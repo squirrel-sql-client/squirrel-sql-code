@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: net.sourceforge.squirrel_sql.client.Main
-Built-By: SQuirreL Development Team
-SplashScreen-Image: icons/splash.jpg

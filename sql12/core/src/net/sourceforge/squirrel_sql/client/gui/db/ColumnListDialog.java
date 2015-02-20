@@ -30,6 +30,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -141,12 +142,11 @@ public class ColumnListDialog extends JDialog implements IDisposableDialog {
         _mode = mode;
         setColumnList(columnInfos);
     }
-            
-    public void setColumnList(TableColumnInfo[] columnInfos) {
+
+    private void setColumnList(TableColumnInfo[] columnInfos) {
         colInfos = columnInfos;
         ArrayList<String> tmp = new ArrayList<String>();
-        for (int i = 0; i < colInfos.length; i++) {
-            TableColumnInfo info = colInfos[i];
+        for (TableColumnInfo info : colInfos) {
             tmp.add(info.getColumnName());
         }
         String[] cols = tmp.toArray(new String[tmp.size()]);
@@ -178,17 +178,16 @@ public class ColumnListDialog extends JDialog implements IDisposableDialog {
     
     public TableColumnInfo[] getSelectedColumnList() {
         ArrayList<TableColumnInfo> result = new ArrayList<TableColumnInfo>();
-        Object[] selectedColNames = columnList.getSelectedValues();
-        for (int i = 0; i < selectedColNames.length; i++) {
-            String columnName = (String)selectedColNames[i];
+        List<String> selectedColNames = columnList.getSelectedValuesList();
+        for (String selectedColName : selectedColNames) {
+            String columnName = selectedColName;
             result.add(getColInfoByName(columnName));
         }
         return result.toArray(new TableColumnInfo[result.size()]);
     }
     
     private TableColumnInfo getColInfoByName(String columnName) {
-        for (int i = 0; i < colInfos.length; i++) {
-            TableColumnInfo colInfo = colInfos[i];
+        for (TableColumnInfo colInfo : colInfos) {
             if (colInfo.getColumnName().equals(columnName)) {
                 return colInfo;
             }

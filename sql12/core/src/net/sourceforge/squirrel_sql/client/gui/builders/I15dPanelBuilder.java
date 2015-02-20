@@ -69,7 +69,7 @@ public class I15dPanelBuilder extends PanelBuilder {
 	 */
 	public I15dPanelBuilder(JPanel panel, FormLayout layout,
 		ResourceBundle bundle) {
-		super(panel, layout);
+		super(layout, panel);
 		this.bundle = bundle;
 	}
 	/**

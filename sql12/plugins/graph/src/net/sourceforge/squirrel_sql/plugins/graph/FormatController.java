@@ -1,500 +1,432 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
 
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Vector;
+public class FormatController {
 
+    private static final StringManager s_stringMgr
+            = StringManagerFactory.getStringManager(FormatController.class);
 
-public class FormatController
-{
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(FormatController.class);
+    private FormatDlg _dlg;
+    private FormatXmlBean[] _formats;
+    private ISession _session;
+    private GraphPlugin _plugin;
+    private String FORMAT_XML_FILE_NAME = "formats.xml";
 
+    private FormatControllerListener _listener;
+    private JPopupMenu m_lstPopup;
+    private Unit m_currentUnit;
 
-	private FormatDlg _dlg;
-   private FormatXmlBean[] _formats;
-   private ISession _session;
-   private GraphPlugin _plugin;
-   private String FORMAT_XML_FILE_NAME = "formats.xml";
+    public FormatController(ISession session, GraphPlugin plugin, FormatControllerListener listener) {
+        try {
+            _plugin = plugin;
+            _session = session;
+            _listener = listener;
 
-   private FormatControllerListener _listener;
-   private JPopupMenu m_lstPopup;
-   private Unit m_currentUnit;
+            String userSettingsFolder = _plugin.getPluginUserSettingsFolder().getPath();
 
-   public FormatController(ISession session, GraphPlugin plugin, FormatControllerListener listener)
-   {
-      try
-      {
-         _plugin = plugin;
-         _session = session;
-         _listener = listener;
+            File f = new File(userSettingsFolder + File.separator + FORMAT_XML_FILE_NAME);
 
-         String userSettingsFolder = _plugin.getPluginUserSettingsFolder().getPath();
+            if (f.exists()) {
+                XMLBeanReader br = new XMLBeanReader();
+                br.load(userSettingsFolder + File.separator + FORMAT_XML_FILE_NAME, this.getClass().getClassLoader());
 
-         File f = new File(userSettingsFolder + File.separator + FORMAT_XML_FILE_NAME);
+                ArrayList<FormatXmlBean> buf = new ArrayList<FormatXmlBean>();
 
-         if(f.exists())
-         {
-            XMLBeanReader br = new XMLBeanReader();
-            br.load(userSettingsFolder + File.separator + FORMAT_XML_FILE_NAME, this.getClass().getClassLoader());
+                for (Iterator<?> i = br.iterator(); i.hasNext();) {
+                    buf.add((FormatXmlBean) i.next());
+                }
 
-            Vector<FormatXmlBean> buf = new Vector<FormatXmlBean>();
-
-            for(Iterator<?> i=br.iterator(); i.hasNext();)
-            {
-               buf.add((FormatXmlBean)i.next());
+                _formats = buf.toArray(new FormatXmlBean[buf.size()]);
             }
 
-            _formats = buf.toArray(new FormatXmlBean[buf.size()]);
-         }
+        } catch (IllegalStateException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (XMLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
+    private void onSave() {
 
-   private void onSave()
-   {
+        if (null == _dlg.txtName.getText() || "".equals(_dlg.txtName.getText().trim())) {
+            // i18n[graph.invalidName=Invalid name]
+            JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidName"));
+            return;
+        }
+        String name = _dlg.txtName.getText().trim();
 
+        Unit selUnit = (Unit) _dlg.cboUnit.getSelectedItem();
 
-      if(null == _dlg.txtName.getText() || "".equals(_dlg.txtName.getText().trim()))
-      {
-			// i18n[graph.invalidName=Invalid name]
-			JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidName"));
-         return;
-      }
-      String name = _dlg.txtName.getText().trim();
+        double height;
+        double width;
 
-      Unit selUnit = (Unit) _dlg.cboUnit.getSelectedItem();
+        String buf;
+        buf = _dlg.txtHeight.getText();
+        try {
+            height = Double.parseDouble(buf) * selUnit.getInCm();
+        } catch (NumberFormatException e) {
+            // i18n[graph.invalidHeight=Invalid height]
+            JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidHeight"));
+            return;
+        }
 
-      double height;
-      double width;
+        buf = _dlg.txtWidth.getText();
+        try {
+            width = Double.parseDouble(buf) * selUnit.getInCm();
+        } catch (NumberFormatException e) {
+            // i18n[graph.invalidWidth=Invalid width]
+            JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidWidth"));
+            return;
+        }
 
-      String buf;
-      buf = _dlg.txtHeight.getText();
-      try
-      {
-         height = Double.parseDouble(buf) * selUnit.getInCm();
-      }
-      catch (NumberFormatException e)
-      {
-			// i18n[graph.invalidHeight=Invalid height]
-			JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidHeight"));
-         return;
-      }
+        boolean isLandscape = _dlg.chkIsLandscape.isSelected();
 
-      buf = _dlg.txtWidth.getText();
-      try
-      {
-         width = Double.parseDouble(buf) * selUnit.getInCm();
-      }
-      catch (NumberFormatException e)
-      {
-			// i18n[graph.invalidWidth=Invalid width]
-			JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidWidth"));
-         return;
-      }
+        FormatXmlBean selBean = (FormatXmlBean) _dlg.lstFormats.getSelectedValue();
 
-      boolean isLandscape = _dlg.chkIsLandscape.isSelected();
+        if (null == selBean) {
+            selBean = new FormatXmlBean(name, width, height, false, isLandscape);
+            ArrayList<FormatXmlBean> v = new ArrayList<FormatXmlBean>();
+            v.addAll(Arrays.asList(_formats));
+            v.add(selBean);
+            _formats = v.toArray(new FormatXmlBean[v.size()]);
 
-      FormatXmlBean selBean = (FormatXmlBean) _dlg.lstFormats.getSelectedValue();
+            _dlg.lstFormats.setListData(_formats);
+            _dlg.lstFormats.setSelectedValue(selBean, true);
+        } else {
+            selBean.setName(name);
+            selBean.setWidth(width);
+            selBean.setHeight(height);
+            selBean.setLandscape(isLandscape);
+            _dlg.lstFormats.repaint();
+        }
 
-      if(null == selBean)
-      {
-         selBean = new FormatXmlBean(name, width, height, false,isLandscape);
-         Vector<FormatXmlBean> v = new Vector<FormatXmlBean>();
-         v.addAll(Arrays.asList(_formats));
-         v.add(selBean);
-         _formats = v.toArray(new FormatXmlBean[v.size()]);
+        _listener.formatsChanged((FormatXmlBean) _dlg.lstFormats.getSelectedValue());
+        saveFormats();
+    }
 
-         _dlg.lstFormats.setListData(_formats);
-         _dlg.lstFormats.setSelectedValue(selBean, true);
-      }
-      else
-      {
-         selBean.setName(name);
-         selBean.setWidth(width);
-         selBean.setHeight(height);
-         selBean.setLandscape(isLandscape);
-         _dlg.lstFormats.repaint();
-      }
-
-      _listener.formatsChanged((FormatXmlBean)_dlg.lstFormats.getSelectedValue());
-      saveFormats();
-   }
-
-   private void saveFormats()
-   {
-      try
-      {
-         String userSettingsFolder = _plugin.getPluginUserSettingsFolder().getPath();
-         XMLBeanWriter bw = new XMLBeanWriter();
-         for (int i = 0; i < _formats.length; i++)
-         {
-            bw.addToRoot(_formats[i]);
-         }
-         bw.save(userSettingsFolder + File.separator + FORMAT_XML_FILE_NAME);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-
-   private void onNew()
-   {
-      _dlg.lstFormats.clearSelection();
-   }
-
-   private void onListSelectionChanged(ListSelectionEvent e)
-   {
-      if(false == e.getValueIsAdjusting())
-      {
-         updateRightSideControls();
-      }
-   }
-
-   private void updateRightSideControls()
-   {
-      FormatXmlBean selBean =(FormatXmlBean) _dlg.lstFormats.getSelectedValue();
-
-      if(null == selBean)
-      {
-         _dlg.txtName.setText(null);
-         _dlg.txtHeight.setText(null);
-         _dlg.txtWidth.setText(null);
-      }
-      else
-      {
-         _dlg.txtName.setText(selBean.getName());
-         _dlg.chkIsLandscape.setSelected(selBean.isLandscape());
-
-         Unit unit = (Unit) _dlg.cboUnit.getSelectedItem();
-
-
-         if(_dlg.cboUnit.getSelectedItem() == Unit.UNIT_CM)
-         {
-            _dlg.txtHeight.setText("" + selBean.getHeight());
-            _dlg.txtWidth.setText("" + selBean.getWidth());
-         }
-         else
-         {
-            _dlg.txtHeight.setText("" +  selBean.getHeight() / unit.getInCm());
-            _dlg.txtWidth.setText("" + selBean.getWidth() / unit.getInCm());
-         }
-      }
-   }
-
-   private FormatXmlBean[] getDefaultFormats()
-   {
-      return new
-         FormatXmlBean[]
-      {
-			// i18n[graph.dina3=Din A 3]
-			new FormatXmlBean(s_stringMgr.getString("graph.dina3"), 29.7, 42.0, false, false),
-			// i18n[graph.dina4=Din A 4]
-         new FormatXmlBean(s_stringMgr.getString("graph.dina4"), 21.0, 29.7, false, false),
-			// i18n[graph.dina5=Din A 5]
-         new FormatXmlBean(s_stringMgr.getString("graph.dina5"), 14.8, 21.0, true, false)
-      };
-   }
-
-   public void setVisible(Window parent, boolean b)
-   {
-      _dlg = new FormatDlg(parent);
-
-      if(null == _formats)
-      {
-         _formats = getDefaultFormats();
-      }
-
-      _dlg.lstFormats.setListData(_formats);
-
-
-      _dlg.cboUnit.addItem(Unit.UNIT_CM);
-      _dlg.cboUnit.addItem(Unit.UNIT_INCH);
-       m_currentUnit = Unit.UNIT_CM;
-      _dlg.cboUnit.setSelectedItem(Unit.UNIT_CM);
-
-      _dlg.lstFormats.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-      _dlg.lstFormats.addListSelectionListener(new ListSelectionListener()
-      {
-         public void valueChanged(ListSelectionEvent e)
-         {
-            onListSelectionChanged(e);
-         }
-      });
-
-
-
-      _dlg.lstFormats.addMouseListener(new MouseAdapter()
-      {
-         public void mousePressed(MouseEvent e)
-         {
-            maybeShowListPopUp(e);
-         }
-
-         public void mouseReleased(MouseEvent e)
-         {
-            maybeShowListPopUp(e);
-         }
-      });
-
-      m_lstPopup = new JPopupMenu();
-
-      // i18n[graph.mnuDelete=delete]
-      JMenuItem mnuDeleteFomat = new JMenuItem(s_stringMgr.getString("graph.mnuDelete"));
-      mnuDeleteFomat.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onDeleteSeletedListItems();
-         }
-      });
-      m_lstPopup.add(mnuDeleteFomat);
-
-      // i18n[graph.landscape=landscape]
-      JMenuItem mnuLandscape = new JMenuItem(s_stringMgr.getString("graph.landscape"));
-      mnuLandscape.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onLandscape();
-         }
-      });
-      m_lstPopup.add(mnuLandscape);
-
-      _dlg.btnNew.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onNew();
-         }
-      });
-
-      _dlg.btnSave.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onSave();
-         }
-      });
-
-      _dlg.addWindowListener(new WindowAdapter()
-      {
-         public void windowClosing(WindowEvent e)
-         {
-            onWindowClosing();
-         }
-      });
-
-      _dlg.cboUnit.addItemListener(new ItemListener()
-      {
-         public void itemStateChanged(ItemEvent e)
-         {
-            onUnitChanged(e);
-         }
-      });
-
-      GUIUtils.centerWithinParent(_dlg);
-
-      _dlg.setVisible(b);
-   }
-
-   private void onLandscape()
-   {
-      FormatXmlBean selBean = (FormatXmlBean) _dlg.lstFormats.getSelectedValue();
-
-      if(null == selBean)
-      {
-         return;
-      }
-
-      FormatXmlBean lsBean = new FormatXmlBean(selBean.getName() + " (LS)", selBean.getHeight(), selBean.getWidth(), false, true);
-
-      Vector<FormatXmlBean> v = new Vector<FormatXmlBean>();
-      v.addAll(Arrays.asList(_formats));
-      v.add(lsBean);
-      _formats = v.toArray(new FormatXmlBean[v.size()]);
-
-      _dlg.lstFormats.setListData(_formats);
-      _dlg.lstFormats.setSelectedValue(lsBean, true);
-
-      _listener.formatsChanged((FormatXmlBean)_dlg.lstFormats.getSelectedValue());
-
-      _dlg.lstFormats.repaint();
-
-   }
-
-   private void onDeleteSeletedListItems()
-   {
-      Object[] selFormats = _dlg.lstFormats.getSelectedValues();
-
-      Vector<FormatXmlBean> remainFormats = new Vector<FormatXmlBean>();
-      for (int i = 0; i < _formats.length; i++)
-      {
-         boolean found = false;
-         for (int j = 0; j < selFormats.length; j++)
-         {
-            if(_formats[i] == selFormats[j])
-            {
-               found = true;
-               break;
+    private void saveFormats() {
+        try {
+            String userSettingsFolder = _plugin.getPluginUserSettingsFolder().getPath();
+            XMLBeanWriter bw = new XMLBeanWriter();
+            for (FormatXmlBean _format : _formats) {
+                bw.addToRoot(_format);
             }
-         }
-         if(false == found)
-         {
-            remainFormats.add(_formats[i]);
-         }
-      }
+            bw.save(userSettingsFolder + File.separator + FORMAT_XML_FILE_NAME);
+        } catch (IllegalStateException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (XMLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    private void onNew() {
+        _dlg.lstFormats.clearSelection();
+    }
 
-      if(0 == remainFormats.size())
-      {
-         _formats = getDefaultFormats();
-      }
-      else
-      {
-         _formats = remainFormats.toArray(new FormatXmlBean[remainFormats.size()]);
-      }
+    private void onListSelectionChanged(ListSelectionEvent e) {
+        if (false == e.getValueIsAdjusting()) {
+            updateRightSideControls();
+        }
+    }
 
-      saveFormats();
+    private void updateRightSideControls() {
+        FormatXmlBean selBean = (FormatXmlBean) _dlg.lstFormats.getSelectedValue();
 
-      _dlg.lstFormats.setListData(_formats);
+        if (null == selBean) {
+            _dlg.txtName.setText(null);
+            _dlg.txtHeight.setText(null);
+            _dlg.txtWidth.setText(null);
+        } else {
+            _dlg.txtName.setText(selBean.getName());
+            _dlg.chkIsLandscape.setSelected(selBean.isLandscape());
 
+            Unit unit = (Unit) _dlg.cboUnit.getSelectedItem();
 
-   }
+            if (_dlg.cboUnit.getSelectedItem() == Unit.UNIT_CM) {
+                _dlg.txtHeight.setText("" + selBean.getHeight());
+                _dlg.txtWidth.setText("" + selBean.getWidth());
+            } else {
+                _dlg.txtHeight.setText("" + selBean.getHeight() / unit.getInCm());
+                _dlg.txtWidth.setText("" + selBean.getWidth() / unit.getInCm());
+            }
+        }
+    }
 
-   private void maybeShowListPopUp(MouseEvent e)
-   {
-      if (e.isPopupTrigger())
-      {
-         m_lstPopup.show(e.getComponent(), e.getX(), e.getY());
-      }
-   }
+    private FormatXmlBean[] getDefaultFormats() {
+        return new FormatXmlBean[]{
+            // i18n[graph.dina3=Din A 3]
+            new FormatXmlBean(s_stringMgr.getString("graph.dina3"), 29.7, 42.0, false, false),
+            // i18n[graph.dina4=Din A 4]
+            new FormatXmlBean(s_stringMgr.getString("graph.dina4"), 21.0, 29.7, false, false),
+            // i18n[graph.dina5=Din A 5]
+            new FormatXmlBean(s_stringMgr.getString("graph.dina5"), 14.8, 21.0, true, false)
+        };
+    }
 
-   private void onUnitChanged(ItemEvent e)
-   {
-      if(ItemEvent.SELECTED == e.getStateChange())
-      {
-         double widht;
-         double height;
+    public void setVisible(Window parent, boolean b) {
+        _dlg = new FormatDlg(parent);
 
-         Unit selUnit = (Unit) _dlg.cboUnit.getSelectedItem();
+        if (null == _formats) {
+            _formats = getDefaultFormats();
+        }
 
-         if(selUnit == m_currentUnit)
-         {
+        _dlg.lstFormats.setListData(_formats);
+
+        _dlg.cboUnit.addItem(Unit.UNIT_CM);
+        _dlg.cboUnit.addItem(Unit.UNIT_INCH);
+        m_currentUnit = Unit.UNIT_CM;
+        _dlg.cboUnit.setSelectedItem(Unit.UNIT_CM);
+
+        _dlg.lstFormats.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        _dlg.lstFormats.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                onListSelectionChanged(e);
+            }
+        });
+
+        _dlg.lstFormats.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                maybeShowListPopUp(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                maybeShowListPopUp(e);
+            }
+        });
+
+        m_lstPopup = new JPopupMenu();
+
+        // i18n[graph.mnuDelete=delete]
+        JMenuItem mnuDeleteFomat = new JMenuItem(s_stringMgr.getString("graph.mnuDelete"));
+        mnuDeleteFomat.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onDeleteSeletedListItems();
+            }
+        });
+        m_lstPopup.add(mnuDeleteFomat);
+
+        // i18n[graph.landscape=landscape]
+        JMenuItem mnuLandscape = new JMenuItem(s_stringMgr.getString("graph.landscape"));
+        mnuLandscape.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onLandscape();
+            }
+        });
+        m_lstPopup.add(mnuLandscape);
+
+        _dlg.btnNew.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onNew();
+            }
+        });
+
+        _dlg.btnSave.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onSave();
+            }
+        });
+
+        _dlg.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                onWindowClosing();
+            }
+        });
+
+        _dlg.cboUnit.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                onUnitChanged(e);
+            }
+        });
+
+        GUIUtils.centerWithinParent(_dlg);
+
+        _dlg.setVisible(b);
+    }
+
+    private void onLandscape() {
+        FormatXmlBean selBean = (FormatXmlBean) _dlg.lstFormats.getSelectedValue();
+
+        if (null == selBean) {
             return;
-         }
+        }
 
+        FormatXmlBean lsBean = new FormatXmlBean(selBean.getName() + " (LS)", selBean.getHeight(), selBean.getWidth(), false, true);
 
-         try
-         {
-            widht = Double.parseDouble(_dlg.txtWidth.getText());
-            height = Double.parseDouble(_dlg.txtHeight.getText());
-         }
-         catch (NumberFormatException e1)
-         {
-				// i18n[graph.invalidNumberFormat=Invalid number format. Can not calculate new unit.]
-				JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidNumberFormat"));
+        ArrayList<FormatXmlBean> v = new ArrayList<FormatXmlBean>();
+        v.addAll(Arrays.asList(_formats));
+        v.add(lsBean);
+        _formats = v.toArray(new FormatXmlBean[v.size()]);
 
-            SwingUtilities.invokeLater(new Runnable()
-            {
-               public void run()
-               {
-                  _dlg.cboUnit.setSelectedItem(m_currentUnit);
-               }
-            });
+        _dlg.lstFormats.setListData(_formats);
+        _dlg.lstFormats.setSelectedValue(lsBean, true);
 
-            return;
-         }
+        _listener.formatsChanged((FormatXmlBean) _dlg.lstFormats.getSelectedValue());
 
+        _dlg.lstFormats.repaint();
 
-         widht *=  m_currentUnit.getInCm() / selUnit.getInCm();
-         height *=  m_currentUnit.getInCm() / selUnit.getInCm();
-         _dlg.txtWidth.setText("" + widht);
-         _dlg.txtHeight.setText("" + height);
+    }
 
-         m_currentUnit = selUnit;
-      }
-   }
+    private void onDeleteSeletedListItems() {
+        List<FormatXmlBean> selFormats = _dlg.lstFormats.getSelectedValuesList();
+        ArrayList<FormatXmlBean> remainFormats = new ArrayList<FormatXmlBean>();
+        for (FormatXmlBean _format : _formats) {
+            boolean found = false;
+            for (FormatXmlBean selFormat : selFormats) {
+                if (_format == selFormat) {
+                    found = true;
+                    break;
+                }
+            }
+            if (false == found) {
+                remainFormats.add(_format);
+            }
+        }
 
-   private void onWindowClosing()
-   {
-      _listener.formatsChanged((FormatXmlBean)_dlg.lstFormats.getSelectedValue());
-      saveFormats();
-   }
+        if (0 == remainFormats.size()) {
+            _formats = getDefaultFormats();
+        } else {
+            _formats = remainFormats.toArray(new FormatXmlBean[remainFormats.size()]);
+        }
 
-   public FormatXmlBean[] getFormats()
-   {
-      if(null == _formats)
-      {
-        _formats = getDefaultFormats();
-      }
+        saveFormats();
 
-      return _formats;
-   }
+        _dlg.lstFormats.setListData(_formats);
 
-   public void close()
-   {
-      if(null != _dlg)
-      {
-         saveFormats();
-         _dlg.setVisible(false);
-         _dlg.dispose();
-      }
+    }
 
-   }
+    private void maybeShowListPopUp(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            m_lstPopup.show(e.getComponent(), e.getX(), e.getY());
+        }
+    }
 
+    private void onUnitChanged(ItemEvent e) {
+        if (ItemEvent.SELECTED == e.getStateChange()) {
+            double widht;
+            double height;
 
-   public static class Unit
-   {
-		// i18n[graph.cm=cm]
-		public static final Unit UNIT_CM = new Unit(s_stringMgr.getString("graph.cm"), 1);
-		// i18n[graph.inch=inch]
-      public static final Unit UNIT_INCH = new Unit(s_stringMgr.getString("graph.inch"), 2.54);
+            Unit selUnit = (Unit) _dlg.cboUnit.getSelectedItem();
 
-      private String _name;
-      private double _inCm;
+            if (selUnit == m_currentUnit) {
+                return;
+            }
 
-      private Unit(String name, double inCm)
-      {
-         _name = name;
-         _inCm = inCm;
-      }
+            try {
+                widht = Double.parseDouble(_dlg.txtWidth.getText());
+                height = Double.parseDouble(_dlg.txtHeight.getText());
+            } catch (NumberFormatException e1) {
+                // i18n[graph.invalidNumberFormat=Invalid number format. Can not calculate new unit.]
+                JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidNumberFormat"));
 
-      public String getName()
-      {
-         return _name;
-      }
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        _dlg.cboUnit.setSelectedItem(m_currentUnit);
+                    }
+                });
 
-      public double getInCm()
-      {
-         return _inCm;
-      }
-      
-      public String toString()
-      {
-         return _name;
-      }
-   }
+                return;
+            }
 
+            widht *= m_currentUnit.getInCm() / selUnit.getInCm();
+            height *= m_currentUnit.getInCm() / selUnit.getInCm();
+            _dlg.txtWidth.setText("" + widht);
+            _dlg.txtHeight.setText("" + height);
+
+            m_currentUnit = selUnit;
+        }
+    }
+
+    private void onWindowClosing() {
+        _listener.formatsChanged((FormatXmlBean) _dlg.lstFormats.getSelectedValue());
+        saveFormats();
+    }
+
+    public FormatXmlBean[] getFormats() {
+        if (null == _formats) {
+            _formats = getDefaultFormats();
+        }
+
+        return _formats;
+    }
+
+    public void close() {
+        if (null != _dlg) {
+            saveFormats();
+            _dlg.setVisible(false);
+            _dlg.dispose();
+        }
+
+    }
+
+    public static class Unit {
+
+        // i18n[graph.cm=cm]
+
+        public static final Unit UNIT_CM = new Unit(s_stringMgr.getString("graph.cm"), 1);
+        // i18n[graph.inch=inch]
+        public static final Unit UNIT_INCH = new Unit(s_stringMgr.getString("graph.inch"), 2.54);
+
+        private final String _name;
+        private final double _inCm;
+
+        private Unit(String name, double inCm) {
+            _name = name;
+            _inCm = inCm;
+        }
+
+        public String getName() {
+            return _name;
+        }
+
+        public double getInCm() {
+            return _inCm;
+        }
+
+        @Override
+        public String toString() {
+            return _name;
+        }
+    }
 
 }
