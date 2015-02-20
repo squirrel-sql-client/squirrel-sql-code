@@ -1,4 +1,4 @@
-package org.squirrelsql.session.sql.bookmark;
+package org.squirrelsql.session.sql.filteredpopup;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -23,20 +23,24 @@ import org.squirrelsql.workaround.KeyMatchWA;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FilteredPopupHandler
+public class FilteredPopupHandler<T extends FilteredPopupEntry>
 {
    private I18n _i18n = new I18n(getClass());
    private SQLTextAreaServices _sqlTextAreaServices;
-   private ArrayList<Bookmark> _bookmarks;
+   private FilteredPopupSelectionListener<T> _filteredPopupSelectionListener;
+   private String _userReadableEntryTypeName;
+   private ArrayList<FilteredPopupEntryWrapper<T>> _entryWrappers;
    private TextField _txtFilter;
-   private ListView<Bookmark> _listView;
+   private ListView<FilteredPopupEntryWrapper<T>> _listView;
    private Popup _popup;
    private BorderPane _borderPane;
 
-   public FilteredPopupHandler(SQLTextAreaServices sqlTextAreaServices, List<Bookmark> bookmarks)
+   public FilteredPopupHandler(SQLTextAreaServices sqlTextAreaServices, String userReadableEntryTypeName, List<T> entries, FilteredPopupSelectionListener<T> filteredPopupSelectionListener)
    {
       _sqlTextAreaServices = sqlTextAreaServices;
-      _bookmarks = new ArrayList<>(bookmarks);
+      _filteredPopupSelectionListener = filteredPopupSelectionListener;
+      _userReadableEntryTypeName = userReadableEntryTypeName;
+      _entryWrappers = FilteredPopupEntryWrapper.wrap(entries);
 
       _popup = new Popup();
 
@@ -66,7 +70,7 @@ public class FilteredPopupHandler
 
    }
 
-   void showPopup()
+   public void showPopup()
    {
       if (_showPopup(false))
       {
@@ -85,14 +89,14 @@ public class FilteredPopupHandler
 
       if (false == forceDisplay)
       {
-         if(0 == _bookmarks.size())
+         if(0 == _entryWrappers.size())
          {
-            new MessageHandler(BookmarkManager.class, MessageHandlerDestination.MESSAGE_PANEL).info(_i18n.t("no.bookmarks.defined"));
+            new MessageHandler(FilteredPopupHandler.class, MessageHandlerDestination.MESSAGE_PANEL).info(_i18n.t("no.entry.defined", _userReadableEntryTypeName));
             return false;
          }
-         else if( 1 == _bookmarks.size())
+         else if( 1 == _entryWrappers.size())
          {
-            runBookmark(_bookmarks.get(0));
+            _filteredPopupSelectionListener.selected(_entryWrappers.get(0).getEntry());
             return false;
          }
       }
@@ -104,15 +108,15 @@ public class FilteredPopupHandler
       return true;
    }
 
-   private void initDisplaySpaces(List<Bookmark> bookmarks)
+   private void initDisplaySpaces(List<FilteredPopupEntryWrapper<T>> entries)
    {
-      if(0 == bookmarks.size())
+      if(0 == entries.size())
       {
          return;
       }
 
-      Bookmark max = bookmarks.stream().max((b1, b2) -> b1.getSelShortcut().length() - b2.getSelShortcut().length()).get();
-      bookmarks.forEach(b -> b.setDisplaySpace(max.getSelShortcut().length() - b.getSelShortcut().length() + 3));
+      FilteredPopupEntryWrapper<T> max = entries.stream().max((b1, b2) -> b1.getSelShortcut().length() - b2.getSelShortcut().length()).get();
+      entries.forEach(b -> b.setDisplaySpace(max.getSelShortcut().length() - b.getSelShortcut().length() + 3));
    }
 
 
@@ -140,17 +144,12 @@ public class FilteredPopupHandler
       }
    }
 
-   private  void onMouseClickedList(MouseEvent event, ListView<Bookmark> listView, Popup popup, SQLTextAreaServices sqlTextAreaServices)
+   private  void onMouseClickedList(MouseEvent event, ListView<FilteredPopupEntryWrapper<T>> listView, Popup popup, SQLTextAreaServices sqlTextAreaServices)
    {
       if(Utils.isDoubleClick(event))
       {
          runSelectedListItem(listView, popup, sqlTextAreaServices);
       }
-   }
-
-   private void runBookmark(Bookmark bookmark)
-   {
-      _sqlTextAreaServices.insertAtCarret("\n" + bookmark.getSql());
    }
 
    private void onHandleKeyOnTxt(KeyEvent keyEvent)
@@ -180,16 +179,16 @@ public class FilteredPopupHandler
       return false;
    }
 
-   private  boolean runSelectedListItem(ListView<Bookmark> listView, Popup popup, SQLTextAreaServices sqlTextAreaServices)
+   private  boolean runSelectedListItem(ListView<FilteredPopupEntryWrapper<T>> listView, Popup popup, SQLTextAreaServices sqlTextAreaServices)
    {
-      Bookmark selectedItem = listView.getSelectionModel().getSelectedItem();
+      FilteredPopupEntryWrapper<T> selectedItem = listView.getSelectionModel().getSelectedItem();
 
       if(null == selectedItem)
       {
          return false;
       }
       popup.hide();
-      runBookmark(selectedItem);
+      _filteredPopupSelectionListener.selected(selectedItem.getEntry());
       return true;
    }
 
@@ -203,17 +202,17 @@ public class FilteredPopupHandler
 
    private void filterPopupList()
    {
-      ArrayList<Bookmark> toRemove = new ArrayList<>();
+      ArrayList<FilteredPopupEntryWrapper<T>> toRemove = new ArrayList<>();
 
-      for (Bookmark bookmark : _bookmarks)
+      for (FilteredPopupEntryWrapper<T> entryWrapper : _entryWrappers)
       {
-         if(false == bookmark.getSelShortcut().toLowerCase().startsWith(_txtFilter.getText().toLowerCase()))
+         if(false == entryWrapper.getSelShortcut().toLowerCase().startsWith(_txtFilter.getText().toLowerCase()))
          {
-            toRemove.add(bookmark);
+            toRemove.add(entryWrapper);
          }
       }
 
-      ObservableList<Bookmark> observableList = FXCollections.observableList((List<Bookmark>) _bookmarks.clone());
+      ObservableList<FilteredPopupEntryWrapper<T>> observableList = FXCollections.observableList((List<FilteredPopupEntryWrapper<T>>) _entryWrappers.clone());
 
       observableList.removeAll(toRemove);
 

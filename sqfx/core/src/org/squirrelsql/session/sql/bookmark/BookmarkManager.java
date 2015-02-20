@@ -1,11 +1,10 @@
 package org.squirrelsql.session.sql.bookmark;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
+import org.squirrelsql.session.sql.filteredpopup.FilteredPopupHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,9 +58,13 @@ public class BookmarkManager
 
    private void showBookmarkPopup()
    {
-      new FilteredPopupHandler(_sqlTextAreaServices, _bookmarks).showPopup();
+      new FilteredPopupHandler<>(_sqlTextAreaServices, _i18n.t("user.readable.entry.name"), _bookmarks, this::runBookmark).showPopup();
    }
 
+   private void runBookmark(Bookmark bookmark)
+   {
+      _sqlTextAreaServices.insertAtCarret("\n" + bookmark.getSql());
+   }
 
    public void execAbreviation()
    {

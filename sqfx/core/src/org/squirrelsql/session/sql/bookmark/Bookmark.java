@@ -1,6 +1,8 @@
 package org.squirrelsql.session.sql.bookmark;
 
-public class Bookmark
+import org.squirrelsql.session.sql.filteredpopup.FilteredPopupEntry;
+
+public class Bookmark implements FilteredPopupEntry
 {
    private String _sql;
    private String _selShortcut;
@@ -8,9 +10,6 @@ public class Bookmark
 
    private boolean _useAsBookmark = true;
    private boolean _useAsAbbreviation = false;
-
-   private String _distString;
-
 
    public Bookmark()
    {
@@ -79,31 +78,5 @@ public class Bookmark
    public void setUseAsAbbreviation(boolean useAsAbbreviation)
    {
       _useAsAbbreviation = useAsAbbreviation;
-   }
-
-
-   /**
-    * Needed for displaying bookmarks of StandardActionConfiguration.EXEC_BOOKMARK.
-    */
-   public void setDisplaySpace(int distLen)
-   {
-      StringBuffer buf = new StringBuffer();
-
-      for (int j = 0; j < distLen; j++)
-      {
-          buf.append(" ");
-      }
-
-      _distString = buf.toString();
-
-   }
-
-   /**
-    * Needed for displaying bookmarks of StandardActionConfiguration.EXEC_BOOKMARK.
-    */
-   @Override
-   public String toString()
-   {
-      return _selShortcut + _distString + _description;
    }
 }
