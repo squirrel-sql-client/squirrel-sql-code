@@ -13,10 +13,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -307,19 +304,25 @@ public class FormatController {
 
     }
 
-    private void onDeleteSeletedListItems() {
-        List<FormatXmlBean> selFormats = _dlg.lstFormats.getSelectedValuesList();
-        ArrayList<FormatXmlBean> remainFormats = new ArrayList<FormatXmlBean>();
-        for (FormatXmlBean _format : _formats) {
+   private void onDeleteSeletedListItems()
+   {
+      Object[] selFormats = _dlg.lstFormats.getSelectedValues();
+
+      Vector<FormatXmlBean> remainFormats = new Vector<FormatXmlBean>();
+      for (int i = 0; i < _formats.length; i++)
+      {
             boolean found = false;
-            for (FormatXmlBean selFormat : selFormats) {
-                if (_format == selFormat) {
+         for (int j = 0; j < selFormats.length; j++)
+         {
+            if(_formats[i] == selFormats[j])
+            {
                     found = true;
                     break;
                 }
             }
-            if (false == found) {
-                remainFormats.add(_format);
+         if(false == found)
+         {
+            remainFormats.add(_formats[i]);
             }
         }
 
