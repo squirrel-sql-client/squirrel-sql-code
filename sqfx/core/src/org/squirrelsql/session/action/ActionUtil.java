@@ -12,41 +12,41 @@ public class ActionUtil
 {
    public static Menu getSessionMenu()
    {
-      return AppState.get().getActionManger().getSessionMenu();
+      return AppState.get().getActionManager().getSessionMenu();
    }
 
    public static ToolBar createToolbar()
    {
-      return AppState.get().getActionManger().createToolbar();
+      return AppState.get().getActionManager().createToolbar();
    }
 
    public static void setActionScope(ActionScope actionScope)
    {
-      AppState.get().getActionManger().setActionScope(actionScope);
+      AppState.get().getActionManager().setActionScope(actionScope);
    }
 
    public static ActionHandle getActionHandleForActiveOrActivatingSessionTabContext(ActionCfg actionCfg)
    {
-      return AppState.get().getActionManger().getActionHandleForActiveOrActivatingSessionTabContext(actionCfg);
+      return AppState.get().getActionManager().getActionHandleForActiveOrActivatingSessionTabContext(actionCfg);
    }
 
    public static ActionHandle getActionHandle(StdActionCfg stdActionCfg, SessionTabContext sessionTabContext)
    {
-      return AppState.get().getActionManger().getActionHandle(stdActionCfg.getActionCfg(), sessionTabContext);
+      return AppState.get().getActionManager().getActionHandle(stdActionCfg.getActionCfg(), sessionTabContext);
    }
 
    public static void updateActionUIs()
    {
-      AppState.get().getActionManger().updateActionUIs();
+      AppState.get().getActionManager().updateActionUIs();
    }
 
    public static List<ActionCfg> getSQLEditRightMouseActionCfgs()
    {
-      return AppState.get().getActionManger().getSQLEditRightMouseActionCfgs();
+      return AppState.get().getActionManager().getSQLEditRightMouseActionCfgs();
    }
 
    public static List<ActionCfg> getAllActionCfgs()
    {
-      return AppState.get().getActionManger().getAllActionCfgs();
+      return AppState.get().getActionManager().getAllActionCfgs();
    }
 }

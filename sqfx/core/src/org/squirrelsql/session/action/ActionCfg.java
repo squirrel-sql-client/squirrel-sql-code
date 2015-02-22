@@ -23,7 +23,7 @@ public class ActionCfg
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // Note: ActionConfigurations are supposed to be an application wide state like in the StandardActionConfiguration enum.
       // If though two ActionConfiguration objects for the same action-function would be created this would result in two different ActionHandles with different listeners
-      _actionConfigurationId = AppState.get().getActionManger().getNextActionConfigurationId();
+      _actionConfigurationId = AppState.get().getActionManager().getNextActionConfigurationId();
       //
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,6 +48,11 @@ public class ActionCfg
    public String getText()
    {
       return _text;
+   }
+
+   public String getToolsPopUpSelector()
+   {
+      return _toolsPopUpSelector;
    }
 
    public KeyCodeCombination getKeyCodeCombination()

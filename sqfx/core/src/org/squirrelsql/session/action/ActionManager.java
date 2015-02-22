@@ -11,7 +11,7 @@ import org.squirrelsql.session.SessionManagerListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActionManger
+public class ActionManager
 {
    private Menu _sessionMenu;
    private ActionScope _currentActionScope;
@@ -27,7 +27,7 @@ public class ActionManger
    }
 
 
-   public ActionManger(SessionManager sessionManager)
+   public ActionManager(SessionManager sessionManager)
    {
       _sessionManager = sessionManager;
       sessionManager.addSessionManagerListener(new SessionManagerListener()
@@ -45,7 +45,7 @@ public class ActionManger
          }
       });
 
-      _sessionMenu = new Menu(new I18n(ActionManger.class).t("main.menu.session"));
+      _sessionMenu = new Menu(new I18n(ActionManager.class).t("main.menu.session"));
       _sessionMenu.setDisable(true);
    }
 

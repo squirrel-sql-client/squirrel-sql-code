@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Tools popup --> In the SQL editor type ctrl+t to open SQuirreL's tools popup.
+
 Feature: Multiple SQLs can be executed at once when separated by the statement separator defined in settings (see menu File --> Settings).
 
 Feature: Made ctrl+left/right caret movement and ctrl+shift+left/right selection work like in Swing-SQuirreL.

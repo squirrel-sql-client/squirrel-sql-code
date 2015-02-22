@@ -8,7 +8,7 @@ import org.squirrelsql.services.RunningServicesManager;
 import org.squirrelsql.services.SettingsManager;
 import org.squirrelsql.services.SquirrelProperty;
 import org.squirrelsql.session.SessionManager;
-import org.squirrelsql.session.action.ActionManger;
+import org.squirrelsql.session.action.ActionManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class AppState
 
    private List<CloseListenerWithFireTime> _applicationCloseListeners = new ArrayList<>();
    private SessionManager _sessionManager = new SessionManager();
-   private ActionManger _actionManger = new ActionManger(_sessionManager);
+   private ActionManager _actionManager = new ActionManager(_sessionManager);
    private SqlHistoryManager _sqlHistoryManager = new SqlHistoryManager();
 
    private RunningServicesManager _runningServicesManager = new RunningServicesManager();
@@ -130,9 +130,9 @@ public class AppState
       return _sessionManager;
    }
 
-   public ActionManger getActionManger()
+   public ActionManager getActionManager()
    {
-      return _actionManger;
+      return _actionManager;
    }
 
    public void removeApplicationCloseListener(ApplicationCloseListener l)
