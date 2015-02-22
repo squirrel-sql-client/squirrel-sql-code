@@ -23,7 +23,7 @@ import org.squirrelsql.workaround.KeyMatchWA;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FilteredPopupHandler<T extends FilteredPopupEntry>
+public class FilteredPopup<T extends FilteredPopupEntry>
 {
    private I18n _i18n = new I18n(getClass());
    private SQLTextAreaServices _sqlTextAreaServices;
@@ -35,7 +35,7 @@ public class FilteredPopupHandler<T extends FilteredPopupEntry>
    private Popup _popup;
    private BorderPane _borderPane;
 
-   public FilteredPopupHandler(SQLTextAreaServices sqlTextAreaServices, String userReadableEntryTypeName, List<T> entries, FilteredPopupSelectionListener<T> filteredPopupSelectionListener)
+   public FilteredPopup(SQLTextAreaServices sqlTextAreaServices, String userReadableEntryTypeName, List<T> entries, FilteredPopupSelectionListener<T> filteredPopupSelectionListener)
    {
       _sqlTextAreaServices = sqlTextAreaServices;
       _filteredPopupSelectionListener = filteredPopupSelectionListener;
@@ -91,7 +91,7 @@ public class FilteredPopupHandler<T extends FilteredPopupEntry>
       {
          if(0 == _entryWrappers.size())
          {
-            new MessageHandler(FilteredPopupHandler.class, MessageHandlerDestination.MESSAGE_PANEL).info(_i18n.t("no.entry.defined", _userReadableEntryTypeName));
+            new MessageHandler(FilteredPopup.class, MessageHandlerDestination.MESSAGE_PANEL).info(_i18n.t("no.entry.defined", _userReadableEntryTypeName));
             return false;
          }
          else if( 1 == _entryWrappers.size())

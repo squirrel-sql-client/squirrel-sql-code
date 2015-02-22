@@ -4,7 +4,7 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
-import org.squirrelsql.session.sql.filteredpopup.FilteredPopupHandler;
+import org.squirrelsql.session.sql.filteredpopup.FilteredPopup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public class BookmarkManager
 
    private void showBookmarkPopup()
    {
-      new FilteredPopupHandler<>(_sqlTextAreaServices, _i18n.t("user.readable.entry.name"), _bookmarks, this::runBookmark).showPopup();
+      new FilteredPopup<>(_sqlTextAreaServices, _i18n.t("user.readable.entry.name"), _bookmarks, this::runBookmark).showPopup();
    }
 
    private void runBookmark(Bookmark bookmark)
