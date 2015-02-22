@@ -251,34 +251,32 @@ public class CopyTableCommand implements ICommand {
 
     private void buttonOkActionPerformed(@SuppressWarnings("unused") java.awt.event.ActionEvent evt) {
         newTableName = tfTableName.getText();
-        StringBuilder selectedFields = new StringBuilder();
-        String fields;
-        List<String> obj = listFields.getSelectedValuesList();
-        for (int i = 0; i < obj.size(); i++) {
-            selectedFields.append(obj.get(i));
-            if (i < obj.size() - 1) {
-                selectedFields.append(", ");
+		String selectedFields = "";
+		String fields = "";
+		Object[] obj = listFields.getSelectedValues();
+		for (int i = 0; i < obj.length; i++)
+		{
+			selectedFields += obj[i];
+			if (i < obj.length - 1)
+				selectedFields += ", ";
             }
-        }
-        if (isAllFields) {
+		if (isAllFields)
             fields = "*";
-        } else {
-            fields = selectedFields.toString();
-        }
+		else
+			fields = selectedFields;
 
-        if (isStructure) {
+		if (isStructure)
             SQLCommandRoot += "SELECT "
                     + fields
                     + " FROM "
                     + oldTableName
                     + " WHERE 1=0 ;";
-        } else {
+		else
             SQLCommandRoot += "SELECT "
                     + fields
                     + " FROM "
                     + oldTableName
                     + " ;";
-        }
 
         SQLQuery = getQuery() + SQLCommandRoot;
         dbUtils.execute(SQLQuery);

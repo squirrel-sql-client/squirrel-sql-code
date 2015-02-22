@@ -178,9 +178,9 @@ public class ColumnListDialog extends JDialog implements IDisposableDialog {
     
     public TableColumnInfo[] getSelectedColumnList() {
         ArrayList<TableColumnInfo> result = new ArrayList<TableColumnInfo>();
-        List<String> selectedColNames = columnList.getSelectedValuesList();
-        for (String selectedColName : selectedColNames) {
-            String columnName = selectedColName;
+        Object[] selectedColNames = columnList.getSelectedValues();
+        for (int i = 0; i < selectedColNames.length; i++) {
+            String columnName = (String)selectedColNames[i];
             result.add(getColInfoByName(columnName));
         }
         return result.toArray(new TableColumnInfo[result.size()]);

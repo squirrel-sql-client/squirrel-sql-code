@@ -24,6 +24,14 @@ Syntax Plugin: Made background color for white spaces affect the whole SQL edito
 
 Bug fixes:
 
+SQuirreL once and again hangs for some seconds on Windows.
+  With help of the new detectEDT-feature it was possible to track the problem back to a JDK problem: https://bugs.openjdk.java.net/browse/JDK-6477756
+  A workaround is to use the JVM parameter -Dsun.awt.nopixfmt=true. This parameter was introduced to the start batches we ship.
+  People who experience the problem and use their own start batches should set the parameter manually.
+
+#1177 Export results to xls fails for large exports that contain DATE columns
+  Thanks to Neville Rowe for the fix.
+
 Tool bar of SQL Worksheet was doubled any time it was moved from between different frames.
 
 #1174 PostgreSQL: create table script: wrong data type numeric
