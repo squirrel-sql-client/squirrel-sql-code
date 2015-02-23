@@ -25,7 +25,14 @@ public class ToolsPopUpActionWrapper implements FilteredPopupEntry
    @Override
    public String getDescription()
    {
-      return _actionCfg.getText();
+      if (null == _actionCfg.getKeyCodeCombination())
+      {
+         return _actionCfg.getText();
+      }
+      else
+      {
+         return _actionCfg.getText() + "  " + _actionCfg.getKeyCodeCombination();
+      }
    }
 
    public ActionCfg getActionCfg()
