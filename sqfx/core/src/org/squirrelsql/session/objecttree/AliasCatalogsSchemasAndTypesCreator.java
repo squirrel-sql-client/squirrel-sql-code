@@ -11,11 +11,11 @@ public class AliasCatalogsSchemasAndTypesCreator
 
    public static void createNodes(TreeView<ObjectTreeNode> objectsTree, Session session)
    {
-      DatabaseStructure dataBaseStructure = session.getSchemaCache().getDataBaseStructure();
+      DatabaseStructure dataBaseStructure = session.getSchemaCacheValue().get().getDataBaseStructure();
 
       DatabaseStructureVisitor<TreeItem<ObjectTreeNode>> databaseStructureVisitor = (parent, structItem) -> createTreeItem(session, parent, structItem);
 
-      TreeItem<ObjectTreeNode> aliasRoot = dataBaseStructure.visitTopToBottom(databaseStructureVisitor, session.getSchemaCache().getSchemaCacheConfig());
+      TreeItem<ObjectTreeNode> aliasRoot = dataBaseStructure.visitTopToBottom(databaseStructureVisitor, session.getSchemaCacheValue().get().getSchemaCacheConfig());
 
       objectsTree.setRoot(aliasRoot);
    }

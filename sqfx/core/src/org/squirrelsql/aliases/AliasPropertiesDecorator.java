@@ -6,7 +6,6 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.schemainfo.*;
 import org.squirrelsql.table.RowObjectTableLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AliasPropertiesDecorator
@@ -115,7 +114,7 @@ public class AliasPropertiesDecorator
 
    public static void fillSchemaTableDefault(DbConnectorResult dbConnectorResult, RowObjectTableLoader<AliasPropertiesSpecifiedLoading> tableLoaderSchemasToFill)
    {
-      DatabaseStructure dataBaseStructure = dbConnectorResult.getSchemaCache().getDataBaseStructure();
+      DatabaseStructure dataBaseStructure = dbConnectorResult.getSchemaCacheValue().get().getDataBaseStructure();
 
       List<StructItemSchema> schemas = dataBaseStructure.getSchemas();
 

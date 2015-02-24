@@ -1,11 +1,8 @@
 package org.squirrelsql.session.sql.syntax;
 
-import javafx.geometry.Point2D;
-import javafx.scene.control.Label;
-import javafx.stage.Popup;
+import javafx.beans.value.ObservableObjectValue;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.MouseOverTextEvent;
 import org.squirrelsql.session.parser.kernel.ErrorInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 
@@ -14,7 +11,6 @@ import javax.swing.text.Segment;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,15 +21,15 @@ public class SQLSyntaxHighlighting
    private final ErrorToolTipHandler _errorToolTipHandler;
    private ISyntaxHighlightTokenMatcher _syntaxHighlightTokenMatcher;
    private CodeArea _sqlTextArea;
-   private SchemaCache _schemaCache;
+   private ObservableObjectValue<SchemaCache> _schemaCacheValue;
    private LexAndParseResultListener _lexAndParseResultListener;
 
    private ErrorInfosHandler _errorInfosHandler = new ErrorInfosHandler();
 
-   public SQLSyntaxHighlighting(CodeArea sqlTextArea, ISyntaxHighlightTokenMatcher syntaxHighlightTokenMatcher, SchemaCache schemaCache)
+   public SQLSyntaxHighlighting(CodeArea sqlTextArea, ISyntaxHighlightTokenMatcher syntaxHighlightTokenMatcher, ObservableObjectValue<SchemaCache> schemaCacheValue)
    {
       _sqlTextArea = sqlTextArea;
-      _schemaCache = schemaCache;
+      _schemaCacheValue = schemaCacheValue;
 
       _sqlTextArea.getStylesheets().add(getClass().getResource("sql-syntax.css").toExternalForm());
 
@@ -65,7 +61,7 @@ public class SQLSyntaxHighlighting
          StyleSpansBuilderWrapper spansBuilder = new StyleSpansBuilderWrapper();
 
 
-         TableNextToCursorHandler tableNextToCursorHandler = new TableNextToCursorHandler(_lexAndParseResultListener, _sqlTextArea.getCaretPosition(), _schemaCache);
+         TableNextToCursorHandler tableNextToCursorHandler = new TableNextToCursorHandler(_lexAndParseResultListener, _sqlTextArea.getCaretPosition(), _schemaCacheValue);
 
 
          //System.out.println("----------------------------------------------------------");

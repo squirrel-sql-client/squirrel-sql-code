@@ -1,5 +1,6 @@
 package org.squirrelsql.session;
 
+import javafx.beans.value.ObservableObjectValue;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
@@ -30,9 +31,9 @@ public class Session
       return _dbConnectorResult;
    }
 
-   public SchemaCache getSchemaCache()
+   public ObservableObjectValue<SchemaCache> getSchemaCacheValue()
    {
-      return _dbConnectorResult.getSchemaCache();
+      return _dbConnectorResult.getSchemaCacheValue();
    }
 
    public SessionProperties getSessionProperties()

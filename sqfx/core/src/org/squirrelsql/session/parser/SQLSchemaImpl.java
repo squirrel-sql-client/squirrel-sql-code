@@ -18,7 +18,7 @@ public class SQLSchemaImpl implements SQLSchema
 
    public Table getTable(String catalog, String schema, String name)
    {
-      List<TableInfo> tablesBySimpleName = _session.getSchemaCache().getTablesBySimpleName(name);
+      List<TableInfo> tablesBySimpleName = _session.getSchemaCacheValue().get().getTablesBySimpleName(name);
       if (0 < tablesBySimpleName.size())
       {
          return new Table(catalog, schema, name, _session);
@@ -28,7 +28,7 @@ public class SQLSchemaImpl implements SQLSchema
 
    public List<Table> getTables(String catalog, String schema, String name)
    {
-      List<TableInfo> tableNames = _session.getSchemaCache().getTablesByFullyQualifiedName(catalog, schema, name);
+      List<TableInfo> tableNames = _session.getSchemaCacheValue().get().getTablesByFullyQualifiedName(catalog, schema, name);
 
       List<Table> ret = new ArrayList<>();
 

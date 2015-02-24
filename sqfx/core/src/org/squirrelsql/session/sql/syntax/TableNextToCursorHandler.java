@@ -1,5 +1,6 @@
 package org.squirrelsql.session.sql.syntax;
 
+import javafx.beans.value.ObservableObjectValue;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
@@ -11,16 +12,16 @@ public class TableNextToCursorHandler
 {
    private LexAndParseResultListener _lexAndParseResultListener;
    private final int _caretPosition;
-   private final SchemaCache _schemaCache;
+   private final ObservableObjectValue<SchemaCache> _schemaCacheValue;
    private List<TableInfo> _tablesNextToCursor = new ArrayList<>();
 
    private int _minDistToCursor = Integer.MAX_VALUE;
 
-   public TableNextToCursorHandler(LexAndParseResultListener lexAndParseResultListener, int caretPosition, SchemaCache schemaCache)
+   public TableNextToCursorHandler(LexAndParseResultListener lexAndParseResultListener, int caretPosition, ObservableObjectValue<SchemaCache> schemaCacheValue)
    {
       _lexAndParseResultListener = lexAndParseResultListener;
       _caretPosition = caretPosition;
-      _schemaCache = schemaCache;
+      _schemaCacheValue = schemaCacheValue;
    }
 
    public void checkToken(int lineStart, Token token)
@@ -43,7 +44,7 @@ public class TableNextToCursorHandler
       }
 
       char[] textArray = token.getTextArray();
-      _tablesNextToCursor = _schemaCache.getTables(textArray, token.getOffset(), token.length());
+      _tablesNextToCursor = _schemaCacheValue.get().getTables(textArray, token.getOffset(), token.length());
 
    }
 

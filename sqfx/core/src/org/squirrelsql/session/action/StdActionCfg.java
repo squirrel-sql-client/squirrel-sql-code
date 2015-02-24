@@ -15,7 +15,8 @@ public enum StdActionCfg
    EDIT_BOOKMARK("bookmark-edit.png", "bookmark.edit", "bookmarkedit", ActionScope.UNSCOPED, null),
    ESCAPE_DATE(null, "escape.date", "date", ActionScope.SQL_EDITOR, null),
    SQL_TO_TABLE(null, "sql.to.table", "sql2table", ActionScope.SQL_EDITOR, null),
-   SHOW_TOOLS_POPUP(null, "show.tools.popup", null, ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN));
+   SHOW_TOOLS_POPUP(null, "show.tools.popup", null, ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN)),
+   RELOAD_DB_META_DATA("reload.png", "reload.meta.data", "reload", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.F5));
 
 
 
@@ -24,7 +25,8 @@ public enum StdActionCfg
          RUN_SQL,
          NEW_SQL_TAB,
          EXEC_BOOKMARK,
-         EDIT_BOOKMARK
+         EDIT_BOOKMARK,
+         RELOAD_DB_META_DATA
    };
 
    public static StdActionCfg[] SESSION_MENU = new StdActionCfg[]
@@ -32,7 +34,8 @@ public enum StdActionCfg
          RUN_SQL,
          NEW_SQL_TAB,
          EXEC_BOOKMARK,
-         EDIT_BOOKMARK
+         EDIT_BOOKMARK,
+         RELOAD_DB_META_DATA
    };
 
 

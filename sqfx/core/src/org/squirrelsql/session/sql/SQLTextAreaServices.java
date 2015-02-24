@@ -2,6 +2,7 @@ package org.squirrelsql.session.sql;
 
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyEvent;
@@ -34,7 +35,7 @@ public class SQLTextAreaServices
    {
       _sqlTextArea = new CodeArea();
 
-      SchemaCache schemaCache = sessionTabContext.getSession().getSchemaCache();
+      ObservableObjectValue<SchemaCache> schemaCacheValue = sessionTabContext.getSession().getSchemaCacheValue();
 
       _parserEventsProcessor = new ParserEventsProcessor(this, sessionTabContext.getSession());
 
@@ -53,7 +54,7 @@ public class SQLTextAreaServices
          }
       });
 
-      _sqlSyntaxHighlighting = new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(schemaCache), schemaCache);
+      _sqlSyntaxHighlighting = new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(schemaCacheValue), schemaCacheValue);
 
       new CtrlLeftRightHandler(_sqlTextArea);
 

@@ -7,6 +7,8 @@ import javafx.scene.layout.BorderPane;
 
 import org.squirrelsql.AppState;
 import org.squirrelsql.ApplicationCloseListener;
+import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.services.Dao;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.SplitPositionSaver;
@@ -14,6 +16,9 @@ import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.objecttree.*;
+import org.squirrelsql.session.schemainfo.SchemaCache;
+import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
+import org.squirrelsql.session.schemainfo.SchemaCacheFactory;
 import org.squirrelsql.session.sql.SqlTabCtrl;
 import org.squirrelsql.session.sql.bookmark.BookmarkEditCtrl;
 import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
@@ -72,6 +77,20 @@ public class SessionCtrl
    {
       StdActionCfg.NEW_SQL_TAB.setAction(() -> AppState.get().getSessionManager().createSqlTab(sessionTabContext));
       StdActionCfg.EDIT_BOOKMARK.setAction(() -> new BookmarkEditCtrl(sessionTabContext));
+      StdActionCfg.RELOAD_DB_META_DATA.setAction(() -> reloadSchemaCache());
+   }
+
+   private void reloadSchemaCache()
+   {
+      DbConnectorResult dbConnectorResult = _sessionTabContext.getSession().getDbConnectorResult();
+
+      SchemaCacheConfig schemaCacheConfig = new SchemaCacheConfig(Dao.loadAliasProperties(dbConnectorResult.getAlias().getId()));
+
+      SchemaCache schemaCache = SchemaCacheFactory.createSchemaCache(dbConnectorResult, dbConnectorResult.getSQLConnection(), schemaCacheConfig);
+
+      schemaCache.load();
+
+      dbConnectorResult.setSchemaCache(schemaCache);
    }
 
    private void onSelectionChanged(Event e)
@@ -165,7 +184,7 @@ public class SessionCtrl
 
    private void removeEmptySchemasIfRequested(TreeView<ObjectTreeNode> objectsTree, Session session)
    {
-      if(false == session.getSchemaCache().getAliasPropertiesDecorator().isHideEmptySchemasInObjectTree())
+      if(false == session.getSchemaCacheValue().get().getAliasPropertiesDecorator().isHideEmptySchemasInObjectTree())
       {
          return;
       }

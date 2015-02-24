@@ -2,7 +2,6 @@ package org.squirrelsql.session.completion;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
@@ -66,7 +65,7 @@ public class CompletionCtrl
 
       TokenParser tokenParser = new TokenParser(tokenAtCarret);
 
-      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache(), _currentTableInfosNextToCursor, _currentAliasInfos).getCompletions(tokenParser);
+      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCacheValue(), _currentTableInfosNextToCursor, _currentAliasInfos).getCompletions(tokenParser);
 
       if(0 == completions.size())
       {

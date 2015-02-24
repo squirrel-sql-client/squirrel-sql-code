@@ -1,5 +1,6 @@
 package org.squirrelsql.session.completion;
 
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -17,13 +18,13 @@ import java.util.List;
 
 public class Completor
 {
-   private SchemaCache _schemaCache;
+   private ObservableObjectValue<SchemaCache> _schemaCacheValue;
    private TableAliasInfo[] _currentAliasInfos;
    private List<TableCompletionCandidate> _currentTableCandidatesNextToCursors = new ArrayList<>();
 
-   public Completor(SchemaCache schemaCache, List<TableInfo> currentTableInfosNextToCursor, TableAliasInfo[] currentAliasInfos)
+   public Completor(ObservableObjectValue<SchemaCache> schemaCacheValue, List<TableInfo> currentTableInfosNextToCursor, TableAliasInfo[] currentAliasInfos)
    {
-      _schemaCache = schemaCache;
+      _schemaCacheValue = schemaCacheValue;
       _currentAliasInfos = currentAliasInfos;
 
       for (TableInfo tableInfo : currentTableInfosNextToCursor)
@@ -42,7 +43,7 @@ public class Completor
 
          for (TableCompletionCandidate tableCompletionCandidate : _currentTableCandidatesNextToCursors)
          {
-            for (ColumnInfo columnInfo : _schemaCache.getColumns(tableCompletionCandidate.getTableInfo()))
+            for (ColumnInfo columnInfo : _schemaCacheValue.get().getColumns(tableCompletionCandidate.getTableInfo()))
             {
                if(tokenParser.uncompletedSplitMatches(columnInfo.getColName()))
                {
@@ -66,7 +67,7 @@ public class Completor
          }
 
 
-         for (String keyword : _schemaCache.getDefaultKeywords())
+         for (String keyword : _schemaCacheValue.get().getDefaultKeywords())
          {
             if(tokenParser.uncompletedSplitMatches(keyword))
             {
@@ -74,7 +75,7 @@ public class Completor
             }
          }
 
-         for (String keyword : _schemaCache.getKeywords().getCellsAsString(0))
+         for (String keyword : _schemaCacheValue.get().getKeywords().getCellsAsString(0))
          {
             if(tokenParser.uncompletedSplitMatches(keyword))
             {
@@ -82,7 +83,7 @@ public class Completor
             }
          }
 
-         List<StructItemCatalog> catalogs = _schemaCache.getCatalogs();
+         List<StructItemCatalog> catalogs = _schemaCacheValue.get().getCatalogs();
 
          for (StructItemCatalog catalog : catalogs)
          {
@@ -92,7 +93,7 @@ public class Completor
             }
          }
 
-         List<StructItemSchema> schemas = _schemaCache.getSchemas();
+         List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemas();
 
          for (StructItemSchema schema : schemas)
          {
@@ -102,7 +103,7 @@ public class Completor
             }
          }
 
-         List<String> functions = _schemaCache.getAllFunctions();
+         List<String> functions = _schemaCacheValue.get().getAllFunctions();
 
          for (String function : functions)
          {
@@ -128,7 +129,7 @@ public class Completor
       }
       else if(1 == tokenParser.completedSplitsCount()) // MyCatalog.xxx or MySchema.xxx or MyTable.xxx
       {
-         StructItemCatalog catalog = _schemaCache.getCatalogByName(tokenParser.getCompletedSplitAt(0));
+         StructItemCatalog catalog = _schemaCacheValue.get().getCatalogByName(tokenParser.getCompletedSplitAt(0));
 
          if(null != catalog) // MyCatalog.xxx
          {
@@ -137,7 +138,7 @@ public class Completor
 
          ///////////////////////////////////////////
          // MySchema.xxx
-         List<StructItemSchema> schemas = _schemaCache.getSchemasByName(tokenParser.getCompletedSplitAt(0));
+         List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemasByName(tokenParser.getCompletedSplitAt(0));
 
          fillTopLevelObjectsForSchemas(ret, tokenParser, schemas);
          //
@@ -155,7 +156,7 @@ public class Completor
          {
             if(tokenParser.getCompletedSplitAt(0).equalsIgnoreCase(currentAliasInfo.aliasName))
             {
-               List<TableInfo> tablesBySimpleName = _schemaCache.getTablesBySimpleName(currentAliasInfo.tableName);
+               List<TableInfo> tablesBySimpleName = _schemaCacheValue.get().getTablesBySimpleName(currentAliasInfo.tableName);
                for (TableInfo tableInfo : tablesBySimpleName)
                {
                   fillColumnsForTable(ret, Arrays.asList(tableInfo.getStructItemSchema()), tableInfo.getName(), tokenParser);
@@ -169,12 +170,12 @@ public class Completor
       }
       else if(2 == tokenParser.completedSplitsCount()) // MyCatalog.MySchema,xxx or MyCatalog.MyTable.xxx or MySchema.MyTable.xxx
       {
-         StructItemCatalog catalog = _schemaCache.getCatalogByName(tokenParser.getCompletedSplitAt(0));
+         StructItemCatalog catalog = _schemaCacheValue.get().getCatalogByName(tokenParser.getCompletedSplitAt(0));
 
 
          if (null != catalog) // MyCatalog.MySchema,xxx or MyCatalog.MyTable.xxx
          {
-            List<StructItemSchema> schemas = _schemaCache.getSchemaByNameAsArray(catalog.getCatalog(), tokenParser.getCompletedSplitAt(1));
+            List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemaByNameAsArray(catalog.getCatalog(), tokenParser.getCompletedSplitAt(1));
 
             fillTopLevelObjectsForSchemas(ret, tokenParser, schemas);
 
@@ -185,17 +186,17 @@ public class Completor
          }
          else // MySchema.MyTable.xxx
          {
-            List<StructItemSchema> schemas = _schemaCache.getSchemasByName(tokenParser.getCompletedSplitAt(0));
+            List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemasByName(tokenParser.getCompletedSplitAt(0));
             fillColumnsForTable(ret, schemas, tokenParser.getCompletedSplitAt(1), tokenParser);
          }
       }
       else if(3 == tokenParser.completedSplitsCount()) // MyCatalog.MySchema,MyTable.xxx
       {
-         StructItemCatalog catalog = _schemaCache.getCatalogByName(tokenParser.getCompletedSplitAt(0));
+         StructItemCatalog catalog = _schemaCacheValue.get().getCatalogByName(tokenParser.getCompletedSplitAt(0));
 
          if(null != catalog)
          {
-            List<StructItemSchema> schemas = _schemaCache.getSchemaByNameAsArray(catalog.getCatalog(), tokenParser.getCompletedSplitAt(1));
+            List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemaByNameAsArray(catalog.getCatalog(), tokenParser.getCompletedSplitAt(1));
 
             fillColumnsForTable(ret, schemas, tokenParser.getCompletedSplitAt(2), tokenParser);
          }
@@ -229,7 +230,7 @@ public class Completor
       {
          List<TableInfo> tables;
 
-         tables = _schemaCache.getTablesByFullyQualifiedName(schema.getCatalog(), schema.getSchema(), tableName);
+         tables = _schemaCacheValue.get().getTablesByFullyQualifiedName(schema.getCatalog(), schema.getSchema(), tableName);
 
          fillMatchingCols(toFill, tokenParser, tables, schema);
 
@@ -238,7 +239,7 @@ public class Completor
             return;
          }
 
-         tables = _schemaCache.getTablesBySchemaQualifiedName(schema.getSchema(), tableName);
+         tables = _schemaCacheValue.get().getTablesBySchemaQualifiedName(schema.getSchema(), tableName);
 
          fillMatchingCols(toFill, tokenParser, tables, schema);
 
@@ -247,7 +248,7 @@ public class Completor
             return;
          }
 
-         tables = _schemaCache.getTablesBySimpleName(tableName);
+         tables = _schemaCacheValue.get().getTablesBySimpleName(tableName);
 
          fillMatchingCols(toFill, tokenParser, tables, schema);
       }
@@ -258,7 +259,7 @@ public class Completor
       for (TableInfo table : tables)
       {
 
-         for (ColumnInfo columnInfo : _schemaCache.getColumns(table))
+         for (ColumnInfo columnInfo : _schemaCacheValue.get().getColumns(table))
          {
             if(tokenParser.uncompletedSplitMatches(columnInfo.getColName()))
             {
@@ -272,7 +273,7 @@ public class Completor
    {
       for (StructItemSchema schema : schemas)
       {
-         List<TableInfo> tableInfos = _schemaCache.getTableInfosMatching(schema.getCatalog(), schema.getSchema(), TableTypes.getTableAndView());
+         List<TableInfo> tableInfos = _schemaCacheValue.get().getTableInfosMatching(schema.getCatalog(), schema.getSchema(), TableTypes.getTableAndView());
 
          DuplicateSimpleNamesCheck duplicateSimpleNamesCheck = new DuplicateSimpleNamesCheck();
 
@@ -291,7 +292,7 @@ public class Completor
             }
          }
 
-         List<ProcedureInfo> procedureInfos = _schemaCache.getProcedureInfosMatching(schema.getCatalog(), schema.getSchema());
+         List<ProcedureInfo> procedureInfos = _schemaCacheValue.get().getProcedureInfosMatching(schema.getCatalog(), schema.getSchema());
 
          for (ProcedureInfo procedureInfo : procedureInfos)
          {

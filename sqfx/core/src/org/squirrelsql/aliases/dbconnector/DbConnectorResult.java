@@ -1,10 +1,10 @@
 package org.squirrelsql.aliases.dbconnector;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableObjectValue;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.session.schemainfo.SchemaCache;
-
-import java.sql.SQLException;
 
 public class DbConnectorResult
 {
@@ -17,7 +17,7 @@ public class DbConnectorResult
    private boolean _editAliasRequested;
    private boolean _loginCanceled;
    private SQLConnection _sqlConnection;
-   private SchemaCache _schemaCache;
+   private SimpleObjectProperty<SchemaCache> _schemaCacheProperty = new SimpleObjectProperty<>();
 
    public DbConnectorResult(Alias alias, String user)
    {
@@ -93,11 +93,11 @@ public class DbConnectorResult
 
    public void setSchemaCache(SchemaCache schemaCache)
    {
-      _schemaCache = schemaCache;
+      _schemaCacheProperty.set(schemaCache);
    }
 
-   public SchemaCache getSchemaCache()
+   public ObservableObjectValue<SchemaCache> getSchemaCacheValue()
    {
-      return _schemaCache;
+      return _schemaCacheProperty;
    }
 }

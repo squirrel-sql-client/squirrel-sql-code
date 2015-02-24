@@ -28,7 +28,7 @@ public class TablesProceduresAndUDTsCreator
 
       for (TreeItem<ObjectTreeNode> udtTypeItem : udtTypeItems)
       {
-         List<UDTInfo>  udtInfos = session.getSchemaCache().getUDTInfosExact(udtTypeItem.getValue().getCatalog(), udtTypeItem.getValue().getSchema());
+         List<UDTInfo>  udtInfos = session.getSchemaCacheValue().get().getUDTInfosExact(udtTypeItem.getValue().getCatalog(), udtTypeItem.getValue().getSchema());
 
          for (UDTInfo udtInfo : udtInfos)
          {
@@ -43,7 +43,7 @@ public class TablesProceduresAndUDTsCreator
 
       for (TreeItem<ObjectTreeNode> procedureTypeItem : procedureTypeItems)
       {
-         List<ProcedureInfo>  procedureInfos = session.getSchemaCache().getProcedureInfosExact(procedureTypeItem.getValue().getCatalog(), procedureTypeItem.getValue().getSchema());
+         List<ProcedureInfo>  procedureInfos = session.getSchemaCacheValue().get().getProcedureInfosExact(procedureTypeItem.getValue().getCatalog(), procedureTypeItem.getValue().getSchema());
 
          for (ProcedureInfo procedureInfo : procedureInfos)
          {
@@ -59,7 +59,7 @@ public class TablesProceduresAndUDTsCreator
       for (TreeItem<ObjectTreeNode> tableTypeItem : tableTypeItems)
       {
          ObjectTreeNode value = tableTypeItem.getValue();
-         List<TableInfo> tableInfos = session.getSchemaCache().getTableInfosExact(value.getCatalog(), value.getSchema(), value.getTableType());
+         List<TableInfo> tableInfos = session.getSchemaCacheValue().get().getTableInfosExact(value.getCatalog(), value.getSchema(), value.getTableType());
 
          for (TableInfo tableInfo : tableInfos)
          {

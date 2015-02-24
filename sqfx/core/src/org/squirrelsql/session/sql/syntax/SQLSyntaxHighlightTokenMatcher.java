@@ -1,14 +1,15 @@
 package org.squirrelsql.session.sql.syntax;
 
+import javafx.beans.value.ObservableObjectValue;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 
 public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatcher
 {
-   private final SchemaCache _schemaCache;
+   private final ObservableObjectValue<SchemaCache> _schemaCacheValue;
 
-   public SQLSyntaxHighlightTokenMatcher(SchemaCache schemaCache)
+   public SQLSyntaxHighlightTokenMatcher(ObservableObjectValue<SchemaCache> schemaCacheValue)
    {
-      _schemaCache = schemaCache;
+      _schemaCacheValue = schemaCacheValue;
    }
 
    @Override
@@ -20,13 +21,13 @@ public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
    @Override
    public boolean isTable(char[] buffer, int offset, int len)
    {
-      return 0 < _schemaCache.getTables(buffer, offset, len).size();
+      return 0 < _schemaCacheValue.get().getTables(buffer, offset, len).size();
    }
 
    @Override
    public boolean isFunction(char[] buffer, int offset, int len)
    {
-      return _schemaCache.isProcedure(buffer, offset, len);
+      return _schemaCacheValue.get().isProcedure(buffer, offset, len);
    }
 
    @Override
@@ -38,12 +39,12 @@ public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
    @Override
    public boolean isColumn(char[] buffer, int offset, int len)
    {
-      return _schemaCache.isColumn(buffer, offset, len);
+      return _schemaCacheValue.get().isColumn(buffer, offset, len);
    }
 
    @Override
    public boolean isKeyword(char[] buffer, int offset, int len)
    {
-      return _schemaCache.isKeyword(buffer, offset, len);
+      return _schemaCacheValue.get().isKeyword(buffer, offset, len);
    }
 }

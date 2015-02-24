@@ -39,17 +39,17 @@ public class TreeDetailsController
 
       if (ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY.equals(selectedItem.getValue().getTypeKey()))
       {
-         addTreeDetailsTab(_i18n.t("objecttree.details.alias.metadata"), _session.getSchemaCache().getDatabaseMetaData());
-         addTreeDetailsTab(_i18n.t("objecttree.details.alias.dataTypes"), _session.getSchemaCache().getTypes());
-         addTreeDetailsTab(_i18n.t("objecttree.details.alias.numericFunctions"), _session.getSchemaCache().getNumericFunctions());
-         addTreeDetailsTab(_i18n.t("objecttree.details.alias.stringFunctions"), _session.getSchemaCache().getStringFunctions());
-         addTreeDetailsTab(_i18n.t("objecttree.details.alias.systemFunctions"), _session.getSchemaCache().getSystemFunctions());
-         addTreeDetailsTab(_i18n.t("objecttree.details.alias.timedateFunctions"), _session.getSchemaCache().getTimeDateFunctions());
-         addTreeDetailsTab(_i18n.t("objecttree.details.alias.keywords"), _session.getSchemaCache().getKeywords());
+         addTreeDetailsTab(_i18n.t("objecttree.details.alias.metadata"), _session.getSchemaCacheValue().get().getDatabaseMetaData());
+         addTreeDetailsTab(_i18n.t("objecttree.details.alias.dataTypes"), _session.getSchemaCacheValue().get().getTypes());
+         addTreeDetailsTab(_i18n.t("objecttree.details.alias.numericFunctions"), _session.getSchemaCacheValue().get().getNumericFunctions());
+         addTreeDetailsTab(_i18n.t("objecttree.details.alias.stringFunctions"), _session.getSchemaCacheValue().get().getStringFunctions());
+         addTreeDetailsTab(_i18n.t("objecttree.details.alias.systemFunctions"), _session.getSchemaCacheValue().get().getSystemFunctions());
+         addTreeDetailsTab(_i18n.t("objecttree.details.alias.timedateFunctions"), _session.getSchemaCacheValue().get().getTimeDateFunctions());
+         addTreeDetailsTab(_i18n.t("objecttree.details.alias.keywords"), _session.getSchemaCacheValue().get().getKeywords());
       }
       else if(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY.equals(selectedItem.getValue().getTypeKey()))
       {
-         addTreeDetailsTab(_i18n.t("objecttree.details.table.columns"), _session.getSchemaCache().getColumnsAsTableLoader(selectedItem.getValue().getTableInfo()));
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.columns"), _session.getSchemaCacheValue().get().getColumnsAsTableLoader(selectedItem.getValue().getTableInfo()));
          //addTreeDetailsTab(_i18n.t("objecttree.details.table.columns"), TableDetailsReader.readColumns(_session, selectedItem.getValue()));
 
          addTreeDetailsTab(_i18n.t("objecttree.details.table.content"), TableDetailsReader.readContent(_session, selectedItem.getValue()));
