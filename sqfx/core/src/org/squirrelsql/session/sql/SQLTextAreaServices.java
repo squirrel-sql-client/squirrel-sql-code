@@ -58,6 +58,14 @@ public class SQLTextAreaServices
 
       new CtrlLeftRightHandler(_sqlTextArea);
 
+      schemaCacheValue.addListener((observable, oldValue, newValue) -> onSchemaCacheUpdated());
+
+   }
+
+   private void onSchemaCacheUpdated()
+   {
+      _sqlSyntaxHighlighting.schemaCacheUpdated();
+      _parserEventsProcessor.triggerParser();
    }
 
    private void onAliasesFound(TableAliasInfo[] aliasInfos)

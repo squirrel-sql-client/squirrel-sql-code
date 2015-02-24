@@ -1,10 +1,13 @@
 package org.squirrelsql.session.sql.syntax;
 
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.ObservableValue;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.session.parser.kernel.ErrorInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
+import org.squirrelsql.workaround.CodeAreaRepaintWA;
 
 import javax.swing.text.Segment;
 
@@ -167,5 +170,10 @@ public class SQLSyntaxHighlighting
          onTextPropertyChanged(_sqlTextArea.getText());
          _errorToolTipHandler.setErrorInfos(errorInfos);
       }
+   }
+
+   public void schemaCacheUpdated()
+   {
+      onTextPropertyChanged(_sqlTextArea.getText());
    }
 }
