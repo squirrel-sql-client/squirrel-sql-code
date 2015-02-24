@@ -12,6 +12,9 @@ import org.squirrelsql.services.Dao;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.SplitPositionSaver;
+import org.squirrelsql.services.progress.ProgressTask;
+import org.squirrelsql.services.progress.Progressable;
+import org.squirrelsql.services.progress.SimpleProgressCtrl;
 import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.action.StdActionCfg;
@@ -82,6 +85,29 @@ public class SessionCtrl
 
    private void reloadSchemaCache()
    {
+      SimpleProgressCtrl simpleProgressCtrl = new SimpleProgressCtrl();
+
+      simpleProgressCtrl.start(new ProgressTask<SchemaCache>()
+      {
+         @Override
+         public SchemaCache call()
+         {
+            return doReload(simpleProgressCtrl.getProgressable());
+         }
+
+         @Override
+         public void goOn(SchemaCache schemaCache)
+         {
+            _sessionTabContext.getSession().getDbConnectorResult().setSchemaCache(schemaCache);
+         }
+      });
+
+   }
+
+   private SchemaCache doReload(Progressable progressable)
+   {
+      progressable.update(_i18n.t("schema.reload.begin"), 1, 2);
+
       DbConnectorResult dbConnectorResult = _sessionTabContext.getSession().getDbConnectorResult();
 
       SchemaCacheConfig schemaCacheConfig = new SchemaCacheConfig(Dao.loadAliasProperties(dbConnectorResult.getAlias().getId()));
@@ -90,7 +116,9 @@ public class SessionCtrl
 
       schemaCache.load();
 
-      dbConnectorResult.setSchemaCache(schemaCache);
+      progressable.update(_i18n.t("schema.reload.end"), 2, 2);
+      return schemaCache;
+
    }
 
    private void onSelectionChanged(Event e)

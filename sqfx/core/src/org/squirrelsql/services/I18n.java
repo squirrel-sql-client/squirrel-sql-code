@@ -1,11 +1,13 @@
 package org.squirrelsql.services;
 
+import org.squirrelsql.AppState;
+import org.squirrelsql.I18nCache;
+
 import java.io.IOException;
 import java.util.Properties;
 
 public class I18n
 {
-   public static final String I18N_PROPERTIES_FILE_NAME = "i18n.properties";
    private Class _clazz;
 
    public I18n(Class clazz)
@@ -15,22 +17,13 @@ public class I18n
 
    public String t(String s, Object ... params)
    {
-      try
+      if (null != AppState.get())
       {
-         Properties props = new Properties();
-         props.load(_clazz.getResourceAsStream(I18N_PROPERTIES_FILE_NAME));
-         String ret = props.getProperty(s);
-
-         if(null == ret)
-         {
-            ret = "Resource " + s + " missing in " + _clazz.getPackage().getName() + "." + I18N_PROPERTIES_FILE_NAME;
-         }
-
-         return String.format(ret, params);
+         return AppState.get().getI18nCache().getLocalizedString(_clazz, s, params);
       }
-      catch (IOException e)
+      else
       {
-         throw new RuntimeException(e);
+         return I18nCache.getLocalizedStringBootstrapSave(_clazz, s, params);
       }
    }
 }

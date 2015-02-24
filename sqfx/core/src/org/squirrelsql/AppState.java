@@ -3,10 +3,7 @@ package org.squirrelsql;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import org.squirrelsql.services.PropertiesHandler;
-import org.squirrelsql.services.RunningServicesManager;
-import org.squirrelsql.services.SettingsManager;
-import org.squirrelsql.services.SquirrelProperty;
+import org.squirrelsql.services.*;
 import org.squirrelsql.session.SessionManager;
 import org.squirrelsql.session.action.ActionManager;
 
@@ -31,7 +28,7 @@ public class AppState
 
    private PrefImpl _prefImpl = new PrefImpl();
    private SettingsManager _settingsManager = new SettingsManager();
-
+   private I18nCache _i18nCache = new I18nCache();
 
 
    public static AppState get()
@@ -161,5 +158,10 @@ public class AppState
    public SettingsManager getSettingsManager()
    {
       return _settingsManager;
+   }
+
+   public I18nCache getI18nCache()
+   {
+      return _i18nCache;
    }
 }
