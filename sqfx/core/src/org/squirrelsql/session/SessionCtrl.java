@@ -74,6 +74,8 @@ public class SessionCtrl
 
       _applicationCloseListener = this::onClose;
       AppState.get().addApplicationCloseListener(_applicationCloseListener, ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);
+
+      _sessionTabContext.getSession().getSchemaCacheValue().addListener((observable, oldValue, newValue) -> reLoadObjectTabSplitPane());
    }
 
    private void initStandardActions(SessionTabContext sessionTabContext)
@@ -85,7 +87,7 @@ public class SessionCtrl
 
    private void reloadSchemaCache()
    {
-      SimpleProgressCtrl simpleProgressCtrl = new SimpleProgressCtrl();
+      SimpleProgressCtrl simpleProgressCtrl = new SimpleProgressCtrl(false, true);
 
       simpleProgressCtrl.start(new ProgressTask<SchemaCache>()
       {
@@ -116,7 +118,7 @@ public class SessionCtrl
 
       schemaCache.load();
 
-      progressable.update(_i18n.t("schema.reload.end"), 2, 2);
+      progressable.update(_i18n.t("schema.reload.end"), 2,2);
       return schemaCache;
 
    }
@@ -181,6 +183,20 @@ public class SessionCtrl
       Tab objectsTab = new Tab(_i18n.t("session.tab.objects"));
       objectsTab.setClosable(false);
 
+      _objectTabSplitPane.setOrientation(Orientation.HORIZONTAL);
+
+      reLoadObjectTabSplitPane();
+
+      _objecttreeSplitPosSaver.apply(_objectTabSplitPane);
+
+
+      objectsTab.setContent(_objectTabSplitPane);
+
+      return objectsTab;
+   }
+
+   private void reLoadObjectTabSplitPane()
+   {
       TreeView<ObjectTreeNode> objectsTree = new TreeView<>();
 
       objectsTree.setCellFactory(cf -> new ObjectsTreeCell());
@@ -191,22 +207,15 @@ public class SessionCtrl
 
       removeEmptySchemasIfRequested(objectsTree, _sessionTabContext.getSession());
 
-
-      _objectTabSplitPane.setOrientation(Orientation.HORIZONTAL);
-      _objectTabSplitPane.getItems().add(objectsTree);
-      _objectTabSplitPane.getItems().add(new TreeDetailsController(objectsTree, _sessionTabContext.getSession()).getComponent());
-
-      _objecttreeSplitPosSaver.apply(_objectTabSplitPane);
-
       TreeItem<ObjectTreeNode> aliasItem = ObjectTreeUtil.findSingleTreeItem(objectsTree, ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY);
       aliasItem.setExpanded(true);
       objectsTree.getSelectionModel().select(aliasItem);
 
 
+      _objectTabSplitPane.getItems().clear();
 
-      objectsTab.setContent(_objectTabSplitPane);
-
-      return objectsTab;
+      _objectTabSplitPane.getItems().add(objectsTree);
+      _objectTabSplitPane.getItems().add(new TreeDetailsController(objectsTree, _sessionTabContext.getSession()).getComponent());
    }
 
 
