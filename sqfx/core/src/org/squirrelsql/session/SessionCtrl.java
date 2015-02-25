@@ -32,8 +32,6 @@ import java.util.List;
 
 public class SessionCtrl
 {
-   private SplitPositionSaver _objecttreeSplitPosSaver = new SplitPositionSaver(getClass(), "objecttree.split.loc");
-
    private static final String PREF_PRE_SELECT_SQL_TAB = "preselect.sql";
 
 
@@ -44,11 +42,11 @@ public class SessionCtrl
    private I18n _i18n = new I18n(getClass());
 
    private Pref _pref = new Pref(getClass());
-   private SplitPane _objectTabSplitPane = new SplitPane();
    private SqlTabCtrl _sqlTabCtrl;
    private final BorderPane _sessionPane;
    private final Tab _sessionTab;
    private SessionTabContext _sessionTabContext;
+   private ObjectTreeTabCtrl _objectTreeTabCtrl;
 
    public SessionCtrl(SessionTabContext sessionTabContext)
    {
@@ -74,8 +72,6 @@ public class SessionCtrl
 
       _applicationCloseListener = this::onClose;
       AppState.get().addApplicationCloseListener(_applicationCloseListener, ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);
-
-      _sessionTabContext.getSession().getSchemaCacheValue().addListener((observable, oldValue, newValue) -> reLoadObjectTabSplitPane());
    }
 
    private void initStandardActions(SessionTabContext sessionTabContext)
@@ -134,10 +130,11 @@ public class SessionCtrl
 
    private TabPane createObjectTreeAndSqlTabPane()
    {
+      _objectTreeTabCtrl = new ObjectTreeTabCtrl(_sessionTabContext);
+
       TabPane ret = new TabPane();
 
-      Tab objectsTab = createObjectsTab();
-      ret.getTabs().add(objectsTab);
+      ret.getTabs().add(_objectTreeTabCtrl.getObjectsTab());
       ActionUtil.setActionScope(ActionScope.OBJECT_TREE);
 
 
@@ -178,84 +175,10 @@ public class SessionCtrl
       }
    }
 
-   private Tab createObjectsTab()
-   {
-      Tab objectsTab = new Tab(_i18n.t("session.tab.objects"));
-      objectsTab.setClosable(false);
-
-      _objectTabSplitPane.setOrientation(Orientation.HORIZONTAL);
-
-      reLoadObjectTabSplitPane();
-
-      _objecttreeSplitPosSaver.apply(_objectTabSplitPane);
-
-
-      objectsTab.setContent(_objectTabSplitPane);
-
-      return objectsTab;
-   }
-
-   private void reLoadObjectTabSplitPane()
-   {
-      TreeView<ObjectTreeNode> objectsTree = new TreeView<>();
-
-      objectsTree.setCellFactory(cf -> new ObjectsTreeCell());
-
-      AliasCatalogsSchemasAndTypesCreator.createNodes(objectsTree, _sessionTabContext.getSession());
-
-      TablesProceduresAndUDTsCreator.createNodes(objectsTree, _sessionTabContext.getSession());
-
-      removeEmptySchemasIfRequested(objectsTree, _sessionTabContext.getSession());
-
-      TreeItem<ObjectTreeNode> aliasItem = ObjectTreeUtil.findSingleTreeItem(objectsTree, ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY);
-      aliasItem.setExpanded(true);
-      objectsTree.getSelectionModel().select(aliasItem);
-
-
-      _objectTabSplitPane.getItems().clear();
-
-      _objectTabSplitPane.getItems().add(objectsTree);
-      _objectTabSplitPane.getItems().add(new TreeDetailsController(objectsTree, _sessionTabContext.getSession()).getComponent());
-   }
-
-
-   private void removeEmptySchemasIfRequested(TreeView<ObjectTreeNode> objectsTree, Session session)
-   {
-      if(false == session.getSchemaCacheValue().get().getAliasPropertiesDecorator().isHideEmptySchemasInObjectTree())
-      {
-         return;
-      }
-
-      List<TreeItem<ObjectTreeNode>> schemas = ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.SCHEMA_TYPE_KEY);
-      removeEmptyNodes(schemas);
-
-      List<TreeItem<ObjectTreeNode>> catalogs = ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.CATALOG_TYPE_KEY);
-      removeEmptyNodes(catalogs);
-
-   }
-
-   private void removeEmptyNodes(List<TreeItem<ObjectTreeNode>> nodes)
-   {
-      List<TreeItem<ObjectTreeNode>> toRemove = new ArrayList<>();
-
-      for (TreeItem<ObjectTreeNode> schema : nodes)
-      {
-         if(0 == schema.getChildren().size())
-         {
-            toRemove.add(schema);
-         }
-      }
-
-      for (TreeItem<ObjectTreeNode> del : toRemove)
-      {
-         del.getParent().getChildren().remove(del);
-      }
-   }
-
 
    private void onClose()
    {
-      _objecttreeSplitPosSaver.save(_objectTabSplitPane);
+      _objectTreeTabCtrl.close();
 
 
       _pref.set(PREF_PRE_SELECT_SQL_TAB, _objectTreeAndSqlTabPane.getSelectionModel().getSelectedItem() == _sqlTabCtrl.getSqlTab());
