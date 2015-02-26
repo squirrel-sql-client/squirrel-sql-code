@@ -1,13 +1,16 @@
 package org.squirrelsql.session;
 
-import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyEvent;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.SplitPositionSaver;
+import org.squirrelsql.session.action.ActionCfg;
+import org.squirrelsql.session.action.ActionScope;
+import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.objecttree.*;
 
 import java.util.ArrayList;
@@ -33,20 +36,42 @@ public class ObjectTreeTabCtrl
 
       _objectTabSplitPane.setOrientation(Orientation.HORIZONTAL);
 
-      reloadObjectTabSplitPane();
-
-      _objecttreeSplitPosSaver.apply(_objectTabSplitPane);
-
+      loadObjectTabSplitPane();
 
       objectsTab.setContent(_objectTabSplitPane);
 
       _objectsTab = objectsTab;
 
       _sessionTabContext.getSession().getSchemaCacheValue().addListener((observable, oldValue, newValue) -> reloadObjectTabSplitPane());
+
+      _objectTabSplitPane.setOnKeyPressed(this::onHandleKeyEvent);
+
+   }
+
+   private void reloadObjectTabSplitPane()
+   {
+      _objecttreeSplitPosSaver.save(_objectTabSplitPane);
+
+      loadObjectTabSplitPane();
+   }
+
+   private void onHandleKeyEvent(KeyEvent keyEvent)
+   {
+      for (ActionCfg actionCfg : ActionUtil.getAllActionCfgs())
+      {
+         if( actionCfg.getActionScope() == ActionScope.OBJECT_TREE || actionCfg.getActionScope() == ActionScope.UNSCOPED)
+         {
+            if (actionCfg.matchesKeyEvent(keyEvent))
+            {
+               actionCfg.fire();
+               return;
+            }
+         }
+      }
    }
 
 
-   private void reloadObjectTabSplitPane()
+   private void loadObjectTabSplitPane()
    {
       TreeItem<ObjectTreeNode> formerSelectedTreeItem = null;
 
@@ -91,6 +116,8 @@ public class ObjectTreeTabCtrl
          int row = objectsTree.getRow(treeItemToSelect);
          objectsTree.scrollTo(row);
       }
+
+      _objecttreeSplitPosSaver.apply(_objectTabSplitPane);
    }
 
    private void removeEmptySchemasIfRequested(TreeView<ObjectTreeNode> objectsTree, Session session)
