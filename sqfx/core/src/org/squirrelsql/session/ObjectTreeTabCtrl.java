@@ -1,5 +1,6 @@
 package org.squirrelsql.session;
 
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -27,32 +28,39 @@ public class ObjectTreeTabCtrl
    {
       _sessionTabContext = sessionTabContext;
 
-      _objectsTab = createObjectsTab();
-
-      _sessionTabContext.getSession().getSchemaCacheValue().addListener((observable, oldValue, newValue) -> reLoadObjectTabSplitPane());
-   }
-
-   private Tab createObjectsTab()
-   {
       Tab objectsTab = new Tab(_i18n.t("session.tab.objects"));
       objectsTab.setClosable(false);
 
       _objectTabSplitPane.setOrientation(Orientation.HORIZONTAL);
 
-      reLoadObjectTabSplitPane();
+      reloadObjectTabSplitPane();
 
       _objecttreeSplitPosSaver.apply(_objectTabSplitPane);
 
 
       objectsTab.setContent(_objectTabSplitPane);
 
-      return objectsTab;
+      _objectsTab = objectsTab;
+
+      _sessionTabContext.getSession().getSchemaCacheValue().addListener((observable, oldValue, newValue) -> reloadObjectTabSplitPane());
    }
 
 
-   private void reLoadObjectTabSplitPane()
+   private void reloadObjectTabSplitPane()
    {
-      TreeView<ObjectTreeNode> objectsTree = new TreeView<>();
+      TreeItem<ObjectTreeNode> formerSelectedTreeItem = null;
+
+      if(0 < _objectTabSplitPane.getItems().size())
+      {
+         TreeView<ObjectTreeNode> objectsTree = (TreeView<ObjectTreeNode>) _objectTabSplitPane.getItems().get(0);
+
+         formerSelectedTreeItem = objectsTree.getSelectionModel().getSelectedItem();
+
+         _objectTabSplitPane.getItems().clear();
+      }
+
+
+      final TreeView<ObjectTreeNode> objectsTree = new TreeView<>();
 
       objectsTree.setCellFactory(cf -> new ObjectsTreeCell());
 
@@ -62,15 +70,27 @@ public class ObjectTreeTabCtrl
 
       removeEmptySchemasIfRequested(objectsTree, _sessionTabContext.getSession());
 
-      TreeItem<ObjectTreeNode> aliasItem = ObjectTreeUtil.findSingleTreeItem(objectsTree, ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY);
-      aliasItem.setExpanded(true);
-      objectsTree.getSelectionModel().select(aliasItem);
 
 
-      _objectTabSplitPane.getItems().clear();
 
       _objectTabSplitPane.getItems().add(objectsTree);
       _objectTabSplitPane.getItems().add(new TreeDetailsController(objectsTree, _sessionTabContext.getSession()).getComponent());
+
+
+      final TreeItem<ObjectTreeNode> treeItemToSelect = ObjectTreeUtil.findTreeItem(objectsTree, formerSelectedTreeItem);
+
+      if(null == treeItemToSelect)
+      {
+         TreeItem<ObjectTreeNode> aliasItem = ObjectTreeUtil.findSingleTreeItem(objectsTree, ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY);
+         aliasItem.setExpanded(true);
+         objectsTree.getSelectionModel().select(aliasItem);
+      }
+      else
+      {
+         objectsTree.getSelectionModel().select(treeItemToSelect);
+         int row = objectsTree.getRow(treeItemToSelect);
+         objectsTree.scrollTo(row);
+      }
    }
 
    private void removeEmptySchemasIfRequested(TreeView<ObjectTreeNode> objectsTree, Session session)

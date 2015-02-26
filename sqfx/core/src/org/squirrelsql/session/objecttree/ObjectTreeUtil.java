@@ -2,6 +2,7 @@ package org.squirrelsql.session.objecttree;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import org.squirrelsql.session.schemainfo.CatalogSchema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,5 +47,29 @@ public class ObjectTreeUtil
       }
 
       throw new IllegalStateException("Found " + arr.size() + " instead of one");
+   }
+
+   public static TreeItem<ObjectTreeNode> findTreeItem(TreeView<ObjectTreeNode> objectsTree, TreeItem<ObjectTreeNode> itemToMatch)
+   {
+      if(null == itemToMatch)
+      {
+         return null;
+      }
+
+
+      List<TreeItem<ObjectTreeNode>> matches = new ArrayList<>();
+      recurse(objectsTree.getRoot(), matches, (item) -> matches(item, itemToMatch));
+
+      if(0 == matches.size())
+      {
+         return null;
+      }
+
+      return matches.get(0);
+   }
+
+   private static boolean matches(TreeItem<ObjectTreeNode> item, TreeItem<ObjectTreeNode> itemToMatch)
+   {
+      return item.getValue().matches(itemToMatch.getValue());
    }
 }
