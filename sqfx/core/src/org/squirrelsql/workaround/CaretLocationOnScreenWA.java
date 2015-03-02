@@ -15,12 +15,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-public class CarretLocationOnScreenWA
+public class CaretLocationOnScreenWA
 {
 
 
 
-   public static Point2D getCarretLocationOnScreen(CodeArea sqlTextArea)
+   public static Point2D getCaretLocationOnScreen(CodeArea sqlTextArea)
    {
       try
       {

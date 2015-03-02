@@ -19,7 +19,7 @@ import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlightTokenMatcher;
 import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlighting;
 import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
 import org.squirrelsql.session.sql.syntax.SyntaxConstants;
-import org.squirrelsql.workaround.CarretLocationOnScreenWA;
+import org.squirrelsql.workaround.CaretLocationOnScreenWA;
 import org.squirrelsql.workaround.CodeAreaRepaintWA;
 import org.squirrelsql.workaround.FocusSqlTextAreaWA;
 
@@ -153,7 +153,7 @@ public class SQLTextAreaServices
 
    public Point2D getCarretLocationOnScreen()
    {
-      return CarretLocationOnScreenWA.getCarretLocationOnScreen(_sqlTextArea);
+      return CaretLocationOnScreenWA.getCaretLocationOnScreen(_sqlTextArea);
    }
 
    public void replaceTokenAtCarretBy(String replacement)
