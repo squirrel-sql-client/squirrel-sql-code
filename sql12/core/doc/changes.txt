@@ -59,6 +59,9 @@ Thanks to Jaroslaw Jarmolowicz for the patch
 
 Bug fixes:
 
+#1183 Empty Contents Tab in SQuirreL when Column-Names contain dashes.
+  This was because double quotes were missing around column names
+
 #618 SQLParam plugin asks for commented variable.
  Thanks to Michal Stekrt for the patch.
 

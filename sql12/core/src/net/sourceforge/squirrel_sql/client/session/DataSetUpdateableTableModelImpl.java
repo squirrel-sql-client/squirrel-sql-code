@@ -16,6 +16,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModel
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -497,7 +498,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       int count = -1;
 
       final String sql = constructUpdateSql(
-            ti.getQualifiedName(), colDefs[col].getColumnName(), whereClause);
+            ti.getQualifiedName(), DialectUtils2.checkColumnDoubleQuotes(colDefs[col].getDialectType(), colDefs[col].getColumnName()), whereClause);
       
       if (s_log.isDebugEnabled()) {
           s_log.debug("updateTableComponent: executing SQL - "+sql);
@@ -530,7 +531,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                 "DataSetUpdateableTableModelImpl.error.updateproblem",
                 ex.getMessage());
           s_log.error("updateTableComponent: unexpected exception - "+
-                      ex.getMessage()+" while executing SQL: "+sql);
+                      ex.getMessage()+" while executing SQL: "+sql, ex);
           
           
          return errMsg;           
@@ -876,7 +877,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                  }
                  continue;
              } 
-             buf.append(colDefs[i].getColumnName());
+             buf.append(DialectUtils2.checkColumnDoubleQuotes(colDefs[i].getDialectType(), colDefs[i].getColumnName()));
              buf.append(",");
          }
          buf.setCharAt(buf.length()-1, ')');
@@ -923,6 +924,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
       catch (SQLException ex)
       {
+         s_log.error(ex);
           // i18n[DataSetUpdateableTableModelImpl.error.duringInsert=Exception seen during check on DB.  Exception was:\n{0}\nInsert was probably not completed correctly.  DB may be corrupted!]
           return s_stringMgr.getString(
                   "DataSetUpdateableTableModelImpl.error.duringInsert", 

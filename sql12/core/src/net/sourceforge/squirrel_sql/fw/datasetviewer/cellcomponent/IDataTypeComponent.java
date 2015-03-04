@@ -29,6 +29,7 @@ import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
 import java.sql.PreparedStatement;
@@ -256,5 +257,5 @@ public interface IDataTypeComponent {
 
 	public String[] getSupportedOperators();
 
-	String getColumnForContentSelect(String columnPrefix);
+	String getColumnForContentSelect(DialectType dialectType, String columnPrefix);
 }

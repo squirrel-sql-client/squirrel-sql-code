@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
+import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -30,7 +31,7 @@ public abstract class AbstractWhereClausePart implements IWhereClausePart {
 	 * @param whereClausePart Custom part of the where clause.
 	 */
 	protected AbstractWhereClausePart(ColumnDisplayDefinition columnDef, String whereClausePart ){
-		setColumn(columnDef.getColumnName());
+		setColumn(DialectUtils2.checkColumnDoubleQuotes(columnDef.getDialectType(), columnDef.getColumnName()));
 		setWhereClause(whereClausePart);
 	}
 	
@@ -42,7 +43,7 @@ public abstract class AbstractWhereClausePart implements IWhereClausePart {
 		if(columnDef == null){
 			throw new IllegalArgumentException("columnDef must not be null");
 		}
-		setColumn(columnDef.getColumnName());
+		setColumn(DialectUtils2.checkColumnDoubleQuotes(columnDef.getDialectType(), columnDef.getColumnName()));
 	}
 
 	

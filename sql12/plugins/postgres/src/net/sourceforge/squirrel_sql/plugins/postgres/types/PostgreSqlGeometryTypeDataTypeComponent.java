@@ -19,6 +19,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeC
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -243,7 +244,7 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends BaseDataTypeCompone
 	 * Geometries can be big, so we don't want all of them
 	 */
 	@Override
-	public String getColumnForContentSelect(String columnPrefix) {
+	public String getColumnForContentSelect(DialectType dialectType, String columnPrefix) {
 		String fullName = columnPrefix + _colDef.getColumnName();
 		return "'" + BRIEF_INDICATOR + ";'||GeometryType(" + fullName + ")||';'||st_asText(st_centroid(" + fullName
 				+ "))||';'||st_NPoints(" + fullName + ")";

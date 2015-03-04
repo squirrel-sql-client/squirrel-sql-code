@@ -38,6 +38,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -365,9 +367,9 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 	}
 
 	@Override
-	public String getColumnForContentSelect(String columnPrefix) {
-		return columnPrefix + _colDef.getColumnName();
-	}
-	
-	
+	public String getColumnForContentSelect(DialectType dialectType, String columnPrefix)
+   {
+      return columnPrefix + DialectUtils2.checkColumnDoubleQuotes(dialectType, _colDef.getColumnName());
+   }
+
 }

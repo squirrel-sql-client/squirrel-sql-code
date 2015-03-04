@@ -1025,7 +1025,7 @@ public class CellComponentFactory {
 	 */
 	public static String getColumnForContentSelect(JTable table,
 			TableColumnInfo tableColumnInfo, DialectType dialectType, String prefix) {
-		return getDataTypeObject(table, tableColumnInfo, dialectType).getColumnForContentSelect(prefix);
+		return getDataTypeObject(table, tableColumnInfo, dialectType).getColumnForContentSelect(dialectType, prefix);
 	}
 
 }
