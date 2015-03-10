@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: SQLs where executed twice
+
 Feature: Refresh button (F5) to reload of database meta data.
 
 Feature: Tools popup --> In the SQL editor type ctrl+t to open SQuirreL's tools popup.

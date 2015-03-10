@@ -111,6 +111,7 @@ public class SqlPaneCtrl
             if (actionCfg.matchesKeyEvent(keyEvent))
             {
                actionCfg.fire();
+               keyEvent.consume();
                return;
             }
          }
