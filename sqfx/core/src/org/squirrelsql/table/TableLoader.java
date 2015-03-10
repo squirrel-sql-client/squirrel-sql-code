@@ -1,5 +1,10 @@
 package org.squirrelsql.table;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -7,11 +12,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
-import org.squirrelsql.services.CollectionUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import org.squirrelsql.services.CollectionUtil;
 
 public class TableLoader
 {
@@ -136,14 +138,27 @@ public class TableLoader
       return colIx;
    }
 
+   //TODO Need a better way of handling this, could be other objects besides BigDecimal
    public int getCellAsInt(String columnName, int rowIx)
    {
-      return (int) _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName)).get();
+	  Object o = _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName)).get();
+	  if(o instanceof BigDecimal){
+		  return ((BigDecimal) o).intValue();
+	  }
+	  else {
+		  return (int) _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName)).get();
+	  }
    }
 
    public Integer getCellAsInteger(String columnName, int rowIx)
    {
-      return (Integer) _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName)).get();
+	  Object o = _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName)).get();
+	  if(o instanceof BigDecimal){
+		  return ((BigDecimal) o).intValue();
+	  }
+	  else {
+		  return (Integer) _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName)).get();
+	  }
    }
 
 
