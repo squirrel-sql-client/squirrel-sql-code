@@ -301,6 +301,7 @@ public class Scanner
 			case 'V': {
 				if (t.val.equals("VALUES")) t.kind = ParsingConstants.KW_VALUES;
 				else if (t.val.equals("VARCHAR")) t.kind = ParsingConstants.KW_VARCHAR;
+				else if (t.val.equals("VARCHAR2")) t.kind = ParsingConstants.KW_VARCHAR2;
 				else if (t.val.equals("VIEW")) t.kind = ParsingConstants.KW_VIEW;
 				break;}
 			case 'W': {
