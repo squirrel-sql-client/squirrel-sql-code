@@ -1,6 +1,10 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Autocomplete for column names throwing cast error on Oracle
+
+Feature: Data type highlight support for Oracle varchar2
+
 Bug fix: SQLs where executed twice
 
 Feature: Refresh button (F5) to reload of database meta data.
