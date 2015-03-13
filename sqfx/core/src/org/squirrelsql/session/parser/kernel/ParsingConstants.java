@@ -68,6 +68,7 @@ public interface ParsingConstants
    static final int KW_UPPER = 41;
    static final int KW_USING = 33;
    static final int KW_VARCHAR = 74;
+   static final int KW_VARCHAR2 = 103;
    static final int KW_WHERE = 34;
    static final int KW_WORK = 71;
    static final int KW_YEAR = 43;

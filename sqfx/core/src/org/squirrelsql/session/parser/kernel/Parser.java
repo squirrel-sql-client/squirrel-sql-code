@@ -634,6 +634,7 @@ public class Parser
 					break;
 				}
 			case ParsingConstants.KW_VARCHAR:
+			case ParsingConstants.KW_VARCHAR2:
 				{
 					Get();
 					lenParam();
