@@ -8,6 +8,9 @@ import org.fxmisc.richtext.PopupAlignment;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.Utils;
 
+/**
+ * Remove whenever CodeArea offers a simple getCaretLocationOnScreen or getCaretBoundsOnScreen method
+ */
 public class CaretPopup
 {
    private Popup _popup = new Popup();
