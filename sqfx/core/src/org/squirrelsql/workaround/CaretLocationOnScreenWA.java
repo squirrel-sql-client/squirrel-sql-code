@@ -25,19 +25,37 @@ public class CaretLocationOnScreenWA
       try
       {
 
+         // Old Version
+//         Field fieldVisual = sqlTextArea.getSkin().getClass().getDeclaredField("visual");
+//         fieldVisual.setAccessible(true);
+//
+//         Object visual = fieldVisual.get(sqlTextArea.getSkin());
+//
+//         Method m = StyledTextAreaVisual.class.getDeclaredMethod("getCaretBoundsOnScreen");
+//
+//         m.setAccessible(true);
+//         Optional<Bounds> buf = (Optional<Bounds>) m.invoke((StyledTextAreaVisual) visual);
+//         Bounds ret = buf.get();
+//         return new Point2D(Math.max(0d,ret.getMinX()), ret.getMinY());
+
+         //return ((StyledTextAreaSkin)sqlTextArea.getSkin()).getCaretLocationOnScreen();
+
+
+         // New Version, since 0.6.1 but is not reliable.
          Field fieldVisual = sqlTextArea.getSkin().getClass().getDeclaredField("visual");
          fieldVisual.setAccessible(true);
 
          Object visual = fieldVisual.get(sqlTextArea.getSkin());
 
-         Method m = StyledTextAreaVisual.class.getDeclaredMethod("getCaretBoundsOnScreen");
-
+         Field fieldNode = visual.getClass().getDeclaredField("node");
+         fieldNode.setAccessible(true);
+         Object styledTextAreaView = fieldNode.get(visual);
+         Method m = styledTextAreaView.getClass().getDeclaredMethod("getCaretBoundsOnScreen");
          m.setAccessible(true);
-         Optional<Bounds> buf = (Optional<Bounds>) m.invoke((StyledTextAreaVisual) visual);
-         Bounds ret = buf.get();
-         return new Point2D(Math.max(0d,ret.getMinX()), ret.getMinY());
+         Optional opt = (Optional) m.invoke(styledTextAreaView);
+         Bounds bounds = (Bounds) opt.get();
+         return new Point2D(Math.max(0d, bounds.getMinX()), bounds.getMinY());
 
-         //return ((StyledTextAreaSkin)sqlTextArea.getSkin()).getCaretLocationOnScreen();
       }
       catch (Exception e)
       {

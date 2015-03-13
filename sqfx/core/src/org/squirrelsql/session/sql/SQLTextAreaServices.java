@@ -15,10 +15,7 @@ import org.squirrelsql.session.parser.ParserEventsProcessor;
 import org.squirrelsql.session.parser.kernel.ErrorInfo;
 import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
-import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlightTokenMatcher;
-import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlighting;
-import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
-import org.squirrelsql.session.sql.syntax.SyntaxConstants;
+import org.squirrelsql.session.sql.syntax.*;
 import org.squirrelsql.workaround.CaretLocationOnScreenWA;
 import org.squirrelsql.workaround.CodeAreaRepaintWA;
 import org.squirrelsql.workaround.FocusSqlTextAreaWA;
@@ -30,6 +27,9 @@ public class SQLTextAreaServices
    private final SQLSyntaxHighlighting _sqlSyntaxHighlighting;
    private final ParserEventsProcessor _parserEventsProcessor;
    private LexAndParseResultListener _lexAndParseResultListener;
+
+   private CaretPopup _caretPopup;
+
 
    public SQLTextAreaServices(SessionTabContext sessionTabContext)
    {
@@ -60,6 +60,7 @@ public class SQLTextAreaServices
 
       schemaCacheValue.addListener((observable, oldValue, newValue) -> onSchemaCacheUpdated());
 
+      _caretPopup = new CaretPopup(_sqlTextArea);
    }
 
    private void onSchemaCacheUpdated()
@@ -151,11 +152,6 @@ public class SQLTextAreaServices
       return new TokenAtCarretInfo(token, begin, end, caretPosition);
    }
 
-   public Point2D getCarretLocationOnScreen()
-   {
-      return CaretLocationOnScreenWA.getCaretLocationOnScreen(_sqlTextArea);
-   }
-
    public void replaceTokenAtCarretBy(String replacement)
    {
       replaceTokenAtCarretBy(0, false, replacement);
@@ -228,5 +224,10 @@ public class SQLTextAreaServices
       int caretPosition = _sqlTextArea.getCaretPosition();
       _sqlTextArea.replaceText(caretPosition,caretPosition,s);
       CodeAreaRepaintWA.avoidRepaintProblemsAfterTextModification(_sqlTextArea);
+   }
+
+   public CaretPopup getCaretPopup()
+   {
+      return _caretPopup;
    }
 }

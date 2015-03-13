@@ -2,13 +2,11 @@ package org.squirrelsql.session.completion;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Popup;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
@@ -49,16 +47,15 @@ public class CompletionCtrl
       });
 
       StdActionCfg.SQL_CODE_COMPLETION.setAction(this::completeCode);
-
    }
 
    private void completeCode()
    {
-      _completeCode(false, null);
+      _completeCode(false);
 
    }
 
-   private void _completeCode(boolean showPopupForSizeOne, Double formerXPos)
+   private void _completeCode(boolean showPopupForSizeOne)
    {
       String tokenAtCarret = _sqlTextAreaServices.getTokenAtCarret();
 
@@ -78,104 +75,94 @@ public class CompletionCtrl
          return;
       }
 
-      Popup pp = new Popup();
-
       ListView<CompletionCandidate> listView = new ListView<>();
       listView.setItems(completions);
 
       listView.getSelectionModel().selectFirst();
 
 
-      listView.setOnKeyTyped(keyEvent -> onHandleKeyOnPopupList((KeyEvent)keyEvent, pp, listView));
+      listView.setOnKeyTyped(keyEvent -> onHandleKeyOnPopupList((KeyEvent)keyEvent, listView));
 
-      listView.setOnMouseClicked(event -> onMouseClickedList(event, pp, listView));
+      listView.setOnMouseClicked(event -> onMouseClickedList(event, listView));
 
-      pp.focusedProperty().addListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue, pp));
+      _sqlTextAreaServices.getCaretPopup().getPopup().focusedProperty().addListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue));
 
       CompletionUtil.prepareCompletionList(listView, _sqlTextAreaServices);
 
-      pp.getContent().add(listView);
-      Point2D cl = _sqlTextAreaServices.getCarretLocationOnScreen();
+      _sqlTextAreaServices.getCaretPopup().setContent(listView);
+      positionAndShowPopup(tokenParser);
 
-      double x;
-      if (null == formerXPos)
-      {
-         x = cl.getX() - _sqlTextAreaServices.getStringWidth(tokenParser.getUncompletedSplit());
-      }
-      else
-      {
-         // This formerXPos is a workaround because the completion list jumps horizontally when the user enters chars while the completion list is open.
-         x = formerXPos;
-      }
 
-      pp.show(_sqlTextAreaServices.getTextArea(), x, cl.getY() + _sqlTextAreaServices.getFontHight() + 4);
-
-//      int pos = _sqlTextAreaServices.getTextArea().getCaretPosition();
-//      int col = _sqlTextAreaServices.getTextArea().getCaretColumn();
-//
-//      System.out.println("col = " + col + ", pos = " + pos);
-//
-//      _sqlTextAreaServices.getTextArea().setPopupAtCaret(pp);
-//      pp.show(AppState.get().getPrimaryStage());
    }
 
-   private void hideIfNotFocused(Boolean newValue, Popup pp)
+   private void positionAndShowPopup(TokenParser tokenParser)
+   {
+      String uncompletedSplit = tokenParser.getUncompletedSplit();
+
+      _sqlTextAreaServices.getCaretPopup().showAtCaretBottom(-_sqlTextAreaServices.getStringWidth(uncompletedSplit));
+   }
+
+   private void hideIfNotFocused(Boolean newValue)
    {
       if(false == newValue)
       {
-         pp.hide();
+         closePopup();
       }
    }
 
-   private void onHandleKeyOnPopupList(KeyEvent keyEvent, Popup pp, ListView<CompletionCandidate> listView)
+   private void closePopup()
+   {
+      _sqlTextAreaServices.getCaretPopup().hideAndClearContent();
+   }
+
+   private void onHandleKeyOnPopupList(KeyEvent keyEvent, ListView<CompletionCandidate> listView)
    {
       if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ENTER)))
       {
-         onCompletionSelected(keyEvent, pp, listView, false);
+         onCompletionSelected(keyEvent, listView, false);
       }
       else if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.TAB)))
       {
-         onCompletionSelected(keyEvent, pp, listView, true);
+         onCompletionSelected(keyEvent, listView, true);
       }
       else if(KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ESCAPE)))
       {
-         pp.hide();
+         closePopup();
          keyEvent.consume();
       }
       else
       {
-         Double formerXPos = pp.getX();
-         pp.hide();
-         Platform.runLater(() -> onCompleteNextChar(formerXPos));
+         closePopup();
+         Platform.runLater(() -> onCompleteNextChar());
       }
    }
 
-   private void onCompleteNextChar(Double formerXPos)
+   private void onCompleteNextChar()
    {
       if (false == Utils.isEmptyString(_sqlTextAreaServices.getTokenAtCarret()))
       {
-         _completeCode(true, formerXPos);
+         _completeCode(true);
       }
    }
 
-   private void onCompletionSelected(KeyEvent keyEvent, Popup pp, ListView<CompletionCandidate> listView, boolean removeSucceedingChars)
+   private void onCompletionSelected(KeyEvent keyEvent, ListView<CompletionCandidate> listView, boolean removeSucceedingChars)
    {
-      finishCompletion(pp, listView, removeSucceedingChars);
+      finishCompletion(listView, removeSucceedingChars);
       keyEvent.consume();
    }
 
-   private void finishCompletion(Popup pp, ListView<CompletionCandidate> listView, boolean removeSucceedingChars)
+   private void finishCompletion(ListView<CompletionCandidate> listView, boolean removeSucceedingChars)
    {
-      pp.hide();
+      closePopup();
       CompletionCandidate selItem = listView.getSelectionModel().getSelectedItems().get(0);
       executeCompletion(selItem, removeSucceedingChars);
    }
 
-   private void onMouseClickedList(MouseEvent event, Popup pp, ListView<CompletionCandidate> listView)
+   private void onMouseClickedList(MouseEvent event, ListView<CompletionCandidate> listView)
    {
       if(Utils.isDoubleClick(event))
       {
-         finishCompletion(pp, listView, false);
+         finishCompletion(listView, false);
       }
    }
 

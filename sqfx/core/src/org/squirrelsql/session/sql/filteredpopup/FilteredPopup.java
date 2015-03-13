@@ -3,7 +3,6 @@ package org.squirrelsql.session.sql.filteredpopup;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -11,7 +10,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Popup;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
@@ -32,7 +30,6 @@ public class FilteredPopup<T extends FilteredPopupEntry>
    private ArrayList<FilteredPopupEntryWrapper<T>> _entryWrappers;
    private TextField _txtFilter;
    private ListView<FilteredPopupEntryWrapper<T>> _listView;
-   private Popup _popup;
    private BorderPane _borderPane;
 
    public FilteredPopup(SQLTextAreaServices sqlTextAreaServices, String userReadableEntryTypeName, List<T> entries, FilteredPopupSelectionListener<T> filteredPopupSelectionListener)
@@ -41,8 +38,6 @@ public class FilteredPopup<T extends FilteredPopupEntry>
       _filteredPopupSelectionListener = filteredPopupSelectionListener;
       _userReadableEntryTypeName = userReadableEntryTypeName;
       _entryWrappers = FilteredPopupEntryWrapper.wrap(entries);
-
-      _popup = new Popup();
 
       _txtFilter = new TextField();
       _txtFilter.setFont(_sqlTextAreaServices.getFont());
@@ -54,11 +49,11 @@ public class FilteredPopup<T extends FilteredPopupEntry>
       _borderPane.setCenter(_listView);
       _borderPane.setStyle("-fx-border-color: lightblue; -fx-border-width: 2;");
 
-      _popup.getContent().add(_borderPane);
+      _sqlTextAreaServices.getCaretPopup().setContent(_borderPane);
 
-      _popup.focusedProperty().addListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue));
+      _sqlTextAreaServices.getCaretPopup().getPopup().focusedProperty().addListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue));
 
-      _listView.setOnMouseClicked(event -> onMouseClickedList(event, _listView, _popup, _sqlTextAreaServices));
+      _listView.setOnMouseClicked(event -> onMouseClickedList(event, _listView));
       _listView.setFocusTraversable(false);
       _listView.focusedProperty().addListener((observable, oldValue, newValue) -> _txtFilter.requestFocus());
 
@@ -74,8 +69,7 @@ public class FilteredPopup<T extends FilteredPopupEntry>
    {
       if (_showPopup(false))
       {
-         Point2D cl = _sqlTextAreaServices.getCarretLocationOnScreen();
-         _popup.show(_sqlTextAreaServices.getTextArea(), cl.getX(), cl.getY());
+         _sqlTextAreaServices.getCaretPopup().showAtCaretTop();
          _txtFilter.requestFocus();
       }
    }
@@ -144,11 +138,11 @@ public class FilteredPopup<T extends FilteredPopupEntry>
       }
    }
 
-   private  void onMouseClickedList(MouseEvent event, ListView<FilteredPopupEntryWrapper<T>> listView, Popup popup, SQLTextAreaServices sqlTextAreaServices)
+   private  void onMouseClickedList(MouseEvent event, ListView<FilteredPopupEntryWrapper<T>> listView)
    {
       if(Utils.isDoubleClick(event))
       {
-         runSelectedListItem(listView, popup, sqlTextAreaServices);
+         runSelectedListItem(listView);
       }
    }
 
@@ -165,13 +159,13 @@ public class FilteredPopup<T extends FilteredPopupEntry>
    {
       if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ENTER)))
       {
-         boolean b = runSelectedListItem(_listView, _popup, _sqlTextAreaServices);
+         boolean b = runSelectedListItem(_listView);
          keyEvent.consume();
          return b;
       }
       else if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ESCAPE)))
       {
-         _popup.hide();
+         _sqlTextAreaServices.getCaretPopup().hideAndClearContent();
          keyEvent.consume();
          return true;
       }
@@ -179,7 +173,7 @@ public class FilteredPopup<T extends FilteredPopupEntry>
       return false;
    }
 
-   private  boolean runSelectedListItem(ListView<FilteredPopupEntryWrapper<T>> listView, Popup popup, SQLTextAreaServices sqlTextAreaServices)
+   private  boolean runSelectedListItem(ListView<FilteredPopupEntryWrapper<T>> listView)
    {
       FilteredPopupEntryWrapper<T> selectedItem = listView.getSelectionModel().getSelectedItem();
 
@@ -187,7 +181,7 @@ public class FilteredPopup<T extends FilteredPopupEntry>
       {
          return false;
       }
-      popup.hide();
+      _sqlTextAreaServices.getCaretPopup().hideAndClearContent();
       _filteredPopupSelectionListener.selected(selectedItem.getEntry());
       return true;
    }
@@ -196,7 +190,7 @@ public class FilteredPopup<T extends FilteredPopupEntry>
    {
       if(false == focused)
       {
-         _popup.hide();
+         _sqlTextAreaServices.getCaretPopup().hideAndClearContent();
       }
    }
 

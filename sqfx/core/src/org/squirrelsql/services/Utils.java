@@ -168,4 +168,9 @@ public class Utils
    {
       return s.replaceAll("\r\n", " ").replaceAll("\n", " ");
    }
+
+   public static boolean isZero(double d)
+   {
+      return Math.abs(d) < 0.0000001d;
+   }
 }
