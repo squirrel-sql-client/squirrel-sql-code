@@ -146,7 +146,7 @@ public class TableLoader
 		  return ((BigDecimal) o).intValue();
 	  }
 	  else {
-		  return (int) _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName)).get();
+		  return (int) o;
 	  }
    }
 
@@ -157,7 +157,7 @@ public class TableLoader
 		  return ((BigDecimal) o).intValue();
 	  }
 	  else {
-		  return (Integer) _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName)).get();
+		  return (int)o;
 	  }
    }
 
