@@ -3,6 +3,7 @@ package org.squirrelsql.session.sql;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
@@ -48,7 +49,8 @@ public class SQLCancelTabCtrl
       _region.setPrefWidth(Double.MAX_VALUE);
       _region.setPrefHeight(Double.MAX_VALUE);
 
-      _cancelTab = new Tab(_i18n.t("session.tab.sql.executing.tab.title"));
+      _cancelTab = new Tab();
+      _cancelTab.setGraphic(new Label(_i18n.t("session.tab.sql.executing.tab.title")));
       _cancelTab.setContent(_region);
 
    }

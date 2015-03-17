@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.Control;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -269,9 +270,22 @@ public class SqlPaneCtrl
    private void addAndSelectTab(Tab outputTab)
    {
       _sqlOutputTabPane.getTabs().add(outputTab);
+      RightMouseMenuHandler resultTabRightMouseMenu = new RightMouseMenuHandler((Control) outputTab.getGraphic());
+      resultTabRightMouseMenu.addMenu(new I18n(getClass()).t("session.tab.menu.closeall"), () -> closeTabs(outputTab, false));
+      resultTabRightMouseMenu.addMenu(new I18n(getClass()).t("session.tab.menu.closeallbutthis"), () -> closeTabs(outputTab, true));      
       _sqlOutputTabPane.getSelectionModel().select(outputTab);
    }
 
+   public void closeTabs(Tab tab, Boolean keepTab){
+	   if(keepTab)
+	   {
+		   _sqlOutputTabPane.getTabs().removeIf(p -> !p.equals(tab));
+	   }
+	   else
+	   {
+		   _sqlOutputTabPane.getTabs().clear();		   
+	   }
+   }   
 
    public void close()
    {

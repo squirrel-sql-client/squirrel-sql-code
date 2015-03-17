@@ -30,7 +30,8 @@ public class ResultTabController
 
       String tabText = Utils.createSqlShortText(sql, 50);
 
-      _containerTab = new Tab(tabText);
+      _containerTab = new Tab();
+      _containerTab.setGraphic(new Label(tabText));
 
       _containerTab.setContent(createContainerPane(sqlResult, sql, sqlCancelTabCtrl));
 
