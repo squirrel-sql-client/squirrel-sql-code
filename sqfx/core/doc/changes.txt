@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Right click on result tabs to Close All or Close All But This
+
 Upgraded RichTextFX to version 0.6.3.
 
 Bug fix: Autocomplete for column names throwing cast error on Oracle
