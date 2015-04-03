@@ -44,16 +44,41 @@ public class CaretPopup
 
    private void _show(double xDisplacementFromCaret, PopupAlignment popupAlignment)
    {
-      Point2D popupAnchorOffset = new Point2D(0,0);
+      Point2D popupAnchorOffset = new Point2D(1,0);
 
       if (false == Utils.isZero(xDisplacementFromCaret))
       {
          popupAnchorOffset = new Point2D(xDisplacementFromCaret, 0);
       }
 
-      _codeArea.setPopupAlignment(popupAlignment);
       _codeArea.setPopupAnchorOffset(popupAnchorOffset);
+      _codeArea.setPopupAlignment(popupAlignment);
+
+      makePopupAlignmentWork();
+
       _popup.show(AppState.get().getPrimaryStage());
+
+
+   }
+
+   /**
+    * This is a workaround for issue #128 of RichtextFx.
+    * See: https://github.com/TomasMikula/RichTextFX/issues/128
+    */
+   private void makePopupAlignmentWork()
+   {
+      int caretPosition = _codeArea.getCaretPosition();
+
+      if(0 != caretPosition)
+      {
+         _codeArea.positionCaret(caretPosition - 1);
+         _codeArea.positionCaret(caretPosition);
+      }
+      else
+      {
+         _codeArea.positionCaret(caretPosition + 1);
+         _codeArea.positionCaret(caretPosition);
+      }
    }
 
    public void hideAndClearContent()
