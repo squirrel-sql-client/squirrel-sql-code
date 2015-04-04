@@ -34,22 +34,33 @@ public class CaretPopup
 
    public void showAtCaretTop()
    {
-      _show(0, PopupAlignment.CARET_TOP);
+      // -9 is a correction to make the top left of the popup cleanly cover the the CodeArea's caret.
+      _show(0, -9, PopupAlignment.CARET_TOP);
    }
 
    public void showAtCaretBottom(double xDisplacementFromCaret)
    {
-      _show(xDisplacementFromCaret, PopupAlignment.CARET_BOTTOM);
+      _show(xDisplacementFromCaret, 0, PopupAlignment.CARET_BOTTOM);
    }
 
-   private void _show(double xDisplacementFromCaret, PopupAlignment popupAlignment)
+   private void _show(double xDisplacementFromCaret, double yDisplacementFromCaret, PopupAlignment popupAlignment)
    {
-      Point2D popupAnchorOffset = new Point2D(1,0);
+      // -1 is a correction to make the top left of the popup cleanly cover the the CodeArea's caret.
+      double xDisplacementFromCaretBuf = -1;
+      double yDisplacementFromCaretBuf = 0;
+
 
       if (false == Utils.isZero(xDisplacementFromCaret))
       {
-         popupAnchorOffset = new Point2D(xDisplacementFromCaret, 0);
+         xDisplacementFromCaretBuf = xDisplacementFromCaret;
       }
+
+      if (false == Utils.isZero(yDisplacementFromCaret))
+      {
+         yDisplacementFromCaretBuf = yDisplacementFromCaret;
+      }
+
+      Point2D popupAnchorOffset = new Point2D(xDisplacementFromCaretBuf, yDisplacementFromCaretBuf);
 
       _codeArea.setPopupAnchorOffset(popupAnchorOffset);
       _codeArea.setPopupAlignment(popupAlignment);
