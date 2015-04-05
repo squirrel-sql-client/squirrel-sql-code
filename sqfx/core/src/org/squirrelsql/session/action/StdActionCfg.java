@@ -16,7 +16,8 @@ public enum StdActionCfg
    ESCAPE_DATE(null, "escape.date", "date", ActionScope.SQL_EDITOR, null),
    SQL_TO_TABLE(null, "sql.to.table", "sql2table", ActionScope.SQL_EDITOR, null),
    SHOW_TOOLS_POPUP(null, "show.tools.popup", null, ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN)),
-   RELOAD_DB_META_DATA("reload.png", "reload.meta.data", "reload", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.F5));
+   RELOAD_DB_META_DATA("reload.png", "reload.meta.data", "reload", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.F5)),
+   DUPLICATE_LINE_OR_SELECTION(null, "duplicate.line.or.selection", "duplicate", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.D, KeyCodeCombination.CONTROL_DOWN));
 
 
 
@@ -44,7 +45,8 @@ public enum StdActionCfg
          ESCAPE_DATE,
          SQL_TO_TABLE,
          EXEC_BOOKMARK,
-         SHOW_TOOLS_POPUP
+         SHOW_TOOLS_POPUP,
+         DUPLICATE_LINE_OR_SELECTION
    };
 
    private ActionCfg _actionCfg;

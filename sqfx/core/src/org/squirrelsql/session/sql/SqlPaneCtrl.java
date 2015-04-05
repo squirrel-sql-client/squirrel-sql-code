@@ -19,6 +19,7 @@ import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.*;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.session.sql.bookmark.BookmarkManager;
+import org.squirrelsql.session.sql.features.DuplicateLineCommand;
 import org.squirrelsql.session.sql.features.EscapeDateCtrl;
 import org.squirrelsql.session.sql.features.SqlToTableCtrl;
 import org.squirrelsql.table.SQLExecutor;
@@ -101,6 +102,7 @@ public class SqlPaneCtrl
       StdActionCfg.RUN_SQL.setAction(() -> onExecuteSql(_sqlTextAreaServices));
       StdActionCfg.ESCAPE_DATE.setAction(() -> new EscapeDateCtrl(s -> _sqlTextAreaServices.insertAtCarret(s)));
       StdActionCfg.SQL_TO_TABLE.setAction(() -> new SqlToTableCtrl(_sessionTabContext.getSession(), _sqlTextAreaServices));
+      StdActionCfg.DUPLICATE_LINE_OR_SELECTION.setAction(() -> new DuplicateLineCommand(_sqlTextAreaServices));
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent)
