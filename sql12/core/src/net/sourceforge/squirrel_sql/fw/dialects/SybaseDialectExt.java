@@ -149,7 +149,7 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 			return false;
 		}
 		String lname = databaseProductName.trim().toLowerCase();
-		if (lname.startsWith("sybase") || lname.startsWith("adaptive") || lname.startsWith("sql server"))
+		if (lname.startsWith("sybase") || lname.startsWith("adaptive") || lname.startsWith("sql server") || lname.startsWith("ase"))
 		{
 			// We don't yet have the need to discriminate by version.
 			return true;
