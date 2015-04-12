@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.awt.*;
 
+import static java.lang.Class.forName;
+
 class AppleApplicationTools {
 
   private final ILogger log = LoggerController.createLogger(AppleApplicationTools.class);
@@ -13,19 +15,26 @@ class AppleApplicationTools {
   {
     try
     {
-      Class.forName("com.apple.eawt.Application");
+      forName("com.apple.eawt.Application");
       return true;
     }
     catch (ClassNotFoundException e)
     {
-      log.debug("Skipping to set application dock icon for Mac OS X, because didn't found 'com.apple.eawt.Application' class.");
+      return false;
     }
-    return false;
   }
 
   public void setDockIconImage(Image image)
   {
-    com.apple.eawt.Application app = com.apple.eawt.Application.getApplication();
-    app.setDockIconImage(image);
+    try
+    {
+      Class applicationClass = forName("com.apple.eawt.Application");
+      Object application = applicationClass.getMethod("getApplication").invoke(applicationClass);
+      applicationClass.getMethod("setDockIconImage").invoke(application, image);
+    }
+    catch (Exception e)
+    {
+      log.debug("Skipping to set application dock icon for Mac OS X, because didn't found 'com.apple.eawt.Application' class.", e);
+    }
   }
 }
