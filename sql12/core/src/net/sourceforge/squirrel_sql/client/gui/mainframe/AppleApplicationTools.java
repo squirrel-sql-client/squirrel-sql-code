@@ -30,7 +30,7 @@ class AppleApplicationTools {
     {
       Class applicationClass = forName("com.apple.eawt.Application");
       Object application = applicationClass.getMethod("getApplication").invoke(applicationClass);
-      applicationClass.getMethod("setDockIconImage").invoke(application, image);
+      applicationClass.getMethod("setDockIconImage", Image.class).invoke(application, image);
     }
     catch (Exception e)
     {
