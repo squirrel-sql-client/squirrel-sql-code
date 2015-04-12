@@ -22,9 +22,12 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopContainerFactory;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.*;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.TabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -44,7 +47,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
@@ -359,15 +361,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 
 		setupFromPreferences();
 
-		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.APPLICATION_ICON);
-		if (icon != null)
-		{
-			setIconImage(icon.getImage());
-		}
-		else
-		{
-			s_log.error("Missing icon for mainframe");
-		}
+		initApplicationIcon(rsrc);
 
 		// On Win 2000 & XP mnemonics are normally hidden. To make them
 		// visible you press the alt key. Under the Windows L&F pressing
@@ -386,6 +380,22 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 				dispose();
 			}
 		});
+	}
+
+	private void initApplicationIcon(SquirrelResources rsrc) {
+		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.APPLICATION_ICON);
+		if (icon != null)
+		{
+			setIconImage(icon.getImage());
+			AppleApplicationTools appleApplicationTools = new AppleApplicationTools();
+			if (appleApplicationTools.isAppleEnvironment()) {
+				appleApplicationTools.setDockIconImage(icon.getImage());
+			}
+		}
+		else
+		{
+			s_log.error("Missing icon for mainframe");
+		}
 	}
 
 	private void setupFromPreferences()
