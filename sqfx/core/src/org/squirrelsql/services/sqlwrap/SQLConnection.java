@@ -225,7 +225,7 @@ public class SQLConnection
       }
    }
 
-   public List<TableInfo> getTableInfos(String catalog, String schema, String tableType)
+   public List<TableInfo> getTableInfos(String catalog, String schema, String tableType, String tableName)
    {
       try
       {
@@ -243,7 +243,15 @@ public class SQLConnection
 
          List<TableInfo> ret = new ArrayList<>();
 
-         ResultSet tables = _con.getMetaData().getTables(catalog, schema, null, new String[]{tableType});
+         ResultSet tables;
+         if (null == tableType)
+         {
+            tables = _con.getMetaData().getTables(catalog, schema, tableName, null);
+         }
+         else
+         {
+            tables = _con.getMetaData().getTables(catalog, schema, tableName, new String[]{tableType});
+         }
 
          while (tables.next())
          {
@@ -267,12 +275,12 @@ public class SQLConnection
       }
    }
 
-   public List<ProcedureInfo> getProcedureInfos(String catalog, String schema)
+   public List<ProcedureInfo> getProcedureInfos(String catalog, String schema, String procedureName)
    {
       try
       {
          List<ProcedureInfo> list = new ArrayList<>();
-         ResultSet procedures = _con.getMetaData().getProcedures(catalog, schema, null);
+         ResultSet procedures = _con.getMetaData().getProcedures(catalog, schema, procedureName);
 
          while (procedures.next())
          {
@@ -300,12 +308,12 @@ public class SQLConnection
       }
    }
 
-   public List<UDTInfo> getUDTInfos(String catalog, String schema)
+   public List<UDTInfo> getUDTInfos(String catalog, String schema, String udtName)
    {
       try
       {
          List<UDTInfo> list = new ArrayList<>();
-         ResultSet udts = _con.getMetaData().getUDTs(catalog, schema, null, null);
+         ResultSet udts = _con.getMetaData().getUDTs(catalog, schema, udtName, null);
 
          while (udts.next())
          {

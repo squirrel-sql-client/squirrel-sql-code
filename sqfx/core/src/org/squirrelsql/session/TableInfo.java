@@ -3,6 +3,7 @@ package org.squirrelsql.session;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
 import org.squirrelsql.table.TableLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TableInfo
@@ -65,13 +66,51 @@ public class TableInfo
          throw new IllegalStateException();
       }
 
-      List<ColumnInfo> ret = ColumnInfo.createColumnInfosFromTableMetaData(this, _columnsAsTableLoader);
-
-      return ret;
+      return ColumnInfo.createColumnInfosFromTableMetaData(this, _columnsAsTableLoader);
    }
+
+   public List<ColumnInfo> getColumnsIfLoaded()
+   {
+      if (null == _columnsAsTableLoader)
+      {
+         return new ArrayList<>();
+      }
+      else
+      {
+         return getColumns();
+      }
+   }
+
+
 
    public StructItemSchema getStructItemSchema()
    {
       return new StructItemSchema(_schema, _catalog);
+   }
+
+
+   @Override
+   public boolean equals(Object o)
+   {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      TableInfo tableInfo = (TableInfo) o;
+
+      if (_catalog != null ? !_catalog.equals(tableInfo._catalog) : tableInfo._catalog != null) return false;
+      if (_schema != null ? !_schema.equals(tableInfo._schema) : tableInfo._schema != null) return false;
+      if (_tableType != null ? !_tableType.equals(tableInfo._tableType) : tableInfo._tableType != null) return false;
+      return !(_name != null ? !_name.equals(tableInfo._name) : tableInfo._name != null);
+
+   }
+
+   @Override
+   public int hashCode()
+   {
+      int result = _catalog != null ? _catalog.hashCode() : 0;
+      result = 31 * result + (_schema != null ? _schema.hashCode() : 0);
+      result = 31 * result + (_tableType != null ? _tableType.hashCode() : 0);
+      result = 31 * result + (_name != null ? _name.hashCode() : 0);
+      return result;
    }
 }

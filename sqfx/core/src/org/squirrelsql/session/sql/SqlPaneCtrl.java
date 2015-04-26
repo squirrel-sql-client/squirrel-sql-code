@@ -21,6 +21,7 @@ import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.session.sql.bookmark.BookmarkManager;
 import org.squirrelsql.session.sql.features.DuplicateLineCommand;
 import org.squirrelsql.session.sql.features.EscapeDateCtrl;
+import org.squirrelsql.session.sql.features.SchemaUpdater;
 import org.squirrelsql.session.sql.features.SqlToTableCtrl;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
@@ -148,21 +149,41 @@ public class SqlPaneCtrl
 
       SQLTokenizer sqlTokenizer = new SQLTokenizer(script);
 
+      SchemaUpdater schemaUpdater = new SchemaUpdater(_sessionTabContext.getSession());
+
       SqlExecutionFinishedListener sqlExecutionFinishedListener = new SqlExecutionFinishedListener()
       {
          @Override
          public void finished(boolean success)
          {
-            if (success && sqlTokenizer.hasMoreSqls())
-            {
-               _execSingleStatement(sqlTokenizer.nextSql(), this);
-            }
+            onSqlExecutionFinished(success, sqlTokenizer, this, schemaUpdater);
          }
+
       };
 
       _execSingleStatement(sqlTokenizer.getFirstSql(), sqlExecutionFinishedListener);
 
    }
+
+   private void onSqlExecutionFinished(boolean success, SQLTokenizer sqlTokenizer, SqlExecutionFinishedListener sqlExecutionFinishedListener, SchemaUpdater schemaUpdater)
+   {
+      boolean hasMoreSqls = sqlTokenizer.hasMoreSqls();
+      if(success)
+      {
+         schemaUpdater.addSql(sqlTokenizer.getCurrentSql());
+      }
+
+      if (success && hasMoreSqls)
+      {
+         _execSingleStatement(sqlTokenizer.nextSql(), sqlExecutionFinishedListener);
+      }
+
+      if(false == hasMoreSqls)
+      {
+         schemaUpdater.doUpdates(_sqlTextAreaServices);
+      }
+   }
+
 
    private void _execSingleStatement(final String sql, SqlExecutionFinishedListener sqlExecutionFinishedListener)
    {

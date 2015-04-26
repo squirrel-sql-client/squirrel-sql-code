@@ -3,6 +3,7 @@ package org.squirrelsql.session.schemainfo;
 import org.squirrelsql.aliases.AliasPropertiesDecorator;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.CaseInsensitiveString;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.*;
 import org.squirrelsql.session.completion.TableTypes;
 import org.squirrelsql.session.objecttree.TableDetailsReader;
@@ -84,74 +85,247 @@ public class SchemaCache
       {
          if(leaf instanceof StructItemTableType)
          {
-            StructItemTableType buf = (StructItemTableType) leaf;
-            if (buf.shouldLoad(_schemaCacheConfig))
-            {
-               List<TableInfo> tableInfos = _dbConnectorResult.getSQLConnection().getTableInfos(buf.getCatalog(), buf.getSchema(), buf.getType());
-               _tableInfos.put(buf, tableInfos);
-
-
-               for (TableInfo tableInfo : tableInfos)
-               {
-                  List<TableInfo> arr;
-
-                  FullyQualifiedTableName fullyQualifiedTableName = new FullyQualifiedTableName(buf.getCatalog(), buf.getSchema(), tableInfo.getName());
-                  arr = _tableInfosByFullyQualifiedName.get(fullyQualifiedTableName);
-
-                  if(null == arr)
-                  {
-                     arr = new ArrayList<>();
-                     _tableInfosByFullyQualifiedName.put(fullyQualifiedTableName, arr);
-                  }
-                  arr.add(tableInfo);
-
-                  SchemaQualifiedTableName schemaQualifiedTableName = new SchemaQualifiedTableName(buf.getSchema(), tableInfo.getName());
-                  arr = _tableInfosByFullyQualifiedName.get(schemaQualifiedTableName);
-
-                  if(null == arr)
-                  {
-                     arr = new ArrayList<>();
-                     _tableInfosBySchemaQualifiedName.put(schemaQualifiedTableName, arr);
-                  }
-                  arr.add(tableInfo);
-
-                  arr = _tableInfosBySimpleName.get(tableInfo.getName());
-
-                  if(null == arr)
-                  {
-                     arr = new ArrayList<>();
-                     _tableInfosBySimpleName.put(new CaseInsensitiveString(tableInfo.getName()), arr);
-                  }
-                  arr.add(tableInfo);
-
-                  _caseInsensitiveCache.addTable(tableInfo);
-
-               }
-
-            }
+            loadMatchingTables((StructItemTableType) leaf, null);
          }
          else if(leaf instanceof StructItemProcedureType)
          {
-            StructItemProcedureType buf = (StructItemProcedureType) leaf;
-            if (buf.shouldLoad(_schemaCacheConfig))
-            {
-               List<ProcedureInfo> procedureInfos = _dbConnectorResult.getSQLConnection().getProcedureInfos(buf.getCatalog(), buf.getSchema());
-               _procedureInfos.put(buf, procedureInfos);
-
-               for (ProcedureInfo procedureInfo : procedureInfos)
-               {
-                  _caseInsensitiveCache.addProc(procedureInfo.getName());
-               }
-            }
+            loadMatchingProcedures((StructItemProcedureType) leaf, null);
          }
          else if(leaf instanceof StructItemUDTType)
          {
-            StructItemUDTType buf = (StructItemUDTType) leaf;
-            if (buf.shouldLoad(_schemaCacheConfig))
+            loadMatchingUDTs((StructItemUDTType) leaf, null);
+         }
+      }
+   }
+
+//   public void reloadMatchingUDTs(String udtName)
+//   {
+//      List<UDTInfo> udtInfos = _dbConnectorResult.getSQLConnection().getUDTInfos(null, null, udtName);
+//
+//      for (UDTInfo udtInfo : udtInfos)
+//      {
+//         StructItemUDTType udtType = new StructItemUDTType(udtInfo.getCatalog(), udtInfo.getSchema());
+//
+//         List<UDTInfo> toRemoveFrom = _udtInfos.get(udtType);
+//
+//         if(null != toRemoveFrom)
+//         {
+//            toRemoveFrom.remove(udtInfo);
+//         }
+//
+//         loadMatchingUDTs(udtType, udtName);
+//      }
+//
+//
+//
+//   }
+
+   private void loadMatchingUDTs(StructItemUDTType udtType, String udtName)
+   {
+      if (udtType.shouldLoad(_schemaCacheConfig))
+      {
+
+         List<UDTInfo> buf = _udtInfos.get(udtType);
+         if(null == buf)
+         {
+            buf = new ArrayList<>();
+            _udtInfos.put(udtType, buf);
+         }
+         buf.addAll(buf);
+
+
+
+         _udtInfos.put(udtType, _dbConnectorResult.getSQLConnection().getUDTInfos(udtType.getCatalog(), udtType.getSchema(), udtName));
+      }
+   }
+
+   public void reloadMatchingProcedures(String caseSensitveProcedureName)
+   {
+      if(null == caseSensitveProcedureName)
+      {
+         return;
+      }
+
+      caseSensitveProcedureName = _caseInsensitiveCache.getCaseSensitiveProcedureName(caseSensitveProcedureName);
+
+
+      _reloadMatchingProcedures(caseSensitveProcedureName);
+
+      if(false == _reloadMatchingProcedures(caseSensitveProcedureName))
+      {
+         // There several ways database systems store names. One of these three should always match.
+         if(false == _reloadMatchingProcedures(caseSensitveProcedureName.toLowerCase()))
+         {
+            _reloadMatchingProcedures(caseSensitveProcedureName.toUpperCase());
+         }
+      }
+
+
+   }
+
+   private boolean _reloadMatchingProcedures(String procedureName)
+   {
+      List<ProcedureInfo> procedureInfos = _dbConnectorResult.getSQLConnection().getProcedureInfos(null, null, procedureName);
+
+      _caseInsensitiveCache.removeProc(procedureName);
+
+      boolean reloaded = false;
+
+      for (ProcedureInfo procedureInfo : procedureInfos)
+      {
+         StructItemProcedureType procedureType = new StructItemProcedureType(procedureInfo.getCatalog(), procedureInfo.getSchema());
+         List<ProcedureInfo> toRemoveFrom = _procedureInfos.get(procedureType);
+
+         if(null != toRemoveFrom)
+         {
+            procedureInfos.remove(procedureInfo);
+         }
+
+         loadMatchingProcedures(procedureType, procedureName);
+
+         reloaded = true;
+      }
+
+      return reloaded;
+   }
+
+   private void loadMatchingProcedures(StructItemProcedureType procedureType, String procedureName)
+   {
+      if (procedureType.shouldLoad(_schemaCacheConfig))
+      {
+         List<ProcedureInfo> procedureInfos = _dbConnectorResult.getSQLConnection().getProcedureInfos(procedureType.getCatalog(), procedureType.getSchema(), procedureName);
+
+
+         _procedureInfos.put(procedureType, procedureInfos);
+
+         List<ProcedureInfo> buf = _procedureInfos.get(procedureType);
+         if(null == buf)
+         {
+            buf = new ArrayList<>();
+            _procedureInfos.put(procedureType, buf);
+         }
+         buf.addAll(procedureInfos);
+
+
+
+         for (ProcedureInfo procedureInfo : procedureInfos)
+         {
+            _caseInsensitiveCache.addProc(procedureInfo.getName());
+         }
+      }
+   }
+
+   public void reloadMatchingTables(String tableName)
+   {
+      if(null == tableName)
+      {
+         return;
+      }
+
+      List<String> caseSensitiveTableNames = _caseInsensitiveCache.getMatchingCaseSensitiveTableNames(tableName);
+
+      for (String caseSensitiveTableName : caseSensitiveTableNames)
+      {
+         if(false == _reloadMatchingTable(caseSensitiveTableName))
+         {
+            // There several ways database systems store names. One of these three should always match.
+            if(false == _reloadMatchingTable(caseSensitiveTableName.toLowerCase()))
             {
-               _udtInfos.put(buf, _dbConnectorResult.getSQLConnection().getUDTInfos(buf.getCatalog(), buf.getSchema()));
+               _reloadMatchingTable(caseSensitiveTableName.toUpperCase());
             }
          }
+      }
+   }
+
+   private boolean _reloadMatchingTable(String tableName)
+   {
+      ArrayList<TableInfo> tableInfos = new ArrayList<>();
+
+      tableInfos.addAll(Utils.convertNullToArray(_dbConnectorResult.getSQLConnection().getTableInfos(null, null, null, tableName)));
+      tableInfos.addAll(Utils.convertNullToArray(_caseInsensitiveCache.getTables(tableName)));
+
+      boolean reloaded = false;
+
+      for (TableInfo tableInfo : tableInfos)
+      {
+         StructItemTableType tableType = new StructItemTableType(tableInfo.getTableType(), tableInfo.getCatalog(), tableInfo.getSchema());
+         FullyQualifiedTableName fullyQualifiedTableName = new FullyQualifiedTableName(tableType.getCatalog(), tableType.getSchema(), tableInfo.getName());
+         SchemaQualifiedTableName schemaQualifiedTableName = new SchemaQualifiedTableName(tableType.getSchema(), tableInfo.getName());
+
+
+         List<TableInfo> buf = _tableInfos.get(tableType);
+         if(null != buf)
+         {
+            buf.remove(tableInfo);
+         }
+
+
+         _tableInfosByFullyQualifiedName.remove(fullyQualifiedTableName);
+         _tableInfosBySchemaQualifiedName.remove(schemaQualifiedTableName);
+         _tableInfosBySimpleName.remove(new CaseInsensitiveString(tableInfo.getName()));
+         _caseInsensitiveCache.removeTable(tableInfo);
+
+         loadMatchingTables(tableType, tableName);
+
+         reloaded = true;
+      }
+
+      return reloaded;
+   }
+
+   private void loadMatchingTables(StructItemTableType tableType, String tableName)
+   {
+      if (tableType.shouldLoad(_schemaCacheConfig))
+      {
+         List<TableInfo> tableInfos = _dbConnectorResult.getSQLConnection().getTableInfos(tableType.getCatalog(), tableType.getSchema(), tableType.getType(), tableName);
+
+         List<TableInfo> buf = _tableInfos.get(tableType);
+         if(null == buf)
+         {
+            buf = new ArrayList<>();
+            _tableInfos.put(tableType, buf);
+         }
+         buf.addAll(tableInfos);
+
+
+         for (TableInfo tableInfo : tableInfos)
+         {
+            List<TableInfo> arr;
+
+
+            FullyQualifiedTableName fullyQualifiedTableName = new FullyQualifiedTableName(tableType.getCatalog(), tableType.getSchema(), tableInfo.getName());
+            arr = _tableInfosByFullyQualifiedName.get(fullyQualifiedTableName);
+
+            if(null == arr)
+            {
+               arr = new ArrayList<>();
+               _tableInfosByFullyQualifiedName.put(fullyQualifiedTableName, arr);
+            }
+            arr.add(tableInfo);
+
+            SchemaQualifiedTableName schemaQualifiedTableName = new SchemaQualifiedTableName(tableType.getSchema(), tableInfo.getName());
+            arr = _tableInfosBySchemaQualifiedName.get(schemaQualifiedTableName);
+
+            if(null == arr)
+            {
+               arr = new ArrayList<>();
+               _tableInfosBySchemaQualifiedName.put(schemaQualifiedTableName, arr);
+            }
+            arr.add(tableInfo);
+
+            arr = _tableInfosBySimpleName.get(new CaseInsensitiveString(tableInfo.getName()));
+
+            if(null == arr)
+            {
+               arr = new ArrayList<>();
+               _tableInfosBySimpleName.put(new CaseInsensitiveString(tableInfo.getName()), arr);
+            }
+            arr.add(tableInfo);
+
+            _caseInsensitiveCache.addTable(tableInfo);
+
+         }
+
       }
    }
 
@@ -167,7 +341,7 @@ public class SchemaCache
 
    public List<TableInfo> getTableInfosExact(String catalog, String schema, String tableType)
    {
-      return convertNullToArray(_tableInfos.get(new StructItemTableType(tableType, catalog, schema)));
+      return Utils.convertNullToArray(_tableInfos.get(new StructItemTableType(tableType, catalog, schema)));
    }
 
    public List<TableInfo> getTableInfosMatching(String catalog, String schema, TableTypes[] allowedTypes)
@@ -187,7 +361,7 @@ public class SchemaCache
 
    public List<ProcedureInfo> getProcedureInfosExact(String catalog, String schema)
    {
-      return convertNullToArray(_procedureInfos.get(new StructItemProcedureType(catalog, schema)));
+      return Utils.convertNullToArray(_procedureInfos.get(new StructItemProcedureType(catalog, schema)));
    }
 
    public List<ProcedureInfo> getProcedureInfosMatching(String catalog, String schema)
@@ -207,7 +381,7 @@ public class SchemaCache
 
    public List<UDTInfo> getUDTInfosExact(String catalog, String schema)
    {
-      return convertNullToArray(_udtInfos.get(new StructItemUDTType(catalog, schema)));
+      return Utils.convertNullToArray(_udtInfos.get(new StructItemUDTType(catalog, schema)));
    }
 
 
@@ -224,16 +398,6 @@ public class SchemaCache
       }
 
       return ret;
-   }
-
-   private <T> List<T> convertNullToArray(List<T> arr)
-   {
-      if (null == arr)
-      {
-         return new ArrayList<>();
-      }
-
-      return arr;
    }
 
    public TableLoader getTypes()
@@ -278,7 +442,7 @@ public class SchemaCache
 
    public List<StructItemSchema> getSchemas()
    {
-      return convertNullToArray(_databaseStructure.getSchemas());
+      return Utils.convertNullToArray(_databaseStructure.getSchemas());
    }
 
    public List<String> getAllFunctions()
@@ -300,27 +464,27 @@ public class SchemaCache
 
    public List<StructItemSchema> getSchemasByName(String schemaName)
    {
-      return convertNullToArray(_databaseStructure.getSchemasByName(schemaName));
+      return Utils.convertNullToArray(_databaseStructure.getSchemasByName(schemaName));
    }
 
    public List<StructItemSchema> getSchemaByNameAsArray(String catalogName, String schemaName)
    {
-      return convertNullToArray(_databaseStructure.getSchemaByNameAsArray(catalogName, schemaName));
+      return Utils.convertNullToArray(_databaseStructure.getSchemaByNameAsArray(catalogName, schemaName));
    }
 
    public List<TableInfo> getTablesByFullyQualifiedName(String catalog, String schema, String tableName)
    {
-      return convertNullToArray(_tableInfosByFullyQualifiedName.get(new FullyQualifiedTableName(catalog, schema, tableName)));
+      return Utils.convertNullToArray(_tableInfosByFullyQualifiedName.get(new FullyQualifiedTableName(catalog, schema, tableName)));
    }
 
    public List<TableInfo> getTablesBySchemaQualifiedName(String schema, String tableName)
    {
-      return convertNullToArray(_tableInfosBySchemaQualifiedName.get(new SchemaQualifiedTableName(schema, tableName)));
+      return Utils.convertNullToArray(_tableInfosBySchemaQualifiedName.get(new SchemaQualifiedTableName(schema, tableName)));
    }
 
    public List<TableInfo> getTablesBySimpleName(String tableName)
    {
-      return convertNullToArray(_tableInfosBySimpleName.get(new CaseInsensitiveString(tableName)));
+      return Utils.convertNullToArray(_tableInfosBySimpleName.get(new CaseInsensitiveString(tableName)));
    }
 
 

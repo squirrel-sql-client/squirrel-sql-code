@@ -1,6 +1,5 @@
 package org.squirrelsql.session.completion;
 
-import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -8,7 +7,7 @@ import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.parser.kernel.TableAliasInfo;
-import org.squirrelsql.session.schemainfo.SchemaCache;
+import org.squirrelsql.session.schemainfo.SchemaCacheProperty;
 import org.squirrelsql.session.schemainfo.StructItemCatalog;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
 
@@ -18,11 +17,11 @@ import java.util.List;
 
 public class Completor
 {
-   private ObservableObjectValue<SchemaCache> _schemaCacheValue;
+   private SchemaCacheProperty _schemaCacheValue;
    private TableAliasInfo[] _currentAliasInfos;
    private List<TableCompletionCandidate> _currentTableCandidatesNextToCursors = new ArrayList<>();
 
-   public Completor(ObservableObjectValue<SchemaCache> schemaCacheValue, List<TableInfo> currentTableInfosNextToCursor, TableAliasInfo[] currentAliasInfos)
+   public Completor(SchemaCacheProperty schemaCacheValue, List<TableInfo> currentTableInfosNextToCursor, TableAliasInfo[] currentAliasInfos)
    {
       _schemaCacheValue = schemaCacheValue;
       _currentAliasInfos = currentAliasInfos;

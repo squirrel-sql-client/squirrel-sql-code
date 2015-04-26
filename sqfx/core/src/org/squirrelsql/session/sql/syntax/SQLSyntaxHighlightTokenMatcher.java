@@ -1,13 +1,12 @@
 package org.squirrelsql.session.sql.syntax;
 
-import javafx.beans.value.ObservableObjectValue;
-import org.squirrelsql.session.schemainfo.SchemaCache;
+import org.squirrelsql.session.schemainfo.SchemaCacheProperty;
 
 public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatcher
 {
-   private final ObservableObjectValue<SchemaCache> _schemaCacheValue;
+   private final SchemaCacheProperty _schemaCacheValue;
 
-   public SQLSyntaxHighlightTokenMatcher(ObservableObjectValue<SchemaCache> schemaCacheValue)
+   public SQLSyntaxHighlightTokenMatcher(SchemaCacheProperty schemaCacheValue)
    {
       _schemaCacheValue = schemaCacheValue;
    }

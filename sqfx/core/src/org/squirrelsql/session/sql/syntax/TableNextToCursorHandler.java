@@ -1,9 +1,8 @@
 package org.squirrelsql.session.sql.syntax;
 
-import javafx.beans.value.ObservableObjectValue;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.squirrelsql.session.TableInfo;
-import org.squirrelsql.session.schemainfo.SchemaCache;
+import org.squirrelsql.session.schemainfo.SchemaCacheProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +11,12 @@ public class TableNextToCursorHandler
 {
    private LexAndParseResultListener _lexAndParseResultListener;
    private final int _caretPosition;
-   private final ObservableObjectValue<SchemaCache> _schemaCacheValue;
+   private final SchemaCacheProperty _schemaCacheValue;
    private List<TableInfo> _tablesNextToCursor = new ArrayList<>();
 
    private int _minDistToCursor = Integer.MAX_VALUE;
 
-   public TableNextToCursorHandler(LexAndParseResultListener lexAndParseResultListener, int caretPosition, ObservableObjectValue<SchemaCache> schemaCacheValue)
+   public TableNextToCursorHandler(LexAndParseResultListener lexAndParseResultListener, int caretPosition, SchemaCacheProperty schemaCacheValue)
    {
       _lexAndParseResultListener = lexAndParseResultListener;
       _caretPosition = caretPosition;

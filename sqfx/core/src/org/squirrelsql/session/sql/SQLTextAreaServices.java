@@ -2,9 +2,7 @@ package org.squirrelsql.session.sql;
 
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.services.Utils;
@@ -14,9 +12,8 @@ import org.squirrelsql.session.parser.ParserEventsListener;
 import org.squirrelsql.session.parser.ParserEventsProcessor;
 import org.squirrelsql.session.parser.kernel.ErrorInfo;
 import org.squirrelsql.session.parser.kernel.TableAliasInfo;
-import org.squirrelsql.session.schemainfo.SchemaCache;
+import org.squirrelsql.session.schemainfo.SchemaCacheProperty;
 import org.squirrelsql.session.sql.syntax.*;
-import org.squirrelsql.workaround.CaretLocationOnScreenWA;
 import org.squirrelsql.workaround.CodeAreaRepaintWA;
 import org.squirrelsql.workaround.FocusSqlTextAreaWA;
 
@@ -35,7 +32,7 @@ public class SQLTextAreaServices
    {
       _sqlTextArea = new CodeArea();
 
-      ObservableObjectValue<SchemaCache> schemaCacheValue = sessionTabContext.getSession().getSchemaCacheValue();
+      SchemaCacheProperty schemaCacheValue = sessionTabContext.getSession().getSchemaCacheValue();
 
       _parserEventsProcessor = new ParserEventsProcessor(this, sessionTabContext.getSession());
 
@@ -58,14 +55,14 @@ public class SQLTextAreaServices
 
       new CtrlLeftRightHandler(_sqlTextArea);
 
-      schemaCacheValue.addListener((observable, oldValue, newValue) -> onSchemaCacheUpdated());
+      schemaCacheValue.addListener(() -> updateHighlighting());
 
       _caretPopup = new CaretPopup(_sqlTextArea);
    }
 
-   private void onSchemaCacheUpdated()
+   public void updateHighlighting()
    {
-      _sqlSyntaxHighlighting.schemaCacheUpdated();
+      _sqlSyntaxHighlighting.updateHighlighting();
       _parserEventsProcessor.triggerParser();
    }
 

@@ -1,13 +1,9 @@
 package org.squirrelsql.session.sql.syntax;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableObjectValue;
-import javafx.beans.value.ObservableValue;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.session.parser.kernel.ErrorInfo;
-import org.squirrelsql.session.schemainfo.SchemaCache;
-import org.squirrelsql.workaround.CodeAreaRepaintWA;
+import org.squirrelsql.session.schemainfo.SchemaCacheProperty;
 
 import javax.swing.text.Segment;
 
@@ -24,12 +20,12 @@ public class SQLSyntaxHighlighting
    private final ErrorToolTipHandler _errorToolTipHandler;
    private ISyntaxHighlightTokenMatcher _syntaxHighlightTokenMatcher;
    private CodeArea _sqlTextArea;
-   private ObservableObjectValue<SchemaCache> _schemaCacheValue;
+   private SchemaCacheProperty _schemaCacheValue;
    private LexAndParseResultListener _lexAndParseResultListener;
 
    private ErrorInfosHandler _errorInfosHandler = new ErrorInfosHandler();
 
-   public SQLSyntaxHighlighting(CodeArea sqlTextArea, ISyntaxHighlightTokenMatcher syntaxHighlightTokenMatcher, ObservableObjectValue<SchemaCache> schemaCacheValue)
+   public SQLSyntaxHighlighting(CodeArea sqlTextArea, ISyntaxHighlightTokenMatcher syntaxHighlightTokenMatcher, SchemaCacheProperty schemaCacheValue)
    {
       _sqlTextArea = sqlTextArea;
       _schemaCacheValue = schemaCacheValue;
@@ -172,7 +168,7 @@ public class SQLSyntaxHighlighting
       }
    }
 
-   public void schemaCacheUpdated()
+   public void updateHighlighting()
    {
       onTextPropertyChanged(_sqlTextArea.getText());
    }

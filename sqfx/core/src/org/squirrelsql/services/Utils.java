@@ -173,4 +173,14 @@ public class Utils
    {
       return Math.abs(d) < 0.0000001d;
    }
+
+   public static  <T> List<T> convertNullToArray(List<T> arr)
+   {
+      if (null == arr)
+      {
+         return new ArrayList<>();
+      }
+
+      return arr;
+   }
 }

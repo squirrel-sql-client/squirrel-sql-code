@@ -8,6 +8,7 @@ import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
 
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -30,6 +31,9 @@ public class TablesProceduresAndUDTsCreator
       {
          List<UDTInfo>  udtInfos = session.getSchemaCacheValue().get().getUDTInfosExact(udtTypeItem.getValue().getCatalog(), udtTypeItem.getValue().getSchema());
 
+         // The schema cache gets changed here :-/
+         udtInfos.sort((ui1, ui2) -> ui1.getName().compareTo(ui2.getName()));
+
          for (UDTInfo udtInfo : udtInfos)
          {
             udtTypeItem.getChildren().add(ObjectTreeItemFactory.createUDT(udtInfo));
@@ -44,6 +48,9 @@ public class TablesProceduresAndUDTsCreator
       for (TreeItem<ObjectTreeNode> procedureTypeItem : procedureTypeItems)
       {
          List<ProcedureInfo>  procedureInfos = session.getSchemaCacheValue().get().getProcedureInfosExact(procedureTypeItem.getValue().getCatalog(), procedureTypeItem.getValue().getSchema());
+
+         // The schema cache gets changed here :-/
+         procedureInfos.sort((pi1, pi2) -> pi1.getName().compareTo(pi2.getName()));
 
          for (ProcedureInfo procedureInfo : procedureInfos)
          {
@@ -60,6 +67,10 @@ public class TablesProceduresAndUDTsCreator
       {
          ObjectTreeNode value = tableTypeItem.getValue();
          List<TableInfo> tableInfos = session.getSchemaCacheValue().get().getTableInfosExact(value.getCatalog(), value.getSchema(), value.getTableType());
+
+         // The schema cache gets changed here :-/
+         tableInfos.sort((ti1, ti2) -> ti1.getName().compareTo(ti2.getName()));
+
 
          for (TableInfo tableInfo : tableInfos)
          {

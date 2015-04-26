@@ -15,6 +15,7 @@ public class SQLTokenizer
    private Iterator<String> _iterator;
    private ArrayList<String> _sqls;
    private boolean _getFirstSqlWasCalled;
+   private String _currentSql;
 
    public SQLTokenizer(String script)
    {
@@ -144,11 +145,10 @@ public class SQLTokenizer
    {
       if (false == _getFirstSqlWasCalled)
       {
-         _iterator.next();
+         _currentSql = _iterator.next();
          _getFirstSqlWasCalled = true;
       }
-
-      return _sqls.get(0);
+      return _currentSql;
    }
 
    public boolean hasMoreSqls()
@@ -158,7 +158,8 @@ public class SQLTokenizer
 
    public String nextSql()
    {
-      return _iterator.next();
+      _currentSql = _iterator.next();
+      return _currentSql;
    }
 
 
@@ -223,4 +224,8 @@ public class SQLTokenizer
       }
    }
 
+   public String getCurrentSql()
+   {
+      return _currentSql;
+   }
 }

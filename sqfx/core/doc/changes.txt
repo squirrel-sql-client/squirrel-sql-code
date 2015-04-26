@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Automated reload on database meta data changes
+
 Feature: Duplicate line in SQL editor (ctrl+D)
 
 Feature: Right click on result tabs to Close All or Close All But This

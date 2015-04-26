@@ -42,7 +42,7 @@ public class ObjectTreeTabCtrl
 
       _objectsTab = objectsTab;
 
-      _sessionTabContext.getSession().getSchemaCacheValue().addListener((observable, oldValue, newValue) -> reloadObjectTabSplitPane());
+      _sessionTabContext.getSession().getSchemaCacheValue().addListener(() -> reloadObjectTabSplitPane());
 
       _objectTabSplitPane.setOnKeyPressed(this::onHandleKeyEvent);
 
