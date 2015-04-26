@@ -2,6 +2,7 @@ package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.services.CaseInsensitiveString;
 import org.squirrelsql.session.ColumnInfo;
+import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 
 import java.io.Serializable;
@@ -9,16 +10,31 @@ import java.util.*;
 
 public class CaseInsensitiveCache implements Serializable
 {
+   public static final int DUMMY_PROCEDURE_TYPE = -23366;
+
    private HashMap<CaseInsensitiveString, List<TableInfo>> _ciTableNames = new HashMap<>();
-   private HashMap<CaseInsensitiveString, String> _ciProcedureName_csProcedureName = new HashMap<>();
+   private HashMap<CaseInsensitiveString, List<ProcedureInfo>> _ciProcedureNames = new HashMap<>();
    private HashSet<CaseInsensitiveString> _ciKeywords = new HashSet<>();
    private HashSet<CaseInsensitiveString> _ciColumns = new HashSet<>();
 
    private CaseInsensitiveString _buf = new CaseInsensitiveString();
 
-   public void addProc(String s)
+   public void addProc(String procName)
    {
-      _ciProcedureName_csProcedureName.put(new CaseInsensitiveString(s), s);
+      addProc(new ProcedureInfo(null, null, procName, DUMMY_PROCEDURE_TYPE));
+   }
+
+   public void addProc(ProcedureInfo pi)
+   {
+      CaseInsensitiveString procedureName = new CaseInsensitiveString(pi.getName());
+      List<ProcedureInfo> procedureInfos = _ciProcedureNames.get(procedureName);
+
+      if(null == procedureInfos)
+      {
+         procedureInfos = new ArrayList<>();
+         _ciProcedureNames.put(procedureName, procedureInfos);
+      }
+      procedureInfos.add(pi);
    }
 
    public void addKeyword(String s)
@@ -58,7 +74,7 @@ public class CaseInsensitiveCache implements Serializable
 
    public boolean isProcedure(char[] buffer, int offset, int len)
    {
-      return _ciProcedureName_csProcedureName.containsKey(_buf.setCharBuffer(buffer, offset, len));
+      return _ciProcedureNames.containsKey(_buf.setCharBuffer(buffer, offset, len));
    }
 
    public boolean isKeyword(char[] buffer, int offset, int len)
@@ -95,19 +111,17 @@ public class CaseInsensitiveCache implements Serializable
 
    public void removeProc(String procedureName)
    {
-      _ciProcedureName_csProcedureName.remove(new CaseInsensitiveString(procedureName));
+      _ciProcedureNames.remove(new CaseInsensitiveString(procedureName));
    }
 
    public List<String> getMatchingCaseSensitiveTableNames(String tableName)
    {
       List<TableInfo> tableInfos = _ciTableNames.get(new CaseInsensitiveString(tableName));
 
-
       if(null == tableInfos)
       {
          return Arrays.asList(tableName);
       }
-
 
       ArrayList<String> ret = new ArrayList<>();
       for (TableInfo tableInfo : tableInfos)
@@ -116,18 +130,29 @@ public class CaseInsensitiveCache implements Serializable
       }
 
       return ret;
-
    }
 
-   public String getCaseSensitiveProcedureName(String procedureName)
+   public List<String> getMatchingCaseSensitiveProcedureNames(String procedureName)
    {
-      String ret = _ciProcedureName_csProcedureName.get(new CaseInsensitiveString(procedureName));
+      List<ProcedureInfo> procedureInfos = _ciProcedureNames.get(new CaseInsensitiveString(procedureName));
 
-      if(null == ret)
+      if(null == procedureInfos)
       {
-         ret = procedureName;
+         return Arrays.asList(procedureName);
+      }
+
+      ArrayList<String> ret = new ArrayList<>();
+      for (ProcedureInfo procedureInfo : procedureInfos)
+      {
+         ret.add(procedureInfo.getName());
       }
 
       return ret;
    }
+
+   public List<ProcedureInfo> getProcedures(String procedureName)
+   {
+      return _ciProcedureNames.get(new CaseInsensitiveString(procedureName));
+   }
+
 }

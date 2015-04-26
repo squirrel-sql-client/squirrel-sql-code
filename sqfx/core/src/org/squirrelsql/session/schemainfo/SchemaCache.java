@@ -139,35 +139,35 @@ public class SchemaCache
       }
    }
 
-   public void reloadMatchingProcedures(String caseSensitveProcedureName)
+   public void reloadMatchingProcedures(String procedureName)
    {
-      if(null == caseSensitveProcedureName)
+
+      if(null == procedureName)
       {
          return;
       }
 
-      caseSensitveProcedureName = _caseInsensitiveCache.getCaseSensitiveProcedureName(caseSensitveProcedureName);
+      List<String> caseSensitiveProcedureNames = _caseInsensitiveCache.getMatchingCaseSensitiveProcedureNames(procedureName);
 
-
-      _reloadMatchingProcedures(caseSensitveProcedureName);
-
-      if(false == _reloadMatchingProcedures(caseSensitveProcedureName))
+      for (String caseSensitiveProcedureName : caseSensitiveProcedureNames)
       {
-         // There several ways database systems store names. One of these three should always match.
-         if(false == _reloadMatchingProcedures(caseSensitveProcedureName.toLowerCase()))
+         if(false == _reloadMatchingProcedures(caseSensitiveProcedureName))
          {
-            _reloadMatchingProcedures(caseSensitveProcedureName.toUpperCase());
+            // There several ways database systems store names. One of these three should always match.
+            if(false == _reloadMatchingProcedures(caseSensitiveProcedureName.toLowerCase()))
+            {
+               _reloadMatchingProcedures(caseSensitiveProcedureName.toUpperCase());
+            }
          }
       }
-
-
    }
 
    private boolean _reloadMatchingProcedures(String procedureName)
    {
-      List<ProcedureInfo> procedureInfos = _dbConnectorResult.getSQLConnection().getProcedureInfos(null, null, procedureName);
+      ArrayList<ProcedureInfo> procedureInfos = new ArrayList<>();
 
-      _caseInsensitiveCache.removeProc(procedureName);
+      procedureInfos.addAll(Utils.convertNullToArray(_dbConnectorResult.getSQLConnection().getProcedureInfos(null, null, procedureName)));
+      procedureInfos.addAll(Utils.convertNullToArray(_caseInsensitiveCache.getProcedures(procedureName)));
 
       boolean reloaded = false;
 
@@ -180,6 +180,9 @@ public class SchemaCache
          {
             toRemoveFrom.remove(procedureInfo);
          }
+
+         _caseInsensitiveCache.removeProc(procedureName);
+
 
          loadMatchingProcedures(procedureType, procedureName);
 
@@ -226,18 +229,18 @@ public class SchemaCache
 
       for (String caseSensitiveTableName : caseSensitiveTableNames)
       {
-         if(false == _reloadMatchingTable(caseSensitiveTableName))
+         if(false == _reloadMatchingTables(caseSensitiveTableName))
          {
             // There several ways database systems store names. One of these three should always match.
-            if(false == _reloadMatchingTable(caseSensitiveTableName.toLowerCase()))
+            if(false == _reloadMatchingTables(caseSensitiveTableName.toLowerCase()))
             {
-               _reloadMatchingTable(caseSensitiveTableName.toUpperCase());
+               _reloadMatchingTables(caseSensitiveTableName.toUpperCase());
             }
          }
       }
    }
 
-   private boolean _reloadMatchingTable(String tableName)
+   private boolean _reloadMatchingTables(String tableName)
    {
       ArrayList<TableInfo> tableInfos = new ArrayList<>();
 
