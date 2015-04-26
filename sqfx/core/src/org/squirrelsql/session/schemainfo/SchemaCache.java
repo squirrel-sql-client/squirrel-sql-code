@@ -178,7 +178,7 @@ public class SchemaCache
 
          if(null != toRemoveFrom)
          {
-            procedureInfos.remove(procedureInfo);
+            toRemoveFrom.remove(procedureInfo);
          }
 
          loadMatchingProcedures(procedureType, procedureName);
