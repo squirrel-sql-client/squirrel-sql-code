@@ -1,12 +1,11 @@
 package org.squirrelsql.session.action;
 
+import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import org.squirrelsql.session.SessionTabContext;
-import org.squirrelsql.workaround.KeyMatchWA;
 
 public class ActionHandle
 {
@@ -31,19 +30,19 @@ public class ActionHandle
       refreshActionUI();
    }
 
-   private void actionPerformed()
+   private void performAction(ActionEvent e)
    {
       if(null != _sqFxActionListener)
       {
          _sqFxActionListener.actionPerformed();
       }
-
+      e.consume();
    }
 
    public void setToolbarButton(Button toolbarButton)
    {
       _toolbarButton = toolbarButton;
-      _toolbarButton.setOnAction((e) -> actionPerformed());
+      _toolbarButton.setOnAction((e) -> performAction(e));
       _toolbarButton.setGraphic(_actionCfg.getIcon());
 
 
@@ -81,7 +80,7 @@ public class ActionHandle
    public void setMenuItem(MenuItem menuItem)
    {
       _menuItem = menuItem;
-      _menuItem.setOnAction((e) -> actionPerformed());
+      _menuItem.setOnAction((e) -> performAction(e));
       _menuItem.setAccelerator(_actionCfg.getKeyCodeCombination());
       refreshActionUI();
    }

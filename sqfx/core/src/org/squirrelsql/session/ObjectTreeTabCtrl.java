@@ -64,6 +64,7 @@ public class ObjectTreeTabCtrl
             if (actionCfg.matchesKeyEvent(keyEvent))
             {
                actionCfg.fire();
+               keyEvent.consume();
                return;
             }
          }
