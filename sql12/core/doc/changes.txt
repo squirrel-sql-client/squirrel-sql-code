@@ -8,6 +8,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Sybase dialect support when using jtds
+ Thanks to Sumit Agarwal for the merge request.
+
 On Mac OS X the SQuirreL now uses the acorn icon instead of the default java coffee cup icon.
   Thanks to Martin W. Kirst for the merge request.
 
