@@ -121,9 +121,12 @@ public class TableLoader
 
    public int getColIxByName(String columnName)
    {
+      String availableColumns = "";
+
       int colIx = -1;
       for (int i = 0; i < _columnHandles.size(); i++)
       {
+         availableColumns += _columnHandles.get(i).getHeader() + "\n";
          if(_columnHandles.get(i).getHeader().equalsIgnoreCase(columnName))
          {
             colIx = i;
@@ -133,7 +136,7 @@ public class TableLoader
 
       if (-1 == colIx)
       {
-         throw new IllegalArgumentException("Unknown column name: " + columnName);
+         throw new IllegalArgumentException("Unknown column name: " + columnName + " available colum names are:\n" + availableColumns);
       }
       return colIx;
    }

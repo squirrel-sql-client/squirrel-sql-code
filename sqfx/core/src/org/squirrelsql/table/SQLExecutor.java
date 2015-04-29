@@ -118,8 +118,8 @@ public class SQLExecutor
             while(true)
             {
 
-               TableLoader resultTableLoader = TableLoaderFactory.loadDataFromResultSet(res, statementChannel);
                TableLoader resultMetaDataTableLoader = ResultSetMetaDataLoader.loadMetaData(res);
+               TableLoader resultTableLoader = TableLoaderFactory.loadDataFromResultSet(res, statementChannel);
 
                List<ColumnInfo> columnInfos = ColumnInfo.createColumnInfosFromResultMetaData(resultMetaDataTableLoader);
 
