@@ -119,6 +119,11 @@ public class TableLoader
       return getCellAt(rowIx, getColIxByName(columnName));
    }
 
+   public String getColIxByNameSave(String columnName)
+   {
+      return null;
+   }
+
    public int getColIxByName(String columnName)
    {
       String availableColumns = "";
@@ -136,7 +141,7 @@ public class TableLoader
 
       if (-1 == colIx)
       {
-         throw new IllegalArgumentException("Unknown column name: " + columnName + " available colum names are:\n" + availableColumns);
+         throw new ColumnNotFoundException("Unknown column name: " + columnName + " available colum names are:\n" + availableColumns);
       }
       return colIx;
    }
@@ -232,4 +237,5 @@ public class TableLoader
    {
       _simpleObjectPropertyRows.get(tablePosition.getRow()).get(tablePosition.getColumn()).set(newValue);
    }
+
 }

@@ -120,16 +120,16 @@ public class ColumnInfo
       {
          int columnIndex = i;
 
-         String colName = tableColumnMetaDataTableLoader.getCellAsString(ColumnMetaProps.COLUMN_NAME.getPropName(), i);
-         int colType = tableColumnMetaDataTableLoader.getCellAsInt(ColumnMetaProps.DATA_TYPE.getPropName(), i);
-         String colTypeName = tableColumnMetaDataTableLoader.getCellAsString(ColumnMetaProps.TYPE_NAME.getPropName(), i);
-         Integer colSize = tableColumnMetaDataTableLoader.getCellAsInteger(ColumnMetaProps.COLUMN_SIZE.getPropName(), i);
-         Integer decDigits = tableColumnMetaDataTableLoader.getCellAsInteger(ColumnMetaProps.DECIMAL_DIGITS.getPropName(), i);
+         String colName = ColumnMetaProps.COLUMN_NAME.getCellAsString(tableColumnMetaDataTableLoader, i);
+         int colType = ColumnMetaProps.DATA_TYPE.getCellAsInt(tableColumnMetaDataTableLoader, i);
+         String colTypeName = ColumnMetaProps.TYPE_NAME.getCellAsString(tableColumnMetaDataTableLoader, i);
+         Integer colSize = ColumnMetaProps.COLUMN_SIZE.getCellAsInteger(tableColumnMetaDataTableLoader, i);
+         Integer decDigits = ColumnMetaProps.DECIMAL_DIGITS.getCellAsInteger(tableColumnMetaDataTableLoader, i);
 
-         String nullablePropValue = tableColumnMetaDataTableLoader.getCellAsString(ColumnMetaProps.IS_NULLABLE.getPropName(), i);
+         String nullablePropValue = ColumnMetaProps.IS_NULLABLE.getCellAsString(tableColumnMetaDataTableLoader, i);
          boolean nullable = ColumnMetaProps.isYes(nullablePropValue);
 
-         String remarks = tableColumnMetaDataTableLoader.getCellAsString(ColumnMetaProps.REMARKS.getPropName(), i);
+         String remarks = tableColumnMetaDataTableLoader.getCellAsString(ColumnMetaProps.REMARKS.getCellAsString(tableColumnMetaDataTableLoader, i), i);
 
          ret.add(new ColumnInfo(tableInfo.getName(), tableInfo.getSchema(), tableInfo.getCatalog(), columnIndex, colName, colType, colTypeName, colSize, decDigits, nullable, remarks));
 

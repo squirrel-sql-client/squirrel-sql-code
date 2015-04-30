@@ -521,7 +521,7 @@ public class SchemaCache
 
       for (int i = 0; i < cols.getRows().size(); i++)
       {
-         _caseInsensitiveCache.addColumn(cols.getCellAsString(ColumnMetaProps.COLUMN_NAME.getPropName(), i));
+         _caseInsensitiveCache.addColumn(ColumnMetaProps.COLUMN_NAME.getCellAsString(cols, i));
       }
 
       table.setColumnsAsTableLoader(cols);
