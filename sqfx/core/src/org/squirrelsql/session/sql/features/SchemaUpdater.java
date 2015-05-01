@@ -22,21 +22,35 @@ public class SchemaUpdater
 
    public void doUpdates(SQLTextAreaServices sqlTextAreaServices)
    {
+      boolean schemaUpdated = false;
+
+
       for (String sql : sqls)
       {
          String tableSimpleName = SchemaUpdaterSqlAnalyzer.getTableSimpleName(sql);
-         _session.getSchemaCacheValue().get().reloadMatchingTables(tableSimpleName);
+
+         if (null != tableSimpleName )
+         {
+            schemaUpdated = true;
+            _session.getSchemaCacheValue().get().reloadMatchingTables(tableSimpleName);
+         }
 
 
          String procedureSimpleName = SchemaUpdaterSqlAnalyzer.getProcedureSimpleName(sql);
-         _session.getSchemaCacheValue().get().reloadMatchingProcedures(procedureSimpleName);
+         if (null != procedureSimpleName)
+         {
+            schemaUpdated = true;
+            _session.getSchemaCacheValue().get().reloadMatchingProcedures(procedureSimpleName);
+         }
 
          //_session.getSchemaCacheValue().get().reloadMatchingUDTs("receipts");
       }
 
-      sqlTextAreaServices.updateHighlighting();
-
-      _session.getDbConnectorResult().fireCacheUpdate();
+      if (schemaUpdated)
+      {
+         sqlTextAreaServices.updateHighlighting();
+         _session.getDbConnectorResult().fireCacheUpdate();
+      }
 
    }
 }

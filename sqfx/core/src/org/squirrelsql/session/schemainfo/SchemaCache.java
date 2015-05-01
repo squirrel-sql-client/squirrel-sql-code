@@ -141,12 +141,6 @@ public class SchemaCache
 
    public void reloadMatchingProcedures(String procedureName)
    {
-
-      if(null == procedureName)
-      {
-         return;
-      }
-
       List<String> caseSensitiveProcedureNames = _caseInsensitiveCache.getMatchingCaseSensitiveProcedureNames(procedureName);
 
       for (String caseSensitiveProcedureName : caseSensitiveProcedureNames)
@@ -220,11 +214,6 @@ public class SchemaCache
 
    public void reloadMatchingTables(String tableName)
    {
-      if(null == tableName)
-      {
-         return;
-      }
-
       List<String> caseSensitiveTableNames = _caseInsensitiveCache.getMatchingCaseSensitiveTableNames(tableName);
 
       for (String caseSensitiveTableName : caseSensitiveTableNames)
