@@ -40,4 +40,7 @@ public class Props
    {
       return new ImageView(getImage(nameInPackage));
    }
+   public ImageView getImageView(Image imageName){
+	   return new ImageView(imageName);
+   }   
 }
