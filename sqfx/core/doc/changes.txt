@@ -1,6 +1,10 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: #1199 I can't connect to a MSSQL DB, but with SQuirreL I can
+
+Bug fix: On MSSQL tables where missing in Object tree
+
 Memory usage improvement
 
 Bug fix: #1173 Squirrel SQL FX connect to DB2, but doesn't show table structure, nor data

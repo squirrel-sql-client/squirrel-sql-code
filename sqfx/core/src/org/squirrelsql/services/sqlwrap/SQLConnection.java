@@ -15,6 +15,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SQLConnection
@@ -97,8 +98,16 @@ public class SQLConnection
          while (schemas.next())
          {
         	//Some Oracle versions error out since Oracle doesn't support catalogs, thus can't connect to DB
-        	if(supportsCatalogs()){
+        	if(supportsCatalogs())
+         {
         		schemaCatalog = schemas.getString("TABLE_CATALOG");
+
+            if(null == schemaCatalog)
+            {
+               // Without this tables are missing on MSSQL
+               schemaCatalog = _con.getCatalog();
+            }
+
         	}
             DBSchema dbSchema = new DBSchema(schemas.getString("TABLE_SCHEM"), schemaCatalog);
             ret.add(dbSchema);
@@ -271,7 +280,10 @@ public class SQLConnection
       }
       catch (SQLException e)
       {
-         throw new RuntimeException(e);
+         // MSSQL used to break here when access rights where missing. That's why we log instead of throw.
+         String msg = "Failed to load tables for: Catalog=" + catalog + "; Schema=" + schema + "; TableType=" + tableType;
+         new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_LOG).warning(msg, e);
+         return Collections.emptyList();
       }
    }
 
@@ -304,7 +316,10 @@ public class SQLConnection
       }
       catch (SQLException e)
       {
-         throw new RuntimeException(e);
+         // MSSQL used to break here when access rights where missing. That's why we log instead of throw.
+         String msg = "Failed to load procedures for criteria: Catalog=" + catalog + "; Schema=" + schema;
+         new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_LOG).warning(msg, e);
+         return Collections.emptyList();
       }
    }
 
@@ -328,7 +343,10 @@ public class SQLConnection
       }
       catch (SQLException e)
       {
-         throw new RuntimeException(e);
+         // MSSQL used to break here when access rights where missing. That's why we log instead of throw.
+         String msg = "Failed to load UDTs for: Catalog=" + catalog + "; Schema=" + schema;
+         new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_LOG).warning(msg, e);
+         return Collections.emptyList();
       }
    }
 
