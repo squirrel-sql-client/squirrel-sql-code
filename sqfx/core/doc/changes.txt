@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Memory usage improvement
+
 Bug fix: #1173 Squirrel SQL FX connect to DB2, but doesn't show table structure, nor data
 
 Bug fix: Reload (F5) was executed twice when the object tree tab was selected
