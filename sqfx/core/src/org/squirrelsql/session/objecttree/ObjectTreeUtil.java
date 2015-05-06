@@ -72,4 +72,14 @@ public class ObjectTreeUtil
    {
       return item.getValue().matches(itemToMatch.getValue());
    }
+
+   public static List<TreeItem<ObjectTreeNode>> findTreeItemsByName(TreeView<ObjectTreeNode> objectsTree, QualifiedObjectName objName)
+   {
+      List<TreeItem<ObjectTreeNode>> matches = new ArrayList<>();
+      TreeItem<ObjectTreeNode> root = objectsTree.getRoot();
+
+      recurse(root, matches, objectTreeNodeTreeItem -> objName.matches(objectTreeNodeTreeItem.getValue()));
+
+      return matches;
+   }
 }

@@ -17,7 +17,8 @@ public enum StdActionCfg
    SQL_TO_TABLE(null, "sql.to.table", "sql2table", ActionScope.SQL_EDITOR, null),
    SHOW_TOOLS_POPUP(null, "show.tools.popup", null, ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN)),
    RELOAD_DB_META_DATA("reload.png", "reload.meta.data", "reload", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.F5)),
-   DUPLICATE_LINE_OR_SELECTION(null, "duplicate.line.or.selection", "duplicate", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.D, KeyCodeCombination.CONTROL_DOWN));
+   DUPLICATE_LINE_OR_SELECTION(null, "duplicate.line.or.selection", "duplicate", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.D, KeyCodeCombination.CONTROL_DOWN)),
+   VIEW_IN_OBJECT_TREE(null, "view.object.at.caret.in.tree", "viewinobjecttree", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.B, KeyCodeCombination.CONTROL_DOWN));
 
 
 
@@ -46,7 +47,8 @@ public enum StdActionCfg
          SQL_TO_TABLE,
          EXEC_BOOKMARK,
          SHOW_TOOLS_POPUP,
-         DUPLICATE_LINE_OR_SELECTION
+         DUPLICATE_LINE_OR_SELECTION,
+         VIEW_IN_OBJECT_TREE
    };
 
    private ActionCfg _actionCfg;

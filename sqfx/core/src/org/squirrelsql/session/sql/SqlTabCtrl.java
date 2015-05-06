@@ -41,5 +41,10 @@ public class SqlTabCtrl
    {
       _sqlPaneCtrl.requestFocus();
    }
+
+   public SQLTextAreaServices getSQLTextAreaServices()
+   {
+      return _sqlPaneCtrl.getSQLTextAreaServices();
+   }
 }
 

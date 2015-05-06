@@ -26,6 +26,7 @@ public class ObjectTreeTabCtrl
 
    private SessionTabContext _sessionTabContext;
    private final Tab _objectsTab;
+   private TreeView<ObjectTreeNode> _objectsTree = new TreeView<>();
 
    public ObjectTreeTabCtrl(SessionTabContext sessionTabContext)
    {
@@ -86,36 +87,34 @@ public class ObjectTreeTabCtrl
       }
 
 
-      final TreeView<ObjectTreeNode> objectsTree = new TreeView<>();
+      _objectsTree.setCellFactory(cf -> new ObjectsTreeCell());
 
-      objectsTree.setCellFactory(cf -> new ObjectsTreeCell());
+      AliasCatalogsSchemasAndTypesCreator.createNodes(_objectsTree, _sessionTabContext.getSession());
 
-      AliasCatalogsSchemasAndTypesCreator.createNodes(objectsTree, _sessionTabContext.getSession());
+      TablesProceduresAndUDTsCreator.createNodes(_objectsTree, _sessionTabContext.getSession());
 
-      TablesProceduresAndUDTsCreator.createNodes(objectsTree, _sessionTabContext.getSession());
-
-      removeEmptySchemasIfRequested(objectsTree, _sessionTabContext.getSession());
+      removeEmptySchemasIfRequested(_objectsTree, _sessionTabContext.getSession());
 
 
 
 
-      _objectTabSplitPane.getItems().add(objectsTree);
-      _objectTabSplitPane.getItems().add(new TreeDetailsController(objectsTree, _sessionTabContext.getSession()).getComponent());
+      _objectTabSplitPane.getItems().add(_objectsTree);
+      _objectTabSplitPane.getItems().add(new TreeDetailsController(_objectsTree, _sessionTabContext.getSession()).getComponent());
 
 
-      final TreeItem<ObjectTreeNode> treeItemToSelect = ObjectTreeUtil.findTreeItem(objectsTree, formerSelectedTreeItem);
+      final TreeItem<ObjectTreeNode> treeItemToSelect = ObjectTreeUtil.findTreeItem(_objectsTree, formerSelectedTreeItem);
 
       if(null == treeItemToSelect)
       {
-         TreeItem<ObjectTreeNode> aliasItem = ObjectTreeUtil.findSingleTreeItem(objectsTree, ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY);
+         TreeItem<ObjectTreeNode> aliasItem = ObjectTreeUtil.findSingleTreeItem(_objectsTree, ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY);
          aliasItem.setExpanded(true);
-         objectsTree.getSelectionModel().select(aliasItem);
+         _objectsTree.getSelectionModel().select(aliasItem);
       }
       else
       {
-         objectsTree.getSelectionModel().select(treeItemToSelect);
-         int row = objectsTree.getRow(treeItemToSelect);
-         objectsTree.scrollTo(row);
+         _objectsTree.getSelectionModel().select(treeItemToSelect);
+         int row = _objectsTree.getRow(treeItemToSelect);
+         _objectsTree.scrollTo(row);
       }
 
       _objecttreeSplitPosSaver.apply(_objectTabSplitPane);
@@ -164,5 +163,26 @@ public class ObjectTreeTabCtrl
    public void close()
    {
       _objecttreeSplitPosSaver.save(_objectTabSplitPane);
+   }
+
+   public boolean selectObjectInTree(QualifiedObjectName objName)
+   {
+      List<TreeItem<ObjectTreeNode>> treeItems= ObjectTreeUtil.findTreeItemsByName(_objectsTree, objName);
+
+      if(0 == treeItems.size())
+      {
+         return false;
+      }
+
+      treeItems.get(0).setExpanded(true);
+
+      _objectsTree.getSelectionModel().select(treeItems.get(0));
+
+      _objectsTree.scrollTo(_objectsTree.getSelectionModel().getSelectedIndex());
+
+      _objectsTab.getTabPane().getSelectionModel().select(_objectsTab);
+
+      return true;
+
    }
 }

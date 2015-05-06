@@ -114,10 +114,9 @@ public class SQLTextAreaServices
       return sql;
    }
 
-   public String getTokenAtCarret()
+   public String getTokenTillCarret()
    {
-      return _getTokenAtCarretInfo().getTokenTillCarret();
-
+      return _getTokenAtCarretInfo().getTokenTillCaret();
    }
 
    private TokenAtCarretInfo _getTokenAtCarretInfo()
@@ -144,9 +143,10 @@ public class SQLTextAreaServices
       }
 
       begin = Math.max(begin, 0);
-      String token = sqlTextAreaText.substring(begin, caretPosition).trim();
+      String tokenTillCaret = sqlTextAreaText.substring(begin, caretPosition).trim();
+      String tokenAtCaret = sqlTextAreaText.substring(begin, end).trim();
 
-      return new TokenAtCarretInfo(token, begin, end, caretPosition);
+      return new TokenAtCarretInfo(tokenTillCaret, tokenAtCaret, begin, end, caretPosition);
    }
 
    public void replaceTokenAtCarretBy(String replacement)
@@ -226,5 +226,10 @@ public class SQLTextAreaServices
    public CaretPopup getCaretPopup()
    {
       return _caretPopup;
+   }
+
+   public String getTokenAtCaret()
+   {
+      return _getTokenAtCarretInfo().getTokenAtCaret();
    }
 }

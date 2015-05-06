@@ -57,7 +57,7 @@ public class CompletionCtrl
 
    private void _completeCode(boolean showPopupForSizeOne)
    {
-      String tokenAtCarret = _sqlTextAreaServices.getTokenAtCarret();
+      String tokenAtCarret = _sqlTextAreaServices.getTokenTillCarret();
 
 
       TokenParser tokenParser = new TokenParser(tokenAtCarret);
@@ -139,7 +139,7 @@ public class CompletionCtrl
 
    private void onCompleteNextChar()
    {
-      if (false == Utils.isEmptyString(_sqlTextAreaServices.getTokenAtCarret()))
+      if (false == Utils.isEmptyString(_sqlTextAreaServices.getTokenTillCarret()))
       {
          _completeCode(true);
       }
@@ -169,7 +169,7 @@ public class CompletionCtrl
 
    private void executeCompletion(CompletionCandidate completionCandidate, boolean removeSucceedingChars)
    {
-      TokenParser tokenParser = new TokenParser(_sqlTextAreaServices.getTokenAtCarret());
+      TokenParser tokenParser = new TokenParser(_sqlTextAreaServices.getTokenTillCarret());
       _sqlTextAreaServices.replaceTokenAtCarretBy(tokenParser.getCompletedSplitsStringLength(), removeSucceedingChars, completionCandidate.getReplacement());
    }
 

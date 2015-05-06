@@ -23,6 +23,7 @@ import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 import org.squirrelsql.session.schemainfo.SchemaCacheFactory;
 import org.squirrelsql.session.sql.SqlTabCtrl;
+import org.squirrelsql.session.sql.ViewInObjectTreeCommand;
 import org.squirrelsql.session.sql.bookmark.BookmarkEditCtrl;
 import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
 
@@ -79,6 +80,8 @@ public class SessionCtrl
       StdActionCfg.NEW_SQL_TAB.setAction(() -> AppState.get().getSessionManager().createSqlTab(sessionTabContext));
       StdActionCfg.EDIT_BOOKMARK.setAction(() -> new BookmarkEditCtrl(sessionTabContext));
       StdActionCfg.RELOAD_DB_META_DATA.setAction(() -> reloadSchemaCache());
+      StdActionCfg.VIEW_IN_OBJECT_TREE.setAction(() -> new ViewInObjectTreeCommand(_sqlTabCtrl.getSQLTextAreaServices(), _objectTreeTabCtrl));
+
    }
 
    private void reloadSchemaCache()

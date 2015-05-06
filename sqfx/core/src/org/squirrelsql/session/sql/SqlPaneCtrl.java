@@ -316,5 +316,10 @@ public class SqlPaneCtrl
       _sqlSplitPosSaver.save(_sqlTabSplitPane);
       _sqlEditTopPanelCtrl.close();
    }
+
+   public SQLTextAreaServices getSQLTextAreaServices()
+   {
+      return _sqlTextAreaServices;
+   }
 }
 

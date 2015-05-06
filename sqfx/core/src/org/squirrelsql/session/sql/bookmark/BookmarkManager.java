@@ -70,7 +70,7 @@ public class BookmarkManager
    {
       for (Bookmark abbreviation : _abbreviations)
       {
-         if(_sqlTextAreaServices.getTokenAtCarret().equalsIgnoreCase(abbreviation.getSelShortcut()))
+         if(_sqlTextAreaServices.getTokenTillCarret().equalsIgnoreCase(abbreviation.getSelShortcut()))
          {
             _sqlTextAreaServices.replaceTokenAtCarretBy(abbreviation.getSql());
             break;
