@@ -129,7 +129,7 @@ public class ColumnInfo
          String nullablePropValue = ColumnMetaProps.IS_NULLABLE.getCellAsString(tableColumnMetaDataTableLoader, i);
          boolean nullable = ColumnMetaProps.isYes(nullablePropValue);
 
-         String remarks = tableColumnMetaDataTableLoader.getCellAsString(ColumnMetaProps.REMARKS.getCellAsString(tableColumnMetaDataTableLoader, i), i);
+         String remarks = ColumnMetaProps.REMARKS.getCellAsString(tableColumnMetaDataTableLoader, i);
 
          ret.add(new ColumnInfo(tableInfo.getName(), tableInfo.getSchema(), tableInfo.getCatalog(), columnIndex, colName, colType, colTypeName, colSize, decDigits, nullable, remarks));
 

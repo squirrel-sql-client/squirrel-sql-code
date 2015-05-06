@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Code completion for table columns didn't work
+
 Feature: In the SQL editor use ctrl+B or right mouse menu or tools popup to locate the object at caret in Object tree
 
 Bug fix: #1199 I can't connect to a MSSQL DB, but with SQuirreL I can
