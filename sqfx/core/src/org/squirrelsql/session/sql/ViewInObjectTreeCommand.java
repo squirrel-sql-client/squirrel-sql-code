@@ -7,6 +7,8 @@ import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.ObjectTreeTabCtrl;
 import org.squirrelsql.session.objecttree.QualifiedObjectName;
 
+import java.util.ArrayList;
+
 public class ViewInObjectTreeCommand
 {
    public ViewInObjectTreeCommand(SQLTextAreaServices sqlTextAreaServices, ObjectTreeTabCtrl objectTreeTabCtrl)
@@ -24,40 +26,73 @@ public class ViewInObjectTreeCommand
          return;
       }
 
-      QualifiedObjectName qualifiedObjectName = getQualifiedObjectName(tokenAtCaret);
+      ArrayList<QualifiedObjectName> qualifiedObjectNames = getQualifiedObjectNames(tokenAtCaret);
 
-      if(false == objectTreeTabCtrl.selectObjectInTree(qualifiedObjectName))
+      for (QualifiedObjectName qualifiedObjectName : qualifiedObjectNames)
       {
-         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), new I18n(getClass()).t("no.object.found.in.object.tree", tokenAtCaret.trim()));
+         if(objectTreeTabCtrl.selectObjectInTree(qualifiedObjectName))
+         {
+            return;
+         }
       }
+
+      FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), new I18n(getClass()).t("no.object.found.in.object.tree", tokenAtCaret.trim()));
    }
 
 
-   private QualifiedObjectName getQualifiedObjectName(String objectName)
+   private ArrayList<QualifiedObjectName> getQualifiedObjectNames(String objectName)
    {
+      ArrayList<QualifiedObjectName> ret = new ArrayList<>();
+
       String[] splits = objectName.split("\\.");
 
       String object = null;
       String schema = null;
       String catalog = null;
 
-      if(splits.length >= 3)
+      if(splits.length > 3)
       {
          catalog = removeQuotes(splits[0]);
          schema = removeQuotes(splits[1]);
          object = removeQuotes(splits[2]);
+         ret.add(new QualifiedObjectName(catalog, schema, object));
+      }
+      else if(splits.length == 3)
+      {
+         catalog = removeQuotes(splits[0]);
+         schema = removeQuotes(splits[1]);
+         object = removeQuotes(splits[2]);
+         ret.add(new QualifiedObjectName(catalog, schema, object));
+
+         // last token may be a column
+         catalog = null;
+         schema = removeQuotes(splits[0]);
+         object = removeQuotes(splits[1]);
+         ret.add(new QualifiedObjectName(catalog, schema, object));
+
       }
       else if(splits.length == 2)
       {
+         catalog = null;
          schema = removeQuotes(splits[0]);
          object = removeQuotes(splits[1]);
+         ret.add(new QualifiedObjectName(catalog, schema, object));
+
+         // last token may be a column
+         catalog = null;
+         schema = null;
+         object = removeQuotes(splits[0]);
+         ret.add(new QualifiedObjectName(catalog, schema, object));
       }
       else
       {
+         catalog = null;
+         schema = null;
          object = removeQuotes(splits[0]);
+         ret.add(new QualifiedObjectName(catalog, schema, object));
       }
 
-      return new QualifiedObjectName(catalog, schema, object);
+      return ret;
    }
 
    private String removeQuotes(String objectName)
