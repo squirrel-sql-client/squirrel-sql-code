@@ -95,7 +95,7 @@ public class SavedQueriesPlugin extends DefaultPlugin {
 	@Override
 	public String getHelpFileName()
 	{
-		return "readme.txt";
+		return "doc/readme.txt";
 	}
 
 	/**
@@ -140,7 +140,8 @@ public class SavedQueriesPlugin extends DefaultPlugin {
 		_cache.save();
 		super.unload();
 	}
-	private void createMenu() {
+
+	private void createMenu() {
 		IApplication app = getApplication();
 		ActionCollection coll = app.getActionCollection();
 

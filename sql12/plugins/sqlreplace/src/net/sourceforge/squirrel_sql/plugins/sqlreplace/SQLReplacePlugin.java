@@ -122,7 +122,7 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 	@Override
 	public String getHelpFileName()
 	{
-		return "readme.txt";
+		return "doc/readme.html";
 	}
 
 	/**

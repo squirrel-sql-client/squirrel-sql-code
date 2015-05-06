@@ -131,7 +131,7 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	@Override
 	public String getHelpFileName()
 	{
-		return "readme.html";
+		return "doc/readme.html";
 	}
 
 	/**

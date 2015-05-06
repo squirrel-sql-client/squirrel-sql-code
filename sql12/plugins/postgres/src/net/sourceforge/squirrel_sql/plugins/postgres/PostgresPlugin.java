@@ -175,7 +175,7 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
      */
     @Override
     public String getHelpFileName() {
-        return "readme.html";
+        return "doc/readme.html";
     }
 
     /**

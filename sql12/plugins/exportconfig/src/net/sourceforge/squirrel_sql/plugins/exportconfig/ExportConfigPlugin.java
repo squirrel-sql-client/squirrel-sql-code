@@ -174,7 +174,7 @@ public class ExportConfigPlugin extends DefaultPlugin
 	 */
 	public String getHelpFileName()
 	{
-		return "readme.html";
+		return "doc/readme.html";
 	}
 
 	/**

@@ -140,7 +140,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     }
     
     public String getHelpFileName() {
-        return "readme.html";
+        return "doc/readme.html";
     }
     
     public String getLicenceFileName() {

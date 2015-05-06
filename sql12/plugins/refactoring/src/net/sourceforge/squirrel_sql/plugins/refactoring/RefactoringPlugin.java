@@ -154,7 +154,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
      *         a help file.
      */
     public String getHelpFileName() {
-        return "readme.html";
+        return "doc/readme.html";
     }
 
 

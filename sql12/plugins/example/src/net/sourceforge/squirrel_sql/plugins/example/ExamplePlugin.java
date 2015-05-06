@@ -85,7 +85,7 @@ public class ExamplePlugin extends DefaultSessionPlugin
 	 */
 	public String getHelpFileName()
 	{
-		return "readme.txt";
+		return "doc/readme.txt";
 	}
 
 	/**

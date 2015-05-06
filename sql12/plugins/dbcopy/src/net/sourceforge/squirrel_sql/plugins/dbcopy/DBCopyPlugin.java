@@ -139,7 +139,7 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	 */
 	public String getHelpFileName()
 	{
-		return "readme.html";
+		return "doc/readme.html";
 	}
 
 	/**

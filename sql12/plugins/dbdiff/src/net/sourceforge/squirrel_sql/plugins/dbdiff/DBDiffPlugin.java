@@ -136,7 +136,7 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	@Override
 	public String getHelpFileName()
 	{
-		return "readme.html";
+		return "doc/readme.html";
 	}
 
 	/**

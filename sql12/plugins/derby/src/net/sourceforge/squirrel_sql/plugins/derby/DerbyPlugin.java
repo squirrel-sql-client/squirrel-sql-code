@@ -148,7 +148,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
     */
    public String getHelpFileName() {
-      return "readme.html";
+      return "doc/readme.html";
    }
 
    /**

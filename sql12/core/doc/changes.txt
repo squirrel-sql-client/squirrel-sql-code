@@ -30,6 +30,8 @@ Syntax Plugin: Made background color for white spaces affect the whole SQL edito
 
 Bug fixes:
 
+#1188 Help tree links don't work.
+
 #1183 Empty Contents Tab in SQuirreL when Column-Names contain dashes.
   This was because double quotes were missing around column names
 

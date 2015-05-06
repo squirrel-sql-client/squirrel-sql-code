@@ -220,7 +220,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	 */
 	public String getHelpFileName()
 	{
-		return "readme.html";
+		return "doc/readme.html";
 	}
 
 	/**

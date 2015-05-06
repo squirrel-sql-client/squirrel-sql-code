@@ -117,7 +117,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 	 */
 	public String getHelpFileName()
 	{
-		return "readme.txt";
+		return "doc/readme.txt";
 	}
 
 	/**

@@ -82,7 +82,7 @@ public class SwingViolationsPlugin extends DefaultSessionPlugin
 	 */
 	public String getHelpFileName()
 	{
-		return "readme.txt";
+		return "doc/readme.html";
 	}
 
 	/**
