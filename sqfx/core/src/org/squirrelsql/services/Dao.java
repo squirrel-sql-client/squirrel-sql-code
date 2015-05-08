@@ -131,6 +131,7 @@ public class Dao
          File file = new File(AppState.get().getUserDir(), fileName);
          FileWriter fileWriter = new FileWriter(file);
          objectWriter.writeValue(fileWriter, toWrite);
+         fileWriter.close();
       }
       catch (IOException e)
       {
@@ -264,13 +265,15 @@ public class Dao
       try
       {
          File file = new File(AppState.get().getUserDir(), FILE_NAME_PREFERENCES);
+         FileInputStream in = new FileInputStream(file);
 
          Properties ret = new Properties();
          if (file.exists())
          {
-            ret.load(new FileInputStream(file));
+            ret.load(in);
          }
 
+         in.close();
          return ret;
       }
       catch (IOException e)
@@ -284,7 +287,9 @@ public class Dao
       try
       {
          File file = new File(AppState.get().getUserDir(), FILE_NAME_PREFERENCES);
-         preferences.store(new FileWriter(file), "SQuirreL SQL FX preferences");
+         FileWriter fileWriter = new FileWriter(file);
+         preferences.store(fileWriter, "SQuirreL SQL FX preferences");
+         fileWriter.close();
       }
       catch (IOException e)
       {

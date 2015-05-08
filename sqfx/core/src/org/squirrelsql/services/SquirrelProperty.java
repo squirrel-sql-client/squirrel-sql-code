@@ -53,13 +53,15 @@ public enum SquirrelProperty
       try
       {
          Properties props = new Properties();
+         FileWriter fileWriter = new FileWriter(file);
 
          for (SquirrelProperty squirrelProperty : SquirrelProperty.values())
          {
             props.put(squirrelProperty._key, squirrelProperty._defaultValue);
          }
 
-         props.store(new FileWriter(file), "SQuirreL SQL FX properties");
+         props.store(fileWriter, "SQuirreL SQL FX properties");
+         fileWriter.close();
       }
       catch (IOException e)
       {

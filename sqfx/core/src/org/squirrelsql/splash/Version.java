@@ -51,6 +51,14 @@ public class Version
          {
             shortVersion = "Unknown Version";
          }
+         finally {
+        	 try{
+        		 is.close();
+        	 }
+        	 catch(IOException e){
+        		 
+        	 }
+         }
       }
       return shortVersion;
    }
