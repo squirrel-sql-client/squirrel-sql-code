@@ -1,6 +1,7 @@
 package org.squirrelsql.aliases;
 
 import javafx.collections.ObservableList;
+import javafx.scene.image.Image;
 import javafx.scene.control.TreeItem;
 import org.apache.commons.lang3.SerializationUtils;
 import org.squirrelsql.Props;
@@ -8,6 +9,10 @@ import org.squirrelsql.globalicons.GlobalIconNames;
 
 public class AliasTreeUtil
 {
+   private static Props _props = new Props(AliasTreeUtil.class);
+   private final static Image _aliasImage = _props.getImage(GlobalIconNames.ALIAS);
+   private final static Image _folderImage = _props.getImage(GlobalIconNames.FOLDER);
+	
    public static TreeItem<AliasTreeNode> deepCopy(TreeItem<AliasTreeNode> toCopy)
    {
       TreeItem<AliasTreeNode> copyParent = createCopy(toCopy);
@@ -41,12 +46,12 @@ public class AliasTreeUtil
 
    public static TreeItem<AliasTreeNode> createFolderNode(String newFolderName)
    {
-      return new TreeItem<AliasTreeNode>(new AliasFolder(newFolderName), new Props(AliasTreeUtil.class).getImageView(GlobalIconNames.FOLDER));
+      return new TreeItem<AliasTreeNode>(new AliasFolder(newFolderName), _props.getImageView(_folderImage));
    }
 
    public static TreeItem<AliasTreeNode> createAliasNode(Alias alias)
    {
-      return new TreeItem<AliasTreeNode>(alias, new Props(AliasTreeUtil.class).getImageView("alias.png"));
+      return new TreeItem<AliasTreeNode>(alias, _props.getImageView(_aliasImage));
    }
 
    public static Alias cloneAlias(Alias alias)

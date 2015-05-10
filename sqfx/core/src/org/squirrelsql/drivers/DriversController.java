@@ -2,6 +2,7 @@ package org.squirrelsql.drivers;
 
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.squirrelsql.*;
@@ -12,7 +13,7 @@ public class DriversController
 {
 
 
-   private Props _props = new Props(this.getClass());
+   private static Props _props = new Props(DriversController.class);
    private I18n _i18n = new I18n(this.getClass());
    private Pref _pref = new Pref(this.getClass());
 
@@ -22,6 +23,8 @@ public class DriversController
    private DockPaneChanel _dockPaneChanel;
    private DriversManager _driversManager = new DriversManager();
    private ToggleButton _btnFilter;
+   private final static Image _driverLoadedImage = _props.getImage(GlobalIconNames.DRIVER_LOADED);
+   private final static Image _driverNotLoadedImage = _props.getImage(GlobalIconNames.DRIVER_NOT_LOADED);
 
 
    public DriversController(DockPaneChanel dockPaneChanel)
@@ -157,5 +160,15 @@ public class DriversController
    public Node getNode()
    {
       return _borderPane;
+   }
+   
+   public static Image getDriverloadedimage() 
+   {
+	  return _driverLoadedImage;
+   }
+
+   public static Image getDrivernotloadedimage() 
+   {
+	  return _driverNotLoadedImage;
    }
 }

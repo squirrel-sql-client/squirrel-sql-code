@@ -2,8 +2,10 @@ package org.squirrelsql.session.objecttree;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
+
 import org.squirrelsql.Props;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.DBSchema;
 import org.squirrelsql.session.ProcedureInfo;
@@ -14,16 +16,16 @@ public class ObjectTreeItemFactory
 {
    private static I18n _i18n = new I18n(ObjectTreeItemFactory.class);
    private static Props _props = new Props(ObjectTreeItemFactory.class);
-   //TODO Refactor image and imageviews across the app, maybe in a centralized location?
-   private static final Image _databaseImage = _props.getImage("database.png");
-   private static final Image _catalogImage = _props.getImage("catalog.png");
-   private static final Image _schemaImage = _props.getImage("schema.png");
-   private static final Image _tableTypeImage = _props.getImage("tableType.png");
-   private static final Image _procedureTypeImage = _props.getImage("procedureType.png");
-   private static final Image _udtTypeImage = _props.getImage("udtType.png");
-   private static final Image _tableImage = _props.getImage("table.png");
-   private static final Image _procedureImage = _props.getImage("procedure.png");
-   private static final Image _udtImage = _props.getImage("udt.png");
+
+   private static final Image _databaseImage = _props.getImage(GlobalIconNames.DATABASE);
+   private static final Image _catalogImage = _props.getImage(GlobalIconNames.CATALOG);
+   private static final Image _schemaImage = _props.getImage(GlobalIconNames.SCHEMA);
+   private static final Image _tableTypeImage = _props.getImage(GlobalIconNames.TABLE_TYPE);
+   private static final Image _procedureTypeImage = _props.getImage(GlobalIconNames.PROCEDURE_TYPE);
+   private static final Image _udtTypeImage = _props.getImage(GlobalIconNames.UDT_TYPE);
+   private static final Image _tableImage = _props.getImage(GlobalIconNames.TABLE);
+   private static final Image _procedureImage = _props.getImage(GlobalIconNames.PROCEDURE);
+   private static final Image _udtImage = _props.getImage(GlobalIconNames.UDT);
 
 
    public static TreeItem<ObjectTreeNode> createAlias(DbConnectorResult dbConnectorResult)

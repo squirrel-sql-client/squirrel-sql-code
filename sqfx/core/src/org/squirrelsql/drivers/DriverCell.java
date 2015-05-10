@@ -11,8 +11,6 @@ public class DriverCell extends ListCell<SQLDriver>
 {
 
    private Props _props = new Props(this.getClass());
-   private ImageView _iconLoaded = new ImageView(_props.getImage("driver_loaded.png"));
-   private ImageView _iconNotLoaded = new ImageView(_props.getImage("driver_not_loaded.png"));
 
    private Paint _stdTextFill;
 
@@ -57,11 +55,11 @@ public class DriverCell extends ListCell<SQLDriver>
    {
       if (sqlDriver.isLoaded())
       {
-         return _iconLoaded;
+         return new ImageView(DriversController.getDriverloadedimage());
       }
       else
       {
-         return _iconNotLoaded;
+         return new ImageView(DriversController.getDrivernotloadedimage());
       }
    }
 }
