@@ -9,11 +9,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.util.Duration;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.Dao;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.progress.TextProgressBar;
+import org.squirrelsql.services.Utils;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,12 +43,37 @@ public class StatusBarCtrl
    private final Button _msgButton = new Button();
    private Timer _curTimer;
    private ImageView _lastCountedIcon;
+   
+   private Long _totalMemory;
+   private Long _freeMemory;
+   private Long _usedMemory;
+   private final static Double _refreshTime = 1.0;
+   private static final int _megaBytes = 1024 * 1024;
+   private static final TextProgressBar _memoryBar = new TextProgressBar();
+   private final Button _garbageCollectButton = new Button();   
 
    public Node getNode()
    {
       HBox hBox = new HBox();
 
       hBox.setAlignment(Pos.CENTER_RIGHT);
+      
+      updateMemory();
+      Timeline memoryUpdater = new Timeline(new KeyFrame(Duration.seconds(_refreshTime), new EventHandler<ActionEvent>() {
+    	  @Override
+    	  public void handle(ActionEvent event) {
+    		  updateMemory();
+    	  }
+      }));
+      memoryUpdater.setCycleCount(Timeline.INDEFINITE);
+      memoryUpdater.play();      
+      hBox.getChildren().add(_memoryBar);
+      
+      _garbageCollectButton.setTooltip(new Tooltip(_i18n.t("statusbar.gc.tooltip")));
+      _garbageCollectButton.setGraphic(_iconMessage);
+      _garbageCollectButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> Utils.gc());
+      hBox.getChildren().add(_garbageCollectButton);
+      
       _txtMessages.setPrefColumnCount(30);
 
       _txtMessages.setEditable(false);
@@ -161,4 +191,14 @@ public class StatusBarCtrl
       ++_countError;
       refreshMessage(_iconError);
    }
+   private void updateMemory()
+   {
+	  _totalMemory = Runtime.getRuntime().totalMemory() / _megaBytes;
+	  _freeMemory = Runtime.getRuntime().freeMemory() / _megaBytes;
+	  _usedMemory = _totalMemory - _freeMemory;
+	  _memoryBar.setText(_usedMemory + " MB of " + _totalMemory + " MB");
+	  _memoryBar.setBarHeight(25);
+	  _memoryBar.setBarWidth(200);
+	  _memoryBar.getProgressBar().setProgress((double)_usedMemory/_totalMemory);	  
+	}   
 }

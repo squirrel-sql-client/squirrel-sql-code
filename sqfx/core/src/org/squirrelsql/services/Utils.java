@@ -183,4 +183,8 @@ public class Utils
 
       return arr;
    }
+   
+  public static void gc(){
+	  System.gc();
+  }
 }
