@@ -3,6 +3,7 @@ package org.squirrelsql;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -33,6 +34,8 @@ public class StatusBarCtrl
    private final ImageView _iconMessage = new ImageView(_props.getImage("message.png"));
    private final ImageView _iconInfo = new ImageView(_props.getImage(GlobalIconNames.INFORMATION));
    private final ImageView _iconWarning = new ImageView(_props.getImage(GlobalIconNames.WARNING));
+   private final ImageView _iconGc = new ImageView(_props.getImage("trash.png"));
+
    private final ImageView _iconError = new ImageView(_props.getImage(GlobalIconNames.ERROR));
 
    private final TextField _txtMessages = new TextField();
@@ -70,10 +73,11 @@ public class StatusBarCtrl
       hBox.getChildren().add(_memoryBar);
       
       _garbageCollectButton.setTooltip(new Tooltip(_i18n.t("statusbar.gc.tooltip")));
-      _garbageCollectButton.setGraphic(_iconMessage);
+      _garbageCollectButton.setGraphic(_iconGc);
       _garbageCollectButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> Utils.gc());
       hBox.getChildren().add(_garbageCollectButton);
-      
+      HBox.setMargin(_garbageCollectButton, new Insets(0,10,0,0));
+
       _txtMessages.setPrefColumnCount(30);
 
       _txtMessages.setEditable(false);
@@ -90,14 +94,7 @@ public class StatusBarCtrl
 
       _msgButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> _msgButton.setGraphic(_iconMessage));
 
-      _msgButton.setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent event)
-         {
-            onShowLogs();
-         }
-      });
+      _msgButton.setOnAction(e -> onShowLogs());
 
 
       refreshMessage(_iconMessage);
