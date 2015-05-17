@@ -188,10 +188,15 @@ public class SessionCtrl
 
       _sqlTabCtrl.close();
       _sessionTabContext.getSession().close();
+      
+      _objectTreeAndSqlTabPane.getSelectionModel().selectedItemProperty().removeListener((observable, oldValue, newValue) -> onTabChanged(newValue));
+      _sessionTab.setOnSelectionChanged(null);
+      
 
       AppState.get().getSessionManager().sessionClose(_sessionTabContext);
 
       AppState.get().removeApplicationCloseListener(_applicationCloseListener);
+      _sessionTab.setOnClosed(null);
    }
 
    public Tab getSessionTab()
