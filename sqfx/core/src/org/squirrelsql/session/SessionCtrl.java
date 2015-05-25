@@ -1,5 +1,6 @@
 package org.squirrelsql.session;
 
+import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
@@ -48,6 +49,7 @@ public class SessionCtrl
    private final Tab _sessionTab;
    private SessionTabContext _sessionTabContext;
    private ObjectTreeTabCtrl _objectTreeTabCtrl;
+   private ChangeListener<Tab> _tabChangeListener;
 
    public SessionCtrl(SessionTabContext sessionTabContext)
    {
@@ -155,7 +157,8 @@ public class SessionCtrl
 
       SessionTabSelectionRepaintWA.forceTabContentRepaintOnSelection(ret);
 
-      ret.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onTabChanged(newValue));
+      _tabChangeListener = (observable, oldValue, newValue) -> onTabChanged(newValue);
+      ret.getSelectionModel().selectedItemProperty().addListener(_tabChangeListener);
 
       return ret;
    }
@@ -189,7 +192,7 @@ public class SessionCtrl
       _sqlTabCtrl.close();
       _sessionTabContext.getSession().close();
       
-      _objectTreeAndSqlTabPane.getSelectionModel().selectedItemProperty().removeListener((observable, oldValue, newValue) -> onTabChanged(newValue));
+      _objectTreeAndSqlTabPane.getSelectionModel().selectedItemProperty().removeListener(_tabChangeListener);
       _sessionTab.setOnSelectionChanged(null);
       
 
