@@ -18,7 +18,8 @@ public enum StdActionCfg
    SHOW_TOOLS_POPUP(null, "show.tools.popup", null, ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN)),
    RELOAD_DB_META_DATA("reload.png", "reload.meta.data", "reload", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.F5)),
    DUPLICATE_LINE_OR_SELECTION(null, "duplicate.line.or.selection", "duplicate", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.D, KeyCodeCombination.CONTROL_DOWN)),
-   VIEW_IN_OBJECT_TREE(null, "view.object.at.caret.in.tree", "viewinobjecttree", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.B, KeyCodeCombination.CONTROL_DOWN));
+   VIEW_IN_OBJECT_TREE(null, "view.object.at.caret.in.tree", "viewinobjecttree", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.B, KeyCodeCombination.CONTROL_DOWN)),
+   SQL_REFORMAT(null, "format.sql", "formatsql", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.ALT_DOWN));
 
 
 
@@ -48,7 +49,8 @@ public enum StdActionCfg
          EXEC_BOOKMARK,
          SHOW_TOOLS_POPUP,
          DUPLICATE_LINE_OR_SELECTION,
-         VIEW_IN_OBJECT_TREE
+         VIEW_IN_OBJECT_TREE,
+         SQL_REFORMAT
    };
 
    private ActionCfg _actionCfg;

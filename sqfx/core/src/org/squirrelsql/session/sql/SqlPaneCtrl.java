@@ -104,6 +104,7 @@ public class SqlPaneCtrl
       StdActionCfg.ESCAPE_DATE.setAction(() -> new EscapeDateCtrl(s -> _sqlTextAreaServices.insertAtCarret(s)));
       StdActionCfg.SQL_TO_TABLE.setAction(() -> new SqlToTableCtrl(_sessionTabContext.getSession(), _sqlTextAreaServices));
       StdActionCfg.DUPLICATE_LINE_OR_SELECTION.setAction(() -> new DuplicateLineCommand(_sqlTextAreaServices));
+      StdActionCfg.SQL_REFORMAT.setAction(() -> new FormatSqlCommand(_sqlTextAreaServices));
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent)

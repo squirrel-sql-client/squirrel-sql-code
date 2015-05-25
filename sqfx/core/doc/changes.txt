@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Formating SQL (ctrl+alt+F)
+
 Feature: Memory usage display and garbage collection button in status bar
 
 Bug fix: Code completion for table columns didn't work

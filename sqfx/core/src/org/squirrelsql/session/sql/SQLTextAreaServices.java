@@ -3,6 +3,7 @@ package org.squirrelsql.session.sql;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import javafx.event.EventHandler;
+import javafx.scene.control.IndexRange;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.services.Utils;
@@ -91,28 +92,58 @@ public class SQLTextAreaServices
 
       if(Utils.isEmptyString(sql))
       {
-         int caretPosition = _sqlTextArea.getCaretPosition();
-         String sqlTextAreaText = _sqlTextArea.getText();
-
-         String sep = SyntaxConstants.CODE_AREA_LINE_SEP + SyntaxConstants.CODE_AREA_LINE_SEP;
-
-         int begin = caretPosition;
-         while(0 < begin && false == sqlTextAreaText.substring(0, begin).endsWith(sep))
-         {
-            --begin;
-         }
-
-         int end = caretPosition;
-         while(sqlTextAreaText.length() > end && false == sqlTextAreaText.substring(end).startsWith(sep))
-         {
-            ++end;
-         }
-
-         sql = sqlTextAreaText.substring(begin, end);
+         CaretBounds caretBounds = getCurrentSqlCaretBounds();
+         sql = _sqlTextArea.getText().substring(caretBounds.begin, caretBounds.end);
       }
 
       return sql;
    }
+
+   private CaretBounds getCurrentSqlCaretBounds()
+   {
+      CaretBounds caretBounds = new CaretBounds();
+
+      IndexRange selection = _sqlTextArea.getSelection();
+      if(0 < selection.getLength())
+      {
+         caretBounds.begin = selection.getStart();
+         caretBounds.end = selection.getEnd();
+         return caretBounds;
+      }
+
+
+      int caretPosition = _sqlTextArea.getCaretPosition();
+      String sqlTextAreaText = _sqlTextArea.getText();
+
+      String sep = SyntaxConstants.CODE_AREA_LINE_SEP + SyntaxConstants.CODE_AREA_LINE_SEP;
+
+      caretBounds.begin = caretPosition;
+      while(0 < caretBounds.begin && false == sqlTextAreaText.substring(0, caretBounds.begin).endsWith(sep))
+      {
+         --caretBounds.begin;
+      }
+
+      caretBounds.end = caretPosition;
+      while(sqlTextAreaText.length() > caretBounds.end && false == sqlTextAreaText.substring(caretBounds.end).startsWith(sep))
+      {
+         ++caretBounds.end;
+      }
+      return caretBounds;
+   }
+
+   public void replaceCurrentSql(String replacement)
+   {
+      String sql = _sqlTextArea.getSelectedText();
+
+      if(Utils.isEmptyString(sql))
+      {
+         CaretBounds currentSqlCaretBounds = getCurrentSqlCaretBounds();
+         _sqlTextArea.selectRange(currentSqlCaretBounds.begin, currentSqlCaretBounds.end);
+      }
+
+      _sqlTextArea.replaceSelection(replacement);
+   }
+
 
    public String getTokenTillCarret()
    {

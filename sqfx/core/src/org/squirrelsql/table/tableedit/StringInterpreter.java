@@ -155,4 +155,16 @@ public class StringInterpreter
          return defaultValue;
       }
    }
+
+   public static <T>  T interpretNonNull(String buf, Class<T> clazz, T defaultValue)
+   {
+      T ret = interpret(buf, clazz, defaultValue);
+
+      if(null == ret)
+      {
+         return defaultValue;
+      }
+
+      return ret;
+   }
 }

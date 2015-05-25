@@ -7,7 +7,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
-public class SettingsView
+public class GeneralView
 {
    @FXML TextField txtStatementSeparator;
    @FXML RadioButton radStandardProps;
@@ -18,8 +18,4 @@ public class SettingsView
    @FXML CheckBox chkLimitRowsByDefault;
    @FXML TextField txtLimitRowsDefault;
    @FXML Button btnSaveStandardProperties;
-
-   @FXML Button btnOk;
-   @FXML Button btnCancel;
-
 }

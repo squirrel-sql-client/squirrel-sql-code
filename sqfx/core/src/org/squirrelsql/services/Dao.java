@@ -13,6 +13,7 @@ import org.squirrelsql.aliases.AliasTreeStructureNode;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
 import org.squirrelsql.session.sql.bookmark.BookmarkPersistence;
+import org.squirrelsql.settings.SQLFormatSettings;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -27,6 +28,7 @@ public class Dao
    public static final String FILE_NAME_SQL_HISTORY = "sqlHistory.json";
    public static final String FILE_NAME_BOOKMARKS = "bookmarks.json";
    public static final String FILE_NAME_SETTINGS = "settings.json";
+   public static final String FILE_NAME_SQL_FORMAT_SETTINGS = "sqlFormatSettings.json";
 
    public static final String FILE_NAME_PREFERENCES = "preferences.properties";
 
@@ -308,4 +310,13 @@ public class Dao
    }
 
 
+   public static SQLFormatSettings loadSQLFormatSeetings()
+   {
+      return loadObject(FILE_NAME_SQL_FORMAT_SETTINGS, new SQLFormatSettings());
+   }
+
+   public static  void writerSQLFormatSeetings(SQLFormatSettings sqlFormatSettings)
+   {
+      writeObject(sqlFormatSettings, FILE_NAME_SQL_FORMAT_SETTINGS);
+   }
 }

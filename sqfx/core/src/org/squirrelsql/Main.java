@@ -14,7 +14,7 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.StageDimensionSaver;
 import org.squirrelsql.session.action.ActionUtil;
-import org.squirrelsql.settings.SettingsController;
+import org.squirrelsql.settings.SettingsDialogController;
 import org.squirrelsql.splash.SquirrelSplashScreen;
 
 public class Main extends Application
@@ -102,7 +102,7 @@ public class Main extends Application
 
       MenuItem showSettings = new MenuItem(i18n.t("main.menu.show.settings"));
       file.getItems().add(showSettings);
-      showSettings.setOnAction(e -> new SettingsController());
+      showSettings.setOnAction(e -> new SettingsDialogController());
 
       MenuItem exit = new MenuItem(i18n.t("main.menu.exit"));
       file.getItems().add(exit);

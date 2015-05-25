@@ -2,7 +2,9 @@ package org.squirrelsql.session.sql.copysqlpart;
 
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import org.squirrelsql.AppState;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.sqlreformat.CodeReformatorFractory;
 import org.squirrelsql.table.tableselection.CellItemsWithColumn;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
 
@@ -10,10 +12,12 @@ import java.util.List;
 
 public class InsertStatCreator
 {
-   private static final String STATEMENT_SEPARATOR = ";";
 
    public static void onCopyAsInsertStat(ExtendedTableSelectionHandler extendedTableSelectionHandler)
    {
+      String statementSeparator = AppState.get().getSettingsManager().getSettings().getStatementSeparator();
+
+
       List<CellItemsWithColumn> selectedCellItemsByColumn = extendedTableSelectionHandler.getSelectedCellItemsWithColumn();
 
 
@@ -56,19 +60,21 @@ public class InsertStatCreator
 
          buf.append(colNames).append(" VALUES ").append(vals);
 
-         if (1 < STATEMENT_SEPARATOR.length())
+         if (1 < statementSeparator.length())
          {
-            buf.append(" ").append(STATEMENT_SEPARATOR).append("\n");
+            buf.append(" ").append(statementSeparator).append("\n");
          }
          else
          {
-            buf.append(STATEMENT_SEPARATOR).append("\n");
+            buf.append(statementSeparator).append("\n");
          }
 
          colNames.setLength(0);
          vals.setLength(0);
 
       }
+
+      //String sql = CodeReformatorFractory.createCodeReformator().reformat(buf.toString());
 
       final Clipboard clipboard = Clipboard.getSystemClipboard();
       final ClipboardContent content = new ClipboardContent();
