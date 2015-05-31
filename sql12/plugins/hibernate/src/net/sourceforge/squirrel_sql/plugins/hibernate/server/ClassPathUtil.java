@@ -31,9 +31,12 @@ public class ClassPathUtil
       {
          File[] files = new File(classPathItem.getPath()).listFiles();
 
-         for (File file : files)
+         if(null != files)
          {
-            ret.add(file.getPath());
+            for (File file : files)
+            {
+               ret.add(file.getPath());
+            }
          }
       }
       else
