@@ -151,6 +151,7 @@ public class DialectFactory
 		dbNameDialectMap.put(maxDbDialect.getDisplayName(), maxDbDialect);
 		dbNameDialectMap.put(mckoiDialect.getDisplayName(), mckoiDialect);
 		dbNameDialectMap.put(mysqlDialect.getDisplayName(), mysqlDialect);
+		dbNameDialectMap.put(mysql5Dialect.getDisplayName(), mysql5Dialect);
 		dbNameDialectMap.put(netezzaDialect.getDisplayName(), netezzaDialect);
 		dbNameDialectMap.put(greenplumDialect.getDisplayName(), greenplumDialect);
 		dbNameDialectMap.put(oracle9iDialect.getDisplayName(), oracle9iDialect);

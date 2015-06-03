@@ -30,6 +30,9 @@ Syntax Plugin: Made background color for white spaces affect the whole SQL edito
 
 Bug fixes:
 
+#1193 Wrong command for MySQL when renaming a column.
+  The problem was a wrong preselection of the dialect for MySql5 DBs.
+
 Hibernate Plugin: In menu File --> Global Preferences --> Tab Hibernate --> The "Details..." button in the lower part of the panel used to break with a NullPointerException
   when a directory of the Hibernate class path did not exist.
 
