@@ -267,15 +267,15 @@ public class Dao
       try
       {
          File file = new File(AppState.get().getUserDir(), FILE_NAME_PREFERENCES);
-         FileInputStream in = new FileInputStream(file);
 
          Properties ret = new Properties();
          if (file.exists())
          {
-            ret.load(in);
+             FileInputStream in = new FileInputStream(file);
+             ret.load(in);
+             in.close();
          }
 
-         in.close();
          return ret;
       }
       catch (IOException e)
