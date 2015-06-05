@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Fixed NPE when there is no preferences.properties file on startup
+
 Feature: Formating SQL (ctrl+alt+F)
 
 Feature: Memory usage display and garbage collection button in status bar
