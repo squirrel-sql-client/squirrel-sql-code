@@ -29,7 +29,7 @@ public abstract class IndexedColumn
       }
    }
 
-   public void sortIx(Comparator comparator)
+   protected void sortIx(Comparator comparator)
    {
       _comparator = comparator;
       Collections.sort(_ix, _comparator);
@@ -150,4 +150,27 @@ public abstract class IndexedColumn
    }
 
    public abstract String calculateDist(Object beginData, Object endData);
+
+   public int countDistinctValsForInterval(int firstIx, int lastIx)
+   {
+      int count = 1;
+      int firstIxOfCurrentValue = getRowIx(firstIx);
+
+      // We assume that values returned by get(i) are sorted.
+      for(int i=firstIx; i <= lastIx; ++i)
+      {
+         if(0 != _comparator.compare(firstIxOfCurrentValue, getRowIx(i)))
+         {
+            ++count;
+            firstIxOfCurrentValue = getRowIx(i);
+         }
+      }
+
+      return count;
+   }
+
+   public int countDistinctValsForColumn()
+   {
+      return countDistinctValsForInterval(0, _ix.size() - 1);
+   }
 }

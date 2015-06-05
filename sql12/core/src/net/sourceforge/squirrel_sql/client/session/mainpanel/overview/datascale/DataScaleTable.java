@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTable;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -16,6 +18,9 @@ import java.util.List;
 
 public class DataScaleTable extends SortableTable
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataScaleTable.class);
+
+
    private List<Object[]> _allRows;
    private ColumnDisplayDefinition[] _columnDefinitions;
 
@@ -45,7 +50,12 @@ public class DataScaleTable extends SortableTable
       String headerValue = (String) getColumnModel().getColumn(column).getHeaderValue();
       if(DataScaleTableModel.COL_NAME_COLUMN.equals(headerValue))
       {
-         return super.getCellRenderer(row, column);
+         TableCellRenderer cellRenderer = super.getCellRenderer(row, column);
+
+         JLabel label = (JLabel) cellRenderer.getTableCellRendererComponent(this, headerValue, false, false, row, column);
+         label.setToolTipText(s_stringMgr.getString("DataScaleTable.columnNameToolTip"));
+
+         return cellRenderer;
       }
       else
       {

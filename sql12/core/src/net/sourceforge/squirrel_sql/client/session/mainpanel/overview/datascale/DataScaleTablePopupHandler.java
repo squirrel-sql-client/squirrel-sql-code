@@ -31,6 +31,7 @@ public class DataScaleTablePopupHandler
    private DataScaleTable _dataScaleTable;
    private JButton _buttonPopupWasOpenedAt;
    private DataScale _dataScalePopupWasOpenedAt;
+   private MouseEvent _mouseEventOfPopup;
 
    DataScaleTablePopupHandler(final DataScaleTable dataScaleTable)
    {
@@ -131,6 +132,16 @@ public class DataScaleTablePopupHandler
       });
       popup.add(mnuInTableWin);
 
+      JMenuItem mnuIntervalDetails = new JMenuItem(s_stringMgr.getString("DataScaleTablePopupHandler.ShowIntervalDetails"));
+      mnuIntervalDetails.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            _dataScalePopupWasOpenedAt.showIntervalDetails(_buttonPopupWasOpenedAt, _mouseEventOfPopup.getLocationOnScreen());
+         }
+      });
+      popup.add(mnuIntervalDetails);
+
       return popup;
    }
 
@@ -138,6 +149,8 @@ public class DataScaleTablePopupHandler
    {
       if (evt.isPopupTrigger())
       {
+         _mouseEventOfPopup = evt;
+
          Point point = new Point(evt.getX(), evt.getY());
 
          int colIx = _dataScaleTable.columnAtPoint(point);

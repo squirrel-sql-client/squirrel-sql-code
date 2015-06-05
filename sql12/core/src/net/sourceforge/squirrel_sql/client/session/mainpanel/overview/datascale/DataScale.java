@@ -72,7 +72,7 @@ public class DataScale implements Comparable<DataScale>
       final JButton ret = new JButton(text);
 
       _defaultButtonBackgroundColor = ret.getBackground();
-      ret.setToolTipText(_intervals.get(intervalIx).getToolTip());
+      ret.setToolTipText(_intervals.get(intervalIx).getSmallToolTipHtml());
 
       ret.setBorder(BorderFactory.createLineBorder(Color.black));
 
@@ -196,5 +196,11 @@ public class DataScale implements Comparable<DataScale>
             btn.setBackground(_defaultButtonBackgroundColor);
          }
       }
+   }
+
+   public void showIntervalDetails(JButton buttonPopupWasOpenedAt, Point dialogLocation)
+   {
+      Interval interval = _intervalByButton.get(buttonPopupWasOpenedAt);
+      _dataScaleListener.showIntervalDetails(interval.getBigToolTipHtml(), dialogLocation);
    }
 }

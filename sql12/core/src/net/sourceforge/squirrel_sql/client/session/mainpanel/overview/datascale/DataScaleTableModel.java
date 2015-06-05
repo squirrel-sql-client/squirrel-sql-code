@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 public class DataScaleTableModel extends AbstractTableModel
@@ -18,12 +19,14 @@ public class DataScaleTableModel extends AbstractTableModel
 
    private DataScale[] _dataScales;
    private CallDepthComboModel _callDepth;
+   private ArrayList<String> _columnNames;
 
 
    public DataScaleTableModel(DataScale[] dataScales, CallDepthComboModel callDepth)
    {
       _dataScales = dataScales;
       _callDepth = callDepth;
+      _columnNames = createColumnNames(_dataScales);
    }
 
 
@@ -55,12 +58,23 @@ public class DataScaleTableModel extends AbstractTableModel
    {
       if (0 == columnIndex)
       {
-         return _dataScales[rowIndex].getColumn();
+         return _columnNames.get(rowIndex);
       }
       else
       {
          return _dataScales[rowIndex];
       }
+   }
+
+   private ArrayList<String> createColumnNames(DataScale[] dataScales)
+   {
+      ArrayList<String> columnNames = new ArrayList<String>();
+      for (DataScale dataScale : dataScales)
+      {
+         String colName = dataScale.getColumn() + " [" + dataScale.getIndexedColumn().countDistinctValsForColumn() + "]";
+         columnNames.add(colName);
+      }
+      return columnNames;
    }
 
    public DataScale getDataScaleAt(int row)

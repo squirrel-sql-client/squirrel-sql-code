@@ -10,6 +10,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -54,6 +55,11 @@ class BarChartCreator
 
          @Override
          public void showInTable(Interval interval)
+         {
+         }
+
+         @Override
+         public void showIntervalDetails(String intervalDetailsHtml, Point dialogLocation)
          {
          }
       };

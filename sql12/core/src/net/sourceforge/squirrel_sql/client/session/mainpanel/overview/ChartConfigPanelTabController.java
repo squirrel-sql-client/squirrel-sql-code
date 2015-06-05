@@ -112,7 +112,7 @@ public class ChartConfigPanelTabController
       cboColumns.setSelectedItem(formerSelectedItem);
 
 
-      if(null == cboColumns.getSelectedItem())
+      if(null == cboColumns.getSelectedItem() && 0 < cboColumns.getItemCount())
       {
          cboColumns.setSelectedIndex(0);
       }

@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -393,6 +394,12 @@ public class OverviewCtrl
          {
             onShowIntervalInTable(interval);
          }
+
+         @Override
+         public void showIntervalDetails(String intervalDetailsHtml, Point dialogLocation)
+         {
+            onShowIntervalDetails(intervalDetailsHtml, dialogLocation);
+         }
       };
 
 
@@ -402,6 +409,11 @@ public class OverviewCtrl
       }
 
       initScaleTable(scales, rows, columnDefinitions, keepFormerParent, selectedCallDepth);
+   }
+
+   private void onShowIntervalDetails(String intervalDetailsHtml, Point dialogLocation)
+   {
+      new IntervalDetailsController(intervalDetailsHtml, GUIUtils.getOwningFrame(_overviewPanel), dialogLocation);
    }
 
    private void initScaleTable(DataScale[] scales, List<Object[]> rows, ColumnDisplayDefinition[] columnDefinitions, boolean keepFormerParent, CallDepthComboModel callDepth)

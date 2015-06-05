@@ -8,6 +8,11 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Feature request #501 Overview/Charts Tab: Distinct Counts
+  - Distinct counts for an Overview as a whole are now displayed right next to the column name
+  - Distinct counts of Intervals are available as tool tips
+    as well as a new details window which is accessible through the right mouse menu
+
 Sybase dialect support when using jtds
  Thanks to Sumit Agarwal for the merge request.
 
