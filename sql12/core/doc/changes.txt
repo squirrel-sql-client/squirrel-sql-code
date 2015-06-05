@@ -39,7 +39,7 @@ When adjusting table column widths a maximum width may now be defined.
 Speeded up reading and writing Alias properties. As result opening and closing a connections will be much faster for big, complicated databases.
   Thanks to Jaroslaw Jarmolowicz for the patch
 
-Starting and stopping Squirell is much faster for big, complicated databases
+Starting and stopping SQuirreL is much faster for big, complicated databases
   Thanks to Jaroslaw Jarmolowicz for the patch
 
 Postgres Plugin:
