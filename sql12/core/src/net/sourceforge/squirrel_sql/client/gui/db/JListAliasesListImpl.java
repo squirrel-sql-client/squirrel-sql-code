@@ -119,7 +119,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
    {
       final ISQLAlias selectedAlias = getSelectedAlias(null);
 
-      _model.sortAliases();
+      _model.sortAliasesForListImpl();
 
 
 		SwingUtilities.invokeLater(new Runnable()

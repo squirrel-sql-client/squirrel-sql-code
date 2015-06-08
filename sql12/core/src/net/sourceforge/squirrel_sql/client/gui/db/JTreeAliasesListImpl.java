@@ -334,20 +334,35 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private void onAliasRemoved(ListDataEvent e)
    {
+      if(_aliasesListModel.isBeingSortedForListImpl())
+      {
+         return;
+      }
+
       DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
 
-      DefaultMutableTreeNode delNode = findRemovedNode();
+      ArrayList<DefaultMutableTreeNode> delNodes = findRemovedNodes();
+
+      if(0 == delNodes.size())
+      {
+         return;
+      }
 
       DefaultMutableTreeNode nextToSel;
-      nextToSel = delNode.getNextSibling();
+      DefaultMutableTreeNode toSelectNextTo = delNodes.get(delNodes.size() - 1);
+      nextToSel = toSelectNextTo.getNextSibling();
 
       if(null == nextToSel)
       {
-         nextToSel = delNode.getPreviousSibling();
+         nextToSel = toSelectNextTo.getPreviousSibling();
       }
 
-      DefaultMutableTreeNode parent = (DefaultMutableTreeNode) delNode.getParent();
-      treeModel.removeNodeFromParent(delNode);
+      DefaultMutableTreeNode parent = (DefaultMutableTreeNode) toSelectNextTo.getParent();
+
+      for (DefaultMutableTreeNode delNode : delNodes)
+      {
+         treeModel.removeNodeFromParent(delNode);
+      }
 
 
       if(null != nextToSel)
@@ -363,7 +378,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       }
    }
 
-   private DefaultMutableTreeNode findRemovedNode()
+   private ArrayList<DefaultMutableTreeNode> findRemovedNodes()
    {
       ArrayList<SQLAlias> buf = new ArrayList<SQLAlias>();
 
@@ -371,15 +386,17 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
       fillAllAliasesFrom(root, buf);
 
+      ArrayList<DefaultMutableTreeNode> ret = new ArrayList<DefaultMutableTreeNode>();
+
       for (SQLAlias sqlAlias : buf)
       {
          if(-1 == _aliasesListModel.getIndex(sqlAlias))
          {
-            return findNode(sqlAlias, root);
+            ret.add(findNode(sqlAlias, root));
          }
       }
 
-      return null;
+      return ret;
    }
 
    private void fillAllAliasesFrom(DefaultMutableTreeNode node, ArrayList<SQLAlias> toFill)
@@ -399,7 +416,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private void onAliasAdded(ListDataEvent e)
    {
-      if(_dontReactToAliasAdd)
+      if(_dontReactToAliasAdd || _aliasesListModel.isBeingSortedForListImpl())
       {
          return;
       }

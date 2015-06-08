@@ -38,9 +38,10 @@ import javax.swing.*;
  */
 public class AliasesListModel extends SortedListModel
 {
-    private static final long serialVersionUID = 1L;
     /** Application API. */
 	private IApplication _app;
+
+	private boolean _isBeingSortedForListImpl = false;
 
 	/**
 	 * Listen to the <TT>DataCache</TT> object for additions
@@ -88,19 +89,27 @@ public class AliasesListModel extends SortedListModel
 		removeElement(alias);
 	}
 
-   public void sortAliases()
+   public void sortAliasesForListImpl()
    {
-		Object[] aliases = toArray();
-
-		Arrays.sort(aliases);
-
-		clear();
-
-		for (int i = 0; i < aliases.length; i++)
+		try
 		{
-			addElement(aliases[i]);
+			_isBeingSortedForListImpl = true;
+			Object[] aliases = toArray();
+
+			Arrays.sort(aliases);
+
+			clear();
+
+			for (int i = 0; i < aliases.length; i++)
+         {
+            addElement(aliases[i]);
+			}
 		}
-   }
+		finally
+		{
+			_isBeingSortedForListImpl = false;
+		}
+	}
 
    public int getIndex(SQLAlias alias)
    {
@@ -130,8 +139,13 @@ public class AliasesListModel extends SortedListModel
       return null;
    }
 
+	public boolean isBeingSortedForListImpl()
+	{
+		return _isBeingSortedForListImpl;
+	}
 
-   /**
+
+	/**
 	 * Listener to changes in <TT>ObjectCache</TT>. As aliases are
 	 * added to/removed from <TT>DataCache</TT> this model is updated.
 	 */
