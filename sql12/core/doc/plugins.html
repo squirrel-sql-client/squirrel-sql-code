@@ -191,13 +191,13 @@ private static ILogger s_log = LoggerController.createLogger(&lt;your-class&gt;.
 <P>And then you can use the logger:</P>
 
 <PRE>
-s_log.error("Error occured loading Look and Feel: " + lafClassName, ex);
+s_log.error("Error occurred loading Look and Feel: " + lafClassName, ex);
 </PRE>
 
 <P>Giving the output:</P>
 
 <PRE>
-12468 [main] ERROR net.sourceforge.squirrel_sql.plugins.laf.LAFRegister  - Error occured loading Look and Feel: com.l2fprod.gui.plaf.skin.LinuxLookAndFeel
+12468 [main] ERROR net.sourceforge.squirrel_sql.plugins.laf.LAFRegister  - Error occurred loading Look and Feel: com.l2fprod.gui.plaf.skin.LinuxLookAndFeel
 com.l2fprod.gui.plaf.skin.impl.gtk.GtkSkinNotFoundException
 	at com.l2fprod.gui.plaf.skin.impl.gtk.GtkSkin.getDefaultSkinLocation(GtkSkin.java)
 	at com.l2fprod.gui.plaf.skin.LinuxLookAndFeel.<init>(LinuxLookAndFeel.java)

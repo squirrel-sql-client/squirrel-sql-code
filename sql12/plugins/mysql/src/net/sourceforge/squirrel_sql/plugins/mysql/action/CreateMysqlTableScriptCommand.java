@@ -102,7 +102,7 @@ class CreateMysqlTableScriptCommand implements ICommand
 				}
 				catch (Exception ex)
 				{
-					s_log.error("Error occured closing PreparedStatement", ex);
+					s_log.error("Error occurred closing PreparedStatement", ex);
 				}
 			}
 

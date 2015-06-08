@@ -131,7 +131,7 @@ Allows an application to modify the jar file from which it came, including outri
  <li>Phase 2 is spawned using the sandbox as it's classpath, SelfModifier as the main class, the
  arguments to "invoke(String[])" as the main arguments, and the <a
  href="#selfmodsysprops">SelfModifier system properties</a> set.
- <li>Immidiately exit so the system unlocks the jar file
+ <li>Immediately exit so the system unlocks the jar file
  </ol>
  <p/>
  <b>Phase 2:</b>
@@ -872,8 +872,8 @@ public <B>SelfModifier</B>(java.lang.reflect.Method&nbsp;method)
 <DD><CODE>java.lang.IllegalArgumentException</CODE> - if <code>method</code> is not public, static, and take a
                                   String array as it's only argument, or of it's declaring class is not public.
 <DD><CODE>java.lang.IllegalStateException</CODE> - if process was not invoked from a jar file, or an IOExceptioin
-                                  occured while accessing it
-<DD><CODE>java.io.IOException</CODE> - if java is unable to be executed as a separte process
+                                  occurred while accessing it
+<DD><CODE>java.io.IOException</CODE> - if java is unable to be executed as a separate process
 <DD><CODE>java.lang.SecurityException</CODE> - if access to the method, or creation of a subprocess is denied</DL>
 </DL>
 <HR>
@@ -999,7 +999,7 @@ private java.lang.Process <B>spawn</B>(java.lang.String[]&nbsp;args,
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE>java.io.IOException</CODE> - if there is an error getting the cononical name of a path</DL>
+<DD><CODE>java.io.IOException</CODE> - if there is an error getting the canonical name of a path</DL>
 </DD>
 </DL>
 <HR>

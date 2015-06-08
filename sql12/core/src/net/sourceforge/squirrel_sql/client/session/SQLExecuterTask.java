@@ -233,7 +233,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                          {
                             if(1 < statementCount)
                             {
-                               sqlExecErrorMsgs.add(handleError(ex, "Error occured in:\n" + lastExecutedStatement));
+                               sqlExecErrorMsgs.add(handleError(ex, "Error occurred in:\n" + lastExecutedStatement));
                             }
                             else
                             {
@@ -255,7 +255,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       {
          if(props.getAbortOnError() && 1 < statementCount)
          {
-            sqlExecErrorMsgs.add(handleError(ex, "Error occured in:\n" + lastExecutedStatement));
+            sqlExecErrorMsgs.add(handleError(ex, "Error occurred in:\n" + lastExecutedStatement));
          }
          else
          {
@@ -286,7 +286,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             }
             catch (Throwable th)
             {
-               s_log.error("Error occured cancelling SQL", th);
+               s_log.error("Error occurred cancelling SQL", th);
             }
          }
          if (_handler != null)

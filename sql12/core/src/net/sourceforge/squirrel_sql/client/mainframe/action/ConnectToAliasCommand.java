@@ -353,7 +353,7 @@ public class ConnectToAliasCommand implements ICommand
 				}
 				catch (SQLException ex)
 				{
-                    // i18n[ConnectToAliasCommand.error.closeconnection=Error occured closing Connection]
+                    // i18n[ConnectToAliasCommand.error.closeconnection=Error occurred closing Connection]
 					s_log.error(s_stringMgr.getString("ConnectToAliasCommand.error.closeconnection"), ex);
 				}
 			}

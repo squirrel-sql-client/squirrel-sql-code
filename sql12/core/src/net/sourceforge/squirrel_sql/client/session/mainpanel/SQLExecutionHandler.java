@@ -131,7 +131,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
       }
       catch (Throwable th)
       {
-         s_log.error("Error occured cancelling SQL", th);
+         s_log.error("Error occurred cancelling SQL", th);
       }
    }
 

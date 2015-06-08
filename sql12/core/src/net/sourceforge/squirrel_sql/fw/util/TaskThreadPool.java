@@ -150,7 +150,7 @@ public class TaskThreadPool
          {
             public void run()
             {
-               //i18n[TaskThreadPool.errorDuringTaskExecMsg=Error ocured during task execution:]
+               //i18n[TaskThreadPool.errorDuringTaskExecMsg=Error occurred during task execution:]
                StringBuffer msg = 
                    new StringBuffer(
                        s_stringMgr.getString(

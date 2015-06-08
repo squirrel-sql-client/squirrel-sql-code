@@ -251,7 +251,7 @@ public class ExportConfigPlugin extends DefaultPlugin
 		}
 		catch (Exception ex)
 		{
-			// i18n[exportconfig.errorCreatingFile=Error occured reading from preferences file: {0}]
+			// i18n[exportconfig.errorCreatingFile=Error occurred reading from preferences file: {0}]
 			s_log.error(s_stringMgr.getString("exportconfig.errorCreatingFile", USER_PREFS_FILE_NAME), ex);
 		}
 		if (_prefs == null)
@@ -272,7 +272,7 @@ public class ExportConfigPlugin extends DefaultPlugin
 		}
 		catch (Exception ex)
 		{
-			// i18n[exportconfig.errorWritingPrefs=Error occured writing to preferences file: {0}]
+			// i18n[exportconfig.errorWritingPrefs=Error occurred writing to preferences file: {0}]
 			s_log.error(s_stringMgr.getString("exportconfig.errorWritingPrefs", USER_PREFS_FILE_NAME), ex);
 		}
 	}

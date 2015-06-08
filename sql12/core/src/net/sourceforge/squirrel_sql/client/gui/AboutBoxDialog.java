@@ -398,7 +398,7 @@ public class AboutBoxDialog extends JDialog
 			}
 			catch (DataSetException ex)
 			{
-                // i18n[AboutBoxDialog.error.systemprops=Error occured displaying System Properties]
+                // i18n[AboutBoxDialog.error.systemprops=Error occurred displaying System Properties]
 				s_log.error(s_stringMgr.getString("AboutBoxDialog.error.systemprops"), ex);
 			}
 

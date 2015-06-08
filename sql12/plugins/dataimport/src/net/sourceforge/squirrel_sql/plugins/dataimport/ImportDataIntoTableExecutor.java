@@ -193,7 +193,7 @@ public class ImportDataIntoTableExecutor {
     		success = true;
     		
     	} catch (SQLException sqle) {
-    		//i18n[ImportDataIntoTableExecutor.sqlException=A database error occured while inserting data]
+    		//i18n[ImportDataIntoTableExecutor.sqlException=A database error occurred while inserting data]
     		//i18n[ImportDataIntoTableExecutor.error=Error]
     		JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.sqlException"), stringMgr.getString("ImportDataIntoTableExecutor.error"), JOptionPane.ERROR_MESSAGE);
     		String query = stmt == null ? "null" : stmt.toString();
@@ -211,7 +211,7 @@ public class ImportDataIntoTableExecutor {
     		}
     		log.error("Unsupported format.", ufe);
     	} catch (IOException ioe) {
-    		//i18n[ImportDataIntoTableExecutor.ioException=An error occured while reading the input file.]
+    		//i18n[ImportDataIntoTableExecutor.ioException=An error occurred while reading the input file.]
     		JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.ioException"), stringMgr.getString("ImportDataIntoTableExecutor.error"), JOptionPane.ERROR_MESSAGE);
     		log.error("Error while reading file", ioe);
     	} finally {

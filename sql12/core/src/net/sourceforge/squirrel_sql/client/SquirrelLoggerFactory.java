@@ -50,7 +50,7 @@ public class SquirrelLoggerFactory extends Log4jLoggerFactory
 		catch (Exception e)
 		{
 			final ILogger log = createLogger(getClass());
-			log.error("Error occured configuring logging. Now logging to standard output", e);
+			log.error("Error occurred configuring logging. Now logging to standard output", e);
 			BasicConfigurator.configure();
 		}
 

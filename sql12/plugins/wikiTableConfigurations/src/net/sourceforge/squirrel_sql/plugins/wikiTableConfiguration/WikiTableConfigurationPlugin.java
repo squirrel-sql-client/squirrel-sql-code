@@ -190,7 +190,7 @@ public class WikiTableConfigurationPlugin extends DefaultSessionPlugin {
 		}
 		catch (Exception ex)
 		{
-			final String msg = "Error occured reading from preferences file: " + BUILD_IN_CONFIGURATIONS_XML;
+			final String msg = "Error occurred reading from preferences file: " + BUILD_IN_CONFIGURATIONS_XML;
 			log.error(msg, ex);
 		}
 	}
@@ -208,7 +208,7 @@ public class WikiTableConfigurationPlugin extends DefaultSessionPlugin {
 		}
 		catch (Exception ex)
 		{
-			final String msg = "Error occured writing to preferences file: " + BUILD_IN_CONFIGURATIONS_XML;
+			final String msg = "Error occurred writing to preferences file: " + BUILD_IN_CONFIGURATIONS_XML;
 			log.error(msg, ex);
 		}
 	}

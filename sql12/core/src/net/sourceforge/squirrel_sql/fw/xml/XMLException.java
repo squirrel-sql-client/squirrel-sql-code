@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.xml;
  */
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 /**
- * This exception indicates that a problem has occured in XML processing.
+ * This exception indicates that a problem has occurred in XML processing.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */

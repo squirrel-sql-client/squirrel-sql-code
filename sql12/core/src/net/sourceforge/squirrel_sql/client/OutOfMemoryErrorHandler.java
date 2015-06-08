@@ -115,7 +115,7 @@ public class OutOfMemoryErrorHandler implements IOutOfMemoryErrorHandler{
 			}
 			showMessage(sessionManager);
 		} else {
-			log.info("A OutOfMemoryError occured, but there are no sessions connected - so we cann't free memory.");
+			log.info("A OutOfMemoryError occurred, but there are no sessions connected - so we can't free memory.");
 		}
 
 	}
@@ -133,7 +133,7 @@ public class OutOfMemoryErrorHandler implements IOutOfMemoryErrorHandler{
 			activeSession.showErrorMessage(i18n.message);
 			application.showErrorDialog(i18n.message);
 		} else {
-			log.info("A OutOfMemoryError occured, but there are no active session!");
+			log.info("A OutOfMemoryError occurred, but there are no active session!");
 		}
 	}
 

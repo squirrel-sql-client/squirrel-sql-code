@@ -872,7 +872,7 @@ Bug-Fixes:
 2991709: Quotes missing in squirrel-sql.bat
 2990527: nChar() is unknown field
 2982594 / 2988387: RSyntax editor crash
-When database errors occured while loading table columns, SQuirreL slowed down and produced a lot of log messages.
+When database errors occurred while loading table columns, SQuirreL slowed down and produced a lot of log messages.
 2981691 / 2981694: squirrel-sql.bat fails on Windows 7 64 bit
 2980873: squirrel-sql.bat doesn't work out of box
 2978540: Identifiers starting with '_' where not handled as identifiers by the RSyntax lexer. This resulted in syntax coloring and completion problems. 
@@ -1006,12 +1006,12 @@ Thanks to Neville Rowe
 2801011: Sybase (CREATE TABLE script generate decimal(15,2) instead of (15,4))
 2794860: Sybase (CREATE TABLE script generate numeric(15) instead (15,2))
 2754166: SQLScript plugin loses precision for Timestamp in H2
-2746982: Error occured in IPlugin.sessionEnded() for SQL Parametrisation
+2746982: Error occurred in IPlugin.sessionEnded() for SQL Parametrisation
 2713952: Create table script (on Sybase): Always generate "datetime" type for "date" (and datetime)
 2657987: Session was closed even if session closing confirm dialog was not confirmed. Connection was not 
          closed then.
 
-ArrayIndexOutOfBounds exception occured when more than one Alias was deleted form Alias tree  
+ArrayIndexOutOfBounds exception occurred when more than one Alias was deleted form Alias tree  
 
 Fixed startup error:
  java.lang.NullPointerException
@@ -1063,7 +1063,7 @@ Other reported bug-fixes:
  - Fixed the case of the install directory (java -> Java) to match the case of the directory created by the 
    installer. 
 
- - NullPointerException occured when last tab was closed
+ - NullPointerException occurred when last tab was closed
 
  - Fixed several problems when Schemas where cached. For example, "Contents Tab SQL filter" and 
    "Limit cell edit WHERE clause size" dialogs did not open.
@@ -1700,7 +1700,7 @@ Bug-Fixes:
   (Now there is a separate function to remove newlines)
 - Caching of schemas (serializing to disc) failed. A NotSerializableException 
   was thrown, due to development code introduced during version 2.5 development.
-- An error occured when F5 (Refresh) was hit in a SQL Work Sheet or an Object Tree Window.
+- An error occurred when F5 (Refresh) was hit in a SQL Work Sheet or an Object Tree Window.
 
 1689040 (plugins prefs files saving) 
 	Now preferences for some plugins (DBCopy, MS SQL-Server, Oracle, SQLScript and 
@@ -1950,7 +1950,7 @@ Look and Feel Plugin: Plastic Look and Feels (JGoodies) weren't available anymor
 
 1554175: (Aliases lost on close) 
 1532997: (NullPointerException when trying to save alias)
-1522229: (Error occured saving Alias Definitions java.lang.NullPointer)
+1522229: (Error occurred saving Alias Definitions java.lang.NullPointer)
 Many people complained about this one.  At first we determined this was low 
 priority since it didn't seem to be reproducable on all jvms. We inadvertantly 
 changed the SQLDriverPropertyCollectionBeanInfo such that it no longer 
@@ -2193,7 +2193,7 @@ Fixed Bug #1472398: Content tab filters didn't work with views.
 Fixed Bug #1465707: Programm slow with big Databases because reading Database Meta Data twice.
                     Technical detail: The SchemaInfo class has become SQuirreL's central meta data cache. 
 
-Fixed Bug: SQuirreL crashed during building output of SQL results when errors occured in number-type or date-type fields.
+Fixed Bug: SQuirreL crashed during building output of SQL results when errors occurred in number-type or date-type fields.
 
 Fixed Bug in Graph Plugin: In zoomed graphs lines with folding points could not be selected.
 
@@ -3253,7 +3253,7 @@ Bug Fixes
 - If you tried to maintain a driver with a Driver JAR file that
   didn't exist an error dialog that couldn't be dismissed was
   displayed.
-- Errors that occured for metadata information (such as data types) didn't
+- Errors that occurred for metadata information (such as data types) didn't
   always display in the message area.
 - Errors in SQL Driver Maintenance weren't always displayed.
 - If invalid data for the data type in a column (E.G. blanks in a numeric)

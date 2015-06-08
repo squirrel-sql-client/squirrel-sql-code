@@ -148,12 +148,12 @@ public class ImportTableDataCommand implements ICommand {
 
 			} catch (SQLException e) {
 				s_log.error("execute: unexpected exception - "+e.getMessage(), e);
-				//i18n[ImportTableDataCommand.sqlErrorOccured=An error occured while reading database data.]
+				//i18n[ImportTableDataCommand.sqlErrorOccured=An error occurred while reading database data.]
 				//i18n[ImportTableDataCommand.error=Error]
 				JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.sqlErrorOccured"), stringMgr.getString("ImportTableDataCommand.error"), JOptionPane.ERROR_MESSAGE);
 			} catch (IOException e) {
 				s_log.error("execute: unexpected exception - "+e.getMessage(), e);
-				//i18n[ImportTableDataCommand.ioErrorOccured=An error occured while reading import file data.]
+				//i18n[ImportTableDataCommand.ioErrorOccured=An error occurred while reading import file data.]
 				JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.ioErrorOccured"), stringMgr.getString("ImportTableDataCommand.error"), JOptionPane.ERROR_MESSAGE);
 			}
 		}

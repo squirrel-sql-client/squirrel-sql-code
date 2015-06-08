@@ -112,11 +112,11 @@ public final class FoldersCache
 		}
 		catch (IOException ex)
 		{
-			s_log.error("Error occured saving queries to " + _queriesFileName, ex);
+			s_log.error("Error occurred saving queries to " + _queriesFileName, ex);
 		}
 		catch (XMLException ex)
 		{
-			s_log.error("Error occured saving queries to " + _queriesFileName, ex);
+			s_log.error("Error occurred saving queries to " + _queriesFileName, ex);
 		}
 	}
 }

@@ -141,13 +141,13 @@ public class AliasScriptCache
 		}
 		catch (IOException ex)
 		{
-			String msg = "Error occured saving scripts to " + _scriptsFileName;
+			String msg = "Error occurred saving scripts to " + _scriptsFileName;
 			s_log.error(msg, ex);
 			_plugin.getApplication().showErrorDialog(msg, ex);
 		}
 		catch (XMLException ex)
 		{
-			String msg = "Error occured saving scripts to " + _scriptsFileName;
+			String msg = "Error occurred saving scripts to " + _scriptsFileName;
 			s_log.error(msg, ex);
 			_plugin.getApplication().showErrorDialog(msg, ex);
 		}

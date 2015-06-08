@@ -123,7 +123,7 @@ public class LogonDialog extends JDialog
 		}
 		catch (Throwable th)
 		{
-			final String msg = "Error occured when talking to the web service";
+			final String msg = "Error occurred when talking to the web service";
 			s_log.error(msg, th);
 			_session.getApplication().showErrorDialog(msg, th);
 		}

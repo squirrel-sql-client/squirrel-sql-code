@@ -389,13 +389,13 @@ public class LAFRegister
 				}
 				catch (Throwable th)
 				{
-					s_log.error("Error occured loading Look and Feel: " + lafClass.getName(), th);
+					s_log.error("Error occurred loading Look and Feel: " + lafClass.getName(), th);
 				}
 			}
 		}
 		catch (Throwable th)
 		{
-			s_log.error("Error occured trying to load Look and Feel classes", th);
+			s_log.error("Error occurred trying to load Look and Feel classes", th);
 		}
 	}
 
@@ -511,7 +511,7 @@ public class LAFRegister
 				}
 				catch (IOException ex)
 				{
-					s_log.error("Error occured reading Look and Feel jar: " + file.getAbsolutePath(), ex);
+					s_log.error("Error occurred reading Look and Feel jar: " + file.getAbsolutePath(), ex);
 				}
 			}
 			catch (MissingResourceException ignore)
@@ -553,7 +553,7 @@ public class LAFRegister
 					}
 					catch (IOException ex)
 					{
-						s_log.error("Error occured reading Look and Feel jar: " + file.getAbsolutePath(), ex);
+						s_log.error("Error occurred reading Look and Feel jar: " + file.getAbsolutePath(), ex);
 					}
 				}
 			}
@@ -564,7 +564,7 @@ public class LAFRegister
 		}
 		catch (IOException ex)
 		{
-			s_log.error("Error occured loading extra LAFs property file", ex);
+			s_log.error("Error occurred loading extra LAFs property file", ex);
 		}
 		return lafs;
 	}

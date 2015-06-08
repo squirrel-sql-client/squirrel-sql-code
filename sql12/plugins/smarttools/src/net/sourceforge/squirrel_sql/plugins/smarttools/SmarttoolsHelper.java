@@ -72,7 +72,7 @@ public class SmarttoolsHelper
 	}
 
 	/**
-	 * Get the parsed string as int or defaultValue if an exception occured
+	 * Get the parsed string as int or defaultValue if an exception occurred
 	 * 
 	 * @param string
 	 *           string to convert

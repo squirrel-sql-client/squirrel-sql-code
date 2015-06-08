@@ -64,7 +64,7 @@ public class RefreshTreeItemAction extends SquirrelAction
 //			}
 //			catch (BaseSQLException ex)
 //			{
-//				final String msg = "Error occured refreshing the objects tree";
+//				final String msg = "Error occurred refreshing the objects tree";
 //				s_log.error(msg, ex);
 //				_session.getMessageHandler().showMessage(msg);
 //				_session.getMessageHandler().showMessage(ex);

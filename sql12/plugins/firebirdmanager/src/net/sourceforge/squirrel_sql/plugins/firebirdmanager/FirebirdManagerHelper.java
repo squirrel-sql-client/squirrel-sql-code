@@ -127,7 +127,7 @@ public class FirebirdManagerHelper {
 	}
 	
 	/**
-	 * Get the parsed string as int or defaultValue if an exception occured
+	 * Get the parsed string as int or defaultValue if an exception occurred
 	 * @param string string to convert
 	 * @param defaultValue default value which will be returned on an exception
 	 * @return converted string or defaultValue

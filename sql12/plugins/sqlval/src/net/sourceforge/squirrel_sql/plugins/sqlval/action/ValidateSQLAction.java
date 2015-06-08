@@ -182,7 +182,7 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 			}
 			catch (Throwable th)
 			{
-				final String msg = "Error occured when talking to the web service";
+				final String msg = "Error occurred when talking to the web service";
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg, th);
 			}

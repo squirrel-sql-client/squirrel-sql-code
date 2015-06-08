@@ -6,7 +6,7 @@ SQL Param Plugin Change Log
 
 Bug-fixes:
 
-2746982: Error occured in IPlugin.sessionEnded() for SQL Parametrisat
+2746982: Error occurred in IPlugin.sessionEnded() for SQL Parametrisat
 
 1.0
 ===

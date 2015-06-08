@@ -60,12 +60,12 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * A monitor, which provide certain information to the user about a long running
- * operation. The user get information about the progress of a long running
+ * operation. The user gets information about the progress of a long running
  * operation. In addition to the progress bar, each step is reported in a
  * "history area". This monitor provides the opportunity to cancel the
  * operation. Sometimes it is not known, how many tasks must be completed, until
  * the whole operation is finished. For this case, the monitor can be run in
- * "indeterminate" mode. Depending on indeterminate or not, we can or cann't
+ * "indeterminate" mode. Depending on indeterminate or not, we can or can't
  * claim that the overall progress is finished.
  * 
  * @see JProgressBar#isIndeterminate()

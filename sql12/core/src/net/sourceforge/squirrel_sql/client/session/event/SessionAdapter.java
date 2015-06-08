@@ -32,7 +32,7 @@ public class SessionAdapter implements ISessionListener
 	/**
 	 * The session has been closed.
 	 *
-	 * @param	evt		The event that has just occured.
+	 * @param	evt		The event that has just occurred.
 	 */
 	public void sessionClosed(SessionEvent evt)
 	{

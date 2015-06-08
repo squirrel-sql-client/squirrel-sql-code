@@ -522,7 +522,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		}
 		catch (Exception ex)
 		{
-			final String msg = "Error occured reading from preferences file: " + IConstants.USER_PREFS_FILE_NAME;
+			final String msg = "Error occurred reading from preferences file: " + IConstants.USER_PREFS_FILE_NAME;
 			s_log.error(msg, ex);
 		}
 
@@ -544,7 +544,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		}
 		catch (Exception ex)
 		{
-			final String msg = "Error occured writing to preferences file: " + IConstants.USER_PREFS_FILE_NAME;
+			final String msg = "Error occurred writing to preferences file: " + IConstants.USER_PREFS_FILE_NAME;
 			s_log.error(msg, ex);
 		}
 	}
@@ -595,8 +595,8 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 			{
 				/*
 								We don't support switching the entry control during a session
-								because serveral things, that are attached to the entry control
-								from outside this plugin would need to reinitialze too.
+								because several things, that are attached to the entry control
+								from outside this plugin would need to reinitialize too.
 								For example code completion and edit extras.
 
 								synchronized (_session)

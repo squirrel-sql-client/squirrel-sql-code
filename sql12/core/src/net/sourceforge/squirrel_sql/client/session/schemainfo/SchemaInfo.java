@@ -881,7 +881,7 @@ public class SchemaInfo
       }
       catch (Throwable ex)
       {
-         s_log.error("Error occured creating keyword collection", ex);
+         s_log.error("Error occurred creating keyword collection", ex);
       }
    }
 
@@ -914,7 +914,7 @@ public class SchemaInfo
       }
       catch (Throwable ex)
       {
-         s_log.error("Error occured creating data types collection", ex);
+         s_log.error("Error occurred creating data types collection", ex);
       }
    }
 

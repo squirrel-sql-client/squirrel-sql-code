@@ -37,7 +37,7 @@ public class SQLPanelEvent extends EventObject
 	/**
 	 * Ctor.
 	 *
-	 * @param	session	The session this is occuring in.
+	 * @param	session	The session this is occurring in.
 	 * @param	source	The <CODE>SQLPanel</CODE> that change has happened to.
 	 * 
 	 * @throws	IllegalArgumentException

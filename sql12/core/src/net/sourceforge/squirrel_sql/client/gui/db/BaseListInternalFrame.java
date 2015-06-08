@@ -142,7 +142,7 @@ abstract class BaseListInternalFrame extends DockWidget
             }
             catch (BaseException ex)
             {
-                      // i18n[BaseListInternalFrame.error.execdoubleclick=Error occured executing doubleclick event]
+                      // i18n[BaseListInternalFrame.error.execdoubleclick=Error occurred executing doubleclick event]
                s_log.error(s_stringMgr.getString("BaseListInternalFrame.error.execdoubleclick"), ex);
             }
          }

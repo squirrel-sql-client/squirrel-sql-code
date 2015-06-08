@@ -175,7 +175,7 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
       }
 		catch (ValidationException ex)
 		{
-            // i18n[AliasWindowFactory.error.copyAlias=Error occured copying the alias]
+            // i18n[AliasWindowFactory.error.copyAlias=Error occurred copying the alias]
 			s_log.error(s_stringMgr.getString("AliasWindowFactory.error.copyAlias"), ex);
 		}
 		final AliasInternalFrame sheet = new AliasInternalFrame(_app, newAlias, COPY);

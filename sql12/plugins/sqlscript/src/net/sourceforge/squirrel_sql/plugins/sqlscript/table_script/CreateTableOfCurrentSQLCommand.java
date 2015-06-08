@@ -178,7 +178,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
             {
                _session.showErrorMessage(e);
 
-               // i18n[sqlscript.storeSqlInTableFailed=An error occured during storing SQL result in table {0}. See messages for details.\nI will create the copy script. You may correct errors and run it again.]
+               // i18n[sqlscript.storeSqlInTableFailed=An error occurred during storing SQL result in table {0}. See messages for details.\nI will create the copy script. You may correct errors and run it again.]
                String msg = s_stringMgr.getString("sqlscript.storeSqlInTableFailed", sTable);
                JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
             }

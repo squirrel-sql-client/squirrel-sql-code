@@ -105,7 +105,7 @@ public class MessageHandler
       System.err.println("### Error occurred in message/error handling. We provide the following information in the following order:");
       System.err.println("### 1. The original message that failed to be handled");
       System.err.println("### 2. The original error that failed to be handled");
-      System.err.println("### 3. The error that occured during message/error handling");
+      System.err.println("### 3. The error that occurred during message/error handling");
       System.err.println("### Here we go:");
       System.err.println("### ");
       System.err.println("### 1. The original message that failed to be handled:");
@@ -132,7 +132,7 @@ public class MessageHandler
       }
 
       System.err.println("### ");
-      System.err.println("### 3. The error that occured during message/error handling");
+      System.err.println("### 3. The error that occurred during message/error handling");
 
       errorFromMessageHandler.printStackTrace(System.err);
 

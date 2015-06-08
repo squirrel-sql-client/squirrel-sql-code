@@ -120,7 +120,7 @@ public class PreferencesManager
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error occured writing to preferences file: " + USER_PREFS_FILE_NAME, ex);
+			s_log.error("Error occurred writing to preferences file: " + USER_PREFS_FILE_NAME, ex);
 		}
 	}
 
@@ -149,7 +149,7 @@ public class PreferencesManager
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error occured reading from preferences file: " + USER_PREFS_FILE_NAME, ex);
+			s_log.error("Error occurred reading from preferences file: " + USER_PREFS_FILE_NAME, ex);
 		}
 		if (_prefs == null)
 		{

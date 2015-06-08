@@ -17,7 +17,7 @@ public class ObjectSubstitute implements Serializable
    private HashMap<String, PlainValue> _plainValueByPropertyName = new HashMap<String, PlainValue>();
 
    /**
-    * Is seriously meant to be package visible because it must not called nowhere except during initialzation in ObjectSubstituteFactory
+    * Is seriously meant to be package visible because it must not called nowhere except during initialization in ObjectSubstituteFactory
     */
    ObjectSubstitute(MappedClassInfoData mappedClassInfoData, String toString)
    {

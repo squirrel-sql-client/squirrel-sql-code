@@ -41,7 +41,7 @@ public interface IResultTab {
      * 			Thrown if <tt>null</tt> <tt>SQLExecutionInfo</tt> passed.
      *
      * @throws	DataSetException
-     * 			Thrown if error occured processing dataset.
+     * 			Thrown if error occurred processing dataset.
      */
     void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds,
             SQLExecutionInfo exInfo) throws DataSetException;

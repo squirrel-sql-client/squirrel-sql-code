@@ -178,7 +178,7 @@ public abstract class DefaultPlugin implements IPlugin
 	 *			if plugin doesn't have an internal name.
 	 *
 	 * @throws	IOException
-	 * 			An error occured retrieving/creating the folder.
+	 * 			An error occurred retrieving/creating the folder.
 	 */
 	public synchronized FileWrapper getPluginAppSettingsFolder()
 		throws IllegalStateException, IOException
@@ -236,7 +236,7 @@ public abstract class DefaultPlugin implements IPlugin
 	 *			if plugin doesn't have an internal name.
 	 *
 	 * @throws	IOException
-	 * 			An error occured retrieving/creating the folder.
+	 * 			An error occurred retrieving/creating the folder.
 	 * 
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getPluginUserSettingsFolder()
 	 */

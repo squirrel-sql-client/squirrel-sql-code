@@ -65,7 +65,7 @@ public class ResultSetReader
 	 */
 	private final int _columnCount;
 
-	/** <TT>true</TT> if an error occured reading a column in th previous row. */
+	/** <TT>true</TT> if an error occurred reading a column in th previous row. */
 	private boolean _errorOccured = false;
 
 	/** Metadata for the <TT>ResultSet</TT>. */
@@ -141,10 +141,10 @@ public class ResultSetReader
 	 * then an <TT>SQLException will be thrown, however if an error occurs
 	 * retrieving the data for a column an error msg will be placed in that
 	 * element of the array, but no exception will be thrown. To see if an
-	 * error occured retrieving column data you can call
+	 * error occurred retrieving column data you can call
 	 * <TT>getColumnErrorInPreviousRow</TT> after the call to <TT>readRow()</TT>.
 	 *
-	 * @throws	SQLException	Error occured on <TT>ResultSet.next()</TT>.
+	 * @throws	SQLException	Error occurred on <TT>ResultSet.next()</TT>.
 	 */
 	public Object[] readRow(BlockMode blockMode) throws SQLException
 	{
@@ -170,11 +170,11 @@ public class ResultSetReader
 	 * then an <TT>SQLException will be thrown, however if an error occurs
 	 * retrieving the data for a column an error msg will be placed in that
 	 * element of the array, but no exception will be thrown. To see if an
-	 * error occured retrieving column data you can call
+	 * error occurred retrieving column data you can call
 	 * <TT>getColumnErrorInPreviousRow</TT> after the call to <TT>readRow()</TT>.
 	 * @param limitRead TODO
 	 *
-	 * @throws	SQLException	Error occured on <TT>ResultSet.next()</TT>.
+	 * @throws	SQLException	Error occurred on <TT>ResultSet.next()</TT>.
 	 */
 	public Object[] readRow(ColumnDisplayDefinition colDefs[], BlockMode blockMode, boolean limitRead) throws SQLException
 	{
@@ -187,9 +187,9 @@ public class ResultSetReader
 	}
 
 	/**
-	 * Retrieve whether an error occured reading a column in the previous row.
+	 * Retrieve whether an error occurred reading a column in the previous row.
 	 *
-	 * @return	<TT>true</TT> if error occured.
+	 * @return	<TT>true</TT> if error occurred.
 	 */
 	public boolean getColumnErrorInPreviousRow()
 	{

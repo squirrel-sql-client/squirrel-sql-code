@@ -184,7 +184,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 		}
 		catch (SQLException ex)
 		{
-			s_log.error("Error occured processing result set", ex);
+			s_log.error("Error occurred processing result set", ex);
 			throw new DataSetException(ex);
 		}
 	}

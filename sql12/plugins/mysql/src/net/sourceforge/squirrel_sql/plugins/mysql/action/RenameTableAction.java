@@ -84,7 +84,7 @@ public class RenameTableAction extends SquirrelAction
 					catch (Throwable th)
 					{
 						_session.showErrorMessage(th);
-						s_log.error("Error occured renaming table", th);
+						s_log.error("Error occurred renaming table", th);
 					}
 				}
 			}

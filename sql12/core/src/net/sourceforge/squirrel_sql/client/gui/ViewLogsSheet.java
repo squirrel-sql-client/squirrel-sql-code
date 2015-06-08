@@ -292,7 +292,7 @@ public class ViewLogsSheet extends DialogWidget
 				}
 				catch (final Exception ex)
 				{
-					// i18n[ViewLogsSheet.error.processinglogfile=Error occured processing log file]
+					// i18n[ViewLogsSheet.error.processinglogfile=Error occurred processing log file]
 					final String msg = s_stringMgr.getString("ViewLogsSheet.error.processinglogfile");
 					s_log.error(msg, ex);
 				}

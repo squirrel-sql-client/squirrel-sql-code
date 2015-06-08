@@ -63,7 +63,7 @@ public class ResultSetColumnReader
 	 *
 	 * @return	<TT>true</TT> if there is a &quot;next row&quot; to read.
 	 *
-	 * @throws	SQLException	SQL error occured.
+	 * @throws	SQLException	SQL error occurred.
 	 */
 	public boolean next() throws SQLException
 	{
@@ -77,7 +77,7 @@ public class ResultSetColumnReader
 	 *
 	 * @return	Boolean value of the specified column.
 	 *
-	 * @throws	SQLException	SQL error occured.
+	 * @throws	SQLException	SQL error occurred.
 	 */
 	public Boolean getBoolean(int columnIdx) throws SQLException
 	{
@@ -139,7 +139,7 @@ public class ResultSetColumnReader
 	 *
 	 * @return	Time value of the specified column.
 	 *
-	 * @throws	SQLException	SQL error occured.
+	 * @throws	SQLException	SQL error occurred.
 	 */
 	public Date getDate(int columnIdx) throws SQLException
 	{
@@ -155,7 +155,7 @@ public class ResultSetColumnReader
 	 *
 	 * @return	Double value of the specified column.
 	 *
-	 * @throws	SQLException	SQL error occured.
+	 * @throws	SQLException	SQL error occurred.
 	 */
 	public Double getDouble(int columnIdx) throws SQLException
 	{
@@ -200,7 +200,7 @@ public class ResultSetColumnReader
 	 *
 	 * @return	long value of the specified column.
 	 *
-	 * @throws	SQLException	SQL error occured.
+	 * @throws	SQLException	SQL error occurred.
 	 */
 	public Long getLong(int columnIdx) throws SQLException
 	{
@@ -253,7 +253,7 @@ public class ResultSetColumnReader
 	 *
 	 * @return	Object value of the specified column.
 	 *
-	 * @throws	SQLException	SQL error occured.
+	 * @throws	SQLException	SQL error occurred.
 	 */
 	public Object getObject(int columnIdx) throws SQLException
 	{
@@ -269,7 +269,7 @@ public class ResultSetColumnReader
 	 *
 	 * @return	String value of the specified column.
 	 *
-	 * @throws	SQLException	SQL error occured.
+	 * @throws	SQLException	SQL error occurred.
 	 */
 	public String getString(int columnIdx) throws SQLException
 	{
@@ -285,7 +285,7 @@ public class ResultSetColumnReader
 	 *
 	 * @return	Time value of the specified column.
 	 *
-	 * @throws	SQLException	SQL error occured.
+	 * @throws	SQLException	SQL error occurred.
 	 */
 	public Time getTime(int columnIdx) throws SQLException
 	{
@@ -301,7 +301,7 @@ public class ResultSetColumnReader
 	 *
 	 * @return	TimeStamp value of the specified column.
 	 *
-	 * @throws	SQLException	SQL error occured.
+	 * @throws	SQLException	SQL error occurred.
 	 */
 	public Timestamp getTimeStamp(int columnIdx) throws SQLException
 	{

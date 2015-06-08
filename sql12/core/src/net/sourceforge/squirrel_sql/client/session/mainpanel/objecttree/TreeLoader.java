@@ -163,7 +163,7 @@ public class TreeLoader
 			}
 		}
 
-		// We cann't use getChildCount, because the node has a temporary child called "Loading..."
+		// We can't use getChildCount, because the node has a temporary child called "Loading..."
 		_parentNode.setNoChildrenFoundWithExpander(noChildrenFound);
 	}
 

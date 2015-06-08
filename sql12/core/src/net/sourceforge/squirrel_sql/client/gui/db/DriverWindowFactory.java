@@ -164,7 +164,7 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 		}
 		catch (ValidationException ex)
 		{
-            // i18n[DriverWindowFactory.error.copyingdriver=Error occured copying the driver]
+            // i18n[DriverWindowFactory.error.copyingdriver=Error occurred copying the driver]
 			s_log.error(s_stringMgr.getString("DriverWindowFactory.error.copyingdriver"), ex);
 		}
 		final DriverInternalFrame sheet =

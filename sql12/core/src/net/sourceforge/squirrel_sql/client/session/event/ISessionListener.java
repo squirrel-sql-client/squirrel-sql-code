@@ -33,14 +33,14 @@ public interface ISessionListener extends EventListener
 	 * The session is about to close. Any clean up activities that
 	 * still require the session can be done here.
 	 *
-	 * @param	evt		The event that has just occured.
+	 * @param	evt		The event that has just occurred.
 	 */
 	void sessionClosing(SessionEvent evt);
 
 	/**
 	 * The session has been closed.
 	 *
-	 * @param	evt		The event that has just occured.
+	 * @param	evt		The event that has just occurred.
 	 */
 	void sessionClosed(SessionEvent evt);
 

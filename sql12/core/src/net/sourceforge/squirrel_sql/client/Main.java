@@ -128,7 +128,7 @@ public class Main
       {
          t.printStackTrace();
       }
-      s_log.error("Exception occured dispatching Event " + event, t);
+      s_log.error("Exception occurred dispatching Event " + event, t);
    }
 
    private static void doOutOfMemory(AWTEvent event, Throwable e, OutOfMemoryErrorHandler oumErrorHandler)

@@ -135,7 +135,7 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
     
     private String getDataTruncationMessage(DataTruncation ex) {
         StringBuilder buf = new StringBuilder();
-        buf.append("Data Truncation error occured on")
+        buf.append("Data Truncation error occurred on")
            .append(ex.getRead() ? " a read " : " a write ")
            .append(" of column ")
            .append(ex.getIndex())

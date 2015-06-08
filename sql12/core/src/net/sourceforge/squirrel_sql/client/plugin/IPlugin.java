@@ -182,7 +182,7 @@ public interface IPlugin
 	 *			if plugin doesn't have an internal name.
 	 *
 	 * @throws	IOException
-	 * 			An error occured retrieving/creating the folder.
+	 * 			An error occurred retrieving/creating the folder.
 	 */
 	FileWrapper getPluginAppSettingsFolder() throws IOException, IllegalStateException;
 
@@ -200,7 +200,7 @@ public interface IPlugin
 	 *			if plugin doesn't have an internal name.
 	 *
 	 * @throws	IOException
-	 * 			An error occured retrieving/creating the folder.
+	 * 			An error occurred retrieving/creating the folder.
 	 */
 	FileWrapper getPluginUserSettingsFolder() throws IllegalStateException, IOException;
 

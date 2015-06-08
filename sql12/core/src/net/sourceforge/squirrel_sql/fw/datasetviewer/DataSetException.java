@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 
 /**
- * This exception indicates that a problem has occured in the processing
+ * This exception indicates that a problem has occurred in the processing
  * of a <CODE>IDataSet</CODE>.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>

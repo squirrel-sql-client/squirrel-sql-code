@@ -177,7 +177,7 @@ class MainFrameToolBar extends ToolBar
 		/**
 		 * An alias has been selected in the list so attempt to connect to it.
 		 *
-		 * @param	evt	 Describes the event that has just occured.
+		 * @param	evt	 Describes the event that has just occurred.
 		 */
 		@Override
 		public void actionPerformed(ActionEvent evt)
@@ -365,7 +365,7 @@ class MainFrameToolBar extends ToolBar
 		/**
 		 * An session has been selected in the list so set it as the active session.
 		 *
-		 * @param	evt	 Describes the event that has just occured.
+		 * @param	evt	 Describes the event that has just occurred.
 		 */
 		@Override
 		public void actionPerformed(ActionEvent evt)

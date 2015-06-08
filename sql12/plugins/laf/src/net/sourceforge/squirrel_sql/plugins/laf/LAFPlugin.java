@@ -228,11 +228,11 @@ public class LAFPlugin extends DefaultPlugin
 		}
 		catch (IOException ex)
 		{
-			s_log.error("Error occured writing to preferences file: " + USER_PREFS_FILE_NAME, ex);
+			s_log.error("Error occurred writing to preferences file: " + USER_PREFS_FILE_NAME, ex);
 		}
 		catch (XMLException ex)
 		{
-			s_log.error("Error occured writing to preferences file: " + USER_PREFS_FILE_NAME, ex);
+			s_log.error("Error occurred writing to preferences file: " + USER_PREFS_FILE_NAME, ex);
 		}
 		super.unload();
 	}
@@ -331,11 +331,11 @@ public class LAFPlugin extends DefaultPlugin
 		}
 		catch (IOException ex)
 		{
-			s_log.error("Error occured in preferences file", ex);
+			s_log.error("Error occurred in preferences file", ex);
 		}
 		catch (XMLException ex)
 		{
-			s_log.error("Error occured in preferences file", ex);
+			s_log.error("Error occurred in preferences file", ex);
 		}
 
 		if (_lafPrefs == null)

@@ -19,7 +19,7 @@ public class HibernateServerExceptionUtil
       pw.flush();
       sw.flush();
 
-      String messageIncludingOriginalStackTrace = "Exception occured on Hibernate Server Process: " + deepestThrowable.getMessage() + "\n";
+      String messageIncludingOriginalStackTrace = "Exception occurred on Hibernate Server Process: " + deepestThrowable.getMessage() + "\n";
 
       String stackTraceString = sw.toString();
       String deepestToString = deepestThrowable.toString();

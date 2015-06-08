@@ -104,7 +104,7 @@ public class DumpSessionAction extends SquirrelAction
 			}
 			catch (Throwable ex)
 			{
-			    // i18n[DumpSessionAction.error=Error occured dumping session: {0}]
+			    // i18n[DumpSessionAction.error=Error occurred dumping session: {0}]
                 final String msg = 
                     s_stringMgr.getString("DumpSessionAction.error", ex);
 				_session.showErrorMessage(msg);

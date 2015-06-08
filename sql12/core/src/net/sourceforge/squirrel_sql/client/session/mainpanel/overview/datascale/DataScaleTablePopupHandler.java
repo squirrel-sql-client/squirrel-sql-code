@@ -51,7 +51,7 @@ public class DataScaleTablePopupHandler
       {
          final DataScale dataScale = dataScaleTable.getDataScaleTableModel().getDataScaleAt(i);
 
-         // This initialzing call is needed to make ths scale to create the buttons.
+         // This initializing call is needed to make ths scale to create the buttons.
          dataScale.getPanel();
 
          JButton[] buttons = dataScale.getButtons();

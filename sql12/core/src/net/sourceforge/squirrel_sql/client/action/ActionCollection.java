@@ -411,7 +411,7 @@ public class ActionCollection
 		}
 		catch (Exception ex)
 		{
-            // i18n[ActionCollection.createActionError=Error occured creating Action: {0}]
+            // i18n[ActionCollection.createActionError=Error occurred creating Action: {0}]
             String msg = 
                 s_stringMgr.getString("ActionCollection.createActionError",
                                       actionClassName);

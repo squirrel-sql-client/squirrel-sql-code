@@ -459,7 +459,7 @@ Bug Fixes
 - If you tried to maintain a driver with a Driver JAR file that
   didn't exist an error dialog that couldn't be dismissed was
   displayed.
-- Errors that occured for metadata information (such as data types) didn't
+- Errors that occurred for metadata information (such as data types) didn't
   always display in the message area.
 - Errors in SQL Driver Maintenance weren't always displayed.
 - If invalid data for the data type in a column (E.G. blanks in a numeric)

@@ -782,7 +782,7 @@ class Session implements ISession
       }
       catch (SQLException ex)
       {
-         s_log.error("Error occured retrieving current catalog from Connection", ex);
+         s_log.error("Error occurred retrieving current catalog from Connection", ex);
       }
       if (catalog == null)
       {
