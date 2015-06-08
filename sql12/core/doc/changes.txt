@@ -53,6 +53,9 @@ Bug fixes:
 
 #1161 Sorting Aliases creates duplicate entries in the tree view
    After sorting Aliases in the view without tree, there were duplicate Aliase entries in the tree view.
+   Note: If your Aliases got duplicated this way you may delete the SQLAliases23_treeStructure.xml file in your SQuirreL user dir.
+         This way Aliases will be unique again but tree folder structure gets lost.
+
 
 #1193 Wrong command for MySQL when renaming a column.
   The problem was a wrong preselection of the dialect for MySql5 DBs.
