@@ -8,6 +8,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+WIKI table Plugin: Added support for JIRA/Confluence Markup Style
+  Thanks to Thomas Hackel for the merge request.
+
 Feature request #501 Overview/Charts Tab: Distinct Counts
   - Distinct counts for an Overview as a whole are now displayed right next to the column name
   - Distinct counts of Intervals are available as tool tips
