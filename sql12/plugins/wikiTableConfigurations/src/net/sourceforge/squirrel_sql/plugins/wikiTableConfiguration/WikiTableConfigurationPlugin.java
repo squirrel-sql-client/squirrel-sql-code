@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.plugins.wikiTableConfiguration.configurations.JIRAConfluenceTableConfiguration;
 import net.sourceforge.squirrel_sql.plugins.wikiTableConfiguration.configurations.MediaWikiTableConfiguration;
 import net.sourceforge.squirrel_sql.plugins.wikiTableConfiguration.configurations.TiddlyWikiTableConfiguration;
 
@@ -47,6 +48,7 @@ import net.sourceforge.squirrel_sql.plugins.wikiTableConfiguration.configuration
  * For the following WIKI engines are configurations provided:
  * <li>Mediawiki</li>
  * <li>TiddlWiki</li>
+ * <li>Atlassian JIRA &amp; Confluence</li>
  * @author Stefan Willinger
  *
  */
@@ -100,12 +102,19 @@ public class WikiTableConfigurationPlugin extends DefaultSessionPlugin {
 	public String getAuthor() {
 		return "Stefan Willinger";
 	}
+	
+	/* (non-Javadoc)
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getContributors()
+	 */
+	public String getContributors() {
+		return "Thomas Hackel";
+	}
 
 	/* (non-Javadoc)
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getVersion()
 	 */
 	public String getVersion() {
-		return "0.1";
+		return "0.2";
 	}
 
 	/**
@@ -126,6 +135,7 @@ public class WikiTableConfigurationPlugin extends DefaultSessionPlugin {
 		
 		wikiTableConfigFactory.addBuilInConfiguration(new MediaWikiTableConfiguration());
 		wikiTableConfigFactory.addBuilInConfiguration(new TiddlyWikiTableConfiguration());
+		wikiTableConfigFactory.addBuilInConfiguration(new JIRAConfluenceTableConfiguration());
 		
 	}
 
