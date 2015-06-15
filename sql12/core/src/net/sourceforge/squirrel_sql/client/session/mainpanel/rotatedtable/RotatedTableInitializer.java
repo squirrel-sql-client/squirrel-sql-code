@@ -70,4 +70,9 @@ public class RotatedTableInitializer
       _rsds = rsds;
       _isInitialized = false;
    }
+
+   public void moreResultsHaveBeenRead()
+   {
+      initRotatedTable();
+   }
 }

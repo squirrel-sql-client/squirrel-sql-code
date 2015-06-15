@@ -8,6 +8,12 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Feature request #487 Show AS label as column header (if present)
+   If a SQL result contains at least one column whose column name is not equal to its column label a button is shown at the header of the tab named "Result".
+   By this button one can toggle display between column names and labels.
+   Note: To configure the default display see menu File -> Global Preferences -> Tab Data Type Controls -> Top of panel.
+
+
 WIKI table Plugin: Added support for JIRA/Confluence Markup Style
   Thanks to Thomas Hackel for the merge request.
 

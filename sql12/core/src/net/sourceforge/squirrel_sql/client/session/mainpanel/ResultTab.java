@@ -29,11 +29,7 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -127,6 +123,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    private OverviewInitializer _overviewInitializer;
 
    private RotatedTableInitializer _rotatedTableInitializer;
+   private ResultLabelNameSwitcher _resultLabelNameSwitcher;
 
    /**
     * Ctor.
@@ -259,8 +256,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	/**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#showResults(net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet, net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet, net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo)
      */
-	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds,
-								SQLExecutionInfo exInfo)
+	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, SQLExecutionInfo exInfo)
 		throws DataSetException
 	{
 		_exInfo = exInfo;
@@ -270,7 +266,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _rsds = rsds;
 
 		// Display the result set.
-		_dataSetViewerFindDecorator.getDataSetViewer().show(rsds, null);
+		_dataSetViewerFindDecorator.getDataSetViewer().show(_rsds, null);
       initContinueReadChannel(_dataSetViewerFindDecorator);
 
 
@@ -280,6 +276,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
       _overviewInitializer.setCurrentResult(_rsds);
       _rotatedTableInitializer.setCurrentResult(_rsds);
+      _resultLabelNameSwitcher.setCurrentResult(_rsds, _dataSetViewerFindDecorator.getDataSetViewer());
 
 		// Display the result set metadata.
 		if (mdds != null && _metaDataOutput != null)
@@ -346,9 +343,11 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
          _queryInfoPanel.displayRowCount(_rsds.currentRowCount());
 
-         _overviewInitializer.initOverview();
+         _overviewInitializer.moreResultsHaveBeenRead();
 
-         _rotatedTableInitializer.initRotatedTable();
+         _rotatedTableInitializer.moreResultsHaveBeenRead();
+
+         _resultLabelNameSwitcher.moreResultsHaveBeenRead();
       }
       catch (DataSetException e)
       {
@@ -552,9 +551,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
        //  SCROLL _resultSetSp.setBorder(BorderFactory.createEmptyBorder());
       
       // i18n[ResultTab.resultsTabTitle=Results]
-      String resultsTabTitle = 
-          s_stringMgr.getString("ResultTab.resultsTabTitle");
-      _tabResultTabs.addTab(resultsTabTitle, _dataSetViewerFindDecorator.getComponent()); //  SCROLL
+      _tabResultTabs.addTab(null, _dataSetViewerFindDecorator.getComponent()); //  SCROLL
+      _resultLabelNameSwitcher = new ResultLabelNameSwitcher(s_stringMgr.getString("ResultTab.resultsTabTitle"), 0, _session, _tabResultTabs);
+
 
       if (_session.getProperties().getShowResultsMetaData())
       {

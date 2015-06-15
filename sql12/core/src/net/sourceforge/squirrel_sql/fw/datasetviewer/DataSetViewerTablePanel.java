@@ -23,6 +23,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DefaultFindService;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
@@ -44,6 +45,8 @@ import java.awt.event.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				implements IDataSetTableControls, Printable
@@ -254,13 +257,34 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
       throw new IllegalStateException("No col with header: " + header);
    }
 
-   public net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService createFindService()
+   public FindService createFindService()
    {
       return new DefaultFindService(_table, getColumnDefinitions(), _table.getTypedModel());
    }
 
 
-   /*
+	@Override
+	public void switchColumnHeader(ColumnHeaderDisplay columnHeaderDisplay)
+	{
+		for(Enumeration e = _table.getColumnModel().getColumns(); e.hasMoreElements();)
+		{
+			ExtTableColumn col = (ExtTableColumn) e.nextElement();
+
+			if (ColumnHeaderDisplay.COLUMN_NAME == columnHeaderDisplay)
+			{
+				col.setHeaderValue(col.getColumnDisplayDefinition().getColumnName());
+			}
+			else if (ColumnHeaderDisplay.COLUMN_LABEL == columnHeaderDisplay)
+			{
+				col.setHeaderValue(col.getColumnDisplayDefinition().getLabel());
+			}
+		}
+
+		_table.getTableHeader().repaint();
+	}
+
+
+	/*
      * The JTable used for displaying all DB ResultSet info.
      */
 	protected final class MyJTable extends JTable

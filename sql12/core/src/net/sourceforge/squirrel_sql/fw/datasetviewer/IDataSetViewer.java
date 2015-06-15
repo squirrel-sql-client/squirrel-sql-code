@@ -108,4 +108,6 @@ public interface IDataSetViewer
    void disableContinueRead();
 
    void setRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener);
+
+	void switchColumnHeader(ColumnHeaderDisplay columnHeaderDisplay);
 }

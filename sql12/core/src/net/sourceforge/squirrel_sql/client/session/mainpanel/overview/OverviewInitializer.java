@@ -71,4 +71,8 @@ public class OverviewInitializer
 
    }
 
+   public void moreResultsHaveBeenRead()
+   {
+      initOverview();
+   }
 }

@@ -235,4 +235,10 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
    public void setRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener)
    {
    }
+
+	@Override
+	public void switchColumnHeader(ColumnHeaderDisplay columnHeaderDisplay)
+	{
+
+	}
 }
