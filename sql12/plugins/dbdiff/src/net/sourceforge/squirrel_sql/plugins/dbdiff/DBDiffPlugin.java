@@ -78,7 +78,7 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	@Override
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
-		addMenuItemsToContextMenu(session);
+		addMenuItemsToContextMenu(session.getObjectTreeAPIOfActiveSessionWindow());
 		return new DBDiffPluginSessionCallback(this);
 	}
 
@@ -231,15 +231,15 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	/**
 	 * @param coll
 	 * @param api
+	 * @param objectTreeApi
 	 */
-	protected void addMenuItemsToContextMenu(ISession session)
+	protected void addMenuItemsToContextMenu(final IObjectTreeAPI objectTreeApi)
 	{
-		final IObjectTreeAPI api = session.getObjectTreeAPIOfActiveSessionWindow();
 		final ActionCollection coll = getApplication().getActionCollection();
 
 		if (SwingUtilities.isEventDispatchThread())
 		{
-			addToPopup(api, coll);
+			addToPopup(objectTreeApi, coll);
 		}
 		else
 		{
@@ -247,7 +247,7 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 			{
 				public void run()
 				{
-					addToPopup(api, coll);
+					addToPopup(objectTreeApi, coll);
 				}
 			});
 		}
