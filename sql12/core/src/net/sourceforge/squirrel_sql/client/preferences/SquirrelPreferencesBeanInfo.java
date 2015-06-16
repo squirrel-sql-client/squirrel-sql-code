@@ -106,6 +106,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 							"setFilePreviousDir"),
 						new PropertyDescriptor(SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN, SquirrelPreferences.class,
 							"getShowPluginFilesInSplashScreen", "setShowPluginFilesInSplashScreen"),
+						new PropertyDescriptor(USE_SHORT_SESSION_TITLE, SquirrelPreferences.class,
+							"getUseShortSessionTitle", "setUseShortSessionTitle"),
 						new PropertyDescriptor(WARN_JRE_JDBC_MISMATCH, SquirrelPreferences.class,
 							"getWarnJreJdbcMismatch", "setWarnJreJdbcMismatch"),
 						new PropertyDescriptor(WARN_FOR_UNSAVED_FILE_EDITS, SquirrelPreferences.class,

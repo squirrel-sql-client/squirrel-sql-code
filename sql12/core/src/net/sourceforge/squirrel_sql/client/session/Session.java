@@ -795,7 +795,11 @@ class Session implements ISession
 
       String title = null;
       String user = _user != null ? _user : "";
-      if (user.length() > 0)
+      if (getApplication().getSquirrelPreferences().getUseShortSessionTitle() )
+      {
+         title = getAlias().getName();
+      }
+      else if (user.length() > 0)
       {
          String[] args = new String[3];
          args[0] = getAlias().getName();

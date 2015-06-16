@@ -33,13 +33,11 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.multi.MultiComboBoxUI;
 
 import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.LocaleUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -131,6 +129,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
       private JCheckBox _showColoriconsInToolbar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showcoloricons"));
       private JCheckBox _showPluginFilesInSplashScreen = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showpluginfiles"));
+      private JCheckBox _useShortSessionTitle = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.useShortSessionTitle"));
 //      private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
 //      // Must have at least 1 blank otherwise width gets set to zero.
 //      private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
@@ -177,6 +176,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          _showDriversToolBar.setSelected(prefs.getShowDriversToolBar());
          _showColoriconsInToolbar.setSelected(prefs.getShowColoriconsInToolbar());
          _showPluginFilesInSplashScreen.setSelected(prefs.getShowPluginFilesInSplashScreen());
+         _useShortSessionTitle.setSelected(prefs.getUseShortSessionTitle());
 
          _confirmSessionCloseChk.setSelected(prefs.getConfirmSessionClose());
          _warnJreJdbcMismatch.setSelected(prefs.getWarnJreJdbcMismatch());
@@ -235,6 +235,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          prefs.setMaximizeSessionSheetOnOpen(_maximimizeSessionSheet.isSelected());
          prefs.setShowColoriconsInToolbar(_showColoriconsInToolbar.isSelected());
          prefs.setShowPluginFilesInSplashScreen(_showPluginFilesInSplashScreen.isSelected());
+         prefs.setUseShortSessionTitle(_useShortSessionTitle.isSelected());
          prefs.setConfirmSessionClose(_confirmSessionCloseChk.isSelected());
          prefs.setWarnJreJdbcMismatch(_warnJreJdbcMismatch.isSelected());
          prefs.setWarnForUnsavedFileEdits(_warnForUnsavedFileEdits.isSelected());
@@ -325,6 +326,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.add(_showColoriconsInToolbar, gbc);
          ++gbc.gridy;
          pnl.add(_showPluginFilesInSplashScreen, gbc);
+         ++gbc.gridy;
+         pnl.add(_useShortSessionTitle, gbc);
 
 			return pnl;
 		}

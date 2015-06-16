@@ -78,6 +78,7 @@ public class SquirrelPreferences implements Serializable
       String SHOW_TOOLTIPS = "showToolTips";
       String SHOW_COLOR_ICONS_IN_TOOLBAR = "showColorIconsInToolbars";
       String SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN = "showPluginFilesInSplashScreen";
+      String USE_SHORT_SESSION_TITLE = "useShortSessionTitle";
       String FILE_OPEN_IN_PREVIOUS_DIR = "fileOpenInPreviousDir";
       String FILE_OPEN_IN_SPECIFIED_DIR = "fileOpenInSpecifiedDir";
       String FILE_SPECIFIED_DIR = "fileSpecifiedDir";
@@ -241,8 +242,10 @@ public class SquirrelPreferences implements Serializable
 
    private int _maxColumnAdjustLength = -1;
 
+	private boolean _useShortSessionTitle = false;
 
-   /**
+
+	/**
 	 * Default ctor.
 	 */
 	public SquirrelPreferences()
@@ -1174,4 +1177,15 @@ public class SquirrelPreferences implements Serializable
    {
       return _maxColumnAdjustLength;
    }
+
+	public void setUseShortSessionTitle(boolean useShortSessionTitle)
+	{
+		_useShortSessionTitle = useShortSessionTitle;
+	}
+
+	public boolean getUseShortSessionTitle()
+	{
+		return _useShortSessionTitle;
+	}
+
 }
