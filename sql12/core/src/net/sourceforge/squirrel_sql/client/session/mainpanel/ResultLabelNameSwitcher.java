@@ -102,11 +102,19 @@ public class ResultLabelNameSwitcher
 
    public void setCurrentResult(ResultSetDataSet rsds, IDataSetViewer dataSetViewer)
    {
-      if (dataSetViewer instanceof  DataSetViewerTablePanel && hasLabelsDifferentFormNames(rsds))
+      if (false == needsLabelSwitch(rsds, dataSetViewer))
       {
-         _dataSetViewer = dataSetViewer;
-         initLabelSwitch();
+         return;
       }
+
+      _dataSetViewer = dataSetViewer;
+      initLabelSwitch();
+
+   }
+
+   private boolean needsLabelSwitch(ResultSetDataSet rsds, IDataSetViewer dataSetViewer)
+   {
+      return dataSetViewer instanceof DataSetViewerTablePanel && hasLabelsDifferentFormNames(rsds);
    }
 
    private boolean hasLabelsDifferentFormNames(ResultSetDataSet rsds)
@@ -122,9 +130,14 @@ public class ResultLabelNameSwitcher
       return false;
    }
 
-   public void moreResultsHaveBeenRead()
+   public void moreResultsHaveBeenRead(ResultSetDataSet rsds)
    {
-      if(_currentIcon == _namedIcon)
+      if (false == needsLabelSwitch(rsds, _dataSetViewer))
+      {
+         return;
+      }
+
+      if (_currentIcon == _namedIcon)
       {
          _dataSetViewer.switchColumnHeader(ColumnHeaderDisplay.COLUMN_NAME);
       }

@@ -74,5 +74,6 @@ public class OverviewInitializer
    public void moreResultsHaveBeenRead()
    {
       initOverview();
+      setCurrentResult(_rsds);
    }
 }

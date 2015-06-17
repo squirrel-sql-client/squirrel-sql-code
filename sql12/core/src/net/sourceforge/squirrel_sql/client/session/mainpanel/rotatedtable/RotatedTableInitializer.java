@@ -74,5 +74,6 @@ public class RotatedTableInitializer
    public void moreResultsHaveBeenRead()
    {
       initRotatedTable();
+      setCurrentResult(_rsds);
    }
 }

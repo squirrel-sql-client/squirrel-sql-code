@@ -347,7 +347,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
          _rotatedTableInitializer.moreResultsHaveBeenRead();
 
-         _resultLabelNameSwitcher.moreResultsHaveBeenRead();
+         _resultLabelNameSwitcher.moreResultsHaveBeenRead(_rsds);
       }
       catch (DataSetException e)
       {
