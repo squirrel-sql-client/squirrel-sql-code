@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.action.RerunCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.AdditionalResultTabsController;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.LazyResultTabControllerFactory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.LazyResultTabInitializer;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewCtrl;
@@ -113,11 +114,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    private boolean _tabIsClosing;
    private SelectRowColLabelController _selectRowColLabelController = new SelectRowColLabelController();
 
-   private LazyResultTabInitializer<OverviewCtrl> _overviewInitializer;
-   private LazyResultTabInitializer<RotatedTableCtrl> _rotatedTableInitializer;
-   private LazyResultTabInitializer<TextResultCtrl> _textResultController;
 
    private ResultLabelNameSwitcher _resultLabelNameSwitcher;
+   private AdditionalResultTabsController _additionalResultTabsController;
 
    /**
     * Ctor.
@@ -268,9 +267,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       _currentSqlLblCtrl.setSql(_sql);
       _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
-      _overviewInitializer.setCurrentResult(_rsds);
-      _rotatedTableInitializer.setCurrentResult(_rsds);
-      _textResultController.setCurrentResult(_rsds);
+
+      _additionalResultTabsController.setCurrentResult(_rsds);
 
       _resultLabelNameSwitcher.setCurrentResult(_rsds, _dataSetViewerFindDecorator.getDataSetViewer());
 
@@ -339,10 +337,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
          _queryInfoPanel.displayRowCount(_rsds.currentRowCount());
 
-         _overviewInitializer.moreResultsHaveBeenRead();
 
-         _rotatedTableInitializer.moreResultsHaveBeenRead();
-         _textResultController.moreResultsHaveBeenRead();
+         _additionalResultTabsController.moreResultsHaveBeenRead();
 
          _resultLabelNameSwitcher.moreResultsHaveBeenRead(_rsds);
       }
@@ -571,57 +567,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		_tabResultTabs.addTab(infoTabTitle, sp);
 
 
-      _overviewInitializer = new LazyResultTabInitializer<OverviewCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<OverviewCtrl>()
-      {
-         @Override
-         public OverviewCtrl create()
-         {
-            return new OverviewCtrl(_session);
-         }
+      _additionalResultTabsController = new AdditionalResultTabsController(_session, _tabResultTabs);
 
-         @Override
-         public boolean isMatchingPanel(Component comp)
-         {
-            return OverviewCtrl.isOverviewPanel(comp);
-         }
-      });
-      _overviewInitializer.initTab();
-
-
-
-      _rotatedTableInitializer = new LazyResultTabInitializer<RotatedTableCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<RotatedTableCtrl>()
-      {
-         @Override
-         public RotatedTableCtrl create()
-         {
-            return new RotatedTableCtrl(_session);
-         }
-
-         @Override
-         public boolean isMatchingPanel(Component comp)
-         {
-            return RotatedTableCtrl.isRotatedTablePanel(comp);
-         }
-      });
-      _rotatedTableInitializer.initTab();
-
-      _textResultController = new LazyResultTabInitializer<TextResultCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<TextResultCtrl>()
-      {
-         @Override
-         public TextResultCtrl create()
-         {
-            return new TextResultCtrl();
-         }
-
-         @Override
-         public boolean isMatchingPanel(Component comp)
-         {
-            return TextResultCtrl.isTextResultPanel(comp);
-         }
-      });
-      _textResultController.initTab();
-
-	}
+   }
 
    private JPanel createRightPanel()
    {
