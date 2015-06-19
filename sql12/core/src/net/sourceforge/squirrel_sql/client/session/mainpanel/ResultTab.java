@@ -22,14 +22,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -39,19 +31,14 @@ import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.action.RerunCurrentSQLResultTabAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.rotatedtable.RotatedTableInitializer;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewInitializer;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.LazyResultTabControllerFactory;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.LazyResultTabInitializer;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewCtrl;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.rotatedtable.RotatedTableCtrl;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.textresult.TextResultCtrl;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ContinueReadChannel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindDecorator;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -60,6 +47,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 {
@@ -120,9 +113,10 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    private boolean _tabIsClosing;
    private SelectRowColLabelController _selectRowColLabelController = new SelectRowColLabelController();
 
-   private OverviewInitializer _overviewInitializer;
+   private LazyResultTabInitializer<OverviewCtrl> _overviewInitializer;
+   private LazyResultTabInitializer<RotatedTableCtrl> _rotatedTableInitializer;
+   private LazyResultTabInitializer<TextResultCtrl> _textResultController;
 
-   private RotatedTableInitializer _rotatedTableInitializer;
    private ResultLabelNameSwitcher _resultLabelNameSwitcher;
 
    /**
@@ -276,6 +270,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
       _overviewInitializer.setCurrentResult(_rsds);
       _rotatedTableInitializer.setCurrentResult(_rsds);
+      _textResultController.setCurrentResult(_rsds);
+
       _resultLabelNameSwitcher.setCurrentResult(_rsds, _dataSetViewerFindDecorator.getDataSetViewer());
 
 		// Display the result set metadata.
@@ -346,6 +342,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          _overviewInitializer.moreResultsHaveBeenRead();
 
          _rotatedTableInitializer.moreResultsHaveBeenRead();
+         _textResultController.moreResultsHaveBeenRead();
 
          _resultLabelNameSwitcher.moreResultsHaveBeenRead(_rsds);
       }
@@ -574,11 +571,55 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		_tabResultTabs.addTab(infoTabTitle, sp);
 
 
-      _overviewInitializer = new OverviewInitializer(_session, _tabResultTabs);
-      _overviewInitializer.initOverview();
+      _overviewInitializer = new LazyResultTabInitializer<OverviewCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<OverviewCtrl>()
+      {
+         @Override
+         public OverviewCtrl create()
+         {
+            return new OverviewCtrl(_session);
+         }
 
-      _rotatedTableInitializer = new RotatedTableInitializer(_session, _tabResultTabs);
-      _rotatedTableInitializer.initRotatedTable();
+         @Override
+         public boolean isMatchingPanel(Component comp)
+         {
+            return OverviewCtrl.isOverviewPanel(comp);
+         }
+      });
+      _overviewInitializer.initTab();
+
+
+
+      _rotatedTableInitializer = new LazyResultTabInitializer<RotatedTableCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<RotatedTableCtrl>()
+      {
+         @Override
+         public RotatedTableCtrl create()
+         {
+            return new RotatedTableCtrl(_session);
+         }
+
+         @Override
+         public boolean isMatchingPanel(Component comp)
+         {
+            return RotatedTableCtrl.isRotatedTablePanel(comp);
+         }
+      });
+      _rotatedTableInitializer.initTab();
+
+      _textResultController = new LazyResultTabInitializer<TextResultCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<TextResultCtrl>()
+      {
+         @Override
+         public TextResultCtrl create()
+         {
+            return new TextResultCtrl();
+         }
+
+         @Override
+         public boolean isMatchingPanel(Component comp)
+         {
+            return TextResultCtrl.isTextResultPanel(comp);
+         }
+      });
+      _textResultController.initTab();
 
 	}
 

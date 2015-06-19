@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 
@@ -73,7 +74,7 @@ public class DataSetTextAreaController
 	 *
 	 * @return	The component for this viewer.
 	 */
-	public Component getComponent()
+	public JComponent getComponent()
 	{
 		return _outText;
 	}

@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.rotatedtable;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.LazyTabControllerCtrl;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -8,7 +9,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import java.awt.*;
 import java.util.*;
 
-public class RotatedTableCtrl
+public class RotatedTableCtrl implements LazyTabControllerCtrl
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RotatedTableCtrl.class);
 
