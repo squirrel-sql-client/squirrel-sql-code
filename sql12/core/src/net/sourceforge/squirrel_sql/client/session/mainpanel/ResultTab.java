@@ -567,7 +567,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		_tabResultTabs.addTab(infoTabTitle, sp);
 
 
-      _additionalResultTabsController = new AdditionalResultTabsController(_session, _tabResultTabs);
+      _additionalResultTabsController = new AdditionalResultTabsController(_session, _tabResultTabs, _dataSetViewerFindDecorator.getDataSetViewer() instanceof DataSetViewerTablePanel);
 
    }
 

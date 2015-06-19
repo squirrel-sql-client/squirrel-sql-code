@@ -17,12 +17,11 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
@@ -30,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -379,6 +379,20 @@ public class GeneralSessionPropertiesPanel
 			++gbc.gridx;
 			pnl.add(_tableContentsCmb, gbc);
 
+
+			++gbc.gridy;
+			gbc.gridx = 0;
+			gbc.gridwidth = 2;
+			pnl.add(new JSeparator(SwingConstants.HORIZONTAL), gbc);
+
+
+			++gbc.gridy;
+			gbc.gridx = 0;
+			gbc.gridwidth = 2;
+			pnl.add(new MultipleLineLabel(s_stringMgr.getString("generalSessionPropertiesPanel.noteOnSqlResults")), gbc);
+			gbc.gridwidth = 1;
+
+
 			++gbc.gridy;
 			gbc.gridx = 0;
 			pnl.add(new JLabel(GeneralSessionPropertiesPanelI18n.SQL_RESULTS, SwingConstants.RIGHT), gbc);
@@ -387,8 +401,16 @@ public class GeneralSessionPropertiesPanel
 			pnl.add(_sqlResultsCmb, gbc);
 
 
-         ++gbc.gridy;
+			++gbc.gridy;
+			gbc.gridx = 0;
+			gbc.gridwidth = 2;
+			pnl.add(new JSeparator(SwingConstants.HORIZONTAL), gbc);
+			gbc.gridwidth = 1;
+
+
+			++gbc.gridy;
          gbc.gridx = 0;
+			gbc.weightx = 1;
          gbc.gridwidth = 2;
          _chkKeepTableLayoutOnRerun.setText(GeneralSessionPropertiesPanelI18n.KEEP_TABLE_LAYOUT_ON_RERUN);
          pnl.add(_chkKeepTableLayoutOnRerun, gbc);

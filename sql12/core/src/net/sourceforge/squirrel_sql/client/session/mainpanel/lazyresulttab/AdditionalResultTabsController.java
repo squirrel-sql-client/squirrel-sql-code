@@ -13,16 +13,18 @@ public class AdditionalResultTabsController
 {
    private final ISession _session;
    private final JTabbedPane _tabResultTabs;
+   private boolean _isOutputAsTable;
 
 
    private LazyResultTabInitializer<OverviewCtrl> _overviewInitializer;
    private LazyResultTabInitializer<RotatedTableCtrl> _rotatedTableInitializer;
    private LazyResultTabInitializer<TextResultCtrl> _textResultController;
 
-   public AdditionalResultTabsController(ISession session, JTabbedPane tabResultTabs)
+   public AdditionalResultTabsController(ISession session, JTabbedPane tabResultTabs, boolean isOutputAsTable)
    {
       _session = session;
       _tabResultTabs = tabResultTabs;
+      _isOutputAsTable = isOutputAsTable;
 
       _overviewInitializer = new LazyResultTabInitializer<OverviewCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<OverviewCtrl>()
       {
@@ -58,21 +60,24 @@ public class AdditionalResultTabsController
       });
       _rotatedTableInitializer.initTab();
 
-      _textResultController = new LazyResultTabInitializer<TextResultCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<TextResultCtrl>()
+      if (_isOutputAsTable)
       {
-         @Override
-         public TextResultCtrl create()
+         _textResultController = new LazyResultTabInitializer<TextResultCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<TextResultCtrl>()
          {
-            return new TextResultCtrl();
-         }
+            @Override
+            public TextResultCtrl create()
+            {
+               return new TextResultCtrl();
+            }
 
-         @Override
-         public boolean isMatchingPanel(Component comp)
-         {
-            return TextResultCtrl.isTextResultPanel(comp);
-         }
-      });
-      _textResultController.initTab();
+            @Override
+            public boolean isMatchingPanel(Component comp)
+            {
+               return TextResultCtrl.isTextResultPanel(comp);
+            }
+         });
+         _textResultController.initTab();
+      }
 
 
    }
@@ -81,13 +86,21 @@ public class AdditionalResultTabsController
    {
       _overviewInitializer.setCurrentResult(rsds);
       _rotatedTableInitializer.setCurrentResult(rsds);
-      _textResultController.setCurrentResult(rsds);
+
+      if (_isOutputAsTable)
+      {
+         _textResultController.setCurrentResult(rsds);
+      }
    }
 
    public void moreResultsHaveBeenRead()
    {
       _overviewInitializer.moreResultsHaveBeenRead();
       _rotatedTableInitializer.moreResultsHaveBeenRead();
-      _textResultController.moreResultsHaveBeenRead();
+
+      if (_isOutputAsTable)
+      {
+         _textResultController.moreResultsHaveBeenRead();
+      }
    }
 }

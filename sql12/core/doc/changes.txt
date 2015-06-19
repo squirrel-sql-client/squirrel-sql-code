@@ -8,6 +8,10 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Feature request #484 Query output preferences --> Allow table and text output simultaneously
+   Note: SQL result output as table or editable table now includes text output in an extra tab.
+         That's why there should be only few cases where choosing text output in Session Properties makes sense anymore.
+
 Feature request #479 Add option for tab names to contain only Alias name
    The option can be found at menu File --> Global Preferences --> Tab General --> Bottom of section Appearance
 
