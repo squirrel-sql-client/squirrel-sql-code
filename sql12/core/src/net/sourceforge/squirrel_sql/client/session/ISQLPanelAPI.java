@@ -213,7 +213,10 @@ public interface ISQLPanelAPI
 	 */
 	void executeCurrentSQL();
 
-   /**
+	void executeAllSQLs();
+
+
+	/**
 	 * Close all the SQL result tabs.
 	 */
 	void closeAllSQLResultTabs();

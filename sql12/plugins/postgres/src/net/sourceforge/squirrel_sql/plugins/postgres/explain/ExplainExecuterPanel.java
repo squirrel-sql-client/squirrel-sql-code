@@ -124,7 +124,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 	}
 
 	@Override
-	public void execute(ISQLEntryPanel parent)
+	public void execute(ISQLEntryPanel parent, ExecutionScope executionScope)
 	{
 		String sql = parent.getSQLToBeExecuted();
 		if (sql == null || sql.length() == 0)

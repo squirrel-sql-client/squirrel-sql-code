@@ -560,6 +560,8 @@ public class SessionPanel extends JPanel
          add(actions.get(RefreshSchemaInfoAction.class));
          addSeparator();
          add(actions.get(ExecuteSqlAction.class));
+			addSeparator();
+         add(actions.get(ExecuteAllSqlsAction.class));
          addSeparator();
 //			actions.get(ExecuteSqlAction.class).setEnabled(false);
          add(actions.get(SQLFilterAction.class));

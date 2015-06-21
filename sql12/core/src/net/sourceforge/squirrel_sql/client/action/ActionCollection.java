@@ -461,9 +461,10 @@ public class ActionCollection
 		add(new DeleteSelectedTablesAction(_app));
 		add(new ShowTableReferencesAction(_app));
 		add(new DumpApplicationAction(_app));
-        add(new SavePreferencesAction(_app));
+		add(new SavePreferencesAction(_app));
 		add(new DumpSessionAction(_app));
 		add(new ExecuteSqlAction(_app));
+		add(new ExecuteAllSqlsAction(_app));
 		add(new ExitAction(_app));
 		add(new FileNewAction(_app));
 		add(new FileDetachAction(_app));

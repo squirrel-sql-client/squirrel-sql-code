@@ -221,12 +221,23 @@ public class SQLResultExecuterPanel extends JPanel
 	}
 
 
-	public void execute(ISQLEntryPanel sqlPanel)
+	public void execute(ISQLEntryPanel sqlPanel, ExecutionScope executionScope)
 	{
       removeErrorPanels();
 
-		String sql = sqlPanel.getSQLToBeExecuted();
-		if (sql != null && sql.length() > 0)
+		String sql;
+
+      if(ExecutionScope.EXEC_CURRENT_SQL == executionScope)
+      {
+         sql = sqlPanel.getSQLToBeExecuted();
+      }
+      else // if(ExecutionScope.EXEC_ALL_SQLS == executionScope)
+      {
+         sql = sqlPanel.getText();
+      }
+
+
+      if (sql != null && sql.length() > 0)
 		{
 			executeSQL(sql);
 		}

@@ -70,7 +70,6 @@ import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
 import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndReadOnPanelSmallPanel;
-import net.sourceforge.squirrel_sql.client.session.properties.SQLResultConfigCtrl;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
@@ -381,20 +380,31 @@ public class SQLPanel extends JPanel
 
 	public void runCurrentExecuter()
 	{
+      _runExecuter(ISQLResultExecuter.ExecutionScope.EXEC_CURRENT_SQL);
+   }
+
+   public void runAllSqlsExecuter()
+	{
+      _runExecuter(ISQLResultExecuter.ExecutionScope.EXEC_ALL_SQLS);
+	}
+
+
+   private void _runExecuter(ISQLResultExecuter.ExecutionScope executionScope)
+   {
       if(1 == _executors.size())
       {
          ISQLResultExecuter exec = _executors.get(0);
-         exec.execute(_sqlEntry);
+         exec.execute(_sqlEntry, executionScope);
       }
       else
       {
          int selectedIndex = _tabbedExecuterPanel.getSelectedIndex();
          ISQLResultExecuter exec = _executors.get(selectedIndex);
-         exec.execute(_sqlEntry);
+         exec.execute(_sqlEntry, executionScope);
       }
-	}
+   }
 
-	/**
+   /**
 	 * Sesssion is ending.
 	 * Remove all listeners that this component has setup. Close all
 	 * torn off result tab windows.
@@ -749,7 +759,7 @@ public class SQLPanel extends JPanel
       return ((SQLHistoryComboBoxModel)_sqlCombo.getModel()).getItems();
    }
 
-   private class SetAutoCommitTask implements Runnable {
+	private class SetAutoCommitTask implements Runnable {
         
         public void run() {
             final ISQLConnection conn = _session.getSQLConnection();

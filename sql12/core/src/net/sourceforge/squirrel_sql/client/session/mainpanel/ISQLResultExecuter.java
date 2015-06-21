@@ -29,12 +29,18 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 public interface ISQLResultExecuter
 {
 
+   public static enum ExecutionScope
+   {
+      EXEC_CURRENT_SQL, EXEC_ALL_SQLS
+   }
+
+
    /** Returns the title of this executor.*/
 	public String getTitle();
 
 	public JComponent getComponent();
 
-	public void execute(ISQLEntryPanel parent);
+	public void execute(ISQLEntryPanel parent, ExecutionScope executionScope);
     
     /**
      * Returns the currently selected ResultTab.

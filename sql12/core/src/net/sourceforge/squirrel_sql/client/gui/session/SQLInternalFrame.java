@@ -178,6 +178,8 @@ public class SQLInternalFrame extends SessionTabWidget
 			setFloatable(false);
 			add(actions.get(ExecuteSqlAction.class));
 			addSeparator();
+			add(actions.get(ExecuteAllSqlsAction.class));
+			addSeparator();
 			add(actions.get(FileNewAction.class));
 			add(actions.get(FileDetachAction.class));
 			add(actions.get(FileOpenAction.class));

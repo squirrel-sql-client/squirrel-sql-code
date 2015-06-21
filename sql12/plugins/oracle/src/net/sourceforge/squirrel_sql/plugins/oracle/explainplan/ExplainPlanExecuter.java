@@ -167,7 +167,7 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
 	 return treeTable;
   }
 
-  public void execute(ISQLEntryPanel sqlPanel) {
+  public void execute(ISQLEntryPanel sqlPanel, ExecutionScope executionScope) {
 	 String sqlToBeExecuted = sqlPanel.getSQLToBeExecuted();
 	 if (sqlToBeExecuted != null && (sqlToBeExecuted.trim().length() > 0)) {
          sqlToBeExecuted = sqlToBeExecuted.trim();

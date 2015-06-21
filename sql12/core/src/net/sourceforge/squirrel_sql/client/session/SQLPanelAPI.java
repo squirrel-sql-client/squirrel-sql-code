@@ -99,6 +99,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction("undo", _panel.getUndoAction());
       _toolsPopupController.addAction("redo", _panel.getRedoAction());
       _toolsPopupController.addAction("runsql", ac.get(ExecuteSqlAction.class));
+      _toolsPopupController.addAction("runallsqls", ac.get(ExecuteAllSqlsAction.class));
       _toolsPopupController.addAction("filenew", ac.get(FileNewAction.class));
       _toolsPopupController.addAction("filedetach", ac.get(FileDetachAction.class));
       _toolsPopupController.addAction("fileopenrecent", ac.get(FileOpenRecentAction.class));
@@ -605,6 +606,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	{
 		_panel.runCurrentExecuter();
 	}
+
+   @Override
+   public void executeAllSQLs()
+   {
+      _panel.runAllSqlsExecuter();
+   }
 
    /**
 	 * Close all the SQL result tabs.

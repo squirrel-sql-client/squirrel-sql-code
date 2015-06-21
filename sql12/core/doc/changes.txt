@@ -8,6 +8,12 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Feature request #485 Execute multiple SQL statements on one click without selection
+   The new feature executes all SQLs in the editor.
+   If there are multiple SQLs in the editor the statement separator has to be used.
+   The feature is accessible through a new tool bar button, tools popup and the alt shift ENTER key combination
+
+
 Feature request #484 Query output preferences --> Allow table and text output simultaneously
    Note: SQL result output as table or editable table now includes text output in an extra tab.
          That's why there should be only few cases where choosing text output in Session Properties makes sense anymore.
