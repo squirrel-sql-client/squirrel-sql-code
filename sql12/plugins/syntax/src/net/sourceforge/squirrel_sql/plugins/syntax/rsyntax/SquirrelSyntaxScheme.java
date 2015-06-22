@@ -63,17 +63,28 @@ public class SquirrelSyntaxScheme extends SyntaxScheme
    {
       Style style;
 
+      ////////////////////////////////////////////////////////////
+      // With RSyntax version 2.5.6 Marking find results
+      // does not work anymore when Styles have background colors.
+      // So we set all background colors to null.
+      // The same is done for the default styles in org.fife.ui.rsyntaxtextarea.SyntaxScheme#restoreDefaults()
+      //
+      //Color bg = new Color(squirrelStyle.getBackgroundRGB());
+      Color bg = null;
+      //
+      /////////////////////////////////////////////////////////////
+
       if (squirrelStyle.isBold())
       {
-         style = new Style(new Color(squirrelStyle.getTextRGB()), new Color(squirrelStyle.getBackgroundRGB()), boldFont);
+         style = new Style(new Color(squirrelStyle.getTextRGB()), bg, boldFont);
       }
       else if (squirrelStyle.isItalic())
       {
-         style = new Style(new Color(squirrelStyle.getTextRGB()), new Color(squirrelStyle.getBackgroundRGB()), italicFont);
+         style = new Style(new Color(squirrelStyle.getTextRGB()), bg, italicFont);
       }
       else
       {
-         style = new Style(new Color(squirrelStyle.getTextRGB()), new Color(squirrelStyle.getBackgroundRGB()), null);
+         style = new Style(new Color(squirrelStyle.getTextRGB()), bg, null);
       }
 
       return style;
