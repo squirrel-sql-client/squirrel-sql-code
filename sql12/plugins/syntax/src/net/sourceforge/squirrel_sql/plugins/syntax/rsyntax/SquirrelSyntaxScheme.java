@@ -72,6 +72,15 @@ public class SquirrelSyntaxScheme extends SyntaxScheme
       //Color bg = new Color(squirrelStyle.getBackgroundRGB());
       Color bg = null;
       //
+      // Excerpts from mails:
+      // Gerd Wagner to Robert Futrell on Jun 22, 2015:
+      // 2. If one defines his own styles using SyntaxScheme.setStyles() the mark all finds feature does not work for Styles that set background colors.
+      //
+      // Robert Futrell to Gerd Wagner on Jun 23, 2015:
+      // For the second issue, yes, that is a known problem I have to work on.
+      // Custom background colors on tokens don't play nicely with Mark All or Mark Occurrences (I believe).
+      // It's on the to-do list.
+      //
       /////////////////////////////////////////////////////////////
 
       if (squirrelStyle.isBold())
