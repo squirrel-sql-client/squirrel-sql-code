@@ -248,6 +248,16 @@ public class ActionHandle
       updateToggleSelectionState();
    }
 
+   public boolean isToggleSelected()
+   {
+      if(_actionCfg.getActionType() != ActionType.TOGGLE)
+      {
+         throw new UnsupportedOperationException("Action is no toggle action");
+      }
+      return _toggleSelectState;
+   }
+
+
    private void updateToggleSelectionState()
    {
       if(_actionCfg.getActionType() != ActionType.TOGGLE)

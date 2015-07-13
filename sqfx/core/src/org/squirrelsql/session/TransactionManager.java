@@ -67,4 +67,9 @@ public class TransactionManager
          throw new RuntimeException(e);
       }
    }
+
+   public boolean isAutoCommit()
+   {
+      return StdActionCfg.TRANSACT_TOGGLE_AUTO_COMMIT.isToggleSelected();
+   }
 }

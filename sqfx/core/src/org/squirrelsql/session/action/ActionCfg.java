@@ -115,8 +115,15 @@ public class ActionCfg
       ActionUtil.getActionHandleForActiveOrActivatingSessionTabContext(this).setToggleSelectState(toggleSelected);
    }
 
+   public boolean isToggleSelected()
+   {
+      return ActionUtil.getActionHandleForActiveOrActivatingSessionTabContext(this).isToggleSelected();
+   }
+
+
    public ActionType getActionType()
    {
       return _actionType;
    }
+
 }

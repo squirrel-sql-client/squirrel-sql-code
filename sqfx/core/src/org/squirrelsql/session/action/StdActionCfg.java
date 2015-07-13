@@ -25,6 +25,8 @@ public enum StdActionCfg
    TRANSACT_COMMIT("commit.png", "transact.commit", null, ActionScope.UNSCOPED, null),
    TRANSACT_ROLLBACK("rollback.png", "transact.rollback", null, ActionScope.UNSCOPED, null),
 
+   RECONNECT("reconnect.png", "reconnect.to.database", "reconnect", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.ALT_DOWN)),
+
 
    /**
     * No real action, just the Separator
@@ -44,7 +46,8 @@ public enum StdActionCfg
          TRANSACT_TOGGLE_AUTO_COMMIT,
          TRANSACT_COMMIT,
          TRANSACT_ROLLBACK,
-         SEPARATOR
+         SEPARATOR,
+         RECONNECT
    };
 
    public static StdActionCfg[] SESSION_MENU = new StdActionCfg[]
@@ -58,7 +61,9 @@ public enum StdActionCfg
          TRANSACT_TOGGLE_AUTO_COMMIT,
          TRANSACT_COMMIT,
          TRANSACT_ROLLBACK,
-         SEPARATOR
+         SEPARATOR,
+         RECONNECT
+
    };
 
 
@@ -135,5 +140,10 @@ public enum StdActionCfg
    public void setToggleSelected(boolean toggleSelected)
    {
       _actionCfg.setToggleSelected(toggleSelected);
+   }
+
+   public boolean isToggleSelected()
+   {
+      return _actionCfg.isToggleSelected();
    }
 }

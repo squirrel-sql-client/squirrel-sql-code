@@ -11,6 +11,7 @@ public class DbConnectorResult
    private Alias _alias;
 
    private String _user; // Should only be null if login was canceled.
+   private String _password;
 
    private boolean _canceled;
    private boolean _editAliasRequested;
@@ -18,10 +19,11 @@ public class DbConnectorResult
    private SQLConnection _sqlConnection;
    private SchemaCacheProperty _schemaCacheProperty = new SchemaCacheProperty();
 
-   public DbConnectorResult(Alias alias, String user)
+   public DbConnectorResult(Alias alias, String user, String password)
    {
       _alias = alias;
       _user = user;
+      _password = password;
    }
 
    public boolean isConnected()
@@ -103,5 +105,10 @@ public class DbConnectorResult
    public void fireCacheUpdate()
    {
       _schemaCacheProperty.fireChanged();
+   }
+
+   public String getPassword()
+   {
+      return _password;
    }
 }

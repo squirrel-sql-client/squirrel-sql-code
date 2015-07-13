@@ -2,24 +2,22 @@ package org.squirrelsql.session;
 
 import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
-import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 
 import org.squirrelsql.AppState;
 import org.squirrelsql.ApplicationCloseListener;
+import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.Dao;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
-import org.squirrelsql.services.SplitPositionSaver;
 import org.squirrelsql.services.progress.ProgressTask;
 import org.squirrelsql.services.progress.Progressable;
 import org.squirrelsql.services.progress.SimpleProgressCtrl;
 import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.action.StdActionCfg;
-import org.squirrelsql.session.objecttree.*;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 import org.squirrelsql.session.schemainfo.SchemaCacheFactory;
@@ -27,9 +25,6 @@ import org.squirrelsql.session.sql.SqlTabCtrl;
 import org.squirrelsql.session.sql.ViewInObjectTreeCommand;
 import org.squirrelsql.session.sql.bookmark.BookmarkEditCtrl;
 import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class SessionCtrl
@@ -39,6 +34,7 @@ public class SessionCtrl
 
    private final TabPane _objectTreeAndSqlTabPane;
    private final ApplicationCloseListener _applicationCloseListener;
+   private final TransactionManager _transactionManager;
 
 
    private I18n _i18n = new I18n(getClass());
@@ -73,7 +69,7 @@ public class SessionCtrl
 
       initStandardActions(sessionTabContext);
 
-      new TransactionManager(sessionTabContext.getSession());
+      _transactionManager = new TransactionManager(sessionTabContext.getSession());
 
       _applicationCloseListener = this::onClose;
       AppState.get().addApplicationCloseListener(_applicationCloseListener, ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);
@@ -85,6 +81,12 @@ public class SessionCtrl
       StdActionCfg.EDIT_BOOKMARK.setAction(() -> new BookmarkEditCtrl(sessionTabContext));
       StdActionCfg.RELOAD_DB_META_DATA.setAction(() -> reloadSchemaCache());
       StdActionCfg.VIEW_IN_OBJECT_TREE.setAction(() -> new ViewInObjectTreeCommand(_sqlTabCtrl.getSQLTextAreaServices(), _objectTreeTabCtrl));
+
+
+      DbConnectorResult dbConnectorResult = _sessionTabContext.getSession().getDbConnectorResult();
+      Session session = sessionTabContext.getSession();
+
+      StdActionCfg.RECONNECT.setAction(() -> session.getSQLConnection().reconnect(dbConnectorResult, _transactionManager.isAutoCommit()));
 
    }
 

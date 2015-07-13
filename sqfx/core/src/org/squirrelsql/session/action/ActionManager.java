@@ -191,7 +191,10 @@ public class ActionManager
 
       for (StdActionCfg stdActionCfg : StdActionCfg.SQL_EDITOR_RIGHT_MOUSE_MENU)
       {
-         ret.add(stdActionCfg.getActionCfg());
+         if (StdActionCfg.SEPARATOR != stdActionCfg)
+         {
+            ret.add(stdActionCfg.getActionCfg());
+         }
       }
 
       return ret;
@@ -203,7 +206,10 @@ public class ActionManager
 
       for (StdActionCfg stdActionCfg : StdActionCfg.values())
       {
-         ret.add(stdActionCfg.getActionCfg());
+         if (StdActionCfg.SEPARATOR != stdActionCfg)
+         {
+            ret.add(stdActionCfg.getActionCfg());
+         }
       }
 
       return ret;

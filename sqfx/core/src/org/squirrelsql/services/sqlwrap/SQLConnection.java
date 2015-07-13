@@ -1,10 +1,9 @@
 package org.squirrelsql.services.sqlwrap;
 
+import org.squirrelsql.AppState;
+import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.dialects.DialectFactory;
-import org.squirrelsql.services.DatabaseObjectType;
-import org.squirrelsql.services.MessageHandler;
-import org.squirrelsql.services.MessageHandlerDestination;
-import org.squirrelsql.services.SQLUtil;
+import org.squirrelsql.services.*;
 import org.squirrelsql.session.DBSchema;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.ProcedureInfo;
@@ -17,6 +16,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class SQLConnection
 {
@@ -373,5 +376,46 @@ public class SQLConnection
    public Connection getConnection()
    {
       return _con;
+   }
+
+   public void reconnect(DbConnectorResult dbConnectorResult, boolean autoCommit)
+   {
+      try
+      {
+         Connection oldCon = _con;
+
+         _con = JDBCUtil.createJDBCConnection(dbConnectorResult.getAlias(), dbConnectorResult.getUser(), dbConnectorResult.getPassword());
+
+
+         _con.setAutoCommit(autoCommit);
+
+
+         Future<?> submit = Executors.newSingleThreadExecutor().submit(() -> SQLUtil.close(oldCon));
+
+         I18n i18n = new I18n(getClass());
+
+
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), i18n.t("reconnect.done"));
+
+
+         MessageHandler mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
+
+         try
+         {
+            submit.get(2000, TimeUnit.MILLISECONDS);
+         }
+         catch (TimeoutException e)
+         {
+            mh.warning(i18n.t("closing.old.connection.after.reconnect.timeout"));
+         }
+         catch (Exception e)
+         {
+            mh.warning(i18n.t("closing.old.connection.after.reconnect.failed", e));
+         }
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 }

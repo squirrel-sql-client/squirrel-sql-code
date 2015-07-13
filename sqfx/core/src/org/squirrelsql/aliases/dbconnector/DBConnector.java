@@ -4,19 +4,14 @@ import javafx.stage.Window;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.AliasUtil;
-import org.squirrelsql.drivers.DriversUtil;
+import org.squirrelsql.services.JDBCUtil;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
-import org.squirrelsql.drivers.SQLDriver;
-import org.squirrelsql.services.sqlwrap.SQLDriverClassLoader;
 import org.squirrelsql.services.CancelableProgressTask;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 import org.squirrelsql.session.schemainfo.SchemaCacheFactory;
 
 import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.SQLException;
-import java.util.Properties;
 
 public class DBConnector
 {
@@ -55,7 +50,7 @@ public class DBConnector
 
          if(false == loginController.isOk())
          {
-            DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, null);
+            DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, null, null);
             dbConnectorResult.setLoginCanceled(true);
             dbConnectorListener.finished(dbConnectorResult);
             return;
@@ -104,45 +99,18 @@ public class DBConnector
 
    private void onCanceled(DbConnectorListener dbConnectorListener, ConnectingController connectingController, String user)
    {
-      DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, user);
+      DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, user, null);
       dbConnectorResult.setCanceled(true);
       onGoOn(dbConnectorResult, dbConnectorListener, connectingController);
    }
 
    private DbConnectorResult doTryConnect(String user, String password)
    {
-      DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, user);
+      DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, user, password);
 
       try
       {
-         SQLDriver sqlDriver = DriversUtil.findDriver(_alias.getDriverId());
-
-         SQLDriverClassLoader driverClassLoader = DriversUtil.createDriverClassLoader(sqlDriver.getJarFileNamesList());
-
-         Driver driver = (Driver)(Class.forName(sqlDriver.getDriverClassName(), false, driverClassLoader).newInstance());
-
-         Properties myProps = new Properties();
-         if (user != null)
-         {
-            myProps.put("user", user);
-         }
-         if (password != null)
-         {
-            myProps.put("password", password);
-         }
-
-         Connection jdbcConn = driver.connect(_alias.getUrl(), myProps);
-
-         if(null == jdbcConn)
-         {
-            // See Api doc of java.sql.Driver.connect();
-            String msg =
-                  "Wrong driver class \"" + sqlDriver.getDriverClassName() +
-                  "\" to connect to URL \"" + _alias.getUrl() + "\"" +
-                  "\nDid you choose the wrong driver in your Alias definition?";
-
-            throw new IllegalStateException(msg);
-         }
+         Connection jdbcConn = JDBCUtil.createJDBCConnection(_alias, user, password);
 
          SQLConnection sqlConnection = new SQLConnection(jdbcConn);
          dbConnectorResult.setSQLConnection(sqlConnection);
