@@ -1,6 +1,10 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Database reconnect
+
+Feature: Toggle between auto commit and manual commit or rollback
+
 Bug fix: Fixed NPE when there is no preferences.properties file on startup
 
 Feature: Formating SQL (ctrl+alt+F)
