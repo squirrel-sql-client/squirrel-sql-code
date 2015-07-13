@@ -65,23 +65,30 @@ public class ActionManager
       _sessionMenu.setDisable(false);
       for (StdActionCfg stdActionCfg : StdActionCfg.SESSION_MENU)
       {
-         MenuItem menuItem;
-         if (stdActionCfg.getActionCfg().getActionType() == ActionType.NON_TOGGLE)
+         if (stdActionCfg == StdActionCfg.SEPARATOR)
          {
-            menuItem = new MenuItem(stdActionCfg.getActionCfg().getText());
+            _sessionMenu.getItems().add(new SeparatorMenuItem());
          }
-         else // if (stdActionCfg.getActionCfg().getActionType() == ActionType.TOGGLE)
+         else
          {
-            menuItem = new CheckMenuItem(stdActionCfg.getActionCfg().getText());
+            MenuItem menuItem;
+            if (stdActionCfg.getActionCfg().getActionType() == ActionType.NON_TOGGLE)
+            {
+               menuItem = new MenuItem(stdActionCfg.getActionCfg().getText());
+            }
+            else // if (stdActionCfg.getActionCfg().getActionType() == ActionType.TOGGLE)
+            {
+               menuItem = new CheckMenuItem(stdActionCfg.getActionCfg().getText());
+            }
+
+            menuItem.setGraphic(stdActionCfg.getActionCfg().getIcon());
+
+            ActionHandle actionHandle = getActionHandle(stdActionCfg.getActionCfg(), sessionTabContext);
+            actionHandle.setMenuItem(menuItem);
+            actionHandle.refreshActionUI();
+
+            _sessionMenu.getItems().add(menuItem);
          }
-
-         menuItem.setGraphic(stdActionCfg.getActionCfg().getIcon());
-
-         ActionHandle actionHandle = getActionHandle(stdActionCfg.getActionCfg(), sessionTabContext);
-         actionHandle.setMenuItem(menuItem);
-         actionHandle.refreshActionUI();
-
-         _sessionMenu.getItems().add(menuItem);
       }
 
       updateActionUIs();
@@ -98,12 +105,24 @@ public class ActionManager
 
       for (StdActionCfg stdActionCfg : StdActionCfg.SESSION_TOOLBAR)
       {
-         addActionToToolbar(ret, stdActionCfg.getActionCfg());
+         if (stdActionCfg == StdActionCfg.SEPARATOR)
+         {
+            addSeparatorToToolbar(ret);
+         }
+         else
+         {
+            addActionToToolbar(ret, stdActionCfg.getActionCfg());
+         }
       }
 
       LogTest.checkAndAddTestToolbarButtons(ret);
 
       return ret;
+   }
+
+   private void addSeparatorToToolbar(ToolBar ret)
+   {
+      ret.getItems().add(new Separator());
    }
 
    public ActionHandle addActionToToolbar(ToolBar toolBar, ActionCfg actionCfg)

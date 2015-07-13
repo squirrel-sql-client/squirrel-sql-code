@@ -23,7 +23,13 @@ public enum StdActionCfg
 
    TRANSACT_TOGGLE_AUTO_COMMIT("autocommit.png", "transact.toggle.autocommit", null, ActionScope.UNSCOPED, null, ActionType.TOGGLE),
    TRANSACT_COMMIT("commit.png", "transact.commit", null, ActionScope.UNSCOPED, null),
-   TRANSACT_ROLLBACK("rollback.png", "transact.rollback", null, ActionScope.UNSCOPED, null);
+   TRANSACT_ROLLBACK("rollback.png", "transact.rollback", null, ActionScope.UNSCOPED, null),
+
+
+   /**
+    * No real action, just the Separator
+    */
+   SEPARATOR;
 
 
 
@@ -34,9 +40,11 @@ public enum StdActionCfg
          EXEC_BOOKMARK,
          EDIT_BOOKMARK,
          RELOAD_DB_META_DATA,
+         SEPARATOR,
          TRANSACT_TOGGLE_AUTO_COMMIT,
          TRANSACT_COMMIT,
          TRANSACT_ROLLBACK,
+         SEPARATOR
    };
 
    public static StdActionCfg[] SESSION_MENU = new StdActionCfg[]
@@ -46,10 +54,11 @@ public enum StdActionCfg
          EXEC_BOOKMARK,
          EDIT_BOOKMARK,
          RELOAD_DB_META_DATA,
+         SEPARATOR,
          TRANSACT_TOGGLE_AUTO_COMMIT,
          TRANSACT_COMMIT,
          TRANSACT_ROLLBACK,
-
+         SEPARATOR
    };
 
 
@@ -74,6 +83,11 @@ public enum StdActionCfg
    StdActionCfg(String iconName, String i18nKeyOfText, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination, ActionType actionType)
    {
       this(new ActionCfg(getImageOrNull(iconName), new I18n(StdActionCfg.class).t(i18nKeyOfText), toolsPopUpSelector, actionScope, keyCodeCombination, actionType));
+   }
+
+   StdActionCfg()
+   {
+      // To use only for the separator
    }
 
    private static Image getImageOrNull(String iconName)
