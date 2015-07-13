@@ -65,7 +65,15 @@ public class ActionManager
       _sessionMenu.setDisable(false);
       for (StdActionCfg stdActionCfg : StdActionCfg.SESSION_MENU)
       {
-         MenuItem menuItem = new MenuItem(stdActionCfg.getActionCfg().getText());
+         MenuItem menuItem;
+         if (stdActionCfg.getActionCfg().getActionType() == ActionType.NON_TOGGLE)
+         {
+            menuItem = new MenuItem(stdActionCfg.getActionCfg().getText());
+         }
+         else // if (stdActionCfg.getActionCfg().getActionType() == ActionType.TOGGLE)
+         {
+            menuItem = new CheckMenuItem(stdActionCfg.getActionCfg().getText());
+         }
 
          menuItem.setGraphic(stdActionCfg.getActionCfg().getIcon());
 
@@ -102,7 +110,16 @@ public class ActionManager
    {
       ActionHandle actionHandle = getActionHandleForActiveOrActivatingSessionTabContext(actionCfg);
 
-      Button b = new Button();
+      ButtonBase b;
+      if (actionCfg.getActionType() == ActionType.NON_TOGGLE)
+      {
+         b = new Button();
+      }
+      else // if (actionCfg.getActionType() == ActionType.NON_TOGGLE)
+      {
+         b = new ToggleButton();
+      }
+
       actionHandle.setToolbarButton(b);
       toolBar.getItems().add(b);
       return actionHandle;

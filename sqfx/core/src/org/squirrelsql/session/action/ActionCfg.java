@@ -16,9 +16,15 @@ public class ActionCfg
    private KeyCodeCombination _keyCodeCombination;
    private final int _actionConfigurationId;
    private String _toolsPopUpSelector;
+   private ActionType _actionType;
 
 
    public ActionCfg(Image icon, String text, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination)
+   {
+      this(icon, text, toolsPopUpSelector, actionScope, keyCodeCombination, ActionType.NON_TOGGLE);
+   }
+
+   public ActionCfg(Image icon, String text, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination, ActionType actionType)
    {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // Note: ActionConfigurations are supposed to be an application wide state like in the StandardActionConfiguration enum.
@@ -33,6 +39,9 @@ public class ActionCfg
       _icon = icon;
       _text = text;
       _keyCodeCombination = keyCodeCombination;
+      _actionType = actionType;
+
+
    }
 
    public ActionScope getActionScope()
@@ -81,6 +90,12 @@ public class ActionCfg
       ActionUtil.getActionHandleForActiveOrActivatingSessionTabContext(this).setAction(sqFxActionListener);
    }
 
+   public void setToggleAction(SqFxToggleActionListener toggleActionListener)
+   {
+      ActionUtil.getActionHandleForActiveOrActivatingSessionTabContext(this).setToggleAction(toggleActionListener);
+   }
+
+
    /**
     * Shortcut method to fire an action for the current SessionTabContext
     */
@@ -88,5 +103,20 @@ public class ActionCfg
    {
       ActionHandle handle = ActionUtil.getActionHandleForActiveOrActivatingSessionTabContext(this);
       handle.fire();
+   }
+
+   public void setDisable(boolean b)
+   {
+      ActionUtil.getActionHandleForActiveOrActivatingSessionTabContext(this).setDisable(b);
+   }
+
+   public void setToggleSelected(boolean toggleSelected)
+   {
+      ActionUtil.getActionHandleForActiveOrActivatingSessionTabContext(this).setToggleSelectState(toggleSelected);
+   }
+
+   public ActionType getActionType()
+   {
+      return _actionType;
    }
 }

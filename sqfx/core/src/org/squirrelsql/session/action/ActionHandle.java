@@ -1,9 +1,7 @@
 package org.squirrelsql.session.action;
 
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import org.squirrelsql.session.SessionTabContext;
 
@@ -14,9 +12,13 @@ public class ActionHandle
 
    private SqFxActionListener _sqFxActionListener;
    private MenuItem _menuItem;
-   private Button _toolbarButton;
+   private ButtonBase _toolbarButton;
    private ActionScope _currentActionScope;
    private boolean _disabledByExtern = false;
+
+   private SqFxToggleActionListener _sqFxToggleActionListener;
+
+   private boolean _toggleSelectState;
 
    public ActionHandle(ActionCfg actionCfg, SessionTabContext sessionTabContext)
    {
@@ -26,21 +28,89 @@ public class ActionHandle
 
    public void setAction(SqFxActionListener sqFxActionListener)
    {
+      if(_actionCfg.getActionType() != ActionType.NON_TOGGLE)
+      {
+         throw new UnsupportedOperationException("Action is a toggle action. Please use setToggleAction() instead of setAction()");
+      }
+
+
       _sqFxActionListener = sqFxActionListener;
       refreshActionUI();
    }
 
-   private void performAction(ActionEvent e)
+   public void setToggleAction(SqFxToggleActionListener toggleActionListener)
    {
-      if(null != _sqFxActionListener)
+      if(_actionCfg.getActionType() != ActionType.TOGGLE)
       {
-         _sqFxActionListener.actionPerformed();
+         throw new UnsupportedOperationException("Action is no toggle action. Please use setAction() instead of setToggleAction()");
       }
-      e.consume();
+
+      _sqFxToggleActionListener = toggleActionListener;
+      refreshActionUI();
    }
 
-   public void setToolbarButton(Button toolbarButton)
+
+   private void performAction(ActionEvent e)
    {
+      if (_actionCfg.getActionType() == ActionType.NON_TOGGLE )
+      {
+         if (null == _sqFxActionListener)
+         {
+            throw new UnsupportedOperationException("No action listener was provided for action: " + _actionCfg.getText());
+         }
+         _sqFxActionListener.actionPerformed();
+      }
+      else // if (_actionCfg.getActionType() == ActionType.TOGGLE )
+      {
+         if (null == _sqFxToggleActionListener)
+         {
+            throw new UnsupportedOperationException("No toggle action listener was provided for action: " + _actionCfg.getText());
+         }
+
+         if(e.getSource() instanceof ToggleButton)
+         {
+            _toggleSelectState = ((ToggleButton)e.getSource()).isSelected();
+            if(null != _menuItem)
+            {
+               ((CheckMenuItem)_menuItem).setSelected(_toggleSelectState);
+            }
+         }
+         else if(e.getSource() instanceof CheckMenuItem)
+         {
+            _toggleSelectState = ((CheckMenuItem)e.getSource()).isSelected();
+
+            if(null != _menuItem)
+            {
+               ((ToggleButton)_toolbarButton).setSelected(_toggleSelectState);
+            }
+         }
+         else
+         {
+            throw new UnsupportedOperationException("For the time being toggle actions only support ToggleButton or CheckMenuItem as event source");
+         }
+
+         _sqFxToggleActionListener.toggleActionPerformed(_toggleSelectState);
+      }
+
+
+
+      if (null != e)
+      {
+         e.consume();
+      }
+   }
+
+   public void setToolbarButton(ButtonBase toolbarButton)
+   {
+      if(_actionCfg.getActionType() == ActionType.TOGGLE && false == toolbarButton instanceof ToggleButton )
+      {
+         throw new UnsupportedOperationException("Action is toggle action and needs a toggle button");
+      }
+      if(_actionCfg.getActionType() == ActionType.NON_TOGGLE && false == toolbarButton instanceof Button )
+      {
+         throw new UnsupportedOperationException("Action is toggle action and needs a button");
+      }
+
       _toolbarButton = toolbarButton;
       _toolbarButton.setOnAction((e) -> performAction(e));
       _toolbarButton.setGraphic(_actionCfg.getIcon());
@@ -79,6 +149,11 @@ public class ActionHandle
 
    public void setMenuItem(MenuItem menuItem)
    {
+      if(_actionCfg.getActionType() == ActionType.TOGGLE && false == menuItem instanceof CheckMenuItem )
+      {
+         throw new UnsupportedOperationException("Action is toggle action and needs a check menu item");
+      }
+
       _menuItem = menuItem;
       _menuItem.setOnAction((e) -> performAction(e));
       _menuItem.setAccelerator(_actionCfg.getKeyCodeCombination());
@@ -119,7 +194,7 @@ public class ActionHandle
          return;
       }
 
-      if(null == _sqFxActionListener)
+      if(null == _sqFxActionListener && null == _sqFxToggleActionListener)
       {
          updateControls(true);
          return;
@@ -152,16 +227,43 @@ public class ActionHandle
       {
          _menuItem.setDisable(disable);
       }
+
+      updateToggleSelectionState();
    }
 
    public void fire()
    {
-      if (null == _sqFxActionListener)
+      performAction(null);
+   }
+
+   public void setToggleSelectState(boolean toggleSelectState)
+   {
+      if(_actionCfg.getActionType() != ActionType.TOGGLE)
       {
-         throw new UnsupportedOperationException("No action listener was provided for action: " + _actionCfg.getText());
+         throw new UnsupportedOperationException("Action is no toggle action and can not be selected");
       }
 
-      _sqFxActionListener.actionPerformed();
+      _toggleSelectState = toggleSelectState;
 
+      updateToggleSelectionState();
+   }
+
+   private void updateToggleSelectionState()
+   {
+      if(_actionCfg.getActionType() != ActionType.TOGGLE)
+      {
+         return;
+      }
+
+
+      if(null != _toolbarButton)
+      {
+         ((ToggleButton)_toolbarButton).setSelected(_toggleSelectState);
+      }
+
+      if(null != _menuItem)
+      {
+         ((CheckMenuItem)_menuItem).setSelected(_toggleSelectState);
+      }
    }
 }

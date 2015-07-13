@@ -19,7 +19,11 @@ public enum StdActionCfg
    RELOAD_DB_META_DATA("reload.png", "reload.meta.data", "reload", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.F5)),
    DUPLICATE_LINE_OR_SELECTION(null, "duplicate.line.or.selection", "duplicate", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.D, KeyCodeCombination.CONTROL_DOWN)),
    VIEW_IN_OBJECT_TREE(null, "view.object.at.caret.in.tree", "viewinobjecttree", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.B, KeyCodeCombination.CONTROL_DOWN)),
-   SQL_REFORMAT(null, "format.sql", "formatsql", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.ALT_DOWN));
+   SQL_REFORMAT(null, "format.sql", "formatsql", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.ALT_DOWN)),
+
+   TRANSACT_TOGGLE_AUTO_COMMIT("autocommit.png", "transact.toggle.autocommit", null, ActionScope.UNSCOPED, null, ActionType.TOGGLE),
+   TRANSACT_COMMIT("commit.png", "transact.commit", null, ActionScope.UNSCOPED, null),
+   TRANSACT_ROLLBACK("rollback.png", "transact.rollback", null, ActionScope.UNSCOPED, null);
 
 
 
@@ -29,7 +33,10 @@ public enum StdActionCfg
          NEW_SQL_TAB,
          EXEC_BOOKMARK,
          EDIT_BOOKMARK,
-         RELOAD_DB_META_DATA
+         RELOAD_DB_META_DATA,
+         TRANSACT_TOGGLE_AUTO_COMMIT,
+         TRANSACT_COMMIT,
+         TRANSACT_ROLLBACK,
    };
 
    public static StdActionCfg[] SESSION_MENU = new StdActionCfg[]
@@ -38,7 +45,11 @@ public enum StdActionCfg
          NEW_SQL_TAB,
          EXEC_BOOKMARK,
          EDIT_BOOKMARK,
-         RELOAD_DB_META_DATA
+         RELOAD_DB_META_DATA,
+         TRANSACT_TOGGLE_AUTO_COMMIT,
+         TRANSACT_COMMIT,
+         TRANSACT_ROLLBACK,
+
    };
 
 
@@ -55,9 +66,14 @@ public enum StdActionCfg
 
    private ActionCfg _actionCfg;
 
-   StdActionCfg(String iconName, String textNonI18n, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination)
+   StdActionCfg(String iconName, String i18nKeyOfText, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination)
    {
-      this(new ActionCfg(getImageOrNull(iconName), new I18n(StdActionCfg.class).t(textNonI18n), toolsPopUpSelector, actionScope, keyCodeCombination));
+      this(iconName, i18nKeyOfText, toolsPopUpSelector, actionScope, keyCodeCombination, ActionType.NON_TOGGLE);
+   }
+
+   StdActionCfg(String iconName, String i18nKeyOfText, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination, ActionType actionType)
+   {
+      this(new ActionCfg(getImageOrNull(iconName), new I18n(StdActionCfg.class).t(i18nKeyOfText), toolsPopUpSelector, actionScope, keyCodeCombination, actionType));
    }
 
    private static Image getImageOrNull(String iconName)
@@ -92,4 +108,18 @@ public enum StdActionCfg
       _actionCfg.setAction(sqFxActionListener);
    }
 
+   public void setDisable(boolean b)
+   {
+      _actionCfg.setDisable(b);
+   }
+
+   public void setToggleAction(SqFxToggleActionListener toggleActionListener)
+   {
+      _actionCfg.setToggleAction(toggleActionListener);
+   }
+
+   public void setToggleSelected(boolean toggleSelected)
+   {
+      _actionCfg.setToggleSelected(toggleSelected);
+   }
 }
