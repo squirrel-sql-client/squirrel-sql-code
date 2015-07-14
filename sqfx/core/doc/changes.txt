@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Wrong messages when transactions where committed/rollbacked.
+
 Bug fix: Code completion didn't work right on Windows: When the completion popup was opened using ctrl+space the space character was still added to the editors text.
   This bug was fixed rolling back RichTextFX from version 0.6.4 to 0.6.3.
   Technical detail: All code changes to RichTextFX between versions 0.6.3 and 0.6.4 can be found here: https://github.com/TomasMikula/RichTextFX/compare/v0.6.3...master

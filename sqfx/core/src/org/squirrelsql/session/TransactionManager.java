@@ -30,7 +30,7 @@ public class TransactionManager
       try
       {
          _session.getSQLConnection().getConnection().rollback();
-         new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL).info(new I18n(getClass()).t("TransactionManager.performed.commit"));
+         new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL).info(new I18n(getClass()).t("TransactionManager.performed.rollback"));
       }
       catch (SQLException e)
       {
@@ -43,7 +43,7 @@ public class TransactionManager
       try
       {
          _session.getSQLConnection().getConnection().commit();
-         new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL).info(new I18n(getClass()).t("TransactionManager.performed.rollback"));
+         new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL).info(new I18n(getClass()).t("TransactionManager.performed.commit"));
       }
       catch (SQLException e)
       {
