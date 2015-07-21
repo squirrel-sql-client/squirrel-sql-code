@@ -29,6 +29,11 @@ public class ActionUtil
    {
       return AppState.get().getActionManager().getActionHandleForActiveOrActivatingSessionTabContext(actionCfg);
    }
+   
+   public static ActionHandle addActionToToolbar(ToolBar toolBar, ActionCfg actionCfg)
+   {
+	   return AppState.get().getActionManager().addActionToToolbar(toolBar, actionCfg);
+   }
 
    public static ActionHandle getActionHandle(StdActionCfg stdActionCfg, SessionTabContext sessionTabContext)
    {

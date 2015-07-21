@@ -8,6 +8,8 @@ import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
+import org.squirrelsql.session.action.ActionUtil;
+import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.sql.copysqlpart.InStatCreator;
 import org.squirrelsql.session.sql.copysqlpart.InsertStatCreator;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
@@ -32,6 +34,7 @@ public class ResultTabController
 
       _containerTab = new Tab();
       _containerTab.setGraphic(new Label(tabText));
+      _containerTab.setUserData(sql);
 
       _containerTab.setContent(createContainerPane(sqlResult, sql, sqlCancelTabCtrl));
 
@@ -58,6 +61,7 @@ public class ResultTabController
       headerFxmlHelper.getView().lblHeader.setText(headertext);
 
       _editButtonCtrl = new EditButtonCtrl(_session, sql);
+      ActionUtil.addActionToToolbar(headerFxmlHelper.getView().resultToolBar, StdActionCfg.RERUN_SQL.getActionCfg());
       headerFxmlHelper.getView().resultToolBar.getItems().add(_editButtonCtrl.getEditButton());
 
       BorderPane bp = new BorderPane();

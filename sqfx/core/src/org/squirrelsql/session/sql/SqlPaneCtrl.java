@@ -105,6 +105,7 @@ public class SqlPaneCtrl
       StdActionCfg.SQL_TO_TABLE.setAction(() -> new SqlToTableCtrl(_sessionTabContext.getSession(), _sqlTextAreaServices));
       StdActionCfg.DUPLICATE_LINE_OR_SELECTION.setAction(() -> new DuplicateLineCommand(_sqlTextAreaServices));
       StdActionCfg.SQL_REFORMAT.setAction(() -> new FormatSqlCommand(_sqlTextAreaServices));
+      StdActionCfg.RERUN_SQL.setAction(() -> onReExecuteSql());
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent)
@@ -164,6 +165,28 @@ public class SqlPaneCtrl
 
       _execSingleStatement(sqlTokenizer.getFirstSql(), sqlExecutionFinishedListener);
 
+   }
+   
+   //FIXME This is not a great way to do this, kind of a hack to set/get the SQL of the selected tab
+   //TODO Move new tab to current tab spot, keep formatting of current tab in new tab
+   public void onReExecuteSql()
+   {
+	   Tab selectedTab = _sqlOutputTabPane.getSelectionModel().getSelectedItem();
+	   if(null != selectedTab)
+	   {
+		   String sql = selectedTab.getUserData().toString();
+		   SQLTokenizer sqlTokenizer = new SQLTokenizer(sql);
+		   SchemaUpdater schemaUpdater = new SchemaUpdater(_sessionTabContext.getSession());
+		   SqlExecutionFinishedListener sqlExecutionFinishedListener = new SqlExecutionFinishedListener() {
+			   @Override
+			   public void finished(boolean success)
+			   {
+				   onSqlExecutionFinished(success, sqlTokenizer, this, schemaUpdater);
+				   _sqlOutputTabPane.getTabs().remove(selectedTab);
+			   }
+		   };
+		   _execSingleStatement(sqlTokenizer.getFirstSql(), sqlExecutionFinishedListener);
+	   }
    }
 
    private void onSqlExecutionFinished(boolean success, SQLTokenizer sqlTokenizer, SqlExecutionFinishedListener sqlExecutionFinishedListener, SchemaUpdater schemaUpdater)

@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Rerun current open results tab (ctrl+shift+enter) or using icon
+
 Bug fix: Wrong messages when transactions where committed/rollbacked.
 
 Bug fix: Code completion didn't work right on Windows: When the completion popup was opened using ctrl+space the space character was still added to the editors text.
