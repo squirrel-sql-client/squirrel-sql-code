@@ -174,7 +174,9 @@ public class SqlPaneCtrl
 	   Tab selectedTab = _sqlOutputTabPane.getSelectionModel().getSelectedItem();
 	   if(null != selectedTab)
 	   {
-		   String sql = selectedTab.getUserData().toString();
+         int indexToReplace = _sqlOutputTabPane.getSelectionModel().getSelectedIndex();
+
+         String sql = ((ResultTabUserData)selectedTab.getUserData()).getSql();
 		   SQLTokenizer sqlTokenizer = new SQLTokenizer(sql);
 		   SchemaUpdater schemaUpdater = new SchemaUpdater(_sessionTabContext.getSession());
 		   SqlExecutionFinishedListener sqlExecutionFinishedListener = new SqlExecutionFinishedListener() {
@@ -185,10 +187,9 @@ public class SqlPaneCtrl
 				   _sqlOutputTabPane.getTabs().remove(selectedTab);
 			   }
 		   };
-		   _execSingleStatement(sqlTokenizer.getFirstSql(), sqlExecutionFinishedListener);
+		   _execSingleStatement(sqlTokenizer.getFirstSql(), sqlExecutionFinishedListener, indexToReplace);
 	   }
    }
-
    private void onSqlExecutionFinished(boolean success, SQLTokenizer sqlTokenizer, SqlExecutionFinishedListener sqlExecutionFinishedListener, SchemaUpdater schemaUpdater)
    {
       boolean hasMoreSqls = sqlTokenizer.hasMoreSqls();
@@ -211,6 +212,12 @@ public class SqlPaneCtrl
 
    private void _execSingleStatement(final String sql, SqlExecutionFinishedListener sqlExecutionFinishedListener)
    {
+      _execSingleStatement(sql, sqlExecutionFinishedListener, null);
+   }
+
+
+   private void _execSingleStatement(String sql, SqlExecutionFinishedListener sqlExecutionFinishedListener, Integer indexToReplace)
+   {
       StatementChannel statementChannel = new StatementChannel();
 
       SQLCancelTabCtrl sqlCancelTabCtrl = new SQLCancelTabCtrl(sql, statementChannel);
@@ -231,14 +238,14 @@ public class SqlPaneCtrl
          @Override
          public void goOn(StatementExecution  statementExecution)
          {
-            onGoOn(statementExecution, sql, sqlCancelTabCtrl, sqlExecutionFinishedListener);
+            onGoOn(statementExecution, sql, sqlCancelTabCtrl, sqlExecutionFinishedListener, indexToReplace);
          }
       };
 
       ProgressUtil.start(pt);
    }
 
-   private void onGoOn(StatementExecution statExec, String sql, SQLCancelTabCtrl sqlCancelTabCtrl, SqlExecutionFinishedListener sqlExecutionFinishedListener)
+   private void onGoOn(StatementExecution statExec, String sql, SQLCancelTabCtrl sqlCancelTabCtrl, SqlExecutionFinishedListener sqlExecutionFinishedListener, Integer indexToReplace)
    {
       removeErrorTab();
 
@@ -283,7 +290,15 @@ public class SqlPaneCtrl
             }
 
             Tab outputTab = resultTabController.getTab();
-            addAndSelectTab(outputTab);
+            if (null != indexToReplace)
+            {
+               _sqlOutputTabPane.getTabs().remove(indexToReplace);
+               addAndSelectTabAt(outputTab, indexToReplace);
+            }
+            else
+            {
+               addAndSelectTab(outputTab);
+            }
          }
 
          for (SQLResult sqlResult : statExec.getUpdateCounts())
@@ -316,10 +331,23 @@ public class SqlPaneCtrl
 
    private void addAndSelectTab(Tab outputTab)
    {
-      _sqlOutputTabPane.getTabs().add(outputTab);
+      addAndSelectTabAt(outputTab, null);
+   }
+
+   private void addAndSelectTabAt(Tab outputTab, Integer index)
+   {
+      if (null == index)
+      {
+         _sqlOutputTabPane.getTabs().add(outputTab);
+      }
+      else
+      {
+         _sqlOutputTabPane.getTabs().add(index, outputTab);
+      }
+
       RightMouseMenuHandler resultTabRightMouseMenu = new RightMouseMenuHandler((Control) outputTab.getGraphic());
       resultTabRightMouseMenu.addMenu(new I18n(getClass()).t("session.tab.menu.closeall"), () -> closeTabs(outputTab, false));
-      resultTabRightMouseMenu.addMenu(new I18n(getClass()).t("session.tab.menu.closeallbutthis"), () -> closeTabs(outputTab, true));      
+      resultTabRightMouseMenu.addMenu(new I18n(getClass()).t("session.tab.menu.closeallbutthis"), () -> closeTabs(outputTab, true));
       _sqlOutputTabPane.getSelectionModel().select(outputTab);
    }
 

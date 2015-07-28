@@ -34,7 +34,7 @@ public class ResultTabController
 
       _containerTab = new Tab();
       _containerTab.setGraphic(new Label(tabText));
-      _containerTab.setUserData(sql);
+      _containerTab.setUserData(new ResultTabUserData(sql));
 
       _containerTab.setContent(createContainerPane(sqlResult, sql, sqlCancelTabCtrl));
 
