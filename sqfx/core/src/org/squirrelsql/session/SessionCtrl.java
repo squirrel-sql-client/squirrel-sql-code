@@ -31,11 +31,6 @@ public class SessionCtrl
    private static final String PREF_PRE_SELECT_SQL_TAB = "preselect.sql";
 
 
-   private final TabPane _objectTreeAndSqlTabPane;
-   private final ApplicationCloseListener _applicationCloseListener;
-   private final TransactionManager _transactionManager;
-
-
    private I18n _i18n = new I18n(getClass());
 
    private Pref _pref = new Pref(getClass());
@@ -45,6 +40,12 @@ public class SessionCtrl
    private SessionTabContext _sessionTabContext;
    private ObjectTreeTabCtrl _objectTreeTabCtrl;
    private ChangeListener<Tab> _tabChangeListener;
+
+   private final TabPane _objectTreeAndSqlTabPane;
+   private final ApplicationCloseListener _applicationCloseListener;
+   private final TransactionManager _transactionManager;
+   private final FileManager _fileManager;
+
 
    public SessionCtrl(SessionTabContext sessionTabContext)
    {
@@ -69,6 +70,8 @@ public class SessionCtrl
       initStandardActions(sessionTabContext);
 
       _transactionManager = new TransactionManager(sessionTabContext.getSession());
+
+      _fileManager = new FileManager(sessionTabContext);
 
       _applicationCloseListener = this::onClose;
       AppState.get().addApplicationCloseListener(_applicationCloseListener, ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);

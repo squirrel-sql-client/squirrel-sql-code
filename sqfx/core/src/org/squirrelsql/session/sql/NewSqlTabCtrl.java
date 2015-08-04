@@ -4,6 +4,7 @@ import javafx.event.Event;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
+import org.squirrelsql.session.FileManager;
 import org.squirrelsql.session.SessionManagerListener;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.SessionUtil;
@@ -17,6 +18,8 @@ public class NewSqlTabCtrl
    private final SessionManagerListener _sessionManagerListener;
    private final SqlPaneCtrl _sqlPaneCtrl;
    private SessionTabContext _newSqlTabContext;
+
+   private final FileManager _fileManager;
 
    public NewSqlTabCtrl(SessionTabContext newSqlTabContext)
    {
@@ -51,6 +54,9 @@ public class NewSqlTabCtrl
       _newSqlTab.setContent(bp);
 
       initStandardActions();
+
+      _fileManager = new FileManager(newSqlTabContext);
+
 
       _newSqlTab.setOnSelectionChanged(this::onSelectionChanged);
       _newSqlTab.setOnClosed(e -> close(_newSqlTabContext));

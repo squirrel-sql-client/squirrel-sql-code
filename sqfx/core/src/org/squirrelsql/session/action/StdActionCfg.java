@@ -29,13 +29,18 @@ public enum StdActionCfg
 
    RECONNECT("reconnect.png", "reconnect.to.database", "reconnect", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.ALT_DOWN), ActionDependency.SESSION),
 
+   FILE_NEW("filenew.png", "file.new", "filenew", ActionScope.SQL_EDITOR, null),
+   FILE_SAVE("filesave.png", "file.save", "filesave", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.S, KeyCodeCombination.CONTROL_DOWN)),
+   FILE_SAVE_AS("filesaveas.png", "file.save.as", "filesaveas", ActionScope.SQL_EDITOR, null),
+   FILE_OPEN("fileopen.png", "file.open", "fileopen", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN)),
+   FILE_APPEND("fileappend.png", "file.append", "fileappend", ActionScope.SQL_EDITOR, null),
+   FILE_DISCONNECT("filedisconnect.png", "file.disconnect", "filedisconnect", ActionScope.SQL_EDITOR, null),
+
 
    /**
-    * No real action, just the Separator
+    * No real action, just the separator
     */
    SEPARATOR;
-
-
 
    public static StdActionCfg[] SESSION_TOOLBAR = new StdActionCfg[]
    {
@@ -49,7 +54,15 @@ public enum StdActionCfg
          TRANSACT_COMMIT,
          TRANSACT_ROLLBACK,
          SEPARATOR,
-         RECONNECT
+         RECONNECT,
+         SEPARATOR,
+         FILE_SAVE,
+         FILE_SAVE_AS,
+         FILE_OPEN,
+         FILE_NEW,
+         FILE_APPEND,
+         FILE_DISCONNECT,
+         SEPARATOR,
    };
 
    public static StdActionCfg[] SESSION_MENU = new StdActionCfg[]
