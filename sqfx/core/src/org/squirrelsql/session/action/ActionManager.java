@@ -99,7 +99,7 @@ public class ActionManager
       return _sessionMenu;
    }
 
-   public ToolBar createToolbar()
+   public ToolBar createStdActionToolbar()
    {
       ToolBar ret = new ToolBar();
 
@@ -139,7 +139,7 @@ public class ActionManager
          b = new ToggleButton();
       }
 
-      actionHandle.setToolbarButton(b);
+      actionHandle.addToolbarButton(b);
       toolBar.getItems().add(b);
       return actionHandle;
    }
@@ -172,9 +172,14 @@ public class ActionManager
          ret.setActionScope(_currentActionScope);
          _actionHandles.add(ret);
       }
-      else
+      else if(1 == handles.size())
       {
          ret = handles.get(0);
+      }
+      else
+      {
+         String msg = "More than one ActionHandle exist for SessionTabContext = " + sessionTabContext.getSessionTabTitle() + " and ActionConfig = " + actionCfg.getActionConfigurationId();
+         throw new IllegalStateException(msg);
       }
 
       return ret;

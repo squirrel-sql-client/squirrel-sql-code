@@ -17,14 +17,15 @@ public class ActionCfg
    private final int _actionConfigurationId;
    private String _toolsPopUpSelector;
    private ActionType _actionType;
+   private ActionDependency _actionDependency;
 
 
    public ActionCfg(Image icon, String text, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination)
    {
-      this(icon, text, toolsPopUpSelector, actionScope, keyCodeCombination, ActionType.NON_TOGGLE);
+      this(icon, text, toolsPopUpSelector, actionScope, keyCodeCombination, ActionDependency.SESSION_TAB,ActionType.NON_TOGGLE);
    }
 
-   public ActionCfg(Image icon, String text, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination, ActionType actionType)
+   public ActionCfg(Image icon, String text, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination, ActionDependency actionDependency, ActionType actionType)
    {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // Note: ActionConfigurations are supposed to be an application wide state like in the StandardActionConfiguration enum.
@@ -33,15 +34,13 @@ public class ActionCfg
       //
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
       _toolsPopUpSelector = toolsPopUpSelector;
       _actionScope = actionScope;
       _icon = icon;
       _text = text;
       _keyCodeCombination = keyCodeCombination;
+      _actionDependency = actionDependency;
       _actionType = actionType;
-
-
    }
 
    public ActionScope getActionScope()
@@ -126,4 +125,13 @@ public class ActionCfg
       return _actionType;
    }
 
+   public ActionDependency getActionDependency()
+   {
+      return _actionDependency;
+   }
+
+   public int getActionConfigurationId()
+   {
+      return _actionConfigurationId;
+   }
 }

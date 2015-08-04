@@ -7,7 +7,6 @@ import javafx.scene.layout.BorderPane;
 
 import org.squirrelsql.AppState;
 import org.squirrelsql.ApplicationCloseListener;
-import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.Dao;
 import org.squirrelsql.services.I18n;
@@ -53,7 +52,7 @@ public class SessionCtrl
 
       _sessionPane = new BorderPane();
 
-      _sessionPane.setTop(ActionUtil.createToolbar());
+      _sessionPane.setTop(ActionUtil.createStdActionToolbar());
 
       _objectTreeAndSqlTabPane = createObjectTreeAndSqlTabPane();
 

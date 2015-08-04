@@ -45,7 +45,7 @@ public class NewSqlTabCtrl
       _sqlPaneCtrl.requestFocus();
 
       BorderPane bp = new BorderPane();
-      bp.setTop(ActionUtil.createToolbar());
+      bp.setTop(ActionUtil.createStdActionToolbar());
       bp.setCenter(_sqlPaneCtrl.getSqlPane());
 
       _newSqlTab.setContent(bp);

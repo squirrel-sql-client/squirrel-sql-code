@@ -15,9 +15,9 @@ public class ActionUtil
       return AppState.get().getActionManager().getSessionMenu();
    }
 
-   public static ToolBar createToolbar()
+   public static ToolBar createStdActionToolbar()
    {
-      return AppState.get().getActionManager().createToolbar();
+      return AppState.get().getActionManager().createStdActionToolbar();
    }
 
    public static void setActionScope(ActionScope actionScope)

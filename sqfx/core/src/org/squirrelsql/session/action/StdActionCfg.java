@@ -17,17 +17,17 @@ public enum StdActionCfg
    ESCAPE_DATE(null, "escape.date", "date", ActionScope.SQL_EDITOR, null),
    SQL_TO_TABLE(null, "sql.to.table", "sql2table", ActionScope.SQL_EDITOR, null),
    SHOW_TOOLS_POPUP(null, "show.tools.popup", null, ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN)),
-   RELOAD_DB_META_DATA("reload.png", "reload.meta.data", "reload", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.F5)),
+   RELOAD_DB_META_DATA("reload.png", "reload.meta.data", "reload", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.F5), ActionDependency.SESSION),
    DUPLICATE_LINE_OR_SELECTION(null, "duplicate.line.or.selection", "duplicate", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.D, KeyCodeCombination.CONTROL_DOWN)),
    VIEW_IN_OBJECT_TREE(null, "view.object.at.caret.in.tree", "viewinobjecttree", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.B, KeyCodeCombination.CONTROL_DOWN)),
    SQL_REFORMAT(null, "format.sql", "formatsql", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.ALT_DOWN)),
-   RERUN_SQL(GlobalIconNames.RERUN, "sql.rerunsql", "rerunsql", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.ENTER, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.SHIFT_DOWN)),
+   RERUN_SQL(GlobalIconNames.RERUN, "sql.rerunsql", "rerunsql", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.ENTER, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.SHIFT_DOWN), ActionDependency.SESSION),
 
-   TRANSACT_TOGGLE_AUTO_COMMIT("autocommit.png", "transact.toggle.autocommit", null, ActionScope.UNSCOPED, null, ActionType.TOGGLE),
-   TRANSACT_COMMIT("commit.png", "transact.commit", null, ActionScope.UNSCOPED, null),
-   TRANSACT_ROLLBACK("rollback.png", "transact.rollback", null, ActionScope.UNSCOPED, null),
+   TRANSACT_TOGGLE_AUTO_COMMIT("autocommit.png", "transact.toggle.autocommit", null, ActionScope.UNSCOPED, null, ActionDependency.SESSION, ActionType.TOGGLE),
+   TRANSACT_COMMIT("commit.png", "transact.commit", null, ActionScope.UNSCOPED, null, ActionDependency.SESSION),
+   TRANSACT_ROLLBACK("rollback.png", "transact.rollback", null, ActionScope.UNSCOPED, null, ActionDependency.SESSION),
 
-   RECONNECT("reconnect.png", "reconnect.to.database", "reconnect", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.ALT_DOWN)),
+   RECONNECT("reconnect.png", "reconnect.to.database", "reconnect", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.ALT_DOWN), ActionDependency.SESSION),
 
 
    /**
@@ -84,12 +84,17 @@ public enum StdActionCfg
 
    StdActionCfg(String iconName, String i18nKeyOfText, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination)
    {
-      this(iconName, i18nKeyOfText, toolsPopUpSelector, actionScope, keyCodeCombination, ActionType.NON_TOGGLE);
+      this(iconName, i18nKeyOfText, toolsPopUpSelector, actionScope, keyCodeCombination, ActionDependency.SESSION_TAB ,ActionType.NON_TOGGLE);
    }
 
-   StdActionCfg(String iconName, String i18nKeyOfText, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination, ActionType actionType)
+   StdActionCfg(String iconName, String i18nKeyOfText, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination, ActionDependency actionDependency)
    {
-      this(new ActionCfg(getImageOrNull(iconName), new I18n(StdActionCfg.class).t(i18nKeyOfText), toolsPopUpSelector, actionScope, keyCodeCombination, actionType));
+      this(iconName, i18nKeyOfText, toolsPopUpSelector, actionScope, keyCodeCombination, actionDependency ,ActionType.NON_TOGGLE);
+   }
+
+   StdActionCfg(String iconName, String i18nKeyOfText, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination, ActionDependency actionDependency, ActionType actionType)
+   {
+      this(new ActionCfg(getImageOrNull(iconName), new I18n(StdActionCfg.class).t(i18nKeyOfText), toolsPopUpSelector, actionScope, keyCodeCombination, actionDependency, actionType));
    }
 
    StdActionCfg()

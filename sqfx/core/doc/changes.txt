@@ -1,6 +1,9 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Toolbar buttons and menus that have Session wide concern (e.g. transaction buttons or schema reload button)
+   are now automatically available in a Session's main tab as well as in additional SQL tabs.
+
 Feature: Rerun current open results tab (ctrl+shift+enter) or using icon
 
 Bug fix: Wrong messages when transactions where committed/rollbacked.

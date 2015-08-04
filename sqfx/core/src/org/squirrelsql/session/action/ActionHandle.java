@@ -7,12 +7,12 @@ import org.squirrelsql.session.SessionTabContext;
 
 public class ActionHandle
 {
+   private final ToolbarButtonsHandler _toolbarButtonsHandler;
    private ActionCfg _actionCfg;
    private SessionTabContext _sessionTabContext;
 
    private SqFxActionListener _sqFxActionListener;
    private MenuItem _menuItem;
-   private ButtonBase _toolbarButton;
    private ActionScope _currentActionScope;
    private boolean _disabledByExtern = false;
 
@@ -24,6 +24,22 @@ public class ActionHandle
    {
       _actionCfg = actionCfg;
       _sessionTabContext = sessionTabContext;
+
+
+
+
+      Tooltip tooltip;
+      if (null != _actionCfg.getKeyCodeCombination())
+      {
+         tooltip = new Tooltip(_actionCfg.getText() + "\t" + _actionCfg.getKeyCodeCombination());
+      }
+      else
+      {
+         tooltip = new Tooltip(_actionCfg.getText());
+      }
+
+      _toolbarButtonsHandler = new ToolbarButtonsHandler((e) -> performAction(e), _actionCfg.getIcon(), tooltip);
+
    }
 
    public void setAction(SqFxActionListener sqFxActionListener)
@@ -81,7 +97,7 @@ public class ActionHandle
 
             if(null != _menuItem)
             {
-               ((ToggleButton)_toolbarButton).setSelected(_toggleSelectState);
+               _toolbarButtonsHandler.setSelected(_toggleSelectState);
             }
          }
          else
@@ -100,7 +116,7 @@ public class ActionHandle
       }
    }
 
-   public void setToolbarButton(ButtonBase toolbarButton)
+   public void addToolbarButton(ButtonBase toolbarButton)
    {
       if(_actionCfg.getActionType() == ActionType.TOGGLE && false == toolbarButton instanceof ToggleButton )
       {
@@ -111,21 +127,7 @@ public class ActionHandle
          throw new UnsupportedOperationException("Action is toggle action and needs a button");
       }
 
-      _toolbarButton = toolbarButton;
-      _toolbarButton.setOnAction((e) -> performAction(e));
-      _toolbarButton.setGraphic(_actionCfg.getIcon());
-
-
-      Tooltip tooltip;
-      if (null != _actionCfg.getKeyCodeCombination())
-      {
-         tooltip = new Tooltip(_actionCfg.getText() + "\t" + _actionCfg.getKeyCodeCombination());
-      }
-      else
-      {
-         tooltip = new Tooltip(_actionCfg.getText());
-      }
-      _toolbarButton.setTooltip(tooltip);
+      _toolbarButtonsHandler.add(toolbarButton);
 
       refreshActionUI();
    }
@@ -157,7 +159,6 @@ public class ActionHandle
       _menuItem = menuItem;
       _menuItem.setOnAction((e) -> performAction(e));
       _menuItem.setAccelerator(_actionCfg.getKeyCodeCombination());
-      refreshActionUI();
    }
 
    public MenuItem getMenuItem()
@@ -167,7 +168,14 @@ public class ActionHandle
 
    public boolean matchesSessionContext(SessionTabContext sessionTabContext)
    {
-      return _sessionTabContext.matches(sessionTabContext);
+      if (_actionCfg.getActionDependency() == ActionDependency.SESSION_TAB)
+      {
+         return _sessionTabContext.matches(sessionTabContext);
+      }
+      else //if (_actionCfg.getActionDependency() == ActionDependency.SESSION)
+      {
+         return _sessionTabContext.getSession().getMainTabContext().matches(sessionTabContext.getSession().getMainTabContext());
+      }
    }
 
    public boolean matchesPrimaryKey(ActionCfg actionCfg, SessionTabContext sessionTabContext)
@@ -219,10 +227,8 @@ public class ActionHandle
 
    private void updateControls(boolean disable)
    {
-      if(null != _toolbarButton)
-      {
-         _toolbarButton.setDisable(disable);
-      }
+      _toolbarButtonsHandler.setDisable(disable);
+
       if(null != _menuItem)
       {
          _menuItem.setDisable(disable);
@@ -266,10 +272,7 @@ public class ActionHandle
       }
 
 
-      if(null != _toolbarButton)
-      {
-         ((ToggleButton)_toolbarButton).setSelected(_toggleSelectState);
-      }
+      _toolbarButtonsHandler.setSelected(_toggleSelectState);
 
       if(null != _menuItem)
       {
