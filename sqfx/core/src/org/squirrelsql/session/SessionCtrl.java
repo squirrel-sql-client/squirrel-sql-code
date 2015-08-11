@@ -60,7 +60,8 @@ public class SessionCtrl
       _sessionPane.setCenter(_objectTreeAndSqlTabPane);
 
       _sessionTab = new Tab();
-      _sessionTab.setGraphic(SessionUtil.createSessionTabHeader(_sessionTabContext));
+      SessionTabHeaderCtrl sessionTabHeaderCtrl = new SessionTabHeaderCtrl(_sessionTabContext);
+      _sessionTab.setGraphic(sessionTabHeaderCtrl.getTabHeader());
       _sessionTab.setContent(_sessionPane);
 
 
@@ -71,7 +72,7 @@ public class SessionCtrl
 
       _transactionManager = new TransactionManager(sessionTabContext.getSession());
 
-      _fileManager = new FileManager(sessionTabContext);
+      _fileManager = new FileManager(sessionTabContext, sessionTabHeaderCtrl);
 
       _applicationCloseListener = this::onClose;
       AppState.get().addApplicationCloseListener(_applicationCloseListener, ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);

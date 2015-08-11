@@ -4,10 +4,7 @@ import javafx.event.Event;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
-import org.squirrelsql.session.FileManager;
-import org.squirrelsql.session.SessionManagerListener;
-import org.squirrelsql.session.SessionTabContext;
-import org.squirrelsql.session.SessionUtil;
+import org.squirrelsql.session.*;
 import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.action.StdActionCfg;
@@ -42,7 +39,8 @@ public class NewSqlTabCtrl
       AppState.get().getSessionManager().addSessionManagerListener(_sessionManagerListener);
 
       _newSqlTab = new Tab();
-      _newSqlTab.setGraphic(SessionUtil.createSessionTabHeader(newSqlTabContext, StdActionCfg.NEW_SQL_TAB.getActionCfg().getIcon()));
+      SessionTabHeaderCtrl sessionTabHeaderCtrl = new SessionTabHeaderCtrl(newSqlTabContext, StdActionCfg.NEW_SQL_TAB.getActionCfg().getIcon());
+      _newSqlTab.setGraphic(sessionTabHeaderCtrl.getTabHeader());
 
       _sqlPaneCtrl = new SqlPaneCtrl(newSqlTabContext);
       _sqlPaneCtrl.requestFocus();
@@ -55,7 +53,7 @@ public class NewSqlTabCtrl
 
       initStandardActions();
 
-      _fileManager = new FileManager(newSqlTabContext);
+      _fileManager = new FileManager(newSqlTabContext, sessionTabHeaderCtrl);
 
 
       _newSqlTab.setOnSelectionChanged(this::onSelectionChanged);
