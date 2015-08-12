@@ -14,6 +14,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 import javax.swing.*;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -59,6 +60,32 @@ public class Utils
       {
       }
    }
+
+   public static void close(FileOutputStream fos)
+   {
+      if(null == fos)
+      {
+         return;
+      }
+
+      try
+      {
+         fos.flush();
+         fos.close();
+      }
+      catch (IOException e)
+      {
+      }
+
+      try
+      {
+         fos.close();
+      }
+      catch (IOException e)
+      {
+      }
+   }
+
 
    public static void close(Statement stat)
    {

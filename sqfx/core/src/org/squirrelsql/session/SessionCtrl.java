@@ -72,7 +72,7 @@ public class SessionCtrl
 
       _transactionManager = new TransactionManager(sessionTabContext.getSession());
 
-      _fileManager = new FileManager(sessionTabContext, sessionTabHeaderCtrl);
+      _fileManager = new FileManager(_sqlTabCtrl.getSQLTextAreaServices(), sessionTabHeaderCtrl);
 
       _applicationCloseListener = this::onClose;
       AppState.get().addApplicationCloseListener(_applicationCloseListener, ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);

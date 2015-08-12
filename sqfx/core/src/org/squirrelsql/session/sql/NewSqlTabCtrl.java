@@ -53,7 +53,7 @@ public class NewSqlTabCtrl
 
       initStandardActions();
 
-      _fileManager = new FileManager(newSqlTabContext, sessionTabHeaderCtrl);
+      _fileManager = new FileManager(_sqlPaneCtrl.getSQLTextAreaServices(), sessionTabHeaderCtrl);
 
 
       _newSqlTab.setOnSelectionChanged(this::onSelectionChanged);
