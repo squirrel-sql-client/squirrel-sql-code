@@ -2,6 +2,8 @@ package org.squirrelsql.session.sql;
 
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.KeyEvent;
@@ -262,5 +264,16 @@ public class SQLTextAreaServices
    public String getTokenAtCaret()
    {
       return _getTokenAtCarretInfo().getTokenAtCaret();
+   }
+
+   public void setText(String s)
+   {
+      _sqlTextArea.clear();
+      _sqlTextArea.appendText(s);
+   }
+
+   public void clear()
+   {
+      _sqlTextArea.clear();
    }
 }

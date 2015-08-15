@@ -11,6 +11,7 @@ public class SessionTabHeaderCtrl
 {
    private final Button _btnFileInfo;
    private final BorderPane _node;
+   private FileState _fileState;
 
    public SessionTabHeaderCtrl(SessionTabContext tabContext)
    {
@@ -51,7 +52,9 @@ public class SessionTabHeaderCtrl
 
    public void setFileState(FileState fileState)
    {
-      switch (fileState)
+      _fileState = fileState;
+
+      switch (_fileState)
       {
          case NO_FILE:
             _btnFileInfo.setGraphic(null);
@@ -70,5 +73,10 @@ public class SessionTabHeaderCtrl
             _btnFileInfo.setVisible(true);
             break;
       }
+   }
+
+   public FileState getFileState()
+   {
+      return _fileState;
    }
 }
