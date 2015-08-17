@@ -1,5 +1,6 @@
 package org.squirrelsql.session;
 
+import javafx.event.Event;
 import javafx.stage.FileChooser;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.*;
@@ -180,6 +181,12 @@ public class FileManager
 
    public void newFile()
    {
+      if(null == _sessionTabHeaderCtrl.getFile())
+      {
+         return;
+      }
+
+
       disconnect();
       _sqlTextAreaServices.clear();
    }
@@ -219,5 +226,13 @@ public class FileManager
 
       _sessionTabHeaderCtrl.setFile(null);
       _sessionTabHeaderCtrl.setFileState(FileState.NO_FILE);
+   }
+
+   public void closeRequest(Event e)
+   {
+      if(false == questionSave())
+      {
+         e.consume();
+      }
    }
 }

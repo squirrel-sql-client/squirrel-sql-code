@@ -64,10 +64,6 @@ public class SessionCtrl
       _sessionTab.setGraphic(sessionTabHeaderCtrl.getTabHeader());
       _sessionTab.setContent(_sessionPane);
 
-
-      _sessionTab.setOnClosed(e -> onClose());
-      _sessionTab.setOnSelectionChanged(this::onSelectionChanged);
-
       initStandardActions(sessionTabContext);
 
       _transactionManager = new TransactionManager(sessionTabContext.getSession());
@@ -76,6 +72,10 @@ public class SessionCtrl
 
       _applicationCloseListener = this::onClose;
       AppState.get().addApplicationCloseListener(_applicationCloseListener, ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);
+
+      _sessionTab.setOnCloseRequest(_fileManager::closeRequest);
+      _sessionTab.setOnClosed(e -> onClose());
+      _sessionTab.setOnSelectionChanged(this::onSelectionChanged);
    }
 
    private void initStandardActions(SessionTabContext sessionTabContext)
@@ -126,7 +126,7 @@ public class SessionCtrl
 
       schemaCache.load();
 
-      progressable.update(_i18n.t("schema.reload.end"), 2,2);
+      progressable.update(_i18n.t("schema.reload.end"), 2, 2);
       return schemaCache;
 
    }

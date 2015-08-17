@@ -57,6 +57,9 @@ public class NewSqlTabCtrl
 
 
       _newSqlTab.setOnSelectionChanged(this::onSelectionChanged);
+
+
+      _newSqlTab.setOnCloseRequest(_fileManager::closeRequest);
       _newSqlTab.setOnClosed(e -> close(_newSqlTabContext));
    }
 
