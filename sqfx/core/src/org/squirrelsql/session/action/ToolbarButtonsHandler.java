@@ -7,8 +7,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ToolbarButtonsHandler
 {
@@ -18,7 +17,7 @@ public class ToolbarButtonsHandler
    private boolean _selected;
    private boolean _disable;
 
-   private List<ButtonBase> _buttons = new ArrayList<>();
+   private Set<ButtonBase> _buttons = Collections.newSetFromMap(new WeakHashMap<>());
 
    public ToolbarButtonsHandler(EventHandler<ActionEvent> eventHandler, ImageView icon, Tooltip tooltip)
    {
