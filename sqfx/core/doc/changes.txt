@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: File save, open etc. in SQL editor.
+
 Feature: Toolbar buttons and menus that have Session wide concern (e.g. transaction buttons or schema reload button)
    are now automatically available in a Session's main tab as well as in additional SQL tabs.
 

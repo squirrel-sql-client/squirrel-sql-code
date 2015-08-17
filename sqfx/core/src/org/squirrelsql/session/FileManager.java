@@ -1,14 +1,13 @@
 package org.squirrelsql.session;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.stage.FileChooser;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.*;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 
 public class FileManager
@@ -19,7 +18,6 @@ public class FileManager
 
    private SQLTextAreaServices _sqlTextAreaServices;
    private final SessionTabHeaderCtrl _sessionTabHeaderCtrl;
-   private File _currentFile;
    private MessageHandler _mhPanel = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
    private MessageHandler _mhLog = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_LOG);
    private Pref _pref = new Pref(getClass());
@@ -38,6 +36,7 @@ public class FileManager
       _sqlTextAreaServices.getTextArea().textProperty().addListener((observable, oldValue, newValue) -> onTextChanged());
    }
 
+
    private void onTextChanged()
    {
       if (FileState.CLEAN == _sessionTabHeaderCtrl.getFileState())
@@ -48,46 +47,46 @@ public class FileManager
 
    public boolean save()
    {
-      if(null == _currentFile)
+      if(null == _sessionTabHeaderCtrl.getFile())
       {
          FileChooser fileChooser = new FileChooser();
          fileChooser.setTitle(_i18n.t("FileManager.save.sql"));
 
          initInitialDir(fileChooser);
 
-         _currentFile = fileChooser.showSaveDialog(AppState.get().getPrimaryStage());
+         _sessionTabHeaderCtrl.setFile(fileChooser.showSaveDialog(AppState.get().getPrimaryStage()));
 
-         if(null == _currentFile)
+         if(null == _sessionTabHeaderCtrl.getFile())
          {
             return false;
          }
 
-         if(false == _currentFile.getName().toUpperCase().endsWith(".SQL") &&  -1 == _currentFile.getName().toUpperCase().indexOf('.'))
+         if(false == _sessionTabHeaderCtrl.getFile().getName().toUpperCase().endsWith(".SQL") &&  -1 == _sessionTabHeaderCtrl.getFile().getName().toUpperCase().indexOf('.'))
          {
-            File correctedFile = new File(_currentFile.getPath() + ".sql");
+            File correctedFile = new File(_sessionTabHeaderCtrl.getFile().getPath() + ".sql");
             if (false == correctedFile.exists())
             {
-               _currentFile = correctedFile;
+               _sessionTabHeaderCtrl.setFile(correctedFile);
             }
          }
       }
 
 
-      if (_currentFile.exists() && false == _currentFile.canWrite())
+      if (_sessionTabHeaderCtrl.getFile().exists() && false == _sessionTabHeaderCtrl.getFile().canWrite())
       {
-         String msg = _i18n.t("FileManager.error.cannotwritefile", _currentFile.getAbsolutePath());
+         String msg = _i18n.t("FileManager.error.cannotwritefile", _sessionTabHeaderCtrl.getFile().getAbsolutePath());
 
          FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), msg);
-         _currentFile = null;
+         _sessionTabHeaderCtrl.setFile(null);
          return false;
       }
 
 
       try
       {
-         Files.write(_currentFile.toPath(), _sqlTextAreaServices.getTextArea().getText().getBytes());
+         Files.write(_sessionTabHeaderCtrl.getFile().toPath(), _sqlTextAreaServices.getTextArea().getText().getBytes());
 
-         String msg = _i18n.t("FileManager.savedfile", _currentFile.getAbsolutePath());
+         String msg = _i18n.t("FileManager.savedfile", _sessionTabHeaderCtrl.getFile().getAbsolutePath());
          _mhPanel.info(msg);
 
          _sessionTabHeaderCtrl.setFileState(FileState.CLEAN);
@@ -137,7 +136,7 @@ public class FileManager
          _sqlTextAreaServices.setText(new String(bytes));
 
 
-         _currentFile = file;
+         _sessionTabHeaderCtrl.setFile(file);
          _sessionTabHeaderCtrl.setFileState(FileState.CLEAN);
       }
       catch (Exception e)
@@ -164,16 +163,16 @@ public class FileManager
 
    public void saveAs()
    {
-      File fileBuf = _currentFile;
+      File fileBuf = _sessionTabHeaderCtrl.getFile();
       FileState fileStateBuf = _sessionTabHeaderCtrl.getFileState();
 
-      _currentFile = null;
+      _sessionTabHeaderCtrl.setFile(null);
       _sessionTabHeaderCtrl.setFileState(FileState.NO_FILE);
 
 
       if(false == save())
       {
-         _currentFile = fileBuf;
+         _sessionTabHeaderCtrl.setFile(fileBuf);
          _sessionTabHeaderCtrl.setFileState(fileStateBuf);
       }
 
@@ -218,7 +217,7 @@ public class FileManager
          return;
       }
 
-      _currentFile = null;
+      _sessionTabHeaderCtrl.setFile(null);
       _sessionTabHeaderCtrl.setFileState(FileState.NO_FILE);
    }
 }
