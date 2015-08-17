@@ -1,6 +1,12 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Fixed memory leak concerning toolbar buttons.
+  Excerpt from Steven Zecks mail announcing the problem:
+  "Part of the problem now is the ToolbarButtonsHandler from commit 54d130.
+  I used the ActionUtils/ActionManager/ActionHandle classes to manage the rerun SQL button and action in the results tab ...
+  But now when the results tab is closed and/or rerun, the _buttons list in ToolbarButtonsHandler isn't cleared, causing a memory leak."
+
 Feature: File save, open etc. in SQL editor.
 
 Feature: Toolbar buttons and menus that have Session wide concern (e.g. transaction buttons or schema reload button)
