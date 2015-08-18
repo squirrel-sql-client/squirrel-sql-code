@@ -32,4 +32,10 @@ public class SchemaCacheProperty
    {
       _listeners.add(l);
    }
+   
+   public void clearListeners()
+   {
+	   _listeners.clear();
+	   _listeners = new ArrayList<>();
+   }
 }
