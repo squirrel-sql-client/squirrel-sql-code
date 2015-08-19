@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: File handling now remembers the last directory.
+
 Bug fix: Fixed memory leak concerning toolbar buttons.
   Excerpt from Steven Zecks mail announcing the problem:
   "Part of the problem now is the ToolbarButtonsHandler from commit 54d130.
