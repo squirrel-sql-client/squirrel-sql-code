@@ -91,6 +91,8 @@ public class FileManager
          _mhPanel.info(msg);
 
          _sessionTabHeaderCtrl.setFileState(FileState.CLEAN);
+
+         _pref.set(LAST_DIRECTORY, _sessionTabHeaderCtrl.getFile().getParent());
          return true;
       }
       catch (IOException ex)
@@ -139,6 +141,8 @@ public class FileManager
 
          _sessionTabHeaderCtrl.setFile(file);
          _sessionTabHeaderCtrl.setFileState(FileState.CLEAN);
+         _pref.set(LAST_DIRECTORY, _sessionTabHeaderCtrl.getFile().getParent());
+
       }
       catch (Exception e)
       {
@@ -209,6 +213,7 @@ public class FileManager
       {
          byte[] bytes = Files.readAllBytes(file.toPath());
          _sqlTextAreaServices.appendToEditor("\n\n" + new String(bytes));
+         _pref.set(LAST_DIRECTORY, file.getParent());
       }
       catch (IOException e)
       {
