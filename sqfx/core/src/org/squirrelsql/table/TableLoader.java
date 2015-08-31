@@ -161,7 +161,11 @@ public class TableLoader
    public Integer getCellAsInteger(String columnName, int rowIx)
    {
 	  Object o = _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName)).get();
-	  if(o instanceof BigDecimal){
+	  if(null == o)
+	  {
+		  return 0;
+	  }
+	  else if(o instanceof BigDecimal){
 		  return ((BigDecimal) o).intValue();
 	  }
 	  else {
