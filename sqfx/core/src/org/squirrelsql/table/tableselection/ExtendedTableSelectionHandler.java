@@ -276,7 +276,7 @@ public class ExtendedTableSelectionHandler
    {
       List<CellItemsWithColumn> ret = new ArrayList<>();
 
-      if(null == _extendedTableSelection)
+      if(null == _extendedTableSelection || null == _extendedTableSelection.getSelectedColumns())
       {
          return ret;
       }

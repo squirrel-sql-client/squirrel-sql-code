@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: When an area of a result table was selected that exceeded valid columns, a NullPointerException occurred when any table copy function was executed.
+
 Bug fix: File handling now remembers the last directory.
 
 Bug fix: Fixed memory leak concerning toolbar buttons.
