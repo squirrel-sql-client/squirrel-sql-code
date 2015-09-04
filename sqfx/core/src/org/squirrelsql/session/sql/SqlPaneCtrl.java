@@ -72,7 +72,8 @@ public class SqlPaneCtrl
 
       initActions();
 
-      _sqlTextAreaServices.setOnKeyPressed(this::onHandleKeyEvent);
+      _sqlTextAreaServices.setOnKeyPressed(e -> onHandleKeyEvent(e, false));
+      _sqlTextAreaServices.setOnKeyTyped(e -> onHandleKeyEvent(e, true));
       createRightMouseMenu();
 
 
@@ -108,7 +109,7 @@ public class SqlPaneCtrl
       StdActionCfg.RERUN_SQL.setAction(() -> onReExecuteSql());
    }
 
-   private void onHandleKeyEvent(KeyEvent keyEvent)
+   private void onHandleKeyEvent(KeyEvent keyEvent, boolean consumeOnly)
    {
       for (ActionCfg actionCfg : ActionUtil.getAllActionCfgs())
       {
@@ -116,7 +117,10 @@ public class SqlPaneCtrl
          {
             if (actionCfg.matchesKeyEvent(keyEvent))
             {
-               actionCfg.fire();
+               if (false == consumeOnly)
+               {
+                  actionCfg.fire();
+               }
                keyEvent.consume();
                return;
             }

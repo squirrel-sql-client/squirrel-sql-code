@@ -85,7 +85,11 @@ public class SQLTextAreaServices
    public void setOnKeyPressed(EventHandler<KeyEvent> keyEventHandler)
    {
       _sqlTextArea.setOnKeyPressed(keyEventHandler);
+   }
 
+   public void setOnKeyTyped(EventHandler<KeyEvent> keyEventHandler)
+   {
+      _sqlTextArea.setOnKeyTyped(keyEventHandler);
    }
 
    public String getCurrentSql()
