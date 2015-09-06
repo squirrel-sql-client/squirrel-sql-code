@@ -78,6 +78,9 @@ Thanks to Jaroslaw Jarmolowicz for the patch
 
 Bug fixes:
 
+#1185 The example URL for MariaDB is wrong
+ Unfortunately the change will only take effect for new installations.
+
 #1191 Remove Newlines Hotkey not working for several versions
 
 #1206 SQuirrel detects single line comment inside string literals
