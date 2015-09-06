@@ -163,7 +163,6 @@ public class ObjectTreeTabCtrl
    public void close()
    {
       _objecttreeSplitPosSaver.save(_objectTabSplitPane);
-      _sessionTabContext.getSession().getSchemaCacheValue().clearListeners();
    }
 
    public boolean selectObjectInTree(QualifiedObjectName objName)
