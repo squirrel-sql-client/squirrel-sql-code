@@ -32,7 +32,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -58,9 +57,6 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 
 	/** Resources for this plugin. */
 	private Resources _resources;
-
-	/** Listener to the SQL panel. */
-	private ISQLPanelListener _lis = new SQLPanelListener();
 
 
 	/**
@@ -157,11 +153,6 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		createMenu();
 	}
 
-   public boolean allowsSessionStartedInBackground()
-   {
-      return true;
-   }
-
    /**
 	 * Session has been started.
 	 * 
@@ -190,47 +181,31 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 
    private void initEditExtras(final ISQLPanelAPI sqlPanelAPI)
    {
-       GUIUtils.processOnSwingEventThread(new Runnable() {
-           public void run() {
-               sqlPanelAPI.addSQLPanelListener(_lis);
-               createSQLEntryAreaPopMenuItems(sqlPanelAPI);
+		ActionCollection actions1 = getApplication().getActionCollection();
+		sqlPanelAPI.addToSQLEntryAreaMenu(actions1.get(InQuotesAction.class));
+		sqlPanelAPI.addToSQLEntryAreaMenu(actions1.get(RemoveQuotesAction.class));
+		sqlPanelAPI.addToSQLEntryAreaMenu(actions1.get(ConvertToStringBufferAction.class));
 
-               ActionCollection actions = getApplication().getActionCollection();
-               sqlPanelAPI.addToToolsPopUp("quote", actions.get(InQuotesAction.class));
-               sqlPanelAPI.addToToolsPopUp("unquote", actions.get(RemoveQuotesAction.class));
-               sqlPanelAPI.addToToolsPopUp("quotesb", actions.get(ConvertToStringBufferAction.class));
-               sqlPanelAPI.addToToolsPopUp("date", actions.get(EscapeDateAction.class));
-               sqlPanelAPI.addToToolsPopUp("sqlcut", actions.get(CutSqlAction.class));
-               sqlPanelAPI.addToToolsPopUp("sqlcopy", actions.get(CopySqlAction.class));
-               sqlPanelAPI.addToToolsPopUp("remnewlines", actions.get(RemoveNewLinesAction.class));
-           }
-       });
-   }
+		JMenuItem mnu;
+		mnu = sqlPanelAPI.addToSQLEntryAreaMenu(actions1.get(RemoveNewLinesAction.class));
+		_resources.configureMenuItem(actions1.get(RemoveNewLinesAction.class), mnu);
 
-   /**
-	 * Called when a session shutdown.
-	 *
-	 * @param	session	The session that is ending.
-	 */
-	public void sessionEnding(ISession session)
-	{
-      ISessionWidget[] frames =
-         session.getApplication().getWindowManager().getAllFramesOfSession(session.getIdentifier());
+		sqlPanelAPI.addToSQLEntryAreaMenu(actions1.get(EscapeDateAction.class));
 
-      for (int i = 0; i < frames.length; i++)
-      {
-         if(frames[i] instanceof SQLInternalFrame)
-         {
-            ((SQLInternalFrame)frames[i]).getSQLPanelAPI().removeSQLPanelListener(_lis);
-         }
+		mnu = sqlPanelAPI.addToSQLEntryAreaMenu(actions1.get(CutSqlAction.class));
+		_resources.configureMenuItem(actions1.get(CutSqlAction.class), mnu);
 
-         if(frames[i] instanceof SessionInternalFrame)
-         {
-            ((SessionInternalFrame)frames[i]).getSQLPanelAPI().removeSQLPanelListener(_lis);
-         }
-      }
+		mnu = sqlPanelAPI.addToSQLEntryAreaMenu(actions1.get(CopySqlAction.class));
+		_resources.configureMenuItem(actions1.get(CopySqlAction.class), mnu);
 
-		super.sessionEnding(session);
+		ActionCollection actions = getApplication().getActionCollection();
+		sqlPanelAPI.addToToolsPopUp("quote", actions.get(InQuotesAction.class));
+		sqlPanelAPI.addToToolsPopUp("unquote", actions.get(RemoveQuotesAction.class));
+		sqlPanelAPI.addToToolsPopUp("quotesb", actions.get(ConvertToStringBufferAction.class));
+		sqlPanelAPI.addToToolsPopUp("date", actions.get(EscapeDateAction.class));
+		sqlPanelAPI.addToToolsPopUp("sqlcut", actions.get(CutSqlAction.class));
+		sqlPanelAPI.addToToolsPopUp("sqlcopy", actions.get(CopySqlAction.class));
+		sqlPanelAPI.addToToolsPopUp("remnewlines", actions.get(RemoveNewLinesAction.class));
 	}
 
 	/**
@@ -259,10 +234,6 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		coll.add(act);
 		_resources.addToMenu(act, menu);
 
-        act = new RemoveNewLinesAction(app, this);
-        coll.add(act);
-        _resources.addToMenu(act, menu);
-        
 		act = new ConvertToStringBufferAction(app, this);
 		coll.add(act);
 		_resources.addToMenu(act, menu);
@@ -283,36 +254,6 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		coll.add(act);
 		_resources.addToMenu(act, menu);
 
-	}
-
-	private void createSQLEntryAreaPopMenuItems(ISQLPanelAPI api)
-	{
-		JMenuItem mnu;
-
-		ActionCollection actions = getApplication().getActionCollection();
-		api.addToSQLEntryAreaMenu(actions.get(InQuotesAction.class));
-		api.addToSQLEntryAreaMenu(actions.get(RemoveQuotesAction.class));
-		api.addToSQLEntryAreaMenu(actions.get(ConvertToStringBufferAction.class));
-
-      mnu = api.addToSQLEntryAreaMenu(actions.get(RemoveNewLinesAction.class));
-      _resources.configureMenuItem(actions.get(RemoveNewLinesAction.class), mnu);
-
-      api.addToSQLEntryAreaMenu(actions.get(EscapeDateAction.class));
-
-		mnu = api.addToSQLEntryAreaMenu(actions.get(CutSqlAction.class));
-		_resources.configureMenuItem(actions.get(CutSqlAction.class), mnu);
-
-		mnu = api.addToSQLEntryAreaMenu(actions.get(CopySqlAction.class));
-		_resources.configureMenuItem(actions.get(CopySqlAction.class), mnu);
-
-	}
-
-	private class SQLPanelListener extends SQLPanelAdapter
-	{
-		public void sqlEntryAreaReplaced(SQLPanelEvent evt)
-		{
-			createSQLEntryAreaPopMenuItems(evt.getSQLPanel());
-		}
 	}
 
 
