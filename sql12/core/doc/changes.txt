@@ -78,6 +78,8 @@ Thanks to Jaroslaw Jarmolowicz for the patch
 
 Bug fixes:
 
+#1216 PostgreSQL: Content tab doesn't display data when quoting column names is necessary
+
 The overview- and rotated table- tabs broke when more results where read.
 
 DBDiff Plugin: Loading of the DBDiff Object tree menus failed when an Object tree window was opened:
