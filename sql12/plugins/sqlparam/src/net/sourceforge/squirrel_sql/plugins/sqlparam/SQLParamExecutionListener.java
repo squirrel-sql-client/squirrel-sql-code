@@ -86,6 +86,8 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 		
 		Matcher m = p.matcher(buffer);
 
+
+		boolean parametersWhereReplaced = false;
 		while (m.find()) {
 			if (isQuoted(buffer, m.start()))
 				continue;
@@ -143,6 +145,7 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 				dialog = null;
 			}
 			buffer.replace(m.start(), m.end(), value);
+			parametersWhereReplaced = true;
 			m.reset();
 		}
 
@@ -152,7 +155,21 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 			}
 		});
 		// log.info("SQL passing to execute: " + buffer.toString());
-		return buffer.toString();
+
+		//////////////////////////////////////////////////////////////////
+		// This is a workaround to avoid bug #1206 "SQuirrel detects single line comment inside string literals"
+		// That means at least when no parameters are used bug #1206 is avoided.
+		// The right way would be to do parsing like in QueryTokenizer instead of using Regular Expressions. Regular Expressions is not able to really cope with literals.
+		if (parametersWhereReplaced)
+		{
+			return buffer.toString();
+		}
+		else
+		{
+			return sql;
+		}
+		//
+		//////////////////////////////////////////////////////////////////
 	}
 
 	private void createParameterDialog(String parameter, String oldValue) {
