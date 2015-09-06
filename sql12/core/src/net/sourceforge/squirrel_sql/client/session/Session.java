@@ -558,7 +558,7 @@ class Session implements ISession
       {
          try
          {
-            connState.saveState(_conn, getProperties(), _msgHandler);
+            connState.saveState(_conn, getProperties(), _msgHandler, _sessionSheet.getSelectedCatalogFromCatalogsComboBox());
          }
          catch (SQLException ex)
          {

@@ -507,8 +507,13 @@ public class SessionPanel extends JPanel
       return _mainTabPane.getTabIndex(mainPanelTab);
    }
 
+	public String getSelectedCatalogFromCatalogsComboBox()
+	{
+		return _toolBar._catalogsPanel.getSelectedCatalog();
+	}
 
-   private class MyToolBar extends ToolBar
+
+	private class MyToolBar extends ToolBar
    {
       private static final long serialVersionUID = 1L;
       private IObjectTreeListener _lis;

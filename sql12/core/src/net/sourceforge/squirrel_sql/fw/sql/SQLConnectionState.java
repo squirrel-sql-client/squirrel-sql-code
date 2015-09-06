@@ -51,7 +51,7 @@ public class SQLConnectionState
 		super();
 	}
 
-   public void saveState(ISQLConnection conn, ISessionProperties sessionProperties, IMessageHandler msgHandler)
+   public void saveState(ISQLConnection conn, ISessionProperties sessionProperties, IMessageHandler msgHandler, String selectedCatalogFromCatalogsComboBox)
 		throws SQLException
 	{
 		if (conn == null)
@@ -83,6 +83,7 @@ public class SQLConnectionState
 
 		try
 		{
+			_catalog = selectedCatalogFromCatalogsComboBox;
 			_catalog = conn.getCatalog();
 		}
 		catch (SQLException ex)
@@ -91,7 +92,7 @@ public class SQLConnectionState
 			 * i18n [SQLConnectionState.errorSavingCatalog]
 				"Error saving current catalog.\n" +
 				"This might happen when reconnecting a Session to restore a broken connection.\n" +
-				"The new connection will use the default catalog.";
+				"The new connection will restore the catalog from catalogs combo box.";
 			 */
 			String msg = s_stringMgr.getString("SQLConnectionState.errorSavingCatalog");
 
