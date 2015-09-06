@@ -175,7 +175,14 @@ public class CatalogsPanel extends JPanel
 
 	public String getSelectedCatalog()
 	{
-		return (String) _catalogsCmb.getSelectedItem();
+		if (null == _catalogsCmb)
+		{
+			return null;
+		}
+		else
+		{
+			return (String) _catalogsCmb.getSelectedItem();
+		}
 	}
 
 }
