@@ -22,9 +22,14 @@ public class SQLHistoryItemWrapper
          // i18n[SQLHistoryItemWrapper.lastUsed=Last used]
          s_stringMgr.getString("SQLHistoryItemWrapper.lastUsed"),
 
+         // i18n[SQLHistoryItemWrapper.lastUsed=Last used]
+         s_stringMgr.getString("SQLHistoryItemWrapper.aliasName"),
+
          // i18n[SQLHistoryItemWrapper.sql=SQL]
          s_stringMgr.getString("SQLHistoryItemWrapper.sql"),
       };
+
+
    private static final SimpleDateFormat LAST_USAGE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
    public static ArrayList<SQLHistoryItemWrapper> wrap(ArrayList<SQLHistoryItem> items)
@@ -50,7 +55,7 @@ public class SQLHistoryItemWrapper
 
    public static int getSQLColIx()
    {
-      return 2;
+      return 3;
    }
 
 
@@ -79,7 +84,8 @@ public class SQLHistoryItemWrapper
       {
          case 0: return _index;
          case 1: return _lastUsageTimeString;
-         case 2: return _item.getSQL();
+         case 2: return _item.getAliasName();
+         case 3: return _item.getSQL();
          default: throw new IllegalArgumentException("Unknown colum index " + column);
 
       }
