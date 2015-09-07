@@ -2,6 +2,8 @@ package org.squirrelsql.session.objecttree;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import org.squirrelsql.services.I18n;
@@ -69,13 +71,9 @@ public class TreeDetailsController
 
    private void addTreeDetailsTab(String tabName, TableLoader tableLoader)
    {
-      Tab tab = new Tab(tabName);
-      tab.setClosable(false);
-      _objectTreeDetailsTabPane.getTabs().add(tab);
 
-      TableView tableView = new TableView();
-      tableLoader.load(tableView);
-      tab.setContent(tableView);
+      TreeDetailsTabController treeDetailsTabController = new TreeDetailsTabController(tabName, tableLoader);
+      _objectTreeDetailsTabPane.getTabs().add(treeDetailsTabController.getTab());
    }
 
 
