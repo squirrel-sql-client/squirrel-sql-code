@@ -312,7 +312,7 @@ public class SqlPaneCtrl
 
          _mh.info(_i18n.t("session.tab.sql.executing.times", statExec.getBestQueryCount(), statExec.getCompleteTime(), statExec.getExecutionTime(), statExec.getProcessinngResultsTime()));
 
-         _sqlEditTopPanelCtrl.addSqlToHistory(sql);
+         _sqlEditTopPanelCtrl.addSqlToHistory(sql, _sessionTabContext.getSession().getAlias().getName());
 
          sqlExecutionFinishedListener.finished(true);
 

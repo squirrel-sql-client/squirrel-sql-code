@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Alias name in SQL history search dialog.
+
 Upgraded RichTextFX to version 0.6.6 and fixed the code completion problem that resulted from changes in RichTextFX, see some paragraphs below.
   Note: This makes SQuirreL FX compatible with jdk1.8.0_60.
 

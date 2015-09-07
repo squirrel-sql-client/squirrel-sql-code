@@ -13,15 +13,17 @@ public class SQLHistoryEntry
    private boolean _new = true;
    private Date _stamp = new Date();
    private String _displaySql;
+   private String _aliasName;
 
    public SQLHistoryEntry()
    {
       // For deserialization
    }
 
-   public SQLHistoryEntry(String sql)
+   public SQLHistoryEntry(String sql, String aliasName)
    {
       setSql(sql);
+      _aliasName = aliasName;
    }
 
    @Override
@@ -51,7 +53,7 @@ public class SQLHistoryEntry
 
 
    @JsonIgnore
-   @RowObjectTableLoaderColumn(columnIndex = 1, columnHeaderI18nKey = "SQLHistoryEntry.col.header.sql")
+   @RowObjectTableLoaderColumn(columnIndex = 2, columnHeaderI18nKey = "SQLHistoryEntry.col.header.sql")
    public String getNormalizedSql()
    {
       return _normalizedSql;
@@ -101,5 +103,16 @@ public class SQLHistoryEntry
    public void setStamp(Date stamp)
    {
       _stamp = stamp;
+   }
+
+   @RowObjectTableLoaderColumn(columnIndex = 1, columnHeaderI18nKey = "SQLHistoryEntry.col.header.alias.name")
+   public String getAliasName()
+   {
+      return _aliasName;
+   }
+
+   public void setAliasName(String aliasName)
+   {
+      _aliasName = aliasName;
    }
 }

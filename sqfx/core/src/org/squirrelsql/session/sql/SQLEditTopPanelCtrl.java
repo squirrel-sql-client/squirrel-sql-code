@@ -128,9 +128,9 @@ public class SQLEditTopPanelCtrl
       return null;
    }
 
-   public void addSqlToHistory(String sql)
+   public void addSqlToHistory(String sql, String aliasName)
    {
-      SQLHistoryEntry buf = new SQLHistoryEntry(sql);
+      SQLHistoryEntry buf = new SQLHistoryEntry(sql, aliasName);
 
       try
       {
