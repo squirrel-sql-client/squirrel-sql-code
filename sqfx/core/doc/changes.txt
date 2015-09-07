@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Tools popup and bookmarks popup didn't scroll right when up or down key was used.
+
 Feature: Alias name in SQL history search dialog.
 
 Upgraded RichTextFX to version 0.6.6 and fixed the code completion problem that resulted from changes in RichTextFX, see some paragraphs below.

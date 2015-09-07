@@ -121,7 +121,7 @@ public class FilteredPopup<T extends FilteredPopupEntry>
          int selIx = _listView.getSelectionModel().getSelectedIndex();
          if(0 < selIx)
          {
-            _listView.getSelectionModel().select(selIx - 1);
+            selectAndScroll(_listView, selIx - 1);
          }
 
          keyEvent.consume();
@@ -131,11 +131,17 @@ public class FilteredPopup<T extends FilteredPopupEntry>
          int selIx = _listView.getSelectionModel().getSelectedIndex();
          if(_listView.getItems().size()-1 > selIx)
          {
-            _listView.getSelectionModel().select(selIx + 1);
+            selectAndScroll(_listView, selIx + 1);
          }
 
          keyEvent.consume();
       }
+   }
+
+   private void selectAndScroll(ListView<FilteredPopupEntryWrapper<T>> listView, int index)
+   {
+      listView.getSelectionModel().select(index);
+      listView.scrollTo(index);
    }
 
    private  void onMouseClickedList(MouseEvent event, ListView<FilteredPopupEntryWrapper<T>> listView)
