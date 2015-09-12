@@ -1,8 +1,8 @@
 package org.squirrelsql.session.sql;
 
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import org.squirrelsql.services.RightMouseMenuHandler;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
@@ -13,6 +13,8 @@ import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.sql.copysqlpart.InStatCreator;
 import org.squirrelsql.session.sql.copysqlpart.InsertStatCreator;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
+import org.squirrelsql.session.sql.tablesearch.SearchPanelVisibleListener;
+import org.squirrelsql.session.sql.tablesearch.TableSearchCtrl;
 import org.squirrelsql.table.*;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
 import org.squirrelsql.table.tableexport.*;
@@ -60,16 +62,44 @@ public class ResultTabController
 
       headerFxmlHelper.getView().lblHeader.setText(headertext);
 
-      _editButtonCtrl = new EditButtonCtrl(_session, sql);
       ActionUtil.addActionToToolbar(headerFxmlHelper.getView().resultToolBar, StdActionCfg.RERUN_SQL.getActionCfg());
+
+      TableSearchCtrl tableSearchCtrl = new TableSearchCtrl(_session);
+      headerFxmlHelper.getView().resultToolBar.getItems().add(tableSearchCtrl.getSearchButton());
+
+      _editButtonCtrl = new EditButtonCtrl(_session, sql);
       headerFxmlHelper.getView().resultToolBar.getItems().add(_editButtonCtrl.getEditButton());
 
       BorderPane bp = new BorderPane();
 
-      //headerFxmlHelper.getView().lblHeader.setStyle("-fx-border-color: blue;");
-      bp.setTop(headerFxmlHelper.getRegion());
+      bp.setTop(createTopPanel(headerFxmlHelper, tableSearchCtrl));
 
       bp.setCenter(createContainerTabPane(sqlResult, sqlCancelTabCtrl));
+
+      return bp;
+   }
+
+   private Node createTopPanel(FxmlHelper<SQLResultHeaderView> headerFxmlHelper, TableSearchCtrl tableSearchCtrl)
+   {
+      BorderPane bp = new BorderPane();
+
+      bp.setTop(headerFxmlHelper.getRegion());
+
+      tableSearchCtrl.setOnShowSearchPanel(new SearchPanelVisibleListener()
+      {
+         @Override
+         public void showPanel(Node panel, boolean visible)
+         {
+            if(visible)
+            {
+               bp.setCenter(panel);
+            }
+            else
+            {
+               bp.setCenter(null);
+            }
+         }
+      });
 
       return bp;
    }

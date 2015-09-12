@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="39.0" prefWidth="629.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.sql.tablesearch.TableSearchPanel">
+   <children>
+      <ComboBox fx:id="cboSearchType" layoutX="5.0" layoutY="7.0" prefHeight="26.0" prefWidth="159.0" AnchorPane.leftAnchor="5.0" />
+      <CheckBox fx:id="chkCaseSensitive" layoutX="171.0" layoutY="11.0" mnemonicParsing="false" text="%check.case.sensitive" />
+      <ComboBox fx:id="cboSearchString" layoutX="295.0" layoutY="7.0" maxWidth="1.7976931348623157E308" minWidth="20.0" prefHeight="26.0" prefWidth="148.0" AnchorPane.leftAnchor="295.0" AnchorPane.rightAnchor="205.0" />
+      <ToolBar layoutX="531.0" layoutY="1.0" AnchorPane.rightAnchor="0.0">
+         <items>
+            <Button fx:id="btnFindNext" mnemonicParsing="false" />
+            <Button fx:id="btnFindPrevious" mnemonicParsing="false" />
+            <Button fx:id="btnHighlightAllMatches" mnemonicParsing="false" />
+            <Button fx:id="btnUnhighlightAll" mnemonicParsing="false" />
+            <Button fx:id="btnResultInOwnTable" mnemonicParsing="false" />
+         </items>
+      </ToolBar>
+   </children>
+</AnchorPane>
