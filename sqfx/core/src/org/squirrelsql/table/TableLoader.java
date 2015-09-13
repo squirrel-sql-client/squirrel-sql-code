@@ -24,6 +24,7 @@ public class TableLoader
    private List<ColumnHandle> _columnHandles = new ArrayList<>();
 
    private List<List<SimpleObjectProperty>> _simpleObjectPropertyRows = new ArrayList<>();
+   private SquirrelDefaultTableCellChannel _squirrelDefaultTableCellChannel = new SquirrelDefaultTableCellChannel();
 
    public TableLoader()
    {
@@ -44,7 +45,7 @@ public class TableLoader
 
    public ColumnHandle addColumn(String header, List selectableValues)
    {
-      ColumnHandle columnHandle = new ColumnHandle(header, _columnHandles.size(), _cellValueReader, selectableValues);
+      ColumnHandle columnHandle = new ColumnHandle(header, _columnHandles.size(), _cellValueReader, selectableValues, _squirrelDefaultTableCellChannel);
       _columnHandles.add(columnHandle);
       return columnHandle;
    }
@@ -242,4 +243,8 @@ public class TableLoader
       _simpleObjectPropertyRows.get(tablePosition.getRow()).get(tablePosition.getColumn()).set(newValue);
    }
 
+   public SquirrelDefaultTableCellChannel getSquirrelDefaultTableCellChannel()
+   {
+      return _squirrelDefaultTableCellChannel;
+   }
 }

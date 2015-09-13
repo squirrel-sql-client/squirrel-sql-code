@@ -64,7 +64,7 @@ public class ResultTabController
 
       ActionUtil.addActionToToolbar(headerFxmlHelper.getView().resultToolBar, StdActionCfg.RERUN_SQL.getActionCfg());
 
-      TableSearchCtrl tableSearchCtrl = new TableSearchCtrl(_session);
+      TableSearchCtrl tableSearchCtrl = new TableSearchCtrl(sqlResult.getResultTableLoader());
       headerFxmlHelper.getView().resultToolBar.getItems().add(tableSearchCtrl.getSearchButton());
 
       _editButtonCtrl = new EditButtonCtrl(_session, sql);

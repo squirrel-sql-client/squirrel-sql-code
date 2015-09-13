@@ -18,6 +18,7 @@ public class ColumnHandle
    private int _columnIndex;
    private TableColumn _tableColumn;
    private List _selectableValues;
+   private SquirrelDefaultTableCellChannel _squirrelDefaultTableCellChannel;
 
    /**
     * This attribute is set only when the columns is an SQL result column.
@@ -25,7 +26,7 @@ public class ColumnHandle
     */
    private ColumnInfo _resultColumnInfo;
 
-   public ColumnHandle(String header, int columnIndex, CellValueReader cellValueReader, List selectableValues)
+   public ColumnHandle(String header, int columnIndex, CellValueReader cellValueReader, List selectableValues, SquirrelDefaultTableCellChannel squirrelDefaultTableCellChannel)
    {
       _header = header;
       _columnIndex = columnIndex;
@@ -53,7 +54,7 @@ public class ColumnHandle
       }
       else
       {
-         _tableColumn.setCellFactory(param -> new SquirrelDefaultTableCell());
+         _tableColumn.setCellFactory(param -> new SquirrelDefaultTableCell(squirrelDefaultTableCellChannel));
       }
 
       _originalCellFactory = _tableColumn.getCellFactory();

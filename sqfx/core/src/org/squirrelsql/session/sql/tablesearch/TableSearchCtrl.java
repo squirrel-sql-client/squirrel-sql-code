@@ -1,6 +1,5 @@
 package org.squirrelsql.session.sql.tablesearch;
 
-import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
@@ -9,18 +8,19 @@ import org.squirrelsql.Props;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Utils;
-import org.squirrelsql.session.Session;
+import org.squirrelsql.table.TableLoader;
 
 public class TableSearchCtrl
 {
    private final ToggleButton _btnSearch;
    private final Props _props = new Props(getClass());
+   private final SearchResultHandler _searchResultHandler;
 
    private SearchPanelVisibleListener _searchPanelVisibleListener;
    private final Region _tableSearchPanelRegion;
    private final TableSearchPanel _tableSearchPanel;
 
-   public TableSearchCtrl(Session session)
+   public TableSearchCtrl(TableLoader resultTableLoader)
    {
       _btnSearch = new ToggleButton();
       _btnSearch.setTooltip(new Tooltip(new I18n(getClass()).t("search.button.tooltip")));
@@ -46,11 +46,19 @@ public class TableSearchCtrl
 
       _tableSearchPanel.cboSearchString.setEditable(true);
 
-      _tableSearchPanel.btnFindNext.setOnAction(e -> find(true));
-      _tableSearchPanel.btnFindPrevious.setOnAction(e -> find(false));
+
+      _searchResultHandler = new SearchResultHandler(resultTableLoader);
+
+
+      _tableSearchPanel.btnFindNext.setOnAction(e -> onFind(true));
+      _tableSearchPanel.btnFindPrevious.setOnAction(e -> onFind(false));
+
+      _tableSearchPanel.btnHighlightAllMatches.setOnAction(e -> _searchResultHandler.highlightAll());
+      _tableSearchPanel.btnUnhighlightAll.setOnAction(e -> _searchResultHandler.unhighlightAll());
+
    }
 
-   private void find(boolean forward)
+   private void onFind(boolean forward)
    {
       String cboEditorText = _tableSearchPanel.cboSearchString.getEditor().getText();
       if(Utils.isEmptyString(cboEditorText))
@@ -63,6 +71,7 @@ public class TableSearchCtrl
       _tableSearchPanel.cboSearchString.getSelectionModel().select(0);
 
 
+      _searchResultHandler.find(forward);
 
    }
 

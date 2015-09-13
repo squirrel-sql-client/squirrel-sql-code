@@ -11,10 +11,14 @@ import org.squirrelsql.services.Utils;
 /**
  * First of all a copy of javafx.scene.control.TableColumn.DEFAULT_CELL_FACTORY
  */
-class SquirrelDefaultTableCell extends TableCell<Object, Object>
+public class SquirrelDefaultTableCell extends TableCell<Object, Object>
 {
-   public SquirrelDefaultTableCell()
+   private SquirrelDefaultTableCellChannel _squirrelDefaultTableCellChannel;
+
+   public SquirrelDefaultTableCell(SquirrelDefaultTableCellChannel squirrelDefaultTableCellChannel)
    {
+      _squirrelDefaultTableCellChannel = squirrelDefaultTableCellChannel;
+
       addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>()
       {
          @Override
@@ -58,7 +62,16 @@ class SquirrelDefaultTableCell extends TableCell<Object, Object>
       {
          CellProperties cellProperties = TableCellUtil.getCellProperties(item);
          super.setText(cellProperties.getValue());
-         super.setStyle(cellProperties.getStyle());
+
+
+         if (_squirrelDefaultTableCellChannel.isSearchMatch(item, this))
+         {
+            super.setStyle(CellProperties.SEARCH_MATCH_STYLE);
+         }
+         else
+         {
+            super.setStyle(cellProperties.getStyle());
+         }
 
          super.setGraphic(null);
       }
