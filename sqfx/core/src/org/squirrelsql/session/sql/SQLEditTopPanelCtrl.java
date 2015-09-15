@@ -80,7 +80,15 @@ public class SQLEditTopPanelCtrl
          return;
       }
 
-      _sqlTextAreaServices.appendToEditor("\n" + selectedItem.getSql());
+      if (Utils.isEmptyString(_sqlTextAreaServices.getTextArea().getText()))
+      {
+         _sqlTextAreaServices.appendToEditor(selectedItem.getSql());
+      }
+      else
+      {
+         _sqlTextAreaServices.appendToEditor("\n" + selectedItem.getSql());
+
+      }
 
       _sqlTextAreaServices.requestFocus();
    }

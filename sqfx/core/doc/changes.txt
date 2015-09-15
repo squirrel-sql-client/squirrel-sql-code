@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Appending an SQL from SQL history to the editor does not add a new line anymore if the editor is empty.
+
 Improved Object tree performance: Details tabs are now loaded on demand.
 
 Bug fix: Tools popup and bookmarks popup didn't scroll right when up or down key was used.
