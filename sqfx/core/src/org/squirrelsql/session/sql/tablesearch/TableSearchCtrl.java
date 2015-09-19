@@ -53,9 +53,20 @@ public class TableSearchCtrl
       _tableSearchPanel.btnFindNext.setOnAction(e -> onFind(true));
       _tableSearchPanel.btnFindPrevious.setOnAction(e -> onFind(false));
 
-      _tableSearchPanel.btnHighlightAllMatches.setOnAction(e -> _searchResultHandler.highlightAll());
+      _tableSearchPanel.btnHighlightAllMatches.setOnAction(e -> onHighLightAll());
       _tableSearchPanel.btnUnhighlightAll.setOnAction(e -> _searchResultHandler.unhighlightAll());
 
+   }
+
+   private void onHighLightAll()
+   {
+      String cboEditorText = _tableSearchPanel.cboSearchString.getEditor().getText();
+      if(Utils.isEmptyString(cboEditorText))
+      {
+         return;
+      }
+
+      _searchResultHandler.highlightAll(cboEditorText, _tableSearchPanel.cboSearchType.getSelectionModel().getSelectedItem());
    }
 
    private void onFind(boolean forward)
@@ -71,7 +82,7 @@ public class TableSearchCtrl
       _tableSearchPanel.cboSearchString.getSelectionModel().select(0);
 
 
-      _searchResultHandler.find(forward);
+      _searchResultHandler.find(forward, cboEditorText, _tableSearchPanel.cboSearchType.getSelectionModel().getSelectedItem());
 
    }
 

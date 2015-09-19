@@ -2,5 +2,5 @@ package org.squirrelsql.table;
 
 public interface SearchMatchCheck
 {
-   boolean isSearchMatch(Object valueToRender, SquirrelDefaultTableCell cell);
+   SearchMatch getSearchMatch(Object valueToRender, SquirrelDefaultTableCell cell);
 }

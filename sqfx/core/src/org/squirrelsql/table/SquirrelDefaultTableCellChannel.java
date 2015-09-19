@@ -4,15 +4,15 @@ public class SquirrelDefaultTableCellChannel
 {
    private SearchMatchCheck _searchMatchCheck;
 
-   public boolean isSearchMatch(Object valueToRender, SquirrelDefaultTableCell cell)
+   public SearchMatch getSearchMatch(Object valueToRender, SquirrelDefaultTableCell cell)
    {
       if (null == _searchMatchCheck)
       {
-         return false;
+         return SearchMatch.MATCH_NONE;
       }
 
 
-      return _searchMatchCheck.isSearchMatch(valueToRender, cell);
+      return _searchMatchCheck.getSearchMatch(valueToRender, cell);
    }
 
    public void setSearchMatchCheck(SearchMatchCheck searchMatchCheck)

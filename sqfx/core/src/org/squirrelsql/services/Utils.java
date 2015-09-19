@@ -21,7 +21,10 @@ import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 public class Utils
 {
@@ -30,19 +33,38 @@ public class Utils
       return Strings.isNullOrEmpty(text) || Strings.isNullOrEmpty(text.trim());
    }
 
+
+   public static boolean compareRespectEmpty(Object o1, Object o2)
+   {
+      return compareRespectEmpty(o1,o2, (t1,t2) -> t1.equals(t2));
+   }
+
    public static boolean compareRespectEmpty(String s1, String s2)
    {
-      if(null == s1 && null == s2)
+      return compareRespectEmpty(s1,s2, (t1,t2) -> t1.equalsIgnoreCase(t2));
+   }
+
+   /**
+    * @param comparator Is called only if o1 and o2 are not null.
+    */
+   private static <T> boolean compareRespectEmpty(T o1, T o2, BiFunction<T, T, Boolean> comparator)
+   {
+      if(null == o1 && null == o2)
       {
          return true;
       }
 
-      if(s1 == null)
+      if(o1 == null && o2 != null)
       {
          return false;
       }
 
-      return s1.equalsIgnoreCase(s2);
+      if(o1 != null && o2 == null)
+      {
+         return false;
+      }
+
+      return comparator.apply(o1, o2);
    }
 
    public static void close(ResultSet res)

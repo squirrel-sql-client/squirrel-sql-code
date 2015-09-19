@@ -64,9 +64,13 @@ public class SquirrelDefaultTableCell extends TableCell<Object, Object>
          super.setText(cellProperties.getValue());
 
 
-         if (_squirrelDefaultTableCellChannel.isSearchMatch(item, this))
+         if ( SearchMatch.MATCH == _squirrelDefaultTableCellChannel.getSearchMatch(item, this))
          {
             super.setStyle(CellProperties.SEARCH_MATCH_STYLE);
+         }
+         else if ( SearchMatch.MATCH_CURRENT == _squirrelDefaultTableCellChannel.getSearchMatch(item, this))
+         {
+            super.setStyle(CellProperties.CURRENT_SEARCH_MATCH_STYLE);
          }
          else
          {

@@ -26,6 +26,8 @@ public class TableLoader
    private List<List<SimpleObjectProperty>> _simpleObjectPropertyRows = new ArrayList<>();
    private SquirrelDefaultTableCellChannel _squirrelDefaultTableCellChannel = new SquirrelDefaultTableCellChannel();
 
+   private TableView _tableView;
+
    public TableLoader()
    {
       _cellValueReader = new CellValueReader()
@@ -76,6 +78,8 @@ public class TableLoader
 
       ObservableList<List<SimpleObjectProperty>> items = FXCollections.observableList(_simpleObjectPropertyRows);
       tv.setItems(items);
+
+      _tableView = tv;
    }
 
    private SimpleObjectProperty interpretValue(SimpleObjectProperty simpleObjectProperty)
@@ -117,13 +121,14 @@ public class TableLoader
 
    public String getCellAsString(String columnName, int rowIx)
    {
-      return getCellAt(rowIx, getColIxByName(columnName));
+      return _getCellAt(rowIx, getColIxByName(columnName));
    }
 
-   public String getColIxByNameSave(String columnName)
+   public String getCellAsString(int row, int col)
    {
-      return null;
+      return _getCellAt(row, col);
    }
+
 
    public int getColIxByName(String columnName)
    {
@@ -175,7 +180,7 @@ public class TableLoader
    }
 
 
-   private String getCellAt(int rowIx, int colIx)
+   private String _getCellAt(int rowIx, int colIx)
    {
       SimpleObjectProperty simpleObjectProperty = getObjectPropertyAt(rowIx, colIx);
       return getStringValue(simpleObjectProperty);
@@ -246,5 +251,10 @@ public class TableLoader
    public SquirrelDefaultTableCellChannel getSquirrelDefaultTableCellChannel()
    {
       return _squirrelDefaultTableCellChannel;
+   }
+
+   public TableView getTableView()
+   {
+      return _tableView;
    }
 }
