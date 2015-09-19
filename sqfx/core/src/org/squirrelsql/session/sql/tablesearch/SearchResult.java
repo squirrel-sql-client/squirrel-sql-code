@@ -67,4 +67,8 @@ public class SearchResult
    }
 
 
+   public void resetCurrentMatchCell()
+   {
+      _currentMatch = null;
+   }
 }

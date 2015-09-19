@@ -46,6 +46,8 @@ public class SearchResultHandler
          }
          startCol = 0;
       }
+
+      _searchResult.resetCurrentMatchCell();
    }
 
 
@@ -58,14 +60,34 @@ public class SearchResultHandler
       return true;
    }
 
-   public void highlightAll(String cboEditorText, TableSearchType selectedItem)
+   public void highlightAll(String cboEditorText, TableSearchType searchType)
    {
+      _currentCboEditorText = cboEditorText;
+      _currentSearchType = searchType;
+
+
+      _searchResult.reset();
+
+      for (int row = 0; row < _resultTableLoader.size(); row++)
+      {
+         for (int col = 0; col < _resultTableLoader.getColumnCount(); col++)
+         {
+            if(matches(_resultTableLoader.getCellAsString(row, col)))
+            {
+               _searchResult.setCurrentMatchCell(row, col);
+            }
+         }
+      }
+      _searchResult.resetCurrentMatchCell();
+
+      _resultTableLoader.getTableView().refresh();
 
    }
 
    public void unhighlightAll()
    {
-
+      _searchResult.reset();
+      _resultTableLoader.getTableView().refresh();
    }
 
 
