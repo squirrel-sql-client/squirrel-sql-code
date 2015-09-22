@@ -7,7 +7,7 @@ public enum TableSearchType
    CONTAINS(I18nHelper.i18n.t("search.type.contains")),
    STARTS_WITH(I18nHelper.i18n.t("search.type.starts.with")),
    ENDS_WITH(I18nHelper.i18n.t("search.type.ends.with")),
-   REG_EXP(I18nHelper.i18n.t("search.type.regExp"));
+   REG_EX(I18nHelper.i18n.t("search.type.regExp"));
 
 
    private static class I18nHelper

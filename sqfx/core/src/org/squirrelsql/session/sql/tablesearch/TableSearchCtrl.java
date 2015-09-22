@@ -66,7 +66,7 @@ public class TableSearchCtrl
          return;
       }
 
-      _searchResultHandler.highlightAll(cboEditorText, _tableSearchPanel.cboSearchType.getSelectionModel().getSelectedItem());
+      _searchResultHandler.highlightAll(cboEditorText, _tableSearchPanel.cboSearchType.getSelectionModel().getSelectedItem(), _tableSearchPanel.chkCaseSensitive.isSelected());
    }
 
    private void onFind(boolean forward)
@@ -82,7 +82,7 @@ public class TableSearchCtrl
       _tableSearchPanel.cboSearchString.getSelectionModel().select(0);
 
 
-      _searchResultHandler.find(forward, cboEditorText, _tableSearchPanel.cboSearchType.getSelectionModel().getSelectedItem());
+      _searchResultHandler.find(forward, cboEditorText, _tableSearchPanel.cboSearchType.getSelectionModel().getSelectedItem(), _tableSearchPanel.chkCaseSensitive.isSelected());
 
    }
 

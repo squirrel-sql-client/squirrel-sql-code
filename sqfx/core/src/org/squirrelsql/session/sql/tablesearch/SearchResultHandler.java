@@ -4,13 +4,13 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.services.Utils;
-import org.squirrelsql.table.SquirrelDefaultTableCell;
 import org.squirrelsql.table.TableLoader;
 
 public class SearchResultHandler
 {
    private String _currentCboEditorText;
    private TableSearchType _currentSearchType;
+   private boolean _caseSensitive;
 
    private SearchResult _searchResult = new SearchResult();
    private TableLoader _resultTableLoader;
@@ -23,12 +23,13 @@ public class SearchResultHandler
       _resultTableLoader.getSquirrelDefaultTableCellChannel().setSearchMatchCheck((valueToRender, cell) -> _searchResult.getSearchMatch(valueToRender, cell));
    }
 
-   public void find(boolean forward, String cboEditorText, TableSearchType searchType)
+   public void find(boolean forward, String cboEditorText, TableSearchType searchType, boolean caseSensitive)
    {
-      if(searchCriteriaChanged(cboEditorText, searchType))
+      if(searchCriteriaChanged(cboEditorText, searchType, caseSensitive))
       {
          _currentCboEditorText = cboEditorText;
          _currentSearchType = searchType;
+         _caseSensitive = caseSensitive;
          _searchResult.reset();
       }
 
@@ -92,19 +93,20 @@ public class SearchResultHandler
    }
 
 
-   private boolean searchCriteriaChanged(String cboEditorText, TableSearchType searchType)
+   private boolean searchCriteriaChanged(String cboEditorText, TableSearchType searchType, boolean caseSensitive)
    {
-      if(Utils.compareRespectEmpty(cboEditorText, _currentCboEditorText) && searchType.equals(_currentSearchType))
+      if(Utils.compareRespectEmpty(cboEditorText, _currentCboEditorText) && searchType.equals(_currentSearchType) && caseSensitive == _caseSensitive)
       {
          return false;
       }
       return true;
    }
 
-   public void highlightAll(String cboEditorText, TableSearchType searchType)
+   public void highlightAll(String cboEditorText, TableSearchType searchType, boolean caseSensitive)
    {
       _currentCboEditorText = cboEditorText;
       _currentSearchType = searchType;
+      _caseSensitive = caseSensitive;
 
 
       _searchResult.reset();
@@ -139,13 +141,30 @@ public class SearchResultHandler
 
 
 
-   /////////////////////////////////
-   // TODO
-   private boolean matches(String toTest)
+   private boolean matches(String cellData)
    {
-      return Utils.compareRespectEmpty(_currentCboEditorText, toTest);
+      if(false == _caseSensitive)
+      {
+         if (TableSearchType.REG_EX != _currentSearchType)
+         {
+            _currentCboEditorText = _currentCboEditorText.toLowerCase();
+         }
+         cellData = cellData.toLowerCase();
+      }
+
+      switch (_currentSearchType)
+      {
+         case CONTAINS:
+            return cellData.contains(_currentCboEditorText);
+         case STARTS_WITH:
+            return cellData.startsWith(_currentCboEditorText);
+         case ENDS_WITH:
+            return cellData.endsWith(_currentCboEditorText);
+         case REG_EX:
+            return cellData.matches(_currentCboEditorText);
+      }
+
+      throw new IllegalArgumentException("Unknown search type " + _currentSearchType);
    }
-   //
-   ///////////////////////////////
 
 }
