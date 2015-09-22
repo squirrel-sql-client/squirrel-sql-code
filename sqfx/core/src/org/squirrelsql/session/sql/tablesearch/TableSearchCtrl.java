@@ -1,17 +1,22 @@
 package org.squirrelsql.session.sql.tablesearch;
 
+import javafx.application.Platform;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.table.TableLoader;
 
 public class TableSearchCtrl
 {
+   private static final String PREF_RECENT_SERCH_STRING_PREFIX = "recentSearchString_";
+   public static final int MAX_RECENT_SEARCH_STRINGS = 5;
    private final ToggleButton _btnSearch;
    private final Props _props = new Props(getClass());
    private final SearchResultHandler _searchResultHandler;
@@ -19,6 +24,7 @@ public class TableSearchCtrl
    private SearchPanelVisibleListener _searchPanelVisibleListener;
    private final Region _tableSearchPanelRegion;
    private final TableSearchPanel _tableSearchPanel;
+   private Pref _pref = new Pref(getClass());
 
    public TableSearchCtrl(TableLoader resultTableLoader)
    {
@@ -46,6 +52,7 @@ public class TableSearchCtrl
 
       _tableSearchPanel.cboSearchString.setEditable(true);
 
+      loadRecentSearchStrings(_tableSearchPanel.cboSearchString);
 
       _searchResultHandler = new SearchResultHandler(resultTableLoader);
 
@@ -93,6 +100,7 @@ public class TableSearchCtrl
       _tableSearchPanel.cboSearchString.getItems().remove(cboEditorText);
       _tableSearchPanel.cboSearchString.getItems().add(0, cboEditorText);
       _tableSearchPanel.cboSearchString.getSelectionModel().select(0);
+      writeRecentSearchString(_tableSearchPanel.cboSearchString);
 
 
       _searchResultHandler.find(forward, cboEditorText, _tableSearchPanel.cboSearchType.getSelectionModel().getSelectedItem(), _tableSearchPanel.chkCaseSensitive.isSelected());
@@ -122,4 +130,32 @@ public class TableSearchCtrl
    {
       _searchPanelVisibleListener = searchPanelVisibleListener;
    }
+
+   private void loadRecentSearchStrings(ComboBox<String> cbo)
+   {
+      for (int i=0; i < MAX_RECENT_SEARCH_STRINGS; ++i)
+      {
+         String searchString = _pref.getString(PREF_RECENT_SERCH_STRING_PREFIX + i, null);
+
+         if(null != searchString)
+         {
+            cbo.getItems().add(searchString);
+         }
+      }
+   }
+
+   private void writeRecentSearchString(ComboBox<String> cbo)
+   {
+      for (int i=0; i < MAX_RECENT_SEARCH_STRINGS; ++i)
+      {
+         if(cbo.getItems().size() <= i)
+         {
+            return;
+         }
+
+         _pref.set(PREF_RECENT_SERCH_STRING_PREFIX + i, cbo.getItems().get(i));
+      }
+   }
+
+
 }
