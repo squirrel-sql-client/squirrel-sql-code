@@ -49,17 +49,33 @@ public class SearchCell
       return result;
    }
 
-   public SearchCell createNextCell(int rowCount, int columnCount)
+   public SearchCell createNextCell(int rowCount, int columnCount, boolean forward)
    {
-      if(columnCount - 1 > _col)
+      if (forward)
       {
-         return new SearchCell(_row, _col + 1);
-      }
-      else if(rowCount - 1 > _row)
-      {
-         return new SearchCell(_row + 1, 0);
-      }
+         if(columnCount - 1 > _col)
+         {
+            return new SearchCell(_row, _col + 1);
+         }
+         else if(rowCount - 1 > _row)
+         {
+            return new SearchCell(_row + 1, 0);
+         }
 
-      return new SearchCell(0,0);
+         return new SearchCell(0,0);
+      }
+      else
+      {
+         if(0 < _col)
+         {
+            return new SearchCell(_row, _col - 1);
+         }
+         else if(0 < _row)
+         {
+            return new SearchCell(_row + 1, columnCount - 1);
+         }
+
+         return new SearchCell(rowCount - 1, columnCount - 1);
+      }
    }
 }

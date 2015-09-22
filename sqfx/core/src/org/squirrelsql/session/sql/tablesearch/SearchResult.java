@@ -38,12 +38,22 @@ public class SearchResult
 
    public SearchCell getStartCell(TableLoader resultTableLoader, boolean forward)
    {
-      if(null == _currentMatch)
+      if (forward)
       {
-         return new SearchCell();
+         if(null == _currentMatch)
+         {
+            return new SearchCell();
+         }
+      }
+      else
+      {
+         if(null == _currentMatch)
+         {
+            return new SearchCell(resultTableLoader.size() - 1, resultTableLoader.getColumnCount() - 1);
+         }
       }
 
-      return _currentMatch.createNextCell(resultTableLoader.size(), resultTableLoader.getColumnCount());
+      return _currentMatch.createNextCell(resultTableLoader.size(), resultTableLoader.getColumnCount(), forward);
    }
 
    public void setCurrentMatchCell(int row, int col)
