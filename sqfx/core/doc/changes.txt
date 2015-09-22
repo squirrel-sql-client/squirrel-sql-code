@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Search in SQL result table.
+
 Bug fix: Appending an SQL from SQL history to the editor does not add a new line anymore if the editor is empty.
 
 Improved Object tree performance: Details tabs are now loaded on demand.
