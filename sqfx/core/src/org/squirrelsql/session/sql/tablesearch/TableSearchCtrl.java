@@ -56,6 +56,19 @@ public class TableSearchCtrl
       _tableSearchPanel.btnHighlightAllMatches.setOnAction(e -> onHighLightAll());
       _tableSearchPanel.btnUnhighlightAll.setOnAction(e -> _searchResultHandler.unhighlightAll());
 
+      _tableSearchPanel.btnResultInOwnTable.setOnAction(e -> onSearchResultInOwnTable());
+
+   }
+
+   private void onSearchResultInOwnTable()
+   {
+      String cboEditorText = _tableSearchPanel.cboSearchString.getEditor().getText();
+      if(Utils.isEmptyString(cboEditorText))
+      {
+         return;
+      }
+
+      _searchResultHandler.showSearchResultInOwnTable(cboEditorText, _tableSearchPanel.cboSearchType.getSelectionModel().getSelectedItem(), _tableSearchPanel.chkCaseSensitive.isSelected());
    }
 
    private void onHighLightAll()

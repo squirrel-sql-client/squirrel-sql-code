@@ -1,13 +1,7 @@
 package org.squirrelsql.services;
 
 import com.google.common.base.Strings;
-
 import javafx.application.Platform;
-import javafx.geometry.Bounds;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -21,10 +15,8 @@ import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Predicate;
 
 public class Utils
 {

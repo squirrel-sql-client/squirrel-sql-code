@@ -31,8 +31,6 @@ public class SettingsDialogController
 
       _dialog.setTitle(_i18n.t("showSettings.title"));
 
-      GuiUtils.makeEscapeClosable(fxmlHelper.getRegion());
-
       _settingsTabControllers.forEach(c -> loadTab(c));
 
       _settingsDialogView.btnOk.setOnAction((e) -> onOk());
