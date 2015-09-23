@@ -48,10 +48,15 @@ public class SquirrelFindDialog extends FindDialog implements ISquirrelSearchDia
          @Override
          public void windowClosing(WindowEvent e)
          {
-            fireClosing();      
+            LastFindHelper.storeLastFinds(SquirrelFindDialog.this.findTextCombo);
+            fireClosing();
          }
       });
-      
+
+
+      LastFindHelper.loadLastFinds(super.findTextCombo);
+
+
    }
 
    @Override
@@ -64,6 +69,7 @@ public class SquirrelFindDialog extends FindDialog implements ISquirrelSearchDia
    @Override
    public void close()
    {
+      LastFindHelper.storeLastFinds(super.findTextCombo);
       fireClosing();
 
       setVisible(false);

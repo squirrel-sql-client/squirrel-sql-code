@@ -1,6 +1,13 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in our GIT repository and in future snapshots and releases.
+===============================================================================================
+
+Syntax plugin: Last five find strings are now saved and can be selected from the drop down of the find and replace dialog.
+
+
+
 3.7.0 (09/14/2015)
 ==================
 

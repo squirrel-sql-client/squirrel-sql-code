@@ -47,21 +47,32 @@ public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSea
          @Override
          public void windowClosing(WindowEvent e)
          {
-            fireClosing();
+            onClosing();
          }
+
       });
+
+      LastFindHelper.loadLastFinds(super.findTextCombo);
    }
+
+   private void onClosing()
+   {
+      LastFindHelper.storeLastFinds(super.findTextCombo);
+      fireClosing();
+   }
+
 
    @Override
    protected void escapePressed()
    {
-      fireClosing();
+      close();
       super.escapePressed();
    }
 
    @Override
    public void close()
    {
+      LastFindHelper.storeLastFinds(super.findTextCombo);
       fireClosing();
 
       setVisible(false);
