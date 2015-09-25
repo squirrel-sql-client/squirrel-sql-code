@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Removed the maximum Java-VM memory parameter (-Xmx512m) from the Windows start batch. Java should be able to manage its memory itself.
+
 Feature: Search in SQL result table.
 
 Bug fix: Appending an SQL from SQL history to the editor does not add a new line anymore if the editor is empty.

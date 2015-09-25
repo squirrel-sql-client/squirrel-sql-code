@@ -46,6 +46,6 @@ SET TMP_PARMS=%1 %2 %3 %4 %5 %6 %7 %8 %9
 
 @rem Run with no command window. This may not work with versions of Windows prior to XP. 
 @rem Remove 'start "SQuirreL SQL Client" /B' for compatibility only if necessary 
-start "SQuirreL SQL Client" /B "%LOCAL_JAVA%" -Xmx512m -cp %SQUIRREL_CP%  -splash:"%SQUIRREL_SQL_HOME%/icons/splash.jpg" org.squirrelsql.Main %TMP_PARMS%
+start "SQuirreL SQL Client" /B "%LOCAL_JAVA%" -cp %SQUIRREL_CP%  -splash:"%SQUIRREL_SQL_HOME%/icons/splash.jpg" org.squirrelsql.Main %TMP_PARMS%
 
 :ExitForWrongJavaVersion
