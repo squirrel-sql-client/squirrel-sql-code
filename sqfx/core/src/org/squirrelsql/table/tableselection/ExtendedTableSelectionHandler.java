@@ -109,9 +109,10 @@ public class ExtendedTableSelectionHandler
 //      System.out.println("Eq=" + (scrollBarH == scrollBarV));
 
 
-      double delta = scrollIfBottomOrTopReached(event, yEnd, tableColumnHeader);
+      double deltaY = scrollIfBottomOrTopReached(event, yEnd, tableColumnHeader);
+      double deltaX = scrollIfRightOrLeftReached(event, xEnd, tableColumnHeader);
 
-      _pBegin = new Point2D(_pBegin.getX(), _pBegin.getY() - delta);
+      _pBegin = new Point2D(_pBegin.getX() - deltaX, _pBegin.getY() - deltaY);
 
 
       GraphicsContext gc = _canvas.getGraphicsContext2D();
@@ -260,6 +261,41 @@ public class ExtendedTableSelectionHandler
 
       return 0;
    }
+
+   private double scrollIfRightOrLeftReached(MouseEvent event, double xEnd, TableColumnHeader tableColumnHeader)
+   {
+      if(event.getX() > xEnd)
+      {
+         TableCell tableCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, _tableView.getLayoutBounds().getWidth() -1, tableColumnHeader.getHeight() + 1);
+         int colIndex = _tableView.getColumns().indexOf(tableCell.getTableColumn());
+
+         if (colIndex + 1 < _tableView.getColumns().size())
+         {
+            int toColIx = colIndex + 1;
+            _tableView.scrollToColumnIndex(toColIx);
+            TableColumn toCol = (TableColumn) _tableView.getColumns().get(toColIx);
+            return toCol.getWidth();
+         }
+      }
+
+      if(event.getX() < 0)
+      {
+         TableCell tableCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, 1 , tableColumnHeader.getHeight() + 1);
+         int colIndex = _tableView.getColumns().indexOf(tableCell.getTableColumn());
+
+         if (colIndex - 1 >= 0)
+         {
+            int toColIx = Math.max(colIndex - 1, 0);
+            _tableView.scrollToColumnIndex(toColIx);
+            TableColumn toCol = (TableColumn) _tableView.getColumns().get(toColIx);
+            return - toCol.getWidth();
+         }
+      }
+
+      return 0;
+   }
+
+
 
    private void clearCanvas()
    {
