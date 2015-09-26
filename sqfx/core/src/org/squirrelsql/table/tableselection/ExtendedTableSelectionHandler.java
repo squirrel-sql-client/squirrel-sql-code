@@ -3,7 +3,6 @@ package org.squirrelsql.table.tableselection;
 import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -14,6 +13,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.table.ColumnHandle;
 import org.squirrelsql.workaround.TableCellByCoordinatesWA;
 
@@ -48,6 +49,17 @@ public class ExtendedTableSelectionHandler
       tableView.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> onDragged(event));
       //
       /////////////////////////////////////////////////////////////////////////////////////
+
+      _canvas.setOnMouseClicked(e -> onCanvasClicked(e));
+   }
+
+   private void onCanvasClicked(MouseEvent event)
+   {
+      // This handler is a workaround for a bug seen on Linux with JDK jdk1.8.0_60
+      // When the mouse is dragged out of the application window _and_ is dragged
+      // back in the application no MOUSE_RELEASED is fired anymore.
+      // Without this code the table would then become inaccessible.
+      _stackPane.getChildren().remove(_canvas);
    }
 
 
