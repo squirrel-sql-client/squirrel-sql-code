@@ -271,10 +271,12 @@ public class ExtendedTableSelectionHandler
 
          if (colIndex + 1 < _tableView.getColumns().size())
          {
+            TableColumn fromCol = (TableColumn) _tableView.getColumns().get(colIndex);
+
             int toColIx = colIndex + 1;
             _tableView.scrollToColumnIndex(toColIx);
             TableColumn toCol = (TableColumn) _tableView.getColumns().get(toColIx);
-            return toCol.getWidth();
+            return fromCol.getWidth() + toCol.getWidth();
          }
       }
 
@@ -285,10 +287,13 @@ public class ExtendedTableSelectionHandler
 
          if (colIndex - 1 >= 0)
          {
+            TableColumn fromCol = (TableColumn) _tableView.getColumns().get(colIndex);
+
+
             int toColIx = Math.max(colIndex - 1, 0);
             _tableView.scrollToColumnIndex(toColIx);
             TableColumn toCol = (TableColumn) _tableView.getColumns().get(toColIx);
-            return - toCol.getWidth();
+            return - (toCol.getWidth() + fromCol.getWidth());
          }
       }
 
