@@ -41,6 +41,7 @@ public class GeneralCtrl implements SettingsTabController
       _generalView.btnSaveStandardProperties.setOnAction(e -> onSaveStandardProperties());
 
       Utils.makePositiveIntegerField(_generalView.txtLimitRowsDefault);
+      Utils.makePositiveIntegerField(_generalView.txtResultTabsLimit);
 
       loadSettingsToUi();
 
@@ -129,9 +130,15 @@ public class GeneralCtrl implements SettingsTabController
       settings.setMultibleLinesInCells(_generalView.chkMultibleLinesInCells.isSelected());
       settings.setLimitRowsByDefault(_generalView.chkLimitRowsByDefault.isSelected());
 
-      String buf = _generalView.txtLimitRowsDefault.getText();
-      settings.setLimitRowsDefault(StringInterpreter.interpret(buf, Integer.class, settings.getLimitRowsDefault()));
+      String buf;
+
+      buf = _generalView.txtLimitRowsDefault.getText();
+      settings.setLimitRowsDefault(interpretPositiveDefinite(buf, settings.getLimitRowsDefault()));
       _generalView.txtLimitRowsDefault.setText("" + settings.getLimitRowsDefault());
+
+      buf = _generalView.txtResultTabsLimit.getText();
+      settings.setResultTabsLimit(interpretPositiveDefinite(buf, settings.getResultTabsLimit()));
+      _generalView.txtResultTabsLimit.setText("" + settings.getResultTabsLimit());
 
       if (false == Utils.isEmptyString(_generalView.txtStatementSeparator.getText()))
       {
@@ -140,6 +147,19 @@ public class GeneralCtrl implements SettingsTabController
 
 
       AppState.get().getSettingsManager().writeSettings();
+   }
+
+   private Integer interpretPositiveDefinite(String buf, int fallbackValue)
+   {
+      Integer ret = StringInterpreter.interpret(buf, Integer.class, fallbackValue);
+
+      if(0 < ret)
+      {
+         return ret;
+      }
+
+      return fallbackValue;
+
    }
 
    private void loadSettingsToUi()
@@ -151,6 +171,7 @@ public class GeneralCtrl implements SettingsTabController
       _generalView.txtLimitRowsDefault.setText("" + settings.getLimitRowsDefault());
 
       _generalView.txtStatementSeparator.setText("" + settings.getStatementSeparator());
+      _generalView.txtResultTabsLimit.setText("" + settings.getResultTabsLimit());
 
       updateUi();
    }

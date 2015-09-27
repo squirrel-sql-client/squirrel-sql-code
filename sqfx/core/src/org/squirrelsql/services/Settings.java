@@ -6,6 +6,7 @@ public class Settings
    private boolean _limitRowsByDefault = true;
    private int _limitRowsDefault = 100;
    private String _statementSeparator = "GO";
+   private int _resultTabsLimit = 10;
 
    public boolean isMultibleLinesInCells()
    {
@@ -45,5 +46,15 @@ public class Settings
    public void setStatementSeparator(String statementSeparator)
    {
       _statementSeparator = statementSeparator;
+   }
+
+   public int getResultTabsLimit()
+   {
+      return _resultTabsLimit;
+   }
+
+   public void setResultTabsLimit(int resultTabsLimit)
+   {
+      _resultTabsLimit = resultTabsLimit;
    }
 }

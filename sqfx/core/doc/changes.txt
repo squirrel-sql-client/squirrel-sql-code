@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: New setting in settings dialog to limit number of SQL result tabs.
+
 Bug fix: When selection inside a SQL result table is in progress and the mouse pointer is dragged right or left out of the table the table did not scroll.
 
 Removed the maximum Java-VM memory parameter (-Xmx512m) from the Windows start batch. Java should be able to manage its memory itself.

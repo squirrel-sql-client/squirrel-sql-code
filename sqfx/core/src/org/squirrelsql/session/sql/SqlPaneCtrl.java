@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+import org.squirrelsql.AppState;
 import org.squirrelsql.services.*;
 import org.squirrelsql.services.progress.ProgressTask;
 import org.squirrelsql.services.progress.ProgressUtil;
@@ -228,7 +229,7 @@ public class SqlPaneCtrl
 
       Tab cancelTab = sqlCancelTabCtrl.getTab();
 
-      addAndSelectTab(cancelTab);
+      addAndSelectTab(cancelTab, false);
 
 
       ProgressTask<StatementExecution> pt = new ProgressTask<StatementExecution>()
@@ -271,7 +272,7 @@ public class SqlPaneCtrl
          errorLabel.setTextFill(Color.RED);
          errorTab.setContent(errorLabel);
 
-         addAndSelectTab(errorTab);
+         addAndSelectTab(errorTab, false);
          sqlExecutionFinishedListener.finished(false);
 
       }
@@ -297,11 +298,11 @@ public class SqlPaneCtrl
             if (null != indexToReplace)
             {
                _sqlOutputTabPane.getTabs().remove(indexToReplace);
-               addAndSelectTabAt(outputTab, indexToReplace);
+               addAndSelectTabAt(outputTab, indexToReplace, false);
             }
             else
             {
-               addAndSelectTab(outputTab);
+               addAndSelectTab(outputTab, true);
             }
          }
 
@@ -333,16 +334,23 @@ public class SqlPaneCtrl
       _sqlOutputTabPane.getTabs().removeAll(toRemove.toArray(new Tab[toRemove.size()]));
    }
 
-   private void addAndSelectTab(Tab outputTab)
+   private void addAndSelectTab(Tab outputTab, boolean checkResultLimit)
    {
-      addAndSelectTabAt(outputTab, null);
+      addAndSelectTabAt(outputTab, null, checkResultLimit);
    }
 
-   private void addAndSelectTabAt(Tab outputTab, Integer index)
+   private void addAndSelectTabAt(Tab outputTab, Integer index, boolean checkResultLimit)
    {
       if (null == index)
       {
          _sqlOutputTabPane.getTabs().add(outputTab);
+
+         int resultTabsLimit = AppState.get().getSettingsManager().getSettings().getResultTabsLimit();
+
+         if(checkResultLimit && resultTabsLimit < _sqlOutputTabPane.getTabs().size())
+         {
+            _sqlOutputTabPane.getTabs().remove(0);
+         }
       }
       else
       {

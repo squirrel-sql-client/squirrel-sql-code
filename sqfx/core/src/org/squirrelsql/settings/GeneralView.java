@@ -18,4 +18,5 @@ public class GeneralView
    @FXML CheckBox chkLimitRowsByDefault;
    @FXML TextField txtLimitRowsDefault;
    @FXML Button btnSaveStandardProperties;
+   @FXML TextField txtResultTabsLimit;
 }
