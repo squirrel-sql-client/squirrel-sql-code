@@ -45,10 +45,7 @@ public class SearchResultHandler
             {
                if(matches(_resultTableLoader.getCellAsString(row, col)))
                {
-                  _searchResult.setCurrentMatchCell(row, col);
-                  _resultTableLoader.getTableView().scrollTo(row);
-                  _resultTableLoader.getTableView().scrollToColumnIndex(col);
-                  _resultTableLoader.getTableView().refresh();
+                  setMatchAndScroll(row, col);
 
                   return;
                }
@@ -66,10 +63,7 @@ public class SearchResultHandler
             {
                if(matches(_resultTableLoader.getCellAsString(row, col)))
                {
-                  _searchResult.setCurrentMatchCell(row, col);
-                  _resultTableLoader.getTableView().scrollTo(row);
-                  _resultTableLoader.getTableView().scrollToColumnIndex(col);
-                  _resultTableLoader.getTableView().refresh();
+                  setMatchAndScroll(row, col);
 
                   return;
                }
@@ -90,6 +84,15 @@ public class SearchResultHandler
 
 
       _searchResult.resetCurrentMatchCell();
+   }
+
+   private void setMatchAndScroll(int row, int colModelIndex)
+   {
+      int colViewIndex = _resultTableLoader.getColumnViewIndex(colModelIndex);
+      _searchResult.setCurrentMatchCell(row, colViewIndex);
+      _resultTableLoader.getTableView().scrollTo(row);
+      _resultTableLoader.getTableView().scrollToColumnIndex(colViewIndex);
+      _resultTableLoader.getTableView().refresh();
    }
 
 
@@ -120,7 +123,7 @@ public class SearchResultHandler
             if(matches(_resultTableLoader.getCellAsString(row, col)))
             {
                ++ matchCount;
-               _searchResult.setCurrentMatchCell(row, col);
+               _searchResult.setCurrentMatchCell(row, _resultTableLoader.getColumnViewIndex(col));
             }
          }
       }

@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Search in SQL result table didn't work when user had rearranged column orders.
+
 Feature: New setting in settings dialog to limit number of SQL result tabs.
 
 Bug fix: When selection inside a SQL result table is in progress and the mouse pointer is dragged right or left out of the table the table did not scroll.

@@ -152,6 +152,12 @@ public class TableLoader
       return colIx;
    }
 
+   public int getColumnViewIndex(int colModelIndex)
+   {
+      return _tableView.getColumns().indexOf(_columnHandles.get(colModelIndex).getTableColumn());
+   }
+
+
    //TODO Need a better way of handling this, could be other objects besides BigDecimal
    public int getCellAsInt(String columnName, int rowIx)
    {
