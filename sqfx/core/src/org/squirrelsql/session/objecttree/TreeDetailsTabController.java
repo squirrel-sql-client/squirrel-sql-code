@@ -9,20 +9,21 @@ public class TreeDetailsTabController
    private final Tab _tab;
    private boolean _loaded;
 
-   public TreeDetailsTabController(String tabName, TableLoader tableLoader)
+   public TreeDetailsTabController(String tabName, ObjectTreeTableLoaderFactory objectTreeTableLoaderFactory)
    {
       _tab = new Tab(tabName);
       _tab.setClosable(false);
 
-      _tab.tabPaneProperty().addListener((observable, oldValue, newValue) -> onSelected(tableLoader));
-      _tab.setOnSelectionChanged(event -> onSelected(tableLoader));
+      _tab.tabPaneProperty().addListener((observable, oldValue, newValue) -> onSelected(objectTreeTableLoaderFactory));
+      _tab.setOnSelectionChanged(event -> onSelected(objectTreeTableLoaderFactory));
    }
 
-   private void onSelected(TableLoader tableLoader)
+   private void onSelected(ObjectTreeTableLoaderFactory objectTreeTableLoaderFactory)
    {
       if(_tab.isSelected() && false == _loaded)
       {
          TableView tableView = new TableView();
+         TableLoader tableLoader = objectTreeTableLoaderFactory.createTableLoader();
          tableLoader.load(tableView);
          _tab.setContent(tableView);
          _loaded = true;
