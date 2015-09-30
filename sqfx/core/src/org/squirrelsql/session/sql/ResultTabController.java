@@ -27,6 +27,7 @@ public class ResultTabController
    private EditButtonCtrl _editButtonCtrl;
    private Session _session;
    private ExtendedTableSelectionHandler _extendedTableSelectionHandler;
+   private TableSearchCtrl _tableSearchCtrl;
 
    public ResultTabController(Session session, SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
    {
@@ -64,15 +65,15 @@ public class ResultTabController
 
       ActionUtil.addActionToToolbar(headerFxmlHelper.getView().resultToolBar, StdActionCfg.RERUN_SQL.getActionCfg());
 
-      TableSearchCtrl tableSearchCtrl = new TableSearchCtrl(sqlResult.getResultTableLoader());
-      headerFxmlHelper.getView().resultToolBar.getItems().add(tableSearchCtrl.getSearchButton());
+      _tableSearchCtrl = new TableSearchCtrl(sqlResult.getResultTableLoader());
+      headerFxmlHelper.getView().resultToolBar.getItems().add(_tableSearchCtrl.getSearchButton());
 
       _editButtonCtrl = new EditButtonCtrl(_session, sql);
       headerFxmlHelper.getView().resultToolBar.getItems().add(_editButtonCtrl.getEditButton());
 
       BorderPane bp = new BorderPane();
 
-      bp.setTop(createTopPanel(headerFxmlHelper, tableSearchCtrl));
+      bp.setTop(createTopPanel(headerFxmlHelper, _tableSearchCtrl));
 
       bp.setCenter(createContainerTabPane(sqlResult, sqlCancelTabCtrl));
 
@@ -85,23 +86,23 @@ public class ResultTabController
 
       bp.setTop(headerFxmlHelper.getRegion());
 
-      tableSearchCtrl.setOnShowSearchPanel(new SearchPanelVisibleListener()
-      {
-         @Override
-         public void showPanel(Node panel, boolean visible)
-         {
-            if(visible)
-            {
-               bp.setCenter(panel);
-            }
-            else
-            {
-               bp.setCenter(null);
-            }
-         }
-      });
+      tableSearchCtrl.setOnShowSearchPanel((panel, visible) -> onShowSearchPanel(panel, visible, bp));
 
       return bp;
+   }
+
+   private void onShowSearchPanel(Node panel, boolean visible, BorderPane bp)
+   {
+      if(visible)
+      {
+         _tableSearchCtrl.setActive(true);
+         bp.setCenter(panel);
+      }
+      else
+      {
+         _tableSearchCtrl.setActive(false);
+         bp.setCenter(null);
+      }
    }
 
    private TabPane createContainerTabPane(SQLResult sqlResult, SQLCancelTabCtrl sqlCancelTabCtrl)

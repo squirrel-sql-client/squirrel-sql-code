@@ -158,4 +158,8 @@ public class TableSearchCtrl
    }
 
 
+   public void setActive(boolean b)
+   {
+      _searchResultHandler.setActive(b);
+   }
 }

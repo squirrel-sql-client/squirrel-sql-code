@@ -20,7 +20,6 @@ public class SearchResultHandler
    public SearchResultHandler(TableLoader resultTableLoader)
    {
       _resultTableLoader = resultTableLoader;
-      _resultTableLoader.getSquirrelDefaultTableCellChannel().setSearchMatchCheck((valueToRender, cell) -> _searchResult.getSearchMatch(valueToRender, cell));
    }
 
    public void find(boolean forward, String cboEditorText, TableSearchType searchType, boolean caseSensitive)
@@ -213,5 +212,18 @@ public class SearchResultHandler
 
       dlg.show();
 
+   }
+
+   public void setActive(boolean b)
+   {
+      if (b)
+      {
+         _resultTableLoader.getSquirrelDefaultTableCellChannel().setSearchMatchCheck((valueToRender, cell) -> _searchResult.getSearchMatch(valueToRender, cell));
+      }
+      else
+      {
+         unhighlightAll();
+         _resultTableLoader.getSquirrelDefaultTableCellChannel().setSearchMatchCheck(null);
+      }
    }
 }
