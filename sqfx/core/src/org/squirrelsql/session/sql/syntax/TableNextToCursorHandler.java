@@ -42,6 +42,8 @@ public class TableNextToCursorHandler
          return;
       }
 
+      _minDistToCursor = distToCursor;
+
       char[] textArray = token.getTextArray();
       _tablesNextToCursor = _schemaCacheValue.get().getTables(textArray, token.getOffset(), token.length());
 
