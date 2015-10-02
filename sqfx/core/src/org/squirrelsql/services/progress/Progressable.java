@@ -99,6 +99,11 @@ public class Progressable extends Task
       _progressTask = progressTask;
    }
 
+   public ProgressTask getProgressTask()
+   {
+      return _progressTask;
+   }
+
    void setRunnable(Runnable runnable)
    {
       _runnable = runnable;

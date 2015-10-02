@@ -159,6 +159,13 @@ public class SimpleProgressCtrl
 
    private void onCanceled()
    {
+      _progressable.cancel();
+
+      if(_progressable.getProgressTask() instanceof CancelableProgressTask)
+      {
+         ((CancelableProgressTask)_progressable.getProgressTask()).cancel();
+      }
+
       updateControlsAfterFinish();
    }
 
