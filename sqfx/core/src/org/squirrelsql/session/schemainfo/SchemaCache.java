@@ -94,6 +94,12 @@ public class SchemaCache
 
       for (int i = 0; i < leaves.size(); i++)
       {
+         if(progressable.isCancelled())
+         {
+            progressable.update("Stopping schema loading");
+            return;
+         }
+
          StructItem leaf = leaves.get(i);
 
          if(leaf instanceof StructItemTableType)
