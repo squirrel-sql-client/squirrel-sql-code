@@ -4,6 +4,7 @@ import org.squirrelsql.aliases.AliasPropertiesDecorator;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.CaseInsensitiveString;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.services.progress.Progressable;
 import org.squirrelsql.session.*;
 import org.squirrelsql.session.completion.TableTypes;
 import org.squirrelsql.session.objecttree.TableDetailsReader;
@@ -48,29 +49,40 @@ public class SchemaCache
       _databaseStructure = databaseStructure;
    }
 
-   public void load()
+   public void load(Progressable progressable)
    {
       if(_schemaCacheConfig.shouldNotLoad())
       {
          return;
       }
 
+      List<StructItem> leaves = _databaseStructure.getLeaves();
 
+
+      int stepCount = 6 + leaves.size();
+
+      progressable.update("Loading data types", 1, stepCount);
       _dataBaseMetadData = DataBaseMetaDataLoader.loadMetaData(_dbConnectorResult.getAlias(), _dbConnectorResult.getSQLConnection());
       _dataTypes = DataTypesLoader.loadTypes(_dbConnectorResult.getSQLConnection());
 
+
+      progressable.update("Loading numeric functions", 2, stepCount);
       _numericFunctions = DataBaseMetaDataLoader.loadNumericFunctions(_dbConnectorResult.getSQLConnection());
       _numericFunctions.getRows().forEach(e -> _caseInsensitiveCache.addProc((String) e.get(0)));
 
+      progressable.update("Loading string functions", 3, stepCount);
       _stringFunctions = DataBaseMetaDataLoader.loadStringFunctions(_dbConnectorResult.getSQLConnection());
       _stringFunctions.getRows().forEach(e ->  _caseInsensitiveCache.addProc((String) e.get(0)));
 
+      progressable.update("Loading system functions", 4, stepCount);
       _systemFunctions = DataBaseMetaDataLoader.loadSystemFunctions(_dbConnectorResult.getSQLConnection());
       _systemFunctions.getRows().forEach(e ->  _caseInsensitiveCache.addProc((String) e.get(0)));
 
+      progressable.update("Loading time/date functions", 5, stepCount);
       _timeDateFunctions = DataBaseMetaDataLoader.loadTimeDateFunctions(_dbConnectorResult.getSQLConnection());
       _timeDateFunctions.getRows().forEach(e ->  _caseInsensitiveCache.addProc((String) e.get(0)));
 
+      progressable.update("Loading keywords", 6, stepCount);
       _keywords = DataBaseMetaDataLoader.loadKeyWords(_dbConnectorResult.getSQLConnection());
       _keywords.getRows().forEach(e ->  _caseInsensitiveCache.addKeyword((String) e.get(0)));
 
@@ -79,10 +91,11 @@ public class SchemaCache
          _caseInsensitiveCache.addKeyword(keyWord);
       }
 
-      List<StructItem> leaves = _databaseStructure.getLeaves();
 
-      for (StructItem leaf : leaves)
+      for (int i = 0; i < leaves.size(); i++)
       {
+         StructItem leaf = leaves.get(i);
+
          if(leaf instanceof StructItemTableType)
          {
             loadMatchingTables((StructItemTableType) leaf, null);
@@ -95,30 +108,12 @@ public class SchemaCache
          {
             loadMatchingUDTs((StructItemUDTType) leaf, null);
          }
-      }
-   }
 
-//   public void reloadMatchingUDTs(String udtName)
-//   {
-//      List<UDTInfo> udtInfos = _dbConnectorResult.getSQLConnection().getUDTInfos(null, null, udtName);
-//
-//      for (UDTInfo udtInfo : udtInfos)
-//      {
-//         StructItemUDTType udtType = new StructItemUDTType(udtInfo.getCatalog(), udtInfo.getSchema());
-//
-//         List<UDTInfo> toRemoveFrom = _udtInfos.get(udtType);
-//
-//         if(null != toRemoveFrom)
-//         {
-//            toRemoveFrom.remove(udtInfo);
-//         }
-//
-//         loadMatchingUDTs(udtType, udtName);
-//      }
-//
-//
-//
-//   }
+         progressable.update("Loading " + leaf.getItemName(), 7 + i, stepCount);
+
+      }
+
+   }
 
    private void loadMatchingUDTs(StructItemUDTType udtType, String udtName)
    {

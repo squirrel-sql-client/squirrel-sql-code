@@ -108,4 +108,10 @@ public class DatabaseStructure extends StructItem
    {
       return CollectionUtil.filter(getSchemas(), (t) -> Utils.compareRespectEmpty(catalogName, t.getCatalog()) && Utils.compareRespectEmpty(schemaName, t.getSchema()));
    }
+
+   @Override
+   public String getItemName()
+   {
+      return "Database";
+   }
 }

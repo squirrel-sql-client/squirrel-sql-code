@@ -52,8 +52,8 @@ public class StructItemProcedureType extends StructItem implements CatalogSchema
       return result;
    }
 
-   public String getQualifiedSchema()
+   public String getItemName()
    {
-      return SQLUtil.getQualifiedName(_catalog, _schema);
+      return SQLUtil.getQualifiedName(_catalog, _schema) + " - procedures";
    }
 }

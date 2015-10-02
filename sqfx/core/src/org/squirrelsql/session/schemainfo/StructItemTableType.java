@@ -84,8 +84,8 @@ public class StructItemTableType extends StructItem implements CatalogSchema
       return matchesRespectNull(catalog, schema);
    }
 
-   public String getQualifiedSchema()
+   public String getItemName()
    {
-      return SQLUtil.getQualifiedName(_catalog, _schema);
+      return SQLUtil.getQualifiedName(_catalog, _schema) + " - tables of type " + _type;
    }
 }

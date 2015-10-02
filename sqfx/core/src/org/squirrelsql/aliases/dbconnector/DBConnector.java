@@ -4,7 +4,10 @@ import javafx.stage.Window;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.AliasUtil;
+import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.JDBCUtil;
+import org.squirrelsql.services.progress.Progressable;
+import org.squirrelsql.services.progress.SimpleProgressCtrl;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.services.CancelableProgressTask;
 import org.squirrelsql.session.schemainfo.SchemaCache;
@@ -66,45 +69,46 @@ public class DBConnector
       }
 
 
-      final ConnectingController connectingController = new ConnectingController(_owner, _alias);
+      String title = new I18n(getClass()).t("connectingctrl.alias.display", _alias.getName(), _alias.getUrl(), _alias.getUserName());
+
+      SimpleProgressCtrl simpleProgressCtrl = new SimpleProgressCtrl(false, false, title);
+
 
       CancelableProgressTask<DbConnectorResult> pt = new CancelableProgressTask<DbConnectorResult>()
       {
          @Override
          public DbConnectorResult call()
          {
-            return doTryConnect(user[0], password[0]);
+            return doTryConnect(user[0], password[0], simpleProgressCtrl.getProgressable());
          }
 
          @Override
          public void goOn(DbConnectorResult dbConnectorResult)
          {
-            onGoOn(dbConnectorResult, dbConnectorListener, connectingController);
+            onGoOn(dbConnectorResult, dbConnectorListener, simpleProgressCtrl);
          }
 
          @Override
          public void cancel()
          {
-            onCanceled(dbConnectorListener, connectingController, user[0]);
+            onCanceled(dbConnectorListener, user[0], simpleProgressCtrl);
          }
       };
 
-      connectingController.startConnecting(pt);
 
 
-
-
+      simpleProgressCtrl.start(pt);
 
    }
 
-   private void onCanceled(DbConnectorListener dbConnectorListener, ConnectingController connectingController, String user)
+   private void onCanceled(DbConnectorListener dbConnectorListener, String user, SimpleProgressCtrl simpleProgressCtrl)
    {
       DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, user, null);
       dbConnectorResult.setCanceled(true);
-      onGoOn(dbConnectorResult, dbConnectorListener, connectingController);
+      onGoOn(dbConnectorResult, dbConnectorListener, simpleProgressCtrl);
    }
 
-   private DbConnectorResult doTryConnect(String user, String password)
+   private DbConnectorResult doTryConnect(String user, String password, Progressable progressable)
    {
       DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, user, password);
 
@@ -116,7 +120,7 @@ public class DBConnector
          dbConnectorResult.setSQLConnection(sqlConnection);
 
          SchemaCache schemaCache = SchemaCacheFactory.createSchemaCache(dbConnectorResult, sqlConnection, _schemaCacheConfig);
-         schemaCache.load();
+         schemaCache.load(progressable);
          dbConnectorResult.setSchemaCache(schemaCache);
 
          return dbConnectorResult;
@@ -128,25 +132,21 @@ public class DBConnector
       }
    }
 
-   private void onGoOn(DbConnectorResult dbConnectorResult, DbConnectorListener dbConnectorListener, ConnectingController connectingController)
+   private void onGoOn(DbConnectorResult dbConnectorResult, DbConnectorListener dbConnectorListener, SimpleProgressCtrl simpleProgressCtrl)
    {
+      simpleProgressCtrl.close();
       if(dbConnectorResult.isCanceled())
       {
-         connectingController.close();
          dbConnectorListener.finished(dbConnectorResult);
       }
       else if(false == dbConnectorResult.isConnected() || null != dbConnectorResult.getConnectException())
       {
-         connectingController.displayAndDecideOnConnectFailure(dbConnectorResult, d -> onConnectFailureDecision(d, dbConnectorResult, dbConnectorListener));
+         new ConnectFailedController(_alias, dbConnectorResult, d -> onConnectFailureDecision(d, dbConnectorResult, dbConnectorListener));
       }
       else
       {
-         connectingController.close();
          dbConnectorListener.finished(dbConnectorResult);
       }
-
-
-
    }
 
    private void onConnectFailureDecision(ConnectFailureDecisionListener.Decision decision, DbConnectorResult dbConnectorResult, DbConnectorListener dbConnectorListener)

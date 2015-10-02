@@ -55,4 +55,10 @@ public class StructItemSchema extends StructItem
       return result;
    }
 
+   public String getItemName()
+   {
+      return "Schema " + SQLUtil.getQualifiedName(_catalogName, _schema);
+   }
+
+
 }

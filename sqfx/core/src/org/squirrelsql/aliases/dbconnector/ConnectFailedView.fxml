@@ -7,7 +7,7 @@
 <?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource i18n.properties?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="444.0000999999975" prefWidth="598.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.aliases.dbconnector.ConnectingView">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="444.0000999999975" prefWidth="598.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.aliases.dbconnector.ConnectFailedView">
   <children>
     <Label alignment="TOP_LEFT" layoutX="14.0" layoutY="14.0" prefHeight="20.0" prefWidth="284.0" text="%connectingto.to" textAlignment="LEFT" />
     <Label fx:id="lblAliasConnecting" alignment="TOP_LEFT" layoutY="34.0" prefWidth="383.0" text="Here the url will show up" textAlignment="LEFT" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="15.0" />

@@ -19,6 +19,7 @@ public class SimpleProgressCtrl
    private final Progressable _progressable;
    private Stage _dialog;
    private boolean _closeOnFinishOrCancel;
+   private String _title;
    private I18n _i18n = new I18n(getClass());
    private volatile boolean _hasShouldReadMessage;
 
@@ -28,7 +29,12 @@ public class SimpleProgressCtrl
    }
    public SimpleProgressCtrl(boolean cancelable, boolean closeOnFinishOrCancel)
    {
+      this(cancelable, closeOnFinishOrCancel, null);
+   }
+   public SimpleProgressCtrl(boolean cancelable, boolean closeOnFinishOrCancel, String title)
+   {
       _closeOnFinishOrCancel = closeOnFinishOrCancel;
+      _title = title;
       _fxmlHelper = new FxmlHelper<>(SimpleProgressView.class);
 
       _progressable = new Progressable(new FXThreadUncheckedCallback()
@@ -71,6 +77,7 @@ public class SimpleProgressCtrl
    {
       _dialog = GuiUtils.createModalDialog(_fxmlHelper.getRegion(), new Pref(getClass()), 600, 400, "SimpleProgressCtrl");
 
+      _dialog.setTitle(_title);
       _dialog.setOnCloseRequest(e -> cancelInBackground());
 
       Platform.runLater(() -> _start());
@@ -181,5 +188,15 @@ public class SimpleProgressCtrl
          Timeline tl = new Timeline(new KeyFrame(new Duration(500), (e) -> _dialog.close()));
          tl.play();
       }
+   }
+
+   public void setTitle(String title)
+   {
+      _dialog.setTitle(title);
+   }
+
+   public void close()
+   {
+      _dialog.close();
    }
 }

@@ -116,19 +116,15 @@ public class SessionCtrl
 
    private SchemaCache doReload(Progressable progressable)
    {
-      progressable.update(_i18n.t("schema.reload.begin"), 1, 2);
-
       DbConnectorResult dbConnectorResult = _sessionTabContext.getSession().getDbConnectorResult();
 
       SchemaCacheConfig schemaCacheConfig = new SchemaCacheConfig(Dao.loadAliasProperties(dbConnectorResult.getAlias().getId()));
 
       SchemaCache schemaCache = SchemaCacheFactory.createSchemaCache(dbConnectorResult, dbConnectorResult.getSQLConnection(), schemaCacheConfig);
 
-      schemaCache.load();
+      schemaCache.load(progressable);
 
-      progressable.update(_i18n.t("schema.reload.end"), 2, 2);
       return schemaCache;
-
    }
 
    private void onSelectionChanged(Event e)

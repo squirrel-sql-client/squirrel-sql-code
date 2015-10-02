@@ -1,5 +1,7 @@
 package org.squirrelsql.session.schemainfo;
 
+import org.squirrelsql.services.SQLUtil;
+
 public class StructItemUDTType extends StructItem implements CatalogSchema
 {
    private final String _catalog;
@@ -50,4 +52,10 @@ public class StructItemUDTType extends StructItem implements CatalogSchema
       result = 31 * result + (_schema != null ? _schema.hashCode() : 0);
       return result;
    }
+
+   public String getItemName()
+   {
+      return SQLUtil.getQualifiedName(_catalog, _schema) + " - UDT";
+   }
+
 }

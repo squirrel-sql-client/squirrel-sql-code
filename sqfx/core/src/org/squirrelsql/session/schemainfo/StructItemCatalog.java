@@ -33,4 +33,11 @@ public class StructItemCatalog extends StructItem
    {
       return _catalog != null ? _catalog.hashCode() : 0;
    }
+
+   public String getItemName()
+   {
+      return "Catalog " + _catalog;
+   }
+
+
 }

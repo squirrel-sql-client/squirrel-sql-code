@@ -3,7 +3,7 @@ package org.squirrelsql.session.schemainfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StructItem
+public abstract class StructItem
 {
    private List<StructItem> _children = new ArrayList<>();
 
@@ -16,6 +16,8 @@ public class StructItem
    {
       return true;
    }
+
+   public abstract String getItemName();
 
    protected void fillLeaves(List<StructItem> toFill)
    {
