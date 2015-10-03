@@ -71,7 +71,7 @@ public class DBConnector
 
       String title = new I18n(getClass()).t("connectingctrl.alias.display", _alias.getName(), _alias.getUrl(), _alias.getUserName());
 
-      SimpleProgressCtrl simpleProgressCtrl = new SimpleProgressCtrl(true, false, title);
+      SimpleProgressCtrl simpleProgressCtrl = new SimpleProgressCtrl(true, true, title);
 
 
       CancelableProgressTask<DbConnectorResult> pt = new CancelableProgressTask<DbConnectorResult>()

@@ -1,10 +1,14 @@
 package org.squirrelsql.session.schemainfo;
 
+import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.session.completion.TableTypes;
 
 public class StructItemTableType extends StructItem implements CatalogSchema
 {
+   private I18n _i18n = new I18n(getClass());
+
+
    private final String _type;
    private final String _catalog;
    private final String _schema;
@@ -86,6 +90,6 @@ public class StructItemTableType extends StructItem implements CatalogSchema
 
    public String getItemName()
    {
-      return SQLUtil.getQualifiedName(_catalog, _schema) + " - tables of type " + _type;
+      return _i18n.t("struct.item.name.table", SQLUtil.getQualifiedName(_catalog, _schema), _type);
    }
 }

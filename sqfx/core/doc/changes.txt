@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Improved connect progress dialog to show progress information.
+
 Bug fix: Code completion did'nt calculate the table/view closest to the caret right. That's why completion of unqualified columns was sometimes wrong.
 
 More improved Object tree performance: Details tabs data are now loaded on demand.
