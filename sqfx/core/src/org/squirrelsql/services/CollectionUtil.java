@@ -25,6 +25,11 @@ public class CollectionUtil
 	   return toFilter.stream().filter(predicate).collect(Collectors.toList());
    }
 
+   public static <T> List<T> filter(T[] toFilter, Predicate<T> predicate)
+   {
+	   return filter((List<T>)Arrays.asList(toFilter), predicate);
+   }
+
    public static <T>boolean contains(T[] toFilter, Predicate<T> predicate)
    {
       return contains((List<T>)Arrays.asList(toFilter), predicate);

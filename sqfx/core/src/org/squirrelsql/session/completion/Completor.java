@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
+import org.squirrelsql.session.completion.joingenerator.JoinGeneratorProvider;
 import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.schemainfo.SchemaCacheProperty;
 import org.squirrelsql.session.schemainfo.StructItemCatalog;
@@ -32,19 +33,22 @@ public class Completor
       }
    }
 
-   public ObservableList<CompletionCandidate> getCompletions(TokenParser tokenParser)
+   public ObservableList<CompletionCandidate> getCompletions(CaretVicinity caretVicinity)
    {
       List<CompletionCandidate> ret = new ArrayList<>();
 
 
-      if(0 == tokenParser.completedSplitsCount()) // everything
+      ret.addAll(JoinGeneratorProvider.getCandidates(caretVicinity));
+
+
+      if(0 == caretVicinity.completedSplitsCount()) // everything
       {
 
          for (TableCompletionCandidate tableCompletionCandidate : _currentTableCandidatesNextToCursors)
          {
             for (ColumnInfo columnInfo : _schemaCacheValue.get().getColumns(tableCompletionCandidate.getTableInfo()))
             {
-               if(tokenParser.uncompletedSplitMatches(columnInfo.getColName()))
+               if(caretVicinity.uncompletedSplitMatches(columnInfo.getColName()))
                {
                   ret.add(new ColumnCompletionCandidate(columnInfo, tableCompletionCandidate));
                }
@@ -53,7 +57,7 @@ public class Completor
 
          for (TableAliasInfo currentAliasInfo : _currentAliasInfos)
          {
-            if(tokenParser.uncompletedSplitMatches(currentAliasInfo.aliasName))
+            if(caretVicinity.uncompletedSplitMatches(currentAliasInfo.aliasName))
             {
                /////////////////////////////////////////////////////////////////////
                // For now we check duplicates for tables only.
@@ -68,7 +72,7 @@ public class Completor
 
          for (String keyword : _schemaCacheValue.get().getDefaultKeywords())
          {
-            if(tokenParser.uncompletedSplitMatches(keyword))
+            if(caretVicinity.uncompletedSplitMatches(keyword))
             {
                ret.add(new KeywordCompletionCandidate(keyword));
             }
@@ -76,7 +80,7 @@ public class Completor
 
          for (String keyword : _schemaCacheValue.get().getKeywords().getCellsAsString(0))
          {
-            if(tokenParser.uncompletedSplitMatches(keyword))
+            if(caretVicinity.uncompletedSplitMatches(keyword))
             {
                ret.add(new KeywordCompletionCandidate(keyword));
             }
@@ -86,7 +90,7 @@ public class Completor
 
          for (StructItemCatalog catalog : catalogs)
          {
-            if(tokenParser.uncompletedSplitMatches(catalog.getCatalog()))
+            if(caretVicinity.uncompletedSplitMatches(catalog.getCatalog()))
             {
                ret.add(new CatalogCompletionCandidate(catalog));
             }
@@ -96,7 +100,7 @@ public class Completor
 
          for (StructItemSchema schema : schemas)
          {
-            if(tokenParser.uncompletedSplitMatches(schema.getSchema()))
+            if(caretVicinity.uncompletedSplitMatches(schema.getSchema()))
             {
                ret.add(new SchemaCompletionCandidate(schema));
             }
@@ -106,7 +110,7 @@ public class Completor
 
          for (String function : functions)
          {
-            if(tokenParser.uncompletedSplitMatches(function))
+            if(caretVicinity.uncompletedSplitMatches(function))
             {
                ret.add(new FunctionCompletionCandidate(function));
             }
@@ -123,29 +127,29 @@ public class Completor
 //            }
 //         }
 
-         fillTopLevelObjectsForSchemas(ret, tokenParser, createFakeSchemaArrayForCatalog(null));
+         fillTopLevelObjectsForSchemas(ret, caretVicinity, createFakeSchemaArrayForCatalog(null));
 
       }
-      else if(1 == tokenParser.completedSplitsCount()) // MyCatalog.xxx or MySchema.xxx or MyTable.xxx
+      else if(1 == caretVicinity.completedSplitsCount()) // MyCatalog.xxx or MySchema.xxx or MyTable.xxx
       {
-         StructItemCatalog catalog = _schemaCacheValue.get().getCatalogByName(tokenParser.getCompletedSplitAt(0));
+         StructItemCatalog catalog = _schemaCacheValue.get().getCatalogByName(caretVicinity.getCompletedSplitAt(0));
 
          if(null != catalog) // MyCatalog.xxx
          {
-            fillTopLevelObjectsForSchemas(ret, tokenParser, createFakeSchemaArrayForCatalog(catalog));
+            fillTopLevelObjectsForSchemas(ret, caretVicinity, createFakeSchemaArrayForCatalog(catalog));
          }
 
          ///////////////////////////////////////////
          // MySchema.xxx
-         List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemasByName(tokenParser.getCompletedSplitAt(0));
+         List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemasByName(caretVicinity.getCompletedSplitAt(0));
 
-         fillTopLevelObjectsForSchemas(ret, tokenParser, schemas);
+         fillTopLevelObjectsForSchemas(ret, caretVicinity, schemas);
          //
          ////////////////////////////////////////////
 
          ////////////////////////////////////////////////
          // MyTable.xxx
-         fillColumnsForTable(ret, createFakeSchemaArrayForCatalog(null), tokenParser.getCompletedSplitAt(0), tokenParser);
+         fillColumnsForTable(ret, createFakeSchemaArrayForCatalog(null), caretVicinity.getCompletedSplitAt(0), caretVicinity);
          //
          //////////////////////////////////////////////////
 
@@ -153,12 +157,12 @@ public class Completor
          // ALIAS.xxx
          for (TableAliasInfo currentAliasInfo : _currentAliasInfos)
          {
-            if(tokenParser.getCompletedSplitAt(0).equalsIgnoreCase(currentAliasInfo.aliasName))
+            if(caretVicinity.getCompletedSplitAt(0).equalsIgnoreCase(currentAliasInfo.aliasName))
             {
                List<TableInfo> tablesBySimpleName = _schemaCacheValue.get().getTablesBySimpleName(currentAliasInfo.tableName);
                for (TableInfo tableInfo : tablesBySimpleName)
                {
-                  fillColumnsForTable(ret, Arrays.asList(tableInfo.getStructItemSchema()), tableInfo.getName(), tokenParser);
+                  fillColumnsForTable(ret, Arrays.asList(tableInfo.getStructItemSchema()), tableInfo.getName(), caretVicinity);
                }
             }
          }
@@ -167,37 +171,37 @@ public class Completor
 
 
       }
-      else if(2 == tokenParser.completedSplitsCount()) // MyCatalog.MySchema,xxx or MyCatalog.MyTable.xxx or MySchema.MyTable.xxx
+      else if(2 == caretVicinity.completedSplitsCount()) // MyCatalog.MySchema,xxx or MyCatalog.MyTable.xxx or MySchema.MyTable.xxx
       {
-         StructItemCatalog catalog = _schemaCacheValue.get().getCatalogByName(tokenParser.getCompletedSplitAt(0));
+         StructItemCatalog catalog = _schemaCacheValue.get().getCatalogByName(caretVicinity.getCompletedSplitAt(0));
 
 
          if (null != catalog) // MyCatalog.MySchema,xxx or MyCatalog.MyTable.xxx
          {
-            List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemaByNameAsArray(catalog.getCatalog(), tokenParser.getCompletedSplitAt(1));
+            List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemaByNameAsArray(catalog.getCatalog(), caretVicinity.getCompletedSplitAt(1));
 
-            fillTopLevelObjectsForSchemas(ret, tokenParser, schemas);
+            fillTopLevelObjectsForSchemas(ret, caretVicinity, schemas);
 
             if(0 == schemas.size())
             {
-               fillColumnsForTable(ret, createFakeSchemaArrayForCatalog(catalog), tokenParser.getCompletedSplitAt(1), tokenParser);
+               fillColumnsForTable(ret, createFakeSchemaArrayForCatalog(catalog), caretVicinity.getCompletedSplitAt(1), caretVicinity);
             }
          }
          else // MySchema.MyTable.xxx
          {
-            List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemasByName(tokenParser.getCompletedSplitAt(0));
-            fillColumnsForTable(ret, schemas, tokenParser.getCompletedSplitAt(1), tokenParser);
+            List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemasByName(caretVicinity.getCompletedSplitAt(0));
+            fillColumnsForTable(ret, schemas, caretVicinity.getCompletedSplitAt(1), caretVicinity);
          }
       }
-      else if(3 == tokenParser.completedSplitsCount()) // MyCatalog.MySchema,MyTable.xxx
+      else if(3 == caretVicinity.completedSplitsCount()) // MyCatalog.MySchema,MyTable.xxx
       {
-         StructItemCatalog catalog = _schemaCacheValue.get().getCatalogByName(tokenParser.getCompletedSplitAt(0));
+         StructItemCatalog catalog = _schemaCacheValue.get().getCatalogByName(caretVicinity.getCompletedSplitAt(0));
 
          if(null != catalog)
          {
-            List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemaByNameAsArray(catalog.getCatalog(), tokenParser.getCompletedSplitAt(1));
+            List<StructItemSchema> schemas = _schemaCacheValue.get().getSchemaByNameAsArray(catalog.getCatalog(), caretVicinity.getCompletedSplitAt(1));
 
-            fillColumnsForTable(ret, schemas, tokenParser.getCompletedSplitAt(2), tokenParser);
+            fillColumnsForTable(ret, schemas, caretVicinity.getCompletedSplitAt(2), caretVicinity);
          }
       }
 
@@ -223,7 +227,7 @@ public class Completor
       return fakeSchemaArray;
    }
 
-   private void fillColumnsForTable(List<CompletionCandidate> toFill, List<StructItemSchema> schemas, String tableName, TokenParser tokenParser)
+   private void fillColumnsForTable(List<CompletionCandidate> toFill, List<StructItemSchema> schemas, String tableName, CaretVicinity caretVicinity)
    {
       for (StructItemSchema schema : schemas)
       {
@@ -231,7 +235,7 @@ public class Completor
 
          tables = _schemaCacheValue.get().getTablesByFullyQualifiedName(schema.getCatalog(), schema.getSchema(), tableName);
 
-         fillMatchingCols(toFill, tokenParser, tables, schema);
+         fillMatchingCols(toFill, caretVicinity, tables, schema);
 
          if(tables.size() > 0)
          {
@@ -240,7 +244,7 @@ public class Completor
 
          tables = _schemaCacheValue.get().getTablesBySchemaQualifiedName(schema.getSchema(), tableName);
 
-         fillMatchingCols(toFill, tokenParser, tables, schema);
+         fillMatchingCols(toFill, caretVicinity, tables, schema);
 
          if(tables.size() > 0)
          {
@@ -249,18 +253,18 @@ public class Completor
 
          tables = _schemaCacheValue.get().getTablesBySimpleName(tableName);
 
-         fillMatchingCols(toFill, tokenParser, tables, schema);
+         fillMatchingCols(toFill, caretVicinity, tables, schema);
       }
    }
 
-   private void fillMatchingCols(List<CompletionCandidate> ret, TokenParser tokenParser, List<TableInfo> tables, StructItemSchema schema)
+   private void fillMatchingCols(List<CompletionCandidate> ret, CaretVicinity caretVicinity, List<TableInfo> tables, StructItemSchema schema)
    {
       for (TableInfo table : tables)
       {
 
          for (ColumnInfo columnInfo : _schemaCacheValue.get().getColumns(table))
          {
-            if(tokenParser.uncompletedSplitMatches(columnInfo.getColName()))
+            if(caretVicinity.uncompletedSplitMatches(columnInfo.getColName()))
             {
                ret.add(new ColumnCompletionCandidate(columnInfo, new TableCompletionCandidate(table, schema)));
             }
@@ -268,7 +272,7 @@ public class Completor
       }
    }
 
-   private void fillTopLevelObjectsForSchemas(List<CompletionCandidate> ret, TokenParser tokenParser, List<StructItemSchema> schemas)
+   private void fillTopLevelObjectsForSchemas(List<CompletionCandidate> ret, CaretVicinity caretVicinity, List<StructItemSchema> schemas)
    {
       for (StructItemSchema schema : schemas)
       {
@@ -278,7 +282,7 @@ public class Completor
 
          for (TableInfo tableInfo : tableInfos)
          {
-            if(tokenParser.uncompletedSplitMatches(tableInfo.getName()))
+            if(caretVicinity.uncompletedSplitMatches(tableInfo.getName()))
             {
                /////////////////////////////////////////////////////////////////////
                // For now we check duplicates for tables only.
@@ -295,7 +299,7 @@ public class Completor
 
          for (ProcedureInfo procedureInfo : procedureInfos)
          {
-            if(tokenParser.uncompletedSplitMatches(procedureInfo.getName()))
+            if(caretVicinity.uncompletedSplitMatches(procedureInfo.getName()))
             {
                ret.add(new ProcedureCompletionCandidate(procedureInfo, schema));
             }

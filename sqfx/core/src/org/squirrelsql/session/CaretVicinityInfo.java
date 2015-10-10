@@ -1,6 +1,6 @@
 package org.squirrelsql.session;
 
-public class TokenAtCarretInfo
+public class CaretVicinityInfo
 {
    private String _tokenTillCaret;
    private String _tokenAtCaret;
@@ -8,7 +8,7 @@ public class TokenAtCarretInfo
    private int _tokenEndPos;
    private final int _caretPosition;
 
-   public TokenAtCarretInfo(String tokenTillCaret, String tokenAtCaret, int tokenBeginPos, int tokenEndPos, int caretPosition)
+   public CaretVicinityInfo(String tokenTillCaret, String tokenAtCaret, int tokenBeginPos, int tokenEndPos, int caretPosition)
    {
       _tokenTillCaret = tokenTillCaret;
       _tokenAtCaret = tokenAtCaret;

@@ -57,12 +57,13 @@ public class CompletionCtrl
 
    private void _completeCode(boolean showPopupForSizeOne)
    {
-      String tokenAtCarret = _sqlTextAreaServices.getTokenTillCarret();
+      String tokenAtCaret = _sqlTextAreaServices.getTokenTillCaret();
+      String lineAtCaret = _sqlTextAreaServices.getLineTillCaret();
 
 
-      TokenParser tokenParser = new TokenParser(tokenAtCarret);
+      CaretVicinity caretVicinity = new CaretVicinity(tokenAtCaret, lineAtCaret);
 
-      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCacheValue(), _currentTableInfosNextToCursor, _currentAliasInfos).getCompletions(tokenParser);
+      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCacheValue(), _currentTableInfosNextToCursor, _currentAliasInfos).getCompletions(caretVicinity);
 
       if(0 == completions.size())
       {
@@ -90,14 +91,14 @@ public class CompletionCtrl
       CompletionUtil.prepareCompletionList(listView, _sqlTextAreaServices);
 
       _sqlTextAreaServices.getCaretPopup().setContent(listView);
-      positionAndShowPopup(tokenParser);
+      positionAndShowPopup(caretVicinity);
 
 
    }
 
-   private void positionAndShowPopup(TokenParser tokenParser)
+   private void positionAndShowPopup(CaretVicinity caretVicinity)
    {
-      String uncompletedSplit = tokenParser.getUncompletedSplit();
+      String uncompletedSplit = caretVicinity.getUncompletedSplit();
 
       _sqlTextAreaServices.getCaretPopup().showAtCaretBottom(-_sqlTextAreaServices.getStringWidth(uncompletedSplit));
    }
@@ -139,7 +140,7 @@ public class CompletionCtrl
 
    private void onCompleteNextChar()
    {
-      if (false == Utils.isEmptyString(_sqlTextAreaServices.getTokenTillCarret()))
+      if (false == Utils.isEmptyString(_sqlTextAreaServices.getTokenTillCaret()))
       {
          _completeCode(true);
       }
@@ -169,8 +170,12 @@ public class CompletionCtrl
 
    private void executeCompletion(CompletionCandidate completionCandidate, boolean removeSucceedingChars)
    {
-      TokenParser tokenParser = new TokenParser(_sqlTextAreaServices.getTokenTillCarret());
-      _sqlTextAreaServices.replaceTokenAtCarretBy(tokenParser.getCompletedSplitsStringLength(), removeSucceedingChars, completionCandidate.getReplacement());
+      CaretVicinity caretVicinity = new CaretVicinity(_sqlTextAreaServices.getTokenTillCaret(), _sqlTextAreaServices.getLineTillCaret());
+      String replacement = completionCandidate.getReplacement();
+      if (null != replacement)
+      {
+         _sqlTextAreaServices.replaceTokenAtCarretBy(caretVicinity.getCompletedSplitsStringLength(), removeSucceedingChars, replacement);
+      }
    }
 
 }
