@@ -53,6 +53,9 @@ public class InnerJoinGenerator
             ret += "\n";
          }
 
+
+
+
          ret += "INNER JOIN " + filteredSplits.get(i) + getJoinColumns(filteredSplits.get(i-1), filteredSplits.get(i));
       }
 

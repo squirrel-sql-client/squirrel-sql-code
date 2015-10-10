@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
+import org.squirrelsql.session.schemainfo.StructItemSchema;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 
 public class CompletionUtil
@@ -37,5 +38,21 @@ public class CompletionUtil
       adjustPreferredListWidth(listView, sqlTextAreaServices);
 
 
+   }
+
+   public static String getCatalogSchemaString(StructItemSchema schema)
+   {
+      String ret = "";
+
+      if(null != schema.getCatalog())
+      {
+         ret += schema.getCatalog() + ".";
+      }
+
+      if(null != schema.getSchema())
+      {
+         ret += schema.getSchema();
+      }
+      return ret;
    }
 }

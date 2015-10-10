@@ -45,7 +45,7 @@ public class TableCompletionCandidate extends CompletionCandidate
 
       if(_showQualifiedHint)
       {
-         ret += " in " + CompletorUtil.getCatalogSchemaString(_tableInfo.getStructItemSchema());
+         ret += " in " + CompletionUtil.getCatalogSchemaString(_tableInfo.getStructItemSchema());
       }
 
       return ret;
