@@ -102,17 +102,30 @@ public class InnerJoinGenerator
 
    private List<String> getJoinClauses(String table1String, String table2String) throws SQLException
    {
-      TableInfo table1 = getTableFromString(table1String);
+      TableFromStringResult res1 = getTableFromString(table1String);
+      TableInfo table1 = res1.getTableInfo();
       if(null == table1)
       {
          return Collections.EMPTY_LIST;
       }
+      if(res1.isUseQualified())
+      {
+         table1String = res1.getCatalogSchema() + "." + table1String;
+      }
 
-      TableInfo table2 = getTableFromString(table2String);
+
+      TableFromStringResult res2 = getTableFromString(table2String);
+      TableInfo table2 = res2.getTableInfo();
       if(null == table2)
       {
          return Collections.EMPTY_LIST;
       }
+      if(res2.isUseQualified())
+      {
+         table2String = res2.getCatalogSchema() + "." + table2String;
+      }
+
+
 
       ArrayList<String> ret = new ArrayList<>();
 
@@ -212,12 +225,15 @@ public class InnerJoinGenerator
          ret.add(joinColumnString);
       }
 
+      if(0 == ret.size())
+      {
+         ret.add("INNER JOIN " + table2String + " ON " + table1String + ". = " + table2String + ".");
+      }
+
       return ret;
-
-
    }
 
-   private TableInfo getTableFromString(String tableString)
+   private TableFromStringResult getTableFromString(String tableString)
    {
       FullyQualifiedTableName fqTableName = CompletionUtil.getFullyQualifiedTableName(tableString);
 
@@ -244,7 +260,14 @@ public class InnerJoinGenerator
 
       if(1 == tables.size())
       {
-         return tables.get(0);
+         return new TableFromStringResult(tables);
+      }
+
+
+      if(1 < tables.size())
+      {
+         _mh.warning(_i18n.t("codecompletion.function.table.not.unique", tableString));
+         return new TableFromStringResult(tables);
       }
 
       if(0 == tables.size())
@@ -252,10 +275,6 @@ public class InnerJoinGenerator
          _mh.warning(_i18n.t("codecompletion.function.unknown.table", tableString));
       }
 
-      if(1 < tables.size())
-      {
-         _mh.warning(_i18n.t("codecompletion.function.table.not.unique", tableString));
-      }
 
       return null;
    }
