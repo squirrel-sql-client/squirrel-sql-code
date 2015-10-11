@@ -161,9 +161,11 @@ public class InnerJoinGenerator
                Utils.compareRespectEmpty(exportedKeys.getCellAsString("FK_NAME", i), fkName)
             )
             {
+               String fkcolumnName = exportedKeys.getCellAsString("FKCOLUMN_NAME", i);
+
                if(0 == joinColumnString.length())
                {
-                  joinColumnString += "INNER JOIN " + table2String + " ON ";
+                  joinColumnString += createJoinClause(table2, fkcolumnName) + " " + table2String + " ON ";
                }
                else
                {
@@ -171,7 +173,7 @@ public class InnerJoinGenerator
                }
 
                joinColumnString +=
-                     table1String + "." + exportedKeys.getCellAsString("PKCOLUMN_NAME", i) + " = " + table2String + "." + exportedKeys.getCellAsString("FKCOLUMN_NAME", i);
+                     table1String + "." + exportedKeys.getCellAsString("PKCOLUMN_NAME", i) + " = " + table2String + "." + fkcolumnName;
             }
          }
 
@@ -208,17 +210,18 @@ public class InnerJoinGenerator
                Utils.compareRespectEmpty(importedKeys.getCellAsString("FK_NAME", i), constraintName)
             )
             {
+
+               String fkcolumnName = importedKeys.getCellAsString("FKCOLUMN_NAME", i);
                if(0 == joinColumnString.length())
                {
-                  joinColumnString += "INNER JOIN " + table2String + " ON ";
+                  joinColumnString += createJoinClause(table1, fkcolumnName) + " " + table2String + " ON ";
                }
                else
                {
                   joinColumnString += " AND ";
                }
 
-               joinColumnString +=
-                     table1String + "." + importedKeys.getCellAsString("FKCOLUMN_NAME", i) + " = " + table2String + "." + importedKeys.getCellAsString("PKCOLUMN_NAME", i);
+               joinColumnString += table1String + "." + fkcolumnName + " = " + table2String + "." + importedKeys.getCellAsString("PKCOLUMN_NAME", i);
             }
          }
 
@@ -231,6 +234,11 @@ public class InnerJoinGenerator
       }
 
       return ret;
+   }
+
+   private String createJoinClause(TableInfo table1, String fkcolumnName)
+   {
+      return "INNER JOIN";
    }
 
    private TableFromStringResult getTableFromString(String tableString)
