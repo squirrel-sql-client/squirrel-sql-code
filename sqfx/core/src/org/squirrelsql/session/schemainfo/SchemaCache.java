@@ -470,7 +470,12 @@ public class SchemaCache
 
    public List<TableInfo> getTablesByFullyQualifiedName(String catalog, String schema, String tableName)
    {
-      return Utils.convertNullToArray(_tableInfosByFullyQualifiedName.get(new FullyQualifiedTableName(catalog, schema, tableName)));
+      return getTablesByFullyQualifiedName(new FullyQualifiedTableName(catalog, schema, tableName));
+   }
+
+   public List<TableInfo> getTablesByFullyQualifiedName(FullyQualifiedTableName fullyQualifiedTableName)
+   {
+      return Utils.convertNullToArray(_tableInfosByFullyQualifiedName.get(fullyQualifiedTableName));
    }
 
    public List<TableInfo> getTablesBySchemaQualifiedName(String schema, String tableName)

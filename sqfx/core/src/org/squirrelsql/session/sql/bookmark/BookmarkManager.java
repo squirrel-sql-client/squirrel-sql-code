@@ -72,7 +72,7 @@ public class BookmarkManager
       {
          if(_sqlTextAreaServices.getTokenTillCaret().equalsIgnoreCase(abbreviation.getSelShortcut()))
          {
-            _sqlTextAreaServices.replaceTokenAtCarretBy(abbreviation.getSql());
+            _sqlTextAreaServices.replaceTokenAtCaretBy(abbreviation.getSql());
             break;
          }
       }

@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Code completion did not work inside column lists that were separated by commas but no white spaces.
+
 Improved connect progress dialog to show progress information.
 
 Bug fix: Code completion did'nt calculate the table/view closest to the caret right. That's why completion of unqualified columns was sometimes wrong.

@@ -38,4 +38,19 @@ public class FullyQualifiedTableName
       result = 31 * result + (_name != null ? _name.hashCode() : 0);
       return result;
    }
+
+   public CaseInsensitiveString getCatalog()
+   {
+      return _catalog;
+   }
+
+   public CaseInsensitiveString getSchema()
+   {
+      return _schema;
+   }
+
+   public CaseInsensitiveString getName()
+   {
+      return _name;
+   }
 }

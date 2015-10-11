@@ -43,4 +43,10 @@ public class InnerJoinCompletionCandidate extends CompletionCandidate
       }
       return "";
    }
+
+   @Override
+   public boolean isGeneratedJoin()
+   {
+      return null != _replacement;
+   }
 }

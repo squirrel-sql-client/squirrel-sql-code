@@ -6,8 +6,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
+import org.squirrelsql.services.CollectionUtil;
+import org.squirrelsql.services.Utils;
+import org.squirrelsql.session.schemainfo.FullyQualifiedTableName;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
+
+import java.util.List;
 
 public class CompletionUtil
 {
@@ -54,5 +59,26 @@ public class CompletionUtil
          ret += schema.getSchema();
       }
       return ret;
+   }
+
+   public static FullyQualifiedTableName getFullyQualifiedTableName(String tableString)
+   {
+      List<String> filteredStrings = CollectionUtil.filter(tableString.split("\\."), s -> false == Utils.isEmptyString(s));
+
+      if(1 == filteredStrings.size())
+      {
+         return new FullyQualifiedTableName(null, null, filteredStrings.get(0));
+      }
+      else if(2 == filteredStrings.size())
+      {
+         return new FullyQualifiedTableName(null, filteredStrings.get(0), filteredStrings.get(1));
+      }
+      else if(3 == filteredStrings.size())
+      {
+         return new FullyQualifiedTableName(filteredStrings.get(0), filteredStrings.get(1), filteredStrings.get(2));
+      }
+
+
+      return null;
    }
 }

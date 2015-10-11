@@ -63,7 +63,7 @@ public class CompletionCtrl
 
       CaretVicinity caretVicinity = new CaretVicinity(tokenAtCaret, lineAtCaret);
 
-      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCacheValue(), _currentTableInfosNextToCursor, _currentAliasInfos).getCompletions(caretVicinity);
+      ObservableList<CompletionCandidate> completions = new Completor(_session, _currentTableInfosNextToCursor, _currentAliasInfos).getCompletions(caretVicinity);
 
       if(0 == completions.size())
       {
@@ -174,7 +174,14 @@ public class CompletionCtrl
       String replacement = completionCandidate.getReplacement();
       if (null != replacement)
       {
-         _sqlTextAreaServices.replaceTokenAtCarretBy(caretVicinity.getCompletedSplitsStringLength(), removeSucceedingChars, replacement);
+         if (completionCandidate.isGeneratedJoin())
+         {
+            _sqlTextAreaServices.replaceJoinGeneratorAtCaretBy(replacement);
+         }
+         else
+         {
+            _sqlTextAreaServices.replaceTokenAtCaretBy(caretVicinity.getCompletedSplitsStringLength(), removeSucceedingChars, replacement);
+         }
       }
    }
 

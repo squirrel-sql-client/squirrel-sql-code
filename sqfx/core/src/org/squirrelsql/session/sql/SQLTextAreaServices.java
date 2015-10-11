@@ -9,6 +9,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.CaretVicinityInfo;
+import org.squirrelsql.session.completion.joingenerator.JoinGeneratorProvider;
 import org.squirrelsql.session.parser.ParserEventsListener;
 import org.squirrelsql.session.parser.ParserEventsProcessor;
 import org.squirrelsql.session.parser.kernel.ErrorInfo;
@@ -151,15 +152,20 @@ public class SQLTextAreaServices
 
    public String getTokenTillCaret()
    {
-      return _getTokenAtCaretInfo(c -> Character.isWhitespace(c)).getTokenTillCaret();
+      return _getCaretVicinityInfo(c -> isTokenEndChar(c)).getTokenTillCaret();
+   }
+
+   private boolean isTokenEndChar(char c)
+   {
+      return Character.isWhitespace(c) || ',' == c || '=' == c || '\'' == c;
    }
 
    public String getLineTillCaret()
    {
-      return _getTokenAtCaretInfo(c -> c == '\n').getTokenTillCaret();
+      return _getCaretVicinityInfo(c -> c == '\n').getTokenTillCaret();
    }
 
-   private CaretVicinityInfo _getTokenAtCaretInfo(TokenDelimiterCheck tokenDelimiterCheck)
+   private CaretVicinityInfo _getCaretVicinityInfo(TokenDelimiterCheck tokenDelimiterCheck)
    {
       int caretPosition = _sqlTextArea.getCaretPosition();
       String sqlTextAreaText = _sqlTextArea.getText();
@@ -190,15 +196,23 @@ public class SQLTextAreaServices
    }
 
 
-   public void replaceTokenAtCarretBy(String replacement)
+   public void replaceTokenAtCaretBy(String replacement)
    {
-      replaceTokenAtCarretBy(0, false, replacement);
+      replaceTokenAtCaretBy(0, false, replacement);
+   }
+
+   public void replaceJoinGeneratorAtCaretBy(String replacement)
+   {
+      CaretVicinityInfo tci = _getCaretVicinityInfo( c -> c == JoinGeneratorProvider.FUNCTION_START);
+
+      _sqlTextArea.replaceText(tci.getTokenBeginPos() - 1, tci.getCaretPosition(), replacement);
    }
 
 
-   public void replaceTokenAtCarretBy(int offset, boolean removeSucceedingChars, String replacement)
+   public void replaceTokenAtCaretBy(int offset, boolean removeSucceedingChars, String replacement)
    {
-      CaretVicinityInfo tci = _getTokenAtCaretInfo(c -> Character.isWhitespace(c));
+      TokenDelimiterCheck tokenDelimiterCheck = c -> isTokenEndChar(c);
+      CaretVicinityInfo tci = _getCaretVicinityInfo(tokenDelimiterCheck);
 
       if (removeSucceedingChars)
       {
@@ -208,8 +222,8 @@ public class SQLTextAreaServices
       {
          _sqlTextArea.replaceText(tci.getTokenBeginPos() + offset, tci.getCaretPosition(), replacement);
       }
-      CodeAreaRepaintWA.avoidRepaintProblemsAfterTextModification(_sqlTextArea);
    }
+
 
    public double getFontHight()
    {
@@ -271,7 +285,7 @@ public class SQLTextAreaServices
 
    public String getTokenAtCaret()
    {
-      return _getTokenAtCaretInfo(c -> Character.isWhitespace(c)).getTokenAtCaret();
+      return _getCaretVicinityInfo(c -> isTokenEndChar(c)).getTokenAtCaret();
    }
 
    public void setText(String s)

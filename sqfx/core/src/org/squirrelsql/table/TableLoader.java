@@ -124,6 +124,13 @@ public class TableLoader
       return _getCellAt(rowIx, getColIxByName(columnName));
    }
 
+   public Object getCellValuePlain(String columnName, int rowIx)
+   {
+      SimpleObjectProperty simpleObjectProperty = _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName));
+      return simpleObjectProperty.get();
+   }
+
+
    public String getCellAsString(int row, int col)
    {
       return _getCellAt(row, col);
