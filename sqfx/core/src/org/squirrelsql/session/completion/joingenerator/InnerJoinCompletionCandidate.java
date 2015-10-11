@@ -4,6 +4,7 @@ import org.squirrelsql.session.completion.CompletionCandidate;
 
 public class InnerJoinCompletionCandidate extends CompletionCandidate
 {
+   public static final String INFO_STRING = "#i,table1,table2,...,tableN,";
    private String _replacement;
 
    public InnerJoinCompletionCandidate(String replacement)
@@ -22,15 +23,20 @@ public class InnerJoinCompletionCandidate extends CompletionCandidate
    {
       if(null == _replacement)
       {
-         return "#i,table1,table2,...,tableN,";
+         return INFO_STRING;
       }
 
-      return _replacement;
+      return _replacement.replace('\n', ' ');
    }
 
    @Override
    public String getReplacement()
    {
+      if(null == _replacement)
+      {
+         return INFO_STRING;
+      }
+
       return _replacement;
    }
 

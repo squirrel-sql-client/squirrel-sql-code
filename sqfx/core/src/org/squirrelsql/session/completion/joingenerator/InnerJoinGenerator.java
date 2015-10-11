@@ -83,7 +83,7 @@ public class InnerJoinGenerator
                      // This is concatenating join clauses for table pairs.
                      // More than one array element can only occur when two tables
                      // have more than one FK-constraint.
-                     buf.add(clause + " " + joinClause);
+                     buf.add(clause + "\n" + joinClause);
                   }
                }
 
