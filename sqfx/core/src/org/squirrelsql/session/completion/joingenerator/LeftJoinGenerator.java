@@ -11,7 +11,7 @@ public class LeftJoinGenerator extends JoinGeneratorBase
       super(caretVicinity, session);
    }
 
-   protected String createJoinClause(TableInfo table1, String fkColumnName)
+   protected String createJoinClause(TableInfo table, String fkColumnName)
    {
       return "LEFT JOIN";
    }
