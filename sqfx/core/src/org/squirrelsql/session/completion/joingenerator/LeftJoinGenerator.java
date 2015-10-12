@@ -21,5 +21,11 @@ public class LeftJoinGenerator extends JoinGeneratorBase
       return JoinGeneratorProvider.GENERATOR_START + "l";
    }
 
+   @Override
+   protected JoinCompletionCandidateBase createCompletionCandidate(String replacement)
+   {
+      return new LeftJoinCompletionCandidate(replacement);
+   }
+
 
 }

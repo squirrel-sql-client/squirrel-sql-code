@@ -291,15 +291,22 @@ public abstract class JoinGeneratorBase
 
       if (0 < replacements.size())
       {
-         return CollectionUtil.transform(replacements, r -> new LeftJoinCompletionCandidate(r));
+         return CollectionUtil.transform(replacements, r -> createCompletionCandidate(r));
       }
 
 
       if(_caretVicinity.uncompletedSplitMatches(getGeneratorName()))
       {
-         return Arrays.asList(new LeftJoinCompletionCandidate());
+         return Arrays.asList(createCompletionCandidate(null));
       }
 
       return new ArrayList<>();
+   }
+
+   protected abstract JoinCompletionCandidateBase createCompletionCandidate(String replacement);
+
+   public Session getSession()
+   {
+      return _session;
    }
 }

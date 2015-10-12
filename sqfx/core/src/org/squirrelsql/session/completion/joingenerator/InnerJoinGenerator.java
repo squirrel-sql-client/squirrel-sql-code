@@ -21,5 +21,11 @@ public class InnerJoinGenerator extends JoinGeneratorBase
       return JoinGeneratorProvider.GENERATOR_START + "i";
    }
 
+   @Override
+   protected JoinCompletionCandidateBase createCompletionCandidate(String replacement)
+   {
+      return new InnerJoinCompletionCandidate(replacement);
+   }
+
 
 }
