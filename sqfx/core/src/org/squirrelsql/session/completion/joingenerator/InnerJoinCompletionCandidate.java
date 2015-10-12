@@ -1,58 +1,24 @@
 package org.squirrelsql.session.completion.joingenerator;
 
-import org.squirrelsql.session.completion.CompletionCandidate;
-
-public class InnerJoinCompletionCandidate extends CompletionCandidate
+public class InnerJoinCompletionCandidate extends JoinCompletionCandidateBase
 {
-   public static final String INFO_STRING = "#i,table1,table2,...,tableN,";
-   private String _replacement;
-
    public InnerJoinCompletionCandidate(String replacement)
    {
-      _replacement = replacement;
+      super(replacement);
    }
 
    public InnerJoinCompletionCandidate()
    {
-      this(null);
+      super(null);
    }
 
-
-   @Override
-   public String getPopupDisplayString()
+   protected String getNonGeneratedTypeName()
    {
-      if(null == _replacement)
-      {
-         return INFO_STRING;
-      }
-
-      return _replacement.replace('\n', ' ');
+      return "inner join statement generation";
    }
 
-   @Override
-   public String getReplacement()
+   protected String getNonGeneratedPopupDisplay()
    {
-      if(null == _replacement)
-      {
-         return INFO_STRING;
-      }
-
-      return _replacement;
-   }
-
-   @Override
-   public String getObjectTypeName()
-   {
-      if(null == _replacement)
-      {
-         return "inner join statement generation";
-      }
-      return "";
-   }
-
-   @Override
-   public boolean isGeneratedJoin()
-   {
-      return null != _replacement;
+      return "#i,table1,table2,...,tableN,";
    }
 }

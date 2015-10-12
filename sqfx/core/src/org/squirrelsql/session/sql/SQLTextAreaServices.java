@@ -203,7 +203,7 @@ public class SQLTextAreaServices
 
    public void replaceJoinGeneratorAtCaretBy(String replacement)
    {
-      CaretVicinityInfo tci = _getCaretVicinityInfo( c -> c == JoinGeneratorProvider.FUNCTION_START);
+      CaretVicinityInfo tci = _getCaretVicinityInfo( c -> c == JoinGeneratorProvider.GENERATOR_START);
 
       _sqlTextArea.replaceText(tci.getTokenBeginPos() - 1, tci.getCaretPosition(), replacement);
    }
