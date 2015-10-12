@@ -33,7 +33,14 @@ public class JoinGeneratorProvider
       ret.addAll(completionCandidates);
 
 
-      return ret;
+      completionCandidates = new SmartJoinGenerator(caretVicinity, session).getCompletionCandidates();
+      if(CollectionUtil.contains(completionCandidates, c -> c.isGeneratedJoin()))
+      {
+         return completionCandidates;
+      }
+      ret.addAll(completionCandidates);
 
+
+      return ret;
    }
 }

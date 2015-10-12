@@ -11,11 +11,6 @@ public abstract class JoinCompletionCandidateBase extends CompletionCandidate
       _replacement = replacement;
    }
 
-   public JoinCompletionCandidateBase()
-   {
-      this(null);
-   }
-
 
    @Override
    public String getPopupDisplayString()

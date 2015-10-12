@@ -1,6 +1,12 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Join generators: Using code completion (ctrl+space) on the following expressions will generate join clauses:
+  - #i,table1,table2,...tableN, will generate inner join from table1 to table2 to ... tableN using constraints between the tables
+  - #l,table1,table2,...tableN, will generate left join from table1 to table2 to ... tableN using constraints between the tables
+  - #j,table1,table2,...tableN, will generate left/inner join from table1 to table2 to ... tableN using constraints between the tables
+    and depending on the foreign keys' nullability
+
 Bug fix: Code completion did not work inside column lists that were separated by commas but no white spaces.
 
 Improved connect progress dialog to show progress information.

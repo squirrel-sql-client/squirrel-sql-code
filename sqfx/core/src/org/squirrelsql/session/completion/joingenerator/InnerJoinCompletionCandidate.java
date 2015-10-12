@@ -7,11 +7,6 @@ public class InnerJoinCompletionCandidate extends JoinCompletionCandidateBase
       super(replacement);
    }
 
-   public InnerJoinCompletionCandidate()
-   {
-      super(null);
-   }
-
    protected String getNonGeneratedTypeName()
    {
       return "inner join statement generation";

@@ -7,11 +7,6 @@ public class LeftJoinCompletionCandidate extends JoinCompletionCandidateBase
       super(replacement);
    }
 
-   public LeftJoinCompletionCandidate()
-   {
-      super(null);
-   }
-
    protected String getNonGeneratedTypeName()
    {
       return "left join statement generation";
