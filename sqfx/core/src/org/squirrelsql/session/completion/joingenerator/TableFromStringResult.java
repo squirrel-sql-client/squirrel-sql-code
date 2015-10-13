@@ -15,7 +15,14 @@ public class TableFromStringResult
 
    public TableInfo getTableInfo()
    {
-      return _tables.get(0);
+      if (0 == _tables.size())
+      {
+         return null;
+      }
+      else
+      {
+         return _tables.get(0);
+      }
    }
 
    public boolean isUseQualified()

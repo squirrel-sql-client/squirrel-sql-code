@@ -282,7 +282,7 @@ public abstract class JoinGeneratorBase
       }
 
 
-      return null;
+      return new TableFromStringResult(new ArrayList<>());
    }
 
    public List<CompletionCandidate> getCompletionCandidates()

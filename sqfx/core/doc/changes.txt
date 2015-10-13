@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Upgraded RichTextFX to version 0.6.10.
+
 Bug fix: Corrected positioning of join generators in completion popup list.
 
 Feature: Join generators: Using code completion (ctrl+space) on the following expressions will generate join clauses:
