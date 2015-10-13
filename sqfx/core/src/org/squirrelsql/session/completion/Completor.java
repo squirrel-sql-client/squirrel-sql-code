@@ -39,17 +39,16 @@ public class Completor
    {
       List<CompletionCandidate> ret = new ArrayList<>();
 
-      List<CompletionCandidate> candidates = JoinGeneratorProvider.getCandidates(_session, caretVicinity);
-      ret.addAll(candidates);
+      List<CompletionCandidate> joinGeneratorCandidates = JoinGeneratorProvider.getCandidates(_session, caretVicinity);
 
-      if(CollectionUtil.contains(candidates, c -> c.isGeneratedJoin()))
+      if(CollectionUtil.contains(joinGeneratorCandidates, c -> c.isGeneratedJoin()))
       {
          // Since join generator strings end with comma
          // and comma means empty token for all other completions
          // a completion list that contained a generated join
-         // would also contain all other completion candidates.
+         // would also contain all other completion joinGeneratorCandidates.
          // That's why we quit here.
-         return FXCollections.observableArrayList(ret);
+         return FXCollections.observableArrayList(joinGeneratorCandidates);
       }
 
       SchemaCacheProperty schemaCacheValue = _session.getSchemaCacheValue();
@@ -68,6 +67,8 @@ public class Completor
                }
             }
          }
+         ret.addAll(joinGeneratorCandidates);
+
 
          for (TableAliasInfo currentAliasInfo : _currentAliasInfos)
          {
