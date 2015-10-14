@@ -70,7 +70,7 @@ public class BookmarkManager
       _sqlTextAreaServices.insertAtCarret("\n" + bookmark.getSql());
    }
 
-   public void execAbreviation(KeyEvent keyEvent)
+   public void execAbbreviation(KeyEvent keyEvent)
    {
       if( false == KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.SPACE)))
       {
