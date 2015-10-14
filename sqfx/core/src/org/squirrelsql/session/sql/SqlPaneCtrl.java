@@ -128,7 +128,7 @@ public class SqlPaneCtrl
          }
       }
 
-      _bookmarkManager.execAbreviation();
+      _bookmarkManager.execAbreviation(keyEvent);
 
    }
 

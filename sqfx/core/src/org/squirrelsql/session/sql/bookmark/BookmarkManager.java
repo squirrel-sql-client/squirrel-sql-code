@@ -1,10 +1,14 @@
 package org.squirrelsql.session.sql.bookmark;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyEvent;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 import org.squirrelsql.session.sql.filteredpopup.FilteredPopup;
+import org.squirrelsql.workaround.KeyMatchWA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +70,14 @@ public class BookmarkManager
       _sqlTextAreaServices.insertAtCarret("\n" + bookmark.getSql());
    }
 
-   public void execAbreviation()
+   public void execAbreviation(KeyEvent keyEvent)
    {
+      if( false == KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.SPACE)))
+      {
+         return;
+      }
+
+
       for (Bookmark abbreviation : _abbreviations)
       {
          if(_sqlTextAreaServices.getTokenTillCaret().equalsIgnoreCase(abbreviation.getSelShortcut()))
