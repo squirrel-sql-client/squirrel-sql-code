@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Improvement: Double click selection in SQL editor now selects words correctly.
+
 Bug fix: Abbreviations where triggered by any succeeding key not only by space.
 
 Upgraded RichTextFX to version 0.6.10.

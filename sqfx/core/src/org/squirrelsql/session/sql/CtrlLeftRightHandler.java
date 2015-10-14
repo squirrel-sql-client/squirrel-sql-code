@@ -10,41 +10,47 @@ import org.squirrelsql.workaround.KeyMatchWA;
 
 public class CtrlLeftRightHandler
 {
-   public static final char[] STOP_AT = new char[]{'.', '(', ')', '\'', '\n', ',', '=', '<', '>'};
    private CodeArea _sqlTextArea;
 
    public CtrlLeftRightHandler(CodeArea sqlTextArea)
    {
       _sqlTextArea = sqlTextArea;
 
+      // Filters(Capturing) before Handlers(Bubbling)
+      // see http://docs.oracle.com/javafx/2/events/processing.htm
       sqlTextArea.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>()
       {
          @Override
          public void handle(KeyEvent event)
          {
-            if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN)))
-            {
-               onLeftCtrl();
-               event.consume();
-            }
-            if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN)))
-            {
-               onRightCtrl();
-               event.consume();
-            }
-            if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)))
-            {
-               onLeftCtrlShift();
-               event.consume();
-            }
-            if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)))
-            {
-               onRightCtrlShift();
-               event.consume();
-            }
+            onHandleKeyEvent(event);
          }
       });
 
+   }
+
+   private void onHandleKeyEvent(KeyEvent event)
+   {
+      if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN)))
+      {
+         onLeftCtrl();
+         event.consume();
+      }
+      if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN)))
+      {
+         onRightCtrl();
+         event.consume();
+      }
+      if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)))
+      {
+         onLeftCtrlShift();
+         event.consume();
+      }
+      if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)))
+      {
+         onRightCtrlShift();
+         event.consume();
+      }
    }
 
    private void onLeftCtrlShift()
@@ -71,7 +77,7 @@ public class CtrlLeftRightHandler
 
       for (; pos > 0; --pos)
       {
-         if (isToStopAt(text.charAt(pos - 1), text.charAt(pos)))
+         if (WordBoundaryCheck.isToStopAt(text.charAt(pos - 1), text.charAt(pos)))
          {
             break;
          }
@@ -117,7 +123,7 @@ public class CtrlLeftRightHandler
 
       for (; pos < text.length(); ++pos)
       {
-         if (isToStopAt(text.charAt(pos), text.charAt(pos - 1)))
+         if (WordBoundaryCheck.isToStopAt(text.charAt(pos), text.charAt(pos - 1)))
          {
             break;
          }
@@ -139,33 +145,4 @@ public class CtrlLeftRightHandler
    }
 
 
-   private boolean isToStopAt(char toCheck, char former)
-   {
-      if (isInStopAtArray(former) || isInStopAtArray(toCheck))
-      {
-         return true;
-      }
-      else if (false == Character.isWhitespace(former) && Character.isWhitespace(toCheck) ||
-            Character.isWhitespace(former) && false == Character.isWhitespace(toCheck))
-      //     else if(Character.isWhitespace(former) && false == Character.isWhitespace(toCheck))
-      {
-         return true;
-      }
-
-      return false;
-   }
-
-   private boolean isInStopAtArray(char toCheck)
-   {
-      for (int i = 0; i < STOP_AT.length; i++)
-      {
-         if (toCheck == STOP_AT[i])
-         {
-            return true;
-         }
-      }
-
-      return false;
-
-   }
 }

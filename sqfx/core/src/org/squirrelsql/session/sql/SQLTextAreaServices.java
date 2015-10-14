@@ -56,6 +56,7 @@ public class SQLTextAreaServices
       _sqlSyntaxHighlighting = new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(schemaCacheValue), schemaCacheValue);
 
       new CtrlLeftRightHandler(_sqlTextArea);
+      new DoubleClickHandler(_sqlTextArea);
 
       schemaCacheValue.addListener(() -> updateHighlighting());
 
