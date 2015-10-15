@@ -231,6 +231,8 @@ public class FileManager
 
       _sessionTabHeaderCtrl.setFile(null);
       _sessionTabHeaderCtrl.setFileState(FileState.NO_FILE);
+
+      _sqlTextAreaServices.requestFocus();
    }
 
    public void closeRequest(Event e)

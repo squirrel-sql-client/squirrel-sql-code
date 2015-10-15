@@ -169,6 +169,7 @@ public class SqlPaneCtrl
       };
 
       _execSingleStatement(sqlTokenizer.getFirstSql(), sqlExecutionFinishedListener);
+      _sqlTextAreaServices.requestFocus();
 
    }
    
