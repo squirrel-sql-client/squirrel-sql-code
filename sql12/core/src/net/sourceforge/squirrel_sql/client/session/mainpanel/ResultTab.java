@@ -197,6 +197,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(
                props.getReadOnlySQLResultsOutputClassName(), null, new DefaultDataModelImplementationDetails(_session));
 
+
+         dataSetViewer.setSession(_session);
+
          _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer, _session.getApplication().getMessageHandler());
          _selectRowColLabelController.setDataSetViewer(dataSetViewer);
 		}

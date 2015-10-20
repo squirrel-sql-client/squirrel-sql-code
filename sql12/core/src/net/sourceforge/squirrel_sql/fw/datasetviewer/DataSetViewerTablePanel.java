@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DefaultFindService;
@@ -644,7 +645,12 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
       {
          _tableHeader.initColWidths();
       }
-   }
+
+		public void setSession(ISession session)
+		{
+			_tablePopupMenu.setSession(session);
+		}
+	}
 
 
 	
@@ -942,4 +948,10 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
       _continueReadHandler.disableContinueRead();
 
    }
+
+	@Override
+	public void setSession(ISession session)
+	{
+		_table.setSession(session);
+	}
 }

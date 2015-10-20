@@ -4,9 +4,14 @@ SQuirreL SQL Client Change Log
 Not yet released, available in our GIT repository and in future snapshots and releases.
 ===============================================================================================
 
+Enhancements:
+
 Syntax plugin: Last five find strings are now saved and can be selected from the drop down of the find and replace dialog.
 
 
+Bug fixes:
+
+NullPointerException occurred when the "Show foreign key references" right mouse menu item of an SQL result table was clicked.
 
 3.7.0 (09/14/2015)
 ==================

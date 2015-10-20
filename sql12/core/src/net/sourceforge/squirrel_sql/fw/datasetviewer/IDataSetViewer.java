@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 import java.awt.Component;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 public interface IDataSetViewer
@@ -110,4 +111,6 @@ public interface IDataSetViewer
    void setRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener);
 
 	void switchColumnHeader(ColumnHeaderDisplay columnHeaderDisplay);
+
+	void setSession(ISession session);
 }

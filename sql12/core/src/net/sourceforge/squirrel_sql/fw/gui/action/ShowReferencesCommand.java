@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.*;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -17,12 +18,14 @@ public class ShowReferencesCommand
    private final JTable _table;
    private final IDataSetUpdateableModel _updateableModel;
    private JFrame _owningFrame;
+   private ISession _session;
 
-   public ShowReferencesCommand(JTable table, IDataSetUpdateableModel updateableModel, JFrame owningFrame)
+   public ShowReferencesCommand(JTable table, IDataSetUpdateableModel updateableModel, JFrame owningFrame, ISession session)
    {
       _table = table;
       _updateableModel = updateableModel;
       _owningFrame = owningFrame;
+      _session = session;
    }
 
    public void execute()
@@ -59,7 +62,7 @@ public class ShowReferencesCommand
       }
 
 
-      ReferencesFrameStarter.showReferences(new RootTable(globalDbTable, inStatColumnInfos), _updateableModel.getSession(), _owningFrame);
+      ReferencesFrameStarter.showReferences(new RootTable(globalDbTable, inStatColumnInfos), _session, _owningFrame);
 
    }
 

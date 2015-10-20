@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  
 import javax.swing.DefaultCellEditor;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -238,6 +239,12 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 
 	@Override
 	public void switchColumnHeader(ColumnHeaderDisplay columnHeaderDisplay)
+	{
+
+	}
+
+	@Override
+	public void setSession(ISession session)
 	{
 
 	}

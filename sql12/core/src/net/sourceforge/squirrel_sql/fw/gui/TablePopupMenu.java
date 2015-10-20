@@ -26,6 +26,7 @@ import java.awt.print.PrinterJob;
 
 import javax.swing.*;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.gui.action.*;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
@@ -41,8 +42,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 public class TablePopupMenu extends BasePopupMenu
 {
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(TablePopupMenu.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TablePopupMenu.class);
+
+	private ISession _session;
 
 
 	public interface IOptionTypes
@@ -438,7 +440,7 @@ public class TablePopupMenu extends BasePopupMenu
       {
          if (_table != null)
          {
-            new ShowReferencesCommand(_table, _updateableModel, (JFrame) GUIUtils.getOwningFrame(_table)).execute();
+            new ShowReferencesCommand(_table, _updateableModel, (JFrame) GUIUtils.getOwningFrame(_table), _session).execute();
          }
       }
    }
@@ -641,5 +643,11 @@ public class TablePopupMenu extends BasePopupMenu
          }
       }
    }
+
+	public void setSession(ISession session)
+	{
+		_session = session;
+	}
+
 }
 
