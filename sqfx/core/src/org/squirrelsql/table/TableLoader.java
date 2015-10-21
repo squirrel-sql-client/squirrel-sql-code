@@ -270,4 +270,11 @@ public class TableLoader
    {
       return _tableView;
    }
+
+   public void removeRows(ArrayList<List> deletedRows)
+   {
+      _simpleObjectPropertyRows.removeAll(deletedRows);
+      _tableView.refresh();
+      _tableView.getSelectionModel().clearSelection();
+   }
 }

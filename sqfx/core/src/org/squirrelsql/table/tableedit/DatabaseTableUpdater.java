@@ -1,6 +1,7 @@
 package org.squirrelsql.table.tableedit;
 
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import org.squirrelsql.AppState;
 import org.squirrelsql.ExceptionHandler;
 import org.squirrelsql.services.FXMessageBox;
@@ -21,49 +22,80 @@ public class DatabaseTableUpdater
 {
    public static DatabaseTableUpdateResult updateDatabase(Session session, SQLResult sqlResult, String userEnteredString, SquirrelTableEditData tableEditData, String tableNameFromSQL)
    {
+      return _doUpdate(session, sqlResult, tableNameFromSQL, true, userEnteredString, tableEditData, null);
+   }
+
+   private static DatabaseTableUpdateResult _doUpdate(Session session, SQLResult sqlResult, String tableNameFromSQL, boolean update, String userEnteredString, SquirrelTableEditData tableEditData, List deleteRow)
+   {
       I18n i18n = new I18n(DatabaseTableUpdater.class);
 
-      List row = tableEditData.getRowValue();
+      List row;
+
+      if (update)
+      {
+         row = tableEditData.getRowValue();
+      }
+      else
+      {
+         row = deleteRow;
+      }
 
       SQLResultMetaDataFacade sqlResultMetaDataFacade = new SQLResultMetaDataFacade(sqlResult.getResultMetaDataTableLoader());
 
       ArrayList<PrepStatParam> updSqlParams = new ArrayList();
       ArrayList<PrepStatParam> selSqlParams = new ArrayList();
 
-      int editColIx = tableEditData.getTablePosition().getColumn();
-      String updateSql =
-            "UPDATE " + tableNameFromSQL +
-            " SET " + sqlResultMetaDataFacade.getColumnNameAt(editColIx) + " = ? ";
-
 
       String selectSql =
             "SELECT COUNT(*) FROM " + tableNameFromSQL;
 
-      Object interpretedNewValue;
-      try
+
+      int editColIx = -1;
+      if (update)
       {
-         interpretedNewValue = StringInterpreter.interpret(userEnteredString, sqlResultMetaDataFacade.getColumnClassNameAt(editColIx));
-      }
-      catch (Throwable t)
-      {
-         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), i18n.t("failed.to.update", t.getMessage()));
-         ExceptionHandler.handle(t);
-         return new DatabaseTableUpdateResult(DatabaseTableUpdateResult.CancelReason.FAILED_TO_INTERPRET_USER_EDIT);
+         editColIx = tableEditData.getTablePosition().getColumn();
       }
 
-      if (interpretedNewValue instanceof NullMarker)
+      String updateSql;
+
+      if (update)
       {
-         updSqlParams.add(new PrepStatParam(null, sqlResultMetaDataFacade.getSqlTypeAt(editColIx)));
+         updateSql = "UPDATE " + tableNameFromSQL + " SET " + sqlResultMetaDataFacade.getColumnNameAt(editColIx) + " = ? ";
       }
       else
       {
-         updSqlParams.add(new PrepStatParam(interpretedNewValue, sqlResultMetaDataFacade.getSqlTypeAt(editColIx)));
+         updateSql = "DELETE FROM " + tableNameFromSQL;
       }
+
+      Object interpretedNewValue = null;
+
+      if (update)
+      {
+         try
+         {
+            interpretedNewValue = StringInterpreter.interpret(userEnteredString, sqlResultMetaDataFacade.getColumnClassNameAt(editColIx));
+         }
+         catch (Throwable t)
+         {
+            FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), i18n.t("failed.to.update", t.getMessage()));
+            ExceptionHandler.handle(t);
+            return new DatabaseTableUpdateResult(DatabaseTableUpdateResult.CancelReason.FAILED_TO_INTERPRET_USER_EDIT);
+         }
+
+         if (interpretedNewValue instanceof NullMarker)
+         {
+            updSqlParams.add(new PrepStatParam(null, sqlResultMetaDataFacade.getSqlTypeAt(editColIx)));
+         }
+         else
+         {
+            updSqlParams.add(new PrepStatParam(interpretedNewValue, sqlResultMetaDataFacade.getSqlTypeAt(editColIx)));
+         }
+      }
+
 
       List<String> colNames = sqlResultMetaDataFacade.getColumnNames();
 
       HashSet<String> addedColNames = new HashSet<>();
-
 
 
       String whereStat = " WHERE ";
@@ -81,7 +113,7 @@ public class DatabaseTableUpdater
 
          Object whereVal;
 
-         if(i == editColIx)
+         if(update && i == editColIx)
          {
             whereVal = tableEditData.getOldValue();
          }
@@ -107,7 +139,6 @@ public class DatabaseTableUpdater
       }
 
 
-
       int updateCount = -1;
       try
       {
@@ -123,13 +154,31 @@ public class DatabaseTableUpdater
          {
             if(0 == count)
             {
-               String msg = i18n.t("update.effects.no.rows");
+               String msg;
+               if (update)
+               {
+                  msg = i18n.t("update.effects.no.rows");
+               }
+               else
+               {
+                  msg = i18n.t("delete.effects.no.rows");
+               }
                FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), msg);
                return new DatabaseTableUpdateResult(DatabaseTableUpdateResult.CancelReason.NO_ROWS_AFFECTED);
             }
             else if (1 < count)
             {
-               String msg = i18n.t("update.effects.more.rows", count);
+               String msg;
+
+               if (update)
+               {
+                  msg = i18n.t("update.effects.more.rows", count);
+               }
+               else
+               {
+                  msg = i18n.t("delete.effects.more.rows", count);
+               }
+
                if(FXMessageBox.NO.equals(FXMessageBox.showYesNo(AppState.get().getPrimaryStage(), msg)))
                {
                   return new DatabaseTableUpdateResult(DatabaseTableUpdateResult.CancelReason.CANCELED_BY_USER);
@@ -149,13 +198,23 @@ public class DatabaseTableUpdater
       }
       catch (SQLException e)
       {
-         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), i18n.t("update.error", e.getMessage()));
+         String msg;
+
+         if (update)
+         {
+            msg = i18n.t("update.error", e.getMessage());
+         }
+         else
+         {
+            msg = i18n.t("delete.error", e.getMessage());
+         }
+
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), msg);
          ExceptionHandler.handle(e);
          return new DatabaseTableUpdateResult(DatabaseTableUpdateResult.CancelReason.FAILED_TO_EXECUTE_UPDATE);
       }
 
       return new DatabaseTableUpdateResult(interpretedNewValue, updateCount);
-
    }
 
    private static void setParams(ArrayList<PrepStatParam> updSqlParams, PreparedStatement prepStat) throws SQLException
@@ -167,4 +226,24 @@ public class DatabaseTableUpdater
       }
    }
 
+   public static ArrayList<List> deleteFromDatabase(Session session, SQLResult sqlResult, ObservableList<List> selectedRows, String tableNameFromSQL)
+   {
+      ArrayList<List> deletedRows = new ArrayList<>();
+
+      for (List selectedRow : selectedRows)
+      {
+         DatabaseTableUpdateResult databaseTableUpdateResult = _doUpdate(session, sqlResult, tableNameFromSQL, false, null, null, selectedRow);
+
+         if(databaseTableUpdateResult.success())
+         {
+            deletedRows.add(selectedRow);
+         }
+         else
+         {
+            break;
+         }
+      }
+
+      return deletedRows;
+   }
 }

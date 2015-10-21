@@ -1,6 +1,10 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Delete rows right mouse menu editable in SQL results:
+         If a SQL result has been made editable by the pen button on the upper right of the result.
+         The results right mouse menu offers a "Delete selected rows" menu item.
+
 Bug fix: Running SQL by clicking the tool bar button used to take the focus off the SQL editor.
 
 Improvement: Double click selection in SQL editor now selects words correctly.

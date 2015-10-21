@@ -1,5 +1,6 @@
 package org.squirrelsql.table.tableedit;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -9,14 +10,17 @@ import org.squirrelsql.session.sql.SQLResult;
 import org.squirrelsql.table.ColumnHandle;
 import org.squirrelsql.table.NullMarker;
 
-public class EdittableTableController
+import java.util.ArrayList;
+import java.util.List;
+
+public class EditableTableController
 {
    private Session _session;
    private final SQLResult _sqlResult;
    private final TableView _tv;
    private String _tableNameFromSQL;
 
-   public EdittableTableController(Session session, SQLResult sqlResult, TableView tv, String tableNameFromSQL)
+   public EditableTableController(Session session, SQLResult sqlResult, TableView tv, String tableNameFromSQL)
    {
       _session = session;
       _sqlResult = sqlResult;
@@ -24,10 +28,10 @@ public class EdittableTableController
       _tableNameFromSQL = tableNameFromSQL;
       _sqlResult.getResultTableLoader().load(tv);
 
-      initTableEditiListener();
+      initTableEditListener();
    }
 
-   private void initTableEditiListener()
+   private void initTableEditListener()
    {
       for (ColumnHandle columnHandle : _sqlResult.getResultTableLoader().getColumnHandles())
       {
@@ -86,5 +90,15 @@ public class EdittableTableController
                   return new SquirrelTextFieldTableCell(squirrelTableEditData -> onEditCommit(squirrelTableEditData));
                }
             };
+   }
+
+   public void deleteSelectedRows()
+   {
+      ObservableList selectedRows = _sqlResult.getResultTableLoader().getTableView().getSelectionModel().getSelectedItems();
+
+      ArrayList<List> deletedRows = DatabaseTableUpdater.deleteFromDatabase(_session, _sqlResult, selectedRows, _tableNameFromSQL);
+
+      _sqlResult.getResultTableLoader().removeRows(deletedRows);
+
    }
 }

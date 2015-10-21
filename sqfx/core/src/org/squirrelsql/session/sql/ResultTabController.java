@@ -156,6 +156,12 @@ public class ResultTabController
       if (_editButtonCtrl.allowsEditing())
       {
          _editButtonCtrl.displayAndPrepareEditing(sqlResult, tv);
+
+         sqlResultRightMouseMenuHandler.addSeparator();
+         MenuItem mnuDeleteRows = sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.delete.selected.rows"), () -> _editButtonCtrl.deleteSelectedRows());
+
+         _editButtonCtrl.setDeleteRowsMenuItem(mnuDeleteRows);
+
       }
       else
       {

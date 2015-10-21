@@ -47,12 +47,12 @@ public class RightMouseMenuHandler
       }
    }
 
-   public void addMenu(String menuTitle, RightMouseMenuHandlerListener rightMouseMenuHandlerListener)
+   public MenuItem addMenu(String menuTitle, RightMouseMenuHandlerListener rightMouseMenuHandlerListener)
    {
-      addMenu(menuTitle, null, rightMouseMenuHandlerListener);
+      return addMenu(menuTitle, null, rightMouseMenuHandlerListener);
    }
 
-   public void addMenu(String menuTitle, KeyCodeCombination keyCodeCombination, RightMouseMenuHandlerListener rightMouseMenuHandlerListener)
+   public MenuItem addMenu(String menuTitle, KeyCodeCombination keyCodeCombination, RightMouseMenuHandlerListener rightMouseMenuHandlerListener)
    {
       MenuItem menuItem = new MenuItem(menuTitle);
       menuItem.setAccelerator(keyCodeCombination);
@@ -60,6 +60,8 @@ public class RightMouseMenuHandler
       menuItem.setOnAction(e -> rightMouseMenuHandlerListener.menuSelected());
 
       _contextMenu.getItems().add(menuItem);
+
+      return menuItem;
    }
    
    public void addSeparator(){
