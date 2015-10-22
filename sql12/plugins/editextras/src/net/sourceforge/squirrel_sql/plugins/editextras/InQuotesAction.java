@@ -78,7 +78,7 @@ class InQuotesAction extends SquirrelAction
 			try
 			{
 				//new InQuotesCommand(_session.getSQLPanelAPI(_plugin)).execute();
-				new InQuotesCommand(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin)).execute();
+				new InQuotesCommand(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin), false).execute();
 			}
 			catch (Throwable ex)
 			{

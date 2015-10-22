@@ -32,18 +32,20 @@ import javax.swing.*;
 class InQuotesCommand implements ICommand
 {
 	private final ISQLPanelAPI _api;
+   private boolean _sbAppend;
 
-	InQuotesCommand(ISQLPanelAPI api)
+   InQuotesCommand(ISQLPanelAPI api, boolean sbAppend)
 	{
 		super();
 		_api = api;
-	}
+      _sbAppend = sbAppend;
+   }
 
 	public void execute() throws BaseException
 	{
       ISQLEntryPanel entryPanel = _api.getSQLEntryPanel();
 
-      quoteSQL(entryPanel, false);
+      quoteSQL(entryPanel, _sbAppend);
 	}
 
    public static void quoteSQL(ISQLEntryPanel entryPanel, boolean sbAppend)
