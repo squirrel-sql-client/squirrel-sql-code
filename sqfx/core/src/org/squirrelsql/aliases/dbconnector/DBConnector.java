@@ -3,6 +3,7 @@ package org.squirrelsql.aliases.dbconnector;
 import javafx.stage.Window;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.aliases.AliasDecorator;
 import org.squirrelsql.aliases.AliasUtil;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.JDBCUtil;
@@ -18,11 +19,11 @@ import java.sql.Connection;
 
 public class DBConnector
 {
-   private Alias _alias;
+   private AliasDecorator _alias;
    private Window _owner;
    private SchemaCacheConfig _schemaCacheConfig;
 
-   public DBConnector(Alias alias, Window owner, SchemaCacheConfig schemaCacheConfig)
+   public DBConnector(AliasDecorator alias, Window owner, SchemaCacheConfig schemaCacheConfig)
    {
       _alias = alias;
 
@@ -47,9 +48,9 @@ public class DBConnector
       final String password[] = new String[1];
 
 
-      if(false == _alias.isAutoLogon() || forceLogin)
+      if(false == _alias.getAlias().isAutoLogon() || forceLogin)
       {
-         LoginController loginController = new LoginController(_alias, _owner);
+         LoginController loginController = new LoginController(_alias.getAlias(), _owner);
 
          if(false == loginController.isOk())
          {
@@ -64,12 +65,12 @@ public class DBConnector
       }
       else
       {
-         user[0] = AliasUtil.getUserNameRespectAliasConfig(_alias);
-         password[0] = AliasUtil.getPasswordRespectAliasConfig(_alias);
+         user[0] = AliasUtil.getUserNameRespectAliasConfig(_alias.getAlias());
+         password[0] = AliasUtil.getPasswordRespectAliasConfig(_alias.getAlias());
       }
 
 
-      String title = new I18n(getClass()).t("connectingctrl.alias.display", _alias.getName(), _alias.getUrl(), _alias.getUserName());
+      String title = new I18n(getClass()).t("connectingctrl.alias.display", _alias.getAlias().getName(), _alias.getAlias().getUrl(), _alias.getAlias().getUserName());
 
       SimpleProgressCtrl simpleProgressCtrl = new SimpleProgressCtrl(true, true, title);
 
@@ -114,7 +115,7 @@ public class DBConnector
 
       try
       {
-         Connection jdbcConn = JDBCUtil.createJDBCConnection(_alias, user, password);
+         Connection jdbcConn = JDBCUtil.createJDBCConnection(_alias.getAlias(), user, password);
 
          SQLConnection sqlConnection = new SQLConnection(jdbcConn);
          dbConnectorResult.setSQLConnection(sqlConnection);
@@ -141,7 +142,7 @@ public class DBConnector
       }
       else if(false == dbConnectorResult.isConnected() || null != dbConnectorResult.getConnectException())
       {
-         new ConnectFailedController(_alias, dbConnectorResult, d -> onConnectFailureDecision(d, dbConnectorResult, dbConnectorListener));
+         new ConnectFailedController(_alias.getAlias(), dbConnectorResult, d -> onConnectFailureDecision(d, dbConnectorResult, dbConnectorListener), _owner);
       }
       else
       {

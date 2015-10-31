@@ -65,7 +65,7 @@ public class SchemaCache
       int stepCount = 6 + leaves.size();
 
       progressable.update(_i18n.t("Loading.data.types"), 1, stepCount);
-      _dataBaseMetadData = DataBaseMetaDataLoader.loadMetaData(_dbConnectorResult.getAlias(), _dbConnectorResult.getSQLConnection());
+      _dataBaseMetadData = DataBaseMetaDataLoader.loadMetaData(_dbConnectorResult.getAliasDecorator().getAlias(), _dbConnectorResult.getSQLConnection());
       _dataTypes = DataTypesLoader.loadTypes(_dbConnectorResult.getSQLConnection());
 
 

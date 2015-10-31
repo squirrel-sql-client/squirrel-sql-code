@@ -1,6 +1,7 @@
 package org.squirrelsql.aliases.dbconnector;
 
 import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.aliases.AliasDecorator;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.schemainfo.SchemaCacheProperty;
@@ -8,7 +9,7 @@ import org.squirrelsql.session.schemainfo.SchemaCacheProperty;
 public class DbConnectorResult
 {
    private Throwable _connectException;
-   private Alias _alias;
+   private AliasDecorator _alias;
 
    private String _user; // Should only be null if login was canceled.
    private String _password;
@@ -19,7 +20,7 @@ public class DbConnectorResult
    private SQLConnection _sqlConnection;
    private SchemaCacheProperty _schemaCacheProperty = new SchemaCacheProperty();
 
-   public DbConnectorResult(Alias alias, String user, String password)
+   public DbConnectorResult(AliasDecorator alias, String user, String password)
    {
       _alias = alias;
       _user = user;
@@ -82,7 +83,7 @@ public class DbConnectorResult
       return _sqlConnection;
    }
 
-   public Alias getAlias()
+   public AliasDecorator getAliasDecorator()
    {
       return _alias;
    }

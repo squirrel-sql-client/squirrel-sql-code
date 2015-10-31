@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: When a connection test within an Alias dialog failed the error message dialog was hidden behind the Alias dialog.
+
 Feature: Delete rows right mouse menu editable in SQL results:
          If a SQL result has been made editable by the pen button on the upper right of the result.
          The results right mouse menu offers a "Delete selected rows" menu item.

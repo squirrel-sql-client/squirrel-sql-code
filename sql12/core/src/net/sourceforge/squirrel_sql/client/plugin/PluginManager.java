@@ -503,7 +503,7 @@ public class PluginManager implements IPluginManager
 					// dialog, so that they can enable it.
 					PluginInfo pi = new PluginInfo();
 					pi.setPlugin(new MyPlaceHolderPlugin(internalName));
-					_plugins.add(pi);
+					addToPlugins(pi);
 
 				} else
 				{
@@ -642,16 +642,16 @@ public class PluginManager implements IPluginManager
 			pli.pluginCreated(plugin);
 			_pluginLoadInfoColl.put(plugin.getInternalName(), pli);
 			pi.setPlugin(plugin);
-			_plugins.add(pi);
+			addToPlugins(pi);
 			if (validatePlugin(plugin))
 			{
 				pli.startLoading();
 				plugin.load(_app);
 				pi.setLoaded(true);
-				_loadedPlugins.put(plugin.getInternalName(), plugin);
+				addToLoadedPlugins(plugin);
 				if (ISessionPlugin.class.isAssignableFrom(pluginClass))
 				{
-					_sessionPlugins.add(new SessionPluginInfo(pi));
+					addToSessionPlugins(pi);
 				}
 			}
 			pli.endLoading();
@@ -797,8 +797,45 @@ public class PluginManager implements IPluginManager
 		}
 
 	}
-	
-   /**
+
+	private void addToPlugins(PluginInfo pi)
+	{
+		if (isRemovedEditExtrasPlugin(pi.getPlugin()))
+		{
+			return;
+		}
+
+		_plugins.add(pi);
+	}
+
+
+	private void addToSessionPlugins(PluginInfo pi)
+	{
+		if (isRemovedEditExtrasPlugin(pi.getPlugin()))
+		{
+			return;
+		}
+
+		_sessionPlugins.add(new SessionPluginInfo(pi));
+	}
+
+	private void addToLoadedPlugins(IPlugin plugin)
+	{
+		if (isRemovedEditExtrasPlugin(plugin))
+		{
+			return;
+		}
+
+		_loadedPlugins.put(plugin.getInternalName(), plugin);
+	}
+
+	private boolean isRemovedEditExtrasPlugin(IPlugin plugin)
+	{
+		return plugin.getPluginJarFilePath().toLowerCase().endsWith("editextras.jar");
+	}
+
+
+	/**
 	 * A plugin implementation that serves only to identify plugins that aren't being loaded, but which are
 	 * still installed, and available to load on startup if the user changes the isLoadedOnStartup attribute.
 	 * 

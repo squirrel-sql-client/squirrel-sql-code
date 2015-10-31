@@ -1,6 +1,7 @@
 package org.squirrelsql.aliases.dbconnector;
 
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.services.FxmlHelper;
@@ -19,11 +20,12 @@ public class ConnectFailedController
    private ConnectFailureDecisionListener _connectFailureDecisionListener;
    private final Stage _stage;
 
-   public ConnectFailedController(Alias alias, DbConnectorResult dbConnectorResult, ConnectFailureDecisionListener connectFailureDecisionListener)
+   public ConnectFailedController(Alias alias, DbConnectorResult dbConnectorResult, ConnectFailureDecisionListener connectFailureDecisionListener, Window owner)
    {
       _connectFailedViewFxml = new FxmlHelper<>(ConnectFailedView.class);
 
       _stage = GuiUtils.createModalDialog(_connectFailedViewFxml.getRegion(), new Pref(getClass()), 600, 400, "ConnectFailedController");
+      _stage.initOwner(owner);
 
 
       _connectFailedViewFxml.getView().lblAliasConnecting.setText(_i18n.t("connectingctrl.alias.display", alias.getName(), alias.getUrl(), alias.getUserName()));

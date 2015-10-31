@@ -82,14 +82,14 @@ public class AliasesController
 
 
       AliasTreeStructureNode structRoot = Dao.loadAliasTree();
-      List<Alias> aliases = Dao.loadAliases();
+      List<AliasDecorator> aliases = Dao.loadAliases();
 
-      List<Alias>  unappliedAliases = structRoot.apply(_treeView.getRoot(), aliases);
+      List<AliasDecorator>  unappliedAliases = structRoot.apply(_treeView.getRoot(), aliases);
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////
       // unappliedAliases should always be empty. But because people are so unhappy when aliases get lost
       // we do this for precautions only.
-      for (Alias unappliedAlias : unappliedAliases)
+      for (AliasDecorator unappliedAlias : unappliedAliases)
       {
          _treeView.getRoot().getChildren().add(new TreeItem<AliasTreeNode>(unappliedAlias));
       }
@@ -102,7 +102,7 @@ public class AliasesController
 
    private void onTreeItemDoubleClicked(TreeItem<AliasTreeNode> selectedItem)
    {
-      if(selectedItem.getValue() instanceof Alias)
+      if(selectedItem.getValue() instanceof AliasDecorator)
       {
          doConnect(selectedItem);
       }
@@ -144,7 +144,7 @@ public class AliasesController
    {
       ObservableList<TreeItem<AliasTreeNode>> items = _treeView.getRoot().getChildren();
 
-      List<Alias> aliases = new ArrayList<>();
+      List<AliasDecorator> aliases = new ArrayList<>();
 
       AliasTreeStructureNode structRoot = new AliasTreeStructureNode();
       structRoot.addAll(items, aliases);
@@ -378,19 +378,21 @@ public class AliasesController
          return;
       }
 
-      new AliasPropertiesEditCtrl((Alias)selectedItem.getValue());
+      AliasDecorator aliasDecorator = (AliasDecorator) selectedItem.getValue();
+      new AliasPropertiesEditCtrl(aliasDecorator);
    }
 
 
    private void editAlias(TreeItem<AliasTreeNode> item)
    {
-      Alias alias = (Alias) item.getValue();
+      AliasDecorator aliasDecorator = (AliasDecorator) item.getValue();
 
-      AliasEditController aliasEditController = new AliasEditController(alias, AliasEditController.ConstructorState.EDIT);
+      AliasEditController aliasEditController = new AliasEditController(aliasDecorator.getAlias(), AliasEditController.ConstructorState.EDIT);
 
       if (aliasEditController.isOk())
       {
-         item.setValue(aliasEditController.getAlias());
+         aliasDecorator.updateAlias(aliasEditController.getAlias());
+         item.setValue(aliasDecorator);
          _aliasTreeNodeChannel.fireChanged(item);
       }
    }
@@ -421,7 +423,7 @@ public class AliasesController
       }
 
 
-      if (selectedItem.getValue() instanceof Alias)
+      if (selectedItem.getValue() instanceof AliasDecorator)
       {
          String msg = _i18n.t("alias.confirm.remove", selectedItem.getValue().getName());
          if(false == FXMessageBox.YES.equals(FXMessageBox.showYesNo(AppState.get().getPrimaryStage(), msg)))
@@ -461,16 +463,16 @@ public class AliasesController
          return;
       }
 
-      Alias alias = (Alias) selectedItem.getValue();
+      AliasDecorator aliasDecorator = (AliasDecorator) selectedItem.getValue();
 
-      alias = AliasTreeUtil.cloneAlias(alias);
+      aliasDecorator = AliasTreeUtil.cloneAlias(aliasDecorator);
 
-      AliasEditController aliasEditController = new AliasEditController(alias, AliasEditController.ConstructorState.COPY);
+      AliasEditController aliasEditController = new AliasEditController(aliasDecorator.getAlias(), AliasEditController.ConstructorState.COPY);
 
       if (aliasEditController.isOk())
       {
-         alias = aliasEditController.getAlias();
-         TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createAliasNode(alias);
+         aliasDecorator.updateAlias(aliasEditController.getAlias());
+         TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createAliasNode(aliasDecorator);
          positionItem(selectedItem, newTreeItem, RelativeNodePosition.LOWER_SIBLING);
       }
 
@@ -486,7 +488,7 @@ public class AliasesController
       if(aliasEditController.isOk())
       {
          Alias alias = aliasEditController.getAlias();
-         TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createAliasNode(alias);
+         TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createAliasNode(new AliasDecorator(alias));
          positionItem(selectedItem, newTreeItem, aliasEditController.getTreePositionCtrl().getRelativeNodePosition());
       }
    }
@@ -509,7 +511,7 @@ public class AliasesController
    {
       TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
 
-      if(null == selectedItem || false == selectedItem.getValue() instanceof Alias)
+      if(null == selectedItem || false == selectedItem.getValue() instanceof AliasDecorator)
       {
          FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.node.to.connect"));
          return;
@@ -520,13 +522,13 @@ public class AliasesController
 
    private void doConnect(TreeItem<AliasTreeNode> selectedItem)
    {
-      Alias alias = (Alias) selectedItem.getValue();
+      AliasDecorator aliasDecorator = (AliasDecorator) selectedItem.getValue();
 
 
-      DBConnector dbConnector = new DBConnector(alias, null, new SchemaCacheConfig(Dao.loadAliasProperties(alias.getId())));
+      DBConnector dbConnector = new DBConnector(aliasDecorator, null, new SchemaCacheConfig(aliasDecorator.getAliasPropertiesDecorator()));
 
 
-      dbConnector.tryConnect(r -> onTryConnectFinished(r, alias));
+      dbConnector.tryConnect(r -> onTryConnectFinished(r, aliasDecorator.getAlias()));
    }
 
    private void onTryConnectFinished(DbConnectorResult dbConnectorResult, Alias alias)

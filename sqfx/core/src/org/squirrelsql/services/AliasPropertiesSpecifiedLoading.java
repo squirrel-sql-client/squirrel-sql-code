@@ -4,7 +4,9 @@ import org.squirrelsql.aliases.AliasPropertiesSchema;
 import org.squirrelsql.aliases.SchemaLoadOptions;
 import org.squirrelsql.table.TableLoaderRowObjectAccess;
 
-public class AliasPropertiesSpecifiedLoading
+import java.io.Serializable;
+
+public class AliasPropertiesSpecifiedLoading implements Serializable
 {
    private AliasPropertiesSchema _aliasPropertiesSchema;
    private SchemaLoadOptions _tableOpt;

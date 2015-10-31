@@ -1,12 +1,10 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
-import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -16,9 +14,9 @@ public class EscapeDateAction extends SquirrelAction implements ISQLPanelAction
 {
    private ISession _session;
 
-   public EscapeDateAction(IApplication app, net.sourceforge.squirrel_sql.fw.util.Resources rsrc)
+   public EscapeDateAction(IApplication app)
    {
-      super(app, rsrc);
+      super(app);
    }
 
    public void actionPerformed(ActionEvent e)

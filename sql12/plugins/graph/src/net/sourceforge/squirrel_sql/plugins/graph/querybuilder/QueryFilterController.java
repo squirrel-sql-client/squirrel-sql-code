@@ -122,7 +122,7 @@ public class QueryFilterController
 
    private void onEscapeDate()
    {
-      String dateEscape = EditExtrasAccessor.getDateEscape(_queryFilterDlg, _session);
+      String dateEscape = EditExtrasAccessor.getDateEscape(_queryFilterDlg);
 
       if (null != dateEscape && 0 < dateEscape.trim().length())
       {

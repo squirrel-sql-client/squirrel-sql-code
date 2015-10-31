@@ -8,7 +8,6 @@ import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
 import org.squirrelsql.ApplicationCloseListener;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.services.Dao;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.progress.ProgressTask;
@@ -118,7 +117,7 @@ public class SessionCtrl
    {
       DbConnectorResult dbConnectorResult = _sessionTabContext.getSession().getDbConnectorResult();
 
-      SchemaCacheConfig schemaCacheConfig = new SchemaCacheConfig(Dao.loadAliasProperties(dbConnectorResult.getAlias().getId()));
+      SchemaCacheConfig schemaCacheConfig = new SchemaCacheConfig(dbConnectorResult.getAliasDecorator().getAliasPropertiesDecorator());
 
       SchemaCache schemaCache = SchemaCacheFactory.createSchemaCache(dbConnectorResult, dbConnectorResult.getSQLConnection(), schemaCacheConfig);
 

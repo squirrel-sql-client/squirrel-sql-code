@@ -17,7 +17,7 @@ public class Session
 
    public Alias getAlias()
    {
-      return _dbConnectorResult.getAlias();
+      return _dbConnectorResult.getAliasDecorator().getAlias();
    }
 
    public void close()

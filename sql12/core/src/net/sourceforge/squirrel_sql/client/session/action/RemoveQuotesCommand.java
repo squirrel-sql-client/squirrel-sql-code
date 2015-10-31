@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 /*
  * Copyright (C) 2003 Gerd Wagner
  *
@@ -22,33 +22,29 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
-import javax.swing.*;
-
 /**
- * This command will &quot;quote&quot; an SQL string.
+ * This command will remove &quot;quotes&quot; from an SQL string.
  *
  * @author  Gerd Wagner
  */
-class InQuotesCommand implements ICommand
+class RemoveQuotesCommand implements ICommand
 {
 	private final ISQLPanelAPI _api;
-   private boolean _sbAppend;
 
-   InQuotesCommand(ISQLPanelAPI api, boolean sbAppend)
+	RemoveQuotesCommand(ISQLPanelAPI api)
 	{
 		super();
 		_api = api;
-      _sbAppend = sbAppend;
-   }
+	}
 
 	public void execute() throws BaseException
 	{
       ISQLEntryPanel entryPanel = _api.getSQLEntryPanel();
 
-      quoteSQL(entryPanel, _sbAppend);
+      unquoteSQL(entryPanel);
 	}
 
-   public static void quoteSQL(ISQLEntryPanel entryPanel, boolean sbAppend)
+   static void unquoteSQL(ISQLEntryPanel entryPanel)
    {
       int[] bounds = entryPanel.getBoundsOfSQLToBeExecuted();
 
@@ -57,17 +53,18 @@ class InQuotesCommand implements ICommand
          return;
       }
 
-      String textToQuote = entryPanel.getSQLToBeExecuted();
+      String textToUnquote = entryPanel.getSQLToBeExecuted();
 
-      if (null == textToQuote)
+      if (null == textToUnquote)
       {
          return;
       }
 
-      String quotedText = Utilities.quoteText(textToQuote, sbAppend);
+      String unquotedText = EditExtrasUtilities.unquoteText(textToUnquote);
 
       entryPanel.setSelectionStart(bounds[0]);
       entryPanel.setSelectionEnd(bounds[1]);
-      entryPanel.replaceSelection(quotedText);
+      entryPanel.replaceSelection(unquotedText);
    }
+
 }

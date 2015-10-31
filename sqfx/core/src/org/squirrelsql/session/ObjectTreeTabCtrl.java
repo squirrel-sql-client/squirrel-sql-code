@@ -7,6 +7,8 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyEvent;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.services.SplitPositionSaver;
 import org.squirrelsql.session.action.ActionCfg;
 import org.squirrelsql.session.action.ActionScope;
@@ -95,6 +97,7 @@ public class ObjectTreeTabCtrl
 
       removeEmptySchemasIfRequested(_objectsTree, _sessionTabContext.getSession());
 
+      doEmptyCheck(_objectsTree);
 
 
 
@@ -118,6 +121,21 @@ public class ObjectTreeTabCtrl
       }
 
       _objecttreeSplitPosSaver.apply(_objectTabSplitPane);
+   }
+
+   private void doEmptyCheck(TreeView<ObjectTreeNode> objectsTree)
+   {
+      if(
+            ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.SCHEMA_TYPE_KEY).isEmpty()
+         && ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.CATALOG_TYPE_KEY).isEmpty()
+         && ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.TABLE_TYPE_KEY).isEmpty()
+         && ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.UDT_TYPE_KEY).isEmpty()
+         && ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.PROCEDURE_TYPE_KEY).isEmpty()
+        )
+      {
+         new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL).warning(new I18n(getClass()).t("empty.object.tree.erroneous.alias.properties.warning"));
+      }
+
    }
 
    private void removeEmptySchemasIfRequested(TreeView<ObjectTreeNode> objectsTree, Session session)

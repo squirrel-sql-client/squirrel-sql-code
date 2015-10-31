@@ -1,5 +1,6 @@
 package org.squirrelsql.aliases;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
@@ -138,8 +139,8 @@ public class AliasEditController
       if(validate())
       {
          SQLDriver sqlDriver = _aliasEditView.cboDriver.getSelectionModel().getSelectedItem();
-         Alias buf = new Alias();
-         storeToAlias(buf, sqlDriver);
+         AliasDecorator buf = new AliasDecorator(new Alias());
+         storeToAlias(buf.getAlias(), sqlDriver);
 
          DBConnector dbConnector = new DBConnector(buf, _dialog, SchemaCacheConfig.createLoadNothing());
 
@@ -152,7 +153,8 @@ public class AliasEditController
    {
       if (dbConnectorResult.isConnected())
       {
-         FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.test.ok"));
+         // Platform.runLater prevents repaint problem
+         Platform.runLater(() -> FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.test.ok")));
       }
    }
 

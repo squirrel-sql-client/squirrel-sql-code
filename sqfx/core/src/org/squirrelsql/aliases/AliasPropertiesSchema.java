@@ -6,7 +6,9 @@ import org.squirrelsql.session.schemainfo.StructItemProcedureType;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
 import org.squirrelsql.session.schemainfo.StructItemTableType;
 
-public class AliasPropertiesSchema
+import java.io.Serializable;
+
+public class AliasPropertiesSchema implements Serializable
 {
    private String _qualifiedSchemaName;
    private String _catalogName;

@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.SimpleType;
 
 import org.squirrelsql.AppState;
-import org.squirrelsql.aliases.Alias;
-import org.squirrelsql.aliases.AliasProperties;
-import org.squirrelsql.aliases.AliasPropertiesDecorator;
-import org.squirrelsql.aliases.AliasTreeStructureNode;
+import org.squirrelsql.aliases.*;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
 import org.squirrelsql.session.sql.bookmark.BookmarkPersistence;
@@ -37,15 +34,20 @@ public class Dao
       writeObject(sqlDrivers, FILE_NAME_DRIVERS);
    }
 
-   public static void writeAliases(List<Alias> aliases, AliasTreeStructureNode treeStructureNode)
+   public static void writeAliases(List<AliasDecorator> aliases, AliasTreeStructureNode treeStructureNode)
    {
-      writeObject(aliases, FILE_NAME_ALIASES);
+      writeObject(CollectionUtil.transform(aliases, ad -> ad.getAlias()), FILE_NAME_ALIASES);
       writeObject(treeStructureNode, FILE_NAME_ALIAS_TREE);
+
+      aliases.forEach(a -> writeAliasProperties( a.getAliasPropertiesDecorator().getAliasProperties() ));
    }
 
-   public static void writeAliasProperties(AliasProperties aliasProperties)
+   private static void writeAliasProperties(AliasProperties aliasProperties)
    {
-      writeObject(aliasProperties, getAliasPropertiesFileName(aliasProperties.getAliasId()));
+      if(null != aliasProperties)
+      {
+         writeObject(aliasProperties, getAliasPropertiesFileName(aliasProperties.getAliasId()));
+      }
    }
 
    private static String getAliasPropertiesFileName(String aliasId)
@@ -64,17 +66,30 @@ public class Dao
       return loadObject(FILE_NAME_ALIAS_TREE, new AliasTreeStructureNode());
    }
 
-   public static List<Alias> loadAliases()
+   public static List<AliasDecorator> loadAliases()
    {
-      return loadObjectArray(FILE_NAME_ALIASES, Alias.class);
+      List<Alias> aliases = loadObjectArray(FILE_NAME_ALIASES, Alias.class);
+
+      return CollectionUtil.transform(aliases, a -> new AliasDecorator(a));
    }
 
+   /**
+    * To respect current user changes this method should be used by AliasDecorator.getAliasPropertiesDecorator() only.
+    *
+    * @see AliasDecorator#getAliasPropertiesDecorator()
+    */
    public static AliasPropertiesDecorator loadAliasProperties(String aliasId)
    {
       AliasProperties aliasProperties = loadObject(getAliasPropertiesFileName(aliasId), new AliasProperties());
 
       return new AliasPropertiesDecorator(aliasProperties);
    }
+
+   public static boolean hasAliasProperties(String aliasId)
+   {
+      return new File(AppState.get().getUserDir(), getAliasPropertiesFileName(aliasId)).exists();
+   }
+
 
 
    private static<T> T loadObject(String fileName, T defaultObject)

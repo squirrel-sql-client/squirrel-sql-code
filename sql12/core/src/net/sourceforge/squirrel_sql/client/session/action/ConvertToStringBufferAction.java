@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 /*
  * Copyright (C) 2003 Gerd Wagner
  *
@@ -20,41 +20,38 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+
 /**
- * This action will &quot;quote&quot; an SQL string.
+ * This action will convert the SQL string to a StringBuffer.
  *
  * @author  Gerd Wagner
  */
-class InQuotesAction extends SquirrelAction
+public class ConvertToStringBufferAction extends SquirrelAction
 					implements ISQLPanelAction
 {
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(InQuotesAction.class);
+		StringManagerFactory.getStringManager(ConvertToStringBufferAction.class);
 
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
-		LoggerController.createLogger(InQuotesAction.class);
+		LoggerController.createLogger(ConvertToStringBufferAction.class);
 
 	/** Current session. */
 	private ISession _session;
 
-	private EditExtrasPlugin _plugin;
 
-	InQuotesAction(IApplication app, EditExtrasPlugin plugin)
+	public ConvertToStringBufferAction(IApplication app)
 	{
-		super(app, plugin.getResources());
-		_plugin = plugin;
+		super(app, app.getResources());
 	}
-
 
    public void setSQLPanel(ISQLPanelAPI panel)
    {
@@ -70,20 +67,20 @@ class InQuotesAction extends SquirrelAction
    }
 
 
-
 	public void actionPerformed(ActionEvent evt)
 	{
 		if (_session != null)
 		{
 			try
 			{
-				//new InQuotesCommand(_session.getSQLPanelAPI(_plugin)).execute();
-				new InQuotesCommand(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin), false).execute();
+
+				//new ConvertToStringBufferCommand(_session.getSQLPanelAPI(_plugin)).execute();
+				new InQuotesCommand(FrameWorkAcessor.getSQLPanelAPI(_session), true).execute();
 			}
 			catch (Throwable ex)
 			{
-				// i18n[editextras.errorQuoteSql=Error processing Quote SQL command: {0}]
-				final String msg = s_stringMgr.getString("editextras.errorQuoteSql", ex);
+				// i18n[editextras.convertStringBufErr=Error executing convert to StringBuffer command: {0}]
+				final String msg = s_stringMgr.getString("editextras.convertStringBufErr", ex);
 				_session.showErrorMessage(msg);
 				s_log.error(msg, ex);
 			}

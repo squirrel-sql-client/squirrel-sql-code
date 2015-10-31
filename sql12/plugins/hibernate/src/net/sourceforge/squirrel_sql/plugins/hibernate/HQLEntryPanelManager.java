@@ -119,7 +119,7 @@ public class HQLEntryPanelManager extends EntryPanelManager
 
    private void onEscapeDate()
    {
-      String str = EditExtrasAccessor.escapeDate(getEntryPanel(), getSession());
+      String str = EditExtrasAccessor.escapeDate(getEntryPanel());
 
       if(null != str)
       {
@@ -171,17 +171,17 @@ public class HQLEntryPanelManager extends EntryPanelManager
 
    private void onUnquoteHQL()
    {
-      EditExtrasAccessor.unquoteHQL(getEntryPanel(), getSession());
+      EditExtrasAccessor.unquoteHQL(getEntryPanel());
    }
 
    private void onQuoteHQLSb()
    {
-      EditExtrasAccessor.quoteHQLSb(getEntryPanel(), getSession());
+      EditExtrasAccessor.quoteHQLSb(getEntryPanel());
    }
 
    private void onQuoteHQL()
    {
-      EditExtrasAccessor.quoteHQL(getEntryPanel(), getSession());
+      EditExtrasAccessor.quoteHQL(getEntryPanel());
    }
 
 

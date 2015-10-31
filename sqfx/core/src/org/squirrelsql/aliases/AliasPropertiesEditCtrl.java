@@ -12,9 +12,7 @@ import org.squirrelsql.services.*;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 import org.squirrelsql.table.RowObjectHandle;
 import org.squirrelsql.table.RowObjectTableLoader;
-import org.squirrelsql.table.TableLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AliasPropertiesEditCtrl
@@ -23,12 +21,12 @@ public class AliasPropertiesEditCtrl
    private Stage _dialog;
    private I18n _i18n = new I18n(this.getClass());
    private Pref _pref = new Pref(getClass());
-   private Alias _alias;
+   private AliasDecorator _aliasDecorator;
    private RowObjectTableLoader<AliasPropertiesSpecifiedLoading> _tableLoaderSchemas;
 
-   public AliasPropertiesEditCtrl(Alias alias)
+   public AliasPropertiesEditCtrl(AliasDecorator aliasDecorator)
    {
-      _alias = alias;
+      _aliasDecorator = aliasDecorator;
       FxmlHelper<AliasPropertiesEditView> fxmlHelper = new FxmlHelper<>(AliasPropertiesEditView.class);
 
       ToggleGroup tg = new ToggleGroup();
@@ -40,7 +38,7 @@ public class AliasPropertiesEditCtrl
       _view.radSpecifyLoading.setToggleGroup(tg);
 
 
-      loadAliasProperties(alias);
+      loadAliasProperties(aliasDecorator);
 
       _view.cboObjectTypes.getItems().clear();
       _view.cboObjectTypes.getItems().add(_i18n.t("alias.properties.all.objects"));
@@ -63,7 +61,7 @@ public class AliasPropertiesEditCtrl
       _view.btnConnectDb.setOnAction(e -> onConnectDb());
 
 
-      initWindow(alias, fxmlHelper);
+      initWindow(aliasDecorator, fxmlHelper);
 
    }
 
@@ -105,17 +103,17 @@ public class AliasPropertiesEditCtrl
       _tableLoaderSchemas.updateUI();
    }
 
-   private void loadAliasProperties(Alias alias)
+   private void loadAliasProperties(AliasDecorator aliasDecorator)
    {
-      AliasProperties aliasProperties = Dao.loadAliasProperties(alias.getId()).getAliasProperties();
+      AliasPropertiesDecorator aliasPropertiesDecorator = _aliasDecorator.getAliasPropertiesDecorator();
 
       _tableLoaderSchemas = AliasPropertiesDecorator.createEmptyTableLoader();
 
-      if(aliasProperties.isLoadAllCacheNon())
+      if(aliasPropertiesDecorator.getAliasProperties().isLoadAllCacheNon())
       {
          _view.radLoadAllCacheNon.setSelected(true);
       }
-      else if(aliasProperties.isLoadAndCacheAll())
+      else if(aliasPropertiesDecorator.getAliasProperties().isLoadAndCacheAll())
       {
          _view.radLoadAndCacheAll.setSelected(true);
       }
@@ -125,19 +123,19 @@ public class AliasPropertiesEditCtrl
       }
 
       AliasPropertiesSpecifiedLoading.TableLoaderAccess tableLoaderAccess = new AliasPropertiesSpecifiedLoading.TableLoaderAccess();
-      _tableLoaderSchemas.addRowObjects(aliasProperties.getSpecifiedLoadings(), tableLoaderAccess);
+      _tableLoaderSchemas.addRowObjects(aliasPropertiesDecorator.getAliasProperties().getSpecifiedLoadings(), tableLoaderAccess);
 
       _view.tblSchemas.setEditable(true);
       _tableLoaderSchemas.load(_view.tblSchemas);
 
-      _view.chkHideEmptySchemas.setSelected(aliasProperties.isHideEmptySchemasInObjectTree());
+      _view.chkHideEmptySchemas.setSelected(aliasPropertiesDecorator.getAliasProperties().isHideEmptySchemasInObjectTree());
 
       onDisableSpecifyControls();
    }
 
    private void onConnectDb()
    {
-      new DBConnector(_alias, _dialog, SchemaCacheConfig.createLoadNothing()).tryConnect(this::onConnected);
+      new DBConnector(_aliasDecorator, _dialog, SchemaCacheConfig.createLoadNothing()).tryConnect(this::onConnected);
    }
 
    private void onConnected(DbConnectorResult dbConnectorResult)
@@ -158,9 +156,9 @@ public class AliasPropertiesEditCtrl
    {
       List<AliasPropertiesSpecifiedLoading> rows = _tableLoaderSchemas.getRowObjects();
 
-      AliasProperties aliasProperties = new AliasProperties(rows, _alias.getId(), _view.radLoadAllCacheNon.isSelected(), _view.radLoadAndCacheAll.isSelected(), _view.chkHideEmptySchemas.isSelected());
+      AliasProperties aliasProperties = new AliasProperties(rows, _aliasDecorator.getId(), _view.radLoadAllCacheNon.isSelected(), _view.radLoadAndCacheAll.isSelected(), _view.chkHideEmptySchemas.isSelected());
 
-      Dao.writeAliasProperties(aliasProperties);
+      _aliasDecorator.updateAliasPropertiesDecorator(new AliasPropertiesDecorator(aliasProperties));
       _dialog.close();
    }
 
@@ -171,10 +169,10 @@ public class AliasPropertiesEditCtrl
 
    }
 
-   private void initWindow(Alias alias, FxmlHelper<AliasPropertiesEditView> fxmlHelper)
+   private void initWindow(AliasDecorator aliasDecorator, FxmlHelper<AliasPropertiesEditView> fxmlHelper)
    {
       _dialog = new Stage();
-      _dialog.setTitle(_i18n.t("aliases.properties.title", alias.getName()));
+      _dialog.setTitle(_i18n.t("aliases.properties.title", aliasDecorator.getName()));
       _dialog.initOwner(AppState.get().getPrimaryStage());
       Region region = fxmlHelper.getRegion();
       _dialog.setScene(new Scene(region));

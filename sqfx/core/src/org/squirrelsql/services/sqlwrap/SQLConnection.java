@@ -384,7 +384,7 @@ public class SQLConnection
       {
          Connection oldCon = _con;
 
-         _con = JDBCUtil.createJDBCConnection(dbConnectorResult.getAlias(), dbConnectorResult.getUser(), dbConnectorResult.getPassword());
+         _con = JDBCUtil.createJDBCConnection(dbConnectorResult.getAliasDecorator().getAlias(), dbConnectorResult.getUser(), dbConnectorResult.getPassword());
 
 
          _con.setAutoCommit(autoCommit);

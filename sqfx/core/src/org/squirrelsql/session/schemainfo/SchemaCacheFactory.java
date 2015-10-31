@@ -13,7 +13,7 @@ public class SchemaCacheFactory
 {
    public static SchemaCache createSchemaCache(DbConnectorResult dbConnectorResult, SQLConnection sqlConnection, SchemaCacheConfig schemaCacheConfig)
    {
-      return new SchemaCache(dbConnectorResult, schemaCacheConfig, createDatabaseStructure(dbConnectorResult.getAlias(), sqlConnection, schemaCacheConfig));
+      return new SchemaCache(dbConnectorResult, schemaCacheConfig, createDatabaseStructure(dbConnectorResult.getAliasDecorator().getAlias(), sqlConnection, schemaCacheConfig));
    }
 
    private static DatabaseStructure createDatabaseStructure(Alias alias, SQLConnection sqlConnection, SchemaCacheConfig schemaCacheConfig)

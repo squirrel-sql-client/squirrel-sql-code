@@ -1,19 +1,33 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
 import java.awt.*;
 
-public class EditExtrasExternalServiceImpl implements EditExtrasExternalService
+public class EditExtrasExternalServiceImpl
 {
+   private IApplication _app;
+   private boolean _copyQuotedSqlsToClip;
+
+   public EditExtrasExternalServiceImpl()
+   {
+      this(false);
+   }
+
+   public EditExtrasExternalServiceImpl(boolean copyQuotedSqlsToClip)
+   {
+      _copyQuotedSqlsToClip = copyQuotedSqlsToClip;
+   }
+
    public void quoteSQL(ISQLEntryPanel entryPanel)
    {
-      InQuotesCommand.quoteSQL(entryPanel, false);
+      InQuotesCommand.quoteSQL(entryPanel, false, _copyQuotedSqlsToClip);
    }
 
    public void quoteSQLSb(ISQLEntryPanel entryPanel)
    {
-      InQuotesCommand.quoteSQL(entryPanel, true);
+      InQuotesCommand.quoteSQL(entryPanel, true, _copyQuotedSqlsToClip);
    }
 
 

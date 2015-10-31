@@ -2,10 +2,11 @@ package org.squirrelsql.aliases;
 
 import org.squirrelsql.services.AliasPropertiesSpecifiedLoading;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AliasProperties
+public class AliasProperties implements Serializable
 {
    private List<AliasPropertiesSpecifiedLoading> _specifiedLoadings = new ArrayList<>();
    private String _aliasId;

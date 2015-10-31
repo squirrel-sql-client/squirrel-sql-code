@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -12,12 +12,12 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class FrameWorkAcessor
 {
-   public static ISQLPanelAPI getSQLPanelAPI(ISession session, EditExtrasPlugin plugin)
+   public static ISQLPanelAPI getSQLPanelAPI(ISession session)
    {
       return session.getSQLPanelAPIOfActiveSessionWindow();
    }
 
-   public static IObjectTreeAPI getObjectTreeAPI(ISession session, EditExtrasPlugin  plugin)
+   public static IObjectTreeAPI getObjectTreeAPI(ISession session)
    {
       return session.getObjectTreeAPIOfActiveSessionWindow();
    }

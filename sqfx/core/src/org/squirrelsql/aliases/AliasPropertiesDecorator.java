@@ -1,5 +1,6 @@
 package org.squirrelsql.aliases;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.AliasPropertiesSpecifiedLoading;
 import org.squirrelsql.services.I18n;
@@ -143,4 +144,14 @@ public class AliasPropertiesDecorator
    {
       return _aliasProperties.isHideEmptySchemasInObjectTree();
    }
+
+   public AliasPropertiesDecorator copyToAlias(Alias target)
+   {
+      AliasProperties targetProperties = SerializationUtils.clone(_aliasProperties);
+
+      targetProperties.setAliasId(target.getId());
+
+      return new AliasPropertiesDecorator(targetProperties);
+   }
+
 }

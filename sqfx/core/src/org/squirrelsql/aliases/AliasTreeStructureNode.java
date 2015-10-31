@@ -68,13 +68,13 @@ public class AliasTreeStructureNode
       _folderName = folderName;
    }
 
-   public void addAll(ObservableList<TreeItem<AliasTreeNode>> items, List<Alias> toFill)
+   public void addAll(ObservableList<TreeItem<AliasTreeNode>> items, List<AliasDecorator> toFill)
    {
       for (TreeItem<AliasTreeNode> item : items)
       {
-         if(item.getValue() instanceof Alias)
+         if(item.getValue() instanceof AliasDecorator)
          {
-            Alias alias = (Alias) item.getValue();
+            AliasDecorator alias = (AliasDecorator) item.getValue();
             _kids.add(new AliasTreeStructureNode(alias.getId()));
             toFill.add(alias);
          }
@@ -88,13 +88,13 @@ public class AliasTreeStructureNode
    }
 
 
-   public List<Alias> apply(TreeItem<AliasTreeNode> parent, List<Alias> aliases)
+   public List<AliasDecorator> apply(TreeItem<AliasTreeNode> parent, List<AliasDecorator> aliases)
    {
       for (AliasTreeStructureNode kid : _kids)
       {
          if(null!= kid.getAliasId())
          {
-            Alias alias = findAndRemoveAlias(aliases, kid.getAliasId());
+            AliasDecorator alias = findAndRemoveAlias(aliases, kid.getAliasId());
 
             if (null != alias) // another precaution to definitely ensure Aliases are read.
             {
@@ -113,9 +113,9 @@ public class AliasTreeStructureNode
       return aliases;
    }
 
-   private Alias findAndRemoveAlias(List<Alias> aliases, String aliasId)
+   private AliasDecorator findAndRemoveAlias(List<AliasDecorator> aliases, String aliasId)
    {
-      for (Alias alias : aliases)
+      for (AliasDecorator alias : aliases)
       {
          if(alias.getId().equals(aliasId))
          {

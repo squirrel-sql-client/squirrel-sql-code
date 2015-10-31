@@ -40,7 +40,7 @@ public class AliasTreeUtil
       }
       else
       {
-         return createAliasNode(cloneAlias((Alias) toCopy.getValue()));
+         return createAliasNode(cloneAlias((AliasDecorator) toCopy.getValue()));
       }
    }
 
@@ -49,16 +49,16 @@ public class AliasTreeUtil
       return new TreeItem<AliasTreeNode>(new AliasFolder(newFolderName), _props.getImageView(_folderImage));
    }
 
-   public static TreeItem<AliasTreeNode> createAliasNode(Alias alias)
+   public static TreeItem<AliasTreeNode> createAliasNode(AliasDecorator alias)
    {
-      return new TreeItem<AliasTreeNode>(alias, _props.getImageView(_aliasImage));
+      return new TreeItem<>(alias, _props.getImageView(_aliasImage));
    }
 
-   public static Alias cloneAlias(Alias alias)
+   public static AliasDecorator cloneAlias(AliasDecorator aliasDecorator)
    {
-      alias = SerializationUtils.clone(alias);
-      alias.initAfterClone();
-      return alias;
+      AliasDecorator ret = aliasDecorator.copy();
+
+      return ret;
    }
 
    public static void sortChildren(TreeItem<AliasTreeNode> parent)
