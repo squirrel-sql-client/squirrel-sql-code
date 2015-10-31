@@ -511,6 +511,14 @@ public class ActionCollection
 
       add(new RenameSessionAction(_app));
       add(new RerunCurrentSQLResultTabAction(_app));
+
+		add(new InQuotesAction(_app));
+		add(new RemoveQuotesAction(_app));
+		add(new ConvertToStringBufferAction(_app));
+		add(new EscapeDateAction(_app));
+		add(new CutSqlAction(_app));
+		add(new CopySqlAction(_app));
+		add(new RemoveNewLinesAction(_app));
 	}
 
 }

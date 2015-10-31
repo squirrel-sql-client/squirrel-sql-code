@@ -6,7 +6,11 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
-Udated Polish translation. Thanks to Begina Felicysym.
+New global preference "In quotes functions should copy quoted SQLs to clipboard", see menu File --> Global Preferences --> Tab "SQL" --> Section "General"
+  Note: With this change the "Edit Extras"-Plugin was removed. All its functions are now part of SQuirreL's core. The change doesn't effect the
+  usage of the functions involved in the change. SQuirreL will not load the "Edit Extras"-Plugin anymore.
+
+Updated Polish translation. Thanks to Begina Felicysym.
 
 Syntax plugin: Last five find strings are now saved and can be selected from the drop down of the find and replace dialog.
 

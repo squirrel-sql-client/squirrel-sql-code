@@ -129,6 +129,13 @@ public class SQLPanelAPI implements ISQLPanelAPI
          _toolsPopupController.addAction("viewinobjecttree", ac.get(ViewObjectAtCursorInObjectTreeAction.class));
       }
 
+      _toolsPopupController.addAction("quote", ac.get(InQuotesAction.class));
+      _toolsPopupController.addAction("unquote", ac.get(RemoveQuotesAction.class));
+      _toolsPopupController.addAction("quotesb", ac.get(ConvertToStringBufferAction.class));
+      _toolsPopupController.addAction("date", ac.get(EscapeDateAction.class));
+      _toolsPopupController.addAction("sqlcut", ac.get(CutSqlAction.class));
+      _toolsPopupController.addAction("sqlcopy", ac.get(CopySqlAction.class));
+      _toolsPopupController.addAction("remnewlines", ac.get(RemoveNewLinesAction.class));
    }
 
 
@@ -138,20 +145,42 @@ public class SQLPanelAPI implements ISQLPanelAPI
       SquirrelResources resources = getSession().getApplication().getResources();
 
 
-      Action toolsPopupAction = _panel.getSession().getApplication().getActionCollection().get(ToolsPopupAction.class);
+      ActionCollection ac = _panel.getSession().getApplication().getActionCollection();
+
+      Action toolsPopupAction = ac.get(ToolsPopupAction.class);
       item = getSQLEntryPanel().addToSQLEntryAreaMenu(toolsPopupAction);
       resources.configureMenuItem(toolsPopupAction, item);
 
       if(_panel.isInMainSessionWindow())
       {
-         Action vioAction = _panel.getSession().getApplication().getActionCollection().get(ViewObjectAtCursorInObjectTreeAction.class);
+         Action vioAction = ac.get(ViewObjectAtCursorInObjectTreeAction.class);
          item = getSQLEntryPanel().addToSQLEntryAreaMenu(vioAction);
          resources.configureMenuItem(vioAction, item);
       }
 
-      Action formatSqlAction = _panel.getSession().getApplication().getActionCollection().get(FormatSQLAction.class);
+      Action formatSqlAction = ac.get(FormatSQLAction.class);
       item = getSQLEntryPanel().addToSQLEntryAreaMenu(formatSqlAction);
       resources.configureMenuItem(formatSqlAction, item);
+
+
+      getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(InQuotesAction.class));
+      getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(RemoveQuotesAction.class));
+      getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(ConvertToStringBufferAction.class));
+
+      JMenuItem mnu;
+      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(RemoveNewLinesAction.class));
+      resources.configureMenuItem(ac.get(RemoveNewLinesAction.class), mnu);
+
+      getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(EscapeDateAction.class));
+
+      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(CutSqlAction.class));
+      resources.configureMenuItem(ac.get(CutSqlAction.class), mnu);
+
+      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(CopySqlAction.class));
+      resources.configureMenuItem(ac.get(CopySqlAction.class), mnu);
+
+
+
    }
 
 

@@ -63,6 +63,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 							"setLoginTimeout"),
 						new PropertyDescriptor(LARGE_SCRIPT_STMT_COUNT, SquirrelPreferences.class,
 							"getLargeScriptStmtCount", "setLargeScriptStmtCount"),
+						new PropertyDescriptor(COPY_QUOTED_SQLS_TO_CLIP, SquirrelPreferences.class,
+							"isCopyQuotedSqlsToClip", "setCopyQuotedSqlsToClip"),
 						new PropertyDescriptor(JDBC_DEBUG_TYPE, SquirrelPreferences.class, "getJdbcDebugType",
 							"setJdbcDebugType"),
 						new PropertyDescriptor(SHOW_MAIN_STATUS_BAR, SquirrelPreferences.class,

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 
 /*
  * This program is free software; you can redistribute it and/or

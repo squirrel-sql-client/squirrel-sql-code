@@ -82,13 +82,10 @@
 		</pack>
 
 		<pack name="Standard" required="no" depends="Base" installGroups="StandardPlugins">
-			<description>Standard Plugins: Code completion, Edit extras, Graph, Look &amp; Feel, SQL Script, Syntax, DB Copy, DB Diff, Refactoring</description>
+			<description>Standard Plugins: Code completion, Graph, Look &amp; Feel, SQL Script, Syntax, DB Copy, DB Diff, Refactoring</description>
 
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/codecompletion.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/codecompletion" />
-
-			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/editextras.jar" />
-			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/editextras" />
 
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/graph.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/graph" />

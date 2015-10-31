@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 /*
  * Copyright (C) 2003 Gerd Wagner
  *
@@ -16,6 +16,7 @@ package net.sourceforge.squirrel_sql.plugins.editextras;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -27,37 +28,39 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+
 /**
  * This action will remove &quot;quote&quot; from an SQL string.
  *
- * @author  Gerd Wagner
+ * @author Gerd Wagner
  */
-class RemoveQuotesAction extends SquirrelAction
-					implements ISQLPanelAction
+public class RemoveQuotesAction extends SquirrelAction
+      implements ISQLPanelAction
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(RemoveQuotesAction.class);
+   private static final StringManager s_stringMgr =
+         StringManagerFactory.getStringManager(RemoveQuotesAction.class);
 
 
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(RemoveQuotesAction.class);
+   /**
+    * Logger for this class.
+    */
+   private static final ILogger s_log =
+         LoggerController.createLogger(RemoveQuotesAction.class);
 
-	/** Current session. */
-	private ISession _session;
+   /**
+    * Current session.
+    */
+   private ISession _session;
 
-	private EditExtrasPlugin _plugin;
 
-	RemoveQuotesAction(IApplication app, EditExtrasPlugin plugin)
-	{
-		super(app, plugin.getResources());
-		_plugin = plugin;
-	}
+   public RemoveQuotesAction(IApplication app)
+   {
+      super(app);
+   }
 
    public void setSQLPanel(ISQLPanelAPI panel)
    {
-      if(null != panel)
+      if (null != panel)
       {
          _session = panel.getSession();
       }
@@ -69,24 +72,24 @@ class RemoveQuotesAction extends SquirrelAction
    }
 
 
-	public void actionPerformed(ActionEvent evt)
-	{
-		if (_session != null)
-		{
-			try
-			{
-				//new RemoveQuotesCommand(_session.getSQLPanelAPI(_plugin)).execute();
-				new RemoveQuotesCommand(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin)).execute();
-			}
-			catch (Throwable ex)
-			{
-				// i18n[editextras.errorRemoveQuotes=Error processing Remove Quotes SQL command: {0}]
-				final String msg = s_stringMgr.getString("editextras.errorRemoveQuotes", ex);
+   public void actionPerformed(ActionEvent evt)
+   {
+      if (_session != null)
+      {
+         try
+         {
+            //new RemoveQuotesCommand(_session.getSQLPanelAPI(_plugin)).execute();
+            new RemoveQuotesCommand(FrameWorkAcessor.getSQLPanelAPI(_session)).execute();
+         }
+         catch (Throwable ex)
+         {
+            // i18n[editextras.errorRemoveQuotes=Error processing Remove Quotes SQL command: {0}]
+            final String msg = s_stringMgr.getString("editextras.errorRemoveQuotes", ex);
 
-				_session.showErrorMessage(msg);
-				s_log.error(msg, ex);
-			}
-		}
-	}
+            _session.showErrorMessage(msg);
+            s_log.error(msg, ex);
+         }
+      }
+   }
 
 }

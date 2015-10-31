@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 
 public interface EscapeDateListener
 {

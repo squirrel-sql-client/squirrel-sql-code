@@ -49,7 +49,7 @@ import java.util.Iterator;
 @SuppressWarnings("serial")
 public class SquirrelPreferences implements Serializable
 {
-   public interface IPropertyNames
+	public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
       String CONFIRM_SESSION_CLOSE = "confirmSessionClose";
@@ -57,6 +57,7 @@ public class SquirrelPreferences implements Serializable
       String JDBC_DEBUG_TYPE = "jdbcDebugtype";
       String LOGIN_TIMEOUT = "loginTimeout";
       String LARGE_SCRIPT_STMT_COUNT = "largeScriptStmtCount";
+      String COPY_QUOTED_SQLS_TO_CLIP = "copyQuotedSqlsToClip";
       String MAIN_FRAME_STATE = "mainFrameWindowState";
       String MAXIMIMIZE_SESSION_SHEET_ON_OPEN = "maximizeSessionSheetOnOpen";
       String NEW_SESSION_VIEW = "newSessionView";
@@ -149,8 +150,10 @@ public class SquirrelPreferences implements Serializable
     /** How many statements before we should consider using UI optimizations for
      *  large script execution
      */
-    private int _largeScriptStmtCount = 200;
-    
+   private int _largeScriptStmtCount = 200;
+
+	private boolean _copyQuotedSqlsToClip;
+
 	/** The View to start when a new session is created. */
 	// JASON: What are its valid values?
 	private String _newSessionView;
@@ -1188,4 +1191,18 @@ public class SquirrelPreferences implements Serializable
 		return _useShortSessionTitle;
 	}
 
+	public boolean getCopyQuotedSqlsToClip()
+	{
+		return _copyQuotedSqlsToClip;
+	}
+
+	public boolean isCopyQuotedSqlsToClip()
+	{
+		return _copyQuotedSqlsToClip;
+	}
+
+	public void setCopyQuotedSqlsToClip(boolean copyQuotedSqlsToClip)
+	{
+		_copyQuotedSqlsToClip = copyQuotedSqlsToClip;
+	}
 }

@@ -1,10 +1,8 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 
 import java.awt.event.ActionEvent;
@@ -12,13 +10,13 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 
 
-public class CopySqlAction extends SquirrelAction implements ISQLPanelAction
+public class CutSqlAction extends SquirrelAction implements ISQLPanelAction
 {
 	private ISQLPanelAPI _panel;
 
-	public CopySqlAction(IApplication app, net.sourceforge.squirrel_sql.fw.util.Resources rsrc)
+	public CutSqlAction(IApplication app)
 	{
-		super(app, rsrc);
+		super(app);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -34,6 +32,11 @@ public class CopySqlAction extends SquirrelAction implements ISQLPanelAction
 
 		StringSelection contents = new StringSelection(sqlToBeExecuted);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, contents);
+
+		_panel.getSQLEntryPanel().setSelectionStart(bounds[0]);
+		_panel.getSQLEntryPanel().setSelectionEnd(bounds[1]);
+		_panel.getSQLEntryPanel().replaceSelection("");
+		
 	}
 
 	public void setSQLPanel(ISQLPanelAPI panel)

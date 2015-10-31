@@ -134,7 +134,6 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="codecompletion"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="dbcopy"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="dbdiff"/></antcall>
-        <antcall target="doCompilePlugin"><param name="pluginName" value="editextras"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="graph"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="laf"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="refactoring"/></antcall>
@@ -148,7 +147,6 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="codecompletion"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="dbcopy"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="dbdiff"/></antcall>
-        <antcall target="doCompilePlugin"><param name="pluginName" value="editextras"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="graph"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="laf"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="refactoring"/></antcall>

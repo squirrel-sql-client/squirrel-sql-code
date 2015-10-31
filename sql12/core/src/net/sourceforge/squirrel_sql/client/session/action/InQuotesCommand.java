@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 /*
  * Copyright (C) 2003 Gerd Wagner
  *
@@ -22,31 +22,39 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
-import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 
 /**
- * This command will remove &quot;quotes&quot; from an SQL string.
+ * This command will &quot;quote&quot; an SQL string.
  *
  * @author  Gerd Wagner
  */
-class RemoveQuotesCommand implements ICommand
+class InQuotesCommand implements ICommand
 {
 	private final ISQLPanelAPI _api;
+   private boolean _sbAppend;
 
-	RemoveQuotesCommand(ISQLPanelAPI api)
+   InQuotesCommand(ISQLPanelAPI api, boolean sbAppend)
 	{
 		super();
 		_api = api;
-	}
+      _sbAppend = sbAppend;
+   }
 
 	public void execute() throws BaseException
 	{
       ISQLEntryPanel entryPanel = _api.getSQLEntryPanel();
 
-      unquoteSQL(entryPanel);
+      quoteSQL(entryPanel, _sbAppend, _api.getSession().getApplication().getSquirrelPreferences().isCopyQuotedSqlsToClip());
 	}
 
-   static void unquoteSQL(ISQLEntryPanel entryPanel)
+   public static void quoteSQL(ISQLEntryPanel entryPanel, boolean sbAppend)
+   {
+      quoteSQL(entryPanel, sbAppend, false);
+   }
+
+   public static void quoteSQL(ISQLEntryPanel entryPanel, boolean sbAppend, boolean copyToCLip)
    {
       int[] bounds = entryPanel.getBoundsOfSQLToBeExecuted();
 
@@ -55,18 +63,24 @@ class RemoveQuotesCommand implements ICommand
          return;
       }
 
-      String textToUnquote = entryPanel.getSQLToBeExecuted();
+      String textToQuote = entryPanel.getSQLToBeExecuted();
 
-      if (null == textToUnquote)
+      if (null == textToQuote)
       {
          return;
       }
 
-      String unquotedText = Utilities.unquoteText(textToUnquote);
+      String quotedText = EditExtrasUtilities.quoteText(textToQuote, sbAppend);
 
       entryPanel.setSelectionStart(bounds[0]);
       entryPanel.setSelectionEnd(bounds[1]);
-      entryPanel.replaceSelection(unquotedText);
-   }
+      entryPanel.replaceSelection(quotedText);
 
+      if (copyToCLip)
+      {
+         StringSelection ss = new StringSelection(quotedText);
+         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+      }
+
+   }
 }

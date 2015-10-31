@@ -26,7 +26,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
-import net.sourceforge.squirrel_sql.client.gui.mainframe.IHasJDesktopPane;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.SystemProperties;
@@ -35,7 +34,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.*;
@@ -324,7 +322,17 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, SelectSqlAction.class, menu);
 		menu.addSeparator();
       addToMenu(rsrc, FormatSQLAction.class, menu);
-      menu.addSeparator();
+
+		addToMenu(rsrc, InQuotesAction.class, menu);
+		addToMenu(rsrc, RemoveQuotesAction.class, menu);
+		addToMenu(rsrc, ConvertToStringBufferAction.class, menu);
+		addToMenu(rsrc, EscapeDateAction.class, menu);
+		addToMenu(rsrc, CutSqlAction.class, menu);
+		addToMenu(rsrc, CopySqlAction.class, menu);
+		addToMenu(rsrc, RemoveNewLinesAction.class, menu);
+
+
+		menu.addSeparator();
 		addToMenu(rsrc, EditWhereColsAction.class, menu);
 		menu.addSeparator();
       addToMenu(rsrc, NewSQLWorksheetAction.class, menu);

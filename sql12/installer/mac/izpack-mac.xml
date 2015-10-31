@@ -117,12 +117,6 @@
 				src="output/dist/plugins/codecompletion.jar" />
 			<file
 				targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
-				src="output/dist/plugins/editextras" />
-			<file
-				targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
-				src="output/dist/plugins/editextras.jar" />
-			<file
-				targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
 				src="output/dist/plugins/graph" />
 			<file
 				targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
