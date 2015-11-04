@@ -7,6 +7,7 @@ public class Settings
    private int _limitRowsDefault = 100;
    private String _statementSeparator = "GO";
    private int _resultTabsLimit = 10;
+   private boolean _copyAliasProperties;
 
    public boolean isMultibleLinesInCells()
    {
@@ -56,5 +57,15 @@ public class Settings
    public void setResultTabsLimit(int resultTabsLimit)
    {
       _resultTabsLimit = resultTabsLimit;
+   }
+
+   public boolean isCopyAliasProperties()
+   {
+      return _copyAliasProperties;
+   }
+
+   public void setCopyAliasProperties(boolean copyAliasProperties)
+   {
+      _copyAliasProperties = copyAliasProperties;
    }
 }

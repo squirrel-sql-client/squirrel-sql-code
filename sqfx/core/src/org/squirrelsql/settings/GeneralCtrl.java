@@ -145,6 +145,8 @@ public class GeneralCtrl implements SettingsTabController
          settings.setStatementSeparator(_generalView.txtStatementSeparator.getText().trim());
       }
 
+      settings.setCopyAliasProperties(_generalView.chkCopyAliasProperties.isSelected());
+
 
       AppState.get().getSettingsManager().writeSettings();
    }
@@ -172,6 +174,8 @@ public class GeneralCtrl implements SettingsTabController
 
       _generalView.txtStatementSeparator.setText("" + settings.getStatementSeparator());
       _generalView.txtResultTabsLimit.setText("" + settings.getResultTabsLimit());
+
+      _generalView.chkCopyAliasProperties.setSelected(settings.isCopyAliasProperties());
 
       updateUi();
    }

@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: New checkbox in settings "When Aliases are copied Alias properties should be copied too", see menu File --> Settings --> Tab General.
+
 Bug fix: When a connection test within an Alias dialog failed the error message dialog was hidden behind the Alias dialog.
 
 Feature: Delete rows right mouse menu editable in SQL results:

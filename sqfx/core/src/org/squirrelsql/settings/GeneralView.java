@@ -19,4 +19,6 @@ public class GeneralView
    @FXML TextField txtLimitRowsDefault;
    @FXML Button btnSaveStandardProperties;
    @FXML TextField txtResultTabsLimit;
+   @FXML CheckBox chkCopyAliasProperties;
+
 }

@@ -1,6 +1,7 @@
 package org.squirrelsql.aliases;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.squirrelsql.AppState;
 import org.squirrelsql.services.Dao;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
@@ -52,7 +53,7 @@ public class AliasDecorator implements AliasTreeNode
          _aliasPropertiesDecorator = getAliasPropertiesDecorator();
       }
 
-      if(null != _aliasPropertiesDecorator)
+      if(AppState.get().getSettingsManager().getSettings().isCopyAliasProperties() && null != _aliasPropertiesDecorator)
       {
          MessageHandler mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
          I18n i18n = new I18n(getClass());
