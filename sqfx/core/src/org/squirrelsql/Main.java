@@ -29,63 +29,71 @@ public class Main extends Application
    public void start(Stage primaryStage) throws Exception
    {
 
-      SquirrelSplashScreen squirrelSplashScreen = new SquirrelSplashScreen(5);
+      try
+      {
+         SquirrelSplashScreen squirrelSplashScreen = new SquirrelSplashScreen(5);
 
-      squirrelSplashScreen.indicateNewTask("Initializing exception handling ...");
-      ExceptionHandler.initHandling();
-
-
-      AppState.init(primaryStage, getParameters());
-
-      primaryStage.setTitle(i18n.t("mainWin.title"));
-
-      DockPaneChanel dockPaneChanel = new DockPaneChanel();
-
-      _splitController = new SplitController(dockPaneChanel);
+         squirrelSplashScreen.indicateNewTask("Initializing exception handling ...");
+         ExceptionHandler.initHandling();
 
 
+         AppState.init(primaryStage, getParameters());
 
-      squirrelSplashScreen.indicateNewTask("Creating application window ...");
-      BorderPane borderPane = new BorderPane();
-      primaryStage.setScene(new Scene(borderPane));
+         primaryStage.setTitle(i18n.t("mainWin.title"));
 
-      borderPane.setCenter(_splitController.getNode());
+         DockPaneChanel dockPaneChanel = new DockPaneChanel();
 
-
-
-      squirrelSplashScreen.indicateNewTask("Loading drivers and aliases ...");
-      DockButtonsCtrl dockButtonsCtrl = new DockButtonsCtrl(dockPaneChanel);
-      Node dockButtons = dockButtonsCtrl.getNode();
+         _splitController = new SplitController(dockPaneChanel);
 
 
-      borderPane.setLeft(dockButtons);
+         squirrelSplashScreen.indicateNewTask("Creating application window ...");
+         BorderPane borderPane = new BorderPane();
+         primaryStage.setScene(new Scene(borderPane));
 
-      borderPane.setBottom(AppState.get().getStatusBarCtrl().getNode());
-
-      borderPane.setTop(createMenuBar(primaryStage));
-
-      squirrelSplashScreen.indicateNewTask("Configuring application window ...");
+         borderPane.setCenter(_splitController.getNode());
 
 
-      final StageDimensionSaver dimensionSaver = new StageDimensionSaver("main", primaryStage, pref, 1000d, 800d, null);
-
-      adjustMessageSplit();
-
-
-
-      primaryStage.setOnCloseRequest(windowEvent -> onClose(dimensionSaver));
+         squirrelSplashScreen.indicateNewTask("Loading drivers and aliases ...");
+         DockButtonsCtrl dockButtonsCtrl = new DockButtonsCtrl(dockPaneChanel);
+         Node dockButtons = dockButtonsCtrl.getNode();
 
 
-      primaryStage.getIcons().add(new Props(getClass()).getImage("acorn.png"));
+         borderPane.setLeft(dockButtons);
+
+         borderPane.setBottom(AppState.get().getStatusBarCtrl().getNode());
+
+         borderPane.setTop(createMenuBar(primaryStage));
+
+         squirrelSplashScreen.indicateNewTask("Configuring application window ...");
 
 
-      squirrelSplashScreen.indicateNewTask("Opening application window ...");
+         final StageDimensionSaver dimensionSaver = new StageDimensionSaver("main", primaryStage, pref, 1000d, 800d, null);
 
-      primaryStage.show();
+         adjustMessageSplit();
 
-      Platform.runLater(() -> AppState.get().doAfterBootstrap());
-      Platform.runLater(() -> primaryStage.toFront());
-      squirrelSplashScreen.close();
+
+         primaryStage.setOnCloseRequest(windowEvent -> onClose(dimensionSaver));
+
+
+         primaryStage.getIcons().add(new Props(getClass()).getImage("acorn.png"));
+
+
+         squirrelSplashScreen.indicateNewTask("Opening application window ...");
+
+         primaryStage.show();
+
+         Platform.runLater(() -> AppState.get().doAfterBootstrap());
+         Platform.runLater(() -> primaryStage.toFront());
+         squirrelSplashScreen.close();
+      }
+      catch (Throwable e)
+      {
+         // We have seen exceptions here that where not delegated to the uncaught exception handler.
+         // That's why this code is here.
+         ExceptionHandler.handle(e);
+
+         Platform.exit();
+      }
 
    }
 
