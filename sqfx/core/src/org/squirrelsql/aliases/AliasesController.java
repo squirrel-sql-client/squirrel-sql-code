@@ -13,10 +13,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import org.squirrelsql.AppState;
-import org.squirrelsql.ApplicationCloseListener;
-import org.squirrelsql.DockPaneChanel;
-import org.squirrelsql.Props;
+import org.squirrelsql.*;
 import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
 import org.squirrelsql.aliases.channel.AliasTreeNodeMoveListener;
 import org.squirrelsql.aliases.dbconnector.DBConnector;
@@ -96,8 +93,7 @@ public class AliasesController
       //
       //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      AppState.get().addApplicationCloseListener(this::onApplicationClosing, ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME);
-
+      AppState.get().addSaveSettingsListener(this::onSaveSettings);
    }
 
    private void onTreeItemDoubleClicked(TreeItem<AliasTreeNode> selectedItem)
@@ -140,7 +136,7 @@ public class AliasesController
    }
 
 
-   private void onApplicationClosing()
+   private void onSaveSettings()
    {
       ObservableList<TreeItem<AliasTreeNode>> items = _treeView.getRoot().getChildren();
 

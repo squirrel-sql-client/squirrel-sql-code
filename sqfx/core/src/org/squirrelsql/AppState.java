@@ -20,6 +20,7 @@ public class AppState
    private MessagePanelCtrl _messagePanelCtrl = new MessagePanelCtrl();
 
    private List<CloseListenerWithFireTime> _applicationCloseListeners = new ArrayList<>();
+   private List<SaveSettingsListener> _saveSettingsListeners = new ArrayList<>();
    private SessionManager _sessionManager = new SessionManager();
    private ActionManager _actionManager = new ActionManager(_sessionManager);
    private SqlHistoryManager _sqlHistoryManager = new SqlHistoryManager();
@@ -109,6 +110,17 @@ public class AppState
       _fireApplicationClosing(ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME);
    }
 
+   public void fireSaveSettings()
+   {
+      SaveSettingsListener[] clone = _saveSettingsListeners.toArray(new SaveSettingsListener[_saveSettingsListeners.size()]);
+
+      for (SaveSettingsListener saveSettingsListener : clone)
+      {
+         saveSettingsListener.saveSettings();
+      }
+   }
+
+
    private void _fireApplicationClosing(ApplicationCloseListener.FireTime fireTime)
    {
       CloseListenerWithFireTime[] clone = _applicationCloseListeners.toArray(new CloseListenerWithFireTime[_applicationCloseListeners.size()]);
@@ -163,5 +175,11 @@ public class AppState
    public I18nCache getI18nCache()
    {
       return _i18nCache;
+   }
+
+   public void addSaveSettingsListener(SaveSettingsListener saveSettingsListener)
+   {
+      _saveSettingsListeners.remove(saveSettingsListener);
+      _saveSettingsListeners.add(saveSettingsListener);
    }
 }

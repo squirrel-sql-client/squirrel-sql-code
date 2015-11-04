@@ -70,7 +70,7 @@ public class DriversManager
       Dao.writeDrivers(_allDrivers);
    }
 
-   public void applicationClosing()
+   public void saveDrivers()
    {
       Dao.writeDrivers(_allDrivers);
    }

@@ -21,7 +21,7 @@ public class SqlHistoryManager
    private void init()
    {
       _sqlHistoryEntries = Dao.loadSqlHistory();
-      AppState.get().addApplicationCloseListener(this::saveHistoy, ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME);
+      AppState.get().addSaveSettingsListener(this::saveHistoy);
    }
 
    public void saveHistoy()

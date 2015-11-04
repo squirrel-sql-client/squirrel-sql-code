@@ -1,6 +1,9 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: New menu item to save all settings immediately, see menu File --> "Save all settings"
+         Note: Settings are autmatically saved on application closing.
+
 Feature: New checkbox in settings "When Aliases are copied Alias properties should be copied too", see menu File --> Settings --> Tab General.
 
 Bug fix: When a connection test within an Alias dialog failed the error message dialog was hidden behind the Alias dialog.

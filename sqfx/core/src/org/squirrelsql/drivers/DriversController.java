@@ -45,14 +45,14 @@ public class DriversController
          _lstDrivers.getSelectionModel().select(0);
       }
 
-      AppState.get().addApplicationCloseListener(this::onApplicationClosing, ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME);
+      AppState.get().addSaveSettingsListener(this::onSaveSettings);
 
 
    }
 
-   private void onApplicationClosing()
+   private void onSaveSettings()
    {
-      _driversManager.applicationClosing();
+      _driversManager.saveDrivers();
    }
 
    private BorderPane createToolBar()

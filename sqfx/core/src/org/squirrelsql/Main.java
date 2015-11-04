@@ -104,6 +104,10 @@ public class Main extends Application
       file.getItems().add(showSettings);
       showSettings.setOnAction(e -> new SettingsDialogController());
 
+      MenuItem saveSettings = new MenuItem(i18n.t("main.save.settings"));
+      file.getItems().add(saveSettings);
+      saveSettings.setOnAction(e -> saveSettings());
+
       MenuItem exit = new MenuItem(i18n.t("main.menu.exit"));
       file.getItems().add(exit);
       exit.setOnAction(e -> onExit(primaryStage));
@@ -142,13 +146,18 @@ public class Main extends Application
 
    private void onClose(StageDimensionSaver dimesionSaver)
    {
+      saveSettings();
       AppState.get().fireApplicationClosing();
       _splitController.close();
       dimesionSaver.save(); // Needed because we are going to exit
-      AppState.get().getPrefImpl().flush();
-
       Platform.exit();
       System.exit(0);
+   }
+
+   private void saveSettings()
+   {
+      AppState.get().fireSaveSettings();
+      AppState.get().getPrefImpl().flush();
    }
 
 

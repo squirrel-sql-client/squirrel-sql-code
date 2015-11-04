@@ -26,7 +26,7 @@ public class PrefImpl
 
          _timeline =  new Timeline(new KeyFrame(Duration.millis(500), ae -> doWrite()));
 
-         AppState.get().addApplicationCloseListener(() -> doWrite() , ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME);
+         AppState.get().addSaveSettingsListener(() -> doWrite());
       }
    }
 
