@@ -1,5 +1,6 @@
 package org.squirrelsql.services;
 
+import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -104,7 +105,8 @@ public class Dao
          }
 
          ObjectMapper mapper = new ObjectMapper();
-         T ret = mapper.readValue(file, SimpleType.construct(defaultObject.getClass()));
+         InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), JsonEncoding.UTF8.getJavaName());
+         T ret = mapper.readValue(inputStreamReader, SimpleType.construct(defaultObject.getClass()));
 
          return ret;
       }
@@ -127,7 +129,8 @@ public class Dao
          }
 
          ObjectMapper mapper = new ObjectMapper();
-         List<T> drivers = mapper.readValue(file, CollectionType.construct(List.class, SimpleType.construct(objectType)));
+         InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), JsonEncoding.UTF8.getJavaName());
+         List<T> drivers = mapper.readValue(inputStreamReader, CollectionType.construct(List.class, SimpleType.construct(objectType)));
 
          return drivers;
       }
@@ -146,9 +149,9 @@ public class Dao
          ObjectWriter objectWriter = mapper.writerWithDefaultPrettyPrinter();
 
          File file = new File(AppState.get().getUserDir(), fileName);
-         FileWriter fileWriter = new FileWriter(file);
-         objectWriter.writeValue(fileWriter, toWrite);
-         fileWriter.close();
+         FileOutputStream fos = new FileOutputStream(file);
+         objectWriter.writeValue(fos, toWrite);
+         fos.close();
       }
       catch (IOException e)
       {

@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Fixed encoding bug that made SQuirreL FX crash during start up when for example German umlauts where used for Alias names or elsewhere.
+
 Feature: New menu item to save all settings immediately, see menu File --> "Save all settings"
          Note: Settings are autmatically saved on application closing.
 
