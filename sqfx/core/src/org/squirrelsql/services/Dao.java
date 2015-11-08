@@ -95,19 +95,19 @@ public class Dao
 
    private static<T> T loadObject(String fileName, T defaultObject)
    {
-      try
-      {
-         File file = new File(AppState.get().getUserDir(), fileName);
+      File file = new File(AppState.get().getUserDir(), fileName);
 
-         if(false == file.exists())
-         {
-            return defaultObject;
-         }
+      if(false == file.exists())
+      {
+         return defaultObject;
+      }
+
+      try (FileInputStream is = new FileInputStream(file);
+           InputStreamReader isr = new InputStreamReader(is, JsonEncoding.UTF8.getJavaName());)
+      {
 
          ObjectMapper mapper = new ObjectMapper();
-         InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), JsonEncoding.UTF8.getJavaName());
-         T ret = mapper.readValue(inputStreamReader, SimpleType.construct(defaultObject.getClass()));
-
+         T ret = mapper.readValue(isr, SimpleType.construct(defaultObject.getClass()));
          return ret;
       }
       catch (IOException e)
@@ -119,19 +119,18 @@ public class Dao
 
    private static<T> List<T> loadObjectArray(String fileName, Class<T> objectType)
    {
-      try
+      File file = new File(AppState.get().getUserDir(), fileName);
+
+      if(false == file.exists())
       {
-         File file = new File(AppState.get().getUserDir(), fileName);
+         return new ArrayList<>();
+      }
 
-         if(false == file.exists())
-         {
-            return new ArrayList<>();
-         }
-
+      try(FileInputStream is = new FileInputStream(file);
+          InputStreamReader isr = new InputStreamReader(is, JsonEncoding.UTF8.getJavaName()))
+      {
          ObjectMapper mapper = new ObjectMapper();
-         InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), JsonEncoding.UTF8.getJavaName());
-         List<T> drivers = mapper.readValue(inputStreamReader, CollectionType.construct(List.class, SimpleType.construct(objectType)));
-
+         List<T> drivers = mapper.readValue(isr, CollectionType.construct(List.class, SimpleType.construct(objectType)));
          return drivers;
       }
       catch (IOException e)
@@ -142,16 +141,18 @@ public class Dao
 
    private static void writeObject(Object toWrite, String fileName)
    {
-      try
-      {
+      File file = new File(AppState.get().getUserDir(), fileName);
 
+      try (FileOutputStream fos = new FileOutputStream(file))
+      {
          ObjectMapper mapper = new ObjectMapper();
          ObjectWriter objectWriter = mapper.writerWithDefaultPrettyPrinter();
 
-         File file = new File(AppState.get().getUserDir(), fileName);
-         FileOutputStream fos = new FileOutputStream(file);
+         // This version of objectWriter.writeValue() ensures,
+         // that objects are written in JsonEncoding.UTF8
+         // and thus that there won't be encoding problems
+         // that makes the loadObjects methods crash.
          objectWriter.writeValue(fos, toWrite);
-         fos.close();
       }
       catch (IOException e)
       {

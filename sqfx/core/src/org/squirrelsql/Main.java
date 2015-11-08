@@ -10,9 +10,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.Pref;
-import org.squirrelsql.services.StageDimensionSaver;
+import org.squirrelsql.services.*;
 import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.settings.SettingsDialogController;
 import org.squirrelsql.splash.SquirrelSplashScreen;
@@ -166,6 +164,7 @@ public class Main extends Application
    {
       AppState.get().fireSaveSettings();
       AppState.get().getPrefImpl().flush();
+      new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL).info(new I18n(getClass()).t("main.save.settings.complete"));
    }
 
 
