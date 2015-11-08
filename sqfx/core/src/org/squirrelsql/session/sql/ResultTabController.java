@@ -3,30 +3,22 @@ package org.squirrelsql.session.sql;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import org.squirrelsql.services.RightMouseMenuHandler;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.StdActionCfg;
-import org.squirrelsql.session.sql.copysqlpart.InStatCreator;
-import org.squirrelsql.session.sql.copysqlpart.InsertStatCreator;
-import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
-import org.squirrelsql.session.sql.tablesearch.SearchPanelVisibleListener;
 import org.squirrelsql.session.sql.tablesearch.TableSearchCtrl;
 import org.squirrelsql.table.*;
-import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
-import org.squirrelsql.table.tableexport.*;
 
 public class ResultTabController
 {
    private I18n _i18n = new I18n(getClass());
 
    private final Tab _containerTab;
-   private EditButtonCtrl _editButtonCtrl;
+   private TableDecorator _sqlResultTableDecorator;
    private Session _session;
-   private ExtendedTableSelectionHandler _extendedTableSelectionHandler;
    private TableSearchCtrl _tableSearchCtrl;
 
    public ResultTabController(Session session, SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
@@ -68,8 +60,9 @@ public class ResultTabController
       _tableSearchCtrl = new TableSearchCtrl(sqlResult.getResultTableLoader());
       headerFxmlHelper.getView().resultToolBar.getItems().add(_tableSearchCtrl.getSearchButton());
 
-      _editButtonCtrl = new EditButtonCtrl(_session, sql);
-      headerFxmlHelper.getView().resultToolBar.getItems().add(_editButtonCtrl.getEditButton());
+
+      _sqlResultTableDecorator = new TableDecorator(_session, sql);
+      headerFxmlHelper.getView().resultToolBar.getItems().add(_sqlResultTableDecorator.getEditButton());
 
       BorderPane bp = new BorderPane();
 
@@ -122,13 +115,9 @@ public class ResultTabController
    private Tab createResultMetaDataTab(SQLResult sqlResult)
    {
       TableLoader tableLoader = sqlResult.getResultMetaDataTableLoader();
+
       Tab outputTab = new Tab(_i18n.t("outputtab.result.metadata"));
-
-      TableView tv = new TableView();
-
-      tableLoader.load(tv);
-
-      outputTab.setContent(tv);
+      outputTab.setContent(TableDecorator.decorateNonSqlEditableTable(tableLoader));
       outputTab.setClosable(false);
 
       return outputTab;
@@ -136,44 +125,13 @@ public class ResultTabController
 
    private Tab createResultsTab(SQLResult sqlResult)
    {
-      TableLoader tableLoader = sqlResult.getResultTableLoader();
+      StackPane stackPane = _sqlResultTableDecorator.decorateTable(sqlResult);
       Tab outputTab = new Tab(_i18n.t("outputtab.results"));
-
-      TableView tv = new TableView();
-
-      tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-      _extendedTableSelectionHandler = new ExtendedTableSelectionHandler(tv);
-
-      RightMouseMenuHandler sqlResultRightMouseMenuHandler = new RightMouseMenuHandler(tv);
-
-      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.Copy"), () -> CopyUtil.copyCells(_extendedTableSelectionHandler, false));
-      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyWithHeader"), () -> CopyUtil.copyCells(_extendedTableSelectionHandler, true));
-      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInStat"),() -> InStatCreator.onCopyAsInStat(_extendedTableSelectionHandler));
-      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInsertStat"),() -> InsertStatCreator.onCopyAsInsertStat(_extendedTableSelectionHandler));
-      sqlResultRightMouseMenuHandler.addSeparator();
-      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.ExportResults"),() -> new ExportResultsCtrl(tableLoader));
-
-      if (_editButtonCtrl.allowsEditing())
-      {
-         _editButtonCtrl.displayAndPrepareEditing(sqlResult, tv);
-
-         sqlResultRightMouseMenuHandler.addSeparator();
-         MenuItem mnuDeleteRows = sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.delete.selected.rows"), () -> _editButtonCtrl.deleteSelectedRows());
-
-         _editButtonCtrl.setDeleteRowsMenuItem(mnuDeleteRows);
-
-      }
-      else
-      {
-         tableLoader.load(tv);
-      }
-
-      StackPane stackPane = _extendedTableSelectionHandler.getStackPane();
       outputTab.setContent(stackPane);
       outputTab.setClosable(false);
-
       return outputTab;
    }
+
 
 
    public Tab getTab()

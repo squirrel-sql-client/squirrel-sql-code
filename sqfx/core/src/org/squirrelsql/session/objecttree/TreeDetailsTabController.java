@@ -2,6 +2,8 @@ package org.squirrelsql.session.objecttree;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.StackPane;
+import org.squirrelsql.session.sql.TableDecorator;
 import org.squirrelsql.table.TableLoader;
 
 public class TreeDetailsTabController
@@ -22,10 +24,11 @@ public class TreeDetailsTabController
    {
       if(_tab.isSelected() && false == _loaded)
       {
-         TableView tableView = new TableView();
          TableLoader tableLoader = objectTreeTableLoaderFactory.createTableLoader();
-         tableLoader.load(tableView);
-         _tab.setContent(tableView);
+
+         StackPane stackPane = TableDecorator.decorateNonSqlEditableTable(tableLoader);
+
+         _tab.setContent(stackPane);
          _loaded = true;
       }
    }

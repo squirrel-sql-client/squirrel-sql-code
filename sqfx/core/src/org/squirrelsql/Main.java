@@ -152,9 +152,19 @@ public class Main extends Application
 
    private void onClose(StageDimensionSaver dimesionSaver)
    {
-      saveSettings();
       AppState.get().fireApplicationClosing();
       _splitController.close();
+
+      //////////////////////////////////////////////////////////////////////////////////////////////////
+      // Done after fire closing because during fire close open sessions add their new SQL history
+      // entries. These have to be saved too.
+      //
+      // Whenever we run into problems with this handling please consider SQL history when the
+      // application is closed while Sessions are open
+      saveSettings();
+      //
+      ////////////////////////////////////////////////////////////////////////////////////
+
       dimesionSaver.save(); // Needed because we are going to exit
       Platform.exit();
       System.exit(0);

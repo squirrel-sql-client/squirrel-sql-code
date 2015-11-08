@@ -16,6 +16,7 @@ import javafx.concurrent.Task;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.table.ColumnHandle;
 import org.squirrelsql.table.TableLoader;
 
@@ -101,12 +102,19 @@ public class ExcelService extends Service<Void> {
 		//retVal.setCellValue("" + cellObj);
 
 
-		if (null == cellObj || null == _tableLoader.getColumnHandles().get(colNum).getResultColumnInfo())
+		ColumnInfo resultColumnInfo = _tableLoader.getColumnHandles().get(colNum).getResultColumnInfo();
+
+		if (null == cellObj || null == resultColumnInfo)
 		{
 			retVal.setCellValue(getDataXLSAsString(cellObj));
 		}
 
-		int colType = _tableLoader.getColumnHandles().get(colNum).getResultColumnInfo().getColType();
+		int colType = Types.VARCHAR;
+
+		if (null != resultColumnInfo)
+		{
+			colType = resultColumnInfo.getColType();
+		}
 
 		switch (colType)
 		{
