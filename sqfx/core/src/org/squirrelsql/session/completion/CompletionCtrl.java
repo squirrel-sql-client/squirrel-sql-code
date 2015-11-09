@@ -23,7 +23,7 @@ public class CompletionCtrl
 {
    private final Session _session;
    private final SQLTextAreaServices _sqlTextAreaServices;
-   private List<TableInfo> _currentTableInfosNextToCursor = new ArrayList<>();
+   private List<TableInfo> _currentTableInfosNextToCaret = new ArrayList<>();
    private TableAliasInfo[] _currentAliasInfos = new TableAliasInfo[0];
 
    public CompletionCtrl(Session session, SQLTextAreaServices sqlTextAreaServices)
@@ -34,9 +34,9 @@ public class CompletionCtrl
       _sqlTextAreaServices.setLexAndParseResultListener(new LexAndParseResultListener()
       {
          @Override
-         public void currentTableInfosNextToCursor(List<TableInfo> tableInfos)
+         public void currentTableInfosNextToCaret(List<TableInfo> tableInfos)
          {
-            _currentTableInfosNextToCursor = tableInfos;
+            _currentTableInfosNextToCaret = tableInfos;
          }
 
          @Override
@@ -57,13 +57,19 @@ public class CompletionCtrl
 
    private void _completeCode(boolean showPopupForSizeOne)
    {
+      ///////////////////////////////////////////////////////////////////////////////////
+      // In case just the caret was moved we refresh _currentTableInfosNextToCaret here
+      _sqlTextAreaServices.calculateTableNextToCaret();
+      //
+      ///////////////////////////////////////////////////////////////////////////////////
+
       String tokenAtCaret = _sqlTextAreaServices.getTokenTillCaret();
       String lineAtCaret = _sqlTextAreaServices.getLineTillCaret();
 
 
       CaretVicinity caretVicinity = new CaretVicinity(tokenAtCaret, lineAtCaret);
 
-      ObservableList<CompletionCandidate> completions = new Completor(_session, _currentTableInfosNextToCursor, _currentAliasInfos).getCompletions(caretVicinity);
+      ObservableList<CompletionCandidate> completions = new Completor(_session, _currentTableInfosNextToCaret, _currentAliasInfos).getCompletions(caretVicinity);
 
       if(0 == completions.size())
       {

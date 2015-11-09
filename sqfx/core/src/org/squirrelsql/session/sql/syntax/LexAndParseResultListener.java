@@ -13,7 +13,7 @@ public interface LexAndParseResultListener
     *
     * @param tableInfos more than one tables occur only if tables with equal names exist in different schemas/catalogs
     */
-   void currentTableInfosNextToCursor(List<TableInfo> tableInfos);
+   void currentTableInfosNextToCaret(List<TableInfo> tableInfos);
 
    void aliasesFound(TableAliasInfo[] aliasInfos);
 }

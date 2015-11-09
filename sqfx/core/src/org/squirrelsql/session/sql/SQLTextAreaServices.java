@@ -121,7 +121,7 @@ public class SQLTextAreaServices
       int caretPosition = _sqlTextArea.getCaretPosition();
       String sqlTextAreaText = _sqlTextArea.getText();
 
-      String sep = SyntaxConstants.CODE_AREA_LINE_SEP + SyntaxConstants.CODE_AREA_LINE_SEP;
+      String sep = SyntaxConstants.SQL_SEPARATOR;
 
       caretBounds.begin = caretPosition;
       while(0 < caretBounds.begin && false == sqlTextAreaText.substring(0, caretBounds.begin).endsWith(sep))
@@ -298,5 +298,10 @@ public class SQLTextAreaServices
    public void clear()
    {
       _sqlTextArea.clear();
+   }
+
+   public void calculateTableNextToCaret()
+   {
+      _sqlSyntaxHighlighting.calculateTableNextToCaret();
    }
 }

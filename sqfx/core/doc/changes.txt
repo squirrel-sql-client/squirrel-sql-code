@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Improved/corrected calculation of table/view closest to the caret once more. Now completion of unqualified columns works better than before.
+
 Feature: Object tree detail tables as well as SQL result meta data tables do now offer the standard right mouse menu.
 
 Bug fix: Fixed encoding bug that made SQuirreL FX crash during start up when for example German umlauts where used for Alias names or elsewhere.

@@ -12,15 +12,18 @@ public class TableNextToCursorHandler
    private LexAndParseResultListener _lexAndParseResultListener;
    private final int _caretPosition;
    private final SchemaCacheProperty _schemaCacheValue;
+   private String _completeText;
    private List<TableInfo> _tablesNextToCursor = new ArrayList<>();
 
    private int _minDistToCursor = Integer.MAX_VALUE;
+   private boolean _inSameSQL = false;
 
-   public TableNextToCursorHandler(LexAndParseResultListener lexAndParseResultListener, int caretPosition, SchemaCacheProperty schemaCacheValue)
+   public TableNextToCursorHandler(LexAndParseResultListener lexAndParseResultListener, int caretPosition, SchemaCacheProperty schemaCacheValue, String completeText)
    {
       _lexAndParseResultListener = lexAndParseResultListener;
       _caretPosition = caretPosition;
       _schemaCacheValue = schemaCacheValue;
+      _completeText = completeText;
    }
 
    public void checkToken(int lineStart, Token token)
@@ -35,18 +38,57 @@ public class TableNextToCursorHandler
          return;
       }
 
-      int distToCursor = Math.abs(lineStart + token.getOffset() - _caretPosition);
 
-      if(_minDistToCursor <= distToCursor)
+
+      if(false == checkCloser(lineStart, token))
       {
          return;
       }
 
-      _minDistToCursor = distToCursor;
-
       char[] textArray = token.getTextArray();
       _tablesNextToCursor = _schemaCacheValue.get().getTables(textArray, token.getOffset(), token.length());
 
+   }
+
+   private boolean checkCloser(int lineStart, Token token)
+   {
+      int tokenPos = lineStart + token.getOffset();
+
+      boolean currentInSameSQL = isInSameSQL(_caretPosition, tokenPos, _completeText);
+      int currentDistToCursor = Math.abs(tokenPos - _caretPosition);
+
+
+
+
+
+      if(_inSameSQL && !currentInSameSQL)
+      {
+         return false;
+      }
+      else if(!_inSameSQL && currentInSameSQL)
+      {
+         // go on
+      }
+      else // _inSameSQL == currentInSameSQL
+      {
+         if(currentDistToCursor >= _minDistToCursor)
+         {
+            return false;
+         }
+      }
+
+      _inSameSQL = currentInSameSQL;
+      _minDistToCursor = currentDistToCursor;
+
+
+      return true;
+   }
+
+   private boolean isInSameSQL(int caretPosition, int tokenPos, String completeText)
+   {
+      int indexOfSqlSeparator = completeText.substring(Math.min(caretPosition, tokenPos), Math.max(caretPosition, tokenPos)).indexOf(SyntaxConstants.SQL_SEPARATOR);
+
+      return -1 == indexOfSqlSeparator;
    }
 
    public void fireTableNextToCursor()
@@ -56,7 +98,7 @@ public class TableNextToCursorHandler
          return;
       }
 
-      _lexAndParseResultListener.currentTableInfosNextToCursor(_tablesNextToCursor);
+      _lexAndParseResultListener.currentTableInfosNextToCaret(_tablesNextToCursor);
 
    }
 }

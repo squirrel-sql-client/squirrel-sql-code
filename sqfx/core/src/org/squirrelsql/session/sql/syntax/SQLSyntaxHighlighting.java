@@ -38,11 +38,16 @@ public class SQLSyntaxHighlighting
       _errorToolTipHandler = new ErrorToolTipHandler(_sqlTextArea);
    }
 
-   private void onTextPropertyChanged(String sql)
+   private void onTextPropertyChanged(String completeText)
+   {
+      analyzeTokens(completeText);
+   }
+
+   private void analyzeTokens(String completeText)
    {
       try
       {
-         List<String> lines = getLines(sql);
+         List<String> lines = getLines(completeText);
 
          List<TokenLine> tokenlines = new ArrayList<>();
 
@@ -60,7 +65,7 @@ public class SQLSyntaxHighlighting
          StyleSpansBuilderWrapper spansBuilder = new StyleSpansBuilderWrapper();
 
 
-         TableNextToCursorHandler tableNextToCursorHandler = new TableNextToCursorHandler(_lexAndParseResultListener, _sqlTextArea.getCaretPosition(), _schemaCacheValue);
+         TableNextToCursorHandler tableNextToCursorHandler = new TableNextToCursorHandler(_lexAndParseResultListener, _sqlTextArea.getCaretPosition(), _schemaCacheValue, completeText);
 
 
          //System.out.println("----------------------------------------------------------");
@@ -93,7 +98,7 @@ public class SQLSyntaxHighlighting
             lineStart += tokenLine.getLineLength();
          }
 
-         int endLength = sql.length() - lastTokenEnd;
+         int endLength = completeText.length() - lastTokenEnd;
 
          if (0 >= endLength)
          {
@@ -171,5 +176,10 @@ public class SQLSyntaxHighlighting
    public void updateHighlighting()
    {
       onTextPropertyChanged(_sqlTextArea.getText());
+   }
+
+   public void calculateTableNextToCaret()
+   {
+      analyzeTokens(_sqlTextArea.getText());
    }
 }
