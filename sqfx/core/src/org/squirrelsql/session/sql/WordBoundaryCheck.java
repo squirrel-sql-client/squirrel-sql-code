@@ -20,7 +20,7 @@ public class WordBoundaryCheck
       return false;
    }
 
-   public static boolean isInStopAtArray(char toCheck)
+   private static boolean isInStopAtArray(char toCheck)
    {
       for (int i = 0; i < STOP_AT.length; i++)
       {
@@ -32,5 +32,10 @@ public class WordBoundaryCheck
 
       return false;
 
+   }
+
+   public static boolean isInStopAtArrayOrWhiteSpace(char c)
+   {
+      return Character.isWhitespace(c) ||  isInStopAtArray(c);
    }
 }

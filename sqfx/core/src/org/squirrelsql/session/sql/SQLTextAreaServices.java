@@ -158,7 +158,7 @@ public class SQLTextAreaServices
 
    private boolean isTokenEndChar(char c)
    {
-      return Character.isWhitespace(c) || ',' == c || '=' == c || '\'' == c;
+      return WordBoundaryCheck.isInStopAtArrayOrWhiteSpace(c);
    }
 
    public String getLineTillCaret()
