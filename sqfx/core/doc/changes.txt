@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: The "Reconnect database" button switched auto commit mode.
+
 Bug fix: Improved/corrected calculation of table/view closest to the caret once more. Now completion of unqualified columns works better than before.
 
 Feature: Object tree detail tables as well as SQL result meta data tables do now offer the standard right mouse menu.

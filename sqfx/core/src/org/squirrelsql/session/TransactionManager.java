@@ -70,6 +70,6 @@ public class TransactionManager
 
    public boolean isAutoCommit()
    {
-      return StdActionCfg.TRANSACT_TOGGLE_AUTO_COMMIT.isToggleSelected();
+      return false == StdActionCfg.TRANSACT_TOGGLE_AUTO_COMMIT.isToggleSelected();
    }
 }
