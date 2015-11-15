@@ -150,10 +150,12 @@ public class Main extends Application
       Platform.runLater(runnable);
    }
 
-   private void onClose(StageDimensionSaver dimesionSaver)
+   private void onClose(StageDimensionSaver dimensionSaver)
    {
       AppState.get().fireApplicationClosing();
       _splitController.close();
+
+      dimensionSaver.save(); // Needed because we are going to exit
 
       //////////////////////////////////////////////////////////////////////////////////////////////////
       // Done after fire closing because during fire close open sessions add their new SQL history
@@ -165,7 +167,6 @@ public class Main extends Application
       //
       ////////////////////////////////////////////////////////////////////////////////////
 
-      dimesionSaver.save(); // Needed because we are going to exit
       Platform.exit();
       System.exit(0);
    }

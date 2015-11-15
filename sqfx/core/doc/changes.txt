@@ -3,6 +3,8 @@ SQuirreL SQL FX Change Log
 
 Improvement: Code completion and abbreviations now handle boundary characters like (),=<> better.
 
+Bug fix: Application window size was not saved on application exit.
+
 Bug fix: The "Reconnect database" button switched auto commit mode.
 
 Bug fix: Improved/corrected calculation of table/view closest to the caret once more. Now completion of unqualified columns works better than before.
