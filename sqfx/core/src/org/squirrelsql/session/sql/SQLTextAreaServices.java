@@ -151,14 +151,14 @@ public class SQLTextAreaServices
    }
 
 
-   public String getTokenTillCaret()
+   public String getTokenTillCaret(char... stopsToIgnore)
    {
-      return _getCaretVicinityInfo(c -> isTokenEndChar(c)).getTokenTillCaret();
+      return _getCaretVicinityInfo(c -> isTokenEndChar(c, stopsToIgnore)).getTokenTillCaret();
    }
 
-   private boolean isTokenEndChar(char c)
+   private boolean isTokenEndChar(char c, char... stopsToIgnore)
    {
-      return WordBoundaryCheck.isInStopAtArrayOrWhiteSpace(c);
+      return WordBoundaryCheck.isInStopAtArrayOrWhiteSpace(c, stopsToIgnore);
    }
 
    public String getLineTillCaret()

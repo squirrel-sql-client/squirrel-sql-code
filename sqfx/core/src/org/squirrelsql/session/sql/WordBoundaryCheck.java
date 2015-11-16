@@ -2,7 +2,9 @@ package org.squirrelsql.session.sql;
 
 public class WordBoundaryCheck
 {
-   public static final char[] STOP_AT = new char[]{'.', '(', ')', '\'', '\n', ',', '=', '<', '>'};
+   public static final char DEFREFENCER = '.';
+
+   public static final char[] STOP_AT = new char[]{DEFREFENCER, '(', ')', '\'', '\n', ',', '=', '<', '>'};
 
    public static boolean isToStopAt(char toCheck, char former)
    {
@@ -20,8 +22,18 @@ public class WordBoundaryCheck
       return false;
    }
 
-   private static boolean isInStopAtArray(char toCheck)
+   private static boolean isInStopAtArray(char toCheck, char... stopsToIgnore)
    {
+      for (char toIgnore : stopsToIgnore)
+      {
+         if(toIgnore == toCheck)
+         {
+            return false;
+         }
+      }
+
+
+
       for (int i = 0; i < STOP_AT.length; i++)
       {
          if (toCheck == STOP_AT[i])
@@ -34,8 +46,8 @@ public class WordBoundaryCheck
 
    }
 
-   public static boolean isInStopAtArrayOrWhiteSpace(char c)
+   public static boolean isInStopAtArrayOrWhiteSpace(char c, char... stopsToIgnore)
    {
-      return Character.isWhitespace(c) ||  isInStopAtArray(c);
+      return Character.isWhitespace(c) ||  isInStopAtArray(c, stopsToIgnore);
    }
 }

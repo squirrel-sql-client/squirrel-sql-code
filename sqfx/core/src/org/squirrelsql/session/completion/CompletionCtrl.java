@@ -13,6 +13,7 @@ import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
+import org.squirrelsql.session.sql.WordBoundaryCheck;
 import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
 import org.squirrelsql.workaround.KeyMatchWA;
 
@@ -63,7 +64,7 @@ public class CompletionCtrl
       //
       ///////////////////////////////////////////////////////////////////////////////////
 
-      String tokenAtCaret = _sqlTextAreaServices.getTokenTillCaret();
+      String tokenAtCaret = _sqlTextAreaServices.getTokenTillCaret(WordBoundaryCheck.DEFREFENCER);
       String lineAtCaret = _sqlTextAreaServices.getLineTillCaret();
 
 

@@ -1,6 +1,10 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Improvement: Duplicate line (ctrl + D) now moves the caret to the duplicated line.
+
+Bug fix: Code completion didn't work right for qualified columns.
+
 Feature: If a table cell is double clicked a cell data display window opens. This window's right mouse menu now offers an entry to reformat Xml or Json strings.
 
 Improvement: Code completion and abbreviations now handle boundary characters like (),=<> better.
