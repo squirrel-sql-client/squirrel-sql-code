@@ -1,5 +1,6 @@
 package org.squirrelsql.table;
 
+import com.sun.javafx.scene.control.skin.TextAreaSkin;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -45,6 +46,8 @@ public class CellDataPopupController
 
       _textArea = new TextArea(interpretCellContentAsSting(_oldValue));
 
+      appendEntriesToStandardTextAreaContextMenu(_textArea);
+
       if (null == cellDataPopupEditListener)
       {
          _textArea.setEditable(false);
@@ -83,6 +86,45 @@ public class CellDataPopupController
 
       _dialog.show();
    }
+
+   private void appendEntriesToStandardTextAreaContextMenu(TextArea textArea)
+   {
+      ContextMenu contextMenu = new ContextMenu();
+      contextMenu.getItems().add(new MenuItem("Bllllla"));
+
+      TextAreaSkin customContextSkin = new TextAreaSkin(textArea)
+      {
+         @Override
+         public void populateContextMenu(ContextMenu contextMenu)
+         {
+            super.populateContextMenu(contextMenu);
+            contextMenu.getItems().add(new SeparatorMenuItem());
+
+            MenuItem menuItem = new MenuItem(_i18n.t("cellPopupController.reformat.xml.json"));
+            menuItem.setOnAction( e -> reformatXmlJson());
+            contextMenu.getItems().add(menuItem);
+         }
+      };
+      textArea.setSkin(customContextSkin);
+   }
+
+   private void reformatXmlJson()
+   {
+      XmlFormatter xmlFormatter = new XmlFormatter(_textArea.getText());
+      if(xmlFormatter.success())
+      {
+         _textArea.setText(xmlFormatter.getFormattedXml());
+         return;
+      }
+
+      JsonFormatter jsonFormatter = new JsonFormatter(_textArea.getText());
+      if(jsonFormatter.success())
+      {
+         _textArea.setText(jsonFormatter.getFormattedJson());
+         return;
+      }
+   }
+
 
    private String interpretCellContentAsSting(Object item)
    {

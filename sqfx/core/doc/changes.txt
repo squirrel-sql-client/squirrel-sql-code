@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: If a table cell is double clicked a cell data display window opens. This window's right mouse menu now offers an entry to reformat Xml or Json strings.
+
 Improvement: Code completion and abbreviations now handle boundary characters like (),=<> better.
 
 Bug fix: Application window size was not saved on application exit.
