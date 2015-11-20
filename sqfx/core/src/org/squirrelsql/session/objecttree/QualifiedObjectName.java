@@ -1,5 +1,6 @@
 package org.squirrelsql.session.objecttree;
 
+import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.services.Utils;
 
 public class QualifiedObjectName
@@ -38,5 +39,11 @@ public class QualifiedObjectName
       }
 
       return _objectName.equalsIgnoreCase(value.getNodeName());
+   }
+
+   @Override
+   public String toString()
+   {
+      return SQLUtil.getQualifiedName(_catalog, _schema, _objectName);
    }
 }

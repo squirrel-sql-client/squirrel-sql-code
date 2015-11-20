@@ -275,21 +275,45 @@ public class SQLUtil
 
    public static String getQualifiedName(String catalogName, String schemaName)
    {
-      if(null == catalogName && null == schemaName)
+      return getQualifiedName(catalogName, schemaName, null);
+   }
+
+   public static String getQualifiedName(String catalogName, String schemaName, String objectName)
+   {
+      StringBuilder result = new StringBuilder();
+      if (catalogName != null)
+      {
+         result.append(catalogName);
+      }
+
+      if (schemaName != null)
+      {
+         if(0 < result.length())
+         {
+            result.append('.');
+         }
+
+         result.append(schemaName);
+      }
+
+      if (objectName != null)
+      {
+         if(0 < result.length())
+         {
+            result.append('.');
+         }
+
+         result.append(objectName);
+      }
+
+
+      if (0 == result.length())
       {
          return null;
       }
-
-      if(null != catalogName && null == schemaName)
+      else
       {
-         return catalogName;
+         return result.toString();
       }
-
-      if(null == catalogName && null != schemaName)
-      {
-         return schemaName;
-      }
-
-      return catalogName + "." + schemaName;
    }
 }

@@ -56,4 +56,9 @@ public class CollectionUtil
       
       return ret;
    }
+
+   public static <T> String getCommaSeparatedNames(List<T> list, Function<T, String> function)
+   {
+      return list.stream().map(function).collect(Collectors.joining(","));
+   }
 }

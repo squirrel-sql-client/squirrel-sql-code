@@ -1,10 +1,7 @@
 package org.squirrelsql.session;
 
 import javafx.geometry.Orientation;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
@@ -99,6 +96,7 @@ public class ObjectTreeTabCtrl
 
       doEmptyCheck(_objectsTree);
 
+      _objectsTree.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 
       _objectTabSplitPane.getItems().add(_objectsTree);

@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: New object tree right mouse menu to copy node names.
+
 Improvement: Duplicate line (ctrl + D) now moves the caret to the duplicated line.
 
 Bug fix: Code completion didn't work right for qualified columns.
