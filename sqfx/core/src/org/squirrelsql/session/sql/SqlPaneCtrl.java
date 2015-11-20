@@ -108,6 +108,7 @@ public class SqlPaneCtrl
       StdActionCfg.DUPLICATE_LINE_OR_SELECTION.setAction(() -> new DuplicateLineCommand(_sqlTextAreaServices));
       StdActionCfg.SQL_REFORMAT.setAction(() -> new FormatSqlCommand(_sqlTextAreaServices));
       StdActionCfg.RERUN_SQL.setAction(() -> onReExecuteSql());
+      StdActionCfg.TOGGLE_UPPER_LOWER.setAction(() -> new ToggleUpperLowerCommand(_sqlTextAreaServices));
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent, boolean consumeOnly)

@@ -22,6 +22,7 @@ public enum StdActionCfg
    VIEW_IN_OBJECT_TREE(null, "view.object.at.caret.in.tree", "viewinobjecttree", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.B, KeyCodeCombination.CONTROL_DOWN)),
    SQL_REFORMAT(null, "format.sql", "formatsql", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.ALT_DOWN)),
    RERUN_SQL(GlobalIconNames.RERUN, "sql.rerunsql", "rerunsql", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.ENTER, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.SHIFT_DOWN), ActionDependency.SESSION),
+   TOGGLE_UPPER_LOWER(null, "toggle.uper.lower.case", "upperlower", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.U, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.SHIFT_DOWN)),
 
    TRANSACT_TOGGLE_AUTO_COMMIT("autocommit.png", "transact.toggle.autocommit", null, ActionScope.UNSCOPED, null, ActionDependency.SESSION, ActionType.TOGGLE),
    TRANSACT_COMMIT("commit.png", "transact.commit", null, ActionScope.UNSCOPED, null, ActionDependency.SESSION),
@@ -90,7 +91,8 @@ public enum StdActionCfg
          SHOW_TOOLS_POPUP,
          DUPLICATE_LINE_OR_SELECTION,
          VIEW_IN_OBJECT_TREE,
-         SQL_REFORMAT
+         SQL_REFORMAT,
+         TOGGLE_UPPER_LOWER
    };
 
    private ActionCfg _actionCfg;

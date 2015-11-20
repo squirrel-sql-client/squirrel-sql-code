@@ -304,4 +304,21 @@ public class SQLTextAreaServices
    {
       _sqlSyntaxHighlighting.calculateTableNextToCaret();
    }
+
+   public void replaceSelection(String replacement, boolean selectReplacement)
+   {
+      if(selectReplacement)
+      {
+         IndexRange selection = _sqlTextArea.getSelection();
+
+         _sqlTextArea.replaceSelection(replacement);
+
+         _sqlTextArea.selectRange(selection.getStart(), selection.getStart() + replacement.length());
+
+      }
+      else
+      {
+         _sqlTextArea.replaceSelection(replacement);
+      }
+   }
 }
