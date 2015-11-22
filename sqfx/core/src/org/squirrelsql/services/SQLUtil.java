@@ -9,6 +9,8 @@ import java.sql.SQLException;
 
 public class SQLUtil
 {
+   public static final String LINE_COMMENT_BEGIN = "--";
+
    public static void close(Connection con)
    {
       if (null == con)

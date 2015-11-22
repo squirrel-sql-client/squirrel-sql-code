@@ -109,6 +109,7 @@ public class SqlPaneCtrl
       StdActionCfg.SQL_REFORMAT.setAction(() -> new FormatSqlCommand(_sqlTextAreaServices));
       StdActionCfg.RERUN_SQL.setAction(() -> onReExecuteSql());
       StdActionCfg.TOGGLE_UPPER_LOWER.setAction(() -> new ToggleUpperLowerCommand(_sqlTextAreaServices));
+      StdActionCfg.TOGGLE_COMMENT_LINES.setAction(() -> new ToggleCommentLinesCommand(_sqlTextAreaServices));
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent, boolean consumeOnly)

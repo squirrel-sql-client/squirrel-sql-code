@@ -1,13 +1,14 @@
 package org.squirrelsql.session.sql;
 
 import org.squirrelsql.AppState;
+import org.squirrelsql.services.SQLUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class SQLTokenizer
 {
-   private String _lineCommentBegin = "--";
+   private String _lineCommentBegin = SQLUtil.LINE_COMMENT_BEGIN;
    private boolean _removeMultiLineComment = true;
 
 

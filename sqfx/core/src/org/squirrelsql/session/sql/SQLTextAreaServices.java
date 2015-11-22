@@ -96,7 +96,7 @@ public class SQLTextAreaServices
    {
       String sql = _sqlTextArea.getSelectedText();
 
-      if(Utils.isEmptyString(sql))
+      if(false == hasSelection())
       {
          CaretBounds caretBounds = getCurrentSqlCaretBounds();
          sql = _sqlTextArea.getText().substring(caretBounds.begin, caretBounds.end);
@@ -105,7 +105,7 @@ public class SQLTextAreaServices
       return sql;
    }
 
-   private CaretBounds getCurrentSqlCaretBounds()
+   public CaretBounds getCurrentSqlCaretBounds()
    {
       CaretBounds caretBounds = new CaretBounds();
 
@@ -139,15 +139,28 @@ public class SQLTextAreaServices
 
    public void replaceCurrentSql(String replacement)
    {
-      String sql = _sqlTextArea.getSelectedText();
+      replaceCurrentSql(replacement, false);
+   }
 
-      if(Utils.isEmptyString(sql))
-      {
-         CaretBounds currentSqlCaretBounds = getCurrentSqlCaretBounds();
-         _sqlTextArea.selectRange(currentSqlCaretBounds.begin, currentSqlCaretBounds.end);
-      }
+   public void replaceCurrentSql(String replacement, boolean selectReplacement)
+   {
+      CaretBounds currentSqlCaretBounds = getCurrentSqlCaretBounds();
+
+      _sqlTextArea.selectRange(currentSqlCaretBounds.begin, currentSqlCaretBounds.end);
 
       _sqlTextArea.replaceSelection(replacement);
+
+      if(selectReplacement)
+      {
+         _sqlTextArea.selectRange(currentSqlCaretBounds.begin, currentSqlCaretBounds.begin + replacement.length());
+      }
+   }
+
+   public boolean hasSelection()
+   {
+      String sql = _sqlTextArea.getSelectedText();
+
+      return false == Utils.isEmptyString(sql);
    }
 
 
