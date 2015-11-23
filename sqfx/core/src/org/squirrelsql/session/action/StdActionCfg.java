@@ -24,6 +24,8 @@ public enum StdActionCfg
    RERUN_SQL(GlobalIconNames.RERUN, "sql.rerunsql", "rerunsql", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.ENTER, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.SHIFT_DOWN), ActionDependency.SESSION),
    TOGGLE_UPPER_LOWER(null, "toggle.upper.lower.case", "upperlower", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.U, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.SHIFT_DOWN)),
    TOGGLE_COMMENT_LINES(null, "toggle.comment.lines", "comment", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.SUBTRACT, KeyCodeCombination.CONTROL_DOWN)),
+   TOGGLE_QUOTE_AS_JAVA_STRING(null, "quote.as.java.string", "quotestring", ActionScope.SQL_EDITOR, null),
+   TOGGLE_QUOTE_AS_JAVA_SB(null, "quote.as.java.sb", "quotesb", ActionScope.SQL_EDITOR, null),
 
    TRANSACT_TOGGLE_AUTO_COMMIT("autocommit.png", "transact.toggle.autocommit", null, ActionScope.UNSCOPED, null, ActionDependency.SESSION, ActionType.TOGGLE),
    TRANSACT_COMMIT("commit.png", "transact.commit", null, ActionScope.UNSCOPED, null, ActionDependency.SESSION),
@@ -94,7 +96,9 @@ public enum StdActionCfg
          VIEW_IN_OBJECT_TREE,
          SQL_REFORMAT,
          TOGGLE_UPPER_LOWER,
-         TOGGLE_COMMENT_LINES
+         TOGGLE_COMMENT_LINES,
+         TOGGLE_QUOTE_AS_JAVA_STRING,
+         TOGGLE_QUOTE_AS_JAVA_SB
    };
 
    private ActionCfg _actionCfg;

@@ -110,6 +110,8 @@ public class SqlPaneCtrl
       StdActionCfg.RERUN_SQL.setAction(() -> onReExecuteSql());
       StdActionCfg.TOGGLE_UPPER_LOWER.setAction(() -> new ToggleUpperLowerCommand(_sqlTextAreaServices));
       StdActionCfg.TOGGLE_COMMENT_LINES.setAction(() -> new ToggleCommentLinesCommand(_sqlTextAreaServices));
+      StdActionCfg.TOGGLE_QUOTE_AS_JAVA_STRING.setAction(() -> new ToggleQuote(_sqlTextAreaServices, false));
+      StdActionCfg.TOGGLE_QUOTE_AS_JAVA_SB.setAction(() -> new ToggleQuote(_sqlTextAreaServices, true));
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent, boolean consumeOnly)

@@ -28,5 +28,6 @@
       <Label layoutX="14.0" layoutY="344.0" prefHeight="16.0" prefWidth="215.0" text="%showSettings.open.result.tabs.limit" />
       <TextField fx:id="txtResultTabsLimit" layoutX="246.0" layoutY="339.0" prefHeight="26.0" prefWidth="81.0" />
       <CheckBox fx:id="chkCopyAliasProperties" layoutX="15.0" layoutY="379.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="559.0" text="%showSettings.copy.alias.properties" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="27.0" />
+      <CheckBox fx:id="chkCopyQuotedToClip" layoutX="15.0" layoutY="411.0" mnemonicParsing="false" text="%showSettings.copy.to.clipboard.on.quote" />
   </children>
 </AnchorPane>

@@ -1,6 +1,9 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: SQL-Editor: Using tools popup (ctrl+T) or right mouse menu to quote/unquote SQL as Java style concatenated string.
+         Note: There is also a new setting that allows to automatically copy quoted SQLs to clipboard.
+
 Feature: SQL-Editor: Ctrl+NumblockMinus toggles current SQL or selection between commented and uncommented.
 
 Feature: SQL-Editor: Ctrl+Shift+U toggles selected text between upper and lower case.
@@ -26,7 +29,7 @@ Feature: Object tree detail tables as well as SQL result meta data tables do now
 Bug fix: Fixed encoding bug that made SQuirreL FX crash during start up when for example German umlauts where used for Alias names or elsewhere.
 
 Feature: New menu item to save all settings immediately, see menu File --> "Save all settings"
-         Note: Settings are autmatically saved on application closing.
+         Note: Settings are automatically saved on application closing.
 
 Feature: New checkbox in settings "When Aliases are copied Alias properties should be copied too", see menu File --> Settings --> Tab General.
 

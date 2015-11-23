@@ -2,19 +2,19 @@ package org.squirrelsql.session;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Side;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 
@@ -147,9 +147,11 @@ public class SessionTabHeaderCtrl
    {
       if(null != _file)
       {
-         Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
-         StringSelection data = new StringSelection(_file.getAbsolutePath());
-         clip.setContents(data, data);
+         final Clipboard clipboard = Clipboard.getSystemClipboard();
+         final ClipboardContent content = new ClipboardContent();
+         content.putString(_file.getAbsolutePath());
+         clipboard.setContent(content);
+
       }
    }
 

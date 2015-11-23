@@ -8,6 +8,7 @@ public class Settings
    private String _statementSeparator = "GO";
    private int _resultTabsLimit = 10;
    private boolean _copyAliasProperties;
+   private boolean _copyQuotedToClip = true;
 
    public boolean isMultibleLinesInCells()
    {
@@ -67,5 +68,15 @@ public class Settings
    public void setCopyAliasProperties(boolean copyAliasProperties)
    {
       _copyAliasProperties = copyAliasProperties;
+   }
+
+   public void setCopyQuotedToClip(boolean copyQuotedToClip)
+   {
+      _copyQuotedToClip = copyQuotedToClip;
+   }
+
+   public boolean isCopyQuotedToClip()
+   {
+      return _copyQuotedToClip;
    }
 }

@@ -20,5 +20,6 @@ public class GeneralView
    @FXML Button btnSaveStandardProperties;
    @FXML TextField txtResultTabsLimit;
    @FXML CheckBox chkCopyAliasProperties;
+   @FXML CheckBox chkCopyQuotedToClip;
 
 }
