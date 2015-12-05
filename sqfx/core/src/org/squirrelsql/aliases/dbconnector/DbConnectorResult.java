@@ -112,4 +112,10 @@ public class DbConnectorResult
    {
       return _password;
    }
+
+   public void close()
+   {
+      _schemaCacheProperty.get().writeCache();
+      _sqlConnection.close();
+   }
 }

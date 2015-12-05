@@ -22,7 +22,7 @@ public class Session
 
    public void close()
    {
-      _dbConnectorResult.getSQLConnection().close();
+      _dbConnectorResult.close();
    }
 
    public DbConnectorResult getDbConnectorResult()
