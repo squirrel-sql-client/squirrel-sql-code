@@ -33,14 +33,12 @@ public class SchemaCacheData
 
    private HashMap<StructItemProcedureType, List<ProcedureInfo>> _procedureInfos = new HashMap<>();
    private HashMap<StructItemUDTType, List<UDTInfo>> _udtInfos = new HashMap<>();
-   private DbConnectorResult _dbConnectorResult;
 
 
    private CaseInsensitiveCache _caseInsensitiveCache = new CaseInsensitiveCache();
 
-   public SchemaCacheData(DbConnectorResult dbConnectorResult, SchemaCacheConfig schemaCacheConfig, DatabaseStructure databaseStructure)
+   public SchemaCacheData(SchemaCacheConfig schemaCacheConfig, DatabaseStructure databaseStructure)
    {
-      _dbConnectorResult = dbConnectorResult;
       _schemaCacheConfig = schemaCacheConfig;
       _databaseStructure = databaseStructure;
    }
@@ -155,20 +153,9 @@ public class SchemaCacheData
       return _udtInfos;
    }
 
-   public DbConnectorResult getDbConnectorResult()
-   {
-      return _dbConnectorResult;
-   }
-
-   public void setDbConnectorResult(DbConnectorResult dbConnectorResult)
-   {
-      _dbConnectorResult = dbConnectorResult;
-   }
 
    public CaseInsensitiveCache getCaseInsensitiveCache()
    {
       return _caseInsensitiveCache;
    }
-
-
 }

@@ -18,10 +18,12 @@ public class SchemaCacheLoader
    private I18n _i18n = new I18n(getClass());
 
    private final SchemaCacheData _scd;
+   private DbConnectorResult _dbConnectorResult;
 
    public SchemaCacheLoader(DbConnectorResult dbConnectorResult, SchemaCacheConfig schemaCacheConfig, DatabaseStructure databaseStructure)
    {
-      _scd = new SchemaCacheData(dbConnectorResult, schemaCacheConfig, databaseStructure);
+      _dbConnectorResult = dbConnectorResult;
+      _scd = new SchemaCacheData(schemaCacheConfig, databaseStructure);
    }
 
    public void load(Progressable progressable)
@@ -37,28 +39,28 @@ public class SchemaCacheLoader
       int stepCount = 6 + leaves.size();
 
       progressable.update(_i18n.t("Loading.data.types"), 1, stepCount);
-      _scd.setDataBaseMetadData(DataBaseMetaDataLoader.loadMetaData(_scd.getDbConnectorResult().getAliasDecorator().getAlias(), _scd.getDbConnectorResult().getSQLConnection()));
-      _scd.setDataTypes(DataTypesLoader.loadTypes(_scd.getDbConnectorResult().getSQLConnection()));
+      _scd.setDataBaseMetadData(DataBaseMetaDataLoader.loadMetaData(_dbConnectorResult.getAliasDecorator().getAlias(), _dbConnectorResult.getSQLConnection()));
+      _scd.setDataTypes(DataTypesLoader.loadTypes(_dbConnectorResult.getSQLConnection()));
 
 
       progressable.update(_i18n.t("Loading.numeric.functions"), 2, stepCount);
-      _scd.setNumericFunctions(DataBaseMetaDataLoader.loadNumericFunctions(_scd.getDbConnectorResult().getSQLConnection()));
+      _scd.setNumericFunctions(DataBaseMetaDataLoader.loadNumericFunctions(_dbConnectorResult.getSQLConnection()));
       _scd.getNumericFunctions().getRows().forEach(e -> _scd.getCaseInsensitiveCache().addProc((String) e.get(0)));
 
       progressable.update(_i18n.t("Loading.string.functions"), 3, stepCount);
-      _scd.setStringFunctions(DataBaseMetaDataLoader.loadStringFunctions(_scd.getDbConnectorResult().getSQLConnection()));
+      _scd.setStringFunctions(DataBaseMetaDataLoader.loadStringFunctions(_dbConnectorResult.getSQLConnection()));
       _scd.getStringFunctions().getRows().forEach(e ->  _scd.getCaseInsensitiveCache().addProc((String) e.get(0)));
 
       progressable.update(_i18n.t("Loading.system.functions"), 4, stepCount);
-      _scd.setSystemFunctions(DataBaseMetaDataLoader.loadSystemFunctions(_scd.getDbConnectorResult().getSQLConnection()));
+      _scd.setSystemFunctions(DataBaseMetaDataLoader.loadSystemFunctions(_dbConnectorResult.getSQLConnection()));
       _scd.getSystemFunctions().getRows().forEach(e ->  _scd.getCaseInsensitiveCache().addProc((String) e.get(0)));
 
       progressable.update(_i18n.t("Loading.time.date.functions"), 5, stepCount);
-      _scd.setTimeDateFunctions(DataBaseMetaDataLoader.loadTimeDateFunctions(_scd.getDbConnectorResult().getSQLConnection()));
+      _scd.setTimeDateFunctions(DataBaseMetaDataLoader.loadTimeDateFunctions(_dbConnectorResult.getSQLConnection()));
       _scd.getTimeDateFunctions().getRows().forEach(e ->  _scd.getCaseInsensitiveCache().addProc((String) e.get(0)));
 
       progressable.update(_i18n.t("Loading.keywords"), 6, stepCount);
-      _scd.setKeywords(DataBaseMetaDataLoader.loadKeyWords(_scd.getDbConnectorResult().getSQLConnection()));
+      _scd.setKeywords(DataBaseMetaDataLoader.loadKeyWords(_dbConnectorResult.getSQLConnection()));
       _scd.getKeywords().getRows().forEach(e ->  _scd.getCaseInsensitiveCache().addKeyword((String) e.get(0)));
 
       for (String keyWord : DefaultKeywords.KEY_WORDS)
@@ -114,7 +116,7 @@ public class SchemaCacheLoader
 
 
 
-         _scd.getUdtInfos().put(udtType, _scd.getDbConnectorResult().getSQLConnection().getUDTInfos(udtType.getCatalog(), udtType.getSchema(), udtName));
+         _scd.getUdtInfos().put(udtType, _dbConnectorResult.getSQLConnection().getUDTInfos(udtType.getCatalog(), udtType.getSchema(), udtName));
       }
    }
 
@@ -139,7 +141,7 @@ public class SchemaCacheLoader
    {
       ArrayList<ProcedureInfo> procedureInfos = new ArrayList<>();
 
-      procedureInfos.addAll(Utils.convertNullToArray(_scd.getDbConnectorResult().getSQLConnection().getProcedureInfos(null, null, procedureName)));
+      procedureInfos.addAll(Utils.convertNullToArray(_dbConnectorResult.getSQLConnection().getProcedureInfos(null, null, procedureName)));
       procedureInfos.addAll(Utils.convertNullToArray(_scd.getCaseInsensitiveCache().getProcedures(procedureName)));
 
       boolean reloaded = false;
@@ -169,7 +171,7 @@ public class SchemaCacheLoader
    {
       if (procedureType.shouldLoad(_scd.getSchemaCacheConfig()))
       {
-         List<ProcedureInfo> procedureInfos = _scd.getDbConnectorResult().getSQLConnection().getProcedureInfos(procedureType.getCatalog(), procedureType.getSchema(), procedureName);
+         List<ProcedureInfo> procedureInfos = _dbConnectorResult.getSQLConnection().getProcedureInfos(procedureType.getCatalog(), procedureType.getSchema(), procedureName);
 
 
          _scd.getProcedureInfos().put(procedureType, procedureInfos);
@@ -212,7 +214,7 @@ public class SchemaCacheLoader
    {
       ArrayList<TableInfo> tableInfos = new ArrayList<>();
 
-      tableInfos.addAll(Utils.convertNullToArray(_scd.getDbConnectorResult().getSQLConnection().getTableInfos(null, null, null, tableName)));
+      tableInfos.addAll(Utils.convertNullToArray(_dbConnectorResult.getSQLConnection().getTableInfos(null, null, null, tableName)));
       tableInfos.addAll(Utils.convertNullToArray(_scd.getCaseInsensitiveCache().getTables(tableName)));
 
       boolean reloaded = false;
@@ -248,7 +250,9 @@ public class SchemaCacheLoader
    {
       if (tableType.shouldLoad(_scd.getSchemaCacheConfig()))
       {
-         List<TableInfo> tableInfos = _scd.getDbConnectorResult().getSQLConnection().getTableInfos(tableType.getCatalog(), tableType.getSchema(), tableType.getType(), tableName);
+         List<TableInfo> tableInfos = _dbConnectorResult.getSQLConnection().getTableInfos(tableType.getCatalog(), tableType.getSchema(), tableType.getType(), tableName);
+         
+         
 
          List<TableInfo> buf = _scd.getTableInfos().get(tableType);
          if(null == buf)

@@ -13,7 +13,7 @@ public class TableInfo
    private final String _tableType;
    private final String _name;
    private String _qualifiedName;
-   private TableLoader _columnsAsTableLoader;
+   private transient TableLoader _columnsAsTableLoader;
 
    public TableInfo(String catalog, String schema, String tableType, String name, String qualifiedName)
    {
