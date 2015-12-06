@@ -32,7 +32,7 @@ public class Session
 
    public SchemaCacheProperty getSchemaCacheValue()
    {
-      return _dbConnectorResult.getSchemaCacheValue();
+      return _dbConnectorResult.getSchemaCacheProperty();
    }
 
    public SessionProperties getSessionProperties()

@@ -98,7 +98,7 @@ public class DbConnectorResult
       _schemaCacheProperty.set(schemaCache);
    }
 
-   public SchemaCacheProperty getSchemaCacheValue()
+   public SchemaCacheProperty getSchemaCacheProperty()
    {
       return _schemaCacheProperty;
    }

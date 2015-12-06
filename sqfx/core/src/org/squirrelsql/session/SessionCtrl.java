@@ -115,7 +115,7 @@ public class SessionCtrl
    private void onGoOnReload(SchemaCache schemaCache)
    {
       _sessionTabContext.getSession().getDbConnectorResult().setSchemaCache(schemaCache);
-      _sessionTabContext.getSession().getDbConnectorResult().getSchemaCacheValue().fireChanged();
+      _sessionTabContext.getSession().getDbConnectorResult().getSchemaCacheProperty().fireChanged();
    }
 
    private SchemaCache doReload(Progressable progressable)

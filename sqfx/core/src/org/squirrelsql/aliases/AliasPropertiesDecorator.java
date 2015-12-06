@@ -124,7 +124,7 @@ public class AliasPropertiesDecorator
 
    public static void fillSchemaTableDefault(DbConnectorResult dbConnectorResult, RowObjectTableLoader<AliasPropertiesSpecifiedLoading> tableLoaderSchemasToFill)
    {
-      DatabaseStructure dataBaseStructure = dbConnectorResult.getSchemaCacheValue().get().getDataBaseStructure();
+      DatabaseStructure dataBaseStructure = dbConnectorResult.getSchemaCacheProperty().get().getDataBaseStructure();
 
       List<StructItemSchema> schemas = dataBaseStructure.getSchemas();
 
