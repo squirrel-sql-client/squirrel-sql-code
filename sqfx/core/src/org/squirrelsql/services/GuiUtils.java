@@ -1,5 +1,6 @@
 package org.squirrelsql.services;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -75,6 +76,18 @@ public class GuiUtils
       new StageDimensionSaver(prefPrefix, ret, pref, initialWidth, initialHeight, AppState.get().getPrimaryStage());
 
       return ret;
+   }
+
+   public static void executeOnEDT(Runnable runnable)
+   {
+      if(Platform.isFxApplicationThread())
+      {
+         runnable.run();
+      }
+      else
+      {
+         Platform.runLater(runnable);
+      }
    }
 
 

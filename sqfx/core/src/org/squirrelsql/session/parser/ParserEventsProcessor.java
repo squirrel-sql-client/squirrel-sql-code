@@ -74,10 +74,14 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 	public void endProcessing()
 	{
-         _processingEnded = true;
+		if(null == _session)
+		{
+			return;
+		}
 
+		_processingEnded = true;
 
-      _sqlTextAreaServices.getTextArea().textProperty().removeListener(_triggerParserKeyListener);
+		_sqlTextAreaServices.getTextArea().textProperty().removeListener(_triggerParserKeyListener);
 
 		if (_parserTimer != null)
 		{
@@ -93,8 +97,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 		_session = null;
 		_sqlTextAreaServices = null;
 		_listeners = null;
-
-
+		_triggerParserKeyListener = null;
 	}
 
 	public void triggerParser()

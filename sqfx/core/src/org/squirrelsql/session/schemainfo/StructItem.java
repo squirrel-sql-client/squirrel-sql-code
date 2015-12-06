@@ -17,6 +17,12 @@ public abstract class StructItem
       return true;
    }
 
+   public boolean shouldCache(SchemaCacheConfig schemaCacheConfig)
+   {
+      return false;
+   }
+
+
    public abstract String getItemName();
 
    protected void fillLeaves(List<StructItem> toFill)
@@ -46,4 +52,10 @@ public abstract class StructItem
       }
    }
 
+
+   @Override
+   public abstract int hashCode();
+
+   @Override
+   public abstract boolean equals(Object obj);
 }

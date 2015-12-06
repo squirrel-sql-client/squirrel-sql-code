@@ -4,9 +4,12 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.session.completion.TableTypes;
 
-public class StructItemTableType extends StructItem implements CatalogSchema
+import java.io.Serializable;
+
+public class StructItemTableType extends StructItem implements CatalogSchema, Serializable
 {
-   private I18n _i18n = new I18n(getClass());
+   // static in order to not violate Serializable
+   private static I18n _i18n = new I18n(StructItemTableType.class);
 
 
    private final String _type;
@@ -25,6 +28,12 @@ public class StructItemTableType extends StructItem implements CatalogSchema
    {
       return schemaCacheConfig.shouldLoadTables(this);
    }
+
+   public boolean shouldCache(SchemaCacheConfig schemaCacheConfig)
+   {
+      return schemaCacheConfig.shouldCacheTables(this);
+   }
+
 
    public String getType()
    {

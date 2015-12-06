@@ -55,7 +55,7 @@ public class SchemaCache
 
    private SchemaCacheData scd()
    {
-      return _schemaCacheLoader.getSchemaCacheData();
+      return _schemaCacheLoader.getSchemaCacheDataReadOnly();
    }
 
    public DatabaseStructure getDataBaseStructure()
@@ -299,6 +299,11 @@ public class SchemaCache
 
    public void writeCache()
    {
+      _schemaCacheLoader.writeCache();
+   }
 
+   public void clearFileSystemCache()
+   {
+      _schemaCacheLoader.clearFileSystemCache();
    }
 }

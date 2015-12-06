@@ -20,9 +20,12 @@ public class SchemaCacheLoader
    private final SchemaCacheData _scd;
    private DbConnectorResult _dbConnectorResult;
 
+   private SerializedCacheManager _serializedCacheManager;
+
    public SchemaCacheLoader(DbConnectorResult dbConnectorResult, SchemaCacheConfig schemaCacheConfig, DatabaseStructure databaseStructure)
    {
       _dbConnectorResult = dbConnectorResult;
+      _serializedCacheManager = new SerializedCacheManager(_dbConnectorResult.getAliasDecorator().getAlias());
       _scd = new SchemaCacheData(schemaCacheConfig, databaseStructure);
    }
 
@@ -250,9 +253,22 @@ public class SchemaCacheLoader
    {
       if (tableType.shouldLoad(_scd.getSchemaCacheConfig()))
       {
-         List<TableInfo> tableInfos = _dbConnectorResult.getSQLConnection().getTableInfos(tableType.getCatalog(), tableType.getSchema(), tableType.getType(), tableName);
-         
-         
+         List<TableInfo> tableInfos;
+
+         if (tableType.shouldCache(_scd.getSchemaCacheConfig()) && null != _serializedCacheManager.getTableInfos(tableType))
+         {
+            tableInfos =  _serializedCacheManager.getTableInfos(tableType);
+         }
+         else
+         {
+            tableInfos = _dbConnectorResult.getSQLConnection().getTableInfos(tableType.getCatalog(), tableType.getSchema(), tableType.getType(), tableName);
+
+            if(tableType.shouldCache(_scd.getSchemaCacheConfig()))
+            {
+               _serializedCacheManager.putTableInfos(tableType, tableInfos);
+            }
+         }
+
 
          List<TableInfo> buf = _scd.getTableInfos().get(tableType);
          if(null == buf)
@@ -304,8 +320,23 @@ public class SchemaCacheLoader
       }
    }
 
-   public SchemaCacheData getSchemaCacheData()
+   /**
+    * Read only is just by contract.
+    * So please don't change the object returned here.
+    * Please use the method by SchemaCacheLoader.
+    */
+   public SchemaCacheData getSchemaCacheDataReadOnly()
    {
       return _scd;
+   }
+
+   public void writeCache()
+   {
+      _serializedCacheManager.writeCache();
+   }
+
+   public void clearFileSystemCache()
+   {
+      _serializedCacheManager.clearFileSystemCache();
    }
 }

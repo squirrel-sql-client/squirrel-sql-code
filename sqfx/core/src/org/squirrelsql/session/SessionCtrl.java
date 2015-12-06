@@ -8,8 +8,7 @@ import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
 import org.squirrelsql.ApplicationCloseListener;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.*;
 import org.squirrelsql.services.progress.ProgressTask;
 import org.squirrelsql.services.progress.Progressable;
 import org.squirrelsql.services.progress.SimpleProgressCtrl;
@@ -107,15 +106,26 @@ public class SessionCtrl
          @Override
          public void goOn(SchemaCache schemaCache)
          {
-            _sessionTabContext.getSession().getDbConnectorResult().setSchemaCache(schemaCache);
+            onGoOnReload(schemaCache);
          }
       });
 
    }
 
+   private void onGoOnReload(SchemaCache schemaCache)
+   {
+      _sessionTabContext.getSession().getDbConnectorResult().setSchemaCache(schemaCache);
+      _sessionTabContext.getSession().getDbConnectorResult().getSchemaCacheValue().fireChanged();
+   }
+
    private SchemaCache doReload(Progressable progressable)
    {
       DbConnectorResult dbConnectorResult = _sessionTabContext.getSession().getDbConnectorResult();
+
+      if(Dao.deleteSerializedSchemaCache(dbConnectorResult.getAliasDecorator().getAlias()))
+      {
+         new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL).info(_i18n.t("schema.cache.file.deleted", dbConnectorResult.getAliasDecorator().getName()));
+      }
 
       SchemaCacheConfig schemaCacheConfig = new SchemaCacheConfig(dbConnectorResult.getAliasDecorator().getAliasPropertiesDecorator());
 

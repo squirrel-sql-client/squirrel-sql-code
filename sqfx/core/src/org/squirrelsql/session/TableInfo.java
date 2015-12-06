@@ -3,15 +3,16 @@ package org.squirrelsql.session;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
 import org.squirrelsql.table.TableLoader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TableInfo
+public class TableInfo implements Serializable
 {
-   private final String _catalog;
-   private final String _schema;
-   private final String _tableType;
-   private final String _name;
+   private String _catalog;
+   private String _schema;
+   private String _tableType;
+   private String _name;
    private String _qualifiedName;
    private transient TableLoader _columnsAsTableLoader;
 

@@ -1,6 +1,8 @@
 package org.squirrelsql.session.schemainfo;
 
-public class StructItemCatalog extends StructItem
+import java.io.Serializable;
+
+public class StructItemCatalog extends StructItem implements Serializable
 {
    private String _catalog;
 

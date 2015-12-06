@@ -8,6 +8,7 @@ import org.squirrelsql.session.schemainfo.*;
 import org.squirrelsql.table.RowObjectTableLoader;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class AliasPropertiesDecorator
 {
@@ -27,11 +28,18 @@ public class AliasPropertiesDecorator
       return _aliasProperties;
    }
 
-   /**
-    *
-    * TODO caching
-    */
    public boolean shouldLoadTables(StructItemTableType structItemTableType)
+   {
+      return _checkPredicateOnTableType(structItemTableType, tableOpt -> SchemaLoadOptions.DONT_LOAD != tableOpt);
+   }
+
+   public boolean shouldCacheTables(StructItemTableType structItemTableType)
+   {
+      return _checkPredicateOnTableType(structItemTableType, tableOpt -> SchemaLoadOptions.LOAD_AND_CACHE == tableOpt);
+   }
+
+
+   private boolean _checkPredicateOnTableType(StructItemTableType structItemTableType, Predicate<SchemaLoadOptions> shouldLoad)
    {
       if(_aliasProperties.isLoadAllCacheNon() || _aliasProperties.isLoadAndCacheAll())
       {
@@ -50,27 +58,28 @@ public class AliasPropertiesDecorator
          {
             if (specifiedLoading.getAliasPropertiesSchema().matches(structItemTableType))
             {
-               return SchemaLoadOptions.DONT_LOAD != specifiedLoading.getTableOpt();
+               return shouldLoad.test(specifiedLoading.getTableOpt());
             }
          }
          else if(isOfTypeView(structItemTableType))
          {
             if (specifiedLoading.getAliasPropertiesSchema().matches(structItemTableType))
             {
-               return SchemaLoadOptions.DONT_LOAD != specifiedLoading.getViewOpt();
+               return shouldLoad.test(specifiedLoading.getViewOpt());
             }
          }
          else
          {
             if (specifiedLoading.getAliasPropertiesSchema().matches(structItemTableType))
             {
-               return SchemaLoadOptions.DONT_LOAD != specifiedLoading.getOtherTableOpt();
+               return shouldLoad.test(specifiedLoading.getOtherTableOpt());
             }
          }
       }
 
       return false;
    }
+
 
    private boolean isOfTypeView(StructItemTableType structItemTableType)
    {

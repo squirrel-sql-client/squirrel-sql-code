@@ -44,6 +44,16 @@ public class SchemaCacheConfig
       return _aliasPropertiesDecorator.shouldLoadTables(structItemTableType);
    }
 
+   public boolean shouldCacheTables(StructItemTableType structItemTableType)
+   {
+      if(shouldNotLoad())
+      {
+         return false;
+      }
+      return _aliasPropertiesDecorator.shouldCacheTables(structItemTableType);
+   }
+
+
    public boolean shouldLoadProcedures(StructItemProcedureType structItemProcedureType)
    {
       if(shouldNotLoad())

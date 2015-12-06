@@ -22,6 +22,11 @@ public class MessageHandler
 
    public void warning(String s, Throwable t)
    {
+      GuiUtils.executeOnEDT(() -> _warning(s, t));
+   }
+
+   private void _warning(String s, Throwable t)
+   {
       try
       {
          if (MessageHandlerDestination.MESSAGE_LOG == _dest)
@@ -44,6 +49,11 @@ public class MessageHandler
    }
 
    public void info(String s)
+   {
+      GuiUtils.executeOnEDT(() -> _info(s));
+   }
+
+   private  void _info(String s)
    {
       try
       {
@@ -78,6 +88,11 @@ public class MessageHandler
    }
 
    public void error(String s, Throwable t)
+   {
+      GuiUtils.executeOnEDT(() -> _error(s, t));
+   }
+
+   private void _error(String s, Throwable t)
    {
       try
       {

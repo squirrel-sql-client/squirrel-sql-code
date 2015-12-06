@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.type.SimpleType;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.*;
 import org.squirrelsql.drivers.SQLDriver;
+import org.squirrelsql.session.schemainfo.schemacacheloading.SerializedCache;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
 import org.squirrelsql.session.sql.bookmark.BookmarkPersistence;
 import org.squirrelsql.settings.SQLFormatSettings;
@@ -20,15 +21,18 @@ import java.util.*;
 public class Dao
 {
 
-   public static final String FILE_NAME_DRIVERS = "drivers.json";
-   public static final String FILE_NAME_ALIASES = "aliases.json";
-   public static final String FILE_NAME_ALIAS_TREE = "aliasTree.json";
-   public static final String FILE_NAME_SQL_HISTORY = "sqlHistory.json";
-   public static final String FILE_NAME_BOOKMARKS = "bookmarks.json";
-   public static final String FILE_NAME_SETTINGS = "settings.json";
-   public static final String FILE_NAME_SQL_FORMAT_SETTINGS = "sqlFormatSettings.json";
+   private static final String FILE_NAME_DRIVERS = "drivers.json";
+   private static final String FILE_NAME_ALIASES = "aliases.json";
+   private static final String FILE_NAME_ALIAS_TREE = "aliasTree.json";
+   private static final String FILE_NAME_SQL_HISTORY = "sqlHistory.json";
+   private static final String FILE_NAME_BOOKMARKS = "bookmarks.json";
+   private static final String FILE_NAME_SETTINGS = "settings.json";
+   private static final String FILE_NAME_SQL_FORMAT_SETTINGS = "sqlFormatSettings.json";
 
-   public static final String FILE_NAME_PREFERENCES = "preferences.properties";
+   private static final String FILE_NAME_PREFERENCES = "preferences.properties";
+
+   private static final String SCHEMA_CACHE_DIR = "schemachaches";
+   public static final String SCHEMA_CACHE_FILE_ENDING = ".ser";
 
    public static void writeDrivers(List<SQLDriver> sqlDrivers)
    {
@@ -337,5 +341,55 @@ public class Dao
    public static  void writerSQLFormatSeetings(SQLFormatSettings sqlFormatSettings)
    {
       writeObject(sqlFormatSettings, FILE_NAME_SQL_FORMAT_SETTINGS);
+   }
+
+   public static SerializedCache readSerializedSchemaCache(Alias alias)
+   {
+      File cache = getSchemaCacheFile(alias);
+
+      if(false == cache.exists())
+      {
+         return null;
+      }
+
+
+      try(FileInputStream fis = new FileInputStream(cache);
+          ObjectInputStream ois = new ObjectInputStream(fis))
+      {
+         return (SerializedCache) ois.readObject();
+      }
+      catch (Throwable e)
+      {
+         cache.delete();
+         throw new RuntimeException(e);
+      }
+   }
+
+   private static File getSchemaCacheFile(Alias alias)
+   {
+      File dir = new File(AppState.get().getUserDir(), SCHEMA_CACHE_DIR);
+      dir.mkdirs();
+
+      return new File(dir, alias.getId() + SCHEMA_CACHE_FILE_ENDING);
+   }
+
+   public static void writeSerializedSchemaCache(Alias alias, SerializedCache serializedCache)
+   {
+      File cache = getSchemaCacheFile(alias);
+
+      try(FileOutputStream fos = new FileOutputStream(cache);
+          ObjectOutputStream oos = new ObjectOutputStream(fos))
+      {
+         oos.writeObject(serializedCache);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public static boolean deleteSerializedSchemaCache(Alias alias)
+   {
+      return getSchemaCacheFile(alias).delete();
    }
 }

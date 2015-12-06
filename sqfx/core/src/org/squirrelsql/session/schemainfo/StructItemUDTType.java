@@ -2,7 +2,9 @@ package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.services.SQLUtil;
 
-public class StructItemUDTType extends StructItem implements CatalogSchema
+import java.io.Serializable;
+
+public class StructItemUDTType extends StructItem implements CatalogSchema, Serializable
 {
    private final String _catalog;
    private final String _schema;
