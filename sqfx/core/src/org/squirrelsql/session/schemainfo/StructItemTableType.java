@@ -4,9 +4,7 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.session.completion.TableTypes;
 
-import java.io.Serializable;
-
-public class StructItemTableType extends StructItem implements CatalogSchema, Serializable
+public class StructItemTableType extends StructItem implements CatalogSchema
 {
    // static in order to not violate Serializable
    private static I18n _i18n = new I18n(StructItemTableType.class);

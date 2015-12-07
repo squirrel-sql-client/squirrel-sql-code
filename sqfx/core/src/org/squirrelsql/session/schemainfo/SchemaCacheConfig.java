@@ -63,10 +63,26 @@ public class SchemaCacheConfig
       return _aliasPropertiesDecorator.shouldLoadProcedures(structItemProcedureType);
    }
 
+   public boolean shouldCacheProcedures(StructItemProcedureType structItemProcedureType)
+   {
+      if(shouldNotLoad())
+      {
+         return false;
+      }
+      return _aliasPropertiesDecorator.shouldCacheProcedures(structItemProcedureType);
+   }
+
+
    public boolean shouldLoadUDTs(StructItemUDTType structItemUDTType)
    {
       return false; // _aliasPropertiesDecorator.shouldLoadUDTs(structItemUDTType);
    }
+
+   public boolean shouldCacheUDTs(StructItemUDTType structItemUDTType)
+   {
+      return false; // _aliasPropertiesDecorator.shouldCacheUDTs(structItemUDTType);
+   }
+
 
    public AliasPropertiesDecorator getAliasPropertiesDecorator()
    {

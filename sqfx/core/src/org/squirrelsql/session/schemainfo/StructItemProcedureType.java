@@ -2,9 +2,7 @@ package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.services.SQLUtil;
 
-import java.io.Serializable;
-
-public class StructItemProcedureType extends StructItem implements CatalogSchema, Serializable
+public class StructItemProcedureType extends StructItem implements CatalogSchema
 {
    private final String _catalog;
    private final String _schema;
@@ -19,6 +17,12 @@ public class StructItemProcedureType extends StructItem implements CatalogSchema
    public boolean shouldLoad(SchemaCacheConfig schemaCacheConfig)
    {
       return schemaCacheConfig.shouldLoadProcedures(this);
+   }
+
+   @Override
+   public boolean shouldCache(SchemaCacheConfig schemaCacheConfig)
+   {
+      return schemaCacheConfig.shouldCacheProcedures(this);
    }
 
    public String getCatalog()

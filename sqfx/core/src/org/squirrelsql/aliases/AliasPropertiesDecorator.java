@@ -38,7 +38,6 @@ public class AliasPropertiesDecorator
       return _checkPredicateOnTableType(structItemTableType, tableOpt -> SchemaLoadOptions.LOAD_AND_CACHE == tableOpt);
    }
 
-
    private boolean _checkPredicateOnTableType(StructItemTableType structItemTableType, Predicate<SchemaLoadOptions> shouldLoad)
    {
       if(_aliasProperties.isLoadAllCacheNon() || _aliasProperties.isLoadAndCacheAll())
@@ -91,7 +90,20 @@ public class AliasPropertiesDecorator
       return "TABLE".equalsIgnoreCase(structItemTableType.getType());
    }
 
+
+
+   public boolean shouldCacheProcedures(StructItemProcedureType structItemProcedureType)
+   {
+      return _checkPredicateOnProcedureType(structItemProcedureType, procedureOpt -> SchemaLoadOptions.LOAD_AND_CACHE == procedureOpt);
+   }
+
+
    public boolean shouldLoadProcedures(StructItemProcedureType structItemProcedureType)
+   {
+      return _checkPredicateOnProcedureType(structItemProcedureType, procedureOpt -> SchemaLoadOptions.DONT_LOAD != procedureOpt);
+   }
+
+   private boolean _checkPredicateOnProcedureType(StructItemProcedureType structItemProcedureType, Predicate<SchemaLoadOptions> answereToSchemaLoadOption)
    {
       if(_aliasProperties.isLoadAllCacheNon() || _aliasProperties.isLoadAndCacheAll())
       {
@@ -102,7 +114,7 @@ public class AliasPropertiesDecorator
       {
          if (specifiedLoading.getAliasPropertiesSchema().matches(structItemProcedureType))
          {
-            return SchemaLoadOptions.DONT_LOAD != specifiedLoading.getProcedureOpt();
+            return answereToSchemaLoadOption.test(specifiedLoading.getProcedureOpt());
          }
       }
 

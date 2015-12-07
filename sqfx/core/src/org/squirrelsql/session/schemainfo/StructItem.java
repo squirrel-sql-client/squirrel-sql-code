@@ -1,9 +1,10 @@
 package org.squirrelsql.session.schemainfo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class StructItem
+public abstract class StructItem implements Serializable
 {
    private List<StructItem> _children = new ArrayList<>();
 

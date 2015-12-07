@@ -302,8 +302,4 @@ public class SchemaCache
       _schemaCacheLoader.writeCache();
    }
 
-   public void clearFileSystemCache()
-   {
-      _schemaCacheLoader.clearFileSystemCache();
-   }
 }

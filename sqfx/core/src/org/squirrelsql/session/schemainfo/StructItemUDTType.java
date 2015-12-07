@@ -2,9 +2,7 @@ package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.services.SQLUtil;
 
-import java.io.Serializable;
-
-public class StructItemUDTType extends StructItem implements CatalogSchema, Serializable
+public class StructItemUDTType extends StructItem implements CatalogSchema
 {
    private final String _catalog;
    private final String _schema;
@@ -21,6 +19,11 @@ public class StructItemUDTType extends StructItem implements CatalogSchema, Seri
       return schemaCacheConfig.shouldLoadUDTs(this);
    }
 
+   @Override
+   public boolean shouldCache(SchemaCacheConfig schemaCacheConfig)
+   {
+      return schemaCacheConfig.shouldCacheUDTs(this);
+   }
 
    public String getCatalog()
    {

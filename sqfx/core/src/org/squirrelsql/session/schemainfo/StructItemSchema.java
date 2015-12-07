@@ -2,10 +2,7 @@ package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.services.SQLUtil;
 
-import java.io.Serializable;
-import java.util.List;
-
-public class StructItemSchema extends StructItem implements Serializable
+public class StructItemSchema extends StructItem
 {
    private final String _schema;
    private final String _catalogName;

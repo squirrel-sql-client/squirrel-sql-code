@@ -3,6 +3,7 @@ package org.squirrelsql.session.schemainfo;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.Utils;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,4 +115,31 @@ public class DatabaseStructure extends StructItem
    {
       return "Database";
    }
+
+
+
+   //////////////////////////////////////////////////////////////////////////////
+   // Objects of this class should not be serialized.
+   // All other inheritors of StructItem should.
+   private void writeObject(ObjectOutputStream out)  throws IOException
+   {
+      throw new NotSerializableException("DatabaseStructure should not take part in Schema caching.");
+   }
+
+   private Object readObject(ObjectInputStream in) throws IOException,
+         ClassNotFoundException
+   {
+      throw new NotSerializableException("DatabaseStructure should not take part in Schema caching.");
+   }
+
+   public static void main(String[] args) throws IOException
+   {
+      ObjectOutputStream oos = new ObjectOutputStream(new ByteArrayOutputStream());
+
+      oos.writeObject(new DatabaseStructure(null, null));
+   }
+
+   //
+   //////////////////////////////////////////////////////////////////////////////
+
 }

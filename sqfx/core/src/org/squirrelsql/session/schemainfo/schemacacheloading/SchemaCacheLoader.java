@@ -108,6 +108,21 @@ public class SchemaCacheLoader
    {
       if (udtType.shouldLoad(_scd.getSchemaCacheConfig()))
       {
+         List<UDTInfo> udtInfos;
+
+         if (udtType.shouldCache(_scd.getSchemaCacheConfig()) && null != _serializedCacheManager.getUDTInfos(udtType))
+         {
+            udtInfos =  _serializedCacheManager.getUDTInfos(udtType);
+         }
+         else
+         {
+            udtInfos = _dbConnectorResult.getSQLConnection().getUDTInfos(udtType.getCatalog(), udtType.getSchema(), udtName);
+
+            if(udtType.shouldCache(_scd.getSchemaCacheConfig()))
+            {
+               _serializedCacheManager.putUDTInfos(udtType, udtInfos);
+            }
+         }
 
          List<UDTInfo> buf = _scd.getUdtInfos().get(udtType);
          if(null == buf)
@@ -115,11 +130,7 @@ public class SchemaCacheLoader
             buf = new ArrayList<>();
             _scd.getUdtInfos().put(udtType, buf);
          }
-         buf.addAll(buf);
-
-
-
-         _scd.getUdtInfos().put(udtType, _dbConnectorResult.getSQLConnection().getUDTInfos(udtType.getCatalog(), udtType.getSchema(), udtName));
+         buf.addAll(udtInfos);
       }
    }
 
@@ -174,8 +185,21 @@ public class SchemaCacheLoader
    {
       if (procedureType.shouldLoad(_scd.getSchemaCacheConfig()))
       {
-         List<ProcedureInfo> procedureInfos = _dbConnectorResult.getSQLConnection().getProcedureInfos(procedureType.getCatalog(), procedureType.getSchema(), procedureName);
+         List<ProcedureInfo> procedureInfos;
 
+         if (procedureType.shouldCache(_scd.getSchemaCacheConfig()) && null != _serializedCacheManager.getProcedureInfos(procedureType))
+         {
+            procedureInfos =  _serializedCacheManager.getProcedureInfos(procedureType);
+         }
+         else
+         {
+            procedureInfos = _dbConnectorResult.getSQLConnection().getProcedureInfos(procedureType.getCatalog(), procedureType.getSchema(), procedureName);
+
+            if(procedureType.shouldCache(_scd.getSchemaCacheConfig()))
+            {
+               _serializedCacheManager.putProcedureInfos(procedureType, procedureInfos);
+            }
+         }
 
          _scd.getProcedureInfos().put(procedureType, procedureInfos);
 
@@ -335,8 +359,4 @@ public class SchemaCacheLoader
       _serializedCacheManager.writeCache();
    }
 
-   public void clearFileSystemCache()
-   {
-      _serializedCacheManager.clearFileSystemCache();
-   }
 }

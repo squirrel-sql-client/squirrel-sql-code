@@ -5,9 +5,13 @@ import org.squirrelsql.services.Dao;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
+import org.squirrelsql.session.UDTInfo;
 import org.squirrelsql.session.schemainfo.StructItem;
+import org.squirrelsql.session.schemainfo.StructItemProcedureType;
 import org.squirrelsql.session.schemainfo.StructItemTableType;
+import org.squirrelsql.session.schemainfo.StructItemUDTType;
 
 import java.util.List;
 
@@ -24,7 +28,7 @@ public class SerializedCacheManager
       _alias = alias;
    }
 
-   public List<TableInfo> getTableInfos(StructItem structItem)
+   public List<TableInfo> getTableInfos(StructItemTableType structItem)
    {
       return getSerializedCache().getTableInfos(structItem);
    }
@@ -33,6 +37,27 @@ public class SerializedCacheManager
    {
       getSerializedCache().putTableInfos(tableType, tableInfos);
    }
+
+   public List<ProcedureInfo> getProcedureInfos(StructItemProcedureType procedureType)
+   {
+      return getSerializedCache().getProcedureInfos(procedureType);
+   }
+
+   public void putProcedureInfos(StructItemProcedureType procedureType, List<ProcedureInfo> procedureInfos)
+   {
+      getSerializedCache().putProcedureInfos(procedureType, procedureInfos);
+   }
+
+   public List<UDTInfo> getUDTInfos(StructItemUDTType udtType)
+   {
+      return getSerializedCache().getUDTInfos(udtType);
+   }
+
+   public void putUDTInfos(StructItemUDTType udtType, List<UDTInfo> udtInfos)
+   {
+      getSerializedCache().putUDTInfos(udtType, udtInfos);
+   }
+
 
    private SerializedCache getSerializedCache()
    {
@@ -65,10 +90,5 @@ public class SerializedCacheManager
       {
          Dao.writeSerializedSchemaCache(_alias, _serializedCache);
       }
-   }
-
-   public void clearFileSystemCache()
-   {
-      _serializedCache = new SerializedCache();
    }
 }
