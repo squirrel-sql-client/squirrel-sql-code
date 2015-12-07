@@ -9,13 +9,13 @@
 <?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource i18n.properties?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="610.9998779296875" prefWidth="756.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.squirrelsql.aliases.AliasPropertiesEditView">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="610.9998779296875" prefWidth="756.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.aliases.AliasPropertiesEditView">
   <children>
-    <RadioButton fx:id="radLoadAllCacheNon" layoutX="13.0" layoutY="48.0" mnemonicParsing="false" text="%aliases.properties.load.all.cache.none" />
-    <RadioButton fx:id="radLoadAndCacheAll" layoutX="13.0" layoutY="85.0" mnemonicParsing="false" text="%aliases.properties.load.all.cache.all" />
-    <RadioButton fx:id="radSpecifyLoading" layoutX="14.0" layoutY="121.0" mnemonicParsing="false" text="%aliases.properties.specify" />
-    <Button fx:id="btnConnectDb" layoutX="284.0" layoutY="116.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="343.0" text="%aliases.properties.connect" />
-    <AnchorPane id="AnchorPane" prefHeight="355.9998779296875" prefWidth="729.0" style="-fx-border-width: 2; -fx-border-color: grey lightgrey lightgrey grey; -fx-border-style: solid line-join bevel;" AnchorPane.bottomAnchor="102.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="153.0">
+    <RadioButton fx:id="radLoadAllCacheNon" layoutX="13.0" layoutY="15.0" mnemonicParsing="false" text="%aliases.properties.load.all.cache.none" />
+    <RadioButton fx:id="radLoadAndCacheAll" layoutX="13.0" layoutY="52.0" mnemonicParsing="false" text="%aliases.properties.load.all.cache.all" />
+    <RadioButton fx:id="radSpecifyLoading" layoutX="14.0" layoutY="88.0" mnemonicParsing="false" text="%aliases.properties.specify" />
+    <Button fx:id="btnConnectDb" layoutX="284.0" layoutY="83.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="343.0" text="%aliases.properties.connect" />
+    <AnchorPane id="AnchorPane" layoutY="120.0" prefHeight="389.0" prefWidth="729.0" style="-fx-border-width: 2; -fx-border-color: grey lightgrey lightgrey grey; -fx-border-style: solid line-join bevel;" AnchorPane.bottomAnchor="102.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="120.0">
       <children>
         <TableView fx:id="tblSchemas" prefHeight="240.0" prefWidth="573.0" AnchorPane.bottomAnchor="34.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0">
           <columns>

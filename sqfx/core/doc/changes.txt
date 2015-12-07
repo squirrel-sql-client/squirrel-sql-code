@@ -1,6 +1,9 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Schema caching is now implemented. Schema caching is often useful for databases which take a long time to connect to.
+   Up to now you could already select this option in the Alias properties dialog but it was treated the same way as "load all, cache non".
+
 Feature: SQL-Editor: Using tools popup (ctrl+T) or right mouse menu to quote/unquote SQL as Java style concatenated string.
          Note: There is also a new setting that allows to automatically copy quoted SQLs to clipboard.
 
