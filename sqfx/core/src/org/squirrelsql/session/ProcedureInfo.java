@@ -1,6 +1,8 @@
 package org.squirrelsql.session;
 
-public class ProcedureInfo
+import java.io.Serializable;
+
+public class ProcedureInfo implements Serializable
 {
    private String _name;
    private String _catalog;

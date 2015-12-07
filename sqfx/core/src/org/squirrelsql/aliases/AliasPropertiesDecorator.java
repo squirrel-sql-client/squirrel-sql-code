@@ -30,16 +30,6 @@ public class AliasPropertiesDecorator
 
    public boolean shouldLoadTables(StructItemTableType structItemTableType)
    {
-      return _checkPredicateOnTableType(structItemTableType, tableOpt -> SchemaLoadOptions.DONT_LOAD != tableOpt);
-   }
-
-   public boolean shouldCacheTables(StructItemTableType structItemTableType)
-   {
-      return _checkPredicateOnTableType(structItemTableType, tableOpt -> SchemaLoadOptions.LOAD_AND_CACHE == tableOpt);
-   }
-
-   private boolean _checkPredicateOnTableType(StructItemTableType structItemTableType, Predicate<SchemaLoadOptions> shouldLoad)
-   {
       if(_aliasProperties.isLoadAllCacheNon() || _aliasProperties.isLoadAndCacheAll())
       {
          if (isOfTypeTable(structItemTableType) || isOfTypeView(structItemTableType))
@@ -50,6 +40,26 @@ public class AliasPropertiesDecorator
          return false; // By default we ignore system table types. They can only be included by specified loading, See below.
       }
 
+      return _checkPredicateOnTableType(structItemTableType, tableOpt -> SchemaLoadOptions.DONT_LOAD != tableOpt);
+   }
+
+   public boolean shouldCacheTables(StructItemTableType structItemTableType)
+   {
+      if(_aliasProperties.isLoadAndCacheAll())
+      {
+         if (isOfTypeTable(structItemTableType) || isOfTypeView(structItemTableType))
+         {
+            return true;
+         }
+
+         return false; // By default we ignore system table types. They can only be included by specified loading, See below.
+      }
+
+      return _checkPredicateOnTableType(structItemTableType, tableOpt -> SchemaLoadOptions.LOAD_AND_CACHE == tableOpt);
+   }
+
+   private boolean _checkPredicateOnTableType(StructItemTableType structItemTableType, Predicate<SchemaLoadOptions> schemaLoadOptionTest)
+   {
       for (AliasPropertiesSpecifiedLoading specifiedLoading : _aliasProperties.getSpecifiedLoadings())
       {
 
@@ -57,21 +67,21 @@ public class AliasPropertiesDecorator
          {
             if (specifiedLoading.getAliasPropertiesSchema().matches(structItemTableType))
             {
-               return shouldLoad.test(specifiedLoading.getTableOpt());
+               return schemaLoadOptionTest.test(specifiedLoading.getTableOpt());
             }
          }
          else if(isOfTypeView(structItemTableType))
          {
             if (specifiedLoading.getAliasPropertiesSchema().matches(structItemTableType))
             {
-               return shouldLoad.test(specifiedLoading.getViewOpt());
+               return schemaLoadOptionTest.test(specifiedLoading.getViewOpt());
             }
          }
          else
          {
             if (specifiedLoading.getAliasPropertiesSchema().matches(structItemTableType))
             {
-               return shouldLoad.test(specifiedLoading.getOtherTableOpt());
+               return schemaLoadOptionTest.test(specifiedLoading.getOtherTableOpt());
             }
          }
       }
@@ -94,27 +104,33 @@ public class AliasPropertiesDecorator
 
    public boolean shouldCacheProcedures(StructItemProcedureType structItemProcedureType)
    {
+      if(_aliasProperties.isLoadAndCacheAll())
+      {
+         return true;
+      }
+
       return _checkPredicateOnProcedureType(structItemProcedureType, procedureOpt -> SchemaLoadOptions.LOAD_AND_CACHE == procedureOpt);
    }
 
 
    public boolean shouldLoadProcedures(StructItemProcedureType structItemProcedureType)
    {
-      return _checkPredicateOnProcedureType(structItemProcedureType, procedureOpt -> SchemaLoadOptions.DONT_LOAD != procedureOpt);
-   }
-
-   private boolean _checkPredicateOnProcedureType(StructItemProcedureType structItemProcedureType, Predicate<SchemaLoadOptions> answereToSchemaLoadOption)
-   {
       if(_aliasProperties.isLoadAllCacheNon() || _aliasProperties.isLoadAndCacheAll())
       {
          return true;
       }
 
+      return _checkPredicateOnProcedureType(structItemProcedureType, procedureOpt -> SchemaLoadOptions.DONT_LOAD != procedureOpt);
+   }
+
+   private boolean _checkPredicateOnProcedureType(StructItemProcedureType structItemProcedureType, Predicate<SchemaLoadOptions> schemaLoadOptionTest)
+   {
+
       for (AliasPropertiesSpecifiedLoading specifiedLoading : _aliasProperties.getSpecifiedLoadings())
       {
          if (specifiedLoading.getAliasPropertiesSchema().matches(structItemProcedureType))
          {
-            return answereToSchemaLoadOption.test(specifiedLoading.getProcedureOpt());
+            return schemaLoadOptionTest.test(specifiedLoading.getProcedureOpt());
          }
       }
 

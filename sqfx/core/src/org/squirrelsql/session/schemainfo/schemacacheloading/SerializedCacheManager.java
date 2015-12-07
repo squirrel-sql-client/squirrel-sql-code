@@ -8,7 +8,6 @@ import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
-import org.squirrelsql.session.schemainfo.StructItem;
 import org.squirrelsql.session.schemainfo.StructItemProcedureType;
 import org.squirrelsql.session.schemainfo.StructItemTableType;
 import org.squirrelsql.session.schemainfo.StructItemUDTType;
@@ -86,7 +85,9 @@ public class SerializedCacheManager
 
    public void writeCache()
    {
-      if(false == _serializedCache.empty())
+      // We check null != _serializedCache here because it might be that no cache
+      // was accessed at all and we don't want to try to read it now.
+      if(null != _serializedCache && false == _serializedCache.empty())
       {
          Dao.writeSerializedSchemaCache(_alias, _serializedCache);
       }
