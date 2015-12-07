@@ -84,11 +84,11 @@ public class SchemaCacheLoader
 
          if(leaf instanceof StructItemTableType)
          {
-            loadMatchingTables((StructItemTableType) leaf, null);
+            loadMatchingTables((StructItemTableType) leaf, null, false);
          }
          else if(leaf instanceof StructItemProcedureType)
          {
-            loadMatchingProcedures((StructItemProcedureType) leaf, null);
+            loadMatchingProcedures((StructItemProcedureType) leaf, null, false);
          }
          else if(leaf instanceof StructItemUDTType)
          {
@@ -173,7 +173,7 @@ public class SchemaCacheLoader
          _scd.getCaseInsensitiveCache().removeProc(procedureName);
 
 
-         loadMatchingProcedures(procedureType, procedureName);
+         loadMatchingProcedures(procedureType, procedureName, true);
 
          reloaded = true;
       }
@@ -181,13 +181,13 @@ public class SchemaCacheLoader
       return reloaded;
    }
 
-   private void loadMatchingProcedures(StructItemProcedureType procedureType, String procedureName)
+   private void loadMatchingProcedures(StructItemProcedureType procedureType, String procedureName, boolean forceReloadFromDB)
    {
       if (procedureType.shouldLoad(_scd.getSchemaCacheConfig()))
       {
          List<ProcedureInfo> procedureInfos;
 
-         if (procedureType.shouldCache(_scd.getSchemaCacheConfig()) && null != _serializedCacheManager.getProcedureInfos(procedureType))
+         if (false == forceReloadFromDB && procedureType.shouldCache(_scd.getSchemaCacheConfig()) && null != _serializedCacheManager.getProcedureInfos(procedureType))
          {
             procedureInfos =  _serializedCacheManager.getProcedureInfos(procedureType);
          }
@@ -265,7 +265,7 @@ public class SchemaCacheLoader
          _scd.getTableInfosBySimpleName().remove(new CaseInsensitiveString(tableInfo.getName()));
          _scd.getCaseInsensitiveCache().removeTable(tableInfo);
 
-         loadMatchingTables(tableType, tableName);
+         loadMatchingTables(tableType, tableName, true);
 
          reloaded = true;
       }
@@ -273,13 +273,13 @@ public class SchemaCacheLoader
       return reloaded;
    }
 
-   private void loadMatchingTables(StructItemTableType tableType, String tableName)
+   private void loadMatchingTables(StructItemTableType tableType, String tableName, boolean forceReloadFromDB)
    {
       if (tableType.shouldLoad(_scd.getSchemaCacheConfig()))
       {
          List<TableInfo> tableInfos;
 
-         if (tableType.shouldCache(_scd.getSchemaCacheConfig()) && null != _serializedCacheManager.getTableInfos(tableType))
+         if (false == forceReloadFromDB && tableType.shouldCache(_scd.getSchemaCacheConfig()) && null != _serializedCacheManager.getTableInfos(tableType))
          {
             tableInfos =  _serializedCacheManager.getTableInfos(tableType);
          }
