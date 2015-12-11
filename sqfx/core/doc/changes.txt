@@ -1,6 +1,9 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Improvement: The progress window that is shown at Session start up offers to open its Alias properties dialog.
+  Changing Alias properties can help to accelerate Session start up.
+
 Feature: Schema caching is now implemented. Schema caching is often useful for databases which take a long time to connect to.
    Up to now you could already select this option in the Alias properties dialog but it was treated the same way as "load all, cache non".
 

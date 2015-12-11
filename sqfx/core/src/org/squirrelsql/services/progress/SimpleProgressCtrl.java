@@ -9,6 +9,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.squirrelsql.services.*;
@@ -205,5 +206,10 @@ public class SimpleProgressCtrl
    public void close()
    {
       _dialog.close();
+   }
+
+   public BorderPane getAvailableArea()
+   {
+      return _fxmlHelper.getView().availableArea;
    }
 }

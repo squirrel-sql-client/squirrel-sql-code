@@ -96,7 +96,7 @@ public class DBConnector
          }
       };
 
-
+      new SessionLoadingTimeHintController(simpleProgressCtrl.getAvailableArea(), _alias);
 
       simpleProgressCtrl.start(pt);
 
