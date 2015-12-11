@@ -96,7 +96,7 @@ public class SqlToTableCtrl
 
    private void exportToTable(Progressable progressable, String sql, SqlToTable.TableExistsOption opt, boolean scriptOnly)
    {
-      SqlToTable sqlToTable = new SqlToTable(progressable, _session.getDbConnectorResult());
+      SqlToTable sqlToTable = new SqlToTable(progressable, _session, _sqlTextAreaServices);
 
       sqlToTable.exportToTable(sql, _view.txtTableName.getText(), opt, scriptOnly);
 

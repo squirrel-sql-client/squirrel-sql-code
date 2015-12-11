@@ -1,6 +1,8 @@
 package org.squirrelsql.session.schemainfo;
 
 
+import org.squirrelsql.services.GuiUtils;
+
 import java.util.ArrayList;
 
 public class SchemaCacheProperty
@@ -9,6 +11,11 @@ public class SchemaCacheProperty
    private SchemaCache _schemaCache;
 
    public void fireChanged()
+   {
+      GuiUtils.executeOnEDT(() -> _fireChanged());
+   }
+
+   private void _fireChanged()
    {
       SchemaCacheObjectPropertyListener[] schemaCacheObjectPropertyListeners = _listeners.toArray(new SchemaCacheObjectPropertyListener[_listeners.size()]);
 

@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: When the "SQL to table" function failed during execution of the CREATE TABLE- or INSERT-statement no error message was logged.
+
 Improvement: The progress window that is shown at Session start up offers to open its Alias properties dialog.
   Changing Alias properties can help to accelerate Session start up.
 

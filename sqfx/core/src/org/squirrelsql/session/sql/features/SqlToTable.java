@@ -4,7 +4,9 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.progress.Progressable;
+import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.SQLResult;
+import org.squirrelsql.session.sql.SQLTextAreaServices;
 import org.squirrelsql.session.sql.StatementChannel;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
@@ -25,14 +27,16 @@ public class SqlToTable
    }
 
    private final Progressable _progressable;
-   private final DbConnectorResult _dbConnectorResult;
+   private final Session _session;
+   private final SQLTextAreaServices _sqlTextAreaServices;
 
    private String _script;
 
-   public SqlToTable(Progressable progressable, DbConnectorResult dbConnectorResult)
+   public SqlToTable(Progressable progressable, Session session, SQLTextAreaServices sqlTextAreaServices)
    {
       _progressable = progressable;
-      _dbConnectorResult = dbConnectorResult;
+      _session = session;
+      _sqlTextAreaServices = sqlTextAreaServices;
    }
 
    public void exportToTable(String sql, String tableName, TableExistsOption opt, boolean scriptOnly)
@@ -48,7 +52,7 @@ public class SqlToTable
       int step = 0;
       _progressable.update(i18n.t("SqlToTableHelper.StartExecutingSQL"), step++, stepCountFixed + stepCountEstimated);
 
-      StatementExecution statementExecution = executeSql(_progressable, _dbConnectorResult, sql);
+      StatementExecution statementExecution = executeSql(_progressable, _session.getDbConnectorResult(), sql);
 
 
       if(0 == statementExecution.getQueryResults().size())
@@ -75,7 +79,7 @@ public class SqlToTable
       SQLToTableHelper sqlToTableHelper = new SQLToTableHelper(tableName, metaDataFacade);
 
 
-      SQLResultMetaDataFacade metaDataOfAlreadyExisitingTable = getMetaDataOfAlreadyExitingTable(_dbConnectorResult, tableName);
+      SQLResultMetaDataFacade metaDataOfAlreadyExisitingTable = getMetaDataOfAlreadyExitingTable(_session.getDbConnectorResult(), tableName);
 
       if(null == metaDataOfAlreadyExisitingTable)
       {
@@ -118,6 +122,8 @@ public class SqlToTable
       else
       {
          stepCountEstimated = sqlsToExecute.size();
+
+         SchemaUpdater schemaUpdater = new SchemaUpdater(_session);
          for (SQLAndMessage sqlAndMessage : sqlsToExecute)
          {
             if(_progressable.isCancelled())
@@ -126,10 +132,19 @@ public class SqlToTable
             }
             _progressable.update(sqlAndMessage.getMsg(), step++, stepCountFixed + stepCountEstimated);
 
-            executeSql(_progressable, _dbConnectorResult, sqlAndMessage.getSql());
+            StatementExecution execRes = executeSql(_progressable, _session.getDbConnectorResult(), sqlAndMessage.getSql());
+
+            if(null != execRes.getFirstSqlException())
+            {
+               throw new RuntimeException("Error occured when executing:\n" + sqlAndMessage.getSql(),  execRes.getFirstSqlException());
+            }
+
+            schemaUpdater.addSql(sqlAndMessage.getSql());
          }
 
          _progressable.update(i18n.t("SqlToTableHelper.TableWriteSuccess", tableName), step++, stepCountFixed + stepCountEstimated);
+
+         schemaUpdater.doUpdates(_sqlTextAreaServices);
       }
 
       _script = "";
