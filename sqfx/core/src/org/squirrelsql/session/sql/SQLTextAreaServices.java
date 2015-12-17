@@ -5,10 +5,11 @@ import com.sun.javafx.tk.Toolkit;
 import javafx.event.EventHandler;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
 import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.services.Utils;
-import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.CaretVicinityInfo;
+import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.completion.joingenerator.JoinGeneratorProvider;
 import org.squirrelsql.session.parser.ParserEventsListener;
 import org.squirrelsql.session.parser.ParserEventsProcessor;
@@ -25,6 +26,7 @@ public class SQLTextAreaServices
    private final CodeArea _sqlTextArea;
    private final SQLSyntaxHighlighting _sqlSyntaxHighlighting;
    private final ParserEventsProcessor _parserEventsProcessor;
+   private final CurrentSqlMarker _currentSqlMarker;
    private LexAndParseResultListener _lexAndParseResultListener;
 
    private CaretPopup _caretPopup;
@@ -61,6 +63,7 @@ public class SQLTextAreaServices
       schemaCacheValue.addListener(() -> updateHighlighting());
 
       _caretPopup = new CaretPopup(_sqlTextArea);
+      _currentSqlMarker = new CurrentSqlMarker(this);
    }
 
    public void updateHighlighting()
@@ -334,4 +337,10 @@ public class SQLTextAreaServices
          _sqlTextArea.replaceSelection(replacement);
       }
    }
+
+   public StackPane getTextAreaStackPane()
+   {
+      return _currentSqlMarker.getTextAreaStackPane();
+   }
+
 }
