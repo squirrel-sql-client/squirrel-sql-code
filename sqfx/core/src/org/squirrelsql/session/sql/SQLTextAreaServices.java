@@ -6,7 +6,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.StackPane;
 import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.Utils;
@@ -131,20 +130,36 @@ public class SQLTextAreaServices
       int caretPosition = _sqlTextArea.getCaretPosition();
       String sqlTextAreaText = _sqlTextArea.getText();
 
-      String sep = SyntaxConstants.SQL_SEPARATOR;
-
       caretBounds.begin = caretPosition;
-      while(0 < caretBounds.begin && false == sqlTextAreaText.substring(0, caretBounds.begin).endsWith(sep))
+      while(false == isStatementBegin(sqlTextAreaText, caretBounds.begin))
       {
          --caretBounds.begin;
       }
 
       caretBounds.end = caretPosition;
-      while(sqlTextAreaText.length() > caretBounds.end && false == sqlTextAreaText.substring(caretBounds.end).startsWith(sep))
+      while(false == isStatementEnd(sqlTextAreaText, caretBounds.end))
       {
          ++caretBounds.end;
       }
       return caretBounds;
+   }
+
+   private boolean isStatementEnd(String sqlTextAreaText, int pos)
+   {
+      String textBehindPos = sqlTextAreaText.substring(pos);
+
+      return sqlTextAreaText.length() == pos
+             || Utils.isEmptyString(textBehindPos)
+             || textBehindPos.startsWith(SyntaxConstants.SQL_SEPARATOR);
+   }
+
+   private boolean isStatementBegin(String sqlTextAreaText, int pos)
+   {
+      String textBeforePos = sqlTextAreaText.substring(0, pos);
+
+      return 0 == pos
+            || Utils.isEmptyString(textBeforePos)
+            || textBeforePos.endsWith(SyntaxConstants.SQL_SEPARATOR);
    }
 
    public void replaceCurrentSql(String replacement)
