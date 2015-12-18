@@ -81,9 +81,7 @@ public class CurrentSqlMarker
       GraphicsContext gc = _canvas.getGraphicsContext2D();
       gc.clearRect(0,0,_canvas.getWidth(),_canvas.getHeight());
 
-
-
-      if(currentSqlCaretBounds.begin == currentSqlCaretBounds.end)
+      if(currentSqlCaretBounds.begin == currentSqlCaretBounds.end || _sqlTextAreaServices.hasSelection())
       {
          return;
       }
