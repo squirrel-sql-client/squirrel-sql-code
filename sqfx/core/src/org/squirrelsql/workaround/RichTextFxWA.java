@@ -24,6 +24,7 @@ public class RichTextFxWA
 
    public static Region getContentRegion(CodeArea sqlTextArea)
    {
+      // Use SenicView to analyze this structure
       VirtualFlow virtualFlow = getVirtualFlow(sqlTextArea);
       Region virtualFlowContent = (Region) virtualFlow.getChildrenUnmodifiable().get(0);
       return virtualFlowContent;
@@ -31,6 +32,7 @@ public class RichTextFxWA
 
    private static VirtualFlow getVirtualFlow(CodeArea sqlTextArea)
    {
+      // Use SenicView to analyze this structure
       Parent styledTextAreaView  = (Parent) sqlTextArea.getChildrenUnmodifiable().get(0);
       return (VirtualFlow) styledTextAreaView.getChildrenUnmodifiable().get(0);
    }
@@ -76,10 +78,12 @@ public class RichTextFxWA
       Point2D end = getCoordinates(sqlTextArea, maxColumn, line, LetterPos.RIGHT_LOWER);
 
       ScrollBar verticalScrollbar = getScrollbar(sqlTextArea, Orientation.VERTICAL);
-
       double yViewOffset = (verticalScrollbar.getMax() - verticalScrollbar.getVisibleAmount()) * verticalScrollbar.getValue() / verticalScrollbar.getMax();
 
-      return new BoundingBox(beg.getX(), beg.getY() - yViewOffset, end.getX() - beg.getX(), end.getY() - beg.getY());
+      ScrollBar horizontalScrollbar = getScrollbar(sqlTextArea, Orientation.HORIZONTAL);
+      double xViewOffset = (horizontalScrollbar.getMax() - horizontalScrollbar.getVisibleAmount()) * horizontalScrollbar.getValue() / horizontalScrollbar.getMax();
+
+      return new BoundingBox(beg.getX() - xViewOffset, beg.getY() - yViewOffset, end.getX() - beg.getX(), end.getY() - beg.getY());
    }
 
    public static ScrollBar getScrollbar(CodeArea sqlTextArea, Orientation orientation)

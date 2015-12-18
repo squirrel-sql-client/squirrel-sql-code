@@ -120,9 +120,16 @@ public class CurrentSqlMarker
          _canvas.widthProperty().bind(contentRegion.widthProperty());
          _canvas.heightProperty().bind(contentRegion.heightProperty());
 
-         RichTextFxWA.getScrollbar(_sqlTextAreaServices.getTextArea(), Orientation.VERTICAL).setFocusTraversable(true);
-
          RichTextFxWA.getScrollbar(_sqlTextAreaServices.getTextArea(), Orientation.VERTICAL).valueProperty().addListener(new ChangeListener<Number>()
+         {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+            {
+               refreshCurrentSqlMark();
+            }
+         });
+
+         RichTextFxWA.getScrollbar(_sqlTextAreaServices.getTextArea(), Orientation.HORIZONTAL).valueProperty().addListener(new ChangeListener<Number>()
          {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
