@@ -149,6 +149,8 @@ public class GeneralCtrl implements SettingsTabController
 
       settings.setCopyQuotedToClip(_generalView.chkCopyQuotedToClip.isSelected());
 
+      settings.setMarkCurrentSQL(_generalView.chkMarkCurrentSql.isSelected());
+
 
       AppState.get().getSettingsManager().writeSettings();
    }
@@ -179,6 +181,8 @@ public class GeneralCtrl implements SettingsTabController
 
       _generalView.chkCopyAliasProperties.setSelected(settings.isCopyAliasProperties());
       _generalView.chkCopyQuotedToClip.setSelected(settings.isCopyQuotedToClip());
+
+      _generalView.chkMarkCurrentSql.setSelected(settings.isMarkCurrentSQL());
 
       updateUi();
    }

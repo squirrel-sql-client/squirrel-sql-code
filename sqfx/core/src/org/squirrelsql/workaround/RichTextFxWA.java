@@ -4,16 +4,15 @@ import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Region;
 import org.fxmisc.flowless.VirtualFlow;
 import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.session.sql.CaretBounds;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Optional;
 
 public class RichTextFxWA
 {
@@ -25,14 +24,15 @@ public class RichTextFxWA
 
    public static Region getContentRegion(CodeArea sqlTextArea)
    {
-      Parent styledTextAreaView  = (Parent) sqlTextArea.getChildrenUnmodifiable().get(0);
-
-      VirtualFlow virtualFlow = (VirtualFlow) styledTextAreaView.getChildrenUnmodifiable().get(0);
-
-
+      VirtualFlow virtualFlow = getVirtualFlow(sqlTextArea);
       Region virtualFlowContent = (Region) virtualFlow.getChildrenUnmodifiable().get(0);
-
       return virtualFlowContent;
+   }
+
+   private static VirtualFlow getVirtualFlow(CodeArea sqlTextArea)
+   {
+      Parent styledTextAreaView  = (Parent) sqlTextArea.getChildrenUnmodifiable().get(0);
+      return (VirtualFlow) styledTextAreaView.getChildrenUnmodifiable().get(0);
    }
 
    public static Bounds getBoundsForCaretBounds(CodeArea sqlTextArea, CaretBounds caretBounds)
@@ -71,11 +71,36 @@ public class RichTextFxWA
       maxColumn = Math.max(column, maxColumn);
 
 
+
       Point2D beg = getCoordinates(sqlTextArea, 0, begLine, LetterPos.LEFT_UPPER);
       Point2D end = getCoordinates(sqlTextArea, maxColumn, line, LetterPos.RIGHT_LOWER);
 
+      ScrollBar verticalScrollbar = getScrollbar(sqlTextArea, Orientation.VERTICAL);
 
-      return new BoundingBox(beg.getX(), beg.getY(), end.getX() - beg.getX(), end.getY() - beg.getY());
+      double yViewOffset = (verticalScrollbar.getMax() - verticalScrollbar.getVisibleAmount()) * verticalScrollbar.getValue() / verticalScrollbar.getMax();
+
+      return new BoundingBox(beg.getX(), beg.getY() - yViewOffset, end.getX() - beg.getX(), end.getY() - beg.getY());
+   }
+
+   public static ScrollBar getScrollbar(CodeArea sqlTextArea, Orientation orientation)
+   {
+      VirtualFlow virtualFlow = getVirtualFlow(sqlTextArea);
+
+      for (Node node : virtualFlow.getChildrenUnmodifiable())
+      {
+         if(node instanceof ScrollBar)
+         {
+            ScrollBar scrollBar = (ScrollBar) node;
+
+            if(scrollBar.getOrientation() == orientation)
+            {
+               return scrollBar;
+            }
+         }
+      }
+
+      throw new IllegalStateException("Could not find scroll bar");
+
    }
 
    private static Point2D getCoordinates(CodeArea sqlTextArea, int col, int line, LetterPos letterPos)

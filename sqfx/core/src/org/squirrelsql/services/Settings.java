@@ -9,6 +9,7 @@ public class Settings
    private int _resultTabsLimit = 10;
    private boolean _copyAliasProperties;
    private boolean _copyQuotedToClip = true;
+   private boolean _markCurrentSQL = true;
 
    public boolean isMultibleLinesInCells()
    {
@@ -78,5 +79,15 @@ public class Settings
    public boolean isCopyQuotedToClip()
    {
       return _copyQuotedToClip;
+   }
+
+   public boolean isMarkCurrentSQL()
+   {
+      return _markCurrentSQL;
+   }
+
+   public void setMarkCurrentSQL(boolean markCurrentSQL)
+   {
+      _markCurrentSQL = markCurrentSQL;
    }
 }

@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
@@ -46,6 +47,15 @@ public class CurrentSqlMarker
          }
       });
 
+      _canvas.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() // Mouse wheel
+      {
+         @Override
+         public void handle(ScrollEvent event)
+         {
+            RichTextFxWA.getContentRegion(_sqlTextAreaServices.getTextArea()).fireEvent(event);
+         }
+      });
+
       _canvas.setCursor(Cursor.TEXT);
 
       _stackPane.setPrefHeight(0);
@@ -53,8 +63,6 @@ public class CurrentSqlMarker
 
       _stackPane.setMinHeight(0);
       _stackPane.setMinWidth(0);
-
-
 
       sqlTextAreaServices.getTextArea().caretPositionProperty().addListener(new ChangeListener<Integer>()
       {
@@ -64,16 +72,6 @@ public class CurrentSqlMarker
             refreshCurrentSqlMark();
          }
       });
-
-      sqlTextAreaServices.getTextArea().setOnScroll(new EventHandler<ScrollEvent>()
-      {
-         @Override
-         public void handle(ScrollEvent event)
-         {
-            System.out.println("event = " + event);
-         }
-      });
-
    }
 
    private void refreshCurrentSqlMark()
@@ -92,11 +90,7 @@ public class CurrentSqlMarker
 
       Region contentRegion = RichTextFxWA.getContentRegion(_sqlTextAreaServices.getTextArea());
 
-      if(false == _canvas.widthProperty().isBound())
-      {
-         _canvas.widthProperty().bind(contentRegion.widthProperty());
-         _canvas.heightProperty().bind(contentRegion.heightProperty());
-      }
+      checkBindings(contentRegion);
 
       CodeArea sqlTextArea = _sqlTextAreaServices.getTextArea();
 
@@ -105,24 +99,42 @@ public class CurrentSqlMarker
       Bounds bounds = RichTextFxWA.getBoundsForCaretBounds(sqlTextArea, currentSqlCaretBounds);
 
 
-      gc.setStroke(Color.BLUE);
+      gc.setStroke(Color.LIGHTSTEELBLUE);
       gc.strokeLine(bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMinY());
       gc.strokeLine(bounds.getMaxX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
       gc.strokeLine(bounds.getMaxX(), bounds.getMaxY(), bounds.getMinX(), bounds.getMaxY());
       gc.strokeLine(bounds.getMinX(), bounds.getMaxY(), bounds.getMinX(), bounds.getMinY());
 
 
-      gc.setStroke(Color.GREEN);
-      gc.strokeLine(1, 1, _canvas.getWidth()-1, 1);
-      gc.strokeLine(_canvas.getWidth()-1, 1, _canvas.getWidth()-1, _canvas.getHeight()-1);
-      gc.strokeLine(_canvas.getWidth()-1, _canvas.getHeight()-1, 1, _canvas.getHeight()-1);
-      gc.strokeLine(1, _canvas.getHeight()-1, 1, 1);
+//      gc.setStroke(Color.GREEN);
+//      gc.strokeLine(1, 1, _canvas.getWidth()-1, 1);
+//      gc.strokeLine(_canvas.getWidth()-1, 1, _canvas.getWidth()-1, _canvas.getHeight()-1);
+//      gc.strokeLine(_canvas.getWidth()-1, _canvas.getHeight()-1, 1, _canvas.getHeight()-1);
+//      gc.strokeLine(1, _canvas.getHeight()-1, 1, 1);
    }
 
+   private void checkBindings(Region contentRegion)
+   {
+      if(false == _canvas.widthProperty().isBound())
+      {
+         _canvas.widthProperty().bind(contentRegion.widthProperty());
+         _canvas.heightProperty().bind(contentRegion.heightProperty());
+
+         RichTextFxWA.getScrollbar(_sqlTextAreaServices.getTextArea(), Orientation.VERTICAL).setFocusTraversable(true);
+
+         RichTextFxWA.getScrollbar(_sqlTextAreaServices.getTextArea(), Orientation.VERTICAL).valueProperty().addListener(new ChangeListener<Number>()
+         {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+            {
+               refreshCurrentSqlMark();
+            }
+         });
+      }
+   }
 
    public StackPane getTextAreaStackPane()
    {
       return _stackPane;
    }
-
 }

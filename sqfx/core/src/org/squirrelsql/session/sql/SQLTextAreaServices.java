@@ -3,10 +3,12 @@ package org.squirrelsql.session.sql;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import org.fxmisc.richtext.CodeArea;
+import org.squirrelsql.AppState;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.CaretVicinityInfo;
 import org.squirrelsql.session.SessionTabContext;
@@ -26,7 +28,7 @@ public class SQLTextAreaServices
    private final CodeArea _sqlTextArea;
    private final SQLSyntaxHighlighting _sqlSyntaxHighlighting;
    private final ParserEventsProcessor _parserEventsProcessor;
-   private final CurrentSqlMarker _currentSqlMarker;
+   private CurrentSqlMarker _currentSqlMarker;
    private LexAndParseResultListener _lexAndParseResultListener;
 
    private CaretPopup _caretPopup;
@@ -63,7 +65,12 @@ public class SQLTextAreaServices
       schemaCacheValue.addListener(() -> updateHighlighting());
 
       _caretPopup = new CaretPopup(_sqlTextArea);
-      _currentSqlMarker = new CurrentSqlMarker(this);
+
+
+      if (AppState.get().getSettingsManager().getSettings().isMarkCurrentSQL())
+      {
+         _currentSqlMarker = new CurrentSqlMarker(this);
+      }
    }
 
    public void updateHighlighting()
@@ -338,9 +345,16 @@ public class SQLTextAreaServices
       }
    }
 
-   public StackPane getTextAreaStackPane()
+   public Node getTextAreaNode()
    {
-      return _currentSqlMarker.getTextAreaStackPane();
+      if (null != _currentSqlMarker)
+      {
+         return _currentSqlMarker.getTextAreaStackPane();
+      }
+      else
+      {
+         return _sqlTextArea;
+      }
    }
 
 }

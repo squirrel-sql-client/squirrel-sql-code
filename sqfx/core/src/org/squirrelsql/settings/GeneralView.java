@@ -21,5 +21,6 @@ public class GeneralView
    @FXML TextField txtResultTabsLimit;
    @FXML CheckBox chkCopyAliasProperties;
    @FXML CheckBox chkCopyQuotedToClip;
+   @FXML CheckBox chkMarkCurrentSql;
 
 }

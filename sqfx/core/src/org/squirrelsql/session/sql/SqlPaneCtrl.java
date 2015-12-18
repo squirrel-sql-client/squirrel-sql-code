@@ -67,7 +67,7 @@ public class SqlPaneCtrl
 
       _sqlOutputTabPane = new TabPane();
 
-      _sqlTabSplitPane.getItems().add(_sqlTextAreaServices.getTextAreaStackPane());
+      _sqlTabSplitPane.getItems().add(_sqlTextAreaServices.getTextAreaNode());
       _sqlTabSplitPane.getItems().add(_sqlOutputTabPane);
 
 
