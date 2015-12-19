@@ -1,5 +1,6 @@
 package org.squirrelsql.session.sql;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -9,12 +10,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.fxmisc.richtext.CodeArea;
+import org.squirrelsql.workaround.KeyMatchWA;
 import org.squirrelsql.workaround.RichTextFxWA;
 
 public class CurrentSqlMarker
@@ -56,6 +57,18 @@ public class CurrentSqlMarker
          }
       });
 
+
+      _sqlTextAreaServices.getTextArea().addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>()
+      {
+         @Override
+         public void handle(KeyEvent event)
+         {
+            onHandleKeyEvent(event);
+         }
+      });
+
+
+
       _canvas.setCursor(Cursor.TEXT);
 
       _stackPane.setPrefHeight(0);
@@ -72,6 +85,15 @@ public class CurrentSqlMarker
             refreshCurrentSqlMark();
          }
       });
+   }
+
+   private void onHandleKeyEvent(KeyEvent event)
+   {
+      // Needs to be done for all keys that change text but don't move caret.
+      if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.DELETE)))
+      {
+         Platform.runLater(() -> refreshCurrentSqlMark());
+      }
    }
 
    private void refreshCurrentSqlMark()
