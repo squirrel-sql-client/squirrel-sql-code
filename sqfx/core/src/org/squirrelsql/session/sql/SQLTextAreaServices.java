@@ -126,8 +126,23 @@ public class SQLTextAreaServices
          return caretBounds;
       }
 
-
       int caretPosition = _sqlTextArea.getCaretPosition();
+
+
+      ////////////////////////////////////////////////////////
+      // Remove this to have the former, less strict
+      // interpretation of current SQL.
+      if(isLineAtCaretEmpty())
+      {
+         CaretBounds ret = new CaretBounds();
+         ret.begin = caretPosition;
+         ret.end = caretPosition;
+         return ret;
+      }
+      //
+      ///////////////////////////////////////////////////////
+
+
       String sqlTextAreaText = _sqlTextArea.getText();
 
       caretBounds.begin = caretPosition;
@@ -142,6 +157,26 @@ public class SQLTextAreaServices
          ++caretBounds.end;
       }
       return caretBounds;
+   }
+
+   private boolean isLineAtCaretEmpty()
+   {
+      int caretPosition = _sqlTextArea.getCaretPosition();
+      String text = _sqlTextArea.getText();
+
+
+      if(0 == caretPosition)
+      {
+         return SyntaxConstants.CODE_AREA_LINE_SEP_CAR == text.charAt(caretPosition);
+      }
+
+      if(text.length() <= caretPosition)
+      {
+         return text.endsWith(SyntaxConstants.CODE_AREA_LINE_SEP);
+      }
+
+
+      return '\n' == text.charAt(caretPosition) && '\n' == text.charAt(caretPosition - 1);
    }
 
    private boolean isStatementEnd(String sqlTextAreaText, int pos)
