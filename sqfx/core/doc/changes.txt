@@ -1,6 +1,10 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: SQL editor: The current SQL (SQL that is executed with Ctrl+Enter) is now marked by a box.
+  In the settings the color of the box can be chosen or it can be switched off.
+
+
 Bug fix: When the "SQL to table" function failed during execution of the CREATE TABLE- or INSERT-statement no error message was logged.
 
 Improvement: The progress window that is shown at Session start up offers to open its Alias properties dialog.
