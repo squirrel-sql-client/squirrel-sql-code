@@ -15,6 +15,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.fxmisc.richtext.CodeArea;
+import org.squirrelsql.AppState;
+import org.squirrelsql.services.Settings;
 import org.squirrelsql.workaround.KeyMatchWA;
 import org.squirrelsql.workaround.RichTextFxWA;
 
@@ -119,7 +121,9 @@ public class CurrentSqlMarker
       Bounds bounds = RichTextFxWA.getBoundsForCaretBounds(sqlTextArea, currentSqlCaretBounds);
 
 
-      gc.setStroke(Color.LIGHTSTEELBLUE);
+      Settings settings = AppState.get().getSettingsManager().getSettings();
+      Color color = Color.rgb(settings.getCurrentSqlMarkColor_R(), settings.getCurrentSqlMarkColor_G(), settings.getCurrentSqlMarkColor_B());
+      gc.setStroke(color);
       gc.strokeLine(bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMinY());
       gc.strokeLine(bounds.getMaxX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
       gc.strokeLine(bounds.getMaxX(), bounds.getMaxY(), bounds.getMinX(), bounds.getMaxY());

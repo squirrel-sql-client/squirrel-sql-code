@@ -29,6 +29,8 @@
       <TextField fx:id="txtResultTabsLimit" layoutX="246.0" layoutY="339.0" prefHeight="26.0" prefWidth="81.0" />
       <CheckBox fx:id="chkCopyAliasProperties" layoutX="15.0" layoutY="379.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="559.0" text="%showSettings.copy.alias.properties" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="27.0" />
       <CheckBox fx:id="chkCopyQuotedToClip" layoutX="15.0" layoutY="411.0" mnemonicParsing="false" text="%showSettings.copy.to.clipboard.on.quote" />
-      <CheckBox fx:id="chkMarkCurrentSql" layoutX="15.0" layoutY="443.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="438.0" text="%showSettings.mark.current.sql.in.sql.editor" />
+      <CheckBox fx:id="chkMarkCurrentSql" layoutX="15.0" layoutY="443.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="285.0" text="%showSettings.mark.current.sql.in.sql.editor" AnchorPane.leftAnchor="15.0" />
+      <ColorPicker fx:id="colPickCurrentSqlMark" layoutX="310.0" layoutY="465.0" AnchorPane.leftAnchor="310.0" />
+      <Label layoutX="58.0" layoutY="470.0" prefHeight="16.0" prefWidth="234.0" text="%showSettings.mark.current.sql.in.sql.editor.color" />
   </children>
 </AnchorPane>

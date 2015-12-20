@@ -3,11 +3,13 @@ package org.squirrelsql.settings;
 import javafx.scene.control.Tab;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import org.squirrelsql.AppState;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.*;
 import org.squirrelsql.table.tableedit.StringInterpreter;
+import org.squirrelsql.workaround.ColorWA;
 
 import java.io.File;
 
@@ -47,6 +49,7 @@ public class GeneralCtrl implements SettingsTabController
 
 
       _generalView.chkLimitRowsByDefault.setOnAction((e) -> updateUi());
+      _generalView.chkMarkCurrentSql.setOnAction((e) -> updateUi());
 
       initPropertiesFileInfoGroup();
    }
@@ -151,6 +154,10 @@ public class GeneralCtrl implements SettingsTabController
 
       settings.setMarkCurrentSQL(_generalView.chkMarkCurrentSql.isSelected());
 
+      settings.setCurrentSqlMarkColor_R(ColorWA.getRed(_generalView.colPickCurrentSqlMark.getValue()));
+      settings.setCurrentSqlMarkColor_G(ColorWA.getGreen(_generalView.colPickCurrentSqlMark.getValue()));
+      settings.setCurrentSqlMarkColor_B(ColorWA.getBlue(_generalView.colPickCurrentSqlMark.getValue()));
+
 
       AppState.get().getSettingsManager().writeSettings();
    }
@@ -184,11 +191,17 @@ public class GeneralCtrl implements SettingsTabController
 
       _generalView.chkMarkCurrentSql.setSelected(settings.isMarkCurrentSQL());
 
+      _generalView.colPickCurrentSqlMark.setValue(Color.rgb(settings.getCurrentSqlMarkColor_R(), settings.getCurrentSqlMarkColor_G(), settings.getCurrentSqlMarkColor_B()));
+
+
+
       updateUi();
    }
 
    private void updateUi()
    {
       _generalView.txtLimitRowsDefault.setDisable(false == _generalView.chkLimitRowsByDefault.isSelected());
+
+      _generalView.colPickCurrentSqlMark.setDisable(false == _generalView.chkMarkCurrentSql.isSelected());
    }
 }

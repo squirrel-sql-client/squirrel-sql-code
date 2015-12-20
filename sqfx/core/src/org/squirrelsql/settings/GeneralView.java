@@ -1,10 +1,7 @@
 package org.squirrelsql.settings;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 
 public class GeneralView
@@ -22,5 +19,6 @@ public class GeneralView
    @FXML CheckBox chkCopyAliasProperties;
    @FXML CheckBox chkCopyQuotedToClip;
    @FXML CheckBox chkMarkCurrentSql;
+   @FXML ColorPicker colPickCurrentSqlMark;
 
 }

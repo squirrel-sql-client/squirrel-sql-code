@@ -1,5 +1,8 @@
 package org.squirrelsql.services;
 
+import javafx.scene.paint.Color;
+import org.squirrelsql.workaround.ColorWA;
+
 public class Settings
 {
    private boolean _multibleLinesInCells = false;
@@ -10,6 +13,10 @@ public class Settings
    private boolean _copyAliasProperties;
    private boolean _copyQuotedToClip = true;
    private boolean _markCurrentSQL = true;
+
+   private int _currentSqlMarkColor_R = ColorWA.getRed(Color.LIGHTSTEELBLUE);
+   private int _currentSqlMarkColor_G = ColorWA.getGreen(Color.LIGHTSTEELBLUE);
+   private int _currentSqlMarkColor_B = ColorWA.getBlue(Color.LIGHTSTEELBLUE);
 
    public boolean isMultibleLinesInCells()
    {
@@ -89,5 +96,35 @@ public class Settings
    public void setMarkCurrentSQL(boolean markCurrentSQL)
    {
       _markCurrentSQL = markCurrentSQL;
+   }
+
+   public int getCurrentSqlMarkColor_R()
+   {
+      return _currentSqlMarkColor_R;
+   }
+
+   public void setCurrentSqlMarkColor_R(int currentSqlMarkColor_R)
+   {
+      _currentSqlMarkColor_R = currentSqlMarkColor_R;
+   }
+
+   public int getCurrentSqlMarkColor_G()
+   {
+      return _currentSqlMarkColor_G;
+   }
+
+   public void setCurrentSqlMarkColor_G(int currentSqlMarkColor_G)
+   {
+      _currentSqlMarkColor_G = currentSqlMarkColor_G;
+   }
+
+   public int getCurrentSqlMarkColor_B()
+   {
+      return _currentSqlMarkColor_B;
+   }
+
+   public void setCurrentSqlMarkColor_B(int currentSqlMarkColor_B)
+   {
+      _currentSqlMarkColor_B = currentSqlMarkColor_B;
    }
 }

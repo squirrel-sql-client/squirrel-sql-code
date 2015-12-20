@@ -164,6 +164,12 @@ public class SQLTextAreaServices
       int caretPosition = _sqlTextArea.getCaretPosition();
       String text = _sqlTextArea.getText();
 
+      if(0 == text.length())
+      {
+         return false;
+      }
+
+
 
       if(0 == caretPosition)
       {

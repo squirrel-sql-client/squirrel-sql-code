@@ -78,10 +78,27 @@ public class RichTextFxWA
       Point2D end = getCoordinates(sqlTextArea, maxColumn, line, LetterPos.RIGHT_LOWER);
 
       ScrollBar verticalScrollbar = getScrollbar(sqlTextArea, Orientation.VERTICAL);
-      double yViewOffset = (verticalScrollbar.getMax() - verticalScrollbar.getVisibleAmount()) * verticalScrollbar.getValue() / verticalScrollbar.getMax();
+      double yViewOffset;
+      if (0 == verticalScrollbar.getMax())
+      {
+         yViewOffset = 0;
+      }
+      else
+      {
+         yViewOffset = (verticalScrollbar.getMax() - verticalScrollbar.getVisibleAmount()) * verticalScrollbar.getValue() / verticalScrollbar.getMax();
+      }
 
       ScrollBar horizontalScrollbar = getScrollbar(sqlTextArea, Orientation.HORIZONTAL);
-      double xViewOffset = (horizontalScrollbar.getMax() - horizontalScrollbar.getVisibleAmount()) * horizontalScrollbar.getValue() / horizontalScrollbar.getMax();
+
+      double xViewOffset;
+      if (0 == horizontalScrollbar.getMax())
+      {
+         xViewOffset = 0;
+      }
+      else
+      {
+         xViewOffset = (horizontalScrollbar.getMax() - horizontalScrollbar.getVisibleAmount()) * horizontalScrollbar.getValue() / horizontalScrollbar.getMax();
+      }
 
       return new BoundingBox(beg.getX() - xViewOffset, beg.getY() - yViewOffset, end.getX() - beg.getX(), end.getY() - beg.getY());
    }
