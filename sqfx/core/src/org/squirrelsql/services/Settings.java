@@ -16,7 +16,7 @@ public class Settings
    private int _resultTabsLimit = 10;
    private boolean _copyAliasProperties;
    private boolean _copyQuotedToClip = true;
-   private boolean _markCurrentSQL = true;
+   private boolean _markCurrentSQL = false;
 
    private int _currentSqlMarkColor_R = ColorWA.getRed(Color.LIGHTSTEELBLUE);
    private int _currentSqlMarkColor_G = ColorWA.getGreen(Color.LIGHTSTEELBLUE);
