@@ -37,6 +37,7 @@ public class GeneralCtrl implements SettingsTabController
 
 
       _generalView.apProperties.setStyle(GuiUtils.STYLE_GROUP_BORDER);
+      _generalView.apMarkCurrentSql.setStyle(GuiUtils.STYLE_GROUP_BORDER);
 
 
       _generalView.btnSaveStandardProperties.setGraphic(_props.getImageView("save.png"));
@@ -45,13 +46,15 @@ public class GeneralCtrl implements SettingsTabController
       Utils.makePositiveIntegerField(_generalView.txtLimitRowsDefault);
       Utils.makePositiveIntegerField(_generalView.txtResultTabsLimit);
 
-      loadSettingsToUi();
+      Settings settings = loadSettingsToUi();
+      new LineHeightOffsetCtrl(_generalView.sldLineHeightOffset, _generalView.txtLineHeightOffset, _generalView.btnApplyLineHeightOffset, settings);
 
 
       _generalView.chkLimitRowsByDefault.setOnAction((e) -> updateUi());
       _generalView.chkMarkCurrentSql.setOnAction((e) -> updateUi());
 
       initPropertiesFileInfoGroup();
+
    }
 
    @Override
@@ -175,7 +178,7 @@ public class GeneralCtrl implements SettingsTabController
 
    }
 
-   private void loadSettingsToUi()
+   private Settings loadSettingsToUi()
    {
       Settings settings = AppState.get().getSettingsManager().getSettings();
 
@@ -196,6 +199,8 @@ public class GeneralCtrl implements SettingsTabController
 
 
       updateUi();
+
+      return settings;
    }
 
    private void updateUi()
@@ -203,5 +208,9 @@ public class GeneralCtrl implements SettingsTabController
       _generalView.txtLimitRowsDefault.setDisable(false == _generalView.chkLimitRowsByDefault.isSelected());
 
       _generalView.colPickCurrentSqlMark.setDisable(false == _generalView.chkMarkCurrentSql.isSelected());
+      _generalView.sldLineHeightOffset.setDisable(false == _generalView.chkMarkCurrentSql.isSelected());
+      _generalView.txtLineHeightOffset.setDisable(false == _generalView.chkMarkCurrentSql.isSelected());
+      _generalView.btnApplyLineHeightOffset.setDisable(false == _generalView.chkMarkCurrentSql.isSelected());
+
    }
 }

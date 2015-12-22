@@ -3,6 +3,11 @@ SQuirreL SQL FX Change Log
 
 Feature: SQL editor: The current SQL (SQL that is executed with Ctrl+Enter) is now marked by a box.
   In the settings the color of the box can be chosen or it can be switched off.
+  Note: Due to an API function missing in the RichTextFx editor component we are forced to do some advanced calculation
+        of the mark's position. The calculation depends on a system dependent line height offset.
+        Users probably need to adjust this offset. To adjust the offset open or create a long script
+        in the SQL editor. Place the caret inside a statement and open the settings windows.
+        Some controls at the General tab allow to adjust the mark online.
 
 
 Bug fix: When the "SQL to table" function failed during execution of the CREATE TABLE- or INSERT-statement no error message was logged.

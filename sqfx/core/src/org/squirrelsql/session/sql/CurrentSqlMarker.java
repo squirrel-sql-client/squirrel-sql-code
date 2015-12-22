@@ -87,6 +87,15 @@ public class CurrentSqlMarker
             refreshCurrentSqlMark();
          }
       });
+
+      AppState.get().getSettingsManager().getSettings().lineHeightOffsetProperty().addListener(new ChangeListener<Number>()
+      {
+         @Override
+         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+         {
+            refreshCurrentSqlMark();
+         }
+      });
    }
 
    private void onHandleKeyEvent(KeyEvent event)

@@ -2,6 +2,7 @@ package org.squirrelsql.services;
 
 import com.google.common.base.Strings;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -133,6 +134,11 @@ public class Utils
       txtField.addEventFilter(KeyEvent.KEY_TYPED, Utils::onCheckInt);
    }
 
+   public static void makePositiveDoubleField(TextField txtField)
+   {
+      txtField.addEventFilter(KeyEvent.KEY_TYPED, Utils::onCheckDouble);
+   }
+
    private static void onCheckInt(KeyEvent t)
    {
       char ar[] = t.getCharacter().toCharArray();
@@ -142,6 +148,17 @@ public class Utils
          t.consume();
       }
    }
+
+   private static void onCheckDouble(KeyEvent t)
+   {
+      char ar[] = t.getCharacter().toCharArray();
+      char ch = ar[t.getCharacter().toCharArray().length - 1];
+      if (!(ch >= '0' && ch <= '9') && ch != '.')
+      {
+         t.consume();
+      }
+   }
+
 
    public static String getStackString(Throwable t)
    {

@@ -21,4 +21,10 @@ public class GeneralView
    @FXML CheckBox chkMarkCurrentSql;
    @FXML ColorPicker colPickCurrentSqlMark;
 
+
+   @FXML AnchorPane apMarkCurrentSql;
+   @FXML Slider sldLineHeightOffset;
+   @FXML TextField txtLineHeightOffset;
+   @FXML Button btnApplyLineHeightOffset;
+
 }

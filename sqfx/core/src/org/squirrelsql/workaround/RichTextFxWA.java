@@ -12,6 +12,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Region;
 import org.fxmisc.flowless.VirtualFlow;
 import org.fxmisc.richtext.CodeArea;
+import org.squirrelsql.AppState;
 import org.squirrelsql.session.sql.CaretBounds;
 
 public class RichTextFxWA
@@ -128,7 +129,7 @@ public class RichTextFxWA
    {
       FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(sqlTextArea.getFont());
 
-      float lineHeight = fontMetrics.getLineHeight() + fontMetrics.getLeading() + 2.3f;
+      float lineHeight = fontMetrics.getLineHeight() + fontMetrics.getLeading() + (float)AppState.get().getSettingsManager().getSettings().getLineHeightOffset();
 
       float y;
 

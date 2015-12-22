@@ -7,7 +7,7 @@
 <?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource i18n.properties?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="539.0" prefWidth="601.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.settings.GeneralView">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="773.0" prefWidth="722.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.settings.GeneralView">
   <children>
     <CheckBox fx:id="chkMultibleLinesInCells" layoutX="14.0" layoutY="15.0" mnemonicParsing="false" text="%multiline.display.explanation" />
     <CheckBox fx:id="chkLimitRowsByDefault" layoutX="14.0" layoutY="49.0" mnemonicParsing="false" prefWidth="246.0" text="%limit.result.rows.default" />
@@ -29,8 +29,16 @@
       <TextField fx:id="txtResultTabsLimit" layoutX="246.0" layoutY="339.0" prefHeight="26.0" prefWidth="81.0" />
       <CheckBox fx:id="chkCopyAliasProperties" layoutX="15.0" layoutY="379.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="559.0" text="%showSettings.copy.alias.properties" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="27.0" />
       <CheckBox fx:id="chkCopyQuotedToClip" layoutX="15.0" layoutY="411.0" mnemonicParsing="false" text="%showSettings.copy.to.clipboard.on.quote" />
-      <CheckBox fx:id="chkMarkCurrentSql" layoutX="15.0" layoutY="443.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="285.0" text="%showSettings.mark.current.sql.in.sql.editor" AnchorPane.leftAnchor="15.0" />
-      <ColorPicker fx:id="colPickCurrentSqlMark" layoutX="310.0" layoutY="465.0" AnchorPane.leftAnchor="310.0" />
-      <Label layoutX="58.0" layoutY="470.0" prefHeight="16.0" prefWidth="234.0" text="%showSettings.mark.current.sql.in.sql.editor.color" />
+      <AnchorPane fx:id="apMarkCurrentSql" layoutX="16.0" layoutY="447.0" prefHeight="240.0" prefWidth="561.0">
+         <children>
+            <CheckBox fx:id="chkMarkCurrentSql" layoutX="9.0" layoutY="8.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="285.0" text="%showSettings.mark.current.sql.in.sql.editor" />
+            <ColorPicker fx:id="colPickCurrentSqlMark" layoutX="304.0" layoutY="30.0" prefHeight="26.0" prefWidth="215.0" />
+            <Label layoutX="52.0" layoutY="35.0" prefHeight="16.0" prefWidth="234.0" text="%showSettings.mark.current.sql.in.sql.editor.color" />
+            <Slider fx:id="sldLineHeightOffset" layoutX="52.0" layoutY="201.0" prefHeight="16.0" prefWidth="234.0" />
+            <TextField fx:id="txtLineHeightOffset" layoutX="290.0" layoutY="196.0" prefHeight="26.0" prefWidth="170.0" />
+            <Button fx:id="btnApplyLineHeightOffset" layoutX="464.0" layoutY="196.0" mnemonicParsing="false" text="%showSettings.mark.current.sql.line.hight.offset.apply" />
+            <Label layoutX="52.0" layoutY="73.0" prefHeight="120.0" prefWidth="518.0" text="%showSettings.mark.current.sql.line.hight.offset.explain" />
+         </children>
+      </AnchorPane>
   </children>
 </AnchorPane>
