@@ -145,6 +145,13 @@ public class SQLTextAreaServices
 
       String sqlTextAreaText = _sqlTextArea.getText();
 
+      if(0 == sqlTextAreaText.length())
+      {
+         caretBounds.begin = -1;
+         caretBounds.end = -1;
+         return caretBounds;
+      }
+
       caretBounds.begin = caretPosition;
       while(false == isStatementBegin(sqlTextAreaText, caretBounds.begin))
       {

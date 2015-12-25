@@ -1,6 +1,10 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Two bug fixes concerning the current SQL mark:
+  - StringIndexOutOfBoundsException occurred when the editor was empty and tools popup was opened.
+  - The current SQL mark vanished when the split pane divider was moved over the mark.
+
 Feature: SQL editor: The current SQL (SQL that is executed with Ctrl+Enter) is now marked by a box.
   In the settings the color of the box can be chosen or it can be switched off.
   Note: Due to an API function missing in the RichTextFx editor component we are forced to do some advanced calculation
