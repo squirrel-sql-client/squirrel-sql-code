@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
-import java.awt.Color;
+import java.awt.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -15,6 +15,7 @@ import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.MarkCurrentSqlHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
@@ -51,6 +52,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    private ErrorInfo[] _currentErrorInfos = new ErrorInfo[0];
    private boolean _parsingInitialized;
    private SquirrelRSyntaxSearchEngine _squirrelRSyntaxSearchEngine;
+   private MarkCurrentSqlHandler _markCurrentSqlHandler;
 
 
    public SquirrelRSyntaxTextArea(ISession session, SyntaxPreferences prefs, RSyntaxPropertiesWrapper propertiesWrapper, IIdentifier sqlEntryPanelIdentifier)
@@ -91,6 +93,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
             session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("syntax.useNoDDrawOnWIn32"));
          }
       }
+      _markCurrentSqlHandler = new MarkCurrentSqlHandler(this);
    }
 
 
@@ -268,4 +271,43 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
       //
       ////////////////////////////////////////////
    }
+
+//   @Override
+//   protected void paintComponent(Graphics g)
+//   {
+//      try
+//      {
+//         super.paintComponent(g);
+//
+//         if(null != getSelectedText())
+//         {
+//            return;
+//         }
+//
+//         int[] bounds = _boundsOfSqlHandler.getSqlBoundsBySeparatorRule(getCaretPosition());
+//
+//         if(bounds[0] == bounds[1])
+//         {
+//            return;
+//         }
+//
+//         Rectangle beg = modelToView(bounds[0]);
+//         Rectangle end = modelToView(bounds[1]);
+//
+//         g.drawRect(beg.x, beg.y, end.width + end.x - beg.x, end.height + end.y - beg.y);
+//      }
+//      catch (BadLocationException e)
+//      {
+//         throw new RuntimeException(e);
+//      }
+//
+//   }
+
+   public void paint(Graphics g)
+   {
+      super.paint(g);
+      _markCurrentSqlHandler.paintMark(g);
+   }
+
+
 }

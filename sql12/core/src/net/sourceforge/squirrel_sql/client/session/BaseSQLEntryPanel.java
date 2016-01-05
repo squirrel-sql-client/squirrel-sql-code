@@ -47,9 +47,10 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 	private IApplication _app;
 
 	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
+   private BoundsOfSqlHandler _boundsOfSqlHandler;
 
 
-	protected BaseSQLEntryPanel(IApplication app)
+   protected BaseSQLEntryPanel(IApplication app)
 	{
 		_entryPanelIdentifier = ENTRY_PANEL_IDENTIFIER_FACTORY.createIdentifier();
 		_textPopupMenu = new TextPopupMenu();
@@ -59,11 +60,17 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 		{
 			public void run()
 			{
-				getTextComponent().addMouseListener(_sqlEntryMouseListener);
+            initLater();
 			}
 		});
 
 	}
+
+   private void initLater()
+   {
+      getTextComponent().addMouseListener(_sqlEntryMouseListener);
+      _boundsOfSqlHandler = new BoundsOfSqlHandler(getTextComponent());
+   }
 
    public IIdentifier getIdentifier()
    {
@@ -92,111 +99,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
    public int[] getBoundsOfSQLToBeExecuted()
    {
-      int[] bounds = new int[2];
-      bounds[0] = getSelectionStart();
-      bounds[1] = getSelectionEnd();
-
-      if(bounds[0] == bounds[1])
-      {
-         bounds = getSqlBoundsBySeparatorRule(getCaretPosition());
-      }
-
-      return bounds;
-   }
-
-   /**
-    * The non selection separator is two new lines. Two new lines with white spaces in between
-    * is counted as separator too. 
-    * @return
-    */
-   private int[] getSqlBoundsBySeparatorRule(int iCaretPos)
-   {
-      int[] bounds = new int[2];
-
-      String sql = getText();
-
-      bounds[0] = lastIndexOfStateSep(sql, iCaretPos);
-      bounds[1] = indexOfStateSep(sql, iCaretPos);
-
-      return bounds;
-
-   }
-   
-   private static int indexOfStateSep(String sql, int pos)
-   {
-      int ix = pos;
-
-      int newLinteCount = 0;
-      for(;;)
-      {
-         if(sql.length() == ix)
-         {
-            return sql.length();
-         }
-
-         if(false == Character.isWhitespace(sql.charAt(ix)))
-         {
-            newLinteCount = 0;
-         }
-
-         if('\n' == sql.charAt(ix))
-         {
-            ++newLinteCount;
-            if(2 == newLinteCount)
-            {
-               return ix-1;
-            }
-         }
-
-         ++ix;
-      }
-   }
-
-   private static int lastIndexOfStateSep(String sql, int pos)
-   {
-      int ix = pos;
-
-      int newLinteCount = 0;
-      for(;;)
-      {
-
-         if (ix == sql.length())
-         {
-            if(ix == 0)
-            {
-               return ix;
-            }
-            else
-            {
-               ix--;
-            }
-         }
-
-
-         
-         if(false == Character.isWhitespace(sql.charAt(ix)))
-         {
-            newLinteCount = 0;
-         }
-
-
-         if('\n' == sql.charAt(ix))
-         {
-            ++newLinteCount;
-            if(2 == newLinteCount)
-            {
-               return ix+newLinteCount;
-            }
-         }
-
-         if(0 == ix)
-         {
-            return 0 + newLinteCount;
-         }
-
-
-         --ix;
-      }
+      return _boundsOfSqlHandler.getBoundsOfSQLToBeExecuted();
    }
 
 
@@ -269,7 +172,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
    public void selectCurrentSql()
    {
       int[] boundsOfSQLToBeExecuted = 
-          getSqlBoundsBySeparatorRule(getCaretPosition());
+          _boundsOfSqlHandler.getSqlBoundsBySeparatorRule(getCaretPosition());
 
       if(boundsOfSQLToBeExecuted[0] != boundsOfSQLToBeExecuted[1])
       {

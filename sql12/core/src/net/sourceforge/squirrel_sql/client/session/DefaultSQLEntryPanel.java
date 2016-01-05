@@ -17,7 +17,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Font;
+import java.awt.*;
 import java.awt.dnd.DropTarget;
 import java.awt.event.MouseListener;
 
@@ -350,6 +350,9 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 
    private static class MyTextArea extends JTextArea
 	{
+
+		private final MarkCurrentSqlHandler _markCurrentSqlHandler;
+
 		private MyTextArea(ISession session)
 		{
 			SessionProperties props = session.getProperties();
@@ -358,6 +361,15 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 			{
 				this.setFont(props.getFontInfo().createFont());
 			}
+
+			_markCurrentSqlHandler = new MarkCurrentSqlHandler(this);
+		}
+
+		@Override
+		public void paint(Graphics g)
+		{
+			super.paint(g);
+			_markCurrentSqlHandler.paintMark(g);
 		}
 	}
 
