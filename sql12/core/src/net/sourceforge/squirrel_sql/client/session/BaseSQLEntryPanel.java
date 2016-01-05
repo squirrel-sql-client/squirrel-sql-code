@@ -79,22 +79,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
 	public String getSQLToBeExecuted()
 	{
-		String sql = getSelectedText();
-		if (sql == null || sql.trim().length() == 0)
-		{
-         sql = getText();
-         int[] bounds = getBoundsOfSQLToBeExecuted();
-
-         if(bounds[0] >= bounds[1])
-         {
-            sql = "";
-         }
-         else
-         {
-            sql = sql.substring(bounds[0], bounds[1]).trim();
-         }
-		}
-		return sql != null ? sql : "";
+		return _boundsOfSqlHandler.getSQLToBeExecuted();
 	}
 
    public int[] getBoundsOfSQLToBeExecuted()

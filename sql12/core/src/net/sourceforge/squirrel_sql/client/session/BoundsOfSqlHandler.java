@@ -120,4 +120,25 @@ public class BoundsOfSqlHandler
       }
    }
 
+   public String getSQLToBeExecuted()
+   {
+      String sql = _textComponent.getSelectedText();
+      if (sql == null || sql.trim().length() == 0)
+      {
+         sql = _textComponent.getText();
+         int[] bounds = getBoundsOfSQLToBeExecuted();
+
+         if(bounds[0] >= bounds[1])
+         {
+            sql = "";
+         }
+         else
+         {
+            sql = sql.substring(bounds[0], bounds[1]).trim();
+         }
+      }
+      return sql != null ? sql : "";
+   }
+
+
 }

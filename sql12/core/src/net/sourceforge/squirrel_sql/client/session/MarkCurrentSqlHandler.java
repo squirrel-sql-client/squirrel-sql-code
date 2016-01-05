@@ -4,21 +4,16 @@ import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.util.Date;
 
 public class MarkCurrentSqlHandler
 {
-   //public static final int NULL_CARET_POS = -10;
    private static final Rectangle NULL_RECT = new Rectangle(-1,-1,-1,-1);
-
 
    private final BoundsOfSqlHandler _boundsOfSqlHandler;
    private JTextComponent _textComponent;
 
 
    private Rectangle _currentRect = (Rectangle) NULL_RECT.clone();
-
-   //private int _currentCaretPos = NULL_CARET_POS;
 
    public MarkCurrentSqlHandler(JTextComponent textComponent)
    {
@@ -40,7 +35,6 @@ public class MarkCurrentSqlHandler
 
          if (null != _textComponent.getSelectedText())
          {
-            //_currentRect = (Rectangle) NULL_RECT.clone();
             return;
          }
 
@@ -48,20 +42,21 @@ public class MarkCurrentSqlHandler
 
          if (bounds[0] + 1 >= bounds[1])
          {
-            //_currentRect = (Rectangle) NULL_RECT.clone();
             return;
          }
-
-         //((Graphics2D)g).setStroke(new BasicStroke(1));
 
          g.setColor(Color.blue);
 
          Rectangle beg = _textComponent.modelToView(bounds[0]);
          Rectangle end = _textComponent.modelToView(bounds[1]);
 
-         x = beg.x;
+
+         int maxSqlX = getMaxSqlX(bounds, end);
+
+         //x = beg.x;
+         x = 0;
          y = beg.y;
-         width = end.width + end.x - beg.x;
+         width = maxSqlX - x;
          height = end.height + end.y - beg.y;
 
          g.drawRect(x, y, width, height);
@@ -73,9 +68,6 @@ public class MarkCurrentSqlHandler
 //         System.out.print(", width = " + width);
 //         System.out.print(", height = " + height);
 //         System.out.println(", color = " + color);
-
-
-         //System.out.println(System.currentTimeMillis() + "MarkCurrentSqlHandler.paintMarkRectangle beg=" + beg + ", end=" + end + ", Color " + color);
       }
       catch (BadLocationException e)
       {
@@ -85,9 +77,25 @@ public class MarkCurrentSqlHandler
       {
          g.setColor(buf);
          triggerRepaintIfChanged(x, y, width, height);
-         //((Graphics2D)g).setStroke(strokeBuf);
       }
 
+   }
+
+   private int getMaxSqlX(int[] bounds, Rectangle end) throws BadLocationException
+   {
+      String text = _textComponent.getText();
+
+      int maxSqlX = 0;
+      for (int i = bounds[0]; i < bounds[1]; i++)
+      {
+         if('\n' == text.charAt(i))
+         {
+            Rectangle rectangle = _textComponent.modelToView(i);
+            maxSqlX = Math.max(maxSqlX, rectangle.x + rectangle.width);
+         }
+      }
+      maxSqlX = Math.max(maxSqlX, end.x + end.width);
+      return maxSqlX;
    }
 
    private void triggerRepaintIfChanged(int x, int y, int width, int height)
@@ -111,13 +119,6 @@ public class MarkCurrentSqlHandler
          }
       }
 
-//      int caretPos = _textComponent.getCaretPosition();
-//
-//      if(_currentCaretPos != caretPos)
-//      {
-//         repaint = true;
-//         _currentCaretPos = caretPos;
-//      }
 
       if (repaint)
       {
@@ -131,7 +132,6 @@ public class MarkCurrentSqlHandler
             @Override
             public void run()
             {
-               System.out.println(new Date() + " _textComponent.repaint()");
                _textComponent.repaint();
             }
          });
