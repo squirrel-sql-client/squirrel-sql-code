@@ -93,7 +93,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
             session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("syntax.useNoDDrawOnWIn32"));
          }
       }
-      _markCurrentSqlHandler = new MarkCurrentSqlHandler(this);
+      _markCurrentSqlHandler = new MarkCurrentSqlHandler(this, session);
    }
 
 

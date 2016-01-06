@@ -17,10 +17,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -168,6 +165,8 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		private IntegerField _loginTimeout = new IntegerField();
       private IntegerField _largeScriptStmtCount = new IntegerField();
 		private JCheckBox _chkCopyQuotedSqlsToClip = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.copy.quoted.sql.to.clip"));
+		private JCheckBox _chkMarkCurrentSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.mark.current.sql"));
+		private JButton _btnCurrentSqlMarkColorRGB = new JButton();
 //		private JCheckBox _debugJdbc = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebug"));
 		private JRadioButton _debugJdbcDont = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugdont"));
 		private JRadioButton _debugJdbcStream = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugstream"));
@@ -190,6 +189,12 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			_loginTimeout.setInt(prefs.getLoginTimeout());
 			_largeScriptStmtCount.setInt(prefs.getLargeScriptStmtCount());
 			_chkCopyQuotedSqlsToClip.setSelected(prefs.getCopyQuotedSqlsToClip());
+
+			_chkMarkCurrentSql.setSelected(prefs.isMarkCurrentSql());
+			getCurrentSqlMarkColorIcon().setColor(new Color(prefs.getCurrentSqlMarkColorRGB()));
+
+			initCurrentMarkGui();
+
 			_debugJdbcStream.setSelected(prefs.isJdbcDebugToStream());
 			_debugJdbcWriter.setSelected(prefs.isJdbcDebugToWriter());
 			_debugJdbcDont.setSelected(prefs.isJdbcDebugDontDebug());
@@ -199,12 +204,54 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
          _fileSpecifiedDir.setText(prefs.getFileSpecifiedDir());
 		}
 
+		private ColorIcon getCurrentSqlMarkColorIcon()
+		{
+			return (ColorIcon)_btnCurrentSqlMarkColorRGB.getIcon();
+		}
+
+		private void initCurrentMarkGui()
+		{
+			_btnCurrentSqlMarkColorRGB.setEnabled(_chkMarkCurrentSql.isSelected());
+
+			_chkMarkCurrentSql.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					_btnCurrentSqlMarkColorRGB.setEnabled(_chkMarkCurrentSql.isSelected());
+				}
+			});
+
+			_btnCurrentSqlMarkColorRGB.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					onChooseCurrentMarkColor();
+				}
+			});
+		}
+
+		private void onChooseCurrentMarkColor()
+		{
+			String title = s_stringMgr.getString("SQLPreferencesPanel.current.sql.mark.color.choose");
+			Color color = JColorChooser.showDialog(this, title, getCurrentSqlMarkColorIcon().getColor());
+
+			if(null != color)
+			{
+				getCurrentSqlMarkColorIcon().setColor(color);
+			}
+		}
+
 		void applyChanges(SquirrelPreferences prefs)
 		{
 			prefs.setLoginTimeout(_loginTimeout.getInt());
          prefs.setLargeScriptStmtCount(_largeScriptStmtCount.getInt());
 
 			prefs.setCopyQuotedSqlsToClip(_chkCopyQuotedSqlsToClip.isSelected());
+
+			prefs.setMarkCurrentSql(_chkMarkCurrentSql.isSelected());
+			prefs.setCurrentSqlMarkColorRGB((getCurrentSqlMarkColorIcon()).getColor().getRGB());
 
 			if (_debugJdbcStream.isSelected())
 			{
@@ -290,7 +337,27 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(_chkCopyQuotedSqlsToClip, gbc);
 
+			gbc.gridx = 0;
+			gbc.gridy = 3;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			gbc.fill = GridBagConstraints.NONE;
+			pnl.add(createCurrentSqlMarkPanel(), gbc);
+
 			return pnl;
+		}
+
+		private JPanel createCurrentSqlMarkPanel()
+		{
+			JPanel ret = new JPanel(new BorderLayout(5,0));
+
+			ret.add(_chkMarkCurrentSql, BorderLayout.WEST);
+			ret.add(_btnCurrentSqlMarkColorRGB, BorderLayout.CENTER);
+
+			_btnCurrentSqlMarkColorRGB.setHorizontalTextPosition(JButton.LEFT);
+			_btnCurrentSqlMarkColorRGB.setIcon(new ColorIcon(16, 16));
+			_btnCurrentSqlMarkColorRGB.setText(s_stringMgr.getString("SQLPreferencesPanel.current.sql.mark.color"));
+
+			return ret;
 		}
 
 		private JPanel createDebugPanel()

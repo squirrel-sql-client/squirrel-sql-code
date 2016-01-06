@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
+import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,6 +59,8 @@ public class SquirrelPreferences implements Serializable
       String LOGIN_TIMEOUT = "loginTimeout";
       String LARGE_SCRIPT_STMT_COUNT = "largeScriptStmtCount";
       String COPY_QUOTED_SQLS_TO_CLIP = "copyQuotedSqlsToClip";
+      String MARK_CURRENT_SQL = "markCurrentSql";
+      String CURRENT_SQL_MARK_COLOR_RGB = "currentSqlMarkColorRGB";
       String MAIN_FRAME_STATE = "mainFrameWindowState";
       String MAXIMIMIZE_SESSION_SHEET_ON_OPEN = "maximizeSessionSheetOnOpen";
       String NEW_SESSION_VIEW = "newSessionView";
@@ -246,6 +249,11 @@ public class SquirrelPreferences implements Serializable
    private int _maxColumnAdjustLength = -1;
 
 	private boolean _useShortSessionTitle = false;
+
+
+	private int _currentSqlMarkColorRGB = Color.blue.getRGB();
+	private boolean _markCurrentSql = true;
+
 
 
 	/**
@@ -1205,4 +1213,32 @@ public class SquirrelPreferences implements Serializable
 	{
 		_copyQuotedSqlsToClip = copyQuotedSqlsToClip;
 	}
+
+	public boolean isMarkCurrentSql()
+	{
+		return _markCurrentSql;
+	}
+
+	public void setMarkCurrentSql(boolean markCurrentSql)
+	{
+		_markCurrentSql = markCurrentSql;
+	}
+
+	public int getCurrentSqlMarkColorRGB()
+	{
+		return _currentSqlMarkColorRGB;
+	}
+
+	public void setCurrentSqlMarkColorRGB(int currentSqlMarkColorRGB)
+	{
+		_currentSqlMarkColorRGB = currentSqlMarkColorRGB;
+	}
+
+
+	public Color getCurrentSqlMarkColor()
+	{
+		return new Color(_currentSqlMarkColorRGB);
+	}
+
+
 }

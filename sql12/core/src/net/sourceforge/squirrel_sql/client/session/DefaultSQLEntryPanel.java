@@ -25,6 +25,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 import javax.swing.undo.UndoManager;
 
@@ -351,7 +352,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
    private static class MyTextArea extends JTextArea
 	{
 
-		private final MarkCurrentSqlHandler _markCurrentSqlHandler;
+		private MarkCurrentSqlHandler _markCurrentSqlHandler;
 
 		private MyTextArea(ISession session)
 		{
@@ -362,7 +363,14 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 				this.setFont(props.getFontInfo().createFont());
 			}
 
-			_markCurrentSqlHandler = new MarkCurrentSqlHandler(this);
+			_markCurrentSqlHandler = new MarkCurrentSqlHandler(this, session);
+
+
+			/////////////////////////////////////////////////////////////////////
+			// To prevent the caret from being hidden by the current SQL mark
+			putClientProperty("caretWidth", 3);
+			//
+			////////////////////////////////////////////////////////////////////
 		}
 
 		@Override

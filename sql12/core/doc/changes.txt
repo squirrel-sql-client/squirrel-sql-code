@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Current SQL mark: In the SQL editor if the caret placed inside an SQL such that this SQL could be executed using ctrl enter, this SQL is now marked by a blue box.
+  The feature can be switched off or the color of the box can be changed at menu File --> Global Preferences --> Tab "SQL" --> Section "General"
+
 New global preference "In quotes functions should copy quoted SQLs to clipboard", see menu File --> Global Preferences --> Tab "SQL" --> Section "General"
   Note: With this change the "Edit Extras"-Plugin was removed. All its functions are now part of SQuirreL's core. The change doesn't effect the
   usage of the functions involved in the change. SQuirreL will not load the "Edit Extras"-Plugin anymore.

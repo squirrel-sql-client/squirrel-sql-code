@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
@@ -9,20 +11,40 @@ public class MarkCurrentSqlHandler
 {
    private static final Rectangle NULL_RECT = new Rectangle(-1,-1,-1,-1);
 
-   private final BoundsOfSqlHandler _boundsOfSqlHandler;
+   private boolean _active = true;
+
+   private BoundsOfSqlHandler _boundsOfSqlHandler;
    private JTextComponent _textComponent;
 
 
    private Rectangle _currentRect = (Rectangle) NULL_RECT.clone();
+   private Color _markColor;
 
-   public MarkCurrentSqlHandler(JTextComponent textComponent)
+   public MarkCurrentSqlHandler(JTextComponent textComponent, ISession session)
    {
+      SquirrelPreferences squirrelPreferences = session.getApplication().getSquirrelPreferences();
+
+      if(false == squirrelPreferences.isMarkCurrentSql())
+      {
+         _active = false;
+         return;
+      }
+
+      _markColor = squirrelPreferences.getCurrentSqlMarkColor();
+
+
+
       _textComponent = textComponent;
       _boundsOfSqlHandler = new BoundsOfSqlHandler(_textComponent);
    }
 
    public void paintMark(final Graphics g)
    {
+      if(_active == false)
+      {
+         return;
+      }
+
       Color buf = g.getColor();
 
       int x = NULL_RECT.x;
@@ -45,7 +67,7 @@ public class MarkCurrentSqlHandler
             return;
          }
 
-         g.setColor(Color.blue);
+         g.setColor(_markColor);
 
          Rectangle beg = _textComponent.modelToView(bounds[0]);
          Rectangle end = _textComponent.modelToView(bounds[1]);
