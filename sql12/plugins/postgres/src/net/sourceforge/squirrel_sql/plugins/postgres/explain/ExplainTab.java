@@ -19,35 +19,20 @@ package net.sourceforge.squirrel_sql.plugins.postgres.explain;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.postgres.PostgresPlugin;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class ExplainTab extends JPanel
 {
@@ -192,7 +177,7 @@ public class ExplainTab extends JPanel
 			public void run()
 			{
 				final IDataSetViewer resultSetOutput =
-					BaseDataSetViewerDestination.getInstance(outputClassName, _model);
+					BaseDataSetViewerDestination.getInstance(outputClassName, _model, _session);
 				_resultSetSp.setViewportView(resultSetOutput.getComponent());
 				_resultSetSp.setRowHeader(null);
 				_rsds.resetCursor();

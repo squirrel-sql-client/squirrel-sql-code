@@ -16,7 +16,7 @@ public class DetailPanel extends JPanel
       super(new GridLayout(1,1));
 
       tblDetails = new DataSetViewerTablePanel();
-      tblDetails.init(null, new DefaultDataModelImplementationDetails(session));
+      tblDetails.init(null, new DefaultDataModelImplementationDetails(session), session);
 
       add(new JScrollPane(tblDetails.getComponent()));
    }

@@ -26,17 +26,9 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
-import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.AdditionalResultTabsController;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.LazyResultTabControllerFactory;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.LazyResultTabInitializer;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewCtrl;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.rotatedtable.RotatedTableCtrl;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.textresult.TextResultCtrl;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
@@ -182,10 +174,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 		if (_allowEditing)
 		{
-         IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator, new DefaultDataModelImplementationDetails(_session));
-         dataSetViewer.setSession(_session);
+         IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator, new DefaultDataModelImplementationDetails(_session), _session);
 
-         _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer, _session.getApplication().getMessageHandler());
+         _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer, _session.getApplication().getMessageHandler(), _session);
          _selectRowColLabelController.setDataSetViewer(dataSetViewer);
 
 		}
@@ -197,12 +188,12 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 			// edited column belongs to.  Therefore limit the output
 			// to be read-only
          IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(
-               props.getReadOnlySQLResultsOutputClassName(), null, new DefaultDataModelImplementationDetails(_session));
+               props.getReadOnlySQLResultsOutputClassName(), null, new DefaultDataModelImplementationDetails(_session), _session);
 
 
-         dataSetViewer.setSession(_session);
+         //dataSetViewer.setSession(_session);
 
-         _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer, _session.getApplication().getMessageHandler());
+         _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer, _session.getApplication().getMessageHandler(), _session);
          _selectRowColLabelController.setDataSetViewer(dataSetViewer);
 		}
 
@@ -213,7 +204,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       if (_session.getProperties().getShowResultsMetaData())
       {
-         _metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName(), null, new DefaultDataModelImplementationDetails(_session));
+         _metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName(), null, new DefaultDataModelImplementationDetails(_session), _session);
          _metaDataSp.setViewportView(_metaDataOutput.getComponent());
          _metaDataSp.setRowHeader(null);
       }
@@ -470,7 +461,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
             {
                TableState resultSortableTableState = getTableState(_dataSetViewerFindDecorator.getDataSetViewer());
 
-               IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _creator, new DefaultDataModelImplementationDetails(_session));
+               IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _creator, new DefaultDataModelImplementationDetails(_session), _session);
                // _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer);
                _dataSetViewerFindDecorator.replaceDataSetViewer(dataSetViewer);
 
@@ -496,7 +487,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
             TableState resultSortableTableState = getTableState(_dataSetViewerFindDecorator.getDataSetViewer());
 
-            IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(readOnlyOutput, _creator, new DefaultDataModelImplementationDetails(_session));
+            IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(readOnlyOutput, _creator, new DefaultDataModelImplementationDetails(_session), _session);
             _dataSetViewerFindDecorator.replaceDataSetViewer(dataSetViewer);
 
 

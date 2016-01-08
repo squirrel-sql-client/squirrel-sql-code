@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.*;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -397,22 +398,34 @@ public class ContentsTab extends BaseTableTab
       }
    }
 
-   
 
-	private StringBuilder gatherColumnsForContentSelect(ISQLDatabaseMetaData md,
-			final ITableInfo ti) throws SQLException {
-		DialectType dialectType = DialectFactory.getDialectType(md);
-		TableColumnInfo[] columnInfo = md.getColumnInfo(ti);
-		StringBuilder coded = new StringBuilder();
-		JTable table = (JTable) ((DataSetScrollingPanel) getComponent()).getViewer().getComponent();
-		for(int i=0;i < columnInfo.length; ++i) {
-			coded.append(CellComponentFactory.getColumnForContentSelect(table, columnInfo[i], dialectType,"tbl."));
-			if (i < columnInfo.length - 1) {
-				coded.append(',');
-			}
-		}
-		return coded;
-	}
+   private StringBuilder gatherColumnsForContentSelect(ISQLDatabaseMetaData md,
+                                                       final ITableInfo ti) throws SQLException
+   {
+      DialectType dialectType = DialectFactory.getDialectType(md);
+      TableColumnInfo[] columnInfo = md.getColumnInfo(ti);
+      StringBuilder coded = new StringBuilder();
+      Component component = getComponent().getViewer().getComponent();
+
+      if (component instanceof JTable)
+      {
+         JTable table = (JTable) component;
+         for (int i = 0; i < columnInfo.length; ++i)
+         {
+            coded.append(CellComponentFactory.getColumnForContentSelect(table, columnInfo[i], dialectType, "tbl."));
+            if (i < columnInfo.length - 1)
+            {
+               coded.append(',');
+            }
+         }
+      }
+      else
+      {
+         coded.append("*");
+      }
+
+      return coded;
+   }
 
    /**
     * Returns true if the ObjectTree tab is selected.

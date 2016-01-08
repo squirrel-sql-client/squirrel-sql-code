@@ -17,10 +17,11 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+
+import java.awt.*;
 
 public interface IDataSetViewer
 {
@@ -33,9 +34,9 @@ public interface IDataSetViewer
 	/**
 	 * Allow some DataSetViewers to complete their initialization.
 	 */
-	void init(IDataSetUpdateableModel updateableObject);
+	void init(IDataSetUpdateableModel updateableObject, ISession session);
 
-   void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails);
+   void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails, ISession session);
 
 
 	/**
@@ -112,5 +113,4 @@ public interface IDataSetViewer
 
 	void switchColumnHeader(ColumnHeaderDisplay columnHeaderDisplay);
 
-	void setSession(ISession session);
 }

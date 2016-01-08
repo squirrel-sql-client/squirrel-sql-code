@@ -1,11 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.graph.nondbconst;
 
-import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -38,7 +37,7 @@ public class ConfigureNonDbConstraintDlg extends JDialog
 
       gbc = new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
       _table = new DataSetViewerTablePanel();
-      _table.init(null);
+      _table.init(null, null);
       JPanel pnlBordered = new JPanel(new GridLayout(1,1));
       pnlBordered.add(new JScrollPane(_table.getComponent()));
       TitledBorder titledBorder = BorderFactory.createTitledBorder(s_stringMgr.getString("graph.ConfigureNonDbConstraintDlg.tblTitle"));

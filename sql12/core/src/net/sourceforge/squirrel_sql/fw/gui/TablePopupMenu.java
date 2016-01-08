@@ -17,17 +17,11 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.KeyEvent;
-
-import java.awt.print.PrinterJob;
-
-import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.gui.action.*;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
@@ -35,8 +29,13 @@ import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableAction
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ITableActionCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.print.PrinterJob;
 
 
 public class TablePopupMenu extends BasePopupMenu
@@ -123,9 +122,9 @@ public class TablePopupMenu extends BasePopupMenu
 	public TablePopupMenu(boolean allowEditing,
 								 IDataSetUpdateableModel updateableModel,
 								 DataSetViewerTablePanel viewer,
-                         IDataModelImplementationDetails dataModelImplementationDetails)
+								 IDataModelImplementationDetails dataModelImplementationDetails,
+								 ISession session)
 	{
-		super();
 		// save the pointer needed to enable editing of data on-demand
 		_updateableModel = updateableModel;
 
@@ -133,6 +132,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		// save the pointer needed for insert and delete operations
 		_viewer = viewer;
+		_session = session;
 
 		// add the menu items to the menu
 		_menuItems[IOptionTypes.COPY] = add(_copy);
@@ -151,9 +151,14 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_UPDATE_STATEMENT] = add(_copyUpdateStatement);
       _menuItems[IOptionTypes.COPY_INSERT_STATEMENT] = add(_copyInsertStatement);
       _menuItems[IOptionTypes.COPY_COLUMN_HEADER] = add(_copyColumnHeader);
-      addSeparator();
-		_menuItems[IOptionTypes.SHOW_REFERENCES] = add(_showReferences);
-      addSeparator();
+
+		if (null != _session)
+		{
+			addSeparator();
+			_menuItems[IOptionTypes.SHOW_REFERENCES] = add(_showReferences);
+		}
+
+		addSeparator();
 		_menuItems[IOptionTypes.EXPORT_CSV] = add(_exportCvs);
       addSeparator();
       _menuItems[IOptionTypes.ADJUST_ALL_COL_WIDTHS_ACTION] = add(_adjustAllColWidthsAction);
@@ -643,11 +648,6 @@ public class TablePopupMenu extends BasePopupMenu
          }
       }
    }
-
-	public void setSession(ISession session)
-	{
-		_session = session;
-	}
 
 }
 

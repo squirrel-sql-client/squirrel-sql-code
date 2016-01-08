@@ -44,6 +44,7 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 	 * Return the component to be displayed in the panel.
 	 *
 	 * @return	The component to be displayed in the panel.
+	 * @param session
 	 */
 	@Override
 	public synchronized DataSetScrollingPanel getComponent()
@@ -78,7 +79,7 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 					// should be no problem
 				}
 									
-				_comp = new DataSetScrollingPanel(getDestinationClassName(), modelReference, new DefaultDataModelImplementationDetails(getSession()));
+				_comp = new DataSetScrollingPanel(getDestinationClassName(), modelReference, new DefaultDataModelImplementationDetails(getSession()), getSession());
 			}
 			catch (Exception ex)
 			{

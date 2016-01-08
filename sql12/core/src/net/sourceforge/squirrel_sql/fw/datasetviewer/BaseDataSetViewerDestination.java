@@ -17,13 +17,13 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
-import javax.swing.DefaultCellEditor;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
 
 /**
  * This provides base behaviour for implemtations of <TT>IDataSetViewerDestination</TT>.
@@ -49,9 +49,9 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	protected DefaultCellEditor currentCellEditor = null;
 	
 	
-	public void init(IDataSetUpdateableModel updateableObject)
+	public void init(IDataSetUpdateableModel updateableObject, ISession session)
 	{
-      init(updateableObject, null);
+      init(updateableObject, null, session);
 	}
 
    /**
@@ -67,7 +67,7 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
     * this added info.  Therefore we need to initialize that class in two stages.
     */
    @Override
-   public void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails)
+   public void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails, ISession session)
    {
    }
 
@@ -179,9 +179,9 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	protected abstract void addRow(Object[] row) throws DataSetException;
 
 
-   public static IDataSetViewer getInstance(String sName, IDataSetUpdateableModel updateableModel)
+   public static IDataSetViewer getInstance(String sName, IDataSetUpdateableModel updateableModel, ISession session)
    {
-      return getInstance(sName, updateableModel, null);
+      return getInstance(sName, updateableModel, null, session);
    }
 
 	/**
@@ -189,14 +189,14 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	 * If no instance can be made then the default
 	 * will be returned.
 	 */
-	public static IDataSetViewer getInstance(String sName, IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails)
+	public static IDataSetViewer getInstance(String sName, IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails, ISession session)
 	{
 		IDataSetViewer dsv = null;
 		try
 		{
 			Class<?> cls = Class.forName(sName);
 			dsv = (IDataSetViewer) cls.newInstance();
-			dsv.init(updateableModel, dataModelImplementationDetails);
+			dsv.init(updateableModel, dataModelImplementationDetails, session);
 		}
 		catch (Exception e)
 		{
@@ -205,7 +205,7 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 		if (dsv == null)
 		{
 			dsv = new DataSetViewerTablePanel();
-			dsv.init(updateableModel, dataModelImplementationDetails);
+			dsv.init(updateableModel, dataModelImplementationDetails, session);
 		}
 		return dsv;
 	}
@@ -243,9 +243,4 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 
 	}
 
-	@Override
-	public void setSession(ISession session)
-	{
-
-	}
 }

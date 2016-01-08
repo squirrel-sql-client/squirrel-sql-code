@@ -17,12 +17,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.BorderFactory;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
 
 public class DataSetScrollingPanel extends JScrollPane
 {
@@ -32,24 +32,18 @@ public class DataSetScrollingPanel extends JScrollPane
 
 	private boolean _fullyCreated = false;
 	private IDataSetViewer _viewer;
+	private ISession _session;
 
-	/**
-	 * @deprecated
-	 */
-	public DataSetScrollingPanel()
-	{
-		super();
-	}
-
-	public DataSetScrollingPanel(String destClassName, IDataSetUpdateableModel updateableModel)
+	public DataSetScrollingPanel(String destClassName, IDataSetUpdateableModel updateableModel, ISession session)
 		throws DataSetException
 	{
-      this(destClassName, updateableModel, null);
+      this(destClassName, updateableModel, null, session);
 	}
 
-	public DataSetScrollingPanel(String destClassName, IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails)
+	public DataSetScrollingPanel(String destClassName, IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails, ISession session)
 		throws DataSetException
 	{
+		_session = session;
 		createUserInterface(destClassName, updateableModel, dataModelImplementationDetails);
 		_fullyCreated = true;
 	}
@@ -94,7 +88,7 @@ public class DataSetScrollingPanel extends JScrollPane
 		throws DataSetException
 	{
 		setBorder(BorderFactory.createEmptyBorder());
-		_viewer = BaseDataSetViewerDestination.getInstance(destClassName, updateableModel, dataModelImplementationDetails);
+		_viewer = BaseDataSetViewerDestination.getInstance(destClassName, updateableModel, dataModelImplementationDetails, _session);
 		Runnable run = new Runnable()
 		{
 			public void run()

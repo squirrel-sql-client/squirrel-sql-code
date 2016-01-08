@@ -34,10 +34,10 @@ public class SingleResultController
 
          DetailAttribute[] attributes = DetailAttribute.createDetailtAttributes(singleType.getMappedClassInfo().getAttributes());
 
-         _tblDetailsData.init(null, new DefaultDataModelImplementationDetails(session));
+         _tblDetailsData.init(null, new DefaultDataModelImplementationDetails(session), session);
          _tblDetailsData.show(new ResultDataSet(singleType));
 
-         _tblDetailsMetaData.init(null, new DefaultDataModelImplementationDetails(session));
+         _tblDetailsMetaData.init(null, new DefaultDataModelImplementationDetails(session), session);
          _tblDetailsMetaData.show(new DetailAttributeDataSet(attributes));
 
          pnlResults.removeAll();

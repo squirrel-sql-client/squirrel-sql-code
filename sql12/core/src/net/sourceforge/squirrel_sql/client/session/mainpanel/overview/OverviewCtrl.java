@@ -7,7 +7,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.LazyTabControllerCtrl;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -282,7 +281,7 @@ public class OverviewCtrl implements LazyTabControllerCtrl
          SimpleDataSet ods = new SimpleDataSet(allRows, columnDisplayDefinitions);
 
          DataSetViewerTablePanel dsv = new DataSetViewerTablePanel();
-         dsv.init(null, new DefaultDataModelImplementationDetails(_session));
+         dsv.init(null, new DefaultDataModelImplementationDetails(_session), _session);
          dsv.show(ods);
          return dsv;
       }

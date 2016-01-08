@@ -16,7 +16,7 @@ public class RotatedTablePanel extends JPanel
       setLayout(new GridLayout(1, 1));
 
       table = new DataSetViewerTablePanel();
-      table.init(null, new DefaultDataModelImplementationDetails(session));
+      table.init(null, new DefaultDataModelImplementationDetails(session), session);
       add(new JScrollPane(table.getComponent()));
 
    }

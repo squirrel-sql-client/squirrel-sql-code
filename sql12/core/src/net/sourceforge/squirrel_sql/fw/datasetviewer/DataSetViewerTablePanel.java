@@ -42,12 +42,13 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.Enumeration;
-import java.util.Iterator;
 
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				implements IDataSetTableControls, Printable
@@ -79,30 +80,30 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	{
 	}
 
-   public void init(IDataSetUpdateableModel updateableModel)
+   public void init(IDataSetUpdateableModel updateableModel, ISession session)
    {
-      init(updateableModel, ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+      init(updateableModel, ListSelectionModel.SINGLE_INTERVAL_SELECTION, session);
    }
 
 
-	public void init(IDataSetUpdateableModel updateableModel, int listSelectionMode)
+	public void init(IDataSetUpdateableModel updateableModel, int listSelectionMode, ISession session)
 	{
-      init(updateableModel, listSelectionMode, null);
+      init(updateableModel, listSelectionMode, null, session);
 	}
 
-   public void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails)
+   public void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails, ISession session)
    {
-      init(updateableModel, ListSelectionModel.SINGLE_INTERVAL_SELECTION, dataModelImplementationDetails);
+      init(updateableModel, ListSelectionModel.SINGLE_INTERVAL_SELECTION, dataModelImplementationDetails, session);
    }
 
-   public void init(IDataSetUpdateableModel updateableModel, int listSelectionMode, IDataModelImplementationDetails dataModelImplementationDetails)
+   public void init(IDataSetUpdateableModel updateableModel, int listSelectionMode, IDataModelImplementationDetails dataModelImplementationDetails, ISession session)
    {
       if (null != dataModelImplementationDetails)
       {
          _dataModelImplementationDetails = dataModelImplementationDetails;
       }
 
-      _table = new MyJTable(this, updateableModel, listSelectionMode);
+      _table = new MyJTable(this, updateableModel, listSelectionMode, session);
       _continueReadHandler = new ContinueReadHandler(_table);
       _selectionHandler = new DataSetViewerTableListSelectionHandler(_table);
       _updateableModel = updateableModel;
@@ -301,7 +302,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		private ButtonTableHeader _tableHeader = new ButtonTableHeader();
 
 		MyJTable(IDataSetTableControls creator,
-               IDataSetUpdateableModel updateableObject, int listSelectionMode)
+					IDataSetUpdateableModel updateableObject, int listSelectionMode, ISession session)
 		{
 			super(new SortableTableModel(new DataSetViewerTableModel(creator)));
 			_creator = creator;
@@ -316,7 +317,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			// the background model is updateable AND we are not already editing
 			if (updateableObject != null && ! creator.isTableEditable())
 				allowUpdate = true;
-			createGUI(allowUpdate, updateableObject, listSelectionMode);
+			createGUI(allowUpdate, updateableObject, listSelectionMode, session);
 
 			// just in case table is editable, call creator to set up cell editors
 			_creator.setCellEditors(this);
@@ -559,7 +560,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		}
 
 		private void createGUI(boolean allowUpdate,
-                             IDataSetUpdateableModel updateableObject, int selectionMode)
+									  IDataSetUpdateableModel updateableObject, int selectionMode, ISession session)
 		{
 			setSelectionMode(selectionMode);
 			setRowSelectionAllowed(false);
@@ -572,7 +573,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			setTableHeader(_tableHeader);
 			_tableHeader.setTable(this);
 
-			_tablePopupMenu = new TablePopupMenu(allowUpdate, updateableObject, DataSetViewerTablePanel.this, getDataModelImplementationDetails());
+			_tablePopupMenu = new TablePopupMenu(allowUpdate, updateableObject, DataSetViewerTablePanel.this, getDataModelImplementationDetails(), session);
 			_tablePopupMenu.setTable(this);
 
          addMouseListener(new MouseAdapter()
@@ -646,10 +647,6 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
          _tableHeader.initColWidths();
       }
 
-		public void setSession(ISession session)
-		{
-			_tablePopupMenu.setSession(session);
-		}
 	}
 
 
@@ -949,9 +946,4 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
    }
 
-	@Override
-	public void setSession(ISession session)
-	{
-		_table.setSession(session);
-	}
 }

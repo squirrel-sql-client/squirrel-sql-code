@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -20,12 +21,12 @@ public class DataSetViewerFindDecorator
    private DataSetFindPanelController _dataSetFindPanelController;
 
 
-   public DataSetViewerFindDecorator(IDataSetViewer dataSetViewer, IMessageHandler messageHandler)
+   public DataSetViewerFindDecorator(IDataSetViewer dataSetViewer, IMessageHandler messageHandler, ISession session)
    {
-      this(dataSetViewer, true, messageHandler);
+      this(dataSetViewer, true, messageHandler, session);
    }
 
-   public DataSetViewerFindDecorator(IDataSetViewer dataSetViewer, boolean putTableInScrollpane, IMessageHandler messageHandler)
+   public DataSetViewerFindDecorator(IDataSetViewer dataSetViewer, boolean putTableInScrollpane, IMessageHandler messageHandler, ISession session)
    {
       _dataSetViewer = dataSetViewer;
       _putTableInScrollpane = putTableInScrollpane;
@@ -43,7 +44,7 @@ public class DataSetViewerFindDecorator
             toggleShowFindPanel();
          }
       };
-      _dataSetFindPanelController = new DataSetFindPanelController(messageHandler, dataSetFindPanelListener);
+      _dataSetFindPanelController = new DataSetFindPanelController(messageHandler, dataSetFindPanelListener, session);
 
       if (_dataSetViewer instanceof DataSetViewerTablePanel)
       {

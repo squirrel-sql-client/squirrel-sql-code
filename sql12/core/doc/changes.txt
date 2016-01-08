@@ -20,6 +20,8 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+Object tree: Contents tab loading raised ClassCastException when table contents where viewed as text output.
+
 NullPointerException occurred when the "Show foreign key references" right mouse menu item of an SQL result table was clicked.
 
 3.7.0 (09/14/2015)

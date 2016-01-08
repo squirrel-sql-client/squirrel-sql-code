@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.util.*;
 import org.apache.commons.lang.StringUtils;
@@ -37,7 +38,7 @@ public class DataSetFindPanelController
       FORWARD, BACKWARD, HIGHLIGHT
    }
 
-   public DataSetFindPanelController(IMessageHandler messageHandler, final DataSetFindPanelListener dataSetFindPanelListener)
+   public DataSetFindPanelController(IMessageHandler messageHandler, final DataSetFindPanelListener dataSetFindPanelListener, final ISession session)
    {
       _messageHandler = messageHandler;
       _dataSetFindPanel = new DataSetFindPanel();
@@ -83,7 +84,7 @@ public class DataSetFindPanelController
          @Override
          public void actionPerformed(ActionEvent e)
          {
-            onShowRowsFoundInTable();
+            onShowRowsFoundInTable(session);
          }
       });
 
@@ -179,12 +180,12 @@ public class DataSetFindPanelController
       }
    }
 
-   private void onShowRowsFoundInTable()
+   private void onShowRowsFoundInTable(ISession session)
    {
       Window parent = SwingUtilities.windowForComponent(_dataSetFindPanel);
 
       JDialog dlg = new JDialog(parent, s_stringMgr.getString("DataSetFindPanel.searchResult"));
-      dlg.getContentPane().add(new JScrollPane(createSimpleTable().getComponent()));
+      dlg.getContentPane().add(new JScrollPane(createSimpleTable(session).getComponent()));
 
       dlg.setLocation(_dataSetViewerTablePanel.getComponent().getLocationOnScreen());
       dlg.setSize(_findService.getVisibleSize());
@@ -192,7 +193,7 @@ public class DataSetFindPanelController
    }
 
 
-   private DataSetViewerTablePanel createSimpleTable()
+   private DataSetViewerTablePanel createSimpleTable(ISession session)
    {
       try
       {
@@ -214,7 +215,7 @@ public class DataSetFindPanelController
             }
          };
 
-         dsv.init(null, dataModelImplementationDetails);
+         dsv.init(null, dataModelImplementationDetails, session);
          dsv.show(ods);
          return dsv;
       }
