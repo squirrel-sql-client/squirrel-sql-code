@@ -27,8 +27,8 @@ public class SquirrelTabbedPaneDelegate
       if (prefs == null) { throw new IllegalArgumentException("SquirrelPreferences == null"); }
       _prefs = prefs;
 
-      int tabLayoutPolicy =
-            _prefs.getUseScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
+      int tabLayoutPolicy = _prefs.getUseScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
+
       _tabbedPane.setTabLayoutPolicy(tabLayoutPolicy);
    }
 
@@ -99,9 +99,7 @@ public class SquirrelTabbedPaneDelegate
 
          if (propName == null || propName.equals(IAppPrefPropertynames.SCROLLABLE_TABBED_PANES))
          {
-            int tabLayoutPolicy =
-                  _prefs.getUseScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT
-                        : JTabbedPane.WRAP_TAB_LAYOUT;
+            int tabLayoutPolicy =  _prefs.getUseScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT: JTabbedPane.WRAP_TAB_LAYOUT;
             squirrelTabbedPane.setTabLayoutPolicy(tabLayoutPolicy);
          }
       }

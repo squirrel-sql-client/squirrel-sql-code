@@ -68,7 +68,7 @@ public class SquirrelPreferences implements Serializable
       String PLUGIN_STATUSES = "pluginStatuses";
       String PROXY = "proxyPerferences";
       String UPDATE = "updatePreferences";
-      String SCROLLABLE_TABBED_PANES = "getUseScrollableTabbedPanes";
+      String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
       String SESSION_PROPERTIES = "sessionProperties";
       String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
       String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
