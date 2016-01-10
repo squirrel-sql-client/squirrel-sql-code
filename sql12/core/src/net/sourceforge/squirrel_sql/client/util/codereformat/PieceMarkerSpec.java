@@ -1,4 +1,7 @@
 package net.sourceforge.squirrel_sql.client.util.codereformat;
+
+import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlPref;
+
 /*
  * Copyright (C) 2003 Gerd Wagner
  *
@@ -84,4 +87,22 @@ public class PieceMarkerSpec
 	}
 
 
+	public boolean is_FROM_begin()
+	{
+		return FormatSqlPref.FROM.equalsIgnoreCase(_pieceMarker);
+	}
+
+	public boolean is_FROM_end()
+	{
+		return    FormatSqlPref.WHERE.equalsIgnoreCase(_pieceMarker)
+				 || FormatSqlPref.GROUP.equalsIgnoreCase(_pieceMarker)
+				 || FormatSqlPref.ORDER.equalsIgnoreCase(_pieceMarker)
+				 || FormatSqlPref.UNION.equalsIgnoreCase(_pieceMarker);
+	}
+
+	public boolean is_AND_or_OR()
+	{
+		return    FormatSqlPref.AND.equalsIgnoreCase(_pieceMarker)
+				 || FormatSqlPref.OR.equalsIgnoreCase(_pieceMarker);
+	}
 }

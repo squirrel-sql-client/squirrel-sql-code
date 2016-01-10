@@ -6,21 +6,28 @@ public class FormatSqlPref
 
    public static final String INSERT = "INSERT";
    public static final String VALUES = "VALUES";
+   public static final String FROM = "FROM";
+   public static final String WHERE = "WHERE";
+   public static final String GROUP = "GROUP";
+   public static final String ORDER = "ORDER";
+   public static final String UNION = "UNION";
+   public static final String AND = "AND";
+   public static final String OR = "OR";
 
 
    private KeywordBehaviourPref[] _keywordBehaviourPrefs = new KeywordBehaviourPref[]
    {
       new KeywordBehaviourPref("SELECT", FormatSqlPanel.KeywordBehaviour.ALONE_IN_LINE.getID()),
-      new KeywordBehaviourPref("UNION", FormatSqlPanel.KeywordBehaviour.ALONE_IN_LINE.getID()),
-      new KeywordBehaviourPref("FROM", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
+      new KeywordBehaviourPref(UNION, FormatSqlPanel.KeywordBehaviour.ALONE_IN_LINE.getID()),
+      new KeywordBehaviourPref(FROM, FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
 
       new KeywordBehaviourPref(JOIN_DISPLAY_STRING, FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
 
-      new KeywordBehaviourPref("WHERE", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
-      new KeywordBehaviourPref("AND", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
-      new KeywordBehaviourPref("OR", FormatSqlPanel.KeywordBehaviour.NO_INFLUENCE_ON_NEW_LINE.getID()),
-      new KeywordBehaviourPref("GROUP", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
-      new KeywordBehaviourPref("ORDER", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
+      new KeywordBehaviourPref(WHERE, FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
+      new KeywordBehaviourPref(AND, FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
+      new KeywordBehaviourPref(OR, FormatSqlPanel.KeywordBehaviour.NO_INFLUENCE_ON_NEW_LINE.getID()),
+      new KeywordBehaviourPref(GROUP, FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
+      new KeywordBehaviourPref(ORDER, FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
 
       new KeywordBehaviourPref("UPDATE", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
       new KeywordBehaviourPref("DELETE", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),

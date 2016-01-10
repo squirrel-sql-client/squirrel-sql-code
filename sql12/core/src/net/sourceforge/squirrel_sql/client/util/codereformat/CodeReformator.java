@@ -166,8 +166,8 @@ public class CodeReformator implements ICodeReformator
 
    private List<String> getReformatedPieces(String in, PieceMarkerSpec[] markers)
    {
-      CodeReformatorKernel kernel = new CodeReformatorKernel(
-            _codeReformatorConfig.getStatementSeparator(), markers, _codeReformatorConfig.getCommentSpecs());
+      CodeReformatorKernel kernel = new CodeReformatorKernel(markers, _codeReformatorConfig.getCommentSpecs());
+
       String[] pieces = kernel.toPieces(in);
       ArrayList<String> piecesBuf = new ArrayList<String>();
 
@@ -382,14 +382,12 @@ public class CodeReformator implements ICodeReformator
    private String[] trySplit(String piece, int braketDepth, int trySplitLineLen)
    {
       String trimmedPiece = piece.trim();
-      CodeReformatorKernel dum = new CodeReformatorKernel(
-            _codeReformatorConfig.getStatementSeparator(), new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs());
+      CodeReformatorKernel dum = new CodeReformatorKernel(new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs());
 
       if (hasTopLevelColon(trimmedPiece, dum))
       {
          PieceMarkerSpec[] pms = createPieceMarkerSpecIncludeColon();
-         CodeReformatorKernel crk = new CodeReformatorKernel(
-               _codeReformatorConfig.getStatementSeparator(), pms, _codeReformatorConfig.getCommentSpecs());
+         CodeReformatorKernel crk = new CodeReformatorKernel(pms, _codeReformatorConfig.getCommentSpecs());
          String[] splitPieces1 = crk.toPieces(trimmedPiece);
          if (1 == splitPieces1.length)
          {
@@ -400,8 +398,7 @@ public class CodeReformator implements ICodeReformator
 
          for (int i = 0; i < splitPieces1.length; ++i)
          {
-            if (trySplitLineLen < splitPieces1[i].length() + braketDepth
-                  * _codeReformatorConfig.getIndent().length())
+            if (trySplitLineLen < splitPieces1[i].length() + braketDepth * _codeReformatorConfig.getIndent().length())
             {
                String[] splitPieces2 = trySplit(splitPieces1[i],
                      braketDepth, trySplitLineLen);
@@ -425,10 +422,9 @@ public class CodeReformator implements ICodeReformator
             // ////////////////////////////////////////////////////////////////////////
             // Split the first two matching toplevel brakets here
             PieceMarkerSpec[] pms = createPieceMarkerSpecExcludeColon();
-            CodeReformatorKernel crk = new CodeReformatorKernel(
-                  _codeReformatorConfig.getStatementSeparator(), pms, _codeReformatorConfig.getCommentSpecs());
-            String[] splitPieces1 = crk.toPieces(trimmedPiece.substring(
-                  tlbi[0] + 1, tlbi[1]));
+            CodeReformatorKernel crk = new CodeReformatorKernel(pms, _codeReformatorConfig.getCommentSpecs());
+
+            String[] splitPieces1 = crk.toPieces(trimmedPiece.substring(tlbi[0] + 1, tlbi[1]));
 
             ArrayList<String> buf = new ArrayList<String>();
             buf.add(trimmedPiece.substring(0, tlbi[0]).trim());
@@ -452,11 +448,9 @@ public class CodeReformator implements ICodeReformator
             ArrayList<String> ret = new ArrayList<String>();
             for (int i = 0; i < splitPieces1.length; ++i)
             {
-               if (trySplitLineLen < splitPieces1[i].length()
-                     + braketDepth * _codeReformatorConfig.getIndent().length())
+               if (trySplitLineLen < splitPieces1[i].length() + braketDepth * _codeReformatorConfig.getIndent().length())
                {
-                  String[] splitPieces2 = trySplit(splitPieces1[i],
-                        braketDepth + 1, trySplitLineLen);
+                  String[] splitPieces2 = trySplit(splitPieces1[i], braketDepth + 1, trySplitLineLen);
                   for (int j = 0; j < splitPieces2.length; ++j)
                   {
                      ret.add(splitPieces2[j]);
@@ -646,8 +640,8 @@ public class CodeReformator implements ICodeReformator
 
    boolean hasCommentEndingWithLineFeed(String in)
    {
-      CodeReformatorKernel dum = new CodeReformatorKernel(
-            _codeReformatorConfig.getStatementSeparator(), new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs());
+      CodeReformatorKernel dum = new CodeReformatorKernel(new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs());
+
       StateOfPosition[] sops = dum.getStatesOfPosition(in);
 
       boolean inComment = false;
@@ -675,8 +669,7 @@ public class CodeReformator implements ICodeReformator
       PieceMarkerSpec[] buf = createPieceMarkerSpecExcludeColon();
       ArrayList<PieceMarkerSpec> ret = new ArrayList<PieceMarkerSpec>();
       ret.addAll(Arrays.asList(buf));
-      ret.add(new PieceMarkerSpec(",",
-            PieceMarkerSpec.TYPE_PIECE_MARKER_AT_END));
+      ret.add(new PieceMarkerSpec(",", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_END));
 
       return ret.toArray(new PieceMarkerSpec[0]);
    }
