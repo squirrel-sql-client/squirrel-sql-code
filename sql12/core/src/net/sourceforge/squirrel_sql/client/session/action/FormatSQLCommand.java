@@ -61,15 +61,6 @@ class FormatSQLCommand implements ICommand
 			return;
 		}
 
-		CommentSpec[] commentSpecs =
-		  new CommentSpec[]
-		  {
-			  new CommentSpec("/*", "*/"),
-			  new CommentSpec("--", StringUtilities.getEolStr())
-		  };
-
-		String statementSep = _session.getQueryTokenizer().getSQLStatementSeparator();
-		
 		CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(_session));
 
 		String reformatedText = cr.reformat(textToReformat);

@@ -76,6 +76,8 @@ public class CodeReformatorConfigFactory
          ret.add(new PieceMarkerSpec("INNER JOIN", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN));
          ret.add(new PieceMarkerSpec("LEFT JOIN", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN));
          ret.add(new PieceMarkerSpec("RIGHT JOIN", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN));
+         ret.add(new PieceMarkerSpec("LEFT OUTER JOIN", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN));
+         ret.add(new PieceMarkerSpec("RIGHT OUTER JOIN", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN));
 
       }
       else
