@@ -175,8 +175,7 @@ public class CodeReformator implements ICodeReformator
       {
          if (_codeReformatorConfig.getTrySplitLineLen() < pieces[i].length())
          {
-            String[] splitPieces = trySplit(pieces[i], 0,
-                  _codeReformatorConfig.getTrySplitLineLen());
+            String[] splitPieces = trySplit(pieces[i], 0, _codeReformatorConfig.getTrySplitLineLen());
             piecesBuf.addAll(Arrays.asList(splitPieces));
          }
          else
