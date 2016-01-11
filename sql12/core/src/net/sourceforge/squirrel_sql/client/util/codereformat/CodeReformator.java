@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlPref;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -31,8 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class CodeReformator implements ICodeReformator
 {
-   private static final StringManager s_stringMgr = StringManagerFactory
-         .getStringManager(CodeReformator.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CodeReformator.class);
 
 
    /**
@@ -42,6 +42,13 @@ public class CodeReformator implements ICodeReformator
 
    private static ILogger s_log = LoggerController.createLogger(CodeReformator.class);
    private CodeReformatorConfig _codeReformatorConfig;
+
+   /////////////////////////////////////////////////////////////
+   // TODO: Diplay in GUI and example
+   private boolean _indentExtra = true;
+   private boolean _lineBreakFor_AND_OR_in_FROM_clause = false;
+   //
+   ////////////////////////////////////////////////////////////
 
    public CodeReformator(CodeReformatorConfig codeReformatorConfig)
    {
@@ -65,24 +72,53 @@ public class CodeReformator implements ICodeReformator
       }
 
       StringBuffer ret = new StringBuffer();
-      int braketCount = 0;
+      int indentDepth = 0;
       for (int i = 0; i < pieces.length; ++i)
       {
+         if(indentExtra(pieces[i]) && 0 < indentDepth)
+         {
+            --indentDepth;
+         }
+
          if (")".equals(pieces[i]))
          {
-            --braketCount;
+            --indentDepth;
          }
-         ret.append(indent(pieces[i], braketCount));
+         ret.append(indent(pieces[i], indentDepth));
          ret.append(_lineSep);
          if ("(".equals(pieces[i]))
          {
-            ++braketCount;
+            ++indentDepth;
+         }
+
+         if(indentExtra(pieces[i]))
+         {
+            ++indentDepth;
          }
       }
 
       validate(in, ret.toString());
 
       return ret.toString();
+   }
+
+   private boolean indentExtra(String piece)
+   {
+      if(false == _indentExtra)
+      {
+         return false;
+      }
+
+      if(   piece.trim().toUpperCase().startsWith(FormatSqlPref.SELECT)
+         || piece.trim().toUpperCase().startsWith(FormatSqlPref.FROM)
+         || piece.trim().toUpperCase().startsWith(FormatSqlPref.WHERE)
+         || piece.trim().toUpperCase().startsWith(FormatSqlPref.UNION)
+         || piece.trim().toUpperCase().startsWith(FormatSqlPref.GROUP)
+         || piece.trim().toUpperCase().startsWith(FormatSqlPref.ORDER))
+      {
+         return true;
+      }
+      return false;
    }
 
    private void validate(String beforeReformat, String afterReformat)
@@ -166,7 +202,7 @@ public class CodeReformator implements ICodeReformator
 
    private List<String> getReformatedPieces(String in, PieceMarkerSpec[] markers)
    {
-      CodeReformatorKernel kernel = new CodeReformatorKernel(markers, _codeReformatorConfig.getCommentSpecs());
+      CodeReformatorKernel kernel = new CodeReformatorKernel(markers, _codeReformatorConfig.getCommentSpecs(), _lineBreakFor_AND_OR_in_FROM_clause);
 
       String[] pieces = kernel.toPieces(in);
       ArrayList<String> piecesBuf = new ArrayList<String>();
@@ -381,12 +417,12 @@ public class CodeReformator implements ICodeReformator
    private String[] trySplit(String piece, int braketDepth, int trySplitLineLen)
    {
       String trimmedPiece = piece.trim();
-      CodeReformatorKernel dum = new CodeReformatorKernel(new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs());
+      CodeReformatorKernel dum = new CodeReformatorKernel(new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs(), _lineBreakFor_AND_OR_in_FROM_clause);
 
       if (hasTopLevelColon(trimmedPiece, dum))
       {
          PieceMarkerSpec[] pms = createPieceMarkerSpecIncludeColon();
-         CodeReformatorKernel crk = new CodeReformatorKernel(pms, _codeReformatorConfig.getCommentSpecs());
+         CodeReformatorKernel crk = new CodeReformatorKernel(pms, _codeReformatorConfig.getCommentSpecs(), _lineBreakFor_AND_OR_in_FROM_clause);
          String[] splitPieces1 = crk.toPieces(trimmedPiece);
          if (1 == splitPieces1.length)
          {
@@ -421,7 +457,7 @@ public class CodeReformator implements ICodeReformator
             // ////////////////////////////////////////////////////////////////////////
             // Split the first two matching toplevel brakets here
             PieceMarkerSpec[] pms = createPieceMarkerSpecExcludeColon();
-            CodeReformatorKernel crk = new CodeReformatorKernel(pms, _codeReformatorConfig.getCommentSpecs());
+            CodeReformatorKernel crk = new CodeReformatorKernel(pms, _codeReformatorConfig.getCommentSpecs(), _lineBreakFor_AND_OR_in_FROM_clause);
 
             String[] splitPieces1 = crk.toPieces(trimmedPiece.substring(tlbi[0] + 1, tlbi[1]));
 
@@ -639,7 +675,7 @@ public class CodeReformator implements ICodeReformator
 
    boolean hasCommentEndingWithLineFeed(String in)
    {
-      CodeReformatorKernel dum = new CodeReformatorKernel(new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs());
+      CodeReformatorKernel dum = new CodeReformatorKernel(new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs(), _lineBreakFor_AND_OR_in_FROM_clause);
 
       StateOfPosition[] sops = dum.getStatesOfPosition(in);
 

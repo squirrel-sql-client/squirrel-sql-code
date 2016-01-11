@@ -23,13 +23,14 @@ public class CodeReformatorKernel
 	private CommentSpec[] _commentSpecs;
 	private PieceMarkerSpec[] _pieceSpecs;
 
-	// TODO: Diplay in GUI and example
-	private boolean _lineBreakFor_AND_OR_in_FROM_clause = false;
+	private boolean _lineBreakFor_AND_OR_in_FROM_clause;
 
-	public CodeReformatorKernel(PieceMarkerSpec[] pieceSpecs, CommentSpec[] commentSpecs)
+	public CodeReformatorKernel(PieceMarkerSpec[] pieceSpecs, CommentSpec[] commentSpecs, boolean lineBreakFor_and_or_in_from_clause)
 	{
 		_commentSpecs = commentSpecs;
 		_pieceSpecs = pieceSpecs;
+
+		_lineBreakFor_AND_OR_in_FROM_clause = lineBreakFor_and_or_in_from_clause;
 	}
 
 	public String[] toPieces(String in)

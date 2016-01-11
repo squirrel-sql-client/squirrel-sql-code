@@ -13,11 +13,12 @@ public class FormatSqlPref
    public static final String UNION = "UNION";
    public static final String AND = "AND";
    public static final String OR = "OR";
+   public static final String SELECT = "SELECT";
 
 
    private KeywordBehaviourPref[] _keywordBehaviourPrefs = new KeywordBehaviourPref[]
    {
-      new KeywordBehaviourPref("SELECT", FormatSqlPanel.KeywordBehaviour.ALONE_IN_LINE.getID()),
+      new KeywordBehaviourPref(SELECT, FormatSqlPanel.KeywordBehaviour.ALONE_IN_LINE.getID()),
       new KeywordBehaviourPref(UNION, FormatSqlPanel.KeywordBehaviour.ALONE_IN_LINE.getID()),
       new KeywordBehaviourPref(FROM, FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
 
