@@ -31,11 +31,26 @@ public class FormatSqlController
       FontInfo fontInfo = app.getSquirrelPreferences().getSessionProperties().getFontInfo();
       _formatSqlPanel.txtExampleSqls.setEditable(false);
       _formatSqlPanel.txtExampleSqls.setFont(fontInfo.createFont());
-      refreshExampleSql(_formatSqlPref);
-
-
 
       _formatSqlPanel.txtIndentCount.setValue(_formatSqlPref.getIndent());
+
+      ActionListener adjustValuesToConstraintListeners = new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            adjustValuesToConstraints();
+         }
+      };
+
+      _formatSqlPanel.chkIndentSections.setSelected(_formatSqlPref.isIndentSections());
+      _formatSqlPanel.chkIndentSections.addActionListener(adjustValuesToConstraintListeners);
+
+      _formatSqlPanel.radCommasAtLineBeginNo.setSelected(!_formatSqlPref.isCommasAtLineBegin());
+      _formatSqlPanel.radCommasAtLineBeginNo.addActionListener(adjustValuesToConstraintListeners);
+      _formatSqlPanel.radCommasAtLineBeginYes.setSelected(_formatSqlPref.isCommasAtLineBegin());
+      _formatSqlPanel.radCommasAtLineBeginYes.addActionListener(adjustValuesToConstraintListeners);
+
 
       _formatSqlPanel.txtIndentCount.addFocusListener(new FocusAdapter()
       {
@@ -56,35 +71,27 @@ public class FormatSqlController
          }
       });
 
-      ActionListener actionListener = new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            refreshExampleSql(createFormatSqlPrefFromGui());
-         }
-      };
-
       for (KeywordBehaviourPrefCtrl keywordBehaviourPrefCtrl : _formatSqlPanel.keywordBehaviourPrefCtrls)
       {
-         keywordBehaviourPrefCtrl.addKeyWordBehaviourChangedListener(actionListener);
+         keywordBehaviourPrefCtrl.addKeyWordBehaviourChangedListener(adjustValuesToConstraintListeners);
       }
 
       _formatSqlPanel.chkDoInsertValuesAlign.setSelected(_formatSqlPref.isDoInsertValuesAlign());
-      _formatSqlPanel.chkDoInsertValuesAlign.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            adjustInsertValuesState();
-         }
-      });
-      adjustInsertValuesState();
+      _formatSqlPanel.chkDoInsertValuesAlign.addActionListener(adjustValuesToConstraintListeners);
+
+      _formatSqlPanel._chkLineBreakFor_AND_OR_in_FROM_clause.setSelected(_formatSqlPref.isLineBreakFor_AND_OR_in_FROM_clause());
+      _formatSqlPanel._chkLineBreakFor_AND_OR_in_FROM_clause.addActionListener(adjustValuesToConstraintListeners);
+
+      adjustValuesToConstraints();
 
    }
 
-   private void adjustInsertValuesState()
+   private void adjustValuesToConstraints()
    {
+      KeywordBehaviourPrefCtrl andCtrl = null;
+      KeywordBehaviourPrefCtrl orCtrl = null;
+
+
       for (KeywordBehaviourPrefCtrl keywordBehaviourPrefCtrl : _formatSqlPanel.keywordBehaviourPrefCtrls)
       {
          String keyWord = keywordBehaviourPrefCtrl.getKeywordBehaviourPref().getKeyWord();
@@ -112,7 +119,26 @@ public class FormatSqlController
                keywordBehaviourPrefCtrl.setEnabled(true);
             }
          }
+         else if (FormatSqlPref.AND.equals(keyWord))
+         {
+            andCtrl = keywordBehaviourPrefCtrl;
+         }
+         else if (FormatSqlPref.OR.equals(keyWord))
+         {
+            orCtrl = keywordBehaviourPrefCtrl;
+         }
       }
+
+      if(FormatSqlPanel.KeywordBehaviour.START_NEW_LINE == andCtrl.getSelectedKeywordBehaviour() || FormatSqlPanel.KeywordBehaviour.START_NEW_LINE == orCtrl.getSelectedKeywordBehaviour())
+      {
+         _formatSqlPanel._chkLineBreakFor_AND_OR_in_FROM_clause.setEnabled(true);
+      }
+      else
+      {
+         _formatSqlPanel._chkLineBreakFor_AND_OR_in_FROM_clause.setEnabled(false);
+      }
+
+
       refreshExampleSql(createFormatSqlPrefFromGui());
    }
 
@@ -120,7 +146,7 @@ public class FormatSqlController
    {
       String sqls;CodeReformator codeReformator = new CodeReformator(CodeReformatorConfigFactory.createConfig(formatSqlPref));
 
-      sqls = codeReformator.reformat("SELECT table1.id, table2.number, SUM(table1.amount) FROM table1 INNER JOIN table2 ON table.id = table2.table1_id WHERE table1.id IN (SELECT table1_id FROM table3 WHERE table3.name = 'Foo Bar' and table3.type = 'unknown_type') GROUP BY table1.id, table2.number ORDER BY table1.id");
+      sqls = codeReformator.reformat("SELECT table1.id, table2.number, table2.name, table2.info1, table2.info2, table2.info3, table2.info4, table2.info5, table2.info6, SUM(table1.amount) FROM table1 INNER JOIN table2 ON table.id1 = table2.table1_id1 AND table.id2 = table2.table1_id2 WHERE table1.id IN (SELECT table1_id FROM table3 WHERE table3.name = 'Foo Bar' and table3.type = 'unknown_type') GROUP BY table1.id, table2.number ORDER BY table1.id");
       sqls += "\n\n";
       sqls += codeReformator.reformat("UPDATE table1 SET name = 'Hello', number = '1456-789' WHERE id = 42");
       sqls += "\n\n";
@@ -185,6 +211,10 @@ public class FormatSqlController
          }
       }
 
+      ret.setIndentSections(_formatSqlPanel.chkIndentSections.isSelected());
+      ret.setCommasAtLineBegin(_formatSqlPanel.radCommasAtLineBeginYes.isSelected());
+
+
       ArrayList<KeywordBehaviourPref> buf = new ArrayList<KeywordBehaviourPref>();
       for (KeywordBehaviourPrefCtrl keywordBehaviourPrefCtrl : _formatSqlPanel.keywordBehaviourPrefCtrls)
       {
@@ -194,6 +224,8 @@ public class FormatSqlController
       ret.setKeywordBehaviourPrefs(buf.toArray(new KeywordBehaviourPref[buf.size()]));
 
       ret.setDoInsertValuesAlign(_formatSqlPanel.chkDoInsertValuesAlign.isSelected());
+
+      ret.setLineBreakFor_AND_OR_in_FROM_clause(_formatSqlPanel._chkLineBreakFor_AND_OR_in_FROM_clause.isSelected());
 
       return ret;
    }

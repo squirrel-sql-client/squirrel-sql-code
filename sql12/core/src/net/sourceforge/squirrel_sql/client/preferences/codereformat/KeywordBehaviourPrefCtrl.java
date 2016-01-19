@@ -27,6 +27,11 @@ public class KeywordBehaviourPrefCtrl
       _keywordBehaviourPref.setKeywordBehaviourId(keywordBehaviour.getID());
    }
 
+   public FormatSqlPanel.KeywordBehaviour getSelectedKeywordBehaviour()
+   {
+      return (FormatSqlPanel.KeywordBehaviour) _cbo.getSelectedItem();
+   }
+
    public KeywordBehaviourPref getKeywordBehaviourPref()
    {
       return _keywordBehaviourPref;

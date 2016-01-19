@@ -87,12 +87,12 @@ public class TopLevelPiecesIterator
 
    private boolean hasFromClauseLineBreakVeto(PieceMarkerSpec pieceMarkerSpec)
    {
-      if(false == _in_FROM_Clause || _lineBreakFor_AND_OR_in_FROM_clause)
+      if(false == _in_FROM_Clause || false == _lineBreakFor_AND_OR_in_FROM_clause)
       {
          return false;
       }
 
-      return pieceMarkerSpec.is_AND_or_OR();
+      return pieceMarkerSpec.is_AND_or_OR() && PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN == pieceMarkerSpec.getType();
    }
 
 }

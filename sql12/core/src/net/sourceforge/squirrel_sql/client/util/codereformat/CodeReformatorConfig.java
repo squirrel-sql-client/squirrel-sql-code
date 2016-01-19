@@ -20,16 +20,32 @@ public class CodeReformatorConfig
 
    private PieceMarkerSpec[] keywordPieceMarkerSpec = new PieceMarkerSpec[0];
 
+   private boolean _indentSections;
+   private boolean _lineBreakFor_AND_OR_in_FROM_clause;
+   private boolean _commasAtLineBegin;
+
+
    /**
     * Use CodeReformatorConfigFactory to create instances of this class
     */
-   CodeReformatorConfig(String statementSeparator, CommentSpec[] commentSpecs, String indent, int trySplitLineLen, boolean doInsertValuesAlign, ArrayList<PieceMarkerSpec> specs)
+   CodeReformatorConfig(String statementSeparator,
+                        CommentSpec[] commentSpecs,
+                        String indent,
+                        int trySplitLineLen,
+                        boolean doInsertValuesAlign,
+                        ArrayList<PieceMarkerSpec> specs,
+                        boolean indentSections,
+                        boolean lineBreakFor_AND_OR_in_FROM_clause,
+                        boolean commasAtLineBegin)
    {
       _statementSeparator = statementSeparator;
       _commentSpecs = commentSpecs;
       _indent = indent;
       _trySplitLineLen = trySplitLineLen;
       _doInsertValuesAlign = doInsertValuesAlign;
+      _indentSections = indentSections;
+      _lineBreakFor_AND_OR_in_FROM_clause = lineBreakFor_AND_OR_in_FROM_clause;
+      _commasAtLineBegin = commasAtLineBegin;
       keywordPieceMarkerSpec = specs.toArray(new PieceMarkerSpec[specs.size()]);
    }
 
@@ -61,5 +77,20 @@ public class CodeReformatorConfig
    public boolean isDoInsertValuesAlign()
    {
       return _doInsertValuesAlign;
+   }
+
+   public boolean isIndentSections()
+   {
+      return _indentSections;
+   }
+
+   public boolean isLineBreakFor_AND_OR_in_FROM_clause()
+   {
+      return _lineBreakFor_AND_OR_in_FROM_clause;
+   }
+
+   public boolean isCommasAtLineBegin()
+   {
+      return _commasAtLineBegin;
    }
 }

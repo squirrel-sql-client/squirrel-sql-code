@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences.codereformat;
 
+import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.util.codereformat.PieceMarkerSpec;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -64,9 +65,18 @@ public class FormatSqlPanel extends JPanel
 
 
    JFormattedTextField txtIndentCount;
+   JCheckBox chkIndentSections = new JCheckBox(s_stringMgr.getString("codereformat.FormatSqlPanel.indent.sections"));
+
+   JRadioButton radCommasAtLineBeginYes;
+   JRadioButton radCommasAtLineBeginNo;
+
+
    JFormattedTextField txtPreferedLineLength;
    ArrayList<KeywordBehaviourPrefCtrl> keywordBehaviourPrefCtrls = new ArrayList<KeywordBehaviourPrefCtrl>();
    JCheckBox chkDoInsertValuesAlign;
+
+   JCheckBox _chkLineBreakFor_AND_OR_in_FROM_clause = new JCheckBox(s_stringMgr.getString("codereformat.FormatSqlPanel.checkbox.lineBreakFor_AND_OR_in_FROM_clause"));
+
 
    JTextArea txtExampleSqls = new JTextArea();
 
@@ -74,7 +84,11 @@ public class FormatSqlPanel extends JPanel
    public FormatSqlPanel(KeywordBehaviourPref[] keywordBehaviourPrefs)
    {
       setLayout(new BorderLayout());
-      add(createControlsPanel(keywordBehaviourPrefs), BorderLayout.WEST);
+
+      JScrollPane scr = new JScrollPane(createControlsPanel(keywordBehaviourPrefs));
+      scr.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      add(scr, BorderLayout.WEST);
+
       add(new JScrollPane(txtExampleSqls), BorderLayout.CENTER);
    }
 
@@ -85,48 +99,92 @@ public class FormatSqlPanel extends JPanel
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      ret.add(new JLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.indent")), gbc);
+      int gridy = 0;
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      int additionalRightInsetForScrollbar = 10;
+      gbc = new GridBagConstraints(0,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      ret.add(new JLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.indentCount")), gbc);
+
+      gbc = new GridBagConstraints(1,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5 + additionalRightInsetForScrollbar),0,0);
       txtIndentCount = new JFormattedTextField(NumberFormat.getInstance());
       txtIndentCount.setColumns(7);
       ret.add(txtIndentCount, gbc);
 
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      ++gridy;
+      gbc = new GridBagConstraints(1,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,5,5 + additionalRightInsetForScrollbar),0,0);
+      ret.add(chkIndentSections, gbc);
+
+      ++gridy;
+      gbc = new GridBagConstraints(1,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,10,5 + additionalRightInsetForScrollbar),0,0);
+      ret.add(createCommasPanel(), gbc);
+
+
+      ++gridy;
+      gbc = new GridBagConstraints(0,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5 + additionalRightInsetForScrollbar),0,0);
       ret.add(new JLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.preferedLineLen")), gbc);
 
-      gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(1,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       txtPreferedLineLength = new JFormattedTextField(NumberFormat.getInstance());
       txtPreferedLineLength.setColumns(7);
       ret.add(txtPreferedLineLength, gbc);
 
-      gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(30,5,5,5),0,0);
+      ++gridy;
+      gbc = new GridBagConstraints(0,gridy,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15,5,5,5 + additionalRightInsetForScrollbar),0,0);
       ret.add(new JLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.keywordBehavior")), gbc);
-
-
-      int gridy = 2;
 
       for (KeywordBehaviourPref keywordBehaviourPref : keywordBehaviourPrefs)
       {
-         keywordBehaviourPrefCtrls.add(createKeywordBehaviourPrefCtrl(ret, keywordBehaviourPref, ++gridy));
+         keywordBehaviourPrefCtrls.add(createKeywordBehaviourPrefCtrl(ret, keywordBehaviourPref, ++gridy, additionalRightInsetForScrollbar));
       }
 
-      gbc = new GridBagConstraints(1,++gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      ++gridy;
+      gbc = new GridBagConstraints(1,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5 + additionalRightInsetForScrollbar),0,0);
       chkDoInsertValuesAlign = new JCheckBox(s_stringMgr.getString("codereformat.FormatSqlPanel.tryAlignInsertValueStatements"));
       ret.add(chkDoInsertValuesAlign, gbc);
+
+      ++gridy;
+      // When AND/OR keywords occur in from clauses you can choose to ignore the start new line setting from above.
+      // This may be considered to to lead to more readable JOIN clauses.
+      MultilineLabel lblLineBreakFor_AND_OR_in_FROM_clause = new MultilineLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.explain.lineBreakFor_AND_OR_in_FROM_clause"));
+      lblLineBreakFor_AND_OR_in_FROM_clause.setText(s_stringMgr.getString("codereformat.FormatSqlPanel.explain.lineBreakFor_AND_OR_in_FROM_clause"));
+
+      gbc = new GridBagConstraints(0,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
+      ret.add(lblLineBreakFor_AND_OR_in_FROM_clause, gbc);
+
+      gbc = new GridBagConstraints(1,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5 + additionalRightInsetForScrollbar),0,0);
+      ret.add(_chkLineBreakFor_AND_OR_in_FROM_clause, gbc);
 
       return ret;
    }
 
-   private KeywordBehaviourPrefCtrl createKeywordBehaviourPrefCtrl(JPanel toAddTo, KeywordBehaviourPref keywordBehaviourPref, int gridy)
+   private JPanel createCommasPanel()
+   {
+      JPanel ret = new JPanel(new GridLayout(2,1,5,0));
+
+      ret.setBorder(BorderFactory.createEtchedBorder());
+
+      radCommasAtLineBeginNo = new JRadioButton(s_stringMgr.getString("codereformat.FormatSqlPanel.commas.at.line.begin.no"));
+      ret.add(radCommasAtLineBeginNo);
+
+      radCommasAtLineBeginYes = new JRadioButton(s_stringMgr.getString("codereformat.FormatSqlPanel.commas.at.line.begin.yes"));
+      ret.add(radCommasAtLineBeginYes);
+
+
+      ButtonGroup bg = new ButtonGroup();
+      bg.add(radCommasAtLineBeginYes);
+      bg.add(radCommasAtLineBeginNo);
+
+      return ret;
+   }
+
+   private KeywordBehaviourPrefCtrl createKeywordBehaviourPrefCtrl(JPanel toAddTo, KeywordBehaviourPref keywordBehaviourPref, int gridy, int additionalRightInsetForScrollbar)
    {
       GridBagConstraints gbc;
       gbc = new GridBagConstraints(0, gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       toAddTo.add(new JLabel(keywordBehaviourPref.getKeyWord()), gbc);
 
-      gbc = new GridBagConstraints(1, gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(1, gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5 + + additionalRightInsetForScrollbar),0,0);
       JComboBox cbo = new JComboBox();
       toAddTo.add(cbo, gbc);
       return new KeywordBehaviourPrefCtrl(cbo, keywordBehaviourPref);

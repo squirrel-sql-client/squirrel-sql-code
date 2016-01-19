@@ -42,6 +42,11 @@ public class FormatSqlPref
    private int _preferedLineLength = 80;
    private boolean _doInsertValuesAlign = true;
 
+   private boolean _indentSections = false;
+   private boolean _lineBreakFor_AND_OR_in_FROM_clause = false;
+   private boolean _commasAtLineBegin = false;
+
+
    public KeywordBehaviourPref[] getKeywordBehaviourPrefs()
    {
       return _keywordBehaviourPrefs;
@@ -81,5 +86,35 @@ public class FormatSqlPref
    public void setDoInsertValuesAlign(boolean doInsertValuesAlign)
    {
       _doInsertValuesAlign = doInsertValuesAlign;
+   }
+
+   public boolean isIndentSections()
+   {
+      return _indentSections;
+   }
+
+   public void setIndentSections(boolean indentSections)
+   {
+      _indentSections = indentSections;
+   }
+
+   public boolean isLineBreakFor_AND_OR_in_FROM_clause()
+   {
+      return _lineBreakFor_AND_OR_in_FROM_clause;
+   }
+
+   public void setLineBreakFor_AND_OR_in_FROM_clause(boolean lineBreakFor_AND_OR_in_FROM_clause)
+   {
+      _lineBreakFor_AND_OR_in_FROM_clause = lineBreakFor_AND_OR_in_FROM_clause;
+   }
+
+   public boolean isCommasAtLineBegin()
+   {
+      return _commasAtLineBegin;
+   }
+
+   public void setCommasAtLineBegin(boolean commasAtLineBegin)
+   {
+      _commasAtLineBegin = commasAtLineBegin;
    }
 }
