@@ -45,7 +45,7 @@ public class CodeReformator implements ICodeReformator
 
    /////////////////////////////////////////////////////////////
    // TODO: Diplay in GUI and example
-   private boolean _indentExtra = true;
+   private boolean _indentSections = true;
    private boolean _lineBreakFor_AND_OR_in_FROM_clause = false;
    private boolean _commasAtLineBegin = false;
    //
@@ -105,7 +105,7 @@ public class CodeReformator implements ICodeReformator
 
    private boolean indentExtra(String piece)
    {
-      if(false == _indentExtra)
+      if(false == _indentSections)
       {
          return false;
       }
