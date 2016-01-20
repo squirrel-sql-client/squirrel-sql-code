@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlPref;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -66,28 +65,29 @@ public class CodeReformator implements ICodeReformator
       }
 
       StringBuffer ret = new StringBuffer();
-      int indentDepth = 0;
+
+      int indentCount = 0;
+
+      IndentSectionsHandler indentSectionsHandler = new IndentSectionsHandler(_codeReformatorConfig.isIndentSections());
+
       for (int i = 0; i < pieces.length; ++i)
       {
-         if(indentExtra(pieces[i]) && 0 < indentDepth)
-         {
-            --indentDepth;
-         }
+         indentSectionsHandler.before(pieces[i]);
 
          if (")".equals(pieces[i]))
          {
-            --indentDepth;
-         }
-         ret.append(indent(pieces[i], indentDepth));
-         ret.append(_lineSep);
-         if ("(".equals(pieces[i]))
-         {
-            ++indentDepth;
+            --indentCount;
          }
 
-         if(indentExtra(pieces[i]))
+         ret.append(indent(pieces[i], indentCount + indentSectionsHandler.getExtraIndentCount()));
+         ret.append(_lineSep);
+
+         indentSectionsHandler.after(pieces[i]);
+
+
+         if ("(".equals(pieces[i]))
          {
-            ++indentDepth;
+            ++indentCount;
          }
       }
 
@@ -96,24 +96,6 @@ public class CodeReformator implements ICodeReformator
       return ret.toString();
    }
 
-   private boolean indentExtra(String piece)
-   {
-      if(false == _codeReformatorConfig.isIndentSections())
-      {
-         return false;
-      }
-
-      if(   piece.trim().toUpperCase().startsWith(FormatSqlPref.SELECT)
-         || piece.trim().toUpperCase().startsWith(FormatSqlPref.FROM)
-         || piece.trim().toUpperCase().startsWith(FormatSqlPref.WHERE)
-         || piece.trim().toUpperCase().startsWith(FormatSqlPref.UNION)
-         || piece.trim().toUpperCase().startsWith(FormatSqlPref.GROUP)
-         || piece.trim().toUpperCase().startsWith(FormatSqlPref.ORDER))
-      {
-         return true;
-      }
-      return false;
-   }
 
    private void validate(String beforeReformat, String afterReformat)
    {
