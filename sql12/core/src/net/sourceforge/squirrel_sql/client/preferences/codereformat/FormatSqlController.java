@@ -146,13 +146,13 @@ public class FormatSqlController
    {
       String sqls;CodeReformator codeReformator = new CodeReformator(CodeReformatorConfigFactory.createConfig(formatSqlPref));
 
-      sqls = codeReformator.reformat("SELECT table1.id, table2.number, table2.name, table2.info1, table2.info2, table2.info3, table2.info4, table2.info5, table2.info6, SUM(table1.amount) FROM table1 INNER JOIN table2 ON table.id1 = table2.table1_id1 AND table.id2 = table2.table1_id2 WHERE table1.id IN (SELECT table1_id FROM table3 WHERE table3.name = 'Foo Bar' and table3.type = 'unknown_type') GROUP BY table1.id, table2.number ORDER BY table1.id");
+      sqls = codeReformator.reformat("SELECT table1.id,table2.number,table2.name,table2.info1,table2.info2,table2.info3,table2.info4,table2.info5,table2.info6,SUM(table1.amount) FROM table1 INNER JOIN table2 ON table.id1 = table2.table1_id1 AND table.id2 = table2.table1_id2 WHERE table1.id IN (SELECT table1_id FROM table3 WHERE table3.name = 'Foo Bar' and table3.type = 'unknown_type') GROUP BY table1.id, table2.number ORDER BY table1.id");
       sqls += "\n\n";
       sqls += codeReformator.reformat("UPDATE table1 SET name = 'Hello', number = '1456-789' WHERE id = 42");
       sqls += "\n\n";
       sqls += codeReformator.reformat("INSERT INTO table1 (name, number) SELECT name, number FROM table1_bak");
       sqls += "\n\n";
-      sqls += codeReformator.reformat("INSERT INTO table1 (name, number, type) VALUES ('Foo', 42, 'VA')");
+      sqls += codeReformator.reformat("INSERT INTO table1 (name,number,type) VALUES ('Foo',42,'VA')");
       sqls += "\n\n";
       sqls += codeReformator.reformat("DELETE FROM table1 WHERE  name = 'Hello' OR number = '1456-789'");
 
