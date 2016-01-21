@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Format SQL has three new options, see menu File -> Global Preferences -> Tab SQL formatting
+ - Indent sections check box
+ - Comma placing radio buttons
+ - When AND/OR keywords occur in FROM clauses you can choose to ignore the start new line setting.
+   This may be considered to lead to more readable JOIN clauses.
+
 Current SQL mark: In the SQL editor if the caret placed inside an SQL such that this SQL could be executed using ctrl enter, this SQL is now marked by a blue box.
   The feature can be switched off or the color of the box can be changed at menu File --> Global Preferences --> Tab "SQL" --> Section "General"
 
