@@ -81,13 +81,15 @@ public class CodeReformatorConfigFactory
 
       if (FormatSqlPref.JOIN_DISPLAY_STRING.equals(keyWord))
       {
-         ret.add(new PieceMarkerSpec("JOIN", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN));
-         ret.add(new PieceMarkerSpec("INNER JOIN", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN));
-         ret.add(new PieceMarkerSpec("LEFT JOIN", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN));
-         ret.add(new PieceMarkerSpec("RIGHT JOIN", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN));
-         ret.add(new PieceMarkerSpec("LEFT OUTER JOIN", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN));
-         ret.add(new PieceMarkerSpec("RIGHT OUTER JOIN", PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN));
-
+         if (null != pieceMarkerSpecType)
+         {
+            ret.add(new PieceMarkerSpec("JOIN", pieceMarkerSpecType));
+            ret.add(new PieceMarkerSpec("INNER JOIN", pieceMarkerSpecType));
+            ret.add(new PieceMarkerSpec("LEFT JOIN", pieceMarkerSpecType));
+            ret.add(new PieceMarkerSpec("RIGHT JOIN", pieceMarkerSpecType));
+            ret.add(new PieceMarkerSpec("LEFT OUTER JOIN", pieceMarkerSpecType));
+            ret.add(new PieceMarkerSpec("RIGHT OUTER JOIN", pieceMarkerSpecType));
+         }
       }
       else
       {
