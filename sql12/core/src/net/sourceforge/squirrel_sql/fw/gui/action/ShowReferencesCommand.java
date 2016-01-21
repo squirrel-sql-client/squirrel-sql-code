@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ShowReferencesCommand
 {
@@ -47,39 +48,37 @@ public class ShowReferencesCommand
 
       if (null == globalDbTable)
       {
-         ResultMetaDataTable buf = findTable(inStatColumnInfos);
+         List<ResultMetaDataTable> tables = findTable(inStatColumnInfos);
 
-         if(null != buf)
+         if (0 == tables.size())
          {
-            globalDbTable = buf;
+            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noTable"));
+            return;
          }
+         else if(1 < tables.size())
+         {
+            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.non.unique.table"));
+            return;
+         }
+
+
+         globalDbTable = tables.get(0);
       }
 
-      if (null == globalDbTable)
-      {
-         JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noTable"));
-         return;
-      }
 
 
       ReferencesFrameStarter.showReferences(new RootTable(globalDbTable, inStatColumnInfos), _session, _owningFrame);
 
    }
 
-   private ResultMetaDataTable findTable(ArrayList<InStatColumnInfo> inStatColumnInfos)
+   private List<ResultMetaDataTable> findTable(ArrayList<InStatColumnInfo> inStatColumnInfos)
    {
-      ResultMetaDataTable ret = null;
+      ArrayList<ResultMetaDataTable> ret = new ArrayList<ResultMetaDataTable>();
       for (InStatColumnInfo inStatColumnInfo : inStatColumnInfos)
       {
          ResultMetaDataTable buf = inStatColumnInfo.getColDef().getResultMetaDataTable();
-         if (null == ret)
-         {
-            ret = buf;
-         }
-         else if (false == ret.getQualifiedName().equalsIgnoreCase(buf.getQualifiedName()))
-         {
-            return null;
-         }
+
+         ret.add(buf);
       }
 
       return ret;
