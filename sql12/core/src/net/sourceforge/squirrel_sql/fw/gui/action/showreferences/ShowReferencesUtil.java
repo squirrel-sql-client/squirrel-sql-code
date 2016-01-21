@@ -83,53 +83,63 @@ public class ShowReferencesUtil
 
       TableEpressionBuilder teb = new TableEpressionBuilder();
 
-      for (int i = 0; i < path.length - 1; i++) // path.length - 1 because we exclude root
+      if (1 == path.length)
       {
-         ReferenceKey referenceKey = (ReferenceKey) ((DefaultMutableTreeNode)path[i]).getUserObject();
+         RootTable rootTable = (RootTable) ((DefaultMutableTreeNode) path[0]).getUserObject();
 
-         if(i == 0)
+         sql = "SELECT * FROM "  + teb.getTableExpr(rootTable.getGlobalDbTable().getQualifiedName());
+
+      }
+      else
+      {
+         for (int i = 0; i < path.length - 1; i++) // path.length - 1 because we exclude root
          {
-            String distinct = "";
+            ReferenceKey referenceKey = (ReferenceKey) ((DefaultMutableTreeNode)path[i]).getUserObject();
+
+            if(i == 0)
+            {
+               String distinct = "";
+
+               if (ReferenceType.EXPORTED_KEY == referenceKey.getReferenceType())
+               {
+                  tableToBeEdited = referenceKey.getFkResultMetaDataTable().getQualifiedName();
+               }
+               else
+               {
+                  distinct = " DISTINCT ";
+                  tableToBeEdited = referenceKey.getPkResultMetaDataTable().getQualifiedName();
+               }
+               sql += "SELECT " + distinct + tableToBeEdited + ".* FROM " + teb.getTableExpr(tableToBeEdited);
+            }
 
             if (ReferenceType.EXPORTED_KEY == referenceKey.getReferenceType())
             {
-               tableToBeEdited = referenceKey.getFkResultMetaDataTable().getQualifiedName();
+               sql += " INNER JOIN " + teb.getTableExpr(referenceKey.getPkResultMetaDataTable().getQualifiedName());
             }
             else
             {
-               distinct = " DISTINCT ";
-               tableToBeEdited = referenceKey.getPkResultMetaDataTable().getQualifiedName();
+               sql += " INNER JOIN " + teb.getTableExpr(referenceKey.getFkResultMetaDataTable().getQualifiedName());
             }
-            sql += "SELECT " + distinct + tableToBeEdited + ".* FROM " + teb.getTableExpr(tableToBeEdited);
-         }
 
-         if (ReferenceType.EXPORTED_KEY == referenceKey.getReferenceType())
-         {
-            sql += " INNER JOIN " + teb.getTableExpr(referenceKey.getPkResultMetaDataTable().getQualifiedName());
-         }
-         else
-         {
-            sql += " INNER JOIN " + teb.getTableExpr(referenceKey.getFkResultMetaDataTable().getQualifiedName());
-         }
-
-         String joinFields = null;
-         for (Map.Entry<String, String> fk_pk : referenceKey.getFkColumn_pkcolumnMap().entrySet())
-         {
-            if (null == joinFields)
+            String joinFields = null;
+            for (Map.Entry<String, String> fk_pk : referenceKey.getFkColumn_pkcolumnMap().entrySet())
             {
-               joinFields = " ON " + teb.getLastTableOrAlias(referenceKey.getPkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getValue() +
-                     " = " + teb.getLastTableOrAlias(referenceKey.getFkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getKey();
+               if (null == joinFields)
+               {
+                  joinFields = " ON " + teb.getLastTableOrAlias(referenceKey.getPkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getValue() +
+                        " = " + teb.getLastTableOrAlias(referenceKey.getFkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getKey();
+               }
+               else
+               {
+                  joinFields += " AND " + teb.getLastTableOrAlias(referenceKey.getPkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getValue() +
+                        " = " + teb.getLastTableOrAlias(referenceKey.getFkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getKey();
+               }
+
             }
-            else
-            {
-               joinFields += " AND " + teb.getLastTableOrAlias(referenceKey.getPkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getValue() +
-                     " = " + teb.getLastTableOrAlias(referenceKey.getFkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getKey();
-            }
+
+            sql += joinFields;
 
          }
-
-         sql += joinFields;
-
       }
 
       RootTable rootTable = (RootTable) ((DefaultMutableTreeNode)path[path.length - 1]).getUserObject();

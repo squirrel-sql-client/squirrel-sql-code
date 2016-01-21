@@ -152,11 +152,6 @@ public class ShowReferencesCtrl
 
       Object[] path = e.getPath().getPath();
 
-      if(path.length < 2)
-      {
-         return;
-      }
-
       DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) path[path.length - 1];
       if(selectedNode.getUserObject() instanceof ReferenceType)
       {

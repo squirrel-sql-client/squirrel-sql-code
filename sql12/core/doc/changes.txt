@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Foreign key references window now also produces a result for the root table of the references tree.
+
 Format SQL has three new options, see menu File -> Global Preferences -> Tab SQL formatting
  - Indent sections check box
  - Comma placing radio buttons
