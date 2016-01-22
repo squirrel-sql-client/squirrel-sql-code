@@ -72,30 +72,30 @@ public class CodeReformator implements ICodeReformator
 
       for (int i = 0; i < pieces.length; ++i)
       {
-         indentSectionsHandler.before(pieces[i]);
-
-         if (")".equals(pieces[i]))
-         {
-            --indentCount;
-         }
-
          if (pieceStartsWithComment(pieces[i]))
          {
             ret.append(pieces[i]);
          }
          else
          {
+            indentSectionsHandler.before(pieces[i]);
+
+            if (")".equals(pieces[i]))
+            {
+               --indentCount;
+            }
+
             ret.append(indent(pieces[i], indentCount + indentSectionsHandler.getExtraIndentCount()));
+
+            indentSectionsHandler.after(pieces[i]);
+
+            if ("(".equals(pieces[i]))
+            {
+               ++indentCount;
+            }
+
          }
          ret.append(_lineSep);
-
-         indentSectionsHandler.after(pieces[i]);
-
-
-         if ("(".equals(pieces[i]))
-         {
-            ++indentCount;
-         }
       }
 
       validate(in, ret.toString());
