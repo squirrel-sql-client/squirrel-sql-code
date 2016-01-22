@@ -9,6 +9,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class ShowReferencesCommand
@@ -73,15 +75,15 @@ public class ShowReferencesCommand
 
    private List<ResultMetaDataTable> findTable(ArrayList<InStatColumnInfo> inStatColumnInfos)
    {
-      ArrayList<ResultMetaDataTable> ret = new ArrayList<ResultMetaDataTable>();
+      HashMap<String,ResultMetaDataTable> ret = new HashMap<String, ResultMetaDataTable>();
       for (InStatColumnInfo inStatColumnInfo : inStatColumnInfos)
       {
          ResultMetaDataTable buf = inStatColumnInfo.getColDef().getResultMetaDataTable();
 
-         ret.add(buf);
+         ret.put(buf.getQualifiedName().toLowerCase() , buf);
       }
 
-      return ret;
+      return new ArrayList<ResultMetaDataTable>(ret.values());
    }
 
 }
