@@ -629,10 +629,16 @@ public class CodeReformator implements ICodeReformator
          }
          else
          {
-            if (Character.isWhitespace(in.charAt(i)) && i + 1 < in.length()
-                  && Character.isWhitespace(in.charAt(i + 1)))
+            if (Character.isWhitespace(in.charAt(i)))
             {
-               dontAppend = true;
+               if (i + 1 < in.length() && Character.isWhitespace(in.charAt(i + 1)))
+               {
+                  dontAppend = true;
+               }
+               else if (0 <= i-1 && ',' == in.charAt(i-1))
+               {
+                  dontAppend = true;
+               }
             }
          }
 
