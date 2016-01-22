@@ -613,6 +613,7 @@ public class CodeReformator implements ICodeReformator
 
       StringBuffer ret = new StringBuffer();
       int aposCount = 0;
+      char lastAppended = '\0';
       for (int i = 0; i < in.length(); ++i)
       {
 
@@ -621,7 +622,8 @@ public class CodeReformator implements ICodeReformator
             ++aposCount;
          }
 
-         boolean dontAppend = false;
+
+         boolean append = true;
 
          if (0 != aposCount % 2)
          {
@@ -633,27 +635,30 @@ public class CodeReformator implements ICodeReformator
             {
                if (i + 1 < in.length() && Character.isWhitespace(in.charAt(i + 1)))
                {
-                  dontAppend = true;
+                  append = false;
                }
-               else if (0 <= i-1 && ',' == in.charAt(i-1))
+               else if (',' == lastAppended)
                {
-                  dontAppend = true;
+                  append = false;
+               }
+               else if (i + 1 < in.length() && ',' == in.charAt(i + 1))
+               {
+                  append = false;
                }
             }
          }
 
-         if (false == dontAppend)
+         if (append)
          {
-            char toAppend;
             if (Character.isWhitespace(in.charAt(i)) && 0 == aposCount % 2)
             {
-               toAppend = ' ';
+               lastAppended = ' ';
             }
             else
             {
-               toAppend = in.charAt(i);
+               lastAppended = in.charAt(i);
             }
-            ret.append(toAppend);
+            ret.append(lastAppended);
          }
       }
 
