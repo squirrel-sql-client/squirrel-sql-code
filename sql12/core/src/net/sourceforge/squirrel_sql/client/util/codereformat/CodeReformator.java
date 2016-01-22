@@ -56,8 +56,8 @@ public class CodeReformator implements ICodeReformator
       in = flatenWhiteSpaces(in, false);
 
       PieceMarkerSpec[] markerExcludeComma = createPieceMarkerSpecExcludeColon();
-      String[] pieces =
-            getReformatedPieces(in, markerExcludeComma).toArray(new String[0]);
+
+      String[] pieces = getReformatedPieces(in, markerExcludeComma).toArray(new String[0]);
 
       if (_codeReformatorConfig.isDoInsertValuesAlign())
       {
@@ -79,7 +79,14 @@ public class CodeReformator implements ICodeReformator
             --indentCount;
          }
 
-         ret.append(indent(pieces[i], indentCount + indentSectionsHandler.getExtraIndentCount()));
+         if (pieceStartsWithComment(pieces[i]))
+         {
+            ret.append(pieces[i]);
+         }
+         else
+         {
+            ret.append(indent(pieces[i], indentCount + indentSectionsHandler.getExtraIndentCount()));
+         }
          ret.append(_lineSep);
 
          indentSectionsHandler.after(pieces[i]);
@@ -94,6 +101,19 @@ public class CodeReformator implements ICodeReformator
       validate(in, ret.toString());
 
       return ret.toString();
+   }
+
+   private boolean pieceStartsWithComment(String piece)
+   {
+      for (CommentSpec commentSpec : _codeReformatorConfig.getCommentSpecs())
+      {
+         if(piece.trim().startsWith(commentSpec.commentBegin))
+         {
+            return true;
+         }
+      }
+
+      return false;
    }
 
 
