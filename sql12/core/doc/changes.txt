@@ -28,6 +28,10 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+#1226 Reconnect didn't work when Session toolbar was configured to be not shown.
+  See menu "File" --> "New Session Properties" --> Tab "General" and check the "Show toolbar" check box.
+
+
 Object tree: Contents tab loading raised ClassCastException when table contents where viewed as text output.
 
 NullPointerException occurred when the "Show foreign key references" right mouse menu item of an SQL result table was clicked.

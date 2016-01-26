@@ -509,6 +509,11 @@ public class SessionPanel extends JPanel
 
 	public String getSelectedCatalogFromCatalogsComboBox()
 	{
+		if(null == _toolBar)
+		{
+			return null;
+		}
+
 		return _toolBar._catalogsPanel.getSelectedCatalog();
 	}
 
