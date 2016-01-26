@@ -37,7 +37,7 @@ public class CodeReformator implements ICodeReformator
    /**
     * Platform-specific line separator string
     */
-   private String _lineSep = StringUtilities.getEolStr();
+   private String _lineSep = ICodeReformator.CODE_REFORMATOR_LINE_SEPARATOR;
 
    private static ILogger s_log = LoggerController.createLogger(CodeReformator.class);
    private CodeReformatorConfig _codeReformatorConfig;

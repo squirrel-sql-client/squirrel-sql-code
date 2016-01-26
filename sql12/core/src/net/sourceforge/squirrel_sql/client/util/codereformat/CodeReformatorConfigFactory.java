@@ -12,10 +12,11 @@ import java.util.ArrayList;
 public class CodeReformatorConfigFactory
 {
 
+
    public static final CommentSpec[] DEFAULT_COMMENT_SPECS = new CommentSpec[]
          {
                new CommentSpec("/*", "*/"),
-               new CommentSpec("--", StringUtilities.getEolStr())
+               new CommentSpec("--", ICodeReformator.CODE_REFORMATOR_LINE_SEPARATOR)
          };
 
    public static final String DEFAULT_STATEMENT_SEPARATOR = ";";
