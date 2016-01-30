@@ -23,6 +23,7 @@ public class FindInObjectTreeController
    {
       _session = session;
       _filterEditSQLEntryPanel = new DefaultSQLEntryPanel(session);
+      _filterEditSQLEntryPanel.setMarkCurrentSQLActive(false);
       _findInObjectTreePanel = new FindInObjectTreePanel(_filterEditSQLEntryPanel.getTextComponent(), session.getApplication().getResources());
 
 

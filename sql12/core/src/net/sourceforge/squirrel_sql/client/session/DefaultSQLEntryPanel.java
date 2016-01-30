@@ -25,7 +25,6 @@ import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 import javax.swing.undo.UndoManager;
 
@@ -45,7 +44,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	private ISession _session;
 
 	/** Text area control. */
-	private MyTextArea _comp;
+	private MyTextArea _myTextArea;
 
     @SuppressWarnings("unused")
     private DropTarget dt;
@@ -59,9 +58,9 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		}
 
 		_session = session;
-		_comp = new MyTextArea(session);
+		_myTextArea = new MyTextArea(session);
 		
-		dt = new DropTarget(_comp, new FileEditorDropTargetListener(session));
+		dt = new DropTarget(_myTextArea, new FileEditorDropTargetListener(session));
 	}
 
 	/**
@@ -73,7 +72,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public JTextComponent getTextComponent()
 	{
-		return _comp;
+		return _myTextArea;
 	}
 
 	/**
@@ -90,12 +89,12 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 
 	public void addUndoableEditListener(UndoableEditListener lis)
 	{
-		_comp.getDocument().addUndoableEditListener(lis);
+		_myTextArea.getDocument().addUndoableEditListener(lis);
 	}
 
 	public void removeUndoableEditListener(UndoableEditListener lis)
 	{
-		_comp.getDocument().removeUndoableEditListener(lis);
+		_myTextArea.getDocument().removeUndoableEditListener(lis);
 	}
 
 	/*
@@ -112,7 +111,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public String getText()
 	{
-		return _comp.getText();
+		return _myTextArea.getText();
 	}
 
 	/**
@@ -120,7 +119,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public String getSelectedText()
 	{
-		return _comp.getSelectedText();
+		return _myTextArea.getSelectedText();
 	}
 
 	/**
@@ -144,13 +143,13 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setText(String sqlScript, boolean select)
 	{
-		_comp.setText(sqlScript);
+		_myTextArea.setText(sqlScript);
 		if (select)
 		{
 			setSelectionEnd(getText().length());
 			setSelectionStart(0);
 		}
-      _comp.setCaretPosition(0);
+      _myTextArea.setCaretPosition(0);
 	}
 
 	/**
@@ -175,7 +174,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	public void appendText(String sqlScript, boolean select)
 	{
 		final int start = select ? getText().length() : 0;
-		_comp.append(sqlScript);
+		_myTextArea.append(sqlScript);
 		if (select)
 		{
 			setSelectionEnd(getText().length());
@@ -191,7 +190,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void replaceSelection(String sqlScript)
 	{
-		_comp.replaceSelection(sqlScript);
+		_myTextArea.replaceSelection(sqlScript);
 	}
 
 	/**
@@ -199,7 +198,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public int getCaretPosition()
 	{
-		return _comp.getCaretPosition();
+		return _myTextArea.getCaretPosition();
 	}
 
 	/**
@@ -207,12 +206,12 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setTabSize(int tabSize)
 	{
-		_comp.setTabSize(tabSize);
+		_myTextArea.setTabSize(tabSize);
 	}
 
 	public void setFont(Font font)
 	{
-		_comp.setFont(font);
+		_myTextArea.setFont(font);
 	}
 
 
@@ -221,7 +220,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void addMouseListener(MouseListener lis)
 	{
-		_comp.addMouseListener(lis);
+		_myTextArea.addMouseListener(lis);
 	}
 
 	/**
@@ -229,7 +228,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void removeMouseListener(MouseListener lis)
 	{
-		_comp.removeMouseListener(lis);
+		_myTextArea.removeMouseListener(lis);
 	}
 
 	/**
@@ -237,7 +236,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setCaretPosition(int pos)
 	{
-		_comp.setCaretPosition(pos);
+		_myTextArea.setCaretPosition(pos);
 	}
 
 	/*
@@ -247,7 +246,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	{
 		try
 		{
-			return _comp.getLineOfOffset(_comp.getCaretPosition());
+			return _myTextArea.getLineOfOffset(_myTextArea.getCaretPosition());
 		}
 		catch (BadLocationException ex)
 		{
@@ -257,11 +256,11 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 
 	public int getCaretLinePosition()
 	{
-		int caretPos = _comp.getCaretPosition();
+		int caretPos = _myTextArea.getCaretPosition();
 		int caretLineOffset = caretPos;
 		try
 		{
-			caretLineOffset = _comp.getLineStartOffset(getCaretLineNumber());
+			caretLineOffset = _myTextArea.getLineStartOffset(getCaretLineNumber());
 		}
 		catch (BadLocationException ex)
 		{
@@ -275,7 +274,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public int getSelectionStart()
 	{
-		return _comp.getSelectionStart();
+		return _myTextArea.getSelectionStart();
 	}
 
 	/**
@@ -283,7 +282,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setSelectionStart(int pos)
 	{
-		_comp.setSelectionStart(pos);
+		_myTextArea.setSelectionStart(pos);
 	}
 
 	/**
@@ -291,7 +290,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public int getSelectionEnd()
 	{
-		return _comp.getSelectionEnd();
+		return _myTextArea.getSelectionEnd();
 	}
 
 	/**
@@ -299,7 +298,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setSelectionEnd(int pos)
 	{
-		_comp.setSelectionEnd(pos);
+		_myTextArea.setSelectionEnd(pos);
 	}
 
 	/**
@@ -307,7 +306,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public boolean hasFocus()
 	{
-		return _comp.hasFocus();
+		return _myTextArea.hasFocus();
 	}
 
 	/**
@@ -315,7 +314,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void requestFocus()
 	{
-		_comp.requestFocus();
+		_myTextArea.requestFocus();
 	}
 
 	/*
@@ -323,7 +322,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void addCaretListener(CaretListener lis)
 	{
-		_comp.addCaretListener(lis);
+		_myTextArea.addCaretListener(lis);
 	}
 
 	/*
@@ -331,7 +330,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void removeCaretListener(CaretListener lis)
 	{
-		_comp.removeCaretListener(lis);
+		_myTextArea.removeCaretListener(lis);
 	}
 
 	public void addSQLTokenListener(SQLTokenListener tl)
@@ -349,7 +348,12 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
       return _session;
    }
 
-   private static class MyTextArea extends JTextArea
+	public void setMarkCurrentSQLActive(boolean b)
+	{
+		_myTextArea._markCurrentSqlHandler.setActive(b);
+	}
+
+	private static class MyTextArea extends JTextArea
 	{
 
 		private MarkCurrentSqlHandler _markCurrentSqlHandler;

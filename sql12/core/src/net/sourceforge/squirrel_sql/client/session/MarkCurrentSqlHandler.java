@@ -160,4 +160,8 @@ public class MarkCurrentSqlHandler
       }
    }
 
+   public void setActive(boolean b)
+   {
+      _active = false;
+   }
 }
