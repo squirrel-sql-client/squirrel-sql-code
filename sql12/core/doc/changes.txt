@@ -28,8 +28,6 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
-#1232 SQuirrelSQL on Mac OS X doesn't want jdk1.8
-
 Current SQL Mark was shown in Object tree find field.
 
 #1226 Reconnect didn't work when Session toolbar was configured to be not shown.
