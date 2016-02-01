@@ -15,6 +15,7 @@ import org.squirrelsql.services.progress.SimpleProgressCtrl;
 import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.action.StdActionCfg;
+import org.squirrelsql.session.objecttree.ObjectTreeTabCtrl;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 import org.squirrelsql.session.schemainfo.SchemaCacheFactory;

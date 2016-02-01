@@ -1,16 +1,18 @@
-package org.squirrelsql.session;
+package org.squirrelsql.session.objecttree;
 
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.services.SplitPositionSaver;
+import org.squirrelsql.session.Session;
+import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.ActionCfg;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.action.ActionUtil;
-import org.squirrelsql.session.objecttree.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +101,7 @@ public class ObjectTreeTabCtrl
       _objectsTree.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 
-      _objectTabSplitPane.getItems().add(_objectsTree);
+      _objectTabSplitPane.getItems().add(createObjectsTreePanel());
       _objectTabSplitPane.getItems().add(new TreeDetailsController(_objectsTree, _sessionTabContext.getSession()).getComponent());
 
 
@@ -108,8 +110,7 @@ public class ObjectTreeTabCtrl
       if(null == treeItemToSelect)
       {
          TreeItem<ObjectTreeNode> aliasItem = ObjectTreeUtil.findSingleTreeItem(_objectsTree, ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY);
-         aliasItem.setExpanded(true);
-         _objectsTree.getSelectionModel().select(aliasItem);
+         ObjectTreeUtil.selectItem(aliasItem, _objectsTree);
       }
       else
       {
@@ -119,6 +120,16 @@ public class ObjectTreeTabCtrl
       }
 
       _objecttreeSplitPosSaver.apply(_objectTabSplitPane);
+   }
+
+   private BorderPane createObjectsTreePanel()
+   {
+      BorderPane borderPane = new BorderPane();
+
+      borderPane.setTop(new ObjectTreeFindCtrl(_objectsTree).getNode());
+      borderPane.setCenter(_objectsTree);
+
+      return borderPane;
    }
 
    private void doEmptyCheck(TreeView<ObjectTreeNode> objectsTree)
@@ -190,9 +201,7 @@ public class ObjectTreeTabCtrl
          return false;
       }
 
-      treeItems.get(0).setExpanded(true);
-
-      _objectsTree.getSelectionModel().select(treeItems.get(0));
+      ObjectTreeUtil.selectItem(treeItems.get(0), _objectsTree);
 
       _objectsTree.scrollTo(_objectsTree.getSelectionModel().getSelectedIndex());
 

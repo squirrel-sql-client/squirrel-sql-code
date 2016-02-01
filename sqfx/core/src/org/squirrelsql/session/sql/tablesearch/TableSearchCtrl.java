@@ -7,6 +7,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import org.squirrelsql.Props;
+import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
@@ -30,7 +31,7 @@ public class TableSearchCtrl
    {
       _btnSearch = new ToggleButton();
       _btnSearch.setTooltip(new Tooltip(new I18n(getClass()).t("search.button.tooltip")));
-      _btnSearch.setGraphic(_props.getImageView("search.png"));
+      _btnSearch.setGraphic(_props.getImageView(GlobalIconNames.SEARCH));
 
       _btnSearch.setOnAction(e -> updateSearchVisible());
 

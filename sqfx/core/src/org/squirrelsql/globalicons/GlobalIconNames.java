@@ -23,4 +23,5 @@ public interface GlobalIconNames
    public static final String PROCEDURE = "procedure.png";
    public static final String UDT = "udt.png";
    public static final String RERUN = "rerun.png";
+   public static final String SEARCH = "search.png";
 }

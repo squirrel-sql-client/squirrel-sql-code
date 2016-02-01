@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.objecttree.ObjectTreeFindView">
+   <right>
+      <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="btnFind" mnemonicParsing="false" />
+            <Button fx:id="btnFilter" mnemonicParsing="false" />
+         </children>
+      </HBox>
+   </right>
+   <center>
+      <TextField fx:id="txtText" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

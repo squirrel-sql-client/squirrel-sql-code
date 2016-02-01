@@ -2,6 +2,7 @@ package org.squirrelsql.session.objecttree;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.schemainfo.CatalogSchema;
 
 import java.util.ArrayList;
@@ -81,5 +82,32 @@ public class ObjectTreeUtil
       recurse(root, matches, objectTreeNodeTreeItem -> objName.matches(objectTreeNodeTreeItem.getValue()));
 
       return matches;
+   }
+
+   public static List<TreeItem<ObjectTreeNode>> findObjectsMatchingName(TreeView<ObjectTreeNode> objectsTree, String name)
+   {
+      if(Utils.isEmptyString(name))
+      {
+         return new ArrayList<>();
+      }
+
+      ArrayList<TreeItem<ObjectTreeNode>> matches = new ArrayList<>();
+
+      recurse(objectsTree.getRoot(), matches, objectTreeNodeTreeItem -> matchesName(objectTreeNodeTreeItem, name));
+
+      return matches;
+   }
+
+   private static boolean matchesName(TreeItem<ObjectTreeNode> objectTreeNodeTreeItem, String name)
+   {
+      String nodeName = objectTreeNodeTreeItem.getValue().getNodeName();
+      return nodeName.trim().toLowerCase().startsWith(name.trim().toLowerCase());
+   }
+
+   public static void selectItem(TreeItem<ObjectTreeNode> itemToSelect, TreeView<ObjectTreeNode> objectsTree)
+   {
+      itemToSelect.setExpanded(true);
+      objectsTree.getSelectionModel().clearSelection();
+      objectsTree.getSelectionModel().select(itemToSelect);
    }
 }

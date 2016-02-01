@@ -4,7 +4,7 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.services.FXMessageBox;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Utils;
-import org.squirrelsql.session.ObjectTreeTabCtrl;
+import org.squirrelsql.session.objecttree.ObjectTreeTabCtrl;
 import org.squirrelsql.session.objecttree.QualifiedObjectName;
 
 import java.util.ArrayList;

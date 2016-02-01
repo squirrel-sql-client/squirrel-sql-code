@@ -82,7 +82,8 @@ public class ExtendedTableSelectionHandler
 
       TableCell beginCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, event.getX(), event.getY());
 
-      if(null != beginCell) {
+      if(null != beginCell)
+      {
     	  _extendedTableSelection = new ExtendedTableSelection(beginCell);
       }
    }
@@ -161,6 +162,11 @@ public class ExtendedTableSelectionHandler
       if (null == endCell)
       {
          _stackPane.getChildren().remove(_canvas);
+         return;
+      }
+
+      if(null == _extendedTableSelection)
+      {
          return;
       }
 
