@@ -19,6 +19,7 @@ import org.squirrelsql.services.progress.ProgressUtil;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.*;
 import org.squirrelsql.session.completion.CompletionCtrl;
+import org.squirrelsql.session.completion.SQLTextAreaTextComponentAdapter;
 import org.squirrelsql.session.sql.bookmark.BookmarkManager;
 import org.squirrelsql.session.sql.features.DuplicateLineCommand;
 import org.squirrelsql.session.sql.features.EscapeDateCtrl;
@@ -61,7 +62,9 @@ public class SqlPaneCtrl
       _toolsPopupManager = new ToolsPopupManager(_sqlTextAreaServices, _sessionTabContext);
 
 
-      _completionCtrl = new CompletionCtrl(sessionTabContext.getSession(), _sqlTextAreaServices);
+      _completionCtrl = new CompletionCtrl(sessionTabContext.getSession(), new SQLTextAreaTextComponentAdapter(_sqlTextAreaServices));
+      StdActionCfg.SQL_CODE_COMPLETION.setAction(_completionCtrl::completeCode);
+
 
       _sqlTabSplitPane.setOrientation(Orientation.VERTICAL);
 

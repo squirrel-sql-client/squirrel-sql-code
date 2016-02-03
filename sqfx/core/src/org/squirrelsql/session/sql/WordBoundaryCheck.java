@@ -2,9 +2,9 @@ package org.squirrelsql.session.sql;
 
 public class WordBoundaryCheck
 {
-   public static final char DEFREFENCER = '.';
+   public static final char DEREFENCER = '.';
 
-   public static final char[] STOP_AT = new char[]{DEFREFENCER, '(', ')', '\'', '\n', ',', '=', '<', '>'};
+   public static final char[] STOP_AT = new char[]{DEREFENCER, '(', ')', '\'', '\n', ',', '=', '<', '>'};
 
    public static boolean isToStopAt(char toCheck, char former)
    {

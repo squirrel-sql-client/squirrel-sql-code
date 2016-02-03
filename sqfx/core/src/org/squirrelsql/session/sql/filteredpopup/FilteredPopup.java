@@ -95,7 +95,7 @@ public class FilteredPopup<T extends FilteredPopupEntry>
          }
       }
 
-      CompletionUtil.prepareCompletionList(_listView, _sqlTextAreaServices);
+      CompletionUtil.prepareCompletionList(_listView, _sqlTextAreaServices.getFont());
 
       _borderPane.requestLayout();
 

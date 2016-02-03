@@ -126,7 +126,7 @@ public class ObjectTreeTabCtrl
    {
       BorderPane borderPane = new BorderPane();
 
-      borderPane.setTop(new ObjectTreeFindCtrl(_objectsTree).getNode());
+      borderPane.setTop(new ObjectTreeFindCtrl(_objectsTree, _sessionTabContext.getSession()).getNode());
       borderPane.setCenter(_objectsTree);
 
       return borderPane;

@@ -2,15 +2,12 @@ package org.squirrelsql.session.completion;
 
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.util.Callback;
+import javafx.scene.text.Font;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.schemainfo.FullyQualifiedTableName;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
-import org.squirrelsql.session.sql.SQLTextAreaServices;
 
 import java.util.List;
 
@@ -22,9 +19,9 @@ public class CompletionUtil
       listView.setPrefHeight(Math.min(listView.getItems().size(), 15) * 24 + 3);
    }
 
-   private static  void adjustPreferredListWidth(ListView listView, SQLTextAreaServices sqlTextAreaServices)
+   private static  void adjustPreferredListWidth(ListView listView, Font textComponentFont)
    {
-      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(sqlTextAreaServices.getFont());
+      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(textComponentFont);
 
       double maxItemWidth = 0;
       for (Object item : listView.getItems())
@@ -34,15 +31,13 @@ public class CompletionUtil
       listView.setPrefWidth(maxItemWidth + 35);
    }
 
-   public static void prepareCompletionList(ListView listView, SQLTextAreaServices sqlTextAreaServices)
+   public static void prepareCompletionList(ListView listView, Font textComponentFont)
    {
 
-      listView.setCellFactory(param -> new CompletionListCell(sqlTextAreaServices.getFont()));
+      listView.setCellFactory(param -> new CompletionListCell(textComponentFont));
 
       adjustPreferredListHeight(listView);
-      adjustPreferredListWidth(listView, sqlTextAreaServices);
-
-
+      adjustPreferredListWidth(listView, textComponentFont);
    }
 
    public static String getCatalogSchemaString(StructItemSchema schema)

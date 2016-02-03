@@ -12,7 +12,6 @@ import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.parser.kernel.TableAliasInfo;
-import org.squirrelsql.session.sql.SQLTextAreaServices;
 import org.squirrelsql.session.sql.WordBoundaryCheck;
 import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
 import org.squirrelsql.workaround.KeyMatchWA;
@@ -23,16 +22,16 @@ import java.util.List;
 public class CompletionCtrl
 {
    private final Session _session;
-   private final SQLTextAreaServices _sqlTextAreaServices;
+   private final TextComponentAdapter _textComponentAdapter;
    private List<TableInfo> _currentTableInfosNextToCaret = new ArrayList<>();
    private TableAliasInfo[] _currentAliasInfos = new TableAliasInfo[0];
 
-   public CompletionCtrl(Session session, SQLTextAreaServices sqlTextAreaServices)
+   public CompletionCtrl(Session session, TextComponentAdapter textComponentAdapter)
    {
       _session = session;
-      _sqlTextAreaServices = sqlTextAreaServices;
+      _textComponentAdapter = textComponentAdapter;
 
-      _sqlTextAreaServices.setLexAndParseResultListener(new LexAndParseResultListener()
+      _textComponentAdapter.setLexAndParseResultListener(new LexAndParseResultListener()
       {
          @Override
          public void currentTableInfosNextToCaret(List<TableInfo> tableInfos)
@@ -46,26 +45,23 @@ public class CompletionCtrl
             _currentAliasInfos = aliasInfos;
          }
       });
-
-      StdActionCfg.SQL_CODE_COMPLETION.setAction(this::completeCode);
    }
 
-   private void completeCode()
+   public void completeCode()
    {
       _completeCode(false);
-
    }
 
    private void _completeCode(boolean showPopupForSizeOne)
    {
       ///////////////////////////////////////////////////////////////////////////////////
       // In case just the caret was moved we refresh _currentTableInfosNextToCaret here
-      _sqlTextAreaServices.calculateTableNextToCaret();
+      _textComponentAdapter.calculateTableNextToCaret();
       //
       ///////////////////////////////////////////////////////////////////////////////////
 
-      String tokenAtCaret = _sqlTextAreaServices.getTokenTillCaret(WordBoundaryCheck.DEFREFENCER);
-      String lineAtCaret = _sqlTextAreaServices.getLineTillCaret();
+      String tokenAtCaret = _textComponentAdapter.getTokenTillCaret(WordBoundaryCheck.DEREFENCER);
+      String lineAtCaret = _textComponentAdapter.getLineTillCaret();
 
 
       CaretVicinity caretVicinity = new CaretVicinity(tokenAtCaret, lineAtCaret);
@@ -93,35 +89,24 @@ public class CompletionCtrl
 
       listView.setOnMouseClicked(event -> onMouseClickedList(event, listView));
 
-      _sqlTextAreaServices.getCaretPopup().getPopup().focusedProperty().addListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue));
+      _textComponentAdapter.setPopupFocusListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue));
 
-      CompletionUtil.prepareCompletionList(listView, _sqlTextAreaServices);
+      CompletionUtil.prepareCompletionList(listView, _textComponentAdapter.getFont());
 
-      _sqlTextAreaServices.getCaretPopup().setContent(listView);
-      positionAndShowPopup(caretVicinity);
 
+      _textComponentAdapter.showPopup(listView, caretVicinity);
 
    }
 
-   private void positionAndShowPopup(CaretVicinity caretVicinity)
-   {
-      String uncompletedSplit = caretVicinity.getUncompletedSplit();
-
-      _sqlTextAreaServices.getCaretPopup().showAtCaretBottom(-_sqlTextAreaServices.getStringWidth(uncompletedSplit));
-   }
 
    private void hideIfNotFocused(Boolean newValue)
    {
       if(false == newValue)
       {
-         closePopup();
+         _textComponentAdapter.closePopup();
       }
    }
 
-   private void closePopup()
-   {
-      _sqlTextAreaServices.getCaretPopup().hideAndClearContent();
-   }
 
    private void onHandleKeyOnPopupList(KeyEvent keyEvent, ListView<CompletionCandidate> listView)
    {
@@ -135,19 +120,19 @@ public class CompletionCtrl
       }
       else if(KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ESCAPE)))
       {
-         closePopup();
+         _textComponentAdapter.closePopup();
          keyEvent.consume();
       }
       else
       {
-         closePopup();
+         _textComponentAdapter.closePopup();
          Platform.runLater(() -> onCompleteNextChar());
       }
    }
 
    private void onCompleteNextChar()
    {
-      if (false == Utils.isEmptyString(_sqlTextAreaServices.getTokenTillCaret()))
+      if (false == Utils.isEmptyString(_textComponentAdapter.getTokenTillCaret()))
       {
          _completeCode(true);
       }
@@ -161,7 +146,7 @@ public class CompletionCtrl
 
    private void finishCompletion(ListView<CompletionCandidate> listView, boolean removeSucceedingChars)
    {
-      closePopup();
+      _textComponentAdapter.closePopup();
       CompletionCandidate selItem = listView.getSelectionModel().getSelectedItems().get(0);
       executeCompletion(selItem, removeSucceedingChars);
    }
@@ -177,17 +162,17 @@ public class CompletionCtrl
 
    private void executeCompletion(CompletionCandidate completionCandidate, boolean removeSucceedingChars)
    {
-      CaretVicinity caretVicinity = new CaretVicinity(_sqlTextAreaServices.getTokenTillCaret(), _sqlTextAreaServices.getLineTillCaret());
+      CaretVicinity caretVicinity = new CaretVicinity(_textComponentAdapter.getTokenTillCaret(), _textComponentAdapter.getLineTillCaret());
       String replacement = completionCandidate.getReplacement();
       if (null != replacement)
       {
          if (completionCandidate.isGeneratedJoin())
          {
-            _sqlTextAreaServices.replaceJoinGeneratorAtCaretBy(replacement);
+            _textComponentAdapter.replaceJoinGeneratorAtCaretBy(replacement);
          }
          else
          {
-            _sqlTextAreaServices.replaceTokenAtCaretBy(caretVicinity.getCompletedSplitsStringLength(), removeSucceedingChars, replacement);
+            _textComponentAdapter.replaceTokenAtCaretBy(caretVicinity.getCompletedSplitsStringLength(), removeSucceedingChars, replacement);
          }
       }
    }

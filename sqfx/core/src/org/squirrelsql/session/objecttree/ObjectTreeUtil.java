@@ -101,7 +101,7 @@ public class ObjectTreeUtil
    private static boolean matchesName(TreeItem<ObjectTreeNode> objectTreeNodeTreeItem, String name)
    {
       String nodeName = objectTreeNodeTreeItem.getValue().getNodeName();
-      return nodeName.trim().toLowerCase().startsWith(name.trim().toLowerCase());
+      return nodeName.trim().toLowerCase().equals(name.trim().toLowerCase());
    }
 
    public static void selectItem(TreeItem<ObjectTreeNode> itemToSelect, TreeView<ObjectTreeNode> objectsTree)
@@ -109,5 +109,7 @@ public class ObjectTreeUtil
       itemToSelect.setExpanded(true);
       objectsTree.getSelectionModel().clearSelection();
       objectsTree.getSelectionModel().select(itemToSelect);
+      int row = objectsTree.getRow(itemToSelect);
+      objectsTree.scrollTo(row);
    }
 }
