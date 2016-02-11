@@ -6,13 +6,15 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.squirrelsql.AppState;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.GuiUtils;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.session.Session;
+import org.squirrelsql.session.SessionTabCloseListener;
+import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.completion.CompletionCtrl;
-import org.squirrelsql.session.completion.CompletionSelectedListener;
 import org.squirrelsql.session.completion.TextFieldTextComponentAdapter;
 import org.squirrelsql.workaround.KeyMatchWA;
 
@@ -47,14 +49,7 @@ public class FilterResultCtrl
 
 
       _completionCtrl = new CompletionCtrl(session, new TextFieldTextComponentAdapter(view.txtFilter));
-      _completionCtrl.setOnCompletionSelected(new CompletionSelectedListener(){
-         @Override
-         public void completionSelected()
-         {
-            System.out.println("FilterResultCtrl.completionSelected");
-            Platform.runLater(() -> applyFilterString());
-         }
-      });
+      _completionCtrl.setOnCompletionSelected(() -> Platform.runLater(() -> applyFilterString()));
 
 
 
@@ -74,6 +69,10 @@ public class FilterResultCtrl
       applyFilterString();
 
       dialog.show();
+
+
+      AppState.get().getSessionManager().getCurrentlyActiveOrActivatingContext().addOnSessionTabClosed(sessionTabContext -> dialog.close());
+
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent, boolean consumeOnly)
