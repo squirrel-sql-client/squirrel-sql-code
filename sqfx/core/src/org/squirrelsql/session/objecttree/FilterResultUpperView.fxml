@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="142.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.objecttree.FilterResultUpperView">
+   <children>
+      <TextField fx:id="txtFilter" layoutX="10.0" layoutY="73.0" prefHeight="26.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+      <Label layoutX="10.0" layoutY="6.0" prefHeight="55.0" text="%objecttreefind.filter.view.explain" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+      <Label layoutX="10.0" layoutY="111.0" prefHeight="16.0" prefWidth="159.0" text="%objecttreefind.filter.view.resultCount" />
+      <TextField fx:id="txtResultCount" layoutX="189.0" layoutY="106.0" prefHeight="26.0" prefWidth="93.0" />
+      <Button fx:id="btnCollapse" layoutX="322.0" layoutY="106.0" mnemonicParsing="false" text="%objecttreefind.filter.view.collapse" />
+   </children>
+</AnchorPane>

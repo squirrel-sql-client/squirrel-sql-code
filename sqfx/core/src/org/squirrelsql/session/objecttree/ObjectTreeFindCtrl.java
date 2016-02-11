@@ -27,11 +27,13 @@ public class ObjectTreeFindCtrl
 
    private I18n _i18n = new I18n(getClass());
    private TreeView<ObjectTreeNode> _objectsTree;
+   private Session _session;
    private ObjectTreeFindView _view;
 
    public ObjectTreeFindCtrl(TreeView<ObjectTreeNode> objectsTree, Session session)
    {
       _objectsTree = objectsTree;
+      _session = session;
       _fxmlHelper = new FxmlHelper<>(ObjectTreeFindView.class);
       _view = _fxmlHelper.getView();
 
@@ -42,12 +44,18 @@ public class ObjectTreeFindCtrl
 
       _view.btnFilter.setGraphic(_props.getImageView("filter.png"));
       _view.btnFilter.setTooltip(new Tooltip(_i18n.t("objecttreefind.filter.tooltip")));
+      _view.btnFilter.setOnAction(e -> onFilter());
 
-      _completionCtrl = new CompletionCtrl(session, new TextFieldTextComponentAdapter(_view.txtText));
+      _completionCtrl = new CompletionCtrl(_session, new TextFieldTextComponentAdapter(_view.txtText));
 
       _view.txtText.setOnKeyPressed(e -> onHandleKeyEvent(e, false));
       _view.txtText.setOnKeyTyped(e -> onHandleKeyEvent(e, true));
 
+   }
+
+   private void onFilter()
+   {
+      new FilterResultCtrl(_session, _objectsTree, _view.txtText.getText());
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent, boolean consumeOnly)
@@ -75,7 +83,7 @@ public class ObjectTreeFindCtrl
 
    private void onFind()
    {
-      List<TreeItem<ObjectTreeNode>> objectsMatchingNames = ObjectTreeUtil.findObjectsMatchingName(_objectsTree, _view.txtText.getText());
+      List<TreeItem<ObjectTreeNode>> objectsMatchingNames = ObjectTreeUtil.findObjectsMatchingName(_objectsTree, _view.txtText.getText(), NameMatchMode.EQUALS);
 
       if(0 == objectsMatchingNames.size())
       {

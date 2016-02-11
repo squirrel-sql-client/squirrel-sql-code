@@ -25,6 +25,7 @@ public class CompletionCtrl
    private final TextComponentAdapter _textComponentAdapter;
    private List<TableInfo> _currentTableInfosNextToCaret = new ArrayList<>();
    private TableAliasInfo[] _currentAliasInfos = new TableAliasInfo[0];
+   private CompletionSelectedListener _onCompletionSelected;
 
    public CompletionCtrl(Session session, TextComponentAdapter textComponentAdapter)
    {
@@ -149,6 +150,11 @@ public class CompletionCtrl
       _textComponentAdapter.closePopup();
       CompletionCandidate selItem = listView.getSelectionModel().getSelectedItems().get(0);
       executeCompletion(selItem, removeSucceedingChars);
+
+      if (null != _onCompletionSelected)
+      {
+         _onCompletionSelected.completionSelected();
+      }
    }
 
    private void onMouseClickedList(MouseEvent event, ListView<CompletionCandidate> listView)
@@ -177,4 +183,8 @@ public class CompletionCtrl
       }
    }
 
+   public void setOnCompletionSelected(CompletionSelectedListener onCompletionSelected)
+   {
+      _onCompletionSelected = onCompletionSelected;
+   }
 }

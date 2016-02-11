@@ -3,7 +3,6 @@ package org.squirrelsql.session.objecttree;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import org.squirrelsql.services.Utils;
-import org.squirrelsql.session.schemainfo.CatalogSchema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,24 +83,29 @@ public class ObjectTreeUtil
       return matches;
    }
 
-   public static List<TreeItem<ObjectTreeNode>> findObjectsMatchingName(TreeView<ObjectTreeNode> objectsTree, String name)
+   public static List<TreeItem<ObjectTreeNode>> findObjectsMatchingName(TreeView<ObjectTreeNode> objectsTree, String name, NameMatchMode nameMatchMode)
    {
-      if(Utils.isEmptyString(name))
-      {
-         return new ArrayList<>();
-      }
-
       ArrayList<TreeItem<ObjectTreeNode>> matches = new ArrayList<>();
 
-      recurse(objectsTree.getRoot(), matches, objectTreeNodeTreeItem -> matchesName(objectTreeNodeTreeItem, name));
+      recurse(objectsTree.getRoot(), matches, objectTreeNodeTreeItem -> matchesName(objectTreeNodeTreeItem, name, nameMatchMode));
 
       return matches;
    }
 
-   private static boolean matchesName(TreeItem<ObjectTreeNode> objectTreeNodeTreeItem, String name)
+   private static boolean matchesName(TreeItem<ObjectTreeNode> objectTreeNodeTreeItem, String name, NameMatchMode nameMatchMode)
    {
       String nodeName = objectTreeNodeTreeItem.getValue().getNodeName();
-      return nodeName.trim().toLowerCase().equals(name.trim().toLowerCase());
+
+      switch (nameMatchMode)
+      {
+         case EQUALS:
+            return nodeName.trim().toLowerCase().equals(name.trim().toLowerCase());
+         case STARTS_WITH:
+            return nodeName.trim().toLowerCase().startsWith(name.trim().toLowerCase());
+         default:
+            throw new UnsupportedOperationException("Unsupported NameMatchMode: " + nameMatchMode);
+      }
+
    }
 
    public static void selectItem(TreeItem<ObjectTreeNode> itemToSelect, TreeView<ObjectTreeNode> objectsTree)
@@ -111,5 +115,20 @@ public class ObjectTreeUtil
       objectsTree.getSelectionModel().select(itemToSelect);
       int row = objectsTree.getRow(itemToSelect);
       objectsTree.scrollTo(row);
+   }
+
+   public static void setExpandedAll(TreeView<ObjectTreeNode> objectsTree, boolean expanded)
+   {
+      _setExpandedAll(objectsTree.getRoot(), expanded);
+   }
+
+   private static void _setExpandedAll(TreeItem<ObjectTreeNode> nodeTreeItem, boolean expanded)
+   {
+      nodeTreeItem.setExpanded(expanded);
+
+      for (TreeItem<ObjectTreeNode> child : nodeTreeItem.getChildren())
+      {
+         _setExpandedAll(child, expanded);
+      }
    }
 }
