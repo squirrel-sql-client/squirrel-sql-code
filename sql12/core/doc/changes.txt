@@ -28,6 +28,10 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+#1236 Shortcut for comment/uncomment current line (ctrl + "/") does not work
+  Fixed according to the suggestion in the bug #1236
+  Please note: The orginal comment/uncomment hot key of SQuirreL is ctrl+Numpad minus / ctrl+shift+Numpad minus.
+
 Current SQL Mark was shown in Object tree find field.
 
 #1226 Reconnect didn't work when Session toolbar was configured to be not shown.
