@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
@@ -118,6 +119,9 @@ public class SQLInternalFrame extends SessionTabWidget
 		RowColumnLabel lblRowCol = new RowColumnLabel(_sqlPanel.getSQLEntryPanel());
 		_statusBar.addJComponent(lblRowCol);
 
+
+		SessionColoringUtil.colorStatusbar(session, _statusBar);
+
 		setContentPane(contentPanel);
 		validate();
 	}
@@ -169,6 +173,8 @@ public class SQLInternalFrame extends SessionTabWidget
 		{
 			super();
 			createGUI(session, panel);
+
+			SessionColoringUtil.colorToolbar(session, this);
 		}
 
 		private void createGUI(ISession session, ISQLPanelAPI panel)

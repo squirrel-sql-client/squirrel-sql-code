@@ -47,6 +47,7 @@ import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionColoringUtil;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -203,11 +204,7 @@ class ObjectTree extends JTree
           }
       });
 
-      SQLAliasColorProperties colorProps = session.getAlias().getColorProperties();
-      if (colorProps.isOverrideObjectTreeBackgroundColor()) {
-      	int rgbValue = colorProps.getObjectTreeBackgroundColorRgbValue();
-      	setBackground(new Color(rgbValue));
-      }
+      SessionColoringUtil.colorTree(session, this);
    }
 
    // Mouse listener used to display popup menu.

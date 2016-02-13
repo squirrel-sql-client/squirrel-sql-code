@@ -104,12 +104,8 @@ public class SessionPanel extends JPanel
         
 		_app = session.getApplication();
 		_sessionId = session.getIdentifier();
-        
-		SQLAliasColorProperties colorProps = session.getAlias().getColorProperties();
-		if (colorProps.isOverrideStatusBarBackgroundColor()) {
-			int rgbValue = colorProps.getStatusBarBackgroundColorRgbValue();
-			_statusBar.setBackground(new Color(rgbValue));
-		}
+
+		SessionColoringUtil.colorStatusbar(session, _statusBar);
 	}
 
    protected void initialize(ISession session) {
@@ -528,12 +524,7 @@ public class SessionPanel extends JPanel
       {
          super();
          createGUI(session);
-         SQLAliasColorProperties colorProps = session.getAlias().getColorProperties();
-         if (colorProps.isOverrideToolbarBackgroundColor()) {
-         	int rgbValue = colorProps.getToolbarBackgroundColorRgbValue();
-         	super.setBackground(new Color(rgbValue));
-         }
-         
+			SessionColoringUtil.colorToolbar(session, this);
       }
 
       public void addNotify()
