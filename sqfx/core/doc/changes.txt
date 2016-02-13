@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Object tree offers find and filter functionality. Note that all edit fields involved offer code completion.
+
 Bug fix: Two bug fixes concerning the current SQL mark:
   - StringIndexOutOfBoundsException occurred when the editor was empty and tools popup was opened.
   - The current SQL mark vanished when the split pane divider was moved over the mark.

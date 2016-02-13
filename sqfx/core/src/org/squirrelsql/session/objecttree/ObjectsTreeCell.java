@@ -3,19 +3,57 @@ package org.squirrelsql.session.objecttree;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseEvent;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.SQLUtil;
+import org.squirrelsql.services.Utils;
+import org.squirrelsql.table.CellDataPopupController;
 
 public class ObjectsTreeCell extends TreeCell<ObjectTreeNode>
 {
    private static I18n _i18n = new I18n(ObjectsTreeCell.class);
+   private ObjectsTreeCellDoubleClickListener _listener;
+
+   public ObjectsTreeCell()
+   {
+      this(null);
+   }
+
+   public ObjectsTreeCell(ObjectsTreeCellDoubleClickListener listener)
+   {
+      if(null == listener)
+      {
+         return;
+      }
+
+
+      _listener = listener;
+      addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>()
+      {
+         @Override
+         public void handle(MouseEvent event)
+         {
+            onDoubleClick(event);
+         }
+      });
+   }
+
+   private void onDoubleClick(MouseEvent event)
+   {
+      if (Utils.isDoubleClick(event))
+      {
+         ObjectTreeNode item = getItem();
+
+         if (null != item)
+         {
+            _listener.nodeDoubleClicked(item);
+         }
+      }
+   }
 
 
    @Override

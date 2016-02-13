@@ -1,18 +1,19 @@
 package org.squirrelsql.session.objecttree;
 
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
+import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.GuiUtils;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.session.Session;
-import org.squirrelsql.session.SessionTabCloseListener;
-import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.session.completion.TextFieldTextComponentAdapter;
@@ -27,34 +28,40 @@ public class FilterResultCtrl
 {
 
    private final FxmlHelper<FilterResultUpperView> _fxmlHelper;
-   private final Pref _pref = new Pref(getClass());
    private final TreeView<ObjectTreeNode> _filterResultTree;
    private final CompletionCtrl _completionCtrl;
    private TreeView<ObjectTreeNode> _sessionsObjectTree;
+   private final Stage _dialog;
 
    public FilterResultCtrl(Session session, TreeView<ObjectTreeNode> sessionsObjectTree, String filterText)
    {
       _sessionsObjectTree = sessionsObjectTree;
       _filterResultTree = createObjectsTree();
 
-      _fxmlHelper = new FxmlHelper<>(FilterResultUpperView.class);
+      _filterResultTree.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<TreeItem<ObjectTreeNode>>()
+      {
+         @Override
+         public void onChanged(Change<? extends TreeItem<ObjectTreeNode>> c)
+         {
+            onFilterResultTreeSelectionChanged();
+         }
+      });
+
+
+
+            _fxmlHelper = new FxmlHelper<>(FilterResultUpperView.class);
 
       FilterResultUpperView view = _fxmlHelper.getView();
 
       view.txtFilter.setText(filterText);
-
       //_fxmlHelper.getView().txtFilter.setOnKeyTyped(e -> Platform.runLater(() -> applyFilterString()));
       view.txtFilter.setOnKeyPressed(e -> onHandleKeyEvent(e, false));
       view.txtFilter.setOnKeyTyped(e -> onHandleKeyEvent(e, true));
-
-
       _completionCtrl = new CompletionCtrl(session, new TextFieldTextComponentAdapter(view.txtFilter));
       _completionCtrl.setOnCompletionSelected(() -> Platform.runLater(() -> applyFilterString()));
 
 
-
       view.btnCollapse.setOnAction(e -> onCollapseTree());
-
 
       view.txtResultCount.setEditable(false);
 
@@ -64,15 +71,24 @@ public class FilterResultCtrl
 
       borderPane.setCenter(_filterResultTree);
 
-      Stage dialog = GuiUtils.createNonModalDialog(borderPane, new Pref(getClass()), 600, 400, "objecttree.FilterResult");
+      _dialog = GuiUtils.createNonModalDialog(borderPane, new Pref(getClass()), 600, 400, "objecttree.FilterResult");
 
       applyFilterString();
 
-      dialog.show();
+      _dialog.show();
 
 
-      AppState.get().getSessionManager().getCurrentlyActiveOrActivatingContext().addOnSessionTabClosed(sessionTabContext -> dialog.close());
+      AppState.get().getSessionManager().getCurrentlyActiveOrActivatingContext().addOnSessionTabClosed(sessionTabContext -> _dialog.close());
 
+   }
+
+   private void onFilterResultTreeSelectionChanged()
+   {
+      List<ObjectTreeNode> selected = CollectionUtil.transform(_filterResultTree.getSelectionModel().getSelectedItems(), otn -> otn.getValue());
+
+      List<TreeItem<ObjectTreeNode>> matches = ObjectTreeUtil.findTreeItemsByObjectTreeNodes(_sessionsObjectTree, selected);
+
+      ObjectTreeUtil.selectItems(_sessionsObjectTree, matches);
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent, boolean consumeOnly)
@@ -158,8 +174,15 @@ public class FilterResultCtrl
    private TreeView<ObjectTreeNode> createObjectsTree()
    {
       TreeView<ObjectTreeNode> objectsTree = new TreeView<>();
-      objectsTree.setCellFactory(cf -> new ObjectsTreeCell());
+      objectsTree.setCellFactory(cf -> new ObjectsTreeCell(otn -> onDoubleClick(otn)));
+
+      objectsTree.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
       return objectsTree;
+   }
+
+   private void onDoubleClick(ObjectTreeNode otn)
+   {
+      _dialog.close();
    }
 
    private List<TreeItem<ObjectTreeNode>> getTreePath(TreeItem<ObjectTreeNode> treeItem)

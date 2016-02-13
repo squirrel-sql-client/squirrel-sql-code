@@ -110,7 +110,7 @@ public class ObjectTreeTabCtrl
       if(null == treeItemToSelect)
       {
          TreeItem<ObjectTreeNode> aliasItem = ObjectTreeUtil.findSingleTreeItem(_objectsTree, ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY);
-         ObjectTreeUtil.selectItem(aliasItem, _objectsTree);
+         ObjectTreeUtil.selectItem(_objectsTree, aliasItem);
       }
       else
       {
@@ -201,7 +201,7 @@ public class ObjectTreeTabCtrl
          return false;
       }
 
-      ObjectTreeUtil.selectItem(treeItems.get(0), _objectsTree);
+      ObjectTreeUtil.selectItem(_objectsTree, treeItems.get(0));
 
       _objectsTree.scrollTo(_objectsTree.getSelectionModel().getSelectedIndex());
 

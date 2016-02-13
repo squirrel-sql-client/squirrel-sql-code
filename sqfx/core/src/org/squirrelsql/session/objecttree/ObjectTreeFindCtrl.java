@@ -90,7 +90,7 @@ public class ObjectTreeFindCtrl
          return;
       }
 
-      ObjectTreeUtil.selectItem(objectsMatchingNames.get(0), _objectsTree);
+      ObjectTreeUtil.selectItem(_objectsTree, objectsMatchingNames.get(0));
    }
 
    public Node getNode()

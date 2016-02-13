@@ -2,9 +2,11 @@ package org.squirrelsql.session.objecttree;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import org.squirrelsql.services.Utils;
+import org.squirrelsql.services.CollectionUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ObjectTreeUtil
@@ -108,14 +110,24 @@ public class ObjectTreeUtil
 
    }
 
-   public static void selectItem(TreeItem<ObjectTreeNode> itemToSelect, TreeView<ObjectTreeNode> objectsTree)
+   public static void selectItem(TreeView<ObjectTreeNode> objectsTree, TreeItem<ObjectTreeNode> itemToSelect)
    {
-      itemToSelect.setExpanded(true);
-      objectsTree.getSelectionModel().clearSelection();
-      objectsTree.getSelectionModel().select(itemToSelect);
-      int row = objectsTree.getRow(itemToSelect);
-      objectsTree.scrollTo(row);
+      selectItems(objectsTree, Collections.singletonList(itemToSelect));
    }
+
+   public static void selectItems(TreeView<ObjectTreeNode> objectsTree, List<TreeItem<ObjectTreeNode>> toSelectList)
+   {
+      objectsTree.getSelectionModel().clearSelection();
+      for (TreeItem<ObjectTreeNode> toSelect : toSelectList)
+      {
+         toSelect.setExpanded(true);
+         objectsTree.getSelectionModel().select(toSelect);
+         int row = objectsTree.getRow(toSelect);
+         objectsTree.scrollTo(row);
+      }
+
+   }
+
 
    public static void setExpandedAll(TreeView<ObjectTreeNode> objectsTree, boolean expanded)
    {
@@ -130,5 +142,16 @@ public class ObjectTreeUtil
       {
          _setExpandedAll(child, expanded);
       }
+   }
+
+   public static List<TreeItem<ObjectTreeNode>> findTreeItemsByObjectTreeNodes(TreeView<ObjectTreeNode> objectsTree, List<ObjectTreeNode> toFind)
+   {
+      List<TreeItem<ObjectTreeNode>> matches = new ArrayList<>();
+      TreeItem<ObjectTreeNode> root = objectsTree.getRoot();
+
+      recurse(root, matches, objectTreeNodeTreeItem -> CollectionUtil.contains(toFind, oti -> oti == objectTreeNodeTreeItem.getValue()));
+
+      return matches;
+
    }
 }
