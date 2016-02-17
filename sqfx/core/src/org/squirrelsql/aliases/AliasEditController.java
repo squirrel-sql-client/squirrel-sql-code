@@ -28,7 +28,7 @@ public class AliasEditController
    private I18n _i18n = new I18n(this.getClass());
    private AliasEditView _aliasEditView;
    private Stage _dialog;
-   private Alias _alias = new Alias();
+   private AliasDecorator _aliasDecorator = new AliasDecorator(new Alias());
    private boolean _ok = false;
 
 
@@ -38,12 +38,12 @@ public class AliasEditController
    }
 
 
-   public AliasEditController(Alias alias, ConstructorState constructorState)
+   public AliasEditController(AliasDecorator aliasDecorator, ConstructorState constructorState)
    {
-      _init(false, false, alias, constructorState);
+      _init(false, false, aliasDecorator, constructorState);
    }
 
-   private void _init(boolean parentNodeSelected, boolean parentAllowsChildren, Alias alias, ConstructorState constructorState)
+   private void _init(boolean parentNodeSelected, boolean parentAllowsChildren, AliasDecorator aliasDecorator, ConstructorState constructorState)
    {
       FxmlHelper<AliasEditView> fxmlHelper = new FxmlHelper<>(AliasEditView.class);
 
@@ -59,8 +59,9 @@ public class AliasEditController
 
       _aliasEditView.cboDriver.setCellFactory(cf -> new DriverCell());
 
+      _aliasEditView.btnProperties.setOnAction(e -> onProperties());
 
-      if (null == alias)
+      if (null == aliasDecorator)
       {
          title = _i18n.t("title.new.alias");
          _treePositionCtrl = new TreePositionCtrl(_aliasEditView.treePositionViewController, parentNodeSelected, parentAllowsChildren);
@@ -73,27 +74,27 @@ public class AliasEditController
       }
       else
       {
-         _alias = alias;
+         _aliasDecorator = aliasDecorator;
 
          _aliasEditView.treePositionView.setDisable(true);
          if (ConstructorState.EDIT == constructorState)
          {
-            title = _i18n.t("title.edit.alias", _alias.getName());
+            title = _i18n.t("title.edit.alias", _aliasDecorator.getName());
 
          }
          else
          {
-            title = _i18n.t("title.copy.alias", _alias.getName());
+            title = _i18n.t("title.copy.alias", _aliasDecorator.getName());
          }
 
-         SQLDriver driver = DriversUtil.findDriver(alias.getDriverId(), drivers);
+         SQLDriver driver = DriversUtil.findDriver(aliasDecorator.getAlias().getDriverId(), drivers);
 
          if(null == driver)
          {
             drivers = new DriversManager().getDrivers(false);
          }
 
-         driver = DriversUtil.findDriver(alias.getDriverId(), drivers);
+         driver = DriversUtil.findDriver(aliasDecorator.getAlias().getDriverId(), drivers);
 
          loadOrStore(false, driver);
       }
@@ -115,6 +116,11 @@ public class AliasEditController
       new StageDimensionSaver("aliasedit", _dialog, _pref, region.getPrefWidth(), region.getPrefHeight(), _dialog.getOwner());
 
       _dialog.showAndWait();
+   }
+
+   private void onProperties()
+   {
+      new AliasPropertiesEditCtrl(_aliasDecorator);
    }
 
    private void initListener()
@@ -261,29 +267,29 @@ public class AliasEditController
    {
       if (store)
       {
-         storeToAlias(_alias, sqlDriver);
+         storeToAlias(_aliasDecorator.getAlias(), sqlDriver);
       }
       else
       {
-         _aliasEditView.txtName.setText(_alias.getName());
+         _aliasEditView.txtName.setText(_aliasDecorator.getAlias().getName());
          _aliasEditView.cboDriver.getSelectionModel().select(sqlDriver);
-         _aliasEditView.txtUrl.setText(_alias.getUrl());
+         _aliasEditView.txtUrl.setText(_aliasDecorator.getAlias().getUrl());
 
-         _aliasEditView.txtUserName.setText(_alias.getUserName());
-         _aliasEditView.chkUserNull.setSelected(_alias.isUserNull());
-         _aliasEditView.chkUserEmpty.setSelected(_alias.isUserEmptyString());
+         _aliasEditView.txtUserName.setText(_aliasDecorator.getAlias().getUserName());
+         _aliasEditView.chkUserNull.setSelected(_aliasDecorator.getAlias().isUserNull());
+         _aliasEditView.chkUserEmpty.setSelected(_aliasDecorator.getAlias().isUserEmptyString());
          initEnableTextField(_aliasEditView.chkUserNull, _aliasEditView.chkUserEmpty, _aliasEditView.txtUserName);
 
-         _aliasEditView.chkSavePassword.setSelected(_alias.isSavePassword());
+         _aliasEditView.chkSavePassword.setSelected(_aliasDecorator.getAlias().isSavePassword());
 
-         _aliasEditView.txtPassword.setText(_alias.getPassword());
-         _aliasEditView.chkPasswordNull.setSelected(_alias.isPasswordNull());
-         _aliasEditView.chkPasswordEmpty.setSelected(_alias.isPasswordEmptyString());
+         _aliasEditView.txtPassword.setText(_aliasDecorator.getAlias().getPassword());
+         _aliasEditView.chkPasswordNull.setSelected(_aliasDecorator.getAlias().isPasswordNull());
+         _aliasEditView.chkPasswordEmpty.setSelected(_aliasDecorator.getAlias().isPasswordEmptyString());
          initEnableTextField(_aliasEditView.chkPasswordNull, _aliasEditView.chkPasswordEmpty, _aliasEditView.txtPassword);
 
 
-         _aliasEditView.chkAutoLogon.setSelected(_alias.isAutoLogon());
-         _aliasEditView.chkConnectAtStartUp.setSelected(_alias.isConnectAtStartUp());
+         _aliasEditView.chkAutoLogon.setSelected(_aliasDecorator.getAlias().isAutoLogon());
+         _aliasEditView.chkConnectAtStartUp.setSelected(_aliasDecorator.getAlias().isConnectAtStartUp());
 
 
       }
@@ -353,7 +359,7 @@ public class AliasEditController
 
    public Alias getAlias()
    {
-      return _alias;
+      return _aliasDecorator.getAlias();
    }
 
    public boolean isOk()

@@ -383,7 +383,7 @@ public class AliasesController
    {
       AliasDecorator aliasDecorator = (AliasDecorator) item.getValue();
 
-      AliasEditController aliasEditController = new AliasEditController(aliasDecorator.getAlias(), AliasEditController.ConstructorState.EDIT);
+      AliasEditController aliasEditController = new AliasEditController(aliasDecorator, AliasEditController.ConstructorState.EDIT);
 
       if (aliasEditController.isOk())
       {
@@ -463,7 +463,7 @@ public class AliasesController
 
       aliasDecorator = AliasTreeUtil.cloneAlias(aliasDecorator);
 
-      AliasEditController aliasEditController = new AliasEditController(aliasDecorator.getAlias(), AliasEditController.ConstructorState.COPY);
+      AliasEditController aliasEditController = new AliasEditController(aliasDecorator, AliasEditController.ConstructorState.COPY);
 
       if (aliasEditController.isOk())
       {

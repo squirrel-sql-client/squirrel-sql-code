@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Made "Properties" button in Alias window work.
+
 Feature: Format SQL has three new options, see menu File -> Settings -> Tab Format SQL
  - Indent sections check box
  - Comma placing radio buttons
