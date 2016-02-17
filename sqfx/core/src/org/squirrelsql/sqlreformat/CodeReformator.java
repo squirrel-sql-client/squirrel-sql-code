@@ -18,7 +18,6 @@ package org.squirrelsql.sqlreformat;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -31,9 +30,10 @@ public class CodeReformator implements ICodeReformator
    /**
     * Platform-specific line separator string
     */
-   private String _lineSep = "\n";
+   private String _lineSep = ICodeReformator.CODE_REFORMATOR_LINE_SEPARATOR;
 
    private CodeReformatorConfig _codeReformatorConfig;
+
 
    public CodeReformator(CodeReformatorConfig codeReformatorConfig)
    {
@@ -48,8 +48,8 @@ public class CodeReformator implements ICodeReformator
       in = flatenWhiteSpaces(in, false);
 
       PieceMarkerSpec[] markerExcludeComma = createPieceMarkerSpecExcludeColon();
-      String[] pieces =
-            getReformatedPieces(in, markerExcludeComma).toArray(new String[0]);
+
+      String[] pieces = getReformatedPieces(in, markerExcludeComma).toArray(new String[0]);
 
       if (_codeReformatorConfig.isDoInsertValuesAlign())
       {
@@ -57,25 +57,57 @@ public class CodeReformator implements ICodeReformator
       }
 
       StringBuffer ret = new StringBuffer();
-      int braketCount = 0;
+
+      int indentCount = 0;
+
+      IndentSectionsHandler indentSectionsHandler = new IndentSectionsHandler(_codeReformatorConfig.isIndentSections());
+
       for (int i = 0; i < pieces.length; ++i)
       {
-         if (")".equals(pieces[i]))
+         if (pieceStartsWithComment(pieces[i]))
          {
-            --braketCount;
+            ret.append(pieces[i]);
          }
-         ret.append(indent(pieces[i], braketCount));
+         else
+         {
+            indentSectionsHandler.before(pieces[i]);
+
+            if (")".equals(pieces[i]))
+            {
+               --indentCount;
+            }
+
+            ret.append(indent(pieces[i], indentCount + indentSectionsHandler.getExtraIndentCount()));
+
+            indentSectionsHandler.after(pieces[i]);
+
+            if ("(".equals(pieces[i]))
+            {
+               ++indentCount;
+            }
+
+         }
          ret.append(_lineSep);
-         if ("(".equals(pieces[i]))
-         {
-            ++braketCount;
-         }
       }
 
       validate(in, ret.toString());
 
       return ret.toString();
    }
+
+   private boolean pieceStartsWithComment(String piece)
+   {
+      for (CommentSpec commentSpec : _codeReformatorConfig.getCommentSpecs())
+      {
+         if(piece.trim().startsWith(commentSpec.commentBegin))
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
 
    private void validate(String beforeReformat, String afterReformat)
    {
@@ -153,8 +185,8 @@ public class CodeReformator implements ICodeReformator
 
    private List<String> getReformatedPieces(String in, PieceMarkerSpec[] markers)
    {
-      CodeReformatorKernel kernel = new CodeReformatorKernel(
-            _codeReformatorConfig.getStatementSeparator(), markers, _codeReformatorConfig.getCommentSpecs());
+      CodeReformatorKernel kernel = new CodeReformatorKernel(markers, _codeReformatorConfig.getCommentSpecs(), _codeReformatorConfig.isLineBreakFor_AND_OR_in_FROM_clause());
+
       String[] pieces = kernel.toPieces(in);
       ArrayList<String> piecesBuf = new ArrayList<String>();
 
@@ -162,8 +194,7 @@ public class CodeReformator implements ICodeReformator
       {
          if (_codeReformatorConfig.getTrySplitLineLen() < pieces[i].length())
          {
-            String[] splitPieces = trySplit(pieces[i], 0,
-                  _codeReformatorConfig.getTrySplitLineLen());
+            String[] splitPieces = trySplit(pieces[i], 0, _codeReformatorConfig.getTrySplitLineLen());
             piecesBuf.addAll(Arrays.asList(splitPieces));
          }
          else
@@ -203,14 +234,12 @@ public class CodeReformator implements ICodeReformator
             insertPieces.add(pieces[i]);
          }
 
-         if (-1 < insertBegin
-               && -1 != pieces[i].toUpperCase().indexOf("VALUES"))
+         if (-1 < insertBegin && -1 != pieces[i].toUpperCase().indexOf("VALUES"))
          {
             hasValues = true;
          }
 
-         if (-1 < insertBegin
-               && _codeReformatorConfig.getStatementSeparator().equalsIgnoreCase(pieces[i]))
+         if (-1 < insertBegin && _codeReformatorConfig.getStatementSeparator().equalsIgnoreCase(pieces[i]))
          {
             if (hasValues)
             {
@@ -278,6 +307,10 @@ public class CodeReformator implements ICodeReformator
             {
                buf = buf.substring(0, buf.length() - 1);
             }
+            else if (buf.startsWith(",")) // Needed to be introduced with _codeReformatorConfig.isCommasAtLineBegin()
+            {
+               buf = buf.substring(1, buf.length());
+            }
             insertList.add(buf);
          }
          if (3 == braketCountAbsolute && !"(".equals(pieces[i])
@@ -287,6 +320,10 @@ public class CodeReformator implements ICodeReformator
             if (buf.endsWith(","))
             {
                buf = buf.substring(0, buf.length() - 1);
+            }
+            else if (buf.startsWith(",")) // Needed to be introduced with _codeReformatorConfig.isCommasAtLineBegin()
+            {
+               buf = buf.substring(1, buf.length());
             }
             valuesList.add(buf);
          }
@@ -369,14 +406,12 @@ public class CodeReformator implements ICodeReformator
    private String[] trySplit(String piece, int braketDepth, int trySplitLineLen)
    {
       String trimmedPiece = piece.trim();
-      CodeReformatorKernel dum = new CodeReformatorKernel(
-            _codeReformatorConfig.getStatementSeparator(), new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs());
+      CodeReformatorKernel dum = new CodeReformatorKernel(new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs(), _codeReformatorConfig.isLineBreakFor_AND_OR_in_FROM_clause());
 
       if (hasTopLevelColon(trimmedPiece, dum))
       {
          PieceMarkerSpec[] pms = createPieceMarkerSpecIncludeColon();
-         CodeReformatorKernel crk = new CodeReformatorKernel(
-               _codeReformatorConfig.getStatementSeparator(), pms, _codeReformatorConfig.getCommentSpecs());
+         CodeReformatorKernel crk = new CodeReformatorKernel(pms, _codeReformatorConfig.getCommentSpecs(), _codeReformatorConfig.isLineBreakFor_AND_OR_in_FROM_clause());
          String[] splitPieces1 = crk.toPieces(trimmedPiece);
          if (1 == splitPieces1.length)
          {
@@ -387,8 +422,7 @@ public class CodeReformator implements ICodeReformator
 
          for (int i = 0; i < splitPieces1.length; ++i)
          {
-            if (trySplitLineLen < splitPieces1[i].length() + braketDepth
-                  * _codeReformatorConfig.getIndent().length())
+            if (trySplitLineLen < splitPieces1[i].length() + braketDepth * _codeReformatorConfig.getIndent().length())
             {
                String[] splitPieces2 = trySplit(splitPieces1[i],
                      braketDepth, trySplitLineLen);
@@ -412,10 +446,9 @@ public class CodeReformator implements ICodeReformator
             // ////////////////////////////////////////////////////////////////////////
             // Split the first two matching toplevel brakets here
             PieceMarkerSpec[] pms = createPieceMarkerSpecExcludeColon();
-            CodeReformatorKernel crk = new CodeReformatorKernel(
-                  _codeReformatorConfig.getStatementSeparator(), pms, _codeReformatorConfig.getCommentSpecs());
-            String[] splitPieces1 = crk.toPieces(trimmedPiece.substring(
-                  tlbi[0] + 1, tlbi[1]));
+            CodeReformatorKernel crk = new CodeReformatorKernel(pms, _codeReformatorConfig.getCommentSpecs(), _codeReformatorConfig.isLineBreakFor_AND_OR_in_FROM_clause());
+
+            String[] splitPieces1 = crk.toPieces(trimmedPiece.substring(tlbi[0] + 1, tlbi[1]));
 
             ArrayList<String> buf = new ArrayList<String>();
             buf.add(trimmedPiece.substring(0, tlbi[0]).trim());
@@ -439,11 +472,9 @@ public class CodeReformator implements ICodeReformator
             ArrayList<String> ret = new ArrayList<String>();
             for (int i = 0; i < splitPieces1.length; ++i)
             {
-               if (trySplitLineLen < splitPieces1[i].length()
-                     + braketDepth * _codeReformatorConfig.getIndent().length())
+               if (trySplitLineLen < splitPieces1[i].length() + braketDepth * _codeReformatorConfig.getIndent().length())
                {
-                  String[] splitPieces2 = trySplit(splitPieces1[i],
-                        braketDepth + 1, trySplitLineLen);
+                  String[] splitPieces2 = trySplit(splitPieces1[i], braketDepth + 1, trySplitLineLen);
                   for (int j = 0; j < splitPieces2.length; ++j)
                   {
                      ret.add(splitPieces2[j]);
@@ -589,6 +620,7 @@ public class CodeReformator implements ICodeReformator
 
       StringBuffer ret = new StringBuffer();
       int aposCount = 0;
+      char lastAppended = '\0';
       for (int i = 0; i < in.length(); ++i)
       {
 
@@ -597,7 +629,8 @@ public class CodeReformator implements ICodeReformator
             ++aposCount;
          }
 
-         boolean dontAppend = false;
+
+         boolean append = true;
 
          if (0 != aposCount % 2)
          {
@@ -605,25 +638,34 @@ public class CodeReformator implements ICodeReformator
          }
          else
          {
-            if (Character.isWhitespace(in.charAt(i)) && i + 1 < in.length()
-                  && Character.isWhitespace(in.charAt(i + 1)))
+            if (Character.isWhitespace(in.charAt(i)))
             {
-               dontAppend = true;
+               if (i + 1 < in.length() && Character.isWhitespace(in.charAt(i + 1)))
+               {
+                  append = false;
+               }
+               else if (',' == lastAppended)
+               {
+                  append = false;
+               }
+               else if (i + 1 < in.length() && ',' == in.charAt(i + 1))
+               {
+                  append = false;
+               }
             }
          }
 
-         if (false == dontAppend)
+         if (append)
          {
-            char toAppend;
             if (Character.isWhitespace(in.charAt(i)) && 0 == aposCount % 2)
             {
-               toAppend = ' ';
+               lastAppended = ' ';
             }
             else
             {
-               toAppend = in.charAt(i);
+               lastAppended = in.charAt(i);
             }
-            ret.append(toAppend);
+            ret.append(lastAppended);
          }
       }
 
@@ -633,8 +675,8 @@ public class CodeReformator implements ICodeReformator
 
    boolean hasCommentEndingWithLineFeed(String in)
    {
-      CodeReformatorKernel dum = new CodeReformatorKernel(
-            _codeReformatorConfig.getStatementSeparator(), new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs());
+      CodeReformatorKernel dum = new CodeReformatorKernel(new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs(), _codeReformatorConfig.isLineBreakFor_AND_OR_in_FROM_clause());
+
       StateOfPosition[] sops = dum.getStatesOfPosition(in);
 
       boolean inComment = false;
@@ -662,8 +704,19 @@ public class CodeReformator implements ICodeReformator
       PieceMarkerSpec[] buf = createPieceMarkerSpecExcludeColon();
       ArrayList<PieceMarkerSpec> ret = new ArrayList<PieceMarkerSpec>();
       ret.addAll(Arrays.asList(buf));
-      ret.add(new PieceMarkerSpec(",",
-            PieceMarkerSpec.TYPE_PIECE_MARKER_AT_END));
+
+      int type;
+      if(_codeReformatorConfig.isCommasAtLineBegin())
+      {
+         type = PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN;
+      }
+      else
+      {
+         type = PieceMarkerSpec.TYPE_PIECE_MARKER_AT_END;
+      }
+
+
+      ret.add(new PieceMarkerSpec(",", type));
 
       return ret.toArray(new PieceMarkerSpec[0]);
    }

@@ -1,4 +1,7 @@
 package org.squirrelsql.sqlreformat;
+
+import org.squirrelsql.settings.SQLKeyWord;
+
 /*
  * Copyright (C) 2003 Gerd Wagner
  *
@@ -84,4 +87,22 @@ public class PieceMarkerSpec
 	}
 
 
+	public boolean is_FROM_begin()
+	{
+		return SQLKeyWord.FROM.name().equalsIgnoreCase(_pieceMarker);
+	}
+
+	public boolean is_FROM_end()
+	{
+		return    SQLKeyWord.WHERE.name().equalsIgnoreCase(_pieceMarker)
+				 || SQLKeyWord.GROUP.name().equalsIgnoreCase(_pieceMarker)
+				 || SQLKeyWord.ORDER.name().equalsIgnoreCase(_pieceMarker)
+				 || SQLKeyWord.UNION.name().equalsIgnoreCase(_pieceMarker);
+	}
+
+	public boolean is_AND_or_OR()
+	{
+		return    SQLKeyWord.AND.name().equalsIgnoreCase(_pieceMarker)
+				 || SQLKeyWord.OR.name().equalsIgnoreCase(_pieceMarker);
+	}
 }

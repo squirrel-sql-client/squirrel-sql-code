@@ -2,6 +2,7 @@ package org.squirrelsql.settings;
 
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.text.Font;
 import org.squirrelsql.services.Dao;
 import org.squirrelsql.services.FxmlHelper;
@@ -41,6 +42,21 @@ public class SQLReformatCtrl implements SettingsTabController
       _view.chkAlignmInsertValues.setSelected(sqlFormatSettings.isAlignmInsertValues());
       _view.chkAlignmInsertValues.setOnAction(e -> updateUi());
 
+      _view.chkIndentSections.setSelected(sqlFormatSettings.isIndentSections());
+      _view.chkIndentSections.setOnAction(e -> updateUi());
+
+      ToggleGroup tg = new ToggleGroup();
+      _view.radCommasAtLineBegin.setSelected(sqlFormatSettings.isCommaAtLineBegin());
+      _view.radCommasAtLineEnd.setSelected(!sqlFormatSettings.isCommaAtLineBegin());
+      _view.radCommasAtLineBegin.setToggleGroup(tg);
+      _view.radCommasAtLineEnd.setToggleGroup(tg);
+      _view.radCommasAtLineBegin.setOnAction(e -> updateUi());
+      _view.radCommasAtLineEnd.setOnAction(e -> updateUi());
+
+
+      _view.chkLineBreakFor_AND_OR_in_FROM_clause.setSelected(sqlFormatSettings.isLineBreakFor_AND_OR_in_FROM_clause());
+      _view.chkLineBreakFor_AND_OR_in_FROM_clause.setOnAction(e -> updateUi());
+
       HashMap<SQLKeyWord, KeyWordBehavior> behaviorsByKeyWord = sqlFormatSettings.getBehaviorsByKeyWord();
 
       HashMap<SQLKeyWord, ComboBox> comboBoxesByKeyWords = _view.getComboBoxesByKeyWords();
@@ -70,6 +86,18 @@ public class SQLReformatCtrl implements SettingsTabController
       _view.cboInsert.setDisable(_view.chkAlignmInsertValues.isSelected());
       _view.cboValues.setDisable(_view.chkAlignmInsertValues.isSelected());
 
+
+      if(   KeyWordBehavior.START_NEW_LINE ==  _view.getComboBoxesByKeyWords().get(SQLKeyWord.AND).getSelectionModel().getSelectedItem()
+         || KeyWordBehavior.START_NEW_LINE == _view.getComboBoxesByKeyWords().get(SQLKeyWord.OR).getSelectionModel().getSelectedItem())
+      {
+         _view.chkLineBreakFor_AND_OR_in_FROM_clause.setDisable(false);
+      }
+      else
+      {
+         _view.chkLineBreakFor_AND_OR_in_FROM_clause.setDisable(true);
+      }
+
+
       refreshExample();
    }
 
@@ -79,13 +107,13 @@ public class SQLReformatCtrl implements SettingsTabController
 
       CodeReformator codeReformator = CodeReformatorFractory.createCodeReformator(readSettingsFromControls());
 
-      sqls = codeReformator.reformat("SELECT table1.id, table2.number, SUM(table1.amount) FROM table1 INNER JOIN table2 ON table.id = table2.table1_id WHERE table1.id IN (SELECT table1_id FROM table3 WHERE table3.name = 'Foo Bar' and table3.type = 'unknown_type') GROUP BY table1.id, table2.number ORDER BY table1.id");
+      sqls = codeReformator.reformat("SELECT table1.id,table2.number,table2.name,table2.info1,table2.info2,table2.info3,table2.info4,table2.info5,table2.info6,SUM(table1.amount) FROM table1 INNER JOIN table2 ON table.id1 = table2.table1_id1 AND table.id2 = table2.table1_id2 LEFT OUTER JOIN table3 ON table.id1 = table3.table1_id1 AND table.id2 = table3.table1_id3 WHERE table1.id IN (SELECT table1_id FROM table3 WHERE table3.name = 'Foo Bar' and table3.type = 'unknown_type') AND table2.name LIKE '%g%' GROUP BY table1.id,table2.number ORDER BY table1.id");
       sqls += "\n\n";
       sqls += codeReformator.reformat("UPDATE table1 SET name = 'Hello', number = '1456-789' WHERE id = 42");
       sqls += "\n\n";
-      sqls += codeReformator.reformat("INSERT INTO table1 (name, number) SELECT name, number FROM table1_bak");
+      sqls += codeReformator.reformat("INSERT INTO table1 (name, number) SELECT name,number FROM table1_bak");
       sqls += "\n\n";
-      sqls += codeReformator.reformat("INSERT INTO table1 (name, number, type) VALUES ('Foo', 42, 'VA')");
+      sqls += codeReformator.reformat("INSERT INTO table1 (name,number,type) VALUES ('Foo',42,'VA')");
       sqls += "\n\n";
       sqls += codeReformator.reformat("DELETE FROM table1 WHERE  name = 'Hello' OR number = '1456-789'");
 
@@ -110,6 +138,9 @@ public class SQLReformatCtrl implements SettingsTabController
       sqlFormatSettings.setPreferedLineLength(StringInterpreter.interpretNonNull(_view.txtPreferedLineLength.getText(), Integer.class, sqlFormatSettings.getPreferedLineLength()));
       sqlFormatSettings.setAlignmInsertValues(_view.chkAlignmInsertValues.isSelected());
 
+      sqlFormatSettings.setIndentSections(_view.chkIndentSections.isSelected());
+      sqlFormatSettings.setCommaAtLineBegin(_view.radCommasAtLineBegin.isSelected());
+      sqlFormatSettings.setLineBreakFor_AND_OR_in_FROM_clause(_view.chkLineBreakFor_AND_OR_in_FROM_clause.isSelected());
 
       HashMap<SQLKeyWord, KeyWordBehavior> behaviorsByKeyWord = sqlFormatSettings.getBehaviorsByKeyWord();
       HashMap<SQLKeyWord, ComboBox> comboBoxesByKeyWords = _view.getComboBoxesByKeyWords();

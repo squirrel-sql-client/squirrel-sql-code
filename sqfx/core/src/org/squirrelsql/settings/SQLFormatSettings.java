@@ -9,6 +9,10 @@ public class SQLFormatSettings
    private HashMap<SQLKeyWord, KeyWordBehavior> _behaviorsByKeyWord = new HashMap<>();
    private boolean _alignmInsertValues = true;
 
+   private boolean _indentSections;
+   private boolean _commaAtLineBegin;
+   private boolean _lineBreakFor_AND_OR_in_FROM_clause = true;
+
 
    public SQLFormatSettings()
    {
@@ -66,5 +70,35 @@ public class SQLFormatSettings
    public void setAlignmInsertValues(boolean alignmInsertValues)
    {
       _alignmInsertValues = alignmInsertValues;
+   }
+
+   public boolean isCommaAtLineBegin()
+   {
+      return _commaAtLineBegin;
+   }
+
+   public void setCommaAtLineBegin(boolean commaAtLineBegin)
+   {
+      _commaAtLineBegin = commaAtLineBegin;
+   }
+
+   public boolean isLineBreakFor_AND_OR_in_FROM_clause()
+   {
+      return _lineBreakFor_AND_OR_in_FROM_clause;
+   }
+
+   public void setLineBreakFor_AND_OR_in_FROM_clause(boolean lineBreakFor_AND_OR_in_FROM_clause)
+   {
+      _lineBreakFor_AND_OR_in_FROM_clause = lineBreakFor_AND_OR_in_FROM_clause;
+   }
+
+   public boolean isIndentSections()
+   {
+      return _indentSections;
+   }
+
+   public void setIndentSections(boolean indentSections)
+   {
+      _indentSections = indentSections;
    }
 }

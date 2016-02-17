@@ -1,6 +1,13 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Format SQL has three new options, see menu File -> Settings -> Tab Format SQL
+ - Indent sections check box
+ - Comma placing radio buttons
+ - When AND/OR keywords occur in FROM clauses you can choose to ignore the start new line setting.
+   This may be considered to lead to more readable JOIN clauses.
+
+
 Feature: Object tree offers find and filter functionality. Note that all edit fields involved offer code completion.
 
 Bug fix: Two bug fixes concerning the current SQL mark:

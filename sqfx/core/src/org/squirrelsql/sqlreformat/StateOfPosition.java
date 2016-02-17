@@ -28,7 +28,7 @@ public class StateOfPosition
 	{
 		StateOfPosition ret = new StateOfPosition();
 		ret.commentIndex = commentIndex;
-		ret.literalSepCount = commentIndex;
+		ret.literalSepCount = literalSepCount;
 		ret.braketDepth = braketDepth;
 		ret.isTopLevel = isTopLevel;
 

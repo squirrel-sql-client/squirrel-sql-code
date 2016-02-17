@@ -1,43 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.45" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.settings.SQLReformatView">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.settings.SQLReformatView">
    <children>
-      <Label layoutX="15.0" layoutY="24.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.indent.space.count" />
-      <TextField fx:id="txtIndentSpaceCount" layoutX="190.0" layoutY="19.0" />
-      <Label layoutX="15.0" layoutY="53.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.prefered.line.length" />
-      <TextField fx:id="txtPreferedLineLength" layoutX="190.0" layoutY="48.0" />
-      <Label layoutX="15.0" layoutY="99.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.behaviour" />
-      <Label layoutX="15.0" layoutY="136.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.select" />
-      <ComboBox fx:id="cboSelect" layoutX="190.0" layoutY="131.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="167.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.union" />
-      <ComboBox fx:id="cboUnion" layoutX="190.0" layoutY="162.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="197.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.from" />
-      <ComboBox fx:id="cboFrom" layoutX="190.0" layoutY="192.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="228.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.innerleftrightjoin" />
-      <ComboBox fx:id="cboInnerleftrightjoin" layoutX="190.0" layoutY="223.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="259.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.where" />
-      <ComboBox fx:id="cboWhere" layoutX="190.0" layoutY="254.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="290.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.and" />
-      <ComboBox fx:id="cboAnd" layoutX="190.0" layoutY="285.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="320.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.or" />
-      <ComboBox fx:id="cboOr" layoutX="190.0" layoutY="315.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="351.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.group" />
-      <ComboBox fx:id="cboGroup" layoutX="190.0" layoutY="346.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="382.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.order" />
-      <ComboBox fx:id="cboOrder" layoutX="190.0" layoutY="377.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="413.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.update" />
-      <ComboBox fx:id="cboUpdate" layoutX="190.0" layoutY="408.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="444.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.delete" />
-      <ComboBox fx:id="cboDelete" layoutX="190.0" layoutY="439.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="474.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.insert" />
-      <ComboBox fx:id="cboInsert" layoutX="190.0" layoutY="469.0" prefHeight="26.0" prefWidth="260.0" />
-      <Label layoutX="15.0" layoutY="505.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.values" />
-      <ComboBox fx:id="cboValues" layoutX="190.0" layoutY="500.0" prefHeight="26.0" prefWidth="260.0" />
-      <CheckBox fx:id="chkAlignmInsertValues" layoutX="190.0" layoutY="546.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="308.0" text="%sqlreformat.try.align.insert.values" />
-      <TextArea fx:id="txtExample" layoutX="462.0" layoutY="8.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="461.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <ScrollPane hbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <content>
+            <AnchorPane>
+               <children>
+                  <Label layoutX="19.6728515625" layoutY="19.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.indent.space.count" />
+                  <TextField fx:id="txtIndentSpaceCount" layoutX="194.6728515625" layoutY="14.0" />
+                  <Label layoutX="19.6728515625" layoutY="166.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.prefered.line.length" />
+                  <TextField fx:id="txtPreferedLineLength" layoutX="194.6728515625" layoutY="161.0" />
+                  <Label layoutX="19.6728515625" layoutY="203.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.behaviour" />
+                  <Label layoutX="19.6728515625" layoutY="240.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.select" />
+                  <ComboBox fx:id="cboSelect" layoutX="194.6728515625" layoutY="235.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="271.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.union" />
+                  <ComboBox fx:id="cboUnion" layoutX="194.6728515625" layoutY="266.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="301.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.from" />
+                  <ComboBox fx:id="cboFrom" layoutX="194.6728515625" layoutY="296.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="332.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.innerleftrightjoin" />
+                  <ComboBox fx:id="cboInnerleftrightjoin" layoutX="194.6728515625" layoutY="327.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="363.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.where" />
+                  <ComboBox fx:id="cboWhere" layoutX="194.6728515625" layoutY="358.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="394.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.and" />
+                  <ComboBox fx:id="cboAnd" layoutX="194.6728515625" layoutY="389.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="424.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.or" />
+                  <ComboBox fx:id="cboOr" layoutX="194.6728515625" layoutY="419.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="455.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.group" />
+                  <ComboBox fx:id="cboGroup" layoutX="194.6728515625" layoutY="450.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="486.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.order" />
+                  <ComboBox fx:id="cboOrder" layoutX="194.6728515625" layoutY="481.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="517.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.update" />
+                  <ComboBox fx:id="cboUpdate" layoutX="194.6728515625" layoutY="512.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="548.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.delete" />
+                  <ComboBox fx:id="cboDelete" layoutX="194.6728515625" layoutY="543.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="578.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.insert" />
+                  <ComboBox fx:id="cboInsert" layoutX="194.6728515625" layoutY="573.0" prefHeight="26.0" prefWidth="260.0" />
+                  <Label layoutX="19.6728515625" layoutY="609.0" prefHeight="16.0" prefWidth="170.0" text="%sqlreformat.keyword.values" />
+                  <ComboBox fx:id="cboValues" layoutX="194.6728515625" layoutY="604.0" prefHeight="26.0" prefWidth="260.0" />
+                  <CheckBox fx:id="chkAlignmInsertValues" layoutX="195.0" layoutY="650.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="281.0" text="%sqlreformat.try.align.insert.values" />
+                  <CheckBox fx:id="chkIndentSections" layoutX="194.6728515625" layoutY="59.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="260.0" text="%sqlreformat.indent.sections" />
+                  <RadioButton fx:id="radCommasAtLineBegin" layoutX="194.6728515625" layoutY="96.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="260.0" text="%sqlreformat.indent.commas.begin" />
+                  <RadioButton fx:id="radCommasAtLineEnd" layoutX="194.6728515625" layoutY="121.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="260.0" text="%sqlreformat.indent.commas.end" />
+                  <Label layoutX="19.6728515625" layoutY="692.0" prefHeight="153.0" prefWidth="162.0" text="%sqlreformat.explain.lineBreakFor_AND_OR_in_FROM_clause" />
+                  <CheckBox fx:id="chkLineBreakFor_AND_OR_in_FROM_clause" layoutX="194.6728515625" layoutY="698.0" mnemonicParsing="false" text="%sqlreformat.lineBreakFor_AND_OR_in_FROM_clause.ignore" />
+               </children>
+            </AnchorPane>
+         </content>
+      </ScrollPane>
+      <TextArea fx:id="txtExample" layoutX="503.0" layoutY="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="483.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
    </children>
 </AnchorPane>

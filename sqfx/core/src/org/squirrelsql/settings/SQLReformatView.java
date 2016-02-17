@@ -1,16 +1,18 @@
 package org.squirrelsql.settings;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.util.HashMap;
 
 public class SQLReformatView
 {
    @FXML TextField txtIndentSpaceCount;
+
+   @FXML CheckBox chkIndentSections;
+   @FXML RadioButton radCommasAtLineBegin;
+   @FXML RadioButton radCommasAtLineEnd;
+
    @FXML TextField txtPreferedLineLength;
 
    @FXML ComboBox cboSelect;
@@ -28,6 +30,9 @@ public class SQLReformatView
    @FXML ComboBox cboValues;
 
    @FXML CheckBox chkAlignmInsertValues;
+
+   @FXML CheckBox chkLineBreakFor_AND_OR_in_FROM_clause;
+
 
    @FXML TextArea txtExample;
 

@@ -70,4 +70,19 @@ public class CodeReformatorConfig
    {
       return _sqlFormatSettings.isAlignmInsertValues();
    }
+
+   public boolean isIndentSections()
+   {
+      return _sqlFormatSettings.isIndentSections();
+   }
+
+   public boolean isLineBreakFor_AND_OR_in_FROM_clause()
+   {
+      return _sqlFormatSettings.isLineBreakFor_AND_OR_in_FROM_clause();
+   }
+
+   public boolean isCommasAtLineBegin()
+   {
+      return _sqlFormatSettings.isCommaAtLineBegin();
+   }
 }

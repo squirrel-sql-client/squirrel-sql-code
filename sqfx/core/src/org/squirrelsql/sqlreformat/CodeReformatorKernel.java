@@ -16,27 +16,28 @@ package org.squirrelsql.sqlreformat;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class CodeReformatorKernel
 {
-	private String _statementSeparator;
 	private CommentSpec[] _commentSpecs;
 	private PieceMarkerSpec[] _pieceSpecs;
-	private StateOfPosition[] _statesOfPosition;
 
-	public CodeReformatorKernel(String statementSeparator, PieceMarkerSpec[] pieceSpecs, CommentSpec[] commentSpecs)
+	private boolean _lineBreakFor_AND_OR_in_FROM_clause;
+
+	public CodeReformatorKernel(PieceMarkerSpec[] pieceSpecs, CommentSpec[] commentSpecs, boolean lineBreakFor_and_or_in_from_clause)
 	{
 		_commentSpecs = commentSpecs;
 		_pieceSpecs = pieceSpecs;
-		_statementSeparator = statementSeparator;
+
+		_lineBreakFor_AND_OR_in_FROM_clause = lineBreakFor_and_or_in_from_clause;
 	}
 
 	public String[] toPieces(String in)
 	{
-		_statesOfPosition = getStatesOfPosition(in);
+		TopLevelPiecesIterator topLevelPiecesIterator = new TopLevelPiecesIterator(_pieceSpecs, getStatesOfPosition(in), _lineBreakFor_AND_OR_in_FROM_clause);
 
-		Vector<String> ret = new Vector<String>();
+		ArrayList<String> ret = new ArrayList<String>();
 
       // toUpperCase replaces the German ß by ss.
       // This will kill reformating later.
@@ -49,9 +50,10 @@ public class CodeReformatorKernel
 
 		int begin = 0;
 
+
 		while(begin < in.length())
 		{
-         Piece p = getNextToplevelPiece(begin, upperIn);
+         Piece p = topLevelPiecesIterator.getNextToplevelPiece(begin, upperIn);
 
 			if(null == p.spec)
 			{
@@ -71,7 +73,7 @@ public class CodeReformatorKernel
 						}
 
 						int afterPieceMarker = p.beginsAt + p.spec.getLengthRightSpaced();
-						Piece nextP = getNextToplevelPiece(afterPieceMarker, upperIn);
+						Piece nextP = topLevelPiecesIterator.getNextToplevelPiece(afterPieceMarker, upperIn);
 						if(null == nextP.spec)
 						{
 							ret.add( in.substring(p.beginsAt).trim() );
@@ -131,57 +133,6 @@ public class CodeReformatorKernel
 		return ret.toArray(new String[ret.size()]);
 	}
 
-	private Piece getNextToplevelPiece(int startAt, String in)
-	{
-		Piece ret = new Piece();
-		ret.beginsAt = in.length();
-
-		for(int i=0; i < _pieceSpecs.length; ++i)
-		{
-			int buf = getTopLevelIndex(startAt, in, _pieceSpecs[i]);
-			if(-1 < buf && buf < ret.beginsAt)
-			{
-				ret.spec = _pieceSpecs[i];
-				ret.beginsAt = buf;
-			}
-		}
-      if(null == ret.spec)
-		{
-			ret.beginsAt = startAt;
-		}
-
-		return ret;
-	}
-
-	private int getTopLevelIndex(int startAt, String in, PieceMarkerSpec pieceSpec)
-	{
-		int ix = in.indexOf(pieceSpec.getPieceMarker(), startAt);
-
-      while(-1 != ix)
-		{
-			if(_statesOfPosition[ix].isTopLevel)
-			{
-				if(pieceSpec.needsSuroundingWhiteSpaces())
-				{
-					char before = (0 == ix ? ' ': in.charAt(ix-1) );
-
-					int pieceMArkerEnd = ix + pieceSpec.getPieceMarker().length() - 1;
-					char after = (pieceMArkerEnd == in.length() - 1 ? ' ': in.charAt(pieceMArkerEnd+1) );
-
-					if(Character.isWhitespace(before) && Character.isWhitespace(after))
-					{
-						return ix;
-					}
-				}
-				else
-				{
-					return ix;
-				}
-			}
-			ix = in.indexOf(pieceSpec.getPieceMarker(), ix + 1);
-		}
-		return -1;
-	}
 
 	public StateOfPosition[] getStatesOfPosition(String in)
 	{

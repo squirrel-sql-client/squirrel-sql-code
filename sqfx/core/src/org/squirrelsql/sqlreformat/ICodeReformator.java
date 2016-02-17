@@ -24,6 +24,9 @@ package org.squirrelsql.sqlreformat;
  */
 public interface ICodeReformator
 {
+	public static final String CODE_REFORMATOR_LINE_SEPARATOR = "\n";
+
+
 	/**
 	 * Reformats the specified String, returning the reformatted version.
 	 * 
