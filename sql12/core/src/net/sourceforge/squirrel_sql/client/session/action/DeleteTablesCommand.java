@@ -140,13 +140,7 @@ public class DeleteTablesCommand implements ICommand
 			{
 				s_log.error("Unexpected exception while attempting to order tables", e);
 			} finally {
-				GUIUtils.processOnSwingEventThread(new Runnable()
-				{
-					public void run()				
-					{
-						_cb.setVisible(false);
-					}
-				});
+				_cb.dispose();
 			}
 			final String sqlSep = _session.getQueryTokenizer().getSQLStatementSeparator();
 			String cascadeClause = null;
@@ -244,10 +238,4 @@ public class DeleteTablesCommand implements ICommand
 		}
 
 	}
-
-	public void setProgressCallBackFactory(IProgressCallBackFactory progressCallBackFactory)
-	{
-		this.progressCallBackFactory = progressCallBackFactory;
-	}
-
 }

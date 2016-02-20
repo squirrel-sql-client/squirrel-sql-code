@@ -52,11 +52,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class ProgressCallBackDialog extends JDialog implements ProgressCallBack
 {
 
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
-
 	/** Logger for this class. */
 	public final static ILogger s_log = LoggerController.createLogger(ProgressCallBackDialog.class);
 
