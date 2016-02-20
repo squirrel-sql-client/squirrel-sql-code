@@ -28,6 +28,11 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+#1240 Data import plugin: When exception occured auto commit mode was usually changed.
+  Along with this fix come the following improvements:
+  - UI is resizeable
+  - Better error messages
+
 #1237 Missing color on SQL window and Object tree window
 
 #1236 Shortcut for comment/uncomment current line (ctrl + "/") does not work

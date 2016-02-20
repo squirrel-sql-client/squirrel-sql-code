@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -186,23 +187,20 @@ public class ProgressBarDialog {
      * @param min The minimum value
      * @param max The maximum value
      */
-    public static void setBarMinMax(final int min, final int max) {
-        if (progressBar.getMinimum() == min 
-                && progressBar.getMaximum() == max) 
+    public static void setBarMinMax(final int min, final int max)
+    {
+        GUIUtils.processOnSwingEventThread(new Runnable()
         {
-            return;
-        }
-        if (SwingUtilities.isEventDispatchThread()) {
-            progressBar.setMinimum(min);
-            progressBar.setMaximum(max);
-        } else {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    progressBar.setMinimum(min);
-                    progressBar.setMaximum(max);
+            public void run()
+            {
+                if (progressBar.getMinimum() == min && progressBar.getMaximum() == max)
+                {
+                    return;
                 }
-            });                    
-        }
+                progressBar.setMinimum(min);
+                progressBar.setMaximum(max);
+            }
+        });
     }
     
     /**
@@ -227,17 +225,16 @@ public class ProgressBarDialog {
      * 
      * @param value The value to increment the bar
      */
-    public static void incrementBar(final int value) {
-        final int newValue = progressBar.getValue() + value;
-        if (SwingUtilities.isEventDispatchThread()) {
-            progressBar.setValue(newValue);
-        } else {
-            SwingUtilities.invokeLater(new Runnable() {
-               public void run() {
-                   progressBar.setValue(newValue);
-               }
-            });
-        }
+    public static void incrementBar(final int value)
+    {
+        GUIUtils.processOnSwingEventThread(new Runnable()
+        {
+            public void run()
+            {
+                final int newValue = progressBar.getValue() + value;
+                progressBar.setValue(newValue);
+            }
+        });
     }
 
     /**

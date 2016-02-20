@@ -98,20 +98,20 @@ public class ImportTableDataCommand implements ICommand {
 		int res = openFile.showOpenDialog(session.getApplication().getMainFrame());
 
 		if (res == JFileChooser.APPROVE_OPTION) {
-			File f = openFile.getSelectedFile();
+			File importFile = openFile.getSelectedFile();
 
-			if(null != f.getParent()){
-				Preferences.userRoot().put(PREFS_KEY_LAST_IMPORT_DIRECTORY, f.getParent());
+			if(null != importFile.getParent()){
+				Preferences.userRoot().put(PREFS_KEY_LAST_IMPORT_DIRECTORY, importFile.getParent());
 			}
 
 			try {
 				TableColumnInfo[] columns = session.getMetaData().getColumnInfo(table);
 
-				ImportFileType type = determineType(f);
+				ImportFileType type = determineType(importFile);
 
 
 
-				IFileImporter importer = FileImporterFactory.createImporter(type, f);
+				IFileImporter importer = FileImporterFactory.createImporter(type, importFile);
 
 				if (importer.getConfigurationPanel() != null) {
 					//i18n[ImportTableDataCommand.settingsDialogTitle=Import file settings]
@@ -133,7 +133,7 @@ public class ImportTableDataCommand implements ICommand {
 				}
 
 
-				final ImportFileDialog importFileDialog = new ImportFileDialog(session, importer, table, columns);
+				final ImportFileDialog importFileDialog = new ImportFileDialog(session, importFile, importer, table, columns);
 
 				importFileDialog.setPreviewData(importer.getPreview(10));
 

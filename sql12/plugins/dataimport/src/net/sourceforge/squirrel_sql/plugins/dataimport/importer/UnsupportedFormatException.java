@@ -17,13 +17,21 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-public class UnsupportedFormatException extends Exception {
-	
-	private static final long serialVersionUID = 1L;
+public class UnsupportedFormatException extends Exception
+{
 
-	public UnsupportedFormatException() {}
-	
-	public UnsupportedFormatException(Exception e) {
-		super(e);
+	public UnsupportedFormatException(Exception e)
+	{
+		super(e.getMessage(), e);
+	}
+
+	public UnsupportedFormatException(String msg)
+	{
+		super(msg);
+	}
+
+	public UnsupportedFormatException(String msg, Throwable e)
+	{
+		super(msg, e);
 	}
 }

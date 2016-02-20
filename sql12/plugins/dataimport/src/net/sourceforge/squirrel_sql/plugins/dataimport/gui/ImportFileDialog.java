@@ -43,8 +43,10 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 import java.util.Vector;
+import java.util.prefs.Preferences;
 
 /**
  * This dialog has some options to specify how the file is imported into
@@ -53,8 +55,10 @@ import java.util.Vector;
  * @author Thorsten Mürell
  */
 public class ImportFileDialog extends DialogWidget
-{	
-	private static final long serialVersionUID = 3470927611018381204L;
+{
+	private static final String PREF_KEY_IMPORT_DIALOG_WIDTH = "Squirrel.dataimport.dialog.width";
+	private static final String PREF_KEY_IMPORT_DIALOG_HEIGHT= "Squirrel.dataimport.dialog.width";
+
 
 	private static final StringManager stringMgr =
 		StringManagerFactory.getStringManager(ImportFileDialog.class);	
@@ -72,22 +76,24 @@ public class ImportFileDialog extends DialogWidget
 	private OkClosePanel btnsPnl = new OkClosePanel();
 	
 	private ISession session = null;
+	private File _importFile;
 	private IFileImporter importer = null;
 	private ITableInfo table = null;
 	private TableColumnInfo[] columns = null;
 
 	/**
 	 * The standard constructor
-	 * 
-	 * @param session The session
+	 *  @param session The session
+	 * @param importFile
 	 * @param importer The file importer
 	 * @param table The table to import into
 	 * @param columns The columns of the import table
 	 */
-	public ImportFileDialog(ISession session, IFileImporter importer, ITableInfo table, TableColumnInfo[] columns) {
+	public ImportFileDialog(ISession session, File importFile, IFileImporter importer, ITableInfo table, TableColumnInfo[] columns) {
         //i18n[ImportFileDialog.fileImport=Import file]
 		super(stringMgr.getString("ImportFileDialog.fileImport"), true, session.getApplication());
 		this.session = session;
+		_importFile = importFile;
 		this.importer = importer;
 		this.table = table;
 		this.columns = columns;
@@ -100,25 +106,34 @@ public class ImportFileDialog extends DialogWidget
         setContentPane(content);
 		btnsPnl.makeOKButtonDefault();
 		btnsPnl.getRootPane().setDefaultButton(btnsPnl.getOKButton());
-        pack();
+
+		setSize(getDimension());
+
 	}
-	
+
+	private Dimension getDimension()
+	{
+		return new Dimension(
+				Preferences.userRoot().getInt(PREF_KEY_IMPORT_DIALOG_WIDTH, 600),
+				Preferences.userRoot().getInt(PREF_KEY_IMPORT_DIALOG_HEIGHT, 600)
+		);
+	}
+
+	public void dispose()
+	{
+		Dimension size = getSize();
+		Preferences.userRoot().putInt(PREF_KEY_IMPORT_DIALOG_WIDTH, size.width);
+		Preferences.userRoot().putInt(PREF_KEY_IMPORT_DIALOG_HEIGHT, size.height);
+
+		super.dispose();
+	}
+
+
 	private Component createMainPanel()
 	{
 		btnsPnl.addListener(new MyOkClosePanelListener());
 
-		final FormLayout layout = new FormLayout(
-				// Columns
-				"left:pref:grow",
-				// Rows
-//				"12dlu, 6dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, 12dlu,              6dlu, 80dlu:grow, 6dlu, pref"
-				"12dlu, 6dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, 12dlu, 2dlu, 12dlu, 2dlu, 12dlu, 2dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, pref"
-				);
-				
-		PanelBuilder builder = new PanelBuilder(layout);
-		CellConstraints cc = new CellConstraints();
-		builder.setDefaultDialogBorder();
-		
+
 		previewTable = new JTable();
 		JScrollPane scrollPane = new JScrollPane(previewTable);
 		
@@ -186,38 +201,40 @@ public class ImportFileDialog extends DialogWidget
 		});
 		safeMode = new JCheckBox(stringMgr.getString("ImportFileDialog.safetySwitch"));
 		safeMode.setSelected(true);
+
+		JPanel ret = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc;
 		
-		
-		int y = 1;
+
+		gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,10,10,10),0,0);
         //i18n[ImportFileDialog.dataPreview=Data preview]
-		builder.add(new JLabel(stringMgr.getString("ImportFileDialog.dataPreview")), cc.xy(1, y));
+		ret.add(new JLabel(stringMgr.getString("ImportFileDialog.dataPreview", _importFile.getAbsolutePath())), gbc);
 		
-		y += 2;
-		builder.add(headersIncluded, cc.xy(1, y));		
+		gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,10,10,10),0,0);
+		ret.add(headersIncluded, gbc);
 
-		y += 2;
-		builder.add(scrollPane, cc.xy(1, y));
-		
-		y += 2;
-		builder.add(suggestColumns, cc.xy(1, y));
-		
-		y += 2;
-		builder.add(suggestColumnsIgnoreCase, cc.xy(1, y));
+		gbc = new GridBagConstraints(0,2,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,10,10,10),0,0);
+		ret.add(scrollPane, gbc);
 
-		y += 2;
-		builder.add(oneToOneMapping, cc.xy(1, y));
+		gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,10,10,10),0,0);
+		ret.add(suggestColumns, gbc);
 
-		y += 2;
-		builder.add(safeMode, cc.xy(1, y));
-		
-		y += 2;
-		builder.add(scrollPane2, cc.xy(1, y));
+		gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,10,10,10),0,0);
+		ret.add(suggestColumnsIgnoreCase, gbc);
 
-		y += 2;
-		builder.add(btnsPnl, cc.xywh(1, y, 1, 1));
+		gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,10,10,10),0,0);
+		ret.add(oneToOneMapping, gbc);
 
-		
-		return builder.getPanel();
+		gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,10,10,10),0,0);
+		ret.add(safeMode, gbc);
+
+		gbc = new GridBagConstraints(0,7,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,10,10,10),0,0);
+		ret.add(scrollPane2, gbc);
+
+		gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,10,10,10),0,0);
+		ret.add(btnsPnl, gbc);
+
+		return ret;
 	}
 	
 

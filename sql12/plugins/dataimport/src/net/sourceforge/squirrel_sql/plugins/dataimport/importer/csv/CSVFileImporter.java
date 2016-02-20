@@ -150,14 +150,14 @@ public class CSVFileImporter implements IFileImporter {
 	 * @see net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter#getLong(int)
 	 */
 	public Long getLong(int column) throws IOException, UnsupportedFormatException {
+		String longS = reader.get(column);
 		try {
-			String longS = reader.get(column);
 			if (null == longS || 0 == longS.trim().length()){
 				return null;
 			}				
 			return Long.parseLong(longS);
 		} catch (NumberFormatException nfe) {
-			throw new UnsupportedFormatException();
+			throw new UnsupportedFormatException("Could not interpret value as long type. Value is: " + longS, nfe);
 		}
 	}
 
@@ -184,9 +184,9 @@ public class CSVFileImporter implements IFileImporter {
 	 */
 	public Date getDate(int column) throws IOException, UnsupportedFormatException {
 		Date d = null;
+		String dateString = reader.get(column);
 		try {
 			DateFormat f = new SimpleDateFormat(settings.getDateFormat());
-			String dateString = reader.get(column);
 			// we allow the return of null values if the the reader returns
 			// an empty String or a null String
 			if (null != dateString && dateString.trim().length() > 0) {
@@ -195,9 +195,9 @@ public class CSVFileImporter implements IFileImporter {
 		} catch (IllegalArgumentException e) {
 			//i18n[CSVFileImporter.invalidDateFormat=Invalid date format given]
 			JOptionPane.showMessageDialog(null, stringMgr.getString("CSVFileImporter.invalidDateFormat"));
-			throw new UnsupportedFormatException();
+			throw new UnsupportedFormatException("Could not interpret value as date type. Value is: " + dateString, e);
 		} catch (ParseException pe) {
-			throw new UnsupportedFormatException();
+			throw new UnsupportedFormatException("Could not interpret value as date type. Value is: " + dateString, pe);
 		}
 		return d;
 	}

@@ -26,6 +26,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -116,122 +117,248 @@ public class ImportDataIntoTableExecutor {
     /**
      * Performs the table copy operation. 
      */
-    private void _execute() {
-    	
-    	// Create column list
-    	String columnList = createColumnList();
-    	ISQLConnection conn = session.getSQLConnection();
-    	
-    	StringBuffer insertSQL = new StringBuffer();
-    	insertSQL.append("insert into ").append(table.getQualifiedName());
-    	insertSQL.append(" (").append(columnList).append(") ");
-    	insertSQL.append("VALUES ");
-    	insertSQL.append(" (").append(getQuestionMarks(getColumnCount())).append(")");
-    	
-    	PreparedStatement stmt = null;
-    	boolean autoCommit = false;
-		int rows = 0;
-		boolean success = false;
-    	try {
-    		DataImportPreferenceBean settings = PreferencesManager.getPreferences();
-    		importer.open();
-    		if (skipHeader) 
-    			importer.next();
-    		autoCommit = conn.getAutoCommit();
-    		conn.setAutoCommit(false);
-    		
-    		if (settings.isUseTruncate()) {
-    			String sql = "DELETE FROM " + table.getQualifiedName();
-    			stmt = conn.prepareStatement(sql);
-    			stmt.execute();
-    			stmt.close();
-    		}
-    		
-    		stmt = conn.prepareStatement(insertSQL.toString());
-    		//i18n[ImportDataIntoTableExecutor.importingDataInto=Importing data into {0}]
-    		ProgressBarDialog.getDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.importingDataInto", table.getSimpleName()), false, null);
-    		int inputLines = importer.getRows();
-    		if (inputLines > 0) {
-    			ProgressBarDialog.setBarMinMax(0, inputLines == -1 ? 5000 : inputLines);
-    		} else {
-    			ProgressBarDialog.setIndeterminate();
-    		}
-    	
-    		while (importer.next()) {
-    			rows++;
-    			if (inputLines > 0) {
-    				ProgressBarDialog.incrementBar(1);
-    			}
-    			stmt.clearParameters();
-    			int i = 1;
-    			for (TableColumnInfo column : columns) {
-    				String mapping = getMapping(column);
-    				try {
-    					if (SpecialColumnMapping.SKIP.getVisibleString().equals(mapping)) {
-    						continue;
-    					} else if (SpecialColumnMapping.FIXED_VALUE.getVisibleString().equals(mapping)) {
-    						bindFixedColumn(stmt, i++, column);
-    					} else if (SpecialColumnMapping.AUTO_INCREMENT.getVisibleString().equals(mapping)) {
-    						bindAutoincrementColumn(stmt, i++, column, rows);
-    					} else if (SpecialColumnMapping.NULL.getVisibleString().equals(mapping)) {
-    						stmt.setNull(i++, column.getDataType());
-    					} else {
-    						bindColumn(stmt, i++, column);
-    					}
-    				} catch (UnsupportedFormatException ufe) {
-    					// i18n[ImportDataIntoTableExecutor.wrongFormat=Imported column has not the required format.\nLine is: {0}, column is: {1}]
-    					JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.wrongFormat", new Object[] { rows, i-1 }));
-    					throw ufe;
-    				}
-    			}
-    			stmt.execute();
-    		}
-    		conn.commit();
-    		conn.setAutoCommit(autoCommit);
-    		importer.close();
-    		
-    		success = true;
-    		
-    	} catch (SQLException sqle) {
-    		//i18n[ImportDataIntoTableExecutor.sqlException=A database error occurred while inserting data]
-    		//i18n[ImportDataIntoTableExecutor.error=Error]
-    		JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.sqlException"), stringMgr.getString("ImportDataIntoTableExecutor.error"), JOptionPane.ERROR_MESSAGE);
-    		String query = stmt == null ? "null" : stmt.toString();
-    		if (query.length() >= 1024000) {	//with the safety switch off it's possible that this query is a few Mb long !
-    			query = query.substring(0, 1024000) + "... (truncated)";
-    		}
-    		log.error("Failing query: " + query);
-    		log.error("Database error", sqle);
-    	} catch (UnsupportedFormatException ufe) {
-    		try { 
-    		    conn.rollback(); 
-    		} catch (Exception e) { 
-    		    log.error("Unexpected exception while attempting to rollback: "
-    		              +e.getMessage(), e);
-    		}
-    		log.error("Unsupported format.", ufe);
-    	} catch (IOException ioe) {
-    		//i18n[ImportDataIntoTableExecutor.ioException=An error occurred while reading the input file.]
-    		JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.ioException"), stringMgr.getString("ImportDataIntoTableExecutor.error"), JOptionPane.ERROR_MESSAGE);
-    		log.error("Error while reading file", ioe);
-    	} finally {
-    		SQLUtilities.closeStatement(stmt);
-    		ProgressBarDialog.dispose();
-    	}
-    	
-    	if (success) {
-    		//i18n[ImportDataIntoTableExecutor.success={0,choice,0#No records|1#One record|1<{0} records} successfully inserted.]
-    		JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.success", rows));
-    	}
-    }
-    
-    private void bindAutoincrementColumn(PreparedStatement stmt, int index, TableColumnInfo column, int counter) throws SQLException, UnsupportedFormatException  {
+	 private void _execute()
+	 {
+		 // Create column list
+		 String columnList = createColumnList();
+		 ISQLConnection conn = session.getSQLConnection();
+
+		 StringBuffer insertSQL = new StringBuffer();
+		 insertSQL.append("insert into ").append(table.getQualifiedName());
+		 insertSQL.append(" (").append(columnList).append(") ");
+		 insertSQL.append("VALUES ");
+		 insertSQL.append(" (").append(getQuestionMarks(getColumnCount())).append(")");
+
+		 PreparedStatement stmt = null;
+		 int currentRow = 0;
+		 boolean success = false;
+
+		 boolean originalAutoCommit = getOriginalAutoCommit(conn);
+
+		 try
+		 {
+			 conn.setAutoCommit(false);
+
+			 DataImportPreferenceBean settings = PreferencesManager.getPreferences();
+			 importer.open();
+			 if (skipHeader)
+				 importer.next();
+
+			 if (settings.isUseTruncate())
+			 {
+				 String sql = "DELETE FROM " + table.getQualifiedName();
+				 stmt = conn.prepareStatement(sql);
+				 stmt.execute();
+				 stmt.close();
+			 }
+
+			 stmt = conn.prepareStatement(insertSQL.toString());
+			 //i18n[ImportDataIntoTableExecutor.importingDataInto=Importing data into {0}]
+			 ProgressBarDialog.getDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.importingDataInto", table.getSimpleName()), false, null);
+			 int inputLines = importer.getRows();
+			 if (inputLines > 0)
+			 {
+				 ProgressBarDialog.setBarMinMax(0, inputLines == -1 ? 5000 : inputLines);
+			 }
+			 else
+			 {
+				 ProgressBarDialog.setIndeterminate();
+			 }
+
+			 while (importer.next())
+			 {
+				 currentRow++;
+				 if (inputLines > 0)
+				 {
+					 ProgressBarDialog.incrementBar(1);
+				 }
+				 stmt.clearParameters();
+				 int i = 1;
+				 for (TableColumnInfo column : columns)
+				 {
+					 String mapping = getMapping(column);
+					 try
+					 {
+						 if (SpecialColumnMapping.SKIP.getVisibleString().equals(mapping))
+						 {
+							 continue;
+						 }
+						 else if (SpecialColumnMapping.FIXED_VALUE.getVisibleString().equals(mapping))
+						 {
+							 bindFixedColumn(stmt, i++, column);
+						 }
+						 else if (SpecialColumnMapping.AUTO_INCREMENT.getVisibleString().equals(mapping))
+						 {
+							 bindAutoincrementColumn(stmt, i++, column, currentRow);
+						 }
+						 else if (SpecialColumnMapping.NULL.getVisibleString().equals(mapping))
+						 {
+							 stmt.setNull(i++, column.getDataType());
+						 }
+						 else
+						 {
+							 bindColumn(stmt, i++, column);
+						 }
+					 }
+					 catch (UnsupportedFormatException ufe)
+					 {
+						 // i18n[ImportDataIntoTableExecutor.wrongFormat=Imported column has not the required format.\nLine is: {0}, column is: {1}]
+						 showMessageDialogOnEDT(stringMgr.getString("ImportDataIntoTableExecutor.wrongFormat", ufe.getMessage(), currentRow, i - 1, column.getColumnName()));
+						 throw ufe;
+					 }
+				 }
+				 stmt.execute();
+			 }
+			 importer.close();
+			 success = true;
+		 }
+		 catch (SQLException sqle)
+		 {
+			 //i18n[ImportDataIntoTableExecutor.sqlException=A database error occurred while inserting data]
+			 //i18n[ImportDataIntoTableExecutor.error=Error]
+			 _showMessageDialogOnEDT(
+					 stringMgr.getString("ImportDataIntoTableExecutor.sqlException", sqle.getMessage(), Integer.toString(currentRow)),
+					 stringMgr.getString("ImportDataIntoTableExecutor.error"));
+
+
+			 String query = stmt == null ? "null" : stmt.toString();
+			 if (query.length() >= 1024000)
+			 {   //with the safety switch off it's possible that this query is a few Mb long !
+				 query = query.substring(0, 1024000) + "... (truncated)";
+			 }
+			 log.error("Failing query: " + query);
+			 log.error("Failing line in CVS file: " + currentRow);
+			 log.error("Database error", sqle);
+		 }
+		 catch (UnsupportedFormatException ufe)
+		 {
+			 log.error("Unsupported format.", ufe);
+		 }
+		 catch (IOException ioe)
+		 {
+			 //i18n[ImportDataIntoTableExecutor.ioException=An error occurred while reading the input file.]
+			 _showMessageDialogOnEDT(
+					 stringMgr.getString("ImportDataIntoTableExecutor.ioException", ioe.getMessage(), Integer.toString(currentRow)),
+					 stringMgr.getString("ImportDataIntoTableExecutor.error"));
+
+			 log.error("Error while reading file", ioe);
+		 }
+		 finally
+		 {
+			 try
+			 {
+				 finishTransaction(conn, success);
+			 }
+			 finally
+			 {
+				 setOriginalAutoCommit(conn, originalAutoCommit);
+				 SQLUtilities.closeStatement(stmt);
+				 ProgressBarDialog.dispose();
+			 }
+		 }
+
+		 if (success)
+		 {
+			 //i18n[ImportDataIntoTableExecutor.success={0,choice,0#No records|1#One record|1<{0} records} successfully inserted.]
+			 showMessageDialogOnEDT(stringMgr.getString("ImportDataIntoTableExecutor.success", currentRow));
+		 }
+	 }
+
+	private void finishTransaction(ISQLConnection conn, boolean success)
+	{
+		try
+		{
+			if(success)
+         {
+            conn.commit();
+         }
+         else
+         {
+            conn.rollback();
+         }
+		}
+		catch (SQLException e)
+		{
+			try
+			{
+				conn.rollback();
+			}
+			catch (SQLException e1)
+			{
+				log.error("Finally failed to rollback connection");
+			}
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void setOriginalAutoCommit(ISQLConnection conn, boolean originalAutoCommit)
+	{
+		try
+		{
+			conn.setAutoCommit(originalAutoCommit);
+		}
+		catch (SQLException e)
+		{
+			_showMessageDialogOnEDT(
+					stringMgr.getString("ImportDataIntoTableExecutor.reestablish.autocommit.failed"),
+					stringMgr.getString("ImportDataIntoTableExecutor.reestablish.autocommit.failed.title"),
+					JOptionPane.ERROR_MESSAGE);
+
+			throw new RuntimeException(e);
+		}
+	}
+
+	private boolean getOriginalAutoCommit(ISQLConnection conn)
+	{
+		try
+		{
+			return conn.getAutoCommit();
+		}
+		catch (SQLException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void _showMessageDialogOnEDT(String string, String title)
+	{
+		_showMessageDialogOnEDT(string, title, JOptionPane.ERROR_MESSAGE);
+	}
+
+	private void showMessageDialogOnEDT(final String message)
+	{
+		_showMessageDialogOnEDT(message, null, JOptionPane.DEFAULT_OPTION);
+	}
+
+
+	private void _showMessageDialogOnEDT(final String message, final String title, final int messageType)
+	{
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				if (null == title)
+				{
+					JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), message);
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), message, title, messageType);
+				}
+			}
+		}, true);
+	}
+
+
+	private void bindAutoincrementColumn(PreparedStatement stmt, int index, TableColumnInfo column, int counter) throws SQLException, UnsupportedFormatException  {
     	long value = 0;
+		String fixedValue = getFixedValue(column);
     	try {
-    		value = Long.parseLong(getFixedValue(column));
+			value = Long.parseLong(fixedValue);
     		value += counter;
     	} catch (NumberFormatException nfe) {
-    		throw new UnsupportedFormatException();
+    		throw new UnsupportedFormatException("Could not interpret value for column " + column.getColumnName() + " as value of type long. The value is: " + fixedValue, nfe);
     	}
     	switch (column.getDataType()) {
     	case Types.BIGINT:
@@ -242,7 +369,7 @@ public class ImportDataIntoTableExecutor {
    			stmt.setInt(index, (int)value);
     		break;
     	default:
-    		throw new UnsupportedFormatException();
+    		throw new UnsupportedFormatException("Autoincrement column " + column.getColumnName() + "  is not numeric");
     	}
 	}
 
@@ -254,8 +381,8 @@ public class ImportDataIntoTableExecutor {
     		try {
     			stmt.setLong(index, Long.parseLong(value));
     		} catch (NumberFormatException nfe) {
-    			throw new UnsupportedFormatException();
-    		}
+    			throw new UnsupportedFormatException(nfe);
+			}
     		break;
     	case Types.INTEGER:
     	case Types.NUMERIC:
@@ -283,7 +410,7 @@ public class ImportDataIntoTableExecutor {
 		if (null != value) {
 			Date d = DateUtils.parseSQLFormats(value);
 			if (d == null)
-				throw new UnsupportedFormatException();
+				throw new UnsupportedFormatException("Could not interpret value as date type. Value is: " + value);
 			stmt.setDate(index, new java.sql.Date(d.getTime()));
 		} else {
 			stmt.setNull(index, Types.DATE);
@@ -295,7 +422,7 @@ public class ImportDataIntoTableExecutor {
 		if (null != value) {
 			Date d = DateUtils.parseSQLFormats(value);
 			if (d == null)
-				throw new UnsupportedFormatException();
+				throw new UnsupportedFormatException("Could not interpret value as date type. Value is: " + value);
 			stmt.setTimestamp(index, new java.sql.Timestamp(d.getTime()));
 		} else {
 			stmt.setNull(index, Types.TIMESTAMP);
@@ -307,7 +434,7 @@ public class ImportDataIntoTableExecutor {
 		if (null != value) {
 			Date d = DateUtils.parseSQLFormats(value);
 			if (d == null)
-				throw new UnsupportedFormatException();
+				throw new UnsupportedFormatException("Could not interpret value as date type. Value is: " + value);
 			stmt.setTime(index, new java.sql.Time(d.getTime()));
 		} else {
 			stmt.setNull(index, Types.TIME);

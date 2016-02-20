@@ -161,7 +161,7 @@ public class ExcelFileImporter implements IFileImporter {
 		checkPointer();
 		Cell cell = sheet.getRow(pointer).getCell(column);
 		if (cell.getCellType() != Cell.CELL_TYPE_NUMERIC) {
-			throw new UnsupportedFormatException();
+			throw new UnsupportedFormatException("Could not interpret value as numeric type. String of value is: " + cell);
 		}
 		return ((Double)cell.getNumericCellValue()).intValue();
 	}
@@ -174,7 +174,7 @@ public class ExcelFileImporter implements IFileImporter {
 		checkPointer();
 		Cell cell = sheet.getRow(pointer).getCell(column);
 		if (DateUtil.isCellDateFormatted(cell)) {
-			throw new UnsupportedFormatException();
+			throw new UnsupportedFormatException("Could not interpret value as date type. String of value is: " + cell);
 		}
 		return DateUtil.getJavaDate(cell.getNumericCellValue());
 	}
@@ -187,7 +187,7 @@ public class ExcelFileImporter implements IFileImporter {
 		checkPointer();
 		Cell cell = sheet.getRow(pointer).getCell(column);
 		if (cell.getCellType() != Cell.CELL_TYPE_NUMERIC) {
-			throw new UnsupportedFormatException();
+			throw new UnsupportedFormatException("Could not interpret value as numeric type. String of value is: " + cell);
 		}
 		return ((Double)cell.getNumericCellValue()).longValue();
 	}
