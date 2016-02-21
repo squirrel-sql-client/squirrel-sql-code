@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Data import plugin: New option to choose if import is done in a single transaction
+                    or if data is committed after every N numbers of inserts, where N can be configured.
+
 Foreign key references window now also produces a result for the root table of the references tree.
 
 Format SQL has three new options, see menu File -> Global Preferences -> Tab SQL formatting

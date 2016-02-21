@@ -17,9 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.gui;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
@@ -36,14 +33,13 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv.CSVFileImporter;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Vector;
 import java.util.prefs.Preferences;
@@ -61,8 +57,10 @@ public class ImportFileDialog extends DialogWidget
 
 
 	private static final StringManager stringMgr =
-		StringManagerFactory.getStringManager(ImportFileDialog.class);	
-	
+		StringManagerFactory.getStringManager(ImportFileDialog.class);
+
+	public static final int DEFAULT_COMMIT_AFTER_INSERTS_COUNT = 100;
+
 	private String[][] previewData = null;
 	private List<String> importerColumns = new Vector<String>();
 	
@@ -80,6 +78,11 @@ public class ImportFileDialog extends DialogWidget
 	private IFileImporter importer = null;
 	private ITableInfo table = null;
 	private TableColumnInfo[] columns = null;
+
+	private JCheckBox _chkSingleTransaction;
+	private JFormattedTextField _txtCommitAfterInserts;
+	private JLabel _lblCommitAfterInsertBegin;
+	private JLabel _lblCommitAfterInsertEnd;
 
 	/**
 	 * The standard constructor
@@ -228,15 +231,69 @@ public class ImportFileDialog extends DialogWidget
 		gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,10,10,10),0,0);
 		ret.add(safeMode, gbc);
 
-		gbc = new GridBagConstraints(0,7,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,10,10,10),0,0);
+		gbc = new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,10,10,10),0,0);
+		ret.add(createTransactionPanel(), gbc);
+
+		gbc = new GridBagConstraints(0,8,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,10,10,10),0,0);
 		ret.add(scrollPane2, gbc);
 
-		gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,10,10,10),0,0);
+		gbc = new GridBagConstraints(0,9,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,10,10,10),0,0);
 		ret.add(btnsPnl, gbc);
 
 		return ret;
 	}
-	
+
+	private JPanel createTransactionPanel()
+	{
+		JPanel ret = new JPanel(new GridBagLayout());
+
+		GridBagConstraints gbc;
+
+		gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
+		_chkSingleTransaction = new JCheckBox(stringMgr.getString("ImportFileDialog.singleTransaction"));
+		ret.add(_chkSingleTransaction, gbc);
+
+		gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,10,0,0),0,0);
+		_lblCommitAfterInsertBegin = new JLabel(stringMgr.getString("ImportFileDialog.commitAfterInsert.begin"));
+		ret.add(_lblCommitAfterInsertBegin, gbc);
+
+		gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0),0,0);
+		_txtCommitAfterInserts = new JFormattedTextField(NumberFormat.getInstance());
+		_txtCommitAfterInserts.setColumns(7);
+		ret.add(_txtCommitAfterInserts, gbc);
+
+		gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0),0,0);
+		_lblCommitAfterInsertEnd = new JLabel(stringMgr.getString("ImportFileDialog.commitAfterInsert.end"));
+		ret.add(_lblCommitAfterInsertEnd, gbc);
+
+		gbc = new GridBagConstraints(4,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
+		ret.add(new JPanel(), gbc);
+
+		_chkSingleTransaction.setSelected(true);
+		_txtCommitAfterInserts.setText("" + DEFAULT_COMMIT_AFTER_INSERTS_COUNT);
+
+		_chkSingleTransaction.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				updateTransactionPanel();
+			}
+		});
+
+		updateTransactionPanel();
+
+		return ret;
+	}
+
+	private void updateTransactionPanel()
+	{
+		boolean intermediateCommits = (false == _chkSingleTransaction.isSelected());
+
+		_txtCommitAfterInserts.setEnabled(intermediateCommits);
+		_lblCommitAfterInsertBegin.setEnabled(intermediateCommits);
+		_lblCommitAfterInsertEnd.setEnabled(intermediateCommits);
+	}
 
 
 	/**
@@ -394,13 +451,44 @@ public class ImportFileDialog extends DialogWidget
 	/**
 	 * This is invoked if the user presses ok
 	 */
-	public void ok() {
+	public void ok()
+	{
 		dispose();
 		//Set the SafetySwitch of the CSVReader
-		if (importer instanceof CSVFileImporter) {
+		if (importer instanceof CSVFileImporter)
+		{
 			((CSVFileImporter) importer).setSafetySwitch(safeMode.isSelected());
 		}
-		ImportDataIntoTableExecutor executor = new ImportDataIntoTableExecutor(session, table, columns, importerColumns, (ColumnMappingTableModel) mappingTable.getModel(), importer);
+
+		int commitAfterEveryInsertsCount = DEFAULT_COMMIT_AFTER_INSERTS_COUNT;
+		if (null != _txtCommitAfterInserts.getText())
+		{
+			try
+			{
+				int buf  = Integer.valueOf(_txtCommitAfterInserts.getText());
+				if (commitAfterEveryInsertsCount >= 0)
+				{
+					commitAfterEveryInsertsCount = buf;
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				// ignore
+			}
+		}
+
+
+		ImportDataIntoTableExecutor executor =
+				new ImportDataIntoTableExecutor(
+						session,
+						table,
+						columns,
+						importerColumns,
+						(ColumnMappingTableModel) mappingTable.getModel(),
+						importer,
+						_chkSingleTransaction.isSelected(),
+						commitAfterEveryInsertsCount);
+
 		executor.setSkipHeader(headersIncluded.isSelected());
 		executor.execute();
 	}

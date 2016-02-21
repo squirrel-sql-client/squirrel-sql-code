@@ -49,49 +49,66 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.util.DateUtils;
  * 
  * @author Thorsten Mürell
  */
-public class ImportDataIntoTableExecutor {
+public class ImportDataIntoTableExecutor
+{
 	private final static ILogger log = LoggerController.createLogger(ImportDataIntoTableExecutor.class);
-	
-    /** Internationalized strings for this class. */
-    private static final StringManager stringMgr =
-        StringManagerFactory.getStringManager(ImportDataIntoTableExecutor.class);
-    
-    /** the thread we do the work in */
-    private Thread execThread = null;
-    
-    private ISession session = null;
-    private ITableInfo table = null;
-    private TableColumnInfo[] columns = null;
-    private ColumnMappingTableModel columnMapping = null;
-    private IFileImporter importer = null;
-    private List<String> importerColumns = null;
-    private boolean skipHeader = false;
 
-    /**
-     * The standard constructor
-     * 
-     * @param session The session
-     * @param table The table to import into
-     * @param columns The columns of the destination table
-     * @param importerColumns The columns of the importer
-     * @param mapping The mapping of the columns
-     * @param importer The file importer
-     */
-    public ImportDataIntoTableExecutor(ISession session, 
-    		                           ITableInfo table,
-    		                           TableColumnInfo[] columns,
-    		                           List<String> importerColumns,
-    		                           ColumnMappingTableModel mapping,
-    		                           IFileImporter importer) {
-    	this.session = session;
-    	this.table = table;
-    	this.columns = columns;
-    	this.columnMapping = mapping;
-    	this.importer = importer;
-    	this.importerColumns = importerColumns;
-    }
-    
-    /**
+	/**
+	 * Internationalized strings for this class.
+	 */
+	private static final StringManager stringMgr =
+			StringManagerFactory.getStringManager(ImportDataIntoTableExecutor.class);
+
+	/**
+	 * the thread we do the work in
+	 */
+	private Thread execThread = null;
+
+	private ISession session = null;
+	private ITableInfo table = null;
+	private TableColumnInfo[] columns = null;
+	private ColumnMappingTableModel columnMapping = null;
+	private IFileImporter importer = null;
+	private List<String> importerColumns = null;
+	private boolean skipHeader = false;
+
+	private final boolean _singleTransaction;
+	private final int _commitAfterEveryInserts;
+
+
+	/**
+	 * The standard constructor
+	 *
+	 * @param session                 The session
+	 * @param table                   The table to import into
+	 * @param columns                 The columns of the destination table
+	 * @param importerColumns         The columns of the importer
+	 * @param mapping                 The mapping of the columns
+	 * @param importer                The file importer
+	 * @param singleTransaction
+	 * @param commitAfterEveryInserts
+	 */
+	public ImportDataIntoTableExecutor(ISession session,
+												  ITableInfo table,
+												  TableColumnInfo[] columns,
+												  List<String> importerColumns,
+												  ColumnMappingTableModel mapping,
+												  IFileImporter importer,
+												  boolean singleTransaction,
+												  int commitAfterEveryInserts)
+	{
+		this.session = session;
+		this.table = table;
+		this.columns = columns;
+		this.columnMapping = mapping;
+		this.importer = importer;
+		this.importerColumns = importerColumns;
+
+		_singleTransaction = singleTransaction;
+		_commitAfterEveryInserts = commitAfterEveryInserts;
+	}
+
+	/**
      * If the header should be skipped
      * 
      * @param skip
@@ -99,25 +116,31 @@ public class ImportDataIntoTableExecutor {
     public void setSkipHeader(boolean skip) {
     	skipHeader = skip;
     }
-    
-    /**
-     * Starts the thread that executes the insert operation.
-     */
-    public void execute() {
-        Runnable runnable = new Runnable() {
-            public void run() {
-                _execute();
-            }
-        };
-        execThread = new Thread(runnable);
-        execThread.setName("Dataimport Executor Thread");
-        execThread.start();
-    }
 
-    /**
-     * Performs the table copy operation. 
-     */
-	 private void _execute()
+	/**
+    * Starts the thread that executes the insert operation.
+    */
+   public void execute()
+	{
+		Runnable runnable = new Runnable()
+      {
+         public void run()
+         {
+            _execute(_singleTransaction, _commitAfterEveryInserts);
+         }
+      };
+		execThread = new Thread(runnable);
+		execThread.setName("Dataimport Executor Thread");
+		execThread.setUncaughtExceptionHandler(createUncaughtExceptionHandler());
+		execThread.start();
+	}
+
+	/**
+     * Performs the table copy operation.
+	  * @param singleTransaction
+	  * @param commitAfterEveryInserts
+	  */
+	 private void _execute(boolean singleTransaction, int commitAfterEveryInserts)
 	 {
 		 // Create column list
 		 String columnList = createColumnList();
@@ -208,6 +231,14 @@ public class ImportDataIntoTableExecutor {
 					 }
 				 }
 				 stmt.execute();
+
+				 if (false == singleTransaction)
+				 {
+					 if(0 < currentRow && 0 == currentRow % commitAfterEveryInserts)
+                {
+                   conn.commit();
+                }
+				 }
 			 }
 			 importer.close();
 			 success = true;
@@ -263,6 +294,26 @@ public class ImportDataIntoTableExecutor {
 			 showMessageDialogOnEDT(stringMgr.getString("ImportDataIntoTableExecutor.success", currentRow));
 		 }
 	 }
+
+	private Thread.UncaughtExceptionHandler createUncaughtExceptionHandler()
+	{
+		return new Thread.UncaughtExceptionHandler()
+		{
+			@Override
+			public void uncaughtException(Thread t, final Throwable e)
+			{
+				GUIUtils.processOnSwingEventThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						throw new RuntimeException(e);
+					}
+				});
+			}
+		};
+	}
+
 
 	private void finishTransaction(ISQLConnection conn, boolean success)
 	{
