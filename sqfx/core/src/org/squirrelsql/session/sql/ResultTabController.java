@@ -21,7 +21,7 @@ public class ResultTabController
    private Session _session;
    private TableSearchCtrl _tableSearchCtrl;
 
-   public ResultTabController(Session session, SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
+   public ResultTabController(Session session, SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl, TableState tableState)
    {
       _session = session;
 
@@ -29,13 +29,14 @@ public class ResultTabController
 
       _containerTab = new Tab();
       _containerTab.setGraphic(new Label(tabText));
-      _containerTab.setUserData(new ResultTabUserData(sql));
 
-      _containerTab.setContent(createContainerPane(sqlResult, sql, sqlCancelTabCtrl));
+      _containerTab.setContent(createContainerPane(sqlResult, sql, sqlCancelTabCtrl, tableState));
+
+      _containerTab.setUserData(new ResultTabUserData(sql, _sqlResultTableDecorator.getTableLoader()));
 
    }
 
-   private BorderPane createContainerPane(SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
+   private BorderPane createContainerPane(SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl, TableState tableState)
    {
 
       FxmlHelper<SQLResultHeaderView> headerFxmlHelper = new FxmlHelper(SQLResultHeaderView.class);
@@ -61,7 +62,7 @@ public class ResultTabController
       headerFxmlHelper.getView().resultToolBar.getItems().add(_tableSearchCtrl.getSearchButton());
 
 
-      _sqlResultTableDecorator = new TableDecorator(_session, sql);
+      _sqlResultTableDecorator = new TableDecorator(_session, sql, tableState);
       headerFxmlHelper.getView().resultToolBar.getItems().add(_sqlResultTableDecorator.getEditButton());
 
       BorderPane bp = new BorderPane();

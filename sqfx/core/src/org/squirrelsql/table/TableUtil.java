@@ -1,6 +1,9 @@
 package org.squirrelsql.table;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.control.IndexedCell;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
@@ -24,6 +27,42 @@ public class TableUtil
    public static List<SimpleObjectProperty> createSimpleObjectPropertyRow(List row)
    {
       return createSimpleObjectPropertyRow(row.toArray(new Object[row.size()]));
+   }
+
+   public static int getFirstVisibleRow(TableView tableView)
+   {
+      VirtualFlow virtualFlow = (VirtualFlow) tableView.lookup(".virtual-flow");
+
+      IndexedCell firstVisibleCell = virtualFlow.getFirstVisibleCell();
+      int rowIndex = firstVisibleCell.getIndex();
+
+      return rowIndex;
+
+   }
+
+   public static void scrollTo(TableView tableView, int firstVisibleRow)
+   {
+      if(firstVisibleRow < 0 || tableView.getItems().size() <= firstVisibleRow)
+      {
+         return;
+      }
+
+
+
+      Platform.runLater(() -> doScrollTo(tableView, firstVisibleRow));
+   }
+
+   private static void doScrollTo(TableView tableView, int firstVisibleRow)
+   {
+      VirtualFlow virtualFlow = (VirtualFlow) tableView.lookup(".virtual-flow");
+
+      if(null == virtualFlow)
+      {
+         scrollTo(tableView, firstVisibleRow);
+         return;
+      }
+
+      virtualFlow.scrollTo(firstVisibleRow);
    }
 
    //   public static void __prepareExtendedSelection(TableView tv)

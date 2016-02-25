@@ -1,6 +1,9 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: After rerunning a SQL query the former table layout is restored.
+
+
 Feature: Made "Properties" button in Alias window work.
 
 Feature: Format SQL has three new options, see menu File -> Settings -> Tab Format SQL

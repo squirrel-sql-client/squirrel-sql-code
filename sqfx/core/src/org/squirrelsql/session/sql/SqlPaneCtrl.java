@@ -27,6 +27,7 @@ import org.squirrelsql.session.sql.features.SchemaUpdater;
 import org.squirrelsql.session.sql.features.SqlToTableCtrl;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
+import org.squirrelsql.table.TableState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -180,8 +181,6 @@ public class SqlPaneCtrl
 
    }
    
-   //FIXME This is not a great way to do this, kind of a hack to set/get the SQL of the selected tab
-   //TODO Move new tab to current tab spot, keep formatting of current tab in new tab
    public void onReExecuteSql()
    {
 	   Tab selectedTab = _sqlOutputTabPane.getSelectionModel().getSelectedItem();
@@ -189,7 +188,11 @@ public class SqlPaneCtrl
 	   {
          int indexToReplace = _sqlOutputTabPane.getSelectionModel().getSelectedIndex();
 
-         String sql = ((ResultTabUserData)selectedTab.getUserData()).getSql();
+         ResultTabUserData resultTabUserData = (ResultTabUserData) selectedTab.getUserData();
+         String sql = resultTabUserData.getSql();
+
+         TableState tableState = new TableState(resultTabUserData.getResultTableLoader());
+
 		   SQLTokenizer sqlTokenizer = new SQLTokenizer(sql);
 		   SchemaUpdater schemaUpdater = new SchemaUpdater(_sessionTabContext.getSession());
 		   SqlExecutionFinishedListener sqlExecutionFinishedListener = new SqlExecutionFinishedListener() {
@@ -197,10 +200,9 @@ public class SqlPaneCtrl
 			   public void finished(boolean success)
 			   {
 				   onSqlExecutionFinished(success, sqlTokenizer, this, schemaUpdater);
-				   _sqlOutputTabPane.getTabs().remove(selectedTab);
 			   }
 		   };
-		   _execSingleStatement(sqlTokenizer.getFirstSql(), sqlExecutionFinishedListener, indexToReplace);
+		   _execSingleStatement(sqlTokenizer.getFirstSql(), sqlExecutionFinishedListener, new PredecessorTabData(indexToReplace, tableState));
 	   }
    }
    private void onSqlExecutionFinished(boolean success, SQLTokenizer sqlTokenizer, SqlExecutionFinishedListener sqlExecutionFinishedListener, SchemaUpdater schemaUpdater)
@@ -229,7 +231,7 @@ public class SqlPaneCtrl
    }
 
 
-   private void _execSingleStatement(String sql, SqlExecutionFinishedListener sqlExecutionFinishedListener, Integer indexToReplace)
+   private void _execSingleStatement(String sql, SqlExecutionFinishedListener sqlExecutionFinishedListener, PredecessorTabData predecessorTabData)
    {
       StatementChannel statementChannel = new StatementChannel();
 
@@ -251,14 +253,14 @@ public class SqlPaneCtrl
          @Override
          public void goOn(StatementExecution  statementExecution)
          {
-            onGoOn(statementExecution, sql, sqlCancelTabCtrl, sqlExecutionFinishedListener, indexToReplace);
+            onGoOn(statementExecution, sql, sqlCancelTabCtrl, sqlExecutionFinishedListener, predecessorTabData);
          }
       };
 
       ProgressUtil.start(pt);
    }
 
-   private void onGoOn(StatementExecution statExec, String sql, SQLCancelTabCtrl sqlCancelTabCtrl, SqlExecutionFinishedListener sqlExecutionFinishedListener, Integer indexToReplace)
+   private void onGoOn(StatementExecution statExec, String sql, SQLCancelTabCtrl sqlCancelTabCtrl, SqlExecutionFinishedListener sqlExecutionFinishedListener, PredecessorTabData predecessorTabData)
    {
       removeErrorTab();
 
@@ -295,18 +297,18 @@ public class SqlPaneCtrl
             if (0 == i)
             {
                sqlCancelTabCtrl.convertToInfoTab(statExec.getCompleteTime());
-               resultTabController = new ResultTabController(_sessionTabContext.getSession(), sqlResult, sql, sqlCancelTabCtrl);
+               resultTabController = new ResultTabController(_sessionTabContext.getSession(), sqlResult, sql, sqlCancelTabCtrl, getTableStateOrNull(predecessorTabData));
             }
             else
             {
-               resultTabController = new ResultTabController(_sessionTabContext.getSession(), sqlResult, sql, null);
+               resultTabController = new ResultTabController(_sessionTabContext.getSession(), sqlResult, sql, null, getTableStateOrNull(predecessorTabData));
             }
 
             Tab outputTab = resultTabController.getTab();
-            if (null != indexToReplace)
+            if (null != predecessorTabData)
             {
-               _sqlOutputTabPane.getTabs().remove(indexToReplace);
-               addAndSelectTabAt(outputTab, indexToReplace, false);
+               _sqlOutputTabPane.getTabs().remove(predecessorTabData.getIndexToReplace());
+               addAndSelectTabAt(outputTab, false, predecessorTabData);
             }
             else
             {
@@ -328,6 +330,15 @@ public class SqlPaneCtrl
       }
    }
 
+   private TableState getTableStateOrNull(PredecessorTabData predecessorTabData)
+   {
+      if(null == predecessorTabData)
+      {
+         return null;
+      }
+      return predecessorTabData.getTableState();
+   }
+
    private void removeErrorTab()
    {
       List<ErrorTab> toRemove = new ArrayList<>();
@@ -344,12 +355,12 @@ public class SqlPaneCtrl
 
    private void addAndSelectTab(Tab outputTab, boolean checkResultLimit)
    {
-      addAndSelectTabAt(outputTab, null, checkResultLimit);
+      addAndSelectTabAt(outputTab, checkResultLimit, null);
    }
 
-   private void addAndSelectTabAt(Tab outputTab, Integer index, boolean checkResultLimit)
+   private void addAndSelectTabAt(Tab outputTab, boolean checkResultLimit, PredecessorTabData predecessorTabData)
    {
-      if (null == index)
+      if (null == predecessorTabData)
       {
          _sqlOutputTabPane.getTabs().add(outputTab);
 
@@ -362,7 +373,7 @@ public class SqlPaneCtrl
       }
       else
       {
-         _sqlOutputTabPane.getTabs().add(index, outputTab);
+         _sqlOutputTabPane.getTabs().add(predecessorTabData.getIndexToReplace(), outputTab);
       }
 
       RightMouseMenuHandler resultTabRightMouseMenu = new RightMouseMenuHandler((Control) outputTab.getGraphic());

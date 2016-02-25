@@ -159,10 +159,6 @@ public class TableLoader
       return colIx;
    }
 
-   public int getColumnViewIndex(int colModelIndex)
-   {
-      return _tableView.getColumns().indexOf(_columnHandles.get(colModelIndex).getTableColumn());
-   }
 
 
    //TODO Need a better way of handling this, could be other objects besides BigDecimal
@@ -276,5 +272,47 @@ public class TableLoader
       _simpleObjectPropertyRows.removeAll(deletedRows);
       _tableView.refresh();
       _tableView.getSelectionModel().clearSelection();
+   }
+
+   public int getColumnViewIndex(int colModelIndex)
+   {
+      int ret = _tableView.getColumns().indexOf(_columnHandles.get(colModelIndex).getTableColumn());
+
+      if(-1 == ret)
+      {
+         throw new IllegalArgumentException("Column not found in TableView: " + _columnHandles.get(colModelIndex).getTableColumn());
+      }
+
+      return ret;
+   }
+
+   public int getColumnModelIndex(TableColumn col)
+   {
+      for (int i = 0; i < _columnHandles.size(); i++)
+      {
+         ColumnHandle columnHandle =  _columnHandles.get(i);
+
+         if(columnHandle.getTableColumn() == col)
+         {
+            return i;
+         }
+
+      }
+
+      throw new IllegalArgumentException("Unknown column: " + col);
+   }
+
+   public int getColumnViewIndex(TableColumn col)
+   {
+      for (int i = 0; i < _tableView.getColumns().size(); i++)
+      {
+         if(_tableView.getColumns().get(i) == col)
+         {
+            return i;
+         }
+
+      }
+
+      throw new IllegalArgumentException("Unknown column: " + col);
    }
 }

@@ -12,15 +12,19 @@ import org.squirrelsql.session.sql.copysqlpart.InStatCreator;
 import org.squirrelsql.session.sql.copysqlpart.InsertStatCreator;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
 import org.squirrelsql.table.TableLoader;
+import org.squirrelsql.table.TableState;
 import org.squirrelsql.table.tableexport.ExportResultsCtrl;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
 
 public class TableDecorator
 {
    private EditButtonCtrl _editButtonCtrl;
+   private TableLoader _tableLoader;
+   private TableState _tableState;
 
-   public TableDecorator(Session session, String sql)
+   public TableDecorator(Session session, String sql, TableState tableState)
    {
+      _tableState = tableState;
       _editButtonCtrl = new EditButtonCtrl(session, sql);
    }
 
@@ -40,15 +44,15 @@ public class TableDecorator
 
    public StackPane decorateTable(SQLResult sqlResult)
    {
-      TableLoader tableLoader = sqlResult.getResultTableLoader();
+      _tableLoader = sqlResult.getResultTableLoader();
 
       TableView tv = new TableView();
       RightMouseMenuHandler sqlResultRightMouseMenuHandler = new RightMouseMenuHandler(tv);
-      ExtendedTableSelectionHandler extendedTableSelectionHandler = doStandardConfigs(tableLoader, tv, sqlResultRightMouseMenuHandler);
+      ExtendedTableSelectionHandler extendedTableSelectionHandler = doStandardConfigs(_tableLoader, tv, sqlResultRightMouseMenuHandler);
 
       if (null != _editButtonCtrl && _editButtonCtrl.allowsEditing())
       {
-         _editButtonCtrl.displayAndPrepareEditing(sqlResult, tv);
+         _editButtonCtrl.displayAndPrepareEditing(sqlResult, tv, _tableState);
 
          sqlResultRightMouseMenuHandler.addSeparator();
          MenuItem mnuDeleteRows = sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.delete.selected.rows"), () -> _editButtonCtrl.deleteSelectedRows());
@@ -58,7 +62,13 @@ public class TableDecorator
       }
       else
       {
-         tableLoader.load(tv);
+         _tableLoader.load(tv);
+
+         if(null != _tableState)
+         {
+            _tableState.apply(_tableLoader);
+         }
+
       }
 
       return extendedTableSelectionHandler.getStackPane();
@@ -89,10 +99,16 @@ public class TableDecorator
       return extendedTableSelectionHandler;
    }
 
+   public TableLoader getTableLoader()
+   {
+      return _tableLoader;
+   }
 
    public static StackPane decorateNonSqlEditableTable(TableLoader tableLoader)
    {
       return new TableDecorator().decorateTable(tableLoader);
    }
+
+
 
 }

@@ -9,6 +9,7 @@ import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.SQLResult;
 import org.squirrelsql.table.ColumnHandle;
 import org.squirrelsql.table.NullMarker;
+import org.squirrelsql.table.TableState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +21,18 @@ public class EditableTableController
    private final TableView _tv;
    private String _tableNameFromSQL;
 
-   public EditableTableController(Session session, SQLResult sqlResult, TableView tv, String tableNameFromSQL)
+   public EditableTableController(Session session, SQLResult sqlResult, TableView tv, TableState tableState, String tableNameFromSQL)
    {
       _session = session;
       _sqlResult = sqlResult;
       _tv = tv;
       _tableNameFromSQL = tableNameFromSQL;
       _sqlResult.getResultTableLoader().load(tv);
+
+      if(null != tableState)
+      {
+         tableState.apply(_sqlResult.getResultTableLoader());
+      }
 
       initTableEditListener();
    }
