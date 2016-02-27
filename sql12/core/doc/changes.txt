@@ -7,7 +7,7 @@ Not yet released, available in our GIT repository and in future snapshots and re
 Enhancements:
 
 Alias properties --> Tab Schemas --> Table is now sortable
-  Thanks to Marek for the patch
+  Thanks to Marek for the patch.
 
 Data import plugin: New option to choose if import is done in a single transaction
                     or if data is committed after every N numbers of inserts, where N can be configured.
@@ -34,18 +34,22 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+For the DB2 data types "FOR BIT DATA", GRAPHIC and VARGRAPHIC the "Store result of SQL in table" function did not create the correct "CREATE TABLE" script.
+  Thanks to Marek for the patch.
+
+
 Concerning result output as text:
   Replace null string character (0x00) with SPACE char, as this character cannot be copied to clipboard and data after this null char are not copied.
   (E.g. occurs when working on Win7 with DB2.)
   This fix also replace FF form feed character (0x0C) with SPACE char,
   as FF character is causing problem when text data are pasted into advanced text editor like Ultraedit, it creates unexpected new lines.
-  Thanks to Marek for the patch
+  Thanks to Marek for the patch.
 
 Some options in New Session Properties (abort on error, write sql errors to log file) are not saved after Squirrel restart
-  Thanks to Marek for the patch
+  Thanks to Marek for the patch.
 
 Milliseconds are lost when you copy timestamp value via "Copy as SQL INSERT-VALUES statement" option
-  Thanks to Marek for the patch
+  Thanks to Marek for the patch.
 
 #1240 Data import plugin: When exception occured auto commit mode was usually changed.
   Along with this fix come the following improvements:

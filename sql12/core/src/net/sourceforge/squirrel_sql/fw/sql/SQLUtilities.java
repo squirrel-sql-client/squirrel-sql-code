@@ -412,32 +412,47 @@ public class SQLUtilities
       StringBuffer sbColDef = new StringBuffer();
       String sLower = sType.toLowerCase();
       sbColDef.append(sColumnName).append(" ");
-      sbColDef.append(sType);
 
-      if (sLower.indexOf("char") != -1)
-      {
-         sbColDef.append("(");
-         sbColDef.append(columnSize).append(decimalDigitsString);
-         sbColDef.append(")");
-      }
-      else if (sLower.equals("numeric"))
-      {
-         sbColDef.append("(");
-         sbColDef.append(columnSize).append(decimalDigitsString);
-         sbColDef.append(")");
-      }
-      else if (sLower.equals("number"))
-      {
-         sbColDef.append("(");
-         sbColDef.append(columnSize).append(decimalDigitsString);
-         sbColDef.append(")");
-      }
-      else if (sLower.equals("decimal"))
-      {
-         sbColDef.append("(");
-         sbColDef.append(columnSize).append(decimalDigitsString);
-         sbColDef.append(")");
-      }
+		if (sLower.indexOf(" for bit data") != -1)
+		{
+			int a = sLower.indexOf(" for bit data");
+			String sLower2;
+			sLower2 = sLower.substring(0, a);
+			sbColDef.append(sLower2.toUpperCase());
+			sbColDef.append("(");
+			sbColDef.append(columnSize).append(decimalDigitsString);
+			sbColDef.append(")");
+			sbColDef.append(" FOR BIT DATA");
+		}
+		else
+		{
+			sbColDef.append(sType);
+
+			if (sLower.indexOf("char") != -1 || sLower.indexOf("graphic") != -1)
+			{
+				sbColDef.append("(");
+				sbColDef.append(columnSize).append(decimalDigitsString);
+				sbColDef.append(")");
+			}
+			else if (sLower.equals("numeric"))
+			{
+				sbColDef.append("(");
+				sbColDef.append(columnSize).append(decimalDigitsString);
+				sbColDef.append(")");
+			}
+			else if (sLower.equals("number"))
+			{
+				sbColDef.append("(");
+				sbColDef.append(columnSize).append(decimalDigitsString);
+				sbColDef.append(")");
+			}
+			else if (sLower.equals("decimal"))
+			{
+				sbColDef.append("(");
+				sbColDef.append(columnSize).append(decimalDigitsString);
+				sbColDef.append(")");
+			}
+		}
 
       return sbColDef.toString();
    }
