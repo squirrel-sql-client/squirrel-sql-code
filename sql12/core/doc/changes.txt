@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Alias properties --> Tab Schemas --> Table is now sortable
+  Thanks to Marek for the patch
+
 Data import plugin: New option to choose if import is done in a single transaction
                     or if data is committed after every N numbers of inserts, where N can be configured.
 

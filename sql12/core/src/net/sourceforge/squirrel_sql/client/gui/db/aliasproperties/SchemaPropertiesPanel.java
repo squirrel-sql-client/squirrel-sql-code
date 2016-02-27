@@ -82,6 +82,7 @@ public class SchemaPropertiesPanel extends JPanel
       add(lblSchemaTableTitle, gbc);
 
       tblSchemas = new JTable();
+      tblSchemas.setAutoCreateRowSorter(true);
       gbc = new GridBagConstraints(0,6,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5), 0,0);
       add(new JScrollPane(tblSchemas), gbc);
 
