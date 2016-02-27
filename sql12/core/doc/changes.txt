@@ -31,6 +31,9 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+Some options in New Session Properties (abort on error, write sql errors to log file) are not saved after Squirrel restart
+  Thanks to Marek for the patch
+
 Milliseconds are lost when you copy timestamp value via "Copy as SQL INSERT-VALUES statement" option
   Thanks to Marek for the patch
 
