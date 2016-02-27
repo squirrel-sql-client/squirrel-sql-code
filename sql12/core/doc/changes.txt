@@ -31,6 +31,9 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+Milliseconds are lost when you copy timestamp value via "Copy as SQL INSERT-VALUES statement" option
+  Thanks to Marek for the patch
+
 #1240 Data import plugin: When exception occured auto commit mode was usually changed.
   Along with this fix come the following improvements:
   - UI is resizeable

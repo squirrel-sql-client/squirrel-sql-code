@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Calendar;
 import java.util.regex.Matcher;
@@ -68,11 +69,11 @@ public class TableCopySqlPartCommandBase
                Calendar cal = Calendar.getInstance();
                cal.setTime(date);
                return getPrefixForStatType(statType, false) + "{ts '" + prefixNulls(cal.get(Calendar.YEAR), 4) + "-" +
-                               prefixNulls(cal.get(Calendar.MONTH) + 1, 2) + "-" +
-                               prefixNulls(cal.get(Calendar.DAY_OF_MONTH) ,2) + " " +
-                               prefixNulls(cal.get(Calendar.HOUR_OF_DAY), 2) + ":" +
-                               prefixNulls(cal.get(Calendar.MINUTE), 2) + ":" +
-                               prefixNulls(cal.get(Calendar.SECOND), 2) + "'}";
+                     prefixNulls(cal.get(Calendar.MONTH) + 1, 2) + "-" +
+                     prefixNulls(cal.get(Calendar.DAY_OF_MONTH), 2) + " " +
+                     prefixNulls(cal.get(Calendar.HOUR_OF_DAY), 2) + ":" +
+                     prefixNulls(cal.get(Calendar.MINUTE), 2) + ":" +
+                     prefixNulls(cal.get(Calendar.SECOND), 2) + getNanoString(date);
             }
             else
             {
@@ -80,6 +81,25 @@ public class TableCopySqlPartCommandBase
             }
          }
       }
+   }
+
+   private String getNanoString(java.util.Date date)
+   {
+      if(false == date instanceof Timestamp)
+      {
+         return "";
+      }
+
+      Timestamp ts = (Timestamp) date;
+
+      int nanos = ts.getNanos() / 1000;
+
+      if(0 == nanos)
+      {
+         return "";
+      }
+
+      return "." + prefixNulls(nanos, 6) + "'}";
    }
 
    private String getPrefixForStatType(StatType statType, boolean isNullVal)
