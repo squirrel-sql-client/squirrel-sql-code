@@ -97,6 +97,10 @@ public class DataSetTextAreaController
 	{
 		data = data.replace('\n', ' ');
 		data = data.replace('\r', ' ');
+                //replace null string character (0x00) with SPACE char, as this character cannot be copied to clipboard
+                data = data.replace('\u0000', ' ');
+                //replace FF character (0x0C) with SPACE char
+                data = data.replace('\u000C', ' ');
 		StringBuffer output = new StringBuffer(data);
 		if (displaySize > IDataSetViewer.MAX_COLUMN_WIDTH)
 		{
