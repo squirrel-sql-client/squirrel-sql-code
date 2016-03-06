@@ -34,6 +34,10 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+Improved logging and handling of "Content" tab display in "Objects" tab with the aim of tracking/preventing.
+ - If an SQL to load the content tab fails, the complete SQL string ist written to the logs
+ - "SELECT *  ..." statement is issued as last fallback.
+
 For the DB2 data types "FOR BIT DATA", GRAPHIC and VARGRAPHIC the "Store result of SQL in table" function did not create the correct "CREATE TABLE" script.
   Thanks to Marek for the patch.
 

@@ -37,7 +37,6 @@ import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
@@ -46,12 +45,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -251,93 +245,26 @@ public class ContentsTab extends BaseTableTab
             }
 
             ResultSet rs = null;
-            StringBuilder coded = gatherColumnsForContentSelect(md, ti);
-			
-            try
+            String coded = gatherColumnsForContentSelect(md, ti).toString();
+
+
+
+            rs = createResultSet(ti, stmt, coded + pseudoColumn);
+
+            if(null == rs)
             {
-               // Note. Some DBMSs such as Oracle do not allow:
-               // "select *, rowid from table"
-               // You cannot have any column name in the columns clause
-               // if you have * in there. Aliasing the table name seems to
-               // be the best way to get around the problem.
-               final StringBuffer buf = new StringBuffer();
-               buf.append("select " + coded)
-                  .append(pseudoColumn)
-                  .append(" from ")
-                  .append(ti.getQualifiedName())
-                  .append(" tbl");
-
-               String clause = _sqlFilterClauses.get(WhereClausePanel.getClauseIdentifier(), ti.getQualifiedName());
-               if ((clause != null) && (clause.length() > 0))
-               {
-                 buf.append(" where ").append(clause);
-               }
-               clause = _sqlFilterClauses.get(OrderByClausePanel.getClauseIdentifier(), ti.getQualifiedName());
-               if ((clause != null) && (clause.length() > 0))
-               {
-                 buf.append(" order by ").append(clause);
-               }
-
-               if (s_log.isDebugEnabled()) {
-                   s_log.debug("createDataSet running SQL: "+buf.toString());
-               }
-                           
-               showWaitDialog(stmt);               
-
-               rs = stmt.executeQuery(buf.toString());
-
-            }
-            catch (SQLException ex)
-            {
-                if (s_log.isDebugEnabled()) {
-                        s_log.debug(
-                            "createDataSet: exception from pseudocolumn query - "
-                                    + ex, ex);
-                    }
-                // We assume here that if the pseudoColumn was used in the query,
-                // then it was likely to have caused the SQLException.  If not, 
-                // (length == 0), then retrying the query won't help - just throw
-                // the exception.
-               if (pseudoColumn.length() == 0)
-               {
-                  throw ex;
-               }
-               // pseudocolumn query failed, so reset it.  Otherwise, we'll 
-               // mistake the last column for a pseudocolumn and make it 
-               // uneditable 
                pseudoColumn = "";
+               rs = createResultSet(ti, stmt, coded);
 
-               // Some tables have pseudo column primary keys and others
-               // do not.  JDBC on some DBMSs does not handle pseudo
-               // columns 'correctly'.  Also, getTables returns 'views' as
-               // well as tables, so the thing we are looking at might not
-               // be a table. (JDBC does not give a simple way to
-               // determine what we are looking at since the type of
-               // object is described in a DBMS-specific encoding.)  For
-               // these reasons, rather than testing for all these
-               // conditions, we just try using the pseudo column info to
-               // get the table data, and if that fails, we try to get the
-               // table data without using the pseudo column.
-               // TODO: Should we change the mode from editable to
-               // non-editable?
-               final StringBuffer buf = new StringBuffer();
-               buf.append("select "+ coded)
-                  .append(" from ")
-                  .append(ti.getQualifiedName())
-                  .append(" tbl");
-
-               String clause = _sqlFilterClauses.get(WhereClausePanel.getClauseIdentifier(), ti.getQualifiedName());
-               if ((clause != null) && (clause.length() > 0))
+               if(null == rs)
                {
-                 buf.append(" where ").append(clause);
-               }
-               clause = _sqlFilterClauses.get(OrderByClausePanel.getClauseIdentifier(), ti.getQualifiedName());
-               if ((clause != null) && (clause.length() > 0))
-               {
-                 buf.append(" order by ").append(clause);
-               }
+                  rs = createResultSet(ti, stmt, "*");
 
-               rs = stmt.executeQuery(buf.toString());
+                  if(null == rs)
+                  {
+                     throw new IllegalStateException("Failed any way to execute content SQL. See former warning log entries for details.");
+                  }
+               }
             }
 
             // KLUDGE:
@@ -395,6 +322,48 @@ public class ContentsTab extends BaseTableTab
          throw new DataSetException(ex);
       } finally {
           disposeWaitDialog();
+      }
+   }
+
+   private ResultSet createResultSet(ITableInfo ti, Statement stmt, String columnsExpression)
+   {
+      final StringBuffer buf = new StringBuffer();
+      try
+      {
+
+         buf.append("select ")
+               .append(columnsExpression)
+               .append(" from ")
+               .append(ti.getQualifiedName())
+               .append(" tbl");
+
+         String clause = _sqlFilterClauses.get(WhereClausePanel.getClauseIdentifier(), ti.getQualifiedName());
+         if ((clause != null) && (clause.length() > 0))
+         {
+            buf.append(" where ").append(clause);
+         }
+         clause = _sqlFilterClauses.get(OrderByClausePanel.getClauseIdentifier(), ti.getQualifiedName());
+         if ((clause != null) && (clause.length() > 0))
+         {
+            buf.append(" order by ").append(clause);
+         }
+
+         if (s_log.isDebugEnabled()) {
+            s_log.debug("createDataSet running SQL: " + buf.toString());
+         }
+
+         showWaitDialog(stmt);
+
+         ResultSet rs = stmt.executeQuery(buf.toString());
+
+         return rs;
+      }
+      catch (Throwable e)
+      {
+         s_log.warn("Failed to execute content SQL: " + buf.toString(), e);
+
+         //throw (e instanceof RuntimeException ? (RuntimeException)e : new RuntimeException(e));
+         return null;
       }
    }
 
