@@ -18,6 +18,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockHandle;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockHandleEvent;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockHandleListener;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 
@@ -193,6 +194,12 @@ public class DockDelegate implements IDockDelegate
    }
 
    public JInternalFrame getInternalFrame()
+   {
+      return null;
+   }
+
+   @Override
+   public TabHandle getTabHandle()
    {
       return null;
    }

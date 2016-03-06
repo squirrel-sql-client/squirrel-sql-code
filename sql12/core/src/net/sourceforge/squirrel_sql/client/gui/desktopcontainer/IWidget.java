@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
+
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
 
@@ -18,9 +20,15 @@ public interface IWidget
 
    /**
     *
-    * @return Will return null if tabbed mode is used.
+    * @return Will return null if tabbed mode is used, {@link DesktopStyle#isDockTabStyle()}
     */
    JInternalFrame getInternalFrame();
+
+   /**
+    *
+    * @return Will return null if InternalFrame mode is used, see {@link DesktopStyle#isDockTabStyle()}
+    */
+   TabHandle getTabHandle();
 
    String getTitle();
 
@@ -39,4 +47,5 @@ public interface IWidget
    boolean isClosed();
 
    boolean isIcon();
+
 }

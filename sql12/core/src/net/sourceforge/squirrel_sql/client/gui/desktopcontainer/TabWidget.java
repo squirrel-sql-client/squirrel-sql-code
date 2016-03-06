@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
 
 public class TabWidget implements IWidget
 {
@@ -40,7 +41,7 @@ public class TabWidget implements IWidget
    }
 
    @Override
-public void moveToFront()
+   public void moveToFront()
    {
       _delegate._moveToFront();
    }
@@ -72,7 +73,7 @@ public void moveToFront()
    }
 
    @Override
-public String getTitle()
+   public String getTitle()
    {
       return _delegate.getTitle();
    }
@@ -88,13 +89,13 @@ public String getTitle()
    }
 
    @Override
-public void dispose()
+   public void dispose()
    {
       _delegate._dispose();
    }
 
    @Override
-public void setTitle(String title)
+   public void setTitle(String title)
    {
       _delegate._setTitle(title);
    }
@@ -111,13 +112,13 @@ public void setTitle(String title)
 
 
    @Override
-public void updateUI()
+   public void updateUI()
    {
       _delegate._updateUI();
    }
 
    @Override
-public void setVisible(boolean aFlag)
+   public void setVisible(boolean aFlag)
    {
       _delegate._setVisible(aFlag);
    }
@@ -160,13 +161,13 @@ public void setVisible(boolean aFlag)
    }
 
    @Override
-public void addWidgetListener(WidgetListener widgetListener)
+   public void addWidgetListener(WidgetListener widgetListener)
    {
       _delegate.addTabWidgetListener(widgetListener);
    }
 
    @Override
-public void removeWidgetListener(WidgetListener widgetListener)
+   public void removeWidgetListener(WidgetListener widgetListener)
    {
       _delegate.removeTabWidgetListener(widgetListener);
    }
@@ -176,49 +177,56 @@ public void removeWidgetListener(WidgetListener widgetListener)
       _delegate.setBounds(rectangle);
    }
 
-   public Rectangle getBounds() {
-   	return _delegate.getBounds();
+   public Rectangle getBounds()
+   {
+      return _delegate.getBounds();
    }
-   
+
    @Override
-public JInternalFrame getInternalFrame()
+   public JInternalFrame getInternalFrame()
    {
       return _delegate.getInternalFrame();
    }
 
+   @Override
+   public TabHandle getTabHandle()
+   {
+      return _delegate.getTabHandle();
+   }
+
    public void setSelected(boolean b)
-      throws PropertyVetoException
+         throws PropertyVetoException
    {
       _delegate.setSelected(b);
    }
 
 
    @Override
-public void putClientProperty(Object key, Object prop)
+   public void putClientProperty(Object key, Object prop)
    {
       _delegate.putClientProperty(key, prop);
    }
 
    @Override
-public Object getClientProperty(Object key)
+   public Object getClientProperty(Object key)
    {
       return _delegate.getClientProperty(key);
    }
 
    @Override
-public boolean isToolWindow()
+   public boolean isToolWindow()
    {
       return _delegate.isClosed();
    }
 
    @Override
-public boolean isClosed()
+   public boolean isClosed()
    {
       return _delegate.isClosed();
    }
 
    @Override
-public boolean isIcon()
+   public boolean isIcon()
    {
       return _delegate.isIcon();
    }
@@ -245,19 +253,22 @@ public boolean isIcon()
    }
 
    @Override
-public void addNotify()
+   public void addNotify()
    {
       _delegate._addNotify();
    }
-   
-   public void setTip(String tip) {
-	this.tip = tip;
+
+   public void setTip(String tip)
+   {
+      this.tip = tip;
    }
-   
-   public String getTip() {
-	   if (tip == null) {
-		   return _delegate.getTitle();
-	   }
-	   return tip;
+
+   public String getTip()
+   {
+      if (tip == null)
+      {
+         return _delegate.getTitle();
+      }
+      return tip;
    }
 }

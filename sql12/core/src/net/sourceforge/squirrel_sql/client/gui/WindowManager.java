@@ -159,7 +159,7 @@ public class WindowManager
 	 * Map of windows(s) that are currently open for a session, keyed by
 	 * session ID.
 	 */
-	private final SessionWindowsHolder _sessionWindows = new SessionWindowsHolder();
+	private final SessionWindowsHolder _sessionWindows;
 
 	private final SessionWindowListener _windowListener = new SessionWindowListener();
 
@@ -211,6 +211,7 @@ public class WindowManager
 			}
 		}, true);
 		new DebugEventListener().setEnabled(enableUserInterfaceDebug);
+		_sessionWindows = new SessionWindowsHolder(_app);
 	}
 
 	/**

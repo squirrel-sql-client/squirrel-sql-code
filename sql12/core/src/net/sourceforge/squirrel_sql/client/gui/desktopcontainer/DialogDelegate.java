@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
@@ -163,6 +164,13 @@ public class DialogDelegate extends JDialog implements IDialogDelegate
    {
       return null;
    }
+
+   @Override
+   public TabHandle getTabHandle()
+   {
+      return null;
+   }
+
 
    public void setSelected(boolean b)
    {

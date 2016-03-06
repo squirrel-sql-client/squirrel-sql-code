@@ -169,4 +169,13 @@ public class TabHandle
       return _fireClosingProceedingOrDone;
    }
 
+   public TabHandle getPreviousTabHandle()
+   {
+      return _dockTabDesktopPane.getPreviousTabHandle(this);
+   }
+
+   public TabHandle getNextTabHandle()
+   {
+      return _dockTabDesktopPane.getNextTabHandle(this);
+   }
 }

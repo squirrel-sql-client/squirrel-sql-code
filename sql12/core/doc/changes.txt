@@ -34,6 +34,8 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+#1241 Switching tab using Alt Left/Right doesn't work right after tabs were moved using drag and drop
+
 Improved logging and handling of "Content" tab display in "Objects" tab with the aim of tracking/preventing.
  - If an SQL to load the content tab fails, the complete SQL string ist written to the logs
  - "SELECT *  ..." statement is issued as last fallback.

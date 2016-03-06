@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -152,6 +153,12 @@ public class DockWidget implements IWidget
    public JInternalFrame getInternalFrame()
    {
       return _delegate.getInternalFrame();
+   }
+
+   @Override
+   public TabHandle getTabHandle()
+   {
+      return _delegate.getTabHandle();
    }
 
    public void setSelected(boolean b)

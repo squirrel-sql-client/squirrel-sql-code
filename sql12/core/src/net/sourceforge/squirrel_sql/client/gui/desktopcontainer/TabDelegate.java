@@ -245,6 +245,12 @@ public class TabDelegate implements ITabDelegate
       return null;  //To change body of implemented methods use File | Settings | File Templates.
    }
 
+   @Override
+   public TabHandle getTabHandle()
+   {
+      return _tabHandle;
+   }
+
    public void setBounds(Rectangle rectangle)
    {
       _widget.setBounds(rectangle);

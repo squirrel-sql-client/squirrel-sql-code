@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.client.gui;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
@@ -27,13 +28,19 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * Allows to acces open Session windows by Session and by opening sequence.
+ * Allows to access open Session windows by Session and by opening sequence.
  */
 public class SessionWindowsHolder
 {
    HashMap<IIdentifier, List<ISessionWidget>> _framesBySessionIdentifier = new HashMap<IIdentifier, List<ISessionWidget>>();
    HashMap<ISessionWidget, IIdentifier> _sessionIdentifierByFrame = new HashMap<ISessionWidget, IIdentifier>();
    Vector<ISessionWidget> _framesInOpeningSequence = new Vector<ISessionWidget>();
+   private IApplication _app;
+
+   public SessionWindowsHolder(IApplication app)
+   {
+      _app = app;
+   }
 
    public int addFrame(IIdentifier sessionIdentifier, ISessionWidget sessionWidget)
    {
@@ -97,17 +104,19 @@ public class SessionWindowsHolder
 
    public ISessionWidget getNextSessionWindow(ISessionWidget sessionWindow)
    {
-      int nextIx = _framesInOpeningSequence.indexOf(sessionWindow) + 1;
+      ISessionWidgetIndexHandler indexHandler = getSessionWidgetIndexHandler();
 
-      if(nextIx < _framesInOpeningSequence.size())
+      ISessionWidget nextWidget = indexHandler.getNextWidget(sessionWindow);
+
+      if(null != nextWidget)
       {
-         return _framesInOpeningSequence.get(nextIx);
+         return nextWidget;
       }
       else
       {
-         if(1 < _framesInOpeningSequence.size())
+         if(1 < indexHandler.size())
          {
-            return _framesInOpeningSequence.get(0);
+            return indexHandler.getFirstSessionWidget();
          }
          else
          {
@@ -118,18 +127,20 @@ public class SessionWindowsHolder
 
    public ISessionWidget getPreviousSessionWindow(ISessionWidget sessionWindow)
    {
-      int prevIx = _framesInOpeningSequence.indexOf(sessionWindow) -1;
+      ISessionWidgetIndexHandler indexHandler = getSessionWidgetIndexHandler();
 
-      if( 0 <= prevIx)
+      ISessionWidget prevWidget = indexHandler.getPreviousWidget(sessionWindow);
+
+      if( null != prevWidget)
       {
-         return _framesInOpeningSequence.get(prevIx);
+         return prevWidget;
       }
       else
       {
 
-         if(1 < _framesInOpeningSequence.size())
+         if(1 < indexHandler.size() )
          {
-            return _framesInOpeningSequence.get(_framesInOpeningSequence.size() - 1);
+            return indexHandler.getLastSessionWidget();
          }
          else
          {
@@ -137,4 +148,18 @@ public class SessionWindowsHolder
          }
       }
    }
+
+   private ISessionWidgetIndexHandler getSessionWidgetIndexHandler()
+   {
+      if(_app.getDesktopStyle().isDockTabStyle())
+      {
+         return new TabSequenceBasedSessionWidgetIndexHandler(_app);
+      }
+      else
+      {
+         return new OpeningSequenceBasedSessionWidgetIndexHandler(_framesInOpeningSequence);
+      }
+   }
+
+
 }

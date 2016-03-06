@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 
@@ -161,6 +162,13 @@ public class InternalFrameDelegate extends JInternalFrame implements IDialogDele
    {
       return this;
    }
+
+   @Override
+   public TabHandle getTabHandle()
+   {
+      return null;
+   }
+
 
 
    public void makeToolWindow(boolean isToolWindow)

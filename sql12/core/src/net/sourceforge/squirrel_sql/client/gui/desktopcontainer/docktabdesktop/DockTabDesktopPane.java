@@ -540,9 +540,6 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
    }
 
 
-
-
-
    private int getTabIndex(TabHandle tabHandle)
    {
       for (int i = 0; i < _tabbedPane.getTabCount(); ++i)
@@ -557,6 +554,13 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
       return -1;
    }
+
+   public TabHandle getHandleAtTabIndex(int tabIndex)
+   {
+      TabPanel comp = (TabPanel) _tabbedPane.getComponentAt(tabIndex);
+      return comp.getTabHandle();
+   }
+
 
 
    public Dimension getRequiredSize()
@@ -678,4 +682,27 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       return _tabHandles.size();
    }
 
+   public TabHandle getPreviousTabHandle(TabHandle tabHandle)
+   {
+      int tabIndex = getTabIndex(tabHandle);
+
+      if(0 < tabIndex)
+      {
+         return getHandleAtTabIndex(tabIndex - 1);
+      }
+
+      return null;
+   }
+
+   public TabHandle getNextTabHandle(TabHandle tabHandle)
+   {
+      int tabIndex = getTabIndex(tabHandle);
+
+      if(tabIndex + 1 < getTabCount())
+      {
+         return getHandleAtTabIndex(tabIndex + 1);
+      }
+
+      return null;
+   }
 }
