@@ -34,6 +34,9 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+Fixed bug in "Copy as SQL INSERT-VALUES statement" option: Closing brackets could be lost when timestamp was generated.
+  Thanks to Marek for the patch.
+
 #1241 Switching tab using Alt Left/Right doesn't work right after tabs were moved using drag and drop
 
 Improved logging and handling of "Content" tab display in "Objects" tab with the aim of tracking/preventing.
@@ -1397,7 +1400,7 @@ that are greater than 4000 characters.
 1902611: (Oracle) Don't fail on SQL-Plus "SET ..." commands in SQL script; Now, the Oracle plugin skips over 
                   them. 
 
-1876352: (DB2) Incorrect  TIMESTAMP in create data script (loss of precision - nanosecond component - also 
+1876352: (DB2) Incorrect  TIMESTAMP in create data script (loss of precision - nanosecond component - also
                affected other databases.
 
 1861402: (Informix catalog switching doesn't work correctly) 

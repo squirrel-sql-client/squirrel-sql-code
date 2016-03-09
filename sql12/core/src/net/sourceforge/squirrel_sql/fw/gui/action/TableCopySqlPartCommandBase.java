@@ -87,7 +87,7 @@ public class TableCopySqlPartCommandBase
    {
       if(false == date instanceof Timestamp)
       {
-         return "";
+         return "'}";
       }
 
       Timestamp ts = (Timestamp) date;
@@ -96,7 +96,7 @@ public class TableCopySqlPartCommandBase
 
       if(0 == nanos)
       {
-         return "";
+         return "'}";
       }
 
       return "." + prefixNulls(nanos, 6) + "'}";
