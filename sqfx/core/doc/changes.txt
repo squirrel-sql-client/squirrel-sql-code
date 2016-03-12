@@ -1,8 +1,9 @@
 SQuirreL SQL FX Change Log
 ==============================
 
-Feature: After rerunning a SQL query the former table layout is restored.
+Feature: About dialog has a system info tab.
 
+Feature: After rerunning a SQL query the former table layout is restored.
 
 Feature: Made "Properties" button in Alias window work.
 

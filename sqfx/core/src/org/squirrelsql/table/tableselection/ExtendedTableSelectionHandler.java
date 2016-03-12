@@ -285,16 +285,20 @@ public class ExtendedTableSelectionHandler
       if(event.getX() > xEnd)
       {
          TableCell tableCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, _tableView.getLayoutBounds().getWidth() -1, tableColumnHeader.getHeight() + 1);
-         int colIndex = _tableView.getColumns().indexOf(tableCell.getTableColumn());
 
-         if (colIndex + 1 < _tableView.getColumns().size())
+         if (null != tableCell)
          {
-            TableColumn fromCol = (TableColumn) _tableView.getColumns().get(colIndex);
+            int colIndex = _tableView.getColumns().indexOf(tableCell.getTableColumn());
 
-            int toColIx = colIndex + 1;
-            _tableView.scrollToColumnIndex(toColIx);
-            TableColumn toCol = (TableColumn) _tableView.getColumns().get(toColIx);
-            return fromCol.getWidth() + toCol.getWidth();
+            if (colIndex + 1 < _tableView.getColumns().size())
+            {
+               TableColumn fromCol = (TableColumn) _tableView.getColumns().get(colIndex);
+
+               int toColIx = colIndex + 1;
+               _tableView.scrollToColumnIndex(toColIx);
+               TableColumn toCol = (TableColumn) _tableView.getColumns().get(toColIx);
+               return fromCol.getWidth() + toCol.getWidth();
+            }
          }
       }
 
