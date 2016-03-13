@@ -1,6 +1,7 @@
 package org.squirrelsql.session.sql;
 
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -25,6 +26,7 @@ import org.squirrelsql.session.sql.features.DuplicateLineCommand;
 import org.squirrelsql.session.sql.features.EscapeDateCtrl;
 import org.squirrelsql.session.sql.features.SchemaUpdater;
 import org.squirrelsql.session.sql.features.SqlToTableCtrl;
+import org.squirrelsql.session.sql.searchchandreplace.SearchAndReplaceCtrl;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
 import org.squirrelsql.table.TableState;
@@ -71,7 +73,7 @@ public class SqlPaneCtrl
 
       _sqlOutputTabPane = new TabPane();
 
-      _sqlTabSplitPane.getItems().add(_sqlTextAreaServices.getTextAreaNode());
+      _sqlTabSplitPane.getItems().add(createTextAreaPane());
       _sqlTabSplitPane.getItems().add(_sqlOutputTabPane);
 
 
@@ -90,6 +92,16 @@ public class SqlPaneCtrl
       _sqlPane.setCenter(_sqlTabSplitPane);
 
       _sqlSplitPosSaver.apply(_sqlTabSplitPane);
+   }
+
+   private Node createTextAreaPane()
+   {
+      BorderPane bp = new BorderPane();
+
+      new SearchAndReplaceCtrl(bp);
+
+      bp.setCenter(_sqlTextAreaServices.getTextAreaNode());
+      return bp;
    }
 
    private void createRightMouseMenu()

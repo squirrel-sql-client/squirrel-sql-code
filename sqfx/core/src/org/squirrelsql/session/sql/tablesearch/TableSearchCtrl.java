@@ -42,8 +42,8 @@ public class TableSearchCtrl
 
       _tableSearchPanel = fxmlHelper.getView();
 
-      configureButton(_tableSearchPanel.btnFindNext, "arrow_down.png", "button.find.next");
-      configureButton(_tableSearchPanel.btnFindPrevious, "arrow_up.png", "button.find.previous");
+      configureButton(_tableSearchPanel.btnFindNext, GlobalIconNames.ARROW_DOWN, "button.find.next");
+      configureButton(_tableSearchPanel.btnFindPrevious, GlobalIconNames.ARROW_UP, "button.find.previous");
       configureButton(_tableSearchPanel.btnHighlightAllMatches, "highlight.png", "button.highlight");
       configureButton(_tableSearchPanel.btnUnhighlightAll, "unhighlight.png", "button.unhighlight");
       configureButton(_tableSearchPanel.btnResultInOwnTable, "result_in_own_table.png", "button.result.in.own.table");

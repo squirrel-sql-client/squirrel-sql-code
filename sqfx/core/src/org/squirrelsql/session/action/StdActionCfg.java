@@ -40,6 +40,8 @@ public enum StdActionCfg
    FILE_APPEND("fileappend.png", "file.append", "fileappend", ActionScope.SQL_EDITOR, null),
    FILE_DISCONNECT("filedisconnect.png", "file.disconnect", "filedisconnect", ActionScope.SQL_EDITOR, null),
 
+   SEARCH_IN_TEXT(GlobalIconNames.SEARCH, "text.search", "search", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN)),
+
 
    /**
     * No real action, just the separator
@@ -67,6 +69,7 @@ public enum StdActionCfg
          FILE_APPEND,
          FILE_DISCONNECT,
          SEPARATOR,
+         SEARCH_IN_TEXT
    };
 
    public static StdActionCfg[] SESSION_MENU = new StdActionCfg[]
@@ -81,7 +84,9 @@ public enum StdActionCfg
          TRANSACT_COMMIT,
          TRANSACT_ROLLBACK,
          SEPARATOR,
-         RECONNECT
+         RECONNECT,
+         SEPARATOR,
+         SEARCH_IN_TEXT
 
    };
 
@@ -98,7 +103,9 @@ public enum StdActionCfg
          TOGGLE_UPPER_LOWER,
          TOGGLE_COMMENT_LINES,
          TOGGLE_QUOTE_AS_JAVA_STRING,
-         TOGGLE_QUOTE_AS_JAVA_SB
+         TOGGLE_QUOTE_AS_JAVA_SB,
+         SEPARATOR,
+         SEARCH_IN_TEXT
    };
 
    private ActionCfg _actionCfg;
