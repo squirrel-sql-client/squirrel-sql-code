@@ -98,7 +98,7 @@ public class SqlPaneCtrl
    {
       BorderPane bp = new BorderPane();
 
-      new SearchAndReplaceCtrl(bp);
+      new SearchAndReplaceCtrl(bp, _sqlTextAreaServices);
 
       bp.setCenter(_sqlTextAreaServices.getTextAreaNode());
       return bp;

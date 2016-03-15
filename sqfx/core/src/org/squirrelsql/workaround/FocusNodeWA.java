@@ -1,17 +1,18 @@
 package org.squirrelsql.workaround;
 
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import org.fxmisc.richtext.CodeArea;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class FocusSqlTextAreaWA
+public class FocusNodeWA
 {
-   public static void forceFocus(CodeArea sqlTextArea)
+   public static void forceFocus(Node node)
    {
-      sqlTextArea.requestFocus();
+      node.requestFocus();
 
       final Timer timer = new Timer();
       TimerTask timerTask = new TimerTask()
@@ -19,29 +20,27 @@ public class FocusSqlTextAreaWA
          @Override
          public void run()
          {
-            onTimerTick(timer, sqlTextArea);
+            onTimerTick(timer, node);
          }
       };
       timer.schedule(timerTask, 0, 100);
 
    }
 
-   private static void onTimerTick(Timer timer, CodeArea sqlTextArea)
+   private static void onTimerTick(Timer timer, Node node)
    {
-      Platform.runLater(() -> forceFocus(timer, sqlTextArea));
+      Platform.runLater(() -> forceFocus(timer, node));
    }
 
-   private static void forceFocus(Timer timer, CodeArea sqlTextArea)
+   private static void forceFocus(Timer timer, Node node)
    {
       //System.out.println("org.squirrelsql.workaround.FocusSqlTextAreaWA.forceFocus");
 
-      if (false == sqlTextArea.isFocused())
+      if (false == node.isFocused())
       {
-         sqlTextArea.requestFocus();
+         node.requestFocus();
          return;
       }
-
-
 
       timer.cancel();
       timer.purge();

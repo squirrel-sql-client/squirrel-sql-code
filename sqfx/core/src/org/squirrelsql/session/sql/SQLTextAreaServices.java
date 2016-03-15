@@ -19,7 +19,7 @@ import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.schemainfo.SchemaCacheProperty;
 import org.squirrelsql.session.sql.syntax.*;
 import org.squirrelsql.workaround.CodeAreaRepaintWA;
-import org.squirrelsql.workaround.FocusSqlTextAreaWA;
+import org.squirrelsql.workaround.FocusNodeWA;
 
 public class SQLTextAreaServices
 {
@@ -326,7 +326,7 @@ public class SQLTextAreaServices
 
    public void requestFocus()
    {
-      FocusSqlTextAreaWA.forceFocus(_sqlTextArea);
+      FocusNodeWA.forceFocus(_sqlTextArea);
    }
 
    public double getStringWidth(String str)
