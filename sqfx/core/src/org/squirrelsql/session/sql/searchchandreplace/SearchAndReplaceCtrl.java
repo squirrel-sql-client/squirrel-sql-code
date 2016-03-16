@@ -36,6 +36,7 @@ public class SearchAndReplaceCtrl
 
       fxmlHelper.getView().btnFindNext.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_DOWN));
       fxmlHelper.getView().btnFindNext.setOnAction(e -> onFindNext());
+      fxmlHelper.getView().btnFindPrevious.setOnAction(e -> onFindPrevious());
 
       fxmlHelper.getView().btnFindPrevious.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_UP));
 
@@ -46,6 +47,49 @@ public class SearchAndReplaceCtrl
 
       fxmlHelper.getView().btnClose.setOnAction(e -> onCLose());
       _borderPane.setTop(fxmlHelper.getRegion());
+   }
+
+   private void onFindPrevious()
+   {
+      _editableComboCtrl.addCurrentTextToHistory();
+
+      String toFind = _editableComboCtrl.getText();
+
+      if(Utils.isEmptyString(toFind))
+      {
+         return;
+      }
+
+      String text = _sqlTextAreaServices.getTextArea().getText();
+
+      int oldStartPos = text.length();
+
+      if (Utils.compareRespectEmpty(toFind, _currentFindText))
+      {
+         oldStartPos = _nextStartPos;
+      }
+
+      int matchPos = moveCaretToNextMatchingPos(text, toFind, false);
+
+      if(-1 != matchPos)
+      {
+         _sqlTextAreaServices.getTextArea().selectRange(matchPos, matchPos + toFind.length());
+      }
+      else
+      {
+         _sqlTextAreaServices.getTextArea().deselect();
+
+         if(text.length() == oldStartPos)
+         {
+            _messageHandler.info(_i18n.t("SearchAndReplaceCtrl.noMatchFound"));
+         }
+         else
+         {
+            _messageHandler.info(_i18n.t("SearchAndReplaceCtrl.noMoreMatchFound.restartEnd"));
+         }
+      }
+
+
    }
 
    private void onFindNext()
@@ -69,7 +113,7 @@ public class SearchAndReplaceCtrl
          oldStartPos = _nextStartPos;
       }
 
-      int matchPos = moveCaretToNextMatchingPos(text, toFind);
+      int matchPos = moveCaretToNextMatchingPos(text, toFind, true);
 
       if(-1 != matchPos)
       {
@@ -85,29 +129,58 @@ public class SearchAndReplaceCtrl
          }
          else
          {
-            _messageHandler.info(_i18n.t("SearchAndReplaceCtrl.noMoreMatchFound"));
+            _messageHandler.info(_i18n.t("SearchAndReplaceCtrl.noMoreMatchFound.restartBegin"));
          }
-
       }
    }
 
-   private int moveCaretToNextMatchingPos(String text, String toFind)
+   private int moveCaretToNextMatchingPos(String text, String toFind, boolean forward)
    {
       if(false == Utils.compareRespectEmpty(toFind, _currentFindText))
       {
          _currentFindText = toFind;
-         _nextStartPos = 0;
+         if (forward)
+         {
+            _nextStartPos = 0;
+         }
+         else
+         {
+            _nextStartPos = text.length();
+         }
       }
 
-      int pos = text.indexOf(toFind, _nextStartPos);
+      int pos;
 
-      if(-1 == pos)
+      if (forward)
       {
-         _nextStartPos = 0;
+         pos = text.indexOf(toFind, _nextStartPos);
       }
       else
       {
-         _nextStartPos = pos + toFind.length();
+         pos = text.substring(0, _nextStartPos).lastIndexOf(toFind, _nextStartPos);
+      }
+
+      if(-1 == pos)
+      {
+         if (forward)
+         {
+            _nextStartPos = 0;
+         }
+         else
+         {
+            _nextStartPos = text.length();
+         }
+      }
+      else
+      {
+         if (forward)
+         {
+            _nextStartPos = pos + toFind.length();
+         }
+         else
+         {
+            _nextStartPos = pos;
+         }
       }
 
 
