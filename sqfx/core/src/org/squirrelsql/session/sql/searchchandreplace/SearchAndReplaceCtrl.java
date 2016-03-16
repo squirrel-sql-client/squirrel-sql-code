@@ -13,17 +13,18 @@ public class SearchAndReplaceCtrl
    private SQLTextAreaServices _sqlTextAreaServices;
    private EditableComboCtrl _editableComboCtrl;
 
-   private int _nextStartPos = 0;
-   private String _currentFindText;
    private MessageHandler _messageHandler = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
    private I18n _i18n = new I18n(getClass());
+
+   private int _nextStartPos = 0;
+   private String _currentFindText;
+
 
    public SearchAndReplaceCtrl(BorderPane borderPane, SQLTextAreaServices sqlTextAreaServices)
    {
       _borderPane = borderPane;
       _sqlTextAreaServices = sqlTextAreaServices;
       StdActionCfg.SEARCH_IN_TEXT.setAction(this::onSearch);
-
    }
 
    private void onSearch()
@@ -68,7 +69,7 @@ public class SearchAndReplaceCtrl
          oldStartPos = _nextStartPos;
       }
 
-      int matchPos = moveCarretToNextMatchingPos(text, toFind);
+      int matchPos = moveCaretToNextMatchingPos(text, toFind);
 
       if(-1 != matchPos)
       {
@@ -90,7 +91,7 @@ public class SearchAndReplaceCtrl
       }
    }
 
-   private int moveCarretToNextMatchingPos(String text, String toFind)
+   private int moveCaretToNextMatchingPos(String text, String toFind)
    {
       if(false == Utils.compareRespectEmpty(toFind, _currentFindText))
       {

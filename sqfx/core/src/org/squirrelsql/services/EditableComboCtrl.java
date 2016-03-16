@@ -1,6 +1,5 @@
 package org.squirrelsql.services;
 
-import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
