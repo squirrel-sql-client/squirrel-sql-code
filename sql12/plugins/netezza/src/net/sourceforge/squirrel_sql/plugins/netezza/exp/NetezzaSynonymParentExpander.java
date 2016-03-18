@@ -53,10 +53,8 @@ public class NetezzaSynonymParentExpander implements INodeExpander
 		"SELECT " +
 		"SYNONYM_NAME " +
 		"FROM _v_synonym " +
-		"where synonym_name like ? " +
-		"and refschema = ? " +
-		"and refdatabase = ? ";
-	
+		"where synonym_name like ? ";
+
 	/**
 	 * Default ctor.
 	 */
@@ -100,9 +98,7 @@ public class NetezzaSynonymParentExpander implements INodeExpander
 			pstmt = conn.prepareStatement(SQL);
 			
 			pstmt.setString(1, filterMatcher.getSqlLikeMatchString());
-			pstmt.setString(2, schemaName);
-			pstmt.setString(3, catalogName);
-			
+
 			rs = pstmt.executeQuery();
 			while (rs.next())
 			{
