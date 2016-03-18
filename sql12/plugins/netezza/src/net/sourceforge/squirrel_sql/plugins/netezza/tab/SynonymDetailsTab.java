@@ -60,8 +60,7 @@ public class SynonymDetailsTab extends BasePreparedStatementTab
 		"refdatabase as Referenced_Database , " +
 		"refdatabase || '.' || synonym_name as Qualified_Name " +
 		"FROM _v_synonym " +
-		"where synonym_name = ? " +
-		"and refschema = ? ";
+		"where synonym_name = ?";
 
 		
 	public SynonymDetailsTab()
@@ -78,12 +77,10 @@ public class SynonymDetailsTab extends BasePreparedStatementTab
 		{
 			s_log.debug("Synonym details SQL: " + SQL);
 			s_log.debug("Synonym name: " + doi.getSimpleName());
-			s_log.debug("Synonym schema: " + doi.getSchemaName());
 		}
 
 		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(SQL);
 		pstmt.setString(1, doi.getSimpleName());
-		pstmt.setString(2, doi.getSchemaName());
 		return pstmt;
 	}
 

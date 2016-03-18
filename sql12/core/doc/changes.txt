@@ -34,6 +34,8 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+#1235 Netezza Plugin: Squirrel not showing Netezza (IBM Puredata) synonyms
+
 Fixed bug in "Copy as SQL INSERT-VALUES statement" option: Closing brackets could be lost when timestamp was generated.
   Thanks to Marek for the patch.
 

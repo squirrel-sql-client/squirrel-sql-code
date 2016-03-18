@@ -63,9 +63,7 @@ public class SynonymSourceTab extends FormattedSourceTab
 		"SELECT " +
 		"'create synonym ' || synonym_name || ' for ' || refobjname " +
 		"FROM _v_synonym " +
-		"where refdatabase = ? " +
-		"and refschema = ? " +
-		"and synonym_name like ? ";
+		"where synonym_name like ? ";
 	}
 
 	/**
