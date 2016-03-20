@@ -18,6 +18,7 @@ public class SearchAndReplaceCtrl
 
    private int _nextStartPos = 0;
    private String _currentFindText;
+   private SearchAndReplaceView _searchAndReplaceView;
 
 
    public SearchAndReplaceCtrl(BorderPane borderPane, SQLTextAreaServices sqlTextAreaServices)
@@ -32,20 +33,21 @@ public class SearchAndReplaceCtrl
       FxmlHelper<SearchAndReplaceView> fxmlHelper = new FxmlHelper<>(SearchAndReplaceView.class);
 
 
-      fxmlHelper.getView().btnClose.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.CLOSE));
+      _searchAndReplaceView = fxmlHelper.getView();
+      _searchAndReplaceView.btnClose.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.CLOSE));
 
-      fxmlHelper.getView().btnFindNext.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_DOWN));
-      fxmlHelper.getView().btnFindNext.setOnAction(e -> onFind(true));
-      fxmlHelper.getView().btnFindPrevious.setOnAction(e -> onFind(false));
+      _searchAndReplaceView.btnFindNext.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_DOWN));
+      _searchAndReplaceView.btnFindNext.setOnAction(e -> onFind(true));
+      _searchAndReplaceView.btnFindPrevious.setOnAction(e -> onFind(false));
 
-      fxmlHelper.getView().btnFindPrevious.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_UP));
+      _searchAndReplaceView.btnFindPrevious.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_UP));
 
-      _editableComboCtrl = new EditableComboCtrl(fxmlHelper.getView().cboSearchText, getClass().getName(), () -> onFind(true));
+      _editableComboCtrl = new EditableComboCtrl(_searchAndReplaceView.cboSearchText, getClass().getName(), () -> onFind(true));
 
       _editableComboCtrl.requestFocus();
 
 
-      fxmlHelper.getView().btnClose.setOnAction(e -> onCLose());
+      _searchAndReplaceView.btnClose.setOnAction(e -> onCLose());
       _borderPane.setTop(fxmlHelper.getRegion());
    }
 
@@ -134,14 +136,7 @@ public class SearchAndReplaceCtrl
 
       int pos;
 
-      if (forward)
-      {
-         pos = text.indexOf(toFind, _nextStartPos);
-      }
-      else
-      {
-         pos = text.substring(0, _nextStartPos).lastIndexOf(toFind, _nextStartPos);
-      }
+      pos = getNextPos(text, toFind, forward, _nextStartPos);
 
       if (-1 == pos)
       {
@@ -168,6 +163,61 @@ public class SearchAndReplaceCtrl
 
 
       return pos;
+   }
+
+   private int getNextPos(String textToFindIn, String toFind, boolean forward, int startPos)
+   {
+      if(false == _searchAndReplaceView.chkMatchCase.isSelected())
+      {
+         textToFindIn = textToFindIn.toLowerCase();
+         toFind = toFind.toLowerCase();
+      }
+
+      int pos;
+      if (forward)
+      {
+         pos = textToFindIn.indexOf(toFind, startPos);
+      }
+      else
+      {
+         pos = textToFindIn.substring(0, startPos).lastIndexOf(toFind, startPos);
+      }
+
+      if(_searchAndReplaceView.chkWholeWord.isSelected())
+      {
+         if(pos < 0)
+         {
+            return pos;
+         }
+
+         if(isSurroundedByWhiteSpace(textToFindIn, toFind, pos))
+         {
+            return pos;
+         }
+         else
+         {
+            return -1;
+         }
+      }
+      else
+      {
+         return pos;
+      }
+   }
+
+   private boolean isSurroundedByWhiteSpace(String textToFindIn, String toFind, int startPos)
+   {
+      return isBorderOrWhiteSpace(textToFindIn, startPos - 1) && isBorderOrWhiteSpace(textToFindIn, startPos + toFind.length());
+   }
+
+   private boolean isBorderOrWhiteSpace(String text, int pos)
+   {
+      if(pos < 0 || text.length() <= pos)
+      {
+         return true;
+      }
+
+      return Character.isWhitespace(text.charAt(pos));
    }
 
    private void onCLose()

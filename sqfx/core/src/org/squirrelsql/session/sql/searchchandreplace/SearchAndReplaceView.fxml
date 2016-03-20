@@ -10,7 +10,7 @@
       <Button fx:id="btnClose" layoutX="855.0" mnemonicParsing="false" AnchorPane.rightAnchor="0.0" />
       <CheckBox fx:id="chkMatchCase" layoutX="377.0" layoutY="4.0" mnemonicParsing="false" text="%searchandreplace.matchcase" AnchorPane.rightAnchor="398.0" />
       <ComboBox fx:id="cboSearchText" prefHeight="26.0" prefWidth="286.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="587.0" />
-      <CheckBox fx:id="chkWholeWOrd" layoutX="484.0" layoutY="4.0" mnemonicParsing="false" text="%searchandreplace.wholeword" AnchorPane.rightAnchor="288.0" />
+      <CheckBox fx:id="chkWholeWord" layoutX="484.0" layoutY="4.0" mnemonicParsing="false" text="%searchandreplace.wholeword" AnchorPane.rightAnchor="288.0" />
       <Button fx:id="btnFindNext" layoutX="306.0" mnemonicParsing="false" AnchorPane.rightAnchor="549.0" />
       <Button fx:id="btnFindPrevious" layoutX="343.0" mnemonicParsing="false" AnchorPane.rightAnchor="512.0" />
    </children>

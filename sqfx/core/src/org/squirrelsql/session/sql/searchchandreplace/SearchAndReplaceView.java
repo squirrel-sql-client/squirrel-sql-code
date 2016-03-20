@@ -11,6 +11,6 @@ public class SearchAndReplaceView
    @FXML Button btnFindNext;
    @FXML Button btnFindPrevious;
    @FXML CheckBox chkMatchCase;
-   @FXML CheckBox chkWholeWOrd;
+   @FXML CheckBox chkWholeWord;
    @FXML Button btnClose;
 }
