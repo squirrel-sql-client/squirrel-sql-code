@@ -32,9 +32,16 @@ public class EditableComboCtrl
 
    private void onHandleKeyEvent(KeyEvent event)
    {
-      if(null != _listener && KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.ENTER)))
+      if (null != _listener)
       {
-         _listener.enterPressed();
+         if(KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.ENTER)))
+         {
+            _listener.enterPressed();
+         }
+         else if(KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.ESCAPE)))
+         {
+            _listener.escapePressed();
+         }
       }
    }
 

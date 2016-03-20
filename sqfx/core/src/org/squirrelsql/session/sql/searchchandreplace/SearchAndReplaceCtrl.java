@@ -42,7 +42,22 @@ public class SearchAndReplaceCtrl
 
       _searchAndReplaceView.btnFindPrevious.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_UP));
 
-      _editableComboCtrl = new EditableComboCtrl(_searchAndReplaceView.cboSearchText, getClass().getName(), () -> onFind(true));
+      EditableComboCtrlEnterListener listener = new EditableComboCtrlEnterListener()
+      {
+         @Override
+         public void enterPressed()
+         {
+            onFind(true);
+         }
+
+         @Override
+         public void escapePressed()
+         {
+            onCLose();
+         }
+      };
+
+      _editableComboCtrl = new EditableComboCtrl(_searchAndReplaceView.cboSearchText, getClass().getName(), listener);
 
       _editableComboCtrl.requestFocus();
 

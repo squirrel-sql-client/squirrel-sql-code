@@ -19,7 +19,6 @@ public class TableSearchCtrl
    private SearchPanelVisibleListener _searchPanelVisibleListener;
    private final Region _tableSearchPanelRegion;
    private final TableSearchPanel _tableSearchPanel;
-   private Pref _pref = new Pref(getClass());
 
    public TableSearchCtrl(TableLoader resultTableLoader)
    {
@@ -45,7 +44,21 @@ public class TableSearchCtrl
       _tableSearchPanel.cboSearchType.getItems().addAll(TableSearchType.values());
       _tableSearchPanel.cboSearchType.getSelectionModel().select(0);
 
-      _editableComboCtrl = new EditableComboCtrl(_tableSearchPanel.cboSearchString, getClass().getName(), () -> onFind(true));
+      EditableComboCtrlEnterListener listener = new EditableComboCtrlEnterListener()
+      {
+         @Override
+         public void enterPressed()
+         {
+            onFind(true);
+         }
+
+         @Override
+         public void escapePressed()
+         {
+         }
+      };
+
+      _editableComboCtrl = new EditableComboCtrl(_tableSearchPanel.cboSearchString, getClass().getName(), listener);
 
       _searchResultHandler = new SearchResultHandler(resultTableLoader);
 
