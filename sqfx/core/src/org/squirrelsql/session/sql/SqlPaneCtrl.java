@@ -26,7 +26,7 @@ import org.squirrelsql.session.sql.features.DuplicateLineCommand;
 import org.squirrelsql.session.sql.features.EscapeDateCtrl;
 import org.squirrelsql.session.sql.features.SchemaUpdater;
 import org.squirrelsql.session.sql.features.SqlToTableCtrl;
-import org.squirrelsql.session.sql.searchchandreplace.SearchAndReplaceCtrl;
+import org.squirrelsql.session.sql.searchchandreplace.SearchCtrl;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
 import org.squirrelsql.table.TableState;
@@ -98,7 +98,7 @@ public class SqlPaneCtrl
    {
       BorderPane bp = new BorderPane();
 
-      new SearchAndReplaceCtrl(bp, _sqlTextAreaServices);
+      new SearchCtrl(bp, _sqlTextAreaServices);
 
       bp.setCenter(_sqlTextAreaServices.getTextAreaNode());
       return bp;

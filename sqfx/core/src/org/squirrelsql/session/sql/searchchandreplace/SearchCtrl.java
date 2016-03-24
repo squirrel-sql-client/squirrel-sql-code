@@ -7,7 +7,7 @@ import org.squirrelsql.services.*;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 
-public class SearchAndReplaceCtrl
+public class SearchCtrl
 {
    private BorderPane _borderPane;
    private SQLTextAreaServices _sqlTextAreaServices;
@@ -18,10 +18,10 @@ public class SearchAndReplaceCtrl
 
    private int _nextStartPos = 0;
    private String _currentFindText;
-   private SearchAndReplaceView _searchAndReplaceView;
+   private SearchView _searchView;
 
 
-   public SearchAndReplaceCtrl(BorderPane borderPane, SQLTextAreaServices sqlTextAreaServices)
+   public SearchCtrl(BorderPane borderPane, SQLTextAreaServices sqlTextAreaServices)
    {
       _borderPane = borderPane;
       _sqlTextAreaServices = sqlTextAreaServices;
@@ -30,17 +30,17 @@ public class SearchAndReplaceCtrl
 
    private void onSearch()
    {
-      FxmlHelper<SearchAndReplaceView> fxmlHelper = new FxmlHelper<>(SearchAndReplaceView.class);
+      FxmlHelper<SearchView> fxmlHelper = new FxmlHelper<>(SearchView.class);
 
 
-      _searchAndReplaceView = fxmlHelper.getView();
-      _searchAndReplaceView.btnClose.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.CLOSE));
+      _searchView = fxmlHelper.getView();
+      _searchView.btnClose.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.CLOSE));
 
-      _searchAndReplaceView.btnFindNext.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_DOWN));
-      _searchAndReplaceView.btnFindNext.setOnAction(e -> onFind(true));
-      _searchAndReplaceView.btnFindPrevious.setOnAction(e -> onFind(false));
+      _searchView.btnFindNext.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_DOWN));
+      _searchView.btnFindNext.setOnAction(e -> onFind(true));
+      _searchView.btnFindPrevious.setOnAction(e -> onFind(false));
 
-      _searchAndReplaceView.btnFindPrevious.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_UP));
+      _searchView.btnFindPrevious.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_UP));
 
       EditableComboCtrlEnterListener listener = new EditableComboCtrlEnterListener()
       {
@@ -57,12 +57,12 @@ public class SearchAndReplaceCtrl
          }
       };
 
-      _editableComboCtrl = new EditableComboCtrl(_searchAndReplaceView.cboSearchText, getClass().getName(), listener);
+      _editableComboCtrl = new EditableComboCtrl(_searchView.cboSearchText, getClass().getName(), listener);
 
       _editableComboCtrl.requestFocus();
 
 
-      _searchAndReplaceView.btnClose.setOnAction(e -> onCLose());
+      _searchView.btnClose.setOnAction(e -> onCLose());
       _borderPane.setTop(fxmlHelper.getRegion());
    }
 
@@ -182,7 +182,7 @@ public class SearchAndReplaceCtrl
 
    private int getNextPos(String textToFindIn, String toFind, boolean forward, int startPos)
    {
-      if(false == _searchAndReplaceView.chkMatchCase.isSelected())
+      if(false == _searchView.chkMatchCase.isSelected())
       {
          textToFindIn = textToFindIn.toLowerCase();
          toFind = toFind.toLowerCase();
@@ -198,7 +198,7 @@ public class SearchAndReplaceCtrl
          pos = textToFindIn.substring(0, startPos).lastIndexOf(toFind, startPos);
       }
 
-      if(_searchAndReplaceView.chkWholeWord.isSelected())
+      if(_searchView.chkWholeWord.isSelected())
       {
          if(pos < 0)
          {
