@@ -31,7 +31,7 @@ public class ReplaceCtrl
 
       _editableComboCtrl = new EditableComboCtrl(_view.cboReplaceText, getClass().getName(), null);
 
-      _view.btnReplace.setOnAction(e -> onReplace());
+      _view.btnReplace.setOnAction(e -> onReplace(false));
       _view.btnExclude.setOnAction(e -> _searchCtrl.findNext());
       _view.btnReplaceAll.setOnAction(e -> onReplaceAll());
 
@@ -40,14 +40,14 @@ public class ReplaceCtrl
 
    private void onReplaceAll()
    {
-      onReplace();
+      onReplace(false);
 
-      while(onReplace())
+      while(onReplace(true))
          ;
 
    }
 
-   private boolean onReplace()
+   private boolean onReplace(boolean adjustStartPos)
    {
       if(false == _searchCtrl.isFoundPositionSelected())
       {
@@ -57,6 +57,11 @@ public class ReplaceCtrl
 
       _sqlTextAreaServices.replaceSelection(_editableComboCtrl.getText(), false);
 
+      if(adjustStartPos && _sqlTextAreaServices.getTextArea().getSelectedText().length() < _editableComboCtrl.getText().length())
+      {
+         // This is to prevent endless loops when onReplaceAll() is executed and a string like '12' is replaced by '1212'
+         _searchCtrl.increaseNextStartPosBy(_editableComboCtrl.getText().length() - _sqlTextAreaServices.getTextArea().getSelectedText().length());
+      }
       _searchCtrl.findNext();
       return false == _searchCtrl.isEOFReached();
    }

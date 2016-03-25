@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: SQL editor supports search and replace. Keyboard shortcuts are Ctrl+F and Ctrl+H.
+
 Feature: About dialog has a system info tab.
 
 Feature: After rerunning a SQL query the former table layout is restored.

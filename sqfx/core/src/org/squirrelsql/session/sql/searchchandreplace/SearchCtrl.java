@@ -275,5 +275,11 @@ public class SearchCtrl
    {
       return _eofReached;
    }
+
+   public void increaseNextStartPosBy(int incr)
+   {
+      _nextStartPos += incr;
+      _nextStartPos = Math.min(_nextStartPos, _sqlTextAreaServices.getTextArea().getText().length());
+   }
 }
 
