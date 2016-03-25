@@ -137,6 +137,7 @@ public class FileManager
          byte[] bytes = Files.readAllBytes(file.toPath());
 
          _sqlTextAreaServices.setText(new String(bytes));
+         _sqlTextAreaServices.getTextArea().positionCaret(0);
 
 
          _sessionTabHeaderCtrl.setFile(file);

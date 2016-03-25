@@ -19,21 +19,29 @@ public class SearchCtrl
    private int _nextStartPos = 0;
    private String _currentFindText;
    private SearchView _searchView;
+   private boolean _foundPositionSelected;
+   private boolean _eofReached;
 
 
    public SearchCtrl(BorderPane borderPane, SQLTextAreaServices sqlTextAreaServices)
    {
       _borderPane = borderPane;
       _sqlTextAreaServices = sqlTextAreaServices;
-      StdActionCfg.SEARCH_IN_TEXT.setAction(this::onSearch);
+      StdActionCfg.SEARCH_IN_TEXT.setAction(this::onOpenSearch);
    }
 
-   private void onSearch()
+   private void onOpenSearch()
    {
       FxmlHelper<SearchView> fxmlHelper = new FxmlHelper<>(SearchView.class);
 
+      init(fxmlHelper.getView());
 
-      _searchView = fxmlHelper.getView();
+      _borderPane.setTop(fxmlHelper.getRegion());
+   }
+
+   private void init(SearchView searchView)
+   {
+      _searchView = searchView;
       _searchView.btnClose.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.CLOSE));
 
       _searchView.btnFindNext.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.ARROW_DOWN));
@@ -63,7 +71,6 @@ public class SearchCtrl
 
 
       _searchView.btnClose.setOnAction(e -> onCLose());
-      _borderPane.setTop(fxmlHelper.getRegion());
    }
 
    private void onFind(boolean forward)
@@ -97,14 +104,21 @@ public class SearchCtrl
          oldStartPos = _nextStartPos;
       }
 
-      int matchPos = moveCaretToNextMatchingPos(text, toFind, forward);
+      int matchPos = getNextMatchingPos(text, toFind, forward);
+
+      _foundPositionSelected = false;
+      _eofReached = false;
+
 
       if (-1 != matchPos)
       {
          _sqlTextAreaServices.getTextArea().selectRange(matchPos, matchPos + toFind.length());
+         _foundPositionSelected = true;
       }
       else
       {
+         _eofReached = true;
+
          _sqlTextAreaServices.getTextArea().deselect();
 
          if (forward)
@@ -133,7 +147,7 @@ public class SearchCtrl
    }
 
 
-   private int moveCaretToNextMatchingPos(String text, String toFind, boolean forward)
+   private int getNextMatchingPos(String text, String toFind, boolean forward)
    {
       if (false == Utils.compareRespectEmpty(toFind, _currentFindText))
       {
@@ -238,6 +252,28 @@ public class SearchCtrl
    private void onCLose()
    {
       _borderPane.setTop(null);
+   }
+
+   public static SearchCtrl create(BorderPane borderPane, SQLTextAreaServices sqlTextAreaServices, SearchView searchView)
+   {
+      SearchCtrl ret = new SearchCtrl(borderPane, sqlTextAreaServices);
+      ret.init(searchView);
+      return ret;
+   }
+
+   public boolean isFoundPositionSelected()
+   {
+      return _foundPositionSelected;
+   }
+
+   public void findNext()
+   {
+      onFind(true);
+   }
+
+   public boolean isEOFReached()
+   {
+      return _eofReached;
    }
 }
 

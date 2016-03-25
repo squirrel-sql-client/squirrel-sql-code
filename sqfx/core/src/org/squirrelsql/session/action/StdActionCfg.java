@@ -41,6 +41,7 @@ public enum StdActionCfg
    FILE_DISCONNECT("filedisconnect.png", "file.disconnect", "filedisconnect", ActionScope.SQL_EDITOR, null),
 
    SEARCH_IN_TEXT(GlobalIconNames.SEARCH, "text.search", "search", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN)),
+   REPLACE_IN_TEXT("replace.png", "text.replace", "replace", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN)),
 
 
    /**
@@ -69,7 +70,8 @@ public enum StdActionCfg
          FILE_APPEND,
          FILE_DISCONNECT,
          SEPARATOR,
-         SEARCH_IN_TEXT
+         SEARCH_IN_TEXT,
+         REPLACE_IN_TEXT
    };
 
    public static StdActionCfg[] SESSION_MENU = new StdActionCfg[]
@@ -86,7 +88,8 @@ public enum StdActionCfg
          SEPARATOR,
          RECONNECT,
          SEPARATOR,
-         SEARCH_IN_TEXT
+         SEARCH_IN_TEXT,
+         REPLACE_IN_TEXT
 
    };
 
@@ -105,7 +108,8 @@ public enum StdActionCfg
          TOGGLE_QUOTE_AS_JAVA_STRING,
          TOGGLE_QUOTE_AS_JAVA_SB,
          SEPARATOR,
-         SEARCH_IN_TEXT
+         SEARCH_IN_TEXT,
+         REPLACE_IN_TEXT
    };
 
    private ActionCfg _actionCfg;

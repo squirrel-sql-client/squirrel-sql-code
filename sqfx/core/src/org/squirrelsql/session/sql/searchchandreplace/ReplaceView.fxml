@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="3.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.sql.searchchandreplace.ReplaceView">
+   <children>
+      <fx:include fx:id="searchView" source="SearchView.fxml" />
+      <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="0.0">
+         <children>
+            <ComboBox fx:id="cboReplaceText" prefHeight="26.0" prefWidth="286.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="587.0" />
+            <Button fx:id="btnReplace" layoutX="290.0" mnemonicParsing="false" text="%searchandreplace.replace" AnchorPane.rightAnchor="512.0" />
+            <Button fx:id="btnReplaceAll" layoutX="371.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="107.0" text="%searchandreplace.replace.all" AnchorPane.rightAnchor="395.0" />
+            <Button fx:id="btnExclude" layoutX="487.0" mnemonicParsing="false" text="%searchandreplace.replace.exclude" AnchorPane.rightAnchor="316.0" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>
