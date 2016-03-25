@@ -46,8 +46,15 @@ public class ReplaceCtrl
 
    }
 
-   private boolean onReplace(boolean adjustStartPos)
+   private boolean onReplace(boolean inReplaceAllLoop)
    {
+
+      if (false == inReplaceAllLoop)
+      {
+         _editableComboCtrl.addCurrentTextToHistory();
+      }
+
+
       if(false == _searchCtrl.isFoundPositionSelected())
       {
          _searchCtrl.findNext();
@@ -56,7 +63,7 @@ public class ReplaceCtrl
 
       _sqlTextAreaServices.replaceSelection(_editableComboCtrl.getText(), false);
 
-      if(adjustStartPos && _sqlTextAreaServices.getTextArea().getSelectedText().length() < _editableComboCtrl.getText().length())
+      if(inReplaceAllLoop && _sqlTextAreaServices.getTextArea().getSelectedText().length() < _editableComboCtrl.getText().length())
       {
          // This is to prevent endless loops when onReplaceAll() is executed and a string like '12' is replaced by '1212'
          _searchCtrl.increaseNextStartPosBy(_editableComboCtrl.getText().length() - _sqlTextAreaServices.getTextArea().getSelectedText().length());
