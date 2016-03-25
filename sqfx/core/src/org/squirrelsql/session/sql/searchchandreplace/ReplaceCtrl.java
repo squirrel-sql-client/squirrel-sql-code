@@ -11,7 +11,6 @@ public class ReplaceCtrl
    private BorderPane _borderPane;
    private SQLTextAreaServices _sqlTextAreaServices;
    private EditableComboCtrl _editableComboCtrl;
-   private ReplaceView _view;
    private SearchCtrl _searchCtrl;
 
    public ReplaceCtrl(BorderPane borderPane, SQLTextAreaServices sqlTextAreaServices)
@@ -26,14 +25,14 @@ public class ReplaceCtrl
    {
       FxmlHelper<ReplaceView> fxmlHelper = new FxmlHelper<>(ReplaceView.class);
 
-      _view = fxmlHelper.getView();
-      _searchCtrl = SearchCtrl.create(_borderPane, _sqlTextAreaServices, _view.searchViewController);
+      ReplaceView view = fxmlHelper.getView();
+      _searchCtrl = SearchCtrl.create(_borderPane, _sqlTextAreaServices, view.searchViewController);
 
-      _editableComboCtrl = new EditableComboCtrl(_view.cboReplaceText, getClass().getName(), null);
+      _editableComboCtrl = new EditableComboCtrl(view.cboReplaceText, getClass().getName(), null);
 
-      _view.btnReplace.setOnAction(e -> onReplace(false));
-      _view.btnExclude.setOnAction(e -> _searchCtrl.findNext());
-      _view.btnReplaceAll.setOnAction(e -> onReplaceAll());
+      view.btnReplace.setOnAction(e -> onReplace(false));
+      view.btnExclude.setOnAction(e -> _searchCtrl.findNext());
+      view.btnReplaceAll.setOnAction(e -> onReplaceAll());
 
       _borderPane.setTop(fxmlHelper.getRegion());
    }
