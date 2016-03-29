@@ -34,6 +34,9 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+Quoting columns didn't work as in other script generation functions when SELECT statements were created (see Object tree's right mouse menu).
+  Thanks to Joao Paulo Limberger for the patch.
+
 #1235 Netezza Plugin: Squirrel not showing Netezza (IBM Puredata) synonyms
 
 Fixed bug in "Copy as SQL INSERT-VALUES statement" option: Closing brackets could be lost when timestamp was generated.

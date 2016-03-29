@@ -3,6 +3,9 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -100,7 +103,10 @@ public class CreateSelectScriptCommand implements ICommand
               {
                  sbScript.append(',');
               }
-              sbScript.append(infos[i].getColumnName());
+
+              DialectType dialectType = DialectFactory.getDialectType(_session.getMetaData());
+
+              sbScript.append(DialectUtils2.checkColumnDoubleQuotes(dialectType, infos[i].getColumnName()));
            }
 
            sbScript.append(" FROM ").append(ScriptUtil.getTableName(ti));
