@@ -43,6 +43,8 @@ public enum StdActionCfg
    SEARCH_IN_TEXT(GlobalIconNames.SEARCH, "text.search", "search", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN)),
    REPLACE_IN_TEXT("replace.png", "text.replace", "replace", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN)),
 
+   GRAPH_NEW_QUERY_BUILDER("graph.png", "graph.new.query.builder", "graph", ActionScope.UNSCOPED, null),
+
 
    /**
     * No real action, just the separator
@@ -71,7 +73,9 @@ public enum StdActionCfg
          FILE_DISCONNECT,
          SEPARATOR,
          SEARCH_IN_TEXT,
-         REPLACE_IN_TEXT
+         REPLACE_IN_TEXT,
+         SEPARATOR,
+         GRAPH_NEW_QUERY_BUILDER
    };
 
    public static StdActionCfg[] SESSION_MENU = new StdActionCfg[]
@@ -89,7 +93,9 @@ public enum StdActionCfg
          RECONNECT,
          SEPARATOR,
          SEARCH_IN_TEXT,
-         REPLACE_IN_TEXT
+         REPLACE_IN_TEXT,
+         SEPARATOR,
+         GRAPH_NEW_QUERY_BUILDER
 
    };
 

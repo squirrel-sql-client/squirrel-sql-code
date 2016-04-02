@@ -15,6 +15,7 @@ import org.squirrelsql.services.progress.SimpleProgressCtrl;
 import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.action.StdActionCfg;
+import org.squirrelsql.session.graph.GraphAccess;
 import org.squirrelsql.session.objecttree.ObjectTreeTabCtrl;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
@@ -90,6 +91,17 @@ public class SessionCtrl
 
       StdActionCfg.RECONNECT.setAction(() -> session.getSQLConnection().reconnect(dbConnectorResult, _transactionManager.isAutoCommit()));
 
+      StdActionCfg.GRAPH_NEW_QUERY_BUILDER.setAction(() -> onNewGraph());
+
+   }
+
+   private void onNewGraph()
+   {
+      Tab tab = GraphAccess.newQueryBuilder(_sessionTabContext);
+
+      _objectTreeAndSqlTabPane.getTabs().add(tab);
+
+      _objectTreeAndSqlTabPane.getSelectionModel().select(tab);
    }
 
    private void reloadSchemaCache()

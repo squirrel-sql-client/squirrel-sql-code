@@ -63,17 +63,24 @@ public class GuiUtils
 
    private static Stage _createDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix, Modality modality)
    {
-      Stage ret = new Stage();
-
-      ret.setScene(new Scene(region));
+      Stage ret = createWindow(region);
 
       ret.initModality(modality);
-
-      ret.initOwner(AppState.get().getPrimaryStage());
 
       makeEscapeClosable(region);
 
       new StageDimensionSaver(prefPrefix, ret, pref, initialWidth, initialHeight, AppState.get().getPrimaryStage());
+
+      return ret;
+   }
+
+   public static Stage createWindow(Region region)
+   {
+      Stage ret = new Stage();
+
+      ret.setScene(new Scene(region));
+
+      ret.initOwner(AppState.get().getPrimaryStage());
 
       return ret;
    }
