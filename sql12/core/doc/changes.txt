@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+#531 Bookmarks Plugin: In the general options of the bookmarks Plugin (see menu File --> Global Preferences --> tab Bookmarks)
+  there is a new option "In ctrl+j popup use "contains" instead of "starts with" to filter entries".
+
 Alias properties --> Tab Schemas --> Table is now sortable
   Thanks to Marek for the patch.
 

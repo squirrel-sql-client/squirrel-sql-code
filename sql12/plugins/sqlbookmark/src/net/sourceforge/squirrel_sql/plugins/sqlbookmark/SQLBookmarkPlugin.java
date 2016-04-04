@@ -71,7 +71,10 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
 
 
    private static final String BOOKMARKS_PROPS_FILE = "bookmarks.properties";
+
    static final String BOOKMARK_PROP_DEFAULT_MARKS_IN_POPUP = "squirrelMarksInPopup";
+   static final String BOOKMARK_PROP_USE_CONTAINS_TO_FILTER_BOOKMARKS = "useContainsToFilterBookmarks";
+
    private Properties _boomarkProps;
 
    private interface IMenuResourceKeys
