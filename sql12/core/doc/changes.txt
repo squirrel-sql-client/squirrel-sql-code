@@ -37,6 +37,9 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+#1245 SQL Script Plugin: Table script creation failed when a column type could not be derived from a Hibernate dialect.
+  This problem was probable to occur for user defined types e.g. when domains were used by Postgresql.
+
 Quoting columns didn't work as in other script generation functions when SELECT statements were created (see Object tree's right mouse menu).
   Thanks to Joao Paulo Limberger for the patch.
 
