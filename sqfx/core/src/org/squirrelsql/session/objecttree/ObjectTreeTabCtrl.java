@@ -210,4 +210,9 @@ public class ObjectTreeTabCtrl
       return true;
 
    }
+
+   public TreeView<ObjectTreeNode> getObjectTree()
+   {
+      return _objectsTree;
+   }
 }

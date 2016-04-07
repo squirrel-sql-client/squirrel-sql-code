@@ -5,14 +5,11 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
-import org.squirrelsql.services.CollectionUtil;
-import org.squirrelsql.services.FxmlHelper;
-import org.squirrelsql.services.GuiUtils;
-import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.*;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.completion.CompletionCtrl;
@@ -24,18 +21,23 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class FilterResultCtrl
+public class ObjectTreeFilterCtrl
 {
+   public static final String DRAGGING_TO_QUERY_BUILDER = "DRAGGING_TO_QUERY_BUILDER";
+
 
    private final FxmlHelper<FilterResultUpperView> _fxmlHelper;
    private final TreeView<ObjectTreeNode> _filterResultTree;
    private final CompletionCtrl _completionCtrl;
+   private final I18n _i18n = new I18n(getClass());
    private TreeView<ObjectTreeNode> _sessionsObjectTree;
    private final Stage _dialog;
+   private ObjectTreeFilterCtrlMode _mode;
 
-   public FilterResultCtrl(Session session, TreeView<ObjectTreeNode> sessionsObjectTree, String filterText)
+   public ObjectTreeFilterCtrl(Session session, String filterText, ObjectTreeFilterCtrlMode mode)
    {
-      _sessionsObjectTree = sessionsObjectTree;
+      _mode = mode;
+      _sessionsObjectTree = session.getSessionCtrl().getObjectTree();
       _filterResultTree = createObjectsTree();
 
       _filterResultTree.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<TreeItem<ObjectTreeNode>>()
@@ -43,13 +45,11 @@ public class FilterResultCtrl
          @Override
          public void onChanged(Change<? extends TreeItem<ObjectTreeNode>> c)
          {
-            onFilterResultTreeSelectionChanged();
+            onFilterResultTreeSelectionChanged(_mode);
          }
       });
 
-
-
-            _fxmlHelper = new FxmlHelper<>(FilterResultUpperView.class);
+      _fxmlHelper = new FxmlHelper<>(FilterResultUpperView.class);
 
       FilterResultUpperView view = _fxmlHelper.getView();
 
@@ -75,6 +75,22 @@ public class FilterResultCtrl
 
       applyFilterString();
 
+      String title;
+      if(ObjectTreeFilterCtrlMode.OBJECT_TREE_SEARCH == _mode)
+      {
+         view.lblDescription.setText(_i18n.t("objecttreefind.filter.view.explain.objecttreesearch"));
+         title = _i18n.t("objecttreefind.filter.window.title");
+      }
+      else // ObjectTreeFilterCtrlMode.ADD_TO_QUERY_BUILDER
+      {
+         view.lblDescription.setText(_i18n.t("objecttreefind.filter.view.explain.addToQueryBuilder"));
+         title = _i18n.t("objecttreefind.filter.window.title.for.graph.add.table");
+
+         _filterResultTree.setOnDragDetected(this::onDragToQueryBuilder);
+         _filterResultTree.setOnDragOver(this::onDragOver);
+      }
+
+      _dialog.setTitle(title);
       _dialog.show();
 
 
@@ -82,8 +98,44 @@ public class FilterResultCtrl
 
    }
 
-   private void onFilterResultTreeSelectionChanged()
+   private void onDragToQueryBuilder(MouseEvent e)
    {
+      if (hasSelectedTables())
+      {
+         Dragboard dragBoard = _filterResultTree.startDragAndDrop(TransferMode.MOVE);
+         ClipboardContent content = new ClipboardContent();
+         content.put(DataFormat.PLAIN_TEXT, DRAGGING_TO_QUERY_BUILDER);
+         dragBoard.setContent(content);
+      }
+
+      e.consume();
+   }
+
+   private void onDragOver(DragEvent dragEvent)
+   {
+      if (dragEvent.getDragboard().hasString())
+      {
+         if (hasSelectedTables())
+         {
+            dragEvent.acceptTransferModes(TransferMode.MOVE);
+         }
+      }
+      dragEvent.consume();
+   }
+
+   private boolean hasSelectedTables()
+   {
+      return _filterResultTree.getSelectionModel().getSelectedItems().stream().filter(tn -> tn.getValue().isOfType(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY)).findFirst().isPresent();
+   }
+
+
+   private void onFilterResultTreeSelectionChanged(ObjectTreeFilterCtrlMode mode)
+   {
+      if(ObjectTreeFilterCtrlMode.ADD_TO_QUERY_BUILDER == mode)
+      {
+         return;
+      }
+
       List<ObjectTreeNode> selected = CollectionUtil.transform(_filterResultTree.getSelectionModel().getSelectedItems(), otn -> otn.getValue());
 
       List<TreeItem<ObjectTreeNode>> matches = ObjectTreeUtil.findTreeItemsByObjectTreeNodes(_sessionsObjectTree, selected);
@@ -116,7 +168,16 @@ public class FilterResultCtrl
    {
       String filterText = _fxmlHelper.getView().txtFilter.getText();
 
-      List<TreeItem<ObjectTreeNode>> filterResult = ObjectTreeUtil.findObjectsMatchingName(_sessionsObjectTree, filterText, NameMatchMode.STARTS_WITH);
+      List<TreeItem<ObjectTreeNode>> filterResult;
+
+      if (ObjectTreeFilterCtrlMode.OBJECT_TREE_SEARCH == _mode)
+      {
+         filterResult = ObjectTreeUtil.findObjectsMatchingName(_sessionsObjectTree, filterText, NameMatchMode.STARTS_WITH);
+      }
+      else
+      {
+         filterResult = ObjectTreeUtil.findObjectsMatchingNameAndType(_sessionsObjectTree, filterText, NameMatchMode.STARTS_WITH, ObjectTreeNodeTypeKey.TABLE_TYPE_KEY);
+      }
 
       _filterResultTree.setRoot(null);
       fillTreeFromFilterResult(filterResult, _filterResultTree);

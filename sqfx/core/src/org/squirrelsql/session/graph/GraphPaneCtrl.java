@@ -7,11 +7,13 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import jfxtras.scene.control.window.Window;
+import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
 
 public class GraphPaneCtrl
 {
@@ -23,6 +25,7 @@ public class GraphPaneCtrl
    {
       Pane desktopPane = createGraphDesktopPane();
 
+      initDrop(desktopPane);
 
       Window w;
       w = createInternalFrame(1, 0);
@@ -84,6 +87,31 @@ public class GraphPaneCtrl
       onDraw(canvas);
 
 
+   }
+
+   private void initDrop(Pane desktopPane)
+   {
+      desktopPane.setOnDragDropped(this::onDragDropped);
+      desktopPane.setOnDragOver(e -> onDragOver(e));
+
+   }
+
+   private void onDragOver(DragEvent dragEvent)
+   {
+      if (ObjectTreeFilterCtrl.DRAGGING_TO_QUERY_BUILDER.equals(dragEvent.getDragboard().getString()))
+      {
+         dragEvent.acceptTransferModes(TransferMode.MOVE);
+      }
+      dragEvent.consume();
+   }
+
+   private void onDragDropped(DragEvent dragEvent)
+   {
+      if( ObjectTreeFilterCtrl.DRAGGING_TO_QUERY_BUILDER.equals(dragEvent.getDragboard().getString()) )
+      {
+         System.out.println("GraphPaneCtrl.onDragDropped now build table internal frames from selected tables in ObjectTreeFilter");
+      }
+      dragEvent.consume();
    }
 
    private void onDraw(Canvas canvas)

@@ -34,9 +34,6 @@ public class AliasCell extends TreeCell<AliasTreeNode>
 
       setOnDragExited(dragPositionMarker::onDragExit);
 
-      setOnDragOver(e -> {
-         dragPositionMarker.onDragOver(e); onDragOver(e);});
-
       setOnDragDropped(e -> onDragDropped(e, dragPositionMarker));
 
       setOnMouseClicked(this::onMouseClicked);

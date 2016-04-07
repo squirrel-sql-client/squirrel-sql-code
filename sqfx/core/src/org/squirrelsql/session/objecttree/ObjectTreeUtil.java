@@ -94,6 +94,14 @@ public class ObjectTreeUtil
       return matches;
    }
 
+
+   public static List<TreeItem<ObjectTreeNode>> findObjectsMatchingNameAndType(TreeView<ObjectTreeNode> objectsTree, String name, NameMatchMode nameMatchMode, ObjectTreeNodeTypeKey objectTreeNodeTypeKey)
+   {
+      List<TreeItem<ObjectTreeNode>> listByType = findByType(objectsTree, objectTreeNodeTypeKey);
+      return CollectionUtil.filter(listByType, objectTreeNodeTreeItem -> matchesName(objectTreeNodeTreeItem, name, nameMatchMode));
+   }
+
+
    private static boolean matchesName(TreeItem<ObjectTreeNode> objectTreeNodeTreeItem, String name, NameMatchMode nameMatchMode)
    {
       String nodeName = objectTreeNodeTreeItem.getValue().getNodeName();

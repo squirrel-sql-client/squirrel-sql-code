@@ -16,6 +16,7 @@ import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.graph.GraphAccess;
+import org.squirrelsql.session.objecttree.ObjectTreeNode;
 import org.squirrelsql.session.objecttree.ObjectTreeTabCtrl;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
@@ -230,5 +231,10 @@ public class SessionCtrl
    public Tab getSessionTab()
    {
       return _sessionTab;
+   }
+
+   public TreeView<ObjectTreeNode> getObjectTree()
+   {
+      return _objectTreeTabCtrl.getObjectTree();
    }
 }

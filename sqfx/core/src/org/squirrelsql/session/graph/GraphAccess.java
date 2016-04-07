@@ -8,11 +8,11 @@ public class GraphAccess
 {
    public static Tab newQueryBuilder(SessionTabContext sessionTabContext)
    {
-      Tab tab = new Tab(new I18n(GraphAccess.class).t("graph.new.graph.title"));
+      Tab tab = new Tab();
 
+
+      tab.setGraphic(new GraphTabHeaderCtrl(sessionTabContext.getSession()).getGraphTabHeader());
       tab.setContent(new GraphPaneCtrl().getPane());
-
-      tab.setClosable(false);
 
       return tab;
    }

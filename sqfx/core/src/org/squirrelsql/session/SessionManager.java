@@ -31,6 +31,8 @@ public class SessionManager
       setCurrentlyActiveOrActivatingContext(sessionTabContext);
 
       SessionCtrl sessionCtrl = new SessionCtrl(_currentlyActiveOrActivatingContext);
+      session.setSessionCtrl(sessionCtrl);
+
       sessionTabContext.setTab(_sessionTabbedPaneController.addSessionTab(sessionCtrl));
       ActionUtil.updateActionUIs();
    }

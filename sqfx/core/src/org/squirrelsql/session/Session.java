@@ -9,6 +9,7 @@ public class Session
 {
    private DbConnectorResult _dbConnectorResult;
    private SessionTabContext _mainTabContext;
+   private SessionCtrl _sessionCtrl;
 
    public Session(DbConnectorResult dbConnectorResult)
    {
@@ -53,5 +54,15 @@ public class Session
    public SQLConnection getSQLConnection()
    {
       return _dbConnectorResult.getSQLConnection();
+   }
+
+   public void setSessionCtrl(SessionCtrl sessionCtrl)
+   {
+      _sessionCtrl = sessionCtrl;
+   }
+
+   public SessionCtrl getSessionCtrl()
+   {
+      return _sessionCtrl;
    }
 }
