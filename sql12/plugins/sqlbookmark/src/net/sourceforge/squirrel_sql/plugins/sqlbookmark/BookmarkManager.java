@@ -181,7 +181,7 @@ public class BookmarkManager implements ICompletorModel
       for (int i = 0; i < bookmarks.size(); i++)
       {
          Bookmark bookmark = bookmarks.get(i);
-         if (bookmark.getName().startsWith(bookmarkNameBegin))
+         if (matches(bookmark, bookmarkNameBegin))
          {
             ret.add(new BookmarkCompletionInfo(bookmark));
             maxNameLen = Math.max(maxNameLen, bookmark.getName().length());
@@ -197,7 +197,7 @@ public class BookmarkManager implements ICompletorModel
 
          for (int i = 0; i < defaultBookmarks.length; i++)
          {
-            if (defaultBookmarks[i].getName().startsWith(bookmarkNameBegin))
+            if (matches(defaultBookmarks[i], bookmarkNameBegin))
             {
                ret.add(new BookmarkCompletionInfo(defaultBookmarks[i]));
                maxNameLen = Math.max(maxNameLen, defaultBookmarks[i].getName().length());
@@ -217,6 +217,21 @@ public class BookmarkManager implements ICompletorModel
       }
 
       return new CompletionCandidates(candidates);
+   }
+
+   private boolean matches(Bookmark defaultBookmark, String bookmarkNameBegin)
+   {
+      String useContainsToFilterBookmarks =
+            _plugin.getBookmarkProperties().getProperty(SQLBookmarkPlugin.BOOKMARK_PROP_USE_CONTAINS_TO_FILTER_BOOKMARKS, "" + false);
+
+      if (Boolean.valueOf(useContainsToFilterBookmarks).booleanValue())
+      {
+         return defaultBookmark.getName().contains(bookmarkNameBegin);
+      }
+      else
+      {
+         return defaultBookmark.getName().startsWith(bookmarkNameBegin);
+      }
    }
 
    public void removeAll()

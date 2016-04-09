@@ -767,9 +767,16 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 					// Sybase IQ using jdbc3 driver returns null for some procedure return types - this is probably
 					// outside the JDBC spec.
 					// The safest solution seems to be to set it to Unknown result type.
-					if (row[4] == null)
+					if (row[4] == null || false == row[4] instanceof Number)
 					{
+						if (row[4] != null)
+						{
+							s_log.warn("Error reading procedure meta data for column 8 (PROCEDURE_TYPE): " +
+                           "According to the API of java.sql.DatabaseMetaData.getProcedures(...) the type should be int but is " + row[4].getClass().getName() + " with value " + row[4]);
+						}
+
 						row[4] = DatabaseMetaData.procedureResultUnknown;
+
 					}
 					final int type = ((Number) row[4]).intValue();
 					ProcedureInfo pi =

@@ -1820,7 +1820,17 @@ public class DialectUtils implements StringTemplateConstants
 			{
 				final String columnName = tcInfo.getColumnName();
 				final String defaultVal = tcInfo.getDefaultValue();
-				final String columnType = dialect.getTypeName(tcInfo);
+
+				String columnType = tcInfo.getTypeName();
+
+				try
+				{
+					columnType = dialect.getTypeName(tcInfo);
+				}
+				catch (Exception e)
+				{
+					log.warn("Failed to derive columnType from Hibernate dialect", e);
+				}
 
 				result.append("\n   ");
 				result.append(columnName);

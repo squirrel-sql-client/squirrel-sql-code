@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Updated Polish translation. Thanks to Begina Felicysym.
+
+#531 Bookmarks Plugin: In the general options of the bookmarks Plugin (see menu File --> Global Preferences --> tab Bookmarks)
+  there is a new option "In ctrl+j popup use "contains" instead of "starts with" to filter entries".
+
 Alias properties --> Tab Schemas --> Table is now sortable
   Thanks to Marek for the patch.
 
@@ -33,6 +38,11 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 
 Bug fixes:
+
+#963 Stored Procedures are not shown in object tree (reported of Informix DB)
+
+#1245 SQL Script Plugin: Table script creation failed when a column type could not be derived from a Hibernate dialect.
+  This problem was probable to occur for user defined types e.g. when domains were used by Postgresql.
 
 Quoting columns didn't work as in other script generation functions when SELECT statements were created (see Object tree's right mouse menu).
   Thanks to Joao Paulo Limberger for the patch.

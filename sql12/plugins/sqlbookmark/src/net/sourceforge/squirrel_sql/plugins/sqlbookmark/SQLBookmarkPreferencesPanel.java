@@ -34,6 +34,7 @@ public class SQLBookmarkPreferencesPanel extends JPanel
    JButton btnRun;
 
    JCheckBox chkSquirrelMarksInPopup;
+   JCheckBox chkUseContainsToFilterBookmarks;
 
 
    public SQLBookmarkPreferencesPanel(SQLBookmarkPlugin plugin)
@@ -66,12 +67,17 @@ public class SQLBookmarkPreferencesPanel extends JPanel
       chkSquirrelMarksInPopup = new JCheckBox(s_stringMgr.getString("sqlbookmark.squirrelMarksInPopup"));
       pnlSouth.add(chkSquirrelMarksInPopup, gbc);
 
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      // i18n[sqlbookmark.squirrelMarksInPopup=Show SQuirreL bookmarks in ctrl+j popup]
+      chkUseContainsToFilterBookmarks = new JCheckBox(s_stringMgr.getString("sqlbookmark.useContainsToFilterBookmarks"));
+      pnlSouth.add(chkUseContainsToFilterBookmarks, gbc);
+
       JLabel lblAccesshint = new JLabel(plugin.getResourceString(AddBookmarkDialog.BM_ACCESS_HINT));
       lblAccesshint.setForeground(Color.red);
-      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
       pnlSouth.add(lblAccesshint, gbc);
 
-      gbc = new GridBagConstraints(1,0,1,2,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+      gbc = new GridBagConstraints(1,0,1,3,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
       pnlSouth.add(new JPanel(), gbc);
 
 

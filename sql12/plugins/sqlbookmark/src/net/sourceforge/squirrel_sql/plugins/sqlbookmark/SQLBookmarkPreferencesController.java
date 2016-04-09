@@ -125,6 +125,12 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       _pnlPrefs.chkSquirrelMarksInPopup.setSelected(Boolean.valueOf(propDefaultMarksInPopup).booleanValue());
 
+
+      String useContainsToFilterBookmarks =
+         _plugin.getBookmarkProperties().getProperty(SQLBookmarkPlugin.BOOKMARK_PROP_USE_CONTAINS_TO_FILTER_BOOKMARKS, "" + false);
+
+      _pnlPrefs.chkUseContainsToFilterBookmarks.setSelected(Boolean.valueOf(useContainsToFilterBookmarks).booleanValue());
+
       _pnlPrefs.treBookmarks.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener()
       {
          public void valueChanged(TreeSelectionEvent e)
@@ -232,6 +238,9 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
 
       _plugin.getBookmarkProperties().put(SQLBookmarkPlugin.BOOKMARK_PROP_DEFAULT_MARKS_IN_POPUP, "" + _pnlPrefs.chkSquirrelMarksInPopup.isSelected());
+
+      _plugin.getBookmarkProperties().put(SQLBookmarkPlugin.BOOKMARK_PROP_USE_CONTAINS_TO_FILTER_BOOKMARKS, "" + _pnlPrefs.chkUseContainsToFilterBookmarks.isSelected());
+
       _plugin.saveBookmarkProperties();
    }
 
