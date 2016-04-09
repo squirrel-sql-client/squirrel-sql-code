@@ -55,7 +55,7 @@ public class ObjectTreeFindCtrl
 
    private void onFilter()
    {
-      new ObjectTreeFilterCtrl(_session, _view.txtText.getText(), ObjectTreeFilterCtrlMode.OBJECT_TREE_SEARCH);
+      new ObjectTreeFilterCtrl(_session, _view.txtText.getText());
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent, boolean consumeOnly)

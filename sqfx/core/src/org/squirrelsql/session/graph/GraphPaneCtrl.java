@@ -13,16 +13,21 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import jfxtras.scene.control.window.Window;
+import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
+
+import java.util.List;
 
 public class GraphPaneCtrl
 {
 
    public static final int PREVENT_INITIAL_SCROLL_DIST = 2;
    private final ScrollPane _scrollPane;
+   private GraphTableDndChannel _graphTableDndChannel;
 
-   public GraphPaneCtrl()
+   public GraphPaneCtrl(GraphTableDndChannel graphTableDndChannel)
    {
+      _graphTableDndChannel = graphTableDndChannel;
       Pane desktopPane = createGraphDesktopPane();
 
       initDrop(desktopPane);
@@ -109,7 +114,9 @@ public class GraphPaneCtrl
    {
       if( ObjectTreeFilterCtrl.DRAGGING_TO_QUERY_BUILDER.equals(dragEvent.getDragboard().getString()) )
       {
-         System.out.println("GraphPaneCtrl.onDragDropped now build table internal frames from selected tables in ObjectTreeFilter");
+         List<TableInfo> tableInfos = _graphTableDndChannel.getLastDroppedTableInfos();
+
+         tableInfos.forEach(ti -> System.out.println("Adding to query builder: "  +  ti.getName()));
       }
       dragEvent.consume();
    }

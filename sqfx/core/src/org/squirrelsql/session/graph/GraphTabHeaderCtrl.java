@@ -18,9 +18,11 @@ public class GraphTabHeaderCtrl
    private final BorderPane _graphTabHeader;
    private final I18n _i18n = new I18n(getClass());
    private final Props _props = new Props(getClass());
+   private GraphTableDndChannel _graphTableDndChannel;
 
-   public GraphTabHeaderCtrl(Session session)
+   public GraphTabHeaderCtrl(GraphTableDndChannel graphTableDndChannel, Session session)
    {
+      _graphTableDndChannel = graphTableDndChannel;
 
       _graphTabHeader = new BorderPane();
 
@@ -39,7 +41,7 @@ public class GraphTabHeaderCtrl
 
    private void onAddTables(Session session)
    {
-      new ObjectTreeFilterCtrl(session, "", ObjectTreeFilterCtrlMode.ADD_TO_QUERY_BUILDER);
+      new ObjectTreeFilterCtrl(session, "", _graphTableDndChannel);
    }
 
    public Node getGraphTabHeader()

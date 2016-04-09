@@ -2,6 +2,7 @@ package org.squirrelsql.session.objecttree;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -14,12 +15,14 @@ import org.squirrelsql.session.Session;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.session.completion.TextFieldTextComponentAdapter;
+import org.squirrelsql.session.graph.GraphTableDndChannel;
 import org.squirrelsql.workaround.KeyMatchWA;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ObjectTreeFilterCtrl
 {
@@ -33,8 +36,20 @@ public class ObjectTreeFilterCtrl
    private TreeView<ObjectTreeNode> _sessionsObjectTree;
    private final Stage _dialog;
    private ObjectTreeFilterCtrlMode _mode;
+   private GraphTableDndChannel _graphTableDndChannel;
 
-   public ObjectTreeFilterCtrl(Session session, String filterText, ObjectTreeFilterCtrlMode mode)
+   public ObjectTreeFilterCtrl(Session session, String filterText)
+   {
+      this(session, filterText, ObjectTreeFilterCtrlMode.OBJECT_TREE_SEARCH);
+   }
+
+   public ObjectTreeFilterCtrl(Session session, String filterText, GraphTableDndChannel graphTableDndChannel)
+   {
+      this(session, filterText, ObjectTreeFilterCtrlMode.ADD_TO_QUERY_BUILDER);
+      _graphTableDndChannel = graphTableDndChannel;
+   }
+
+   private ObjectTreeFilterCtrl(Session session, String filterText, ObjectTreeFilterCtrlMode mode)
    {
       _mode = mode;
       _sessionsObjectTree = session.getSessionCtrl().getObjectTree();
@@ -106,6 +121,7 @@ public class ObjectTreeFilterCtrl
          ClipboardContent content = new ClipboardContent();
          content.put(DataFormat.PLAIN_TEXT, DRAGGING_TO_QUERY_BUILDER);
          dragBoard.setContent(content);
+         _graphTableDndChannel.setLastDraggingObjectTreeFilter(this);
       }
 
       e.consume();
@@ -262,4 +278,10 @@ public class ObjectTreeFilterCtrl
    }
 
 
+   public List<ObjectTreeNode> getSelectedObjectTreeNodes()
+   {
+      List<TreeItem<ObjectTreeNode>> buf = CollectionUtil.filter(_filterResultTree.getSelectionModel().getSelectedItems(), ti -> ti.getValue().isOfType(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY));
+
+      return CollectionUtil.transform(buf, TreeItem::getValue);
+   }
 }

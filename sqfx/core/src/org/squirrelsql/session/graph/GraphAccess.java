@@ -10,9 +10,10 @@ public class GraphAccess
    {
       Tab tab = new Tab();
 
+      GraphTableDndChannel graphTableDndChannel = new GraphTableDndChannel();
 
-      tab.setGraphic(new GraphTabHeaderCtrl(sessionTabContext.getSession()).getGraphTabHeader());
-      tab.setContent(new GraphPaneCtrl().getPane());
+      tab.setGraphic(new GraphTabHeaderCtrl(graphTableDndChannel, sessionTabContext.getSession()).getGraphTabHeader());
+      tab.setContent(new GraphPaneCtrl(graphTableDndChannel).getPane());
 
       return tab;
    }
