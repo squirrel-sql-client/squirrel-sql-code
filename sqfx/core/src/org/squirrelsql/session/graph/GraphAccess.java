@@ -13,7 +13,7 @@ public class GraphAccess
       GraphTableDndChannel graphTableDndChannel = new GraphTableDndChannel();
 
       tab.setGraphic(new GraphTabHeaderCtrl(graphTableDndChannel, sessionTabContext.getSession()).getGraphTabHeader());
-      tab.setContent(new GraphPaneCtrl(graphTableDndChannel).getPane());
+      tab.setContent(new GraphPaneCtrl(graphTableDndChannel, sessionTabContext.getSession()).getPane());
 
       return tab;
    }

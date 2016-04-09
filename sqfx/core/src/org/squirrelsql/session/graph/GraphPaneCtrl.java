@@ -13,6 +13,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import jfxtras.scene.control.window.Window;
+import org.squirrelsql.services.CollectionUtil;
+import org.squirrelsql.session.ColumnInfo;
+import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
 
@@ -24,29 +27,23 @@ public class GraphPaneCtrl
    public static final int PREVENT_INITIAL_SCROLL_DIST = 2;
    private final ScrollPane _scrollPane;
    private GraphTableDndChannel _graphTableDndChannel;
+   private Session _session;
+   private final Pane _desktopPane;
 
-   public GraphPaneCtrl(GraphTableDndChannel graphTableDndChannel)
+   public GraphPaneCtrl(GraphTableDndChannel graphTableDndChannel, Session session)
    {
       _graphTableDndChannel = graphTableDndChannel;
-      Pane desktopPane = createGraphDesktopPane();
+      _session = session;
+      _desktopPane = createGraphDesktopPane();
 
-      initDrop(desktopPane);
-
-      Window w;
-      w = createInternalFrame(1, 0);
-      desktopPane.getChildren().add(w);
-      w = createInternalFrame(2, 0);
-      desktopPane.getChildren().add(w);
-
-//      w = createInternalFrame(3, 800);
-//      desktopPane.getChildren().add(w);
+      initDrop(_desktopPane);
 
       // init and show the stage
       // create a scene that displays the desktopPane (resolution 600,600)
       StackPane stackPane = new StackPane();
       Canvas canvas = new Canvas();
       stackPane.getChildren().add(canvas);
-      stackPane.getChildren().add(desktopPane);
+      stackPane.getChildren().add(_desktopPane);
 
       _scrollPane = new ScrollPane(stackPane);
 
@@ -116,9 +113,33 @@ public class GraphPaneCtrl
       {
          List<TableInfo> tableInfos = _graphTableDndChannel.getLastDroppedTableInfos();
 
-         tableInfos.forEach(ti -> System.out.println("Adding to query builder: "  +  ti.getName()));
+         double offset = 0;
+         for (TableInfo tableInfo : tableInfos)
+         {
+            double x = dragEvent.getX() + offset;
+            double y = dragEvent.getY() + offset;
+            _desktopPane.getChildren().add(createInternalFrame(tableInfo, x, y));
+
+            offset += 10;
+         }
       }
       dragEvent.consume();
+   }
+
+   private Window createInternalFrame(TableInfo tableInfo, double x, double y)
+   {
+      Window w = new Window(tableInfo.getName());
+
+      Pane contentPane = createContentPane(tableInfo);
+
+      w.setContentPane(contentPane);
+
+      w.setLayoutX(x);
+      w.setLayoutY(y);
+
+      // define the initial window size
+      w.setPrefSize(300, 200);
+      return w;
    }
 
    private void onDraw(Canvas canvas)
@@ -138,28 +159,13 @@ public class GraphPaneCtrl
       return desktopPane;
    }
 
-   private Window createInternalFrame(int ix, int layoutOffset)
+
+   private Pane createContentPane(TableInfo tableInfo)
    {
-      // create a window with title "My Window"
-      Window w = new Window("My Window " + ix);
+      List<ColumnInfo> columns = _session.getSchemaCacheValue().get().getColumns(tableInfo);
 
-      Pane contentPane = createContentPane();
-
-      w.setContentPane(contentPane);
-
-      // set the window position to 10,10 (coordinates inside canvas)
-      w.setLayoutX(10 + layoutOffset);
-      w.setLayoutY(10 + layoutOffset);
-
-      // define the initial window size
-      w.setPrefSize(300, 200);
-      return w;
-   }
-
-   private Pane createContentPane()
-   {
       BorderPane contentPane = new BorderPane();
-      contentPane.setCenter(new ListView<String>(FXCollections.observableArrayList("1", "2", "3")));
+      contentPane.setCenter(new ListView<String>(FXCollections.observableArrayList(CollectionUtil.transform(columns, c -> c.getDescription()))));
       return contentPane;
    }
 
