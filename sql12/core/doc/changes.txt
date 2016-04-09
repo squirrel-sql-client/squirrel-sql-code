@@ -39,6 +39,8 @@ Syntax plugin: Last five find strings are now saved and can be selected from the
 
 Bug fixes:
 
+#963 Stored Procedures are not shown in object tree (reported of Informix DB)
+
 #1245 SQL Script Plugin: Table script creation failed when a column type could not be derived from a Hibernate dialect.
   This problem was probable to occur for user defined types e.g. when domains were used by Postgresql.
 
