@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Updated Polish translation. Thanks to Begina Felicysym.
+
 #531 Bookmarks Plugin: In the general options of the bookmarks Plugin (see menu File --> Global Preferences --> tab Bookmarks)
   there is a new option "In ctrl+j popup use "contains" instead of "starts with" to filter entries".
 
