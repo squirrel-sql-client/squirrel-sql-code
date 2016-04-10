@@ -98,6 +98,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 	/** Connection to database this class is supplying information for. */
 	private ISQLConnection _conn;
+	
+	private NetezzaSpecifics _netezzaSpecifics = null;
 
 	/**
 	 * Cache of commonly accessed metadata properties keyed by the method name that attempts to retrieve them.
@@ -908,6 +910,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			tableTypes.add("SYSTEM TABLE");
 			tableTypes.add("TABLE");
 			tableTypes.add("VIEW");
+			tableTypes.add("SYNONYM");
 		}
 
 		value = tableTypes.toArray(new String[tableTypes.size()]);
@@ -1708,8 +1711,22 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 	private ResultSet getColumns(ITableInfo ti) throws SQLException
 	{
-		return privateGetJDBCMetaData().getColumns(ti.getCatalogName(), ti.getSchemaName(), escapeTableNames(ti.getSimpleName()),
-			"%");
+		String catalog = ti.getCatalogName();
+		String schema = ti.getSchemaName();
+		String table = escapeTableNames(ti.getSimpleName());
+		
+		if (DialectFactory.isNetezza(this)) {
+			if (_netezzaSpecifics == null)
+				_netezzaSpecifics = new NetezzaSpecifics(this);
+			NetezzaSynonym synonym = _netezzaSpecifics.returnSynonym(catalog, schema, table);
+			if (synonym != null) {
+				catalog = synonym.getCatalog();
+				schema = synonym.getSchema();
+				table = synonym.getTable();
+			}
+		}
+
+		return privateGetJDBCMetaData().getColumns(catalog, schema, table, "%");
 	}
 
 	/**
@@ -1756,7 +1773,25 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		{
 			final Map<Integer, TableColumnInfo> columns = new TreeMap<Integer, TableColumnInfo>();
 			DatabaseMetaData md = privateGetJDBCMetaData();
+
+			// TODO this should not be here like this:
+			// The usage of DialectFactory calls implies different SQLDatabaseMetaData classes
+			// for which different SQLDatabaseMetaDataFactory's should be created and registered.
+			// For now, I added Netezza here too, but refactoring should be done
+			// Function: resolve synonym to the referenced table, so we can get columns for that table
+			if (DialectFactory.isNetezza(this)) {
+				if (_netezzaSpecifics == null)
+					_netezzaSpecifics = new NetezzaSpecifics(this);
+				NetezzaSynonym synonym = _netezzaSpecifics.returnSynonym(catalog, schema, table);
+				if (synonym != null) {
+					catalog = synonym.getCatalog();
+					schema = synonym.getSchema();
+					table = synonym.getTable();
+				}
+			}
+			
 			rs = md.getColumns(catalog, schema, table, "%");
+			
 			final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
 
 			int isNullAllowed = DatabaseMetaData.typeNullableUnknown;
