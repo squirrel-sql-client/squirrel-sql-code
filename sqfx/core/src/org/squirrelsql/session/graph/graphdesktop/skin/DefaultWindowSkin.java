@@ -478,16 +478,15 @@ public class DefaultWindowSkin extends SkinBase<Window>
 
    private void onMouseDragged(MouseEvent event)
    {
-      final Window n = control;
+      final Window w = control;
 
-      final double parentScaleX = n.getParent().localToSceneTransformProperty().getValue().getMxx();
-      final double parentScaleY = n.getParent().localToSceneTransformProperty().getValue().getMyy();
+      final double parentScaleX = w.getParent().localToSceneTransformProperty().getValue().getMxx();
+      final double parentScaleY = w.getParent().localToSceneTransformProperty().getValue().getMyy();
 
-//      final double scaleX = n.localToSceneTransformProperty().getValue().getMxx();
-//      final double scaleY = n.localToSceneTransformProperty().getValue().getMyy();
+//      final double scaleX = w.localToSceneTransformProperty().getValue().getMxx();
+//      final double scaleY = w.localToSceneTransformProperty().getValue().getMyy();
 
-      Bounds boundsInScene =
-            control.localToScene(control.getBoundsInLocal());
+      Bounds boundsInScene = control.localToScene(control.getBoundsInLocal());
 
       double sceneX = boundsInScene.getMinX();
       double sceneY = boundsInScene.getMinY();
@@ -504,14 +503,14 @@ public class DefaultWindowSkin extends SkinBase<Window>
          double scaledX = nodeX * 1 / parentScaleX;
          double scaledY = nodeY * 1 / parentScaleY;
 
-//         double offsetForAllX = scaledX - n.getLayoutX();
-//         double offsetForAllY = scaledY - n.getLayoutY();
+//         double offsetForAllX = scaledX - w.getLayoutX();
+//         double offsetForAllY = scaledY - w.getLayoutY();
 
 
          if (dragging || (_lastMousePressedWasInTitleBar && isInsideTitleBar(event)))
          {
-            n.setLayoutX(scaledX);
-            n.setLayoutY(scaledY);
+            w.setLayoutX(Math.max(0, scaledX));
+            w.setLayoutY(Math.max(0, scaledY));
 
             dragging = true;
          }
@@ -520,8 +519,8 @@ public class DefaultWindowSkin extends SkinBase<Window>
       else
       {
 
-//         double width = n.getBoundsInLocal().getMaxX() - n.getBoundsInLocal().getMinX();
-//         double height = n.getBoundsInLocal().getMaxY() - n.getBoundsInLocal().getMinY();
+//         double width = w.getBoundsInLocal().getMaxX() - w.getBoundsInLocal().getMinX();
+//         double height = w.getBoundsInLocal().getMaxY() - w.getBoundsInLocal().getMinY();
 
          if (RESIZE_TOP)
          {
