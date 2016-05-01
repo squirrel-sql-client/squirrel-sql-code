@@ -75,6 +75,7 @@ public class DefaultWindowSkin extends SkinBase<Window>
    private double contentScale = 1.0;
    private double oldHeight;
    private Timeline minimizeTimeLine;
+   private boolean _lastMousePressedWasInTitleBar;
 
    public DefaultWindowSkin(Window w)
    {
@@ -370,6 +371,8 @@ public class DefaultWindowSkin extends SkinBase<Window>
       {
          control.toFront();
       }
+
+      _lastMousePressedWasInTitleBar = isInsideTitleBar(event);
    }
 
    private void onMouseMoved(MouseEvent event)
@@ -389,8 +392,8 @@ public class DefaultWindowSkin extends SkinBase<Window>
 
       final Node n = control;
 
-      final double parentScaleX = n.getParent().localToSceneTransformProperty().getValue().getMxx();
-      final double parentScaleY = n.getParent().localToSceneTransformProperty().getValue().getMyy();
+//      final double parentScaleX = n.getParent().localToSceneTransformProperty().getValue().getMxx();
+//      final double parentScaleY = n.getParent().localToSceneTransformProperty().getValue().getMyy();
 
       final double scaleX = n.localToSceneTransformProperty().getValue().getMxx();
       final double scaleY = n.localToSceneTransformProperty().getValue().getMyy();
@@ -475,17 +478,13 @@ public class DefaultWindowSkin extends SkinBase<Window>
 
    private void onMouseDragged(MouseEvent event)
    {
-      final Node n = control;
+      final Window n = control;
 
-      final double parentScaleX = n.getParent().
-            localToSceneTransformProperty().getValue().getMxx();
-      final double parentScaleY = n.getParent().
-            localToSceneTransformProperty().getValue().getMyy();
+      final double parentScaleX = n.getParent().localToSceneTransformProperty().getValue().getMxx();
+      final double parentScaleY = n.getParent().localToSceneTransformProperty().getValue().getMyy();
 
-      final double scaleX = n.localToSceneTransformProperty().
-            getValue().getMxx();
-      final double scaleY = n.localToSceneTransformProperty().
-            getValue().getMyy();
+//      final double scaleX = n.localToSceneTransformProperty().getValue().getMxx();
+//      final double scaleY = n.localToSceneTransformProperty().getValue().getMyy();
 
       Bounds boundsInScene =
             control.localToScene(control.getBoundsInLocal());
@@ -505,11 +504,11 @@ public class DefaultWindowSkin extends SkinBase<Window>
          double scaledX = nodeX * 1 / parentScaleX;
          double scaledY = nodeY * 1 / parentScaleY;
 
-         double offsetForAllX = scaledX - n.getLayoutX();
-         double offsetForAllY = scaledY - n.getLayoutY();
+//         double offsetForAllX = scaledX - n.getLayoutX();
+//         double offsetForAllY = scaledY - n.getLayoutY();
 
 
-         if (dragging || false == isInsideContent(event))
+         if (dragging || (_lastMousePressedWasInTitleBar && isInsideTitleBar(event)))
          {
             n.setLayoutX(scaledX);
             n.setLayoutY(scaledY);
@@ -521,10 +520,8 @@ public class DefaultWindowSkin extends SkinBase<Window>
       else
       {
 
-         double width = n.getBoundsInLocal().getMaxX()
-               - n.getBoundsInLocal().getMinX();
-         double height = n.getBoundsInLocal().getMaxY()
-               - n.getBoundsInLocal().getMinY();
+//         double width = n.getBoundsInLocal().getMaxX() - n.getBoundsInLocal().getMinX();
+//         double height = n.getBoundsInLocal().getMaxY() - n.getBoundsInLocal().getMinY();
 
          if (RESIZE_TOP)
          {
@@ -615,9 +612,9 @@ public class DefaultWindowSkin extends SkinBase<Window>
    }
 
 
-   private boolean isInsideContent(MouseEvent e)
+   private boolean isInsideTitleBar(MouseEvent e)
    {
-      Bounds b = control.getContentPane().getBoundsInParent();
+      Bounds b = titleBar.getBoundsInParent();
       return b.contains(e.getX(), e.getY());
    }
 

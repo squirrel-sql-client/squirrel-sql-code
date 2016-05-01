@@ -12,11 +12,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import jfxtras.scene.control.window.Window;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
+import org.squirrelsql.session.graph.graphdesktop.Window;
 import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
 
 import java.util.List;
@@ -93,12 +93,11 @@ public class GraphPaneCtrl
 
    private void initDrop(Pane desktopPane)
    {
-      desktopPane.setOnDragDropped(this::onDragDropped);
-      desktopPane.setOnDragOver(e -> onDragOver(e));
-
+      desktopPane.setOnDragDropped(this::onDragDroppedOfTableFromObjectTreeDialogToDesktop);
+      desktopPane.setOnDragOver(e -> onDragOverOfTableFromObjectTreeDialogToDesktop(e));
    }
 
-   private void onDragOver(DragEvent dragEvent)
+   private void onDragOverOfTableFromObjectTreeDialogToDesktop(DragEvent dragEvent)
    {
       if (ObjectTreeFilterCtrl.DRAGGING_TO_QUERY_BUILDER.equals(dragEvent.getDragboard().getString()))
       {
@@ -107,7 +106,7 @@ public class GraphPaneCtrl
       dragEvent.consume();
    }
 
-   private void onDragDropped(DragEvent dragEvent)
+   private void onDragDroppedOfTableFromObjectTreeDialogToDesktop(DragEvent dragEvent)
    {
       if( ObjectTreeFilterCtrl.DRAGGING_TO_QUERY_BUILDER.equals(dragEvent.getDragboard().getString()) )
       {
