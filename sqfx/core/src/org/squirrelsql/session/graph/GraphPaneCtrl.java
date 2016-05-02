@@ -79,16 +79,9 @@ public class GraphPaneCtrl
       canvas.widthProperty().bind(dbWidth);
       canvas.heightProperty().bind(dbHeight);
 
-      canvas.widthProperty().addListener((observable, oldValue, newValue) -> {
-         onDraw(canvas);
-      });
-      canvas.heightProperty().addListener((observable, oldValue, newValue) -> {
-         onDraw(canvas);
-      });
-
+      canvas.widthProperty().addListener((observable, oldValue, newValue) -> onDraw(canvas));
+      canvas.heightProperty().addListener((observable, oldValue, newValue) -> onDraw(canvas));
       onDraw(canvas);
-
-
    }
 
    private void initDrop(Pane desktopPane)
@@ -147,7 +140,7 @@ public class GraphPaneCtrl
 
       gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-      gc.setStroke(Color.BLACK);
+      gc.setStroke(Color.RED);
       gc.setLineWidth(3);
       gc.strokeLine(0, 0, canvas.getWidth(), canvas.getHeight());
    }

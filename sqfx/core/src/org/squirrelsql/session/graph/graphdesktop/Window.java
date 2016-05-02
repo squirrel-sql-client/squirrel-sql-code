@@ -200,6 +200,8 @@ public class Window extends Control implements SelectableNode {
         st.setToY(0);
         st.setDuration(Duration.seconds(0.2));
 
+        rightIcons.addAll(new CloseIcon(this));
+
         setCloseTransition(st);
 
     }
