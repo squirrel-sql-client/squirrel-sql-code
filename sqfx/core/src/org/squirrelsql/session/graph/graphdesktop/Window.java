@@ -43,6 +43,7 @@ import javafx.scene.control.Control;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import org.squirrelsql.session.graph.TableWindowCtrl;
 
 /**
  * Window control. A window control is a window node as known from Swing, e.g
@@ -136,8 +137,9 @@ public class Window extends Control implements SelectableNode {
      * Selectable property (defines whether this window is selectable.
      */
     private final BooleanProperty selectableProperty = new SimpleBooleanProperty(true);
+   private TableWindowCtrl _ctrl;
 
-    /**
+   /**
      * Constructor.
      */
     public Window() {
@@ -621,4 +623,13 @@ public class Window extends Control implements SelectableNode {
         return selectedProperty.get();
     }
 
+   public TableWindowCtrl getCtrl()
+   {
+      return _ctrl;
+   }
+
+   public void setCtrl(TableWindowCtrl ctrl)
+   {
+      _ctrl = ctrl;
+   }
 }

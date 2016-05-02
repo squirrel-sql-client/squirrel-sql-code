@@ -1,19 +1,15 @@
 package org.squirrelsql.session.graph;
 
 import javafx.beans.binding.DoubleBinding;
-import javafx.collections.FXCollections;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import org.squirrelsql.services.CollectionUtil;
-import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
@@ -28,13 +24,12 @@ public class GraphPaneCtrl
    private final ScrollPane _scrollPane;
    private GraphTableDndChannel _graphTableDndChannel;
    private Session _session;
-   private final Pane _desktopPane;
+   private final Pane _desktopPane = new Pane();
 
    public GraphPaneCtrl(GraphTableDndChannel graphTableDndChannel, Session session)
    {
       _graphTableDndChannel = graphTableDndChannel;
       _session = session;
-      _desktopPane = createGraphDesktopPane();
 
       initDrop(_desktopPane);
 
@@ -110,28 +105,14 @@ public class GraphPaneCtrl
          {
             double x = dragEvent.getX() + offset;
             double y = dragEvent.getY() + offset;
-            _desktopPane.getChildren().add(createInternalFrame(tableInfo, x, y));
+
+            TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, tableInfo, x, y);
+            _desktopPane.getChildren().add(tableWindowCtrl.getWindow());
 
             offset += 10;
          }
       }
       dragEvent.consume();
-   }
-
-   private Window createInternalFrame(TableInfo tableInfo, double x, double y)
-   {
-      Window w = new Window(tableInfo.getName());
-
-      Pane contentPane = createContentPane(tableInfo);
-
-      w.setContentPane(contentPane);
-
-      w.setLayoutX(x);
-      w.setLayoutY(y);
-
-      // define the initial window size
-      w.setPrefSize(300, 200);
-      return w;
    }
 
    private void onDraw(Canvas canvas)
@@ -143,24 +124,24 @@ public class GraphPaneCtrl
       gc.setStroke(Color.RED);
       gc.setLineWidth(3);
       gc.strokeLine(0, 0, canvas.getWidth(), canvas.getHeight());
+
+      for (Node pkNode : _desktopPane.getChildren())
+      {
+         TableWindowCtrl pkCtrl = ((Window) pkNode).getCtrl();
+
+         for (Node fkNode : _desktopPane.getChildren())
+         {
+            TableWindowCtrl fkCtrl = ((Window) fkNode).getCtrl();
+
+            List<Point2D> pkPoints = pkCtrl.getPkPointsTo(fkCtrl);
+            List<Point2D> fkPoints = fkCtrl.getFkPointsTo(pkCtrl);
+
+
+         }
+      }
+
+
    }
-
-   private Pane createGraphDesktopPane()
-   {
-      Pane desktopPane = new Pane();
-      return desktopPane;
-   }
-
-
-   private Pane createContentPane(TableInfo tableInfo)
-   {
-      List<ColumnInfo> columns = _session.getSchemaCacheValue().get().getColumns(tableInfo);
-
-      BorderPane contentPane = new BorderPane();
-      contentPane.setCenter(new ListView<String>(FXCollections.observableArrayList(CollectionUtil.transform(columns, c -> c.getDescription()))));
-      return contentPane;
-   }
-
 
    public Node getPane()
    {
