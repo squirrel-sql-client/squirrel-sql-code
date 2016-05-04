@@ -25,6 +25,7 @@ public class GraphPaneCtrl
    private GraphTableDndChannel _graphTableDndChannel;
    private Session _session;
    private final Pane _desktopPane = new Pane();
+   private final Canvas _canvas;
 
    public GraphPaneCtrl(GraphTableDndChannel graphTableDndChannel, Session session)
    {
@@ -36,8 +37,8 @@ public class GraphPaneCtrl
       // init and show the stage
       // create a scene that displays the desktopPane (resolution 600,600)
       StackPane stackPane = new StackPane();
-      Canvas canvas = new Canvas();
-      stackPane.getChildren().add(canvas);
+      _canvas = new Canvas();
+      stackPane.getChildren().add(_canvas);
       stackPane.getChildren().add(_desktopPane);
 
       _scrollPane = new ScrollPane(stackPane);
@@ -71,12 +72,12 @@ public class GraphPaneCtrl
       };
 
 
-      canvas.widthProperty().bind(dbWidth);
-      canvas.heightProperty().bind(dbHeight);
+      _canvas.widthProperty().bind(dbWidth);
+      _canvas.heightProperty().bind(dbHeight);
 
-      canvas.widthProperty().addListener((observable, oldValue, newValue) -> onDraw(canvas));
-      canvas.heightProperty().addListener((observable, oldValue, newValue) -> onDraw(canvas));
-      onDraw(canvas);
+      _canvas.widthProperty().addListener((observable, oldValue, newValue) -> onDraw());
+      _canvas.heightProperty().addListener((observable, oldValue, newValue) -> onDraw());
+      onDraw();
    }
 
    private void initDrop(Pane desktopPane)
@@ -106,24 +107,26 @@ public class GraphPaneCtrl
             double x = dragEvent.getX() + offset;
             double y = dragEvent.getY() + offset;
 
-            TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, tableInfo, x, y);
+            TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, tableInfo, x, y, new DrawLinesListener(){public void drawLines(TableWindowCtrl ctrl){onDraw();}});
             _desktopPane.getChildren().add(tableWindowCtrl.getWindow());
 
             offset += 10;
          }
+
+         onDraw();
       }
       dragEvent.consume();
    }
 
-   private void onDraw(Canvas canvas)
+   private void onDraw()
    {
-      GraphicsContext gc = canvas.getGraphicsContext2D();
+      GraphicsContext gc = _canvas.getGraphicsContext2D();
 
-      gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+      gc.clearRect(0, 0, _canvas.getWidth(), _canvas.getHeight());
 
-      gc.setStroke(Color.RED);
-      gc.setLineWidth(3);
-      gc.strokeLine(0, 0, canvas.getWidth(), canvas.getHeight());
+      gc.setStroke(Color.BLACK);
+      gc.setLineWidth(1);
+      //gc.strokeLine(0, 0, _canvas.getWidth(), _canvas.getHeight());
 
       for (Node pkNode : _desktopPane.getChildren())
       {
@@ -136,11 +139,18 @@ public class GraphPaneCtrl
             List<Point2D> pkPoints = pkCtrl.getPkPointsTo(fkCtrl);
             List<Point2D> fkPoints = fkCtrl.getFkPointsTo(pkCtrl);
 
+            if (0 < pkPoints.size() && 0 < fkPoints.size())
+            {
+               double x1 = pkPoints.get(0).getX();
+               double y1 = pkPoints.get(0).getY();
+               double x2 = fkPoints.get(0).getX();
+               double y2 = fkPoints.get(0).getY();
 
+               //System.out.println("(" + x1 +"," + y1 + ") - (" + x2 + "," + y2 +")");
+               gc.strokeLine(x1, y1, x2, y2);
+            }
          }
       }
-
-
    }
 
    public Node getPane()

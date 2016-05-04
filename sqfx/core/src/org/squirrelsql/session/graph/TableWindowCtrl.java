@@ -12,14 +12,15 @@ import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class TableWindowCtrl extends Window
+public class TableWindowCtrl
 {
    private Session _session;
    private final Window _window;
 
-   public TableWindowCtrl(Session session, TableInfo tableInfo, double x, double y)
+   public TableWindowCtrl(Session session, TableInfo tableInfo, double x, double y, DrawLinesListener drawLinesListener)
    {
       _session = session;
       _window = new Window(tableInfo.getName());
@@ -35,6 +36,10 @@ public class TableWindowCtrl extends Window
       _window.setPrefSize(300, 200);
 
       _window.setCtrl(this);
+
+      _window.boundsInParentProperty().addListener((observable, oldValue, newValue) -> drawLinesListener.drawLines(TableWindowCtrl.this));
+
+      _window.setOnClosedAction(e -> drawLinesListener.drawLines(TableWindowCtrl.this));
    }
 
    private Pane createContentPane(TableInfo tableInfo)
@@ -54,11 +59,49 @@ public class TableWindowCtrl extends Window
 
    public List<Point2D> getPkPointsTo(TableWindowCtrl fkCtrl)
    {
-      return new ArrayList<>();
+      if(fkCtrl == this)
+      {
+         return new ArrayList<>();
+      }
+
+      Point2D ret;
+      if(getMidX() < fkCtrl.getMidX())
+      {
+         ret = new Point2D(_window.getBoundsInParent().getMaxX(), _window.getBoundsInParent().getMinY());
+      }
+      else
+      {
+         ret = new Point2D(_window.getBoundsInParent().getMinX(), _window.getBoundsInParent().getMinY());
+      }
+
+      //ret.add(_window.getTranslateX(), _window.getTranslateY());
+      return Collections.singletonList(ret);
+   }
+
+   private double getMidX()
+   {
+      return _window.getBoundsInParent().getMinX() + (_window.getBoundsInParent().getMaxX() - _window.getBoundsInParent().getMinX()) / 2.0;
    }
 
    public List<Point2D> getFkPointsTo(TableWindowCtrl pkCtrl)
    {
-      return new ArrayList<>();
+      if(pkCtrl == this)
+      {
+         return new ArrayList<>();
+      }
+
+      Point2D ret;
+      if(getMidX() < pkCtrl.getMidX())
+      {
+         ret = new Point2D(_window.getBoundsInParent().getMaxX(), _window.getBoundsInParent().getMaxY());
+      }
+      else
+      {
+         ret = new Point2D(_window.getBoundsInParent().getMinX(), _window.getBoundsInParent().getMaxY());
+      }
+
+      //ret.add(_window.getTranslateX(), _window.getTranslateY());
+      return Collections.singletonList(ret);
+
    }
 }
