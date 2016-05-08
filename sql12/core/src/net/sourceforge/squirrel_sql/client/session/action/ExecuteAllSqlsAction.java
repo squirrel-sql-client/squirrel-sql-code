@@ -19,7 +19,7 @@ public class ExecuteAllSqlsAction extends SquirrelAction implements ISQLPanelAct
    public void setSQLPanel(ISQLPanelAPI panel)
    {
       _panel = panel;
-      setEnabled(null != _panel);
+      setEnabled(null != _panel && getApplication().getSquirrelPreferences().isAllowRunAllSQLsInEditor());
    }
 
    public void actionPerformed(ActionEvent evt)
