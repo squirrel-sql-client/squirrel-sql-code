@@ -22,7 +22,7 @@ public class DrawLinesCtrl
       _desktopPane = desktopPane;
       _scrollPane = scrollPane;
 
-      SizeBindingHelper.bindCanvasSizeToDesktopPaneSize(desktopPane, _canvas);
+      SizeBindingHelper.bindLinesCanvasSizeToDesktopPaneSize(desktopPane, _canvas);
 
       _canvas.widthProperty().addListener((observable, oldValue, newValue) -> onDraw());
       _canvas.heightProperty().addListener((observable, oldValue, newValue) -> onDraw());

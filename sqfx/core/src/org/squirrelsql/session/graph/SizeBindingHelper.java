@@ -9,7 +9,7 @@ public class SizeBindingHelper
 {
    private static final int PREVENT_INITIAL_SCROLL_DIST = 2;
 
-   public static void bindCanvasSizeToDesktopPaneSize(final Pane desktopPane, Canvas canvas)
+   public static void bindLinesCanvasSizeToDesktopPaneSize(final Pane desktopPane, Canvas linesCanvas)
    {
       DoubleBinding dbWidth = new DoubleBinding()
       {
@@ -21,7 +21,7 @@ public class SizeBindingHelper
          @Override
          protected double computeValue()
          {
-            return desktopPane.widthProperty().get() - PREVENT_INITIAL_SCROLL_DIST;
+            return desktopPane.widthProperty().get();
          }
       };
 
@@ -35,13 +35,13 @@ public class SizeBindingHelper
          @Override
          protected double computeValue()
          {
-            return desktopPane.heightProperty().get() - PREVENT_INITIAL_SCROLL_DIST;
+            return desktopPane.heightProperty().get();
          }
       };
 
 
-      canvas.widthProperty().bind(dbWidth);
-      canvas.heightProperty().bind(dbHeight);
+      linesCanvas.widthProperty().bind(dbWidth);
+      linesCanvas.heightProperty().bind(dbHeight);
    }
 
    public static void bindSizingDummyCanvasToScrollPane(ScrollPane scrollPane, Canvas sizingDummyCanvas)
