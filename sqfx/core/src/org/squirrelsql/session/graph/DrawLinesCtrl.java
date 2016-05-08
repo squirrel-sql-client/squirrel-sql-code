@@ -1,6 +1,5 @@
 package org.squirrelsql.session.graph;
 
-import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -14,46 +13,14 @@ import java.util.List;
 
 public class DrawLinesCtrl
 {
-   private static final int PREVENT_INITIAL_SCROLL_DIST = 2;
-
-
    private Canvas _canvas = new Canvas();
    private Pane _desktopPane;
 
-   public DrawLinesCtrl(Pane desktopPane, ScrollPane scrollPane)
+   public DrawLinesCtrl(Pane desktopPane)
    {
-      DoubleBinding dbWidth = new DoubleBinding()
-      {
-         {
-            super.bind(scrollPane.widthProperty());
-         }
-
-
-         @Override
-         protected double computeValue()
-         {
-            return scrollPane.widthProperty().get() - PREVENT_INITIAL_SCROLL_DIST;
-         }
-      };
-
-      DoubleBinding dbHeight = new DoubleBinding()
-      {
-         {
-            super.bind(scrollPane.heightProperty());
-         }
-
-
-         @Override
-         protected double computeValue()
-         {
-            return scrollPane.heightProperty().get() - PREVENT_INITIAL_SCROLL_DIST;
-         }
-      };
-
-
       _desktopPane = desktopPane;
-      _canvas.widthProperty().bind(dbWidth);
-      _canvas.heightProperty().bind(dbHeight);
+
+      SizeBindingHelper.bindCanvasSizeToDesktopPaneSize(desktopPane, _canvas);
 
       _canvas.widthProperty().addListener((observable, oldValue, newValue) -> onDraw());
       _canvas.heightProperty().addListener((observable, oldValue, newValue) -> onDraw());
@@ -80,10 +47,14 @@ public class DrawLinesCtrl
             List<Point2D> pkPoints = pkCtrl.getPkPointsTo(fkCtrl);
             List<Point2D> fkPoints = fkCtrl.getFkPointsTo(pkCtrl);
 
+            double scrollOffSetX = _canvas.getWidth() - _desktopPane.getWidth();
+            double scrollOffSetY = _canvas.getHeight() - _desktopPane.getHeight();
+
             if (0 < pkPoints.size() && 0 < fkPoints.size())
             {
                double x1 = pkPoints.get(0).getX();
                double y1 = pkPoints.get(0).getY();
+
                double x2 = fkPoints.get(0).getX();
                double y2 = fkPoints.get(0).getY();
 

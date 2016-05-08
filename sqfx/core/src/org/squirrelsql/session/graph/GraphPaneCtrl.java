@@ -1,6 +1,7 @@
 package org.squirrelsql.session.graph;
 
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
@@ -33,7 +34,12 @@ public class GraphPaneCtrl
       StackPane stackPane = new StackPane();
 
       _scrollPane = new ScrollPane();
-      _drawLinesCtrl = new DrawLinesCtrl(_desktopPane, _scrollPane);
+      _drawLinesCtrl = new DrawLinesCtrl(_desktopPane);
+
+
+      Canvas sizingDummyPane = new Canvas();
+      stackPane.getChildren().add(sizingDummyPane);
+      SizeBindingHelper.bindSizingDummyCanvasToScrollPane(_scrollPane, sizingDummyPane);
 
       stackPane.getChildren().add(_drawLinesCtrl.getCanvas());
       stackPane.getChildren().add(_desktopPane);
