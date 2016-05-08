@@ -15,10 +15,12 @@ public class DrawLinesCtrl
 {
    private Canvas _canvas = new Canvas();
    private Pane _desktopPane;
+   private ScrollPane _scrollPane;
 
-   public DrawLinesCtrl(Pane desktopPane)
+   public DrawLinesCtrl(Pane desktopPane, ScrollPane scrollPane)
    {
       _desktopPane = desktopPane;
+      _scrollPane = scrollPane;
 
       SizeBindingHelper.bindCanvasSizeToDesktopPaneSize(desktopPane, _canvas);
 
@@ -34,6 +36,9 @@ public class DrawLinesCtrl
 
       gc.setStroke(Color.BLACK);
       gc.setLineWidth(1);
+
+      double maxX = 0;
+      double maxY = 0;
 
       for (Node pkNode : _desktopPane.getChildren())
       {
@@ -58,9 +63,20 @@ public class DrawLinesCtrl
                gc.strokeLine(x1, y1, x2, y2);
             }
          }
+
+         maxX = Math.max(pkCtrl.getWindow().getBoundsInParent().getMaxX(), maxX);
+         maxY = Math.max(pkCtrl.getWindow().getBoundsInParent().getMaxY(), maxY);
       }
+
+      preventUnnecessaryScrolling(maxX, maxY);
    }
 
+   private void preventUnnecessaryScrolling(double maxX, double maxY)
+   {
+      System.out.println("maxX = " + maxX + ", maxY = " + maxY );
+      _desktopPane.setMaxWidth(Math.max(_scrollPane.getWidth(), maxX));
+      _desktopPane.setMaxHeight(Math.max(_scrollPane.getHeight(), maxY));
+   }
 
 
    public Canvas getCanvas()
