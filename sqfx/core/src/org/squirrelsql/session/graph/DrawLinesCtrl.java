@@ -34,7 +34,6 @@ public class DrawLinesCtrl
 
       gc.setStroke(Color.BLACK);
       gc.setLineWidth(1);
-      //gc.strokeLine(0, 0, _canvas.getWidth(), _canvas.getHeight());
 
       for (Node pkNode : _desktopPane.getChildren())
       {
@@ -46,9 +45,6 @@ public class DrawLinesCtrl
 
             List<Point2D> pkPoints = pkCtrl.getPkPointsTo(fkCtrl);
             List<Point2D> fkPoints = fkCtrl.getFkPointsTo(pkCtrl);
-
-            double scrollOffSetX = _canvas.getWidth() - _desktopPane.getWidth();
-            double scrollOffSetY = _canvas.getHeight() - _desktopPane.getHeight();
 
             if (0 < pkPoints.size() && 0 < fkPoints.size())
             {
