@@ -73,7 +73,6 @@ public class DrawLinesCtrl
 
    private void preventUnnecessaryScrolling(double maxX, double maxY)
    {
-      System.out.println("maxX = " + maxX + ", maxY = " + maxY );
       _desktopPane.setMaxWidth(Math.max(_scrollPane.getWidth(), maxX));
       _desktopPane.setMaxHeight(Math.max(_scrollPane.getHeight(), maxY));
    }
