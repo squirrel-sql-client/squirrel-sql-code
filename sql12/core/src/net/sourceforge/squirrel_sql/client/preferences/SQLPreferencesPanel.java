@@ -25,7 +25,6 @@ import javax.swing.*;
 
 import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -165,6 +164,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		private IntegerField _loginTimeout = new IntegerField();
       private IntegerField _largeScriptStmtCount = new IntegerField();
 		private JCheckBox _chkCopyQuotedSqlsToClip = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.copy.quoted.sql.to.clip"));
+		private JCheckBox _chkAllowRunAllSQLsInEditor = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.allow.run.all.sqls.in.editor"));
 		private JCheckBox _chkMarkCurrentSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.mark.current.sql"));
 		private JButton _btnCurrentSqlMarkColorRGB = new JButton();
 //		private JCheckBox _debugJdbc = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebug"));
@@ -189,6 +189,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			_loginTimeout.setInt(prefs.getLoginTimeout());
 			_largeScriptStmtCount.setInt(prefs.getLargeScriptStmtCount());
 			_chkCopyQuotedSqlsToClip.setSelected(prefs.getCopyQuotedSqlsToClip());
+			_chkAllowRunAllSQLsInEditor.setSelected(prefs.getAllowRunAllSQLsInEditor());
 
 			_chkMarkCurrentSql.setSelected(prefs.isMarkCurrentSql());
 			getCurrentSqlMarkColorIcon().setColor(new Color(prefs.getCurrentSqlMarkColorRGB()));
@@ -249,6 +250,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
          prefs.setLargeScriptStmtCount(_largeScriptStmtCount.getInt());
 
 			prefs.setCopyQuotedSqlsToClip(_chkCopyQuotedSqlsToClip.isSelected());
+			prefs.setAllowRunAllSQLsInEditor(_chkAllowRunAllSQLsInEditor.isSelected());
 
 			prefs.setMarkCurrentSql(_chkMarkCurrentSql.isSelected());
 			prefs.setCurrentSqlMarkColorRGB((getCurrentSqlMarkColorIcon()).getColor().getRGB());
@@ -339,6 +341,11 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 			gbc.gridx = 0;
 			gbc.gridy = 3;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			pnl.add(_chkAllowRunAllSQLsInEditor, gbc);
+
+			gbc.gridx = 0;
+			gbc.gridy = 4;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			gbc.fill = GridBagConstraints.NONE;
 			pnl.add(createCurrentSqlMarkPanel(), gbc);

@@ -157,6 +157,8 @@ public class SquirrelPreferences implements Serializable
 
 	private boolean _copyQuotedSqlsToClip;
 
+	private boolean _allowRunAllSQLsInEditor = true;
+
 	/** The View to start when a new session is created. */
 	// JASON: What are its valid values?
 	private String _newSessionView;
@@ -1212,6 +1214,21 @@ public class SquirrelPreferences implements Serializable
 	public void setCopyQuotedSqlsToClip(boolean copyQuotedSqlsToClip)
 	{
 		_copyQuotedSqlsToClip = copyQuotedSqlsToClip;
+	}
+
+	public boolean getAllowRunAllSQLsInEditor()
+	{
+		return _allowRunAllSQLsInEditor;
+	}
+
+	public boolean isAllowRunAllSQLsInEditor()
+	{
+		return _allowRunAllSQLsInEditor;
+	}
+
+	public void setAllowRunAllSQLsInEditor(boolean allowRunAllSQLsInEditor)
+	{
+		_allowRunAllSQLsInEditor = allowRunAllSQLsInEditor;
 	}
 
 	public boolean isMarkCurrentSql()
