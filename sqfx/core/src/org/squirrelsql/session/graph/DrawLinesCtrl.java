@@ -5,8 +5,10 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import org.squirrelsql.Props;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 
 import java.util.List;
@@ -16,6 +18,9 @@ public class DrawLinesCtrl
    private Canvas _canvas = new Canvas();
    private Pane _desktopPane;
    private ScrollPane _scrollPane;
+   private Props _props = new Props(this.getClass());
+   private Image _arrowLeftImage = _props.getImage("arrow_left.png");
+   private Image _arrowRightImage = _props.getImage("arrow_right.png");
 
    public DrawLinesCtrl(Pane desktopPane, ScrollPane scrollPane)
    {
@@ -53,14 +58,48 @@ public class DrawLinesCtrl
 
             if (0 < pkPoints.size() && 0 < fkPoints.size())
             {
-               double x1 = pkPoints.get(0).getX();
-               double y1 = pkPoints.get(0).getY();
+               double xPk = pkPoints.get(0).getX();
+               double yPk = pkPoints.get(0).getY();
 
-               double x2 = fkPoints.get(0).getX();
-               double y2 = fkPoints.get(0).getY();
+               double xFk = fkPoints.get(0).getX();
+               double yFk = fkPoints.get(0).getY();
 
-               //System.out.println("(" + x1 +"," + y1 + ") - (" + x2 + "," + y2 +")");
-               gc.strokeLine(x1, y1, x2, y2);
+               double xl;
+               double yl;
+
+               double xr;
+               double yr;
+
+               if(xPk < xFk)
+               {
+                  xl = xPk;
+                  yl = yPk;
+
+                  xr = xFk;
+                  yr = yFk;
+
+                  gc.drawImage(_arrowLeftImage, xl, yl - _arrowLeftImage.getHeight() / 2d);
+
+                  //System.out.println("PK left " + pkCtrl.getWindow().getTitle());
+               }
+               else
+               {
+                  xl = xFk;
+                  yl = yFk;
+
+                  xr = xPk;
+                  yr = yPk;
+
+                  gc.drawImage(_arrowRightImage, xr - _arrowRightImage.getWidth(), yr - _arrowRightImage.getHeight() / 2d);
+
+                  //System.out.println("PK right " + pkCtrl.getWindow().getTitle());
+               }
+
+               int d = 20;
+
+               gc.strokeLine(xl, yl, xl  + d, yl);
+               gc.strokeLine(xl  + d, yl, xr - d, yr);
+               gc.strokeLine(xr - d, yr, xr, yr);
             }
          }
 
