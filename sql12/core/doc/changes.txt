@@ -6,7 +6,7 @@ SQuirreL SQL Client Change Log
 
 Enhancements:
 
-Option to en/disable "Run all SQLs in editor function", see menu File --> Global Preferences --> tab SQL
+Option to en/disable the "Run all SQLs in editor" function, see menu File --> Global Preferences --> tab SQL
 
 Updated Polish translation. Thanks to Begina Felicysym.
 
