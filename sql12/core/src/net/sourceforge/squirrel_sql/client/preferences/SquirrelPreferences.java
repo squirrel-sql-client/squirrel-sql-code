@@ -59,6 +59,7 @@ public class SquirrelPreferences implements Serializable
       String LOGIN_TIMEOUT = "loginTimeout";
       String LARGE_SCRIPT_STMT_COUNT = "largeScriptStmtCount";
       String COPY_QUOTED_SQLS_TO_CLIP = "copyQuotedSqlsToClip";
+      String ALLOW_RUN_ALL_SQLS_IN_EDITOR = "allowRunAllSQLsInEditor";
       String MARK_CURRENT_SQL = "markCurrentSql";
       String CURRENT_SQL_MARK_COLOR_RGB = "currentSqlMarkColorRGB";
       String MAIN_FRAME_STATE = "mainFrameWindowState";

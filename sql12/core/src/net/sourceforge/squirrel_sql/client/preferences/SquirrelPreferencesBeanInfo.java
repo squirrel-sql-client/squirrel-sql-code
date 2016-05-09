@@ -64,8 +64,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 						new PropertyDescriptor(LARGE_SCRIPT_STMT_COUNT, SquirrelPreferences.class,
 							"getLargeScriptStmtCount", "setLargeScriptStmtCount"),
 
-						new PropertyDescriptor(COPY_QUOTED_SQLS_TO_CLIP, SquirrelPreferences.class,
-							"isCopyQuotedSqlsToClip", "setCopyQuotedSqlsToClip"),
+						new PropertyDescriptor(ALLOW_RUN_ALL_SQLS_IN_EDITOR, SquirrelPreferences.class,
+							"isAllowRunAllSQLsInEditor", "setAllowRunAllSQLsInEditor"),
 
 						new PropertyDescriptor(MARK_CURRENT_SQL, SquirrelPreferences.class,
 								"isMarkCurrentSql", "setMarkCurrentSql"),
