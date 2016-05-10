@@ -57,22 +57,49 @@ public class TableWindowCtrl
       return _window;
    }
 
-   public List<Point2D> getPkPointsTo(TableWindowCtrl fkCtrl)
+   public List<LineSpec> getLineSpecs(TableWindowCtrl pkCtrl)
    {
-      if(fkCtrl == this)
+      if(pkCtrl == this)
       {
          return new ArrayList<>();
       }
 
-      Point2D ret;
-      if(getMidX() < fkCtrl.getMidX())
+
+      double d = 20;
+
+      PkPoint pkPoint;
+      double pkGatherPointX;
+      double pkGatherPointY;
+      double fkGatherPointX;
+      double fkGatherPointY;
+      FkPoint fkPoint;
+
+      if(pkCtrl.getMidX() < getMidX())
       {
-         ret = new Point2D(_window.getBoundsInParent().getMaxX(), _window.getBoundsInParent().getMinY());
+         pkPoint = new PkPoint(pkCtrl._window.getBoundsInParent().getMaxX(), pkCtrl._window.getBoundsInParent().getMinY(), Math.PI);
+
+         pkGatherPointX = pkCtrl._window.getBoundsInParent().getMaxX() + d;
+         pkGatherPointY = pkCtrl._window.getBoundsInParent().getMinY();
+
+         fkGatherPointX = _window.getBoundsInParent().getMinX() - d;
+         fkGatherPointY = _window.getBoundsInParent().getMaxY();
+
+         fkPoint = new FkPoint(_window.getBoundsInParent().getMinX(), _window.getBoundsInParent().getMaxY());
       }
       else
       {
-         ret = new Point2D(_window.getBoundsInParent().getMinX(), _window.getBoundsInParent().getMinY());
+         pkPoint = new PkPoint(pkCtrl._window.getBoundsInParent().getMinX(), pkCtrl._window.getBoundsInParent().getMinY(), 0);
+
+         pkGatherPointX = pkCtrl._window.getBoundsInParent().getMinX() - d;
+         pkGatherPointY = pkCtrl._window.getBoundsInParent().getMinY();
+
+         fkGatherPointX = _window.getBoundsInParent().getMaxX() + d;
+         fkGatherPointY = _window.getBoundsInParent().getMaxY();
+         fkPoint = new FkPoint(_window.getBoundsInParent().getMaxX(), _window.getBoundsInParent().getMaxY());
       }
+
+      LineSpec ret = new LineSpec(Collections.singletonList(pkPoint), pkGatherPointX, pkGatherPointY, fkGatherPointX, fkGatherPointY, Collections.singletonList(fkPoint));
+
 
       //ret.add(_window.getTranslateX(), _window.getTranslateY());
       return Collections.singletonList(ret);

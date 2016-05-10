@@ -1,6 +1,5 @@
 package org.squirrelsql.session.graph;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -19,8 +18,6 @@ public class DrawLinesCtrl
    private Pane _desktopPane;
    private ScrollPane _scrollPane;
    private Props _props = new Props(this.getClass());
-   private Image _arrowLeftImage = _props.getImage("arrow_left.png");
-   private Image _arrowRightImage = _props.getImage("arrow_right.png");
 
    public DrawLinesCtrl(Pane desktopPane, ScrollPane scrollPane)
    {
@@ -53,53 +50,24 @@ public class DrawLinesCtrl
          {
             TableWindowCtrl fkCtrl = ((Window) fkNode).getCtrl();
 
-            List<Point2D> pkPoints = pkCtrl.getPkPointsTo(fkCtrl);
-            List<Point2D> fkPoints = fkCtrl.getFkPointsTo(pkCtrl);
+            List<LineSpec> lineSpecs = fkCtrl.getLineSpecs(pkCtrl);
 
-            if (0 < pkPoints.size() && 0 < fkPoints.size())
+            for (LineSpec lineSpec : lineSpecs)
             {
-               double xPk = pkPoints.get(0).getX();
-               double yPk = pkPoints.get(0).getY();
-
-               double xFk = fkPoints.get(0).getX();
-               double yFk = fkPoints.get(0).getY();
-
-               double xl;
-               double yl;
-
-               double xr;
-               double yr;
-
-               if(xPk < xFk)
+               for (PkPoint pkPoint : lineSpec.getPkPoints())
                {
-                  xl = xPk;
-                  yl = yPk;
-
-                  xr = xFk;
-                  yr = yFk;
-
-                  gc.drawImage(_arrowLeftImage, xl, yl - _arrowLeftImage.getHeight() / 2d);
-
-                  //System.out.println("PK left " + pkCtrl.getWindow().getTitle());
-               }
-               else
-               {
-                  xl = xFk;
-                  yl = yFk;
-
-                  xr = xPk;
-                  yr = yPk;
-
-                  gc.drawImage(_arrowRightImage, xr - _arrowRightImage.getWidth(), yr - _arrowRightImage.getHeight() / 2d);
-
-                  //System.out.println("PK right " + pkCtrl.getWindow().getTitle());
+                  RotatedImageInCanvas.drawRotatedImage(gc, GraphConstants.ARROW_RIGHT_IMAGE, pkPoint.getArrowAngle(), pkPoint.getArrowX(), pkPoint.getArrowY());
+                  //gc.drawImage(GraphConstants.ARROW_RIGHT_IMAGE, pkPoint.getArrowX(), pkPoint.getArrowY());
+                  gc.strokeLine(pkPoint.getX(), pkPoint.getY(), lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
                }
 
-               int d = 20;
+               gc.strokeLine(lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
 
-               gc.strokeLine(xl, yl, xl  + d, yl);
-               gc.strokeLine(xl  + d, yl, xr - d, yr);
-               gc.strokeLine(xr - d, yr, xr, yr);
+               for (FkPoint fkPoint : lineSpec.getFkPoints())
+               {
+                  gc.strokeLine(fkPoint.getX(), fkPoint.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
+               }
+
             }
          }
 
