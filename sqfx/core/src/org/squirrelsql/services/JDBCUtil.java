@@ -1,6 +1,7 @@
 package org.squirrelsql.services;
 
 import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.aliases.dbconnector.ConnectionWithDriverData;
 import org.squirrelsql.drivers.DriversUtil;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.services.sqlwrap.SQLDriverClassLoader;
@@ -11,7 +12,7 @@ import java.util.Properties;
 
 public class JDBCUtil
 {
-   public static Connection createJDBCConnection(Alias alias, String user, String password)
+   public static ConnectionWithDriverData createJDBCConnection(Alias alias, String user, String password)
    {
       try
       {
@@ -43,7 +44,10 @@ public class JDBCUtil
 
             throw new IllegalStateException(msg);
          }
-         return jdbcConn;
+
+
+
+         return new ConnectionWithDriverData(jdbcConn, driver.jdbcCompliant());
       }
       catch (Exception e)
       {

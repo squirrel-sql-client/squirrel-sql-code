@@ -1,6 +1,7 @@
 package org.squirrelsql.services.sqlwrap;
 
 import org.squirrelsql.AppState;
+import org.squirrelsql.aliases.dbconnector.ConnectionWithDriverData;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.dialects.DialectFactory;
 import org.squirrelsql.services.*;
@@ -31,11 +32,13 @@ public class SQLConnection
    private MessageHandler _mhLog = new MessageHandler(this.getClass(), MessageHandlerDestination.MESSAGE_LOG);
 
    private Connection _con;
+   private ConnectionWithDriverData _connectionWithDriverData;
 
 
-   public SQLConnection(Connection con)
+   public SQLConnection(ConnectionWithDriverData connectionWithDriverData)
    {
-      _con = con;
+      _connectionWithDriverData = connectionWithDriverData;
+      _con = _connectionWithDriverData.getConnection();
    }
 
    public void close()
@@ -384,7 +387,7 @@ public class SQLConnection
       {
          Connection oldCon = _con;
 
-         _con = JDBCUtil.createJDBCConnection(dbConnectorResult.getAliasDecorator().getAlias(), dbConnectorResult.getUser(), dbConnectorResult.getPassword());
+         _con = JDBCUtil.createJDBCConnection(dbConnectorResult.getAliasDecorator().getAlias(), dbConnectorResult.getUser(), dbConnectorResult.getPassword()).getConnection();
 
 
          _con.setAutoCommit(autoCommit);
@@ -417,5 +420,10 @@ public class SQLConnection
       {
          throw new RuntimeException(e);
       }
+   }
+
+   public boolean jdbcCompliant()
+   {
+      return _connectionWithDriverData.jdbcCompliant();
    }
 }

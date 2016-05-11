@@ -115,7 +115,7 @@ public class DBConnector
 
       try
       {
-         Connection jdbcConn = JDBCUtil.createJDBCConnection(_alias.getAlias(), user, password);
+         ConnectionWithDriverData jdbcConn = JDBCUtil.createJDBCConnection(_alias.getAlias(), user, password);
 
          SQLConnection sqlConnection = new SQLConnection(jdbcConn);
          dbConnectorResult.setSQLConnection(sqlConnection);

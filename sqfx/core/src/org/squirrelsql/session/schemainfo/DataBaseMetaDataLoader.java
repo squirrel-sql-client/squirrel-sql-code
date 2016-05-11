@@ -1,6 +1,7 @@
 package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.drivers.DriversUtil;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.services.I18n;
@@ -40,6 +41,7 @@ public class DataBaseMetaDataLoader
 
    public static TableLoader loadMetaData(Alias alias, SQLConnection sqlConnection)
    {
+
       I18n i18n = new I18n(DataBaseMetaDataLoader.class);
 
 
@@ -51,6 +53,7 @@ public class DataBaseMetaDataLoader
 
       tableLoader.addRow("JDBC Driver CLASSNAME", driver.getDriverClassName());
       tableLoader.addRow("JDBC Driver CLASSPATH", DriversUtil.getJarFileNamesListString(driver));
+      tableLoader.addRow("Is driver JDBC compliant", sqlConnection.jdbcCompliant());
       tableLoader.addRow("getTimeOpened", new Date());
 
       DatabaseMetaData md = sqlConnection.getDatabaseMetaData();
