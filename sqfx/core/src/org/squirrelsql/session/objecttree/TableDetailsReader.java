@@ -54,17 +54,32 @@ public class TableDetailsReader
 
    public static TableLoader readPrimaryKey(Session session, ObjectTreeNode objectTreeNode)
    {
-      return loadTableMetaData(objectTreeNode, (catalog,schema,tableName) -> session.getDbConnectorResult().getSQLConnection().getDatabaseMetaData().getPrimaryKeys(catalog, schema, tableName));
+      return readPrimaryKey(session, objectTreeNode.getTableInfo());
+   }
+
+   public static TableLoader readPrimaryKey(Session session, TableInfo tableInfo)
+   {
+      return _loadTableMetaData(tableInfo, (catalog,schema,tableName) -> session.getDbConnectorResult().getSQLConnection().getDatabaseMetaData().getPrimaryKeys(catalog, schema, tableName));
    }
 
    public static TableLoader readExportedKeys(Session session, ObjectTreeNode objectTreeNode)
    {
-      return loadTableMetaData(objectTreeNode, (catalog,schema,tableName) -> session.getDbConnectorResult().getSQLConnection().getDatabaseMetaData().getExportedKeys(catalog, schema, tableName));
+      return readExportedKeys(session, objectTreeNode.getTableInfo());
+   }
+
+   public static TableLoader readExportedKeys(Session session, TableInfo tableInfo)
+   {
+      return _loadTableMetaData(tableInfo, (catalog,schema,tableName) -> session.getDbConnectorResult().getSQLConnection().getDatabaseMetaData().getExportedKeys(catalog, schema, tableName));
    }
 
    public static TableLoader readImportedKeys(Session session, ObjectTreeNode objectTreeNode)
    {
-      return loadTableMetaData(objectTreeNode, (catalog,schema,tableName) -> session.getDbConnectorResult().getSQLConnection().getDatabaseMetaData().getImportedKeys(catalog, schema, tableName));
+      return readImportedKeys(session, objectTreeNode.getTableInfo());
+   }
+
+   public static TableLoader readImportedKeys(Session session, TableInfo tableInfo)
+   {
+      return _loadTableMetaData(tableInfo, (catalog,schema,tableName) -> session.getDbConnectorResult().getSQLConnection().getDatabaseMetaData().getImportedKeys(catalog, schema, tableName));
    }
 
    public static TableLoader readIndexes(Session session, ObjectTreeNode objectTreeNode)

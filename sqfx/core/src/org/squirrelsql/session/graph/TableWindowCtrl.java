@@ -1,7 +1,6 @@
 package org.squirrelsql.session.graph;
 
 import javafx.collections.FXCollections;
-import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -10,6 +9,7 @@ import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
+import org.squirrelsql.session.objecttree.TableDetailsReader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +47,17 @@ public class TableWindowCtrl
       List<ColumnInfo> columns = _session.getSchemaCacheValue().get().getColumns(tableInfo);
 
       BorderPane contentPane = new BorderPane();
-      contentPane.setCenter(new ListView<String>(FXCollections.observableArrayList(CollectionUtil.transform(columns, c -> c.getDescription()))));
+
+      PrimaryKeyInfo pkInfo = new PrimaryKeyInfo(TableDetailsReader.readPrimaryKey(_session, tableInfo));
+      ImportedKeysInfo impKeysInfo = new ImportedKeysInfo(TableDetailsReader.readImportedKeys(_session, tableInfo));
+      //ExportedKeysInfo expKeysInfo = new ExportedKeysInfo(TableDetailsReader.readExportedKeys(_session, tableInfo));
+
+      ListView<GraphColumn> listView = new ListView<>(FXCollections.observableArrayList(CollectionUtil.transform(columns, c -> new GraphColumn(c, pkInfo, impKeysInfo))));
+
+      listView.setCellFactory(p -> new ColumnListCell());
+
+
+      contentPane.setCenter(listView);
       return contentPane;
    }
 
@@ -110,25 +120,6 @@ public class TableWindowCtrl
       return _window.getBoundsInParent().getMinX() + (_window.getBoundsInParent().getMaxX() - _window.getBoundsInParent().getMinX()) / 2.0;
    }
 
-   public List<Point2D> getFkPointsTo(TableWindowCtrl pkCtrl)
-   {
-      if(pkCtrl == this)
-      {
-         return new ArrayList<>();
-      }
 
-      Point2D ret;
-      if(getMidX() < pkCtrl.getMidX())
-      {
-         ret = new Point2D(_window.getBoundsInParent().getMaxX(), _window.getBoundsInParent().getMaxY());
-      }
-      else
-      {
-         ret = new Point2D(_window.getBoundsInParent().getMinX(), _window.getBoundsInParent().getMaxY());
-      }
 
-      //ret.add(_window.getTranslateX(), _window.getTranslateY());
-      return Collections.singletonList(ret);
-
-   }
 }
