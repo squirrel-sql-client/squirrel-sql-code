@@ -13,7 +13,7 @@ public class PrimaryKeyInfo
       _pkAsTableLoader = pkAsTableLoader;
    }
 
-   public boolean isPk(ColumnInfo columnInfo)
+   public boolean belongsToPk(ColumnInfo columnInfo)
    {
       for (int i = 0; i < _pkAsTableLoader.size(); i++)
       {

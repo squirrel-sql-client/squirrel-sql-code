@@ -1,5 +1,6 @@
 package org.squirrelsql.session.graph;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -57,13 +58,12 @@ public class DrawLinesCtrl
                for (PkPoint pkPoint : lineSpec.getPkPoints())
                {
                   RotatedImageInCanvas.drawRotatedImage(gc, GraphConstants.ARROW_RIGHT_IMAGE, pkPoint.getArrowAngle(), pkPoint.getArrowX(), pkPoint.getArrowY());
-                  //gc.drawImage(GraphConstants.ARROW_RIGHT_IMAGE, pkPoint.getArrowX(), pkPoint.getArrowY());
                   gc.strokeLine(pkPoint.getX(), pkPoint.getY(), lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
                }
 
                gc.strokeLine(lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
 
-               for (FkPoint fkPoint : lineSpec.getFkPoints())
+               for (Point2D fkPoint : lineSpec.getFkPoints())
                {
                   gc.strokeLine(fkPoint.getX(), fkPoint.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
                }

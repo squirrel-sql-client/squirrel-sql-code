@@ -1,54 +1,47 @@
 package org.squirrelsql.session.graph;
 
-import java.util.ArrayList;
+import javafx.geometry.Point2D;
+
 import java.util.List;
 
 public class LineSpec
 {
-   private final List<PkPoint> _pkPoints;
-   private final double _pkGatherPointX;
-   private final double _pkGatherPointY;
-   private final double _fkGatherPointX;
-   private final double _fkGatherPointY;
-   private final List<FkPoint> _fkPoints;
+   private final PkSpec _pkSpec;
+   private final FkSpec _fkSpec;
 
-   public LineSpec(List<PkPoint> pkPoints, double pkGatherPointX, double pkGatherPointY, double fkGatherPointX, double fkGatherPointY, List<FkPoint> fkPoints)
+   public LineSpec(PkSpec pkSpec, FkSpec fkSpec)
    {
-      _pkPoints = pkPoints;
-      _pkGatherPointX = pkGatherPointX;
-      _pkGatherPointY = pkGatherPointY;
-      _fkGatherPointX = fkGatherPointX;
-      _fkGatherPointY = fkGatherPointY;
-      _fkPoints = fkPoints;
+      _pkSpec = pkSpec;
+      _fkSpec = fkSpec;
    }
 
    public List<PkPoint> getPkPoints()
    {
-      return _pkPoints;
+      return _pkSpec.getPkPoints();
    }
 
    public double getPkGatherPointX()
    {
-      return _pkGatherPointX;
+      return _pkSpec.getPkGatherPointX();
    }
 
    public double getPkGatherPointY()
    {
-      return _pkGatherPointY;
+      return _pkSpec.getPkGatherPointY();
    }
 
    public double getFkGatherPointX()
    {
-      return _fkGatherPointX;
+      return _fkSpec.getFkGatherPointX();
    }
 
    public double getFkGatherPointY()
    {
-      return _fkGatherPointY;
+      return _fkSpec.getFkGatherPointY();
    }
 
-   public List<FkPoint> getFkPoints()
+   public List<Point2D> getFkPoints()
    {
-      return _fkPoints;
+      return _fkSpec.getFkPoints();
    }
 }

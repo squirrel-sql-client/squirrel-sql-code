@@ -7,7 +7,6 @@ import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class TableWindowCtrl
@@ -15,15 +14,18 @@ public class TableWindowCtrl
    private Session _session;
    private final Window _window;
    private ColumnListCtrl _columnListCtrl;
+   private TableInfo _tableInfo;
 
    public TableWindowCtrl(Session session, TableInfo tableInfo, double x, double y, DrawLinesListener drawLinesListener)
    {
       _session = session;
-      _window = new Window(tableInfo.getName());
+      _tableInfo = tableInfo;
 
-      _columnListCtrl = new ColumnListCtrl(_session, tableInfo);
+      _window = new Window(_tableInfo.getName());
 
-      Pane contentPane = new BorderPane(_columnListCtrl.getColumnList());
+      _columnListCtrl = new ColumnListCtrl(_session, _tableInfo, _window);
+
+      Pane contentPane = new BorderPane(_columnListCtrl.getColumnListView());
 
       _window.setContentPane(contentPane);
 
@@ -53,45 +55,35 @@ public class TableWindowCtrl
          return new ArrayList<>();
       }
 
+      ArrayList<LineSpec> ret = new ArrayList<>();
 
-      double d = 20;
-
-      PkPoint pkPoint;
-      double pkGatherPointX;
-      double pkGatherPointY;
-      double fkGatherPointX;
-      double fkGatherPointY;
-      FkPoint fkPoint;
+      TableWindowSide windowSide;
 
       if(pkCtrl.getMidX() < getMidX())
       {
-         pkPoint = new PkPoint(pkCtrl._window.getBoundsInParent().getMaxX(), pkCtrl._window.getBoundsInParent().getMinY(), Math.PI);
-
-         pkGatherPointX = pkCtrl._window.getBoundsInParent().getMaxX() + d;
-         pkGatherPointY = pkCtrl._window.getBoundsInParent().getMinY();
-
-         fkGatherPointX = _window.getBoundsInParent().getMinX() - d;
-         fkGatherPointY = _window.getBoundsInParent().getMaxY();
-
-         fkPoint = new FkPoint(_window.getBoundsInParent().getMinX(), _window.getBoundsInParent().getMaxY());
+         windowSide = TableWindowSide.RIGHT;
       }
       else
       {
-         pkPoint = new PkPoint(pkCtrl._window.getBoundsInParent().getMinX(), pkCtrl._window.getBoundsInParent().getMinY(), 0);
-
-         pkGatherPointX = pkCtrl._window.getBoundsInParent().getMinX() - d;
-         pkGatherPointY = pkCtrl._window.getBoundsInParent().getMinY();
-
-         fkGatherPointX = _window.getBoundsInParent().getMaxX() + d;
-         fkGatherPointY = _window.getBoundsInParent().getMaxY();
-         fkPoint = new FkPoint(_window.getBoundsInParent().getMaxX(), _window.getBoundsInParent().getMaxY());
+         windowSide = TableWindowSide.LEFT;
       }
 
-      LineSpec ret = new LineSpec(Collections.singletonList(pkPoint), pkGatherPointX, pkGatherPointY, fkGatherPointX, fkGatherPointY, Collections.singletonList(fkPoint));
+      List<FkSpec> fkSpecs = _columnListCtrl.getFkSpecsTo(pkCtrl._tableInfo, windowSide);
 
+      if(0 < fkSpecs.size())
+      {
+         PkSpec pkSpec = pkCtrl._columnListCtrl.getPkSpec(windowSide);
 
-      //ret.add(_window.getTranslateX(), _window.getTranslateY());
-      return Collections.singletonList(ret);
+         if (null != pkSpec)
+         {
+            for (FkSpec fkSpec : fkSpecs)
+            {
+               ret.add(new LineSpec(pkSpec, fkSpec));
+            }
+         }
+      }
+
+      return ret;
    }
 
    private double getMidX()

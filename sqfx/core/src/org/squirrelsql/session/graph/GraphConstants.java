@@ -9,4 +9,6 @@ public class GraphConstants
 
    public static double IMAGE_HEIGHT = ARROW_RIGHT_IMAGE.getHeight();
    public static double IMAGE_WIDTH = ARROW_RIGHT_IMAGE.getWidth();
+
+   public static double X_GATHER_DIST = 20;
 }
