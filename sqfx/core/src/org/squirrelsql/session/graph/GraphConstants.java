@@ -11,4 +11,7 @@ public class GraphConstants
    public static double IMAGE_WIDTH = ARROW_RIGHT_IMAGE.getWidth();
 
    public static double X_GATHER_DIST = 20;
+
+   public static final int TITLEBAR_HEIGHT = 27;
+
 }

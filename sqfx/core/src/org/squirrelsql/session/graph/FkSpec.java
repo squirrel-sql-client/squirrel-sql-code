@@ -37,12 +37,11 @@ public class FkSpec
 
       if(TableWindowSide.LEFT == windowSide)
       {
-         _fkGatherPointX = fkPoints.get(0).getX() - GraphConstants.X_GATHER_DIST;
-
+         _fkGatherPointX = fkPoints.get(0).getX() + GraphConstants.X_GATHER_DIST;
       }
       else
       {
-         _fkGatherPointX = fkPoints.get(0).getX() + GraphConstants.X_GATHER_DIST;
+         _fkGatherPointX = fkPoints.get(0).getX() - GraphConstants.X_GATHER_DIST;
       }
 
       _fkGatherPointY = midY;

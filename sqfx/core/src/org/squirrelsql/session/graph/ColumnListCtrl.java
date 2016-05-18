@@ -94,11 +94,11 @@ public class ColumnListCtrl
                double fkPointX;
                if(TableWindowSide.LEFT == windowSide)
                {
-                  fkPointX = _window.getBoundsInParent().getMinX();
+                  fkPointX = _window.getBoundsInParent().getMaxX();
                }
                else
                {
-                  fkPointX = _window.getBoundsInParent().getMaxX();
+                  fkPointX = _window.getBoundsInParent().getMinX();
                }
 
                double pkPointY = _columnPositionHelper.getMiddleYOfColumn(graphColumn);

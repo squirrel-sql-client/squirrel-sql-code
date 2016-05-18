@@ -56,7 +56,7 @@ public class ColumnPositionHelper
       }
 
 
-      double ret = midYOfCol + _listView.getBoundsInParent().getMinY() + _window.getBoundsInParent().getMinY() + 27;
+      double ret = midYOfCol + _listView.getBoundsInParent().getMinY() + _window.getBoundsInParent().getMinY() + GraphConstants.TITLEBAR_HEIGHT;
 
       System.out.println("ret = " + ret);
       return ret;
