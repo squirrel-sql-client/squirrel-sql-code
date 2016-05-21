@@ -1,14 +1,22 @@
 package org.squirrelsql.session.graph;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollToEvent;
+import javafx.scene.input.ScrollEvent;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 import org.squirrelsql.session.objecttree.TableDetailsReader;
+import org.squirrelsql.workaround.ListViewScrollEventWA;
 
 import java.util.*;
 
@@ -19,7 +27,7 @@ public class ColumnListCtrl
    private final ColumnPositionHelper _columnPositionHelper;
    private Window _window;
 
-   public ColumnListCtrl(Session session, TableInfo tableInfo, Window window)
+   public ColumnListCtrl(Session session, TableInfo tableInfo, Window window, Runnable scrollListener)
    {
       _window = window;
       List<ColumnInfo> columns = session.getSchemaCacheValue().get().getColumns(tableInfo);
@@ -32,8 +40,10 @@ public class ColumnListCtrl
 
       _columnPositionHelper = new ColumnPositionHelper(_listView, _window);
 
-
       _listView.setCellFactory(p -> _columnPositionHelper.registerCell(new ColumnListCell()));
+
+      new ListViewScrollEventWA(scrollListener, _listView);
+
    }
 
    public ListView<GraphColumn> getColumnListView()

@@ -1,5 +1,10 @@
 package org.squirrelsql.session.graph;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.control.ListView;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.squirrelsql.session.Session;
@@ -23,7 +28,7 @@ public class TableWindowCtrl
 
       _window = new Window(_tableInfo.getName());
 
-      _columnListCtrl = new ColumnListCtrl(_session, _tableInfo, _window);
+      _columnListCtrl = new ColumnListCtrl(_session, _tableInfo, _window, () -> drawLinesListener.drawLines(TableWindowCtrl.this));
 
       Pane contentPane = new BorderPane(_columnListCtrl.getColumnListView());
 
