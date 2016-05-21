@@ -1,7 +1,6 @@
 package org.squirrelsql.session.graph;
 
 import javafx.geometry.Bounds;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 
@@ -21,7 +20,7 @@ public class ColumnPositionHelper
       _window = window;
    }
 
-   public ListCell<GraphColumn> registerCell(ColumnListCell columnListCell)
+   public ColumnListCell registerCell(ColumnListCell columnListCell)
    {
       _cells.put(columnListCell, null);
       return columnListCell;
