@@ -80,9 +80,7 @@ public class ObjectTreeTabCtrl
 
       if(0 < _objectTabSplitPane.getItems().size())
       {
-         TreeView<ObjectTreeNode> objectsTree = (TreeView<ObjectTreeNode>) _objectTabSplitPane.getItems().get(0);
-
-         formerSelectedTreeItem = objectsTree.getSelectionModel().getSelectedItem();
+         formerSelectedTreeItem = _objectsTree.getSelectionModel().getSelectedItem();
 
          _objectTabSplitPane.getItems().clear();
       }
