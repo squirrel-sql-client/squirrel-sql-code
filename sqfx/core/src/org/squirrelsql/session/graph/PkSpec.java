@@ -46,18 +46,38 @@ public class PkSpec
 
       for (Point2D pkPoint : pkPoint2Ds)
       {
+         // Will be between 0 and 2*PI
          double arrowAngle;
+
+         double d = pkPoint.getY() - midY;
+
+         // Values are between 0 and PI/2
+         double angleFromSimpleTriangle = Math.atan(Math.abs(d) / GraphConstants.X_GATHER_DIST);
 
          if(TableWindowSide.LEFT == windowSide)
          {
-            arrowAngle = Math.atan((pkPoint.getY() - midY) / GraphConstants.X_GATHER_DIST);
+            if (Math.signum(d) >= 0)
+            {
+               arrowAngle = angleFromSimpleTriangle;
+            }
+            else
+            {
+               arrowAngle = 2*Math.PI - angleFromSimpleTriangle;
+            }
          }
          else
          {
-            arrowAngle = Math.PI - Math.atan((pkPoint.getY() - midY) / GraphConstants.X_GATHER_DIST);
+            if (Math.signum(d) >= 0)
+            {
+               arrowAngle = Math.PI - angleFromSimpleTriangle;
+            }
+            else
+            {
+               arrowAngle = Math.PI + angleFromSimpleTriangle;
+            }
          }
 
-         _pkPoints.add(new PkPoint(pkPoint.getX(), pkPoint.getY(), arrowAngle));
+         _pkPoints.add(new PkPoint(pkPoint.getX(), pkPoint.getY(), arrowAngle, angleFromSimpleTriangle));
       }
    }
 

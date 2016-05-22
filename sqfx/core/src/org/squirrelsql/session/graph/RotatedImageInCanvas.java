@@ -17,7 +17,8 @@ public class RotatedImageInCanvas
     */
    private static void rotate(GraphicsContext gc, double angle, double px, double py)
    {
-      Rotate r = new Rotate( 360/(2*Math.PI) * angle, px, py);
+      double angleInDeg = 360 / (2 * Math.PI) * angle;
+      Rotate r = new Rotate( angleInDeg, px, py);
       gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
    }
 
