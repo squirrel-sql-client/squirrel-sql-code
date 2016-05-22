@@ -52,45 +52,24 @@ public class PkPoint
       double h = GraphConstants.IMAGE_HEIGHT;
       double w = GraphConstants.IMAGE_WIDTH;
 
-//      double f = h * (1 - 2* Math.abs(Math.sin(_arrowAngle)));
-//      System.out.println("PkPoint.getArrowY " + _arrowAngle/ (2*Math.PI) * 360 + " f is " + f);
+      double offset;
 
-
-      double offset = -(h * Math.sin(_angleFromSimpleTriangle)) - w/2.0 * Math.cos(_angleFromSimpleTriangle);
-
-      if (isAboveGatherPointY())
+      if (isBelowGatherPointY())
       {
-         offset = offset;
+         offset = -h * Math.sin(_angleFromSimpleTriangle) - w/2.0 * Math.cos(_angleFromSimpleTriangle);
       }
       else
       {
-         offset = offset + h * Math.sin(_angleFromSimpleTriangle);
+         offset = - w/2.0 * Math.cos(_angleFromSimpleTriangle);
       }
-
-//      double offset = - w * Math.cos(_angleFromSimpleTriangle);
-//
-//      if(isAboveGatherPointY())
-//      {
-//
-//         double v = -w * Math.sin(_angleFromSimpleTriangle);
-//
-//         System.out.println("############ _angleFromSimpleTriangle = " + 1/(2*Math.PI) * 360 * _angleFromSimpleTriangle + " arrowAngle = " + 1/(2*Math.PI) * 360 * _arrowAngle + " v="+ v);
-//
-//         offset = v;
-//      }
-
-
-      //System.out.println("_y="  + _y + " _angleFromSimpleTriangle=" + _angleFromSimpleTriangle/ (2*Math.PI) * 360 + " offset=" + offset);
-
-//      if(signum <= 0)
-//      {
-//         offset -= h;
-//      }
 
       return _y + offset;
    }
 
-   private boolean isAboveGatherPointY()
+   /**
+    * Note: Y Axis is turned upside down
+    */
+   private boolean isBelowGatherPointY()
    {
       return 0 < _arrowAngle && _arrowAngle < Math.PI;
    }
