@@ -54,7 +54,7 @@ public class PkSpec
          }
          else
          {
-            arrowAngle = Math.atan((pkPoint.getY() - midY) / GraphConstants.X_GATHER_DIST) + Math.PI;
+            arrowAngle = Math.PI - Math.atan((pkPoint.getY() - midY) / GraphConstants.X_GATHER_DIST);
          }
 
          _pkPoints.add(new PkPoint(pkPoint.getX(), pkPoint.getY(), arrowAngle));
