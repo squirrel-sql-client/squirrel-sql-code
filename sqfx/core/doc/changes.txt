@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature (in progress): First steps towards query builder.
+
 Bug fix: ClassCastException occurred in background when create table statement was executed.
 
 Feature: The databases meta data detail tab of the Object tree shows if the driver is JDBC compliant, see java.sql.Driver.jdbcCompliant().
