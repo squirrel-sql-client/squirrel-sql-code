@@ -56,7 +56,7 @@ public class DrawLinesCtrl
             {
                for (PkPoint pkPoint : lineSpec.getPkPoints())
                {
-                  ArrowDrawer.drawArrow(gc, pkPoint.getArrowAngle(), pkPoint.getX(), pkPoint.getY());
+                  ArrowDrawer.drawArrow(gc, pkPoint);
                   gc.strokeLine(pkPoint.getX(), pkPoint.getY(), lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
                }
 

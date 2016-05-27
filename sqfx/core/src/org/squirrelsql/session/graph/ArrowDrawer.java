@@ -13,17 +13,17 @@ public class ArrowDrawer
       return new Rotate( angleInDeg, px, py);
    }
 
-   public static void drawArrow(GraphicsContext gc, double angle, double x, double y)
+   public static void drawArrow(GraphicsContext gc, PkPoint pkPoint)
    {
-      Rotate r = createRotation(angle, 0, 0);
+      Rotate r = createRotation(pkPoint.getArrowAngle(), 0, 0);
       gc.save();
       gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 
-      Point2D p = createRotation(-angle,0,0).transform(x, y);
+      Point2D p = createRotation( - pkPoint.getArrowAngle(),0,0).transform(pkPoint.getX(), pkPoint.getY());
 
       gc.drawImage(GraphConstants.ARROW_RIGHT_IMAGE, p.getX() - GraphConstants.IMAGE_WIDTH, p.getY() - GraphConstants.IMAGE_HEIGHT / 2.0);
 
-      //gc.fillOval(p.getX() - 2, p.getY() - 2, 4, 4);
+      //gc.fillOval(pkPoint.getX() - 2, pkPoint.getY() - 2, 4, 4);
 
       gc.restore();
    }
