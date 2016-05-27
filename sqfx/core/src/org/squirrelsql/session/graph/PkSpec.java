@@ -77,7 +77,7 @@ public class PkSpec
             }
          }
 
-         _pkPoints.add(new PkPoint(pkPoint.getX(), pkPoint.getY(), arrowAngle, angleFromSimpleTriangle));
+         _pkPoints.add(new PkPoint(pkPoint.getX(), pkPoint.getY(), arrowAngle));
       }
    }
 

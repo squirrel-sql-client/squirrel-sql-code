@@ -5,7 +5,6 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.squirrelsql.Props;
@@ -57,7 +56,7 @@ public class DrawLinesCtrl
             {
                for (PkPoint pkPoint : lineSpec.getPkPoints())
                {
-                  RotatedImageInCanvas.drawRotatedImage (gc, GraphConstants.ARROW_RIGHT_IMAGE, pkPoint.getArrowAngle(), pkPoint.getArrowX(), pkPoint.getArrowY(), pkPoint.getX(), pkPoint.getY());
+                  ArrowDrawer.drawArrow(gc, pkPoint.getArrowAngle(), pkPoint.getX(), pkPoint.getY());
                   gc.strokeLine(pkPoint.getX(), pkPoint.getY(), lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
                }
 
