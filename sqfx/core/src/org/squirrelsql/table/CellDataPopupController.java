@@ -1,6 +1,5 @@
 package org.squirrelsql.table;
 
-import com.sun.javafx.scene.control.skin.TextAreaSkin;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -92,20 +91,10 @@ public class CellDataPopupController
       ContextMenu contextMenu = new ContextMenu();
       contextMenu.getItems().add(new MenuItem("Bllllla"));
 
-      TextAreaSkin customContextSkin = new TextAreaSkin(textArea)
-      {
-         @Override
-         public void populateContextMenu(ContextMenu contextMenu)
-         {
-            super.populateContextMenu(contextMenu);
-            contextMenu.getItems().add(new SeparatorMenuItem());
+      MenuItem menuItem = new MenuItem(_i18n.t("cellPopupController.reformat.xml.json"));
+      menuItem.setOnAction( e -> reformatXmlJson());
 
-            MenuItem menuItem = new MenuItem(_i18n.t("cellPopupController.reformat.xml.json"));
-            menuItem.setOnAction( e -> reformatXmlJson());
-            contextMenu.getItems().add(menuItem);
-         }
-      };
-      textArea.setSkin(customContextSkin);
+      GuiUtils.addContextMenuItemToStandardTextAreaMenu(textArea, menuItem);
    }
 
    private void reformatXmlJson()

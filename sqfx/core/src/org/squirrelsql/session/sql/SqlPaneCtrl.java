@@ -2,11 +2,7 @@ package org.squirrelsql.session.sql;
 
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.Control;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -286,14 +282,16 @@ public class SqlPaneCtrl
 
          ErrorTab errorTab = new ErrorTab();
 
-         Label errorTabLabel = new Label("Error");
+         Label errorTabLabel = new Label(_i18n.t("sqlresult.error.tab.title"));
          errorTabLabel.setTextFill(Color.RED);
          errorTab.setGraphic(errorTabLabel);
 
-         Label errorLabel = new Label(errMsg);
+         TextArea errorLabel = new TextArea(errMsg);
 
          errorLabel.setFont(Font.font("Courier", FontWeight.EXTRA_BOLD, 15));
-         errorLabel.setTextFill(Color.RED);
+         //errorLabel.setTextFill(Color.RED);
+         errorLabel.setStyle("-fx-text-inner-color: red;");
+         errorLabel.setEditable(false);
          errorTab.setContent(errorLabel);
 
          addAndSelectTab(errorTab, false);
