@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ObjectTreeFilterCtrl
@@ -141,7 +142,12 @@ public class ObjectTreeFilterCtrl
 
    private boolean hasSelectedTables()
    {
-      return _filterResultTree.getSelectionModel().getSelectedItems().stream().filter(tn -> tn.getValue().isOfType(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY)).findFirst().isPresent();
+      return _filterResultTree.getSelectionModel().getSelectedItems().stream().filter(this::isTable).findFirst().isPresent();
+   }
+
+   private boolean isTable(TreeItem<ObjectTreeNode> tn)
+   {
+      return null != tn && tn.getValue().isOfType(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY);
    }
 
 
@@ -280,7 +286,7 @@ public class ObjectTreeFilterCtrl
 
    public List<ObjectTreeNode> getSelectedObjectTreeNodes()
    {
-      List<TreeItem<ObjectTreeNode>> buf = CollectionUtil.filter(_filterResultTree.getSelectionModel().getSelectedItems(), ti -> ti.getValue().isOfType(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY));
+      List<TreeItem<ObjectTreeNode>> buf = CollectionUtil.filter(_filterResultTree.getSelectionModel().getSelectedItems(), this::isTable);
 
       return CollectionUtil.transform(buf, TreeItem::getValue);
    }
