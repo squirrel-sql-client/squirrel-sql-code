@@ -34,6 +34,13 @@ public class TableUtil
       VirtualFlow virtualFlow = (VirtualFlow) tableView.lookup(".virtual-flow");
 
       IndexedCell firstVisibleCell = virtualFlow.getFirstVisibleCell();
+
+      if(null == firstVisibleCell)
+      {
+         // Happens when table is empty.
+         return -1;
+      }
+
       int rowIndex = firstVisibleCell.getIndex();
 
       return rowIndex;
