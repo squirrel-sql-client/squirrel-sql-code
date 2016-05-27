@@ -57,7 +57,7 @@ public class DrawLinesCtrl
             {
                for (PkPoint pkPoint : lineSpec.getPkPoints())
                {
-                  RotatedImageInCanvas.drawRotatedImage(gc, GraphConstants.ARROW_RIGHT_IMAGE, pkPoint.getArrowAngle(), pkPoint.getArrowX(), pkPoint.getArrowY());
+                  RotatedImageInCanvas.drawRotatedImage (gc, GraphConstants.ARROW_RIGHT_IMAGE, pkPoint.getArrowAngle(), pkPoint.getArrowX(), pkPoint.getArrowY(), pkPoint.getX(), pkPoint.getY());
                   gc.strokeLine(pkPoint.getX(), pkPoint.getY(), lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
                }
 

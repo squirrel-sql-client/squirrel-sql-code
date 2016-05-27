@@ -31,39 +31,23 @@ public class PkPoint
 
    public double getArrowX()
    {
-      double signum = Math.signum(Math.cos(_arrowAngle));
+      double h = GraphConstants.IMAGE_HEIGHT;
+      double w = GraphConstants.IMAGE_WIDTH;
+      double cos = Math.cos(_arrowAngle);
+      double sin = Math.sin(_arrowAngle);
 
-      double offset;
-      if(signum < 0)
-      {
-         offset = 0;
-      }
-      else
-      {
-         offset = -GraphConstants.IMAGE_WIDTH;
-      }
+      return _x - (cos*w + sin*h/2);
 
-      return _x + offset;
    }
 
    public double getArrowY()
    {
-
       double h = GraphConstants.IMAGE_HEIGHT;
       double w = GraphConstants.IMAGE_WIDTH;
+      double cos = Math.cos(_arrowAngle);
+      double sin = Math.sin(_arrowAngle);
 
-      double offset;
-
-      if (isBelowGatherPointY())
-      {
-         offset = -h * Math.sin(_angleFromSimpleTriangle) - w/2.0 * Math.cos(_angleFromSimpleTriangle);
-      }
-      else
-      {
-         offset = - w/2.0 * Math.cos(_angleFromSimpleTriangle);
-      }
-
-      return _y + offset;
+      return _y - (-sin*w + cos*h/2);
    }
 
    /**
