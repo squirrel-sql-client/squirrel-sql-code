@@ -1,7 +1,7 @@
 SQuirreL SQL FX Change Log
 ==============================
 
-Improvement: SQL editor: Tab / Shift+Tab  indents/unindents selected text.
+Improvement: SQL-Editor: Tab / Shift+Tab  indents/unindents selected text.
 
 Upgraded RichTextFX to version 0.7-M1
 
