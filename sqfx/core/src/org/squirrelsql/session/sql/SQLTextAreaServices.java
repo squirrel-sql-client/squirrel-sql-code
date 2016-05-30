@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.KeyEvent;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.Utils;
@@ -20,11 +21,12 @@ import org.squirrelsql.session.schemainfo.SchemaCacheProperty;
 import org.squirrelsql.session.sql.syntax.*;
 import org.squirrelsql.workaround.CodeAreaRepaintWA;
 import org.squirrelsql.workaround.FocusNodeWA;
+import org.squirrelsql.workaround.RichTextFxWA;
 
 public class SQLTextAreaServices
 {
 
-   private final CodeArea _sqlTextArea;
+   private final VirtualizedScrollPane<CodeArea> _sqlTextAreaVirtualScroll;
    private final SQLSyntaxHighlighting _sqlSyntaxHighlighting;
    private final ParserEventsProcessor _parserEventsProcessor;
    private CurrentSqlMarker _currentSqlMarker;
@@ -35,7 +37,7 @@ public class SQLTextAreaServices
 
    public SQLTextAreaServices(SessionTabContext sessionTabContext)
    {
-      _sqlTextArea = new CodeArea();
+      _sqlTextAreaVirtualScroll = new VirtualizedScrollPane<>(new CodeArea());
 
       SchemaCacheProperty schemaCacheValue = sessionTabContext.getSession().getSchemaCacheValue();
 
@@ -56,14 +58,14 @@ public class SQLTextAreaServices
          }
       });
 
-      _sqlSyntaxHighlighting = new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(schemaCacheValue), schemaCacheValue);
+      _sqlSyntaxHighlighting = new SQLSyntaxHighlighting(_sqlTextAreaVirtualScroll.getContent(), new SQLSyntaxHighlightTokenMatcher(schemaCacheValue), schemaCacheValue);
 
-      new CtrlLeftRightHandler(_sqlTextArea);
-      new DoubleClickHandler(_sqlTextArea);
+      new CtrlLeftRightHandler(_sqlTextAreaVirtualScroll.getContent());
+      new DoubleClickHandler(_sqlTextAreaVirtualScroll.getContent());
 
       schemaCacheValue.addListener(() -> updateHighlighting());
 
-      _caretPopup = new CaretPopup(_sqlTextArea);
+      _caretPopup = new CaretPopup(_sqlTextAreaVirtualScroll.getContent());
 
 
       if (AppState.get().getSettingsManager().getSettings().isMarkCurrentSQL())
@@ -88,27 +90,33 @@ public class SQLTextAreaServices
 
    public CodeArea getTextArea()
    {
-      return _sqlTextArea;
+      return _sqlTextAreaVirtualScroll.getContent();
    }
+
+   public VirtualizedScrollPane<CodeArea> getTextAreaVirtualScroll()
+   {
+      return _sqlTextAreaVirtualScroll;
+   }
+
 
    public void setOnKeyPressed(EventHandler<KeyEvent> keyEventHandler)
    {
-      _sqlTextArea.setOnKeyPressed(keyEventHandler);
+      _sqlTextAreaVirtualScroll.getContent().setOnKeyPressed(keyEventHandler);
    }
 
    public void setOnKeyTyped(EventHandler<KeyEvent> keyEventHandler)
    {
-      _sqlTextArea.setOnKeyTyped(keyEventHandler);
+      _sqlTextAreaVirtualScroll.getContent().setOnKeyTyped(keyEventHandler);
    }
 
    public String getCurrentSql()
    {
-      String sql = _sqlTextArea.getSelectedText();
+      String sql = _sqlTextAreaVirtualScroll.getContent().getSelectedText();
 
       if(false == hasSelection())
       {
          CaretBounds caretBounds = getCurrentSqlCaretBounds();
-         sql = _sqlTextArea.getText().substring(caretBounds.begin, caretBounds.end);
+         sql = _sqlTextAreaVirtualScroll.getContent().getText().substring(caretBounds.begin, caretBounds.end);
       }
 
       return sql;
@@ -118,7 +126,7 @@ public class SQLTextAreaServices
    {
       CaretBounds caretBounds = new CaretBounds();
 
-      IndexRange selection = _sqlTextArea.getSelection();
+      IndexRange selection = _sqlTextAreaVirtualScroll.getContent().getSelection();
       if(0 < selection.getLength())
       {
          caretBounds.begin = selection.getStart();
@@ -126,7 +134,7 @@ public class SQLTextAreaServices
          return caretBounds;
       }
 
-      int caretPosition = _sqlTextArea.getCaretPosition();
+      int caretPosition = _sqlTextAreaVirtualScroll.getContent().getCaretPosition();
 
 
       ////////////////////////////////////////////////////////
@@ -143,7 +151,7 @@ public class SQLTextAreaServices
       ///////////////////////////////////////////////////////
 
 
-      String sqlTextAreaText = _sqlTextArea.getText();
+      String sqlTextAreaText = _sqlTextAreaVirtualScroll.getContent().getText();
 
       if(0 == sqlTextAreaText.length())
       {
@@ -168,8 +176,8 @@ public class SQLTextAreaServices
 
    private boolean isLineAtCaretEmpty()
    {
-      int caretPosition = _sqlTextArea.getCaretPosition();
-      String text = _sqlTextArea.getText();
+      int caretPosition = _sqlTextAreaVirtualScroll.getContent().getCaretPosition();
+      String text = _sqlTextAreaVirtualScroll.getContent().getText();
 
       if(0 == text.length())
       {
@@ -219,19 +227,19 @@ public class SQLTextAreaServices
    {
       CaretBounds currentSqlCaretBounds = getCurrentSqlCaretBounds();
 
-      _sqlTextArea.selectRange(currentSqlCaretBounds.begin, currentSqlCaretBounds.end);
+      _sqlTextAreaVirtualScroll.getContent().selectRange(currentSqlCaretBounds.begin, currentSqlCaretBounds.end);
 
-      _sqlTextArea.replaceSelection(replacement);
+      _sqlTextAreaVirtualScroll.getContent().replaceSelection(replacement);
 
       if(selectReplacement)
       {
-         _sqlTextArea.selectRange(currentSqlCaretBounds.begin, currentSqlCaretBounds.begin + replacement.length());
+         _sqlTextAreaVirtualScroll.getContent().selectRange(currentSqlCaretBounds.begin, currentSqlCaretBounds.begin + replacement.length());
       }
    }
 
    public boolean hasSelection()
    {
-      String sql = _sqlTextArea.getSelectedText();
+      String sql = _sqlTextAreaVirtualScroll.getContent().getSelectedText();
 
       return false == Utils.isEmptyString(sql);
    }
@@ -254,8 +262,8 @@ public class SQLTextAreaServices
 
    private CaretVicinityInfo _getCaretVicinityInfo(TokenDelimiterCheck tokenDelimiterCheck)
    {
-      int caretPosition = _sqlTextArea.getCaretPosition();
-      String sqlTextAreaText = _sqlTextArea.getText();
+      int caretPosition = _sqlTextAreaVirtualScroll.getContent().getCaretPosition();
+      String sqlTextAreaText = _sqlTextAreaVirtualScroll.getContent().getText();
 
 
       int begin = caretPosition-1;
@@ -292,7 +300,7 @@ public class SQLTextAreaServices
    {
       CaretVicinityInfo tci = _getCaretVicinityInfo( c -> c == JoinGeneratorProvider.GENERATOR_START);
 
-      _sqlTextArea.replaceText(tci.getTokenBeginPos() - 1, tci.getCaretPosition(), replacement);
+      _sqlTextAreaVirtualScroll.getContent().replaceText(tci.getTokenBeginPos() - 1, tci.getCaretPosition(), replacement);
    }
 
 
@@ -303,35 +311,35 @@ public class SQLTextAreaServices
 
       if (removeSucceedingChars)
       {
-         _sqlTextArea.replaceText(tci.getTokenBeginPos() + offset, tci.getTokenEndPos(), replacement);
+         _sqlTextAreaVirtualScroll.getContent().replaceText(tci.getTokenBeginPos() + offset, tci.getTokenEndPos(), replacement);
       }
       else
       {
-         _sqlTextArea.replaceText(tci.getTokenBeginPos() + offset, tci.getCaretPosition(), replacement);
+         _sqlTextAreaVirtualScroll.getContent().replaceText(tci.getTokenBeginPos() + offset, tci.getCaretPosition(), replacement);
       }
    }
 
 
    public double getFontHight()
    {
-      if( 0 > _sqlTextArea.getFont().getSize())
+      if( 0 > RichTextFxWA.getFont(_sqlTextAreaVirtualScroll.getContent()).getSize())
       {
          return 12;
       }
       else
       {
-         return _sqlTextArea.getFont().getSize();
+         return RichTextFxWA.getFont(_sqlTextAreaVirtualScroll.getContent()).getSize();
       }
    }
 
    public void requestFocus()
    {
-      FocusNodeWA.forceFocus(_sqlTextArea);
+      FocusNodeWA.forceFocus(_sqlTextAreaVirtualScroll.getContent());
    }
 
    public double getStringWidth(String str)
    {
-      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(_sqlTextArea.getFont());
+      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(RichTextFxWA.getFont(_sqlTextAreaVirtualScroll.getContent()));
       return fontMetrics.computeStringWidth(str);
    }
 
@@ -348,21 +356,21 @@ public class SQLTextAreaServices
 
    public void appendToEditor(String sql)
    {
-      _sqlTextArea.appendText(sql);
-      CodeAreaRepaintWA.avoidRepaintProblemsAfterTextModification(_sqlTextArea);
+      _sqlTextAreaVirtualScroll.getContent().appendText(sql);
+      CodeAreaRepaintWA.avoidRepaintProblemsAfterTextModification(_sqlTextAreaVirtualScroll.getContent());
 
    }
 
    public javafx.scene.text.Font getFont()
    {
-      return _sqlTextArea.getFont();
+      return RichTextFxWA.getFont(_sqlTextAreaVirtualScroll.getContent());
    }
 
    public void insertAtCarret(String s)
    {
-      int caretPosition = _sqlTextArea.getCaretPosition();
-      _sqlTextArea.replaceText(caretPosition,caretPosition,s);
-      CodeAreaRepaintWA.avoidRepaintProblemsAfterTextModification(_sqlTextArea);
+      int caretPosition = _sqlTextAreaVirtualScroll.getContent().getCaretPosition();
+      _sqlTextAreaVirtualScroll.getContent().replaceText(caretPosition,caretPosition,s);
+      CodeAreaRepaintWA.avoidRepaintProblemsAfterTextModification(_sqlTextAreaVirtualScroll.getContent());
    }
 
    public CaretPopup getCaretPopup()
@@ -377,13 +385,13 @@ public class SQLTextAreaServices
 
    public void setText(String s)
    {
-      _sqlTextArea.clear();
-      _sqlTextArea.appendText(s);
+      _sqlTextAreaVirtualScroll.getContent().clear();
+      _sqlTextAreaVirtualScroll.getContent().appendText(s);
    }
 
    public void clear()
    {
-      _sqlTextArea.clear();
+      _sqlTextAreaVirtualScroll.getContent().clear();
    }
 
    public void calculateTableNextToCaret()
@@ -395,16 +403,16 @@ public class SQLTextAreaServices
    {
       if(selectReplacement)
       {
-         IndexRange selection = _sqlTextArea.getSelection();
+         IndexRange selection = _sqlTextAreaVirtualScroll.getContent().getSelection();
 
-         _sqlTextArea.replaceSelection(replacement);
+         _sqlTextAreaVirtualScroll.getContent().replaceSelection(replacement);
 
-         _sqlTextArea.selectRange(selection.getStart(), selection.getStart() + replacement.length());
+         _sqlTextAreaVirtualScroll.getContent().selectRange(selection.getStart(), selection.getStart() + replacement.length());
 
       }
       else
       {
-         _sqlTextArea.replaceSelection(replacement);
+         _sqlTextAreaVirtualScroll.getContent().replaceSelection(replacement);
       }
    }
 
@@ -416,8 +424,7 @@ public class SQLTextAreaServices
       }
       else
       {
-         return _sqlTextArea;
+         return _sqlTextAreaVirtualScroll;
       }
    }
-
 }

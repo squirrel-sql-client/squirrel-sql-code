@@ -31,7 +31,7 @@ public class CurrentSqlMarker
       _sqlTextAreaServices = sqlTextAreaServices;
 
       _stackPane = new StackPane();
-      _stackPane.getChildren().add(_sqlTextAreaServices.getTextArea());
+      _stackPane.getChildren().add(_sqlTextAreaServices.getTextAreaVirtualScroll());
 
       _stackPane.getChildren().add(_canvas);
       StackPane.setAlignment(_canvas, Pos.TOP_LEFT);
@@ -55,7 +55,7 @@ public class CurrentSqlMarker
          @Override
          public void handle(ScrollEvent event)
          {
-            RichTextFxWA.getContentRegion(_sqlTextAreaServices.getTextArea()).fireEvent(event);
+            RichTextFxWA.getVirtualFlowContent(_sqlTextAreaServices.getTextArea()).fireEvent(event);
          }
       });
 
@@ -130,7 +130,7 @@ public class CurrentSqlMarker
          return;
       }
 
-      Region contentRegion = RichTextFxWA.getContentRegion(_sqlTextAreaServices.getTextArea());
+      Region contentRegion = _sqlTextAreaServices.getTextArea();
 
       checkBindings(contentRegion);
 
@@ -138,7 +138,7 @@ public class CurrentSqlMarker
 
 
 
-      Bounds bounds = RichTextFxWA.getBoundsForCaretBounds(sqlTextArea, currentSqlCaretBounds);
+      Bounds bounds = RichTextFxWA.getBoundsForCaretBounds(_sqlTextAreaServices.getTextAreaVirtualScroll(), currentSqlCaretBounds);
 
 
       Settings settings = AppState.get().getSettingsManager().getSettings();
@@ -164,7 +164,7 @@ public class CurrentSqlMarker
          _canvas.widthProperty().bind(contentRegion.widthProperty());
          _canvas.heightProperty().bind(contentRegion.heightProperty());
 
-         RichTextFxWA.getScrollbar(_sqlTextAreaServices.getTextArea(), Orientation.VERTICAL).valueProperty().addListener(new ChangeListener<Number>()
+         RichTextFxWA.getScrollbar(_sqlTextAreaServices.getTextAreaVirtualScroll(), Orientation.VERTICAL).valueProperty().addListener(new ChangeListener<Number>()
          {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
@@ -173,7 +173,7 @@ public class CurrentSqlMarker
             }
          });
 
-         RichTextFxWA.getScrollbar(_sqlTextAreaServices.getTextArea(), Orientation.HORIZONTAL).valueProperty().addListener(new ChangeListener<Number>()
+         RichTextFxWA.getScrollbar(_sqlTextAreaServices.getTextAreaVirtualScroll(), Orientation.HORIZONTAL).valueProperty().addListener(new ChangeListener<Number>()
          {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)

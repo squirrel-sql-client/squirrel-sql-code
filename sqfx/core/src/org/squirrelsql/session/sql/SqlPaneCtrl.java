@@ -388,7 +388,7 @@ public class SqlPaneCtrl
          _sqlOutputTabPane.getTabs().add(predecessorTabData.getIndexToReplace(), outputTab);
       }
 
-      RightMouseMenuHandler resultTabRightMouseMenu = new RightMouseMenuHandler((Control) outputTab.getGraphic());
+      RightMouseMenuHandler resultTabRightMouseMenu = new RightMouseMenuHandler(outputTab.getGraphic());
       resultTabRightMouseMenu.addMenu(new I18n(getClass()).t("session.tab.menu.closeall"), () -> closeTabs(outputTab, false));
       resultTabRightMouseMenu.addMenu(new I18n(getClass()).t("session.tab.menu.closeallbutthis"), () -> closeTabs(outputTab, true));
       _sqlOutputTabPane.getSelectionModel().select(outputTab);

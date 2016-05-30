@@ -1,5 +1,6 @@
 package org.squirrelsql.workaround;
 
+import com.sun.javafx.font.FontStrike;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import javafx.geometry.BoundingBox;
@@ -10,22 +11,27 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Region;
+import javafx.scene.text.Font;
 import org.fxmisc.flowless.VirtualFlow;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.AppState;
 import org.squirrelsql.session.sql.CaretBounds;
 
+import java.lang.reflect.Field;
+
 public class RichTextFxWA
 {
+
    private static enum LetterPos
    {
       RIGHT_LOWER, LEFT_UPPER
    }
 
 
-   public static Region getContentRegion(CodeArea sqlTextArea)
+   public static Region getVirtualFlowContent(CodeArea sqlTextArea)
    {
-      // Use SenicView to analyze this structure
+      // Use ScenicView to analyze this structure
       VirtualFlow virtualFlow = getVirtualFlow(sqlTextArea);
       Region virtualFlowContent = (Region) virtualFlow.getChildrenUnmodifiable().get(0);
       return virtualFlowContent;
@@ -33,14 +39,13 @@ public class RichTextFxWA
 
    private static VirtualFlow getVirtualFlow(CodeArea sqlTextArea)
    {
-      // Use SenicView to analyze this structure
-      Parent styledTextAreaView  = (Parent) sqlTextArea.getChildrenUnmodifiable().get(0);
-      return (VirtualFlow) styledTextAreaView.getChildrenUnmodifiable().get(0);
+      // Use ScenicView to analyze this structure
+      return (VirtualFlow) sqlTextArea.getChildrenUnmodifiable().get(0);
    }
 
-   public static Bounds getBoundsForCaretBounds(CodeArea sqlTextArea, CaretBounds caretBounds)
+   public static Bounds getBoundsForCaretBounds(VirtualizedScrollPane<CodeArea> virtualizedScrollPane, CaretBounds caretBounds)
    {
-      String text = sqlTextArea.getText();
+      String text = virtualizedScrollPane.getContent().getText();
 
       int line = 0;
       int begLine = 0;
@@ -75,10 +80,10 @@ public class RichTextFxWA
 
 
 
-      Point2D beg = getCoordinates(sqlTextArea, 0, begLine, LetterPos.LEFT_UPPER);
-      Point2D end = getCoordinates(sqlTextArea, maxColumn, line, LetterPos.RIGHT_LOWER);
+      Point2D beg = getCoordinates(virtualizedScrollPane.getContent(), 0, begLine, LetterPos.LEFT_UPPER);
+      Point2D end = getCoordinates(virtualizedScrollPane.getContent(), maxColumn, line, LetterPos.RIGHT_LOWER);
 
-      ScrollBar verticalScrollbar = getScrollbar(sqlTextArea, Orientation.VERTICAL);
+      ScrollBar verticalScrollbar = getScrollbar(virtualizedScrollPane, Orientation.VERTICAL);
       double yViewOffset;
       if (0 == verticalScrollbar.getMax())
       {
@@ -89,7 +94,7 @@ public class RichTextFxWA
          yViewOffset = (verticalScrollbar.getMax() - verticalScrollbar.getVisibleAmount()) * verticalScrollbar.getValue() / verticalScrollbar.getMax();
       }
 
-      ScrollBar horizontalScrollbar = getScrollbar(sqlTextArea, Orientation.HORIZONTAL);
+      ScrollBar horizontalScrollbar = getScrollbar(virtualizedScrollPane, Orientation.HORIZONTAL);
 
       double xViewOffset;
       if (0 == horizontalScrollbar.getMax())
@@ -104,30 +109,32 @@ public class RichTextFxWA
       return new BoundingBox(beg.getX() - xViewOffset, beg.getY() - yViewOffset, end.getX() - beg.getX(), end.getY() - beg.getY());
    }
 
-   public static ScrollBar getScrollbar(CodeArea sqlTextArea, Orientation orientation)
+   public static ScrollBar getScrollbar(VirtualizedScrollPane virtualizedScrollPane, Orientation orientation)
    {
-      VirtualFlow virtualFlow = getVirtualFlow(sqlTextArea);
-
-      for (Node node : virtualFlow.getChildrenUnmodifiable())
+      try
       {
-         if(node instanceof ScrollBar)
+         if(orientation == Orientation.HORIZONTAL)
          {
-            ScrollBar scrollBar = (ScrollBar) node;
-
-            if(scrollBar.getOrientation() == orientation)
-            {
-               return scrollBar;
-            }
+            Field hbar = VirtualizedScrollPane.class.getDeclaredField("hbar");
+            hbar.setAccessible(true);
+            return (ScrollBar) hbar.get(virtualizedScrollPane);
+         }
+         else
+         {
+            Field vbar = VirtualizedScrollPane.class.getDeclaredField("vbar");
+            vbar.setAccessible(true);
+            return (ScrollBar) vbar.get(virtualizedScrollPane);
          }
       }
-
-      throw new IllegalStateException("Could not find scroll bar");
-
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    private static Point2D getCoordinates(CodeArea sqlTextArea, int col, int line, LetterPos letterPos)
    {
-      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(sqlTextArea.getFont());
+      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(getFont(sqlTextArea));
 
       float lineHeight = fontMetrics.getLineHeight() + fontMetrics.getLeading() + (float)AppState.get().getSettingsManager().getSettings().getLineHeightOffset();
 
@@ -156,4 +163,12 @@ public class RichTextFxWA
 
       return p;
    }
+
+   public static Font getFont(CodeArea sqlTextArea)
+   {
+      // TODO Read from richtextfx-fat-0.7-M1.jar/org/fxmisc/richtext/util/code-area.css
+      // TODO This style is loade in org.fxmisc.richtext.CodeArea
+      return Font.font("monospace");
+   }
+
 }

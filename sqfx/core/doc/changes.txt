@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Upgraded RichTextFX to version 0.7-M1
+
 Bug fix: NullPointerException occurred when empty table was rerun.
 
 Feature: Message panel entries and SQL-Error panel text can be copied to clipboard.
