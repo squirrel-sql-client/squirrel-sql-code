@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Unquote didn't work when quoted string didn't end with semicolon.
+
 Improvement: SQL-Editor: Tab / Shift+Tab  indents/unindents selected text.
 
 Upgraded RichTextFX to version 0.7-M1

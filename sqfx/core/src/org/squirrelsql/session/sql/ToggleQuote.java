@@ -57,7 +57,7 @@ public class ToggleQuote
 
    private boolean isQuotedLine(String line)
    {
-      return line.matches(".*\\\"\\s*\\;.*") || line.matches(".*\\\"\\s*\\+.*") || line.matches(".*\\.\\s*append\\s*\\(\\s*\\\".*")  || line.matches(".*\\\"\\s*\\)\\s*\\;.*");
+      return line.matches(".*\\\"\\s*\\;.*") || line.matches(".*\\\"\\s*\\+.*") || line.matches(".*\\.\\s*append\\s*\\(\\s*\\\".*")  || line.matches(".*\\\"\\s*\\)\\s*\\;.*") || line.matches(".*\\\"\\s*\\.*");
    }
 
    private String quoteText(String textToQuote, boolean sbAppend)
