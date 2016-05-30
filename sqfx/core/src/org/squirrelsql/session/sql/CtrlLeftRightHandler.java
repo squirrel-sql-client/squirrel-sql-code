@@ -36,17 +36,17 @@ public class CtrlLeftRightHandler
          onLeftCtrl();
          event.consume();
       }
-      if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN)))
+      else if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN)))
       {
          onRightCtrl();
          event.consume();
       }
-      if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)))
+      else if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)))
       {
          onLeftCtrlShift();
          event.consume();
       }
-      if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)))
+      else if (KeyMatchWA.matches(event, new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)))
       {
          onRightCtrlShift();
          event.consume();

@@ -62,6 +62,7 @@ public class SQLTextAreaServices
 
       new CtrlLeftRightHandler(_sqlTextAreaVirtualScroll.getContent());
       new DoubleClickHandler(_sqlTextAreaVirtualScroll.getContent());
+      new TabHandler(this);
 
       schemaCacheValue.addListener(() -> updateHighlighting());
 
@@ -237,6 +238,16 @@ public class SQLTextAreaServices
       }
    }
 
+   public void replaceLineAtCaret(String replacement)
+   {
+      CaretVicinityInfo cvi = _getCaretVicinityInfo(c -> c == '\n');
+
+      _sqlTextAreaVirtualScroll.getContent().replaceText(cvi.getTokenBeginPos(), cvi.getTokenEndPos(), replacement);
+      _sqlTextAreaVirtualScroll.getContent().moveTo(cvi.getTokenBeginPos());
+
+   }
+
+
    public boolean hasSelection()
    {
       String sql = _sqlTextAreaVirtualScroll.getContent().getSelectedText();
@@ -260,7 +271,18 @@ public class SQLTextAreaServices
       return _getCaretVicinityInfo(c -> c == '\n').getTokenTillCaret();
    }
 
+   public String getLineAtCaret()
+   {
+      return _getCaretVicinityInfo(c -> c == '\n', false).getTokenAtCaret();
+   }
+
+
    private CaretVicinityInfo _getCaretVicinityInfo(TokenDelimiterCheck tokenDelimiterCheck)
+   {
+      return _getCaretVicinityInfo(tokenDelimiterCheck, true);
+   }
+
+   private CaretVicinityInfo _getCaretVicinityInfo(TokenDelimiterCheck tokenDelimiterCheck, boolean trimmed)
    {
       int caretPosition = _sqlTextAreaVirtualScroll.getContent().getCaretPosition();
       String sqlTextAreaText = _sqlTextAreaVirtualScroll.getContent().getText();
@@ -284,8 +306,14 @@ public class SQLTextAreaServices
       }
 
       begin = Math.max(begin, 0);
-      String tokenTillCaret = sqlTextAreaText.substring(begin, caretPosition).trim();
-      String tokenAtCaret = sqlTextAreaText.substring(begin, end).trim();
+      String tokenTillCaret = sqlTextAreaText.substring(begin, caretPosition);
+      String tokenAtCaret = sqlTextAreaText.substring(begin, end);
+
+      if(trimmed)
+      {
+         tokenTillCaret = tokenTillCaret.trim();
+         tokenAtCaret = tokenAtCaret.trim();
+      }
 
       return new CaretVicinityInfo(tokenTillCaret, tokenAtCaret, begin, end, caretPosition);
    }

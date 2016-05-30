@@ -6,6 +6,7 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.services.*;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
+import org.squirrelsql.session.sql.TabHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -136,7 +137,11 @@ public class FileManager
       {
          byte[] bytes = Files.readAllBytes(file.toPath());
 
-         _sqlTextAreaServices.setText(new String(bytes));
+         String text = new String(bytes);
+
+         text = normalizeText(text);
+
+         _sqlTextAreaServices.setText(text);
          _sqlTextAreaServices.getTextArea().positionCaret(0);
 
 
@@ -150,6 +155,11 @@ public class FileManager
          _mhPanel.error(e);
          _mhLog.error(e);
       }
+   }
+
+   private String normalizeText(String text)
+   {
+      return text.replaceAll("\t", TabHandler.TAB_SPACES);
    }
 
    private boolean questionSave()

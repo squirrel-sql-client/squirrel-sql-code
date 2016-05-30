@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Improvement: SQL editor: Tab / Shift+Tab  indents/unindents selected text.
+
 Upgraded RichTextFX to version 0.7-M1
 
 Bug fix: NullPointerException occurred when empty table was rerun.
