@@ -1,12 +1,12 @@
 package org.squirrelsql.session.sql;
 
-import com.sun.xml.internal.fastinfoset.stax.events.Util;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.workaround.KeyMatchWA;
 
 public class TabHandler
@@ -50,7 +50,7 @@ public class TabHandler
    {
       String selectedText = _sqlTextAreaServices.getTextArea().getSelectedText();
 
-      if (Util.isEmptyString(selectedText))
+      if (Utils.isEmptyString(selectedText))
       {
          handelTabWithoutSelection(forward);
       }
