@@ -1,10 +1,5 @@
 package org.squirrelsql.session.graph;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.scene.control.ListView;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.squirrelsql.session.Session;
@@ -12,6 +7,7 @@ import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TableWindowCtrl
@@ -20,6 +16,7 @@ public class TableWindowCtrl
    private final Window _window;
    private ColumnListCtrl _columnListCtrl;
    private TableInfo _tableInfo;
+   private HashMap<String, PersistentFkProps> _persistentFkPropsByFkName = new HashMap<>();
 
    public TableWindowCtrl(Session session, TableInfo tableInfo, double x, double y, DrawLinesListener drawLinesListener)
    {
@@ -75,6 +72,11 @@ public class TableWindowCtrl
 
       List<FkSpec> fkSpecs = _columnListCtrl.getFkSpecsTo(pkCtrl._tableInfo, windowSide);
 
+      for (FkSpec fkSpec : fkSpecs)
+      {
+         fkSpec.setPersistentFkProps(getPersistenFkProps(fkSpec.getFkName()));
+      }
+
       if(0 < fkSpecs.size())
       {
          PkSpec pkSpec = pkCtrl._columnListCtrl.getPkSpec(windowSide);
@@ -91,11 +93,20 @@ public class TableWindowCtrl
       return ret;
    }
 
+   private PersistentFkProps getPersistenFkProps(String fkName)
+   {
+      PersistentFkProps ret = _persistentFkPropsByFkName.get(fkName);
+      if(null == ret)
+      {
+         ret = new PersistentFkProps(fkName);
+         _persistentFkPropsByFkName.put(fkName, ret);
+      }
+
+      return ret;
+   }
+
    private double getMidX()
    {
       return _window.getBoundsInParent().getMinX() + (_window.getBoundsInParent().getMaxX() - _window.getBoundsInParent().getMinX()) / 2.0;
    }
-
-
-
 }

@@ -44,4 +44,14 @@ public class LineSpec
    {
       return _fkSpec.getFkPoints();
    }
+
+   public boolean isSelected()
+   {
+      return _fkSpec.isSelected();
+   }
+
+   public void setSelected(boolean selected)
+   {
+      _fkSpec.setSelected(selected);
+   }
 }

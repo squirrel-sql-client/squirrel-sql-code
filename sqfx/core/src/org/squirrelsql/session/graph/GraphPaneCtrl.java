@@ -4,6 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -43,6 +44,8 @@ public class GraphPaneCtrl
 
       stackPane.getChildren().add(_drawLinesCtrl.getCanvas());
       stackPane.getChildren().add(_desktopPane);
+
+      _desktopPane.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> _drawLinesCtrl.mouseClicked(e));
 
       _scrollPane.setContent(stackPane);
    }
