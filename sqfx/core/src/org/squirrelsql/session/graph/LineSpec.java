@@ -54,4 +54,14 @@ public class LineSpec
    {
       _fkSpec.setSelected(selected);
    }
+
+   public void addFoldingPoint(Point2D p)
+   {
+      _fkSpec.addFoldingPoint(p);
+   }
+
+   public List<Point2D> getFoldingPoints()
+   {
+      return _fkSpec.getFoldingPoints();
+   }
 }

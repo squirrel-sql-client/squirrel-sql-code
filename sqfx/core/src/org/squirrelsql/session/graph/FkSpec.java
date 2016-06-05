@@ -83,4 +83,13 @@ public class FkSpec
       _persistentFkProps = persistentFkProps;
    }
 
+   public void addFoldingPoint(Point2D p)
+   {
+      _persistentFkProps.addFoldingPoint(p);
+   }
+
+   public List<Point2D> getFoldingPoints()
+   {
+      return _persistentFkProps.getFoldingPoints();
+   }
 }

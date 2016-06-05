@@ -3,45 +3,53 @@ package org.squirrelsql.services;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import org.squirrelsql.RightMouseMenuHandlerListener;
 
 public class RightMouseMenuHandler
 {
    private ContextMenu _contextMenu;
+   private Node _parentNode;
 
-   public RightMouseMenuHandler(Node node)
+   public RightMouseMenuHandler(Node parentNode)
    {
-      createRightMouseMenu(node);
+      this(parentNode, true);
    }
 
-   private void createRightMouseMenu(Node node)
+   public RightMouseMenuHandler(Node parentNode, boolean attachMouseListenerToParentNode)
+   {
+      _parentNode = parentNode;
+      createRightMouseMenu(attachMouseListenerToParentNode);
+   }
+
+   private void createRightMouseMenu(boolean attachListener)
    {
       _contextMenu = new ContextMenu();
 
       _contextMenu.setAutoHide(true);
 
-      node.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
+      if (attachListener)
       {
-         @Override
-         public void handle(MouseEvent e)
+         _parentNode.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
          {
-            onShowRightMouseMenu(e, _contextMenu, node);
-         }
-      });
+            @Override
+            public void handle(MouseEvent e)
+            {
+               onShowRightMouseMenu(e, _contextMenu);
+            }
+         });
+      }
    }
 
-   private void onShowRightMouseMenu(MouseEvent e, ContextMenu cm, Node node)
+   private void onShowRightMouseMenu(MouseEvent e, ContextMenu cm)
    {
-      if (e.getButton() == MouseButton.SECONDARY)
+      if (isPopupTrigger(e))
       {
-         cm.show(node, e.getScreenX(), e.getScreenY());
+         cm.show(_parentNode, e.getScreenX(), e.getScreenY());
       }
       else
       {
@@ -68,5 +76,15 @@ public class RightMouseMenuHandler
    
    public void addSeparator(){
 	   _contextMenu.getItems().add(new SeparatorMenuItem());
-   }   
+   }
+
+   public void show(MouseEvent e)
+   {
+      onShowRightMouseMenu(e, _contextMenu);
+   }
+
+   public static boolean isPopupTrigger(MouseEvent e)
+   {
+      return e.getButton() == MouseButton.SECONDARY;
+   }
 }

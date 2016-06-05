@@ -9,7 +9,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import org.squirrelsql.Props;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.RightMouseMenuHandler;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 
 import java.util.ArrayList;
@@ -70,7 +71,19 @@ public class DrawLinesCtrl
                      gc.strokeLine(pkPoint.getX(), pkPoint.getY(), lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
                   }
 
-                  gc.strokeLine(lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
+                  Point2D begin = new Point2D(lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
+
+                  for (Point2D fp : lineSpec.getFoldingPoints())
+                  {
+                     gc.strokeLine(begin.getX(), begin.getY(), fp.getX(), fp.getY());
+
+                     int r = 10;
+                     gc.fillOval(fp.getX() - r/2d, fp.getY() - r/2.d, r, r);
+
+                     begin = fp;
+                  }
+
+                  gc.strokeLine(begin.getX(), begin.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
 
                   for (Point2D fkPoint : lineSpec.getFkPoints())
                   {
@@ -128,8 +141,24 @@ public class DrawLinesCtrl
             {
                allLineSpecs.add(lineSpec);
 
-               Polygon polygon = createPolygon(lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY(), lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY(), 3);
+               Point2D begin = new Point2D(lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
 
+               Polygon polygon;
+
+               int halfThickness = 3;
+               for (Point2D fp : lineSpec.getFoldingPoints())
+               {
+                  polygon = createPolygon(begin.getX(), begin.getY(), fp.getX(), fp.getY(), halfThickness);
+                  if (polygon.contains(e.getX(), e.getY()))
+                  {
+                     clickedLineSpec = lineSpec;
+                  }
+
+                  begin = fp;
+
+               }
+
+               polygon = createPolygon(begin.getX(), begin.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY(), halfThickness);
                if (polygon.contains(e.getX(), e.getY()))
                {
                   clickedLineSpec = lineSpec;
@@ -147,10 +176,32 @@ public class DrawLinesCtrl
                lineSpec.setSelected(false);
             }
          }
-         clickedLineSpec.setSelected(!clickedLineSpec.isSelected());
+
+         if(RightMouseMenuHandler.isPopupTrigger(e))
+         {
+            LineSpec finalClickedLineSpec = clickedLineSpec;
+
+            RightMouseMenuHandler rightMouseMenuHandler = new RightMouseMenuHandler(_canvas, false);
+            rightMouseMenuHandler.addMenu(new I18n(getClass()).t("folding.point.add"), () -> onAddFoldingPoint(e, finalClickedLineSpec));
+            rightMouseMenuHandler.show(e);
+
+            clickedLineSpec.setSelected(true);
+
+         }
+         else
+         {
+            clickedLineSpec.setSelected(!clickedLineSpec.isSelected());
+         }
 
          doDraw();
+
       }
+   }
+
+   private void onAddFoldingPoint(MouseEvent e, LineSpec clickedLineSpec)
+   {
+      clickedLineSpec.addFoldingPoint(new Point2D(e.getX(), e.getY()));
+      doDraw();
    }
 
    private Polygon createPolygon(double x1, double y1, double x2, double y2, double halfThickness)

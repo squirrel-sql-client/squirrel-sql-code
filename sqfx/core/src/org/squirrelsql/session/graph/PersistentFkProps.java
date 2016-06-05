@@ -1,9 +1,15 @@
 package org.squirrelsql.session.graph;
 
+import javafx.geometry.Point2D;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class PersistentFkProps
 {
    private String _fkName;
    private boolean _selected;
+   private ArrayList<Point2D> _foldingPoints = new ArrayList<>();
 
    public PersistentFkProps(String fkName)
    {
@@ -18,5 +24,15 @@ public class PersistentFkProps
    public void setSelected(boolean selected)
    {
       _selected = selected;
+   }
+
+   public void addFoldingPoint(Point2D p)
+   {
+      _foldingPoints.add(p);
+   }
+
+   public List<Point2D> getFoldingPoints()
+   {
+      return _foldingPoints;
    }
 }
