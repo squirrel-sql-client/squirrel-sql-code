@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature (in progress): Query builder allows to add folding points to constraint lines.
+
 Bug fix: Unquote didn't work when quoted string didn't end with semicolon.
 
 Improvement: SQL-Editor: Tab / Shift+Tab  indents/unindents selected text.
