@@ -202,37 +202,6 @@ public class DrawLinesCtrl
       doDraw();
    }
 
-   private Polygon createPolygon(double x1, double y1, double x2, double y2, double halfThickness)
-   {
-      Polygon ret = new Polygon();
-
-      if (x1 < x2 && y1 < y2)
-      {
-         ret.getPoints().addAll(x1 + halfThickness, y1 - halfThickness);
-         ret.getPoints().addAll(x1 - halfThickness, y1 + halfThickness);
-         ret.getPoints().addAll(x2 - halfThickness, y2 + halfThickness);
-         ret.getPoints().addAll(x2 + halfThickness, y2 - halfThickness);
-      }
-      else if (x1 > x2 && y1 > y2)
-      {
-         ret.getPoints().addAll(x1 - halfThickness, y1 + halfThickness);
-         ret.getPoints().addAll(x1 + halfThickness, y1 - halfThickness);
-         ret.getPoints().addAll(x2 + halfThickness, y2 - halfThickness);
-         ret.getPoints().addAll(x2 - halfThickness, y2 + halfThickness);
-      }
-      else
-      {
-         ret.getPoints().addAll(x1 + halfThickness, y1 + halfThickness);
-         ret.getPoints().addAll(x1 - halfThickness, y1 - halfThickness);
-         ret.getPoints().addAll(x2 - halfThickness, y2 - halfThickness);
-         ret.getPoints().addAll(x2 + halfThickness, y2 + halfThickness);
-      }
-
-      //System.out.println("("+ x1 + ", " + y1 + ") - (" + x2 + ", " + y2 +")");
-
-      return ret;
-   }
-
    public void mousePressed(MouseEvent e)
    {
       _currentLineInteractionInfo.clear();
@@ -257,10 +226,9 @@ public class DrawLinesCtrl
 
          Polygon polygon;
 
-         int halfThickness = 3;
          for (Point2D fp : lineSpec.getFoldingPoints())
          {
-            polygon = createPolygon(begin.getX(), begin.getY(), fp.getX(), fp.getY(), halfThickness);
+            polygon = GraphUtils.createPolygon(begin.getX(), begin.getY(), fp.getX(), fp.getY());
             if (polygon.contains(e.getX(), e.getY()))
             {
                _currentLineInteractionInfo.setClickedOnLineSpec(lineSpec);
@@ -270,7 +238,7 @@ public class DrawLinesCtrl
             begin = fp;
          }
 
-         polygon = createPolygon(begin.getX(), begin.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY(), halfThickness);
+         polygon = GraphUtils.createPolygon(begin.getX(), begin.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
          if (polygon.contains(e.getX(), e.getY()))
          {
             _currentLineInteractionInfo.setClickedOnLineSpec(lineSpec);

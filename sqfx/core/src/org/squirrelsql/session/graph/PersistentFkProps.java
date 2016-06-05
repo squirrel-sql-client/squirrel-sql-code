@@ -45,4 +45,9 @@ public class PersistentFkProps
    {
       _foldingPoints.set(_foldingPoints.indexOf(oldFP), newFP);
    }
+
+   public void addFoldingPointAt(Point2D fp, int listIndex)
+   {
+      _foldingPoints.add(listIndex, fp);
+   }
 }

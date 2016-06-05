@@ -102,4 +102,9 @@ public class FkSpec
    {
       _persistentFkProps.replaceFoldingPoint(oldFP, newFP);
    }
+
+   public void addFoldingPointAt(Point2D fp, int listIndex)
+   {
+      _persistentFkProps.addFoldingPointAt(fp, listIndex);
+   }
 }

@@ -1,6 +1,7 @@
 package org.squirrelsql.session.graph;
 
 import javafx.geometry.Point2D;
+import javafx.scene.shape.Polygon;
 
 import java.util.List;
 
@@ -57,7 +58,25 @@ public class LineSpec
 
    public void addFoldingPoint(Point2D p)
    {
+      Point2D begin = new Point2D(getPkGatherPointX(), getPkGatherPointY());
+
+      Polygon polygon;
+
+      for (int i = 0; i < _fkSpec.getFoldingPoints().size(); i++)
+      {
+         Point2D fp = _fkSpec.getFoldingPoints().get(i);
+
+         polygon = GraphUtils.createPolygon(begin.getX(), begin.getY(), fp.getX(), fp.getY());
+         if (polygon.contains(p.getX(), p.getY()))
+         {
+            _fkSpec.addFoldingPointAt(p, i);
+            return;
+         }
+         begin = fp;
+      }
+
       _fkSpec.addFoldingPoint(p);
+
    }
 
    public List<Point2D> getFoldingPoints()
