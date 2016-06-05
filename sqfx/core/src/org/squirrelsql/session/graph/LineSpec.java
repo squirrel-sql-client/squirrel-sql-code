@@ -64,4 +64,9 @@ public class LineSpec
    {
       return _fkSpec.getFoldingPoints();
    }
+
+   public void removeFoldingPoint(Point2D fp)
+   {
+      _fkSpec.removeFoldingPoint(fp);
+   }
 }

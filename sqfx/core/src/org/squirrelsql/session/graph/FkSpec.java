@@ -92,4 +92,9 @@ public class FkSpec
    {
       return _persistentFkProps.getFoldingPoints();
    }
+
+   public void removeFoldingPoint(Point2D fp)
+   {
+      _persistentFkProps.removeFoldingPoint(fp);
+   }
 }

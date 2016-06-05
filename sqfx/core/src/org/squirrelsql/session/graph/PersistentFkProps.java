@@ -35,4 +35,9 @@ public class PersistentFkProps
    {
       return _foldingPoints;
    }
+
+   public void removeFoldingPoint(Point2D fp)
+   {
+      _foldingPoints.remove(fp);
+   }
 }

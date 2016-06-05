@@ -8,6 +8,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Polygon;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.RightMouseMenuHandler;
@@ -21,6 +22,7 @@ public class DrawLinesCtrl
    private Canvas _canvas = new Canvas();
    private Pane _desktopPane;
    private ScrollPane _scrollPane;
+   public static final int FOLDING_POINT_DIAMETER = 10;
 
    public DrawLinesCtrl(Pane desktopPane, ScrollPane scrollPane)
    {
@@ -77,8 +79,7 @@ public class DrawLinesCtrl
                   {
                      gc.strokeLine(begin.getX(), begin.getY(), fp.getX(), fp.getY());
 
-                     int r = 10;
-                     gc.fillOval(fp.getX() - r/2d, fp.getY() - r/2.d, r, r);
+                     gc.fillOval(fp.getX() - FOLDING_POINT_DIAMETER /2d, fp.getY() - FOLDING_POINT_DIAMETER /2.d, FOLDING_POINT_DIAMETER, FOLDING_POINT_DIAMETER);
 
                      begin = fp;
                   }
@@ -123,51 +124,65 @@ public class DrawLinesCtrl
 
    public void mouseClicked(MouseEvent e)
    {
+
+      Point2D clickedFoldingPoint = null;
       LineSpec clickedLineSpec = null;
 
-      ArrayList<LineSpec> allLineSpecs = new ArrayList<>();
+      ArrayList<LineSpec> allLineSpecs = getAllLineSpecs();
 
-      for (Node pkNode : _desktopPane.getChildren())
+      for (LineSpec lineSpec : allLineSpecs)
       {
-         TableWindowCtrl pkCtrl = ((Window) pkNode).getCtrl();
-
-         for (Node fkNode : _desktopPane.getChildren())
+         for (Point2D fp : lineSpec.getFoldingPoints())
          {
-            TableWindowCtrl fkCtrl = ((Window) fkNode).getCtrl();
-
-            List<LineSpec> lineSpecs = fkCtrl.getLineSpecs(pkCtrl);
-
-            for (LineSpec lineSpec : lineSpecs)
+            Ellipse ellipse = new Ellipse(fp.getX(), fp.getY(), FOLDING_POINT_DIAMETER / 2d, FOLDING_POINT_DIAMETER / 2d);
+            if (ellipse.contains(e.getX(), e.getY()))
             {
-               allLineSpecs.add(lineSpec);
-
-               Point2D begin = new Point2D(lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
-
-               Polygon polygon;
-
-               int halfThickness = 3;
-               for (Point2D fp : lineSpec.getFoldingPoints())
-               {
-                  polygon = createPolygon(begin.getX(), begin.getY(), fp.getX(), fp.getY(), halfThickness);
-                  if (polygon.contains(e.getX(), e.getY()))
-                  {
-                     clickedLineSpec = lineSpec;
-                  }
-
-                  begin = fp;
-
-               }
-
-               polygon = createPolygon(begin.getX(), begin.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY(), halfThickness);
-               if (polygon.contains(e.getX(), e.getY()))
-               {
-                  clickedLineSpec = lineSpec;
-               }
+               clickedFoldingPoint = fp;
+               clickedLineSpec = lineSpec;
+               break;
             }
+         }
+
+         Point2D begin = new Point2D(lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
+
+         Polygon polygon;
+
+         int halfThickness = 3;
+         for (Point2D fp : lineSpec.getFoldingPoints())
+         {
+            polygon = createPolygon(begin.getX(), begin.getY(), fp.getX(), fp.getY(), halfThickness);
+            if (polygon.contains(e.getX(), e.getY()))
+            {
+               clickedLineSpec = lineSpec;
+            }
+
+            begin = fp;
+         }
+
+         polygon = createPolygon(begin.getX(), begin.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY(), halfThickness);
+         if (polygon.contains(e.getX(), e.getY()))
+         {
+            clickedLineSpec = lineSpec;
+            break;
          }
       }
 
-      if(null != clickedLineSpec)
+      if(null != clickedFoldingPoint)
+      {
+         if(RightMouseMenuHandler.isPopupTrigger(e))
+         {
+            RightMouseMenuHandler rightMouseMenuHandler = new RightMouseMenuHandler(_canvas, false);
+            LineSpec finalClickedLineSpec = clickedLineSpec;
+            Point2D finalClickedFoldingPoint = clickedFoldingPoint;
+            rightMouseMenuHandler.addMenu(new I18n(getClass()).t("folding.point.remove"), () -> onRemoveFoldingPoint(finalClickedLineSpec, finalClickedFoldingPoint));
+            rightMouseMenuHandler.show(e);
+
+            clickedLineSpec.setSelected(true);
+         }
+
+         doDraw();
+      }
+      else if(null != clickedLineSpec)
       {
          for (LineSpec lineSpec : allLineSpecs)
          {
@@ -196,6 +211,30 @@ public class DrawLinesCtrl
          doDraw();
 
       }
+   }
+
+   private void onRemoveFoldingPoint(LineSpec finalClickedLineSpec, Point2D finalClickedFoldingPoint)
+   {
+      finalClickedLineSpec.removeFoldingPoint(finalClickedFoldingPoint);
+      doDraw();
+   }
+
+   private ArrayList<LineSpec> getAllLineSpecs()
+   {
+      ArrayList<LineSpec> ret = new ArrayList<>();
+      for (Node pkNode : _desktopPane.getChildren())
+      {
+         TableWindowCtrl pkCtrl = ((Window) pkNode).getCtrl();
+
+         for (Node fkNode : _desktopPane.getChildren())
+         {
+            TableWindowCtrl fkCtrl = ((Window) fkNode).getCtrl();
+
+            ret.addAll(fkCtrl.getLineSpecs(pkCtrl));
+         }
+      }
+
+      return ret;
    }
 
    private void onAddFoldingPoint(MouseEvent e, LineSpec clickedLineSpec)
