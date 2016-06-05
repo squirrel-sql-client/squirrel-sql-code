@@ -97,4 +97,9 @@ public class FkSpec
    {
       _persistentFkProps.removeFoldingPoint(fp);
    }
+
+   public void replaceFoldingPoint(Point2D oldFP, Point2D newFP)
+   {
+      _persistentFkProps.replaceFoldingPoint(oldFP, newFP);
+   }
 }

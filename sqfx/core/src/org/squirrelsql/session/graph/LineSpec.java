@@ -69,4 +69,9 @@ public class LineSpec
    {
       _fkSpec.removeFoldingPoint(fp);
    }
+
+   public void replaceFoldingPoint(Point2D oldFP, Point2D newFP)
+   {
+      _fkSpec.replaceFoldingPoint(oldFP, newFP);
+   }
 }

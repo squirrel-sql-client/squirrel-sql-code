@@ -40,4 +40,9 @@ public class PersistentFkProps
    {
       _foldingPoints.remove(fp);
    }
+
+   public void replaceFoldingPoint(Point2D oldFP, Point2D newFP)
+   {
+      _foldingPoints.set(_foldingPoints.indexOf(oldFP), newFP);
+   }
 }

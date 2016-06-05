@@ -46,6 +46,9 @@ public class GraphPaneCtrl
       stackPane.getChildren().add(_desktopPane);
 
       _desktopPane.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> _drawLinesCtrl.mouseClicked(e));
+      _desktopPane.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> _drawLinesCtrl.mousePressed(e));
+      _desktopPane.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> _drawLinesCtrl.mouseDragged(e));
+      _desktopPane.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> _drawLinesCtrl.mouseReleased(e));
 
       _scrollPane.setContent(stackPane);
    }

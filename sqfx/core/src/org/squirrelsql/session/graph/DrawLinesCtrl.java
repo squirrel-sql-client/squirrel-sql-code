@@ -19,10 +19,14 @@ import java.util.List;
 
 public class DrawLinesCtrl
 {
+   public static final int FOLDING_POINT_DIAMETER = 10;
+
    private Canvas _canvas = new Canvas();
    private Pane _desktopPane;
    private ScrollPane _scrollPane;
-   public static final int FOLDING_POINT_DIAMETER = 10;
+
+   private LineInteractionInfo _currentLineInteractionInfo = new LineInteractionInfo();
+
 
    public DrawLinesCtrl(Pane desktopPane, ScrollPane scrollPane)
    {
@@ -125,87 +129,42 @@ public class DrawLinesCtrl
    public void mouseClicked(MouseEvent e)
    {
 
-      Point2D clickedFoldingPoint = null;
-      LineSpec clickedLineSpec = null;
-
-      ArrayList<LineSpec> allLineSpecs = getAllLineSpecs();
-
-      for (LineSpec lineSpec : allLineSpecs)
+      for (LineSpec lineSpec : _currentLineInteractionInfo.getAllLineSpecsCache())
       {
-         for (Point2D fp : lineSpec.getFoldingPoints())
+         if (lineSpec != _currentLineInteractionInfo.getClickedOnLineSpec())
          {
-            Ellipse ellipse = new Ellipse(fp.getX(), fp.getY(), FOLDING_POINT_DIAMETER / 2d, FOLDING_POINT_DIAMETER / 2d);
-            if (ellipse.contains(e.getX(), e.getY()))
-            {
-               clickedFoldingPoint = fp;
-               clickedLineSpec = lineSpec;
-               break;
-            }
-         }
-
-         Point2D begin = new Point2D(lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
-
-         Polygon polygon;
-
-         int halfThickness = 3;
-         for (Point2D fp : lineSpec.getFoldingPoints())
-         {
-            polygon = createPolygon(begin.getX(), begin.getY(), fp.getX(), fp.getY(), halfThickness);
-            if (polygon.contains(e.getX(), e.getY()))
-            {
-               clickedLineSpec = lineSpec;
-            }
-
-            begin = fp;
-         }
-
-         polygon = createPolygon(begin.getX(), begin.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY(), halfThickness);
-         if (polygon.contains(e.getX(), e.getY()))
-         {
-            clickedLineSpec = lineSpec;
-            break;
+            lineSpec.setSelected(false);
          }
       }
 
-      if(null != clickedFoldingPoint)
+
+      if(_currentLineInteractionInfo.isClickOnFoldingPoint())
       {
          if(RightMouseMenuHandler.isPopupTrigger(e))
          {
             RightMouseMenuHandler rightMouseMenuHandler = new RightMouseMenuHandler(_canvas, false);
-            LineSpec finalClickedLineSpec = clickedLineSpec;
-            Point2D finalClickedFoldingPoint = clickedFoldingPoint;
-            rightMouseMenuHandler.addMenu(new I18n(getClass()).t("folding.point.remove"), () -> onRemoveFoldingPoint(finalClickedLineSpec, finalClickedFoldingPoint));
+            rightMouseMenuHandler.addMenu(new I18n(getClass()).t("folding.point.remove"), this::onRemoveFoldingPoint);
             rightMouseMenuHandler.show(e);
 
-            clickedLineSpec.setSelected(true);
+            _currentLineInteractionInfo.getClickedOnLineSpec().setSelected(true);
          }
 
          doDraw();
       }
-      else if(null != clickedLineSpec)
+      else if(_currentLineInteractionInfo.isClickOnLineSpec())
       {
-         for (LineSpec lineSpec : allLineSpecs)
-         {
-            if (lineSpec != clickedLineSpec)
-            {
-               lineSpec.setSelected(false);
-            }
-         }
-
          if(RightMouseMenuHandler.isPopupTrigger(e))
          {
-            LineSpec finalClickedLineSpec = clickedLineSpec;
-
             RightMouseMenuHandler rightMouseMenuHandler = new RightMouseMenuHandler(_canvas, false);
-            rightMouseMenuHandler.addMenu(new I18n(getClass()).t("folding.point.add"), () -> onAddFoldingPoint(e, finalClickedLineSpec));
+            rightMouseMenuHandler.addMenu(new I18n(getClass()).t("folding.point.add"), () -> onAddFoldingPoint(e));
             rightMouseMenuHandler.show(e);
 
-            clickedLineSpec.setSelected(true);
+            _currentLineInteractionInfo.getClickedOnLineSpec().setSelected(true);
 
          }
          else
          {
-            clickedLineSpec.setSelected(!clickedLineSpec.isSelected());
+            _currentLineInteractionInfo.getClickedOnLineSpec().setSelected(!_currentLineInteractionInfo.getClickedOnLineSpec().isSelected());
          }
 
          doDraw();
@@ -213,9 +172,9 @@ public class DrawLinesCtrl
       }
    }
 
-   private void onRemoveFoldingPoint(LineSpec finalClickedLineSpec, Point2D finalClickedFoldingPoint)
+   private void onRemoveFoldingPoint()
    {
-      finalClickedLineSpec.removeFoldingPoint(finalClickedFoldingPoint);
+      _currentLineInteractionInfo.removeFoldingPoint();
       doDraw();
    }
 
@@ -237,9 +196,9 @@ public class DrawLinesCtrl
       return ret;
    }
 
-   private void onAddFoldingPoint(MouseEvent e, LineSpec clickedLineSpec)
+   private void onAddFoldingPoint(MouseEvent e)
    {
-      clickedLineSpec.addFoldingPoint(new Point2D(e.getX(), e.getY()));
+      _currentLineInteractionInfo.getClickedOnLineSpec().addFoldingPoint(new Point2D(e.getX(), e.getY()));
       doDraw();
    }
 
@@ -274,5 +233,73 @@ public class DrawLinesCtrl
       return ret;
    }
 
+   public void mousePressed(MouseEvent e)
+   {
+      _currentLineInteractionInfo.clear();
+
+      ArrayList<LineSpec> allLineSpecs = getAllLineSpecs();
+
+      _currentLineInteractionInfo.setAllLineSpecsCache(allLineSpecs);
+
+      for (LineSpec lineSpec : allLineSpecs)
+      {
+         for (Point2D fp : lineSpec.getFoldingPoints())
+         {
+            Ellipse ellipse = new Ellipse(fp.getX(), fp.getY(), FOLDING_POINT_DIAMETER / 2d, FOLDING_POINT_DIAMETER / 2d);
+            if (ellipse.contains(e.getX(), e.getY()))
+            {
+               _currentLineInteractionInfo.setClickedOnFoldingPoint(fp, lineSpec);
+               break;
+            }
+         }
+
+         Point2D begin = new Point2D(lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
+
+         Polygon polygon;
+
+         int halfThickness = 3;
+         for (Point2D fp : lineSpec.getFoldingPoints())
+         {
+            polygon = createPolygon(begin.getX(), begin.getY(), fp.getX(), fp.getY(), halfThickness);
+            if (polygon.contains(e.getX(), e.getY()))
+            {
+               _currentLineInteractionInfo.setClickedOnLineSpec(lineSpec);
+               break;
+            }
+
+            begin = fp;
+         }
+
+         polygon = createPolygon(begin.getX(), begin.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY(), halfThickness);
+         if (polygon.contains(e.getX(), e.getY()))
+         {
+            _currentLineInteractionInfo.setClickedOnLineSpec(lineSpec);
+            break;
+         }
+      }
+   }
+
+   public void mouseDragged(MouseEvent e)
+   {
+      if (false == _currentLineInteractionInfo.isClickOnFoldingPoint() || RightMouseMenuHandler.isPopupTrigger(e))
+      {
+         return;
+      }
+
+      _currentLineInteractionInfo.moveFoldingPointTo(e.getX(), e.getY());
+      doDraw();
+   }
+
+   public void mouseReleased(MouseEvent e)
+   {
+      if (false == _currentLineInteractionInfo.isClickOnFoldingPoint() || RightMouseMenuHandler.isPopupTrigger(e))
+      {
+         return;
+      }
+
+      _currentLineInteractionInfo.moveFoldingPointTo(e.getX(), e.getY());
+      _currentLineInteractionInfo.clear();
+      doDraw();
+   }
 
 }
