@@ -14,23 +14,23 @@ public class SessionTabbedPaneCtrl
    }
 
 
-   public Tab addSessionTab(SessionCtrl sessionCtrl)
+   public SessionTabAdmin addSessionTab(SessionCtrl sessionCtrl)
    {
-      Tab tab = sessionCtrl.getSessionTab();
-      return addTabAndSelect(tab);
+      SessionTabAdmin tabAdmin = sessionCtrl.getSessionTabAdmin();
+      return addTabAndSelect(tabAdmin);
    }
 
-   public Tab addSqlTab(NewSqlTabCtrl newSqlTabCtrl)
+   public SessionTabAdmin addSqlTab(NewSqlTabCtrl newSqlTabCtrl)
    {
-      Tab tab = newSqlTabCtrl.getSqlTab();
-      return addTabAndSelect(tab);
+      SessionTabAdmin tabAdmin = newSqlTabCtrl.getSessionTabAdmin();
+      return addTabAndSelect(tabAdmin);
    }
 
-   private Tab addTabAndSelect(Tab tab)
+   private SessionTabAdmin addTabAndSelect(SessionTabAdmin sessionTabAdmin)
    {
-      _tabPane.getTabs().add(tab);
-      _tabPane.getSelectionModel().select(tab);
-      return tab;
+      _tabPane.getTabs().add(sessionTabAdmin.getTab());
+      _tabPane.getSelectionModel().select(sessionTabAdmin.getTab());
+      return sessionTabAdmin;
    }
 
 }

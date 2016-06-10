@@ -4,7 +4,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Tab;
 import org.squirrelsql.AppState;
 
-import javax.swing.*;
 import java.util.ArrayList;
 
 public class SessionTabContext
@@ -12,7 +11,7 @@ public class SessionTabContext
    private final int _sessionTabContextId;
    private Session _session;
    private boolean _sessionMainTab;
-   private Tab _tab;
+   private SessionTabAdmin _sessionTabAdmin;
 
    private SimpleBooleanProperty _bookmarksChanged = new SimpleBooleanProperty();
    private ArrayList<SessionTabCloseListener> _sessionTabCloseListeners = new ArrayList<>();
@@ -49,15 +48,15 @@ public class SessionTabContext
       return _sessionMainTab;
    }
 
-   public void setTab(Tab tab)
+   public void setTabAdmin(SessionTabAdmin sessionTabAdmin)
    {
-      _tab = tab;
-      _tab.setOnClosed(e -> fireClosed());
+      _sessionTabAdmin = sessionTabAdmin;
+      _sessionTabAdmin.addOnClosed(e -> fireClosed());
    }
 
-   public Tab getTab()
+   public SessionTabAdmin getTab()
    {
-      return _tab;
+      return _sessionTabAdmin;
    }
 
    public boolean equalsSession(SessionTabContext other)

@@ -56,7 +56,7 @@ public class ActionManager
       _sessionMenu.getItems().clear();
 
 
-      if(null == sessionTabContext)
+      if(null == _activeOrActivatingSessionTabContext)
       {
          _sessionMenu.setDisable(true);
          return;
@@ -83,7 +83,7 @@ public class ActionManager
 
             menuItem.setGraphic(stdActionCfg.getActionCfg().getIcon());
 
-            ActionHandle actionHandle = getActionHandle(stdActionCfg.getActionCfg(), sessionTabContext);
+            ActionHandle actionHandle = getActionHandle(stdActionCfg.getActionCfg(), _activeOrActivatingSessionTabContext);
             actionHandle.setMenuItem(menuItem);
             actionHandle.refreshActionUI();
 

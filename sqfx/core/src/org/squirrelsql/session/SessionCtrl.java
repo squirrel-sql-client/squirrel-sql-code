@@ -37,7 +37,7 @@ public class SessionCtrl
    private Pref _pref = new Pref(getClass());
    private SqlTabCtrl _sqlTabCtrl;
    private final BorderPane _sessionPane;
-   private final Tab _sessionTab;
+   private final SessionTabAdmin _sessionTabAdmin;
    private SessionTabContext _sessionTabContext;
    private ObjectTreeTabCtrl _objectTreeTabCtrl;
    private ChangeListener<Tab> _tabChangeListener;
@@ -60,23 +60,20 @@ public class SessionCtrl
 
       _sessionPane.setCenter(_objectTreeAndSqlTabPane);
 
-      _sessionTab = new Tab();
-      SessionTabHeaderCtrl sessionTabHeaderCtrl = new SessionTabHeaderCtrl(_sessionTabContext);
-      _sessionTab.setGraphic(sessionTabHeaderCtrl.getTabHeader());
-      _sessionTab.setContent(_sessionPane);
+      _sessionTabAdmin = new SessionTabAdmin(_sessionTabContext, _sessionPane, SessionTabType.SQL_TAB);
 
       initStandardActions(sessionTabContext);
 
       _transactionManager = new TransactionManager(sessionTabContext.getSession());
 
-      _fileManager = new FileManager(_sqlTabCtrl.getSQLTextAreaServices(), sessionTabHeaderCtrl);
+      _fileManager = new FileManager(_sqlTabCtrl.getSQLTextAreaServices(), _sessionTabAdmin.getSessionTabHeaderCtrl());
 
       _applicationCloseListener = this::onClose;
       AppState.get().addApplicationCloseListener(_applicationCloseListener, ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);
 
-      _sessionTab.setOnCloseRequest(_fileManager::closeRequest);
-      _sessionTab.setOnClosed(e -> onClose());
-      _sessionTab.setOnSelectionChanged(this::onSelectionChanged);
+      _sessionTabAdmin.addOnCloseRequest(_fileManager::closeRequest);
+      _sessionTabAdmin.addOnClosed(e -> onClose());
+      _sessionTabAdmin.addOnSelectionChanged(this::onSelectionChanged);
    }
 
    private void initStandardActions(SessionTabContext sessionTabContext)
@@ -152,7 +149,7 @@ public class SessionCtrl
 
    private void onSelectionChanged(Event e)
    {
-      if(_sessionTab.isSelected())
+      if(_sessionTabAdmin.isSelected())
       {
          AppState.get().getSessionManager().setCurrentlyActiveOrActivatingContext(_sessionTabContext);
          onTabChanged(_objectTreeAndSqlTabPane.getSelectionModel().getSelectedItem());
@@ -219,22 +216,19 @@ public class SessionCtrl
       _sessionTabContext.getSession().close();
       
       _objectTreeAndSqlTabPane.getSelectionModel().selectedItemProperty().removeListener(_tabChangeListener);
-      _sessionTab.setOnSelectionChanged(null);
-      
 
       AppState.get().getSessionManager().sessionClose(_sessionTabContext);
 
       AppState.get().removeApplicationCloseListener(_applicationCloseListener);
-      _sessionTab.setOnClosed(null);
-   }
-
-   public Tab getSessionTab()
-   {
-      return _sessionTab;
    }
 
    public TreeView<ObjectTreeNode> getObjectTree()
    {
       return _objectTreeTabCtrl.getObjectTree();
+   }
+
+   public SessionTabAdmin getSessionTabAdmin()
+   {
+      return _sessionTabAdmin;
    }
 }

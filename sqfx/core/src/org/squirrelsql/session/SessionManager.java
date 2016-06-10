@@ -33,7 +33,7 @@ public class SessionManager
       SessionCtrl sessionCtrl = new SessionCtrl(_currentlyActiveOrActivatingContext);
       session.setSessionCtrl(sessionCtrl);
 
-      sessionTabContext.setTab(_sessionTabbedPaneController.addSessionTab(sessionCtrl));
+      sessionTabContext.setTabAdmin(_sessionTabbedPaneController.addSessionTab(sessionCtrl));
       ActionUtil.updateActionUIs();
    }
 
@@ -44,7 +44,7 @@ public class SessionManager
 
 
       NewSqlTabCtrl newSqlTabCtrl = new NewSqlTabCtrl(newSqlTabContext);
-      newSqlTabContext.setTab(_sessionTabbedPaneController.addSqlTab(newSqlTabCtrl));
+      newSqlTabContext.setTabAdmin(_sessionTabbedPaneController.addSqlTab(newSqlTabCtrl));
       ActionUtil.updateActionUIs();
    }
 
@@ -92,7 +92,7 @@ public class SessionManager
 
       fireContextClosing(sessionTabContext);
 
-      if(sessionTabContext.matches(_currentlyActiveOrActivatingContext))
+      if(sessionTabContext.equalsSession(_currentlyActiveOrActivatingContext))
       {
          _currentlyActiveOrActivatingContext = null;
       }

@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Database connection was not closed when Session was closed.
+
 Feature (in progress): Query builder allows to add folding points to constraint lines.
 
 Bug fix: Unquote didn't work when quoted string didn't end with semicolon.

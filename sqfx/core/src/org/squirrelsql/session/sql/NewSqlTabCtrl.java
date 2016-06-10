@@ -1,7 +1,6 @@
 package org.squirrelsql.session.sql;
 
 import javafx.event.Event;
-import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
 import org.squirrelsql.session.*;
@@ -11,7 +10,7 @@ import org.squirrelsql.session.action.StdActionCfg;
 
 public class NewSqlTabCtrl
 {
-   private Tab _newSqlTab;
+   private SessionTabAdmin _sessionTabAdmin;
    private final SessionManagerListener _sessionManagerListener;
    private final SqlPaneCtrl _sqlPaneCtrl;
    private SessionTabContext _newSqlTabContext;
@@ -38,9 +37,6 @@ public class NewSqlTabCtrl
 
       AppState.get().getSessionManager().addSessionManagerListener(_sessionManagerListener);
 
-      _newSqlTab = new Tab();
-      SessionTabHeaderCtrl sessionTabHeaderCtrl = new SessionTabHeaderCtrl(newSqlTabContext, StdActionCfg.NEW_SQL_TAB.getActionCfg().getIcon());
-      _newSqlTab.setGraphic(sessionTabHeaderCtrl.getTabHeader());
 
       _sqlPaneCtrl = new SqlPaneCtrl(newSqlTabContext);
       _sqlPaneCtrl.requestFocus();
@@ -49,18 +45,17 @@ public class NewSqlTabCtrl
       bp.setTop(ActionUtil.createStdActionToolbar());
       bp.setCenter(_sqlPaneCtrl.getSqlPane());
 
-      _newSqlTab.setContent(bp);
+      _sessionTabAdmin = new SessionTabAdmin(_newSqlTabContext, bp, SessionTabType.SQL_TAB);
+      SessionTabHeaderCtrl sessionTabHeaderCtrl = new SessionTabHeaderCtrl(newSqlTabContext, StdActionCfg.NEW_SQL_TAB.getActionCfg().getIcon());
 
       initStandardActions();
 
       _fileManager = new FileManager(_sqlPaneCtrl.getSQLTextAreaServices(), sessionTabHeaderCtrl);
 
 
-      _newSqlTab.setOnSelectionChanged(this::onSelectionChanged);
-
-
-      _newSqlTab.setOnCloseRequest(_fileManager::closeRequest);
-      _newSqlTab.setOnClosed(e -> close(_newSqlTabContext));
+      _sessionTabAdmin.addOnSelectionChanged(this::onSelectionChanged);
+      _sessionTabAdmin.addOnCloseRequest(_fileManager::closeRequest);
+      _sessionTabAdmin.addOnClosed(e -> close(_newSqlTabContext));
    }
 
    private void initStandardActions()
@@ -70,7 +65,7 @@ public class NewSqlTabCtrl
 
    private void onSelectionChanged(Event e)
    {
-      if(_newSqlTab.isSelected())
+      if(_sessionTabAdmin.isSelected())
       {
          AppState.get().getSessionManager().setCurrentlyActiveOrActivatingContext(_newSqlTabContext);
       }
@@ -88,14 +83,11 @@ public class NewSqlTabCtrl
       _sqlPaneCtrl.close();
       AppState.get().getSessionManager().removeSessionManagerListener(_sessionManagerListener);
 
-      if (null != _newSqlTab.getTabPane())
-      {
-         _newSqlTab.getTabPane().getTabs().remove(_newSqlTab);
-      }
+      _sessionTabAdmin.removeFromTabPane();
    }
 
-   public Tab getSqlTab()
+   public SessionTabAdmin getSessionTabAdmin()
    {
-      return _newSqlTab;
+      return _sessionTabAdmin;
    }
 }
