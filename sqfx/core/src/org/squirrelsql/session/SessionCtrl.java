@@ -60,7 +60,7 @@ public class SessionCtrl
 
       _sessionPane.setCenter(_objectTreeAndSqlTabPane);
 
-      _sessionTabAdmin = new SessionTabAdmin(_sessionTabContext, _sessionPane, SessionTabType.SQL_TAB);
+      _sessionTabAdmin = new SessionTabAdmin(_sessionTabContext, _sessionPane, SessionTabType.SESSION_MAIN_TAB);
 
       initStandardActions(sessionTabContext);
 

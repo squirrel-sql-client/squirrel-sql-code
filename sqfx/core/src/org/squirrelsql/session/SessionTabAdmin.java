@@ -4,6 +4,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
+import org.squirrelsql.session.action.StdActionCfg;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,16 @@ public class SessionTabAdmin
    {
       _sessionTab = new Tab();
 
-      _sessionTabHeaderCtrl = new SessionTabHeaderCtrl(sessionTabContext);
+      if(tabType == SessionTabType.SQL_TAB)
+      {
+         _sessionTabHeaderCtrl = new SessionTabHeaderCtrl(sessionTabContext, StdActionCfg.NEW_SQL_TAB.getActionCfg().getIcon());
+      }
+      else
+      {
+         _sessionTabHeaderCtrl = new SessionTabHeaderCtrl(sessionTabContext);
+      }
+
+
       _sessionTab .setGraphic(_sessionTabHeaderCtrl.getTabHeader());
       _sessionTab .setContent(content);
 
