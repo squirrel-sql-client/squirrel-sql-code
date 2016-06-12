@@ -8,6 +8,10 @@ Enhancements:
 
 Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
+Bug fixes:
+
+#1248 "Statment" misspelled
+
 
 3.7.1 (05/08/2016)
 ==================
