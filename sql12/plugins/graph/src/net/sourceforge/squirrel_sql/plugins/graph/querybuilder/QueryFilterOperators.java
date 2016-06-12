@@ -5,6 +5,7 @@ public enum QueryFilterOperators
 
    EQUAL(0, "="),
    LIKE(1, "LIKE"),
+   NOT_LIKE(11, "NOT LIKE"),
    IN(2, "IN"),
    IS_NULL(3, "IS NULL"),
    LESS(4, "<"),
