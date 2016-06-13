@@ -189,6 +189,7 @@ public class SchemaInfoCache implements Serializable
       ArrayList<String> tableTypeCandidates = new ArrayList<String>();
       tableTypeCandidates.add("TABLE");
       tableTypeCandidates.add("SYSTEM TABLE");
+      tableTypeCandidates.add("SYNONYM");
 
       ArrayList<String> viewTypeCandidates = new ArrayList<String>();
       viewTypeCandidates.add("VIEW");

@@ -1407,6 +1407,10 @@ public class SchemaInfo
             {
                types = new String[]{"VIEW"};
             }
+            else if (DatabaseObjectType.SYNONYM == dot)
+            {
+               types = new String[]{"SYNONYM"};
+            }
 
             _schemaInfoCache.clearTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), types);
             loadTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), types, 1);
