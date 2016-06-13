@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Netezza SYNONYM support added and enhanced 
+  Thanks to Richard Kooijman for the patch
+
+New high definition icon
+  Thanks to Richard Kooijman for the patch
+
+
 Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
