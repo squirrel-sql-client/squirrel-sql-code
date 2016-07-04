@@ -11,7 +11,7 @@ Hibernate Plugin: Experimental Hibernate 5 support. Known issues are:
   - "NoSuchMethodException: java.lang.Object.getJDBCContext()" at connect.
   - Works for JPA configuration only.
   - Most HQL queries only work with the connection configured in persistence.xml. (Error message: "Collection can not be fetched by a stateles session").
-  - SQL from HQL generation doe not work.
+  - SQL from HQL generation does not work.
 
 
 Netezza SYNONYM support added and enhanced 
