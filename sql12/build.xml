@@ -7,7 +7,7 @@
 
         <!-- DEFINE VERSION ONLY HERE -->
         <!--<property name="squirrelsql.version" value="3.7.1"/>-->
-        <property name="squirrelsql.version" value="snapshot-${DSTAMP}_${TSTAMP}"/>
+        <property name="squirrelsql.version" value="snapshot-${DSTAMP}_${TSTAMP}-Hibernate-5-experimental"/>
 
         <delete dir="output"/>
         <mkdir dir="output/work/bin"/>
