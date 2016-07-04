@@ -8,7 +8,7 @@ import java.util.*;
 
 public class HibernateServerConnectionImpl implements HibernateServerConnection
 {
-   private Object _sessionFactoryImpl;
+   private FactoryWrapper _sessionFactoryImpl;
    private ClassLoader _cl;
    private boolean _server;
 
@@ -22,7 +22,7 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
    private String _password;
 
 
-   HibernateServerConnectionImpl(Object sessionFactoryImpl, ClassLoader cl, boolean isServer) throws RemoteException
+   HibernateServerConnectionImpl(FactoryWrapper sessionFactoryImpl, ClassLoader cl, boolean isServer) throws RemoteException
    {
       _sessionFactoryImpl = sessionFactoryImpl;
       _cl = cl;
@@ -47,7 +47,7 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
          List<ReflectionCaller> translators =
          new ReflectionCaller(_cl)
             .getClass("org.hibernate.engine.query.HQLQueryPlan", _cl)
-            .callConstructor(new Class[]{String.class, Boolean.TYPE, Map.class, sessionFactoryImplementorClass}, new Object[]{hqlQuery, false, Collections.EMPTY_MAP, _sessionFactoryImpl})
+            .callConstructor(new Class[]{String.class, Boolean.TYPE, Map.class, sessionFactoryImplementorClass}, new Object[]{hqlQuery, false, Collections.EMPTY_MAP, _sessionFactoryImpl.getSessionFactory()})
             .callArrayMethod("getTranslators");
 
          ArrayList<String> ret = new ArrayList<String>();
@@ -79,7 +79,7 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
 
       try
       {
-         new ReflectionCaller(_sessionFactoryImpl).callMethod("close");
+         new ReflectionCaller(_sessionFactoryImpl.getSessionFactory()).callMethod("close");
       }
       catch (Throwable t)
       {
@@ -113,68 +113,13 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
          return;
       }
 
-      _infoDataByClassName = new HashMap<String, MappedClassInfoData>();
-
-      ReflectionCaller sessionFactoryImplcaller = new ReflectionCaller(_sessionFactoryImpl);
-      Collection<ReflectionCaller> persisters = sessionFactoryImplcaller.callMethod("getAllClassMetadata").callCollectionMethod("values");
-
-      for (ReflectionCaller persister : persisters)
+      if ( VersionInfo.isVersion3(_cl))
       {
-         Object entityMode_POJO = persister.getClass("org.hibernate.EntityMode", _cl).getField("POJO").getCallee();
-         Class mappedClass = (Class) persister.callMethod("getMappedClass", new Object[]{entityMode_POJO}).getCallee();
-
-         String identifierPropertyName = (String) persister.callMethod("getIdentifierPropertyName").getCallee();
-
-         Class identifierPropertyClass = persister.callMethod("getIdentifierType").callMethod("getReturnedClass").getCalleeClass();
-
-         String identifierPropertyClassName = identifierPropertyClass.getName();
-
-
-         String tableName = (String) persister.callMethod("getTableName").getCallee();
-         String[] identifierColumnNames = (String[]) persister.callMethod("getIdentifierColumnNames").getCallee();
-
-
-         HibernatePropertyInfo identifierPropInfo =
-            new HibernatePropertyInfo(identifierPropertyName, identifierPropertyClassName, tableName, identifierColumnNames);
-
-         identifierPropInfo.setIdentifier(true);
-
-
-         String[] propertyNames = (String[]) persister.callMethod("getPropertyNames").getCallee();
-
-         HibernatePropertyInfo[] infos = new HibernatePropertyInfo[propertyNames.length];
-         for (int i = 0; i < propertyNames.length; i++)
-         {
-            ReflectionCaller propertyTypeCaller = persister.callMethod("getPropertyType", propertyNames[i]);
-            String mayBeCollectionTypeName = propertyTypeCaller.callMethod("getReturnedClass").getCalleeClass().getName();
-
-            String propTableName = (String) persister.callMethod("getPropertyTableName", propertyNames[i]).getCallee();
-            String[] propertyColumnNames = (String[]) persister.callMethod("getPropertyColumnNames", propertyNames[i]).getCallee();
-
-            try
-            {
-               // If this isn't instanceof org.hibernate.type.CollectionType a NoSuchMethodException will be thrown
-               String role = (String) propertyTypeCaller.callMethod("getRole").getCallee();
-
-               ReflectionCaller collectionMetaDataCaller = sessionFactoryImplcaller.callMethod("getCollectionMetadata", role);
-               String typeName = collectionMetaDataCaller.callMethod("getElementType").callMethod("getReturnedClass").getCalleeClass().getName();
-
-               infos[i] = new HibernatePropertyInfo(propertyNames[i], typeName, propTableName, propertyColumnNames);
-               infos[i].setCollectionClassName(mayBeCollectionTypeName);
-            }
-            catch(RuntimeException e)
-            {
-               if(HibernateServerExceptionUtil.getDeepestThrowable(e) instanceof NoSuchMethodException)
-               {
-                  infos[i] = new HibernatePropertyInfo(propertyNames[i], mayBeCollectionTypeName, propTableName, propertyColumnNames);
-               }
-               else
-               {
-                  throw (RuntimeException)prepareTransport(e);
-               }
-            }
-         }
-         _infoDataByClassName.put(mappedClass.getName(), new MappedClassInfoData(mappedClass.getName(), tableName, identifierPropInfo, infos));
+         _infoDataByClassName = MappedClassInfoLoaderVersion3.getMappedClassInfosVersion3(_sessionFactoryImpl.getSessionFactory(), _cl, _server);
+      }
+      else
+      {
+         _infoDataByClassName = MappedClassInfoLoaderVersion5.getMappedClassInfosVersion5(_sessionFactoryImpl, _cl, _server);
       }
    }
 
@@ -240,17 +185,17 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
       }
       catch (Throwable t)
       {
-         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().begin()", prepareTransport(t));
+         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().begin()", HibernateServerExceptionUtil.prepareTransport(t, _server));
       }
 
       try
       {
          JDBCTemporalEscapeParse jdbcTemporalEscapeParse = new JDBCTemporalEscapeParse(hqlQuery);
 
-         ReflectionCaller rc;
+         ReflectionCaller rcQuery;
          if(jdbcTemporalEscapeParse.hasEscapes())
          {
-            rc = getRcHibernateSession().callMethod("createQuery", jdbcTemporalEscapeParse.getHql());
+            rcQuery = getRcHibernateSession().callMethod("createQuery", jdbcTemporalEscapeParse.getHql());
 
             TreeMap<String, Date> datesByParamName = jdbcTemporalEscapeParse.getDatesByParamName();
             for (String paramName : datesByParamName.keySet())
@@ -258,20 +203,20 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
                RCParam param = new RCParam();
                param.add(paramName, String.class);
                param.add(datesByParamName.get(paramName), Object.class);
-               rc.callMethod("setParameter", param);
+               rcQuery.callMethod("setParameter", param);
             }
             
             ret.setMessagePanelInfoText("Temporal values were parameterized:\n" + jdbcTemporalEscapeParse.getMessagePanelInfoText());
          }
          else
          {
-            rc = getRcHibernateSession().callMethod("createQuery", hqlQuery);
+            rcQuery = getRcHibernateSession().callMethod("createQuery", hqlQuery);
          }
 
 
          if (isDataUpdate(hqlQuery))
          {
-            int updateCount = (Integer)rc.callMethod("executeUpdate").getCallee();
+            int updateCount = (Integer)rcQuery.callMethod("executeUpdate").getCallee();
             ret.setUpdateCount(updateCount);
             getRcHibernateSession().callMethod("getTransaction").callMethod("commit");
 
@@ -284,28 +229,31 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
          {
             if (0 <= sqlNbrRowsToShow)
             {
-               rc = rc.callMethod("setMaxResults", new RCParam().add(sqlNbrRowsToShow, Integer.TYPE));
+               rcQuery = rcQuery.callMethod("setMaxResults", new RCParam().add(sqlNbrRowsToShow, Integer.TYPE));
             }
 
-            queryResList = (List) rc.callMethod("list").getCallee();
+            queryResList = (List) rcQuery.callMethod("list").getCallee();
             tryRollbackTx(ret);
 
          }
       }
       catch (Throwable t)
       {
-         ret.setExceptionOccuredWhenExecutingQuery(prepareTransport(t));
+         ret.setExceptionOccuredWhenExecutingQuery(HibernateServerExceptionUtil.prepareTransport(t, _server));
          tryRollbackTx(ret);
       }
 
 
-      try
+      if( VersionInfo.isVersion3(_cl) )
       {
-         getRcHibernateSession().callMethod("clear");
-      }
-      catch (Throwable t)
-      {
-         ret.putSessionAdminException("Exception occurced during call of Session.clear()", prepareTransport(t));
+         try
+         {
+            getRcHibernateSession().callMethod("clear");
+         }
+         catch (Throwable t)
+         {
+            ret.putSessionAdminException("Exception occurced during call of Session.clear()", HibernateServerExceptionUtil.prepareTransport(t, _server));
+         }
       }
 
       if (null != queryResList)
@@ -325,7 +273,7 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
       }
       catch (Throwable t)
       {
-         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().rollback()", prepareTransport(t));
+         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().rollback()", HibernateServerExceptionUtil.prepareTransport(t, _server));
       }
    }
 
@@ -339,16 +287,6 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
                   );
    }
 
-   private Throwable prepareTransport(Throwable t)
-   {
-      if(false == _server)
-      {
-         return t;
-      }
-
-      return HibernateServerExceptionUtil.prepareTransport(t);
-   }
-
 
    private ReflectionCaller getRcHibernateSession()
    {
@@ -358,10 +296,17 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
          {
             if (null == _driverClassName)
             {
-               _rcHibernateSession = new ReflectionCaller(_sessionFactoryImpl).callMethod("openSession");
+               _rcHibernateSession = new ReflectionCaller(_sessionFactoryImpl.getSessionFactory()).callMethod("openSession");
             }
             else
             {
+               String openSessionMethodName = "openSession";
+
+               if( false == VersionInfo.isVersion3(_cl))
+               {
+                  openSessionMethodName = "openStatelessSession";
+               }
+
                ReflectionCaller driver = new ReflectionCaller().getClass(_driverClassName, _cl).newInstance();
 
                Properties props = new Properties();
@@ -373,7 +318,7 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
                RCParam rcParam = new RCParam();
                rcParam.add(con.getCallee(), Connection.class);
 
-               _rcHibernateSession = new ReflectionCaller(_sessionFactoryImpl).callMethod("openSession", rcParam);
+               _rcHibernateSession = new ReflectionCaller(_sessionFactoryImpl.getSessionFactory()).callMethod(openSessionMethodName, rcParam);
             }
          }
 

@@ -15,7 +15,8 @@ public class IntraVmConnectionFactory
 
          Thread.currentThread().setContextClassLoader(cl);
 
-         Object sessionFactoryImpl = null;
+         FactoryWrapper factoryWrapper;
+
 
          if (cfg.isUserDefinedProvider())
          {
@@ -24,8 +25,8 @@ public class IntraVmConnectionFactory
 
             Object sessionFactoryProviderImpl = providerClass.newInstance();
 
-            sessionFactoryImpl =
-                  new ReflectionCaller(sessionFactoryProviderImpl).callMethod("getSessionFactoryImpl").getCallee();
+            factoryWrapper =
+                  new FactoryWrapper(new ReflectionCaller(sessionFactoryProviderImpl).callMethod("getSessionFactoryImpl").getCallee());
          }
          else if (cfg.isJPA())
          {
@@ -33,21 +34,39 @@ public class IntraVmConnectionFactory
             Class<?> persistenceClass = cl.loadClass("javax.persistence.Persistence");
 
             Method createMeth = persistenceClass.getMethod("createEntityManagerFactory", String.class);
-            Object hibernateEntityManagerFactory = createMeth.invoke(persistenceClass, persistenceUnitName);
-            ReflectionCaller rc = new ReflectionCaller(hibernateEntityManagerFactory);
-            sessionFactoryImpl = rc.callMethod("getSessionFactory").getCallee();
+            Object entityManagerFactory = createMeth.invoke(persistenceClass, persistenceUnitName);
+
+            if( VersionInfo.isVersion3(cl))
+            {
+               ReflectionCaller rc = new ReflectionCaller(entityManagerFactory);
+               factoryWrapper = new FactoryWrapper(rc.callMethod("getSessionFactory").getCallee());
+            }
+            else
+            {
+               if( VersionInfo.isVersion5_2(cl) )
+               {
+                  factoryWrapper = new FactoryWrapper(entityManagerFactory);
+                  factoryWrapper.setEntityManagerFactory(entityManagerFactory);
+               }
+               else
+               {
+                  ReflectionCaller rc = new ReflectionCaller(entityManagerFactory);
+                  factoryWrapper = new FactoryWrapper(rc.callMethod("getSessionFactory").getCallee());
+                  factoryWrapper.setEntityManagerFactory(entityManagerFactory);
+               }
+            }
          }
          else
          {
             Class<?> confiugrationClass = cl.loadClass("org.hibernate.cfg.Configuration");
             ReflectionCaller rc = new ReflectionCaller(confiugrationClass.newInstance());
 
-            sessionFactoryImpl = rc.callMethod("configure").callMethod("buildSessionFactory").getCallee();
+            factoryWrapper = new FactoryWrapper(rc.callMethod("configure").callMethod("buildSessionFactory").getCallee());
          }
 
          Thread.currentThread().setContextClassLoader(null);
 
-         return new HibernateServerConnectionImpl(sessionFactoryImpl, cl, isServer);
+         return new HibernateServerConnectionImpl(factoryWrapper, cl, isServer);
       }
       catch (Exception e)
       {

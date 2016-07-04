@@ -49,4 +49,14 @@ public class HibernateServerExceptionUtil
       return parent;
 
    }
+
+   public static Throwable prepareTransport(Throwable t, boolean server)
+   {
+      if(false == server)
+      {
+         return t;
+      }
+
+      return prepareTransport(t);
+   }
 }
