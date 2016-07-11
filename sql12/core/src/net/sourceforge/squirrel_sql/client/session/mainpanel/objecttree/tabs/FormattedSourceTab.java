@@ -297,7 +297,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 	protected String[] getBindValues()
 	{
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-		return new String[] { doi.getSimpleName() };
+		return new String[] { doi.getSchemaName(), doi.getSimpleName() };
 	}
 	
 	/**
