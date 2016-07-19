@@ -80,6 +80,8 @@ public class FormatSqlPanel extends JPanel
 
    JTextArea txtExampleSqls = new JTextArea();
 
+   JComboBox _cboColumnListSplitMode = new JComboBox();
+
 
    public FormatSqlPanel(KeywordBehaviourPref[] keywordBehaviourPrefs)
    {
@@ -128,6 +130,16 @@ public class FormatSqlPanel extends JPanel
       txtPreferedLineLength = new JFormattedTextField(NumberFormat.getInstance());
       txtPreferedLineLength.setColumns(7);
       ret.add(txtPreferedLineLength, gbc);
+
+
+      ++gridy;
+      gbc = new GridBagConstraints(0,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,5,5),0,0);
+      ret.add(new JLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.column.list.behavior")), gbc);
+
+      gbc = new GridBagConstraints(1,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,5,5 + additionalRightInsetForScrollbar),0,0);
+      ret.add(_cboColumnListSplitMode, gbc);
+
+
 
       ++gridy;
       gbc = new GridBagConstraints(0,gridy,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15,5,5,5 + additionalRightInsetForScrollbar),0,0);

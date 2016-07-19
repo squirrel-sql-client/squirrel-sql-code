@@ -3,11 +3,13 @@ package net.sourceforge.squirrel_sql.client.preferences.codereformat;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
+import net.sourceforge.squirrel_sql.client.util.codereformat.ColumnListSpiltMode;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
+import javax.swing.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
@@ -78,6 +80,10 @@ public class FormatSqlController
 
       _formatSqlPanel.chkDoInsertValuesAlign.setSelected(_formatSqlPref.isDoInsertValuesAlign());
       _formatSqlPanel.chkDoInsertValuesAlign.addActionListener(adjustValuesToConstraintListeners);
+
+      _formatSqlPanel._cboColumnListSplitMode.setModel(new DefaultComboBoxModel(ColumnListSpiltMode.values()));
+      _formatSqlPanel._cboColumnListSplitMode.setSelectedItem(ColumnListSpiltMode.valueOf(_formatSqlPref.getColumnListSplitMode()));
+      _formatSqlPanel._cboColumnListSplitMode.addActionListener(adjustValuesToConstraintListeners);
 
       _formatSqlPanel._chkLineBreakFor_AND_OR_in_FROM_clause.setSelected(_formatSqlPref.isLineBreakFor_AND_OR_in_FROM_clause());
       _formatSqlPanel._chkLineBreakFor_AND_OR_in_FROM_clause.addActionListener(adjustValuesToConstraintListeners);
@@ -224,6 +230,9 @@ public class FormatSqlController
       ret.setKeywordBehaviourPrefs(buf.toArray(new KeywordBehaviourPref[buf.size()]));
 
       ret.setDoInsertValuesAlign(_formatSqlPanel.chkDoInsertValuesAlign.isSelected());
+
+      ColumnListSpiltMode selMode = (ColumnListSpiltMode) _formatSqlPanel._cboColumnListSplitMode.getSelectedItem();
+      ret.setColumnListSplitMode(selMode.name());
 
       ret.setLineBreakFor_AND_OR_in_FROM_clause(_formatSqlPanel._chkLineBreakFor_AND_OR_in_FROM_clause.isSelected());
 

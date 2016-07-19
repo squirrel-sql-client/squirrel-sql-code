@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlPre
 import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlPrefReader;
 import net.sourceforge.squirrel_sql.client.preferences.codereformat.KeywordBehaviourPref;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.util.ArrayList;
 
@@ -70,7 +69,8 @@ public class CodeReformatorConfigFactory
             specs,
             formatSqlPref.isIndentSections(),
             formatSqlPref.isLineBreakFor_AND_OR_in_FROM_clause(),
-            formatSqlPref.isCommasAtLineBegin());
+            formatSqlPref.isCommasAtLineBegin(),
+            ColumnListSpiltMode.valueOf(formatSqlPref.getColumnListSplitMode()));
    }
 
    private static ArrayList<PieceMarkerSpec> createPieceMarkerSpecs(KeywordBehaviourPref keywordBehaviourPref)

@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.preferences.codereformat;
 
+import net.sourceforge.squirrel_sql.client.util.codereformat.ColumnListSpiltMode;
+
 public class FormatSqlPref
 {
    public static final String JOIN_DISPLAY_STRING = "INNER/LEFT/RIGHT JOIN";
@@ -45,6 +47,7 @@ public class FormatSqlPref
    private boolean _indentSections = false;
    private boolean _lineBreakFor_AND_OR_in_FROM_clause = false;
    private boolean _commasAtLineBegin = false;
+   private String _columnListSplitMode = ColumnListSpiltMode.ALLOW_SPLIT.name();
 
 
    public KeywordBehaviourPref[] getKeywordBehaviourPrefs()
@@ -116,5 +119,15 @@ public class FormatSqlPref
    public void setCommasAtLineBegin(boolean commasAtLineBegin)
    {
       _commasAtLineBegin = commasAtLineBegin;
+   }
+
+   public String getColumnListSplitMode()
+   {
+      return _columnListSplitMode;
+   }
+
+   public void setColumnListSplitMode(String columnListSplitMode)
+   {
+      _columnListSplitMode = columnListSplitMode;
    }
 }

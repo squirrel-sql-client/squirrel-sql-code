@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Added configuration as formulated in bug #1238 (Format SQL puts all columns in SELECT statement in one line)
+  See menu "File" --> "Global Preferences" --> tab "SQL formatting" --> "Column list split behavior"
+
 Netezza SYNONYM support added and enhanced 
   Thanks to Richard Kooijman for the patch
 

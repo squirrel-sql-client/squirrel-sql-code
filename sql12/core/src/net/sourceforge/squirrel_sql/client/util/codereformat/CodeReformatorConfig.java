@@ -1,14 +1,6 @@
 package net.sourceforge.squirrel_sql.client.util.codereformat;
 
-import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlPanel;
-import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlPref;
-import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlPrefReader;
-import net.sourceforge.squirrel_sql.client.preferences.codereformat.KeywordBehaviourPref;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class CodeReformatorConfig
 {
@@ -18,11 +10,13 @@ public class CodeReformatorConfig
    private int _trySplitLineLen;
    private boolean _doInsertValuesAlign;
 
-   private PieceMarkerSpec[] keywordPieceMarkerSpec = new PieceMarkerSpec[0];
+   private PieceMarkerSpec[] _keywordPieceMarkerSpec = new PieceMarkerSpec[0];
 
    private boolean _indentSections;
    private boolean _lineBreakFor_AND_OR_in_FROM_clause;
    private boolean _commasAtLineBegin;
+
+   private final ColumnListSpiltMode _selectListSplitMode;
 
 
    /**
@@ -36,7 +30,8 @@ public class CodeReformatorConfig
                         ArrayList<PieceMarkerSpec> specs,
                         boolean indentSections,
                         boolean lineBreakFor_AND_OR_in_FROM_clause,
-                        boolean commasAtLineBegin)
+                        boolean commasAtLineBegin,
+                        ColumnListSpiltMode selectListSplitMode)
    {
       _statementSeparator = statementSeparator;
       _commentSpecs = commentSpecs;
@@ -46,7 +41,9 @@ public class CodeReformatorConfig
       _indentSections = indentSections;
       _lineBreakFor_AND_OR_in_FROM_clause = lineBreakFor_AND_OR_in_FROM_clause;
       _commasAtLineBegin = commasAtLineBegin;
-      keywordPieceMarkerSpec = specs.toArray(new PieceMarkerSpec[specs.size()]);
+      _keywordPieceMarkerSpec = specs.toArray(new PieceMarkerSpec[specs.size()]);
+      _selectListSplitMode = selectListSplitMode;
+
    }
 
    public String getStatementSeparator()
@@ -71,7 +68,7 @@ public class CodeReformatorConfig
 
    public PieceMarkerSpec[] getKeywordPieceMarkerSpecs()
    {
-      return keywordPieceMarkerSpec;
+      return _keywordPieceMarkerSpec;
    }
 
    public boolean isDoInsertValuesAlign()
@@ -92,5 +89,10 @@ public class CodeReformatorConfig
    public boolean isCommasAtLineBegin()
    {
       return _commasAtLineBegin;
+   }
+
+   public ColumnListSpiltMode getSelectListSpiltMode()
+   {
+      return _selectListSplitMode;
    }
 }
