@@ -1,6 +1,10 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: New SQL format option concerning column list splitting
+  See menu "File" --> "Global Preferences" --> tab "SQL formatting" --> "Column list split behavior"
+
+
 Bug fix: Database connection was not closed when Session was closed.
 
 Feature (in progress): Query builder allows to add folding points to constraint lines.

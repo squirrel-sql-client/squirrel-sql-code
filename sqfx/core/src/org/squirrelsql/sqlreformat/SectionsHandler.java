@@ -1,15 +1,16 @@
 package org.squirrelsql.sqlreformat;
 
+
 import org.squirrelsql.settings.SQLKeyWord;
 
-public class IndentSectionsHandler
+public class SectionsHandler
 {
    private boolean _indentSections;
    private boolean _currentPieceIsSectionBegin;
    private int _offset;
    private boolean _sqlHasSections;
 
-   public IndentSectionsHandler(boolean indentSections)
+   public SectionsHandler(boolean indentSections)
    {
       _indentSections = indentSections;
    }
@@ -55,19 +56,37 @@ public class IndentSectionsHandler
       }
    }
 
-   private boolean isSectionBegin(String piece)
+   public static boolean isSectionBegin(String piece)
    {
 
-      if(   piece.trim().toUpperCase().startsWith(SQLKeyWord.SELECT.name())
-            || piece.trim().toUpperCase().startsWith(SQLKeyWord.FROM.name())
-            || piece.trim().toUpperCase().startsWith(SQLKeyWord.WHERE.name())
-            || piece.trim().toUpperCase().startsWith(SQLKeyWord.UNION.name())
-            || piece.trim().toUpperCase().startsWith(SQLKeyWord.GROUP.name())
-            || piece.trim().toUpperCase().startsWith(SQLKeyWord.ORDER.name()))
+      if(   isSelectSectionBegin(piece)
+            || beginsWithKeyword(piece, SQLKeyWord.FROM.name())
+            || beginsWithKeyword(piece, SQLKeyWord.WHERE.name())
+            || beginsWithKeyword(piece, SQLKeyWord.UNION.name())
+            || beginsWithKeyword(piece, SQLKeyWord.GROUP.name())
+            || beginsWithKeyword(piece, SQLKeyWord.ORDER.name()))
       {
          return true;
       }
       return false;
+   }
+
+   public static boolean isSelectSectionBegin(String piece)
+   {
+      return beginsWithKeyword(piece, SQLKeyWord.SELECT.name());
+   }
+
+   private static boolean beginsWithKeyword(String piece, String keyword)
+   {
+      String trimedUcPiece = piece.trim().toUpperCase();
+
+      if(false == trimedUcPiece.startsWith(keyword.toUpperCase()))
+      {
+         return false;
+      }
+
+      return trimedUcPiece.length() == keyword.length() || Character.isWhitespace(trimedUcPiece.charAt(keyword.length()));
+
    }
 
 }

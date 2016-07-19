@@ -10,6 +10,7 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.sqlreformat.CodeReformator;
 import org.squirrelsql.sqlreformat.CodeReformatorFractory;
+import org.squirrelsql.sqlreformat.ColumnListSpiltMode;
 import org.squirrelsql.table.tableedit.StringInterpreter;
 
 import java.util.HashMap;
@@ -56,6 +57,10 @@ public class SQLReformatCtrl implements SettingsTabController
 
       _view.chkLineBreakFor_AND_OR_in_FROM_clause.setSelected(sqlFormatSettings.isLineBreakFor_AND_OR_in_FROM_clause());
       _view.chkLineBreakFor_AND_OR_in_FROM_clause.setOnAction(e -> updateUi());
+
+      _view.cboColumnListSplitMode.getItems().addAll(ColumnListSpiltMode.values());
+      _view.cboColumnListSplitMode.getSelectionModel().select(ColumnListSpiltMode.valueOf(sqlFormatSettings.getColumnListSpiltMode()));
+      _view.cboColumnListSplitMode.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> updateUi());
 
       HashMap<SQLKeyWord, KeyWordBehavior> behaviorsByKeyWord = sqlFormatSettings.getBehaviorsByKeyWord();
 
@@ -141,6 +146,8 @@ public class SQLReformatCtrl implements SettingsTabController
       sqlFormatSettings.setIndentSections(_view.chkIndentSections.isSelected());
       sqlFormatSettings.setCommaAtLineBegin(_view.radCommasAtLineBegin.isSelected());
       sqlFormatSettings.setLineBreakFor_AND_OR_in_FROM_clause(_view.chkLineBreakFor_AND_OR_in_FROM_clause.isSelected());
+
+      sqlFormatSettings.setColumnListSpiltMode(((ColumnListSpiltMode) _view.cboColumnListSplitMode.getSelectionModel().getSelectedItem()).name());
 
       HashMap<SQLKeyWord, KeyWordBehavior> behaviorsByKeyWord = sqlFormatSettings.getBehaviorsByKeyWord();
       HashMap<SQLKeyWord, ComboBox> comboBoxesByKeyWords = _view.getComboBoxesByKeyWords();

@@ -85,4 +85,9 @@ public class CodeReformatorConfig
    {
       return _sqlFormatSettings.isCommaAtLineBegin();
    }
+
+   public ColumnListSpiltMode getSelectListSpiltMode()
+   {
+      return ColumnListSpiltMode.valueOf(_sqlFormatSettings.getColumnListSpiltMode());
+   }
 }

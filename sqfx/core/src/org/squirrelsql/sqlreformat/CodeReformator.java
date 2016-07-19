@@ -60,7 +60,7 @@ public class CodeReformator implements ICodeReformator
 
       int indentCount = 0;
 
-      IndentSectionsHandler indentSectionsHandler = new IndentSectionsHandler(_codeReformatorConfig.isIndentSections());
+      SectionsHandler sectionsHandler = new SectionsHandler(_codeReformatorConfig.isIndentSections());
 
       for (int i = 0; i < pieces.length; ++i)
       {
@@ -70,16 +70,17 @@ public class CodeReformator implements ICodeReformator
          }
          else
          {
-            indentSectionsHandler.before(pieces[i]);
+
+            sectionsHandler.before(pieces[i]);
 
             if (")".equals(pieces[i]))
             {
                --indentCount;
             }
 
-            ret.append(indent(pieces[i], indentCount + indentSectionsHandler.getExtraIndentCount()));
+            ret.append(indent(pieces[i], indentCount + sectionsHandler.getExtraIndentCount()));
 
-            indentSectionsHandler.after(pieces[i]);
+            sectionsHandler.after(pieces[i]);
 
             if ("(".equals(pieces[i]))
             {
@@ -190,11 +191,13 @@ public class CodeReformator implements ICodeReformator
       String[] pieces = kernel.toPieces(in);
       ArrayList<String> piecesBuf = new ArrayList<String>();
 
+      ColumnListSpiltHandler columnListSpiltHandler = new ColumnListSpiltHandler(_codeReformatorConfig.getSelectListSpiltMode());
+
       for (int i = 0; i < pieces.length; ++i)
       {
-         if (_codeReformatorConfig.getTrySplitLineLen() < pieces[i].length())
+         if (_codeReformatorConfig.getTrySplitLineLen() < pieces[i].length() || columnListSpiltHandler.requiresSplit())
          {
-            String[] splitPieces = trySplit(pieces[i], 0, _codeReformatorConfig.getTrySplitLineLen());
+            String[] splitPieces = trySplit(pieces[i], 0, _codeReformatorConfig.getTrySplitLineLen(), columnListSpiltHandler);
             piecesBuf.addAll(Arrays.asList(splitPieces));
          }
          else
@@ -378,7 +381,7 @@ public class CodeReformator implements ICodeReformator
       ArrayList<String> ret = new ArrayList<String>();
       for (int i = 0; i < pieces.length; i++)
       {
-         ret.addAll(Arrays.asList(trySplit(pieces[i], 0, 1)));
+         ret.addAll(Arrays.asList(trySplit(pieces[i], 0, 1, new ColumnListSpiltHandler(ColumnListSpiltMode.REQUIRE_SPLIT))));
       }
       return ret.toArray(new String[ret.size()]);
    }
@@ -403,14 +406,22 @@ public class CodeReformator implements ICodeReformator
       }
    }
 
-   private String[] trySplit(String piece, int braketDepth, int trySplitLineLen)
+   private String[] trySplit(String piece, int braketDepth, int trySplitLineLen, ColumnListSpiltHandler columnListSpiltHandler)
    {
       String trimmedPiece = piece.trim();
       CodeReformatorKernel dum = new CodeReformatorKernel(new PieceMarkerSpec[0], _codeReformatorConfig.getCommentSpecs(), _codeReformatorConfig.isLineBreakFor_AND_OR_in_FROM_clause());
 
       if (hasTopLevelColon(trimmedPiece, dum))
       {
-         PieceMarkerSpec[] pms = createPieceMarkerSpecIncludeColon();
+         PieceMarkerSpec[] pms = createPieceMarkerSpec(columnListSpiltHandler);
+
+         int internalTrySplitLineLen = trySplitLineLen;
+
+         if(columnListSpiltHandler.requiresSplit())
+         {
+            internalTrySplitLineLen = 1;
+         }
+
          CodeReformatorKernel crk = new CodeReformatorKernel(pms, _codeReformatorConfig.getCommentSpecs(), _codeReformatorConfig.isLineBreakFor_AND_OR_in_FROM_clause());
          String[] splitPieces1 = crk.toPieces(trimmedPiece);
          if (1 == splitPieces1.length)
@@ -422,10 +433,9 @@ public class CodeReformator implements ICodeReformator
 
          for (int i = 0; i < splitPieces1.length; ++i)
          {
-            if (trySplitLineLen < splitPieces1[i].length() + braketDepth * _codeReformatorConfig.getIndent().length())
+            if (internalTrySplitLineLen < splitPieces1[i].length() + braketDepth * _codeReformatorConfig.getIndent().length())
             {
-               String[] splitPieces2 = trySplit(splitPieces1[i],
-                     braketDepth, trySplitLineLen);
+               String[] splitPieces2 = trySplit(splitPieces1[i], braketDepth, internalTrySplitLineLen, columnListSpiltHandler);
                for (int j = 0; j < splitPieces2.length; ++j)
                {
                   ret.add(splitPieces2[j].trim());
@@ -445,7 +455,7 @@ public class CodeReformator implements ICodeReformator
          {
             // ////////////////////////////////////////////////////////////////////////
             // Split the first two matching toplevel brakets here
-            PieceMarkerSpec[] pms = createPieceMarkerSpecExcludeColon();
+            PieceMarkerSpec[] pms = createPieceMarkerSpec(columnListSpiltHandler);
             CodeReformatorKernel crk = new CodeReformatorKernel(pms, _codeReformatorConfig.getCommentSpecs(), _codeReformatorConfig.isLineBreakFor_AND_OR_in_FROM_clause());
 
             String[] splitPieces1 = crk.toPieces(trimmedPiece.substring(tlbi[0] + 1, tlbi[1]));
@@ -474,7 +484,7 @@ public class CodeReformator implements ICodeReformator
             {
                if (trySplitLineLen < splitPieces1[i].length() + braketDepth * _codeReformatorConfig.getIndent().length())
                {
-                  String[] splitPieces2 = trySplit(splitPieces1[i], braketDepth + 1, trySplitLineLen);
+                  String[] splitPieces2 = trySplit(splitPieces1[i], braketDepth + 1, trySplitLineLen, columnListSpiltHandler);
                   for (int j = 0; j < splitPieces2.length; ++j)
                   {
                      ret.add(splitPieces2[j]);
@@ -495,6 +505,21 @@ public class CodeReformator implements ICodeReformator
             return new String[]{piece};
          }
       }
+   }
+
+   private PieceMarkerSpec[] createPieceMarkerSpec(ColumnListSpiltHandler columnListSpiltHandler)
+   {
+      PieceMarkerSpec[] pms;
+
+      if (columnListSpiltHandler.allowsSplit())
+      {
+         pms = createPieceMarkerSpecIncludeColon();
+      }
+      else
+      {
+         pms = createPieceMarkerSpecExcludeColon();
+      }
+      return pms;
    }
 
    /**

@@ -1,5 +1,7 @@
 package org.squirrelsql.settings;
 
+import org.squirrelsql.sqlreformat.ColumnListSpiltMode;
+
 import java.util.HashMap;
 
 public class SQLFormatSettings
@@ -12,6 +14,7 @@ public class SQLFormatSettings
    private boolean _indentSections;
    private boolean _commaAtLineBegin;
    private boolean _lineBreakFor_AND_OR_in_FROM_clause = true;
+   private String _columnListSpiltMode = ColumnListSpiltMode.ALLOW_SPLIT.name();
 
 
    public SQLFormatSettings()
@@ -100,5 +103,15 @@ public class SQLFormatSettings
    public void setIndentSections(boolean indentSections)
    {
       _indentSections = indentSections;
+   }
+
+   public String getColumnListSpiltMode()
+   {
+      return _columnListSpiltMode;
+   }
+
+   public void setColumnListSpiltMode(String columnListSpiltMode)
+   {
+      _columnListSpiltMode = columnListSpiltMode;
    }
 }

@@ -36,6 +36,9 @@ public class SQLReformatView
 
    @FXML TextArea txtExample;
 
+   @FXML ComboBox cboColumnListSplitMode;
+
+
    public HashMap<SQLKeyWord, ComboBox> getComboBoxesByKeyWords()
    {
       HashMap<SQLKeyWord, ComboBox> ret = new HashMap<>();
