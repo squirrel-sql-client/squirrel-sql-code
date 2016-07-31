@@ -34,6 +34,8 @@ import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import javax.swing.*;
+
 /**
  * The plugin class.
  */
@@ -200,18 +202,13 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 			{
 				rc = true;
 				final ISQLPanelAPI api = session.getSessionInternalFrame().getSQLPanelAPI();
-				GUIUtils.processOnSwingEventThread(new Runnable()
+
+				SwingUtilities.invokeLater(new Runnable()
 				{
 					public void run()
 					{
 						api.setEntireSQLScript(sql);
-						session.getApplication().getThreadPool().addTask(new Runnable()
-						{
-							public void run()
-							{
-								api.executeCurrentSQL();
-							}
-						});
+						api.executeCurrentSQL();
 					}
 				});
 			}
@@ -222,6 +219,12 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 			return null;
 		}
 		return new PluginSessionCallbackAdaptor(this);
+	}
+
+	@Override
+	public boolean allowsSessionStartedInBackground()
+	{
+		return false;
 	}
 
 	/**

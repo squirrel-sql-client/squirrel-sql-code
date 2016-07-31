@@ -20,6 +20,8 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+#1260 Session Scripts plugin: NullPointerException occurred when Session start up script was executed.
+
 #1248 "Statment" misspelled
 
 #1257 Procedure source not shown
