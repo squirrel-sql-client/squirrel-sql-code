@@ -89,16 +89,13 @@ public class SessionCtrl
 
       StdActionCfg.RECONNECT.setAction(() -> session.getSQLConnection().reconnect(dbConnectorResult, _transactionManager.isAutoCommit()));
 
-      StdActionCfg.GRAPH_NEW_QUERY_BUILDER.setAction(() -> onNewGraph());
-
+      GraphAccess graphAccess = new GraphAccess(_sessionTabContext, this::onAddAndSelectTab);
+      StdActionCfg.GRAPH_NEW_QUERY_BUILDER.setAction(() -> graphAccess.onNewGraph());
    }
 
-   private void onNewGraph()
+   private void onAddAndSelectTab(Tab tab)
    {
-      Tab tab = GraphAccess.newQueryBuilder(_sessionTabContext);
-
       _objectTreeAndSqlTabPane.getTabs().add(tab);
-
       _objectTreeAndSqlTabPane.getSelectionModel().select(tab);
    }
 

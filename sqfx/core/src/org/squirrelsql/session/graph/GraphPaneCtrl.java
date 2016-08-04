@@ -1,5 +1,6 @@
 package org.squirrelsql.session.graph;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -12,10 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
-import org.squirrelsql.services.Dao;
-import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.MessageHandler;
-import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.*;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
@@ -40,7 +38,7 @@ public class GraphPaneCtrl
    private final I18n _i18n = new I18n(getClass());
 
 
-   public GraphPaneCtrl(GraphTableDndChannel graphTableDndChannel, Session session)
+   public GraphPaneCtrl(GraphTableDndChannel graphTableDndChannel, Session session, GraphPersistence graphPersistence)
    {
       _graphTableDndChannel = graphTableDndChannel;
       _session = session;
@@ -73,10 +71,29 @@ public class GraphPaneCtrl
 
       _toolbar = createToolbar();
 
-
-
       _pane.setTop(_toolbar);
       _pane.setCenter(_scrollPane);
+
+      Platform.runLater(() -> loadExistingTables(graphPersistence));
+   }
+
+   private void loadExistingTables(GraphPersistence graphPersistence)
+   {
+      for (GraphTableInfo graphTableInfo : graphPersistence.getGraphTableInfos())
+      {
+         List<TableInfo> tableInfos = _session.getSchemaCacheValue().get().getTablesByFullyQualifiedName(graphTableInfo.getCatalog(), graphTableInfo.getSchema(), graphTableInfo.getName());
+
+         if(0 == tableInfos.size())
+         {
+            MessageHandler mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
+            String qualifiedTableName = SQLUtil.getQualifiedName(graphTableInfo.getCatalog(), graphTableInfo.getSchema(), graphTableInfo.getName());
+            mh.warning(_i18n.t("graph.table.of.graph.does.not.exist", qualifiedTableName, graphPersistence.getTabTitle()));
+            continue;
+         }
+
+         addTableToDesktop(tableInfos.get(0), graphTableInfo.getMinX(), graphTableInfo.getMinY(), graphTableInfo.getWidth(), graphTableInfo.getHeight());
+      }
+      _drawLinesCtrl.doDraw();
    }
 
    private void onShowToolbar(boolean b)
@@ -157,9 +174,7 @@ public class GraphPaneCtrl
             double x = dragEvent.getX() + offset;
             double y = dragEvent.getY() + offset;
 
-            TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, tableInfo, x, y, ctrl -> _drawLinesCtrl.doDraw());
-
-            _desktopPane.getChildren().add(tableWindowCtrl.getWindow());
+            addTableToDesktop(tableInfo, x, y);
 
             offset += 10;
          }
@@ -167,6 +182,18 @@ public class GraphPaneCtrl
          _drawLinesCtrl.doDraw();
       }
       dragEvent.consume();
+   }
+
+   private void addTableToDesktop(TableInfo tableInfo, double x, double y)
+   {
+      addTableToDesktop(tableInfo, x, y, 300, 200);
+   }
+
+   private void addTableToDesktop(TableInfo tableInfo, double x, double y, double width, double height)
+   {
+      TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, tableInfo, x, y, width, height, ctrl -> _drawLinesCtrl.doDraw());
+
+      _desktopPane.getChildren().add(tableWindowCtrl.getWindow());
    }
 
 

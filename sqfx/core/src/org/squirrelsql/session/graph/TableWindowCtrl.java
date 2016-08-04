@@ -18,7 +18,7 @@ public class TableWindowCtrl
    private TableInfo _tableInfo;
    private HashMap<String, PersistentFkProps> _persistentFkPropsByFkName = new HashMap<>();
 
-   public TableWindowCtrl(Session session, TableInfo tableInfo, double x, double y, DrawLinesListener drawLinesListener)
+   public TableWindowCtrl(Session session, TableInfo tableInfo, double x, double y, double width, double height, DrawLinesListener drawLinesListener)
    {
       _session = session;
       _tableInfo = tableInfo;
@@ -34,8 +34,7 @@ public class TableWindowCtrl
       _window.setLayoutX(x);
       _window.setLayoutY(y);
 
-      // define the initial window size
-      _window.setPrefSize(300, 200);
+      _window.setPrefSize(width, height);
 
       _window.setCtrl(this);
 

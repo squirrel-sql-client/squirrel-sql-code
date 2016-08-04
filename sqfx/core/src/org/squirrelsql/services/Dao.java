@@ -400,4 +400,9 @@ public class Dao
    {
       return writeObject(graphPersistence, FILE_NAME_GRAPH_PERSISTENCE);
    }
+
+   public static GraphPersistence loadGraphPersistence()
+   {
+      return loadObject(FILE_NAME_GRAPH_PERSISTENCE, new GraphPersistence());
+   }
 }

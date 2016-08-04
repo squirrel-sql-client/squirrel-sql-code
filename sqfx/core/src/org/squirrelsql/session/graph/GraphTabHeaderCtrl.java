@@ -17,12 +17,12 @@ public class GraphTabHeaderCtrl
    private final I18n _i18n = new I18n(getClass());
    private final Props _props = new Props(getClass());
 
-   public GraphTabHeaderCtrl(GraphTableDndChannel graphTableDndChannel)
+   public GraphTabHeaderCtrl(GraphTableDndChannel graphTableDndChannel, String tabTitle)
    {
 
       _graphTabHeader = new BorderPane();
 
-      _graphTabHeader.setCenter(new Label(_i18n.t("graph.new.graph.title")));
+      _graphTabHeader.setCenter(new Label(tabTitle));
 
       ToggleButton btnToggleShowToolbar = new ToggleButton();
       btnToggleShowToolbar.setPadding(new Insets(3));
