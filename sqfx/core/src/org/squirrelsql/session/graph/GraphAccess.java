@@ -1,7 +1,6 @@
 package org.squirrelsql.session.graph;
 
 import javafx.scene.control.Tab;
-import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.SessionTabContext;
 
 public class GraphAccess
@@ -12,7 +11,7 @@ public class GraphAccess
 
       GraphTableDndChannel graphTableDndChannel = new GraphTableDndChannel();
 
-      tab.setGraphic(new GraphTabHeaderCtrl(graphTableDndChannel, sessionTabContext.getSession()).getGraphTabHeader());
+      tab.setGraphic(new GraphTabHeaderCtrl(graphTableDndChannel).getGraphTabHeader());
       tab.setContent(new GraphPaneCtrl(graphTableDndChannel, sessionTabContext.getSession()).getPane());
 
       return tab;

@@ -27,4 +27,6 @@ public interface GlobalIconNames
    String CLOSE = "close.png";
    String ARROW_DOWN = "arrow_down.png";
    String ARROW_UP = "arrow_up.png";
+   String FILE_SAVE = "filesave.png";
+   String FILE_OPEN = "fileopen.png";
 }

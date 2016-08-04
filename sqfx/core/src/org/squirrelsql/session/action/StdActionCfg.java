@@ -34,9 +34,9 @@ public enum StdActionCfg
    RECONNECT("reconnect.png", "reconnect.to.database", "reconnect", ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.ALT_DOWN), ActionDependency.SESSION),
 
    FILE_NEW("filenew.png", "file.new", "filenew", ActionScope.SQL_EDITOR, null),
-   FILE_SAVE("filesave.png", "file.save", "filesave", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.S, KeyCodeCombination.CONTROL_DOWN)),
+   FILE_SAVE(GlobalIconNames.FILE_SAVE, "file.save", "filesave", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.S, KeyCodeCombination.CONTROL_DOWN)),
    FILE_SAVE_AS("filesaveas.png", "file.save.as", "filesaveas", ActionScope.SQL_EDITOR, null),
-   FILE_OPEN("fileopen.png", "file.open", "fileopen", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN)),
+   FILE_OPEN(GlobalIconNames.FILE_OPEN, "file.open", "fileopen", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN)),
    FILE_APPEND("fileappend.png", "file.append", "fileappend", ActionScope.SQL_EDITOR, null),
    FILE_DISCONNECT("filedisconnect.png", "file.disconnect", "filedisconnect", ActionScope.SQL_EDITOR, null),
 

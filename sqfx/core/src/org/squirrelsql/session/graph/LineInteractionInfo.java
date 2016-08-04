@@ -9,7 +9,7 @@ public class LineInteractionInfo
 {
    private LineSpec _clickedOnLineSpec;
    private Point2D _clickedOnFoldingPoint;
-   private ArrayList<LineSpec> _allLineSpecsCache;
+   private ArrayList<LineSpec> _allLineSpecsCache = new ArrayList<>();
 
    public void clear()
    {

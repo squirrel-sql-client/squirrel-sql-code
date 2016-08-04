@@ -6,10 +6,13 @@ import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
 import org.squirrelsql.session.objecttree.ObjectTreeNode;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class GraphTableDndChannel
 {
    private ObjectTreeFilterCtrl _lastDraggingObjectTreeFilter;
+
+   private ShowToolbarListener _showToolbarListener;
 
    public void setLastDraggingObjectTreeFilter(ObjectTreeFilterCtrl dragingObjectTreeFilter)
    {
@@ -20,5 +23,15 @@ public class GraphTableDndChannel
    {
       List< ObjectTreeNode> buf = _lastDraggingObjectTreeFilter.getSelectedObjectTreeNodes();
       return CollectionUtil.transform(buf, ObjectTreeNode::getTableInfo);
+   }
+
+   public void showToolBar(boolean b)
+   {
+      _showToolbarListener.showToolbar(b);
+   }
+
+   public void setShowtoolbarListener(ShowToolbarListener showToolbarListener)
+   {
+      _showToolbarListener = showToolbarListener;
    }
 }

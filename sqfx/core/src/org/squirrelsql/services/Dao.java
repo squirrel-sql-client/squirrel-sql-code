@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.type.SimpleType;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.*;
 import org.squirrelsql.drivers.SQLDriver;
+import org.squirrelsql.session.graph.GraphPersistence;
 import org.squirrelsql.session.schemainfo.schemacacheloading.SerializedCache;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
 import org.squirrelsql.session.sql.bookmark.BookmarkPersistence;
@@ -28,6 +29,7 @@ public class Dao
    private static final String FILE_NAME_BOOKMARKS = "bookmarks.json";
    private static final String FILE_NAME_SETTINGS = "settings.json";
    private static final String FILE_NAME_SQL_FORMAT_SETTINGS = "sqlFormatSettings.json";
+   private static final String FILE_NAME_GRAPH_PERSISTENCE = "graphPersistence.json";
 
    private static final String FILE_NAME_PREFERENCES = "preferences.properties";
 
@@ -143,7 +145,7 @@ public class Dao
       }
    }
 
-   private static void writeObject(Object toWrite, String fileName)
+   private static File writeObject(Object toWrite, String fileName)
    {
       File file = new File(AppState.get().getUserDir(), fileName);
 
@@ -157,6 +159,7 @@ public class Dao
          // and thus that there won't be encoding problems
          // that makes the loadObjects methods crash.
          objectWriter.writeValue(fos, toWrite);
+         return file;
       }
       catch (IOException e)
       {
@@ -391,5 +394,10 @@ public class Dao
    public static boolean deleteSerializedSchemaCache(Alias alias)
    {
       return getSchemaCacheFile(alias).delete();
+   }
+
+   public static File writeGraphPersistence(GraphPersistence graphPersistence)
+   {
+      return writeObject(graphPersistence, FILE_NAME_GRAPH_PERSISTENCE);
    }
 }

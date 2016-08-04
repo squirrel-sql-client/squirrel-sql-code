@@ -109,4 +109,9 @@ public class TableWindowCtrl
    {
       return _window.getBoundsInParent().getMinX() + (_window.getBoundsInParent().getMaxX() - _window.getBoundsInParent().getMinX()) / 2.0;
    }
+
+   public TableInfo getTableInfo()
+   {
+      return _tableInfo;
+   }
 }
