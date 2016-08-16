@@ -5,6 +5,8 @@ import org.squirrelsql.services.Dao;
 import org.squirrelsql.session.SessionTabAccess;
 import org.squirrelsql.session.SessionTabContext;
 
+import java.util.List;
+
 public class GraphAccess
 {
    private final SessionTabContext _sessionTabContext;
@@ -15,22 +17,30 @@ public class GraphAccess
       _sessionTabContext = sessionTabContext;
       _sessionTabAccess = sessionTabAccess;
 
-      loadGraphTab(Dao.loadGraphPersistence());
+      loadGraphTabs(Dao.loadGraphPersistences(_sessionTabContext.getSession().getAlias()));
    }
 
    public void onNewGraph()
    {
-      loadGraphTab(new GraphPersistence());
+      loadGraphTab(new GraphPersistenceWrapper());
    }
 
-   private void loadGraphTab(GraphPersistence graphPersistence)
+   private void loadGraphTabs(List<GraphPersistenceWrapper> graphPersistenceWrappers)
+   {
+      for (GraphPersistenceWrapper graphPersistenceWrapper : graphPersistenceWrappers)
+      {
+         loadGraphTab(graphPersistenceWrapper);
+      }
+   }
+
+   private void loadGraphTab(GraphPersistenceWrapper graphPersistenceWrapper)
    {
       Tab tab = new Tab();
 
-      GraphTableDndChannel graphTableDndChannel = new GraphTableDndChannel();
+      GraphChannel graphChannel = new GraphChannel();
 
-      tab.setGraphic(new GraphTabHeaderCtrl(graphTableDndChannel, graphPersistence.getTabTitle()).getGraphTabHeader());
-      tab.setContent(new GraphPaneCtrl(graphTableDndChannel, _sessionTabContext.getSession(), graphPersistence).getPane());
+      tab.setGraphic(new GraphTabHeaderCtrl(graphChannel, graphPersistenceWrapper.getTabTitle()).getGraphTabHeader());
+      tab.setContent(new GraphPaneCtrl(graphChannel, _sessionTabContext.getSession(), graphPersistenceWrapper).getPane());
 
       _sessionTabAccess.addAndSelectTab(tab);
    }

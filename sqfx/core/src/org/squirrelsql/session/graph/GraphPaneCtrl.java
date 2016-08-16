@@ -1,7 +1,6 @@
 package org.squirrelsql.session.graph;
 
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
@@ -18,7 +17,6 @@ import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
-import sun.awt.AppContext;
 
 import java.util.List;
 
@@ -29,8 +27,9 @@ public class GraphPaneCtrl
    private BorderPane _pane = new BorderPane();
 
    private final ScrollPane _scrollPane;
-   private GraphTableDndChannel _graphTableDndChannel;
+   private GraphChannel _graphChannel;
    private Session _session;
+   private GraphPersistenceWrapper _graphPersistenceWrapper;
    private final Pane _desktopPane = new Pane();
    private final DrawLinesCtrl _drawLinesCtrl;
 
@@ -38,10 +37,11 @@ public class GraphPaneCtrl
    private final I18n _i18n = new I18n(getClass());
 
 
-   public GraphPaneCtrl(GraphTableDndChannel graphTableDndChannel, Session session, GraphPersistence graphPersistence)
+   public GraphPaneCtrl(GraphChannel graphChannel, Session session, GraphPersistenceWrapper graphPersistenceWrapper)
    {
-      _graphTableDndChannel = graphTableDndChannel;
+      _graphChannel = graphChannel;
       _session = session;
+      _graphPersistenceWrapper = graphPersistenceWrapper;
 
       initDrop(_desktopPane);
 
@@ -65,7 +65,7 @@ public class GraphPaneCtrl
       _desktopPane.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> _drawLinesCtrl.mouseDragged(e));
       _desktopPane.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> _drawLinesCtrl.mouseReleased(e));
 
-      graphTableDndChannel.setShowtoolbarListener(this::onShowToolbar);
+      graphChannel.setShowtoolbarListener(this::onShowToolbar);
 
       _scrollPane.setContent(stackPane);
 
@@ -74,12 +74,12 @@ public class GraphPaneCtrl
       _pane.setTop(_toolbar);
       _pane.setCenter(_scrollPane);
 
-      Platform.runLater(() -> loadExistingTables(graphPersistence));
+      Platform.runLater(() -> loadExistingTables(_graphPersistenceWrapper));
    }
 
-   private void loadExistingTables(GraphPersistence graphPersistence)
+   private void loadExistingTables(GraphPersistenceWrapper graphPersistenceWrapper)
    {
-      for (GraphTableInfo graphTableInfo : graphPersistence.getGraphTableInfos())
+      for (GraphTableInfo graphTableInfo : graphPersistenceWrapper.getDelegate().getGraphTableInfos())
       {
          List<TableInfo> tableInfos = _session.getSchemaCacheValue().get().getTablesByFullyQualifiedName(graphTableInfo.getCatalog(), graphTableInfo.getSchema(), graphTableInfo.getName());
 
@@ -87,13 +87,15 @@ public class GraphPaneCtrl
          {
             MessageHandler mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
             String qualifiedTableName = SQLUtil.getQualifiedName(graphTableInfo.getCatalog(), graphTableInfo.getSchema(), graphTableInfo.getName());
-            mh.warning(_i18n.t("graph.table.of.graph.does.not.exist", qualifiedTableName, graphPersistence.getTabTitle()));
+            mh.warning(_i18n.t("graph.table.of.graph.does.not.exist", qualifiedTableName, graphPersistenceWrapper.getTabTitle()));
             continue;
          }
 
          addTableToDesktop(tableInfos.get(0), graphTableInfo.getMinX(), graphTableInfo.getMinY(), graphTableInfo.getWidth(), graphTableInfo.getHeight());
       }
-      _drawLinesCtrl.doDraw();
+
+      // This call will prevent DND of tables into the query builder window from working. We have to find a different solution for that.
+      //_drawLinesCtrl.doDraw();
    }
 
    private void onShowToolbar(boolean b)
@@ -129,22 +131,36 @@ public class GraphPaneCtrl
 
    private void onSaveGraph()
    {
-      GraphPersistence gp = new GraphPersistence();
+      if(_graphPersistenceWrapper.isNew())
+      {
+         String graphName = new GraphNameCtrl().getGraphName();
+         _graphPersistenceWrapper.getDelegate().setTabTitle(graphName);
+
+         if(null == graphName)
+         {
+            return;
+         }
+      }
+
+      _graphPersistenceWrapper.getDelegate().getGraphTableInfos().clear();
+
       for (Node pkNode : _desktopPane.getChildren())
       {
          TableWindowCtrl ctrl = ((Window) pkNode).getCtrl();
          GraphTableInfo gti = new GraphTableInfo(ctrl);
-         gp.getGraphTableInfos().add(gti);
+         _graphPersistenceWrapper.getDelegate().getGraphTableInfos().add(gti);
       }
 
       MessageHandler mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
 
-      mh.info(_i18n.t("graph.wrote.file.to", Dao.writeGraphPersistence(gp).getPath()));
+      mh.info(_i18n.t("graph.wrote.file.to", Dao.writeGraphPersistence(_graphPersistenceWrapper, _session.getAlias()).getPath()));
+
+      _graphChannel.setTabTitle(_graphPersistenceWrapper.getDelegate().getTabTitle());
    }
 
    private void onAddTables()
    {
-      new ObjectTreeFilterCtrl(_session, "", _graphTableDndChannel);
+      new ObjectTreeFilterCtrl(_session, "", _graphChannel);
    }
 
    private void initDrop(Pane desktopPane)
@@ -166,7 +182,7 @@ public class GraphPaneCtrl
    {
       if( ObjectTreeFilterCtrl.DRAGGING_TO_QUERY_BUILDER.equals(dragEvent.getDragboard().getString()) )
       {
-         List<TableInfo> tableInfos = _graphTableDndChannel.getLastDroppedTableInfos();
+         List<TableInfo> tableInfos = _graphChannel.getLastDroppedTableInfos();
 
          double offset = 0;
          for (TableInfo tableInfo : tableInfos)

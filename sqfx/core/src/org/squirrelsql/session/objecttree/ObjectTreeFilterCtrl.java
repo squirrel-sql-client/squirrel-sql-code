@@ -2,7 +2,6 @@ package org.squirrelsql.session.objecttree;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
-import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -15,15 +14,13 @@ import org.squirrelsql.session.Session;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.session.completion.TextFieldTextComponentAdapter;
-import org.squirrelsql.session.graph.GraphTableDndChannel;
+import org.squirrelsql.session.graph.GraphChannel;
 import org.squirrelsql.workaround.KeyMatchWA;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class ObjectTreeFilterCtrl
 {
@@ -37,17 +34,17 @@ public class ObjectTreeFilterCtrl
    private TreeView<ObjectTreeNode> _sessionsObjectTree;
    private final Stage _dialog;
    private ObjectTreeFilterCtrlMode _mode;
-   private GraphTableDndChannel _graphTableDndChannel;
+   private GraphChannel _graphChannel;
 
    public ObjectTreeFilterCtrl(Session session, String filterText)
    {
       this(session, filterText, ObjectTreeFilterCtrlMode.OBJECT_TREE_SEARCH);
    }
 
-   public ObjectTreeFilterCtrl(Session session, String filterText, GraphTableDndChannel graphTableDndChannel)
+   public ObjectTreeFilterCtrl(Session session, String filterText, GraphChannel graphChannel)
    {
       this(session, filterText, ObjectTreeFilterCtrlMode.ADD_TO_QUERY_BUILDER);
-      _graphTableDndChannel = graphTableDndChannel;
+      _graphChannel = graphChannel;
    }
 
    private ObjectTreeFilterCtrl(Session session, String filterText, ObjectTreeFilterCtrlMode mode)
@@ -122,7 +119,7 @@ public class ObjectTreeFilterCtrl
          ClipboardContent content = new ClipboardContent();
          content.put(DataFormat.PLAIN_TEXT, DRAGGING_TO_QUERY_BUILDER);
          dragBoard.setContent(content);
-         _graphTableDndChannel.setLastDraggingObjectTreeFilter(this);
+         _graphChannel.setLastDraggingObjectTreeFilter(this);
       }
 
       e.consume();

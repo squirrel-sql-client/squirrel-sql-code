@@ -8,7 +8,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.session.Session;
 
 public class GraphTabHeaderCtrl
 {
@@ -16,13 +15,15 @@ public class GraphTabHeaderCtrl
    private final BorderPane _graphTabHeader;
    private final I18n _i18n = new I18n(getClass());
    private final Props _props = new Props(getClass());
+   private final Label _lblTabTitle = new Label();
 
-   public GraphTabHeaderCtrl(GraphTableDndChannel graphTableDndChannel, String tabTitle)
+   public GraphTabHeaderCtrl(GraphChannel graphChannel, String tabTitle)
    {
 
       _graphTabHeader = new BorderPane();
 
-      _graphTabHeader.setCenter(new Label(tabTitle));
+      _lblTabTitle.setText(tabTitle);
+      _graphTabHeader.setCenter(_lblTabTitle);
 
       ToggleButton btnToggleShowToolbar = new ToggleButton();
       btnToggleShowToolbar.setPadding(new Insets(3));
@@ -31,7 +32,9 @@ public class GraphTabHeaderCtrl
       btnToggleShowToolbar.setSelected(true);
       BorderPane.setMargin(btnToggleShowToolbar, new Insets(5));
 
-      btnToggleShowToolbar.setOnAction(e-> graphTableDndChannel.showToolBar(btnToggleShowToolbar.isSelected()));
+      btnToggleShowToolbar.setOnAction(e-> graphChannel.showToolBar(btnToggleShowToolbar.isSelected()));
+
+      graphChannel.setTabTitleListener((title) -> _lblTabTitle.setText(title));
 
       _graphTabHeader.setRight(btnToggleShowToolbar);
    }

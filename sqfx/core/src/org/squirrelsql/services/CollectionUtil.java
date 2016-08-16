@@ -46,6 +46,11 @@ public class CollectionUtil
       toRemoveFrom.removeIf(predicate);
    }
 
+   public static <T, R> List<T>transform(R[] in, Function<R, T> function)
+   {
+      return transform(Arrays.asList(in), function);
+   }
+
    public static <T, R> List<T>transform(List<R> in, Function<R, T> function)
    {
       List<T> ret = new ArrayList<>();

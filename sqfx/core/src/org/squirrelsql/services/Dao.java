@@ -10,6 +10,7 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.*;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.session.graph.GraphPersistence;
+import org.squirrelsql.session.graph.GraphPersistenceWrapper;
 import org.squirrelsql.session.schemainfo.schemacacheloading.SerializedCache;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
 import org.squirrelsql.session.sql.bookmark.BookmarkPersistence;
@@ -35,6 +36,7 @@ public class Dao
 
    private static final String SCHEMA_CACHE_DIR = "schemachaches";
    public static final String SCHEMA_CACHE_FILE_ENDING = ".ser";
+   public static final String GRAPH_PERSISTENCE_FILE_PREFIX = "graphPersistence-";
 
    public static void writeDrivers(List<SQLDriver> sqlDrivers)
    {
@@ -103,6 +105,11 @@ public class Dao
    {
       File file = new File(AppState.get().getUserDir(), fileName);
 
+      return loadObject(file, defaultObject);
+   }
+
+   private static <T> T loadObject(File file, T defaultObject)
+   {
       if(false == file.exists())
       {
          return defaultObject;
@@ -148,7 +155,11 @@ public class Dao
    private static File writeObject(Object toWrite, String fileName)
    {
       File file = new File(AppState.get().getUserDir(), fileName);
+      return writeObject(toWrite, file);
+   }
 
+   private static File writeObject(Object toWrite, File file)
+   {
       try (FileOutputStream fos = new FileOutputStream(file))
       {
          ObjectMapper mapper = new ObjectMapper();
@@ -396,13 +407,41 @@ public class Dao
       return getSchemaCacheFile(alias).delete();
    }
 
-   public static File writeGraphPersistence(GraphPersistence graphPersistence)
+   public static File writeGraphPersistence(GraphPersistenceWrapper graphPersistenceWrapper, Alias alias)
    {
-      return writeObject(graphPersistence, FILE_NAME_GRAPH_PERSISTENCE);
+      File aliasDir = getAliasDir(alias);
+
+      aliasDir.mkdirs();
+
+      if(false == aliasDir.exists())
+      {
+         throw new IllegalStateException("Couldn't create directory: " + aliasDir.getPath());
+      }
+
+      GraphPersistence graphPersistence = graphPersistenceWrapper.getDelegate();
+
+      File aliasFile = new File(aliasDir, GRAPH_PERSISTENCE_FILE_PREFIX + graphPersistence.getId() + ".json");
+
+      return writeObject(graphPersistence, aliasFile);
    }
 
-   public static GraphPersistence loadGraphPersistence()
+   private static File getAliasDir(Alias alias)
    {
-      return loadObject(FILE_NAME_GRAPH_PERSISTENCE, new GraphPersistence());
+      return new File(AppState.get().getUserDir(), "aliasDir-" + alias.getId());
+   }
+
+   public static List<GraphPersistenceWrapper> loadGraphPersistences(Alias alias)
+   {
+      File aliasDir = getAliasDir(alias);
+
+      File[] files = aliasDir.listFiles(f -> f.getName().startsWith(GRAPH_PERSISTENCE_FILE_PREFIX));
+
+      return CollectionUtil.transform(files, f -> toGraphPersistenceWrapper(f));
+
+   }
+
+   private static GraphPersistenceWrapper toGraphPersistenceWrapper(File f)
+   {
+      return new GraphPersistenceWrapper(loadObject(f, new GraphPersistence()));
    }
 }

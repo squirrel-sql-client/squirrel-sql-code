@@ -8,15 +8,16 @@ import org.squirrelsql.session.objecttree.ObjectTreeNode;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class GraphTableDndChannel
+public class GraphChannel
 {
    private ObjectTreeFilterCtrl _lastDraggingObjectTreeFilter;
 
    private ShowToolbarListener _showToolbarListener;
+   private TabTitleListener _tabTitleListener;
 
-   public void setLastDraggingObjectTreeFilter(ObjectTreeFilterCtrl dragingObjectTreeFilter)
+   public void setLastDraggingObjectTreeFilter(ObjectTreeFilterCtrl draggingObjectTreeFilter)
    {
-      _lastDraggingObjectTreeFilter = dragingObjectTreeFilter;
+      _lastDraggingObjectTreeFilter = draggingObjectTreeFilter;
    }
 
    public List<TableInfo> getLastDroppedTableInfos()
@@ -33,5 +34,15 @@ public class GraphTableDndChannel
    public void setShowtoolbarListener(ShowToolbarListener showToolbarListener)
    {
       _showToolbarListener = showToolbarListener;
+   }
+
+   public void setTabTitleListener(TabTitleListener tabTitleListener)
+   {
+      _tabTitleListener = tabTitleListener;
+   }
+
+   public void setTabTitle(String tabTitle)
+   {
+      _tabTitleListener.setTabTitle(tabTitle);
    }
 }
