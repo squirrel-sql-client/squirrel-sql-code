@@ -9,9 +9,16 @@ import org.squirrelsql.services.Utils;
 public class GraphNameCtrl
 {
    private String _graphName;
+   private String _defaultTabTitle;
 
    public GraphNameCtrl()
    {
+      this(null);
+   }
+
+   public GraphNameCtrl(String defaultTabTitle)
+   {
+      _defaultTabTitle = defaultTabTitle;
       FxmlHelper<GraphNameView> fxmlHelper = new FxmlHelper<>(GraphNameView.class);
 
       Stage dlg = GuiUtils.createModalDialog(fxmlHelper.getRegion(), new Pref(getClass()), 285, 135, "GraphNameDialog");
@@ -19,7 +26,10 @@ public class GraphNameCtrl
       fxmlHelper.getView().btnOk.setOnAction(e -> onOk(fxmlHelper, dlg));
       fxmlHelper.getView().btnCancel.setOnAction(e -> dlg.close());
 
+      fxmlHelper.getView().txtFileName.setText(defaultTabTitle);
+
       dlg.showAndWait();
+
    }
 
    private void onOk(FxmlHelper<GraphNameView> fxmlHelper, Stage dlg)
@@ -30,7 +40,7 @@ public class GraphNameCtrl
 
    public String getGraphName()
    {
-      if(Utils.isEmptyString(_graphName))
+      if(Utils.isEmptyString(_graphName) || Utils.compareRespectEmpty(_graphName, _defaultTabTitle))
       {
          return null;
       }

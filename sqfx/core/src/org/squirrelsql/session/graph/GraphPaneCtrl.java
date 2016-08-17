@@ -126,7 +126,35 @@ public class GraphPaneCtrl
       btnSaveGraph.setOnAction(e -> onSaveGraph());
       toolBar.getItems().add(btnSaveGraph);
 
+      Button btnSaveGraphAs = new Button();
+      btnSaveGraphAs.setGraphic(_props.getImageView(GlobalIconNames.FILE_SAVE_AS));
+      btnSaveGraphAs.setTooltip(new Tooltip(_i18n.t("graph.save.graph.as")));
+      btnSaveGraphAs.setOnAction(e -> onSaveGraphAs());
+      toolBar.getItems().add(btnSaveGraphAs);
+
       return toolBar;
+   }
+
+   private void onSaveGraphAs()
+   {
+      if(_graphPersistenceWrapper.isNew())
+      {
+         onSaveGraph();
+         return;
+      }
+
+      String graphName = new GraphNameCtrl(_graphPersistenceWrapper.getTabTitle()).getGraphName();
+
+      if(null == graphName)
+      {
+         return;
+      }
+
+      Dao.deleteGraphPersistence(_graphPersistenceWrapper, _session.getAlias());
+
+      _graphPersistenceWrapper.getDelegate().setTabTitle(graphName);
+
+      _saveIntern();
    }
 
    private void onSaveGraph()
@@ -142,6 +170,12 @@ public class GraphPaneCtrl
          }
       }
 
+      _saveIntern();
+   }
+
+
+   private void _saveIntern()
+   {
       _graphPersistenceWrapper.getDelegate().getGraphTableInfos().clear();
 
       for (Node pkNode : _desktopPane.getChildren())

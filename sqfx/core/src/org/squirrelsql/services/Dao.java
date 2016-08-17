@@ -409,6 +409,15 @@ public class Dao
 
    public static File writeGraphPersistence(GraphPersistenceWrapper graphPersistenceWrapper, Alias alias)
    {
+      File graphPersistenceFile = getGraphPersistenceFile(graphPersistenceWrapper, alias);
+
+      GraphPersistence graphPersistence = graphPersistenceWrapper.getDelegate();
+
+      return writeObject(graphPersistence, graphPersistenceFile);
+   }
+
+   private static File getGraphPersistenceFile(GraphPersistenceWrapper graphPersistenceWrapper, Alias alias)
+   {
       File aliasDir = getAliasDir(alias);
 
       aliasDir.mkdirs();
@@ -418,11 +427,7 @@ public class Dao
          throw new IllegalStateException("Couldn't create directory: " + aliasDir.getPath());
       }
 
-      GraphPersistence graphPersistence = graphPersistenceWrapper.getDelegate();
-
-      File aliasFile = new File(aliasDir, GRAPH_PERSISTENCE_FILE_PREFIX + graphPersistence.getId() + ".json");
-
-      return writeObject(graphPersistence, aliasFile);
+      return new File(aliasDir, GRAPH_PERSISTENCE_FILE_PREFIX + graphPersistenceWrapper.getDelegate().getId() + ".json");
    }
 
    private static File getAliasDir(Alias alias)
@@ -443,5 +448,15 @@ public class Dao
    private static GraphPersistenceWrapper toGraphPersistenceWrapper(File f)
    {
       return new GraphPersistenceWrapper(loadObject(f, new GraphPersistence()));
+   }
+
+   public static void deleteGraphPersistence(GraphPersistenceWrapper graphPersistenceWrapper, Alias alias)
+   {
+      File graphPersistenceFile = getGraphPersistenceFile(graphPersistenceWrapper, alias);
+
+      if(false == graphPersistenceFile.delete())
+      {
+         throw new IllegalStateException("Could not delete file: " + graphPersistenceFile.getPath());
+      }
    }
 }

@@ -22,26 +22,31 @@ public class GraphAccess
 
    public void onNewGraph()
    {
-      loadGraphTab(new GraphPersistenceWrapper());
+      loadGraphTab(new GraphPersistenceWrapper(), true);
    }
 
    private void loadGraphTabs(List<GraphPersistenceWrapper> graphPersistenceWrappers)
    {
       for (GraphPersistenceWrapper graphPersistenceWrapper : graphPersistenceWrappers)
       {
-         loadGraphTab(graphPersistenceWrapper);
+         loadGraphTab(graphPersistenceWrapper, false);
       }
    }
 
-   private void loadGraphTab(GraphPersistenceWrapper graphPersistenceWrapper)
+   private void loadGraphTab(GraphPersistenceWrapper graphPersistenceWrapper, boolean selectTab)
    {
       Tab tab = new Tab();
 
       GraphChannel graphChannel = new GraphChannel();
 
-      tab.setGraphic(new GraphTabHeaderCtrl(graphChannel, graphPersistenceWrapper.getTabTitle()).getGraphTabHeader());
+      tab.setGraphic(new GraphTabHeaderCtrl(graphChannel, graphPersistenceWrapper.getTabTitle(), () -> onSelectTab(tab)).getGraphTabHeader());
       tab.setContent(new GraphPaneCtrl(graphChannel, _sessionTabContext.getSession(), graphPersistenceWrapper).getPane());
 
-      _sessionTabAccess.addAndSelectTab(tab);
+      _sessionTabAccess.addTab(tab, selectTab);
+   }
+
+   private void onSelectTab(Tab tab)
+   {
+      tab.getTabPane().getSelectionModel().select(tab);
    }
 }

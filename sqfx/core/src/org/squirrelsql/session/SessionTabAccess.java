@@ -4,5 +4,5 @@ import javafx.scene.control.Tab;
 
 public interface SessionTabAccess
 {
-   void addAndSelectTab(Tab tab);
+   void addTab(Tab tab, boolean selectTab);
 }
