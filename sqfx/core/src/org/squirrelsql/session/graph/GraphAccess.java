@@ -37,12 +37,32 @@ public class GraphAccess
    {
       Tab tab = new Tab();
 
-      GraphChannel graphChannel = new GraphChannel();
+      GraphTabListener graphTabListener = new GraphTabListener()
+      {
+         @Override
+         public void selectTab()
+         {
+            onSelectTab(tab);
+         }
 
-      tab.setGraphic(new GraphTabHeaderCtrl(graphChannel, graphPersistenceWrapper.getTabTitle(), () -> onSelectTab(tab)).getGraphTabHeader());
+         @Override
+         public void removeTab()
+         {
+            onRemoveTab(tab);
+         }
+      };
+
+      GraphChannel graphChannel = new GraphChannel(graphTabListener);
+
+      tab.setGraphic(new GraphTabHeaderCtrl(graphChannel, graphPersistenceWrapper.getTabTitle()).getGraphTabHeader());
       tab.setContent(new GraphPaneCtrl(graphChannel, _sessionTabContext.getSession(), graphPersistenceWrapper).getPane());
 
       _sessionTabAccess.addTab(tab, selectTab);
+   }
+
+   private void onRemoveTab(Tab tab)
+   {
+      tab.getTabPane().getTabs().remove(tab);
    }
 
    private void onSelectTab(Tab tab)

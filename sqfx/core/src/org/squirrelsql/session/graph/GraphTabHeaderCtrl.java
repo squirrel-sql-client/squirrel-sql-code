@@ -17,7 +17,7 @@ public class GraphTabHeaderCtrl
    private final Props _props = new Props(getClass());
    private final Label _lblTabTitle = new Label();
 
-   public GraphTabHeaderCtrl(GraphChannel graphChannel, String tabTitle, GraphTabSelectionRequestListener graphTabSelectionRequestListener)
+   public GraphTabHeaderCtrl(GraphChannel graphChannel, String tabTitle)
    {
 
       _graphTabHeader = new BorderPane();
@@ -32,17 +32,17 @@ public class GraphTabHeaderCtrl
       btnToggleShowToolbar.setSelected(true);
       BorderPane.setMargin(btnToggleShowToolbar, new Insets(5));
 
-      btnToggleShowToolbar.setOnAction(e-> onShowToolbar(graphChannel, btnToggleShowToolbar, graphTabSelectionRequestListener));
+      btnToggleShowToolbar.setOnAction(e-> onShowToolbar(graphChannel, btnToggleShowToolbar));
 
       graphChannel.setTabTitleListener((title) -> _lblTabTitle.setText(title));
 
       _graphTabHeader.setRight(btnToggleShowToolbar);
    }
 
-   private void onShowToolbar(GraphChannel graphChannel, ToggleButton btnToggleShowToolbar, GraphTabSelectionRequestListener graphTabSelectionRequestListener)
+   private void onShowToolbar(GraphChannel graphChannel, ToggleButton btnToggleShowToolbar)
    {
       graphChannel.showToolBar(btnToggleShowToolbar.isSelected());
-      graphTabSelectionRequestListener.selectTab();
+      graphChannel.selectGraphTab();
    }
 
    public Node getGraphTabHeader()

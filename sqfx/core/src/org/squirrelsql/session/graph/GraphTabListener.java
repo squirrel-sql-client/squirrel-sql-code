@@ -1,6 +1,8 @@
 package org.squirrelsql.session.graph;
 
-public interface GraphTabSelectionRequestListener
+public interface GraphTabListener
 {
    void selectTab();
+
+   void removeTab();
 }

@@ -6,7 +6,6 @@ import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
 import org.squirrelsql.session.objecttree.ObjectTreeNode;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class GraphChannel
 {
@@ -14,6 +13,12 @@ public class GraphChannel
 
    private ShowToolbarListener _showToolbarListener;
    private TabTitleListener _tabTitleListener;
+   private GraphTabListener _graphTabListener;
+
+   public GraphChannel(GraphTabListener graphTabListener)
+   {
+      _graphTabListener = graphTabListener;
+   }
 
    public void setLastDraggingObjectTreeFilter(ObjectTreeFilterCtrl draggingObjectTreeFilter)
    {
@@ -44,5 +49,15 @@ public class GraphChannel
    public void setTabTitle(String tabTitle)
    {
       _tabTitleListener.setTabTitle(tabTitle);
+   }
+
+   public void selectGraphTab()
+   {
+      _graphTabListener.selectTab();
+   }
+
+   public void removeGraphTab()
+   {
+      _graphTabListener.removeTab();
    }
 }

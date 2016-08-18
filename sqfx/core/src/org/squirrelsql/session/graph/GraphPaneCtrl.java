@@ -1,15 +1,19 @@
 package org.squirrelsql.session.graph;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import org.squirrelsql.AppState;
 import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.*;
@@ -114,26 +118,36 @@ public class GraphPaneCtrl
    {
       ToolBar toolBar = new ToolBar();
 
-      Button btnAddTable = new Button();
-      btnAddTable.setGraphic(_props.getImageView("addTable.png"));
-      btnAddTable.setTooltip(new Tooltip(_i18n.t("graph.add.table.button.tooltip")));
-      btnAddTable.setOnAction(e -> onAddTables());
-      toolBar.getItems().add(btnAddTable);
-
-      Button btnSaveGraph = new Button();
-      btnSaveGraph.setGraphic(_props.getImageView(GlobalIconNames.FILE_SAVE));
-      btnSaveGraph.setTooltip(new Tooltip(_i18n.t("graph.save.graph")));
-      btnSaveGraph.setOnAction(e -> onSaveGraph());
-      toolBar.getItems().add(btnSaveGraph);
-
-      Button btnSaveGraphAs = new Button();
-      btnSaveGraphAs.setGraphic(_props.getImageView(GlobalIconNames.FILE_SAVE_AS));
-      btnSaveGraphAs.setTooltip(new Tooltip(_i18n.t("graph.save.graph.as")));
-      btnSaveGraphAs.setOnAction(e -> onSaveGraphAs());
-      toolBar.getItems().add(btnSaveGraphAs);
+      addToolBarButton(toolBar, "addTable.png", new Tooltip(_i18n.t("graph.add.table.button.tooltip")), e -> onAddTables());
+      toolBar.getItems().add(new Separator());
+      addToolBarButton(toolBar, GlobalIconNames.FILE_SAVE, new Tooltip(_i18n.t("graph.save.graph")), e -> onSaveGraph());
+      addToolBarButton(toolBar, GlobalIconNames.FILE_SAVE_AS, new Tooltip(_i18n.t("graph.save.graph.as")), e -> onSaveGraphAs());
+      addToolBarButton(toolBar, "trash_delete.png", new Tooltip(_i18n.t("graph.delete.graph")), e -> onDeleteGraph());
+      toolBar.getItems().add(new Separator());
 
       return toolBar;
    }
+
+   private void addToolBarButton(ToolBar toolBar, String iconFileName, Tooltip value, EventHandler<ActionEvent> actionEventEventHandler)
+   {
+      Button btnDeleteGraph = new Button();
+      btnDeleteGraph.setGraphic(_props.getImageView(iconFileName));
+      btnDeleteGraph.setTooltip(value);
+      btnDeleteGraph.setOnAction(actionEventEventHandler);
+      toolBar.getItems().add(btnDeleteGraph);
+   }
+
+   private void onDeleteGraph()
+   {
+      String query = _i18n.t("query.delete.graph", _graphPersistenceWrapper.getTabTitle());
+
+      if( FXMessageBox.YES.equals(FXMessageBox.showYesNo(AppState.get().getPrimaryStage(), query)) )
+      {
+         Dao.deleteGraphPersistence(_graphPersistenceWrapper, _session.getAlias());
+         _graphChannel.removeGraphTab();
+      }
+   }
+
 
    private void onSaveGraphAs()
    {
