@@ -6,7 +6,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
@@ -22,6 +21,7 @@ import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class GraphPaneCtrl
@@ -83,19 +83,20 @@ public class GraphPaneCtrl
 
    private void loadExistingTables(GraphPersistenceWrapper graphPersistenceWrapper)
    {
-      for (GraphTableInfo graphTableInfo : graphPersistenceWrapper.getDelegate().getGraphTableInfos())
+      for (GraphTablePersistence graphTablePersistence : graphPersistenceWrapper.getDelegate().getGraphTablePersistences())
       {
-         List<TableInfo> tableInfos = _session.getSchemaCacheValue().get().getTablesByFullyQualifiedName(graphTableInfo.getCatalog(), graphTableInfo.getSchema(), graphTableInfo.getName());
+         List<TableInfo> tableInfos = _session.getSchemaCacheValue().get().getTablesByFullyQualifiedName(graphTablePersistence.getCatalog(), graphTablePersistence.getSchema(), graphTablePersistence.getName());
 
          if(0 == tableInfos.size())
          {
             MessageHandler mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
-            String qualifiedTableName = SQLUtil.getQualifiedName(graphTableInfo.getCatalog(), graphTableInfo.getSchema(), graphTableInfo.getName());
+            String qualifiedTableName = SQLUtil.getQualifiedName(graphTablePersistence.getCatalog(), graphTablePersistence.getSchema(), graphTablePersistence.getName());
             mh.warning(_i18n.t("graph.table.of.graph.does.not.exist", qualifiedTableName, graphPersistenceWrapper.getTabTitle()));
             continue;
          }
 
-         addTableToDesktop(tableInfos.get(0), graphTableInfo.getMinX(), graphTableInfo.getMinY(), graphTableInfo.getWidth(), graphTableInfo.getHeight());
+         HashMap<String, FkProps> fkProps = FkPropsPersistence.toFkProps(graphTablePersistence.getPersistentFkPropsPersistenceByFkName());
+         addTableToDesktop(tableInfos.get(0), graphTablePersistence.getMinX(), graphTablePersistence.getMinY(), graphTablePersistence.getWidth(), graphTablePersistence.getHeight(), fkProps);
       }
 
       // This call will prevent DND of tables into the query builder window from working. We have to find a different solution for that.
@@ -190,13 +191,13 @@ public class GraphPaneCtrl
 
    private void _saveIntern()
    {
-      _graphPersistenceWrapper.getDelegate().getGraphTableInfos().clear();
+      _graphPersistenceWrapper.getDelegate().getGraphTablePersistences().clear();
 
       for (Node pkNode : _desktopPane.getChildren())
       {
          TableWindowCtrl ctrl = ((Window) pkNode).getCtrl();
-         GraphTableInfo gti = new GraphTableInfo(ctrl);
-         _graphPersistenceWrapper.getDelegate().getGraphTableInfos().add(gti);
+         GraphTablePersistence gti = new GraphTablePersistence(ctrl);
+         _graphPersistenceWrapper.getDelegate().getGraphTablePersistences().add(gti);
       }
 
       MessageHandler mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
@@ -255,7 +256,12 @@ public class GraphPaneCtrl
 
    private void addTableToDesktop(TableInfo tableInfo, double x, double y, double width, double height)
    {
-      TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, tableInfo, x, y, width, height, ctrl -> _drawLinesCtrl.doDraw());
+      addTableToDesktop(tableInfo, x, y, width, height, new HashMap<>());
+   }
+
+   private void addTableToDesktop(TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName)
+   {
+      TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, tableInfo, x, y, width, height, fkPropsByFkName, ctrl -> _drawLinesCtrl.doDraw());
 
       _desktopPane.getChildren().add(tableWindowCtrl.getWindow());
    }

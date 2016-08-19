@@ -9,6 +9,7 @@ import org.squirrelsql.session.graph.graphdesktop.Window;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TableWindowCtrl
 {
@@ -16,12 +17,13 @@ public class TableWindowCtrl
    private final Window _window;
    private ColumnListCtrl _columnListCtrl;
    private TableInfo _tableInfo;
-   private HashMap<String, PersistentFkProps> _persistentFkPropsByFkName = new HashMap<>();
+   private HashMap<String, FkProps> _fkPropsByFkName = new HashMap<>();
 
-   public TableWindowCtrl(Session session, TableInfo tableInfo, double x, double y, double width, double height, DrawLinesListener drawLinesListener)
+   public TableWindowCtrl(Session session, TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, DrawLinesListener drawLinesListener)
    {
       _session = session;
       _tableInfo = tableInfo;
+      _fkPropsByFkName = fkPropsByFkName;
 
       _window = new Window(_tableInfo.getName());
 
@@ -73,7 +75,7 @@ public class TableWindowCtrl
 
       for (FkSpec fkSpec : fkSpecs)
       {
-         fkSpec.setPersistentFkProps(getPersistenFkProps(fkSpec.getFkName()));
+         fkSpec.setFkProps(getPersistenFkProps(fkSpec.getFkName()));
       }
 
       if(0 < fkSpecs.size())
@@ -92,13 +94,13 @@ public class TableWindowCtrl
       return ret;
    }
 
-   private PersistentFkProps getPersistenFkProps(String fkName)
+   private FkProps getPersistenFkProps(String fkName)
    {
-      PersistentFkProps ret = _persistentFkPropsByFkName.get(fkName);
+      FkProps ret = _fkPropsByFkName.get(fkName);
       if(null == ret)
       {
-         ret = new PersistentFkProps(fkName);
-         _persistentFkPropsByFkName.put(fkName, ret);
+         ret = new FkProps(fkName);
+         _fkPropsByFkName.put(fkName, ret);
       }
 
       return ret;
@@ -112,5 +114,10 @@ public class TableWindowCtrl
    public TableInfo getTableInfo()
    {
       return _tableInfo;
+   }
+
+   public HashMap<String, FkProps> getFkPropsByFkName()
+   {
+      return _fkPropsByFkName;
    }
 }

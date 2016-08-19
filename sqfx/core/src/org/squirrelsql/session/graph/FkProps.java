@@ -1,17 +1,19 @@
 package org.squirrelsql.session.graph;
 
 import javafx.geometry.Point2D;
+import org.squirrelsql.services.CollectionUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class PersistentFkProps
+public class FkProps
 {
    private String _fkName;
    private boolean _selected;
    private ArrayList<Point2D> _foldingPoints = new ArrayList<>();
 
-   public PersistentFkProps(String fkName)
+   public FkProps(String fkName)
    {
       _fkName = fkName;
    }
@@ -50,4 +52,26 @@ public class PersistentFkProps
    {
       _foldingPoints.add(listIndex, fp);
    }
+
+
+   public FkPropsPersistence toPersistence()
+   {
+      FkPropsPersistence ret = new FkPropsPersistence();
+
+      ret.setFkName(_fkName);
+
+      ret.setFoldingPointPersistences(CollectionUtil.transform(_foldingPoints, fp -> toFpPersistence(fp)));
+
+      return ret;
+   }
+
+   private FoldingPointPersistence toFpPersistence(Point2D fp)
+   {
+      FoldingPointPersistence ret = new FoldingPointPersistence();
+      ret.setX(fp.getX());
+      ret.setY(fp.getY());
+
+      return ret;
+   }
+
 }

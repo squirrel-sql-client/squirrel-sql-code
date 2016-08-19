@@ -1,6 +1,8 @@
 package org.squirrelsql.session.graph;
 
-public class GraphTableInfo
+import java.util.HashMap;
+
+public class GraphTablePersistence
 {
    private String _catalog;
    private String _schema;
@@ -13,14 +15,16 @@ public class GraphTableInfo
    private double _width;
    private double _height;
 
+   private HashMap<String, FkPropsPersistence> _persistentFkPropsPersistenceByFkName;
+
    /**
     * For serialization only
     */
-   public GraphTableInfo()
+   public GraphTablePersistence()
    {
    }
 
-   public GraphTableInfo(TableWindowCtrl ctrl)
+   public GraphTablePersistence(TableWindowCtrl ctrl)
    {
       _catalog = ctrl.getTableInfo().getCatalog();
       _schema = ctrl.getTableInfo().getSchema();
@@ -31,6 +35,8 @@ public class GraphTableInfo
       _minY = ctrl.getWindow().getLayoutY();
       _width = ctrl.getWindow().getWidth();
       _height = ctrl.getWindow().getHeight();
+
+      _persistentFkPropsPersistenceByFkName = FkPropsPersistence.toFkPropsPersitences(ctrl.getFkPropsByFkName());
 
    }
 
@@ -114,5 +120,15 @@ public class GraphTableInfo
    public void setTableType(String tableType)
    {
       _tableType = tableType;
+   }
+
+   public HashMap<String, FkPropsPersistence> getPersistentFkPropsPersistenceByFkName()
+   {
+      return _persistentFkPropsPersistenceByFkName;
+   }
+
+   public void setPersistentFkPropsPersistenceByFkName(HashMap<String, FkPropsPersistence> persistentFkPropsPersistenceByFkName)
+   {
+      _persistentFkPropsPersistenceByFkName = persistentFkPropsPersistenceByFkName;
    }
 }

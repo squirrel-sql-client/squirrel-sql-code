@@ -12,16 +12,16 @@ public class GraphPersistence
    private String _tabTitle = DEFAULT_GRAPH_NAME;
    private String _id = UUID.randomUUID().toString();
 
-   private ArrayList<GraphTableInfo> _graphTableInfos = new ArrayList<>();
+   private ArrayList<GraphTablePersistence> _graphTablePersistences = new ArrayList<>();
 
-   public ArrayList<GraphTableInfo> getGraphTableInfos()
+   public ArrayList<GraphTablePersistence> getGraphTablePersistences()
    {
-      return _graphTableInfos;
+      return _graphTablePersistences;
    }
 
-   public void setGraphTableInfos(ArrayList<GraphTableInfo> graphTableInfos)
+   public void setGraphTablePersistences(ArrayList<GraphTablePersistence> graphTablePersistences)
    {
-      _graphTableInfos = graphTableInfos;
+      _graphTablePersistences = graphTablePersistences;
    }
 
    public String getTabTitle()

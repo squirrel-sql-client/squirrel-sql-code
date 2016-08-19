@@ -11,7 +11,7 @@ public class FkSpec
    private final double _fkGatherPointY;
    private final String _fkName;
    private ArrayList<Point2D> _fkPoints;
-   private PersistentFkProps _persistentFkProps;
+   private FkProps _fkProps;
 
    public FkSpec(String fkName, ArrayList<Point2D> fkPoints, TableWindowSide windowSide)
    {
@@ -65,12 +65,12 @@ public class FkSpec
 
    public boolean isSelected()
    {
-      return _persistentFkProps.isSelected();
+      return _fkProps.isSelected();
    }
 
    public void setSelected(boolean selected)
    {
-      _persistentFkProps.setSelected(selected);
+      _fkProps.setSelected(selected);
    }
 
    public String getFkName()
@@ -78,33 +78,33 @@ public class FkSpec
       return _fkName;
    }
 
-   public void setPersistentFkProps(PersistentFkProps persistentFkProps)
+   public void setFkProps(FkProps fkProps)
    {
-      _persistentFkProps = persistentFkProps;
+      _fkProps = fkProps;
    }
 
    public void addFoldingPoint(Point2D p)
    {
-      _persistentFkProps.addFoldingPoint(p);
+      _fkProps.addFoldingPoint(p);
    }
 
    public List<Point2D> getFoldingPoints()
    {
-      return _persistentFkProps.getFoldingPoints();
+      return _fkProps.getFoldingPoints();
    }
 
    public void removeFoldingPoint(Point2D fp)
    {
-      _persistentFkProps.removeFoldingPoint(fp);
+      _fkProps.removeFoldingPoint(fp);
    }
 
    public void replaceFoldingPoint(Point2D oldFP, Point2D newFP)
    {
-      _persistentFkProps.replaceFoldingPoint(oldFP, newFP);
+      _fkProps.replaceFoldingPoint(oldFP, newFP);
    }
 
    public void addFoldingPointAt(Point2D fp, int listIndex)
    {
-      _persistentFkProps.addFoldingPointAt(fp, listIndex);
+      _fkProps.addFoldingPointAt(fp, listIndex);
    }
 }
