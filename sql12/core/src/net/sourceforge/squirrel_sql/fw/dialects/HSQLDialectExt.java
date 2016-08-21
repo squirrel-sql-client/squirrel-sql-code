@@ -67,6 +67,9 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 			registerColumnType(Types.TINYINT, "tinyint");
 			registerColumnType(Types.VARBINARY, "varbinary");
 			registerColumnType(Types.VARCHAR, "varchar");
+			registerColumnType(Types.NVARCHAR, "varchar");
+			registerColumnType(Types.NCHAR, "varchar");
+			registerColumnType(Types.LONGNVARCHAR, "varchar");
 		}
 	}
 

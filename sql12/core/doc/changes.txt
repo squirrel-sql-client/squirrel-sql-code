@@ -20,6 +20,9 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+#1263 DB copy from MS SQL to HSQLDB with NVARCHAR column leads to no dialect mapping error
+   Fixed HSQLDB dialect as suggested in the bug.
+
 #1260 Session scripts Plugin: NullPointerException occurred when Session start up script was executed.
 
 #1248 "Statment" misspelled
