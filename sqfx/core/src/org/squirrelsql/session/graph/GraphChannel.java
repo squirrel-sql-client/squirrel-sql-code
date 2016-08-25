@@ -14,6 +14,7 @@ public class GraphChannel
    private ShowToolbarListener _showToolbarListener;
    private TabTitleListener _tabTitleListener;
    private GraphTabListener _graphTabListener;
+   private ColumnListCtrl _lastDraggingColumnListCtrl;
 
    public GraphChannel(GraphTabListener graphTabListener)
    {
@@ -59,5 +60,15 @@ public class GraphChannel
    public void removeGraphTab()
    {
       _graphTabListener.removeTab();
+   }
+
+   public void setLastDraggingColumnListCtrl(ColumnListCtrl lastDraggingColumnListCtrl)
+   {
+      _lastDraggingColumnListCtrl = lastDraggingColumnListCtrl;
+   }
+
+   public ColumnListCtrl getLastDraggingColumnListCtrl()
+   {
+      return _lastDraggingColumnListCtrl;
    }
 }

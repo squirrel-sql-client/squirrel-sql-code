@@ -3,12 +3,15 @@ package org.squirrelsql.session.graph;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.TableInfo;
 
+import java.util.ArrayList;
+
 public class GraphColumn
 {
    private ColumnInfo _columnInfo;
    private final PrimaryKeyInfo _primaryKeyInfo;
    private final ImportedKeysInfo _impKeysInfo;
    private String _postFix;
+   private ArrayList<NonDbImportedKey> _nonDbImportedKeys = new ArrayList<>();
 
    public GraphColumn(ColumnInfo columnInfo, PrimaryKeyInfo primaryKeyInfo, ImportedKeysInfo impKeysInfo)
    {
@@ -48,5 +51,10 @@ public class GraphColumn
    public String getFkNameTo(TableInfo toPkTable)
    {
       return _impKeysInfo.getFkNameTo(toPkTable, _columnInfo);
+   }
+
+   public void addNonDbImportedKey(NonDbImportedKey nonDbImportedKey)
+   {
+      _nonDbImportedKeys.add(nonDbImportedKey);
    }
 }

@@ -220,7 +220,8 @@ public class GraphPaneCtrl
 
    private void onDragOverOfTableFromObjectTreeDialogToDesktop(DragEvent dragEvent)
    {
-      if (ObjectTreeFilterCtrl.DRAGGING_TO_QUERY_BUILDER.equals(dragEvent.getDragboard().getString()))
+      if (   ObjectTreeFilterCtrl.DRAGGING_TO_QUERY_BUILDER.equals(dragEvent.getDragboard().getString())
+          || ColumnListCtrl.DRAGGING_COLUMS.equals(dragEvent.getDragboard().getString()) )
       {
          dragEvent.acceptTransferModes(TransferMode.MOVE);
       }
@@ -261,7 +262,7 @@ public class GraphPaneCtrl
 
    private void addTableToDesktop(TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName)
    {
-      TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, tableInfo, x, y, width, height, fkPropsByFkName, ctrl -> _drawLinesCtrl.doDraw());
+      TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, _graphChannel, tableInfo, x, y, width, height, fkPropsByFkName, ctrl -> _drawLinesCtrl.doDraw());
 
       _desktopPane.getChildren().add(tableWindowCtrl.getWindow());
    }

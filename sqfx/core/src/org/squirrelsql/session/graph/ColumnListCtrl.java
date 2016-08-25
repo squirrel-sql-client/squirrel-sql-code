@@ -3,6 +3,8 @@ package org.squirrelsql.session.graph;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.input.*;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.Session;
@@ -19,17 +21,23 @@ import java.util.List;
 public class ColumnListCtrl
 {
 
+   public static final String DRAGGING_COLUMS = "DRAGGING_COLUMS";
    private final ListView<GraphColumn> _listView;
    private final ColumnPositionHelper _columnPositionHelper;
+   private GraphChannel _graphChannel;
+   private TableInfo _tableInfo;
    private Window _window;
 
-   public ColumnListCtrl(Session session, TableInfo tableInfo, Window window, Runnable scrollListener)
+   public ColumnListCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, Window window, Runnable scrollListener)
    {
+      _graphChannel = graphChannel;
+      _tableInfo = tableInfo;
       _window = window;
-      List<ColumnInfo> columns = session.getSchemaCacheValue().get().getColumns(tableInfo);
 
-      PrimaryKeyInfo pkInfo = new PrimaryKeyInfo(TableDetailsReader.readPrimaryKey(session, tableInfo));
-      ImportedKeysInfo impKeysInfo = new ImportedKeysInfo(TableDetailsReader.readImportedKeys(session, tableInfo));
+      List<ColumnInfo> columns = session.getSchemaCacheValue().get().getColumns(_tableInfo);
+
+      PrimaryKeyInfo pkInfo = new PrimaryKeyInfo(TableDetailsReader.readPrimaryKey(session, _tableInfo));
+      ImportedKeysInfo impKeysInfo = new ImportedKeysInfo(TableDetailsReader.readImportedKeys(session, _tableInfo));
       //ExportedKeysInfo expKeysInfo = new ExportedKeysInfo(TableDetailsReader.readExportedKeys(_session, tableInfo));
 
       _listView = new ListView<>(FXCollections.observableArrayList(CollectionUtil.transform(columns, c -> new GraphColumn(c, pkInfo, impKeysInfo))));
@@ -38,6 +46,69 @@ public class ColumnListCtrl
 
       ListViewScrollEventWA listViewScrollEventWA = new ListViewScrollEventWA(scrollListener);
       _listView.setCellFactory(p -> listViewScrollEventWA.registerCell(_columnPositionHelper.registerCell(new ColumnListCell())));
+
+      _listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+      _listView.setOnDragDetected(e -> onDragDetected(e));
+      _listView.setOnDragOver(e -> onDragOver(e));
+      _listView.setOnDragDropped(e -> onDragDropped(e));
+   }
+
+   private void onDragDropped(DragEvent e)
+   {
+      if( DRAGGING_COLUMS.equals(e.getDragboard().getString()) )
+      {
+         ColumnListCtrl source = _graphChannel.getLastDraggingColumnListCtrl();
+
+         System.out.println("ColumnListCtrl.onDragDropped TableInfo: " + source._tableInfo.getQualifiedName());
+
+         for (GraphColumn graphColumn : source._listView.getSelectionModel().getSelectedItems())
+         {
+            System.out.println("  ColumnListCtrl.onDragDropped Col: " + graphColumn.getDescription());
+
+         }
+
+         if(1 == source._listView.getSelectionModel().getSelectedItems().size())
+         {
+            GraphColumn sourceCol = source._listView.getSelectionModel().getSelectedItems().get(0);
+            GraphColumn dropCol = getDropColumn(e);
+
+            dropCol.addNonDbImportedKey(new NonDbImportedKey(sourceCol, source._tableInfo));
+         }
+      }
+      e.consume();
+
+   }
+
+   private GraphColumn getDropColumn(DragEvent e)
+   {
+      // TODO Implement
+      return _listView.getItems().get(0);
+   }
+
+   private void onDragOver(DragEvent e)
+   {
+      if (DRAGGING_COLUMS.equals(e.getDragboard().getString()))
+      {
+         e.acceptTransferModes(TransferMode.MOVE);
+      }
+      e.consume();
+
+   }
+
+   private void onDragDetected(MouseEvent e)
+   {
+      if (0 < _listView.getSelectionModel().getSelectedItems().size())
+      {
+         Dragboard dragBoard = _listView.startDragAndDrop(TransferMode.MOVE);
+         ClipboardContent content = new ClipboardContent();
+         content.put(DataFormat.PLAIN_TEXT, DRAGGING_COLUMS);
+         dragBoard.setContent(content);
+         _graphChannel.setLastDraggingColumnListCtrl(this);
+      }
+
+      e.consume();
+
    }
 
    public ListView<GraphColumn> getColumnListView()

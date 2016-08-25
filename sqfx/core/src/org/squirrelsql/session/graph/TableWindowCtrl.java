@@ -19,7 +19,7 @@ public class TableWindowCtrl
    private TableInfo _tableInfo;
    private HashMap<String, FkProps> _fkPropsByFkName = new HashMap<>();
 
-   public TableWindowCtrl(Session session, TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, DrawLinesListener drawLinesListener)
+   public TableWindowCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, DrawLinesListener drawLinesListener)
    {
       _session = session;
       _tableInfo = tableInfo;
@@ -27,7 +27,7 @@ public class TableWindowCtrl
 
       _window = new Window(_tableInfo.getName());
 
-      _columnListCtrl = new ColumnListCtrl(_session, _tableInfo, _window, () -> drawLinesListener.drawLines(TableWindowCtrl.this));
+      _columnListCtrl = new ColumnListCtrl(_session, graphChannel, _tableInfo, _window, () -> drawLinesListener.drawLines(TableWindowCtrl.this));
 
       Pane contentPane = new BorderPane(_columnListCtrl.getColumnListView());
 
