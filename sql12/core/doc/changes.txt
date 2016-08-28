@@ -20,6 +20,12 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+Postgres plugin:
+  Trigger details tab was still using the deprecated condition_timing column in the trigger query,
+  causing PSQLException: ERROR: column "condition_timing" does not exist and preventing tab from displaying.
+   Thanks to Joseph Dillman for the fix.
+
+
 #1263 DB copy from MS SQL to HSQLDB with NVARCHAR column leads to no dialect mapping error
    Fixed HSQLDB dialect as suggested in the bug.
 
