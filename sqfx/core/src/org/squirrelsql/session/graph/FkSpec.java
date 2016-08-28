@@ -12,9 +12,16 @@ public class FkSpec
    private final String _fkName;
    private ArrayList<Point2D> _fkPoints;
    private FkProps _fkProps;
+   private boolean _nonDB;
 
    public FkSpec(String fkName, ArrayList<Point2D> fkPoints, TableWindowSide windowSide)
    {
+      this(fkName, fkPoints, windowSide, false);
+   }
+
+   public FkSpec(String fkName, ArrayList<Point2D> fkPoints, TableWindowSide windowSide, boolean nonDB)
+   {
+      _nonDB = nonDB;
       if(0 == fkPoints.size())
       {
          throw new IllegalArgumentException("There must be at least one fkPoint");
@@ -47,6 +54,7 @@ public class FkSpec
 
       _fkGatherPointY = midY;
    }
+
 
    public double getFkGatherPointX()
    {
@@ -106,5 +114,10 @@ public class FkSpec
    public void addFoldingPointAt(Point2D fp, int listIndex)
    {
       _fkProps.addFoldingPointAt(fp, listIndex);
+   }
+
+   public boolean isNonDB()
+   {
+      return _nonDB;
    }
 }

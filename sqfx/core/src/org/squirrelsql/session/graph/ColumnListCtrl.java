@@ -13,10 +13,7 @@ import org.squirrelsql.session.graph.graphdesktop.Window;
 import org.squirrelsql.session.objecttree.TableDetailsReader;
 import org.squirrelsql.workaround.ListViewScrollEventWA;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class ColumnListCtrl
 {
@@ -73,7 +70,9 @@ public class ColumnListCtrl
             GraphColumn sourceCol = source._listView.getSelectionModel().getSelectedItems().get(0);
             GraphColumn dropCol = getDropColumn(e);
 
-            dropCol.addNonDbImportedKey(new NonDbImportedKey(sourceCol, source._tableInfo));
+            String nonDbFkId = UUID.randomUUID().toString();
+            sourceCol.addNonDbImportedKey(new NonDbImportedKey(nonDbFkId, dropCol, this._tableInfo));
+            dropCol.addNonDbFkIdPointingAtMe(nonDbFkId);
          }
       }
       e.consume();
@@ -151,6 +150,41 @@ public class ColumnListCtrl
       }
    }
 
+   public PkSpec getNonDbPkSpec(TableWindowSide windowSide, String fkId)
+   {
+      ArrayList<Point2D> pkPoints = new ArrayList<>();
+
+      for (GraphColumn graphColumn : _listView.getItems())
+      {
+         if(graphColumn.doesNonDbFkIdPointAtMe(fkId))
+         {
+            double pkPointX;
+            if(TableWindowSide.LEFT == windowSide)
+            {
+               pkPointX = _window.getBoundsInParent().getMinX();
+            }
+            else
+            {
+               pkPointX = _window.getBoundsInParent().getMaxX();
+            }
+
+            double pkPointY = _columnPositionHelper.getMiddleYOfColumn(graphColumn);
+            pkPoints.add(new Point2D(pkPointX, pkPointY));
+
+         }
+      }
+
+      if (0 < pkPoints.size())
+      {
+         return new PkSpec(pkPoints, windowSide);
+      }
+      else
+      {
+         return null;
+      }
+   }
+
+
 
    public List<FkSpec> getFkSpecsTo(TableInfo toPkTable, TableWindowSide windowSide)
    {
@@ -184,6 +218,55 @@ public class ColumnListCtrl
          if(0 < fkPoints.size())
          {
             ret.add(new FkSpec(fkName, fkPoints, windowSide));
+         }
+      }
+
+      List<String> nonDbFkIds = getNonDbFkIdsPointingToTable(toPkTable);
+
+      for (String nonDbFkId : nonDbFkIds)
+      {
+         ArrayList<Point2D> fkPoints = new ArrayList<>();
+
+         for (GraphColumn graphColumn : _listView.getItems())
+         {
+            if(graphColumn.importsNonDbFkId(nonDbFkId))
+            {
+               double fkPointX;
+               if(TableWindowSide.LEFT == windowSide)
+               {
+                  fkPointX = _window.getBoundsInParent().getMaxX();
+               }
+               else
+               {
+                  fkPointX = _window.getBoundsInParent().getMinX();
+               }
+
+               double pkPointY = _columnPositionHelper.getMiddleYOfColumn(graphColumn);
+               fkPoints.add(new Point2D(fkPointX, pkPointY));
+            }
+         }
+
+         if(0 < fkPoints.size())
+         {
+            ret.add(new FkSpec(nonDbFkId, fkPoints, windowSide, true));
+         }
+      }
+
+      return ret;
+   }
+
+   private List<String> getNonDbFkIdsPointingToTable(TableInfo toPkTable)
+   {
+      ArrayList<String> ret = new ArrayList<>();
+
+      for (GraphColumn graphColumn : _listView.getItems())
+      {
+         for (NonDbImportedKey nonDbImportedKey : graphColumn.getNonDbImportedKeys())
+         {
+            if(nonDbImportedKey.getTableThisImportedKeyPointsTo().equals(toPkTable))
+            {
+               ret.add(nonDbImportedKey.getNonDbFkId());
+            }
          }
       }
 

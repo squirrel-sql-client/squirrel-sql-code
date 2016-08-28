@@ -3,7 +3,7 @@ package org.squirrelsql.session.graph;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.TableInfo;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class GraphColumn
 {
@@ -11,7 +11,8 @@ public class GraphColumn
    private final PrimaryKeyInfo _primaryKeyInfo;
    private final ImportedKeysInfo _impKeysInfo;
    private String _postFix;
-   private ArrayList<NonDbImportedKey> _nonDbImportedKeys = new ArrayList<>();
+   private HashMap<String, NonDbImportedKey> _nonDbImportedKeyByNonDbFkId = new HashMap<>();
+   private HashSet<String> _nonDbFkIdsPointingAtMe = new HashSet<>();
 
    public GraphColumn(ColumnInfo columnInfo, PrimaryKeyInfo primaryKeyInfo, ImportedKeysInfo impKeysInfo)
    {
@@ -55,6 +56,26 @@ public class GraphColumn
 
    public void addNonDbImportedKey(NonDbImportedKey nonDbImportedKey)
    {
-      _nonDbImportedKeys.add(nonDbImportedKey);
+      _nonDbImportedKeyByNonDbFkId.put(nonDbImportedKey.getNonDbFkId(), nonDbImportedKey);
+   }
+
+   public boolean doesNonDbFkIdPointAtMe(String nonDbFkId)
+   {
+      return _nonDbFkIdsPointingAtMe.contains(nonDbFkId);
+   }
+
+   public void addNonDbFkIdPointingAtMe(String nonDbFkId)
+   {
+      _nonDbFkIdsPointingAtMe.add(nonDbFkId);
+   }
+
+   public ArrayList<NonDbImportedKey> getNonDbImportedKeys()
+   {
+      return new ArrayList<>(_nonDbImportedKeyByNonDbFkId.values());
+   }
+
+   public boolean importsNonDbFkId(String nonDbFkId)
+   {
+      return _nonDbImportedKeyByNonDbFkId.containsKey(nonDbFkId);
    }
 }

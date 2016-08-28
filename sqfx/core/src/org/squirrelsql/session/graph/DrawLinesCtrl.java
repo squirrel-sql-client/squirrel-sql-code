@@ -45,7 +45,6 @@ public class DrawLinesCtrl
 
       gc.clearRect(0, 0, _canvas.getWidth(), _canvas.getHeight());
 
-      gc.setStroke(Color.BLACK);
       gc.setLineWidth(1);
 
       double maxX = 0;
@@ -69,6 +68,15 @@ public class DrawLinesCtrl
                   if(lineSpec.isSelected())
                   {
                      gc.setLineWidth(3d);
+                  }
+
+                  if (lineSpec.isNonDb())
+                  {
+                     gc.setStroke(Color.BLUE);
+                  }
+                  else
+                  {
+                     gc.setStroke(Color.BLACK);
                   }
 
                   for (PkPoint pkPoint : lineSpec.getPkPoints())

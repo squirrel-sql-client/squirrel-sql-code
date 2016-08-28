@@ -93,4 +93,9 @@ public class LineSpec
    {
       _fkSpec.replaceFoldingPoint(oldFP, newFP);
    }
+
+   public boolean isNonDb()
+   {
+      return _fkSpec.isNonDB();
+   }
 }

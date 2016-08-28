@@ -80,15 +80,40 @@ public class TableWindowCtrl
 
       if(0 < fkSpecs.size())
       {
+
+         ///////////////////////////////////////////////////////////
+         // A table has either zero or one primary key.
+         // That's why we consider only a single PkSpec.
          PkSpec pkSpec = pkCtrl._columnListCtrl.getPkSpec(windowSide);
 
          if (null != pkSpec)
          {
             for (FkSpec fkSpec : fkSpecs)
             {
-               ret.add(new LineSpec(pkSpec, fkSpec));
+               if (false == fkSpec.isNonDB())
+               {
+                  ret.add(new LineSpec(pkSpec, fkSpec));
+               }
             }
          }
+         //
+         ////////////////////////////////////////////////////////
+
+         //////////////////////////////////////////////////////////
+         // A table may have several non DB constraints pointing to
+         // several combinations of columns.
+         // That's why we consider several non DB PkSpecs.
+         for (FkSpec fkSpec : fkSpecs)
+         {
+            if (fkSpec.isNonDB())
+            {
+               PkSpec nonDbPkSpec = pkCtrl._columnListCtrl.getNonDbPkSpec(windowSide, fkSpec.getFkName());
+
+               ret.add(new LineSpec(nonDbPkSpec, fkSpec));
+            }
+         }
+         //
+         ////////////////////////////////////////////////////////////
       }
 
       return ret;
