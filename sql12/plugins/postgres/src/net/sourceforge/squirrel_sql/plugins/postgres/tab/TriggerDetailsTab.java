@@ -53,7 +53,7 @@ public class TriggerDetailsTab extends BasePreparedStatementTab
 
 	/** SQL that retrieves the data. */
 	private static String SQL =
-        "select condition_timing AS trigger_time, " +
+        "select action_timing AS trigger_time, " +
         "       v.manip AS triggering_event, " +
         "       action_orientation AS granularity, " +
         "       event_object_table AS table_name " +

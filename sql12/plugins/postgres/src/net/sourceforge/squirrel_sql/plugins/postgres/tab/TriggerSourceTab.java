@@ -35,7 +35,7 @@ public class TriggerSourceTab extends PostgresSourceTab
 {
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
-        "select 'create trigger ' || t.trigger_name || ' ' || condition_timing " +
+        "select 'create trigger ' || t.trigger_name || ' ' || action_timing " +
         "|| ' ' || v.manip || ' on ' || event_object_table " +
         "|| ' for each ' || action_orientation || ' ' || action_statement as trigdef " +
         "FROM information_schema.triggers t, " +
