@@ -24,12 +24,14 @@ public class ColumnListCtrl
    private GraphChannel _graphChannel;
    private TableInfo _tableInfo;
    private Window _window;
+   private Runnable _drawLinesListener;
 
-   public ColumnListCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, Window window, Runnable scrollListener)
+   public ColumnListCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, Window window, Runnable drawLinesListener)
    {
       _graphChannel = graphChannel;
       _tableInfo = tableInfo;
       _window = window;
+      _drawLinesListener = drawLinesListener;
 
       List<ColumnInfo> columns = session.getSchemaCacheValue().get().getColumns(_tableInfo);
 
@@ -41,7 +43,7 @@ public class ColumnListCtrl
 
       _columnPositionHelper = new ColumnPositionHelper(_listView, _window);
 
-      ListViewScrollEventWA listViewScrollEventWA = new ListViewScrollEventWA(scrollListener);
+      ListViewScrollEventWA listViewScrollEventWA = new ListViewScrollEventWA(drawLinesListener);
       _listView.setCellFactory(p -> listViewScrollEventWA.registerCell(_columnPositionHelper.registerCell(new ColumnListCell())));
 
       _listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -57,22 +59,28 @@ public class ColumnListCtrl
       {
          ColumnListCtrl source = _graphChannel.getLastDraggingColumnListCtrl();
 
-         System.out.println("ColumnListCtrl.onDragDropped TableInfo: " + source._tableInfo.getQualifiedName());
-
-         for (GraphColumn graphColumn : source._listView.getSelectionModel().getSelectedItems())
-         {
-            System.out.println("  ColumnListCtrl.onDragDropped Col: " + graphColumn.getDescription());
-
-         }
+//         System.out.println("ColumnListCtrl.onDragDropped TableInfo: " + source._tableInfo.getQualifiedName());
+//
+//         for (GraphColumn graphColumn : source._listView.getSelectionModel().getSelectedItems())
+//         {
+//            System.out.println("  ColumnListCtrl.onDragDropped Col: " + graphColumn.getDescription());
+//
+//         }
 
          if(1 == source._listView.getSelectionModel().getSelectedItems().size())
          {
             GraphColumn sourceCol = source._listView.getSelectionModel().getSelectedItems().get(0);
             GraphColumn dropCol = getDropColumn(e);
 
+            if(null == dropCol)
+            {
+               return;
+            }
+
             String nonDbFkId = UUID.randomUUID().toString();
             sourceCol.addNonDbImportedKey(new NonDbImportedKey(nonDbFkId, dropCol, this._tableInfo));
             dropCol.addNonDbFkIdPointingAtMe(nonDbFkId);
+            _drawLinesListener.run();
          }
       }
       e.consume();
@@ -81,8 +89,7 @@ public class ColumnListCtrl
 
    private GraphColumn getDropColumn(DragEvent e)
    {
-      // TODO Implement
-      return _listView.getItems().get(0);
+      return _columnPositionHelper.getColumnAt(e);
    }
 
    private void onDragOver(DragEvent e)

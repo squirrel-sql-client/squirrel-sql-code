@@ -2,6 +2,7 @@ package org.squirrelsql.session.graph;
 
 import javafx.geometry.Bounds;
 import javafx.scene.control.ListView;
+import javafx.scene.input.DragEvent;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 
 import java.util.WeakHashMap;
@@ -60,5 +61,22 @@ public class ColumnPositionHelper
 
       double ret = midYOfCol + _listView.getBoundsInParent().getMinY() + _window.getBoundsInParent().getMinY() + GraphConstants.TITLEBAR_HEIGHT;
       return ret;
+   }
+
+   public GraphColumn getColumnAt(DragEvent e)
+   {
+      ColumnListCell[] cells  = (ColumnListCell[]) _cells.keySet().toArray(new ColumnListCell[0]);
+
+      for (ColumnListCell cell : cells)
+      {
+         if(    cell.getBoundsInParent().getMinX() < e.getX() && e.getX()  < cell.getBoundsInParent().getMaxX()
+             && cell.getBoundsInParent().getMinY() < e.getY() && e.getY()  < cell.getBoundsInParent().getMaxY()
+           )
+         {
+            return cell.getItem();
+         }
+      }
+
+      return null;
    }
 }
