@@ -3,6 +3,7 @@ package org.squirrelsql.session.graph;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 
 public class ArrowDrawer
@@ -13,7 +14,7 @@ public class ArrowDrawer
       return new Rotate( angleInDeg, px, py);
    }
 
-   public static void drawArrow(GraphicsContext gc, PkPoint pkPoint)
+   public static void drawArrow(GraphicsContext gc, PkPoint pkPoint, Color arrowColor)
    {
       Rotate r = createRotation(pkPoint.getArrowAngle(), 0, 0);
       gc.save();
@@ -21,7 +22,14 @@ public class ArrowDrawer
 
       Point2D p = createRotation( - pkPoint.getArrowAngle(),0,0).transform(pkPoint.getX(), pkPoint.getY());
 
-      gc.drawImage(GraphConstants.ARROW_RIGHT_IMAGE, p.getX() - GraphConstants.IMAGE_WIDTH, p.getY() - GraphConstants.IMAGE_HEIGHT / 2.0);
+      if (Color.BLUE.equals(arrowColor))
+      {
+         gc.drawImage(GraphConstants.ARROW_RIGHT_IMAGE_BLUE, p.getX() - GraphConstants.IMAGE_WIDTH, p.getY() - GraphConstants.IMAGE_HEIGHT / 2.0);
+      }
+      else
+      {
+         gc.drawImage(GraphConstants.ARROW_RIGHT_IMAGE, p.getX() - GraphConstants.IMAGE_WIDTH, p.getY() - GraphConstants.IMAGE_HEIGHT / 2.0);
+      }
 
       //gc.fillOval(pkPoint.getX() - 2, pkPoint.getY() - 2, 4, 4);
 

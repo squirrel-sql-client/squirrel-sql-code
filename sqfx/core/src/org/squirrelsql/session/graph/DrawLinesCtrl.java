@@ -73,15 +73,17 @@ public class DrawLinesCtrl
                   if (lineSpec.isNonDb())
                   {
                      gc.setStroke(Color.BLUE);
+                     gc.setFill(Color.BLUE);
                   }
                   else
                   {
                      gc.setStroke(Color.BLACK);
+                     gc.setFill(Color.BLACK);
                   }
 
                   for (PkPoint pkPoint : lineSpec.getPkPoints())
                   {
-                     ArrowDrawer.drawArrow(gc, pkPoint);
+                     ArrowDrawer.drawArrow(gc, pkPoint, (Color)gc.getFill());
                      gc.strokeLine(pkPoint.getX(), pkPoint.getY(), lineSpec.getPkGatherPointX(), lineSpec.getPkGatherPointY());
                   }
 
