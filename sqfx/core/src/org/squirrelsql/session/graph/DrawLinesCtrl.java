@@ -167,6 +167,10 @@ public class DrawLinesCtrl
          {
             RightMouseMenuHandler rightMouseMenuHandler = new RightMouseMenuHandler(_canvas, false);
             rightMouseMenuHandler.addMenu(new I18n(getClass()).t("folding.point.add"), () -> onAddFoldingPoint(e));
+            if (_currentLineInteractionInfo.getClickedOnLineSpec().isNonDb())
+            {
+               rightMouseMenuHandler.addMenu(new I18n(getClass()).t("configure.nondb.constraint"), () -> onConfigureNonDBConstraint(e));
+            }
             rightMouseMenuHandler.show(e);
 
             _currentLineInteractionInfo.getClickedOnLineSpec().setSelected(true);
@@ -180,6 +184,11 @@ public class DrawLinesCtrl
          doDraw();
 
       }
+   }
+
+   private void onConfigureNonDBConstraint(MouseEvent e)
+   {
+      new ConfigureNonDBConstraintCtrl(_currentLineInteractionInfo);
    }
 
    private void onRemoveFoldingPoint()
