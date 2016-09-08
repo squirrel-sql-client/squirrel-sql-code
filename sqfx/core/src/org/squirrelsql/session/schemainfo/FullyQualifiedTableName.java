@@ -1,6 +1,7 @@
 package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.services.CaseInsensitiveString;
+import org.squirrelsql.services.SQLUtil;
 
 public class FullyQualifiedTableName
 {
@@ -52,5 +53,11 @@ public class FullyQualifiedTableName
    public CaseInsensitiveString getName()
    {
       return _name;
+   }
+
+   @Override
+   public String toString()
+   {
+      return SQLUtil.getQualifiedName(_catalog, _schema, _name);
    }
 }

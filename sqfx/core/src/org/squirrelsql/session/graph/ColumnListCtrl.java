@@ -201,7 +201,7 @@ public class ColumnListCtrl
 
       for (String fkName : fkNames)
       {
-         ArrayList<Point2D> fkPoints = new ArrayList<>();
+         ArrayList<FkPoint> fkPoints = new ArrayList<>();
 
          for (GraphColumn graphColumn : _listView.getItems())
          {
@@ -218,7 +218,7 @@ public class ColumnListCtrl
                }
 
                double pkPointY = _columnPositionHelper.getMiddleYOfColumn(graphColumn);
-               fkPoints.add(new Point2D(fkPointX, pkPointY));
+               fkPoints.add(new FkPoint(graphColumn ,new Point2D(fkPointX, pkPointY)));
             }
          }
 
@@ -232,7 +232,7 @@ public class ColumnListCtrl
 
       for (String nonDbFkId : nonDbFkIds)
       {
-         ArrayList<Point2D> fkPoints = new ArrayList<>();
+         ArrayList<FkPoint> fkPoints = new ArrayList<>();
 
          for (GraphColumn graphColumn : _listView.getItems())
          {
@@ -249,7 +249,7 @@ public class ColumnListCtrl
                }
 
                double pkPointY = _columnPositionHelper.getMiddleYOfColumn(graphColumn);
-               fkPoints.add(new Point2D(fkPointX, pkPointY));
+               fkPoints.add(new FkPoint(graphColumn, new Point2D(fkPointX, pkPointY)));
             }
          }
 
@@ -295,5 +295,10 @@ public class ColumnListCtrl
       }
 
       return Arrays.asList(ret.toArray(new String[0]));
+   }
+
+   public List<GraphColumn> getGraphColumns()
+   {
+      return _listView.getItems();
    }
 }

@@ -96,9 +96,14 @@ public class ColumnInfo
       return _colName + " " + _colTypeName + getSizes() + " " + (_nullable ? "NULL" : "NOT NULL");
    }
 
+   public String getFullTableName()
+   {
+      return new FullyQualifiedTableName(_catalogName, _schemaName, _tableName).toString();
+   }
+
    public String getFullTableColumnName()
    {
-      return new FullyQualifiedTableName(_catalogName, _schemaName, _tableName).toString() + "." + _colName;
+      return getFullTableName() + "." + _colName;
    }
 
    private String getSizes()
@@ -165,4 +170,10 @@ public class ColumnInfo
       }
       return ret;
    }
+
+   public boolean matches(ColumnInfo columnInfo)
+   {
+      return getFullTableColumnName().equals(columnInfo.getFullTableColumnName());
+   }
+
 }

@@ -44,15 +44,16 @@ public class GraphColumn
       return _primaryKeyInfo.belongsToPk(_columnInfo);
    }
 
-   public boolean belongsToFk(String fkName)
+   public boolean belongsToFk(String fkNameOrId)
    {
-      return _impKeysInfo.belongsToFk(fkName, _columnInfo);
+      return _impKeysInfo.belongsToFk(fkNameOrId, _columnInfo);
    }
 
    public String getFkNameTo(TableInfo toPkTable)
    {
       return _impKeysInfo.getFkNameTo(toPkTable, _columnInfo);
    }
+
 
    public void addNonDbImportedKey(NonDbImportedKey nonDbImportedKey)
    {
@@ -77,5 +78,27 @@ public class GraphColumn
    public boolean importsNonDbFkId(String nonDbFkId)
    {
       return _nonDbImportedKeyByNonDbFkId.containsKey(nonDbFkId);
+   }
+
+   public boolean isMyNonDbPkCol(GraphColumn pkCol, String nonDbFkId)
+   {
+      NonDbImportedKey nonDbImportedKey = _nonDbImportedKeyByNonDbFkId.get(nonDbFkId);
+
+      if(null == nonDbImportedKey)
+      {
+         return false;
+      }
+
+      return nonDbImportedKey.getColumnThisImportedKeyPointsTo().matches(pkCol);
+   }
+
+   private boolean matches(GraphColumn other)
+   {
+      return _columnInfo.matches(other._columnInfo);
+   }
+
+   public ColumnInfo getColumnInfo()
+   {
+      return _columnInfo;
    }
 }

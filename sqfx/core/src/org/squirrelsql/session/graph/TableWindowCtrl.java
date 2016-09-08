@@ -9,7 +9,6 @@ import org.squirrelsql.session.graph.graphdesktop.Window;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TableWindowCtrl
 {
@@ -75,7 +74,7 @@ public class TableWindowCtrl
 
       for (FkSpec fkSpec : fkSpecs)
       {
-         fkSpec.setFkProps(getPersistenFkProps(fkSpec.getFkName()));
+         fkSpec.setFkProps(getPersistenFkProps(fkSpec.getFkNameOrId()));
       }
 
       if(0 < fkSpecs.size())
@@ -107,7 +106,7 @@ public class TableWindowCtrl
          {
             if (fkSpec.isNonDB())
             {
-               PkSpec nonDbPkSpec = pkCtrl._columnListCtrl.getNonDbPkSpec(windowSide, fkSpec.getFkName());
+               PkSpec nonDbPkSpec = pkCtrl._columnListCtrl.getNonDbPkSpec(windowSide, fkSpec.getFkNameOrId());
 
                ret.add(new LineSpec(nonDbPkSpec, fkSpec));
             }
@@ -144,5 +143,10 @@ public class TableWindowCtrl
    public HashMap<String, FkProps> getFkPropsByFkName()
    {
       return _fkPropsByFkName;
+   }
+
+   public List<GraphColumn> getGraphColumns()
+   {
+      return _columnListCtrl.getGraphColumns();
    }
 }

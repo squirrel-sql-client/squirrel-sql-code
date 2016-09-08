@@ -100,9 +100,9 @@ public class DrawLinesCtrl
 
                   gc.strokeLine(begin.getX(), begin.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
 
-                  for (Point2D fkPoint : lineSpec.getFkPoints())
+                  for (FkPoint fkPoint : lineSpec.getFkPoints())
                   {
-                     gc.strokeLine(fkPoint.getX(), fkPoint.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
+                     gc.strokeLine(fkPoint.getPoint().getX(), fkPoint.getPoint().getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
                   }
                }
                finally
@@ -188,7 +188,7 @@ public class DrawLinesCtrl
 
    private void onConfigureNonDBConstraint(MouseEvent e)
    {
-      new ConfigureNonDBConstraintCtrl(_currentLineInteractionInfo);
+      new ConfigureNonDBConstraintCtrl(_currentLineInteractionInfo, new GraphColumnFinder(_desktopPane));
    }
 
    private void onRemoveFoldingPoint()

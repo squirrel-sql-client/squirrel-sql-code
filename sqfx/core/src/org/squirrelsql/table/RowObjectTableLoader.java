@@ -42,6 +42,11 @@ public class RowObjectTableLoader<T>
       }
    }
 
+   public void addRowObject(T rowObject)
+   {
+      addRowObject(rowObject, new AnnotationTableLoaderRowObjectAccess<T>());
+   }
+
    public void addRowObjects(ObservableList<T> rowObjects)
    {
       addRowObjects(rowObjects, new AnnotationTableLoaderRowObjectAccess<T>());

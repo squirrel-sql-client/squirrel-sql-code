@@ -41,7 +41,7 @@ public class LineSpec
       return _fkSpec.getFkGatherPointY();
    }
 
-   public List<Point2D> getFkPoints()
+   public List<FkPoint> getFkPoints()
    {
       return _fkSpec.getFkPoints();
    }
@@ -97,5 +97,15 @@ public class LineSpec
    public boolean isNonDb()
    {
       return _fkSpec.isNonDB();
+   }
+
+   public PkSpec getPkSpec()
+   {
+      return _pkSpec;
+   }
+
+   public FkSpec getFkSpec()
+   {
+      return _fkSpec;
    }
 }

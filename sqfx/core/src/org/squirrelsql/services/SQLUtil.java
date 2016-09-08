@@ -280,6 +280,16 @@ public class SQLUtil
       return getQualifiedName(catalogName, schemaName, null);
    }
 
+   public static String getQualifiedName(CaseInsensitiveString catalogName, CaseInsensitiveString schemaName, CaseInsensitiveString objectName)
+   {
+      String cat = null == catalogName ? null:catalogName.toString();
+      String schem = null == schemaName ? null:schemaName.toString();
+      String obj = null == objectName ? null:objectName.toString();
+
+      return getQualifiedName(cat, schem, obj);
+   }
+
+
    public static String getQualifiedName(String catalogName, String schemaName, String objectName)
    {
       StringBuilder result = new StringBuilder();

@@ -1,23 +1,25 @@
 package org.squirrelsql.session.graph;
 
+import javafx.geometry.Point2D;
+
 public class FkPoint
 {
-   private final double _x;
-   private final double _y;
+   private final GraphColumn _graphColumn;
+   private final Point2D _point;
 
-   public FkPoint(double x, double y)
+   public FkPoint(GraphColumn graphColumn, Point2D point)
    {
-      _x = x;
-      _y = y;
+      _graphColumn = graphColumn;
+      _point = point;
    }
 
-   public double getX()
+   public GraphColumn getGraphColumn()
    {
-      return _x;
+      return _graphColumn;
    }
 
-   public double getY()
+   public Point2D getPoint()
    {
-      return _y;
+      return _point;
    }
 }

@@ -9,17 +9,17 @@ public class FkSpec
 {
    private final double _fkGatherPointX;
    private final double _fkGatherPointY;
-   private final String _fkName;
-   private ArrayList<Point2D> _fkPoints;
+   private final String _fkNameOrId;
+   private ArrayList<FkPoint> _fkPoints;
    private FkProps _fkProps;
    private boolean _nonDB;
 
-   public FkSpec(String fkName, ArrayList<Point2D> fkPoints, TableWindowSide windowSide)
+   public FkSpec(String fkNameOrId, ArrayList<FkPoint> fkPoints, TableWindowSide windowSide)
    {
-      this(fkName, fkPoints, windowSide, false);
+      this(fkNameOrId, fkPoints, windowSide, false);
    }
 
-   public FkSpec(String fkName, ArrayList<Point2D> fkPoints, TableWindowSide windowSide, boolean nonDB)
+   public FkSpec(String fkNameOrId, ArrayList<FkPoint> fkPoints, TableWindowSide windowSide, boolean nonDB)
    {
       _nonDB = nonDB;
       if(0 == fkPoints.size())
@@ -27,17 +27,17 @@ public class FkSpec
          throw new IllegalArgumentException("There must be at least one fkPoint");
       }
 
-      _fkName = fkName;
+      _fkNameOrId = fkNameOrId;
       _fkPoints = fkPoints;
 
 
       double maxY = Double.MIN_VALUE;
       double minY = Double.MAX_VALUE;
 
-      for (Point2D pkPoint : fkPoints)
+      for (FkPoint fkPoint : fkPoints)
       {
-         minY = Math.min(minY, pkPoint.getY());
-         maxY = Math.max(maxY, pkPoint.getY());
+         minY = Math.min(minY, fkPoint.getPoint().getY());
+         maxY = Math.max(maxY, fkPoint.getPoint().getY());
       }
 
       double midY = (maxY - minY) / 2d + minY;
@@ -45,11 +45,11 @@ public class FkSpec
 
       if(TableWindowSide.LEFT == windowSide)
       {
-         _fkGatherPointX = fkPoints.get(0).getX() + GraphConstants.X_GATHER_DIST;
+         _fkGatherPointX = fkPoints.get(0).getPoint().getX() + GraphConstants.X_GATHER_DIST;
       }
       else
       {
-         _fkGatherPointX = fkPoints.get(0).getX() - GraphConstants.X_GATHER_DIST;
+         _fkGatherPointX = fkPoints.get(0).getPoint().getX() - GraphConstants.X_GATHER_DIST;
       }
 
       _fkGatherPointY = midY;
@@ -66,7 +66,7 @@ public class FkSpec
       return _fkGatherPointY;
    }
 
-   public List<Point2D> getFkPoints()
+   public List<FkPoint> getFkPoints()
    {
       return _fkPoints;
    }
@@ -81,9 +81,9 @@ public class FkSpec
       _fkProps.setSelected(selected);
    }
 
-   public String getFkName()
+   public String getFkNameOrId()
    {
-      return _fkName;
+      return _fkNameOrId;
    }
 
    public void setFkProps(FkProps fkProps)
