@@ -101,4 +101,10 @@ public class GraphColumn
    {
       return _columnInfo;
    }
+
+   @Override
+   public String toString()
+   {
+      return _columnInfo.getDescription();
+   }
 }

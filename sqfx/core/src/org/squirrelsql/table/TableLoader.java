@@ -68,6 +68,17 @@ public class TableLoader
    void addSimpleObjectPropertyRow(List<SimpleObjectProperty> buf)
    {
       _simpleObjectPropertyRows.add(buf);
+
+      if(null != _tableView)
+      {
+
+         TableState ts = new TableState(this);
+         ObservableList selectedIndices = _tableView.getSelectionModel().getSelectedIndices();
+         ObservableList<List<SimpleObjectProperty>> items = FXCollections.observableList(_simpleObjectPropertyRows);
+         _tableView.setItems(items);
+         ts.apply(this);
+
+      }
    }
 
    public void load(TableView tv)
@@ -265,6 +276,14 @@ public class TableLoader
    public TableView getTableView()
    {
       return _tableView;
+   }
+
+
+   public void removeRow(List<SimpleObjectProperty> deleteRow)
+   {
+      ArrayList<List> buf = new ArrayList<>();
+      buf.add(deleteRow);
+      removeRows(buf);
    }
 
    public void removeRows(ArrayList<List> deletedRows)

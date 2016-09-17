@@ -7,51 +7,153 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.table.RowObjectTableLoader;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ConfigureNonDBConstraintCtrl
 {
 
    private final I18n _i18n = new I18n(getClass());
+
+   private final ConfigureNonDBConstraintView _view;
+   private final RowObjectTableLoader<ColumnPairRow> _tableLoader;
+   private boolean _ok;
+   private final Stage _dlg;
 
    public ConfigureNonDBConstraintCtrl(LineInteractionInfo currentLineInteractionInfo, GraphColumnFinder graphColumnFinder)
    {
       FxmlHelper<ConfigureNonDBConstraintView> fxmlHelper = new FxmlHelper<>(ConfigureNonDBConstraintView.class);
 
 
-      RowObjectTableLoader<ColumnPairRow> tableLoader = new RowObjectTableLoader<>();
+      _tableLoader = new RowObjectTableLoader<>();
 
-      tableLoader.initColsByAnnotations(ColumnPairRow.class);
+      _tableLoader.initColsByAnnotations(ColumnPairRow.class);
 
       LineSpec lineSpec = currentLineInteractionInfo.getClickedOnLineSpec();
 
       String fkId = lineSpec.getFkSpec().getFkNameOrId();
 
 
-      ConfigureNonDBConstraintView view = fxmlHelper.getView();
+      _view = fxmlHelper.getView();
 
-      view.txtFkTableName.setEditable(false);
-      view.txtPkTableName.setEditable(false);
+      _view.txtFkTableName.setEditable(false);
+      _view.txtPkTableName.setEditable(false);
+
+
+      ArrayList<GraphColumn> fkColsInColPairTable = new ArrayList<>();
+      ArrayList<GraphColumn> pkColsInColPairTable = new ArrayList<>();
 
       for (FkPoint fkPoint : lineSpec.getFkSpec().getFkPoints())
       {
          GraphColumn fkCol = fkPoint.getGraphColumn();
          GraphColumn pkCol = graphColumnFinder.findNonDbPkCol(fkCol, fkId);
-         tableLoader.addRowObject(new ColumnPairRow(fkCol, pkCol));
+         _tableLoader.addRowObject(new ColumnPairRow(fkCol, pkCol));
 
-         view.txtFkTableName.setText(fkCol.getColumnInfo().getFullTableName());
-         view.txtPkTableName.setText(pkCol.getColumnInfo().getFullTableName());
+         fkColsInColPairTable.add(fkCol);
+         pkColsInColPairTable.add(pkCol);
+
+         _view.txtFkTableName.setText(fkCol.getColumnInfo().getFullTableName());
+         _view.txtPkTableName.setText(pkCol.getColumnInfo().getFullTableName());
       }
 
-      tableLoader.load(view.tblColumnPairs);
+      _tableLoader.load(_view.tblColumnPairs);
 
 
-      view.lblFkColumns.setText(_i18n.t("nondb.cols.label.fk", view.txtFkTableName.getText()));
-      view.lblPkColumns.setText(_i18n.t("nondb.cols.label.pk", view.txtPkTableName.getText()));
+      _view.lblFkColumns.setText(_i18n.t("nondb.cols.label.fk", _view.txtFkTableName.getText()));
+      _view.lblPkColumns.setText(_i18n.t("nondb.cols.label.pk", _view.txtPkTableName.getText()));
 
-      Stage dlg = GuiUtils.createModalDialog(fxmlHelper.getRegion(), new Pref(getClass()), 650, 570, "ConfigureNonDBConstraint");
 
-      dlg.setTitle(_i18n.t("configure.nondb.constraint"));
+      List<GraphColumn> fkTableCols = graphColumnFinder.getAllColumnsForTable(_view.txtFkTableName.getText());
+      fkTableCols.removeAll(fkColsInColPairTable);
+      fkTableCols.sort((c1,c2) -> compareCols(c1, c2));
+      _view.cboFkColumn.getItems().addAll(fkTableCols);
+      _view.cboFkColumn.getSelectionModel().select(0);
 
-      dlg.showAndWait();
+      List<GraphColumn> pkTableCols = graphColumnFinder.getAllColumnsForTable(_view.txtPkTableName.getText());
+      pkTableCols.removeAll(pkColsInColPairTable);
+      pkTableCols.sort((c1,c2) -> compareCols(c1, c2));
+      _view.cboPkColumn.getItems().addAll(pkTableCols);
+      _view.cboPkColumn.getSelectionModel().select(0);
 
+      _view.btnAdd.setOnAction(e -> onAdd());
+      _view.btnRemoveSelectedEntry.setOnAction(e -> onRemoveSelected());
+
+
+      _view.btnOk.setOnAction(e -> close(true));
+      _view.btnCancel.setOnAction(e -> close(false));
+
+
+      _dlg = GuiUtils.createModalDialog(fxmlHelper.getRegion(), new Pref(getClass()), 650, 570, "ConfigureNonDBConstraint");
+
+      _dlg.setTitle(_i18n.t("configure.nondb.constraint"));
+
+      _dlg.showAndWait();
+
+   }
+
+   private void close(boolean ok)
+   {
+      _ok = ok;
+      _dlg.close();
+   }
+
+   private void onRemoveSelected()
+   {
+      //ColumnPairRow selectedItem = (ColumnPairRow) _view.tblColumnPairs.getSelectionModel().getSelectedItem();
+      ColumnPairRow selectedItem = _tableLoader.getSelectedRow();
+
+      if(null == selectedItem)
+      {
+         return;
+      }
+
+      _tableLoader.removeRow(selectedItem);
+
+      _view.cboFkColumn.getItems().add(selectedItem.getFkGraphColumn());
+      _view.cboFkColumn.getItems().sort((c1,c2) -> compareCols(c1, c2));
+      _view.cboFkColumn.getSelectionModel().select(0);
+
+
+      _view.cboPkColumn.getItems().add(selectedItem.getPkGraphColumn());
+      _view.cboPkColumn.getItems().sort((c1,c2) -> compareCols(c1, c2));
+      _view.cboPkColumn.getSelectionModel().select(0);
+   }
+
+   private void onAdd()
+   {
+      GraphColumn selFkCol = _view.cboFkColumn.getSelectionModel().getSelectedItem();
+      GraphColumn selPkCol = _view.cboPkColumn.getSelectionModel().getSelectedItem();
+
+
+      if(null == selFkCol || null == selPkCol)
+      {
+         return;
+      }
+
+
+      _tableLoader.addRowObject(new ColumnPairRow(selFkCol, selPkCol));
+
+      _view.cboFkColumn.getItems().remove(selFkCol);
+      if (0 <_view.cboFkColumn.getItems().size())
+      {
+         _view.cboFkColumn.getSelectionModel().select(0);
+      }
+
+      _view.cboPkColumn.getItems().remove(selPkCol);
+      if (0 <_view.cboPkColumn.getItems().size())
+      {
+         _view.cboPkColumn.getSelectionModel().select(0);
+      }
+
+   }
+
+   private int compareCols(GraphColumn c1, GraphColumn c2)
+   {
+      return c1.getColumnInfo().getColName().toUpperCase().compareTo(c2.getColumnInfo().getColName().toUpperCase());
+   }
+
+   public boolean isOk()
+   {
+      return _ok;
    }
 }

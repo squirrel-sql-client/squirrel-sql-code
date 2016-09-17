@@ -2,6 +2,7 @@ package org.squirrelsql.table;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
+import org.squirrelsql.session.graph.ColumnPairRow;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
 
 import java.util.ArrayList;
@@ -133,5 +134,37 @@ public class RowObjectTableLoader<T>
       }
 
       return ret;
+   }
+
+   public void removeRow(T toRemove)
+   {
+      for (RowObjectHandle<T> h : _rowObjectHandles)
+      {
+         if(toRemove.equals(h.getRowObject()))
+         {
+            _tableLoader.removeRow(h.getSimpleObjectProperties());
+            return;
+         }
+      }
+   }
+
+   public T getSelectedRow()
+   {
+      Object selectedItem = _tableLoader.getTableView().getSelectionModel().getSelectedItem();
+
+      if(null == selectedItem)
+      {
+         return null;
+      }
+
+      for (RowObjectHandle<T> rowObjectHandle : _rowObjectHandles)
+      {
+         if(rowObjectHandle.getSimpleObjectProperties().equals(selectedItem))
+         {
+            return rowObjectHandle.getRowObject();
+         }
+      }
+
+      throw new IllegalStateException("Couldn't find row object table row " + selectedItem);
    }
 }

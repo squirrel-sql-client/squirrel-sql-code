@@ -11,8 +11,8 @@ public class ConfigureNonDBConstraintView
    @FXML Button btnRemoveSelectedEntry;
    @FXML Label lblFkColumns;
    @FXML Label lblPkColumns;
-   @FXML ComboBox cboFkColumn;
-   @FXML ComboBox cboPkColumn;
+   @FXML ComboBox<GraphColumn> cboFkColumn;
+   @FXML ComboBox<GraphColumn> cboPkColumn;
    @FXML Button btnAdd;
    @FXML Button btnOk;
    @FXML Button btnCancel;

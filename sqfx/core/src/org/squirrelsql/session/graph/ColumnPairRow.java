@@ -25,4 +25,14 @@ public class ColumnPairRow
    {
       return _pkCol.getColumnInfo().getColName();
    }
+
+   public GraphColumn getFkGraphColumn()
+   {
+      return _fkCol;
+   }
+
+   public GraphColumn getPkGraphColumn()
+   {
+      return _pkCol;
+   }
 }

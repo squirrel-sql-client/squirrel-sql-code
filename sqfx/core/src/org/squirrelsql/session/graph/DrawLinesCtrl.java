@@ -169,7 +169,7 @@ public class DrawLinesCtrl
             rightMouseMenuHandler.addMenu(new I18n(getClass()).t("folding.point.add"), () -> onAddFoldingPoint(e));
             if (_currentLineInteractionInfo.getClickedOnLineSpec().isNonDb())
             {
-               rightMouseMenuHandler.addMenu(new I18n(getClass()).t("configure.nondb.constraint"), () -> onConfigureNonDBConstraint(e));
+               rightMouseMenuHandler.addMenu(new I18n(getClass()).t("configure.nondb.constraint"), () -> onConfigureNonDBConstraint());
             }
             rightMouseMenuHandler.show(e);
 
@@ -186,9 +186,11 @@ public class DrawLinesCtrl
       }
    }
 
-   private void onConfigureNonDBConstraint(MouseEvent e)
+   private void onConfigureNonDBConstraint()
    {
-      new ConfigureNonDBConstraintCtrl(_currentLineInteractionInfo, new GraphColumnFinder(_desktopPane));
+      ConfigureNonDBConstraintCtrl dlg = new ConfigureNonDBConstraintCtrl(_currentLineInteractionInfo, new GraphColumnFinder(_desktopPane));
+
+      System.out.println("DrawLinesCtrl.onConfigureNonDBConstraint " + dlg.isOk());
    }
 
    private void onRemoveFoldingPoint()
