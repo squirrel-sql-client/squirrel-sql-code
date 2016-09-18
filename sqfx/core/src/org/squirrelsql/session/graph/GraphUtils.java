@@ -1,6 +1,7 @@
 package org.squirrelsql.session.graph;
 
 import javafx.scene.shape.Polygon;
+import org.squirrelsql.session.TableInfo;
 
 public class GraphUtils
 {
@@ -42,5 +43,11 @@ public class GraphUtils
       //System.out.println("("+ x1 + ", " + y1 + ") - (" + x2 + ", " + y2 +")");
 
       return ret;
+   }
+
+   static void connectColumns(String nonDbFkId, GraphColumn fkCol, TableInfo pkTableInfo, GraphColumn pkCol)
+   {
+      fkCol.addNonDbImportedKey(new NonDbImportedKey(nonDbFkId, pkCol, pkTableInfo));
+      pkCol.addNonDbFkIdPointingAtMe(nonDbFkId);
    }
 }

@@ -188,9 +188,8 @@ public class DrawLinesCtrl
 
    private void onConfigureNonDBConstraint()
    {
-      ConfigureNonDBConstraintCtrl dlg = new ConfigureNonDBConstraintCtrl(_currentLineInteractionInfo, new GraphColumnFinder(_desktopPane));
-
-      System.out.println("DrawLinesCtrl.onConfigureNonDBConstraint " + dlg.isOk());
+      new ConfigureNonDBConstraintCtrl(_currentLineInteractionInfo, new GraphColumnFinder(_desktopPane));
+      doDraw();
    }
 
    private void onRemoveFoldingPoint()

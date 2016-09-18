@@ -107,4 +107,10 @@ public class GraphColumn
    {
       return _columnInfo.getDescription();
    }
+
+   public void removeNonDbFkId(String nonDbFkId)
+   {
+      _nonDbImportedKeyByNonDbFkId.remove(nonDbFkId);
+      _nonDbFkIdsPointingAtMe.remove(nonDbFkId);
+   }
 }

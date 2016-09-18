@@ -78,8 +78,7 @@ public class ColumnListCtrl
             }
 
             String nonDbFkId = UUID.randomUUID().toString();
-            sourceCol.addNonDbImportedKey(new NonDbImportedKey(nonDbFkId, dropCol, this._tableInfo));
-            dropCol.addNonDbFkIdPointingAtMe(nonDbFkId);
+            GraphUtils.connectColumns(nonDbFkId, sourceCol, this._tableInfo, dropCol);
             _drawLinesListener.run();
          }
       }

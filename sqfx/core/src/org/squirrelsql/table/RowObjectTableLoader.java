@@ -143,6 +143,7 @@ public class RowObjectTableLoader<T>
          if(toRemove.equals(h.getRowObject()))
          {
             _tableLoader.removeRow(h.getSimpleObjectProperties());
+            _rowObjectHandles.remove(h);
             return;
          }
       }
