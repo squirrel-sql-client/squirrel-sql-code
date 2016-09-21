@@ -227,7 +227,7 @@ public class ColumnListCtrl
          }
       }
 
-      List<String> nonDbFkIds = getNonDbFkIdsPointingToTable(toPkTable);
+      HashSet<String> nonDbFkIds = getNonDbFkIdsPointingToTable(toPkTable);
 
       for (String nonDbFkId : nonDbFkIds)
       {
@@ -261,9 +261,9 @@ public class ColumnListCtrl
       return ret;
    }
 
-   private List<String> getNonDbFkIdsPointingToTable(TableInfo toPkTable)
+   private HashSet<String> getNonDbFkIdsPointingToTable(TableInfo toPkTable)
    {
-      ArrayList<String> ret = new ArrayList<>();
+      HashSet<String> ret = new HashSet<>();
 
       for (GraphColumn graphColumn : _listView.getItems())
       {
