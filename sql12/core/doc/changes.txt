@@ -23,6 +23,8 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+#1267 NullPointerException on Create Data Script
+
 Postgres plugin:
   Trigger details tab was still using the deprecated condition_timing column in the trigger query,
   causing PSQLException: ERROR: column "condition_timing" does not exist and preventing tab from displaying.

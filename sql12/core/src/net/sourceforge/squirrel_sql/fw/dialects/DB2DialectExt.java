@@ -1265,7 +1265,17 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	@Override
 	public String getBinaryLiteralString(byte[] binaryData)
 	{
-		return "BLOB(x'" + DialectUtils.toHexString(binaryData) + "')";
+		if (null == binaryData)
+		{
+			// According to
+			// #1267 NullPointerException on Create Data Script
+			// It happens that this is null
+			return "null";
+		}
+		else
+		{
+			return "BLOB(x'" + DialectUtils.toHexString(binaryData) + "')";
+		}
 	}
 
 
