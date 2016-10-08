@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Added default driver definition for Salesforces DB
+
 #545 Copy table excerpts as ascii art for convenient inclusion in text-only docs
    See new entry in table's right mouse menu: Copy aligned (as in 'Results as text' tab)
 
