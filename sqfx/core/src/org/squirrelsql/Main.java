@@ -29,70 +29,85 @@ public class Main extends Application
 
       try
       {
-         SquirrelSplashScreen squirrelSplashScreen = new SquirrelSplashScreen(5);
-
+         SquirrelSplashScreen squirrelSplashScreen = new SquirrelSplashScreen(4);
          squirrelSplashScreen.indicateNewTask("Initializing exception handling ...");
          ExceptionHandler.initHandling();
 
+         Thread thread = new Thread(() -> startMainStageInBackground(primaryStage, squirrelSplashScreen));
 
-         AppState.init(primaryStage, getParameters());
+         thread.setUncaughtExceptionHandler((t,e) -> quitOnException(e));
 
-         primaryStage.setTitle(i18n.t("mainWin.title"));
+         thread.start();
 
-         DockPaneChanel dockPaneChanel = new DockPaneChanel();
-
-         _splitController = new SplitController(dockPaneChanel);
-
-
-         squirrelSplashScreen.indicateNewTask("Creating application window ...");
-         BorderPane borderPane = new BorderPane();
-         primaryStage.setScene(new Scene(borderPane));
-
-         borderPane.setCenter(_splitController.getNode());
-
-
-         squirrelSplashScreen.indicateNewTask("Loading drivers and aliases ...");
-         DockButtonsCtrl dockButtonsCtrl = new DockButtonsCtrl(dockPaneChanel);
-         Node dockButtons = dockButtonsCtrl.getNode();
-
-
-         borderPane.setLeft(dockButtons);
-
-         borderPane.setBottom(AppState.get().getStatusBarCtrl().getNode());
-
-         borderPane.setTop(createMenuBar(primaryStage));
-
-         squirrelSplashScreen.indicateNewTask("Configuring application window ...");
-
-
-         final StageDimensionSaver dimensionSaver = new StageDimensionSaver("main", primaryStage, pref, 1000d, 800d, null);
-
-         adjustMessageSplit();
-
-
-         primaryStage.setOnCloseRequest(windowEvent -> onClose(dimensionSaver));
-
-
-         primaryStage.getIcons().add(new Props(getClass()).getImage("acorn.png"));
-
-
-         squirrelSplashScreen.indicateNewTask("Opening application window ...");
-
-         primaryStage.show();
-
-         Platform.runLater(() -> AppState.get().doAfterBootstrap());
-         Platform.runLater(() -> primaryStage.toFront());
-         squirrelSplashScreen.close();
       }
       catch (Throwable e)
       {
          // We have seen exceptions here that where not delegated to the uncaught exception handler.
          // That's why this code is here.
-         ExceptionHandler.handle(e);
-
-         Platform.exit();
+         quitOnException(e);
       }
 
+   }
+
+   private void quitOnException(Throwable e)
+   {
+      ExceptionHandler.handle(e);
+      Platform.exit();
+   }
+
+   private void startMainStageInBackground(Stage primaryStage, SquirrelSplashScreen squirrelSplashScreen)
+   {
+      AppState.init(primaryStage, getParameters());
+
+      primaryStage.setTitle(i18n.t("mainWin.title"));
+
+      DockPaneChanel dockPaneChanel = new DockPaneChanel();
+
+      _splitController = new SplitController(dockPaneChanel);
+
+
+      squirrelSplashScreen.indicateNewTask("Creating application window ...");
+      BorderPane mainPane = new BorderPane();
+
+      mainPane.setCenter(_splitController.getNode());
+
+
+      squirrelSplashScreen.indicateNewTask("Loading drivers and aliases ...");
+      DockButtonsCtrl dockButtonsCtrl = new DockButtonsCtrl(dockPaneChanel);
+      Node dockButtons = dockButtonsCtrl.getNode();
+
+
+      mainPane.setLeft(dockButtons);
+
+      mainPane.setBottom(AppState.get().getStatusBarCtrl().getNode());
+
+      mainPane.setTop(createMenuBar(primaryStage));
+
+
+      final StageDimensionSaver dimensionSaver = new StageDimensionSaver("main", primaryStage, pref, 1000d, 800d, null);
+
+      adjustMessageSplit();
+
+
+      primaryStage.setOnCloseRequest(windowEvent -> onClose(dimensionSaver));
+
+
+      primaryStage.getIcons().add(new Props(getClass()).getImage("acorn.png"));
+
+
+      squirrelSplashScreen.indicateNewTask("Opening application window ...");
+
+      Platform.runLater(() -> diplayMainStage(primaryStage, mainPane,squirrelSplashScreen));
+   }
+
+   private void diplayMainStage(Stage primaryStage, BorderPane mainPane, SquirrelSplashScreen squirrelSplashScreen)
+   {
+      primaryStage.setScene(new Scene(mainPane));
+      primaryStage.show();
+
+      Platform.runLater(() -> AppState.get().doAfterBootstrap());
+      Platform.runLater(() -> primaryStage.toFront());
+      squirrelSplashScreen.close();
    }
 
    private MenuBar createMenuBar(Stage primaryStage)

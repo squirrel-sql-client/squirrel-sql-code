@@ -23,7 +23,7 @@ public class AppState
    private List<SaveSettingsListener> _saveSettingsListeners = new ArrayList<>();
    private SessionManager _sessionManager = new SessionManager();
    private ActionManager _actionManager = new ActionManager(_sessionManager);
-   private SqlHistoryManager _sqlHistoryManager = new SqlHistoryManager();
+   private SqlHistoryManager _sqlHistoryManager;
 
    private RunningServicesManager _runningServicesManager = new RunningServicesManager();
 
@@ -158,6 +158,11 @@ public class AppState
 
    public SqlHistoryManager getSqlHistoryManager()
    {
+      if (null == _sqlHistoryManager)
+      {
+         // Lazy because it breaks when done during bootstrap
+         _sqlHistoryManager = new SqlHistoryManager();
+      }
       return _sqlHistoryManager;
    }
 

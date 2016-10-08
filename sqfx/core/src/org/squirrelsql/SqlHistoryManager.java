@@ -15,7 +15,7 @@ public class SqlHistoryManager
 
    public SqlHistoryManager()
    {
-      Platform.runLater(this::init);
+      init();
    }
 
    private void init()
