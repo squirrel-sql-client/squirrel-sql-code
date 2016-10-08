@@ -1,6 +1,8 @@
 package org.squirrelsql.session.graph;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class GraphTablePersistence
 {
@@ -15,7 +17,8 @@ public class GraphTablePersistence
    private double _width;
    private double _height;
 
-   private HashMap<String, FkPropsPersistence> _persistentFkPropsPersistenceByFkName;
+   private HashMap<String, FkPropsPersistence> _persistentFkPropsPersistenceByFkName = new HashMap<>();
+   private List<NonDbColumnImportPersistence> _nonDbColumnImportPersistences = new ArrayList<>();
 
    /**
     * For serialization only
@@ -37,6 +40,8 @@ public class GraphTablePersistence
       _height = ctrl.getWindow().getHeight();
 
       _persistentFkPropsPersistenceByFkName = FkPropsPersistence.toFkPropsPersitences(ctrl.getFkPropsByFkName());
+
+      _nonDbColumnImportPersistences = ctrl.getNonDbColumnImportPersistences();
 
    }
 
@@ -131,4 +136,16 @@ public class GraphTablePersistence
    {
       _persistentFkPropsPersistenceByFkName = persistentFkPropsPersistenceByFkName;
    }
+
+   public List<NonDbColumnImportPersistence> getNonDbColumnImportPersistences()
+   {
+      return _nonDbColumnImportPersistences;
+   }
+
+   public void setNonDbColumnImportPersistences(List<NonDbColumnImportPersistence> nonDbColumnImportPersistences)
+   {
+      _nonDbColumnImportPersistences = nonDbColumnImportPersistences;
+   }
+
+
 }

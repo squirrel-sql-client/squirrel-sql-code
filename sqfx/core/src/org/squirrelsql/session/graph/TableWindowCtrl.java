@@ -15,18 +15,20 @@ public class TableWindowCtrl
    private Session _session;
    private final Window _window;
    private ColumnListCtrl _columnListCtrl;
+   private GraphChannel _graphChannel;
    private TableInfo _tableInfo;
    private HashMap<String, FkProps> _fkPropsByFkName = new HashMap<>();
 
-   public TableWindowCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, DrawLinesListener drawLinesListener)
+   public TableWindowCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, List<NonDbColumnImportPersistence> nonDbColumnImportPersistences, DrawLinesListener drawLinesListener)
    {
       _session = session;
+      _graphChannel = graphChannel;
       _tableInfo = tableInfo;
       _fkPropsByFkName = fkPropsByFkName;
 
       _window = new Window(_tableInfo.getName());
 
-      _columnListCtrl = new ColumnListCtrl(_session, graphChannel, _tableInfo, _window, () -> drawLinesListener.drawLines(TableWindowCtrl.this));
+      _columnListCtrl = new ColumnListCtrl(_session, _graphChannel, _tableInfo, _window, nonDbColumnImportPersistences, () -> drawLinesListener.drawLines(TableWindowCtrl.this));
 
       Pane contentPane = new BorderPane(_columnListCtrl.getColumnListView());
 
@@ -41,7 +43,39 @@ public class TableWindowCtrl
 
       _window.boundsInParentProperty().addListener((observable, oldValue, newValue) -> drawLinesListener.drawLines(TableWindowCtrl.this));
 
-      _window.setOnClosedAction(e -> drawLinesListener.drawLines(TableWindowCtrl.this));
+      _window.setOnClosedAction(e -> onRemovedFromGraph(drawLinesListener));
+   }
+
+   private void onRemovedFromGraph(DrawLinesListener drawLinesListener)
+   {
+      drawLinesListener.drawLines(TableWindowCtrl.this);
+
+      for (TableWindowCtrl tableWindowCtrl : _graphChannel.getGraphFinder().getAllTableCtrls())
+      {
+         if(tableWindowCtrl == this)
+         {
+            return;
+         }
+
+         tableWindowCtrl.removeNonDBConstraintDataTo(this);
+      }
+
+   }
+
+   private void removeNonDBConstraintDataTo(TableWindowCtrl other)
+   {
+      for (GraphColumn graphColumn : _columnListCtrl.getGraphColumns())
+      {
+         for (GraphColumn otherCol : other._columnListCtrl.getGraphColumns())
+         {
+            List<String> keysToRemove = graphColumn.removeNonDBConstraintDataTo(otherCol);
+
+            for (String keyToRemove : keysToRemove)
+            {
+               _fkPropsByFkName.remove(keyToRemove);
+            }
+         }
+      }
    }
 
 
@@ -148,5 +182,10 @@ public class TableWindowCtrl
    public List<GraphColumn> getGraphColumns()
    {
       return _columnListCtrl.getGraphColumns();
+   }
+
+   public List<NonDbColumnImportPersistence> getNonDbColumnImportPersistences()
+   {
+      return _columnListCtrl.getNonDbColumnImportPersistences();
    }
 }

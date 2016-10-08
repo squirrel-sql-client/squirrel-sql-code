@@ -14,7 +14,7 @@ public class GraphColumn
    private HashMap<String, NonDbImportedKey> _nonDbImportedKeyByNonDbFkId = new HashMap<>();
    private HashSet<String> _nonDbFkIdsPointingAtMe = new HashSet<>();
 
-   public GraphColumn(ColumnInfo columnInfo, PrimaryKeyInfo primaryKeyInfo, ImportedKeysInfo impKeysInfo)
+   public GraphColumn(ColumnInfo columnInfo, PrimaryKeyInfo primaryKeyInfo, ImportedKeysInfo impKeysInfo, NonDbColumnImportPersistence pers, GraphFinder finder)
    {
       _columnInfo = columnInfo;
       _primaryKeyInfo = primaryKeyInfo;
@@ -30,6 +30,12 @@ public class GraphColumn
       if(_impKeysInfo.isFk(_columnInfo))
       {
          _postFix += "(FK)";
+      }
+
+      if(null != pers)
+      {
+         _nonDbFkIdsPointingAtMe = pers.getNonDbFkIdsPointingAtMe();
+         _nonDbImportedKeyByNonDbFkId = NonDbColumnImportPersistence.toNonDbImportedKeyByNonDbFkId(pers, finder);
       }
 
    }
@@ -112,5 +118,40 @@ public class GraphColumn
    {
       _nonDbImportedKeyByNonDbFkId.remove(nonDbFkId);
       _nonDbFkIdsPointingAtMe.remove(nonDbFkId);
+   }
+
+   public NonDbColumnImportPersistence getNonDbImportPersistence()
+   {
+      NonDbColumnImportPersistence ret = new NonDbColumnImportPersistence(_columnInfo.getCatalogName(), _columnInfo.getSchemaName(), _columnInfo.getTableName(), _columnInfo.getColName());
+
+      ret.setNonDbFkIdsPointingAtMe(_nonDbFkIdsPointingAtMe);
+
+      HashMap<String, NonDbImportedKeyPersistence> buf = new HashMap<>();
+      for (Map.Entry<String, NonDbImportedKey> entry : _nonDbImportedKeyByNonDbFkId.entrySet())
+      {
+         buf.put(entry.getKey(), NonDbImportedKeyPersistence.toNonDbImportedKeyPersistence(entry.getValue()));
+      }
+      ret.setNonDbImportedKeyPersistenceByNonDbFkId(buf);
+
+      return ret;
+   }
+
+   public List<String> removeNonDBConstraintDataTo(GraphColumn otherCol)
+   {
+      ArrayList<String> keysToRemove = new ArrayList<>();
+
+      for (String nonDbFkId : otherCol._nonDbImportedKeyByNonDbFkId.keySet())
+      {
+         removeNonDbFkId(nonDbFkId);
+         keysToRemove.add(nonDbFkId);
+      }
+
+      for (String nonDbFkId : otherCol._nonDbFkIdsPointingAtMe)
+      {
+         removeNonDbFkId(nonDbFkId);
+         keysToRemove.add(nonDbFkId);
+      }
+
+      return keysToRemove;
    }
 }

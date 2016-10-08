@@ -21,6 +21,7 @@ import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class GraphPaneCtrl
       _session = session;
       _graphPersistenceWrapper = graphPersistenceWrapper;
 
+      graphChannel.setDesktopPane(_desktopPane);
       initDrop(_desktopPane);
 
       // init and show the stage
@@ -96,7 +98,9 @@ public class GraphPaneCtrl
          }
 
          HashMap<String, FkProps> fkProps = FkPropsPersistence.toFkProps(graphTablePersistence.getPersistentFkPropsPersistenceByFkName());
-         addTableToDesktop(tableInfos.get(0), graphTablePersistence.getMinX(), graphTablePersistence.getMinY(), graphTablePersistence.getWidth(), graphTablePersistence.getHeight(), fkProps);
+
+         List<NonDbColumnImportPersistence> nonDbColumnImportPersistences = graphTablePersistence.getNonDbColumnImportPersistences();
+         addTableToDesktop(tableInfos.get(0), graphTablePersistence.getMinX(), graphTablePersistence.getMinY(), graphTablePersistence.getWidth(), graphTablePersistence.getHeight(), fkProps, nonDbColumnImportPersistences);
       }
 
       // This call will prevent DND of tables into the query builder window from working. We have to find a different solution for that.
@@ -257,12 +261,12 @@ public class GraphPaneCtrl
 
    private void addTableToDesktop(TableInfo tableInfo, double x, double y, double width, double height)
    {
-      addTableToDesktop(tableInfo, x, y, width, height, new HashMap<>());
+      addTableToDesktop(tableInfo, x, y, width, height, new HashMap<>(), new ArrayList<>());
    }
 
-   private void addTableToDesktop(TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName)
+   private void addTableToDesktop(TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, List<NonDbColumnImportPersistence> nonDbColumnImportPersistences)
    {
-      TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, _graphChannel, tableInfo, x, y, width, height, fkPropsByFkName, ctrl -> _drawLinesCtrl.doDraw());
+      TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, _graphChannel, tableInfo, x, y, width, height, fkPropsByFkName, nonDbColumnImportPersistences, ctrl -> _drawLinesCtrl.doDraw());
 
       _desktopPane.getChildren().add(tableWindowCtrl.getWindow());
    }

@@ -11,11 +11,11 @@ import org.squirrelsql.session.graph.graphdesktop.Window;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphColumnFinder
+public class GraphFinder
 {
    private Pane _desktopPane;
 
-   public GraphColumnFinder(Pane desktopPane)
+   public GraphFinder(Pane desktopPane)
    {
       _desktopPane = desktopPane;
    }
@@ -61,6 +61,18 @@ public class GraphColumnFinder
 
    public TableInfo getTable(String qualifiedTableName)
    {
+      TableWindowCtrl ret = getTableWindowCtrl(qualifiedTableName);
+
+      if(null == ret)
+      {
+         return null;
+      }
+
+      return ret.getTableInfo();
+   }
+
+   public TableWindowCtrl getTableWindowCtrl(String qualifiedTableName)
+   {
       for (Node tableNode : _desktopPane.getChildren())
       {
          TableWindowCtrl tableCtrl = ((Window) tableNode).getCtrl();
@@ -70,11 +82,43 @@ public class GraphColumnFinder
 
          if (qualifiedName.equalsIgnoreCase(qualifiedTableName))
          {
-            return tableCtrl.getTableInfo();
+            return tableCtrl;
          }
       }
 
       return null;
    }
 
+
+   public GraphColumn findCol(String catalogName, String schemaName, String tableName, String colName)
+   {
+      TableWindowCtrl tableWindowCtrl = getTableWindowCtrl(SQLUtil.getQualifiedName(catalogName, schemaName, tableName));
+
+      if(null == tableWindowCtrl)
+      {
+         return null;
+      }
+
+      for (GraphColumn graphColumn : tableWindowCtrl.getGraphColumns())
+      {
+         if(graphColumn.getColumnInfo().getColName().equalsIgnoreCase(colName))
+         {
+            return graphColumn;
+         }
+      }
+
+      return null;
+   }
+
+   public List<TableWindowCtrl> getAllTableCtrls()
+   {
+      List<TableWindowCtrl> ret = new ArrayList<>();
+
+      for (Node tableNode : _desktopPane.getChildren())
+      {
+         ret.add(((Window) tableNode).getCtrl());
+      }
+
+      return ret;
+   }
 }

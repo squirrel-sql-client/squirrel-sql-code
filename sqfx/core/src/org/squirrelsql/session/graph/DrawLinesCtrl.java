@@ -188,7 +188,7 @@ public class DrawLinesCtrl
 
    private void onConfigureNonDBConstraint()
    {
-      new ConfigureNonDBConstraintCtrl(_currentLineInteractionInfo, new GraphColumnFinder(_desktopPane));
+      new ConfigureNonDBConstraintCtrl(_currentLineInteractionInfo, new GraphFinder(_desktopPane));
       doDraw();
    }
 

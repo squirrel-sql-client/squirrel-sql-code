@@ -26,7 +26,7 @@ public class ColumnListCtrl
    private Window _window;
    private Runnable _drawLinesListener;
 
-   public ColumnListCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, Window window, Runnable drawLinesListener)
+   public ColumnListCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, Window window, List<NonDbColumnImportPersistence> nonDbColumnImportPersistences, Runnable drawLinesListener)
    {
       _graphChannel = graphChannel;
       _tableInfo = tableInfo;
@@ -39,7 +39,7 @@ public class ColumnListCtrl
       ImportedKeysInfo impKeysInfo = new ImportedKeysInfo(TableDetailsReader.readImportedKeys(session, _tableInfo));
       //ExportedKeysInfo expKeysInfo = new ExportedKeysInfo(TableDetailsReader.readExportedKeys(_session, tableInfo));
 
-      _listView = new ListView<>(FXCollections.observableArrayList(CollectionUtil.transform(columns, c -> new GraphColumn(c, pkInfo, impKeysInfo))));
+      _listView = new ListView<>(FXCollections.observableArrayList(CollectionUtil.transform(columns, c -> new GraphColumn(c, pkInfo, impKeysInfo, NonDbColumnImportPersistence.getMatching(c, nonDbColumnImportPersistences), graphChannel.getGraphFinder()))));
 
       _columnPositionHelper = new ColumnPositionHelper(_listView, _window);
 
@@ -299,5 +299,17 @@ public class ColumnListCtrl
    public List<GraphColumn> getGraphColumns()
    {
       return _listView.getItems();
+   }
+
+   public List<NonDbColumnImportPersistence> getNonDbColumnImportPersistences()
+   {
+      List<NonDbColumnImportPersistence> ret = new ArrayList<>();
+
+      for (GraphColumn graphColumn : _listView.getItems())
+      {
+         ret.add(graphColumn.getNonDbImportPersistence());
+      }
+
+      return ret;
    }
 }

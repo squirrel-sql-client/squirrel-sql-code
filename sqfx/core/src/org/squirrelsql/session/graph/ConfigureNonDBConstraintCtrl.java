@@ -20,9 +20,9 @@ public class ConfigureNonDBConstraintCtrl
    private final RowObjectTableLoader<ColumnPairRow> _tableLoader;
    private final Stage _dlg;
    private final String _constraintsNonDbFkId;
-   private final GraphColumnFinder _graphColumnFinder;
+   private final GraphFinder _graphFinder;
 
-   public ConfigureNonDBConstraintCtrl(LineInteractionInfo currentLineInteractionInfo, GraphColumnFinder graphColumnFinder)
+   public ConfigureNonDBConstraintCtrl(LineInteractionInfo currentLineInteractionInfo, GraphFinder graphFinder)
    {
       FxmlHelper<ConfigureNonDBConstraintView> fxmlHelper = new FxmlHelper<>(ConfigureNonDBConstraintView.class);
 
@@ -45,11 +45,11 @@ public class ConfigureNonDBConstraintCtrl
       ArrayList<GraphColumn> fkColsInColPairTable = new ArrayList<>();
       ArrayList<GraphColumn> pkColsInColPairTable = new ArrayList<>();
 
-      _graphColumnFinder = graphColumnFinder;
+      _graphFinder = graphFinder;
       for (FkPoint fkPoint : lineSpec.getFkSpec().getFkPoints())
       {
          GraphColumn fkCol = fkPoint.getGraphColumn();
-         GraphColumn pkCol = _graphColumnFinder.findNonDbPkCol(fkCol, _constraintsNonDbFkId);
+         GraphColumn pkCol = _graphFinder.findNonDbPkCol(fkCol, _constraintsNonDbFkId);
          _tableLoader.addRowObject(new ColumnPairRow(fkCol, pkCol));
 
          fkColsInColPairTable.add(fkCol);
@@ -66,13 +66,13 @@ public class ConfigureNonDBConstraintCtrl
       _view.lblPkColumns.setText(_i18n.t("nondb.cols.label.pk", _view.txtPkTableName.getText()));
 
 
-      List<GraphColumn> fkTableCols = _graphColumnFinder.getAllColumnsForTable(_view.txtFkTableName.getText());
+      List<GraphColumn> fkTableCols = _graphFinder.getAllColumnsForTable(_view.txtFkTableName.getText());
       fkTableCols.removeAll(fkColsInColPairTable);
       fkTableCols.sort((c1,c2) -> compareCols(c1, c2));
       _view.cboFkColumn.getItems().addAll(fkTableCols);
       _view.cboFkColumn.getSelectionModel().select(0);
 
-      List<GraphColumn> pkTableCols = _graphColumnFinder.getAllColumnsForTable(_view.txtPkTableName.getText());
+      List<GraphColumn> pkTableCols = _graphFinder.getAllColumnsForTable(_view.txtPkTableName.getText());
       pkTableCols.removeAll(pkColsInColPairTable);
       pkTableCols.sort((c1,c2) -> compareCols(c1, c2));
       _view.cboPkColumn.getItems().addAll(pkTableCols);
@@ -104,12 +104,12 @@ public class ConfigureNonDBConstraintCtrl
          return;
       }
 
-      for (GraphColumn graphColumn : _graphColumnFinder.getAllColumnsForTable(_view.txtPkTableName.getText()))
+      for (GraphColumn graphColumn : _graphFinder.getAllColumnsForTable(_view.txtPkTableName.getText()))
       {
          graphColumn.removeNonDbFkId(_constraintsNonDbFkId);
       }
 
-      for (GraphColumn graphColumn : _graphColumnFinder.getAllColumnsForTable(_view.txtFkTableName.getText()))
+      for (GraphColumn graphColumn : _graphFinder.getAllColumnsForTable(_view.txtFkTableName.getText()))
       {
          graphColumn.removeNonDbFkId(_constraintsNonDbFkId);
       }
@@ -117,7 +117,7 @@ public class ConfigureNonDBConstraintCtrl
 
       for (ColumnPairRow cpr : _tableLoader.getRowObjects())
       {
-         TableInfo pkTableInfo = _graphColumnFinder.getTable(_view.txtPkTableName.getText());
+         TableInfo pkTableInfo = _graphFinder.getTable(_view.txtPkTableName.getText());
 
          GraphUtils.connectColumns(_constraintsNonDbFkId, cpr.getFkGraphColumn(), pkTableInfo, cpr.getPkGraphColumn());
       }

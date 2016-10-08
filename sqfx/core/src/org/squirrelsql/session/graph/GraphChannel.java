@@ -1,5 +1,6 @@
 package org.squirrelsql.session.graph;
 
+import javafx.scene.layout.Pane;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
@@ -15,6 +16,7 @@ public class GraphChannel
    private TabTitleListener _tabTitleListener;
    private GraphTabListener _graphTabListener;
    private ColumnListCtrl _lastDraggingColumnListCtrl;
+   private Pane _desktopPane;
 
    public GraphChannel(GraphTabListener graphTabListener)
    {
@@ -70,5 +72,15 @@ public class GraphChannel
    public ColumnListCtrl getLastDraggingColumnListCtrl()
    {
       return _lastDraggingColumnListCtrl;
+   }
+
+   public GraphFinder getGraphFinder()
+   {
+      return new GraphFinder(_desktopPane);
+   }
+
+   public void setDesktopPane(Pane desktopPane)
+   {
+      _desktopPane = desktopPane;
    }
 }
