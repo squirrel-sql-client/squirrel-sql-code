@@ -6,9 +6,10 @@ public class DockTabDesktopManager implements TabHandleListener
 {
    private SquirrelDesktopManager _squirrelDesktopManager;
 
-   public void tabClosing(TabHandleEvent tabHandleEvent)
+   public boolean tabClosing(TabHandleEvent tabHandleEvent)
    {
       //To change body of implemented methods use File | Settings | File Templates.
+      return true;
    }
 
    public void tabClosed(TabHandleEvent tabHandleEvent)

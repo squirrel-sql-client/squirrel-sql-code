@@ -72,9 +72,10 @@ public class OverviewFrame extends DialogWidget
       addWidgetListener(new WidgetAdapter()
       {
          @Override
-         public void widgetClosing(WidgetEvent evt)
+         public boolean widgetClosing(WidgetEvent evt)
          {
             onWidgetClosing();
+            return true;
          }
       });
    }

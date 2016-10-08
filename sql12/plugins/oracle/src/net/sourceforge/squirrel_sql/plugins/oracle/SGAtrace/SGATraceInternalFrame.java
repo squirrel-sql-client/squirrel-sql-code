@@ -77,10 +77,11 @@ public class SGATraceInternalFrame extends OracleInternalFrame
    {
       addWidgetListener(new WidgetAdapter()
       {
-         public void widgetClosing(WidgetEvent e)
+         public boolean widgetClosing(WidgetEvent e)
          {
             SGATraceInternalFrame.super.internalFrameClosing(_toolBar.isStayOnTop(), _sgaTracePanel.getAutoRefreshPeriod());
             _sgaTracePanel.setAutoRefresh(false);
+            return true;
          }
       });
 

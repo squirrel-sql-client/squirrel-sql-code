@@ -29,8 +29,6 @@ import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrame;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrameCallback;
 
 import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 
 public class InvalidObjectsInternalFrame extends OracleInternalFrame
@@ -69,9 +67,10 @@ public class InvalidObjectsInternalFrame extends OracleInternalFrame
 
       addWidgetListener(new WidgetAdapter()
       {
-         public void widgetClosing(WidgetEvent e)
+         public boolean widgetClosing(WidgetEvent e)
          {
             InvalidObjectsInternalFrame.super.internalFrameClosing(_toolBar.isStayOnTop(), 0);
+            return true;
          }
       });
 

@@ -407,7 +407,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
    }
 
 
-   void removeTab(TabHandle tabHandle, ActionEvent e, TabClosingMode tabClosingMode)
+   boolean removeTab(TabHandle tabHandle, ActionEvent e, TabClosingMode tabClosingMode)
    {
 
 
@@ -417,11 +417,16 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
          {
             if(_handlesInRemoveTab_CloseButton.contains(tabHandle))
             {
-               return;
+               return false;
             }
 
             _handlesInRemoveTab_CloseButton.add(tabHandle);
-            tabHandle.fireClosing(e);
+
+            if(false == tabHandle.fireClosing(e))
+            {
+               return false;
+            }
+
             if (WindowConstants.DO_NOTHING_ON_CLOSE != tabHandle.getWidget().getDefaultCloseOperation())
             {
                int tabIndex = getTabIndex(tabHandle);
@@ -445,7 +450,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
          {
             if(_handlesInRemoveTab_Dispose.contains(tabHandle))
             {
-               return;
+               return false;
             }
 
             _handlesInRemoveTab_Dispose.add(tabHandle);
@@ -453,7 +458,10 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
             if(false == tabHandle.isFireClosingProceedingOrDone())
             {
                // Has to be done here e.g. when "Close All Sessions" menu was used.
-               tabHandle.fireClosing(e);
+               if(false == tabHandle.fireClosing(e))
+               {
+                  return false;
+               }
             }
 
             tabHandle.getWidget().setVisible(false);
@@ -477,6 +485,8 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       {
          throw new IllegalArgumentException("Unknown TabClosingMode: " + tabClosingMode);
       }
+
+      return true;
    }
 
    private ButtonTabComponent removeTabFromTabbedPane(int tabIndex)

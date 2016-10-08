@@ -6,7 +6,7 @@ public interface WidgetListener extends EventListener
 {
    public void widgetOpened(WidgetEvent evt);
 
-   public void widgetClosing(WidgetEvent evt);
+   public boolean widgetClosing(WidgetEvent evt);
 
    public void widgetClosed(WidgetEvent evt);
 

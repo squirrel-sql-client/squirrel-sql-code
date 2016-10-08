@@ -7,8 +7,9 @@ public class WidgetAdapter implements WidgetListener
    {
    }
 
-   public void widgetClosing(WidgetEvent evt)
+   public boolean widgetClosing(WidgetEvent evt)
    {
+      return true;
    }
 
    public void widgetClosed(WidgetEvent evt)

@@ -103,18 +103,26 @@ public class SessionInternalFrame extends SessionTabWidget
 
 		addWidgetListener(new WidgetAdapter()
 		{
-			public void widgetClosing(WidgetEvent evt)
+			public boolean widgetClosing(WidgetEvent evt)
 			{
             if (!session.isfinishedLoading())
             {
-               return;
+               return false;
             }
             final ISession mySession = getSession();
             if (mySession != null)
 				{
-               _sessionPanel.sessionWindowClosing();
-					_app.getSessionManager().closeSession(mySession);
+               boolean success = _app.getSessionManager().closeSession(mySession);
+
+               if (success)
+               {
+                  _sessionPanel.sessionWindowClosing();
+               }
+
+               return success;
 				}
+
+				return true;
 			}
 		});
 

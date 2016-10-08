@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
@@ -33,8 +32,6 @@ import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 
 import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 
 public class SQLInternalFrame extends SessionTabWidget
@@ -95,9 +92,10 @@ public class SQLInternalFrame extends SessionTabWidget
             });
 			}
 
-         public void widgetClosing(WidgetEvent e)
+         public boolean widgetClosing(WidgetEvent e)
          {
             _sqlPanel.sessionWindowClosing();
+            return true;
          }
 		});
 

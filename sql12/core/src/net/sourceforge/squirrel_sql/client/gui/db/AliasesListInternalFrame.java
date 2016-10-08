@@ -98,9 +98,10 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          }
 
          @Override
-         public void widgetClosing(WidgetEvent evt)
+         public boolean widgetClosing(WidgetEvent evt)
          {
             nowVisible(false);
+            return true;
          }
 
          @Override

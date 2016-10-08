@@ -36,9 +36,9 @@ public class TabDelegate implements ITabDelegate
 
       _tabHandle.addTabHandleListener(new TabHandleListener()
       {
-         public void tabClosing(TabHandleEvent tabHandleEvent)
+         public boolean tabClosing(TabHandleEvent tabHandleEvent)
          {
-            onTabClosing(tabHandleEvent);
+            return onTabClosing(tabHandleEvent);
          }
 
          public void tabClosed(TabHandleEvent tabHandleEvent)
@@ -85,14 +85,20 @@ public class TabDelegate implements ITabDelegate
       }
    }
 
-   private void onTabClosing(TabHandleEvent tabHandleEvent)
+   private boolean onTabClosing(TabHandleEvent tabHandleEvent)
    {
-      _eventCaster.fireWidgetClosing(new WidgetEvent(tabHandleEvent, _widget));
+      if(false == _eventCaster.fireWidgetClosing(new WidgetEvent(tabHandleEvent, _widget)))
+      {
+         return false;
+      }
+
       if (WindowConstants.DO_NOTHING_ON_CLOSE != _defaultCloseOperation)
       {
          _eventCaster.fireWidgetDeactivated(new WidgetEvent(tabHandleEvent, _widget));
          _widget.setVisible(false);
       }
+
+      return true;
    }
 
 

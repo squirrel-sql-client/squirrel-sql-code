@@ -1124,10 +1124,11 @@ public class WindowManager
 		}
 
 		@Override
-		public void widgetClosing(WidgetEvent evt)
+		public boolean widgetClosing(WidgetEvent evt)
 		{
 			refireSessionSheetClosing(evt);
-		}
+         return true;
+      }
 
 		@Override
 		public void widgetClosed(WidgetEvent evt)

@@ -72,10 +72,11 @@ public class SessionInfoInternalFrame extends OracleInternalFrame
 
       addWidgetListener(new WidgetAdapter()
       {
-         public void widgetClosing(WidgetEvent e)
+         public boolean widgetClosing(WidgetEvent e)
          {
             SessionInfoInternalFrame.super.internalFrameClosing(_toolBar.isStayOnTop(), _sessionInfoPanel.getAutoRefreshPeriod());
             _sessionInfoPanel.setAutoRefresh(false);
+            return true;
          }
       });
 

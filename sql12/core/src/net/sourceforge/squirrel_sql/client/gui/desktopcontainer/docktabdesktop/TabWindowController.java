@@ -85,6 +85,8 @@ public class TabWindowController implements DockTabDesktopPaneHolder
          }
       });
 
+      _tabWindowFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
       _tabWindowFrame.setVisible(true);
    }
 
@@ -107,8 +109,14 @@ public class TabWindowController implements DockTabDesktopPaneHolder
       TabHandle[] clone = handels.toArray(new TabHandle[handels.size()]);
       for (TabHandle handel : clone)
       {
-         handel.removeTab(DockTabDesktopPane.TabClosingMode.DISPOSE);
+         if(false == handel.removeTab(DockTabDesktopPane.TabClosingMode.DISPOSE))
+         {
+            return;
+         }
       }
+
+      _tabWindowFrame.setVisible(false);
+      _tabWindowFrame.dispose();
 
       _app.getMultipleWindowsHandler().unregisterDesktop(this);
    }

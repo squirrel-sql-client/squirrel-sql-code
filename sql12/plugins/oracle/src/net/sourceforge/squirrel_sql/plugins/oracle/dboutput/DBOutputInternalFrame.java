@@ -26,7 +26,6 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
@@ -85,9 +84,10 @@ public class DBOutputInternalFrame extends OracleInternalFrame
    {
       addWidgetListener(new WidgetAdapter()
       {
-         public void widgetClosing(WidgetEvent e)
+         public boolean widgetClosing(WidgetEvent e)
          {
             onWidgetClosing();
+            return true;
          }
       });
 

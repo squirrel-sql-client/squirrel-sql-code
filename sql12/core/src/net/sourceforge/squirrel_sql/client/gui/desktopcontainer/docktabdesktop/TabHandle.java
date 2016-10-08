@@ -40,15 +40,21 @@ public class TabHandle
    }
 
 
-   public void fireClosing(ActionEvent e)
+   public boolean fireClosing(ActionEvent e)
    {
       _fireClosingProceedingOrDone = true;
       TabHandleListener[] clone = _tabHandleListeners.toArray(new TabHandleListener[_tabHandleListeners.size()]);
 
       for (TabHandleListener listener : clone)
       {
-         listener.tabClosing(new TabHandleEvent(this, e));
+         if(false == listener.tabClosing(new TabHandleEvent(this, e)))
+         {
+            _fireClosingProceedingOrDone = false;
+            return false;
+         }
       }
+
+      return true;
    }
 
    public void fireClosed(ActionEvent e)
@@ -154,9 +160,9 @@ public class TabHandle
       _dockTabDesktopPane.setTabIcon(this, frameIcon);
    }
 
-   public void removeTab(DockTabDesktopPane.TabClosingMode tabClosingMode)
+   public boolean removeTab(DockTabDesktopPane.TabClosingMode tabClosingMode)
    {
-      _dockTabDesktopPane.removeTab(this, null, tabClosingMode);
+      return _dockTabDesktopPane.removeTab(this, null, tabClosingMode);
    }
 
    public void select()

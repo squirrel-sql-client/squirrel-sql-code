@@ -47,14 +47,18 @@ public class WidgetEventCaster
       }
    }
 
-   public void fireWidgetClosing(WidgetEvent widgetEvent)
+   public boolean fireWidgetClosing(WidgetEvent widgetEvent)
    {
       WidgetListener[] clone = _listeners.toArray(new WidgetListener[_listeners.size()]);
 
       for (WidgetListener listener : clone)
       {
-         listener.widgetClosing(widgetEvent);
+         if(false == listener.widgetClosing(widgetEvent))
+         {
+            return false;
+         }
       }
+      return true;
    }
 
    public void fireWidgetClosed(WidgetEvent widgetEvent)
