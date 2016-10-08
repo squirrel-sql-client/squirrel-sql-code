@@ -17,6 +17,14 @@ public class FxmlHelper<T>
 
       try
       {
+         if (Thread.currentThread().getContextClassLoader() == null)
+         {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            String msg = "Thread.currentThread().getContextClassLoader() returned null this is said to happen on IOS only";
+            new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL).warning(msg);
+         }
+
+
          _fxmlLoader = new FXMLLoader(getClass().getResource("/" + fxmlViewClass.getName().replaceAll("\\.", "/") + ".fxml"), ResourceBundle.getBundle(fxmlViewClass.getPackage().getName() + ".i18n"));
          _region = _fxmlLoader.load();
       }
