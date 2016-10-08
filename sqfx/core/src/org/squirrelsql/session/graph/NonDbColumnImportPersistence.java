@@ -98,7 +98,10 @@ public class NonDbColumnImportPersistence
          GraphColumn col = finder.findCol(value.getCatalogName(), value.getSchemaName(), value.getTableName(), value.getColName());
          TableInfo table = finder.getTable(SQLUtil.getQualifiedName(value.getCatalogName(), value.getSchemaName(), value.getTableName()));
 
-         ret.put(entry.getKey(), new NonDbImportedKey(value.getNonDbFkId(), col, table));
+         //if (null != col && null != table)
+         {
+            ret.put(entry.getKey(), new NonDbImportedKey(value.getNonDbFkId(), col, table));
+         }
       }
 
       return ret;

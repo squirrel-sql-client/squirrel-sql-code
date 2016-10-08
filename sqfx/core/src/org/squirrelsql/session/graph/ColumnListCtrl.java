@@ -39,7 +39,7 @@ public class ColumnListCtrl
       ImportedKeysInfo impKeysInfo = new ImportedKeysInfo(TableDetailsReader.readImportedKeys(session, _tableInfo));
       //ExportedKeysInfo expKeysInfo = new ExportedKeysInfo(TableDetailsReader.readExportedKeys(_session, tableInfo));
 
-      _listView = new ListView<>(FXCollections.observableArrayList(CollectionUtil.transform(columns, c -> new GraphColumn(c, pkInfo, impKeysInfo, NonDbColumnImportPersistence.getMatching(c, nonDbColumnImportPersistences), graphChannel.getGraphFinder()))));
+      _listView = new ListView<>(FXCollections.observableArrayList(CollectionUtil.transform(columns, c -> new GraphColumn(c, pkInfo, impKeysInfo, NonDbColumnImportPersistence.getMatching(c, nonDbColumnImportPersistences), graphChannel))));
 
       _columnPositionHelper = new ColumnPositionHelper(_listView, _window);
 

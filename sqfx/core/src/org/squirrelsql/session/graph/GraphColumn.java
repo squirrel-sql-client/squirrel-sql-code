@@ -14,7 +14,7 @@ public class GraphColumn
    private HashMap<String, NonDbImportedKey> _nonDbImportedKeyByNonDbFkId = new HashMap<>();
    private HashSet<String> _nonDbFkIdsPointingAtMe = new HashSet<>();
 
-   public GraphColumn(ColumnInfo columnInfo, PrimaryKeyInfo primaryKeyInfo, ImportedKeysInfo impKeysInfo, NonDbColumnImportPersistence pers, GraphFinder finder)
+   public GraphColumn(ColumnInfo columnInfo, PrimaryKeyInfo primaryKeyInfo, ImportedKeysInfo impKeysInfo, NonDbColumnImportPersistence pers, GraphChannel graphChannel)
    {
       _columnInfo = columnInfo;
       _primaryKeyInfo = primaryKeyInfo;
@@ -32,12 +32,18 @@ public class GraphColumn
          _postFix += "(FK)";
       }
 
+
       if(null != pers)
       {
-         _nonDbFkIdsPointingAtMe = pers.getNonDbFkIdsPointingAtMe();
-         _nonDbImportedKeyByNonDbFkId = NonDbColumnImportPersistence.toNonDbImportedKeyByNonDbFkId(pers, finder);
+         graphChannel.addAllTablesAddedListener(() -> onAllTablesAdded(pers, graphChannel));
       }
 
+   }
+
+   private void onAllTablesAdded(NonDbColumnImportPersistence pers, GraphChannel graphChannel)
+   {
+      _nonDbFkIdsPointingAtMe = pers.getNonDbFkIdsPointingAtMe();
+      _nonDbImportedKeyByNonDbFkId = NonDbColumnImportPersistence.toNonDbImportedKeyByNonDbFkId(pers, graphChannel.getGraphFinder());
    }
 
    public String getDescription()

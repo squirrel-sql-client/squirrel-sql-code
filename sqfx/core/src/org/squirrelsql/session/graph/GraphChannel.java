@@ -6,6 +6,7 @@ import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
 import org.squirrelsql.session.objecttree.ObjectTreeNode;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class GraphChannel
@@ -17,6 +18,7 @@ public class GraphChannel
    private GraphTabListener _graphTabListener;
    private ColumnListCtrl _lastDraggingColumnListCtrl;
    private Pane _desktopPane;
+   private HashSet<AllTablesAddedListener> _allTablesAddedListeners = new HashSet<>();
 
    public GraphChannel(GraphTabListener graphTabListener)
    {
@@ -82,5 +84,18 @@ public class GraphChannel
    public void setDesktopPane(Pane desktopPane)
    {
       _desktopPane = desktopPane;
+   }
+
+   public void addAllTablesAddedListener(AllTablesAddedListener allTablesAddedListener)
+   {
+      _allTablesAddedListeners.add(allTablesAddedListener);
+   }
+
+   public void fireAllTablesAdded()
+   {
+      for (AllTablesAddedListener l : _allTablesAddedListeners.toArray(new AllTablesAddedListener[_allTablesAddedListeners.size()]))
+      {
+         l.allTablesAdded();
+      }
    }
 }

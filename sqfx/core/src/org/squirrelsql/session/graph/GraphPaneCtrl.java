@@ -103,6 +103,8 @@ public class GraphPaneCtrl
          addTableToDesktop(tableInfos.get(0), graphTablePersistence.getMinX(), graphTablePersistence.getMinY(), graphTablePersistence.getWidth(), graphTablePersistence.getHeight(), fkProps, nonDbColumnImportPersistences);
       }
 
+      _graphChannel.fireAllTablesAdded();
+
       // This call will prevent DND of tables into the query builder window from working. We have to find a different solution for that.
       //_drawLinesCtrl.doDraw();
    }
