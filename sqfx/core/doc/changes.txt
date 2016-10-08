@@ -2,6 +2,8 @@ SQuirreL SQL FX Change Log
 ==============================
 
 Bug fix: Fixed ExceptionInInitializerError caused by NullPointerException on IOS when the driver configuration dialog was opened.
+  Thanks to Jürgen Weltner for the fix.
+
 
 Feature (in progress): Query builders can be saved.
 
