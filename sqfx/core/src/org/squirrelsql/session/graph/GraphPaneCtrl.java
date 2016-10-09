@@ -217,7 +217,7 @@ public class GraphPaneCtrl
 
    private void onAddTables()
    {
-      new ObjectTreeFilterCtrl(_session, "", _graphChannel);
+      new ObjectTreeFilterCtrl(_session, "", _graphChannel, tableInfo -> addTableToDesktop(tableInfo, 0, 0));
    }
 
    private void initDrop(Pane desktopPane)

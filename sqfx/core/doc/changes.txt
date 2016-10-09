@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature (in progress): Query builder: Double click in 'Add table' now also adds the clicked table to the query builder (usually drag and drop is used).
+
 Feature (in progress): Query builder: Add table dialog is opened automatically when a new query builder is created.
 
 Bug fix: #1271 Splash screen on OSX hangs up SQuirreL

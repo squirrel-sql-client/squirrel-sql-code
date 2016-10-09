@@ -15,6 +15,7 @@ import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.session.completion.TextFieldTextComponentAdapter;
 import org.squirrelsql.session.graph.GraphChannel;
+import org.squirrelsql.session.graph.ObjectTreeFilterDoubleClickListener;
 import org.squirrelsql.workaround.KeyMatchWA;
 
 import java.util.ArrayList;
@@ -35,16 +36,18 @@ public class ObjectTreeFilterCtrl
    private final Stage _dialog;
    private ObjectTreeFilterCtrlMode _mode;
    private GraphChannel _graphChannel;
+   private ObjectTreeFilterDoubleClickListener _objectTreeFilterDoubleClickListener;
 
    public ObjectTreeFilterCtrl(Session session, String filterText)
    {
       this(session, filterText, ObjectTreeFilterCtrlMode.OBJECT_TREE_SEARCH);
    }
 
-   public ObjectTreeFilterCtrl(Session session, String filterText, GraphChannel graphChannel)
+   public ObjectTreeFilterCtrl(Session session, String filterText, GraphChannel graphChannel, ObjectTreeFilterDoubleClickListener objectTreeFilterDoubleClickListener)
    {
       this(session, filterText, ObjectTreeFilterCtrlMode.ADD_TO_QUERY_BUILDER);
       _graphChannel = graphChannel;
+      _objectTreeFilterDoubleClickListener = objectTreeFilterDoubleClickListener;
    }
 
    private ObjectTreeFilterCtrl(Session session, String filterText, ObjectTreeFilterCtrlMode mode)
@@ -262,6 +265,11 @@ public class ObjectTreeFilterCtrl
 
    private void onDoubleClick(ObjectTreeNode otn)
    {
+      if(null != _objectTreeFilterDoubleClickListener)
+      {
+         _objectTreeFilterDoubleClickListener.doubleClicked(otn.getTableInfo());
+      }
+
       _dialog.close();
    }
 
