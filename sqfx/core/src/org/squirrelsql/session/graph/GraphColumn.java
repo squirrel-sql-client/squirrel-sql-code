@@ -1,5 +1,6 @@
 package org.squirrelsql.session.graph;
 
+import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.TableInfo;
 
@@ -87,6 +88,12 @@ public class GraphColumn
       return new ArrayList<>(_nonDbImportedKeyByNonDbFkId.values());
    }
 
+   public NonDbImportedKey getNonDbImportedKeyForId(String nonDbFkId)
+   {
+      return _nonDbImportedKeyByNonDbFkId.get(nonDbFkId);
+   }
+
+
    public boolean importsNonDbFkId(String nonDbFkId)
    {
       return _nonDbImportedKeyByNonDbFkId.containsKey(nonDbFkId);
@@ -159,5 +166,10 @@ public class GraphColumn
       }
 
       return keysToRemove;
+   }
+
+   public String getQualifiedTableName()
+   {
+      return _columnInfo.getQualifiedTableName();
    }
 }

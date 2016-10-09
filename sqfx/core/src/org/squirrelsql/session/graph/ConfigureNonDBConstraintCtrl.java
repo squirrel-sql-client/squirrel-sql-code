@@ -55,8 +55,8 @@ public class ConfigureNonDBConstraintCtrl
          fkColsInColPairTable.add(fkCol);
          pkColsInColPairTable.add(pkCol);
 
-         _view.txtFkTableName.setText(fkCol.getColumnInfo().getFullTableName());
-         _view.txtPkTableName.setText(pkCol.getColumnInfo().getFullTableName());
+         _view.txtFkTableName.setText(fkCol.getColumnInfo().getQualifiedTableName());
+         _view.txtPkTableName.setText(pkCol.getColumnInfo().getQualifiedTableName());
       }
 
       _tableLoader.load(_view.tblColumnPairs);
@@ -108,11 +108,14 @@ public class ConfigureNonDBConstraintCtrl
       {
          graphColumn.removeNonDbFkId(_constraintsNonDbFkId);
       }
+      _graphFinder.getTableWindowCtrl(_view.txtPkTableName.getText()).removeNonDBFkId(_constraintsNonDbFkId);
+
 
       for (GraphColumn graphColumn : _graphFinder.getAllColumnsForTable(_view.txtFkTableName.getText()))
       {
          graphColumn.removeNonDbFkId(_constraintsNonDbFkId);
       }
+      _graphFinder.getTableWindowCtrl(_view.txtFkTableName.getText()).removeNonDBFkId(_constraintsNonDbFkId);
 
 
       for (ColumnPairRow cpr : _tableLoader.getRowObjects())

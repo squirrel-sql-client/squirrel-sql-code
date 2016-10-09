@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature (in progress): Query builder: Non DB constraints can be create (using drag and drop) configured and removed (using right mouse menu).
+
 Feature (in progress): Query builder: Double click in 'Add table' now also adds the clicked table to the query builder (usually drag and drop is used).
 
 Feature (in progress): Query builder: Add table dialog is opened automatically when a new query builder is created.

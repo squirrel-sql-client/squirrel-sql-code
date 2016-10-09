@@ -118,7 +118,7 @@ public class CopySqlPartUtil
    {
 
 
-      Matcher matcher = FILL_COLUMN_NAME_PATTERN.matcher(colInfo.getFullTableColumnName());
+      Matcher matcher = FILL_COLUMN_NAME_PATTERN.matcher(colInfo.getQualifiedTableColumnName());
       if (matcher.matches())
       {
          return matcher.group(1);

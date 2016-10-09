@@ -72,11 +72,17 @@ public class TableWindowCtrl
 
             for (String keyToRemove : keysToRemove)
             {
-               _fkPropsByFkName.remove(keyToRemove);
+               removeNonDBFkId(keyToRemove);
             }
          }
       }
    }
+
+   public void removeNonDBFkId(String constraintsNonDbFkId)
+   {
+      _fkPropsByFkName.remove(constraintsNonDbFkId);
+   }
+
 
 
    public Window getWindow()

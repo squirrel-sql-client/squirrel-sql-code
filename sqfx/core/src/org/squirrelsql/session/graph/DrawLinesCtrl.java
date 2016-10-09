@@ -24,14 +24,16 @@ public class DrawLinesCtrl
    private Canvas _canvas = new Canvas();
    private Pane _desktopPane;
    private ScrollPane _scrollPane;
+   private GraphChannel _graphChannel;
 
    private LineInteractionInfo _currentLineInteractionInfo = new LineInteractionInfo();
 
 
-   public DrawLinesCtrl(Pane desktopPane, ScrollPane scrollPane)
+   public DrawLinesCtrl(Pane desktopPane, ScrollPane scrollPane, GraphChannel graphChannel)
    {
       _desktopPane = desktopPane;
       _scrollPane = scrollPane;
+      _graphChannel = graphChannel;
 
       SizeBindingHelper.bindLinesCanvasSizeToDesktopPaneSize(desktopPane, _canvas);
 
@@ -170,6 +172,7 @@ public class DrawLinesCtrl
             if (_currentLineInteractionInfo.getClickedOnLineSpec().isNonDb())
             {
                rightMouseMenuHandler.addMenu(new I18n(getClass()).t("configure.nondb.constraint"), () -> onConfigureNonDBConstraint());
+               rightMouseMenuHandler.addMenu(new I18n(getClass()).t("remove.nondb.constraint"), () -> onRemoveNonDBConstraint());
             }
             rightMouseMenuHandler.show(e);
 
@@ -184,6 +187,27 @@ public class DrawLinesCtrl
          doDraw();
 
       }
+   }
+
+   private void onRemoveNonDBConstraint()
+   {
+      String nonDbFkId = _currentLineInteractionInfo.getClickedOnLineSpec().getFkSpec().getFkNameOrId();
+
+      List<FkPoint> fkPoints = _currentLineInteractionInfo.getClickedOnLineSpec().getFkSpec().getFkPoints();
+
+      for (FkPoint fkPoint : fkPoints)
+      {
+         GraphColumn fkCol = fkPoint.getGraphColumn();
+         GraphColumn pkCol = fkCol.getNonDbImportedKeyForId(nonDbFkId).getColumnThisImportedKeyPointsTo();
+
+         pkCol.removeNonDbFkId(nonDbFkId);
+         fkCol.removeNonDbFkId(nonDbFkId);
+
+         _graphChannel.getGraphFinder().getTableWindowCtrl(pkCol.getQualifiedTableName()).removeNonDBFkId(nonDbFkId);
+         _graphChannel.getGraphFinder().getTableWindowCtrl(fkCol.getQualifiedTableName()).removeNonDBFkId(nonDbFkId);
+      }
+
+      doDraw();
    }
 
    private void onConfigureNonDBConstraint()

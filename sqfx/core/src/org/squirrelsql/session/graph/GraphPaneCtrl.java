@@ -57,7 +57,7 @@ public class GraphPaneCtrl
       StackPane stackPane = new StackPane();
 
       _scrollPane = new ScrollPane();
-      _drawLinesCtrl = new DrawLinesCtrl(_desktopPane, _scrollPane);
+      _drawLinesCtrl = new DrawLinesCtrl(_desktopPane, _scrollPane, _graphChannel);
 
 
       Canvas sizingDummyPane = new Canvas();
