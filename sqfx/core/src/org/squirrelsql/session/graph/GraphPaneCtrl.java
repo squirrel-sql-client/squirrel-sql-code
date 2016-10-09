@@ -40,6 +40,7 @@ public class GraphPaneCtrl
 
    private final Props _props = new Props(getClass());
    private final I18n _i18n = new I18n(getClass());
+   private Button _toolbarBtnAddTable;
 
 
    public GraphPaneCtrl(GraphChannel graphChannel, Session session, GraphPersistenceWrapper graphPersistenceWrapper)
@@ -125,7 +126,7 @@ public class GraphPaneCtrl
    {
       ToolBar toolBar = new ToolBar();
 
-      addToolBarButton(toolBar, "addTable.png", new Tooltip(_i18n.t("graph.add.table.button.tooltip")), e -> onAddTables());
+      _toolbarBtnAddTable = addToolBarButton(toolBar, "addTable.png", new Tooltip(_i18n.t("graph.add.table.button.tooltip")), e -> onAddTables());
       toolBar.getItems().add(new Separator());
       addToolBarButton(toolBar, GlobalIconNames.FILE_SAVE, new Tooltip(_i18n.t("graph.save.graph")), e -> onSaveGraph());
       addToolBarButton(toolBar, GlobalIconNames.FILE_SAVE_AS, new Tooltip(_i18n.t("graph.save.graph.as")), e -> onSaveGraphAs());
@@ -135,13 +136,14 @@ public class GraphPaneCtrl
       return toolBar;
    }
 
-   private void addToolBarButton(ToolBar toolBar, String iconFileName, Tooltip value, EventHandler<ActionEvent> actionEventEventHandler)
+   private Button addToolBarButton(ToolBar toolBar, String iconFileName, Tooltip value, EventHandler<ActionEvent> actionEventEventHandler)
    {
-      Button btnDeleteGraph = new Button();
-      btnDeleteGraph.setGraphic(_props.getImageView(iconFileName));
-      btnDeleteGraph.setTooltip(value);
-      btnDeleteGraph.setOnAction(actionEventEventHandler);
-      toolBar.getItems().add(btnDeleteGraph);
+      Button btn = new Button();
+      btn.setGraphic(_props.getImageView(iconFileName));
+      btn.setTooltip(value);
+      btn.setOnAction(actionEventEventHandler);
+      toolBar.getItems().add(btn);
+      return btn;
    }
 
    private void onDeleteGraph()
@@ -277,5 +279,10 @@ public class GraphPaneCtrl
    public Node getPane()
    {
       return _pane;
+   }
+
+   public void pushAddTableBtn()
+   {
+      _toolbarBtnAddTable.fire();
    }
 }

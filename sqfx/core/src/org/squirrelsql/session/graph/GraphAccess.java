@@ -1,6 +1,12 @@
 package org.squirrelsql.session.graph;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
+import javafx.util.Duration;
 import org.squirrelsql.services.Dao;
 import org.squirrelsql.session.SessionTabAccess;
 import org.squirrelsql.session.SessionTabContext;
@@ -33,7 +39,7 @@ public class GraphAccess
       }
    }
 
-   private void loadGraphTab(GraphPersistenceWrapper graphPersistenceWrapper, boolean selectTab)
+   private void loadGraphTab(GraphPersistenceWrapper graphPersistenceWrapper, boolean newGraph)
    {
       Tab tab = new Tab();
 
@@ -55,9 +61,22 @@ public class GraphAccess
       GraphChannel graphChannel = new GraphChannel(graphTabListener);
 
       tab.setGraphic(new GraphTabHeaderCtrl(graphChannel, graphPersistenceWrapper.getTabTitle()).getGraphTabHeader());
-      tab.setContent(new GraphPaneCtrl(graphChannel, _sessionTabContext.getSession(), graphPersistenceWrapper).getPane());
+      GraphPaneCtrl graphPaneCtrl = new GraphPaneCtrl(graphChannel, _sessionTabContext.getSession(), graphPersistenceWrapper);
+      tab.setContent(graphPaneCtrl.getPane());
 
-      _sessionTabAccess.addTab(tab, selectTab);
+      _sessionTabAccess.addTab(tab, newGraph);
+
+      Platform.runLater(() -> pushAddTableToolbarButton(newGraph, graphPaneCtrl));
+   }
+
+   private void pushAddTableToolbarButton(boolean newGraph, final GraphPaneCtrl graphPaneCtrl)
+   {
+      if(newGraph)
+      {
+         Timeline tl = new Timeline(new KeyFrame(Duration.millis(700), event -> graphPaneCtrl.pushAddTableBtn()));
+         tl.setCycleCount(1);
+         tl.play();
+      }
    }
 
    private void onRemoveTab(Tab tab)
