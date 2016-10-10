@@ -102,6 +102,12 @@ public class DrawLinesCtrl
 
                   gc.strokeLine(begin.getX(), begin.getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
 
+
+                  JoinConfigUtil.drawConfigureImage(gc, lineSpec);
+
+
+
+
                   for (FkPoint fkPoint : lineSpec.getFkPoints())
                   {
                      gc.strokeLine(fkPoint.getPoint().getX(), fkPoint.getPoint().getY(), lineSpec.getFkGatherPointX(), lineSpec.getFkGatherPointY());
@@ -162,6 +168,10 @@ public class DrawLinesCtrl
          }
 
          doDraw();
+      }
+      else if (JoinConfigUtil.checkAndHandleClickOnIcon(_currentLineInteractionInfo, e, _desktopPane, () -> doDraw()))
+      {
+
       }
       else if(_currentLineInteractionInfo.isClickOnLineSpec())
       {

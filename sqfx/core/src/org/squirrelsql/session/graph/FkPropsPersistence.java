@@ -11,6 +11,7 @@ public class FkPropsPersistence
 {
    private List<FoldingPointPersistence> _foldingPointPersistences = new ArrayList<>();
    private String _fkName;
+   private String _joinConfigValue = JoinConfig.INNER_JOIN.toString();
 
 
    public List<FoldingPointPersistence> getFoldingPointPersistences()
@@ -40,7 +41,7 @@ public class FkPropsPersistence
 
       for (Map.Entry<String, FkPropsPersistence> entry : persistentFkPropsPersistenceByFkName.entrySet())
       {
-         FkProps fkProps = new FkProps(entry.getKey());
+         FkProps fkProps = new FkProps(entry.getKey(), JoinConfig.valueOf(entry.getValue().getJoinConfigValue()));
 
          for (FoldingPointPersistence fpp : entry.getValue().getFoldingPointPersistences())
          {
@@ -63,5 +64,15 @@ public class FkPropsPersistence
       }
 
       return ret;
+   }
+
+   public void setJoinConfigValue(String joinConfigValue)
+   {
+      _joinConfigValue = joinConfigValue;
+   }
+
+   public String getJoinConfigValue()
+   {
+      return _joinConfigValue;
    }
 }

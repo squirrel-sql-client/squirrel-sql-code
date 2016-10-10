@@ -12,10 +12,17 @@ public class FkProps
    private String _fkName;
    private boolean _selected;
    private ArrayList<Point2D> _foldingPoints = new ArrayList<>();
+   private JoinConfig _joinConfig = JoinConfig.INNER_JOIN;
 
    public FkProps(String fkName)
    {
+      this(fkName, JoinConfig.INNER_JOIN);
+   }
+
+   public FkProps(String fkName, JoinConfig joinConfig)
+   {
       _fkName = fkName;
+      _joinConfig = joinConfig;
    }
 
    public boolean isSelected()
@@ -59,6 +66,7 @@ public class FkProps
       FkPropsPersistence ret = new FkPropsPersistence();
 
       ret.setFkName(_fkName);
+      ret.setJoinConfigValue(_joinConfig.toString());
 
       ret.setFoldingPointPersistences(CollectionUtil.transform(_foldingPoints, fp -> toFpPersistence(fp)));
 
@@ -74,4 +82,13 @@ public class FkProps
       return ret;
    }
 
+   public void setJoinConfig(JoinConfig joinConfig)
+   {
+      _joinConfig = joinConfig;
+   }
+
+   public JoinConfig getJoinConfig()
+   {
+      return _joinConfig;
+   }
 }

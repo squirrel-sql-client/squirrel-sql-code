@@ -172,4 +172,14 @@ public class GraphColumn
    {
       return _columnInfo.getQualifiedTableName();
    }
+
+   public String getPkTableName(String fkNameOrId)
+   {
+      if(null != _nonDbImportedKeyByNonDbFkId.get(fkNameOrId))
+      {
+         return _nonDbImportedKeyByNonDbFkId.get(fkNameOrId).getTableThisImportedKeyPointsTo().getName();
+      }
+
+      return _impKeysInfo.getPkTable(fkNameOrId).getName().toString();
+   }
 }

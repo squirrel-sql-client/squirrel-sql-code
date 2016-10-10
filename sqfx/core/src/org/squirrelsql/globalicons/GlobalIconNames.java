@@ -30,4 +30,8 @@ public interface GlobalIconNames
    String FILE_SAVE = "filesave.png";
    String FILE_SAVE_AS = "filesaveas.png";
    String FILE_OPEN = "fileopen.png";
+   String EQUAL = "equal.png";
+   String EQUAL_LEFT = "equalLeft.png";
+   String EQUAL_RIGHT = "equalRight.png";
+   String EQUAL_CROSSED = "equalCrossed.png";
 }

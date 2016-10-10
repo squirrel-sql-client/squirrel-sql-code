@@ -120,4 +120,14 @@ public class FkSpec
    {
       return _nonDB;
    }
+
+   public void setJoinConfig(JoinConfig joinConfig)
+   {
+      _fkProps.setJoinConfig(joinConfig);
+   }
+
+   public JoinConfig getJoinConfig()
+   {
+      return _fkProps.getJoinConfig();
+   }
 }
