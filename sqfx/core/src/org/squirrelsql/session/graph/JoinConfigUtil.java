@@ -16,7 +16,38 @@ public class JoinConfigUtil
 {
    public static void drawConfigureImage(GraphicsContext gc, LineSpec lineSpec)
    {
-      Image image = new Props(JoinConfigUtil.class).getImage(lineSpec.getFkSpec().getJoinConfig().getImageName());
+      JoinConfig joinConfig = lineSpec.getFkSpec().getJoinConfig();
+
+      String imageName;
+      if(joinConfig == JoinConfig.LEFT_JOIN)
+      {
+         if(isFkTableLeft(lineSpec))
+         {
+            imageName = JoinConfig.LEFT_JOIN.getImageName();
+         }
+         else
+         {
+            imageName = JoinConfig.RIGHT_JOIN.getImageName();
+         }
+      }
+      else if(joinConfig == JoinConfig.RIGHT_JOIN)
+      {
+         if(isFkTableLeft(lineSpec))
+         {
+            imageName = JoinConfig.RIGHT_JOIN.getImageName();
+         }
+         else
+         {
+            imageName = JoinConfig.LEFT_JOIN.getImageName();
+         }
+      }
+      else
+      {
+         imageName = joinConfig.getImageName();
+      }
+
+
+      Image image = new Props(JoinConfigUtil.class).getImage(imageName);
 
       Point2D imagePoint = getImagePoint(lineSpec, image);
 
@@ -131,7 +162,7 @@ public class JoinConfigUtil
 
       if(lineSpec.getFkGatherPointX() < lineSpec.getPkGatherPointX())
       {
-         return graphColumn.getColumnInfo().getQualifiedTableName();
+         return graphColumn.getColumnInfo().getTableName();
       }
       else
       {
@@ -146,7 +177,7 @@ public class JoinConfigUtil
 
       if(lineSpec.getFkGatherPointX() > lineSpec.getPkGatherPointX())
       {
-         return graphColumn.getColumnInfo().getQualifiedTableName();
+         return graphColumn.getColumnInfo().getTableName();
       }
       else
       {
@@ -154,5 +185,11 @@ public class JoinConfigUtil
          return graphColumn.getPkTableName(fkNameOrId);
       }
    }
+
+   private static boolean isFkTableLeft(LineSpec lineSpec)
+   {
+      return lineSpec.getFkGatherPointX() < lineSpec.getPkGatherPointX();
+   }
+
 
 }
