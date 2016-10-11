@@ -13,6 +13,7 @@ public class GraphPersistence
    private String _id = UUID.randomUUID().toString();
 
    private ArrayList<GraphTablePersistence> _graphTablePersistences = new ArrayList<>();
+   private boolean _hideNoJoins;
 
    public ArrayList<GraphTablePersistence> getGraphTablePersistences()
    {
@@ -42,5 +43,15 @@ public class GraphPersistence
    public void setId(String id)
    {
       _id = id;
+   }
+
+   public boolean isHideNoJoins()
+   {
+      return _hideNoJoins;
+   }
+
+   public void setHideNoJoins(boolean hideNoJoins)
+   {
+      _hideNoJoins = hideNoJoins;
    }
 }

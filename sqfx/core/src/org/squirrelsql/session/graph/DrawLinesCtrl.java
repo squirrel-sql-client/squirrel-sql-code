@@ -27,6 +27,7 @@ public class DrawLinesCtrl
    private GraphChannel _graphChannel;
 
    private LineInteractionInfo _currentLineInteractionInfo = new LineInteractionInfo();
+   private boolean _hideNoJoins;
 
 
    public DrawLinesCtrl(Pane desktopPane, ScrollPane scrollPane, GraphChannel graphChannel)
@@ -64,6 +65,10 @@ public class DrawLinesCtrl
 
             for (LineSpec lineSpec : lineSpecs)
             {
+               if(_hideNoJoins && lineSpec.getFkSpec().getJoinConfig() == JoinConfig.NO_JOIN)
+               {
+                  continue;
+               }
 
                try
                {
@@ -324,4 +329,8 @@ public class DrawLinesCtrl
       doDraw();
    }
 
+   public void setHideNoJoins(boolean hideNoJoins)
+   {
+      _hideNoJoins = hideNoJoins;
+   }
 }

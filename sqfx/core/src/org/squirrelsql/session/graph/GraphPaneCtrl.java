@@ -3,9 +3,11 @@ package org.squirrelsql.session.graph;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
@@ -58,6 +60,7 @@ public class GraphPaneCtrl
 
       _scrollPane = new ScrollPane();
       _drawLinesCtrl = new DrawLinesCtrl(_desktopPane, _scrollPane, _graphChannel);
+      _drawLinesCtrl.setHideNoJoins(graphPersistenceWrapper.getDelegate().isHideNoJoins());
 
 
       Canvas sizingDummyPane = new Canvas();
@@ -133,7 +136,26 @@ public class GraphPaneCtrl
       addToolBarButton(toolBar, "trash_delete.png", new Tooltip(_i18n.t("graph.delete.graph")), e -> onDeleteGraph());
       toolBar.getItems().add(new Separator());
 
+      CheckBox chkHideNoJoins = new CheckBox(_i18n.t("hide.no.joins"));
+      chkHideNoJoins.setGraphic(new ImageView(_props.getImage(GlobalIconNames.EQUAL_CROSSED)));
+      chkHideNoJoins.setContentDisplay(ContentDisplay.RIGHT);
+      chkHideNoJoins.setSelected(_graphPersistenceWrapper.getDelegate().isHideNoJoins());
+      chkHideNoJoins.setOnAction(e -> onChkHideNoJoins(chkHideNoJoins));
+
+      toolBar.getItems().add(chkHideNoJoins);
+
+
+      toolBar.getItems().add(new Separator());
+
+
       return toolBar;
+   }
+
+   private void onChkHideNoJoins(CheckBox chkHideNoJoins)
+   {
+      _drawLinesCtrl.setHideNoJoins(chkHideNoJoins.isSelected());
+      _drawLinesCtrl.doDraw();
+      _graphPersistenceWrapper.getDelegate().setHideNoJoins(chkHideNoJoins.isSelected());
    }
 
    private Button addToolBarButton(ToolBar toolBar, String iconFileName, Tooltip value, EventHandler<ActionEvent> actionEventEventHandler)
