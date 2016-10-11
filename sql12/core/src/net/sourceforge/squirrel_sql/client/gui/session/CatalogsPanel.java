@@ -175,7 +175,8 @@ public class CatalogsPanel extends JPanel
 
 	public String getSelectedCatalog()
 	{
-		if (null == _catalogsCmb)
+		if (   null == _catalogsCmb
+			 || false == _catalogsCmb.getSelectedItem() instanceof String) // Happens when instanceof SQLCatalogsComboBox.NoCatalogPlaceHolder. Perhaps NoCatalogPlaceHolder should be removed when it causes more trouble.
 		{
 			return null;
 		}
