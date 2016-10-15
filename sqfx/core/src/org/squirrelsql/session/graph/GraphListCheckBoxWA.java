@@ -17,10 +17,12 @@ public class GraphListCheckBoxWA extends BorderPane
    private Image _imageUnchecked = _props.getImage("unchecked.png");
 
    private boolean _selected = false;
+   private GraphListCheckBoxSelectionListener _graphListCheckBoxSelectionListener;
 
 
-   public GraphListCheckBoxWA()
+   public GraphListCheckBoxWA(GraphListCheckBoxSelectionListener graphListCheckBoxSelectionListener)
    {
+      _graphListCheckBoxSelectionListener = graphListCheckBoxSelectionListener;
       addEventHandler(MouseEvent.MOUSE_CLICKED, e -> onClicked());
       updateGraphics();
    }
@@ -29,6 +31,7 @@ public class GraphListCheckBoxWA extends BorderPane
    {
       _selected = !_selected;
       updateGraphics();
+      _graphListCheckBoxSelectionListener.selectionChanged(_selected);
    }
 
    private void updateGraphics()

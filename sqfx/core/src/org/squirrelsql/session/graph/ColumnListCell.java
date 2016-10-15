@@ -8,28 +8,13 @@ import org.squirrelsql.Props;
 
 public class ColumnListCell extends ListCell<GraphColumn>
 {
-   private final HBox _columnControls;
+   private final ColumnConfigurationCtrl _columnConfigurationCtrl = new ColumnConfigurationCtrl();
 
 
    public ColumnListCell()
    {
       double size = getFont().getSize() - 1;
       setFont(Font.font(size));
-      _columnControls = createColumnControls();
-   }
-
-
-   private HBox createColumnControls()
-   {
-      HBox ret = new HBox();
-      ret.setSpacing(3);
-
-      Props props = new Props(getClass());
-
-      ret.getChildren().add(new GraphListCheckBoxWA());
-      ret.getChildren().add(new ImageView(props.getImage("aggfct.png")));
-      ret.getChildren().add(new ImageView(props.getImage("filter.gif")));
-      return ret;
    }
 
    @Override
@@ -45,7 +30,7 @@ public class ColumnListCell extends ListCell<GraphColumn>
       }
 
       setText(columnInfo.getDescription());
-      setGraphic(_columnControls);
+      setGraphic(_columnConfigurationCtrl.getPanel());
    }
 
 
