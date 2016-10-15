@@ -1,10 +1,13 @@
 package org.squirrelsql.session.graph;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.*;
+import javafx.util.Callback;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.Session;
@@ -44,13 +47,19 @@ public class ColumnListCtrl
       _columnPositionHelper = new ColumnPositionHelper(_listView, _window);
 
       ListViewScrollEventWA listViewScrollEventWA = new ListViewScrollEventWA(drawLinesListener);
-      _listView.setCellFactory(p -> listViewScrollEventWA.registerCell(_columnPositionHelper.registerCell(new ColumnListCell())));
+      _listView.setCellFactory(p -> listViewScrollEventWA.registerCell(_columnPositionHelper.registerCell(createColumnListCell())));
 
       _listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
       _listView.setOnDragDetected(e -> onDragDetected(e));
       _listView.setOnDragOver(e -> onDragOver(e));
       _listView.setOnDragDropped(e -> onDragDropped(e));
+   }
+
+   private ColumnListCell createColumnListCell()
+   {
+      ColumnListCell ret = new ColumnListCell();
+      return ret;
    }
 
    private void onDragDropped(DragEvent e)
