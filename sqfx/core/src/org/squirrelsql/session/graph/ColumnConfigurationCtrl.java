@@ -11,13 +11,14 @@ public class ColumnConfigurationCtrl
       _panel = new HBox();
       _panel.setSpacing(3);
 
-      AggregateFunctionCtrl aggregateFunctionCtrl = new AggregateFunctionCtrl(false);
+      AggregateFunctionPane aggregateFunctionPane = new AggregateFunctionPane(false);
 
-      GraphListCheckBoxWA graphListCheckBox = new GraphListCheckBoxWA(b -> aggregateFunctionCtrl.setEnabled(b));
+      GraphListCheckBoxWA graphListCheckBox = new GraphListCheckBoxWA(b -> aggregateFunctionPane.setEnabled(b));
 
       _panel.getChildren().add(graphListCheckBox);
-      _panel.getChildren().add(aggregateFunctionCtrl);
-      _panel.getChildren().add(new FilterCtrl());
+      _panel.getChildren().add(aggregateFunctionPane);
+      _panel.getChildren().add(new FilterPane());
+      _panel.getChildren().add(new OrderByPane());
    }
 
    public HBox getPanel()

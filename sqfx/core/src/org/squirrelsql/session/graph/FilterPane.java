@@ -4,9 +4,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.Props;
 
-public class FilterCtrl extends BorderPane
+public class FilterPane extends BorderPane
 {
-   public FilterCtrl()
+   public FilterPane()
    {
       ImageView imageView = new ImageView(new Props(getClass()).getImage("filter.gif"));
       setCenter(imageView);
