@@ -71,7 +71,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	/** Scroll pane for <TT>_metaDataOutput</TT>. */
 	private JScrollPane _metaDataSp = new JScrollPane();
 
-	/** Tabbed pane containing the SQL results the the results meta data. */
+	/** Tabbed pane containing the SQL results and the results meta data. */
 	private JTabbedPane _tabResultTabs;
 
 	/** <TT>SQLExecuterPanel</TT> that this tab is showing results for. */

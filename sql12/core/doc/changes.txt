@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Tabs can be closed by middle mouse click
+
 Added default driver definition for Salesforces DB
 
 #545 Copy table excerpts as ascii art for convenient inclusion in text-only docs
