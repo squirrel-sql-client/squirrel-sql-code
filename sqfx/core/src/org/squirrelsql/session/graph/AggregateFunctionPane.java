@@ -34,17 +34,36 @@ public class AggregateFunctionPane extends BorderPane
       }
 
 
-      MenuItem none = new MenuItem(_i18n.t("agg.function.none"), new ImageView(new Props(getClass()).getImage("aggfct.png")));
-      MenuItem sum = new MenuItem(_i18n.t("agg.function.sum"), new ImageView(new Props(getClass()).getImage("aggsum.png")));
-      MenuItem max = new MenuItem(_i18n.t("agg.function.max"), new ImageView(new Props(getClass()).getImage("aggmax.png")));
-      MenuItem min = new MenuItem(_i18n.t("agg.function.min"), new ImageView(new Props(getClass()).getImage("aggmin.png")));
-      MenuItem count = new MenuItem(_i18n.t("agg.function.count"), new ImageView(new Props(getClass()).getImage("aggcount.png")));
+      ImageView nonIcon = new ImageView(new Props(getClass()).getImage("aggfct.png"));
+      MenuItem none = new MenuItem(_i18n.t("agg.function.none"), nonIcon);
+      none.setOnAction(e -> onFctSelected(nonIcon));
+
+      ImageView sumIcon = new ImageView(new Props(getClass()).getImage("aggsum.png"));
+      MenuItem sum = new MenuItem(_i18n.t("agg.function.sum"), sumIcon);
+      sum.setOnAction(e -> onFctSelected(sumIcon));
+
+      ImageView maxIcon = new ImageView(new Props(getClass()).getImage("aggmax.png"));
+      MenuItem max = new MenuItem(_i18n.t("agg.function.max"), maxIcon);
+      max.setOnAction(e -> onFctSelected(maxIcon));
+
+      ImageView minIcon = new ImageView(new Props(getClass()).getImage("aggmin.png"));
+      MenuItem min = new MenuItem(_i18n.t("agg.function.min"), minIcon);
+      min.setOnAction(e -> onFctSelected(minIcon));
+
+      ImageView countIcon = new ImageView(new Props(getClass()).getImage("aggcount.png"));
+      MenuItem count = new MenuItem(_i18n.t("agg.function.count"), countIcon);
+      count.setOnAction(e -> onFctSelected(countIcon));
 
       ContextMenu popup = new ContextMenu(none, sum, max, min, count);
 
       Point2D localToScene = localToScreen(0, 0);
 
       popup.show(AppState.get().getPrimaryStage(), localToScene.getX(), localToScene.getY());
+   }
+
+   private void onFctSelected(ImageView icon)
+   {
+      setCenter(icon);
    }
 
    private void updateGraphics()

@@ -24,9 +24,17 @@ public class OrderByPane extends BorderPane
 
    private void showPopup()
    {
-      MenuItem none = new MenuItem(_i18n.t("order.none"), new ImageView(new Props(getClass()).getImage("sort.png")));
-      MenuItem asc = new MenuItem(_i18n.t("order.asc"), new ImageView(new Props(getClass()).getImage("sort_asc.gif")));
-      MenuItem desc = new MenuItem(_i18n.t("order.desc"), new ImageView(new Props(getClass()).getImage("sort_desc.gif")));
+      ImageView noneIcon = new ImageView(new Props(getClass()).getImage("sort.png"));
+      MenuItem none = new MenuItem(_i18n.t("order.none"), noneIcon);
+      none.setOnAction(e -> onFctSelected(noneIcon));
+
+      ImageView ascIcon = new ImageView(new Props(getClass()).getImage("sort_asc.gif"));
+      MenuItem asc = new MenuItem(_i18n.t("order.asc"), ascIcon);
+      asc.setOnAction(e -> onFctSelected(ascIcon));
+
+      ImageView descIcon = new ImageView(new Props(getClass()).getImage("sort_desc.gif"));
+      MenuItem desc = new MenuItem(_i18n.t("order.desc"), descIcon);
+      desc.setOnAction(e -> onFctSelected(descIcon));
 
 
       ContextMenu popup = new ContextMenu(none, asc, desc);
@@ -38,5 +46,9 @@ public class OrderByPane extends BorderPane
 
    }
 
+   private void onFctSelected(ImageView icon)
+   {
+      setCenter(icon);
+   }
 
 }
