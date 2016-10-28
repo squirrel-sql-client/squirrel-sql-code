@@ -55,15 +55,6 @@ public class ButtonTabComponent extends JPanel
       _label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
       //add more space to the top of the component
 
-      _label.addMouseListener(new MouseAdapter()
-      {
-         @Override
-         public void mouseClicked(MouseEvent e)
-         {
-            onMouseClickedLabel(e);
-         }
-      });
-
       _pnlSmallTabButtons = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
       _pnlSmallTabButtons.setOpaque(false);
 
@@ -75,14 +66,6 @@ public class ButtonTabComponent extends JPanel
       _btnToWindow = new SmallTabButton(s_stringMgr.getString("docktabdesktop.ButtonTabComponent.detachButtonTooltip"), app.getResources().getIcon(SquirrelResources.IImageNames.TAB_DETACH_SMALL));
 
       _pnlSmallTabButtons.add(_btnToWindow);
-   }
-
-   private void onMouseClickedLabel(MouseEvent e)
-   {
-      if(SwingUtilities.isMiddleMouseButton (e))
-      {
-         _btnClose.doClick();
-      }
    }
 
    // if look and feel changes we have to set the new defaults for rendering the title label
@@ -210,6 +193,11 @@ public class ButtonTabComponent extends JPanel
          }
       }
       return null;
+   }
+
+   public void doClickClose()
+   {
+      _btnClose.doClick();
    }
 
    private static class CloseTabButton extends SmallTabButton

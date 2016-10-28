@@ -27,6 +27,8 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+Session tabs wheren't selected on mouse click. This bug occurred since the "Tabs can be closed by middle mouse click" feature.
+
 Reconnecting (ctrl alt t) failed on Vertica DB with error:
  java.lang.ClassCastException: net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox$NoCatalogPlaceHolder cannot be cast to java.lang.String
   	at net.sourceforge.squirrel_sql.client.gui.session.CatalogsPanel.getSelectedCatalog(CatalogsPanel.java:184)
