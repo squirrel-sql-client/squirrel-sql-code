@@ -1617,10 +1617,11 @@ public class DBUtil extends I18NBaseObject
 	 * 
 	 * @param columnList
 	 * @param ti
+	 * @param doubleQuoteTableName
 	 * @return
 	 * @throws SQLException
 	 */
-	public static String getSelectQuery(SessionInfoProvider prov, String columnList, ITableInfo ti)
+	public static String getSelectQuery(SessionInfoProvider prov, String columnList, ITableInfo ti, boolean doubleQuoteTableName)
 	      throws SQLException, UserCancelledOperationException
 	{
 		StringBuilder result = new StringBuilder("select ");
@@ -1628,9 +1629,7 @@ public class DBUtil extends I18NBaseObject
 		result.append(" from ");
 		ISession sourceSession = prov.getSourceSession();
 
-		String tableName = getQualifiedObjectName(
-		   sourceSession, ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(),
-		   DialectFactory.SOURCE_TYPE);
+		String tableName = getQualifiedObjectName(sourceSession, ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), DialectFactory.SOURCE_TYPE, doubleQuoteTableName);
 		result.append(tableName);
 		return result.toString();
 	}
@@ -1640,19 +1639,21 @@ public class DBUtil extends I18NBaseObject
 	 * @param sourceConn
 	 * @param columnList
 	 * @param ti
+	 * @param doubleQuoteTableName
 	 * @return
 	 * @throws SQLException
 	 */
 	public static String getInsertSQL(SessionInfoProvider prov, String columnList, ITableInfo ti,
-	      int columnCount) throws SQLException, UserCancelledOperationException
+												 int columnCount, boolean doubleQuoteTableName) throws SQLException, UserCancelledOperationException
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("insert into ");
 		String destSchema = DBUtil.getSchemaNameFromDbObject(prov.getDestDatabaseObject());
 		String destCatalog = prov.getDestDatabaseObject().getCatalogName();
 		ISession destSession = prov.getDestSession();
-		result.append(getQualifiedObjectName(
-		   destSession, destCatalog, destSchema, ti.getSimpleName(), DialectFactory.DEST_TYPE));
+
+		result.append(getQualifiedObjectName(destSession, destCatalog, destSchema, ti.getSimpleName(), DialectFactory.DEST_TYPE, doubleQuoteTableName));
+
 		result.append(" ( ");
 		result.append(columnList);
 		result.append(" ) values ( ");
@@ -1693,8 +1694,12 @@ public class DBUtil extends I18NBaseObject
 	 * @return
 	 * @throws UserCancelledOperationException
 	 */
-	public static String getQualifiedObjectName(ISession session, String catalogName, String schemaName,
-	      String objectName, int sessionType)
+	public static String getQualifiedObjectName(ISession session, String catalogName, String schemaName, String objectName, int sessionType)
+	{
+		return getQualifiedObjectName(session, catalogName, schemaName, objectName, sessionType, false);
+	}
+
+	public static String getQualifiedObjectName(ISession session, String catalogName, String schemaName, String objectName, int sessionType, boolean doubleQuoteTableName)
 	{
 		String catalog = catalogName;
 		String schema = schemaName;
@@ -1731,25 +1736,39 @@ public class DBUtil extends I18NBaseObject
 		}
 		if (!useCatalog && !useSchema)
 		{
-			return object;
+			return handleQuoting(object, doubleQuoteTableName);
 		}
 		if ((catalog == null || catalog.equals("")) && (schema == null || schema.equals("")))
 		{
-			return object;
+			return handleQuoting(object, doubleQuoteTableName);
 		}
 		StringBuilder result = new StringBuilder();
 		if (useCatalog && catalog != null && !catalog.equals(""))
 		{
-			result.append(catalog);
+			result.append(handleQuoting(catalog, doubleQuoteTableName));
 			result.append(getCatSep(session));
 		}
 		if (useSchema && schema != null && !schema.equals(""))
 		{
-			result.append(schema);
+			result.append(handleQuoting(schema, doubleQuoteTableName));
 			result.append(".");
 		}
-		result.append(object);
+
+		result.append(handleQuoting(object, doubleQuoteTableName));
+
 		return result.toString();
+	}
+
+	private static String handleQuoting(String object, boolean doubleQuoteTableName)
+	{
+		if (doubleQuoteTableName)
+		{
+			return "\"" + object + "\"";
+		}
+		else
+		{
+			return object;
+		}
 	}
 
 	public static String getCatSep(ISession session)

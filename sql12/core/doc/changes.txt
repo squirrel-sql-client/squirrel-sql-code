@@ -27,6 +27,8 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+#1276 DB Copy Plugin: An error occurred when a table was copied and the table name needed to be double quoted.
+
 Session tabs wheren't selected on mouse click. This bug occurred since the "Tabs can be closed by middle mouse click" feature.
 
 Reconnecting (ctrl alt t) failed on Vertica DB with error:

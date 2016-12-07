@@ -565,13 +565,31 @@ public class CopyExecutor extends I18NBaseObject {
             
             String sourceColList = DBUtil.getColumnList(sourceInfos);
             String destColList = DBUtil.getColumnList(destInfos);
-            
-            String selectSQL = DBUtil.getSelectQuery(prov,
-                                                     sourceColList, 
-                                                     sourceTableInfo);
-            String insertSQL = DBUtil.getInsertSQL(prov, destColList,
-                                                   destTableInfo,
-                                                   destInfos.length);
+
+
+            boolean doubleQuoteTableName = false;
+
+            String selectSQL = DBUtil.getSelectQuery(prov,sourceColList,sourceTableInfo,doubleQuoteTableName);
+
+            try
+            {
+                rs = DBUtil.executeQuery(prov.getSourceSession(), selectSQL);
+            }
+            catch (Exception e)
+            {
+                log.info("Failed to execute SELECT-SQL without double quoting. Now trying with double quoting", e);
+
+                doubleQuoteTableName = true;
+
+                selectSQL = DBUtil.getSelectQuery(prov, sourceColList,sourceTableInfo, doubleQuoteTableName);
+
+                rs = DBUtil.executeQuery(prov.getSourceSession(), selectSQL);
+
+            }
+
+
+            String insertSQL = DBUtil.getInsertSQL(prov, destColList, destTableInfo, destInfos.length, doubleQuoteTableName);
+
             insertStmt = destConn.prepareStatement(insertSQL);
             
             int count = 1;
@@ -582,7 +600,6 @@ public class CopyExecutor extends I18NBaseObject {
             boolean foundLOBType = false;
             // Loop through source records...
             DBUtil.setLastStatement(selectSQL);
-            rs = DBUtil.executeQuery(prov.getSourceSession(), selectSQL);
             DBUtil.setLastStatement(insertSQL);
             boolean isMysql = DialectFactory.isMySQL(destSession.getMetaData());
             boolean isSourceOracle = 
