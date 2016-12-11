@@ -563,28 +563,36 @@ public class CopyExecutor extends I18NBaseObject {
                              sourceTableInfo.getQualifiedName(),
                              destTableInfo.getQualifiedName());
             
-            String sourceColList = DBUtil.getColumnList(sourceInfos);
-            String destColList = DBUtil.getColumnList(destInfos);
+            String sourceColList = DBUtil.getColumnList(sourceInfos, false);
+            String destColList = DBUtil.getColumnList(destInfos, false);
 
 
             boolean doubleQuoteTableName = false;
 
             String selectSQL = DBUtil.getSelectQuery(prov,sourceColList,sourceTableInfo,doubleQuoteTableName);
-
             try
             {
                 rs = DBUtil.executeQuery(prov.getSourceSession(), selectSQL);
             }
             catch (Exception e)
             {
-                log.info("Failed to execute SELECT-SQL without double quoting. Now trying with double quoting", e);
-
-                doubleQuoteTableName = true;
-
-                selectSQL = DBUtil.getSelectQuery(prov, sourceColList,sourceTableInfo, doubleQuoteTableName);
-
-                rs = DBUtil.executeQuery(prov.getSourceSession(), selectSQL);
-
+                try
+                {
+                    log.info("Failed to execute SELECT-SQL without double quoting. Now trying with double quoting table name", e);
+                    doubleQuoteTableName = true;
+                    selectSQL = DBUtil.getSelectQuery(prov, sourceColList,sourceTableInfo, doubleQuoteTableName);
+                    rs = DBUtil.executeQuery(prov.getSourceSession(), selectSQL);
+                }
+                catch (Exception e1)
+                {
+                    log.info("Failed to execute SELECT-SQL without double quoting. Now trying with double quoting table name and column names", e);
+                    doubleQuoteTableName = true;
+                    boolean doubleQuoteColumnNames = true;
+                    sourceColList = DBUtil.getColumnList(sourceInfos, doubleQuoteColumnNames);
+                    destColList = DBUtil.getColumnList(destInfos, doubleQuoteColumnNames);
+                    selectSQL = DBUtil.getSelectQuery(prov, sourceColList,sourceTableInfo, doubleQuoteTableName);
+                    rs = DBUtil.executeQuery(prov.getSourceSession(), selectSQL);
+                }
             }
 
 

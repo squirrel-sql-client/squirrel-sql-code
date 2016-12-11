@@ -1482,17 +1482,18 @@ public class DBUtil extends I18NBaseObject
 	 * 
 	 * @param con
 	 * @param ti
+	 * @param doubleQuoteColumnNames
 	 * @return
 	 * @throws SQLException
 	 */
-	public static String getColumnList(TableColumnInfo[] colInfoArr) throws SQLException
+	public static String getColumnList(TableColumnInfo[] colInfoArr, boolean doubleQuoteColumnNames) throws SQLException
 	{
 		StringBuilder result = new StringBuilder();
 
 		for (int i = 0; i < colInfoArr.length; i++)
 		{
 			TableColumnInfo colInfo = colInfoArr[i];
-			String columnName = colInfo.getColumnName();
+			String columnName = handleQuoting(colInfo.getColumnName(), doubleQuoteColumnNames);
 			result.append(columnName);
 			if (i < colInfoArr.length - 1)
 			{
@@ -1759,9 +1760,9 @@ public class DBUtil extends I18NBaseObject
 		return result.toString();
 	}
 
-	private static String handleQuoting(String object, boolean doubleQuoteTableName)
+	private static String handleQuoting(String object, boolean doubleQuote)
 	{
-		if (doubleQuoteTableName)
+		if (doubleQuote)
 		{
 			return "\"" + object + "\"";
 		}
