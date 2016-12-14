@@ -568,6 +568,7 @@ public class CopyExecutor extends I18NBaseObject {
 
 
             boolean doubleQuoteTableName = false;
+            boolean doubleQuoteColumnNames = false;
 
             String selectSQL = DBUtil.getSelectQuery(prov,sourceColList,sourceTableInfo,doubleQuoteTableName);
             try
@@ -587,7 +588,9 @@ public class CopyExecutor extends I18NBaseObject {
                 {
                     log.info("Failed to execute SELECT-SQL without double quoting. Now trying with double quoting table name and column names", e);
                     doubleQuoteTableName = true;
-                    boolean doubleQuoteColumnNames = true;
+
+                    doubleQuoteColumnNames = true;
+
                     sourceColList = DBUtil.getColumnList(sourceInfos, doubleQuoteColumnNames);
                     destColList = DBUtil.getColumnList(destInfos, doubleQuoteColumnNames);
                     selectSQL = DBUtil.getSelectQuery(prov, sourceColList,sourceTableInfo, doubleQuoteTableName);
@@ -654,9 +657,44 @@ public class CopyExecutor extends I18NBaseObject {
                     }
                 }                
                 lastStmtValuesBuffer.append(")");
-                DBUtil.setLastStatementValues(lastStmtValuesBuffer.toString());
-                sendStatementEvent(insertSQL, bindVarVals);
-                insertStmt.executeUpdate();
+
+                try
+                {
+                    DBUtil.setLastStatementValues(lastStmtValuesBuffer.toString());
+                    sendStatementEvent(insertSQL, bindVarVals);
+                    insertStmt.executeUpdate();
+                }
+                catch (Exception e)
+                {
+
+                    try
+                    {
+                        log.info("Failed to execute INSERT-SQL. Now trying with inverted quoting for columns", e);
+
+                        destColList = DBUtil.getColumnList(destInfos, !doubleQuoteColumnNames);
+                        insertSQL = DBUtil.getInsertSQL(prov, destColList, destTableInfo, destInfos.length, doubleQuoteTableName);
+                        insertStmt = destConn.prepareStatement(insertSQL);
+
+                        DBUtil.setLastStatementValues(lastStmtValuesBuffer.toString());
+                        sendStatementEvent(insertSQL, bindVarVals);
+                        insertStmt.executeUpdate();
+                    }
+                    catch (Exception e1)
+                    {
+                        log.info("Failed to execute INSERT-SQL. Now trying with inverted quoting with inverted quoting for columns and table", e);
+
+                        destColList = DBUtil.getColumnList(destInfos, !doubleQuoteColumnNames);
+                        insertSQL = DBUtil.getInsertSQL(prov, destColList, destTableInfo, destInfos.length, !doubleQuoteTableName);
+                        insertStmt = destConn.prepareStatement(insertSQL);
+
+                        DBUtil.setLastStatementValues(lastStmtValuesBuffer.toString());
+                        sendStatementEvent(insertSQL, bindVarVals);
+                        insertStmt.executeUpdate();
+
+                    }
+
+                }
+
                 sendRecordEvent(count, sourceTableCount);
                 count++;
                 if (!currentAutoCommitValue) {
