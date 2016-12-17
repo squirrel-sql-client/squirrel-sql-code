@@ -18,13 +18,11 @@ public class GraphListCheckBoxWA extends BorderPane
 
    private boolean _selected = false;
    private GraphListCheckBoxSelectionListener _graphListCheckBoxSelectionListener;
-   private ColumnConfigurationListener _columnConfigurationListener;
 
 
-   public GraphListCheckBoxWA(GraphListCheckBoxSelectionListener graphListCheckBoxSelectionListener, ColumnConfigurationListener columnConfigurationListener)
+   public GraphListCheckBoxWA(GraphListCheckBoxSelectionListener graphListCheckBoxSelectionListener)
    {
       _graphListCheckBoxSelectionListener = graphListCheckBoxSelectionListener;
-      _columnConfigurationListener = columnConfigurationListener;
       addEventHandler(MouseEvent.MOUSE_CLICKED, e -> onClicked());
       updateGraphics();
 
@@ -36,7 +34,6 @@ public class GraphListCheckBoxWA extends BorderPane
       _selected = !_selected;
       updateGraphics();
       _graphListCheckBoxSelectionListener.selectionChanged(_selected);
-      _columnConfigurationListener.requestLayout();
    }
 
    private void updateGraphics()

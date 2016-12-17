@@ -11,13 +11,11 @@ import org.squirrelsql.AppState;
 public class AggregateFunctionPane extends BorderPane
 {
    private AggregateFunctionData _aggregateFunctionData;
-   private ColumnConfigurationListener _columnConfigurationListener;
 
 
-   public AggregateFunctionPane(AggregateFunctionData aggregateFunctionData, ColumnConfigurationListener columnConfigurationListener)
+   public AggregateFunctionPane(AggregateFunctionData aggregateFunctionData)
    {
       _aggregateFunctionData = aggregateFunctionData;
-      _columnConfigurationListener = columnConfigurationListener;
 
       updateGraphics();
 
@@ -69,7 +67,6 @@ public class AggregateFunctionPane extends BorderPane
    {
       setCenter(image);
       layoutChildren();
-      _columnConfigurationListener.requestLayout();
    }
 
 

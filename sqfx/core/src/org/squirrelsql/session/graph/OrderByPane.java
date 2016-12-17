@@ -12,18 +12,10 @@ import org.squirrelsql.services.I18n;
 
 public class OrderByPane extends BorderPane
 {
-   private I18n _i18n = new I18n(getClass());
-   private ColumnConfigurationListener _columnConfigurationListener;
-
-
-   public OrderByPane(ColumnConfigurationListener columnConfigurationListener)
+   public OrderByPane()
    {
       super(new ImageView(new Props(OrderByPane.class).getImage("sort.png")));
-      _columnConfigurationListener = columnConfigurationListener;
       addEventHandler(MouseEvent.MOUSE_PRESSED, e -> showPopup());
-
-
-
    }
 
    private void showPopup()
@@ -55,7 +47,6 @@ public class OrderByPane extends BorderPane
    private void onFctSelected(ImageView icon)
    {
       setCenter(icon);
-      _columnConfigurationListener.requestLayout();
    }
 
 }
