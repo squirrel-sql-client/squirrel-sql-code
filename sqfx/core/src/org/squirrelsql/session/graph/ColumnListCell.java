@@ -1,10 +1,7 @@
 package org.squirrelsql.session.graph;
 
 import javafx.scene.control.ListCell;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
-import org.squirrelsql.Props;
 
 public class ColumnListCell extends ListCell<GraphColumn>
 {
@@ -30,7 +27,7 @@ public class ColumnListCell extends ListCell<GraphColumn>
       }
 
       setText(columnInfo.getDescription());
-      setGraphic(_columnConfigurationCtrl.getPanel());
+      setGraphic(_columnConfigurationCtrl.createPanel(columnInfo.getColumnConfiguration()));
    }
 
 

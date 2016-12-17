@@ -5,20 +5,26 @@ import javafx.scene.layout.HBox;
 public class ColumnConfigurationCtrl
 {
 
-   public HBox getPanel()
+   private HBox _currentPanel;
+
+   public HBox createPanel(ColumnConfiguration columnConfiguration)
    {
-      HBox panel;
-      panel = new HBox();
-      panel.setSpacing(3);
+      _currentPanel = new HBox();
 
-      AggregateFunctionPane aggregateFunctionPane = new AggregateFunctionPane(false);
 
-      GraphListCheckBoxWA graphListCheckBox = new GraphListCheckBoxWA(b -> aggregateFunctionPane.setEnabled(b));
+      _currentPanel.setSpacing(3);
 
-      panel.getChildren().add(graphListCheckBox);
-      panel.getChildren().add(aggregateFunctionPane);
-      panel.getChildren().add(new FilterPane());
-      panel.getChildren().add(new OrderByPane());
-      return panel;
+      ColumnConfigurationListener columnConfigurationListener = () -> _currentPanel.requestLayout();
+
+      AggregateFunctionPane aggregateFunctionPane = new AggregateFunctionPane(columnConfiguration.getAggregateFunctionData(), columnConfigurationListener);
+
+      GraphListCheckBoxWA graphListCheckBox = new GraphListCheckBoxWA(b -> aggregateFunctionPane.setEnabled(b), columnConfigurationListener);
+
+      _currentPanel.getChildren().add(graphListCheckBox);
+//      _currentPanel.getChildren().add(aggregateFunctionPane);
+      _currentPanel.getChildren().add(aggregateFunctionPane);
+      _currentPanel.getChildren().add(new FilterPane(columnConfigurationListener));
+      _currentPanel.getChildren().add(new OrderByPane(columnConfigurationListener));
+      return _currentPanel;
    }
 }

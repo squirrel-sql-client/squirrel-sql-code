@@ -6,7 +6,7 @@ import org.squirrelsql.Props;
 
 public class FilterPane extends BorderPane
 {
-   public FilterPane()
+   public FilterPane(ColumnConfigurationListener columnConfigurationListener)
    {
       ImageView imageView = new ImageView(new Props(getClass()).getImage("filter.gif"));
       setCenter(imageView);

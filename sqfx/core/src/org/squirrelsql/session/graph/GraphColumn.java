@@ -14,6 +14,7 @@ public class GraphColumn
    private String _postFix;
    private HashMap<String, NonDbImportedKey> _nonDbImportedKeyByNonDbFkId = new HashMap<>();
    private HashSet<String> _nonDbFkIdsPointingAtMe = new HashSet<>();
+   private ColumnConfiguration _columnConfiguration = new ColumnConfiguration();
 
    public GraphColumn(ColumnInfo columnInfo, PrimaryKeyInfo primaryKeyInfo, ImportedKeysInfo impKeysInfo, NonDbColumnImportPersistence pers, GraphChannel graphChannel)
    {
@@ -181,5 +182,10 @@ public class GraphColumn
       }
 
       return _impKeysInfo.getPkTable(fkNameOrId).getName().toString();
+   }
+
+   public ColumnConfiguration getColumnConfiguration()
+   {
+      return _columnConfiguration;
    }
 }

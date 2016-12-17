@@ -7,20 +7,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
-import org.squirrelsql.Props;
-import org.squirrelsql.services.I18n;
 
 public class AggregateFunctionPane extends BorderPane
 {
-   private final ImageView _imageEnabled = new ImageView(new Props(getClass()).getImage("aggfct.png"));
-   private final ImageView _imageDisabled = new ImageView(new Props(getClass()).getImage("aggfct_disabled.png"));
-   private boolean _enabled;
+   private AggregateFunctionData _aggregateFunctionData;
+   private ColumnConfigurationListener _columnConfigurationListener;
 
-   private I18n _i18n = new I18n(getClass());
 
-   public AggregateFunctionPane(boolean enabled)
+   public AggregateFunctionPane(AggregateFunctionData aggregateFunctionData, ColumnConfigurationListener columnConfigurationListener)
    {
-      _enabled = enabled;
+      _aggregateFunctionData = aggregateFunctionData;
+      _columnConfigurationListener = columnConfigurationListener;
+
       updateGraphics();
 
       addEventHandler(MouseEvent.MOUSE_PRESSED, e -> showPopup());
@@ -28,60 +26,62 @@ public class AggregateFunctionPane extends BorderPane
 
    private void showPopup()
    {
-      if(false == _enabled)
+      if(false == _aggregateFunctionData.isInSelect())
       {
          return;
       }
 
+      MenuItem[]  menuItems = new MenuItem[AggregateFunction.values().length];
 
-      ImageView nonIcon = new ImageView(new Props(getClass()).getImage("aggfct.png"));
-      MenuItem none = new MenuItem(_i18n.t("agg.function.none"), nonIcon);
-      none.setOnAction(e -> onFctSelected(nonIcon));
+      for (int i = 0; i < AggregateFunction.values().length; i++)
+      {
+         AggregateFunction agg = AggregateFunction.values()[i];
+         menuItems[i] = new MenuItem(agg.getTitle(), agg.createImage());
+         menuItems[i].setOnAction(e -> onFctSelected(agg));
+      }
 
-      ImageView sumIcon = new ImageView(new Props(getClass()).getImage("aggsum.png"));
-      MenuItem sum = new MenuItem(_i18n.t("agg.function.sum"), sumIcon);
-      sum.setOnAction(e -> onFctSelected(sumIcon));
-
-      ImageView maxIcon = new ImageView(new Props(getClass()).getImage("aggmax.png"));
-      MenuItem max = new MenuItem(_i18n.t("agg.function.max"), maxIcon);
-      max.setOnAction(e -> onFctSelected(maxIcon));
-
-      ImageView minIcon = new ImageView(new Props(getClass()).getImage("aggmin.png"));
-      MenuItem min = new MenuItem(_i18n.t("agg.function.min"), minIcon);
-      min.setOnAction(e -> onFctSelected(minIcon));
-
-      ImageView countIcon = new ImageView(new Props(getClass()).getImage("aggcount.png"));
-      MenuItem count = new MenuItem(_i18n.t("agg.function.count"), countIcon);
-      count.setOnAction(e -> onFctSelected(countIcon));
-
-      ContextMenu popup = new ContextMenu(none, sum, max, min, count);
+      ContextMenu popup = new ContextMenu(menuItems);
 
       Point2D localToScene = localToScreen(0, 0);
 
       popup.show(AppState.get().getPrimaryStage(), localToScene.getX(), localToScene.getY());
    }
 
-   private void onFctSelected(ImageView icon)
+   private void onFctSelected(AggregateFunction agg)
    {
-      setCenter(icon);
+      _aggregateFunctionData.setAggregateFunction(agg);
+      _setCenter(agg.createImage());
    }
 
    private void updateGraphics()
    {
-      if(_enabled)
+      if(_aggregateFunctionData.isInSelect())
       {
-         setCenter(_imageEnabled);
+         _setCenter(_aggregateFunctionData.getAggregateFunction().createImage());
       }
       else
       {
-         setCenter(_imageDisabled);
+         _setCenter(AggregateFunction.createDisabledImage());
       }
+   }
+
+   private void _setCenter(ImageView image)
+   {
+      setCenter(image);
+      layoutChildren();
+      _columnConfigurationListener.requestLayout();
    }
 
 
    public void setEnabled(boolean b)
    {
-      _enabled = b;
+      _aggregateFunctionData.setInSelect(b);
+
+      if(false == b)
+      {
+         _aggregateFunctionData.setAggregateFunction(AggregateFunction.NONE);
+      }
+
       updateGraphics();
    }
 }
