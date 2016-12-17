@@ -28,16 +28,18 @@ public class OrderByPane extends BorderPane
 
    private void showPopup()
    {
-      ImageView noneIcon = new ImageView(new Props(getClass()).getImage("sort.png"));
-      MenuItem none = new MenuItem(_i18n.t("order.none"), noneIcon);
+
+      ImageView noneIcon = OrderBy.createSortImage();
+      MenuItem none = new MenuItem(OrderBy.getOrderByNoneText(), noneIcon);
       none.setOnAction(e -> onFctSelected(noneIcon));
 
-      ImageView ascIcon = new ImageView(new Props(getClass()).getImage("sort_asc.gif"));
-      MenuItem asc = new MenuItem(_i18n.t("order.asc"), ascIcon);
+
+      ImageView ascIcon = OrderBy.ASC.createImage();
+      MenuItem asc = new MenuItem(OrderBy.ASC.getTitle(), ascIcon);
       asc.setOnAction(e -> onFctSelected(ascIcon));
 
-      ImageView descIcon = new ImageView(new Props(getClass()).getImage("sort_desc.gif"));
-      MenuItem desc = new MenuItem(_i18n.t("order.desc"), descIcon);
+      ImageView descIcon = OrderBy.DESC.createImage();
+      MenuItem desc = new MenuItem(OrderBy.DESC.getTitle(), descIcon);
       desc.setOnAction(e -> onFctSelected(descIcon));
 
 
