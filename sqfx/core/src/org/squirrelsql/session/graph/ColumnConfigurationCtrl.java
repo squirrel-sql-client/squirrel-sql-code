@@ -21,7 +21,7 @@ public class ColumnConfigurationCtrl
       _currentPanel.getChildren().add(graphListCheckBox);
 //      _currentPanel.getChildren().add(aggregateFunctionPane);
       _currentPanel.getChildren().add(aggregateFunctionPane);
-      _currentPanel.getChildren().add(new FilterPane(column.getColumnConfiguration()));
+      _currentPanel.getChildren().add(new FilterPane(column.getColumnConfiguration().getFilterData()));
       _currentPanel.getChildren().add(new OrderByPane());
       return _currentPanel;
    }

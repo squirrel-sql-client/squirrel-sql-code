@@ -23,6 +23,9 @@ public class FilterCtrl
       _view.cboOperator.getItems().addAll(Operator.values());
       _view.cboOperator.getSelectionModel().select(Operator.valueOf(filterData.getOperatorAsString()));
 
+      _view.cboOperator.valueProperty().addListener((observable, oldValue, newValue) -> onOperatorChanged());
+      onOperatorChanged();
+
       _view.txtValue.setText(filterData.getFilter());
 
       _view.btnCancel.setCancelButton(true);
@@ -34,6 +37,12 @@ public class FilterCtrl
       _dlg = GuiUtils.createModalDialog(fxmlHelper.getRegion(), new Pref(getClass()), 470, 170, "FilterCtrl");
 
       _dlg.showAndWait();
+   }
+
+   private void onOperatorChanged()
+   {
+      Operator value = (Operator) _view.cboOperator.getValue();
+      _view.txtValue.setDisable(!value.requiresValue());
    }
 
    private void onOk()
