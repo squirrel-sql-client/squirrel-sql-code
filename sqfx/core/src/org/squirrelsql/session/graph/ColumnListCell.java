@@ -27,7 +27,7 @@ public class ColumnListCell extends ListCell<GraphColumn>
       }
 
       setText(columnInfo.getDescription());
-      setGraphic(_columnConfigurationCtrl.createPanel(columnInfo.getColumnConfiguration()));
+      setGraphic(_columnConfigurationCtrl.createPanel(columnInfo));
    }
 
 

@@ -52,7 +52,7 @@
                   <RadioButton fx:id="radCommasAtLineEnd" layoutX="194.6728515625" layoutY="121.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="260.0" text="%sqlreformat.indent.commas.end" />
                   <Label layoutX="19.6728515625" layoutY="745.0" prefHeight="153.0" prefWidth="162.0" text="%sqlreformat.explain.lineBreakFor_AND_OR_in_FROM_clause" />
                   <CheckBox fx:id="chkLineBreakFor_AND_OR_in_FROM_clause" layoutX="194.6728515625" layoutY="751.0" mnemonicParsing="false" text="%sqlreformat.lineBreakFor_AND_OR_in_FROM_clause.ignore" />
-                  <Label layoutX="20.0" layoutY="206.0" prefHeight="16.0" prefWidth="171.0" text="%sqlreformat.column.list.behavior" />
+                  <Label layoutX="20.0" layoutY="206.0" prefHeight="16.0" prefWidth="171.0" text="%sqlreformat.columnConfiguration.list.behavior" />
                   <ComboBox fx:id="cboColumnListSplitMode" layoutX="195.0" layoutY="201.0" prefHeight="26.0" prefWidth="278.0" />
                </children>
             </AnchorPane>

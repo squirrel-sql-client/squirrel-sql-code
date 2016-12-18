@@ -18,9 +18,9 @@
         </columns>
       </TableView>
       <Button fx:id="btnRemoveSelectedEntry" layoutX="14.0" layoutY="333.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="333.0" text="%remove.selected.rows" AnchorPane.bottomAnchor="213.0" />
-      <Label fx:id="lblFkColumns" layoutX="14.0" layoutY="407.0" prefHeight="16.0" prefWidth="340.0" text="Source column (Table: ...):" AnchorPane.bottomAnchor="149.0" />
+      <Label fx:id="lblFkColumns" layoutX="14.0" layoutY="407.0" prefHeight="16.0" prefWidth="340.0" text="Source columnConfiguration (Table: ...):" AnchorPane.bottomAnchor="149.0" />
       <ComboBox fx:id="cboFkColumn" layoutX="14.0" layoutY="423.0" prefHeight="26.0" prefWidth="404.0" AnchorPane.bottomAnchor="123.0" />
-      <Label fx:id="lblPkColumns" layoutX="14.0" layoutY="457.0" prefHeight="16.0" prefWidth="340.0" text="Target column (Table: ...):" AnchorPane.bottomAnchor="99.0" />
+      <Label fx:id="lblPkColumns" layoutX="14.0" layoutY="457.0" prefHeight="16.0" prefWidth="340.0" text="Target columnConfiguration (Table: ...):" AnchorPane.bottomAnchor="99.0" />
       <ComboBox fx:id="cboPkColumn" layoutX="14.0" layoutY="473.0" prefHeight="26.0" prefWidth="404.0" AnchorPane.bottomAnchor="73.0" />
       <Button fx:id="btnAdd" layoutX="427.0" layoutY="423.0" mnemonicParsing="false" prefHeight="77.0" prefWidth="93.0" text="%constraint.add" AnchorPane.bottomAnchor="72.0" />
       <Button fx:id="btnOk" layoutX="612.0" layoutY="532.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="63.0" text="%constraint.ok" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="88.0" />

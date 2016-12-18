@@ -14,7 +14,7 @@ Bug fix: Fixed ExceptionInInitializerError caused by NullPointerException on IOS
 
 Feature (in progress): Query builders can be saved.
 
-Feature: New SQL format option concerning column list splitting
+Feature: New SQL format option concerning columnConfiguration list splitting
   See menu "File" --> "Global Preferences" --> tab "SQL formatting" --> "Column list split behavior"
 
 Bug fix: Database connection was not closed when Session was closed.
@@ -129,7 +129,7 @@ Feature: Join generators: Using code completion (ctrl+space) on the following ex
   - #j,table1,table2,...tableN, will generate left/inner join from table1 to table2 to ... tableN using constraints between the tables
     and depending on the foreign keys' nullability
 
-Bug fix: Code completion did not work inside column lists that were separated by commas but no white spaces.
+Bug fix: Code completion did not work inside columnConfiguration lists that were separated by commas but no white spaces.
 
 Improved connect progress dialog to show progress information.
 
@@ -137,7 +137,7 @@ Bug fix: Code completion did'nt calculate the table/view closest to the caret ri
 
 More improved Object tree performance: Details tabs data are now loaded on demand.
 
-Bug fix: Search in SQL result table didn't work when user had rearranged column orders.
+Bug fix: Search in SQL result table didn't work when user had rearranged columnConfiguration orders.
 
 Feature: New setting in settings dialog to limit number of SQL result tabs.
 
@@ -213,7 +213,7 @@ Feature: Right click on result tabs to Close All or Close All But This
 
 Upgraded RichTextFX to version 0.6.3.
 
-Bug fix: Autocomplete for column names throwing cast error on Oracle
+Bug fix: Autocomplete for columnConfiguration names throwing cast error on Oracle
 
 Feature: Data type highlight support for Oracle varchar2
 
