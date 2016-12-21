@@ -79,7 +79,14 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 	 */
 	public String statementExecuting(String sql) {
 		// log.info("SQL starting to execute: " + sql);
-		StringBuffer buffer = new StringBuffer(sql.replaceAll("--.*", ""));
+
+		// Removes -- comments
+		sql = sql.replaceAll("--.*", "");
+
+		// Removes /*  */ comments
+		sql = sql.replaceAll("/\\*(.|\\s)*\\*/", "");
+
+		StringBuffer buffer = new StringBuffer(sql);
 		Map<String, String> cache = plugin.getCache();
 		Map<String, String> currentCache = new HashMap<String, String>();
 		Pattern p = Pattern.compile("[\\ \\(]:[a-zA-Z]\\w+");
