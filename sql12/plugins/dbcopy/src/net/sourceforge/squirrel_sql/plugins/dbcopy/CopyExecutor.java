@@ -626,36 +626,7 @@ public class CopyExecutor extends I18NBaseObject {
                 }
                 StringBuilder lastStmtValuesBuffer = new StringBuilder();
                 lastStmtValuesBuffer.append("\n(Bind variable values: ");
-                for (int i = 0; i < columnCount; i++) {
-
-                    int sourceColType = sourceInfos[i].getDataType();
-                    // If source column is type 1111 (OTHER), try to use the 
-                    // column type name to find a type that isn't 1111.
-                    sourceColType = DBUtil.replaceOtherDataType(sourceInfos[i], prov.getSourceSession());
-                    sourceColType = getDateReplacement(sourceColType, 
-                                                       isSourceOracle);
-                    
-                    int destColType   = destInfos[i].getDataType();
-                    // If source column is type 1111 (OTHER), try to use the 
-                    // column type name to find a type that isn't 1111.
-                    destColType = DBUtil.replaceOtherDataType(destInfos[i], prov.getDestSession());
-                    destColType = getDateReplacement(destColType, isDestOracle);
-                    
-                    
-                    String bindVal = DBUtil.bindVariable(insertStmt,
-                                                         sourceColType,
-                                                         destColType,
-                                                         i+1,
-                                                         rs);
-                    bindVarVals[i] = bindVal;
-                    lastStmtValuesBuffer.append(bindVal);
-                    if (i + 1 < columnCount) {
-                        lastStmtValuesBuffer.append(", ");
-                    }
-                    if (isLOBType(destColType)) {
-                    	foundLOBType = true;
-                    }
-                }                
+                foundLOBType = setPreparedStatementParams(insertStmt, rs, sourceInfos, destInfos, columnCount, bindVarVals, foundLOBType, isSourceOracle, isDestOracle, lastStmtValuesBuffer);
                 lastStmtValuesBuffer.append(")");
 
                 try
@@ -675,6 +646,9 @@ public class CopyExecutor extends I18NBaseObject {
                         insertSQL = DBUtil.getInsertSQL(prov, destColList, destTableInfo, destInfos.length, doubleQuoteTableName);
                         insertStmt = destConn.prepareStatement(insertSQL);
 
+                        foundLOBType = setPreparedStatementParams(insertStmt, rs, sourceInfos, destInfos, columnCount, bindVarVals, foundLOBType, isSourceOracle, isDestOracle, lastStmtValuesBuffer);
+
+
                         DBUtil.setLastStatementValues(lastStmtValuesBuffer.toString());
                         sendStatementEvent(insertSQL, bindVarVals);
                         insertStmt.executeUpdate();
@@ -686,6 +660,8 @@ public class CopyExecutor extends I18NBaseObject {
                         destColList = DBUtil.getColumnList(destInfos, !doubleQuoteColumnNames);
                         insertSQL = DBUtil.getInsertSQL(prov, destColList, destTableInfo, destInfos.length, !doubleQuoteTableName);
                         insertStmt = destConn.prepareStatement(insertSQL);
+
+                        foundLOBType = setPreparedStatementParams(insertStmt, rs, sourceInfos, destInfos, columnCount, bindVarVals, foundLOBType, isSourceOracle, isDestOracle, lastStmtValuesBuffer);
 
                         DBUtil.setLastStatementValues(lastStmtValuesBuffer.toString());
                         sendStatementEvent(insertSQL, bindVarVals);
@@ -712,7 +688,39 @@ public class CopyExecutor extends I18NBaseObject {
             }
         }
     }
-    
+
+    private boolean setPreparedStatementParams(PreparedStatement insertStmt, ResultSet rs, TableColumnInfo[] sourceInfos, TableColumnInfo[] destInfos, int columnCount, String[] bindVarVals, boolean foundLOBType, boolean isSourceOracle, boolean isDestOracle, StringBuilder lastStmtValuesBuffer) throws SQLException
+    {
+        for (int i = 0; i < columnCount; i++)
+        {
+
+            // If source column is type 1111 (OTHER), try to use the
+            // column type name to find a type that isn't 1111.
+            int sourceColType = DBUtil.replaceOtherDataType(sourceInfos[i], prov.getSourceSession());
+            sourceColType = getDateReplacement(sourceColType, isSourceOracle);
+
+            int destColType   = destInfos[i].getDataType();
+            // If source column is type 1111 (OTHER), try to use the
+            // column type name to find a type that isn't 1111.
+            destColType = DBUtil.replaceOtherDataType(destInfos[i], prov.getDestSession());
+            destColType = getDateReplacement(destColType, isDestOracle);
+
+
+            String bindVal = DBUtil.bindVariable(insertStmt, sourceColType, destColType,i+1, rs);
+            bindVarVals[i] = bindVal;
+            lastStmtValuesBuffer.append(bindVal);
+            if (i + 1 < columnCount)
+            {
+                lastStmtValuesBuffer.append(", ");
+            }
+            if (isLOBType(destColType))
+            {
+                foundLOBType = true;
+            }
+        }
+        return foundLOBType;
+    }
+
     /**
      * This will return a TIMESTAMP type when the specified type is a DATE and 
      * isOracle is true.  This is done so that Oracle dates that have a time 
