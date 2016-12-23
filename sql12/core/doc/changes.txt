@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+More Granular RSYNTAX Color Tokens
+ Thanks to Duane Redfern for the merge request
+
 Tabs can be closed by middle mouse click
 
 Added default driver definition for Salesforces DB
