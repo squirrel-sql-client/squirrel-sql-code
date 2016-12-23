@@ -7,32 +7,36 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
-import org.squirrelsql.Props;
-import org.squirrelsql.services.I18n;
 
 public class OrderByPane extends BorderPane
 {
-   public OrderByPane()
+   private OrderByData _orderByData;
+
+   public OrderByPane(OrderByData orderByData)
    {
-      super(new ImageView(new Props(OrderByPane.class).getImage("sort.png")));
+      _orderByData = orderByData;
+
+      OrderBy orderBy = OrderBy.valueOf(_orderByData.getOrderBy());
+      setCenter(orderBy.createImage());
+
       addEventHandler(MouseEvent.MOUSE_PRESSED, e -> showPopup());
    }
 
    private void showPopup()
    {
 
-      ImageView noneIcon = OrderBy.createSortImage();
-      MenuItem none = new MenuItem(OrderBy.getOrderByNoneText(), noneIcon);
-      none.setOnAction(e -> onFctSelected(noneIcon));
+      ImageView noneIcon = OrderBy.NONE.createImage();
+      MenuItem none = new MenuItem(OrderBy.NONE.getTitle(), noneIcon);
+      none.setOnAction(e -> onFctSelected(OrderBy.NONE));
 
 
       ImageView ascIcon = OrderBy.ASC.createImage();
       MenuItem asc = new MenuItem(OrderBy.ASC.getTitle(), ascIcon);
-      asc.setOnAction(e -> onFctSelected(ascIcon));
+      asc.setOnAction(e -> onFctSelected(OrderBy.ASC));
 
       ImageView descIcon = OrderBy.DESC.createImage();
       MenuItem desc = new MenuItem(OrderBy.DESC.getTitle(), descIcon);
-      desc.setOnAction(e -> onFctSelected(descIcon));
+      desc.setOnAction(e -> onFctSelected(OrderBy.DESC));
 
 
       ContextMenu popup = new ContextMenu(none, asc, desc);
@@ -44,9 +48,10 @@ public class OrderByPane extends BorderPane
 
    }
 
-   private void onFctSelected(ImageView icon)
+   private void onFctSelected(OrderBy orderBy)
    {
-      setCenter(icon);
+      setCenter(orderBy.createImage());
+      _orderByData.setOrderBy(orderBy.name());
    }
 
 }

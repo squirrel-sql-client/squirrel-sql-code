@@ -22,7 +22,7 @@ public class ColumnConfigurationCtrl
 //      _currentPanel.getChildren().add(aggregateFunctionPane);
       _currentPanel.getChildren().add(aggregateFunctionPane);
       _currentPanel.getChildren().add(new FilterPane(column.getColumnConfiguration().getFilterData()));
-      _currentPanel.getChildren().add(new OrderByPane());
+      _currentPanel.getChildren().add(new OrderByPane(column.getColumnConfiguration().getOrderByData()));
       return _currentPanel;
    }
 }

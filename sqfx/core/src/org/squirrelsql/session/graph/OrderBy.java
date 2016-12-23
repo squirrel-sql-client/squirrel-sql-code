@@ -6,6 +6,7 @@ import org.squirrelsql.services.I18n;
 
 public enum OrderBy
 {
+   NONE("sort.png",  "order.none"),
    ASC("sort_asc.gif", "order.asc"),
    DESC("sort_desc.gif", "order.desc");
 
@@ -28,18 +29,5 @@ public enum OrderBy
       return _title;
    }
 
-
-
-
-
-   public static ImageView createSortImage()
-   {
-      return new ImageView(new Props(OrderBy.class).getImage("sort.png"));
-   }
-
-   public static String getOrderByNoneText()
-   {
-      return new I18n(OrderBy.class).t("order.none");
-   }
 
 }
