@@ -441,6 +441,11 @@ public class Dao
 
       File[] files = aliasDir.listFiles(f -> f.getName().startsWith(GRAPH_PERSISTENCE_FILE_PREFIX));
 
+      if(null == files)
+      {
+         return Collections.emptyList();
+      }
+
       return CollectionUtil.transform(files, f -> toGraphPersistenceWrapper(f));
 
    }
