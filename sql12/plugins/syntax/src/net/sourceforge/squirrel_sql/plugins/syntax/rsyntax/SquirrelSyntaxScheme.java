@@ -55,6 +55,36 @@ public class SquirrelSyntaxScheme extends SyntaxScheme
       stylesBuf[Token.ERROR_IDENTIFIER] = createRSyntaxStyle(prefs.getErrorStyle(), boldFont, italicFont);
       stylesBuf[Token.ERROR_NUMBER_FORMAT] = createRSyntaxStyle(prefs.getErrorStyle(), boldFont, italicFont);
       stylesBuf[Token.ERROR_STRING_DOUBLE] = createRSyntaxStyle(prefs.getErrorStyle(), boldFont, italicFont);
+	  
+	  // DAR001 Begin Mods for more granular synatx colors
+      stylesBuf[Token.RESERVED_WORD_2] = createRSyntaxStyle(prefs.getReservedWordStyle(), boldFont, italicFont);
+      stylesBuf[Token.ANNOTATION] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.COMMENT_KEYWORD] = createRSyntaxStyle(prefs.getCommentStyle(), boldFont, italicFont);     
+      stylesBuf[Token.COMMENT_MARKUP] = createRSyntaxStyle(prefs.getCommentStyle(), boldFont, italicFont);     
+      stylesBuf[Token.FUNCTION] = createRSyntaxStyle(prefs.getFunctionStyle(), boldFont, italicFont);
+      stylesBuf[Token.DATA_TYPE] = createRSyntaxStyle(prefs.getDataTypeStyle(), boldFont, italicFont);    
+      stylesBuf[Token.LITERAL_BOOLEAN] = createRSyntaxStyle(prefs.getLiteralStyle(), boldFont, italicFont);
+      stylesBuf[Token.LITERAL_NUMBER_DECIMAL_INT] = createRSyntaxStyle(prefs.getLiteralStyle(), boldFont, italicFont);
+      stylesBuf[Token.LITERAL_NUMBER_FLOAT] = createRSyntaxStyle(prefs.getLiteralStyle(), boldFont, italicFont);
+      stylesBuf[Token.LITERAL_NUMBER_HEXADECIMAL] = createRSyntaxStyle(prefs.getLiteralStyle(), boldFont, italicFont);
+      stylesBuf[Token.LITERAL_CHAR] = createRSyntaxStyle(prefs.getLiteralStyle(), boldFont, italicFont);
+      stylesBuf[Token.LITERAL_BACKQUOTE] = createRSyntaxStyle(prefs.getLiteralStyle(), boldFont, italicFont);
+      stylesBuf[Token.MARKUP_TAG_DELIMITER] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.MARKUP_TAG_NAME] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.MARKUP_TAG_ATTRIBUTE] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.MARKUP_TAG_ATTRIBUTE_VALUE] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.MARKUP_COMMENT] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.MARKUP_DTD] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.MARKUP_PROCESSING_INSTRUCTION] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.MARKUP_CDATA] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.MARKUP_CDATA_DELIMITER] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.MARKUP_ENTITY_REFERENCE] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.PREPROCESSOR] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.REGEX] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.SEPARATOR] = createRSyntaxStyle(prefs.getSeparatorStyle(), boldFont, italicFont);
+      stylesBuf[Token.VARIABLE] = createRSyntaxStyle(prefs.getIdentifierStyle(), boldFont, italicFont);
+      stylesBuf[Token.ERROR_CHAR] = createRSyntaxStyle(prefs.getErrorStyle(), boldFont, italicFont);
+	  // DAR001 End Mods
 
       super.setStyles(stylesBuf);
    }
