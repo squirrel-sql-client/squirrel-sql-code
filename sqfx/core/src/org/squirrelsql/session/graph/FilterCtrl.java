@@ -4,6 +4,7 @@ import javafx.stage.Stage;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.GuiUtils;
 import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.Utils;
 
 public class FilterCtrl
 {
@@ -47,7 +48,17 @@ public class FilterCtrl
 
    private void onOk()
    {
-      _filterPersistence.setFilter(_view.txtValue.getText());
+      String text = _view.txtValue.getText();
+
+      if (Utils.isEmptyString(text))
+      {
+         _filterPersistence.setFilter(null);
+      }
+      else
+      {
+         _filterPersistence.setFilter(text);
+      }
+
       Operator selectedItem = (Operator)_view.cboOperator.getSelectionModel().getSelectedItem();
       _filterPersistence.setOperatorAsString( selectedItem.name());
       _dlg.close();
