@@ -1,6 +1,6 @@
 package org.squirrelsql.session.graph;
 
-public class OrderByData
+public class OrderByPersistence
 {
    private String _orderBy = OrderBy.NONE.name();
 

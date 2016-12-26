@@ -18,7 +18,7 @@ public class GraphTablePersistence
    private double _height;
 
    private HashMap<String, FkPropsPersistence> _persistentFkPropsPersistenceByFkName = new HashMap<>();
-   private List<NonDbColumnImportPersistence> _nonDbColumnImportPersistences = new ArrayList<>();
+   private List<ColumnPersistence> _columnPersistences = new ArrayList<>();
 
    /**
     * For serialization only
@@ -41,7 +41,7 @@ public class GraphTablePersistence
 
       _persistentFkPropsPersistenceByFkName = FkPropsPersistence.toFkPropsPersitences(ctrl.getFkPropsByFkName());
 
-      _nonDbColumnImportPersistences = ctrl.getNonDbColumnImportPersistences();
+      _columnPersistences = ctrl.getNonDbColumnImportPersistences();
 
    }
 
@@ -137,15 +137,13 @@ public class GraphTablePersistence
       _persistentFkPropsPersistenceByFkName = persistentFkPropsPersistenceByFkName;
    }
 
-   public List<NonDbColumnImportPersistence> getNonDbColumnImportPersistences()
+   public List<ColumnPersistence> getColumnPersistences()
    {
-      return _nonDbColumnImportPersistences;
+      return _columnPersistences;
    }
 
-   public void setNonDbColumnImportPersistences(List<NonDbColumnImportPersistence> nonDbColumnImportPersistences)
+   public void setColumnPersistences(List<ColumnPersistence> columnPersistences)
    {
-      _nonDbColumnImportPersistences = nonDbColumnImportPersistences;
+      _columnPersistences = columnPersistences;
    }
-
-
 }

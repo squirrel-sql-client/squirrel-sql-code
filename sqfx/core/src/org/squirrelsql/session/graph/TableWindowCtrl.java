@@ -19,7 +19,7 @@ public class TableWindowCtrl
    private TableInfo _tableInfo;
    private HashMap<String, FkProps> _fkPropsByFkName = new HashMap<>();
 
-   public TableWindowCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, List<NonDbColumnImportPersistence> nonDbColumnImportPersistences, DrawLinesListener drawLinesListener)
+   public TableWindowCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, List<ColumnPersistence> columnPersistences, DrawLinesListener drawLinesListener)
    {
       _session = session;
       _graphChannel = graphChannel;
@@ -28,7 +28,7 @@ public class TableWindowCtrl
 
       _window = new Window(_tableInfo.getName());
 
-      _columnListCtrl = new ColumnListCtrl(_session, _graphChannel, _tableInfo, _window, nonDbColumnImportPersistences, () -> drawLinesListener.drawLines(TableWindowCtrl.this));
+      _columnListCtrl = new ColumnListCtrl(_session, _graphChannel, _tableInfo, _window, columnPersistences, () -> drawLinesListener.drawLines(TableWindowCtrl.this));
 
       Pane contentPane = new BorderPane(_columnListCtrl.getColumnListView());
 
@@ -190,8 +190,9 @@ public class TableWindowCtrl
       return _columnListCtrl.getGraphColumns();
    }
 
-   public List<NonDbColumnImportPersistence> getNonDbColumnImportPersistences()
+   public List<ColumnPersistence> getNonDbColumnImportPersistences()
    {
       return _columnListCtrl.getNonDbColumnImportPersistences();
    }
+
 }

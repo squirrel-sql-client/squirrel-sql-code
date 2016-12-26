@@ -1,6 +1,6 @@
 package org.squirrelsql.session.graph;
 
-public class AggregateFunctionData
+public class AggregateFunctionPersistence
 {
    private boolean _inSelect;
    private AggregateFunction _aggregateFunction = AggregateFunction.NONE;

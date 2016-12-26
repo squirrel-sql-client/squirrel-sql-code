@@ -29,17 +29,14 @@ public class MessageHandler
    {
       try
       {
-         if (MessageHandlerDestination.MESSAGE_LOG == _dest)
+         if (MessageHandlerDestination.MESSAGE_LOG.matches(_dest))
          {
             AppState.get().getStatusBarCtrl().warning(s, t);
          }
-         else if (MessageHandlerDestination.MESSAGE_PANEL == _dest)
+
+         if (MessageHandlerDestination.MESSAGE_PANEL.matches(_dest))
          {
             AppState.get().getMessagePanelCtrl().warning(s, t);
-         }
-         else
-         {
-            throw new UnsupportedOperationException("Unkonwn destination: " + _dest);
          }
       }
       catch (Throwable tmh)
@@ -57,17 +54,14 @@ public class MessageHandler
    {
       try
       {
-         if (MessageHandlerDestination.MESSAGE_LOG == _dest)
+         if (MessageHandlerDestination.MESSAGE_LOG.matches(_dest))
          {
             AppState.get().getStatusBarCtrl().info(s);
          }
-         else if (MessageHandlerDestination.MESSAGE_PANEL == _dest)
+
+         if (MessageHandlerDestination.MESSAGE_PANEL.matches(_dest))
          {
             AppState.get().getMessagePanelCtrl().info(s);
-         }
-         else
-         {
-            throw new UnsupportedOperationException("Unkonwn destination: " + _dest);
          }
       }
       catch (Throwable tmh)
@@ -96,17 +90,14 @@ public class MessageHandler
    {
       try
       {
-         if (MessageHandlerDestination.MESSAGE_LOG == _dest)
+         if (MessageHandlerDestination.MESSAGE_LOG.matches(_dest))
          {
             AppState.get().getStatusBarCtrl().error(s, t);
          }
-         else if (MessageHandlerDestination.MESSAGE_PANEL == _dest)
+
+         if (MessageHandlerDestination.MESSAGE_PANEL.matches(_dest))
          {
             AppState.get().getMessagePanelCtrl().error(s, t);
-         }
-         else
-         {
-            throw new UnsupportedOperationException("Unkonwn destination: " + _dest);
          }
       }
       catch (Throwable tmh)

@@ -1,6 +1,5 @@
 package org.squirrelsql.session.graph;
 
-import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.TableInfo;
 
@@ -11,16 +10,23 @@ public class GraphColumn
    private ColumnInfo _columnInfo;
    private final PrimaryKeyInfo _primaryKeyInfo;
    private final ImportedKeysInfo _impKeysInfo;
+   private ColumnPersistence _columnPersistence;
    private String _postFix;
    private HashMap<String, NonDbImportedKey> _nonDbImportedKeyByNonDbFkId = new HashMap<>();
    private HashSet<String> _nonDbFkIdsPointingAtMe = new HashSet<>();
-   private ColumnConfiguration _columnConfiguration = new ColumnConfiguration();
 
-   public GraphColumn(ColumnInfo columnInfo, PrimaryKeyInfo primaryKeyInfo, ImportedKeysInfo impKeysInfo, NonDbColumnImportPersistence pers, GraphChannel graphChannel)
+   public GraphColumn(ColumnInfo columnInfo, PrimaryKeyInfo primaryKeyInfo, ImportedKeysInfo impKeysInfo, ColumnPersistence columnPersistence, GraphChannel graphChannel)
    {
       _columnInfo = columnInfo;
       _primaryKeyInfo = primaryKeyInfo;
       _impKeysInfo = impKeysInfo;
+      _columnPersistence = columnPersistence;
+
+      if(null == _columnPersistence)
+      {
+         _columnPersistence = new ColumnPersistence(_columnInfo.getCatalogName(), _columnInfo.getSchemaName(), _columnInfo.getTableName(), _columnInfo.getColName());
+
+      }
 
       _postFix = " ";
 
@@ -35,17 +41,17 @@ public class GraphColumn
       }
 
 
-      if(null != pers)
+      if(null != columnPersistence)
       {
-         graphChannel.addAllTablesAddedListener(() -> onAllTablesAdded(pers, graphChannel));
+         graphChannel.addAllTablesAddedListener(() -> onAllTablesAdded(columnPersistence, graphChannel));
       }
 
    }
 
-   private void onAllTablesAdded(NonDbColumnImportPersistence pers, GraphChannel graphChannel)
+   private void onAllTablesAdded(ColumnPersistence pers, GraphChannel graphChannel)
    {
       _nonDbFkIdsPointingAtMe = pers.getNonDbFkIdsPointingAtMe();
-      _nonDbImportedKeyByNonDbFkId = NonDbColumnImportPersistence.toNonDbImportedKeyByNonDbFkId(pers, graphChannel.getGraphFinder());
+      _nonDbImportedKeyByNonDbFkId = ColumnPersistence.toNonDbImportedKeyByNonDbFkId(pers, graphChannel.getGraphFinder());
    }
 
    public String getDescription()
@@ -134,20 +140,19 @@ public class GraphColumn
       _nonDbFkIdsPointingAtMe.remove(nonDbFkId);
    }
 
-   public NonDbColumnImportPersistence getNonDbImportPersistence()
+   public ColumnPersistence getColumnPersistence()
    {
-      NonDbColumnImportPersistence ret = new NonDbColumnImportPersistence(_columnInfo.getCatalogName(), _columnInfo.getSchemaName(), _columnInfo.getTableName(), _columnInfo.getColName());
 
-      ret.setNonDbFkIdsPointingAtMe(_nonDbFkIdsPointingAtMe);
+      _columnPersistence.setNonDbFkIdsPointingAtMe(_nonDbFkIdsPointingAtMe);
 
       HashMap<String, NonDbImportedKeyPersistence> buf = new HashMap<>();
       for (Map.Entry<String, NonDbImportedKey> entry : _nonDbImportedKeyByNonDbFkId.entrySet())
       {
          buf.put(entry.getKey(), NonDbImportedKeyPersistence.toNonDbImportedKeyPersistence(entry.getValue()));
       }
-      ret.setNonDbImportedKeyPersistenceByNonDbFkId(buf);
+      _columnPersistence.setNonDbImportedKeyPersistenceByNonDbFkId(buf);
 
-      return ret;
+      return _columnPersistence;
    }
 
    public List<String> removeNonDBConstraintDataTo(GraphColumn otherCol)
@@ -184,8 +189,8 @@ public class GraphColumn
       return _impKeysInfo.getPkTable(fkNameOrId).getName().toString();
    }
 
-   public ColumnConfiguration getColumnConfiguration()
+   public ColumnConfigurationPersistence getColumnConfigurationPersistence()
    {
-      return _columnConfiguration;
+      return _columnPersistence.getColumnConfigurationPersistence();
    }
 }

@@ -14,15 +14,18 @@ public class ColumnConfigurationCtrl
 
       _currentPanel.setSpacing(3);
 
-      AggregateFunctionPane aggregateFunctionPane = new AggregateFunctionPane(column.getColumnConfiguration().getAggregateFunctionData());
+      AggregateFunctionPersistence aggregateFunctionPersistence = column.getColumnConfigurationPersistence().getAggregateFunctionPersistence();
 
+      AggregateFunctionPane aggregateFunctionPane = new AggregateFunctionPane(aggregateFunctionPersistence);
       GraphListCheckBoxWA graphListCheckBox = new GraphListCheckBoxWA(b -> aggregateFunctionPane.setEnabled(b));
+      graphListCheckBox.setSelected(aggregateFunctionPersistence.isInSelect());
+
 
       _currentPanel.getChildren().add(graphListCheckBox);
 //      _currentPanel.getChildren().add(aggregateFunctionPane);
       _currentPanel.getChildren().add(aggregateFunctionPane);
-      _currentPanel.getChildren().add(new FilterPane(column.getColumnConfiguration().getFilterData()));
-      _currentPanel.getChildren().add(new OrderByPane(column.getColumnConfiguration().getOrderByData()));
+      _currentPanel.getChildren().add(new FilterPane(column.getColumnConfigurationPersistence().getFilterPersistence()));
+      _currentPanel.getChildren().add(new OrderByPane(column.getColumnConfigurationPersistence().getOrderByPersistence()));
       return _currentPanel;
    }
 }

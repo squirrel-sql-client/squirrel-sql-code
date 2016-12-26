@@ -1,6 +1,6 @@
 package org.squirrelsql.session.graph;
 
-public class FilterData
+public class FilterPersistence
 {
    private String _operatorAsString = Operator.EQUALS.name();
    private String _filter;

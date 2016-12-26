@@ -1,13 +1,10 @@
 package org.squirrelsql.session.graph;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.*;
-import javafx.util.Callback;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.Session;
@@ -29,7 +26,7 @@ public class ColumnListCtrl
    private Window _window;
    private Runnable _drawLinesListener;
 
-   public ColumnListCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, Window window, List<NonDbColumnImportPersistence> nonDbColumnImportPersistences, Runnable drawLinesListener)
+   public ColumnListCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, Window window, List<ColumnPersistence> columnPersistences, Runnable drawLinesListener)
    {
       _graphChannel = graphChannel;
       _tableInfo = tableInfo;
@@ -42,12 +39,12 @@ public class ColumnListCtrl
       ImportedKeysInfo impKeysInfo = new ImportedKeysInfo(TableDetailsReader.readImportedKeys(session, _tableInfo));
       //ExportedKeysInfo expKeysInfo = new ExportedKeysInfo(TableDetailsReader.readExportedKeys(_session, tableInfo));
 
-      _listView = new ListView<>(FXCollections.observableArrayList(CollectionUtil.transform(columns, c -> new GraphColumn(c, pkInfo, impKeysInfo, NonDbColumnImportPersistence.getMatching(c, nonDbColumnImportPersistences), graphChannel))));
+      _listView = new ListView<>(FXCollections.observableArrayList(CollectionUtil.transform(columns, c -> new GraphColumn(c, pkInfo, impKeysInfo, ColumnPersistence.getMatching(c, columnPersistences), graphChannel))));
 
       _columnPositionHelper = new ColumnPositionHelper(_listView, _window);
 
       ListViewScrollEventWA listViewScrollEventWA = new ListViewScrollEventWA(drawLinesListener);
-      _listView.setCellFactory(p -> listViewScrollEventWA.registerCell(_columnPositionHelper.registerCell(createColumnListCell())));
+      _listView.setCellFactory(p -> listViewScrollEventWA.registerCell(_columnPositionHelper.registerCell(new ColumnListCell())));
 
       _listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -56,9 +53,15 @@ public class ColumnListCtrl
       _listView.setOnDragDropped(e -> onDragDropped(e));
    }
 
-   private ColumnListCell createColumnListCell()
+   private ColumnConfigurationPersistence getColumnConfiguration(ColumnInfo columnInfo, HashMap<String, ColumnConfigurationPersistence> columnConfigurationByColumnName)
    {
-      ColumnListCell ret = new ColumnListCell();
+      ColumnConfigurationPersistence ret = columnConfigurationByColumnName.get(columnInfo.getColName());
+
+      if(null == ret)
+      {
+         return new ColumnConfigurationPersistence();
+      }
+
       return ret;
    }
 
@@ -310,15 +313,16 @@ public class ColumnListCtrl
       return _listView.getItems();
    }
 
-   public List<NonDbColumnImportPersistence> getNonDbColumnImportPersistences()
+   public List<ColumnPersistence> getNonDbColumnImportPersistences()
    {
-      List<NonDbColumnImportPersistence> ret = new ArrayList<>();
+      List<ColumnPersistence> ret = new ArrayList<>();
 
       for (GraphColumn graphColumn : _listView.getItems())
       {
-         ret.add(graphColumn.getNonDbImportPersistence());
+         ret.add(graphColumn.getColumnPersistence());
       }
 
       return ret;
    }
+
 }

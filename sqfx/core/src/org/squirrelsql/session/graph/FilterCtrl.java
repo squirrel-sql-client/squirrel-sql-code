@@ -10,23 +10,23 @@ public class FilterCtrl
 
    private final Stage _dlg;
    private final FilterView _view;
-   private FilterData _filterData;
+   private FilterPersistence _filterPersistence;
 
-   public FilterCtrl(FilterData filterData)
+   public FilterCtrl(FilterPersistence filterPersistence)
    {
-      _filterData = filterData;
+      _filterPersistence = filterPersistence;
 
       FxmlHelper<FilterView> fxmlHelper = new FxmlHelper(FilterView.class);
 
       _view = fxmlHelper.getView();
 
       _view.cboOperator.getItems().addAll(Operator.values());
-      _view.cboOperator.getSelectionModel().select(Operator.valueOf(filterData.getOperatorAsString()));
+      _view.cboOperator.getSelectionModel().select(Operator.valueOf(filterPersistence.getOperatorAsString()));
 
       _view.cboOperator.valueProperty().addListener((observable, oldValue, newValue) -> onOperatorChanged());
       onOperatorChanged();
 
-      _view.txtValue.setText(filterData.getFilter());
+      _view.txtValue.setText(filterPersistence.getFilter());
 
       _view.btnCancel.setCancelButton(true);
       _view.btnOk.setDefaultButton(true);
@@ -47,9 +47,9 @@ public class FilterCtrl
 
    private void onOk()
    {
-      _filterData.setFilter(_view.txtValue.getText());
+      _filterPersistence.setFilter(_view.txtValue.getText());
       Operator selectedItem = (Operator)_view.cboOperator.getSelectionModel().getSelectedItem();
-      _filterData.setOperatorAsString( selectedItem.name());
+      _filterPersistence.setOperatorAsString( selectedItem.name());
       _dlg.close();
    }
 

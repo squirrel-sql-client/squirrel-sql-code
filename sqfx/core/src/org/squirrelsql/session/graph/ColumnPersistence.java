@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-public class NonDbColumnImportPersistence
+public class ColumnPersistence
 {
    private String _catalogName;
    private String _schemaName;
@@ -18,8 +18,10 @@ public class NonDbColumnImportPersistence
 
    private HashSet<String> _nonDbFkIdsPointingAtMe = new HashSet<>();
    private HashMap<String, NonDbImportedKeyPersistence> _nonDbImportedKeyPersistenceByNonDbFkId = new HashMap<>();
+   private ColumnConfigurationPersistence _columnConfigurationPersistence = new ColumnConfigurationPersistence();
 
-   public NonDbColumnImportPersistence(String catalogName, String schemaName, String tableName, String colName)
+
+   public ColumnPersistence(String catalogName, String schemaName, String tableName, String colName)
    {
       _catalogName = catalogName;
       _schemaName = schemaName;
@@ -27,7 +29,7 @@ public class NonDbColumnImportPersistence
       _colName = colName;
    }
 
-   public NonDbColumnImportPersistence()
+   public ColumnPersistence()
    {
    }
 
@@ -71,9 +73,9 @@ public class NonDbColumnImportPersistence
       return _colName;
    }
 
-   public static NonDbColumnImportPersistence getMatching(ColumnInfo c, List<NonDbColumnImportPersistence> nonDbColumnImportPersistences)
+   public static ColumnPersistence getMatching(ColumnInfo c, List<ColumnPersistence> columnPersistences)
    {
-      for (NonDbColumnImportPersistence pers : nonDbColumnImportPersistences)
+      for (ColumnPersistence pers : columnPersistences)
       {
          if(SQLUtil.getQualifiedName(pers.getCatalogName(), pers.getSchemaName(), pers.getTableName()).equalsIgnoreCase(SQLUtil.getQualifiedName(c.getCatalogName(), c.getSchemaName(), c.getTableName())))
          {
@@ -87,7 +89,7 @@ public class NonDbColumnImportPersistence
       return null;
    }
 
-   public static HashMap<String, NonDbImportedKey> toNonDbImportedKeyByNonDbFkId(NonDbColumnImportPersistence pers, GraphFinder finder)
+   public static HashMap<String, NonDbImportedKey> toNonDbImportedKeyByNonDbFkId(ColumnPersistence pers, GraphFinder finder)
    {
       HashMap<String, NonDbImportedKey> ret = new HashMap<>();
 
@@ -125,5 +127,15 @@ public class NonDbColumnImportPersistence
    public void setColName(String colName)
    {
       _colName = colName;
+   }
+
+   public void setColumnConfigurationPersistence(ColumnConfigurationPersistence columnConfigurationPersistence)
+   {
+      _columnConfigurationPersistence = columnConfigurationPersistence;
+   }
+
+   public ColumnConfigurationPersistence getColumnConfigurationPersistence()
+   {
+      return _columnConfigurationPersistence;
    }
 }

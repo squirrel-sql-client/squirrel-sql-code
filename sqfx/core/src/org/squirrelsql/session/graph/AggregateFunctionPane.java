@@ -10,12 +10,12 @@ import org.squirrelsql.AppState;
 
 public class AggregateFunctionPane extends BorderPane
 {
-   private AggregateFunctionData _aggregateFunctionData;
+   private AggregateFunctionPersistence _aggregateFunctionPersistence;
 
 
-   public AggregateFunctionPane(AggregateFunctionData aggregateFunctionData)
+   public AggregateFunctionPane(AggregateFunctionPersistence aggregateFunctionPersistence)
    {
-      _aggregateFunctionData = aggregateFunctionData;
+      _aggregateFunctionPersistence = aggregateFunctionPersistence;
 
       updateGraphics();
 
@@ -24,7 +24,7 @@ public class AggregateFunctionPane extends BorderPane
 
    private void showPopup()
    {
-      if(false == _aggregateFunctionData.isInSelect())
+      if(false == _aggregateFunctionPersistence.isInSelect())
       {
          return;
       }
@@ -47,15 +47,15 @@ public class AggregateFunctionPane extends BorderPane
 
    private void onFctSelected(AggregateFunction agg)
    {
-      _aggregateFunctionData.setAggregateFunction(agg);
+      _aggregateFunctionPersistence.setAggregateFunction(agg);
       _setCenter(agg.createImage());
    }
 
    private void updateGraphics()
    {
-      if(_aggregateFunctionData.isInSelect())
+      if(_aggregateFunctionPersistence.isInSelect())
       {
-         _setCenter(_aggregateFunctionData.getAggregateFunction().createImage());
+         _setCenter(_aggregateFunctionPersistence.getAggregateFunction().createImage());
       }
       else
       {
@@ -72,11 +72,11 @@ public class AggregateFunctionPane extends BorderPane
 
    public void setEnabled(boolean b)
    {
-      _aggregateFunctionData.setInSelect(b);
+      _aggregateFunctionPersistence.setInSelect(b);
 
       if(false == b)
       {
-         _aggregateFunctionData.setAggregateFunction(AggregateFunction.NONE);
+         _aggregateFunctionPersistence.setAggregateFunction(AggregateFunction.NONE);
       }
 
       updateGraphics();

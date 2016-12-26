@@ -7,11 +7,11 @@ import org.squirrelsql.Props;
 
 public class FilterPane extends BorderPane
 {
-   private FilterData _filterData;
+   private FilterPersistence _filterPersistence;
 
-   public FilterPane(FilterData filterData)
+   public FilterPane(FilterPersistence filterPersistence)
    {
-      _filterData = filterData;
+      _filterPersistence = filterPersistence;
       ImageView imageView = new ImageView(new Props(getClass()).getImage("filter.gif"));
       setCenter(imageView);
       addEventHandler(MouseEvent.MOUSE_PRESSED, e -> onFilterCtrl());
@@ -19,6 +19,6 @@ public class FilterPane extends BorderPane
 
    private void onFilterCtrl()
    {
-      new FilterCtrl(_filterData);
+      new FilterCtrl(_filterPersistence);
    }
 }

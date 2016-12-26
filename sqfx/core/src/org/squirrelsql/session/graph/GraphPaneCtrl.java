@@ -3,7 +3,6 @@ package org.squirrelsql.session.graph;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
@@ -103,8 +102,9 @@ public class GraphPaneCtrl
 
          HashMap<String, FkProps> fkProps = FkPropsPersistence.toFkProps(graphTablePersistence.getPersistentFkPropsPersistenceByFkName());
 
-         List<NonDbColumnImportPersistence> nonDbColumnImportPersistences = graphTablePersistence.getNonDbColumnImportPersistences();
-         addTableToDesktop(tableInfos.get(0), graphTablePersistence.getMinX(), graphTablePersistence.getMinY(), graphTablePersistence.getWidth(), graphTablePersistence.getHeight(), fkProps, nonDbColumnImportPersistences);
+         List<ColumnPersistence> columnPersistences = graphTablePersistence.getColumnPersistences();
+
+         addTableToDesktop(tableInfos.get(0), graphTablePersistence.getMinX(), graphTablePersistence.getMinY(), graphTablePersistence.getWidth(), graphTablePersistence.getHeight(), fkProps, columnPersistences);
       }
 
       _graphChannel.fireAllTablesAdded();
@@ -290,9 +290,9 @@ public class GraphPaneCtrl
       addTableToDesktop(tableInfo, x, y, width, height, new HashMap<>(), new ArrayList<>());
    }
 
-   private void addTableToDesktop(TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, List<NonDbColumnImportPersistence> nonDbColumnImportPersistences)
+   private void addTableToDesktop(TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, List<ColumnPersistence> columnPersistences)
    {
-      TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, _graphChannel, tableInfo, x, y, width, height, fkPropsByFkName, nonDbColumnImportPersistences, ctrl -> _drawLinesCtrl.doDraw());
+      TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, _graphChannel, tableInfo, x, y, width, height, fkPropsByFkName, columnPersistences, ctrl -> _drawLinesCtrl.doDraw());
 
       _desktopPane.getChildren().add(tableWindowCtrl.getWindow());
    }

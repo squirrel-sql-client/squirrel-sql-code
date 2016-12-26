@@ -10,13 +10,13 @@ import org.squirrelsql.AppState;
 
 public class OrderByPane extends BorderPane
 {
-   private OrderByData _orderByData;
+   private OrderByPersistence _orderByPersistence;
 
-   public OrderByPane(OrderByData orderByData)
+   public OrderByPane(OrderByPersistence orderByPersistence)
    {
-      _orderByData = orderByData;
+      _orderByPersistence = orderByPersistence;
 
-      OrderBy orderBy = OrderBy.valueOf(_orderByData.getOrderBy());
+      OrderBy orderBy = OrderBy.valueOf(_orderByPersistence.getOrderBy());
       setCenter(orderBy.createImage());
 
       addEventHandler(MouseEvent.MOUSE_PRESSED, e -> showPopup());
@@ -51,7 +51,7 @@ public class OrderByPane extends BorderPane
    private void onFctSelected(OrderBy orderBy)
    {
       setCenter(orderBy.createImage());
-      _orderByData.setOrderBy(orderBy.name());
+      _orderByPersistence.setOrderBy(orderBy.name());
    }
 
 }

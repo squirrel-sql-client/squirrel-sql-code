@@ -446,13 +446,31 @@ public class Dao
          return Collections.emptyList();
       }
 
-      return CollectionUtil.transform(files, f -> toGraphPersistenceWrapper(f));
+      ArrayList<GraphPersistenceWrapper> ret = new ArrayList<>();
+      for (File file : files)
+      {
+         GraphPersistenceWrapper wrapper = toGraphPersistenceWrapper(file);
+         if (null != wrapper)
+         {
+            ret.add(wrapper);
+         }
+      }
+
+      return ret;
 
    }
 
    private static GraphPersistenceWrapper toGraphPersistenceWrapper(File f)
    {
-      return new GraphPersistenceWrapper(loadObject(f, new GraphPersistence()));
+      try
+      {
+         return new GraphPersistenceWrapper(loadObject(f, new GraphPersistence()));
+      }
+      catch (Throwable e)
+      {
+         new MessageHandler(Dao.class, MessageHandlerDestination.MESSAGE_LOG_AND_PANEL).error(new I18n(Dao.class).t("dao.graph.failed.loading", f.getAbsolutePath()), e);
+         return null;
+      }
    }
 
    public static void deleteGraphPersistence(GraphPersistenceWrapper graphPersistenceWrapper, Alias alias)
