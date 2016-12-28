@@ -3,6 +3,7 @@ package org.squirrelsql.session.graph;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
@@ -23,6 +24,7 @@ import org.squirrelsql.session.graph.graphdesktop.Window;
 import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,6 +44,9 @@ public class GraphPaneCtrl
    private final Props _props = new Props(getClass());
    private final I18n _i18n = new I18n(getClass());
    private Button _toolbarBtnAddTable;
+   private final SplitPane _splitPane;
+   private SplitPositionSaver _splitPositionSaver = new SplitPositionSaver(getClass(), "graphSplit");
+   private ArrayList<ToggleButton> _queryConfigToggleButtons = new ArrayList<>();
 
 
    public GraphPaneCtrl(GraphChannel graphChannel, Session session, GraphPersistenceWrapper graphPersistenceWrapper)
@@ -81,7 +86,11 @@ public class GraphPaneCtrl
       _toolbar = createToolbar();
 
       _pane.setTop(_toolbar);
-      _pane.setCenter(_scrollPane);
+
+      _splitPane = new SplitPane(_scrollPane);
+      _splitPane.setOrientation(Orientation.VERTICAL);
+
+      _pane.setCenter(_splitPane);
 
       Platform.runLater(() -> loadExistingTables(_graphPersistenceWrapper));
    }
@@ -144,11 +153,83 @@ public class GraphPaneCtrl
 
       toolBar.getItems().add(chkHideNoJoins);
 
+      toolBar.getItems().add(new Separator());
+
+      ToggleButton[] buf;
+
+      buf = new ToggleButton[]
+      {
+         addToolBarToggleButton(toolBar, null, new Tooltip(_i18n.t("graph.query.select")), e -> onConfigQuery((ToggleButton) e.getSource(), QueryConfigType.SELECT)),
+         addToolBarToggleButton(toolBar, null, new Tooltip(_i18n.t("graph.query.where")), e -> onConfigQuery((ToggleButton) e.getSource(), QueryConfigType.WHERE)),
+         addToolBarToggleButton(toolBar, null, new Tooltip(_i18n.t("graph.query.orderby")), e -> onConfigQuery((ToggleButton) e.getSource(), QueryConfigType.ORDER_BY))
+      };
+
+      _queryConfigToggleButtons.addAll(Arrays.asList(buf));
+
+      toolBar.getItems().add(new Separator());
+
+      buf = new ToggleButton[]
+      {
+            addToolBarToggleButton(toolBar, null, new Tooltip(_i18n.t("graph.query.sql")), e -> onConfigQuery((ToggleButton) e.getSource(), QueryConfigType.SQL)),
+            addToolBarToggleButton(toolBar, null, new Tooltip(_i18n.t("graph.query.result")), e -> onConfigQuery((ToggleButton) e.getSource(), QueryConfigType.RESULT)),
+      };
+
+      _queryConfigToggleButtons.addAll(Arrays.asList(buf));
 
       toolBar.getItems().add(new Separator());
 
 
       return toolBar;
+   }
+
+   private void onConfigQuery(ToggleButton button, QueryConfigType queryConfigType)
+   {
+      if (2 <= _splitPane.getItems().size() )
+      {
+         _splitPositionSaver.save(_splitPane);
+         _splitPane.getItems().remove(1);
+      }
+
+      if(false == button.isSelected())
+      {
+         return;
+      }
+
+      for (ToggleButton queryConfigToggleButton : _queryConfigToggleButtons)
+      {
+         if(queryConfigToggleButton != button && queryConfigToggleButton.isSelected())
+         {
+            queryConfigToggleButton.setSelected(false);
+         }
+      }
+
+      switch (queryConfigType)
+      {
+         case SELECT:
+            SelectConfigCtrl selectConfigCtrl = new SelectConfigCtrl(_graphPersistenceWrapper);
+            _splitPane.getItems().add(selectConfigCtrl.getPane());
+            break;
+         case WHERE:
+            WhereConfigCtrl whereConfigCtrl = new WhereConfigCtrl(_graphPersistenceWrapper);
+            _splitPane.getItems().add(whereConfigCtrl.getPane());
+            break;
+         case ORDER_BY:
+            OrderByConfigCtrl  orderByConfigCtrl = new OrderByConfigCtrl(_graphPersistenceWrapper);
+            _splitPane.getItems().add(orderByConfigCtrl.getPane());
+            break;
+         case SQL:
+            SqlConfigCtrl  sqlConfigCtrl = new SqlConfigCtrl(_graphPersistenceWrapper);
+            _splitPane.getItems().add(sqlConfigCtrl.getPane());
+            break;
+         case RESULT:
+            ResultConfigCtrl  resultConfigCtrl = new ResultConfigCtrl(_graphPersistenceWrapper);
+            _splitPane.getItems().add(resultConfigCtrl.getPane());
+            break;
+
+      }
+
+
+      _splitPositionSaver.applyInvertedDefault(_splitPane);
    }
 
    private void onChkHideNoJoins(CheckBox chkHideNoJoins)
@@ -158,11 +239,39 @@ public class GraphPaneCtrl
       _graphPersistenceWrapper.getDelegate().setHideNoJoins(chkHideNoJoins.isSelected());
    }
 
-   private Button addToolBarButton(ToolBar toolBar, String iconFileName, Tooltip value, EventHandler<ActionEvent> actionEventEventHandler)
+   private Button addToolBarButton(ToolBar toolBar, String iconFileName, Tooltip tooltip, EventHandler<ActionEvent> actionEventEventHandler)
    {
-      Button btn = new Button();
-      btn.setGraphic(_props.getImageView(iconFileName));
-      btn.setTooltip(value);
+      return (Button) addToolBarButton(toolBar, iconFileName, tooltip, actionEventEventHandler, false);
+   }
+
+   private ToggleButton addToolBarToggleButton(ToolBar toolBar, String iconFileName, Tooltip tooltip, EventHandler<ActionEvent> actionEventEventHandler)
+   {
+      return (ToggleButton) addToolBarButton(toolBar, iconFileName, tooltip, actionEventEventHandler, true);
+   }
+
+   private ButtonBase addToolBarButton(ToolBar toolBar, String iconFileName, Tooltip tooltip, EventHandler<ActionEvent> actionEventEventHandler, boolean toggle)
+   {
+      ButtonBase btn;
+
+      if (toggle)
+      {
+         btn = new ToggleButton();
+      }
+      else
+      {
+         btn = new Button();
+      }
+
+      if (null != iconFileName)
+      {
+         btn.setGraphic(_props.getImageView(iconFileName));
+      }
+      else
+      {
+         btn.setText(tooltip.getText());
+      }
+
+      btn.setTooltip(tooltip);
       btn.setOnAction(actionEventEventHandler);
       toolBar.getItems().add(btn);
       return btn;
