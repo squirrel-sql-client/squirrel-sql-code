@@ -88,16 +88,20 @@ public class AnnotationTableLoaderRowObjectAccess<T> implements TableLoaderRowOb
 
 
 
-   public static <T> void initColsByAnnotations(RowObjectTableLoader<T> rowObjectTableLoader, Class<T> rowObjectClass)
+   public static <T> ArrayList<ColumnHandle> initColsByAnnotations(RowObjectTableLoader<T> rowObjectTableLoader, Class<T> rowObjectClass)
    {
       List<ColInfo> colInfos = findAllColInfosOrderedByColIx(rowObjectClass);
 
       I18n i18n = new I18n(rowObjectClass);
 
+      ArrayList<ColumnHandle> ret = new ArrayList<>();
       for (ColInfo colInfo : colInfos)
       {
-         rowObjectTableLoader.addColumn(i18n.t(colInfo.getAnnotation().columnHeaderI18nKey()));
+         ColumnHandle columnHandle = rowObjectTableLoader.addColumn(i18n.t(colInfo.getAnnotation().columnHeaderI18nKey()));
+         ret.add(columnHandle);
       }
+
+      return ret;
    }
 
 

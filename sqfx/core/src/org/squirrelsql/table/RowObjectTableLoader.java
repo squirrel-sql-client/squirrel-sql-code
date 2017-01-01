@@ -2,7 +2,6 @@ package org.squirrelsql.table;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
-import org.squirrelsql.session.graph.ColumnPairRow;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
 
 import java.util.ArrayList;
@@ -89,9 +88,9 @@ public class RowObjectTableLoader<T>
       _rowObjectHandles.clear();
    }
 
-   public void initColsByAnnotations(Class<T> rowObjectClass)
+   public ArrayList<ColumnHandle> initColsByAnnotations(Class<T> rowObjectClass)
    {
-      AnnotationTableLoaderRowObjectAccess.initColsByAnnotations(this, rowObjectClass);
+      return AnnotationTableLoaderRowObjectAccess.initColsByAnnotations(this, rowObjectClass);
 
    }
 
