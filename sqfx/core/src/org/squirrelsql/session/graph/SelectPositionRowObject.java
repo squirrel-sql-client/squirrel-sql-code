@@ -23,4 +23,8 @@ public class SelectPositionRowObject
       return _columnPersistence.getTableName();
    }
 
+   public void setSelectPosition(int index)
+   {
+      _columnPersistence.getColumnConfigurationPersistence().setSelectPosition(index);
+   }
 }

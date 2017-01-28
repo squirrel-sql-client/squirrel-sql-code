@@ -9,11 +9,13 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 
 import org.squirrelsql.services.CollectionUtil;
+import org.squirrelsql.services.Utils;
 
 public class TableLoader
 {
@@ -333,5 +335,66 @@ public class TableLoader
       }
 
       throw new IllegalArgumentException("Unknown column: " + col);
+   }
+
+   public void moveSelectedRowsUp()
+   {
+      List<Integer> selRows = Utils.toOrdinaryList(_tableView.getSelectionModel().getSelectedIndices());
+
+      for (Integer selRow : selRows)
+      {
+         if (0 == selRow)
+         {
+            return;
+         }
+      }
+
+      ArrayList<Integer> newSelRows = new ArrayList<>();
+      for (int i = 0; i < selRows.size(); ++i)
+      {
+         Object rowObject = _tableView.getItems().remove((int)selRows.get(i));
+
+         int newSelRow = selRows.get(i) - 1;
+         newSelRows.add(newSelRow);
+
+         _tableView.getItems().add(newSelRow, rowObject);
+      }
+
+
+      _tableView.getSelectionModel().clearSelection();
+      for (Integer newSelRow : newSelRows)
+      {
+         _tableView.getSelectionModel().select((int)newSelRow);
+      }
+   }
+
+   public void moveSelectedRowsDown()
+   {
+      List<Integer> selRows = Utils.toOrdinaryList(_tableView.getSelectionModel().getSelectedIndices());
+
+      for (int i : selRows)
+      {
+         if (_tableView.getItems().size() - 1 == i)
+         {
+            return;
+         }
+      }
+
+      ArrayList<Integer> newSelRows = new ArrayList<>();
+
+      for (int i = selRows.size() - 1; i >= 0; --i)
+      {
+         Object rowObject = _tableView.getItems().remove((int)selRows.get(i));
+         int newSelRow = selRows.get(i) + 1;
+         newSelRows.add(newSelRow);
+
+         _tableView.getItems().add(newSelRow, rowObject);
+      }
+
+      _tableView.getSelectionModel().clearSelection();
+      for (Integer newSelRow : newSelRows)
+      {
+         _tableView.getSelectionModel().select((int)newSelRow);
+      }
    }
 }

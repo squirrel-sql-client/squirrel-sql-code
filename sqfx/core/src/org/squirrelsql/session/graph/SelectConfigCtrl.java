@@ -2,6 +2,7 @@ package org.squirrelsql.session.graph;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -10,6 +11,7 @@ import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.table.ColumnHandle;
+import org.squirrelsql.table.RowObjectHandle;
 import org.squirrelsql.table.RowObjectTableLoader;
 
 import java.util.ArrayList;
@@ -23,8 +25,12 @@ public class SelectConfigCtrl
    private Button _btnUp = new Button(_i18n.t("SelectConfigCtrl.btnup"), new Props(getClass()).getImageView(GlobalIconNames.ARROW_UP));
    private Button _btnDown = new Button(_i18n.t("SelectConfigCtrl.btndown"), new Props(getClass()).getImageView(GlobalIconNames.ARROW_DOWN));
 
+   private GraphPersistenceWrapper _graphPersistenceWrapper;
+   private TableView _tableView = new TableView();
+
    public SelectConfigCtrl(GraphPersistenceWrapper graphPersistenceWrapper)
    {
+      _graphPersistenceWrapper = graphPersistenceWrapper;
 
       ArrayList<ColumnPersistence> selCols = new ArrayList<>();
 
@@ -53,7 +59,33 @@ public class SelectConfigCtrl
          selCols.get(i).getColumnConfigurationPersistence().setSelectPosition(i);
          _tableLoader.addRowObject(new SelectPositionRowObject(selCols.get(i)));
       }
+
+      _btnUp.setOnAction(e -> onUp());
+      _btnDown.setOnAction(e -> onDown());
    }
+
+   private void onDown()
+   {
+      _tableLoader.moveSelectedRowsDown();
+      initColumnIndexes();
+   }
+
+
+   private void onUp()
+   {
+      _tableLoader.moveSelectedRowsUp();
+      initColumnIndexes();
+   }
+
+   private void initColumnIndexes()
+   {
+      for (int i = 0; i < _tableView.getItems().size(); i++)
+      {
+         RowObjectHandle<SelectPositionRowObject> rowObjectHandle = _tableLoader.getRowObjectHandleForTableRow(_tableView.getItems().get(i));
+         rowObjectHandle.getRowObject().setSelectPosition(i);
+      }
+   }
+
 
    private int onCompare(ColumnPersistence c1, ColumnPersistence c2)
    {
@@ -76,9 +108,9 @@ public class SelectConfigCtrl
 
    public Pane getPane()
    {
-      TableView tableView = new TableView();
+      _tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-      _tableLoader.load(tableView);
+      _tableLoader.load(_tableView);
 
       HBox hBox = new HBox();
 
@@ -87,7 +119,7 @@ public class SelectConfigCtrl
 
       hBox.getChildren().addAll(_btnUp, _btnDown);
 
-      BorderPane borderPane = new BorderPane(tableView);
+      BorderPane borderPane = new BorderPane(_tableView);
 
       borderPane.setBottom(hBox);
 

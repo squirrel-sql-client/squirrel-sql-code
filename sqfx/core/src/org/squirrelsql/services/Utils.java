@@ -2,6 +2,7 @@ package org.squirrelsql.services;
 
 import com.google.common.base.Strings;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -245,4 +246,17 @@ public class Utils
   public static void gc(){
 	  System.gc();
   }
+
+   public static <T> List<T>  toOrdinaryList(ObservableList<T> observableList)
+   {
+      ArrayList<T> ret = new ArrayList<T>();
+
+      for (T element : observableList)
+      {
+         ret.add(element);
+      }
+
+
+      return ret;
+   }
 }

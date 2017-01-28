@@ -2,6 +2,7 @@ package org.squirrelsql.table;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
+import org.squirrelsql.session.graph.SelectPositionRowObject;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
 
 import java.util.ArrayList;
@@ -166,5 +167,30 @@ public class RowObjectTableLoader<T>
       }
 
       throw new IllegalStateException("Couldn't find row object table row " + selectedItem);
+   }
+
+   public void moveSelectedRowsUp()
+   {
+      _tableLoader.moveSelectedRowsUp();
+   }
+
+   public void moveSelectedRowsDown()
+   {
+      _tableLoader.moveSelectedRowsDown();
+
+   }
+
+   public RowObjectHandle<T> getRowObjectHandleForTableRow(Object tableRow)
+   {
+      for (RowObjectHandle<T> rowObjectHandle : _rowObjectHandles)
+      {
+         if(rowObjectHandle.getSimpleObjectProperties() == tableRow)
+         {
+            return rowObjectHandle;
+         }
+      }
+
+      throw new IllegalStateException("No handle found for row: " + tableRow);
+
    }
 }

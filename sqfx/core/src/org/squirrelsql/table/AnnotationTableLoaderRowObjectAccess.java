@@ -64,12 +64,14 @@ public class AnnotationTableLoaderRowObjectAccess<T> implements TableLoaderRowOb
 
          for (PropertyDescriptor propertyDescriptor : propertyDescriptors)
          {
-            RowObjectTableLoaderColumn annotation = propertyDescriptor.getReadMethod().getAnnotation(RowObjectTableLoaderColumn.class);
 
-            if (null == annotation)
+            if (null == propertyDescriptor.getReadMethod() || false == propertyDescriptor.getReadMethod().isAnnotationPresent(RowObjectTableLoaderColumn.class))
             {
                continue;
             }
+
+            RowObjectTableLoaderColumn annotation = propertyDescriptor.getReadMethod().getAnnotation(RowObjectTableLoaderColumn.class);
+
 
             ret.add(new ColInfo(annotation, propertyDescriptor));
 
