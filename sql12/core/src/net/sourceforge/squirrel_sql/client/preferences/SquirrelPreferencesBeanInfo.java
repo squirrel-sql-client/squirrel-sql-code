@@ -44,7 +44,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 		try
 		{
 			PropertyDescriptor[] result =
-				new PropertyDescriptor[] {
+				new PropertyDescriptor[]
+					{
 						new PropertyDescriptor(SESSION_PROPERTIES, SquirrelPreferences.class,
 							"getSessionProperties", "setSessionProperties"),
 						new PropertyDescriptor(MAIN_FRAME_STATE, SquirrelPreferences.class,
@@ -142,8 +143,13 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 
 						new PropertyDescriptor(MAX_COLUMN_ADJUST_LENGTH_DEFINED, SquirrelPreferences.class, "getMaxColumnAdjustLengthDefined",
 							"setMaxColumnAdjustLengthDefined"),
+
 						new PropertyDescriptor(MAX_COLUMN_ADJUST_LENGTH, SquirrelPreferences.class, "getMaxColumnAdjustLength",
-							"setMaxColumnAdjustLength"), };
+							"setMaxColumnAdjustLength"),
+
+						new PropertyDescriptor(REMEMBER_VALUE_OF_POPUP, SquirrelPreferences.class, "isRememberValueOfPopup",
+							"setRememberValueOfPopup"),
+				};
 
 			return result;
 		}

@@ -101,6 +101,7 @@ public class SquirrelPreferences implements Serializable
       String PREFERRED_LOCALE = "preferredLocale";
       String MAX_COLUMN_ADJUST_LENGTH_DEFINED = "maxColumnAdjustLengthDefined";
       String MAX_COLUMN_ADJUST_LENGTH = "maxColumnAdjustLength";
+      String REMEMBER_VALUE_OF_POPUP = "rememberValueOfPopup";
    }
 
    public interface IJdbcDebugTypes
@@ -257,6 +258,7 @@ public class SquirrelPreferences implements Serializable
 	private int _currentSqlMarkColorRGB = Color.blue.getRGB();
 	private boolean _markCurrentSql = true;
 
+	private boolean _rememberValueOfPopup = false;
 
 
 	/**
@@ -1256,6 +1258,16 @@ public class SquirrelPreferences implements Serializable
 	public Color getCurrentSqlMarkColor()
 	{
 		return new Color(_currentSqlMarkColorRGB);
+	}
+
+	public boolean isRememberValueOfPopup()
+	{
+		return _rememberValueOfPopup;
+	}
+
+	public void setRememberValueOfPopup(boolean b)
+	{
+		_rememberValueOfPopup = b;
 	}
 
 

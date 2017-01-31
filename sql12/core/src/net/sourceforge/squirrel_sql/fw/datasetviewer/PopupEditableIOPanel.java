@@ -59,9 +59,8 @@ import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
  */
 public class PopupEditableIOPanel extends JPanel implements ActionListener {
 
-	private static final long serialVersionUID = 1L;
 
-    private static final StringManager s_stringMgr =
+	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(PopupEditableIOPanel.class);
 	public static final String ACTION_BROWSE = "browse";
 	public static final String ACTION_EXPORT = "export";

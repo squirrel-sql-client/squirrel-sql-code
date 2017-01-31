@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+#548 Size of table cell popup can be configured to be saved,
+     see menu File --> Global Preferences --> tab General --> last check box in section Appearance
+
 #548 Add button "as XML" to the modal window "Value of column ..." opened from Results table
      AND integrated Json formatting
 

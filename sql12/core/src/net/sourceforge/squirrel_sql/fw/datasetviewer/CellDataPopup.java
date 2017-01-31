@@ -18,13 +18,13 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
 //import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -36,6 +36,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class CellDataPopup
 {
+	public static final String PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH = "Squirrel.popupEditableIOPanelWidth";
+	public static final String PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT = "Squirrel.popupEditableIOPanelHeight";
+
 
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(CellDataPopup.class);
@@ -69,51 +72,60 @@ public class CellDataPopup
          editor.cancelCellEditing();
 
       Component parent = SwingUtilities.windowForComponent(table);
-      Component newComp = null;
 
-      TextAreaInternalFrame taif =
-         new TextAreaInternalFrame(table, table.getColumnName(col), colDef, obj,
+      final TextAreaDialog dialog =
+         new TextAreaDialog(table, table.getColumnName(col), colDef, obj,
             row, col, isModelEditable, table);
 
-      taif.pack();
-      newComp = taif;
+      dialog.pack();
 
-      Dimension dim = newComp.getSize();
-		boolean dimChanged = false;
-		if (dim.width < 300)
+		Dimension dim;
+		if (Main.getApplication().getSquirrelPreferences().isRememberValueOfPopup())
 		{
-			dim.width = 300;
-			dimChanged = true;
+			int width = Preferences.userRoot().getInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, 600);
+			int height = Preferences.userRoot().getInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, 300);
+			dim = new Dimension(width, height);
 		}
-		if (dim.height < 300)
+		else
 		{
-			dim.height = 300;
-			dimChanged = true;
-		}
-		if (dim.width > 600)
-		{
-			dim.width = 600;
-			dimChanged = true;
-		}
-		if (dim.height > 500)
-		{
-			dim.height = 500;
-			dimChanged = true;
-		}
-		if (dimChanged)
-		{
-			newComp.setSize(dim);
+			dim = dialog.getSize();
+			if (dim.width < 300)
+			{
+				dim.width = 300;
+			}
+			if (dim.height < 300)
+			{
+				dim.height = 300;
+			}
+			if (dim.width > 600)
+			{
+				dim.width = 600;
+			}
+			if (dim.height > 500)
+			{
+				dim.height = 500;
+			}
 		}
 
-      Point parentBounds = parent.getLocation();
+		Point parentBounds = parent.getLocation();
 
       parentBounds.x += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).x;
       parentBounds.y += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).y;
 
-		newComp.setLocation(parentBounds);
-      newComp.setSize(dim);
+		dialog.setLocation(parentBounds);
+      dialog.setSize(dim);
 
-		newComp.setVisible(true);
+      dialog.addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				Preferences.userRoot().putInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, dialog.getSize().width);
+				Preferences.userRoot().putInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, dialog.getSize().height);
+			}
+		});
+
+		dialog.setVisible(true);
 	}
 
 
@@ -192,11 +204,9 @@ public class CellDataPopup
 						ColumnDataPopupPanel.this.ioPanel.requestFocus();
 
 					}
-					else {
-						// no problem in conversion - proceed with update
-//						((DataSetViewerTablePanel.MyJTable)_table).setConvertedValueAt(
-//							newValue, _row, _col);
-_table.setValueAt(newValue, _row, _col);
+					else
+					{
+						_table.setValueAt(newValue, _row, _col);
 						ColumnDataPopupPanel.this._parentFrame.setVisible(false);
 						ColumnDataPopupPanel.this._parentFrame.dispose();
 					}
@@ -241,12 +251,12 @@ _table.setValueAt(newValue, _row, _col);
 
 	// The following is only useable for a root type of InternalFrame. If the
 	// root type is Dialog or Frame, then other code must be used.
-	class TextAreaInternalFrame extends JDialog
+	class TextAreaDialog extends JDialog
 	{
 
-        public TextAreaInternalFrame(Component comp, String columnName, ColumnDisplayDefinition colDef,
-			Object value, int row, int col,
-			boolean isModelEditable, JTable table)
+        public TextAreaDialog(Component comp, String columnName, ColumnDisplayDefinition colDef,
+										Object value, int row, int col,
+										boolean isModelEditable, JTable table)
 		{
 
          // i18n[cellDataPopup.valueofColumn=Value of column {0}]

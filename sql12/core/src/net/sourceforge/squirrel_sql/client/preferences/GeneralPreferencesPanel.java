@@ -130,6 +130,9 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
       private JCheckBox _showColoriconsInToolbar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showcoloricons"));
       private JCheckBox _showPluginFilesInSplashScreen = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showpluginfiles"));
       private JCheckBox _useShortSessionTitle = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.useShortSessionTitle"));
+      private JCheckBox _rememberValueOfPopup = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.rememberValueOfPopup"));
+
+
 //      private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
 //      // Must have at least 1 blank otherwise width gets set to zero.
 //      private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
@@ -177,6 +180,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          _showColoriconsInToolbar.setSelected(prefs.getShowColoriconsInToolbar());
          _showPluginFilesInSplashScreen.setSelected(prefs.getShowPluginFilesInSplashScreen());
          _useShortSessionTitle.setSelected(prefs.getUseShortSessionTitle());
+         _rememberValueOfPopup.setSelected(prefs.isRememberValueOfPopup());
 
          _confirmSessionCloseChk.setSelected(prefs.getConfirmSessionClose());
          _warnJreJdbcMismatch.setSelected(prefs.getWarnJreJdbcMismatch());
@@ -236,6 +240,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          prefs.setShowColoriconsInToolbar(_showColoriconsInToolbar.isSelected());
          prefs.setShowPluginFilesInSplashScreen(_showPluginFilesInSplashScreen.isSelected());
          prefs.setUseShortSessionTitle(_useShortSessionTitle.isSelected());
+         prefs.setRememberValueOfPopup(_rememberValueOfPopup.isSelected());
          prefs.setConfirmSessionClose(_confirmSessionCloseChk.isSelected());
          prefs.setWarnJreJdbcMismatch(_warnJreJdbcMismatch.isSelected());
          prefs.setWarnForUnsavedFileEdits(_warnForUnsavedFileEdits.isSelected());
@@ -328,6 +333,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          pnl.add(_showPluginFilesInSplashScreen, gbc);
          ++gbc.gridy;
          pnl.add(_useShortSessionTitle, gbc);
+         ++gbc.gridy;
+         pnl.add(_rememberValueOfPopup, gbc);
 
 			return pnl;
 		}
