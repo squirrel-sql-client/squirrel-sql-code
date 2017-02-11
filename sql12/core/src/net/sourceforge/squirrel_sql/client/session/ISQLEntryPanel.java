@@ -38,7 +38,7 @@ public interface ISQLEntryPanel extends IHasIdentifier
 	 *
 	 * @return	The text area component.
 	 */
-	JTextComponent getTextComponent();
+	JTextArea getTextComponent();
 
 	/**
 	 * If the component returned by <TT>getTextComponent</TT> contains
