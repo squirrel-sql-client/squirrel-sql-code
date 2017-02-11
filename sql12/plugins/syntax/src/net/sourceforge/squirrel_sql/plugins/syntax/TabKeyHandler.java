@@ -7,13 +7,24 @@ import javax.swing.text.BadLocationException;
 
 public class TabKeyHandler
 {
-   int _tabLength = 12;
+   private JTextArea _textComponent;
+   private final int _tabLength;
 
-   public TabKeyHandler(final JTextArea textComponent)
+   public TabKeyHandler(final JTextArea textComponent, SyntaxPlugin syntaxPlugin)
    {
-      textComponent.setTabSize(_tabLength);
+      _textComponent = textComponent;
 
-      textComponent.getDocument().addDocumentListener(new DocumentListener()
+      _tabLength = syntaxPlugin.getSyntaxPreferences().getTabLength();
+
+      _textComponent.setTabSize(_tabLength);
+
+      if(false == syntaxPlugin.getSyntaxPreferences().isReplaceTabsBySpaces())
+      {
+         return;
+      }
+
+
+      _textComponent.getDocument().addDocumentListener(new DocumentListener()
       {
          public void changedUpdate(DocumentEvent e)
          {
@@ -22,7 +33,7 @@ public class TabKeyHandler
 
          public void insertUpdate(DocumentEvent e)
          {
-            onCorrectTab(e, textComponent);
+            onCorrectTab(e);
          }
 
          public void removeUpdate(DocumentEvent e)
@@ -33,7 +44,7 @@ public class TabKeyHandler
 
    }
 
-   private void onCorrectTab(final DocumentEvent e, final JTextArea textComponent)
+   private void onCorrectTab(final DocumentEvent e)
    {
       try
       {
@@ -50,7 +61,7 @@ public class TabKeyHandler
             {
                public void run()
                {
-                  correctTab(e, textComponent);
+                  correctTab(e);
                }
             });
          }
@@ -61,10 +72,10 @@ public class TabKeyHandler
       }
    }
 
-   private void correctTab(DocumentEvent e, JTextArea textComponent)
+   private void correctTab(DocumentEvent e)
    {
       int offset = e.getOffset();
-      textComponent.replaceRange(createStringOfBlanks(_tabLength), offset, offset + 1);
+      _textComponent.replaceRange(createStringOfBlanks(_tabLength), offset, offset + 1);
    }
 
    public static String createStringOfBlanks(int n)
