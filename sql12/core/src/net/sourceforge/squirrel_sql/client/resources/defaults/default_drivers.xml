@@ -2,17 +2,88 @@
 
 <Beans>
 
-    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        <name>Starschema BigQuery JDBC</name>
-        <driverClassName>net.starschema.clouddb.jdbc.BQDriver</driverClassName>
-        <url>jdbc:BQDriver:projectid(&lt;urlencoded&gt;)?withServiceAccount=false</url>
-        <jarFileNames Indexed="true"/>
-        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-            <string>-60</string>
-        </identifier>
-        <websiteUrl>http://code.google.com/p/starschema-bigquery-jdbc/</websiteUrl>
-    </Bean>
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        	<name>Salesforce</name>
+        	<driverClassName>com.reliersoft.sforce.jdbc.Driver</driverClassName>
+        	<url>jdbc:sforce://login.salesforce.com</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-64</string>
+		</identifier>
+		<websiteUrl>http://reliersoft.com/download/salesforce-jdbc-driver</websiteUrl>
+ 	</Bean>
 
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        	<name>MongoDB</name>
+        	<driverClassName>mongodb.jdbc.MongoDriver</driverClassName>
+        	<url>jdbc:mongo://&lt;servername>&gt;</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-63</string>
+		</identifier>
+		<websiteUrl>http://www.unitiyjdbc.com/mongojdbc/</websiteUrl>
+ 	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        	<name>HP Vertica</name>
+        	<driverClassName>com.vertica.jdbc.Driver</driverClassName>
+        	<url>jdbc:vertica://10.10.92.160:5433/VMart?user=uidbadmin123&amp;password=uidbadmin123</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-62</string>
+		</identifier>
+		<websiteUrl>http://www.vertica.com</websiteUrl>
+ 	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        	<name>MariaDB Driver for MySQL and MariaDB</name>
+        	<driverClassName>org.mariadb.jdbc.Driver</driverClassName>
+        	<url>jdbc:mysql://host:3306/database</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-61</string>
+		</identifier>
+		<websiteUrl>https://downloads.mariadb.org/client-java/</websiteUrl>
+ 	</Bean>
+
+        <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+            <name>Starschema BigQuery JDBC</name>
+            <driverClassName>net.starschema.clouddb.jdbc.BQDriver</driverClassName>
+            <url>jdbc:BQDriver:projectid(&lt;urlencoded&gt;)?withServiceAccount=false</url>
+            <jarFileNames Indexed="true"/>
+            <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+                <string>-60</string>
+            </identifier>
+            <websiteUrl>http://code.google.com/p/starschema-bigquery-jdbc/</websiteUrl>
+        </Bean>
+	
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        	<name>UnityJDBC MultiSource Virtualization</name>
+        	<driverClassName>unity.jdbc.UnityDriver</driverClassName>
+        	<url>jdbc:unity://virtual</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-59</string>
+		</identifier>
+		<websiteUrl>http://www.unityjdbc.com</websiteUrl>
+ 	</Bean>
+	
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        	<name>Infiniflux</name>
+        	<driverClassName>iflux.jdbc.driver.IfluxDriver</driverClassName>
+        	<url>jdbc:Iflux://&lt;server:port&gt;/&lt;databaseName&gt;</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-58</string>
+		</identifier>
+		<websiteUrl>http://www.infiniflux.com</websiteUrl>
+ 	</Bean>
 
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         <driverClassName>com.hxtt.sql.cobol.CobolDriver</driverClassName>
@@ -690,63 +761,5 @@
 		</identifier>
 		<websiteUrl>http://java.sun.com/j2se/1.3/docs/guide/jdbc/getstart/bridge.doc.html</websiteUrl>
 	</Bean>
-	
-	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        	<name>UnityJDBC MultiSource Virtualization</name>
-        	<driverClassName>unity.jdbc.UnityDriver</driverClassName>
-        	<url>jdbc:unity://virtual</url>
-		<usesClassPath>true</usesClassPath>
-		<jarFileNames Indexed="true"/>
-		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-			<string>-59</string>
-		</identifier>
-		<websiteUrl>http://www.unityjdbc.com</websiteUrl>
- 	</Bean>
 
-	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        	<name>MariaDB Driver for MySQL and MariaDB</name>
-        	<driverClassName>org.mariadb.jdbc.Driver</driverClassName>
-        	<url>jdbc:mysql://host:3306/database</url>
-		<usesClassPath>true</usesClassPath>
-		<jarFileNames Indexed="true"/>
-		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-			<string>-61</string>
-		</identifier>
-		<websiteUrl>https://downloads.mariadb.org/client-java/</websiteUrl>
- 	</Bean>
-
-	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        	<name>HP Vertica</name>
-        	<driverClassName>com.vertica.jdbc.Driver</driverClassName>
-        	<url>jdbc:vertica://10.10.92.160:5433/VMart?user=uidbadmin123&amp;password=uidbadmin123</url>
-		<usesClassPath>true</usesClassPath>
-		<jarFileNames Indexed="true"/>
-		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-			<string>-62</string>
-		</identifier>
-		<websiteUrl>http://www.vertica.com</websiteUrl>
- 	</Bean>
-
-	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        	<name>MongoDB</name>
-        	<driverClassName>mongodb.jdbc.MongoDriver</driverClassName>
-        	<url>jdbc:mongo://&lt;servername>&gt;</url>
-		<usesClassPath>true</usesClassPath>
-		<jarFileNames Indexed="true"/>
-		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-			<string>-63</string>
-		</identifier>
-		<websiteUrl>http://www.unitiyjdbc.com/mongojdbc/</websiteUrl>
- 	</Bean>
-	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        	<name>Salesforce</name>
-        	<driverClassName>com.reliersoft.sforce.jdbc.Driver</driverClassName>
-        	<url>jdbc:sforce://login.salesforce.com</url>
-		<usesClassPath>true</usesClassPath>
-		<jarFileNames Indexed="true"/>
-		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-			<string>-64</string>
-		</identifier>
-		<websiteUrl>http://reliersoft.com/download/salesforce-jdbc-driver</websiteUrl>
- 	</Bean>
 </Beans>
