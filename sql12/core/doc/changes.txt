@@ -39,6 +39,9 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+#1287 On MacOS, the launcher script contains a hard-coded reference to Contents/Resources/Java
+  Thanks to Peter G. Horvath for the fix.
+
 Old application icon was shown Unix/Linux OSes.
 
 #618 sqlparam plugin asks for commented variables  is now also fixed for /* */ style comments

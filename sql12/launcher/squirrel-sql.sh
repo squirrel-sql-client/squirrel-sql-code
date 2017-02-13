@@ -53,7 +53,12 @@ esac
 
 # SQuirreL home.
 if $macosx ; then
-	SQUIRREL_SQL_HOME='%INSTALL_PATH/Contents/Resources/Java'
+    SQUIRREL_SQL_HOME=`dirname "$0"`/Contents/Resources/Java
+    if [ ! -d "$SQUIRREL_SQL_HOME" ]; then
+        # We assume that this is the ZIP file extracted on MacOS,
+        # so, fall-back to the defult path
+        SQUIRREL_SQL_HOME=`dirname "$0"`
+    fi
 else 
 	SQUIRREL_SQL_HOME='%INSTALL_PATH'
 fi
