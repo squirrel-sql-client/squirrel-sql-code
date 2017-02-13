@@ -276,6 +276,8 @@ public interface ISQLPanelAPI
 	 */
 	JMenuItem addToSQLEntryAreaMenu(Action action);
 
+	void addSeparatorToSQLEntryAreaMenu();
+
 	ISession getSession();
 
 	boolean isInMainSessionWindow();

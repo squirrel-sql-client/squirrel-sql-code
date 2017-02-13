@@ -18,17 +18,12 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.*;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -37,14 +32,9 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesTab;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateFileOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateSelectScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTemplateDataScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.DropTableScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.*;
+
+import javax.swing.*;
 
 /**
  * The SQL Script plugin class.
@@ -230,6 +220,20 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 				sqlInternalFrame.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
 				sqlInternalFrame.addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
 				sqlInternalFrame.addToToolsPopUp("sql2file", coll.get(CreateFileOfCurrentSQLAction.class));
+
+				JMenuItem mnu;
+
+				sqlInternalFrame.getSQLPanelAPI().addSeparatorToSQLEntryAreaMenu();
+
+				mnu = sqlInternalFrame.getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateTableOfCurrentSQLAction.class));
+				_resources.configureMenuItem(coll.get(CreateTableOfCurrentSQLAction.class), mnu);
+
+				mnu = sqlInternalFrame.getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class));
+				_resources.configureMenuItem(coll.get(CreateDataScriptOfCurrentSQLAction.class), mnu);
+
+				mnu = sqlInternalFrame.getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateFileOfCurrentSQLAction.class));
+				_resources.configureMenuItem(coll.get(CreateFileOfCurrentSQLAction.class), mnu);
+
 			}
 
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,
@@ -267,6 +271,22 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 		session.getSessionInternalFrame().addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
 		session.getSessionInternalFrame().addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
 		session.getSessionInternalFrame().addToToolsPopUp("sql2file", coll.get(CreateFileOfCurrentSQLAction.class));
+
+
+
+		JMenuItem mnu;
+
+		session.getSessionInternalFrame().getSQLPanelAPI().addSeparatorToSQLEntryAreaMenu();
+
+		mnu = session.getSessionInternalFrame().getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateTableOfCurrentSQLAction.class));
+		_resources.configureMenuItem(coll.get(CreateTableOfCurrentSQLAction.class), mnu);
+
+		mnu = session.getSessionInternalFrame().getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class));
+		_resources.configureMenuItem(coll.get(CreateDataScriptOfCurrentSQLAction.class), mnu);
+
+		mnu = session.getSessionInternalFrame().getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateFileOfCurrentSQLAction.class));
+		_resources.configureMenuItem(coll.get(CreateFileOfCurrentSQLAction.class), mnu);
+
 	}
 
 	private void createMenu()

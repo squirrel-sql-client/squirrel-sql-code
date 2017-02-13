@@ -750,6 +750,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		return _panel.addToSQLEntryAreaMenu(action);
 	}
 
+	@Override
+	public void addSeparatorToSQLEntryAreaMenu()
+	{
+		_panel.addSeparatorToSQLEntryAreaMenu();
+	}
+
 	/** JASON: Remove once deprecated interface removed*/
 	public ISession getSession()
 	{

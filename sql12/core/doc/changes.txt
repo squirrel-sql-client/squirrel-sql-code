@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Added "Create Data Script from SQL", "Store result of SQL in table", "Create Data Script from SQL" functions to editor's right mouse menu.
+
 #491 Tab length can be configured and tabs can be chosen to be replace by spaces.
         See menu File --> New Session Properties --> Tab Syntax
 

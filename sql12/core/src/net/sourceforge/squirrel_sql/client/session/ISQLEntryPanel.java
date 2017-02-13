@@ -146,6 +146,9 @@ public interface ISQLEntryPanel extends IHasIdentifier
 	 */
 	JMenuItem addToSQLEntryAreaMenu(Action action);
 
+	void addSeparatorToSQLEntryAreaMenu();
+
+
 	void addMouseListener(MouseListener lis);
 	void removeMouseListener(MouseListener lis);
 

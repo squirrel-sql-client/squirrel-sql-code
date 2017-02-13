@@ -575,6 +575,13 @@ public class SQLPanel extends JPanel
 		return getSQLEntryPanel().addToSQLEntryAreaMenu(action);
 	}
 
+	public void addSeparatorToSQLEntryAreaMenu()
+	{
+		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
+	}
+
+
+
 	private void fireSQLEntryAreaInstalled()
 	{
 		// Guaranteed to be non-null.

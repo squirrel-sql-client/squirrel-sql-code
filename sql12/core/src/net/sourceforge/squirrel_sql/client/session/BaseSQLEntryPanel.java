@@ -203,7 +203,14 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 		return _textPopupMenu.add(action);
 	}
 
-   /**
+	@Override
+	public void addSeparatorToSQLEntryAreaMenu()
+	{
+		_textPopupMenu.addSeparator();
+	}
+
+
+	/**
 	 * @see ISQLEntryPanel#addRedoUndoActionsToSQLEntryAreaMenu(javax.swing.Action, javax.swing.Action)
 	 */
 	public void addRedoUndoActionsToSQLEntryAreaMenu(Action undo, Action redo)
