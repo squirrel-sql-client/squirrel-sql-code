@@ -24,8 +24,7 @@ import java.awt.dnd.DropTarget;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
 
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
@@ -44,7 +43,6 @@ import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
 
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -109,7 +107,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * @see ISQLEntryPanel#gettextComponent()
 	 */
-	public JTextComponent getTextComponent()
+	public JTextArea getTextComponent()
 	{
 		return _textArea;
 	}

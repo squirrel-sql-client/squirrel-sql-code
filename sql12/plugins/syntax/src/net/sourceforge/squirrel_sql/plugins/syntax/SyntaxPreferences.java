@@ -58,6 +58,8 @@ public class SyntaxPreferences implements Serializable, Cloneable
       String USE_PLAIN_CONTROL = "usePlainControl";
       String WHITE_SPACE_STYLE = "whiteSpaceStyle";
       String TEXT_LIMIT_LINE_VISIBLE = "textLimitLineVisible";
+      String TAB_LENGTH = "tabLength";
+      String REPLACE_TABS_BY_SPACES = "replaceTabsBySpaces";
       String TEXT_LIMIT_LINE_WIDTH = "textLimitLineWidth";
       String HIGHLIGHT_CURRENT_LINE = "highlightCurrentLine";
       String LINE_NUMBERS_ENABLED = "lineNumbersEnabled";
@@ -100,21 +102,18 @@ public class SyntaxPreferences implements Serializable, Cloneable
 	private SyntaxStyle _tableStyle = new SyntaxStyle();
 	private SyntaxStyle _whiteSpaceStyle = new SyntaxStyle();
 
-//	private int _caretRGB = Color.red.getRGB();
-//	private int _selectionRGB = 0xccccff;
-//	private int _lineHighlightRGB = Color.lightGray.getRGB();
-//	private int _eolMarkerRGB = 0x009999;
-//	private int _bracketHighlightRGB = Color.black.getRGB();
-//	private int _lineNumberRGB = Color.black.getRGB();
 
    private boolean _textLimitLineVisible = false;
    private int _textLimitLineWidth = 80;
 
-   private boolean _highlightCurrentLine = true;
+	private int _tabLength = 5;
+	private boolean _replaceTabsBySpaces = false;
+
+	private boolean _highlightCurrentLine = true;
 
    private boolean _lineNumbersEnabled = false;
 
-   /**
+	/**
     * Indicates, that copy in rich text format should be used as default copy action (if possible)
     */
    private boolean _useCopyAsRtf = false;
@@ -306,7 +305,42 @@ public class SyntaxPreferences implements Serializable, Cloneable
       }
    }
 
-   public int getTextLimitLineWidth()
+	public boolean isReplaceTabsBySpaces()
+	{
+		return _replaceTabsBySpaces;
+	}
+
+	public void setReplaceTabsBySpaces(boolean data)
+	{
+		if (_replaceTabsBySpaces != data)
+		{
+			final Boolean oldValue = Boolean.valueOf(_replaceTabsBySpaces);
+			_replaceTabsBySpaces = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.REPLACE_TABS_BY_SPACES,
+					oldValue, Boolean.valueOf(_replaceTabsBySpaces));
+		}
+
+	}
+
+	public int getTabLength()
+	{
+		return _tabLength;
+	}
+
+	public void setTabLength(int data)
+	{
+		if (_tabLength != data)
+		{
+			final Integer oldValue = _tabLength;
+			_tabLength = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.TAB_LENGTH,
+					oldValue, (Integer)_tabLength);
+		}
+
+	}
+
+
+	public int getTextLimitLineWidth()
    {
       return _textLimitLineWidth;
    }
@@ -613,104 +647,6 @@ public class SyntaxPreferences implements Serializable, Cloneable
 		}
 	}
 
-
-
-
-//	public int getCaretRGB()
-//	{
-//		return _caretRGB;
-//	}
-//
-//	public void setCaretRGB(int data)
-//	{
-//		if (_caretRGB != data)
-//		{
-//			final int oldValue = _caretRGB;
-//			_caretRGB = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.CARET_COLOR,
-//				oldValue, _caretRGB);
-//		}
-//	}
-//
-//	public int getSelectionRGB()
-//	{
-//		return _selectionRGB;
-//	}
-//
-//	public void setSelectionRGB(int data)
-//	{
-//		if (_selectionRGB != data)
-//		{
-//			final int oldValue = _selectionRGB;
-//			_selectionRGB = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.SELECTION_COLOR,
-//				oldValue, _selectionRGB);
-//		}
-//	}
-//
-//	public int getCurrentLineHighlightRGB()
-//	{
-//		return _lineHighlightRGB;
-//	}
-//
-//	public void setCurrentLineHighlightRGB(int data)
-//	{
-//		if (_lineHighlightRGB != data)
-//		{
-//			final int oldValue = _lineHighlightRGB;
-//			_lineHighlightRGB = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.CURRENT_LINE_HIGHLIGHT_COLOR,
-//				oldValue, _lineHighlightRGB);
-//		}
-//	}
-//
-//	public int getEOLMarkerRGB()
-//	{
-//		return _eolMarkerRGB;
-//	}
-//
-//	public void setEOLMarkerRGB(int data)
-//	{
-//		if (_eolMarkerRGB != data)
-//		{
-//			final int oldValue = _eolMarkerRGB;
-//			_eolMarkerRGB = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.EOL_MARKER_COLOR,
-//				oldValue, _eolMarkerRGB);
-//		}
-//	}
-//
-//	public int getBracketHighlightRGB()
-//	{
-//		return _bracketHighlightRGB;
-//	}
-//
-//	public void setBracketHighlightRGB(int data)
-//	{
-//		if (_bracketHighlightRGB != data)
-//		{
-//			final int oldValue = _bracketHighlightRGB;
-//			_bracketHighlightRGB = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.BRACKET_HIGHLIGHT_COLOR,
-//				oldValue, _bracketHighlightRGB);
-//		}
-//	}
-//
-//	public int getLineNumberRGB()
-//	{
-//		return _lineNumberRGB;
-//	}
-//
-//	public void setLineNumberRGB(int data)
-//	{
-//		if (_lineNumberRGB != data)
-//		{
-//			final int oldValue = _lineNumberRGB;
-//			_lineNumberRGB = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.LINE_NUMBER_COLOR,
-//				oldValue, _lineNumberRGB);
-//		}
-//	}
 
 	private synchronized PropertyChangeReporter getPropertyChangeReporter()
 	{

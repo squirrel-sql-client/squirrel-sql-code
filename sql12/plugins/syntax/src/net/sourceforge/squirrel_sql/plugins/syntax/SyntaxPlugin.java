@@ -370,6 +370,11 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		return ret;
 	}
 
+	public SyntaxPreferences getSyntaxPreferences()
+	{
+		return _newSessionPrefs;
+	}
+
 	private void initSessionSheet(ISession session)
 	{
 		ActionCollection coll = getApplication().getActionCollection();

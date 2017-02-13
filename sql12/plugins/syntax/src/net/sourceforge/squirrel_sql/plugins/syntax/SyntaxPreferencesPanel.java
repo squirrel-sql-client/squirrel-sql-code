@@ -143,7 +143,7 @@ public class SyntaxPreferencesPanel
 	 */
 	public String getTitle()
 	{
-		return MyPanel.i18n.TAB_TITLE;
+		return s_stringMgr.getString("syntax.prefSyntax");
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class SyntaxPreferencesPanel
 	 */
 	public String getHint()
 	{
-		return MyPanel.i18n.TAB_HINT;
+		return s_stringMgr.getString("syntax.prefSyntaxHint");
 	}
 
 	/**
@@ -161,53 +161,20 @@ public class SyntaxPreferencesPanel
 	 */
 	private final static class MyPanel extends JPanel
 	{
-      /**
-		 * This interface defines locale specific strings. This should be
-		 * replaced with a property file.
-		 */
-		interface i18n
-		{
-			// i18n[syntax.prefSyntax=Syntax]
-			String TAB_TITLE = s_stringMgr.getString("syntax.prefSyntax");
-			// i18n[syntax.prefSyntaxHint=Syntax Highlighting]
-			String TAB_HINT = s_stringMgr.getString("syntax.prefSyntaxHint");
-			// i18n[syntax.prefUseNetbeans=Use Netbeans editor (recommended)]
-         String NETBEANS = s_stringMgr.getString("syntax.prefUseNetbeans");
-			// i18n[syntax.prefUseNetbeans=Use Netbeans editor (recommended)]
-         String RSYNTAX = s_stringMgr.getString("syntax.prefUseRsyntax");
-			// i18n[syntax.prefUseOster=Use Ostermiller editor]
-			String OSTER = s_stringMgr.getString("syntax.prefUseOster");
-			// i18n[syntax.prefUsePlain=Use plain editor]
-         String PLAIN = s_stringMgr.getString("syntax.prefUsePlain");
+      private final JRadioButton _rsyntaxActiveOpt  = new JRadioButton(s_stringMgr.getString("syntax.prefUseRsyntax"));
+      private final JRadioButton _plainActiveOpt  = new JRadioButton(s_stringMgr.getString("syntax.prefUsePlain"));
 
-         // i18n[syntax.textLimitLineVisible=Show text limit line]
-         String TEXT_LIMIT_LINE_VISIBLE = s_stringMgr.getString("syntax.textLimitLineVisible");
-         // i18n[syntax.textLimitLineWidth=Text limit line width]
-         String TEXT_LIMIT_LINE_WIDTH = s_stringMgr.getString("syntax.textLimitLineWidth");
-
-         // i18n[syntax.highlightCurrentLine=Highlight current line]
-         String HIGHLIGHT_CURRENT_LINE = s_stringMgr.getString("syntax.highlightCurrentLine");
-
-         // i18n[syntax.lineNumbersEnabled=Enable line numbers]
-         String LINE_NUMBERS_ENABLES = s_stringMgr.getString("syntax.lineNumbersEnabled");
-
-         // i18n[syntax.useCopyAsRtf=Copy in rich text format per default]
-         String USE_COPY_AS_RTF = s_stringMgr.getString("syntax.useCopyAsRtf");
-
-      }
-
-      private final JRadioButton _rsyntaxActiveOpt  = new JRadioButton(i18n.RSYNTAX);
-      private final JRadioButton _plainActiveOpt  = new JRadioButton(i18n.PLAIN);
-
-      private final JCheckBox _chkTextLimitLineVisible = new JCheckBox(i18n.TEXT_LIMIT_LINE_VISIBLE);
+      private final JCheckBox _chkTextLimitLineVisible = new JCheckBox(s_stringMgr.getString("syntax.textLimitLineVisible"));
       private final JTextField _txtTextLimitLineWidth = new JTextField();
-      private final JCheckBox _chkHighlightCurrentLine = new JCheckBox(i18n.HIGHLIGHT_CURRENT_LINE);
-      private final JCheckBox _chkLineNumbersEnabled = new JCheckBox(i18n.LINE_NUMBERS_ENABLES);
+      private final JCheckBox _chkHighlightCurrentLine = new JCheckBox(s_stringMgr.getString("syntax.highlightCurrentLine"));
+      private final JCheckBox _chkLineNumbersEnabled = new JCheckBox(s_stringMgr.getString("syntax.lineNumbersEnabled"));
       
-      private final JCheckBox _useCopyAsRtf = new JCheckBox(i18n.USE_COPY_AS_RTF);
+      private final JCheckBox _useCopyAsRtf = new JCheckBox(s_stringMgr.getString("syntax.useCopyAsRtf"));
 
+		private final JTextField _txtTabLength = new JTextField();
+		private final JCheckBox _chkReplaceTabsBySpaces = new JCheckBox(s_stringMgr.getString("syntax.replaceTabsBySpaces"));
 
-      private StylesListSelectionListener _listLis;
+		private StylesListSelectionListener _listLis;
 
 
 		private final StylesList _stylesList = new StylesList();
@@ -262,6 +229,9 @@ public class SyntaxPreferencesPanel
          
          _stylesList.loadData(prefs);
 			_styleMaintPnl.setStyle(_stylesList.getSelectedSyntaxStyle());
+
+			_txtTabLength.setText("" + prefs.getTabLength());
+			_chkReplaceTabsBySpaces.setSelected(prefs.isReplaceTabsBySpaces());
 			
 			
 			updateControlStatus();
@@ -288,10 +258,55 @@ public class SyntaxPreferencesPanel
          prefs.setHighlightCurrentLine(_chkHighlightCurrentLine.isSelected());
          prefs.setLineNumbersEnabled(_chkLineNumbersEnabled.isSelected());
          prefs.setUseCopyAsRtf(_useCopyAsRtf.isSelected());
-         
-         int limit = 80;
 
-         try
+			fillTextLineLimit(prefs);
+
+			fillTabLength(prefs);
+
+			prefs.setReplaceTabsBySpaces(_chkReplaceTabsBySpaces.isSelected());
+
+
+         prefs.setColumnStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.COLUMNS));
+			prefs.setCommentStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.COMMENTS));
+			prefs.setErrorStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.ERRORS));
+			prefs.setFunctionStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.FUNCTIONS));
+			prefs.setIdentifierStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.IDENTIFIERS));
+			prefs.setLiteralStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.LITERALS));
+			prefs.setOperatorStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.OPERATORS));
+			prefs.setReservedWordStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.RESERVED_WORDS));
+			prefs.setSeparatorStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.SEPARATORS));
+			prefs.setTableStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.TABLES));
+			prefs.setWhiteSpaceStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.WHITE_SPACE));
+			prefs.setDataTypeStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.DATA_TYPES));
+		}
+
+		private void fillTabLength(SyntaxPreferences prefs)
+		{
+			int limit = prefs.getTabLength();
+			try
+			{
+				int buf = Integer.parseInt(_txtTabLength.getText());
+
+				if(0 < buf && buf < 1000)
+				{
+					limit = buf;
+				}
+				else
+				{
+					s_log.error("Invalid text limit widht: " + _txtTabLength.getText());
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				s_log.error("Invalid text limit widht: " + _txtTabLength.getText(), e);
+			}
+			prefs.setTabLength(limit);
+		}
+
+		private void fillTextLineLimit(SyntaxPreferences prefs)
+		{
+			int limit = prefs.getTextLimitLineWidth();
+			try
          {
             int buf = Integer.parseInt(_txtTextLimitLineWidth.getText());
 
@@ -308,24 +323,10 @@ public class SyntaxPreferencesPanel
          {
             s_log.error("Invalid text limit widht: " + _txtTextLimitLineWidth.getText(), e);
          }
-
-         prefs.setTextLimitLineWidth(limit);
-
-         prefs.setColumnStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.COLUMNS));
-			prefs.setCommentStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.COMMENTS));
-			prefs.setErrorStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.ERRORS));
-			prefs.setFunctionStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.FUNCTIONS));
-			prefs.setIdentifierStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.IDENTIFIERS));
-			prefs.setLiteralStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.LITERALS));
-			prefs.setOperatorStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.OPERATORS));
-			prefs.setReservedWordStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.RESERVED_WORDS));
-			prefs.setSeparatorStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.SEPARATORS));
-			prefs.setTableStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.TABLES));
-			prefs.setWhiteSpaceStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.WHITE_SPACE));
-			prefs.setDataTypeStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.DATA_TYPES));
+			prefs.setTextLimitLineWidth(limit);
 		}
 
-      private void updateControlStatus()
+		private void updateControlStatus()
       {
     	  final boolean useRSyntaxControl = _rsyntaxActiveOpt.isSelected();
     	  final boolean usePlainControl = _plainActiveOpt.isSelected();
@@ -451,11 +452,32 @@ public class SyntaxPreferencesPanel
 
          gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
          pnlRet.add(_useCopyAsRtf, gbc);
-         
+
+         gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+         pnlRet.add(createTabConfigPanel(), gbc);
+
          return pnlRet;
       }
 
-      private JPanel createPnlLineLimit()
+		private JPanel createTabConfigPanel()
+		{
+			JPanel ret = new JPanel(new GridBagLayout());
+
+			GridBagConstraints gbc;
+			gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+			ret.add(new JLabel(s_stringMgr.getString("syntax.tabLength")), gbc);
+
+			gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+			_txtTabLength.setColumns(3);
+			ret.add(_txtTabLength, gbc);
+
+			gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+			ret.add(_chkReplaceTabsBySpaces, gbc);
+
+			return ret;
+		}
+
+		private JPanel createPnlLineLimit()
       {
          GridBagConstraints gbc;
          JPanel pnlLineLimit = new JPanel(new GridBagLayout());
@@ -463,7 +485,7 @@ public class SyntaxPreferencesPanel
          pnlLineLimit.add(_chkTextLimitLineVisible, gbc);
 
          gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
-         pnlLineLimit.add(new JLabel(i18n.TEXT_LIMIT_LINE_WIDTH), gbc);
+         pnlLineLimit.add(new JLabel(s_stringMgr.getString("syntax.textLimitLineWidth")), gbc);
 
          _txtTextLimitLineWidth.setColumns(3);
          gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);

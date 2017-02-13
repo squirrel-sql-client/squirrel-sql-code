@@ -63,6 +63,8 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
 
       new AutoCorrector(newPnl.getTextComponent(), _syntaxPugin);
 
+      new TabKeyHandler(newPnl.getTextComponent(), _syntaxPugin);
+
       if(null == pnl || false == newPnl.getClass().equals(pnl.getClass()))
       {
          removePanel(session);

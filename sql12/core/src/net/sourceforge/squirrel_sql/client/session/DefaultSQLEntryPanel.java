@@ -25,7 +25,6 @@ import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.JTextComponent;
 import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
@@ -70,7 +69,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 *
 	 * @return	The text area component.
 	 */
-	public JTextComponent getTextComponent()
+	public JTextArea getTextComponent()
 	{
 		return _myTextArea;
 	}
