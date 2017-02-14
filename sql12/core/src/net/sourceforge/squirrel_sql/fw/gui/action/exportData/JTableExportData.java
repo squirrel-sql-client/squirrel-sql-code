@@ -100,19 +100,26 @@ public class JTableExportData implements IExportData {
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData#getRows(boolean)
 	 */
 	@Override
-	public Iterator<IExportDataRow> getRows() {
+	public Iterator<IExportDataRow> getRows()
+	{
 		List<IExportDataRow> rows = new ArrayList<IExportDataRow>(nbrSelRows);
-		for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx) {
+		for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
+		{
 			List<IExportDataCell> cells = new ArrayList<IExportDataCell>(nbrSelCols);
-			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
+
+			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
+			{
 				ExportDataColumn cellObj;
-				
+
 				final Object obj = table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-				
-				if (table.getColumnModel().getColumn(colIdx) instanceof ExtTableColumn) {
-					ExtTableColumn col = (ExtTableColumn) table.getColumnModel().getColumn(colIdx);
+
+				if (table.getColumnModel().getColumn(colIdx) instanceof ExtTableColumn)
+				{
+					ExtTableColumn col = (ExtTableColumn) table.getColumnModel().getColumn(selCols[colIdx]);
 					cellObj = new ExportDataColumn(col.getColumnDisplayDefinition(), obj, rowIdx, colIdx);
-				} else {
+				}
+				else
+				{
 					cellObj = new ExportDataColumn(null, obj, rowIdx, colIdx);
 				}
 				cells.add(cellObj);

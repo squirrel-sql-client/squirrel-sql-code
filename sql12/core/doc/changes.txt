@@ -41,6 +41,8 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+Table export to MS Excel failed when only the selected part of a table was chosen to export.
+
 #1287 On MacOS, the launcher script contains a hard-coded reference to Contents/Resources/Java
   Thanks to Peter G. Horvath for the fix.
 
