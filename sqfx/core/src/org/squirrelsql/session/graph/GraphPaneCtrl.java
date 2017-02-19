@@ -401,7 +401,7 @@ public class GraphPaneCtrl
 
    private void addTableToDesktop(TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, List<ColumnPersistence> columnPersistences)
    {
-      TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, _graphChannel, tableInfo, x, y, width, height, fkPropsByFkName, columnPersistences, ctrl -> _drawLinesCtrl.doDraw());
+      TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, _graphChannel, tableInfo, x, y, width, height, fkPropsByFkName, columnPersistences, ctrl -> _drawLinesCtrl.doDraw(), ctrl -> onTableClosed(ctrl));
 
       if (0 == columnPersistences.size())
       {
@@ -410,6 +410,22 @@ public class GraphPaneCtrl
       }
 
       _desktopPane.getChildren().add(tableWindowCtrl.getWindow());
+   }
+
+   private void onTableClosed(TableWindowCtrl ctrl)
+   {
+      for (GraphTablePersistence graphTablePersistence : _graphPersistenceWrapper.getDelegate().getGraphTablePersistences())
+      {
+         String qualifiedNamePers = SQLUtil.getQualifiedName(graphTablePersistence.getCatalog(), graphTablePersistence.getSchema(), graphTablePersistence.getName());
+         String qualifiedNameTableInfo = SQLUtil.getQualifiedName(ctrl.getTableInfo().getCatalog(), ctrl.getTableInfo().getSchema(), ctrl.getTableInfo().getName());
+
+         if(qualifiedNameTableInfo.equalsIgnoreCase(qualifiedNamePers))
+         {
+            _graphPersistenceWrapper.getDelegate().getGraphTablePersistences().remove(graphTablePersistence);
+            _graphChannel.getQueryChannel().fireChanged();
+            return;
+         }
+      }
    }
 
 

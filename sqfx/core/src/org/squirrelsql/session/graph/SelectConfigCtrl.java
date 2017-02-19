@@ -71,6 +71,8 @@ public class SelectConfigCtrl
          selCols.get(i).getColumnConfigurationPersistence().setSelectPosition(i);
          _tableLoader.addRowObject(new SelectPositionRowObject(selCols.get(i)));
       }
+
+      _tableView.refresh();
    }
 
    private void onQueryChanged()

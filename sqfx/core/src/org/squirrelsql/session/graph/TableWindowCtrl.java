@@ -18,13 +18,15 @@ public class TableWindowCtrl
    private GraphChannel _graphChannel;
    private TableInfo _tableInfo;
    private HashMap<String, FkProps> _fkPropsByFkName = new HashMap<>();
+   private TableWindowCloseListener _tableWindowCloseListener;
 
-   public TableWindowCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, List<ColumnPersistence> columnPersistences, DrawLinesListener drawLinesListener)
+   public TableWindowCtrl(Session session, GraphChannel graphChannel, TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, List<ColumnPersistence> columnPersistences, DrawLinesListener drawLinesListener, TableWindowCloseListener tableWindowCloseListener)
    {
       _session = session;
       _graphChannel = graphChannel;
       _tableInfo = tableInfo;
       _fkPropsByFkName = fkPropsByFkName;
+      _tableWindowCloseListener = tableWindowCloseListener;
 
       _window = new Window(_tableInfo.getName());
 
@@ -59,6 +61,7 @@ public class TableWindowCtrl
 
          tableWindowCtrl.removeNonDBConstraintDataTo(this);
       }
+      _tableWindowCloseListener.closed(this);
 
    }
 
