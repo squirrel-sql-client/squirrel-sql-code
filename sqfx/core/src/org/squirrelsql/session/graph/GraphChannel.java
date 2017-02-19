@@ -19,6 +19,7 @@ public class GraphChannel
    private ColumnListCtrl _lastDraggingColumnListCtrl;
    private Pane _desktopPane;
    private HashSet<AllTablesAddedListener> _allTablesAddedListeners = new HashSet<>();
+   private QueryChannel _queryChannel = new QueryChannel();
 
    public GraphChannel(GraphTabListener graphTabListener)
    {
@@ -97,5 +98,10 @@ public class GraphChannel
       {
          l.allTablesAdded();
       }
+   }
+
+   public QueryChannel getQueryChannel()
+   {
+      return _queryChannel;
    }
 }

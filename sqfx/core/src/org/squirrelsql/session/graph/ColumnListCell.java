@@ -5,13 +5,14 @@ import javafx.scene.text.Font;
 
 public class ColumnListCell extends ListCell<GraphColumn>
 {
-   private final ColumnConfigurationCtrl _columnConfigurationCtrl = new ColumnConfigurationCtrl();
+   private final ColumnConfigurationCtrl _columnConfigurationCtrl;
 
 
-   public ColumnListCell()
+   public ColumnListCell(QueryChannel queryChannel)
    {
       double size = getFont().getSize() - 1;
       setFont(Font.font(size));
+      _columnConfigurationCtrl = new ColumnConfigurationCtrl(queryChannel);
    }
 
    @Override

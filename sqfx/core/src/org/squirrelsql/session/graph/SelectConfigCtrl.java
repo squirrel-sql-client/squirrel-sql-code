@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class SelectConfigCtrl
 {
-   private final RowObjectTableLoader<SelectPositionRowObject> _tableLoader;
+   private RowObjectTableLoader<SelectPositionRowObject> _tableLoader;
 
    private I18n _i18n = new I18n(getClass());
 
@@ -28,13 +28,29 @@ public class SelectConfigCtrl
    private GraphPersistenceWrapper _graphPersistenceWrapper;
    private TableView _tableView = new TableView();
 
-   public SelectConfigCtrl(GraphPersistenceWrapper graphPersistenceWrapper)
+   public SelectConfigCtrl(GraphPersistenceWrapper graphPersistenceWrapper, QueryChannel queryChannel)
    {
       _graphPersistenceWrapper = graphPersistenceWrapper;
 
+      queryChannel.addQueryChannelListener(() -> onQueryChanged());
+
+      _tableLoader = new RowObjectTableLoader<>();
+      ArrayList<ColumnHandle> columnHandles = _tableLoader.initColsByAnnotations(SelectPositionRowObject.class);
+      columnHandles.forEach(ch -> ch.getTableColumn().setSortable(false));
+
+      initRows();
+
+      _btnUp.setOnAction(e -> onUp());
+      _btnDown.setOnAction(e -> onDown());
+   }
+
+   private void initRows()
+   {
+      _tableLoader.clearRows();
+
       ArrayList<ColumnPersistence> selCols = new ArrayList<>();
 
-      for (GraphTablePersistence table : graphPersistenceWrapper.getDelegate().getGraphTablePersistences())
+      for (GraphTablePersistence table : _graphPersistenceWrapper.getDelegate().getGraphTablePersistences())
       {
          for (ColumnPersistence col : table.getColumnPersistences())
          {
@@ -48,20 +64,44 @@ public class SelectConfigCtrl
       selCols.sort((c1, c2) -> onCompare(c1, c2));
 
 
-      _tableLoader = new RowObjectTableLoader<>();
 
-      ArrayList<ColumnHandle> columnHandles = _tableLoader.initColsByAnnotations(SelectPositionRowObject.class);
-
-      columnHandles.forEach(ch -> ch.getTableColumn().setSortable(false));
 
       for (int i = 0; i < selCols.size(); i++)
       {
          selCols.get(i).getColumnConfigurationPersistence().setSelectPosition(i);
          _tableLoader.addRowObject(new SelectPositionRowObject(selCols.get(i)));
       }
+   }
 
-      _btnUp.setOnAction(e -> onUp());
-      _btnDown.setOnAction(e -> onDown());
+   private void onQueryChanged()
+   {
+//      for (GraphTablePersistence table : _graphPersistenceWrapper.getDelegate().getGraphTablePersistences())
+//      {
+//         for (ColumnPersistence col : table.getColumnPersistences())
+//         {
+//            if(false == col.getColumnConfigurationPersistence().getAggregateFunctionPersistence().isInSelect())
+//            {
+//               continue;
+//            }
+//
+//
+//            boolean found = false;
+//            for (SelectPositionRowObject selectPositionRowObject : _tableLoader.getRowObjects())
+//            {
+//               if(selectPositionRowObject.getColumnPersistence() == col)
+//               {
+//                  found = true;
+//               }
+//            }
+//
+//            if(false == found)
+//            {
+//               _tableLoader.addRowObject(new SelectPositionRowObject(col));
+//            }
+//         }
+//      }
+
+      initRows();
    }
 
    private void onDown()

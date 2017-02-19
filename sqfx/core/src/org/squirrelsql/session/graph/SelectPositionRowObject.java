@@ -27,4 +27,9 @@ public class SelectPositionRowObject
    {
       _columnPersistence.getColumnConfigurationPersistence().setSelectPosition(index);
    }
+
+   public ColumnPersistence getColumnPersistence()
+   {
+      return _columnPersistence;
+   }
 }

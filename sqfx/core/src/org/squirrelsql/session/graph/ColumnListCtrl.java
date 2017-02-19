@@ -44,7 +44,7 @@ public class ColumnListCtrl
       _columnPositionHelper = new ColumnPositionHelper(_listView, _window);
 
       ListViewScrollEventWA listViewScrollEventWA = new ListViewScrollEventWA(drawLinesListener);
-      _listView.setCellFactory(p -> listViewScrollEventWA.registerCell(_columnPositionHelper.registerCell(new ColumnListCell())));
+      _listView.setCellFactory(p -> listViewScrollEventWA.registerCell(_columnPositionHelper.registerCell(new ColumnListCell(_graphChannel.getQueryChannel()))));
 
       _listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 

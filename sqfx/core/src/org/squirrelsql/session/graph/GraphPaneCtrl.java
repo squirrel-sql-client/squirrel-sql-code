@@ -206,7 +206,7 @@ public class GraphPaneCtrl
       switch (queryConfigType)
       {
          case SELECT:
-            SelectConfigCtrl selectConfigCtrl = new SelectConfigCtrl(_graphPersistenceWrapper);
+            SelectConfigCtrl selectConfigCtrl = new SelectConfigCtrl(_graphPersistenceWrapper, _graphChannel.getQueryChannel());
             _splitPane.getItems().add(selectConfigCtrl.getPane());
             break;
          case WHERE:
@@ -402,6 +402,12 @@ public class GraphPaneCtrl
    private void addTableToDesktop(TableInfo tableInfo, double x, double y, double width, double height, HashMap<String, FkProps> fkPropsByFkName, List<ColumnPersistence> columnPersistences)
    {
       TableWindowCtrl tableWindowCtrl = new TableWindowCtrl(_session, _graphChannel, tableInfo, x, y, width, height, fkPropsByFkName, columnPersistences, ctrl -> _drawLinesCtrl.doDraw());
+
+      if (0 == columnPersistences.size())
+      {
+         // A new table is being added. We create a persistence for it to make QuerChannel events work.
+         _graphPersistenceWrapper.getDelegate().getGraphTablePersistences().add(new GraphTablePersistence(tableWindowCtrl));
+      }
 
       _desktopPane.getChildren().add(tableWindowCtrl.getWindow());
    }

@@ -10,12 +10,14 @@ import org.squirrelsql.AppState;
 
 public class AggregateFunctionPane extends BorderPane
 {
-   private AggregateFunctionPersistence _aggregateFunctionPersistence;
+   private ColumnConfigurationPersistence _columnConfigurationPersistence;
+   private QueryChannel _queryChannel;
 
 
-   public AggregateFunctionPane(AggregateFunctionPersistence aggregateFunctionPersistence)
+   public AggregateFunctionPane(ColumnConfigurationPersistence columnConfigurationPersistence, QueryChannel queryChannel)
    {
-      _aggregateFunctionPersistence = aggregateFunctionPersistence;
+      _columnConfigurationPersistence = columnConfigurationPersistence;
+      _queryChannel = queryChannel;
 
       updateGraphics();
 
@@ -24,7 +26,7 @@ public class AggregateFunctionPane extends BorderPane
 
    private void showPopup()
    {
-      if(false == _aggregateFunctionPersistence.isInSelect())
+      if(false == _columnConfigurationPersistence.getAggregateFunctionPersistence().isInSelect())
       {
          return;
       }
@@ -47,15 +49,15 @@ public class AggregateFunctionPane extends BorderPane
 
    private void onFctSelected(AggregateFunction agg)
    {
-      _aggregateFunctionPersistence.setAggregateFunction(agg);
+      _columnConfigurationPersistence.getAggregateFunctionPersistence().setAggregateFunction(agg);
       _setCenter(agg.createImage());
    }
 
    private void updateGraphics()
    {
-      if(_aggregateFunctionPersistence.isInSelect())
+      if(_columnConfigurationPersistence.getAggregateFunctionPersistence().isInSelect())
       {
-         _setCenter(_aggregateFunctionPersistence.getAggregateFunction().createImage());
+         _setCenter(_columnConfigurationPersistence.getAggregateFunctionPersistence().getAggregateFunction().createImage());
       }
       else
       {
@@ -72,13 +74,16 @@ public class AggregateFunctionPane extends BorderPane
 
    public void setEnabled(boolean b)
    {
-      _aggregateFunctionPersistence.setInSelect(b);
+      _columnConfigurationPersistence.getAggregateFunctionPersistence().setInSelect(b);
 
       if(false == b)
       {
-         _aggregateFunctionPersistence.setAggregateFunction(AggregateFunction.NONE);
+         _columnConfigurationPersistence.getAggregateFunctionPersistence().setAggregateFunction(AggregateFunction.NONE);
+         _columnConfigurationPersistence.setSelectPosition(-1);
       }
 
       updateGraphics();
+
+      _queryChannel.fireChanged();
    }
 }

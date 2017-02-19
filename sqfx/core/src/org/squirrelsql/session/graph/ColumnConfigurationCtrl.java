@@ -6,6 +6,12 @@ public class ColumnConfigurationCtrl
 {
 
    private HBox _currentPanel;
+   private QueryChannel _queryChannel;
+
+   public ColumnConfigurationCtrl(QueryChannel queryChannel)
+   {
+      _queryChannel = queryChannel;
+   }
 
    public HBox createPanel(GraphColumn column)
    {
@@ -14,9 +20,10 @@ public class ColumnConfigurationCtrl
 
       _currentPanel.setSpacing(3);
 
-      AggregateFunctionPersistence aggregateFunctionPersistence = column.getColumnConfigurationPersistence().getAggregateFunctionPersistence();
+      ColumnConfigurationPersistence columnConfigurationPersistence = column.getColumnConfigurationPersistence();
+      AggregateFunctionPersistence aggregateFunctionPersistence = columnConfigurationPersistence.getAggregateFunctionPersistence();
 
-      AggregateFunctionPane aggregateFunctionPane = new AggregateFunctionPane(aggregateFunctionPersistence);
+      AggregateFunctionPane aggregateFunctionPane = new AggregateFunctionPane(columnConfigurationPersistence, _queryChannel);
       GraphListCheckBoxWA graphListCheckBox = new GraphListCheckBoxWA(b -> aggregateFunctionPane.setEnabled(b));
       graphListCheckBox.setSelected(aggregateFunctionPersistence.isInSelect());
 
@@ -24,8 +31,8 @@ public class ColumnConfigurationCtrl
       _currentPanel.getChildren().add(graphListCheckBox);
 //      _currentPanel.getChildren().add(aggregateFunctionPane);
       _currentPanel.getChildren().add(aggregateFunctionPane);
-      _currentPanel.getChildren().add(new FilterPane(column.getColumnConfigurationPersistence().getFilterPersistence()));
-      _currentPanel.getChildren().add(new OrderByPane(column.getColumnConfigurationPersistence().getOrderByPersistence()));
+      _currentPanel.getChildren().add(new FilterPane(columnConfigurationPersistence.getFilterPersistence()));
+      _currentPanel.getChildren().add(new OrderByPane(columnConfigurationPersistence.getOrderByPersistence()));
       return _currentPanel;
    }
 }
