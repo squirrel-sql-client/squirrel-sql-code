@@ -1,7 +1,10 @@
 package org.squirrelsql.session.graph;
 
+import javafx.geometry.Insets;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
@@ -32,7 +35,12 @@ public class TableWindowCtrl
 
       _columnListCtrl = new ColumnListCtrl(_session, _graphChannel, _tableInfo, _window, columnPersistences, () -> drawLinesListener.drawLines(TableWindowCtrl.this));
 
-      Pane contentPane = new BorderPane(_columnListCtrl.getColumnListView());
+
+      ListView<GraphColumn> columnListView = _columnListCtrl.getColumnListView();
+
+      BorderPane contentPane = new BorderPane();
+      BorderPane.setMargin(columnListView, new Insets(0,5,5,5));
+      contentPane.setCenter(columnListView);
 
       _window.setContentPane(contentPane);
 
