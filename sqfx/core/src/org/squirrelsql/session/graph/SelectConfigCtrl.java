@@ -32,7 +32,7 @@ public class SelectConfigCtrl
    {
       _graphPersistenceWrapper = graphPersistenceWrapper;
 
-      queryChannel.addQueryChannelListener(() -> onQueryChanged());
+      queryChannel.addQueryChannelListener(() -> initRows());
 
       _tableLoader = new RowObjectTableLoader<>();
       ArrayList<ColumnHandle> columnHandles = _tableLoader.initColsByAnnotations(SelectPositionRowObject.class);
@@ -73,37 +73,6 @@ public class SelectConfigCtrl
       }
 
       _tableView.refresh();
-   }
-
-   private void onQueryChanged()
-   {
-//      for (GraphTablePersistence table : _graphPersistenceWrapper.getDelegate().getGraphTablePersistences())
-//      {
-//         for (ColumnPersistence col : table.getColumnPersistences())
-//         {
-//            if(false == col.getColumnConfigurationPersistence().getAggregateFunctionPersistence().isInSelect())
-//            {
-//               continue;
-//            }
-//
-//
-//            boolean found = false;
-//            for (SelectPositionRowObject selectPositionRowObject : _tableLoader.getRowObjects())
-//            {
-//               if(selectPositionRowObject.getColumnPersistence() == col)
-//               {
-//                  found = true;
-//               }
-//            }
-//
-//            if(false == found)
-//            {
-//               _tableLoader.addRowObject(new SelectPositionRowObject(col));
-//            }
-//         }
-//      }
-
-      initRows();
    }
 
    private void onDown()
