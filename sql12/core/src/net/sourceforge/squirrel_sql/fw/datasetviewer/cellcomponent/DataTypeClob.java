@@ -230,7 +230,7 @@ public class DataTypeClob extends BaseDataTypeComponent
 	public String renderObject(Object value) {
 		String text = (String)_renderer.renderObject(value);
 		if (_makeNewlinesVisibleInCell){
-		    text = text.replaceAll("\n", "/\\n");
+		    text = text.replaceAll("\n", "\\\\n");
 		}
 		return text;
 	}
