@@ -305,14 +305,27 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		coll.add(act);
 		_resources.addToMenu(act, menu);
 
+
+		///////////////////////////////////////////////////////////////////
+		//
 		act = new CommentAction(getApplication(), _resources);
 		coll.add(act);
 		_resources.addToMenu(act, menu);
 
+		act = new CommentActionAltAccelerator(getApplication(), _resources);
+		coll.add(act);
+		_resources.addToMenu(act, menu);
+		//
+		////////////////////////////////////////////////////////////////////
+
 		act = new UncommentAction(getApplication(), _resources);
 		coll.add(act);
 		_resources.addToMenu(act, menu);
-		
+
+		act = new UncommentActionAltAccelerator(getApplication(), _resources);
+		coll.add(act);
+		_resources.addToMenu(act, menu);
+
 	}
 
 	/**
@@ -416,10 +429,29 @@ public class SyntaxPlugin extends DefaultSessionPlugin
       JMenuItem mnuUnmark = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UnmarkAction.class));
       _resources.configureMenuItem(coll.get(UnmarkAction.class), mnuUnmark);
 
+
+      //////////////////////////////////////////////////////////////////////
+		//
       JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
       _resources.configureMenuItem(coll.get(CommentAction.class), mnuComment);
+
+      JMenuItem mnuCommentAltAccelerator = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentActionAltAccelerator.class));
+      _resources.configureMenuItem(coll.get(CommentActionAltAccelerator.class), mnuCommentAltAccelerator);
+		mnuCommentAltAccelerator.setVisible(false);
+		//
+		//////////////////////////////////////////////////////////////////////
+
+
+		/////////////////////////////////////////////////////////////////////
+		//
       JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
       _resources.configureMenuItem(coll.get(UncommentAction.class), mnuUncomment);
+
+      JMenuItem mnuUncommentAltAccelerator = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentActionAltAccelerator.class));
+      _resources.configureMenuItem(coll.get(UncommentActionAltAccelerator.class), mnuUncommentAltAccelerator);
+		mnuUncommentAltAccelerator.setVisible(false);
+		//
+		/////////////////////////////////////////////////////////////////////
 
 
       if (sqlPanelAPI.getSQLEntryPanel().getTextComponent() instanceof SquirrelRSyntaxTextArea)
