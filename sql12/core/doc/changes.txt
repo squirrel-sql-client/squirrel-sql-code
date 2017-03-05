@@ -6,7 +6,7 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
-Comment/uncomment short cuts (ctrl minus / ctrl shift minus) now works for Numpad-minus too.
+Comment/uncomment short cuts (ctrl minus / ctrl shift minus) now work with Numpad-minus too.
 
 Added "Create Data Script from SQL", "Store result of SQL in table", "Create Data Script from SQL" functions to editor's right mouse menu.
 
