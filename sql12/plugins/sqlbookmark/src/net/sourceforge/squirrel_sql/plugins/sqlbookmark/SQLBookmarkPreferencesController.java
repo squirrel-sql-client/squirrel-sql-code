@@ -335,7 +335,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
    {
       BookmarEditController ctrlr = new BookmarEditController(_app.getMainFrame(), null, true);
 
-      if (ctrlr.isCancelled())
+      if (ctrlr.isCanceled())
       {
          return;
       }
@@ -379,12 +379,33 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       BookmarEditController ctrlr = new BookmarEditController(_app.getMainFrame(), (Bookmark) selNode.getUserObject(), editable);
 
-      if(ctrlr.isCancelled())
+      if(ctrlr.isCanceled())
       {
          return;
       }
 
       selNode.setUserObject(ctrlr.getBookmark());
+
+      refreshTree(selNode);
+
+   }
+
+   private void refreshTree(DefaultMutableTreeNode selNode)
+   {
+      boolean squirrelPathExpanded = _pnlPrefs.treBookmarks.isExpanded(new TreePath(_nodeSquirrelMarks.getPath()));
+
+      DefaultTreeModel model = (DefaultTreeModel) _pnlPrefs.treBookmarks.getModel();
+      TreeNode root = (TreeNode) model.getRoot();
+      model.setRoot(null);
+
+      model.setRoot(root);
+
+      _pnlPrefs.treBookmarks.setSelectionPath(new TreePath(selNode.getPath()));
+
+      if(squirrelPathExpanded)
+      {
+         _pnlPrefs.treBookmarks.expandPath(new TreePath(_nodeSquirrelMarks.getPath()));
+      }
    }
 
 

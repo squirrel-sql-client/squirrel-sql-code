@@ -25,12 +25,22 @@ public class BookmarkEditDialog extends JDialog
     * Create the entry dialog
     *
     * @param owner The frame the dialog will be centered in
+    * @param b
     */
-   public BookmarkEditDialog(Frame owner)
+   public BookmarkEditDialog(Frame owner, boolean adding)
    {
 
       // i18n[sqlbookmark.editBookmark=Edit bookmark]
-      super(owner, s_stringMgr.getString("sqlbookmark.editBookmark"), true);
+      super(owner, true);
+
+      if (adding)
+      {
+         setTitle(s_stringMgr.getString("sqlbookmark.addBookmark"));
+      }
+      else
+      {
+         setTitle(s_stringMgr.getString("sqlbookmark.editBookmark"));
+      }
 
       Container contentPane = getContentPane();
       contentPane.setLayout(new GridBagLayout());

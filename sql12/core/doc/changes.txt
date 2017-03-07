@@ -43,6 +43,10 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+#1290 Bookmarks plugin: NPE Add empty bookmark --> Empty bookmarks are prevented
+#1291 Bookmarks plugin: Add Bookmark dialog looks awfully
+#1292 Bookmarks plugin: Edit bookmark is not refreshing User bookmarks tree
+
 
 When menu File --> Global Preferences --> tab "Data Type Controls" --> "Show newlines as \n within cells"
  was activated newlines where replaced by /n instead of \n

@@ -6,9 +6,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 
 public class BookmarEditController
 {
@@ -16,7 +14,7 @@ public class BookmarEditController
       StringManagerFactory.getStringManager(BookmarEditController.class);
 
 
-   private boolean _cancelled;
+   private boolean _canceled;
    private BookmarkEditDialog _dlg;
    private Bookmark _mark;
 
@@ -24,7 +22,7 @@ public class BookmarEditController
    public BookmarEditController(Frame owner, Bookmark mark, boolean editable)
    {
       _mark = mark;
-      _dlg = new BookmarkEditDialog(owner);
+      _dlg = new BookmarkEditDialog(owner, null == _mark);
 
       _dlg.btnOk.setEnabled(editable);
 
@@ -62,6 +60,16 @@ public class BookmarEditController
       _dlg.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
       _dlg.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
       _dlg.getRootPane().getActionMap().put("CloseAction", closeAction);
+
+
+      _dlg.addWindowListener(new WindowAdapter()
+      {
+         @Override
+         public void windowClosing(WindowEvent e)
+         {
+            _canceled = true;
+         }
+      });
 
 
       GUIUtils.centerWithinParent(_dlg);
@@ -108,7 +116,7 @@ public class BookmarEditController
       }
 
       _dlg.setVisible(false);
-      _cancelled = false;
+      _canceled = false;
    }
 
    private boolean containsWhiteSpaces(String name)
@@ -127,7 +135,7 @@ public class BookmarEditController
    private void onCancel()
    {
       _dlg.setVisible(false);
-      _cancelled = true;
+      _canceled = true;
    }
 
    /**
@@ -135,9 +143,9 @@ public class BookmarEditController
     *
     * @return if true, user cancelled operation.
     */
-   public boolean isCancelled()
+   public boolean isCanceled()
    {
-      return _cancelled;
+      return _canceled;
    }
 
    /**
@@ -145,9 +153,9 @@ public class BookmarEditController
     *
     * @param status The cancelled status.
     */
-   public void setCancelled(boolean status)
+   public void setCanceled(boolean status)
    {
-      _cancelled = status;
+      _canceled = status;
    }
 
    public Bookmark getBookmark()

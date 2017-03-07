@@ -125,11 +125,11 @@ public class AddBookmarkDialog extends JDialog
       gbc = new GridBagConstraints(0,1,1,1,0.0,0.0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0);
       getContentPane().add(new JLabel(plugin.getResourceString(BM_DESCRIPTION)), gbc);
 
-      gbc = new GridBagConstraints(1,1,2,1,1.0,0.0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5),0,0);
+      gbc = new GridBagConstraints(1,1,1,1,1.0,0.0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5),0,0);
       getContentPane().add(txtDescription, gbc);
 
 
-      gbc = new GridBagConstraints(0,2,3,1,1.0,0.0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5),0,0);
+      gbc = new GridBagConstraints(0,2,2,1,1.0,0.0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5),0,0);
       JLabel lblAccesshint = new JLabel(plugin.getResourceString(BM_ACCESS_HINT));
       lblAccesshint.setForeground(Color.red);
       getContentPane().add(lblAccesshint, gbc);
@@ -146,7 +146,7 @@ public class AddBookmarkDialog extends JDialog
       pnlButtons.add(btnCancel, gbc);
 
 
-      gbc = new GridBagConstraints(2,3,1,1,1.0,0.0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(1,3,1,1,1.0,0.0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10,5,5,5),0,0);
       getContentPane().add(pnlButtons, gbc);
 
       getRootPane().setDefaultButton(btnOK);
@@ -170,7 +170,7 @@ public class AddBookmarkDialog extends JDialog
       getRootPane().getActionMap().put("CloseAction", closeAction);
 
 
-      setSize(430, 130);
+      setSize(430, 150);
    }
 
    public boolean isOK()
