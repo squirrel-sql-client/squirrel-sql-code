@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.swing.*;
 
@@ -117,8 +118,8 @@ public class RunBookmarkCommand implements ICommand {
      * Bookmarked SQL strings can have replaceable parameters. At the time 
      * the bookmark is loaded, the user is asked to enter values for any
      * of the parameters. The parameters come in three forms:
-     * ${prompt[, tip]}		 - simple anonymous parameter
-     * ${id=name, prompt[, tip]} - named parameter, allows it to be reused
+     * ${prompt(2017|2016)[, tip]}		 - simple anonymous parameter (placaholder)
+     * ${id=name, prompt(2017)[, tip]} - named parameter, allows it to be reused
      * ${ref=name}		 - use the value of an already named parameter.
      *   where
      * prompt is the string to display in the popup prompt
@@ -220,14 +221,50 @@ public class RunBookmarkCommand implements ICommand {
             for (idx = 0; idx < parameters.size(); idx++) {
                 Parameter parameter = parameters.get(idx);
 
+                // Check if prompt contains placeholder
+                String placeholder = "";
+
+                //////////////////////////////////////////////////////////////////////////
+                // If a tip exists, then the values are included in the tip string
+                // else in the prompt string
+                int pos = 0;
+                if ((pos = parameter.prompt.indexOf("(")) >= 0) {
+                    int rpos = parameter.prompt.indexOf(")", pos);
+                    if (rpos < 0) break;
+                    placeholder = parameter.prompt.substring(pos + 1, rpos);
+                    parameter.prompt = parameter.prompt.substring(0, pos);
+                }
+                else if(null != parameter.tip && (pos = parameter.tip.indexOf("(")) >= 0)
+                {
+                    int rpos = parameter.tip.indexOf(")", pos);
+                    if (rpos < 0) break;
+                    placeholder = parameter.tip.substring(pos + 1, rpos);
+                    parameter.tip = parameter.tip.substring(0, pos);
+                }
+                //
+                //////////////////////////////////////////////////////////
+
                 JLabel label = new JLabel(parameter.prompt + ":",
                         SwingConstants.RIGHT);
                 if (parameter.tip != null)
                     label.setToolTipText(parameter.tip);
 
-                JTextField value = new JTextField(20);
-                propPane.add(label, value);
+                JComponent value = new JTextField(20);
+                ((JTextField)value).setText(placeholder);
 
+                // Parse placeholder and use JTextField (single value) or use JComboBox (*)
+                if (placeholder.length() > 0) {
+                    StringTokenizer st = new StringTokenizer(placeholder, "|");
+                    if (st.countTokens() > 1) {
+                        Vector<String> choices = new Vector<String>();
+                        while (st.hasMoreElements()) {
+                            choices.add(st.nextToken());
+                        }
+                        value = new JComboBox(choices);
+                    }
+                }
+
+                propPane.add(label, value);
                 parameter.value = value;
             }
 
@@ -261,7 +298,11 @@ public class RunBookmarkCommand implements ICommand {
                     if (parameter.reference != null)
                         parameter = paramsById.get(parameter.reference);
 
-                    sqlbuf.append(parameter.value.getText());
+                    if (parameter.value instanceof JTextField) {
+                        sqlbuf.append(((JTextField)parameter.value).getText());
+                    } else {
+                        sqlbuf.append((String)(((JComboBox)(parameter.value)).getSelectedItem()));
+                    }
                 }
             }
 
@@ -283,10 +324,10 @@ public class RunBookmarkCommand implements ICommand {
     	String id;
     	String prompt;
     	String tip;
-    	JTextField value;
+    	JComponent value;
     }
 
-    /** 
+    /**
      * Internal action class called when user clicks the "OK" button.
      */
     static class DoneAction implements ActionListener {

@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Bookmarks Plugin: It's now possible to define default values for parameters.
+   Here is an extract from updated the SQLBookmark-Plugin help:
+     In case you want to give a default value for a parameter the syntax would be ${prompt[, tip](defaultValue)}.<BR>
+     Also a list of predefined values is possible. The syntax then is ${prompt[, tip](defaultValue_1|defaultValue_2|defaultValue_3)}
+   Thanks to Krzysztof Szymko for the patch.
+
 Comment/uncomment short cuts (ctrl minus / ctrl shift minus) now work with Numpad-minus too.
 
 Added "Create Data Script from SQL", "Store result of SQL in table", "Create Data Script from SQL" functions to editor's right mouse menu.
