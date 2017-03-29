@@ -51,7 +51,8 @@ public class ImportTableDataAction extends SquirrelAction implements ISessionAct
 	 * 
 	 * @param session The session
 	 */
-	public void setSession(ISession session) {
+	@Override
+    public void setSession(ISession session) {
 		this.session = session;
 	}
 
@@ -60,7 +61,8 @@ public class ImportTableDataAction extends SquirrelAction implements ISessionAct
 	 * 
 	 * @param ev The action event
 	 */
-	public void actionPerformed(ActionEvent ev) {
+	@Override
+    public void actionPerformed(ActionEvent ev) {
 		if (session != null)
 		{
 			IObjectTreeAPI treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
@@ -77,7 +79,7 @@ public class ImportTableDataAction extends SquirrelAction implements ISessionAct
 			}
 			else
 			{
-				session.showErrorMessage("Wrong object");
+				session.showErrorMessage("Importing data into a table works with one table only!");
 			}
 		}
 	}

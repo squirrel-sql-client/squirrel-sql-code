@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Dataimport Plugin:
+ - Improved messaging
+ - Table refresh after import
+ Thanks to Krzysztof Szymko for the patch.
+
+
 Bookmarks Plugin: It's now possible to define default values for parameters.
    Here is an extract from updated the SQLBookmark-Plugin help:
      In case you want to give a default value for a parameter the syntax would be ${prompt[, tip](defaultValue)}.<BR>

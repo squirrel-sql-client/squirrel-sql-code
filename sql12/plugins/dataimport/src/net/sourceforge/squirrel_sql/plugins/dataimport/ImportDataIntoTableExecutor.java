@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -124,7 +125,8 @@ public class ImportDataIntoTableExecutor
 	{
 		Runnable runnable = new Runnable()
       {
-         public void run()
+         @Override
+        public void run()
          {
             _execute(_singleTransaction, _commitAfterEveryInserts);
          }
@@ -278,7 +280,14 @@ public class ImportDataIntoTableExecutor
 		 {
 			 try
 			 {
-				 finishTransaction(conn, success);
+			     try
+			     {
+			         importer.close();
+			         finishTransaction(conn, success);
+			     } catch (IOException ioe)
+			     {
+			         log.error("Error while closing file", ioe);
+			     }
 			 }
 			 finally
 			 {
@@ -290,6 +299,16 @@ public class ImportDataIntoTableExecutor
 
 		 if (success)
 		 {
+		     GUIUtils.processOnSwingEventThread(new Runnable()
+		     {
+		         @Override
+		         public void run()
+		         {
+		             IObjectTreeAPI treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+		             treeAPI.refreshSelectedNodes();
+		         }
+		     });
+
 			 //i18n[ImportDataIntoTableExecutor.success={0,choice,0#No records|1#One record|1<{0} records} successfully inserted.]
 			 showMessageDialogOnEDT(stringMgr.getString("ImportDataIntoTableExecutor.success", currentRow));
 		 }
