@@ -728,7 +728,7 @@ public class WikiTablePreferencesPanel extends JPanel {
 		unique = true;
 		for (Object conf : configArray) {
 			// This must be a check, if the references are identical.
-			if(conf != conf){
+			if(config != conf){
 				if(StringUtils.equalsIgnoreCase(config.getName(), ((IWikiTableConfiguration) conf).getName())){
 					unique = false;
 				}

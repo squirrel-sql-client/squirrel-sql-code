@@ -17,24 +17,20 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
+import com.jidesoft.swing.MultilineLabel;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -65,6 +61,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		super();
 	}
 
+	@Override
 	public void initialize(IApplication app)
 	{
 		if (app == null)
@@ -79,10 +76,12 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
    }
 
+   @Override
    public void uninitialize(IApplication app)
    {
    }
 
+   @Override
    public synchronized Component getPanelComponent()
 	{
 		if (_myPanel == null)
@@ -93,16 +92,19 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		return _myScrollPane;
 	}
 
+	@Override
 	public void applyChanges()
 	{
 		_myPanel.applyChanges(_app.getSquirrelPreferences());
 	}
 
+	@Override
 	public String getTitle()
 	{
 		return s_stringMgr.getString("GeneralPreferencesPanel.tabtitle");
 	}
 
+	@Override
 	public String getHint()
 	{
 		return s_stringMgr.getString("GeneralPreferencesPanel.tabhint");
@@ -200,6 +202,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
          _tabbedStyle.addActionListener(new ActionListener()
          {
+            @Override
             public void actionPerformed(ActionEvent e)
             {
                onStyleChanged();
@@ -208,6 +211,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
          _internalFrameStyle.addActionListener(new ActionListener()
          {
+            @Override
             public void actionPerformed(ActionEvent e)
             {
                onStyleChanged();
@@ -424,10 +428,9 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = GridBagConstraints.HORIZONTAL;
+         gbc.anchor = GridBagConstraints.NORTHWEST;
          gbc.fill = GridBagConstraints.NONE;
          gbc.insets = new Insets(2, 4, 2, 4);
-         gbc.anchor = GridBagConstraints.NORTHWEST;
 
          ApplicationFiles appFiles = new ApplicationFiles();
          String execLogFile = appFiles.getExecutionLogFile().getPath();
@@ -469,9 +472,9 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
          pnl.setLayout(new GridBagLayout());
          final GridBagConstraints gbc = new GridBagConstraints();
+         gbc.anchor = GridBagConstraints.NORTHWEST;
          gbc.fill = GridBagConstraints.NONE;
          gbc.insets = new Insets(2, 4, 2, 4);
-         gbc.anchor = GridBagConstraints.NORTHWEST; 
 
          ApplicationFiles appFiles = new ApplicationFiles();
          String userDir = appFiles.getUserSettingsDirectory().getPath();

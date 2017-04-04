@@ -158,7 +158,6 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter {
 		// 'columns' tag will contain informations about columns
 		columns = testDoc.createElement("columns");
 		root.appendChild(columns);
-		int curRow = 0;		
 	}
 
 	/**
