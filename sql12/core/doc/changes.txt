@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Postgres Plugin: Procedure sources are now shown with signature
+  rather than only procedure's body code.
+ Thanks to Krzysztof Szymko for the patch.
+
+
 Dataimport Plugin:
  - Improved messaging
  - Table refresh after import

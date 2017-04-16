@@ -37,9 +37,9 @@ public class ProcedureSourceTab extends FormattedSourceTab
 	protected String getSqlStatement()
 	{
 		return
-      "SELECT p.prosrc FROM pg_proc p, pg_namespace n " +
-      "where p.pronamespace = n.oid " +
-      "and n.nspname = ? " +
-      "and p.proname = ? ";
+      "SELECT pg_get_functiondef(p.oid) FROM pg_proc p, pg_namespace n " +
+       "WHERE p.pronamespace = n.oid " +
+         "AND n.nspname = ? " +
+         "AND p.proname = ? ";
 	}
 }

@@ -23,7 +23,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.util.codereformat.*;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.client.util.codereformat.ICodeReformator;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -140,6 +143,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 			super(session);
 		}
 
+		@Override
 		public void load(ISession session, PreparedStatement stmt)
 		{
 			getTextArea().setText("");
@@ -166,7 +170,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 						buf.append(line);
 					}
 				}
-				if (appendSeparator)
+				if (appendSeparator && (statementSeparator != null))
 				{
 					buf.append("\n");
 					buf.append(statementSeparator);
