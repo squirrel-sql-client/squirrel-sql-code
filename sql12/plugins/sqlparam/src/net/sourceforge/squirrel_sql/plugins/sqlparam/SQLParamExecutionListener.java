@@ -17,23 +17,30 @@ package net.sourceforge.squirrel_sql.plugins.sqlparam;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetCommand;
+import java.awt.AWTEvent;
+import java.awt.ActiveEvent;
+import java.awt.Component;
+import java.awt.MenuComponent;
+import java.awt.Toolkit;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.JLayeredPane;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlparam.gui.AskParamValueDialog;
-
-import javax.swing.*;
-import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This listener listens for SQL execution.
@@ -64,6 +71,7 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 	 * 
 	 * @param sql
 	 */
+	@Override
 	public void statementExecuted(String sql) {
 		// log.info("SQL executed: " + sql);
 	}
@@ -78,11 +86,14 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 	 * @return	The SQL to be executed. If <TT>null</TT> returned then the
 	 *			statement will not be executed.
 	 */
+	@Override
 	public String statementExecuting(String sql) {
 		// log.info("SQL starting to execute: " + sql);
 
 		// Removes -- comments
-		sql = sql.replaceAll("--.*", "");
+		sql = removeComments(sql);
+
+		//log.info("Removed comments: " + sql);
 
 		// Removes /*  */ comments
 		sql = sql.replaceAll("/\\*(.|\\s)*\\*/", "");
@@ -130,6 +141,7 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 				} else {
 					try {
 						SwingUtilities.invokeAndWait(new Runnable() {
+							@Override
 							public void run() {
 								createParameterDialog(var, oldValue);
 							}
@@ -183,16 +195,16 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 	}
 
 	private static String removeComments(String sql) {
-        java.util.List<Integer> literalsStartPositions = new ArrayList<Integer>();
-		  java.util.List<Integer> literalsEndPositions = new ArrayList<Integer>();
+        List<Integer> literalsStartPositions = new ArrayList<Integer>();
+        List<Integer> literalsEndPositions = new ArrayList<Integer>();
         Matcher lm = Pattern.compile("('(('')|[^'])*')").matcher(sql);
         while (lm.find()) {
             literalsStartPositions.add(lm.start());
             literalsEndPositions.add(lm.end());
         }
 
-		  java.util.List<Integer> commentsStartPositions = new ArrayList<Integer>();
-		  java.util.List<Integer> commentsEndPositions = new ArrayList<Integer>();
+        List<Integer> commentsStartPositions = new ArrayList<Integer>();
+        List<Integer> commentsEndPositions = new ArrayList<Integer>();
         Matcher commentsm = Pattern.compile("--(.*?)\r?\n").matcher(sql);
         while (commentsm.find()) {
             if (isNotInsideOfAnyLiteral(commentsm.start(), literalsStartPositions, literalsEndPositions)) {
@@ -226,7 +238,7 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 	}
 
 	// comment can not start in any of the literals
-	private static boolean isNotInsideOfAnyLiteral(int spos, java.util.List<Integer> literalsStartPositions, java.util.List<Integer> literalsEndPositions) {
+	private static boolean isNotInsideOfAnyLiteral(int spos, List<Integer> literalsStartPositions, List<Integer> literalsEndPositions) {
         for (int i = 0; i < literalsStartPositions.size(); i++) {
             if (literalsStartPositions.get(i) <= spos && spos < literalsEndPositions.get(i)) {
                 return false;
@@ -247,6 +259,7 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 		dialog.moveToFront();
 		DialogWidget.centerWithinDesktop(dialog);
 		dialog.setVisible(true);
+		dialog.requestFocusForInputField();
 	}
 
 	private String sanitizeValue(String value, boolean quoting) {

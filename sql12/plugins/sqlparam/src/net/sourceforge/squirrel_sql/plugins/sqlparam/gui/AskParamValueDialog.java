@@ -204,8 +204,13 @@ public class AskParamValueDialog extends DialogWidget
 		dispose();
 	}
 
+	public void requestFocusForInputField()
+	{
+		requestFocus();
+		value.requestFocus();
+	}
 
-	
+
 	private final class MyOkClosePanelListener implements IOkClosePanelListener
 	{
 		/**
