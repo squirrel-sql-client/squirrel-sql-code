@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlparam.gui.AskParamValueDialog;
 import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -157,6 +158,7 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 		}
 
 		GUIUtils.processOnSwingEventThread(new Runnable() {
+			@Override
 			public void run() {
 				new SelectWidgetCommand(session.getActiveSessionWindow()).execute();
 			}
@@ -166,7 +168,8 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 		//////////////////////////////////////////////////////////////////
 		// This is a workaround to avoid bug #1206 "SQuirrel detects single line comment inside string literals"
 		// That means at least when no parameters are used bug #1206 is avoided.
-		// The right way would be to do parsing like in QueryTokenizer instead of using Regular Expressions. Regular Expressions is not able to really cope with literals.
+		// The right way would be to do parsing like in QueryTokenizer instead of using Regular Expressions.
+		// Regular Expressions is not able to really cope with literals.
 		if (parametersWhereReplaced)
 		{
 			return buffer.toString();
@@ -178,6 +181,64 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 		//
 		//////////////////////////////////////////////////////////////////
 	}
+
+	private static String removeComments(String sql) {
+        java.util.List<Integer> literalsStartPositions = new ArrayList<Integer>();
+		  java.util.List<Integer> literalsEndPositions = new ArrayList<Integer>();
+        Matcher lm = Pattern.compile("('(('')|[^'])*')").matcher(sql);
+        while (lm.find()) {
+            literalsStartPositions.add(lm.start());
+            literalsEndPositions.add(lm.end());
+        }
+
+		  java.util.List<Integer> commentsStartPositions = new ArrayList<Integer>();
+		  java.util.List<Integer> commentsEndPositions = new ArrayList<Integer>();
+        Matcher commentsm = Pattern.compile("--(.*?)\r?\n").matcher(sql);
+        while (commentsm.find()) {
+            if (isNotInsideOfAnyLiteral(commentsm.start(), literalsStartPositions, literalsEndPositions)) {
+                commentsStartPositions.add(commentsm.start());
+                commentsEndPositions.add(commentsm.end());
+            }
+        }
+
+        // it's possible that there's no \r\n after the last line comment
+        StringBuffer strippedSql = new StringBuffer(sql);
+        int commentStartIdx = -1;
+        if ((commentStartIdx = strippedSql.lastIndexOf("--")) != -1) {
+            // commentStartIdx can NOT be before end of last matched comment [start, end)
+            boolean uniqueComment = true;
+            if (commentsEndPositions.size() > 0) {
+                if (commentsEndPositions.get(commentsEndPositions.size() - 1) > commentStartIdx) {
+                    uniqueComment = false;
+                }
+            }
+            if (uniqueComment && isNotInsideOfAnyLiteral(commentStartIdx, literalsStartPositions, literalsEndPositions)) {
+                commentsStartPositions.add(commentStartIdx);
+                commentsEndPositions.add(strippedSql.length());
+            }
+        }
+
+        for (int i = commentsStartPositions.size() - 1; i >= 0; --i) {
+            strippedSql = strippedSql.replace(commentsStartPositions.get(i), commentsEndPositions.get(i), "");
+        }
+
+        return strippedSql.toString();
+	}
+
+	// comment can not start in any of the literals
+	private static boolean isNotInsideOfAnyLiteral(int spos, java.util.List<Integer> literalsStartPositions, java.util.List<Integer> literalsEndPositions) {
+        for (int i = 0; i < literalsStartPositions.size(); i++) {
+            if (literalsStartPositions.get(i) <= spos && spos < literalsEndPositions.get(i)) {
+                return false;
+            }
+        }
+	    return true;
+	}
+
+	public static void main(String[] args) {
+	    String testCase1 = "-- sql \n INSERT INTO code (txt) VALUES -- haha\n 'for(int i = e-1; i >= 0; --i)') -- nice test";
+	    System.out.println(SQLParamExecutionListener.removeComments(testCase1));
+    }
 
 	private void createParameterDialog(String parameter, String oldValue) {
 		dialog = new AskParamValueDialog(parameter, oldValue, session.getApplication());
