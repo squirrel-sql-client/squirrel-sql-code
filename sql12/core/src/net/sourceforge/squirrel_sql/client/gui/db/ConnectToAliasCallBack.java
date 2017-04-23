@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -67,6 +68,8 @@ public class ConnectToAliasCallBack implements ICompletionCallback
     */
    public void errorOccured(Throwable th, boolean connectingHasBeenCanceledByUser)
    {
+      th = Utilities.getDeepestThrowable(th);
+
       if (th instanceof WrappedSQLException)
       {
          th = ((WrappedSQLException)th).getSQLExeption();
@@ -82,7 +85,7 @@ public class ConnectToAliasCallBack implements ICompletionCallback
          msg = _sqlAlias.getName() + ": " + msg;
          if (false == connectingHasBeenCanceledByUser)
          {
-            showErrorDialog(msg, th);
+            showErrorDialog(getMsg(msg, th), th);
          }
          else
          {
@@ -94,7 +97,7 @@ public class ConnectToAliasCallBack implements ICompletionCallback
          String msg = s_stringMgr.getString("ConnectToAliasCommand.error.driver", _sqlAlias.getName());
          if (false == connectingHasBeenCanceledByUser)
          {
-            showErrorDialog(msg, th);
+            showErrorDialog(getMsg(msg, th), th);
          }
       }
       else if (th instanceof NoClassDefFoundError)
@@ -103,7 +106,7 @@ public class ConnectToAliasCallBack implements ICompletionCallback
          s_log.error(msg, th);
          if (false == connectingHasBeenCanceledByUser)
          {
-            showErrorDialog(msg, th);
+            showErrorDialog(getMsg(msg, th), th);
          }
       }
       else
@@ -113,9 +116,14 @@ public class ConnectToAliasCallBack implements ICompletionCallback
          s_log.error(msg, th);
          if (false == connectingHasBeenCanceledByUser)
          {
-            showErrorDialog(msg, th);
+            showErrorDialog(getMsg(msg, th), th);
          }
       }
+   }
+
+   private String getMsg(String msg, Throwable th)
+   {
+      return msg + "\n" + th.getClass() + ": " + th.getMessage();
    }
 
    protected IApplication getApplication()
