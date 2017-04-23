@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+#470 New global preference to auto-save current SQL commands into file at exit and auto-reload them at startup into SQL editor pane.
+  See menu File --> Global Preferences --> Tab SQL --> Check box --> Section General
+
+
 Dataimport Plugin:
  - Improved messaging
  - Table refresh after import

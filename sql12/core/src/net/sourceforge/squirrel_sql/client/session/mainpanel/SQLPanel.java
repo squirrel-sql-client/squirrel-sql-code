@@ -56,12 +56,10 @@ import javax.swing.plaf.SplitPaneUI;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.OpenSqlHistoryAction;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
@@ -76,6 +74,7 @@ import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -185,7 +184,6 @@ public class SQLPanel extends JPanel
 	 */
 	public SQLPanel(ISession session, boolean isInMainSessionWindow)
 	{
-		super();
 		_inMainSessionWindow = isInMainSessionWindow;
 		setSession(session);
 		createGUI();
@@ -195,6 +193,26 @@ public class SQLPanel extends JPanel
 		addExecutor(_sqlExecPanel);
 		_panelAPI = new SQLPanelAPI(this);
       _resultLimitAndReadOnPanelSmallPanel.loadData(session.getProperties());
+
+
+		if(isInMainSessionWindow() && Main.getApplication().getSquirrelPreferences().isReloadSqlContents())
+		{
+			final String sqlContents = ReloadSqlContentsHelper.getLastSqlContent(session.getAlias());
+
+			if (null != sqlContents)
+			{
+				Runnable runnable = new Runnable()
+				{
+					public void run()
+					{
+						_panelAPI.setEntireSQLScript(sqlContents);
+					}
+				};
+
+				SwingUtilities.invokeLater(runnable);
+			}
+		}
+
 	}
 
 	/**
@@ -411,11 +429,30 @@ public class SQLPanel extends JPanel
 	 */
 	void sessionClosing()
 	{
-		if (_propsListener != null)
+		if (_propsListener == null)
 		{
-			_session.getProperties().removePropertyChangeListener(_propsListener);
-			_propsListener = null;
+			return;
 		}
+
+		_session.getProperties().removePropertyChangeListener(_propsListener);
+		_propsListener = null;
+
+		if(Main.getApplication().getSquirrelPreferences().isReloadSqlContents())
+		{
+			String entireSQLScript = _panelAPI.getEntireSQLScript();
+			if (isInMainSessionWindow() && false == StringUtilities.isEmpty(entireSQLScript, true))
+			{
+				if (null != entireSQLScript)
+				{
+					ReloadSqlContentsHelper.writeLastSqlContent(getSession().getAlias(), entireSQLScript);
+				}
+			}
+		}
+		else
+		{
+			ReloadSqlContentsHelper.tryDeleteContentsFile(getSession().getAlias());
+		}
+
 	}
 
    public void sessionWindowClosing()

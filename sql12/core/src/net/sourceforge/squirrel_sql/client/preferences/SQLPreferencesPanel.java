@@ -167,7 +167,9 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		private JCheckBox _chkAllowRunAllSQLsInEditor = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.allow.run.all.sqls.in.editor"));
 		private JCheckBox _chkMarkCurrentSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.mark.current.sql"));
 		private JButton _btnCurrentSqlMarkColorRGB = new JButton();
-//		private JCheckBox _debugJdbc = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebug"));
+
+		private JCheckBox _chkReloadSqlContentsSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.reload.sql.contents"));
+
 		private JRadioButton _debugJdbcDont = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugdont"));
 		private JRadioButton _debugJdbcStream = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugstream"));
 		private JRadioButton _debugJdbcWriter = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugwriter"));
@@ -196,6 +198,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 			initCurrentMarkGui();
 
+			_chkReloadSqlContentsSql.setSelected(prefs.isReloadSqlContents());
 			_debugJdbcStream.setSelected(prefs.isJdbcDebugToStream());
 			_debugJdbcWriter.setSelected(prefs.isJdbcDebugToWriter());
 			_debugJdbcDont.setSelected(prefs.isJdbcDebugDontDebug());
@@ -254,6 +257,8 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 			prefs.setMarkCurrentSql(_chkMarkCurrentSql.isSelected());
 			prefs.setCurrentSqlMarkColorRGB((getCurrentSqlMarkColorIcon()).getColor().getRGB());
+
+			prefs.setReloadSqlContents(_chkReloadSqlContentsSql.isSelected());
 
 			if (_debugJdbcStream.isSelected())
 			{
@@ -349,6 +354,12 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			gbc.fill = GridBagConstraints.NONE;
 			pnl.add(createCurrentSqlMarkPanel(), gbc);
+
+			gbc.gridx = 0;
+			gbc.gridy = 5;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			gbc.fill = GridBagConstraints.NONE;
+			pnl.add(_chkReloadSqlContentsSql, gbc);
 
 			return pnl;
 		}

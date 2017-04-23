@@ -102,6 +102,7 @@ public class SquirrelPreferences implements Serializable
       String MAX_COLUMN_ADJUST_LENGTH_DEFINED = "maxColumnAdjustLengthDefined";
       String MAX_COLUMN_ADJUST_LENGTH = "maxColumnAdjustLength";
       String REMEMBER_VALUE_OF_POPUP = "rememberValueOfPopup";
+      String RELOAD_SQL_CONTENTS = "ReloadSqlContents";
    }
 
    public interface IJdbcDebugTypes
@@ -260,6 +261,7 @@ public class SquirrelPreferences implements Serializable
 
 	private boolean _rememberValueOfPopup = false;
 
+	private boolean _reloadSqlContents;
 
 	/**
 	 * Default ctor.
@@ -1269,6 +1271,17 @@ public class SquirrelPreferences implements Serializable
 	{
 		_rememberValueOfPopup = b;
 	}
+
+	public boolean isReloadSqlContents()
+	{
+		return _reloadSqlContents;
+	}
+
+	public void setReloadSqlContents(boolean reloadSqlContents)
+	{
+		_reloadSqlContents = reloadSqlContents;
+	}
+
 
 
 }

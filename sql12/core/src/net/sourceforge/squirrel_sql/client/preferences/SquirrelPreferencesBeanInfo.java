@@ -149,6 +149,9 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 
 						new PropertyDescriptor(REMEMBER_VALUE_OF_POPUP, SquirrelPreferences.class, "isRememberValueOfPopup",
 							"setRememberValueOfPopup"),
+
+						new PropertyDescriptor(RELOAD_SQL_CONTENTS, SquirrelPreferences.class, "isReloadSqlContents",
+							"setReloadSqlContents"),
 				};
 
 			return result;
