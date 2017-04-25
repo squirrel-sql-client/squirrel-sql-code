@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.io.*;
 
@@ -53,7 +54,7 @@ class ReloadSqlContentsHelper
 
       sqlContentsDir.mkdirs();
 
-      return new File(sqlContentsDir, "sqlcontents_" + alias.getIdentifier() + ".sql");
+      return new File(sqlContentsDir, "sqlcontents_" + StringUtilities.javaNormalize(alias.getIdentifier().toString(), false) + ".sql");
    }
 
    static void writeLastSqlContent(ISQLAliasExt alias, String entireSQLScript)

@@ -287,9 +287,18 @@ public class StringUtilities
 
    public static String javaNormalize(String text)
    {
+      return javaNormalize(text, true );
+   }
+
+   public static String javaNormalize(String text, boolean ensureJavaStart)
+   {
       StringBuffer buf = new StringBuffer(text.length());
 
-      if(Character.isJavaIdentifierStart(text.charAt(0)) )
+      if(ensureJavaStart && Character.isJavaIdentifierStart(text.charAt(0)) )
+      {
+         buf.append(text.charAt(0));
+      }
+      else if(false == ensureJavaStart && Character.isLetterOrDigit(text.charAt(0)) )
       {
          buf.append(text.charAt(0));
       }
