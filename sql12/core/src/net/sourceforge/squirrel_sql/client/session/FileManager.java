@@ -1,12 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import java.awt.*;
+import java.awt.Frame;
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import javax.swing.JFileChooser;
 
@@ -14,7 +16,6 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -266,14 +267,14 @@ public class FileManager
       {
          memorizeFile(file, prefs);
 
-         FileOutputStream fos = null;
+         Writer writer = null;
          try
          {
-            fos = new FileOutputStream(file);
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
 
             String sScript = getEntireSQLScriptWithPlatformEolChar();
 
-            fos.write(sScript.getBytes());
+            writer.write(sScript);
             setFile(file);
             // i18n[FileManager.savedfile=Saved to {0}]
             String msg = s_stringMgr.getString("FileManager.savedfile",
@@ -286,7 +287,7 @@ public class FileManager
          }
          finally
          {
-         	ioUtil.closeOutputStream(fos);
+         	ioUtil.closeWriter(writer);
          }
       }
       return true;
