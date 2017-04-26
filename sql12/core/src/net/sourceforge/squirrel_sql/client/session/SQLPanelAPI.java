@@ -528,6 +528,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	public synchronized void setEntireSQLScript(String sqlScript)
 	{
 		_panel.getSQLEntryPanel().setText(sqlScript);
+		_panel.getSQLEntryPanel().setCaretPosition(0);
 	}
 
 	/**

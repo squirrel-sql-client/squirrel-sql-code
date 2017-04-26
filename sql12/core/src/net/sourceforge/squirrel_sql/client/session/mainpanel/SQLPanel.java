@@ -439,10 +439,15 @@ public class SQLPanel extends JPanel
 
 		if(Main.getApplication().getSquirrelPreferences().isReloadSqlContents())
 		{
-			String entireSQLScript = _panelAPI.getEntireSQLScript();
-			if (isInMainSessionWindow() && false == StringUtilities.isEmpty(entireSQLScript, true))
+			if (isInMainSessionWindow())
 			{
-				if (null != entireSQLScript)
+				String entireSQLScript = _panelAPI.getEntireSQLScript();
+
+				if (StringUtilities.isEmpty(entireSQLScript, true))
+				{
+					ReloadSqlContentsHelper.tryDeleteContentsFile(getSession().getAlias());
+				}
+				else
 				{
 					ReloadSqlContentsHelper.writeLastSqlContent(getSession().getAlias(), entireSQLScript);
 				}
