@@ -18,44 +18,25 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FilenameFilter;
-
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.gui.DirectoryListComboBox;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.gui.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FilenameFilter;
+import java.util.prefs.Preferences;
 
 /**
  * This sheet shows the SQuirreL log files.
@@ -64,6 +45,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class ViewLogsSheet extends DialogWidget
 {
+	public static final String PREF_KEY_LOGS_SHEET_WIDTH = "Squirrel.logsSheetWidth";
+	public static final String PREF_KEY_LOGS_SHEET_HEIGHT = "Squirrel.logsSheetHeight";
+
+
+
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ViewLogsSheet.class);
@@ -121,7 +107,18 @@ public class ViewLogsSheet extends DialogWidget
 		_prefs = _app.getSquirrelPreferences();
 		_logDir = new ApplicationFiles().getExecutionLogFile().getParentFile();
 		createUserInterface();
+
+		setSize(getDimension());
 	}
+
+	private Dimension getDimension()
+	{
+		return new Dimension(
+				Preferences.userRoot().getInt(PREF_KEY_LOGS_SHEET_WIDTH, 500),
+				Preferences.userRoot().getInt(PREF_KEY_LOGS_SHEET_HEIGHT, 400)
+		);
+	}
+
 
 	/**
 	 * Show this window
@@ -167,6 +164,11 @@ public class ViewLogsSheet extends DialogWidget
 		_closing = true;
 
 		ViewLogsSheet.disposeInstance();
+
+		Dimension size = getSize();
+		Preferences.userRoot().putInt(PREF_KEY_LOGS_SHEET_WIDTH, size.width);
+		Preferences.userRoot().putInt(PREF_KEY_LOGS_SHEET_HEIGHT, size.height);
+
 
 		super.dispose();
 	}
