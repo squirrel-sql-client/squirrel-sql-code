@@ -37,7 +37,7 @@ public class IntegerField extends JTextField
 	 */
 	public IntegerField()
 	{
-		super();
+		super(10);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class IntegerField extends JTextField
 		{
 			return 0;
 		}
-		return Integer.parseInt(text);
+		return Integer.parseInt(text.substring(0, Math.min(10, text.length())));
 	}
 
 	/**

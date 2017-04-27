@@ -59,6 +59,8 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+#1297 Data Type Controls (max number of digits input - no error handling)
+
 #1289 Connection Error Dialog does not show the actual JDBC error message emitted
   Thanks to Peter G. Horvath for the patch.
 
