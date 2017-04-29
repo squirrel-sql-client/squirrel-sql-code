@@ -159,7 +159,7 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
      */
     @Override
     public String getContributors() {
-        return "Daniel Regli, Yannick Winiger, Jarosław Jarmołowicz";
+        return "Daniel Regli, Yannick Winiger, Jaros\u0142aw Jarmo\u0142owicz";
     }
 
     /**

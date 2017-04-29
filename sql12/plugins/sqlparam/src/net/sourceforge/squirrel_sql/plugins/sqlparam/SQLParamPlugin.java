@@ -59,6 +59,7 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	 *
 	 * @return  the internal name of this plugin.
 	 */
+	@Override
 	public String getInternalName()
 	{
 		return "sqlparam";
@@ -69,6 +70,7 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	 *
 	 * @return  the descriptive name of this plugin.
 	 */
+	@Override
 	public String getDescriptiveName()
 	{
 		return "SQL Parametrisation";
@@ -79,6 +81,7 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	 *
 	 * @return  the current version of this plugin.
 	 */
+	@Override
 	public String getVersion()
 	{
 		return "1.0.1";
@@ -101,9 +104,10 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	 *
 	 * @return  the authors name.
 	 */
+	@Override
 	public String getAuthor()
 	{
-		return "Thorsten Mürell";
+		return "Thorsten M\u00FCrell";
 	}
 
 	/**
@@ -206,6 +210,7 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	 * @param	session		Session that has started.
 	 * @return The callback to start on session events.
 	 */
+	@Override
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 		log.info("Initializing plugin");
@@ -215,11 +220,13 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 
 		PluginSessionCallback ret = new PluginSessionCallback()
 		{
+			@Override
 			public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, final ISession sess)
 			{
 				initSQLParam(sqlInternalFrame.getSQLPanelAPI(), sess);
 			}
 
+			@Override
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
 			{
 				// Nothing to do if object tree is opened.
@@ -255,6 +262,7 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 		
 		GUIUtils.processOnSwingEventThread(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				log.info("Adding SQL execution listener.");

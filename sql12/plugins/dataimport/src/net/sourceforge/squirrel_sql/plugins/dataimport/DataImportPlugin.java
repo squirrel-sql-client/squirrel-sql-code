@@ -85,7 +85,7 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 	 * @return  the authors name.
 	 */
 	public String getAuthor() {
-		return "Thorsten Mürell";
+		return "Thorsten M\u00FCrell";
 	}
 
 	/**
