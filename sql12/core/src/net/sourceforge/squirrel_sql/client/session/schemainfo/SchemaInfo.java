@@ -1396,24 +1396,9 @@ public class SchemaInfo
          if (doi instanceof ITableInfo)
          {
             ITableInfo ti = (ITableInfo) doi;
-            DatabaseObjectType dot = ti.getDatabaseObjectType();
 
-            String[] types = null;
-            if (DatabaseObjectType.TABLE == dot)
-            {
-               types = new String[]{"TABLE"};
-            }
-            else if (DatabaseObjectType.VIEW == dot)
-            {
-               types = new String[]{"VIEW"};
-            }
-            else if (DatabaseObjectType.SYNONYM == dot)
-            {
-               types = new String[]{"SYNONYM"};
-            }
-
-            _schemaInfoCache.clearTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), types);
-            loadTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), types, 1);
+            _schemaInfoCache.clearTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), null);
+            loadTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), null, 1);
          }
          else if(doi instanceof IProcedureInfo)
          {
