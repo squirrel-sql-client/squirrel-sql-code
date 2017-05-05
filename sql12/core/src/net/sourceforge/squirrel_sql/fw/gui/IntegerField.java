@@ -62,7 +62,7 @@ public class IntegerField extends JTextField
 		{
 			return 0;
 		}
-		return Integer.parseInt(text.substring(0, Math.min(10, text.length())));
+		return Integer.parseInt(text);
 	}
 
 	/**
@@ -83,15 +83,22 @@ public class IntegerField extends JTextField
 	 */
 	protected Document createDefaultModel()
 	{
-		return new IntegerDocument();
+		return new IntegerDocument(getColumns());
 	}
 
 	/**
 	 * This document only allows integral values to be added to it.
 	 */
-	static class IntegerDocument extends PlainDocument
+	private static class IntegerDocument extends PlainDocument
 	{
-		public void insertString(int offs, String str, AttributeSet a)
+		private int _columns;
+
+		public IntegerDocument(int columns)
+		{
+			_columns = columns;
+		}
+
+		public void insertString(int offs, String str, AttributeSet set)
 			throws BadLocationException
 		{
 			if (str != null)
@@ -99,7 +106,10 @@ public class IntegerField extends JTextField
 				try
 				{
 					Integer.decode(str);
-					super.insertString(offs, str, a);
+					if ((getLength() + str.length()) <= _columns)
+					{
+						super.insertString(offs, str, set);
+					}
 				}
 				catch (NumberFormatException ex)
 				{
