@@ -47,6 +47,7 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
@@ -259,6 +260,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	/**
 	 * Return the name of the java class used to hold this data type.
 	 */
+	@Override
 	public String getClassName() {
 		return "java.lang.String";
 	}
@@ -271,6 +273,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	/**
 	 * Render a value into text for this DataType.
 	 */
+	@Override
 	public String renderObject(Object value) {
 		String text = (String)_renderer.renderObject(value);
 		if (_makeNewlinesVisibleInCell) {
@@ -289,6 +292,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * the text, much less edit it.  The simplest solution is to allow editing of multi-line
 	 * text only in the Popup window.
 	 */
+	@Override
 	public boolean isEditableInCell(Object originalValue) {
 		//			prevent editing if text contains newlines
 		 if (originalValue != null && ((String)originalValue).indexOf('\n') > -1)
@@ -303,6 +307,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * to be able to view the entire contents of the cell even if it was not
 	 * completely loaded during the initial table setup.
 	 */
+	@Override
 	public boolean needToReRead(Object originalValue) {
 		// if we are not limiting anything, return false
 		if (_limitRead == false)
@@ -311,6 +316,9 @@ public class DataTypeString extends BaseDataTypeComponent
 		// if the value is null, then it was read ok
 		if (originalValue == null)
 			return false;
+
+		if (((String)originalValue).endsWith("...") && (((String)originalValue).length() == _limitReadLength + 3))
+		    return true;
 
 		// we are limiting some things.
 		// if the string we have is less than the limit, then we are ok
@@ -338,6 +346,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
+	@Override
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
 
@@ -352,6 +361,7 @@ public class DataTypeString extends BaseDataTypeComponent
 		//
 		((RestorableJTextField)_textComponent).addMouseListener(new MouseAdapter()
 		{
+			@Override
 			public void mousePressed(MouseEvent evt)
 			{
 				if (evt.getClickCount() == 2)
@@ -373,6 +383,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
 	 */
+	@Override
 	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
 		// handle null, which is shown as the special string "<null>"
 		if (value.equals("<null>"))
@@ -395,6 +406,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * or TextArea, and must handle all
 	 * user key strokes related to editing of that data.
 	 */
+	@Override
 	public boolean useBinaryEditingPanel() {
 		return false;
 	}
@@ -410,6 +422,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
 	 */
+	@Override
 	public boolean isEditableInPopup(Object originalValue) {
 		// The only thing that would prevent us from editing a string in the popup
 		// is if that string has been truncated when read from the DB.
@@ -421,6 +434,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	/*
 		 * Return a JTextArea usable in the CellPopupDialog.
 		 */
+	 @Override
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
 
@@ -440,6 +454,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	/**
 	 * Validating and converting in Popup is identical to cell-related operation.
 	 */
+	@Override
 	public Object validateAndConvertInPopup(String value, Object originalValue, StringBuffer messageBuffer) {
 		return validateAndConvert(value, originalValue, messageBuffer);
 	}
@@ -456,6 +471,7 @@ public class DataTypeString extends BaseDataTypeComponent
 		 */
 	 private class KeyTextHandler extends BaseKeyTextHandler {
 		// special handling of operations while editing Strings
+		@Override
 		public void keyTyped(KeyEvent e) {
 			char c = e.getKeyChar();
 
@@ -532,6 +548,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
+	@Override
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
 
@@ -550,7 +567,7 @@ public class DataTypeString extends BaseDataTypeComponent
 					(_limitReadOnSpecificColumns == true &&
 						_limitReadColumnNameMap.containsKey(_colDef.getColumnName()))) {
 					// this column is limited, so truncate the data
-					data = data.substring(0, _limitReadLength);
+					data = data.substring(0, _limitReadLength) + "...";
 				}
 
 			}
@@ -572,6 +589,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
+	@Override
 	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		// first do special check to see if we should use LONGVARCHAR
 		// in the WHERE clause.
@@ -602,6 +620,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * When updating the database, insert the appropriate datatype into the
 	 * prepared statment at the given variable position.
 	 */
+	@Override
 	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
 		throws java.sql.SQLException {
 		if (value == null) {
@@ -616,6 +635,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * Get a default value for the table used to input data for a new row
 	 * to be inserted into the DB.
 	 */
+	@Override
 	public Object getDefaultValue(String dbDefaultValue) {
 		if (dbDefaultValue != null) {
 			// try to use the DB default value
@@ -648,6 +668,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	  * a file.  We put both export and import together in one test
 	  * on the assumption that all conversions can be done both ways.
 	  */
+	 @Override
 	 public boolean canDoFileIO() {
 		 return true;
 	 }
@@ -669,6 +690,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	  * that would require a binary representation to display
 	  * to user.
 	  */
+	@Override
 	public String importObject(FileInputStream inStream)
 		 throws IOException {
 
@@ -727,6 +749,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	  * that would require a binary representation to display
 	  * to user.
 	  */
+	 @Override
 	 public void exportObject(FileOutputStream outStream, String text)
 		 throws IOException {
 
@@ -844,6 +867,7 @@ public class DataTypeString extends BaseDataTypeComponent
 			// checkbox for limit/no-limit on data read during initial table load
 			_limitReadChk.setSelected(_limitRead);
 			_limitReadChk.addChangeListener(new ChangeListener(){
+				@Override
 				public void stateChanged(ChangeEvent e) {
 					_limitReadLengthTextField.setEnabled(_limitReadChk.isSelected());
 					_limitReadOnSpecificColumnsChk.setEnabled(_limitReadChk.isSelected());
@@ -859,6 +883,7 @@ public class DataTypeString extends BaseDataTypeComponent
 			// set the flag for whether or not to limit only on specific fields
 			_limitReadOnSpecificColumnsChk.setSelected(_limitReadOnSpecificColumns);
 			_limitReadOnSpecificColumnsChk.addChangeListener(new ChangeListener(){
+				@Override
 				public void stateChanged(ChangeEvent e) {
 					_limitReadColumnNameTextArea.setEnabled(
 						_limitReadOnSpecificColumnsChk.isSelected());
@@ -939,6 +964,7 @@ public class DataTypeString extends BaseDataTypeComponent
 		  * User has clicked OK in the surrounding JPanel,
 		 * so save the current state of all variables
 		  */
+		@Override
 		public void ok() {
 			// get the values from the controls and set them in the static properties
 			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();

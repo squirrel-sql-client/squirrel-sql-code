@@ -46,7 +46,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
     * Hold onto the current ResultDataSet so if the execution is
     * cancelled then this can be cancelled.
     */
-   private ResultSetDataSet rsds = null;
+   private ResultSetDataSet _rsds = null;
 
    private String sqlToBeExecuted = null;
    private SQLType sqlType = null;
@@ -328,9 +328,9 @@ class SQLExecutionHandler implements ISQLExecuterHandler
 
    public void sqlExecutionCancelled()
    {
-      if (rsds != null)
+      if (_rsds != null)
       {
-         rsds.cancelProcessing();
+         _rsds.cancelProcessing();
       }
       // i18n[SQLResultExecuterPanel.canceleRequested=Query execution cancel requested by user.]
 //          String canc =
@@ -405,7 +405,10 @@ class SQLExecutionHandler implements ISQLExecuterHandler
 	   String outputStatus = s_stringMgr.getString("SQLResultExecuterPanel.outputStatus");
 
 	   _cancelPanelCtrl.setStatusLabel(outputStatus);
-	   rsds = new ResultSetDataSet();
+
+	   _rsds = new ResultSetDataSet();
+      _rsds.setLimitDataRead(true);
+
 	   try {
 
 		   SessionProperties props = _session.getProperties();
@@ -420,16 +423,16 @@ class SQLExecutionHandler implements ISQLExecuterHandler
 
          // rsds.setContentsTabResultSet() reads the result set. So results processing on the DB is over
          // and this time is measured. None is interested in the time that it takes us to render Swing tables ...
-		   info.resultsProcessingComplete(rsds.setSqlExecutionTabResultSet(rs, null, dialectType));
+		   info.resultsProcessingComplete(_rsds.setSqlExecutionTabResultSet(rs, null, dialectType));
 
-		   _executionHandlerListener.addResultsTab(info, rsds, rsmdds, model, _resultTabToReplace);
+		   _executionHandlerListener.addResultsTab(info, _rsds, rsmdds, model, _resultTabToReplace);
 
       }finally{
     	  /*
     	   * Make sure, that in any case, even when a exception occurs, the rsds is set to null, so that
     	   * the GC can clean them.
     	   */
-    	  rsds = null;
+    	  _rsds = null;
    	}
    }
 

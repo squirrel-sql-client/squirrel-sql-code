@@ -6,12 +6,20 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
-The Logs window now remembers its size.
+The limit string loading size option (see menu File --> Global Preferences --> Tab 'Data Type Controls --> section 'CHAR, VARCHAR, ...')
+  used to work for the Object tree only and now works for SQLs too.
+  Furthermore limited strings are now indicated by the ending '...'.
+ Thanks to Krzysztof Szymko for the patch.
+
 
 Table types shown in Object tree can now be filtered, see menu File --> New Session Properties --> tab Object tree --> section Filters
 
 #470 New global preference to auto-save current SQL commands into file at exit and auto-reload them at startup into SQL editor pane.
   See menu File --> Global Preferences --> Tab SQL --> Check box --> Section General
+ Thanks to Krzysztof Szymko for the patch.
+
+
+The Logs window now remembers its size.
 
 
 Dataimport Plugin:
