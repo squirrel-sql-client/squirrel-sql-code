@@ -25,11 +25,11 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaFilterMatcher;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.CatalogFilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.CatalogFilterMatcher;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaFilterMatcher;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.TableTypeFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -107,6 +107,7 @@ public class DatabaseExpander implements INodeExpander
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
+	@Override
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
 	{
@@ -247,6 +248,8 @@ public class DatabaseExpander implements INodeExpander
 			final ISQLConnection conn = session.getSQLConnection();
 			final SQLDatabaseMetaData md = conn.getSQLMetaData();
 
+			TableTypeFilterMatcher ttMatcher = new TableTypeFilterMatcher(session.getProperties());
+
 			// Add table types to list.
 			if (_tableTypes.length > 0)
 			{
@@ -255,9 +258,12 @@ public class DatabaseExpander implements INodeExpander
 					IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
 													schemaName, _tableTypes[i],
 													DatabaseObjectType.TABLE_TYPE_DBO, md);
-					ObjectTreeNode child = new ObjectTreeNode(session, dbo);
-					list.add(child);
-				}
+					if (ttMatcher.matches(dbo.getSimpleName()))
+					{
+						ObjectTreeNode child = new ObjectTreeNode(session, dbo);
+						list.add(child);
+					}
+			   }
 			}
 			else
 			{

@@ -94,12 +94,14 @@ public class SessionObjectTreePropertiesPanel
 	 *
 	 * @param	app	Application API.
 	 */
+	@Override
 	public void initialize(IApplication app)
 	{
 		_props = _app.getSquirrelPreferences().getSessionProperties();
 		_myPanel.loadData(_props);
 	}
 
+	@Override
 	public void initialize(IApplication app, ISession session)
 		throws IllegalArgumentException
 	{
@@ -111,21 +113,25 @@ public class SessionObjectTreePropertiesPanel
 		_myPanel.loadData(_props);
 	}
 
+	@Override
 	public Component getPanelComponent()
 	{
 		return _scrolledMyPanel;
 	}
 
+	@Override
 	public String getTitle()
 	{
 		return ObjectTreepropsPanel.i18n.OBJECT_TREE;
 	}
 
+	@Override
 	public String getHint()
 	{
 		return ObjectTreepropsPanel.i18n.OBJECT_TREE;
 	}
 
+	@Override
 	public void applyChanges()
 	{
 		_myPanel.applyChanges(_props);
@@ -172,6 +178,8 @@ public class SessionObjectTreePropertiesPanel
       private JTextField _catalogFilterExclude = new JTextField();
 		private JTextField _schemaFilterInclude = new JTextField();
 		private JTextField _schemaFilterExclude = new JTextField();
+      private JTextField _tableTypeFilterInclude = new JTextField();
+      private JTextField _tableTypeFilterExclude = new JTextField();
 		private JTextField _objectFilterInclude = new JTextField();
 		private JTextField _objectFilterExclude = new JTextField();
 		// i18n[sessionPropertiesPanel.loadSchemasCatalogs=Load Schemas/Catalogs into object tree]
@@ -197,9 +205,11 @@ public class SessionObjectTreePropertiesPanel
 			_loadSchemasCatalogsChk.setSelected(props.getLoadSchemasCatalogs());
          _catalogFilterInclude.setText(props.getCatalogFilterInclude());
          _schemaFilterInclude.setText(props.getSchemaFilterInclude());
+         _tableTypeFilterInclude.setText(props.getTableTypeFilterInclude());
          _objectFilterInclude.setText(props.getObjectFilterInclude());
          _catalogFilterExclude.setText(props.getCatalogFilterExclude());
          _schemaFilterExclude.setText(props.getSchemaFilterExclude());
+         _tableTypeFilterExclude.setText(props.getTableTypeFilterExclude());
          _objectFilterExclude.setText(props.getObjectFilterExclude());
 
 			updateControlStatus();
@@ -222,21 +232,27 @@ public class SessionObjectTreePropertiesPanel
 
          final String oldSchemaFilterInclude = props.getSchemaFilterInclude();
          final String oldCatalogFilterInclude = props.getCatalogFilterInclude();
+         final String oldTableTypeFilterInclude = props.getTableTypeFilterInclude();
          final String oldObjectFilterInclude = props.getObjectFilterInclude();
          final String oldSchemaFilterExclude = props.getSchemaFilterInclude();
          final String oldCatalogFilterExclude = props.getCatalogFilterInclude();
+         final String oldTableTypeFilterExclude = props.getTableTypeFilterInclude();
          final String oldObjectFilterExclude = props.getObjectFilterInclude();
          final String newSchemaFilterInclude = _schemaFilterInclude.getText();
          final String newCatalogFilterInclude = _catalogFilterInclude.getText();
+         final String newTableTypeFilterInclude = _tableTypeFilterInclude.getText();
          final String newObjectFilterInclude = _objectFilterInclude.getText();
          final String newSchemaFilterExclude = _schemaFilterExclude.getText();
          final String newCatalogFilterExclude = _catalogFilterExclude.getText();
+         final String newTableTypeFilterExclude = _tableTypeFilterExclude.getText();
          final String newObjectFilterExclude = _objectFilterExclude.getText();
          props.setCatalogFilterInclude(newCatalogFilterInclude);
          props.setSchemaFilterInclude(newSchemaFilterInclude);
+         props.setTableTypeFilterInclude(newTableTypeFilterInclude);
          props.setObjectFilterInclude(newObjectFilterInclude);
          props.setCatalogFilterExclude(newCatalogFilterExclude);
          props.setSchemaFilterExclude(newSchemaFilterExclude);
+         props.setTableTypeFilterExclude(newTableTypeFilterExclude);
          props.setObjectFilterExclude(newObjectFilterExclude);
 
 
@@ -247,10 +263,12 @@ public class SessionObjectTreePropertiesPanel
 
               !StringUtils.equals(oldCatalogFilterInclude, newCatalogFilterInclude) ||
               !StringUtils.equals(oldSchemaFilterInclude, newSchemaFilterInclude) ||
+              !StringUtils.equals(oldTableTypeFilterInclude, newTableTypeFilterInclude) ||
               !StringUtils.equals(oldObjectFilterInclude, newObjectFilterInclude) ||
 
               !StringUtils.equals(oldCatalogFilterExclude, newCatalogFilterExclude) ||
               !StringUtils.equals(oldSchemaFilterExclude, newSchemaFilterExclude) ||
+              !StringUtils.equals(oldTableTypeFilterExclude, newTableTypeFilterExclude) ||
               !StringUtils.equals(oldObjectFilterExclude, newObjectFilterExclude)
             )
          {
@@ -371,21 +389,34 @@ public class SessionObjectTreePropertiesPanel
 
 
          gbc = new GridBagConstraints(0,4,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,0,4),0,0);
-         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.objectInclude")), gbc);
+         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.tableTypeInclude")), gbc);
 
          gbc = new GridBagConstraints(1,4,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,0,4),0,0);
-         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.objectExclude")), gbc);
+         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.tableTypeExclude")), gbc);
 
          gbc = new GridBagConstraints(0,5,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
-         pnl.add(_objectFilterInclude, gbc);
+         pnl.add(_tableTypeFilterInclude, gbc);
 
          gbc = new GridBagConstraints(1,5,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         pnl.add(_tableTypeFilterExclude, gbc);
+
+
+         gbc = new GridBagConstraints(0,6,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,0,4),0,0);
+         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.objectInclude")), gbc);
+
+         gbc = new GridBagConstraints(1,6,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,0,4),0,0);
+         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.objectExclude")), gbc);
+
+         gbc = new GridBagConstraints(0,7,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         pnl.add(_objectFilterInclude, gbc);
+
+         gbc = new GridBagConstraints(1,7,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
          pnl.add(_objectFilterExclude, gbc);
 
 
-         gbc = new GridBagConstraints(0,6,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4),0,0);
+         gbc = new GridBagConstraints(0,8,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4),0,0);
          pnl.add(new JPanel(), gbc);
-         gbc = new GridBagConstraints(1,6,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4),0,0);
+         gbc = new GridBagConstraints(1,8,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4),0,0);
          pnl.add(new JPanel(), gbc);
 
          return pnl;
@@ -399,11 +430,13 @@ public class SessionObjectTreePropertiesPanel
 		private final class ControlMediator implements ChangeListener,
 															ActionListener
 		{
+			@Override
 			public void stateChanged(ChangeEvent evt)
 			{
 				updateControlStatus();
 			}
 
+			@Override
 			public void actionPerformed(ActionEvent evt)
 			{
 				updateControlStatus();

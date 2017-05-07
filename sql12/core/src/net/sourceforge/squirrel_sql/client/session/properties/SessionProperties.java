@@ -57,9 +57,11 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
 
       String CATALOG_FILTER_INCLUDE = "catalogFilterInclude";
       String SCHEMA_FILTER_INCLUDE = "schemaFilterInclude";
+      String TABLE_TYPE_FILTER_INCLUDE = "tableTypeFilterInclude";
       String OBJECT_FILTER_INCLUDE = "objectFilterInclude";
       String CATALOG_FILTER_EXCLUDE = "catalogFilterExclude";
       String SCHEMA_FILTER_EXCLUDE = "schemaFilterExclude";
+      String TABLE_TYPE_FILTER_EXCLUDE = "tableTypeFilterExclude";
       String OBJECT_FILTER_EXCLUDE = "objectFilterExclude";
 
       String COMMIT_ON_CLOSING_CONNECTION = "commitOnClosingConnection";
@@ -132,12 +134,16 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    private String _schemaFilterInclude = "";
    /** Limit catalog objects to those in this comma-delimited list. */
    private String _catalogFilterInclude = "";
+   /** Table Types Filter */
+   private String _tableTypeFilterInclude = "";
    /** Object Filter */
    private String _objectFilterInclude = "";
    /** Limit schema objects to those in this comma-delimited list.	*/
    private String _schemaFilterExclude = "";
    /** Limit catalog objects to those in this comma-delimited list. */
    private String _catalogFilterExclude = "";
+   /** Table Types Filter */
+   private String _tableTypeFilterExclude = "";
    /** Object Filter */
    private String _objectFilterExclude = "";
 
@@ -284,6 +290,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    /**
     * Return a copy of this object.
     */
+   @Override
    public Object clone()
    {
       try
@@ -419,6 +426,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    }
 
 
+   @Override
    public boolean getAutoCommit()
    {
       return _autoCommit;
@@ -986,6 +994,11 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       return _schemaFilterInclude;
    }
 
+   public String getTableTypeFilterInclude()
+   {
+      return _tableTypeFilterInclude;
+   }
+
    public String getObjectFilterInclude()
    {
       return _objectFilterInclude;
@@ -1015,6 +1028,13 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
          _schemaFilterInclude);
    }
 
+   public synchronized void setTableTypeFilterInclude(String data)
+   {
+      final String oldValue = _tableTypeFilterInclude;
+      _tableTypeFilterInclude = data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.TABLE_TYPE_FILTER_INCLUDE, oldValue, _tableTypeFilterInclude);
+   }
+
    public synchronized void setObjectFilterInclude(String data)
    {
       final String oldValue = _objectFilterInclude;
@@ -1038,6 +1058,11 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    public String getSchemaFilterExclude()
    {
       return _schemaFilterExclude;
+   }
+
+   public String getTableTypeFilterExclude()
+   {
+      return _tableTypeFilterExclude;
    }
 
    public String getObjectFilterExclude()
@@ -1081,6 +1106,13 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
          IPropertyNames.SCHEMA_FILTER_EXCLUDE,
          oldValue,
          _schemaFilterExclude);
+   }
+
+   public synchronized void setTableTypeFilterExclude(String data)
+   {
+      final String oldValue = _tableTypeFilterExclude;
+      _tableTypeFilterExclude = data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.TABLE_TYPE_FILTER_EXCLUDE, oldValue, _tableTypeFilterExclude);
    }
 
    public synchronized void setObjectFilterExclude(String data)
@@ -1143,11 +1175,13 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       return _propChgReporter;
    }
 
-    public int getSQLFetchSize() 
+    @Override
+    public int getSQLFetchSize()
     {
     	return  _sqlFetchSize;
     }
     
+    @Override
     public boolean getSQLUseFetchSize()
     {
 	return _sqlUseFetchSize;

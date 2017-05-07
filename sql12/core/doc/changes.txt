@@ -8,6 +8,8 @@ Enhancements:
 
 The Logs window now remembers its size.
 
+Table types shown in Object tree can now be filtered, see menu File --> New Session Properties --> tab Object tree --> section Filters
+
 #470 New global preference to auto-save current SQL commands into file at exit and auto-reload them at startup into SQL editor pane.
   See menu File --> Global Preferences --> Tab SQL --> Check box --> Section General
 
