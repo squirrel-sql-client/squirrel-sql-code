@@ -36,8 +36,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 
-import org.apache.commons.lang.StringUtils;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
@@ -129,16 +127,14 @@ public class DataTypeBigDecimal extends FloatingPointBase
 
       // If we use _scale here some number displays go crazy.
       //_numberFormat.setMaximumFractionDigits(_scale);
-      _numberFormat.setMaximumFractionDigits(maximumFractionDigits);      
-         
-      
-      _numberFormat.setMinimumFractionDigits(0);
-
+      _numberFormat.setMinimumFractionDigits(minimumFractionDigits);
+      _numberFormat.setMaximumFractionDigits(maximumFractionDigits);
    }
 
 	/**
 	 * Return the name of the java class used to hold this data type.
 	 */
+	@Override
 	public String getClassName() {
 		return "java.math.BigDecimal";
 	}
@@ -150,6 +146,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	/**
 	 * Render a value into text for this DataType.
 	 */
+	@Override
 	public String renderObject(Object value) {
 
 
@@ -184,6 +181,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	/**
 	 * This Data Type can be edited in a table cell.
 	 */
+	@Override
 	public boolean isEditableInCell(Object originalValue) {
 		return true;
 	}
@@ -195,6 +193,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	 * to be able to view the entire contents of the cell even if it was not
 	 * completely loaded during the initial table setup.
 	 */
+	@Override
 	public boolean needToReRead(Object originalValue) {
 		// this DataType does not limit the data read during the initial load of the table,
 		// so there is no need to re-read the complete data later
@@ -204,6 +203,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
+	@Override
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
 
@@ -218,6 +218,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 		//
 		((RestorableJTextField)_textComponent).addMouseListener(new MouseAdapter()
 		{
+			@Override
 			public void mousePressed(MouseEvent evt)
 			{
 				if (evt.getClickCount() == 2)
@@ -239,6 +240,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
 	 */
+	@Override
 	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer)
 	{
 		// handle null, which is shown as the special string "<null>"
@@ -329,6 +331,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	 * or TextArea, and must handle all
 	 * user key strokes related to editing of that data.
 	 */
+	@Override
 	public boolean useBinaryEditingPanel() {
 		return false;
 	}
@@ -342,6 +345,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
 	 */
+	@Override
 	public boolean isEditableInPopup(Object originalValue) {
 		return true;
 	}
@@ -350,6 +354,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	 * Return a JTextArea usable in the CellPopupDialog
 	 * and fill in the value.
 	 */
+	 @Override
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
 
@@ -366,6 +371,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	/**
 	 * Validating and converting in Popup is identical to cell-related operation.
 	 */
+	@Override
 	public Object validateAndConvertInPopup(String value, Object originalValue, StringBuffer messageBuffer) {
 		return validateAndConvert(value, originalValue, messageBuffer);
 	}
@@ -380,6 +386,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 		 */
 	 private class KeyTextHandler extends BaseKeyTextHandler {
          
+		 @Override
 		 public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
 
@@ -477,6 +484,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
+	@Override
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
 
@@ -499,6 +507,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
+	@Override
 	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 			return new IsNullWhereClausePart(_colDef);
@@ -525,6 +534,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	 * Get a default value for the table used to input data for a new row
 	 * to be inserted into the DB.
 	 */
+	@Override
 	public Object getDefaultValue(String dbDefaultValue) {
 		if (dbDefaultValue != null) {
 			// try to use the DB default value
@@ -559,6 +569,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	  * a file.  We put both export and import together in one test
 	  * on the assumption that all conversions can be done both ways.
 	  */
+	 @Override
 	 public boolean canDoFileIO() {
 		 return true;
 	 }
@@ -578,6 +589,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	  * File is assumed to be and ASCII string of digits
 	  * representing a value of this data type.
 	  */
+	@Override
 	public String importObject(FileInputStream inStream)
 		 throws IOException {
 
@@ -640,6 +652,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	  * File is assumed to be and ASCII string of digits
 	  * representing a value of this data type.
 	  */
+	 @Override
 	 public void exportObject(FileOutputStream outStream, String text)
 		 throws IOException {
 

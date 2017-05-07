@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+The minimum number of decimal digits of floating point numbers can now be defined
+  (see menu File --> Global Preferences --> Tab 'Data Type Controls --> section 'FLOAT, REAL, ...')
+ Thanks to Krzysztof Szymko for the patch.
+
+
 The limit string loading size option (see menu File --> Global Preferences --> Tab 'Data Type Controls --> section 'CHAR, VARCHAR, ...')
   used to work for the Object tree only and now works for SQLs too.
   Furthermore limited strings are now indicated by the ending '...'.
