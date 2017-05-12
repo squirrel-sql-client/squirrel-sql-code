@@ -31,13 +31,9 @@ public class PostgresSequenceParentExtractorImpl implements ISequenceParentExtra
 		"SELECT relname " +
 	   "FROM pg_class " +
 	   "WHERE relkind = 'S' " +
-	   "AND relnamespace IN ( " +
-	   "   SELECT " +
-	   "   oid " +
-	   "   FROM pg_namespace " +
-	   "   WHERE nspname = ? " +
-	   ") " +
-	   "AND relname like ? ";
+	   "AND relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ?) " +
+	   "AND relname like ? " +
+	   "ORDER BY relname";
 	
 	@Override
 	public String getSequenceParentQuery()

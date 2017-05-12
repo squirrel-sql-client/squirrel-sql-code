@@ -76,6 +76,9 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+PostgreSQL sequences are now sorted
+ Thanks to Krzysztof Szymko for the patch.
+
 #1302 ObjectTree SEQUENCE parent node Details tab tries to fetch details of non-existing sequence
 
 #1298 DROP TABLE IF EXISTS doubles VIEW content
