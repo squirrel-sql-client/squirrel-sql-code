@@ -76,6 +76,8 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+#1302 ObjectTree SEQUENCE parent node Details tab tries to fetch details of non-existing sequence
+
 #1298 DROP TABLE IF EXISTS doubles VIEW content
 
 #1297 Data Type Controls (max number of digits input - no error handling)

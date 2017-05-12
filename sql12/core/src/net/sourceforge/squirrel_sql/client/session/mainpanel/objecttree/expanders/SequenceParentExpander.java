@@ -110,7 +110,7 @@ public class SequenceParentExpander implements INodeExpander
 			while (rs.next())
 			{
 				final IDatabaseObjectInfo si =
-					new DatabaseObjectInfo(catalogName, schemaName, rs.getString(1), DatabaseObjectType.SEQUENCE,
+					new DatabaseObjectInfo(catalogName, schemaName, rs.getString(1), DatabaseObjectType.SEQUENCE_TYPE_DBO,
 						md);
 				if (filterMatcher.matches(si.getSimpleName()))
 				{

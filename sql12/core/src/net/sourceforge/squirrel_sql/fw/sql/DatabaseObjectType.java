@@ -84,7 +84,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     * Database object type for a "Index Type" node in the object tree. There is
     * one node of this type in the object tree for each table and it is labeled "INDEX".
     */   
-   public static final DatabaseObjectType INDEX_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.INDEX_TYPE_DBO", DOT_INDEXES); //DatabaseObjectType.INDEX_TYPE_DBO=Index Type
+   public static final DatabaseObjectType INDEX_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.INDEX_TYPE_DBO", DOT_INDEXES, true); //DatabaseObjectType.INDEX_TYPE_DBO=Index Type
    
    /** Index. */
    public final static DatabaseObjectType INDEX = createNewDatabaseObjectTypeI18n("DatabaseObjectType.index", DOT_INDEX);
@@ -96,7 +96,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     * Database object type for a "Procedure Type" node in the object tree. There is
     * only one node of this type in the object tree and it is labeled "PROCEDURE".
     */
-   public final static DatabaseObjectType PROC_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.PROC_TYPE_DBO", DOT_PROCEDURES); //DatabaseObjectType.PROC_TYPE_DBO=Stored Procedure Type
+   public final static DatabaseObjectType PROC_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.PROC_TYPE_DBO", DOT_PROCEDURES, true); //DatabaseObjectType.PROC_TYPE_DBO=Stored Procedure Type
 
 
 
@@ -114,7 +114,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     * An object that generates uniques IDs for primary keys. E.G. an Oracle
     * sequence.
     */
-   public final static DatabaseObjectType SEQUENCE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.sequence", DOT_SEQUENCES);
+   public final static DatabaseObjectType SEQUENCE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.sequence", DOT_SEQUENCES, true);
 
    /**
     * Database object type for a "Synonym Type" node in the object tree. There is
@@ -135,7 +135,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     * Database object type for a "Table Type" node in the object tree. Some examples
     * are "TABLE", "SYSTEM TABLE", "VIEW" etc.
     */
-   public final static DatabaseObjectType TABLE_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.TABLE_TYPE_DBO", DOT_TABLES); //DatabaseObjectType.TABLE_TYPE_DBO=Table Type
+   public final static DatabaseObjectType TABLE_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.TABLE_TYPE_DBO", DOT_TABLES, true); //DatabaseObjectType.TABLE_TYPE_DBO=Table Type
 
    public static final DatabaseObjectType VIEW = createNewDatabaseObjectTypeI18n("DatabaseObjectType.view", DOT_VIEW);
 
@@ -143,7 +143,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     * Database object type for a "Trigger Type" node in the object tree. There is
     * one node of this type in the object tree for each table and it is labeled "TRIGGER".
     */   
-   public static final DatabaseObjectType TRIGGER_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.TRIGGER_TYPE_DBO", DOT_TRIGGERS); //DatabaseObjectType.TRIGGER_TYPE_DBO=Trigger Type
+   public static final DatabaseObjectType TRIGGER_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.TRIGGER_TYPE_DBO", DOT_TRIGGERS, true); //DatabaseObjectType.TRIGGER_TYPE_DBO=Trigger Type
    
    /** Trigger. */
    public final static DatabaseObjectType TRIGGER = createNewDatabaseObjectTypeI18n("DatabaseObjectType.catalog", DOT_TRIGGER);
@@ -155,7 +155,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     * Database object type for a "UDT Type" node in the object tree. There is only one
     * node of this type in the object tree and it says "UDT".
     */
-   public final static DatabaseObjectType UDT_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.UDT_TYPE_DBO", DOT_DATATYPES); //DatabaseObjectType.UDT_TYPE_DBO=UDT Type
+   public final static DatabaseObjectType UDT_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.UDT_TYPE_DBO", DOT_DATATYPES, true); //DatabaseObjectType.UDT_TYPE_DBO=UDT Type
 
    /** User defined function. */
    public final static DatabaseObjectType UDF = createNewDatabaseObjectTypeI18n("DatabaseObjectType.udf");
@@ -176,6 +176,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
    private final String _name;
    private String _keyForSerializationReplace;
    private Icon _icon;
+   private boolean _isContainerNode;
 
    /**
     * Default ctor.
@@ -226,6 +227,11 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
 
    private static DatabaseObjectType createNewDatabaseObjectTypeI18n(String key, String imageName)
    {
+      return createNewDatabaseObjectTypeI18n(key, imageName, false);
+   }
+
+   private static DatabaseObjectType createNewDatabaseObjectTypeI18n(String key, String imageName, boolean isContainerNode)
+   {
       ImageIcon icon = null;
 
       if (null != imageName)
@@ -233,7 +239,21 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
          icon = new LibraryResources().getIcon(imageName);
       }
 
-      return createNewDatabaseObjectType(s_stringMgr.getString(key), icon);
+      DatabaseObjectType ret = createNewDatabaseObjectType(s_stringMgr.getString(key), icon);
+      
+      ret.setContainerNode(isContainerNode);
+
+      return ret;
+   }
+
+   private void setContainerNode(boolean isContainerNode)
+   {
+      _isContainerNode = isContainerNode;
+   }
+
+   public boolean isContainerNode()
+   {
+      return _isContainerNode;
    }
 
    private static DatabaseObjectType createNewDatabaseObjectTypeI18n(String key)

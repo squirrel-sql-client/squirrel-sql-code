@@ -331,8 +331,8 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
 
         // Sequence tabs
-        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE_TYPE_DBO, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE_TYPE_DBO, new SequenceDetailsTab());
 
         // Lock tab
         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new LockTab());

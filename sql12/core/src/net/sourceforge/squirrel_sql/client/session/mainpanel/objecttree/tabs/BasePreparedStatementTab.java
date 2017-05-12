@@ -110,11 +110,13 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 
 	protected void refreshComponent() throws DataSetException
 	{
-		ISession session = getSession();
-		if (session == null)
+		if(getDatabaseObjectInfo().getDatabaseObjectType().isContainerNode())
 		{
-			throw new IllegalStateException("Null ISession");
+			_comp.clear();
+			return;
 		}
+
+
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
@@ -123,7 +125,7 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
          pstmt = createStatement();
          rs = pstmt.executeQuery();
          final IDataSet ds = createDataSetFromResultSet(rs);
-         _comp.load(ds, new DefaultDataModelImplementationDetails(session));
+         _comp.load(ds, new DefaultDataModelImplementationDetails(getSession()));
       }
       catch (SQLException ex)
       {
