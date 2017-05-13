@@ -3,10 +3,12 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Calendar;
+import java.util.Formatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 
 public class TableCopySqlPartCommandBase
 {
@@ -74,6 +76,55 @@ public class TableCopySqlPartCommandBase
                      prefixNulls(cal.get(Calendar.HOUR_OF_DAY), 2) + ":" +
                      prefixNulls(cal.get(Calendar.MINUTE), 2) + ":" +
                      prefixNulls(cal.get(Calendar.SECOND), 2) + getNanoString(date);
+            }
+            else if(cellObj instanceof Byte[] || cellObj instanceof byte[])
+            {
+               Byte[] cellObjBytes=null;
+               if (cellObj instanceof Byte[])
+               {
+                  cellObjBytes = (Byte[])cellObj;
+               }
+               else
+               {
+                  byte[] cellObjBytesPrimitives = (byte[])cellObj;
+                  cellObjBytes = new Byte[cellObjBytesPrimitives.length];
+                  int i = 0;
+                  for (byte b : cellObjBytesPrimitives) 
+                  {	  
+                     cellObjBytes[i++] = b;
+                  }
+               }
+
+               Formatter formatter = new Formatter();
+               for (byte b : cellObjBytes)
+               {
+                  formatter.format("%02x", b);
+               }
+               String cellObjStr = formatter.toString();
+               formatter.close();
+
+               String prefix="X'";
+               String suffix="'";
+               if(colDef.getDialectType().equals(DialectType.DB2))
+               {
+                  if(colDef.getSqlType() == Types.BLOB)
+                  {
+                     prefix="BLOB(X'";
+                     suffix="')";
+                  }
+               }
+               else if(colDef.getDialectType().equals(DialectType.ORACLE))
+               {
+                  prefix="'";
+                  suffix="'";
+               }
+               else if(colDef.getDialectType().equals(DialectType.MSSQL))
+               {
+                  prefix="0x";
+                  suffix="";
+               }
+
+               return getPrefixForStatType(statType, false) + prefix + cellObjStr + suffix;
             }
             else
             {
