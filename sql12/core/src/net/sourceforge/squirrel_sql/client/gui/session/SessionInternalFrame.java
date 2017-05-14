@@ -112,7 +112,7 @@ public class SessionInternalFrame extends SessionTabWidget
             final ISession mySession = getSession();
             if (mySession != null)
 				{
-               boolean success = _app.getSessionManager().closeSession(mySession);
+               boolean success = _app.getSessionManager().closeSession(mySession, true);
 
                if (success)
                {

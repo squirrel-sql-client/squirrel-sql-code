@@ -76,6 +76,8 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+#1303 Close via session menu does NOT remove session tab
+
 PostgreSQL sequences are now sorted
  Thanks to Krzysztof Szymko for the patch.
 

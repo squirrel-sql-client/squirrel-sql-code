@@ -258,16 +258,24 @@ public class SessionManager
     */
    public synchronized boolean closeSession(ISession session)
    {
-      if (session == null)
-      {
-         throw new IllegalArgumentException("ISession == null");
-      }
+      return closeSession(session, false);
+   }
+
+   public synchronized boolean closeSession(ISession session, boolean doNothingAndReturnTrueWhenInClosing)
+   {
 
       try
       {
          if(_inCloseSession.contains(session.getIdentifier()))
          {
-            return false;
+            if (doNothingAndReturnTrueWhenInClosing)
+            {
+               return true;
+            }
+            else
+            {
+               return false;
+            }
          }
 
          _inCloseSession.add(session.getIdentifier());
