@@ -76,6 +76,8 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+#1304 Saving script ruins greek words
+
 Fix the problem with "Show foreign key references..." on a row with
   a raw type (BINARY, VARBINARY, (VAR)CHAR FOR BIT DATA, BLOB) primary-key.
  Thanks to Stefan Mueller for the patch

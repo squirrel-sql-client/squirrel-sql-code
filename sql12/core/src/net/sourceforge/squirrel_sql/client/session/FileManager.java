@@ -1,14 +1,12 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import java.awt.Frame;
+import java.awt.*;
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.util.HashMap;
 
 import javax.swing.JFileChooser;
 
@@ -16,6 +14,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -267,14 +266,18 @@ public class FileManager
       {
          memorizeFile(file, prefs);
 
-         Writer writer = null;
+         // NOTE: Changing this code may result in severe
+         // encoding problems for languages that are not
+         // close to the english character set,
+         // e.g. see Bug #1304 "Saving script ruins greek words"
+         FileOutputStream fos = null;
          try
          {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+            fos = new FileOutputStream(file);
 
             String sScript = getEntireSQLScriptWithPlatformEolChar();
 
-            writer.write(sScript);
+            fos.write(sScript.getBytes());
             setFile(file);
             // i18n[FileManager.savedfile=Saved to {0}]
             String msg = s_stringMgr.getString("FileManager.savedfile",
@@ -287,7 +290,7 @@ public class FileManager
          }
          finally
          {
-         	ioUtil.closeWriter(writer);
+         	ioUtil.closeOutputStream(fos);
          }
       }
       return true;
