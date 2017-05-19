@@ -60,12 +60,16 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaDataFactory;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaDataFactory;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -121,8 +125,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.types.OracleXmlTypeDataTypeCo
  * 
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class OraclePlugin extends DefaultSessionPlugin
-{
+public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMetaDataFactory {
 	/**
 	 * Logger for this class.
 	 */
@@ -162,7 +165,17 @@ public class OraclePlugin extends DefaultSessionPlugin
 	public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.oracle.oracle";
    private IObjectTypes _objectTypes;
 
-   interface i18n
+	@Override
+	public SQLDatabaseMetaData fetchMeta(final ISQLConnection conn) {
+		return new SQLDatabaseMetaData(conn) {
+			@Override
+			public String getOptionalPseudoColumnForDataSelection(final ITableInfo ti) {
+				return "ROWID";
+			}
+		};
+	}
+
+	interface i18n
 	{
 		// i18n[OraclePlugin.title=Oracle]
 		String title = s_stringMgr.getString("OraclePlugin.title");
@@ -330,6 +343,8 @@ public class OraclePlugin extends DefaultSessionPlugin
 			/* Register custom DataTypeComponent factory for Oracles XMLType */
 			CellComponentFactory.registerDataTypeFactory(
 			   new OracleXmlTypeDataTypeComponentFactory());
+
+			SQLDatabaseMetaDataFactory.registerOverride(DialectType.ORACLE, this);
 		}
       catch (Exception e)
 		{

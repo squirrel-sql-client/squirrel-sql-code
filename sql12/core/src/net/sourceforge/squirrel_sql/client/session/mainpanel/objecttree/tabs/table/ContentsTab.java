@@ -17,13 +17,14 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.awt.*;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.swing.JTable;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
@@ -35,12 +36,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
@@ -221,7 +217,6 @@ public class ContentsTab extends BaseTableTab
             	}
             }
 
-            // TODO: - Col - Add method to Databasemetadata that returns array
             // of objects for getBestRowIdentifier. For PostgreSQL put this kludge in
             // the new function. THis way all the kludges are kept in one place.
             //
@@ -234,14 +229,11 @@ public class ContentsTab extends BaseTableTab
             // you must create the table using "WITH OID" appended to the create
             // statement.  Otherwise, OID column is not available by default.
             //
-            if (pseudoColumn.length() == 0)
-            {
-                if (DialectFactory.isPostgreSQL(md)) {
-                    pseudoColumn = ", oid";
-                }
-                if (DialectFactory.isOracle(md)) {
-                    pseudoColumn = ", ROWID";
-                }
+            if (pseudoColumn.length() == 0) {
+              String pc = md.getOptionalPseudoColumnForDataSelection(ti);
+              if (pc != null) {
+                  pseudoColumn = ", " + pc;
+              }
             }
 
             ResultSet rs = null;
