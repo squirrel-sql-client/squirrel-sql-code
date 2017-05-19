@@ -582,5 +582,9 @@ public interface ISQLDatabaseMetaData {
      */
     void clearCache();
 
-   
+
+    /*
+     Gets optional pseudo column name for content tab data retrieval
+     */
+    String getOptionalPseudoColumnForDataSelection(ITableInfo ti);
 }

@@ -1929,6 +1929,11 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		_cache.clear();
 	}
 
+	@Override
+	public String getOptionalPseudoColumnForDataSelection(final ITableInfo ti) {
+		return null;
+	}
+
 	/**
 	 * Make a String array of the passed string. Commas separate the elements in the input string. The array is
 	 * sorted.
