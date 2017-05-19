@@ -78,6 +78,9 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+#1262 Error when viewing the content of a table of PostgreSQL database in Object tree.
+  The error occurred when a table contained an OID.
+
 #1304 Saving script ruins greek words
 
 Fix the problem with "Show foreign key references..." on a row with
