@@ -52,20 +52,21 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_WITH_HEADERS = 1;
 		int COPY_HTML = 2;
 		int COPY_ALIGNED = 3;
-		int COPY_IN_STATEMENT = 4;
-		int COPY_WHERE_STATEMENT = 5;
-		int COPY_UPDATE_STATEMENT = 6;
-		int COPY_INSERT_STATEMENT = 7;
-		int COPY_COLUMN_HEADER = 8;
-		int SHOW_REFERENCES = 9;
-		int EXPORT_CSV = 10;
-		int SELECT_ALL = 11;
-		int ADJUST_ALL_COL_WIDTHS_ACTION = 12;
-		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 13;
-		int SHOW_ROW_NUMBERS = 14;
-		int COPY_WIKI = 15;
-		int SELECT_ROWS = 16;
-		int LAST_ENTRY = 17;
+		int COPY_MARKDOWN = 4;
+		int COPY_IN_STATEMENT = 5;
+		int COPY_WHERE_STATEMENT = 6;
+		int COPY_UPDATE_STATEMENT = 7;
+		int COPY_INSERT_STATEMENT = 8;
+		int COPY_COLUMN_HEADER = 9;
+		int SHOW_REFERENCES = 10;
+		int EXPORT_CSV = 11;
+		int SELECT_ALL = 12;
+		int ADJUST_ALL_COL_WIDTHS_ACTION = 13;
+		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 14;
+		int SHOW_ROW_NUMBERS = 15;
+		int COPY_WIKI = 16;
+		int SELECT_ROWS = 17;
+		int LAST_ENTRY = 18;
    }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
@@ -82,6 +83,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyWithHeadersAction _copyWithHeaders = new CopyWithHeadersAction();
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
 	private CopyAlignedAction _copyAligned = new CopyAlignedAction();
+	private CopyAsMarkdownAction _copyAsMarkdown = new CopyAsMarkdownAction();
 
 	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
 	private CopyWhereStatementAction _copyWhereStatement = new CopyWhereStatementAction();
@@ -142,6 +144,7 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_WITH_HEADERS] = add(_copyWithHeaders);
 		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
 		_menuItems[IOptionTypes.COPY_ALIGNED] = add(_copyAligned);
+		_menuItems[IOptionTypes.COPY_MARKDOWN] = add(_copyAsMarkdown);
 
 		_menuItems[IOptionTypes.COPY_WIKI] = add(copyWikiTableActionFactory.createMenueItem(new ITableActionCallback() {
 			@Override
@@ -343,6 +346,22 @@ public class TablePopupMenu extends BasePopupMenu
 			if (_table != null)
 			{
 				new TableCopyAlignedCommand(_table, _session).execute();
+			}
+		}
+	}
+
+	private class CopyAsMarkdownAction extends BaseAction
+	{
+		CopyAsMarkdownAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.copyasmarkdown"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+				new TableCopyAsMarkdownCommand(_table, _session).execute();
 			}
 		}
 	}

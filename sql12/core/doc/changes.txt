@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Enhancement of feature request #545: New table right mouse menu 'Copy as markdown table'
+
 The minimum number of decimal digits of floating point numbers can now be defined
   (see menu File --> Global Preferences --> Tab 'Data Type Controls --> section 'FLOAT, REAL, ...')
  Thanks to Krzysztof Szymko for the patch.
