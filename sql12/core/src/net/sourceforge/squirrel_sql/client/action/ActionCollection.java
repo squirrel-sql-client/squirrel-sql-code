@@ -519,6 +519,8 @@ public class ActionCollection
 		add(new CutSqlAction(_app));
 		add(new CopySqlAction(_app));
 		add(new RemoveNewLinesAction(_app));
+		add(new PasteFromHistoryAction(_app));
+		add(new PasteFromHistoryAltAcceleratorAction(_app));
 	}
 
 }

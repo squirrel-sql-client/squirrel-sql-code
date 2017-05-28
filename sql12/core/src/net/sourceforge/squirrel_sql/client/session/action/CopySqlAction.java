@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -34,6 +35,9 @@ public class CopySqlAction extends SquirrelAction implements ISQLPanelAction
 
 		StringSelection contents = new StringSelection(sqlToBeExecuted);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, contents);
+
+		Main.getApplication().getPasteHistroy().addToPasteHistory(sqlToBeExecuted);
+
 	}
 
 	public void setSQLPanel(ISQLPanelAPI panel)

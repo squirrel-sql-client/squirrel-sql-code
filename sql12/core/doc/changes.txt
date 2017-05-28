@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+The new paste history can be called using ctrl+shift+V oder ctrl+shift+insert. It offers to paste
+  the content of former copy or cut actions.
+
 Enhancement of feature request #545: New table right mouse menu 'Copy as markdown table'
 
 The minimum number of decimal digits of floating point numbers can now be defined

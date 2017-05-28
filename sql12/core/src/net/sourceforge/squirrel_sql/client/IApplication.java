@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -250,4 +251,6 @@ public interface IApplication
    MultipleWindowsHandler getMultipleWindowsHandler();
 
    RecentFilesManager getRecentFilesManager();
+
+	PasteHistory getPasteHistroy();
 }

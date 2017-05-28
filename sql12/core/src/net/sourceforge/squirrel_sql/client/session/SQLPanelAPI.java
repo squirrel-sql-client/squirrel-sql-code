@@ -22,7 +22,6 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
@@ -137,6 +136,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction("sqlcut", ac.get(CutSqlAction.class));
       _toolsPopupController.addAction("sqlcopy", ac.get(CopySqlAction.class));
       _toolsPopupController.addAction("remnewlines", ac.get(RemoveNewLinesAction.class));
+      _toolsPopupController.addAction("pastehist", ac.get(PasteFromHistoryAction.class));
    }
 
 
@@ -180,7 +180,11 @@ public class SQLPanelAPI implements ISQLPanelAPI
       mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(CopySqlAction.class));
       resources.configureMenuItem(ac.get(CopySqlAction.class), mnu);
 
+      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(PasteFromHistoryAction.class));
+      resources.configureMenuItem(ac.get(PasteFromHistoryAction.class), mnu);
 
+      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(PasteFromHistoryAltAcceleratorAction.class));
+      resources.configureMenuItem(ac.get(PasteFromHistoryAltAcceleratorAction.class), mnu);
 
    }
 

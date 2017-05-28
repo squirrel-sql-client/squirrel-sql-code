@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
@@ -97,6 +98,8 @@ public class CopyObjectNameCommand implements ICommand
 			Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
 			StringSelection data = new StringSelection(buf.toString());
 			clip.setContents(data, data);
+
+			Main.getApplication().getPasteHistroy().addToPasteHistory(buf.toString());
 		}
 	}
 }

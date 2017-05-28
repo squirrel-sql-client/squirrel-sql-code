@@ -35,6 +35,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
 import org.apache.commons.lang.StringUtils;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -160,14 +161,16 @@ class Application implements IApplication
 	private List<ApplicationListener> _listeners = new ArrayList<ApplicationListener>();
 
 //	private UpdateCheckTimer updateCheckTimer = null;
-	
+
 	private IShutdownTimer _shutdownTimer = new ShutdownTimer();
 
-        private MultipleWindowsHandler _multipleWindowsHandler = new MultipleWindowsHandler(this);
+	private MultipleWindowsHandler _multipleWindowsHandler = new MultipleWindowsHandler(this);
 
-        private RecentFilesManager _recentFilesManager = new RecentFilesManager();
+	private RecentFilesManager _recentFilesManager = new RecentFilesManager();
 
-   /**
+	private PasteHistory _pasteHistory = new PasteHistory();
+
+	/**
 	 * Default ctor.
 	 */
 	Application()
@@ -1346,7 +1349,13 @@ class Application implements IApplication
       return _recentFilesManager;
    }
 
-   protected void exitApplication(int code){
+	@Override
+	public PasteHistory getPasteHistroy()
+	{
+		return _pasteHistory;
+	}
+
+	protected void exitApplication(int code){
        System.exit(code);
    }
    

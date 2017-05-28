@@ -67,6 +67,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabLi
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteFromHistoryAttach;
 import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndReadOnPanelSmallPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
@@ -518,19 +519,11 @@ public class SQLPanel extends JPanel
       _splitPane.add(scrollPane, JSplitPane.LEFT);
 
 
-
-//		if (!_sqlEntry.getDoesTextComponentHaveScroller())
-//		{
-//         JScrollPane sqlEntryScroller = createScrollPane(_sqlEntry.getTextComponent());
-//			_splitPane.add(sqlEntryScroller);
-//		}
-//		else
-//		{
-//			_splitPane.add(_sqlEntry.getTextComponent(), JSplitPane.LEFT);
-//		}
 		_splitPane.setDividerLocation(pos);
 
       _undoHandler = new UndoHandlerImpl(_session.getApplication(), _sqlEntry);
+
+      new PasteFromHistoryAttach(_sqlEntry);
 
       fireSQLEntryAreaInstalled();
 	}
