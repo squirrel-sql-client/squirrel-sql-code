@@ -43,10 +43,6 @@ public class PasteFromHistoryDialog extends JDialog
 
       getContentPane().add(createButtonPanel(), BorderLayout.SOUTH);
 
-
-      GUIUtils.centerWithinParent(this);
-      setVisible(true);
-
       GUIUtils.enableCloseByEscape(this);
    }
 

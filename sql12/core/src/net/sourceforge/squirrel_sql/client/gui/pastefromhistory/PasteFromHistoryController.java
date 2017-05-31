@@ -3,14 +3,12 @@ package net.sourceforge.squirrel_sql.client.gui.pastefromhistory;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.prefs.Preferences;
 
 public class PasteFromHistoryController
@@ -73,6 +71,14 @@ public class PasteFromHistoryController
          }
       });
 
+      _dlg.lstHistoryItems.addMouseListener(new MouseAdapter() {
+         @Override
+         public void mouseClicked(MouseEvent e)
+         {
+            onListMouseClicked(e);
+         }
+      });
+
       _dlg.addWindowListener(new WindowAdapter()
       {
          @Override
@@ -82,7 +88,20 @@ public class PasteFromHistoryController
          }
       });
 
+      _dlg.setVisible(true);
 
+      GUIUtils.centerWithinParent(_dlg);
+
+
+
+   }
+
+   private void onListMouseClicked(MouseEvent e)
+   {
+      if (e.getClickCount() == 2)
+      {
+         onOk();
+      }
    }
 
    private void onOk()
