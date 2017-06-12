@@ -14,6 +14,7 @@ public class SQLAliasSchemaDetailProperties
    private int _table ;
    private int _view;
    private int _procedure;
+   private int _UDT;
 
    public String getSchemaName()
    {
@@ -56,6 +57,17 @@ public class SQLAliasSchemaDetailProperties
       _procedure = id;
    }
 
+   public int getUDT()
+   {
+      return _UDT;
+   }
+
+   public void setUDT(int UDT)
+   {
+      _UDT = UDT;
+   }
+
+
    public int compareTo(SQLAliasSchemaDetailProperties other)
    {
       return _schemaName.compareTo(other._schemaName);
@@ -92,6 +104,4 @@ public class SQLAliasSchemaDetailProperties
            return false;
        return true;
    }
-   
-   
 }

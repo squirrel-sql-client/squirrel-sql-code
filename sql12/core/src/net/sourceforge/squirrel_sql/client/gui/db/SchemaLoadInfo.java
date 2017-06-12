@@ -25,4 +25,6 @@ public class SchemaLoadInfo implements Serializable
    public String[] tableTypes;
 
    public boolean loadProcedures = true;
+
+   public boolean loadUDTs = true;
 }

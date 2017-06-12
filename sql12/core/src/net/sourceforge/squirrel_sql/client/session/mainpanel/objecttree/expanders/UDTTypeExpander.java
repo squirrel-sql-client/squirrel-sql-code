@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
 
@@ -53,26 +54,19 @@ public class UDTTypeExpander implements INodeExpander
                                                ObjectTreeNode parentNode)
 		throws SQLException
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
-		final ISQLConnection conn = session.getSQLConnection();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
 
-      ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
+		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		session.getSchemaInfo().waitTillUDTsLoaded();
+		IUDTInfo[] udtInfos = session.getSchemaInfo().getUDTInfos(catalogName, schemaName, new ObjFilterMatcher(session.getProperties()));
 
-      IUDTInfo[] udts =
-         conn.getSQLMetaData().getUDTs(catalogName, schemaName, filterMatcher.getSqlLikeMatchString(), null);
-
-		for (int i = 0; i < udts.length; ++i)
+		for (int i = 0; i < udtInfos.length; ++i)
 		{
-         if(filterMatcher.matches(udts[i].getSimpleName()))
-         {
-            ObjectTreeNode child = new ObjectTreeNode(session, udts[i]);
-            childNodes.add(child);
-         }
-      }
-
+			ObjectTreeNode child = new ObjectTreeNode(session, udtInfos[i]);
+			childNodes.add(child);
+		}
 		return childNodes;
 	}
 }

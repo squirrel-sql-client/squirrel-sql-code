@@ -360,7 +360,7 @@ public interface ISQLDatabaseMetaData {
      * @throws  SQLException    Thrown if an SQL error occurs.
      */
     IUDTInfo[] getUDTs(String catalog, String schemaPattern,
-            String typeNamePattern, int[] types) throws SQLException;
+            String typeNamePattern, int[] types, ProgressCallBack pcb) throws SQLException;
 
     /**
      * Retrieve the names of the Numeric Functions that this DBMS supports.

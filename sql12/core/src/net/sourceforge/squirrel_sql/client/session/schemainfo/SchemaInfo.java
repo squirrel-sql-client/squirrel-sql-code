@@ -38,22 +38,10 @@ import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaNameLoadInfo;
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBackAdaptor;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -112,6 +100,9 @@ public class SchemaInfo
        String LOADING_PROCS_MSG = 
            s_stringMgr.getString("SchemaInfo.loadingStoredProcedures");
        
+       String LOADING_UDTS_MSG =
+           s_stringMgr.getString("SchemaInfo.loadingUDTs");
+
        // i18n[SchemaInfo.loadingSchemas=Loading schemas]
        String LOADING_SCHEMAS_MSG = 
            s_stringMgr.getString("SchemaInfo.loadingSchemas");
@@ -135,6 +126,7 @@ public class SchemaInfo
    private boolean _schemasAndCatalogsLoaded;
    private boolean _tablesLoaded;
    private boolean _storedProceduresLoaded;
+   private boolean _udtsLoaded;
 
    public SchemaInfo(IApplication app)
    {
@@ -256,6 +248,7 @@ public class SchemaInfo
          _schemasAndCatalogsLoaded = false;
          _tablesLoaded = false;
          _storedProceduresLoaded = false;
+         _udtsLoaded = false;
       }
 
       breathing();
@@ -352,6 +345,9 @@ public class SchemaInfo
          progress = loadStoredProcedures(null, null, null, progress);
          notifyStoredProceduresLoaded();
 
+         progress = loadUDTs(null, null, null, progress);
+         notifyUDTsLoaded();
+
       }
       finally
       {
@@ -374,6 +370,15 @@ public class SchemaInfo
       synchronized(this)
       {
          _storedProceduresLoaded = true;
+         this.notifyAll();
+      }
+   }
+
+   private void notifyUDTsLoaded()
+   {
+      synchronized(this)
+      {
+         _udtsLoaded = true;
          this.notifyAll();
       }
    }
@@ -428,7 +433,38 @@ public class SchemaInfo
       return progress;
    }
 
-   private int loadTables(String catalog, 
+   private int loadUDTs(String catalog, String schema, String udtNamePattern, int progress)
+   {
+
+      long start = 0, finish = 0;
+      try
+      {
+         if (s_log.isDebugEnabled()) {
+             s_log.debug(i18n.LOADING_UDTS_MSG);
+             start = System.currentTimeMillis();
+         }
+
+         int beginProgress = getLoadMethodProgress(progress++);
+         setProgress(i18n.LOADING_UDTS_MSG, beginProgress);
+         privateLoadUDTs(catalog,
+                         schema,
+                         udtNamePattern,
+                         i18n.LOADING_UDTS_MSG,
+                         beginProgress);
+
+         if (s_log.isDebugEnabled()) {
+             finish = System.currentTimeMillis();
+             s_log.debug("UDTs loaded in " + (finish - start) + " ms");
+         }
+      }
+      catch (Exception ex)
+      {
+         s_log.error("Error loading UDTs", ex);
+      }
+      return progress;
+   }
+
+   private int loadTables(String catalog,
                           String schema, 
                           String tableNamePattern, 
                           String[] types, 
@@ -600,6 +636,42 @@ public class SchemaInfo
                for (int j = 0; j < procedures.length; j++)
                {
                   _schemaInfoCache.writeToProcedureCache(procedures[j]);
+               }
+            }
+         }
+      }
+      catch (Throwable th)
+      {
+         s_log.error("Failed to load stored procedures", th);
+      }
+
+   }
+
+   private void privateLoadUDTs(String catalog, String schema, String udtNamePattern, final String msg, final int beginProgress)
+   {
+      try
+      {
+
+         ProgressCallBack pcb = new ProgressCallBackAdaptor()
+         {  @Override
+            public void currentlyLoading(String simpleName)
+            {
+               setProgress(msg + " (" + simpleName + ")", beginProgress);
+            }
+         };
+
+
+         SchemaLoadInfo[] schemaLoadInfos = _schemaInfoCache.getMatchingSchemaLoadInfos(schema);
+
+         for (int i = 0; i < schemaLoadInfos.length; i++)
+         {
+            if(schemaLoadInfos[i].loadUDTs)
+            {
+               IUDTInfo[] udts = _dmd.getUDTs(catalog, schemaLoadInfos[i].schemaName, udtNamePattern, null, pcb);
+
+               for (int j = 0; j < udts.length; j++)
+               {
+                  _schemaInfoCache.writeToUDTCache(udts[j]);
                }
             }
          }
@@ -1181,6 +1253,46 @@ public class SchemaInfo
 
       return ret.toArray(new IProcedureInfo[ret.size()]);
    }
+   public IUDTInfo[] getUDTInfos(String catalog, String schema)
+   {
+      return getUDTInfos(catalog, schema, new ObjFilterMatcher());
+   }
+
+
+   public IUDTInfo[] getUDTInfos(String catalog, String schema, ObjFilterMatcher filterMatcher)
+   {
+      ArrayList<IUDTInfo> ret = new ArrayList<IUDTInfo>();
+
+      for (Iterator<IUDTInfo> i =
+           _schemaInfoCache.getIUDTInfosForReadOnly().keySet().iterator(); i.hasNext();)
+      {
+
+         IUDTInfo iProcInfo = i.next();
+         boolean toAdd = true;
+         if (null != catalog && false == catalog.equalsIgnoreCase(iProcInfo.getCatalogName()))
+         {
+            toAdd = false;
+         }
+
+         if (null != schema && false == schema.equalsIgnoreCase(iProcInfo.getSchemaName()))
+         {
+            toAdd = false;
+         }
+
+         if(false == filterMatcher.matches(iProcInfo.getSimpleName()))
+         {
+            toAdd = false;
+         }
+
+
+         if (toAdd)
+         {
+            ret.add(iProcInfo);
+         }
+      }
+
+      return ret.toArray(new UDTInfo[ret.size()]);
+   }
 
 
    public boolean isLoaded()
@@ -1389,6 +1501,7 @@ public class SchemaInfo
             _schemasAndCatalogsLoaded = false;
             _tablesLoaded = false;
             _storedProceduresLoaded = false;
+            _udtsLoaded = false;
 
          }
 
@@ -1399,12 +1512,21 @@ public class SchemaInfo
 
             _schemaInfoCache.clearTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), null);
             loadTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), null, 1);
+
+            loadUDTs(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), 1);
+
          }
          else if(doi instanceof IProcedureInfo)
          {
             IProcedureInfo pi = (IProcedureInfo) doi;
             _schemaInfoCache.clearStoredProcedures(pi.getCatalogName(), pi.getSchemaName(), pi.getSimpleName());
             loadStoredProcedures(pi.getCatalogName(), pi.getSchemaName(), pi.getSimpleName(), 1);
+         }
+         else if(doi instanceof IUDTInfo)
+         {
+            IUDTInfo udtInfo = (IUDTInfo) doi;
+            _schemaInfoCache.clearUDTs(udtInfo.getCatalogName(), udtInfo.getSchemaName(), udtInfo.getSimpleName());
+            loadUDTs(udtInfo.getCatalogName(), udtInfo.getSchemaName(), udtInfo.getSimpleName(), 1);
          }
          else if(DatabaseObjectType.TABLE_TYPE_DBO == doi.getDatabaseObjectType())
          {
@@ -1429,6 +1551,11 @@ public class SchemaInfo
             _schemaInfoCache.clearStoredProcedures(doi.getCatalogName(), doi.getSchemaName(), null);
             loadStoredProcedures(doi.getCatalogName(), doi.getSchemaName(), null, 1);
          }
+         else if(DatabaseObjectType.UDT == doi.getDatabaseObjectType() || DatabaseObjectType.UDF_TYPE_DBO == doi.getDatabaseObjectType())
+         {
+            _schemaInfoCache.clearUDTs(doi.getCatalogName(), doi.getSchemaName(), null);
+            loadUDTs(doi.getCatalogName(), doi.getSchemaName(), null, 1);
+         }
          else if(DatabaseObjectType.SCHEMA == doi.getDatabaseObjectType())
          {
             //int progress = loadSchemas(1);
@@ -1439,6 +1566,10 @@ public class SchemaInfo
             // load procedures with catalog = null
             _schemaInfoCache.clearStoredProcedures(null, doi.getSchemaName(), null);
             loadStoredProcedures(null, doi.getSchemaName(), null, progress);
+
+            // load UDTs with catalog = null
+            _schemaInfoCache.clearUDTs(null, doi.getSchemaName(), null);
+            loadUDTs(null, doi.getSchemaName(), null, progress);
          }
          else if(DatabaseObjectType.CATALOG == doi.getDatabaseObjectType())
          {
@@ -1450,6 +1581,10 @@ public class SchemaInfo
             // load procedures with schema = null
             _schemaInfoCache.clearStoredProcedures(doi.getCatalogName(), null, null);
             loadStoredProcedures(doi.getCatalogName(), null, null, progress);
+
+            // load UDTs with schema = null
+            _schemaInfoCache.clearUDTs(doi.getCatalogName(), null, null);
+            loadUDTs(doi.getCatalogName(), null, null, progress);
          }
          else if(DatabaseObjectType.SESSION == doi.getDatabaseObjectType())
          {
@@ -1467,6 +1602,8 @@ public class SchemaInfo
          _schemasAndCatalogsLoaded = true;
          _tablesLoaded = true;
          _storedProceduresLoaded = true;
+         _udtsLoaded = true;
+
          notifySchemasAndCatalogsLoad();
          notifyTablesLoaded();
          notifyStoredProceduresLoaded();
@@ -1629,6 +1766,24 @@ public class SchemaInfo
          synchronized (this)
          {
             while (false == _storedProceduresLoaded)
+            {
+               this.wait();
+            }
+         }
+      }
+      catch (InterruptedException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public void waitTillUDTsLoaded()
+   {
+      try
+      {
+         synchronized (this)
+         {
+            while (false == _udtsLoaded)
             {
                this.wait();
             }

@@ -424,7 +424,7 @@ public class GenerateSqlDialog extends JDialog {
                     model.addElement(procs[i]);
 
             /* add the UDTs. */
-            IUDTInfo[] udts = metaData.getUDTs(catalog,null,null,null);
+            IUDTInfo[] udts = metaData.getUDTs(catalog,null,null,null, null);
             for (i = 0; i < udts.length; i++)
                 model.addElement(udts[i]);
         }

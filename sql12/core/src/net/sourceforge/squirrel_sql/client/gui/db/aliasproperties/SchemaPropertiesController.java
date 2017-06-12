@@ -37,6 +37,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    private JComboBox _cboTables = new JComboBox();
    private JComboBox _cboView = new JComboBox();
    private JComboBox _cboFunction = new JComboBox();
+   private JComboBox _cboUDT = new JComboBox();
    private Color _origTblColor;
    private SQLAlias _alias;
    private IApplication _app;
@@ -78,6 +79,12 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       tc.setCellEditor(new DefaultCellEditor(initCbo(_cboFunction)));
       cm.addColumn(tc);
 
+      tc = new TableColumn(SchemaTableModel.IX_UDT);
+      // i18n[SchemaPropertiesController.tableHeader.procedures=Procedures]
+      tc.setHeaderValue(s_stringMgr.getString("SchemaPropertiesController.tableHeader.udts"));
+      tc.setCellEditor(new DefaultCellEditor(initCbo(_cboUDT)));
+      cm.addColumn(tc);
+
       _pnl.tblSchemas.setColumnModel(cm);
 
       _pnl.radLoadAllAndCacheNone.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_ALL_CACHE_NONE);
@@ -90,6 +97,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.TABLES);
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.VIEWS);
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.PROCEDURES);
+      _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.UDTS);
 
       for (int i = 0; i < SchemaTableCboItem.items.length; i++)
       {
@@ -217,10 +225,17 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       else if(SchemaTableUpdateWhatItem.PROCEDURES == selWhatItem)
       {
          _schemaTableModel.setColumnTo(SchemaTableModel.IX_PROCEDURE, selToItem);
-      } else {
+      }
+      else if(SchemaTableUpdateWhatItem.UDTS == selWhatItem)
+      {
+         _schemaTableModel.setColumnTo(SchemaTableModel.IX_UDT, selToItem);
+      }
+      else
+      {
           _schemaTableModel.setColumnTo(SchemaTableModel.IX_TABLE, selToItem);
           _schemaTableModel.setColumnTo(SchemaTableModel.IX_VIEW, selToItem);
           _schemaTableModel.setColumnTo(SchemaTableModel.IX_PROCEDURE, selToItem);
+          _schemaTableModel.setColumnTo(SchemaTableModel.IX_UDT, selToItem);
       }
    }
 
@@ -343,6 +358,8 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       public static final SchemaTableUpdateWhatItem VIEWS = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.views"));
       // i18n[SchemaTableUpdateWhatItem.procedures=Procedures]
       public static final SchemaTableUpdateWhatItem PROCEDURES = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.procedures"));
+      // i18n[SchemaTableUpdateWhatItem.procedures=Procedures]
+      public static final SchemaTableUpdateWhatItem UDTS = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.udts"));
       // i18n[SchemaTableUpdateWhatItem.allObjects=All Objects]
       public static final SchemaTableUpdateWhatItem ALL = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.allObjects"));
       

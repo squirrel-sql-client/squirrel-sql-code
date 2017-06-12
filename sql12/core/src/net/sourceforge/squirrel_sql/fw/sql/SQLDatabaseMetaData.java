@@ -1062,8 +1062,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getUDTs(java.lang.String,
 	 *      java.lang.String, java.lang.String, int[])
 	 */
-	public synchronized IUDTInfo[] getUDTs(String catalog, String schemaPattern, String typeNamePattern,
-		int[] types) throws SQLException
+	public synchronized IUDTInfo[] getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types, ProgressCallBack progressCallBack) throws SQLException
 	{
 		DatabaseMetaData md = privateGetJDBCMetaData();
 		ArrayList<UDTInfo> list = new ArrayList<UDTInfo>();
@@ -1075,10 +1074,23 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			DialectType dialectType = DialectFactory.getDialectType(this);
 			final ResultSetReader rdr = new ResultSetReader(rs, cols, dialectType);
 			Object[] row = null;
+
+			int count = 0;
 			while ((row = rdr.readRow(BlockMode.INDIFFERENT)) != null)
 			{
-				list.add(new UDTInfo(getAsString(row[0]), getAsString(row[1]), getAsString(row[2]),
-					getAsString(row[3]), getAsString(row[4]), getAsString(row[5]), this));
+				UDTInfo udtInfo = new UDTInfo(getAsString(row[0]), getAsString(row[1]), getAsString(row[2]),
+						getAsString(row[3]), getAsString(row[4]), getAsString(row[5]), this);
+
+				list.add(udtInfo);
+
+				if (null != progressCallBack)
+				{
+					if (0 == count++ % 200)
+					{
+						progressCallBack.currentlyLoading(udtInfo.getSimpleName());
+					}
+				}
+
 			}
 		}
 		finally

@@ -105,6 +105,7 @@ public class SQLAliasSchemaProperties implements Serializable
                tableTypesToLoad.addAll(Arrays.asList(viewTypes));
             }
 
+
             buf.loadProcedures =
                needsLoading(_schemaDetails[i].getProcedure(), null == cachedDetailProp ? null : cachedDetailProp.getProcedure());
 
@@ -113,6 +114,17 @@ public class SQLAliasSchemaProperties implements Serializable
                buf.tableTypes = tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]);
                ret.add(buf);
             }
+
+
+            buf.loadUDTs =
+               needsLoading(_schemaDetails[i].getUDT(), null == cachedDetailProp ? null : cachedDetailProp.getUDT());
+
+            if(0 < tableTypesToLoad.size() || buf.loadUDTs)
+            {
+               buf.tableTypes = tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]);
+               ret.add(buf);
+            }
+
          }
 
          return ret.toArray(new SchemaLoadInfo[ret.size()]);
@@ -142,7 +154,8 @@ public class SQLAliasSchemaProperties implements Serializable
          {
             if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getTable() &&
                SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getView() &&
-               SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getProcedure())
+               SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getProcedure() &&
+               SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getUDT())
             {
                continue;
             }
@@ -168,7 +181,15 @@ public class SQLAliasSchemaProperties implements Serializable
             else
             {
                schemaLoadInfo.loadProcedures = false;
+            }
 
+            if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getUDT())
+            {
+               schemaLoadInfo.loadUDTs = true;
+            }
+            else
+            {
+               schemaLoadInfo.loadUDTs = false;
             }
 
             schemaLoadInfos.add(schemaLoadInfo);
@@ -260,7 +281,21 @@ public class SQLAliasSchemaProperties implements Serializable
          {
             ret.add(_schemaDetails[i].getSchemaName());
          }
+      }
 
+      return ret.toArray(new String[ret.size()]);
+   }
+
+   public String[] fetchAllSchemaUDTsNotToBeCached()
+   {
+      ArrayList<String> ret = new ArrayList<String>();
+
+      for (int i = 0; i < _schemaDetails.length; i++)
+      {
+         if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_LOAD_AND_CACHE != _schemaDetails[i].getUDT())
+         {
+            ret.add(_schemaDetails[i].getSchemaName());
+         }
       }
 
       return ret.toArray(new String[ret.size()]);
@@ -281,7 +316,8 @@ public class SQLAliasSchemaProperties implements Serializable
          {
             if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_LOAD_AND_CACHE ==_schemaDetails[i].getTable() ||
                SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_LOAD_AND_CACHE ==_schemaDetails[i].getView() ||
-               SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_LOAD_AND_CACHE ==_schemaDetails[i].getProcedure())
+               SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_LOAD_AND_CACHE ==_schemaDetails[i].getProcedure() ||
+               SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_LOAD_AND_CACHE ==_schemaDetails[i].getUDT())
             {
                return true;
             }

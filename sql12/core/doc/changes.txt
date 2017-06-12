@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+#555 New features for code completion needed --> Completion for UDTs
+  UDT names are now available in code completion and can be configured in the Alias Properties dialog.
+
+
 The new paste history can be called using ctrl+shift+V oder ctrl+shift+insert. It offers to paste
   the content of former copy or cut actions.
 

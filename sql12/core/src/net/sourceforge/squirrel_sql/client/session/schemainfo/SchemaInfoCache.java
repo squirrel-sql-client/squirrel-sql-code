@@ -2,15 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
@@ -87,9 +79,20 @@ public class SchemaInfoCache implements Serializable
    
    private Map<IProcedureInfo, IProcedureInfo> _iProcedureInfos = 
        Collections.synchronizedMap(new TreeMap<IProcedureInfo, IProcedureInfo>());
-   
-   private Hashtable<CaseInsensitiveString, List<IProcedureInfo>> _procedureInfosBySimpleName = 
-       new Hashtable<CaseInsensitiveString, List<IProcedureInfo>>();
+
+   private Hashtable<CaseInsensitiveString, List<IProcedureInfo>> _procedureInfosBySimpleName =
+         new Hashtable<CaseInsensitiveString, List<IProcedureInfo>>();
+
+
+   private Map<CaseInsensitiveString, String> _udtNames =
+         Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, String>());
+
+   private Map<IUDTInfo, IUDTInfo> _iUdtInfos =
+       Collections.synchronizedMap(new TreeMap<IUDTInfo, IUDTInfo>());
+
+   private Hashtable<CaseInsensitiveString, List<IUDTInfo>> _udtInfosBySimpleName =
+         new Hashtable<CaseInsensitiveString, List<IUDTInfo>>();
+
    //
    ///////////////////////////////////////////////////////////////////////////
 
@@ -316,19 +319,6 @@ public class SchemaInfoCache implements Serializable
       Arrays.sort(tableArr, new TableInfoSimpleNameComparator());
       _iTableInfos = new CopyOnWriteArrayList<ITableInfo>(tableArr);
    }
-   
-   /**
-    * Adds a single ITableInfo to the internal list(s) and re-sorts.  This 
-    * should not be called in a tight loop iterating over a list of ITableInfos.
-    * If the caller is looping over an array of ITableInfo objects, please use 
-    * the version that accepts the ITableInfo array instead.
-    * 
-    * @param info the ITableInfo to add.
-    */
-   public void writeToTableCache(ITableInfo info)
-   {
-      writeToTableCache(new ITableInfo[] { info });      
-   }
 
 
    public void writeToProcedureCache(IProcedureInfo procedure)
@@ -348,6 +338,25 @@ public class SchemaInfoCache implements Serializable
          aIProcInfos.add(procedure);
       }
       _iProcedureInfos.put(procedure, procedure);
+   }
+
+   public void writeToUDTCache(IUDTInfo udtInfo)
+   {
+      String udt = udtInfo.getSimpleName();
+      if (udt.length() > 0)
+      {
+         CaseInsensitiveString ciudt = new CaseInsensitiveString(udt);
+         _udtNames.put(ciudt , udt);
+
+         List<IUDTInfo> udtInfos = _udtInfosBySimpleName.get(ciudt);
+         if(null == udtInfos)
+         {
+            udtInfos = new ArrayList<IUDTInfo>();
+            _udtInfosBySimpleName.put(ciudt, udtInfos);
+         }
+         udtInfos.add(udtInfo);
+      }
+      _iUdtInfos.put(udtInfo, udtInfo);
    }
 
 
@@ -402,6 +411,12 @@ public class SchemaInfoCache implements Serializable
          for (int i = 0; i < procedureSchemas.length; i++)
          {
             clearStoredProcedures(null, procedureSchemas[i], null);
+         }
+
+         String[] udtSchemas = _schemaPropsCacheIsBasedOn.fetchAllSchemaUDTsNotToBeCached();
+         for (int i = 0; i < udtSchemas.length; i++)
+         {
+            clearUDTs(null, udtSchemas[i], null);
          }
 
 
@@ -515,6 +530,35 @@ public class SchemaInfoCache implements Serializable
             {
                _procedureInfosBySimpleName.remove(ciSimpleName);
                _procedureNames.remove(ciSimpleName);
+            }
+
+         }
+      }
+   }
+
+   void clearUDTs(String catalogName, String schemaName, String simpleName)
+   {
+      for(Iterator<IUDTInfo> i = _iUdtInfos.keySet().iterator(); i.hasNext();)
+      {
+         IUDTInfo udtInfo = i.next();
+
+
+         boolean matches = matchesMetaString(udtInfo.getCatalogName(), catalogName);
+         matches &= matchesMetaString(udtInfo.getSchemaName(), schemaName);
+         matches &= matchesMetaString(udtInfo.getSimpleName(), simpleName);
+
+
+         if(matches)
+         {
+            i.remove();
+
+            CaseInsensitiveString ciSimpleName = new CaseInsensitiveString(udtInfo.getSimpleName());
+            List<IUDTInfo> udtInfos = _udtInfosBySimpleName.get(ciSimpleName);
+            udtInfos.remove(udtInfo);
+            if(0 == udtInfos.size())
+            {
+               _udtInfosBySimpleName.remove(ciSimpleName);
+               _udtNames.remove(ciSimpleName);
             }
 
          }
@@ -635,6 +679,12 @@ public class SchemaInfoCache implements Serializable
    {
       return _iProcedureInfos;
    }
+
+   public Map<IUDTInfo, IUDTInfo> getIUDTInfosForReadOnly()
+   {
+      return _iUdtInfos;
+   }
+
 
    /**
     * When SchemaInfoCache has been deserialized the the constants in DatabaseObjectType

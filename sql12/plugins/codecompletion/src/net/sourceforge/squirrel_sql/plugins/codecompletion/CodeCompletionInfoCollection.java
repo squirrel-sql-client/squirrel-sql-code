@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateLi
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
@@ -135,6 +136,20 @@ public class CodeCompletionInfoCollection
                   _prefs);
             completionInfos.add(buf);
          }
+
+         IUDTInfo[] udtInfos = _session.getSchemaInfo().getUDTInfos(catalog, schema);
+         for (int i = 0; i < udtInfos.length; i++)
+         {
+            CodeCompletionUDTInfo buf =
+                  new CodeCompletionUDTInfo(udtInfos[i].getSimpleName(),
+                        udtInfos[i].getDataType(),
+                        catalog,
+                        schema
+                  );
+            completionInfos.add(buf);
+         }
+
+
 
 
          if(null == catalog && null == schema)
