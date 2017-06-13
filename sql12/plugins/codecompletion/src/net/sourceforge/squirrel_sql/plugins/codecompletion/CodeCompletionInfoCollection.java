@@ -137,19 +137,20 @@ public class CodeCompletionInfoCollection
             completionInfos.add(buf);
          }
 
-         IUDTInfo[] udtInfos = _session.getSchemaInfo().getUDTInfos(catalog, schema);
-         for (int i = 0; i < udtInfos.length; i++)
+         if (_prefs.isIncludeUDTs())
          {
-            CodeCompletionUDTInfo buf =
-                  new CodeCompletionUDTInfo(udtInfos[i].getSimpleName(),
-                        udtInfos[i].getDataType(),
-                        catalog,
-                        schema
-                  );
-            completionInfos.add(buf);
+            IUDTInfo[] udtInfos = _session.getSchemaInfo().getUDTInfos(catalog, schema);
+            for (int i = 0; i < udtInfos.length; i++)
+            {
+               CodeCompletionUDTInfo buf =
+                     new CodeCompletionUDTInfo(udtInfos[i].getSimpleName(),
+                           udtInfos[i].getDataType(),
+                           catalog,
+                           schema
+                     );
+               completionInfos.add(buf);
+            }
          }
-
-
 
 
          if(null == catalog && null == schema)

@@ -16,6 +16,7 @@ public class CodeCompletionPreferences implements Serializable
    private int maxLastSelectedCompletionNames = 1;
    private boolean _showRemarksInColumnCompletion;
    private boolean _matchCamelCase;
+   private boolean _includeUDTs = true;
 
    public int getGeneralCompletionConfig()
 	{
@@ -65,5 +66,15 @@ public class CodeCompletionPreferences implements Serializable
    public void setMatchCamelCase(boolean matchCamelCase)
    {
       _matchCamelCase = matchCamelCase;
+   }
+
+   public boolean isIncludeUDTs()
+   {
+      return _includeUDTs;
+   }
+
+   public void setIncludeUDTs(boolean includeUDTs)
+   {
+      _includeUDTs = includeUDTs;
    }
 }

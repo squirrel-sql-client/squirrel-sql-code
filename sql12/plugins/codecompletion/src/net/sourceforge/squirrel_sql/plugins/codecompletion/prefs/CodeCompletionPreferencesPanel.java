@@ -26,6 +26,7 @@ public class CodeCompletionPreferencesPanel extends JPanel
    JTextField txtMaxLastSelectedCompletionNames;
    JCheckBox chkShowRemarksInColumnCompletion;
    JCheckBox chkMatchCamelCase;
+   JCheckBox chkIncludeUDTs;
 
 
    public CodeCompletionPreferencesPanel()
@@ -96,6 +97,9 @@ public class CodeCompletionPreferencesPanel extends JPanel
       chkMatchCamelCase = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.matchCamelCase"));
       add(chkMatchCamelCase,gbc);
 
+      gbc = new GridBagConstraints(0,12,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
+      chkIncludeUDTs = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.includeUDTs"));
+      add(chkIncludeUDTs, gbc);
    }
 
 

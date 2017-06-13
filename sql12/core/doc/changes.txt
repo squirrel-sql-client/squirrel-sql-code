@@ -8,6 +8,8 @@ Enhancements:
 
 #555 New features for code completion needed --> Completion for UDTs
   UDT names are now available in code completion and can be configured in the Alias Properties dialog.
+  Note: If you find UDTs are not of use in code completion you can switch it off.
+        See menu File --> New Session Properties --> Tab 'Code completion' --> Checkbox at bottom.
 
 
 The new paste history can be called using ctrl+shift+V oder ctrl+shift+insert. It offers to paste
