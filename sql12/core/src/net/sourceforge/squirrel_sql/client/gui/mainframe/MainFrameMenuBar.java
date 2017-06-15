@@ -341,6 +341,8 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, PasteFromHistoryAction.class, menu);
 		addToMenu(rsrc, PasteFromHistoryAltAcceleratorAction.class, menu);
 		menu.addSeparator();
+		addToMenu(rsrc, ToggleMinimizeResultsAction.class, menu);
+		menu.addSeparator();
 
 		menu.setEnabled(false);
 		return menu;

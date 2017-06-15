@@ -172,10 +172,10 @@ public class SQLPanel extends JPanel
    private ArrayList<SqlPanelListener> _sqlPanelListeners = new ArrayList<SqlPanelListener>();
    private IUndoHandler _undoHandler;
    private ResultLimitAndReadOnPanelSmallPanel _resultLimitAndReadOnPanelSmallPanel = new ResultLimitAndReadOnPanelSmallPanel();
+	private ToggleResultMinimizeHandler _toggleResultMinimizeHandler;
 
 
-
-   /**
+	/**
 	 * Ctor.
 	 *
 	 * @param	session	 Current session.
@@ -194,6 +194,8 @@ public class SQLPanel extends JPanel
 		addExecutor(_sqlExecPanel);
 		_panelAPI = new SQLPanelAPI(this);
       _resultLimitAndReadOnPanelSmallPanel.loadData(session.getProperties());
+
+      _toggleResultMinimizeHandler = new ToggleResultMinimizeHandler(_splitPane);
 
 
 		if(isInMainSessionWindow() && Main.getApplication().getSquirrelPreferences().isReloadSqlContents())
@@ -800,6 +802,11 @@ public class SQLPanel extends JPanel
    {
       return ((SQLHistoryComboBoxModel)_sqlCombo.getModel()).getItems();
    }
+
+	public void toggleMinimizeResults()
+	{
+		_toggleResultMinimizeHandler.toggleMinimizeResults();
+	}
 
 	private class SetAutoCommitTask implements Runnable {
         

@@ -116,6 +116,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction("tabclosecur", ac.get(CloseCurrentSQLResultTabAction.class));
       _toolsPopupController.addAction("tabsticky", ac.get(ToggleCurrentSQLResultTabStickyAction.class));
 
+      _toolsPopupController.addAction("minres", ac.get(ToggleMinimizeResultsAction.class));
+
       _toolsPopupController.addAction("sqlprevious", ac.get(PreviousSqlAction.class));
       _toolsPopupController.addAction("sqlnext", ac.get(NextSqlAction.class));
       _toolsPopupController.addAction("sqlselect", ac.get(SelectSqlAction.class));
@@ -185,6 +187,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
       mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(PasteFromHistoryAltAcceleratorAction.class));
       resources.configureMenuItem(ac.get(PasteFromHistoryAltAcceleratorAction.class), mnu);
+
+      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(ToggleMinimizeResultsAction.class));
+      resources.configureMenuItem(ac.get(ToggleMinimizeResultsAction.class), mnu);
 
    }
 
@@ -790,7 +795,13 @@ public class SQLPanelAPI implements ISQLPanelAPI
       return _panel.getSQLHistoryItems();
    }
 
-   private boolean showConfirmSaveDialog() 
+	@Override
+	public void toggleMinimizeResults()
+	{
+		_panel.toggleMinimizeResults();
+	}
+
+	private boolean showConfirmSaveDialog()
    {
        File file = _fileManager.getFile();
        

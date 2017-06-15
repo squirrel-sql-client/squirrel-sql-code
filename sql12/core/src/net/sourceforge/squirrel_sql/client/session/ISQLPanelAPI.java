@@ -311,5 +311,7 @@ public interface ISQLPanelAPI
 	void addSqlPanelListener(SqlPanelListener sqlPanelListener);
 
 	ArrayList<SQLHistoryItem> getSQLHistoryItems();
+
+	void toggleMinimizeResults();
 }
 

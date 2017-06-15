@@ -450,6 +450,7 @@ public class ActionCollection
 		add(new CloseCurrentSQLResultTabAction(_app));
 		add(new ToggleCurrentSQLResultTabStickyAction(_app));
 		add(new CloseAllSQLResultWindowsAction(_app));
+		add(new ToggleMinimizeResultsAction(_app));
 		add(new ViewObjectAtCursorInObjectTreeAction(_app));
 		add(new CloseSessionAction(_app));
 		add(new CloseSessionWindowAction(_app));

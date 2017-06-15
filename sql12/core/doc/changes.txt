@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+The SQL result panel can now be hidden and restore by the new 'Toggle minimize results' function.
+  Use ctrl shift M, tools popup or right mouse menu of SQL editor.
+
 #555 New features for code completion needed --> Completion for UDTs
   UDT names are now available in code completion and can be configured in the Alias Properties dialog.
   Note: If you find UDTs are not of use in code completion you can switch it off.
