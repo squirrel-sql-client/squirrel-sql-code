@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -91,6 +92,14 @@ public class PasteFromHistoryController
       _dlg.setVisible(true);
 
       GUIUtils.centerWithinParent(_dlg);
+
+      SwingUtilities.invokeLater(new Runnable() {
+         @Override
+         public void run()
+         {
+            _dlg.lstHistoryItems.requestFocus();
+         }
+      });
 
 
 
