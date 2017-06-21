@@ -14,15 +14,25 @@ public class ToggleResultMinimizeHandler
 
    public void toggleMinimizeResults()
    {
-      if(10 > Math.abs(_splitPane.getDividerLocation() + _splitPane.getDividerSize() - _splitPane.getBounds().height))
+      int sizeAccordingToOrientation;
+      if (_splitPane.getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
       {
-         if(_lastDividerLocation < _splitPane.getBounds().height -10 )
+         sizeAccordingToOrientation = _splitPane.getBounds().width;
+      }
+      else
+      {
+         sizeAccordingToOrientation = _splitPane.getBounds().height;
+      }
+
+      if(10 > Math.abs(_splitPane.getDividerLocation() + _splitPane.getDividerSize() - sizeAccordingToOrientation))
+      {
+         if(_lastDividerLocation < sizeAccordingToOrientation -10 )
          {
             doSetDividerLocation(_lastDividerLocation);
          }
          else
          {
-            doSetDividerLocation((int)(_splitPane.getBounds().height * 2 / 3));
+            doSetDividerLocation((int)(sizeAccordingToOrientation * 2 / 3));
          }
 
       }
