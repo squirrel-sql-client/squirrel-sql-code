@@ -20,13 +20,12 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 
 /**
- * This class holds the configuration variables for the CVS importer.
+ * This class holds the configuration variables for the CSV importer.
  * 
  * @author Thorsten Mürell
  */
 public class CSVSettingsBean implements Cloneable, Serializable {
-	private static final long serialVersionUID = 6633824961073722466L;
-	
+
 	private char seperator = ';';
 	
 	private transient Charset importCharset = Charset.defaultCharset();
