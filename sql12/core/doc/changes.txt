@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Updated French translation. Thanks to Erwan Duroselle.
+
 The SQL result panel can now be hidden and restore by the new 'Toggle minimize results' function.
   Use ctrl shift M, tools popup or right mouse menu of SQL editor.
 
