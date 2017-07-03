@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
@@ -9,8 +7,6 @@ import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 public abstract class FloatingPointBase extends BaseDataTypeComponent
 {
 
-
-	public static final String GROUPING_SEPARATOR_NONE = "NONE";
 
 	/**
 	 * Generate a JPanel containing controls that allow the user
@@ -70,25 +66,14 @@ public abstract class FloatingPointBase extends BaseDataTypeComponent
 		}
 		else if (FloatingPointBaseDTProperties.isUseUserDefinedFormat())
 		{
-			DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
-			otherSymbols.setDecimalSeparator(FloatingPointBaseDTProperties.getUserDefinedDecimalSeparator().charAt(0));
-
+			String userDefinedDecimalSeparator = FloatingPointBaseDTProperties.getUserDefinedDecimalSeparator();
 			String groupingSeparator = FloatingPointBaseDTProperties.getUserDefinedGroupingSeparator();
 
-			if (false == GROUPING_SEPARATOR_NONE.equalsIgnoreCase(groupingSeparator))
-			{
-				otherSymbols.setGroupingSeparator(groupingSeparator.charAt(0));
-			}
+			int userDefinedMinimumFractionDigits = FloatingPointBaseDTProperties.getUserDefinedMinimumFractionDigits();
+			int userDefinedMaximumFractionDigits = FloatingPointBaseDTProperties.getUserDefinedMaximumFractionDigits();
 
-			NumberFormat numberFormat = new DecimalFormat(new DecimalFormat().toPattern(), otherSymbols);
 
-			if (GROUPING_SEPARATOR_NONE.equalsIgnoreCase(groupingSeparator))
-			{
-				numberFormat.setGroupingUsed(false);
-			}
-
-			numberFormat.setMinimumFractionDigits(FloatingPointBaseDTProperties.getUserDefinedMinimumFractionDigits());
-			numberFormat.setMaximumFractionDigits(FloatingPointBaseDTProperties.getUserDefinedMaximumFractionDigits());
+			NumberFormat numberFormat = UserDefinedDecimalFormatFactory.createUserDefinedFormat(userDefinedDecimalSeparator, groupingSeparator, userDefinedMinimumFractionDigits, userDefinedMaximumFractionDigits);
 
 			return numberFormat;
 

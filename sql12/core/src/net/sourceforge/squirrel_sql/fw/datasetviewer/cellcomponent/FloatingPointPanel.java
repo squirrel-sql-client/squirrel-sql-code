@@ -9,9 +9,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.text.NumberFormat;
 
 /**
@@ -23,9 +21,9 @@ class FloatingPointPanel extends OkJPanel
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FloatingPointBase.class);
 
-   JRadioButton optUseJavaDefaultFormat = new JRadioButton(s_stringMgr.getString("floatingPointBase.useDefaultFormat", new Double(3.14159).toString()));
    JRadioButton optUseLocaleDependendFormat = new JRadioButton();
-   JRadioButton optUseUserDefinedFormat = new JRadioButton(s_stringMgr.getString("floatingPointBase.optUseUserDefinedFormat"));
+   JRadioButton optUseUserDefinedFormat = new JRadioButton();
+   JRadioButton optUseJavaDefaultFormat = new JRadioButton(s_stringMgr.getString("floatingPointBase.useDefaultFormat", new Double(3.14159).toString()));
 
 
    IntegerField localeDependendMinimumFraction = new IntegerField(2);
@@ -36,7 +34,7 @@ class FloatingPointPanel extends OkJPanel
    IntegerField userDefinedMaximumFraction = new IntegerField(2);
 
 
-   JComboBox cboGroupingSeparator = new JComboBox(new String[]{".", ",", FloatingPointBase.GROUPING_SEPARATOR_NONE});
+   JComboBox cboGroupingSeparator = new JComboBox(new String[]{".", ",", UserDefinedDecimalFormatFactory.GROUPING_SEPARATOR_NONE});
    JComboBox cboDecimalSeparator = new JComboBox(new String[]{",", "."});
 
 
@@ -84,51 +82,66 @@ class FloatingPointPanel extends OkJPanel
       optUseLocaleDependendFormat.addChangeListener(radioButtonListener);
       optUseUserDefinedFormat.addChangeListener(radioButtonListener);
 
-      FocusListener localeDependentConfigListener = new FocusAdapter()
-      {
-         @Override
-         public void focusLost(FocusEvent e)
-         {
-            onLocaleDependentConfigChanged();
-         }
-      };
 
       optUseLocaleDependendFormat.setSelected(FloatingPointBaseDTProperties.isUseLocaleFormat());
       optUseJavaDefaultFormat.setSelected(FloatingPointBaseDTProperties.isUseJavaDefaultFormat());
       optUseUserDefinedFormat.setSelected(FloatingPointBaseDTProperties.isUseUserDefinedFormat());
 
 
+      FocusListener localeDependentConfigListener = new FocusAdapter()
+      {
+         @Override
+         public void focusLost(FocusEvent e)
+         {
+            optUseLocaleDependendFormat.setText(createTextForOptUseLocaleDependendFormat());
+         }
+      };
+
       localeDependendMinimumFraction.addFocusListener(localeDependentConfigListener);
       localeDependendMaximumFraction.addFocusListener(localeDependentConfigListener);
-
 
       localeDependendMinimumFraction.setInt(FloatingPointBaseDTProperties.getMinimumFractionDigits());
       localeDependendMaximumFraction.setInt(FloatingPointBaseDTProperties.getMaximumFractionDigits());
 
+
+
+
+
+      FocusListener userDefinedFocusListener = new FocusAdapter()
+      {
+         @Override
+         public void focusLost(FocusEvent e)
+         {
+            optUseUserDefinedFormat.setText(createTextForOptUseUserDefinedFormat());
+         }
+      };
+
+      optUseLocaleDependendFormat.setText(createTextForOptUseLocaleDependendFormat());
+
+
+      userDefinedMaximumFraction.addFocusListener(userDefinedFocusListener);
+      userDefinedMinimumFraction.addFocusListener(userDefinedFocusListener);
+
       userDefinedMinimumFraction.setInt(FloatingPointBaseDTProperties.getUserDefinedMinimumFractionDigits());
       userDefinedMaximumFraction.setInt(FloatingPointBaseDTProperties.getUserDefinedMaximumFractionDigits());
 
-      cboGroupingSeparator.setSelectedItem(FloatingPointBaseDTProperties.getUserDefinedGroupingSeparator());
+
+      ActionListener userDefinedActionListener = new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            optUseUserDefinedFormat.setText(createTextForOptUseUserDefinedFormat());
+         }
+      };
+
+      cboDecimalSeparator.addActionListener(userDefinedActionListener);
+      cboGroupingSeparator.addActionListener(userDefinedActionListener);
+
       cboDecimalSeparator.setSelectedItem(FloatingPointBaseDTProperties.getUserDefinedDecimalSeparator());
+      cboGroupingSeparator.setSelectedItem(FloatingPointBaseDTProperties.getUserDefinedGroupingSeparator());
 
-
-      onLocaleDependentConfigChanged();
-
-   }
-
-   private void onLocaleDependentConfigChanged()
-   {
-      try
-      {
-         int minimumFractionAsInt = localeDependendMinimumFraction.getInt();
-         int maximumFractionAsInt = localeDependendMaximumFraction.getInt();
-         optUseLocaleDependendFormat.setText(createTextForOptUseLocaleDependendFormat(minimumFractionAsInt, maximumFractionAsInt));
-         localeDependendMinimumFraction.repaint();
-         localeDependendMaximumFraction.repaint();
-      }
-      catch (NumberFormatException nfe)
-      {
-      }
+      optUseUserDefinedFormat.setText(createTextForOptUseUserDefinedFormat());
    }
 
    private void onRadioButtonsChanged()
@@ -215,13 +228,34 @@ class FloatingPointPanel extends OkJPanel
     *
     * @param maxFractionDigits Number of digits after the comma to use in the example.
     */
-   private String createTextForOptUseLocaleDependendFormat(int minFractionDigits, int maxFractionDigits)
+   private String createTextForOptUseLocaleDependendFormat()
    {
+      int minFractionDigits = localeDependendMinimumFraction.getInt();
+      int maxFractionDigits = localeDependendMaximumFraction.getInt();
+
       NumberFormat numberFormat = NumberFormat.getInstance();
       numberFormat.setMinimumFractionDigits(minFractionDigits);
       numberFormat.setMaximumFractionDigits(maxFractionDigits);
+
       return s_stringMgr.getString("floatingPointBase.uselocaleDependendFormat",
-            numberFormat.format(new Double(1.00000)), numberFormat.format(new Double(3.14159)));
+            numberFormat.format(new Double(1000000)), numberFormat.format(new Double(Math.PI)));
+   }
+
+   private String createTextForOptUseUserDefinedFormat()
+   {
+      int userDefinedMinimumFractionDigits = userDefinedMinimumFraction.getInt();
+      int userDefinedMaximumFractionDigits = userDefinedMaximumFraction.getInt();
+      String userDefinedDecimalSeparator = (String) cboDecimalSeparator.getSelectedItem();
+      String userDefinedGroupingSeparator = (String) cboGroupingSeparator.getSelectedItem();
+
+      NumberFormat numberFormat =
+            UserDefinedDecimalFormatFactory.createUserDefinedFormat(userDefinedDecimalSeparator,
+                                                                    userDefinedGroupingSeparator,
+                                                                    userDefinedMinimumFractionDigits,
+                                                                    userDefinedMaximumFractionDigits);
+
+      return s_stringMgr.getString("floatingPointBase.optUseUserDefinedFormat",
+            numberFormat.format(new Double(1000000)), numberFormat.format(new Double(Math.PI)));
    }
 
    /**

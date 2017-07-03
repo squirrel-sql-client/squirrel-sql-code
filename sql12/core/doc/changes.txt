@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+The format floating point numbers can now be user defined.
+  See menu File --> Global Preferences --> Tab 'Data Type Controls --> section 'FLOAT, REAL, ...'
+
 Updated French translation. Thanks to Erwan Duroselle.
 
 The SQL result panel can now be hidden and restore by the new 'Toggle minimize results' function.
