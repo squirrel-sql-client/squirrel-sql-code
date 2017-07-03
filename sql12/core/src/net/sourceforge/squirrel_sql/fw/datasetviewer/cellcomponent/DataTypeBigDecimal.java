@@ -123,12 +123,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
       _precision = colDef.getPrecision();
       _scale = colDef.getScale();
 
-      _numberFormat = NumberFormat.getInstance();
-
-      // If we use _scale here some number displays go crazy.
-      //_numberFormat.setMaximumFractionDigits(_scale);
-      _numberFormat.setMinimumFractionDigits(minimumFractionDigits);
-      _numberFormat.setMaximumFractionDigits(maximumFractionDigits);
+      _numberFormat = createNumberFormat();
    }
 
 	/**
@@ -152,7 +147,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 
 		//return (String)_renderer.renderObject(value);
 
-		if (value == null || useJavaDefaultFormat)
+		if (value == null || FloatingPointBaseDTProperties.isUseJavaDefaultFormat())
 		{
 			return (String)_renderer.renderObject(value);
 		}
@@ -252,7 +247,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 		{
 			BigDecimal obj;
 
-			if(useJavaDefaultFormat)
+			if(FloatingPointBaseDTProperties.isUseJavaDefaultFormat())
 			{
 				obj = new BigDecimal(value);
 			}

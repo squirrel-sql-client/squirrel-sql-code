@@ -103,11 +103,8 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 		_table = table;
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
-		_numberFormat = NumberFormat.getInstance();
-	
-		// If we use _scale here some number displays go crazy.
-	    _numberFormat.setMinimumFractionDigits(minimumFractionDigits);
-		_numberFormat.setMaximumFractionDigits(maximumFractionDigits);
+
+		_numberFormat = createNumberFormat();
 	}
 
 	/**
@@ -132,7 +129,7 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 
 		// return (String)_renderer.renderObject(value);
 
-		if (value == null || useJavaDefaultFormat)
+		if (value == null || FloatingPointBaseDTProperties.isUseJavaDefaultFormat())
 		{
 			return (String) _renderer.renderObject(value);
 		}
@@ -230,7 +227,7 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 		{
 			Double obj;
 
-			if (useJavaDefaultFormat)
+			if (FloatingPointBaseDTProperties.isUseJavaDefaultFormat())
 			{
 				obj = new Double(value);
 			}

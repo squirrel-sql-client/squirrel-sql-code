@@ -108,12 +108,9 @@ public class DataTypeFloat extends FloatingPointBase
       _table = table;
       _colDef = colDef;
       _isNullable = colDef.isNullable();
-      _numberFormat = NumberFormat.getInstance();
+      //_numberFormat = NumberFormat.getInstance();
 
-
-      // If we use _scale here some number displays go crazy.
-      _numberFormat.setMinimumFractionDigits(minimumFractionDigits);
-      _numberFormat.setMaximumFractionDigits(maximumFractionDigits);
+      _numberFormat = createNumberFormat();
    }
 
    /**
@@ -134,7 +131,7 @@ public class DataTypeFloat extends FloatingPointBase
    @Override
    public String renderObject(Object value) {
 
-      if (value == null || useJavaDefaultFormat)
+      if (value == null || FloatingPointBaseDTProperties.isUseJavaDefaultFormat())
       {
          return (String)_renderer.renderObject(value);
       }
@@ -233,7 +230,7 @@ public class DataTypeFloat extends FloatingPointBase
       {
          Float obj;
 
-         if(useJavaDefaultFormat)
+         if(FloatingPointBaseDTProperties.isUseJavaDefaultFormat())
          {
             obj = new Float(value);
          }
