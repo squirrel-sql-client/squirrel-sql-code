@@ -197,7 +197,13 @@ class Application implements IApplication
 		_resources = new SquirrelResources(SquirrelResources.BUNDLE_BASE_NAME);
 		_prefs = SquirrelPreferences.load();
       _desktopStyle = new DesktopStyle(_prefs);
-		Locale.setDefault(constructPreferredLocale(_prefs));
+
+		Locale locale = constructPreferredLocale(_prefs);
+		if (null != locale)
+		{
+			Locale.setDefault(locale);
+		}
+
 		preferencesHaveChanged(null);
 		_prefs.addPropertyChangeListener(new PropertyChangeListener()
 		{
@@ -325,13 +331,22 @@ class Application implements IApplication
 	private Locale constructPreferredLocale(SquirrelPreferences prefs)
 	{
 		String langCountryPair = prefs.getPreferredLocale();
-		if (StringUtils.isEmpty(langCountryPair))
+
+		if (SquirrelPreferences.getDontChangeLocaleConstant().equals(langCountryPair))
 		{
-			langCountryPair = "en_US";
+			return null;
 		}
-		String[] parts = langCountryPair.split("_");
-		if (parts.length == 2) { return new Locale(parts[0], parts[1]); }
-		return new Locale(parts[0]);
+		else
+		{
+			if (StringUtils.isEmpty(langCountryPair))
+         {
+            langCountryPair = "en_US";
+         }
+			String[] parts = langCountryPair.split("_");
+			if (parts.length == 2) { return new Locale(parts[0], parts[1]); }
+			return new Locale(parts[0]);
+		}
+
 	}
 
 	/**

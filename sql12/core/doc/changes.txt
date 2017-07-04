@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+The 'Locale' combo box at menu File --> Global Preferences --> Tab General
+  now has an entry 'Don't change'. This entry may prevent translation problems
+  and will be the default entry for new installations.
+
 The format floating point numbers can now be user defined.
   See menu File --> Global Preferences --> Tab 'Data Type Controls --> section 'FLOAT, REAL, ...'
 

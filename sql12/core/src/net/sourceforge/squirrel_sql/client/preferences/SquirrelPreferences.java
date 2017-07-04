@@ -272,6 +272,13 @@ public class SquirrelPreferences implements Serializable
 		loadDefaults();
 	}
 
+	public static String getDontChangeLocaleConstant()
+	{
+		return s_stringMgr.getString("preferences.dont.change.locale");
+	}
+
+
+
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
 		getPropertyChangeReporter().addPropertyChangeListener(listener);
