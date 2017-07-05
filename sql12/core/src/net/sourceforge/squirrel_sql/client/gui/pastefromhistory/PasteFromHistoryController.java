@@ -28,9 +28,9 @@ public class PasteFromHistoryController
       _dlg.txtHistoryDetail.setEditable(false);
 
 
-      PasteHistory pasteHistroy = Main.getApplication().getPasteHistroy();
+      PasteHistory pasteHistory = Main.getApplication().getPasteHistory();
 
-      String[] histroy = pasteHistroy.getHistroy();
+      String[] histroy = pasteHistory.getHistroy();
 
       _dlg.lstHistoryItems.setListData(histroy);
 
@@ -121,6 +121,12 @@ public class PasteFromHistoryController
       {
          _sqlPanelAPI.getSQLEntryPanel().replaceSelection(selected);
       }
+
+      ///////////////////////////////////////////////////////////////////////
+      // Put the pasted entry on top of the history
+      Main.getApplication().getPasteHistory().addToPasteHistory(selected);
+      //
+      ///////////////////////////////////////////////////////////////////////
 
       close();
    }

@@ -36,7 +36,7 @@ public class PasteFromHistoryAttach
 
    private void onCopyToClipboard(String clipContent)
    {
-      PasteHistory pasteHistory = Main.getApplication().getPasteHistroy();
+      PasteHistory pasteHistory = Main.getApplication().getPasteHistory();
 
       pasteHistory.addToPasteHistory(clipContent);
    }

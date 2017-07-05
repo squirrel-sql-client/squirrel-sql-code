@@ -1365,7 +1365,7 @@ class Application implements IApplication
    }
 
 	@Override
-	public PasteHistory getPasteHistroy()
+	public PasteHistory getPasteHistory()
 	{
 		return _pasteHistory;
 	}

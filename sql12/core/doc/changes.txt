@@ -99,6 +99,8 @@ Graph plugin: Added a 'NOT LIKE' operator to Query builder filter.
 
 Bug fixes:
 
+Paste history (ctrl +shift + v or insert): The pasted content didn't move to the top of the history list.
+
 'Toggle minimize results' didn't work for horizontal SQL panel layout. (See menu File --> New Session Properties --> Tab General)
 
 MS Windows: List in 'Paste from History' dialog didn't get focused when opened.

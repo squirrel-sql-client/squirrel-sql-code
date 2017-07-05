@@ -252,5 +252,5 @@ public interface IApplication
 
    RecentFilesManager getRecentFilesManager();
 
-	PasteHistory getPasteHistroy();
+	PasteHistory getPasteHistory();
 }

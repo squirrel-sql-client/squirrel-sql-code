@@ -4,7 +4,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 
 import java.awt.event.ActionEvent;
 import java.awt.*;
@@ -34,7 +33,7 @@ public class CutSqlAction extends SquirrelAction implements ISQLPanelAction
 		StringSelection contents = new StringSelection(sqlToBeExecuted);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, contents);
 
-		Main.getApplication().getPasteHistroy().addToPasteHistory(sqlToBeExecuted);
+		Main.getApplication().getPasteHistory().addToPasteHistory(sqlToBeExecuted);
 
 
 		_panel.getSQLEntryPanel().setSelectionStart(bounds[0]);

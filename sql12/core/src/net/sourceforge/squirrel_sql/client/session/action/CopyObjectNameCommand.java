@@ -99,7 +99,7 @@ public class CopyObjectNameCommand implements ICommand
 			StringSelection data = new StringSelection(buf.toString());
 			clip.setContents(data, data);
 
-			Main.getApplication().getPasteHistroy().addToPasteHistory(buf.toString());
+			Main.getApplication().getPasteHistory().addToPasteHistory(buf.toString());
 		}
 	}
 }
