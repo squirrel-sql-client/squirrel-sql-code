@@ -46,7 +46,7 @@ public class VerticalToggleButton extends ToggleButton
 
       g.rotate(-Math.PI / 2);
       g.translate(-bi.getHeight(), bi.getWidth());
-      g.drawString(caption, WIDHT_MARGIN , -HEIGHT_MARGIN - fm.getDescent());
+      g.drawString(caption, WIDHT_MARGIN, - fm.getDescent());
 
       WritableImage writableImage = SwingFXUtils.toFXImage(bi, new WritableImage(captionWidth, captionHeight));
 

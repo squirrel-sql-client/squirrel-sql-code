@@ -1,10 +1,8 @@
 package org.squirrelsql.session.graph;
 
 import javafx.stage.Stage;
-import org.squirrelsql.services.FxmlHelper;
-import org.squirrelsql.services.GuiUtils;
-import org.squirrelsql.services.Pref;
-import org.squirrelsql.services.Utils;
+import org.squirrelsql.services.*;
+import org.squirrelsql.session.ColumnInfo;
 
 public class FilterCtrl
 {
@@ -12,10 +10,12 @@ public class FilterCtrl
    private final Stage _dlg;
    private final FilterView _view;
    private FilterPersistence _filterPersistence;
+   private QueryChannel _queryChannel;
 
-   public FilterCtrl(FilterPersistence filterPersistence)
+   public FilterCtrl(FilterPersistence filterPersistence, ColumnInfo columnInfo, QueryChannel queryChannel)
    {
       _filterPersistence = filterPersistence;
+      _queryChannel = queryChannel;
 
       FxmlHelper<FilterView> fxmlHelper = new FxmlHelper(FilterView.class);
 
@@ -35,7 +35,10 @@ public class FilterCtrl
       _view.btnCancel.setOnAction(e -> onCancel());
       _view.btnOk.setOnAction(e -> onOk());
 
+
       _dlg = GuiUtils.createModalDialog(fxmlHelper.getRegion(), new Pref(getClass()), 470, 170, "FilterCtrl");
+
+      _dlg.setTitle(columnInfo.getQualifiedTableColumnName());
 
       _dlg.showAndWait();
    }
@@ -62,6 +65,8 @@ public class FilterCtrl
       Operator selectedItem = (Operator)_view.cboOperator.getSelectionModel().getSelectedItem();
       _filterPersistence.setOperatorAsString( selectedItem.name());
       _dlg.close();
+
+      _queryChannel.fireChanged();
    }
 
    private void onCancel()

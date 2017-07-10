@@ -5,23 +5,26 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.session.ColumnInfo;
 
 public class FilterPane extends BorderPane
 {
    private FilterPersistence _filterPersistence;
+   private ColumnInfo _columnInfo;
 
-   public FilterPane(FilterPersistence filterPersistence)
+   public FilterPane(FilterPersistence filterPersistence, ColumnInfo columnInfo, QueryChannel queryChannel)
    {
       _filterPersistence = filterPersistence;
+      _columnInfo = columnInfo;
 
       updateIcon();
 
-      addEventHandler(MouseEvent.MOUSE_PRESSED, e -> onFilterCtrl());
+      addEventHandler(MouseEvent.MOUSE_PRESSED, e -> onFilterCtrl(queryChannel));
    }
 
-   private void onFilterCtrl()
+   private void onFilterCtrl(QueryChannel queryChannel)
    {
-      new FilterCtrl(_filterPersistence);
+      new FilterCtrl(_filterPersistence, _columnInfo, queryChannel);
       updateIcon();
    }
 
