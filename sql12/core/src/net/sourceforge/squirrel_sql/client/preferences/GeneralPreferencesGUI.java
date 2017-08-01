@@ -113,11 +113,8 @@ final class GeneralPreferencesGUI extends JPanel
       _selectOnRightMouseClick.setSelected(prefs.getSelectOnRightMouseClick());
       _showPleaseWaitDialog.setSelected(prefs.getShowPleaseWaitDialog());
       _maxColumnAdjustLengthCtrl.init(prefs.getMaxColumnAdjustLengthDefined(), prefs.getMaxColumnAdjustLength());
+
       String preferredLocalString = prefs.getPreferredLocale();
-      if (StringUtils.isEmpty(preferredLocalString))
-      {
-         preferredLocalString = "en_US";
-      }
       _localeChooser.setSelectedItem(preferredLocalString);
 
       _tabbedStyle.addActionListener(new ActionListener()

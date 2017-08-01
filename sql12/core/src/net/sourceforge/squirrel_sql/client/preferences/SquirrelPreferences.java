@@ -24,10 +24,7 @@ import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
-import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -247,7 +244,7 @@ public class SquirrelPreferences implements Serializable
 
 	private boolean _showPleaseWaitDialog;
 
-	private String _preferredLocale;
+	private String _preferredLocale = getDontChangeLocaleConstant();
 
    private boolean _maxColumnAdjustLengthDefined = false;
 
@@ -1171,6 +1168,11 @@ public class SquirrelPreferences implements Serializable
 	 */
 	public String getPreferredLocale()
 	{
+		if(StringUtilities.isEmpty(_preferredLocale, true))
+		{
+			return getDontChangeLocaleConstant();
+		}
+
 		return _preferredLocale;
 	}
 
