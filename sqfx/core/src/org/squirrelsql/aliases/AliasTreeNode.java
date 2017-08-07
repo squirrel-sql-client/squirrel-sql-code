@@ -1,7 +1,15 @@
 package org.squirrelsql.aliases;
 
-public interface AliasTreeNode
+import org.squirrelsql.services.dndpositionmarker.DropIntoInfo;
+
+public interface AliasTreeNode extends DropIntoInfo
 {
-   public String getId();
-   public String getName();
+   String getId();
+   String getName();
+
+   @Override
+   default boolean allowsDropInto()
+   {
+      return this instanceof AliasFolder;
+   }
 }

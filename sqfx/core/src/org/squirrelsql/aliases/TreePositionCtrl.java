@@ -1,15 +1,8 @@
 package org.squirrelsql.aliases;
 
-import com.google.common.base.Strings;
-import javafx.scene.Scene;
 import javafx.scene.control.ToggleGroup;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import org.squirrelsql.AppState;
-import org.squirrelsql.services.FXMessageBox;
-import org.squirrelsql.services.FxmlHelper;
-import org.squirrelsql.services.GuiUtils;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.dndpositionmarker.RelativeNodePosition;
 
 public class TreePositionCtrl
 {

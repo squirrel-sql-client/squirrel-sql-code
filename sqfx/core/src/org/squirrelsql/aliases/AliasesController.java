@@ -20,6 +20,7 @@ import org.squirrelsql.aliases.dbconnector.DBConnector;
 import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.*;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.services.dndpositionmarker.RelativeNodePosition;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 
 import java.util.ArrayList;

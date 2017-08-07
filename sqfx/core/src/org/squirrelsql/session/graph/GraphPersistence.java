@@ -14,6 +14,7 @@ public class GraphPersistence
 
    private ArrayList<GraphTablePersistence> _graphTablePersistences = new ArrayList<>();
    private boolean _hideNoJoins;
+   private WhereConfigColPersistence _whereConfigColPersistence = new WhereConfigColPersistence();
 
    public ArrayList<GraphTablePersistence> getGraphTablePersistences()
    {
@@ -53,5 +54,15 @@ public class GraphPersistence
    public void setHideNoJoins(boolean hideNoJoins)
    {
       _hideNoJoins = hideNoJoins;
+   }
+
+   public WhereConfigColPersistence getWhereConfigColPersistence()
+   {
+      return _whereConfigColPersistence;
+   }
+
+   public void setWhereConfigColPersistence(WhereConfigColPersistence whereConfigColPersistence)
+   {
+      _whereConfigColPersistence = whereConfigColPersistence;
    }
 }

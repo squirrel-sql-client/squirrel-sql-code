@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.dndpositionmarker.RelativeNodePosition;
 
 public class WhereConfigCtrl
 {
@@ -21,16 +22,80 @@ public class WhereConfigCtrl
    public WhereConfigCtrl(GraphPersistenceWrapper graphPersistenceWrapper, QueryChannel queryChannel)
    {
       _graphPersistenceWrapper = graphPersistenceWrapper;
-      //treeView.setCellFactory(cf -> new WhereConfigCell());
+      _treeView.setCellFactory(cf -> new WhereConfigColCell(this::onDropped));
 
       _splitPane = new SplitPane(createLeftPanel(), new TextArea());
-
 
       _btnAddAnd.setOnAction(e -> onAddFolder(WhereConfigColEnum.AND));
       _btnAddOr.setOnAction(e -> onAddFolder(WhereConfigColEnum.OR));
 
       queryChannel.addQueryChannelListener(this::updateWhereConfig);
       updateWhereConfig();
+   }
+
+   private void onDropped(String idToMove, TreeItem<WhereConfigColTreeNode> targetTreeItem, RelativeNodePosition relativeNodePosition)
+   {
+      TreeItem<WhereConfigColTreeNode> draggedTreeItem = findById(_root, idToMove);
+
+      if(null == draggedTreeItem)
+      {
+         return;
+      }
+
+      draggedTreeItem.getParent().getChildren().remove(draggedTreeItem);
+
+
+      if(relativeNodePosition == RelativeNodePosition.ROOT)
+      {
+         _treeView.getRoot().getChildren().add(draggedTreeItem);
+      }
+      else if(relativeNodePosition == RelativeNodePosition.CHILD)
+      {
+         targetTreeItem.getChildren().add(draggedTreeItem);
+         targetTreeItem.setExpanded(true);
+      }
+      else if(relativeNodePosition == RelativeNodePosition.UPPER_SIBLING)
+      {
+         TreeItem<WhereConfigColTreeNode> parent = targetTreeItem.getParent();
+
+         int ixOfSelected = parent.getChildren().indexOf(targetTreeItem);
+         parent.getChildren().add(ixOfSelected, draggedTreeItem);
+
+      }
+      else if(relativeNodePosition == RelativeNodePosition.LOWER_SIBLING)
+      {
+         TreeItem<WhereConfigColTreeNode> parent = targetTreeItem.getParent();
+
+         int ixOfSelected = parent.getChildren().indexOf(targetTreeItem);
+         parent.getChildren().add(ixOfSelected + 1, draggedTreeItem);
+      }
+
+      _treeView.getSelectionModel().select(draggedTreeItem);
+
+      WhereConfigPersister.toPersistence(_root, _graphPersistenceWrapper);
+
+   }
+
+   private TreeItem<WhereConfigColTreeNode> findById(TreeItem<WhereConfigColTreeNode> parent, String idToFind)
+   {
+      for (TreeItem<WhereConfigColTreeNode> whereConfigColTreeNodeTreeItem : parent.getChildren())
+      {
+         if(whereConfigColTreeNodeTreeItem.getValue().getId().equals(idToFind))
+         {
+            return whereConfigColTreeNodeTreeItem;
+         }
+         else
+         {
+            TreeItem<WhereConfigColTreeNode> ret = findById(whereConfigColTreeNodeTreeItem, idToFind);
+
+            if(null != ret)
+            {
+               return ret;
+            }
+         }
+      }
+
+      return null;
    }
 
    private void onAddFolder(WhereConfigColEnum whereConfigColEnum)
@@ -55,10 +120,19 @@ public class WhereConfigCtrl
          else
          {
             TreeItem<WhereConfigColTreeNode> parent = treeItem.getParent();
+
+            if(null == parent)
+            {
+               parent = _treeView.getRoot();
+            }
+
             int index = parent.getChildren().indexOf(treeItem);
             parent.getChildren().add(index + 1, new TreeItem<>(newNode));
          }
       }
+
+      WhereConfigPersister.toPersistence(_root, _graphPersistenceWrapper);
+
    }
 
    private BorderPane createLeftPanel()
@@ -82,25 +156,7 @@ public class WhereConfigCtrl
 
    private void updateWhereConfig()
    {
-      _root.getChildren().clear();
-
-      for (GraphTablePersistence graphTablePersistence : _graphPersistenceWrapper.getDelegate().getGraphTablePersistences())
-      {
-         for (ColumnPersistence columnPersistence : graphTablePersistence.getColumnPersistences())
-         {
-            FilterPersistence filterPersistence = columnPersistence.getColumnConfigurationPersistence().getFilterPersistence();
-
-            if (false == FilterPersistenceUtil.isEmpty(filterPersistence))
-            {
-               TreeItem<WhereConfigColTreeNode> treeItem = new TreeItem<>(new WhereConfigColTreeNode(columnPersistence));
-
-               _root.getChildren().add(treeItem);
-            }
-
-         }
-      }
-
-      _root.setExpanded(true);
+      WhereConfigPersister.toGui(_root, _graphPersistenceWrapper);
    }
 
    public SplitPane getPane()

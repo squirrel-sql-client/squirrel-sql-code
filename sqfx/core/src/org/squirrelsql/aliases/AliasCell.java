@@ -7,7 +7,7 @@ import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
-import org.squirrelsql.aliases.dnd.DndDragPositionMarker;
+import org.squirrelsql.services.dndpositionmarker.DndDragPositionMarker;
 import org.squirrelsql.services.Utils;
 
 public class AliasCell extends TreeCell<AliasTreeNode>

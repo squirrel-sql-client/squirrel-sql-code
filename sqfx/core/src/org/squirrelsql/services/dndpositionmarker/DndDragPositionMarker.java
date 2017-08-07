@@ -1,4 +1,4 @@
-package org.squirrelsql.aliases.dnd;
+package org.squirrelsql.services.dndpositionmarker;
 
 import javafx.scene.Node;
 import javafx.scene.control.TreeCell;
@@ -7,21 +7,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import org.squirrelsql.aliases.AliasFolder;
-import org.squirrelsql.aliases.RelativeNodePosition;
 
-public class DndDragPositionMarker<T>
+public class DndDragPositionMarker<T extends DropIntoInfo>
 {
    public static final Color STROKE_COLOR = Color.BLACK;
    private TreeCell<T> _treeCell;
-   private ModifyableChildrensAccessor _accessor;
+   private ModifiableChildrenAccessor _accessor;
 
    private Path _upperLinePath = new Path();
    private Path _rightLinePath = new Path();
    private Path _lowerLinePath = new Path();
    public static final int STROKE_WIDTH = 3;
 
-   public DndDragPositionMarker(TreeCell<T> treeCell, ModifyableChildrensAccessor accessor)
+   public DndDragPositionMarker(TreeCell<T> treeCell, ModifiableChildrenAccessor accessor)
    {
       _treeCell = treeCell;
       _accessor = accessor;
@@ -83,7 +81,7 @@ public class DndDragPositionMarker<T>
 
    private boolean allowsChildren(T item)
    {
-      return item instanceof AliasFolder;
+      return item.allowsDropInto();
    }
 
    private boolean isOnTheRight(DragEvent dragEvent)

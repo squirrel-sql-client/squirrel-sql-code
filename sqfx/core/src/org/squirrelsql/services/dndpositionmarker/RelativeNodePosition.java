@@ -1,4 +1,4 @@
-package org.squirrelsql.aliases;
+package org.squirrelsql.services.dndpositionmarker;
 
 public enum RelativeNodePosition
 {
