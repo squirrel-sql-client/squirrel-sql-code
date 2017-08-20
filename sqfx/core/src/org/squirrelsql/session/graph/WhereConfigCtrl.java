@@ -7,6 +7,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.dndpositionmarker.RelativeNodePosition;
+import org.squirrelsql.session.Session;
+import org.squirrelsql.session.sql.SQLTextAreaServices;
+import org.squirrelsql.sqlreformat.CodeReformatorFractory;
 
 public class WhereConfigCtrl
 {
@@ -18,13 +21,17 @@ public class WhereConfigCtrl
    private TreeItem<WhereConfigColTreeNode> _root;
    private Button _btnAddAnd = new Button(new I18n(getClass()).t("whereconfig.add.and"));
    private Button _btnAddOr = new Button(new I18n(getClass()).t("whereconfig.add.or"));
+   private final SQLTextAreaServices _txtWhereClause;
 
-   public WhereConfigCtrl(GraphPersistenceWrapper graphPersistenceWrapper, QueryChannel queryChannel)
+   public WhereConfigCtrl(GraphPersistenceWrapper graphPersistenceWrapper, QueryChannel queryChannel, Session session)
    {
       _graphPersistenceWrapper = graphPersistenceWrapper;
       _treeView.setCellFactory(cf -> new WhereConfigColCell(this::onDropped));
 
-      _splitPane = new SplitPane(createLeftPanel(), new TextArea());
+      _txtWhereClause = new SQLTextAreaServices(session, false);
+      _txtWhereClause.setEditable(false);
+
+      _splitPane = new SplitPane(createLeftPanel(), _txtWhereClause.getTextAreaNode());
 
       _btnAddAnd.setOnAction(e -> onAddFolder(WhereConfigColEnum.AND));
       _btnAddOr.setOnAction(e -> onAddFolder(WhereConfigColEnum.OR));
@@ -72,7 +79,7 @@ public class WhereConfigCtrl
 
       _treeView.getSelectionModel().select(draggedTreeItem);
 
-      WhereConfigPersister.toPersistence(_root, _graphPersistenceWrapper);
+      toPersistence();
 
    }
 
@@ -131,8 +138,22 @@ public class WhereConfigCtrl
          }
       }
 
+      toPersistence();
+
+   }
+
+   private void toPersistence()
+   {
       WhereConfigPersister.toPersistence(_root, _graphPersistenceWrapper);
 
+      updateSqlTextField();
+   }
+
+   private void updateSqlTextField()
+   {
+      String sqlWhereClause = WhereClauseCreator.generateWhereClause(_root);
+      sqlWhereClause = CodeReformatorFractory.createCodeReformator().reformat(sqlWhereClause);
+      _txtWhereClause.setText(sqlWhereClause);
    }
 
    private BorderPane createLeftPanel()
@@ -157,6 +178,7 @@ public class WhereConfigCtrl
    private void updateWhereConfig()
    {
       WhereConfigPersister.toGui(_root, _graphPersistenceWrapper);
+      updateSqlTextField();
    }
 
    public SplitPane getPane()

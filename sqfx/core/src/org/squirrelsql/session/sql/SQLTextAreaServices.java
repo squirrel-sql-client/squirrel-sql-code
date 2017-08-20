@@ -11,7 +11,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.CaretVicinityInfo;
-import org.squirrelsql.session.SessionTabContext;
+import org.squirrelsql.session.Session;
 import org.squirrelsql.session.completion.joingenerator.JoinGeneratorProvider;
 import org.squirrelsql.session.parser.ParserEventsListener;
 import org.squirrelsql.session.parser.ParserEventsProcessor;
@@ -35,13 +35,18 @@ public class SQLTextAreaServices
    private CaretPopup _caretPopup;
 
 
-   public SQLTextAreaServices(SessionTabContext sessionTabContext)
+   public SQLTextAreaServices(Session session)
+   {
+      this(session, true);
+   }
+
+   public SQLTextAreaServices(Session session, boolean highlightErrors)
    {
       _sqlTextAreaVirtualScroll = new VirtualizedScrollPane<>(new CodeArea());
 
-      SchemaCacheProperty schemaCacheValue = sessionTabContext.getSession().getSchemaCacheValue();
+      SchemaCacheProperty schemaCacheValue = session.getSchemaCacheValue();
 
-      _parserEventsProcessor = new ParserEventsProcessor(this, sessionTabContext.getSession());
+      _parserEventsProcessor = new ParserEventsProcessor(this, session);
 
       _parserEventsProcessor.addParserEventsListener(new ParserEventsListener()
       {
@@ -54,7 +59,10 @@ public class SQLTextAreaServices
          @Override
          public void errorsFound(ErrorInfo[] errorInfos)
          {
-            _sqlSyntaxHighlighting.setErrorInfos(errorInfos);
+            if (highlightErrors)
+            {
+               _sqlSyntaxHighlighting.setErrorInfos(errorInfos);
+            }
          }
       });
 
@@ -454,5 +462,10 @@ public class SQLTextAreaServices
       {
          return _sqlTextAreaVirtualScroll;
       }
+   }
+
+   public void setEditable(boolean b)
+   {
+      _sqlTextAreaVirtualScroll.getContent().setEditable(b);
    }
 }

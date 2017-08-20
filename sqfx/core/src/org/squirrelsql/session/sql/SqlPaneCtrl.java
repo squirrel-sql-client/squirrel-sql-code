@@ -56,7 +56,7 @@ public class SqlPaneCtrl
    public SqlPaneCtrl(SessionTabContext sessionTabContext)
    {
       _sessionTabContext = sessionTabContext;
-      _sqlTextAreaServices = new SQLTextAreaServices(_sessionTabContext);
+      _sqlTextAreaServices = new SQLTextAreaServices(_sessionTabContext.getSession());
 
       _bookmarkManager = new BookmarkManager(_sqlTextAreaServices, _sessionTabContext);
       _toolsPopupManager = new ToolsPopupManager(_sqlTextAreaServices, _sessionTabContext);

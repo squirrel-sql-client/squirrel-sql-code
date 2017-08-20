@@ -210,7 +210,7 @@ public class GraphPaneCtrl
             _splitPane.getItems().add(selectConfigCtrl.getPane());
             break;
          case WHERE:
-            WhereConfigCtrl whereConfigCtrl = new WhereConfigCtrl(_graphPersistenceWrapper, _graphChannel.getQueryChannel());
+            WhereConfigCtrl whereConfigCtrl = new WhereConfigCtrl(_graphPersistenceWrapper, _graphChannel.getQueryChannel(), _session);
             _splitPane.getItems().add(whereConfigCtrl.getPane());
             break;
          case ORDER_BY:
