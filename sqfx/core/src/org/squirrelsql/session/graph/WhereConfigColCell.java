@@ -49,7 +49,7 @@ public class WhereConfigColCell extends javafx.scene.control.TreeCell<WhereConfi
       if (dragEvent.getDragboard().hasString())
       {
          String id = dragEvent.getDragboard().getString();
-         if (false == isEmpty() && false == getItem().getId().equals(id) && false == getItem().isRoot())
+         if (false == isEmpty() && false == getItem().getId().equals(id))
          {
             dragEvent.acceptTransferModes(TransferMode.MOVE);
          }

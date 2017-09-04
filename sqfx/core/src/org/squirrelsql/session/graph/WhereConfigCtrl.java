@@ -58,7 +58,7 @@ public class WhereConfigCtrl
       }
       else if(relativeNodePosition == RelativeNodePosition.CHILD)
       {
-         targetTreeItem.getChildren().add(draggedTreeItem);
+         targetTreeItem.getChildren().add(0, draggedTreeItem);
          targetTreeItem.setExpanded(true);
       }
       else if(relativeNodePosition == RelativeNodePosition.UPPER_SIBLING)
