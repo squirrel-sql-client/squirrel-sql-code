@@ -74,7 +74,8 @@ public class RightMouseMenuHandler
       return menuItem;
    }
    
-   public void addSeparator(){
+   public void addSeparator()
+   {
 	   _contextMenu.getItems().add(new SeparatorMenuItem());
    }
 
