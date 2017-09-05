@@ -6,7 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.RightMouseMenuHandler;
+import org.squirrelsql.services.rightmousemenuhandler.RightMouseMenuHandler;
 import org.squirrelsql.services.dndpositionmarker.RelativeNodePosition;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.graph.GraphPersistenceWrapper;
@@ -44,7 +44,13 @@ public class WhereConfigCtrl
 
 
       RightMouseMenuHandler rightMouseMenuHandler = new RightMouseMenuHandler(_treeView);
+      rightMouseMenuHandler.setRightMousePopupAllowedCallback(this::isShowPopupAllowed);
       rightMouseMenuHandler.addMenu(new I18n(getClass()).t("whereconfig.folder.remove"), this::onRemoveSelectedFolder);
+   }
+
+   private boolean isShowPopupAllowed()
+   {
+      return false;
    }
 
    private void onRemoveSelectedFolder()

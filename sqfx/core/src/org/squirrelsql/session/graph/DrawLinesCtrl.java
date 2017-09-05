@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Polygon;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.RightMouseMenuHandler;
+import org.squirrelsql.services.rightmousemenuhandler.RightMouseMenuHandler;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 
 import java.util.ArrayList;
