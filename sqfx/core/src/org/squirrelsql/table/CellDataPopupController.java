@@ -88,9 +88,6 @@ public class CellDataPopupController
 
    private void appendEntriesToStandardTextAreaContextMenu(TextArea textArea)
    {
-      ContextMenu contextMenu = new ContextMenu();
-      contextMenu.getItems().add(new MenuItem("Bllllla"));
-
       MenuItem menuItem = new MenuItem(_i18n.t("cellPopupController.reformat.xml.json"));
       menuItem.setOnAction( e -> reformatXmlJson());
 
