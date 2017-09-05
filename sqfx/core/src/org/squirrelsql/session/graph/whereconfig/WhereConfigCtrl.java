@@ -1,4 +1,4 @@
-package org.squirrelsql.session.graph;
+package org.squirrelsql.session.graph.whereconfig;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -6,8 +6,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.RightMouseMenuHandler;
 import org.squirrelsql.services.dndpositionmarker.RelativeNodePosition;
 import org.squirrelsql.session.Session;
+import org.squirrelsql.session.graph.GraphPersistenceWrapper;
+import org.squirrelsql.session.graph.QueryChannel;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 import org.squirrelsql.sqlreformat.CodeReformatorFractory;
 
@@ -38,6 +41,15 @@ public class WhereConfigCtrl
 
       queryChannel.addQueryChannelListener(this::updateWhereConfig);
       updateWhereConfig();
+
+
+      RightMouseMenuHandler rightMouseMenuHandler = new RightMouseMenuHandler(_treeView);
+      rightMouseMenuHandler.addMenu(new I18n(getClass()).t("whereconfig.folder.remove"), this::onRemoveSelectedFolder);
+   }
+
+   private void onRemoveSelectedFolder()
+   {
+      System.out.println("WhereConfigCtrl.onRemoveSelectedFolder");
    }
 
    private void onDropped(String idToMove, TreeItem<WhereConfigColTreeNode> targetTreeItem, RelativeNodePosition relativeNodePosition)

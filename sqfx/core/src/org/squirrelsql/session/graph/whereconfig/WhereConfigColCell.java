@@ -1,4 +1,4 @@
-package org.squirrelsql.session.graph;
+package org.squirrelsql.session.graph.whereconfig;
 
 import javafx.scene.input.*;
 import org.squirrelsql.services.dndpositionmarker.DndDragPositionMarker;

@@ -1,6 +1,7 @@
 package org.squirrelsql.session.graph;
 
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.session.graph.whereconfig.WhereConfigColPersistence;
 
 import java.util.ArrayList;
 import java.util.UUID;
