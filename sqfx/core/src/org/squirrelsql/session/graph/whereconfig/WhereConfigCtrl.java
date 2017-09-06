@@ -2,17 +2,22 @@ package org.squirrelsql.session.graph.whereconfig;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.rightmousemenuhandler.RightMouseMenuHandler;
 import org.squirrelsql.services.dndpositionmarker.RelativeNodePosition;
+import org.squirrelsql.services.rightmousemenuhandler.RightMouseMenuHandler;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.graph.GraphPersistenceWrapper;
 import org.squirrelsql.session.graph.QueryChannel;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 import org.squirrelsql.sqlreformat.CodeReformatorFractory;
+
+import java.util.ArrayList;
 
 public class WhereConfigCtrl
 {
@@ -50,12 +55,49 @@ public class WhereConfigCtrl
 
    private boolean isShowPopupAllowed()
    {
-      return false;
+      TreeItem<WhereConfigColTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+
+      if(null == selectedItem)
+      {
+         return false;
+      }
+
+      return selectedItem.getValue().isFolder() && !selectedItem.getValue().isRoot();
    }
 
    private void onRemoveSelectedFolder()
    {
-      System.out.println("WhereConfigCtrl.onRemoveSelectedFolder");
+      TreeItem<WhereConfigColTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+
+      ArrayList<TreeItem<WhereConfigColTreeNode>> filters = new ArrayList<>();
+
+      findFilters(selectedItem, filters);
+
+      filters.forEach(f -> f.getParent().getChildren().remove(f));
+
+      TreeItem<WhereConfigColTreeNode> parent = selectedItem.getParent();
+
+      parent.getChildren().remove(selectedItem);
+      parent.getChildren().addAll(filters);
+
+
+      toPersistence();
+      updateSqlTextField();
+   }
+
+   private void findFilters(TreeItem<WhereConfigColTreeNode> parent, ArrayList<TreeItem<WhereConfigColTreeNode>> filters)
+   {
+      for (TreeItem<WhereConfigColTreeNode> item : parent.getChildren())
+      {
+         if (item.getValue().isFilter())
+         {
+            filters.add(item);
+         }
+         else if (item.getValue().isFolder())
+         {
+            findFilters(item, filters);
+         }
+      }
    }
 
    private void onDropped(String idToMove, TreeItem<WhereConfigColTreeNode> targetTreeItem, RelativeNodePosition relativeNodePosition)
@@ -83,13 +125,23 @@ public class WhereConfigCtrl
       {
          TreeItem<WhereConfigColTreeNode> parent = targetTreeItem.getParent();
 
+         if(null == parent)
+         {
+            parent = _root;
+         }
+
          int ixOfSelected = parent.getChildren().indexOf(targetTreeItem);
-         parent.getChildren().add(ixOfSelected, draggedTreeItem);
+         parent.getChildren().add(Math.max(ixOfSelected, 0), draggedTreeItem);
 
       }
       else if(relativeNodePosition == RelativeNodePosition.LOWER_SIBLING)
       {
          TreeItem<WhereConfigColTreeNode> parent = targetTreeItem.getParent();
+
+         if(null == parent)
+         {
+            parent = _root;
+         }
 
          int ixOfSelected = parent.getChildren().indexOf(targetTreeItem);
          parent.getChildren().add(ixOfSelected + 1, draggedTreeItem);
