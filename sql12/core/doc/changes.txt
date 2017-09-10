@@ -13,7 +13,7 @@ Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress 
  Thanks to Tinco van Engen
 
 
-3.8.0 (29/08/2017)
+3.8.0 (08/29/2017)
 ==================
 
 Enhancements:
