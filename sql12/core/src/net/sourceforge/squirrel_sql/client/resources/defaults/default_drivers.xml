@@ -3,6 +3,18 @@
 <Beans>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        	<name>SQLLite</name>
+        	<driverClassName>org.sqlite.JDBC</driverClassName>
+        	<url>jdbc:sqlite:&lt;PathToSQLLiteDBFile&gt;</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-65</string>
+		</identifier>
+		<websiteUrl>https://bitbucket.org/xerial/sqlite-jdbc/downloads/</websiteUrl>
+ 	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         	<name>Salesforce</name>
         	<driverClassName>com.reliersoft.sforce.jdbc.Driver</driverClassName>
         	<url>jdbc:sforce://login.salesforce.com</url>

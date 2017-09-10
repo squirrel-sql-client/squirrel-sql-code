@@ -5,6 +5,16 @@ Not yet released, available in our GIT repository and in future snapshots and re
 ===============================================================================================
 
 Enhancements:
+Added SQLLite default driver definition.
+ Thanks to Chris Papps
+
+
+
+
+3.8.0 (29/08/2017)
+==================
+
+Enhancements:
 
 The 'Locale' combo box at menu File --> Global Preferences --> Tab General
   now has an entry 'Don't change'. This entry may prevent translation problems
