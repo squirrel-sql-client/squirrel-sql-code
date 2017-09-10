@@ -2,6 +2,31 @@
 
 <Beans>
 
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>Progress 9.1E and 10.0B</name>
+		<driverClassName>com.progress.sql.jdbc.JdbcProgressDriver</driverClassName>
+		<url>jdbc:JdbcProgress:T:&lt;host_name&gt;:&lt;port_number&gt;:&lt;database_name&gt;</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-67</string>
+		</identifier>
+		<websiteUrl>http://knowledgebase.progress.com/articles/Article/000032547</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>OpenEdge</name>
+		<driverClassName>com.ddtek.jdbc.openedge.OpenEdgeDriver</driverClassName>
+		<url>jdbc:datadirect:openedge://&lt;host_name&gt;:&lt;port_number&gt;;databaseName=&lt;database_name&gt;</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-66</string>
+		</identifier>
+		<websiteUrl>http://knowledgebase.progress.com/articles/Article/000032547</websiteUrl>
+	</Bean>
+
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         	<name>SQLLite</name>
         	<driverClassName>org.sqlite.JDBC</driverClassName>

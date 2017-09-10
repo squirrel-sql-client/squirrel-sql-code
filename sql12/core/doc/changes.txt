@@ -5,10 +5,12 @@ Not yet released, available in our GIT repository and in future snapshots and re
 ===============================================================================================
 
 Enhancements:
+
 Added SQLLite default driver definition.
  Thanks to Chris Papps
 
-
+Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress databases.
+ Thanks to Tinco van Engen
 
 
 3.8.0 (29/08/2017)
