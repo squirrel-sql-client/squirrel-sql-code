@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+The combo box of the SQL result table find function now has an 'exact' entry.
+
 Added SQLLite default driver definition.
  Thanks to Chris Papps
 
