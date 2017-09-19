@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 import javax.swing.*;
 import java.awt.*;
@@ -94,6 +95,12 @@ public class AliasesList implements IToogleableAliasesList
    public boolean isEmpty()
    {
       return getCurrentImpl().isEmpty();
+   }
+
+   @Override
+   public void goToAlias(ISQLAlias aliasToGoTo)
+   {
+      getCurrentImpl().goToAlias(aliasToGoTo);
    }
 
 

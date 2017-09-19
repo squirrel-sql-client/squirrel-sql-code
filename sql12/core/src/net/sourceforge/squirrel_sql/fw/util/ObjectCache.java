@@ -151,6 +151,14 @@ public class ObjectCache<E extends IHasIdentifier> implements IObjectCache<E>
 		return getCacheEntry(objClass).values().iterator();
 	}
 
+	@Override
+	public List<E> getAllForClassAsList(Class<E> objClass)
+	{
+		return new ArrayList<E>(getCacheEntry(objClass).values());
+	}
+
+
+
 	/**
 	 * Return a <CODE>CacheEntry</CODE> for the passed class. If one doesn't
 	 * exist then create it and add to <CODE>_entries</CODE>.

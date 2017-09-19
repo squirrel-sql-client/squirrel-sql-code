@@ -214,6 +214,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          _pm.addSeparator();
          _pm.add(actions.get(AliasFileOpenAction.class));
          _pm.addSeparator();
+         _pm.add(actions.get(FindAliasAction.class));
          _pm.add(actions.get(SortAliasesAction.class));
          _pm.addSeparator();
          addToMenuAsCheckBoxMenuItem(_app.getResources(), actions.get(ToggleTreeViewAction.class), _pm);
@@ -339,6 +340,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 			_tb.addSeparator();
          _tb.add(actions.get(AliasFileOpenAction.class));
 			_tb.addSeparator();
+			_tb.add(actions.get(FindAliasAction.class));
 			_tb.add(actions.get(SortAliasesAction.class));
          _tb.addSeparator();
          _tb.addToggleAction((IToggleAction)actions.get(ToggleTreeViewAction.class));

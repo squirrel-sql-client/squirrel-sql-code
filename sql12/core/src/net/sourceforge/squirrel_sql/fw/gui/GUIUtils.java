@@ -469,11 +469,21 @@ public class GUIUtils
 
    public static void enableCloseByEscape(final JDialog dialog)
    {
+		enableCloseByEscape(dialog, null);
+	}
+
+   public static void enableCloseByEscape(final JDialog dialog, final CloseByEscapeListener closeByEscapeListener)
+   {
       AbstractAction closeAction = new AbstractAction()
       {
 
          public void actionPerformed(ActionEvent actionEvent)
          {
+         	if(null != closeByEscapeListener)
+				{
+					closeByEscapeListener.willCloseByEcape(dialog);
+				}
+
             dialog.setVisible(false);
             dialog.dispose();
          }

@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+
 import java.awt.event.MouseEvent;
 
 /*
@@ -39,4 +41,5 @@ public interface IAliasesList extends IBaseList
 
    boolean isEmpty();
 
+   void goToAlias(ISQLAlias aliasToGoTo);
 }

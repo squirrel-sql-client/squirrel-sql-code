@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+New find Alias dialog to find and connect to Aliases, use shortcut ctrl alt shift F
+
 The combo box of the SQL result table find function now has an 'exact' entry.
 
 Added SQLLite default driver definition.
@@ -14,7 +16,9 @@ Added SQLLite default driver definition.
 Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress databases.
  Thanks to Tinco van Engen
 
+
 Bug fixes:
+
 Fixed error display when connection failed (Resource not found)
 
 
