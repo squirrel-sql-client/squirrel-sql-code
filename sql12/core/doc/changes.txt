@@ -19,6 +19,8 @@ Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress 
 
 Bug fixes:
 
+Fixed missing text resource "Procedures" in Alias schema properties
+
 Fixed error display when connection failed (Resource not found)
 
 
