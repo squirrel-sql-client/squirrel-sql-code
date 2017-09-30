@@ -57,17 +57,20 @@ public class FileManager
       return open(f, false);
    }
 
-   public boolean open(File f, boolean appendToExisting) {
+   public boolean open(File f, boolean appendToExisting)
+   {
        boolean result = false;
        _sqlPanelAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
        result = true;
-      if (!appendToExisting) {
+      if (!appendToExisting)
+      {
          _sqlPanelAPI.setEntireSQLScript("");
       }
-       loadScript(f);
+      loadScript(f);
        return result;
    }
-   
+
+
    public boolean open(boolean appendToExisting)
    {
        boolean result = false;
@@ -364,8 +367,9 @@ public class FileManager
       return (SessionTabWidget)_sqlPanelAPI.getSession().getActiveSessionWindow();
    }
 
-   public File getFile() {
-       return _toSaveTo;
+   public File getFile()
+   {
+      return _toSaveTo;
    }
 
 

@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
@@ -108,6 +109,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction("fileappend", ac.get(FileAppendAction.class));
       _toolsPopupController.addAction("fileclose", ac.get(FileCloseAction.class));
       _toolsPopupController.addAction("fileprint", ac.get(FilePrintAction.class));
+      _toolsPopupController.addAction("filereload", ac.get(FileReloadAction.class));
 
       _toolsPopupController.addAction("tabnext", ac.get(GotoNextResultsTabAction.class));
       _toolsPopupController.addAction("tabprevious", ac.get(GotoPreviousResultsTabAction.class));
@@ -262,8 +264,29 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _fileManager.clearCurrentFile();
    }
 
+	public void fileReload()
+	{
+		if(null == _fileManager.getFile())
+		{
+			Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelAPI.nofileToRelaod"));
+			return;
+		}
 
-   /* (non-Javadoc)
+		File file = _fileManager.getFile();
+
+		int caretPosition = getSQLEntryPanel().getCaretPosition();
+
+		_closeFile(true);
+
+		fileOpen(file);
+
+		getSQLEntryPanel().setCaretPosition(Math.min(getSQLEntryPanel().getText().length(), caretPosition));
+
+	}
+
+
+
+	/* (non-Javadoc)
    * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileNew()
    */
    public void fileNew()
@@ -296,39 +319,51 @@ public class SQLPanelAPI implements ISQLPanelAPI
     */
    public void fileOpen()
    {
-       if (unsavedEdits) {
-           showConfirmSaveDialog();
-       }       
-       if (_fileManager.open(false)) {
-           fileOpened = true;
-           fileSaved = false;
-           unsavedEdits = false;
-           ActionCollection actions = 
-               getSession().getApplication().getActionCollection();
-           actions.enableAction(FileSaveAction.class, false);           
-       }
-   }
+		if (unsavedEdits)
+		{
+			showConfirmSaveDialog();
+		}
+		if (_fileManager.open(false))
+		{
+			fileOpened = true;
+			fileSaved = false;
+			unsavedEdits = false;
+			ActionCollection actions =
+					getSession().getApplication().getActionCollection();
+			actions.enableAction(FileSaveAction.class, false);
+		}
 
-   public void fileOpen(File f) {
+		getSQLEntryPanel().setCaretPosition(0);
+
+	}
+
+   public void fileOpen(File f)
+	{
       fileOpen(f, false);
    }
 
-   public void fileOpen(File f, boolean append){
-    if (unsavedEdits) {
-        showConfirmSaveDialog();
-    }
-    if (_fileManager.open(f, append)) {
-        fileOpened = true;
-        fileSaved = false;
-        unsavedEdits = false;
-        ActionCollection actions =
-            getSession().getApplication().getActionCollection();
-        actions.enableAction(FileSaveAction.class, false);
-    }
-       
-   }
-   
-   /* (non-Javadoc)
+	public void fileOpen(File f, boolean append)
+	{
+		if (unsavedEdits)
+		{
+			showConfirmSaveDialog();
+		}
+		if (_fileManager.open(f, append))
+		{
+			fileOpened = true;
+			fileSaved = false;
+			unsavedEdits = false;
+			ActionCollection actions =
+					getSession().getApplication().getActionCollection();
+			actions.enableAction(FileSaveAction.class, false);
+		}
+
+		getSQLEntryPanel().setCaretPosition(0);
+
+
+	}
+
+	/* (non-Javadoc)
     * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#filePrint()
     */
    public void filePrint() {

@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#558 New toolbar button: 'File reload'
+
 New find Alias dialog to find and connect to Aliases, use shortcut ctrl alt shift F
 
 The combo box of the SQL result table find function now has an 'exact' entry.
@@ -18,6 +20,8 @@ Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress 
 
 
 Bug fixes:
+
+When file is opened cursor is now positioned at the beginning of the editor.
 
 Fixed missing text resource "Procedures" in Alias schema properties
 
