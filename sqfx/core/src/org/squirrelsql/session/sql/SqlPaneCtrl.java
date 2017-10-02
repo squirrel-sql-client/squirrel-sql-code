@@ -13,6 +13,7 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.services.*;
 import org.squirrelsql.services.progress.ProgressTask;
 import org.squirrelsql.services.progress.ProgressUtil;
+import org.squirrelsql.services.rightmousemenuhandler.RightMouseMenuHandler;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.*;
 import org.squirrelsql.session.completion.CompletionCtrl;

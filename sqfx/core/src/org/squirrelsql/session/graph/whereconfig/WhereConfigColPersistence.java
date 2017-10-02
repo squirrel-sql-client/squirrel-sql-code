@@ -1,4 +1,4 @@
-package org.squirrelsql.session.graph;
+package org.squirrelsql.session.graph.whereconfig;
 
 import java.util.ArrayList;
 

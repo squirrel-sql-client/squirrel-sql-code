@@ -193,6 +193,7 @@ public class SQLInternalFrame extends SessionTabWidget
 			add(actions.get(FileSaveAsAction.class));
          add(actions.get(FileCloseAction.class));
          add(actions.get(FilePrintAction.class));
+         add(actions.get(FileReloadAction.class));
 			addSeparator();
 			add(actions.get(PreviousSqlAction.class));
 			add(actions.get(NextSqlAction.class));

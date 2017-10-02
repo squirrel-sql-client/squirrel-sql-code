@@ -21,6 +21,7 @@ import org.squirrelsql.services.*;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
+import org.squirrelsql.session.graph.whereconfig.WhereConfigCtrl;
 import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
 
 import java.util.ArrayList;

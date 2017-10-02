@@ -92,6 +92,9 @@ public class DataSetFindPanel extends JPanel
       // i18n[DataSetFindPanel.filterCboContains=contains]
       CONTAINS (s_stringMgr.getString("DataSetFindPanel.filterCboContains")),
 
+      // i18n[DataSetFindPanel.filterCboContains=contains]
+      EXACT (s_stringMgr.getString("DataSetFindPanel.exact")),
+
       // i18n[DataSetFindPanel.filterCboStartsWith=starts with]
       STARTS_WITH (s_stringMgr.getString("DataSetFindPanel.filterCboStartsWith")),
 

@@ -17,10 +17,13 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * This interface defines a the behaviour of an object cache.
  *
@@ -76,6 +79,8 @@ public interface IObjectCache<E extends IHasIdentifier>
 	 * @return  <CODE>Iterator</CODE> over all objects.
 	 */
 	Iterator<E> getAllForClass(Class<E> objClass);
+
+	List<E> getAllForClassAsList(Class<E> objClass);
 
 	/**
 	 * Adds a listener for changes to the cache entry for the passed class.

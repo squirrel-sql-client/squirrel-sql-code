@@ -304,6 +304,8 @@ public interface ISQLPanelAPI
 
    void filePrint();
 
+	void fileReload();
+
 	void showToolsPopup();
 
 	boolean confirmClose();

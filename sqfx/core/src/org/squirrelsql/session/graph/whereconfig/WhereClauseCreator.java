@@ -1,4 +1,4 @@
-package org.squirrelsql.session.graph;
+package org.squirrelsql.session.graph.whereconfig;
 
 import javafx.scene.control.TreeItem;
 

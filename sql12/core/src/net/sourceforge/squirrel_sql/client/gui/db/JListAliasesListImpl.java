@@ -168,6 +168,13 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
       return 0 == _model.getSize();
    }
 
+   @Override
+   public void goToAlias(ISQLAlias aliasToGoTo)
+   {
+		SQLAlias alias = _model.getAlias(aliasToGoTo.getIdentifier());
+		getList().setSelectedValue(alias, true);
+	}
+
    /**
 	 * Return the description for the alias that the mouse is currently
 	 * over as the tooltip text.

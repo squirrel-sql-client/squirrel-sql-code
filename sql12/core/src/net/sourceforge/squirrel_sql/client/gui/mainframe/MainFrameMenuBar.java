@@ -371,6 +371,7 @@ final class MainFrameMenuBar extends JMenuBar
       menu.addSeparator();
 		addToMenu(rsrc, AliasFileOpenAction.class, menu);
       menu.addSeparator();
+      addToMenu(rsrc, FindAliasAction.class, menu);
       addToMenu(rsrc, SortAliasesAction.class, menu);
       menu.addSeparator();
       addToMenuAsCheckBoxMenuItem(rsrc, ToggleTreeViewAction.class, menu);
@@ -404,6 +405,7 @@ final class MainFrameMenuBar extends JMenuBar
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.WINDOWS);
 		addToMenu(rsrc, ViewAliasesAction.class, menu);
+		addToMenu(rsrc, FindAliasAction.class, menu);
 		addToMenu(rsrc, ViewDriversAction.class, menu);
 		addToMenu(rsrc, ViewLogsAction.class, menu);
       if (_app.getDesktopStyle().isInternalFrameStyle())
@@ -458,6 +460,7 @@ final class MainFrameMenuBar extends JMenuBar
       addToMenu(rsrc, FileCloseAction.class, menu);
       addToMenu(rsrc, FileAppendAction.class, menu);
       addToMenu(rsrc, FilePrintAction.class, menu);
+      addToMenu(rsrc, FileReloadAction.class, menu);
       return menu;
    }
 

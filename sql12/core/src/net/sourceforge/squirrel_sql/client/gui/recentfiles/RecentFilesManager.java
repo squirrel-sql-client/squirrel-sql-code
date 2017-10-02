@@ -1,23 +1,29 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.type.SimpleType;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 
 public class RecentFilesManager
 {
-   private RecentFilesXmlBean _recentFilesXmlBean = new RecentFilesXmlBean();
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RecentFilesManager.class);
+
+
+   private RecentFilesJsonBean _recentFilesJsonBean = new RecentFilesJsonBean();
 
    public void fileTouched(String absolutePath, ISQLAliasExt alias)
    {
-      ArrayList<String> recentFiles = _recentFilesXmlBean.getRecentFiles();
+      ArrayList<String> recentFiles = _recentFilesJsonBean.getRecentFiles();
       adjustFileArray(absolutePath, recentFiles);
 
 
@@ -30,7 +36,7 @@ public class RecentFilesManager
       fileArray.remove(newAbsolutePath);
       fileArray.add(0, newAbsolutePath);
 
-      while (_recentFilesXmlBean.getMaxRecentFiles() < fileArray.size())
+      while (_recentFilesJsonBean.getMaxRecentFiles() < fileArray.size())
       {
          fileArray.remove(fileArray.size()-1);
       }
@@ -46,7 +52,7 @@ public class RecentFilesManager
       {
          ret = new AliasFileXmlBean();
          ret.setAlisaIdentifierString(alias.getIdentifier().toString());
-         _recentFilesXmlBean.getAliasFileXmlBeans().add(ret);
+         _recentFilesJsonBean.getAliasFileXmlBeans().add(ret);
       }
 
       return ret;
@@ -55,7 +61,7 @@ public class RecentFilesManager
    private AliasFileXmlBean findAliasFile(ISQLAlias alias)
    {
       AliasFileXmlBean ret = null;
-      ArrayList<AliasFileXmlBean> aliasFileXmlBeans = _recentFilesXmlBean.getAliasFileXmlBeans();
+      ArrayList<AliasFileXmlBean> aliasFileXmlBeans = _recentFilesJsonBean.getAliasFileXmlBeans();
       for (AliasFileXmlBean aliasFileXmlBean : aliasFileXmlBeans)
       {
          if(aliasFileXmlBean.getAlisaIdentifierString().equals(alias.getIdentifier().toString()))
@@ -67,17 +73,24 @@ public class RecentFilesManager
       return ret;
    }
 
-   public void saveXmlBean(File recentFilesBeanFile)
+   public void saveJsonBean(File recentFilesBeanFile)
    {
+
       try
       {
-         Marshaller marshaller = JAXBContext.newInstance(RecentFilesXmlBean.class).createMarshaller();
-         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
          FileOutputStream fos = new FileOutputStream(recentFilesBeanFile);
-         marshaller.marshal(_recentFilesXmlBean, fos);
 
-         fos.flush();
+         ObjectMapper mapper = new ObjectMapper();
+         ObjectWriter objectWriter = mapper.writerWithDefaultPrettyPrinter();
+
+         // This version of objectWriter.writeValue() ensures,
+         // that objects are written in JsonEncoding.UTF8
+         // and thus that there won't be encoding problems
+         // that makes the loadObjects methods crash.
+         objectWriter.writeValue(fos, _recentFilesJsonBean);
+
          fos.close();
+
       }
       catch (Exception e)
       {
@@ -85,32 +98,54 @@ public class RecentFilesManager
       }
    }
 
-   public void initXmlBean(File recentFilesXmlBeanFile)
+   public void initJSonBean(File recentFilesJsonBeanFile)
    {
-      if(false == recentFilesXmlBeanFile.exists())
-      {
-         return;
-      }
-
       try
       {
-         Unmarshaller um = JAXBContext.newInstance(RecentFilesXmlBean.class).createUnmarshaller();
-         _recentFilesXmlBean = (RecentFilesXmlBean) um.unmarshal(new FileReader(recentFilesXmlBeanFile));
+         checkIfOlderVersionWarningIsNeeded();
+
+
+         if(false == recentFilesJsonBeanFile.exists())
+         {
+            return;
+         }
+
+
+         FileInputStream is = new FileInputStream(recentFilesJsonBeanFile);
+         InputStreamReader isr = new InputStreamReader(is, JsonEncoding.UTF8.getJavaName());
+
+
+         ObjectMapper mapper = new ObjectMapper();
+         _recentFilesJsonBean = mapper.readValue(isr, SimpleType.construct(RecentFilesJsonBean.class));
+
+
+         isr.close();
+         is.close();
+
       }
-      catch (Exception e)
+      catch (IOException e)
       {
          throw new RuntimeException(e);
+      }
+   }
+
+   private void checkIfOlderVersionWarningIsNeeded()
+   {
+      File oldVerionFile = new ApplicationFiles().getRecentFilesXmlBeanFile_oldXmlVersion();
+      if(oldVerionFile.exists())
+      {
+         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("RecentFilesManager.old.version.warning", oldVerionFile.getPath()));
       }
    }
 
    public ArrayList<String> getRecentFiles()
    {
-      return _recentFilesXmlBean.getRecentFiles();
+      return _recentFilesJsonBean.getRecentFiles();
    }
 
    public ArrayList<String> getFavouriteFiles()
    {
-      return _recentFilesXmlBean.getFavouriteFiles();
+      return _recentFilesJsonBean.getFavouriteFiles();
    }
 
    public ArrayList<String> getRecentFilesForAlias(ISQLAlias selectedAlias)
@@ -125,17 +160,17 @@ public class RecentFilesManager
 
    public int getMaxRecentFiles()
    {
-      return _recentFilesXmlBean.getMaxRecentFiles();
+      return _recentFilesJsonBean.getMaxRecentFiles();
    }
 
    public void setMaxRecentFiles(int n)
    {
-      _recentFilesXmlBean.setMaxRecentFiles(n);
+      _recentFilesJsonBean.setMaxRecentFiles(n);
    }
 
    public void adjustFavouriteFiles(File selectedFile)
    {
-      adjustFileArray(selectedFile.getAbsolutePath(), _recentFilesXmlBean.getFavouriteFiles());
+      adjustFileArray(selectedFile.getAbsolutePath(), _recentFilesJsonBean.getFavouriteFiles());
    }
 
    public void adjustFavouriteAliasFiles(ISQLAlias alias, File selectedFile)
@@ -145,12 +180,12 @@ public class RecentFilesManager
 
    public void setRecentFiles(ArrayList<String> files)
    {
-      _recentFilesXmlBean.setRecentFiles(files);
+      _recentFilesJsonBean.setRecentFiles(files);
    }
 
    public void setFavouriteFiles(ArrayList<String> files)
    {
-      _recentFilesXmlBean.setFavouriteFiles(files);
+      _recentFilesJsonBean.setFavouriteFiles(files);
    }
 
    public void setRecentFilesForAlias(ISQLAlias alias, ArrayList<String> files)

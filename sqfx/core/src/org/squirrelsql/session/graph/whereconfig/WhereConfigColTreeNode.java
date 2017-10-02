@@ -1,6 +1,10 @@
-package org.squirrelsql.session.graph;
+package org.squirrelsql.session.graph.whereconfig;
 
 import org.squirrelsql.services.dndpositionmarker.DropIntoInfo;
+import org.squirrelsql.session.graph.ColumnPersistence;
+import org.squirrelsql.session.graph.ColumnPersistenceId;
+import org.squirrelsql.session.graph.FilterPersistence;
+import org.squirrelsql.session.graph.Operator;
 
 import java.util.UUID;
 

@@ -17,19 +17,16 @@ package net.sourceforge.squirrel_sql.fw.xml;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.*;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
-
-import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
-import net.sourceforge.squirrel_sql.fw.util.IObjectCache;
-import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCache;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.util.List;
 /**
  * This class is a cache of objects that can be read from/written to an XML
  * document. All objects stored must implement <CODE>IHasIdentifier</CODE>.<P>
@@ -118,6 +115,13 @@ public class XMLObjectCache<E extends IHasIdentifier> implements IObjectCache<E>
 	{
 		return _cache.getAllForClass(objClass);
 	}
+
+	@Override
+	public List<E> getAllForClassAsList(Class<E> objClass)
+	{
+		return _cache.getAllForClassAsList(objClass);
+	}
+
 
 	/**
 	 * Adds a listener for changes to the cache entry for the passed class.

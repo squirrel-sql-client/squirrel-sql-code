@@ -617,6 +617,35 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       return 0 == _aliasesListModel.getSize();
    }
 
+   @Override
+   public void goToAlias(ISQLAlias aliasToGoTo)
+   {
+      DefaultMutableTreeNode root = (DefaultMutableTreeNode)_tree.getModel().getRoot();
+
+
+      DefaultMutableTreeNode node = findNode((SQLAlias) aliasToGoTo, root);
+
+      if(null == node)
+      {
+         return;
+      }
+
+
+      TreePath treePath = new TreePath(node.getPath());
+
+
+      _tree.clearSelection();
+
+      _tree.expandPath(treePath);
+
+      _tree.setSelectionPath(treePath);
+
+      Rectangle bounds = _tree.getPathBounds(treePath);
+
+      _tree.scrollRectToVisible(bounds);
+
+   }
+
    private void removeAllAliasesFromNode(DefaultMutableTreeNode selNode)
    {
       if(selNode.getUserObject() instanceof SQLAlias)

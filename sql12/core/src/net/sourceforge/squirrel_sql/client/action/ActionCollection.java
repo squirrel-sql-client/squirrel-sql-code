@@ -476,6 +476,7 @@ public class ActionCollection
 		add(new FileSaveAsAction(_app));
       add(new FileCloseAction(_app));
       add(new FilePrintAction(_app));
+      add(new FileReloadAction(_app));
 		add(new GlobalPreferencesAction(_app));
 		add(new GotoNextResultsTabAction(_app));
 		add(new GotoPreviousResultsTabAction(_app));

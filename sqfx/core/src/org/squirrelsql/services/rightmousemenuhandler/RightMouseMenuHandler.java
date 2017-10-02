@@ -1,4 +1,4 @@
-package org.squirrelsql.services;
+package org.squirrelsql.services.rightmousemenuhandler;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -8,12 +8,12 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import org.squirrelsql.RightMouseMenuHandlerListener;
 
 public class RightMouseMenuHandler
 {
    private ContextMenu _contextMenu;
    private Node _parentNode;
+   private RightMousePopupAllowedCallback _rightMousePopupAllowedCallback;
 
    public RightMouseMenuHandler(Node parentNode)
    {
@@ -47,7 +47,7 @@ public class RightMouseMenuHandler
 
    private void onShowRightMouseMenu(MouseEvent e, ContextMenu cm)
    {
-      if (isPopupTrigger(e))
+      if (isPopupTrigger(e) && isShowPopupAllowed())
       {
          cm.show(_parentNode, e.getScreenX(), e.getScreenY());
       }
@@ -55,6 +55,11 @@ public class RightMouseMenuHandler
       {
          cm.hide();
       }
+   }
+
+   private boolean isShowPopupAllowed()
+   {
+      return null == _rightMousePopupAllowedCallback || _rightMousePopupAllowedCallback.isShowPopupAllowed();
    }
 
    public MenuItem addMenu(String menuTitle, RightMouseMenuHandlerListener rightMouseMenuHandlerListener)
@@ -74,13 +79,19 @@ public class RightMouseMenuHandler
       return menuItem;
    }
    
-   public void addSeparator(){
+   public void addSeparator()
+   {
 	   _contextMenu.getItems().add(new SeparatorMenuItem());
    }
 
    public void show(MouseEvent e)
    {
       onShowRightMouseMenu(e, _contextMenu);
+   }
+
+   public void setRightMousePopupAllowedCallback(RightMousePopupAllowedCallback rightMousePopupAllowedCallback)
+   {
+      _rightMousePopupAllowedCallback = rightMousePopupAllowedCallback;
    }
 
    public static boolean isPopupTrigger(MouseEvent e)

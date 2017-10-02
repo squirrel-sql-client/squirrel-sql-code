@@ -365,6 +365,8 @@ public class DataSetFindPanelController
       {
          case CONTAINS:
             return viewDataAsString.contains(toMatchAgainst);
+         case EXACT:
+            return viewDataAsString.equals(toMatchAgainst);
          case STARTS_WITH:
             return viewDataAsString.startsWith(toMatchAgainst);
          case ENDS_WITH:

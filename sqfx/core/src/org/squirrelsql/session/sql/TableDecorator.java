@@ -6,7 +6,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.StackPane;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.RightMouseMenuHandler;
+import org.squirrelsql.services.rightmousemenuhandler.RightMouseMenuHandler;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.copysqlpart.InStatCreator;
 import org.squirrelsql.session.sql.copysqlpart.InsertStatCreator;

@@ -1,12 +1,7 @@
-package net.sourceforge.squirrel_sql.client.gui.db;
-
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-
-import java.awt.event.MouseEvent;
-
+package net.sourceforge.squirrel_sql.client.session.action;
 /*
- * Copyright (C) 2004 Colin Bell
- * colbell@users.sourceforge.net
+ * Copyright (C) 2006 Rob Manning
+ * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,23 +18,31 @@ import java.awt.event.MouseEvent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-public interface IAliasesList extends IBaseList
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+
+import java.awt.event.ActionEvent;
+
+
+public class FileReloadAction extends SquirrelAction  implements ISQLPanelAction
 {
-	/**
-	 * Return the <TT>ISQLAlias</TT> that is currently selected.
-    * @param evt
-    */
-	public SQLAlias getSelectedAlias(MouseEvent evt);
+   private ISQLPanelAPI _panel;
 
-   void sortAliases();
+   public FileReloadAction(IApplication app)
+   {
+      super(app);
+   }
 
-   void requestFocus();
+   public void actionPerformed(ActionEvent e)
+   {
+      _panel.fileReload();
 
-   void deleteSelected();
+   }
 
-   void modifySelected();
-
-   boolean isEmpty();
-
-   void goToAlias(ISQLAlias aliasToGoTo);
+   public void setSQLPanel(ISQLPanelAPI panel)
+   {
+      _panel = panel;
+      setEnabled(null != _panel);
+   }
 }

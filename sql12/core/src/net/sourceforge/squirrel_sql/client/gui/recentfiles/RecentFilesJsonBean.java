@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 
 @XmlRootElement(name = "AliasFileXmlBean")
-public class RecentFilesXmlBean
+public class RecentFilesJsonBean
 {
    private ArrayList<String> _recentFiles = new ArrayList<String>();
    private ArrayList<AliasFileXmlBean> _aliasFileXmlBeans = new ArrayList<AliasFileXmlBean>();

@@ -4,16 +4,14 @@ import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import org.squirrelsql.services.GuiUtils;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.RightMouseMenuHandler;
+import org.squirrelsql.services.rightmousemenuhandler.RightMouseMenuHandler;
 import org.squirrelsql.services.Utils;
 
 import java.sql.SQLException;
