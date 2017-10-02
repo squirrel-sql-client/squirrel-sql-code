@@ -295,7 +295,7 @@ class Application implements IApplication
       saveAliases();
       s_log.info("Application.shutdown->_saveApplicationState: saveAliases() ELAPSED: " + (System.currentTimeMillis() - begin));
 
-      _recentFilesManager.saveXmlBean(_appFiles.getRecentFilesXmlBeanFile());
+      _recentFilesManager.saveJsonBean(_appFiles.getRecentFilesJsonBeanFile());
       s_log.info("Application.shutdown->_saveApplicationState: saveRecentFiles() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       // Save Application level SQL history.
@@ -853,7 +853,7 @@ class Application implements IApplication
 			_shutdownTimer.start();
 		}
 
-      _recentFilesManager.initXmlBean(_appFiles.getRecentFilesXmlBeanFile());
+      _recentFilesManager.initJSonBean(_appFiles.getRecentFilesJsonBeanFile());
 	}
 
 	/**

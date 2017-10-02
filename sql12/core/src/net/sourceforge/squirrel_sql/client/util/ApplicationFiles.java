@@ -61,7 +61,6 @@ public class ApplicationFiles
 	 */
 	public ApplicationFiles()
 	{
-		super();
 		ApplicationArguments args = ApplicationArguments.getInstance();
 
 		final String homeDir = args.getSquirrelHomeDirectory();
@@ -133,9 +132,14 @@ public class ApplicationFiles
       return new File(_userSettingsDir + File.separator + "SQLAliases23_treeStructure.xml");
    }
 
-   public File getRecentFilesXmlBeanFile()
+   public File getRecentFilesXmlBeanFile_oldXmlVersion()
    {
       return new File(_userSettingsDir + File.separator + "RecentFilesXmlBean.xml");
+   }
+
+   public File getRecentFilesJsonBeanFile()
+   {
+      return new File(_userSettingsDir + File.separator + "RecentFilesJsonBean.json");
    }
 
 
