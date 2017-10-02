@@ -9,7 +9,7 @@
 
         <!-- DEFINE VERSION ONLY HERE -->
         <!--<property name="squirrelsql.version" value="3.7.1"/>-->
-        <property name="squirrelsql.version" value="3.8.0"/>
+        <property name="squirrelsql.version" value="snapshot-${DSTAMP}_${TSTAMP}"/>
 
         <delete dir="output"/>
         <mkdir dir="output/work/bin"/>
