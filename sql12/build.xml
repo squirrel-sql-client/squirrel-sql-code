@@ -1,13 +1,15 @@
 <project name="SQuirreLSQL" default="buildAll" basedir=".">
 
 
+    <property name="targetVM" value="1.6"/>
+
     <target name="cleanAllAndInit" description="cleanAllAndInit">
 
         <tstamp/> <!-- Needed to initialize DSTAMP and TSTAMP variables-->
 
         <!-- DEFINE VERSION ONLY HERE -->
         <!--<property name="squirrelsql.version" value="3.7.1"/>-->
-        <property name="squirrelsql.version" value="snapshot-${DSTAMP}_${TSTAMP}"/>
+        <property name="squirrelsql.version" value="3.8.0"/>
 
         <delete dir="output"/>
         <mkdir dir="output/work/bin"/>
@@ -94,7 +96,7 @@
     </pathconvert>
 
     <target name="compileCore" description="compileCore">
-        <javac
+        <javac source="${targetVM}" target="${targetVM}"
             includeantruntime="false"
             srcdir="core/src"
             destdir="output/work/bin"
@@ -201,8 +203,8 @@
 
         <echo message="###Compiling Plugin ${pluginName}"/>
 
-        <javac
-            includeantruntime="false"
+        <javac source="${targetVM}" target="${targetVM}"
+               includeantruntime="false"
             srcdir="plugins/${pluginName}/src"
             destdir="output/work/${pluginName}/bin"
             debug="true" >
