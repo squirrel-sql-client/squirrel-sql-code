@@ -58,34 +58,39 @@ public class GuiUtils
 
    public static Stage createModalDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix)
    {
-      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.WINDOW_MODAL);
+      return createModalDialog(region, pref, initialWidth, initialHeight, prefPrefix, AppState.get().getPrimaryStage());
+   }
+
+   public static Stage createModalDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix, Stage owner)
+   {
+      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.WINDOW_MODAL, owner);
    }
 
    public static Stage createNonModalDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix)
    {
-      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.NONE);
+      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.NONE, AppState.get().getPrimaryStage());
    }
 
-   private static Stage _createDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix, Modality modality)
+   private static Stage _createDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix, Modality modality, Stage owner)
    {
-      Stage ret = createWindow(region);
+      Stage ret = createWindow(region, owner);
 
       ret.initModality(modality);
 
       makeEscapeClosable(region);
 
-      new StageDimensionSaver(prefPrefix, ret, pref, initialWidth, initialHeight, AppState.get().getPrimaryStage());
+      new StageDimensionSaver(prefPrefix, ret, pref, initialWidth, initialHeight, owner);
 
       return ret;
    }
 
-   public static Stage createWindow(Region region)
+   public static Stage createWindow(Region region, Stage owner)
    {
       Stage ret = new Stage();
 
       ret.setScene(new Scene(region));
 
-      ret.initOwner(AppState.get().getPrimaryStage());
+      ret.initOwner(owner);
 
       return ret;
    }

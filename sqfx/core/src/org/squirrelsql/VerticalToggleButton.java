@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import org.squirrelsql.workaround.StringWidthWA;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -24,7 +25,8 @@ public class VerticalToggleButton extends ToggleButton
       FontMetrics fm = Toolkit.getToolkit().getFontLoader().getFontMetrics(f);
 
       int captionHeight = toInt(fm.getXheight());
-      int captionWidth = toInt(fm.computeStringWidth(caption));
+      //int captionWidth = toInt(fm.computeStringWidth(caption));
+      int captionWidth = toInt(StringWidthWA.computeTextWidth(f, caption));
       BufferedImage bi = new BufferedImage(captionHeight + 2 * HEIGHT_MARGIN, captionWidth + 2 * WIDHT_MARGIN, BufferedImage.TYPE_INT_ARGB);
 
 

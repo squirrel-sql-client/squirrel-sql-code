@@ -6,6 +6,7 @@ import javafx.scene.layout.BorderPane;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.ColumnInfo;
+import org.squirrelsql.session.graph.filter.FilterCtrl;
 
 public class FilterPane extends BorderPane
 {
