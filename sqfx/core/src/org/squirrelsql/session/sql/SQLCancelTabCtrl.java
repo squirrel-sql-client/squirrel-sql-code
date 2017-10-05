@@ -1,9 +1,8 @@
 package org.squirrelsql.session.sql;
 
 import javafx.animation.AnimationTimer;
-import javafx.scene.Node;
-import javafx.scene.control.Tab;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.Region;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;

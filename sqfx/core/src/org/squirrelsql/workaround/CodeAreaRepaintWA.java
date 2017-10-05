@@ -1,6 +1,5 @@
 package org.squirrelsql.workaround;
 
-import javafx.application.Platform;
 import org.fxmisc.richtext.CodeArea;
 
 public class CodeAreaRepaintWA

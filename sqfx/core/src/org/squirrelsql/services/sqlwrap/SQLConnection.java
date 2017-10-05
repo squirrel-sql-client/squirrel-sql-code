@@ -4,10 +4,16 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.dbconnector.ConnectionWithDriverData;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.dialects.DialectFactory;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.DatabaseObjectType;
+import org.squirrelsql.services.FXMessageBox;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.JDBCUtil;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.session.DBSchema;
-import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.ProcedureInfo;
+import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
 
 import java.sql.Connection;

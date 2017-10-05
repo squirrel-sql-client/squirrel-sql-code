@@ -1,11 +1,8 @@
 package org.squirrelsql;
 
-import javafx.application.Platform;
-import javafx.collections.transformation.FilteredList;
 import org.squirrelsql.services.Dao;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SqlHistoryManager

@@ -1,15 +1,8 @@
 package org.squirrelsql.session.sql;
 
-import javafx.scene.control.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import org.squirrelsql.services.*;
+import javafx.scene.control.Tab;
+import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.SessionTabContext;
-import org.squirrelsql.table.SQLExecutor;
-import org.squirrelsql.table.StatementExecution;
-
-import java.util.ArrayList;
 
 public class SqlTabCtrl
 {

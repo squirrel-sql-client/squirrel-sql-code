@@ -1,12 +1,19 @@
 package org.squirrelsql.session.action;
 
-import javafx.scene.control.*;
-
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Separator;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToolBar;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.SessionManager;
 import org.squirrelsql.session.SessionManagerListener;
+import org.squirrelsql.session.SessionTabContext;
 
 import java.util.ArrayList;
 import java.util.List;

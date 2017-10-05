@@ -3,7 +3,13 @@ package org.squirrelsql.session.sql.searchchandreplace;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.EditableComboCtrl;
+import org.squirrelsql.services.EditableComboCtrlEnterListener;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 

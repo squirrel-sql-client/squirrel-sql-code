@@ -1,8 +1,18 @@
 package org.squirrelsql.session.parser.kernel;
 
-import org.squirrelsql.session.parser.kernel.completions.*;
+import org.squirrelsql.session.parser.kernel.completions.SQLColumn;
+import org.squirrelsql.session.parser.kernel.completions.SQLModifyingStatement;
+import org.squirrelsql.session.parser.kernel.completions.SQLSelectStatement;
+import org.squirrelsql.session.parser.kernel.completions.SQLSelectStatementListener;
+import org.squirrelsql.session.parser.kernel.completions.SQLStatement;
+import org.squirrelsql.session.parser.kernel.completions.SQLStatementContext;
+import org.squirrelsql.session.parser.kernel.completions.SQLTable;
+import org.squirrelsql.session.parser.kernel.completions.SQLWhere;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.Vector;
 
 public class Parser
 {

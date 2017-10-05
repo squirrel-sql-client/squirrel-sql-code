@@ -10,7 +10,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.globalicons.GlobalIconNames;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.CollectionUtil;
+import org.squirrelsql.services.Dao;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.GuiUtils;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.StageDimensionSaver;
+import org.squirrelsql.services.Utils;
 
 import java.awt.*;
 import java.io.BufferedReader;

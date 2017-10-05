@@ -1,7 +1,6 @@
 package org.squirrelsql.session;
 
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.control.Tab;
 import org.squirrelsql.AppState;
 
 import java.util.ArrayList;

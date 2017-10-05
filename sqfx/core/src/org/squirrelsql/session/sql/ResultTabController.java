@@ -1,8 +1,11 @@
 package org.squirrelsql.session.sql;
 
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Utils;
@@ -10,7 +13,8 @@ import org.squirrelsql.session.Session;
 import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.sql.tablesearch.TableSearchCtrl;
-import org.squirrelsql.table.*;
+import org.squirrelsql.table.TableLoader;
+import org.squirrelsql.table.TableState;
 
 public class ResultTabController
 {

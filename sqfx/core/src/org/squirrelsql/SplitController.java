@@ -7,7 +7,6 @@ import org.squirrelsql.aliases.AliasesController;
 import org.squirrelsql.drivers.DriversController;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.SplitPositionSaver;
-import org.squirrelsql.workaround.SplitDividerWA;
 
 public class SplitController
 {

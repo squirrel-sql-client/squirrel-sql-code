@@ -24,10 +24,14 @@
  */
 package org.squirrelsql.session.sql.syntax;
 
-import java.io.*;
-import javax.swing.text.Segment;
+import org.fife.ui.rsyntaxtextarea.AbstractJFlexTokenMaker;
+import org.fife.ui.rsyntaxtextarea.Token;
 
-import org.fife.ui.rsyntaxtextarea.*;
+import javax.swing.text.Segment;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 
 /**

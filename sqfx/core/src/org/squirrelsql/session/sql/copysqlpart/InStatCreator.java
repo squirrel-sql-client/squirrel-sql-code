@@ -3,7 +3,6 @@ package org.squirrelsql.session.sql.copysqlpart;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import org.squirrelsql.session.ColumnInfo;
-import org.squirrelsql.table.ColumnHandle;
 import org.squirrelsql.table.tableselection.CellItemsWithColumn;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
 

@@ -3,7 +3,10 @@ package org.squirrelsql.session.objecttree;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.*;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
@@ -11,7 +14,6 @@ import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.services.Utils;
-import org.squirrelsql.table.CellDataPopupController;
 
 public class ObjectsTreeCell extends TreeCell<ObjectTreeNode>
 {

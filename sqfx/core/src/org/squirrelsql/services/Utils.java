@@ -3,7 +3,6 @@ package org.squirrelsql.services;
 import com.google.common.base.Strings;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;

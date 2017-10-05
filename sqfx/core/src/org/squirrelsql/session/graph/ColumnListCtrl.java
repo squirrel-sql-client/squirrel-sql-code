@@ -4,7 +4,12 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.input.*;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.Session;
@@ -13,7 +18,12 @@ import org.squirrelsql.session.graph.graphdesktop.Window;
 import org.squirrelsql.session.objecttree.TableDetailsReader;
 import org.squirrelsql.workaround.ListViewScrollEventWA;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 
 public class ColumnListCtrl
 {

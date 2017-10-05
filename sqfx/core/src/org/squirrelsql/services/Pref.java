@@ -2,8 +2,6 @@ package org.squirrelsql.services;
 
 import org.squirrelsql.AppState;
 
-import java.io.File;
-
 public class Pref
 {
    private Class _clazz;

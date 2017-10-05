@@ -2,7 +2,6 @@ package org.squirrelsql.drivers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.squirrelsql.PreDefinedDrivers;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.Dao;

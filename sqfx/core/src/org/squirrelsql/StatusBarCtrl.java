@@ -1,5 +1,7 @@
 package org.squirrelsql;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -10,16 +12,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
-import javafx.animation.Timeline;
-import javafx.animation.KeyFrame;
-import javafx.util.Duration;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.util.Duration;
 import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.Dao;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.progress.TextProgressBar;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.services.progress.TextProgressBar;
 
 import java.util.Timer;
 import java.util.TimerTask;

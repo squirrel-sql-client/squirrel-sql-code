@@ -10,7 +10,6 @@ import javafx.scene.input.MouseEvent;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
-import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.sql.WordBoundaryCheck;
 import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;

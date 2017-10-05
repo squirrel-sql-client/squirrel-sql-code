@@ -1,7 +1,7 @@
 package org.squirrelsql.session;
 
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.TabPane;
 import org.squirrelsql.session.sql.NewSqlTabCtrl;
 
 public class SessionTabbedPaneCtrl

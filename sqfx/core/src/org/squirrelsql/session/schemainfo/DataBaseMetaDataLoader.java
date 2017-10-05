@@ -1,7 +1,6 @@
 package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.Alias;
-import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.drivers.DriversUtil;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.services.I18n;

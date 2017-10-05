@@ -1,11 +1,7 @@
 package org.squirrelsql.workaround;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import org.squirrelsql.session.graph.GraphColumn;
 
 public class ListViewScrollEventWA
 {

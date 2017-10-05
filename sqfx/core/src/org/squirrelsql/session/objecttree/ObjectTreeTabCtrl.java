@@ -1,7 +1,11 @@
 package org.squirrelsql.session.objecttree;
 
 import javafx.geometry.Orientation;
-import javafx.scene.control.*;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.services.I18n;

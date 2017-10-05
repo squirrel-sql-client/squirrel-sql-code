@@ -8,7 +8,17 @@ import org.squirrelsql.services.progress.Progressable;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
-import org.squirrelsql.session.schemainfo.*;
+import org.squirrelsql.session.schemainfo.DataBaseMetaDataLoader;
+import org.squirrelsql.session.schemainfo.DataTypesLoader;
+import org.squirrelsql.session.schemainfo.DatabaseStructure;
+import org.squirrelsql.session.schemainfo.DefaultKeywords;
+import org.squirrelsql.session.schemainfo.FullyQualifiedTableName;
+import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
+import org.squirrelsql.session.schemainfo.SchemaQualifiedTableName;
+import org.squirrelsql.session.schemainfo.StructItem;
+import org.squirrelsql.session.schemainfo.StructItemProcedureType;
+import org.squirrelsql.session.schemainfo.StructItemTableType;
+import org.squirrelsql.session.schemainfo.StructItemUDTType;
 
 import java.util.ArrayList;
 import java.util.List;

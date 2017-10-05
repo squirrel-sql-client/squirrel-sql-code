@@ -22,9 +22,9 @@
  */
 package org.squirrelsql.session.parser.kernel.completions;
 
+import org.squirrelsql.session.parser.kernel.ParserLogger;
 import org.squirrelsql.session.parser.kernel.SQLCompletion;
 import org.squirrelsql.session.parser.kernel.SQLSchema;
-import org.squirrelsql.session.parser.kernel.ParserLogger;
 
 /**
  * a completion suggesting column names

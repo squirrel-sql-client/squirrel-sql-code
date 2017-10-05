@@ -1,5 +1,20 @@
 package org.squirrelsql.table.tableexport;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.squirrelsql.session.ColumnInfo;
+import org.squirrelsql.table.ColumnHandle;
+import org.squirrelsql.table.TableLoader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -8,17 +23,6 @@ import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.squirrelsql.session.ColumnInfo;
-import org.squirrelsql.table.ColumnHandle;
-import org.squirrelsql.table.TableLoader;
 
 public class ExcelService extends Service<Void> {
 

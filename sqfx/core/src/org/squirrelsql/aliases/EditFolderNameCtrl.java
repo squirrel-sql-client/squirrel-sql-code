@@ -5,7 +5,10 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.FXMessageBox;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.GuiUtils;
+import org.squirrelsql.services.I18n;
 
 public class EditFolderNameCtrl
 {

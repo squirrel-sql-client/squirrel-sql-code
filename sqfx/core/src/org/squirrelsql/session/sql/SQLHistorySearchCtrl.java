@@ -1,10 +1,7 @@
 package org.squirrelsql.session.sql;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -13,7 +10,13 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.GuiUtils;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.SplitPositionSaver;
+import org.squirrelsql.services.StageDimensionSaver;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.table.RowObjectTableLoader;
 

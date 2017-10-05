@@ -3,7 +3,11 @@ package org.squirrelsql.session.schemainfo;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.Utils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 

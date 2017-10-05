@@ -23,11 +23,15 @@
 package org.squirrelsql.session.parser.kernel.completions;
 
 
+import org.squirrelsql.session.parser.kernel.Completion;
 import org.squirrelsql.session.parser.kernel.SQLCompletion;
 import org.squirrelsql.session.parser.kernel.SQLSchema;
-import org.squirrelsql.session.parser.kernel.Completion;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 
 /**

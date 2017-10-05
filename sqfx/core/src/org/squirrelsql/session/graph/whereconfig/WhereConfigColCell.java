@@ -1,6 +1,11 @@
 package org.squirrelsql.session.graph.whereconfig;
 
-import javafx.scene.input.*;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import org.squirrelsql.services.dndpositionmarker.DndDragPositionMarker;
 
 public class WhereConfigColCell extends javafx.scene.control.TreeCell<WhereConfigColTreeNode>

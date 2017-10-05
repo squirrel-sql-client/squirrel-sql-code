@@ -4,11 +4,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.dbconnector.DBConnector;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.AliasPropertiesSpecifiedLoading;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.GuiUtils;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.StageDimensionSaver;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 import org.squirrelsql.table.RowObjectHandle;
 import org.squirrelsql.table.RowObjectTableLoader;

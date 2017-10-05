@@ -2,7 +2,10 @@ package org.squirrelsql.settings;
 
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.GuiUtils;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
 
 import java.util.Arrays;
 import java.util.List;

@@ -2,7 +2,12 @@ package org.squirrelsql.session.sql.tablesearch;
 
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.GuiUtils;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.table.ColumnHandle;
 import org.squirrelsql.table.TableLoader;
 

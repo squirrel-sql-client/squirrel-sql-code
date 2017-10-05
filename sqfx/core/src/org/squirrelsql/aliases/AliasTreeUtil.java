@@ -1,9 +1,8 @@
 package org.squirrelsql.aliases;
 
 import javafx.collections.ObservableList;
-import javafx.scene.image.Image;
 import javafx.scene.control.TreeItem;
-import org.apache.commons.lang3.SerializationUtils;
+import javafx.scene.image.Image;
 import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
 

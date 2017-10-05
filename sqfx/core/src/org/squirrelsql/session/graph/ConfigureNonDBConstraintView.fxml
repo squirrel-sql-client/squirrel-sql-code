@@ -7,7 +7,6 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="763.0" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.graph.ConfigureNonDBConstraintView">
    <children>
       <Label layoutX="14.0" layoutY="91.0" prefHeight="16.0" prefWidth="729.0" text="%constraints.referencing.columns" />

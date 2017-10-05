@@ -1,14 +1,11 @@
 package org.squirrelsql.workaround;
 
-import com.sun.javafx.font.FontStrike;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;

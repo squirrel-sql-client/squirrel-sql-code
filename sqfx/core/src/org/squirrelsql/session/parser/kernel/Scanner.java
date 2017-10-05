@@ -1,8 +1,6 @@
 package org.squirrelsql.session.parser.kernel;
-import org.squirrelsql.session.parser.kernel.ErrorStream;
 
-import java.io.*;
-import java.util.*;
+import java.util.BitSet;
 
 class Token {
 	int kind;    // token kind

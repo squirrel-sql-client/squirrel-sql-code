@@ -1,13 +1,20 @@
 package org.squirrelsql.drivers;
 
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.squirrelsql.*;
+import org.squirrelsql.AppState;
+import org.squirrelsql.DockPaneChanel;
+import org.squirrelsql.PreDefinedDrivers;
+import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.DockToolbarBuilder;
+import org.squirrelsql.services.FXMessageBox;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
 
 public class DriversController
 {

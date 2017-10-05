@@ -4,7 +4,11 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.AliasPropertiesSpecifiedLoading;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.session.schemainfo.*;
+import org.squirrelsql.session.schemainfo.DatabaseStructure;
+import org.squirrelsql.session.schemainfo.StructItemCatalog;
+import org.squirrelsql.session.schemainfo.StructItemProcedureType;
+import org.squirrelsql.session.schemainfo.StructItemSchema;
+import org.squirrelsql.session.schemainfo.StructItemTableType;
 import org.squirrelsql.table.RowObjectTableLoader;
 
 import java.util.List;

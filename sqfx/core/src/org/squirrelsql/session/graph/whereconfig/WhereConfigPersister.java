@@ -1,7 +1,12 @@
 package org.squirrelsql.session.graph.whereconfig;
 
 import javafx.scene.control.TreeItem;
-import org.squirrelsql.session.graph.*;
+import org.squirrelsql.session.graph.ColumnPersistence;
+import org.squirrelsql.session.graph.ColumnPersistenceId;
+import org.squirrelsql.session.graph.FilterPersistence;
+import org.squirrelsql.session.graph.FilterPersistenceUtil;
+import org.squirrelsql.session.graph.GraphPersistenceWrapper;
+import org.squirrelsql.session.graph.GraphTablePersistence;
 
 import java.util.ArrayList;
 

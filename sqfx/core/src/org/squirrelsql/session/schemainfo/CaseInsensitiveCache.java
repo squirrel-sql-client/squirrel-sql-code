@@ -6,7 +6,11 @@ import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public class CaseInsensitiveCache implements Serializable
 {

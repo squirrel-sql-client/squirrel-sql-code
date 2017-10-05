@@ -5,8 +5,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
 import org.squirrelsql.workaround.ColorWA;
 
-import java.net.DatagramSocket;
-
 public class Settings
 {
    private boolean _multibleLinesInCells = false;

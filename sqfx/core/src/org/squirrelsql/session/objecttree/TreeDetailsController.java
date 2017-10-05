@@ -3,7 +3,9 @@ package org.squirrelsql.session.objecttree;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.Session;
 

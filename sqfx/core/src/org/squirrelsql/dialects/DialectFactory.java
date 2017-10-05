@@ -1,7 +1,6 @@
 package org.squirrelsql.dialects;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 public class DialectFactory

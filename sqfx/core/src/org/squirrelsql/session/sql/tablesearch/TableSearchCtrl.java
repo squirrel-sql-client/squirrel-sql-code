@@ -6,7 +6,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.EditableComboCtrl;
+import org.squirrelsql.services.EditableComboCtrlEnterListener;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.table.TableLoader;
 
 public class TableSearchCtrl

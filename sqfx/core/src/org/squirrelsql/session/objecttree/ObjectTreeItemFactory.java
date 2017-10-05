@@ -2,7 +2,6 @@ package org.squirrelsql.session.objecttree;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
-
 import org.squirrelsql.Props;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.globalicons.GlobalIconNames;

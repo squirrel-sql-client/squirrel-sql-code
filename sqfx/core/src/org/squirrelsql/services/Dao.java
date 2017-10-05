@@ -5,9 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.SimpleType;
-
 import org.squirrelsql.AppState;
-import org.squirrelsql.aliases.*;
+import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.aliases.AliasDecorator;
+import org.squirrelsql.aliases.AliasProperties;
+import org.squirrelsql.aliases.AliasPropertiesDecorator;
+import org.squirrelsql.aliases.AliasTreeStructureNode;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.session.graph.GraphPersistence;
 import org.squirrelsql.session.graph.GraphPersistenceWrapper;
@@ -16,9 +19,22 @@ import org.squirrelsql.session.sql.SQLHistoryEntry;
 import org.squirrelsql.session.sql.bookmark.BookmarkPersistence;
 import org.squirrelsql.settings.SQLFormatSettings;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 public class Dao
 {

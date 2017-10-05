@@ -11,10 +11,19 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.dbconnector.DBConnector;
-import org.squirrelsql.drivers.*;
-import org.squirrelsql.services.*;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.drivers.DriverCell;
+import org.squirrelsql.drivers.DriversFilteredPref;
+import org.squirrelsql.drivers.DriversManager;
+import org.squirrelsql.drivers.DriversUtil;
 import org.squirrelsql.drivers.SQLDriver;
+import org.squirrelsql.services.FXMessageBox;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.GuiUtils;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.StageDimensionSaver;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 
 public class AliasEditController

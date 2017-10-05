@@ -16,7 +16,15 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.squirrelsql.AppState;
 import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.FXMessageBox;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.GuiUtils;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.StageDimensionSaver;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.table.TableLoader;
 
 import java.awt.*;

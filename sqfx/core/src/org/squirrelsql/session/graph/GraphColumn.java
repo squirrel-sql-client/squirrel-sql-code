@@ -3,7 +3,11 @@ package org.squirrelsql.session.graph;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.TableInfo;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class GraphColumn
 {

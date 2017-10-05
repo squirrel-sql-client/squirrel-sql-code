@@ -11,8 +11,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.squirrelsql.services.GuiUtils;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.rightmousemenuhandler.RightMouseMenuHandler;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.services.rightmousemenuhandler.RightMouseMenuHandler;
 
 import java.sql.SQLException;
 

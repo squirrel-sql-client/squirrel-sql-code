@@ -2,13 +2,11 @@ package org.squirrelsql.session.objecttree;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
 
-import java.util.Comparator;
 import java.util.List;
 
 

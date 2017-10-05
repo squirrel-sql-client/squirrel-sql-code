@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource i18n.properties?>
 
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.layout.AnchorPane?>
 <AnchorPane id="AnchorPane" style="-fx-border-width: 2; -fx-border-color: grey lightgrey lightgrey grey; -fx-border-style: solid line-join bevel;" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.aliases.TreePositionView">
   <children>
     <RadioButton fx:id="radToRoot" layoutX="14.0" layoutY="43.0" mnemonicParsing="false" text="%aliastree.edit.folder.addToRoot" />

@@ -1,7 +1,10 @@
 package org.squirrelsql.session.graph.filter;
 
 import javafx.stage.Stage;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.GuiUtils;
+import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.graph.FilterPersistence;
 import org.squirrelsql.session.graph.Operator;

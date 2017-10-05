@@ -1,7 +1,6 @@
 package org.squirrelsql.session.objecttree;
 
 import javafx.scene.control.Tab;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
 import org.squirrelsql.session.sql.TableDecorator;
 import org.squirrelsql.table.TableLoader;

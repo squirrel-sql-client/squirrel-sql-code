@@ -22,14 +22,13 @@
  */
 package org.squirrelsql.session.parser.kernel.completions;
 
+import org.squirrelsql.session.parser.kernel.Completion;
+import org.squirrelsql.session.parser.kernel.ParserLogger;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
-import org.squirrelsql.session.parser.kernel.Completion;
-import org.squirrelsql.session.parser.kernel.ParserLogger;
-import org.squirrelsql.session.parser.kernel.SQLSchema;
 
 
 /**

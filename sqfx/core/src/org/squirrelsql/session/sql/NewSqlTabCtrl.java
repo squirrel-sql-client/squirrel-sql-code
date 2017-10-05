@@ -3,9 +3,14 @@ package org.squirrelsql.session.sql;
 import javafx.event.Event;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
-import org.squirrelsql.session.*;
-import org.squirrelsql.session.action.ActionUtil;
+import org.squirrelsql.session.FileManager;
+import org.squirrelsql.session.SessionManagerListener;
+import org.squirrelsql.session.SessionTabAdmin;
+import org.squirrelsql.session.SessionTabContext;
+import org.squirrelsql.session.SessionTabHeaderCtrl;
+import org.squirrelsql.session.SessionTabType;
 import org.squirrelsql.session.action.ActionScope;
+import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.StdActionCfg;
 
 public class NewSqlTabCtrl

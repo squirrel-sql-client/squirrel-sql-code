@@ -3,12 +3,17 @@ package org.squirrelsql.aliases;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
-import javafx.scene.input.*;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
-import org.squirrelsql.services.dndpositionmarker.DndDragPositionMarker;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.services.dndpositionmarker.DndDragPositionMarker;
 
 public class AliasCell extends TreeCell<AliasTreeNode>
 {

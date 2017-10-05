@@ -1,11 +1,17 @@
 package org.squirrelsql.session.schemainfo.schemacacheloading;
 
-import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.CaseInsensitiveString;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
-import org.squirrelsql.session.schemainfo.*;
+import org.squirrelsql.session.schemainfo.CaseInsensitiveCache;
+import org.squirrelsql.session.schemainfo.DatabaseStructure;
+import org.squirrelsql.session.schemainfo.FullyQualifiedTableName;
+import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
+import org.squirrelsql.session.schemainfo.SchemaQualifiedTableName;
+import org.squirrelsql.session.schemainfo.StructItemProcedureType;
+import org.squirrelsql.session.schemainfo.StructItemTableType;
+import org.squirrelsql.session.schemainfo.StructItemUDTType;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.HashMap;

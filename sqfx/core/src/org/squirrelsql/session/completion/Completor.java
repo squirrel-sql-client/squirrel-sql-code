@@ -2,7 +2,6 @@ package org.squirrelsql.session.completion;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.ProcedureInfo;

@@ -1,7 +1,6 @@
 package org.squirrelsql.session.objecttree;
 
 import javafx.scene.image.ImageView;
-import org.apache.poi.hpsf.Util;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.ProcedureInfo;

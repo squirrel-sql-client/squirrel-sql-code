@@ -2,8 +2,6 @@ package org.squirrelsql.workaround;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.control.TextArea;
-import org.fxmisc.richtext.CodeArea;
 
 import java.util.Timer;
 import java.util.TimerTask;

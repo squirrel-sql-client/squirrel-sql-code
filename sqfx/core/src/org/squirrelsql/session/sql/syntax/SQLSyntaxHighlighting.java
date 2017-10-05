@@ -6,7 +6,6 @@ import org.squirrelsql.session.parser.kernel.ErrorInfo;
 import org.squirrelsql.session.schemainfo.SchemaCacheProperty;
 
 import javax.swing.text.Segment;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;

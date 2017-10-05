@@ -1,6 +1,5 @@
 package org.squirrelsql.aliases.dbconnector;
 
-import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.AliasDecorator;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.session.schemainfo.SchemaCache;

@@ -7,7 +7,9 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 public class ToolbarButtonsHandler
 {

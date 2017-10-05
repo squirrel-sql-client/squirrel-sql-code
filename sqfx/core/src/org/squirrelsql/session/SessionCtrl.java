@@ -2,18 +2,23 @@ package org.squirrelsql.session;
 
 import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
-import javafx.scene.control.*;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
-
 import org.squirrelsql.AppState;
 import org.squirrelsql.ApplicationCloseListener;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.Dao;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.progress.ProgressTask;
 import org.squirrelsql.services.progress.Progressable;
 import org.squirrelsql.services.progress.SimpleProgressCtrl;
-import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.ActionScope;
+import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.graph.GraphAccess;
 import org.squirrelsql.session.objecttree.ObjectTreeNode;

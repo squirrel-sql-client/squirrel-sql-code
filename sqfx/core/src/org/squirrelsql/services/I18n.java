@@ -3,9 +3,6 @@ package org.squirrelsql.services;
 import org.squirrelsql.AppState;
 import org.squirrelsql.I18nCache;
 
-import java.io.IOException;
-import java.util.Properties;
-
 public class I18n
 {
    private Class _clazz;

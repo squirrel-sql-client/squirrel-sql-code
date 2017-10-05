@@ -3,8 +3,6 @@ package org.squirrelsql.session.graph;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
 import javafx.util.Duration;
 import org.squirrelsql.services.Dao;

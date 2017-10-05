@@ -4,7 +4,6 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.Utils;
-import org.squirrelsql.sqlreformat.CodeReformatorFractory;
 import org.squirrelsql.table.tableselection.CellItemsWithColumn;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
 

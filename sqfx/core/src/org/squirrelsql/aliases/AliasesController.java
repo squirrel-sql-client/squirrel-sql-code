@@ -1,7 +1,6 @@
 package org.squirrelsql.aliases;
 
 import com.google.common.base.Strings;
-
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -12,14 +11,19 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
-import org.squirrelsql.*;
+import org.squirrelsql.AppState;
+import org.squirrelsql.DockPaneChanel;
+import org.squirrelsql.Props;
 import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
 import org.squirrelsql.aliases.channel.AliasTreeNodeMoveListener;
 import org.squirrelsql.aliases.dbconnector.DBConnector;
-import org.squirrelsql.globalicons.GlobalIconNames;
-import org.squirrelsql.services.*;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.globalicons.GlobalIconNames;
+import org.squirrelsql.services.Dao;
+import org.squirrelsql.services.DockToolbarBuilder;
+import org.squirrelsql.services.FXMessageBox;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.dndpositionmarker.RelativeNodePosition;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 

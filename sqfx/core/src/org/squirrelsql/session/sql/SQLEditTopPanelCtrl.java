@@ -6,9 +6,12 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import org.squirrelsql.AppState;
 import org.squirrelsql.Props;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.Settings;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
-import org.squirrelsql.session.SessionTabContext;
 
 public class SQLEditTopPanelCtrl
 {

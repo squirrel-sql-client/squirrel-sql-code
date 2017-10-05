@@ -20,13 +20,12 @@
  */
 package org.squirrelsql.session.parser.kernel.completions;
 
-import org.squirrelsql.session.parser.kernel.SQLCompletion;
-import org.squirrelsql.session.parser.kernel.SQLSchema;
 import org.squirrelsql.session.parser.kernel.ParserLogger;
+import org.squirrelsql.session.parser.kernel.SQLCompletion;
 import org.squirrelsql.session.parser.kernel.SQLSchema.Table;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * this class represents a table completion, as it appears within the FROM

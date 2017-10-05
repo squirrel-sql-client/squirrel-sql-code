@@ -2,8 +2,6 @@ package org.squirrelsql.session.completion;
 
 import org.squirrelsql.session.ColumnInfo;
 
-import java.util.ArrayList;
-
 public class ColumnCompletionCandidate extends CompletionCandidate
 {
    private ColumnInfo _columnInfo;

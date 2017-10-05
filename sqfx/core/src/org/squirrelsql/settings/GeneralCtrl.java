@@ -7,7 +7,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import org.squirrelsql.AppState;
 import org.squirrelsql.Props;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.FXMessageBox;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.GuiUtils;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.Settings;
+import org.squirrelsql.services.SquirrelProperty;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.table.tableedit.StringInterpreter;
 import org.squirrelsql.workaround.ColorWA;
 

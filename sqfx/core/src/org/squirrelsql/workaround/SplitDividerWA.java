@@ -1,7 +1,6 @@
 package org.squirrelsql.workaround;
 
 import javafx.application.Platform;
-import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 
 import java.util.Timer;

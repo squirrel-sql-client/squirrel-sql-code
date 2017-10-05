@@ -2,7 +2,6 @@ package org.squirrelsql.table;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
-import org.squirrelsql.session.graph.SelectPositionRowObject;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
 
 import java.util.ArrayList;

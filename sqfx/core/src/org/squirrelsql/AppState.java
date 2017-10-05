@@ -2,8 +2,10 @@ package org.squirrelsql;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.PropertiesHandler;
+import org.squirrelsql.services.RunningServicesManager;
+import org.squirrelsql.services.SettingsManager;
+import org.squirrelsql.services.SquirrelProperty;
 import org.squirrelsql.session.SessionManager;
 import org.squirrelsql.session.action.ActionManager;
 

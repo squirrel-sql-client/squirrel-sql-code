@@ -4,7 +4,10 @@ import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
@@ -12,10 +15,12 @@ import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.GuiUtils;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.StageDimensionSaver;
 import org.squirrelsql.session.SessionTabContext;
-import org.squirrelsql.session.action.ActionHandle;
-import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.StdActionCfg;
 
 public class BookmarkEditCtrl

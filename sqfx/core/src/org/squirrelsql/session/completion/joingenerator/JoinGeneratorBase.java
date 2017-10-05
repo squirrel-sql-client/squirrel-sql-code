@@ -1,6 +1,10 @@
 package org.squirrelsql.session.completion.joingenerator;
 
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.CollectionUtil;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.completion.CaretVicinity;
@@ -12,7 +16,11 @@ import org.squirrelsql.table.TableLoaderFactory;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
 public abstract class JoinGeneratorBase
 {

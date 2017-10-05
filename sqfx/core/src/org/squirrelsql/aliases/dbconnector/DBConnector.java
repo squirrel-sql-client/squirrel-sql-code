@@ -2,20 +2,17 @@ package org.squirrelsql.aliases.dbconnector;
 
 import javafx.stage.Window;
 import org.squirrelsql.AppState;
-import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.AliasDecorator;
 import org.squirrelsql.aliases.AliasUtil;
+import org.squirrelsql.services.CancelableProgressTask;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.JDBCUtil;
 import org.squirrelsql.services.progress.Progressable;
 import org.squirrelsql.services.progress.SimpleProgressCtrl;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
-import org.squirrelsql.services.CancelableProgressTask;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 import org.squirrelsql.session.schemainfo.SchemaCacheFactory;
-
-import java.sql.Connection;
 
 public class DBConnector
 {

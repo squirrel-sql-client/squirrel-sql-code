@@ -2,8 +2,8 @@ package org.squirrelsql.session.completion.joingenerator;
 
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.session.Session;
-import org.squirrelsql.session.completion.CompletionCandidate;
 import org.squirrelsql.session.completion.CaretVicinity;
+import org.squirrelsql.session.completion.CompletionCandidate;
 
 import java.util.ArrayList;
 import java.util.List;

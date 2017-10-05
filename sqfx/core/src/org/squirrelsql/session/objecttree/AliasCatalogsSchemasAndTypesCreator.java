@@ -4,7 +4,14 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import org.squirrelsql.session.DBSchema;
 import org.squirrelsql.session.Session;
-import org.squirrelsql.session.schemainfo.*;
+import org.squirrelsql.session.schemainfo.DatabaseStructure;
+import org.squirrelsql.session.schemainfo.DatabaseStructureVisitor;
+import org.squirrelsql.session.schemainfo.StructItem;
+import org.squirrelsql.session.schemainfo.StructItemCatalog;
+import org.squirrelsql.session.schemainfo.StructItemProcedureType;
+import org.squirrelsql.session.schemainfo.StructItemSchema;
+import org.squirrelsql.session.schemainfo.StructItemTableType;
+import org.squirrelsql.session.schemainfo.StructItemUDTType;
 
 public class AliasCatalogsSchemasAndTypesCreator
 {

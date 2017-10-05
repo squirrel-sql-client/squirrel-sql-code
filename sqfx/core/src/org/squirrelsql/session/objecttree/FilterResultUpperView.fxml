@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-
 <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="142.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.objecttree.FilterResultUpperView">
    <children>
       <TextField fx:id="txtFilter" layoutX="10.0" layoutY="73.0" prefHeight="26.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />

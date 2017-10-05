@@ -5,8 +5,6 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.IndexedCell;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.StackPane;
-import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
 
 import java.util.ArrayList;
 import java.util.List;

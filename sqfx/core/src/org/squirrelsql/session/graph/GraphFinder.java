@@ -2,9 +2,7 @@ package org.squirrelsql.session.graph;
 
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.SQLUtil;
-import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 
