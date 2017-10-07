@@ -32,7 +32,7 @@ public class ColumnConfigurationCtrl
 //      _currentPanel.getChildren().add(aggregateFunctionPane);
       _currentPanel.getChildren().add(aggregateFunctionPane);
       _currentPanel.getChildren().add(new FilterPane(columnConfigurationPersistence.getFilterPersistence(), column.getColumnInfo(), _queryChannel));
-      _currentPanel.getChildren().add(new OrderByPane(columnConfigurationPersistence.getOrderByPersistence()));
+      _currentPanel.getChildren().add(new OrderByPane(columnConfigurationPersistence.getOrderByPersistence(), _queryChannel));
       return _currentPanel;
    }
 }

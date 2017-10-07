@@ -7,6 +7,7 @@ public class ColumnConfigurationPersistence
    private FilterPersistence _filterPersistence = new FilterPersistence();
    private OrderByPersistence _orderByPersistence = new OrderByPersistence();
    private int _selectPosition = -1;
+   private int _orderByPosition = -1;
 
    public AggregateFunctionPersistence getAggregateFunctionPersistence()
    {
@@ -47,5 +48,15 @@ public class ColumnConfigurationPersistence
    public void setSelectPosition(int selectPosition)
    {
       _selectPosition = selectPosition;
+   }
+
+   public int getOrderByPosition()
+   {
+      return _orderByPosition;
+   }
+
+   public void setOrderByPosition(int orderByPosition)
+   {
+      _orderByPosition = orderByPosition;
    }
 }

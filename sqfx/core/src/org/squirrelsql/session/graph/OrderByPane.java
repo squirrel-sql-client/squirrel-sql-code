@@ -11,10 +11,12 @@ import org.squirrelsql.AppState;
 public class OrderByPane extends BorderPane
 {
    private OrderByPersistence _orderByPersistence;
+   private QueryChannel _queryChannel;
 
-   public OrderByPane(OrderByPersistence orderByPersistence)
+   public OrderByPane(OrderByPersistence orderByPersistence, QueryChannel queryChannel)
    {
       _orderByPersistence = orderByPersistence;
+      _queryChannel = queryChannel;
 
       OrderBy orderBy = OrderBy.valueOf(_orderByPersistence.getOrderBy());
       setCenter(orderBy.createImage());
@@ -52,6 +54,7 @@ public class OrderByPane extends BorderPane
    {
       setCenter(orderBy.createImage());
       _orderByPersistence.setOrderBy(orderBy.name());
+      _queryChannel.fireChanged();
    }
 
 }

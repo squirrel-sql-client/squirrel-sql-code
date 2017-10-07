@@ -230,7 +230,7 @@ public class GraphPaneCtrl
             _splitPane.getItems().add(whereConfigCtrl.getPane());
             break;
          case ORDER_BY:
-            OrderByConfigCtrl  orderByConfigCtrl = new OrderByConfigCtrl(_graphPersistenceWrapper);
+            OrderByConfigCtrl  orderByConfigCtrl = new OrderByConfigCtrl(_graphPersistenceWrapper, _graphChannel.getQueryChannel());
             _splitPane.getItems().add(orderByConfigCtrl.getPane());
             break;
          case SQL:
