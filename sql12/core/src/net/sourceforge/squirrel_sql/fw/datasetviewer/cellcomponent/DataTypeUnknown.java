@@ -337,13 +337,10 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 		}
 		else
 		{
-			data = s_stringMgr.getString("DataTypeUnknown.unknown",
-			                             _colDef.getSqlType() );
+			data = s_stringMgr.getString("DataTypeUnknown.unknown", _colDef.getSqlType() );
 		}
-		
-		if (rs.wasNull())
-			return null;
-		else return data;
+
+		return data;
 	}
 
 	/**

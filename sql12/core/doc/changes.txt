@@ -24,6 +24,10 @@ Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress 
 
 Bug fixes:
 
+#1317 Oracle type INTERVALDS not properly displayed
+ The problem occurred when SQuirreL encountered an unknown SQL-Type and decided not to read the data,
+ see menu File --> Global Preferences --> tab Data Type Controls --> Section Unknown Data Types
+
 #1310 Mac OS installation does not run
   Separate scripts for Linux/Unix and MACOS were introduced.
   The MACOS script was adjusted according to Jörn's suggestions in bug #1310
