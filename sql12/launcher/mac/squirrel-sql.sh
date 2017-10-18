@@ -1,4 +1,6 @@
-#! /bin/sh
+#! /bin/sh -x
+
+ABSPATH=$(cd "$(dirname "$0")"; pwd)
 
 # This function sets a global variable named "CP" to a command-path separated list of jars located beneath the 
 # specified folder.  If the specified folder contains a lib directory, then jars beneath the lib folder are 
@@ -23,7 +25,7 @@ buildCPFromDir()
 } 
 
 # IZPACK_JAVA_HOME is filtered in by the IzPack installer when this script is installed
-IZPACK_JAVA_HOME=%JAVA_HOME
+IZPACK_JAVA_HOME=/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home
 
 # We detect the java executable to use according to the following algorithm:
 #
@@ -40,22 +42,28 @@ else
 fi
 
 # Are we running within Cygwin on some version of Windows or on Mac OS X?
-cygwin=false;
+macosx=false;
 case "`uname -s`" in
-	CYGWIN*) 
-		cygwin=true 
+	Darwin*)
+		macosx=true
 		;;
 esac
 
 # SQuirreL home.
-SQUIRREL_SQL_HOME='%INSTALL_PATH'
+if $macosx ; then
+#    SQUIRREL_SQL_HOME=`dirname "$0"`/Contents/Resources/Java
+    SQUIRREL_SQL_HOME=$(echo $ABSPATH | grep -o '^/.*/Contents/')Resources/Java
+    if [ ! -d "$SQUIRREL_SQL_HOME" ]; then
+        # We assume that this is the ZIP file extracted on MacOS,
+        # so, fall-back to the defult path
+        SQUIRREL_SQL_HOME=`dirname "$0"`
+    fi
+else 
+    SQUIRREL_SQL_HOME='/Applications/SQuirreLSQL.app'
+fi
 
 # SQuirreL home in Unix format.
-if $cygwin ; then
-	UNIX_STYLE_HOME=`cygpath "$SQUIRREL_SQL_HOME"`
-else
-	UNIX_STYLE_HOME="$SQUIRREL_SQL_HOME"
-fi
+UNIX_STYLE_HOME="$SQUIRREL_SQL_HOME"
 
 cd "$UNIX_STYLE_HOME"
 
@@ -75,19 +83,22 @@ TMP_CP=$CP
 
 # Now add the system classpath to the classpath. If running
 # Cygwin we also need to change the classpath to Windows format.
-if $cygwin ; then
-	TMP_CP=`cygpath -w -p $TMP_CP`
-	TMP_CP=$TMP_CP';'$CLASSPATH
+TMP_CP=$TMP_CP:$CLASSPATH
+
+# Define mac-specific system properties if running on Mac OS X
+MACOSX_SQUIRREL_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=SQuirreLSQL"
+NATIVE_LAF_PROP="--native-laf"
+
+
+if $macosx ; then
+	# macosx provides unknown args to the script, causing SQuirreL to bail..
+	SCRIPT_ARGS=""
 else
-	TMP_CP=$TMP_CP:$CLASSPATH
+	SCRIPT_ARGS="$1 $2 $3 $4 $5 $6 $7 $8 $9"
 fi
-
-
-
-SCRIPT_ARGS="$1 $2 $3 $4 $5 $6 $7 $8 $9"
 
 # Now, pickup all jars once again from the installation and lib directories. The variable "CP" is assigned this value.
 buildCPFromDir "$UNIX_STYLE_HOME"
 
 # Launch SQuirreL application
-$JAVACMD -Xmx256m -cp "$CP" -splash:"$SQUIRREL_SQL_HOME/icons/splash.jpg" net.sourceforge.squirrel_sql.client.Main --log-config-file "$UNIX_STYLE_HOME"/log4j.properties --squirrel-home "$UNIX_STYLE_HOME" $NATIVE_LAF_PROP $SCRIPT_ARGS
+$JAVACMD -Xmx256m -cp "$CP" $MACOSX_SQUIRREL_PROPS -splash:"$SQUIRREL_SQL_HOME/icons/splash.jpg" net.sourceforge.squirrel_sql.client.Main --log-config-file "$UNIX_STYLE_HOME"/log4j.properties --squirrel-home "$UNIX_STYLE_HOME" $NATIVE_LAF_PROP $SCRIPT_ARGS

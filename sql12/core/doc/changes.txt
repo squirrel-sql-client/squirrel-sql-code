@@ -24,6 +24,10 @@ Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress 
 
 Bug fixes:
 
+#1310 Mac OS installation does not run
+  Separate scripts for Linux/Unix and MACOS were introduced.
+  The MACOS script was adjusted according to Jörn's suggestions in bug #1310
+
 When file is opened cursor is now positioned at the beginning of the editor.
 
 Fixed missing text resource "Procedures" in Alias schema properties

@@ -53,7 +53,7 @@
 			required="yes"
 			installGroups="Core">
 			<description>SQL Client</description>
-			<file targetdir="$INSTALL_PATH/Contents/MacOS" src="launcher/squirrel-sql.sh" />
+			<file targetdir="$INSTALL_PATH/Contents/MacOS" src="launcher/mac/squirrel-sql.sh" />
 
 			<!-- Make squirrel launch script executable -->
 			<executable targetfile="$INSTALL_PATH/Contents/MacOS/squirrel-sql.sh" stage="never" />
