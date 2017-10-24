@@ -416,13 +416,10 @@ public Object get(int columnIndex) {
          String columnName =  getColumnName(i,md,idx);
          String columnTypeName = getColumnTypeName(i,md, idx);
          int baseColumnType = getColumnType(i,md,idx);
-		int columnType = fixColumnType(columnName, baseColumnType, columnTypeName);
+		   int columnType = fixColumnType(columnName, baseColumnType, columnTypeName);
          
-         columnDefs[i] = new ColumnDisplayDefinition(computeWidths ? colWidths[i]
-                                                           : md.getColumnDisplaySize(idx),
-                                                     fullTableName
-                                                           + ":"
-                                                           + md.getColumnLabel(idx),
+         columnDefs[i] = new ColumnDisplayDefinition(computeWidths ? colWidths[i] : Math.min(md.getColumnDisplaySize(idx), 1000),
+                                                     fullTableName + ":" + md.getColumnLabel(idx),
                                                      columnName,
                                                      md.getColumnLabel(idx),
                                                      columnType,
