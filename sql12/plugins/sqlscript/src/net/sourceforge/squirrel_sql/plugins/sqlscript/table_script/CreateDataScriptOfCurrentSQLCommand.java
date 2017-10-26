@@ -72,10 +72,10 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                 ISQLPanelAPI api =
                     FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
 
-                String script = api.getSQLScriptToBeExecuted();
+                String scripts = api.getSQLScriptToBeExecuted();
 
                IQueryTokenizer qt = _session.getQueryTokenizer();
-               qt.setScriptToTokenize(script);
+               qt.setScriptToTokenize(scripts);
 
                if(false == qt.hasQuery())
                {
@@ -84,37 +84,36 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                   return;
                }
 
-
-
                ISQLConnection conn = _session.getSQLConnection();
 
-
-               final Statement stmt = conn.createStatement();
-               try
-               {
-                  String sql = qt.nextQuery();
-
-                  ResultSet srcResult = stmt.executeQuery(sql);
-                  ResultSetMetaData metaData = srcResult.getMetaData();
-                  //String sTable = metaData.getTableName(1);
-
-                  ITableInfo tInfo = new TableInfo(metaData.getCatalogName(1), metaData.getSchemaName(1),
-                       metaData.getTableName(1), "TABLE", "", _session.getMetaData());
-
-                  String sTable = ScriptUtil.getTableName(tInfo);
-
-                  if (sTable == null || sTable.equals(""))
+               while (qt.hasQuery()) {
+                  final Statement stmt = conn.createStatement();
+                  try
                   {
-                     int iFromIndex =
-                         StringUtilities.getTokenBeginIndex(sql, "from");
-                     sTable = getNextToken(sql, iFromIndex + "from".length());
+                     String sql = qt.nextQuery();
+   
+                     ResultSet srcResult = stmt.executeQuery(sql);
+                     ResultSetMetaData metaData = srcResult.getMetaData();
+                     //String sTable = metaData.getTableName(1);
+   
+                     ITableInfo tInfo = new TableInfo(metaData.getCatalogName(1), metaData.getSchemaName(1),
+                          metaData.getTableName(1), "TABLE", "", _session.getMetaData());
+   
+                     String sTable = ScriptUtil.getTableName(tInfo);
+   
+                     if (sTable == null || sTable.equals(""))
+                     {
+                        int iFromIndex =
+                            StringUtilities.getTokenBeginIndex(sql, "from");
+                        sTable = getNextToken(sql, iFromIndex + "from".length());
+                     }
+                     genInserts(srcResult, sTable, sbRows, false);
                   }
-                  genInserts(srcResult, sTable, sbRows, false);
-               }
-               finally
-               {
-               	SQLUtilities.closeStatement(stmt);
-               }
+                  finally
+                  {
+                  	SQLUtilities.closeStatement(stmt);
+                  }
+               }  // end while
             }
             catch (Exception e)
             {
