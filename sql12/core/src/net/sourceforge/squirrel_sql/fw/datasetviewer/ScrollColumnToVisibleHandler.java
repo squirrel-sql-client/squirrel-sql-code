@@ -1,0 +1,79 @@
+package net.sourceforge.squirrel_sql.fw.datasetviewer;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class ScrollColumnToVisibleHandler
+{
+   private int blinkCount = 0;
+   private Timer _timer;
+
+
+   public ScrollColumnToVisibleHandler(final JTable table, ExtTableColumn toScrollto)
+   {
+      for (int i = 0; i < table.getColumnModel().getColumnCount(); i++)
+      {
+         final ExtTableColumn column = (ExtTableColumn) table.getColumnModel().getColumn(i);
+
+         if(column == toScrollto)
+         {
+            final int columnIxToScrollTo = i;
+
+            Rectangle cellRect = table.getCellRect(0, columnIxToScrollTo, true);
+            table.scrollRectToVisible(cellRect);
+
+            _timer = new Timer(500, new ActionListener()
+            {
+               @Override
+               public void actionPerformed(ActionEvent e)
+               {
+                  onBlinkCol(table, columnIxToScrollTo);
+               }
+            });
+
+            _timer.setRepeats(true);
+
+            onBlinkCol(table, columnIxToScrollTo);
+
+            _timer.start();
+
+            return;
+         }
+      }
+   }
+
+   private void onBlinkCol(JTable table, int columnIxToScrollTo)
+   {
+      Rectangle headerRect = table.getTableHeader().getHeaderRect(columnIxToScrollTo);
+
+      Graphics graphics = table.getTableHeader().getGraphics();
+
+
+
+      if(blinkCount++ % 2 == 0)
+      {
+         Color formerColor = graphics.getColor();
+
+         graphics.setColor(Color.red);
+
+         graphics.drawRect(headerRect.x, headerRect.y, headerRect.width-1, headerRect.height-1);
+
+         graphics.setColor(formerColor);
+      }
+      else
+      {
+         table.getTableHeader().repaint();
+      }
+
+
+      if(blinkCount > 10)
+      {
+         _timer.stop();
+
+         table.getTableHeader().repaint();
+
+      }
+   }
+}

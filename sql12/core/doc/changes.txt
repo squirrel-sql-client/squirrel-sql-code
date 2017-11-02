@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Columns of SQL results can be searched for by a new tool bar button on the upper right of the result tab.
+
 Introduced Java 9 compatibility at the cost of loosing recent file history ones.
   A warning is issued the points to the XML file where the former version history can be found.
 

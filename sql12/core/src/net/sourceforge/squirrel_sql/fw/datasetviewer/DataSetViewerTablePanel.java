@@ -40,6 +40,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -48,6 +49,7 @@ import java.awt.event.MouseEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
@@ -286,9 +288,35 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	}
 
 
+	public java.util.List<ExtTableColumn> getTableColumns()
+	{
+		ArrayList<ExtTableColumn> ret = new ArrayList<ExtTableColumn>();
+
+		for (int i = 0; i < _table.getColumnModel().getColumnCount(); i++)
+		{
+			final ExtTableColumn column = (ExtTableColumn) _table.getColumnModel().getColumn(i);
+
+			ret.add(column);
+		}
+
+		return ret;
+
+	}
+
+	public void scrollColumnToVisible(ExtTableColumn columnDisplayDefinition)
+	{
+		new ScrollColumnToVisibleHandler(_table, columnDisplayDefinition);
+	}
+
+	public void moveColumnsToFront(ArrayList<ExtTableColumn> columnsToMoveToFront)
+	{
+		MoveColumnsToFrontHandler.moveColumnsToFront(_table, columnsToMoveToFront);
+	}
+
+
 	/*
-     * The JTable used for displaying all DB ResultSet info.
-     */
+        * The JTable used for displaying all DB ResultSet info.
+        */
 	protected final class MyJTable extends JTable
 	{
 		private final int _multiplier;

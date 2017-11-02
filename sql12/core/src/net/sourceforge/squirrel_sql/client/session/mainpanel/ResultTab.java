@@ -24,15 +24,18 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.RerunCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.findcolumn.FindColumnCtrl;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.AdditionalResultTabsController;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindDecorator;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -585,6 +588,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       ret.add(_readMoreResultsHandler.getLoadingLabel());
       ret.add(new TabButton(getRerunCurrentSQLResultTabAction()));
+      ret.add(new TabButton(new FindColumnAction(_session.getApplication())));
       ret.add(new TabButton(new FindInResultAction(_session.getApplication())));
       ret.add(new TabButton(new CreateResultTabFrameAction(_session.getApplication())));
       ret.add(new TabButton(new CloseAction()));
@@ -651,6 +655,43 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       public void actionPerformed(ActionEvent evt)
       {
          toggleShowFindPanel();
+      }
+   }
+
+   public class FindColumnAction extends SquirrelAction
+   {
+      FindColumnAction(IApplication app)
+      {
+         super(app, app.getResources());
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+         onFindColumn();
+      }
+   }
+
+   private void onFindColumn()
+   {
+      if(false == _dataSetViewerFindDecorator.getDataSetViewer() instanceof DataSetViewerTablePanel)
+      {
+         _session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("ResultTab.ColumnSearchNotSupported"));
+         s_log.warn(s_stringMgr.getString("ResultTab.ColumnSearchNotSupported"));
+         return;
+      }
+
+      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _dataSetViewerFindDecorator.getDataSetViewer();
+
+      _tabResultTabs.setSelectedIndex(0);
+      FindColumnCtrl findColumnCtrl = new FindColumnCtrl(GUIUtils.getOwningFrame(this), dataSetViewerTablePanel);
+
+      if(null != findColumnCtrl.getColumnToGoTo())
+      {
+         dataSetViewerTablePanel.scrollColumnToVisible(findColumnCtrl.getColumnToGoTo().getExtTableColumn());
+      }
+      else if(null != findColumnCtrl.getColumnsToMoveToFront())
+      {
+         dataSetViewerTablePanel.moveColumnsToFront(findColumnCtrl.getColumnsToMoveToFront());
       }
    }
 

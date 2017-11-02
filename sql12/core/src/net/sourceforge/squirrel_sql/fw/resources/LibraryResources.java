@@ -25,6 +25,12 @@ public class LibraryResources extends Resources
    {
       String TABLE_ASCENDING = "table.ascending";
       String TABLE_DESCENDING = "table.descending";
+      String RIGHT_ARROW = "right.arrow";
+      String LEFT_ARROW = "left.arrow";
+
+      String SORT_ASC = "sort.asc";
+      String SORT_DESC = "sort.desc";
+
       String OPEN = "open";
 
       String DOT_CATALOG = "dot.catalog";
