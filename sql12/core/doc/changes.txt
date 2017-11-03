@@ -29,6 +29,10 @@ Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress 
 
 Bug fixes:
 
+For some databases schema loading took long even if schema loading was configured to ignore most schemas.
+  Those databases, e.g. Oracle, take long to execute DatabaseMetaData.getTables(..., String[] tablesTypes)
+  even if the tablesTypes array is empty.
+
 When column display size (ResultSetMetaData.getColumnDisplaySize()) was a very large value
  the column width in result tables turned out to be very small. Seen on Postgres.
 

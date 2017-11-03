@@ -1316,14 +1316,19 @@ public class SchemaInfo
                setProgress(msg + " (" + simpleName + ")", beginProgress);
             }
          };
-         SchemaLoadInfo[] schemaLoadInfos = 
-            _schemaInfoCache.getMatchingSchemaLoadInfos(schema, types);
+         SchemaLoadInfo[] schemaLoadInfos = _schemaInfoCache.getMatchingSchemaLoadInfos(schema, types);
          
          for (int i = 0; i < schemaLoadInfos.length; i++)
          {
-            ITableInfo[] infos = _dmd.getTables(catalog,
-                  schemaLoadInfos[i].schemaName, tableNamePattern,
-                  schemaLoadInfos[i].tableTypes, pcb);
+            ITableInfo[] infos = new ITableInfo[0];
+
+            if (0 != schemaLoadInfos[i].tableTypes.length)
+            {
+               // With Oracle this takes quite a lot of time if schemaLoadInfos[i].tableTypes is empty
+               // that's why this if is here
+               infos = _dmd.getTables(catalog,schemaLoadInfos[i].schemaName, tableNamePattern,schemaLoadInfos[i].tableTypes, pcb);
+            }
+
             _schemaInfoCache.writeToTableCache(infos);
          }
       }
