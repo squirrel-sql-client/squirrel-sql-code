@@ -86,7 +86,8 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
 
                ISQLConnection conn = _session.getSQLConnection();
 
-               while (qt.hasQuery()) {
+               while (qt.hasQuery())
+               {
                   final Statement stmt = conn.createStatement();
                   try
                   {

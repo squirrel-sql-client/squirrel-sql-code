@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+INSERT/data scripts can now be created from multiple SQL statements instead of from just on statement.
+  Thanks to  Daniel Stränger for the merge request.
+
 Columns of SQL results can be searched for by a new tool bar button on the upper right of the result tab.
 
 Introduced Java 9 compatibility at the cost of loosing recent file history ones.
