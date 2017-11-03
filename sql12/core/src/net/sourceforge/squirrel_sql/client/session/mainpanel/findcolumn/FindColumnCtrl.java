@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.CloseByEscapeListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathItem;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
