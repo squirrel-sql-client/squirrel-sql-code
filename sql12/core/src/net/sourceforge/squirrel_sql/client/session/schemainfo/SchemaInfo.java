@@ -1322,9 +1322,9 @@ public class SchemaInfo
          {
             ITableInfo[] infos = new ITableInfo[0];
 
-            if (0 != schemaLoadInfos[i].tableTypes.length)
+            if (null == schemaLoadInfos[i].tableTypes || 0 < schemaLoadInfos[i].tableTypes.length)
             {
-               // With Oracle this takes quite a lot of time if schemaLoadInfos[i].tableTypes is empty
+               // With Oracle this takes quite a lot of time if schemaLoadInfos[i].tableTypes has length 0
                // that's why this if is here
                infos = _dmd.getTables(catalog,schemaLoadInfos[i].schemaName, tableNamePattern,schemaLoadInfos[i].tableTypes, pcb);
             }
