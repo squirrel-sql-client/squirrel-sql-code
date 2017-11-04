@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#532 Increased maximum font size of SQL editor: Maximum was 14 and is now 28.
+  See menu File --> New Session Properties --> tab SQL --> Section SQL Entry Area
+
 INSERT/data scripts can now be created from multiple SQL statements instead of from just on statement.
   Thanks to  Daniel Stränger for the merge request.
 

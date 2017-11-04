@@ -53,8 +53,7 @@ public class FontChooser extends JDialog
 	private final boolean _selectStyles;
 
 	private JComboBox _fontNamesCmb;
-	private final JComboBox _fontSizesCmb = new JComboBox(new String[]
-												{ "8", "9", "10", "12", "14" });
+	private final JComboBox _fontSizesCmb = new JComboBox(new String[] { "8", "9", "10", "12", "14", "16", "18", "20", "22", "24", "26", "28" });
 	private final JCheckBox _boldChk = new JCheckBox(s_stringMgr.getString("FontChooser.bold"));
 	private final JCheckBox _italicChk = new JCheckBox(s_stringMgr.getString("FontChooser.italic"));
 	private final JLabel _previewLbl = new JLabel(s_stringMgr.getString("FontChooser.previewText"));
