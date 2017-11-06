@@ -32,6 +32,11 @@ Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress 
 
 Bug fixes:
 
+#1321 Scripts for the plain zip releases are updated and now match the installer versions.
+ Please note that there are now separate scripts for Linux/Unix and Mac.
+ While the installers automatically come with the right script
+ the plain zip packages now contain squirrel-sql.sh for Linux/Unix and squirrel-sql-mac.sh for the Mac.
+
 For some databases schema loading took long even if schema loading was configured to ignore most schemas.
   Those databases, e.g. Oracle, take long to execute DatabaseMetaData.getTables(..., String[] tablesTypes)
   even if the tablesTypes array is empty.
