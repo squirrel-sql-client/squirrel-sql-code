@@ -39,13 +39,13 @@ public class FindColumnDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0 );
+      gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,3,3,0), 0,0 );
       getContentPane().add(createLeftPane(), gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0 );
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0,0,0,3), 0,0 );
       getContentPane().add(createMiddleButtonPane(), gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(3,0,0,0), 0,0 );
+      gbc = new GridBagConstraints(2,0,1,1,1,1, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(5,0,3,3), 0,0 );
       getContentPane().add(createRightPanel(), gbc);
 
 
@@ -117,10 +117,10 @@ public class FindColumnDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0,3,3,3), 0,0 );
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0,3,3,0), 0,0 );
       ret.add(btnRight, gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0 );
+      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0,3,0,0), 0,0 );
       ret.add(btnLeft, gbc);
 
       return ret;
@@ -158,13 +158,18 @@ public class FindColumnDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,3,3), 0,0 );
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,3,0), 0,0 );
       ret.add(btnUp, gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0 );
+      gbc = new GridBagConstraints(0,1,1,1,0,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,0), 0,0 );
       ret.add(btnDown, gbc);
 
       return ret;
    }
 
+   public void showDialog()
+   {
+      GUIUtils.forceFocus(txtFilter);
+      super.setVisible(true);
+   }
 }

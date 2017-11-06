@@ -157,7 +157,7 @@ public class FindColumnCtrl
 
       _findColumnDlg.setSize(getDimension());
 
-      _findColumnDlg.setVisible(true);
+      _findColumnDlg.showDialog();
    }
 
    private void onMoveToTableBegin()

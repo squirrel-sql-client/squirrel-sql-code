@@ -26,6 +26,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyVetoException;
@@ -506,4 +507,35 @@ public class GUIUtils
       };
       return newFolder;
    }
+
+	public static void forceFocus(final JComponent comp)
+	{
+		final Timer[] timerRef = new Timer[1];
+
+		timerRef[0] = new Timer(100, new ActionListener()
+		{
+			private int maxCount = 0;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (comp.hasFocus() || maxCount > 15)
+				{
+					timerRef[0].stop();
+					return;
+				}
+				comp.requestFocusInWindow();
+				comp.requestFocus();
+				++maxCount;
+
+			}
+		});
+
+		timerRef[0].setRepeats(true);
+
+		timerRef[0].start();
+
+		comp.requestFocusInWindow();
+		comp.requestFocus();
+	}
 }
