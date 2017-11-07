@@ -286,7 +286,7 @@ public class FindColumnCtrl
 
          String filterText = _findColumnDlg.txtFilter.getText();
 
-         if(StringUtilities.isEmpty(filterText, true) || -1 < colWrapper.toString().toLowerCase().indexOf(filterText))
+         if(StringUtilities.isEmpty(filterText, true) || -1 < colWrapper.toString().toLowerCase().indexOf(filterText.toLowerCase()))
          {
             if(false == _rightListModel.contains(colWrapper))
             {
