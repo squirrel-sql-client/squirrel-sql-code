@@ -114,8 +114,8 @@ public class SQLInternalFrame extends SessionTabWidget
 		_statusBar.setFont(fn);
 		contentPanel.add(_statusBar, BorderLayout.SOUTH);
 
-		RowColumnLabel lblRowCol = new RowColumnLabel(_sqlPanel.getSQLEntryPanel());
-		_statusBar.addJComponent(lblRowCol);
+		_statusBar.addJComponent(new SchemaPanel(session));
+		_statusBar.addJComponent(new RowColumnLabel(_sqlPanel.getSQLEntryPanel()));
 
 
 		SessionColoringUtil.colorStatusbar(session, _statusBar);

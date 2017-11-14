@@ -29,14 +29,11 @@ import java.sql.SQLException;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
@@ -48,8 +45,8 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoActio
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
+import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -66,6 +63,9 @@ public class ObjectTreeInternalFrame extends SessionTabWidget
 
 	/** Toolbar for window. */
 	private ObjectTreeToolBar _toolBar;
+
+	private StatusBar _statusBar = new StatusBar();
+
 
 	private boolean _hasBeenVisible = false;
 
@@ -143,6 +143,15 @@ public class ObjectTreeInternalFrame extends SessionTabWidget
 		contentPanel.add(_toolBar, BorderLayout.NORTH);
 		contentPanel.add(_objTreePanel, BorderLayout.CENTER);
 		setContentPane(contentPanel);
+
+		Font fn = app.getFontInfoStore().getStatusBarFontInfo().createFont();
+		_statusBar.setFont(fn);
+		contentPanel.add(_statusBar, BorderLayout.SOUTH);
+
+		_statusBar.addJComponent(new SchemaPanel(session));
+
+		SessionColoringUtil.colorStatusbar(session, _statusBar);
+
 		validate();
 	}
 

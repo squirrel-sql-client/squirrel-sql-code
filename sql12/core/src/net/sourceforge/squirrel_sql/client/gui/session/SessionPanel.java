@@ -22,7 +22,6 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -470,8 +469,8 @@ public class SessionPanel extends JPanel
 		_objTreeSelectionLis = new ObjectTreeSelectionListener();
 		getObjectTreePanel().addTreeSelectionListener(_objTreeSelectionLis);
 
-		RowColumnLabel lblRowCol = new RowColumnLabel(_mainTabPane.getSQLPanel().getSQLEntryPanel());
-		addToStatusBar(lblRowCol);
+		addToStatusBar(new SchemaPanel(session));
+		addToStatusBar(new RowColumnLabel(_mainTabPane.getSQLPanel().getSQLEntryPanel()));
 		validate();
 	}
 

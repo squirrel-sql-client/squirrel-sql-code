@@ -86,7 +86,11 @@ public class SquirrelResources extends Resources
       String SMALL_FILE = "smallFile";
       String SMALL_FILE_CHANGED = "smallFileChanged";
 
-      String LABELED = "labeled";
+		String SMALL_REFRESH = "smallRefresh";
+
+		String SMALL_CHOOSE_SCHEMA = "smallChooseSchema";
+
+		String LABELED = "labeled";
       String NAMED = "named";
 
       String TAB_DETACH = "tabDetach";

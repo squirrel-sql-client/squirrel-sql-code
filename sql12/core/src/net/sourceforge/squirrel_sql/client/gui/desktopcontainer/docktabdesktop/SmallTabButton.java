@@ -20,7 +20,17 @@ public class SmallTabButton<T> extends JButton
       this(toolTipText, icon, null);
    }
 
+   public SmallTabButton(String toolTipText, ImageIcon icon, int sizeOffset)
+   {
+      this(toolTipText, icon, null, sizeOffset);
+   }
+
    public SmallTabButton(String toolTipText, ImageIcon icon, T userObject)
+   {
+      this(toolTipText, icon, userObject, 5);
+   }
+
+   public SmallTabButton(String toolTipText, ImageIcon icon, T userObject, int sizeOffset)
    {
       _icon = icon;
       _userObject = userObject;
@@ -31,7 +41,7 @@ public class SmallTabButton<T> extends JButton
       }
       else
       {
-         size = Math.max(_icon.getIconWidth(), _icon.getIconHeight()) + 5;
+         size = Math.max(_icon.getIconWidth(), _icon.getIconHeight()) + sizeOffset;
       }
       setPreferredSize(new Dimension(size, size));
       setToolTipText(toolTipText);

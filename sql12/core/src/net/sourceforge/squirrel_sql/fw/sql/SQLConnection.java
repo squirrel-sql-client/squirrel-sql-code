@@ -356,6 +356,19 @@ public class SQLConnection implements ISQLConnection
 		return getConnection().getCatalog();
 	}
 
+	public String getSchema() throws SQLException
+	{
+		validateConnection();
+		return getConnection().getSchema();
+	}
+
+	public void setSchema(String schema) throws SQLException
+	{
+		validateConnection();
+		getConnection().setSchema(schema);
+	}
+
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#setCatalog(java.lang.String)
 	 */
