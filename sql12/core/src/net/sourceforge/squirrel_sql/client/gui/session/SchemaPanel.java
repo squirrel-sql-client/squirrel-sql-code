@@ -137,6 +137,11 @@ public class SchemaPanel extends JPanel
          int menuHeight = new JMenuItem("Test").getPreferredSize().height;
          for (String schema : _session.getSQLConnection().getSQLMetaData().getSchemas())
          {
+            if(StringUtilities.isEmpty(schema, true))
+            {
+               continue;
+            }
+
             JMenuItem menuItem = new JMenuItem(schema);
             menuItem.addActionListener(e -> onSchemaSelected(menuItem));
 
@@ -170,9 +175,13 @@ public class SchemaPanel extends JPanel
       {
          _session.getSQLConnection().setSchema(menuItem.getText());
 
-         if( null != menuItem.getText() && menuItem.getText().equalsIgnoreCase(_session.getSQLConnection().getSchema()))
+         if( menuItem.getText().equalsIgnoreCase(_session.getSQLConnection().getSchema()))
          {
-            onRefreshSchema(false);
+            onRefreshSchema(true);
+         }
+         else
+         {
+            s_log.error("Setting schema didn't take effect.");
          }
       }
       catch (Throwable e)
