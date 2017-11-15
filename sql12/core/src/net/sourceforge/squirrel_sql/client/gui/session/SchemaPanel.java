@@ -4,13 +4,13 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.JScrollPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -130,18 +130,33 @@ public class SchemaPanel extends JPanel
    {
       try
       {
-         JPopupMenu popupSchemas= new JPopupMenu();
+         JScrollPopupMenu popupSchemas = new JScrollPopupMenu();
+         popupSchemas.setMaximumVisibleRows(20);
 
+         int menuCount = 0;
+         int menuHeight = new JMenuItem("Test").getPreferredSize().height;
          for (String schema : _session.getSQLConnection().getSQLMetaData().getSchemas())
          {
             JMenuItem menuItem = new JMenuItem(schema);
-
-            menuItem.addActionListener(e -> onSchemaSelected(menuItem) );
+            menuItem.addActionListener(e -> onSchemaSelected(menuItem));
 
             popupSchemas.add(menuItem);
+            ++menuCount;
          }
 
-         popupSchemas.show(_btnChooseSchema, -popupSchemas.getPreferredSize().width + _btnChooseSchema.getWidth(),  -popupSchemas.getPreferredSize().height + _btnChooseSchema.getHeight());
+         int visibleItemCount = Math.min(menuCount, popupSchemas.getMaximumVisibleRows());
+
+         int scrollbarSizeIfVisible = 0;
+
+         if(menuCount > popupSchemas.getMaximumVisibleRows())
+         {
+            scrollbarSizeIfVisible = popupSchemas.getScrollBar().getPreferredSize().width;
+         }
+
+         popupSchemas.show(_btnChooseSchema,
+               -popupSchemas.getPreferredSize().width - scrollbarSizeIfVisible +_btnChooseSchema.getWidth(),
+               -visibleItemCount*menuHeight + _btnChooseSchema.getHeight());
+
       }
       catch (SQLException e)
       {
