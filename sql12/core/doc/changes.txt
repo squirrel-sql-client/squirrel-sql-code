@@ -36,6 +36,13 @@ Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress 
 
 Bug fixes:
 
+Mac scripts where changed according to the comment of Nov. 18. 2017 in bug #1321.
+  This change contradicts the change made for bug #1310.
+  Since there seems to be no version that works for all Mac users
+  the problem is well documented in the script itself
+  to allow users to change the script and to try out which version works for them.
+
+
 #1321 Scripts for the plain zip releases are updated and now match the installer versions.
  Please note that there are now separate scripts for Linux/Unix and Mac.
  While the installers automatically come with the right script

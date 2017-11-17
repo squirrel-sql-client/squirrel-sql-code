@@ -1,5 +1,10 @@
 #! /bin/sh -x
 
+#############################################################################
+# NOTE: If this script DOES NOT WORK search for the CHANGE_HERE comment below
+#############################################################################
+
+
 ABSPATH=$(cd "$(dirname "$0")"; pwd)
 
 # This function sets a global variable named "CP" to a command-path separated list of jars located beneath the
@@ -49,13 +54,27 @@ case "`uname -s`" in
 		;;
 esac
 
+
+
 # SQuirreL home. This is the plain zip version of squirrel-sql.sh, so the installer isn't run.  In this case
 # the script cannot be modified by the installer to hard-code the install path.  We prefer to specify squirrel
 # home as an absolute path, so that the command will work when exec'd from any location. So we attempt to 
 # detect the absolute path using dirname "$0", which should work in most cases.  
+
+
 if $macosx ; then
-#    SQUIRREL_SQL_HOME=`dirname "$0"`/Contents/Resources/Java
-    SQUIRREL_SQL_HOME=$(echo $ABSPATH | grep -o '^/.*/Contents/')Resources/Java
+
+
+##################################################################################################
+# CHANGE_HERE
+# Mac users are not able which of the two lines below works correctly, see bugs 1287, 1321, 1310.
+# Thus if you have problems running SQuirreL on IOS please try out the alternative line
+##################################################################################################
+    SQUIRREL_SQL_HOME=`dirname "$0"`/Contents/Resources/Java
+#    SQUIRREL_SQL_HOME=$(echo $ABSPATH | grep -o '^/.*/Contents/')Resources/Java
+
+
+
     if [ ! -d "$SQUIRREL_SQL_HOME" ]; then
         # We assume that this is the ZIP file extracted on MacOS,
         # so, fall-back to the defult path
