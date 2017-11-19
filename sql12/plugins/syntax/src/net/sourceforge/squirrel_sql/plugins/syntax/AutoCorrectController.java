@@ -144,9 +144,9 @@ public class AutoCorrectController
 
       DefaultTableModel dtm = (DefaultTableModel) _dlg.tblAutoCorrects.getModel();
 
-      Vector<Vector<String>> dataVector = dtm.getDataVector();
+      Vector<Vector> dataVector = dtm.getDataVector();
 
-      Hashtable<String, String> newAutoCorrects = 
+      Hashtable<String, String> newAutoCorrects =
           new Hashtable<String, String>();
 
       for (int i = 0; i < dataVector.size(); i++)

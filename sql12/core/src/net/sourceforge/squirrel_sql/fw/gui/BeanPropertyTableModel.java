@@ -61,7 +61,7 @@ public class BeanPropertyTableModel extends DefaultTableModel
 		final Vector<Object> columnNames = new Vector<Object>();
 		columnNames.add(_nameColumnName);
 		columnNames.add(_valueColumnName);
-		final Vector<Object> columnData = new Vector<Object>();
+		final Vector<Vector> columnData = new Vector<>();
 		if (_bean != null)
 		{
 			try
@@ -81,7 +81,7 @@ public class BeanPropertyTableModel extends DefaultTableModel
 		setDataVector(columnData, columnNames);
 	}
 
-	private void processBeanInfo(BeanInfo info, Vector<Object> columnData)
+	private void processBeanInfo(BeanInfo info, Vector<Vector> columnData)
 		throws InvocationTargetException, IllegalAccessException
 	{
 		BeanInfo[] extra = info.getAdditionalBeanInfo();

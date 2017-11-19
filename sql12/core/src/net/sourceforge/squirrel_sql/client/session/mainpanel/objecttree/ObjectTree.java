@@ -43,6 +43,7 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -453,13 +454,12 @@ class ObjectTree extends JTree
 		// expanded. If it was recursively call this method in order to expand
 		// the child.
       @SuppressWarnings("unchecked")
-      Enumeration<ObjectTreeNode> childEnumeration = 
-          (Enumeration<ObjectTreeNode>) node.children();
-		Iterator<ObjectTreeNode> it = 
-            new EnumerationIterator<ObjectTreeNode>(childEnumeration);
+      Enumeration<TreeNode> childEnumeration = node.children();
+		Iterator<TreeNode> it = new EnumerationIterator<TreeNode>(childEnumeration);
+
 		while (it.hasNext())
 		{
-			final ObjectTreeNode child = it.next();
+			final ObjectTreeNode child = (ObjectTreeNode) it.next();
 			final TreePath childPath = new TreePath(child.getPath());
 			final String childPathName = childPath.toString();
 

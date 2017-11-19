@@ -1,9 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 
-@XmlRootElement(name = "AliasFileXmlBean")
 public class RecentFilesJsonBean
 {
    private ArrayList<String> _recentFiles = new ArrayList<String>();
