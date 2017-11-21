@@ -1,15 +1,16 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.findcolumn;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 public class FindColumnColWrapper
 {
    private ExtTableColumn _extTableColumn;
+   private boolean _dataSetContainsdifferentTables;
 
-   public FindColumnColWrapper(ExtTableColumn extTableColumn)
+   public FindColumnColWrapper(ExtTableColumn extTableColumn, boolean dataSetContainsdifferentTables)
    {
       _extTableColumn = extTableColumn;
+      _dataSetContainsdifferentTables = dataSetContainsdifferentTables;
    }
 
    @Override
@@ -17,9 +18,9 @@ public class FindColumnColWrapper
    {
       String tableNamePostFix = "";
 
-      if(false == StringUtilities.isEmpty(_extTableColumn.getColumnDisplayDefinition().getTableName(), true))
+      if(_dataSetContainsdifferentTables && null != TableNameAccess.getTableName(_extTableColumn))
       {
-         tableNamePostFix = " (" + _extTableColumn.getColumnDisplayDefinition().getTableName() + ")";
+         tableNamePostFix = "  (" + TableNameAccess.getTableName(_extTableColumn) + ")";
       }
 
 

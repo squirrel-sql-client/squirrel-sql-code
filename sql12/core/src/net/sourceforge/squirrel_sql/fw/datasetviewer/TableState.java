@@ -92,7 +92,7 @@ public class TableState
 
    private void moveTo(TableColumnModel columnModel, int modelIndex, int columnIndex)
    {
-      if(columnIndex >= columnModel.getColumnCount() || columnIndex <= 0)
+      if(columnIndex >= columnModel.getColumnCount() || columnIndex < 0)
       {
          return;
       }

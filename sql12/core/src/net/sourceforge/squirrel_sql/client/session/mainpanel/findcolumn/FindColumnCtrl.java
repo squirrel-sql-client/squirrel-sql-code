@@ -19,6 +19,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.prefs.Preferences;
 
 public class FindColumnCtrl
@@ -38,9 +39,13 @@ public class FindColumnCtrl
 
    private FindColumnColWrapper _columnToGoTo;
    private ArrayList<ExtTableColumn> _columnsToMoveToFront;
+   private final boolean _dataSetContainsdifferentTables;
 
    public FindColumnCtrl(final Frame owningFrame, DataSetViewerTablePanel dataSetViewerTablePanel)
    {
+      _dataSetContainsdifferentTables = dataSetContainsdifferentTables(dataSetViewerTablePanel);
+
+
       _dataSetViewerTablePanel = dataSetViewerTablePanel;
       _findColumnDlg = new FindColumnDlg(owningFrame);
 
@@ -160,9 +165,20 @@ public class FindColumnCtrl
       _findColumnDlg.showDialog();
    }
 
+   private boolean dataSetContainsdifferentTables(DataSetViewerTablePanel dataSetViewerTablePanel)
+   {
+      HashSet<String> uniqueTableNamesOrNull = new HashSet<>();
+
+      for (ExtTableColumn extTableColumn : dataSetViewerTablePanel.getTableColumns())
+      {
+         uniqueTableNamesOrNull.add(TableNameAccess.getTableName(extTableColumn));
+      }
+      return uniqueTableNamesOrNull.size() > 1;
+   }
+
    private void onMoveToTableBegin()
    {
-      _columnsToMoveToFront = new ArrayList<ExtTableColumn>();
+      _columnsToMoveToFront = new ArrayList<>();
 
       for (int i = 0; i < _rightListModel.size(); i++)
       {
@@ -282,7 +298,7 @@ public class FindColumnCtrl
 
       for (ExtTableColumn extTableColumn : _dataSetViewerTablePanel.getTableColumns())
       {
-         FindColumnColWrapper colWrapper = new FindColumnColWrapper(extTableColumn);
+         FindColumnColWrapper colWrapper = new FindColumnColWrapper(extTableColumn, _dataSetContainsdifferentTables);
 
          String filterText = _findColumnDlg.txtFilter.getText();
 
