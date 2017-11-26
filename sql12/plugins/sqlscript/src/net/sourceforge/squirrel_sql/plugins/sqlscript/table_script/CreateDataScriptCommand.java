@@ -488,27 +488,29 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
    {
       String escape = SQLScriptPreferencesManager.getPreferences().getEscapeNewLineString();
 
-      int iIndex;
-      iIndex = sResult.indexOf('\n');
-      if (iIndex != -1)
-      {
-         int iPrev = 0;
-         StringBuffer sb = new StringBuffer();
-         sb.append(sResult.substring(iPrev, iIndex));
-         sb.append(escape);
-         iPrev = iIndex + escape.length();
-         iIndex = sResult.indexOf('\n', iPrev-1);
-         while (iIndex != -1)
-         {
-            sb.append(sResult.substring(iPrev-1, iIndex));
-            sb.append(escape);
-            iPrev = iIndex + escape.length();
-            iIndex = sResult.indexOf('\n', iPrev-1);
-         }
-         sb.append(sResult.substring(iPrev-1));
-         sResult = sb.toString();
-      }
-      return sResult;
+      return sResult.replaceAll("\n", escape);
+
+//      int iIndex;
+//      iIndex = sResult.indexOf('\n');
+//      if (iIndex != -1)
+//      {
+//         int iPrev = 0;
+//         StringBuffer sb = new StringBuffer();
+//         sb.append(sResult.substring(iPrev, iIndex));
+//         sb.append(escape);
+//         iPrev = iIndex + escape.length();
+//         iIndex = sResult.indexOf('\n', iPrev-1);
+//         while (iIndex != -1)
+//         {
+//            sb.append(sResult.substring(iPrev-1, iIndex));
+//            sb.append(escape);
+//            iPrev = iIndex + escape.length();
+//            iIndex = sResult.indexOf('\n', iPrev-1);
+//         }
+//         sb.append(sResult.substring(iPrev-1));
+//         sResult = sb.toString();
+//      }
+//      return sResult;
    }
 
    /**

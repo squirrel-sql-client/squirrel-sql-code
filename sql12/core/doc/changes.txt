@@ -36,6 +36,8 @@ Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress 
 
 Bug fixes:
 
+#1324 SQL script generation corrupts data when remapping newlines.
+
 Fixed two minor issues of the SQL results column search feature:
   - When columns were moved and table was made editable the first moved column reappeared at its former position.
   - If different tables occur in a SQL result and if your RDBMS/driver gives access to SQL results table names
