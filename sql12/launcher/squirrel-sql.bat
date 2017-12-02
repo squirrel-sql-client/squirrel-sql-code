@@ -46,7 +46,7 @@ SET TMP_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\log4j.properties" --squirre
 
 @rem Run with no command window. This may not work with versions of Windows prior to XP. 
 @rem Remove 'start "SQuirreL SQL Client" /B' for compatibility only if necessary 
-start "SQuirreL SQL Client" /B "%LOCAL_JAVA%" -Xmx256m -Dsun.awt.nopixfmt=true -Dsun.java2d.noddraw=true -cp %SQUIRREL_CP% -splash:"%SQUIRREL_SQL_HOME%/icons/splash.jpg" net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
+start "SQuirreL SQL Client" /B "%LOCAL_JAVA%" -Dsun.awt.nopixfmt=true -Dsun.java2d.noddraw=true -cp %SQUIRREL_CP% -splash:"%SQUIRREL_SQL_HOME%/icons/splash.jpg" net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
 
 :ExitForWrongJavaVersion
 

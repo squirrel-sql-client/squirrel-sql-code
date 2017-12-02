@@ -65,7 +65,7 @@ cd "$UNIX_STYLE_HOME"
 # minimum acceptable version (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should 
 # be all that is necessary for the version form. 
 $JAVACMD -cp "$UNIX_STYLE_HOME/lib/versioncheck.jar" JavaVersionChecker 1.8 9
-if [ "$?" = "1" ]; then
+if [ "$?" != "0" ]; then
 	exit
 fi
 
@@ -90,4 +90,4 @@ SCRIPT_ARGS="$1 $2 $3 $4 $5 $6 $7 $8 $9"
 buildCPFromDir "$UNIX_STYLE_HOME"
 
 # Launch SQuirreL application
-$JAVACMD -Xmx256m -cp "$CP" -splash:"$SQUIRREL_SQL_HOME/icons/splash.jpg" net.sourceforge.squirrel_sql.client.Main --log-config-file "$UNIX_STYLE_HOME"/log4j.properties --squirrel-home "$UNIX_STYLE_HOME" $NATIVE_LAF_PROP $SCRIPT_ARGS
+"$JAVACMD" -cp "$CP" -splash:"$SQUIRREL_SQL_HOME/icons/splash.jpg" net.sourceforge.squirrel_sql.client.Main --log-config-file "$UNIX_STYLE_HOME"/log4j.properties --squirrel-home "$UNIX_STYLE_HOME" $NATIVE_LAF_PROP $SCRIPT_ARGS

@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Launch script improvements:
+ - Several improvements to the MAC launch scripts provided by Harry Evans in bug #1321.
+ - '-Xmx256m' was removed from all scripts as a consequence of Java 1.8 being required.
+
 Display of current schema in a Session tab's status bar / Option to set the schema.
   The JDBC API methods to do this were introduced with Java 1.7 and currently do not work for all drivers/RDBMSes
   NOTE: WITH THIS CHANGE SQUIRREL REQUIRES Java 8.

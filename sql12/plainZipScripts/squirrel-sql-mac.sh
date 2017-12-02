@@ -67,11 +67,12 @@ if $macosx ; then
 
 ##################################################################################################
 # CHANGE_HERE
-# Mac users are not able which of the two lines below works correctly, see bugs 1287, 1321, 1310.
-# Thus if you have problems running SQuirreL on IOS please try out the alternative line
+# Mac users are not able which of the three lines below works correctly, see bugs 1287, 1321, 1310.
+# Thus if you have problems running SQuirreL on IOS please try out the alternative lines
 ##################################################################################################
     SQUIRREL_SQL_HOME=`dirname "$0"`/Contents/Resources/Java
 #    SQUIRREL_SQL_HOME=$(echo $ABSPATH | grep -o '^/.*/Contents/')Resources/Java
+#    SQUIRREL_SQL_HOME=`dirname "$0"`/../Resources/Java
 
 
 
@@ -94,8 +95,8 @@ cd "$UNIX_STYLE_HOME"
 # should be able to be run by that version or higher. The arguments to JavaVersionChecker below specify the 
 # minimum acceptable version (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should 
 # be all that is necessary for the version form. 
-$JAVACMD -cp "$UNIX_STYLE_HOME/lib/versioncheck.jar" JavaVersionChecker 1.8 9
-if [ "$?" = "1" ]; then
+"$JAVACMD" -cp "$UNIX_STYLE_HOME/lib/versioncheck.jar" JavaVersionChecker 1.8 9
+if [ "$?" != "0" ]; then
   exit
 fi
 
@@ -123,4 +124,4 @@ fi
 buildCPFromDir "$UNIX_STYLE_HOME"
 
 # Launch SQuirreL application
-$JAVACMD -Xmx256m -cp "$CP" $MACOSX_SQUIRREL_PROPS -splash:"$SQUIRREL_SQL_HOME/icons/splash.jpg" net.sourceforge.squirrel_sql.client.Main --log-config-file "$UNIX_STYLE_HOME"/log4j.properties --squirrel-home "$UNIX_STYLE_HOME" $NATIVE_LAF_PROP $SCRIPT_ARGS
+"$JAVACMD" -cp "$CP" $MACOSX_SQUIRREL_PROPS -splash:"$SQUIRREL_SQL_HOME/icons/splash.jpg" net.sourceforge.squirrel_sql.client.Main --log-config-file "$UNIX_STYLE_HOME"/log4j.properties --squirrel-home "$UNIX_STYLE_HOME" $NATIVE_LAF_PROP $SCRIPT_ARGS
