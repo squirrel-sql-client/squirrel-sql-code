@@ -21,10 +21,12 @@ public class CliInitializer
          throw new IllegalArgumentException("-Dsquirrel.home must be non null");
       }
 
-      System.out.println("###############squirrelHome = " + squirrelHome);
-      System.out.println("###############squirrelUser = " + squirrelUserDir);
+      System.out.println();
+      System.out.println("SQuirreL CLI environment information:");
+      System.out.println("  squirrelHome = " + squirrelHome);
+      System.out.println("  squirrelUser = " + squirrelUserDir);
+      System.out.println();
 
-      //Main.setCliMode();
 
       if (StringUtilities.isEmpty(squirrelUserDir, true))
       {
@@ -45,7 +47,11 @@ public class CliInitializer
       application.initDriverManager();
       application.initDataCache();
 
-      System.out.println("CliInitializer.initializeSquirrelInCliMode DONE");
+      if (application.getSquirrelPreferences().getSessionProperties().getSQLLimitRows())
+      {
+         System.out.println("NOTE: SQL results are limited to " + application.getSquirrelPreferences().getSessionProperties().getSQLNbrRowsToShow() + " rows.");
+         System.out.println();
+      }
 
    }
 

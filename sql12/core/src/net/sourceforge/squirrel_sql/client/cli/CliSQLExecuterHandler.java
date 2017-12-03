@@ -64,17 +64,13 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
 
       rsds.setSqlExecutionTabResultSet(rst, null, dialectType);
 
-      StringBuilder sb = new StringBuilder();
 
-      ResultAsText resultAsText = new ResultAsText(rsds.getDataSetDefinition().getColumnDefinitions(), true, line -> onAddLine(line, sb));
+      ResultAsText resultAsText = new ResultAsText(rsds.getDataSetDefinition().getColumnDefinitions(), true, line -> onAddLine(line));
 
       for (Object[] row : rsds.getAllDataForReadOnly())
       {
          resultAsText.addRow(row);
       }
-
-
-      System.out.println(sb);
    }
 
    @Override
@@ -83,9 +79,9 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
       //System.out.println("Execution took " + info.getTotalElapsedMillis() + " Millis");
    }
 
-   private void onAddLine(String line, StringBuilder sb)
+   private void onAddLine(String line)
    {
-      sb.append(line);
+      System.out.print(line);
    }
 
    @Override
