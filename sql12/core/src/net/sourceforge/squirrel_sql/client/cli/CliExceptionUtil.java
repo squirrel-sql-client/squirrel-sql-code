@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public class CliExceptionUtil
 {
-   public static RuntimeException wrapRunntime(Exception e)
+   public static RuntimeException wrapRunntime(Throwable e)
    {
       if(e instanceof RuntimeException)
       {

@@ -30,19 +30,25 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
       {
          System.out.println(postErrorString);
       }
+
+      if(null != th)
+      {
+         throw CliExceptionUtil.wrapRunntime(th);
+      }
+
       return postErrorString;
    }
 
    @Override
    public void sqlStatementCount(int statementCount)
    {
-      System.out.println("statementCount = " + statementCount);
+      //System.out.println("statementCount = " + statementCount);
    }
 
    @Override
    public void sqlToBeExecuted(String sql)
    {
-      System.out.println("sql = " + sql);
+      //System.out.println("sql = " + sql);
    }
 
    @Override
@@ -69,6 +75,12 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
 
 
       System.out.println(sb);
+   }
+
+   @Override
+   public void sqlExecutionComplete(SQLExecutionInfo info, int processedStatementCount, int statementCount)
+   {
+      //System.out.println("Execution took " + info.getTotalElapsedMillis() + " Millis");
    }
 
    private void onAddLine(String line, StringBuilder sb)

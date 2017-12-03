@@ -32,18 +32,19 @@ public class SquirrelCli
          }
       }
 
-      System.out.println("Alias name \"" + aliasName + "\" not found.");
+      throw new IllegalArgumentException("Alias name \"" + aliasName + "\" not found.");
    }
 
    public static void exec(String sql)
    {
-      System.out.println("sql = " + sql);
+      //System.out.println("sql = " + sql);
 
       CliSession cliSession = new CliSession(_aliasToConnectTo);
 
       ISQLExecuterHandler sqlExecuterHandlerProxy = new CliSQLExecuterHandler(cliSession);
 
       SQLExecuterTask sqlExecuterTask = new SQLExecuterTask(cliSession, sql, sqlExecuterHandlerProxy);
+      sqlExecuterTask.setExecuteEditableCheck(false);
 
       sqlExecuterTask.run();
    }
