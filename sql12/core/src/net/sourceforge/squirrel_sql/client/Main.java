@@ -152,4 +152,9 @@ public class Main
    {
       return application;
    }
+
+   public static void setApplication(Application application)
+   {
+      Main.application = application;
+   }
 }

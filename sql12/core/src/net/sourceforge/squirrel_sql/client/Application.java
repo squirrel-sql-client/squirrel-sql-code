@@ -89,7 +89,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  * @author Lynn Pye
  */
-class Application implements IApplication
+public class Application implements IApplication
 {	
 
 	/** Logger for this class. */
@@ -173,7 +173,7 @@ class Application implements IApplication
 	/**
 	 * Default ctor.
 	 */
-	Application()
+	public Application()
 	{
 		super();
 	}
@@ -192,10 +192,7 @@ class Application implements IApplication
 
 		editWhereCols.setApplication(this);
 
-		// TODO: Make properties file Application.properties so we can use class
-		// name to generate properties file name.
-		_resources = new SquirrelResources(SquirrelResources.BUNDLE_BASE_NAME);
-		_prefs = SquirrelPreferences.load();
+		initResourcesAndPrefs();
       _desktopStyle = new DesktopStyle(_prefs);
 
 		Locale locale = constructPreferredLocale(_prefs);
@@ -226,6 +223,12 @@ class Application implements IApplication
          new EventDispatchThreadWatcher();
       }
    }
+
+	public void initResourcesAndPrefs()
+	{
+		_resources = new SquirrelResources(SquirrelResources.BUNDLE_BASE_NAME);
+		_prefs = SquirrelPreferences.load();
+	}
 
 	/**
 	 * Application is shutting down.
@@ -752,11 +755,11 @@ class Application implements IApplication
 		_actions.loadActionKeys(_prefs.getActionKeys());
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createjdbcmgr"));
-		_driverMgr = new SQLDriverManager();
+		initDriverManager();
 
 		// TODO: pass in a message handler so user gets error msgs.
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingjdbc"));
-		_appFiles = new ApplicationFiles();
+		initAppFiles();
 
 		String errMsg = FileTransformer.transform(_appFiles);
 		if (null != errMsg)
@@ -766,9 +769,7 @@ class Application implements IApplication
 			System.exit(-1);
 		}
 
-		_cache =
-			new DataCache(_driverMgr, _appFiles.getDatabaseDriversFile(), _appFiles.getDatabaseAliasesFile(),
-				_resources.getDefaultDriversUrl(), this);
+		initDataCache();
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createWindowManager"));
 		_windowManager = new WindowManager(this, args.getUserInterfaceDebugEnabled());
@@ -852,8 +853,23 @@ class Application implements IApplication
 			_shutdownTimer.setApplication(this);
 			_shutdownTimer.start();
 		}
+	}
 
-      _recentFilesManager.initJSonBean(_appFiles.getRecentFilesJsonBeanFile());
+	public void initDriverManager()
+	{
+		_driverMgr = new SQLDriverManager();
+	}
+
+	public void initAppFiles()
+	{
+		_appFiles = new ApplicationFiles();
+	}
+
+	public void initDataCache()
+	{
+		_cache =
+			new DataCache(_driverMgr, _appFiles.getDatabaseDriversFile(), _appFiles.getDatabaseAliasesFile(),
+				_resources.getDefaultDriversUrl(), this);
 	}
 
 	/**
