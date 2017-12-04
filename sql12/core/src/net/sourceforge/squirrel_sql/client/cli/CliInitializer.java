@@ -11,8 +11,11 @@ import java.util.Properties;
 public class CliInitializer
 {
 
-   public static void initializeSquirrelInCliMode()
+   private static ShellMode _shellMode;
+
+   public static void initializeSquirrelInCliMode(ShellMode shellMode)
    {
+      _shellMode = shellMode;
       String squirrelHome =  System.getProperty("squirrel.home");
       String squirrelUserDir =  System.getProperty("squirrel.userdir");
 
@@ -21,11 +24,14 @@ public class CliInitializer
          throw new IllegalArgumentException("-Dsquirrel.home must be non null");
       }
 
-      System.out.println();
-      System.out.println("SQuirreL CLI environment information:");
-      System.out.println("  squirrelHome = " + squirrelHome);
-      System.out.println("  squirrelUser = " + squirrelUserDir);
-      System.out.println();
+      if (shellMode == ShellMode.CLI)
+      {
+         System.out.println();
+         System.out.println("SQuirreL CLI environment information:");
+         System.out.println("  squirrelHome = " + squirrelHome);
+         System.out.println("  squirrelUser = " + squirrelUserDir);
+         System.out.println();
+      }
 
 
       if (StringUtilities.isEmpty(squirrelUserDir, true))
@@ -47,12 +53,11 @@ public class CliInitializer
       application.initDriverManager();
       application.initDataCache();
 
-      if (application.getSquirrelPreferences().getSessionProperties().getSQLLimitRows())
+      if (shellMode == ShellMode.CLI && application.getSquirrelPreferences().getSessionProperties().getSQLLimitRows())
       {
          System.out.println("NOTE: SQL results are limited to " + application.getSquirrelPreferences().getSessionProperties().getSQLNbrRowsToShow() + " rows.");
          System.out.println();
       }
-
    }
 
    private static void initLogging()
@@ -66,4 +71,8 @@ public class CliInitializer
       PropertyConfigurator.configure(props);
    }
 
+   public static ShellMode getShellMode()
+   {
+      return _shellMode;
+   }
 }
