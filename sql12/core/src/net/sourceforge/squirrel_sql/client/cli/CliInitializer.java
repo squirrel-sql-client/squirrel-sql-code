@@ -15,11 +15,17 @@ public class CliInitializer
 
    public static void initializeSquirrelInCliMode(ShellMode shellMode)
    {
-      _shellMode = shellMode;
       String squirrelHome =  System.getProperty("squirrel.home");
       String squirrelUserDir =  System.getProperty("squirrel.userdir");
 
-      if(StringUtilities.isEmpty(squirrelHome, true))
+      initializeSquirrelInCliMode(shellMode, squirrelHome, squirrelUserDir);
+   }
+
+   public static void initializeSquirrelInCliMode(ShellMode shellMode, String squirrelHomeDir, String squirrelUserDir)
+   {
+      _shellMode = shellMode;
+
+      if(StringUtilities.isEmpty(squirrelHomeDir, true))
       {
          throw new IllegalArgumentException("-Dsquirrel.home must be non null");
       }
@@ -28,7 +34,7 @@ public class CliInitializer
       {
          System.out.println();
          System.out.println("SQuirreL CLI environment information:");
-         System.out.println("  squirrelHome = " + squirrelHome);
+         System.out.println("  squirrelHome = " + squirrelHomeDir);
          System.out.println("  squirrelUser = " + squirrelUserDir);
          System.out.println();
       }
@@ -36,11 +42,11 @@ public class CliInitializer
 
       if (StringUtilities.isEmpty(squirrelUserDir, true))
       {
-         ApplicationArguments.initialize(new String[]{"-nosplash", "-no-plugins", "-home", squirrelHome});
+         ApplicationArguments.initialize(new String[]{"-nosplash", "-no-plugins", "-home", squirrelHomeDir});
       }
       else
       {
-         ApplicationArguments.initialize(new String[]{"-no-splash", "-no-plugins", "-home", squirrelHome, "-userdir", squirrelUserDir});
+         ApplicationArguments.initialize(new String[]{"-no-splash", "-no-plugins", "-home", squirrelHomeDir, "-userdir", squirrelUserDir});
       }
 
       initLogging();

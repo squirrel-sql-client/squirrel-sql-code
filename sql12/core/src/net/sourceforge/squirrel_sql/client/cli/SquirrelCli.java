@@ -51,30 +51,31 @@ public class SquirrelCli
       sqlExecuterTask.run();
    }
 
-   public static boolean evaluateScriptParams()
+   public static void evaluateScriptParams(String connectParam, String execParam)
    {
-      String connectParam = System.getProperty("squirrel.param1");
-      String execParam = System.getProperty("squirrel.param2");
 
-      if(false == StringUtilities.isEmpty(connectParam, true))
+      if(StringUtilities.isEmpty(connectParam, true) || StringUtilities.isEmpty(execParam, true))
       {
-         if(false == connectParam.startsWith("connect(") || false == connectParam.endsWith(")"))
-         {
-            throw new IllegalArgumentException("First parameter must be \"connect(<Alias name>)\"");
-         }
-
-         String aliasName = connectParam.substring("connect(".length());
-
-         aliasName = aliasName.substring(0, aliasName.length() - 1);
-
-         connect(aliasName);
-
-         if (false == StringUtilities.isEmpty(execParam, true))
-         {
-            exec(execParam);
-            return true;
-         }
+         String msg = "Missing batch mode parameters:\n" +
+               "   First parameter must be \\\"connect(<Alias name>)\\\"\"\n" +
+               "   Second parameter must be one or more SQL statements. More than one statements must be separated by SQuirreLs statement separator.";
+         throw new IllegalArgumentException(msg);
       }
-      return false;
+
+
+
+      if(false == connectParam.startsWith("connect(") || false == connectParam.endsWith(")"))
+      {
+         throw new IllegalArgumentException("First parameter must be \"connect(<Alias name>)\"");
+      }
+
+      String aliasName = connectParam.substring("connect(".length());
+
+      aliasName = aliasName.substring(0, aliasName.length() - 1);
+
+      connect(aliasName);
+
+      System.out.println("############### " + execParam);
+      exec(execParam);
    }
 }
