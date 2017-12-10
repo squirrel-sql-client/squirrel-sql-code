@@ -6,6 +6,11 @@ import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
 
@@ -81,7 +86,21 @@ public class SquirrelCli
 
       connect(aliasName);
 
-      //System.out.println("############### " + execParam);
+      Path path = Paths.get(execParam);
+
+      if(Files.isRegularFile(path))
+      {
+         try
+         {
+            execParam = new String(Files.readAllBytes(path));
+         }
+         catch (IOException e)
+         {
+            System.err.println("ERROR: Failed to read file " + path.getFileName() + ": " + e.getMessage());
+            e.printStackTrace();
+         }
+      }
+
       exec(execParam);
    }
 }
