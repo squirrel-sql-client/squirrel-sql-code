@@ -41,6 +41,12 @@ public class SquirrelCli
    {
       //System.out.println("sql = " + sql);
 
+      if(null == _aliasToConnectTo)
+      {
+         System.err.println("ERROR: No database connection has been opened. Call connect(...) to open a connection.");
+         return;
+      }
+
       CliSession cliSession = new CliSession(_aliasToConnectTo);
 
       ISQLExecuterHandler sqlExecuterHandlerProxy = new CliSQLExecuterHandler(cliSession);
@@ -75,7 +81,7 @@ public class SquirrelCli
 
       connect(aliasName);
 
-      System.out.println("############### " + execParam);
+      //System.out.println("############### " + execParam);
       exec(execParam);
    }
 }

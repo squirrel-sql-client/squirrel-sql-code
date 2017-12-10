@@ -52,6 +52,12 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
    }
 
    @Override
+   public void sqlDataUpdated(int updateCount)
+   {
+      System.out.println(updateCount + " rows updated");
+   }
+
+   @Override
    public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model) throws DataSetException
    {
 
