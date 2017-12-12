@@ -104,7 +104,7 @@ TMP_CP=$CP
 TMP_CP=$TMP_CP:$CLASSPATH
 
 # Define mac-specific system properties if running on Mac OS X
-MACOSX_SQUIRREL_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=SQuirreLSQL"
+MACOSX_SQUIRREL_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=SQuirreLSQL -Dapple.awt.application.name=SQuirreLSQL"
 NATIVE_LAF_PROP="--native-laf"
 
 
