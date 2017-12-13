@@ -61,46 +61,4 @@ public class SquirrelCli
 
       sqlExecuterTask.run();
    }
-
-   public static void evaluateScriptParams(String connectParam, String execParam)
-   {
-
-      if(StringUtilities.isEmpty(connectParam, true) || StringUtilities.isEmpty(execParam, true))
-      {
-         String msg = "Missing batch mode parameters:\n" +
-               "   First parameter must be \\\"connect(<Alias name>)\\\"\"\n" +
-               "   Second parameter must be one or more SQL statements. More than one statements must be separated by SQuirreLs statement separator.";
-         throw new IllegalArgumentException(msg);
-      }
-
-
-
-      if(false == connectParam.startsWith("connect(") || false == connectParam.endsWith(")"))
-      {
-         throw new IllegalArgumentException("First parameter must be \"connect(<Alias name>)\"");
-      }
-
-      String aliasName = connectParam.substring("connect(".length());
-
-      aliasName = aliasName.substring(0, aliasName.length() - 1);
-
-      connect(aliasName);
-
-      Path path = Paths.get(execParam);
-
-      if(Files.isRegularFile(path))
-      {
-         try
-         {
-            execParam = new String(Files.readAllBytes(path));
-         }
-         catch (IOException e)
-         {
-            System.err.println("ERROR: Failed to read file " + path.getFileName() + ": " + e.getMessage());
-            e.printStackTrace();
-         }
-      }
-
-      exec(execParam);
-   }
 }
