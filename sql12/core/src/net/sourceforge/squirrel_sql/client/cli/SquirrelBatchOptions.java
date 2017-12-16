@@ -67,10 +67,10 @@ public enum SquirrelBatchOptions
          {
             return "Missing parameter " + USER._option.getOpt();
          }
-         else if(false == commandLine.hasOption(PASSWORD._option.getOpt()))
-         {
-            return "Missing parameter " + PASSWORD._option.getOpt();
-         }
+//         else if(false == commandLine.hasOption(PASSWORD._option.getOpt()))
+//         {
+//            return "Missing parameter " + PASSWORD._option.getOpt();
+//         }
 
          return null;
 

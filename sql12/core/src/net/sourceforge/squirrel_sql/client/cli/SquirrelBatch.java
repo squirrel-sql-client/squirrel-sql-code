@@ -4,7 +4,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import java.io.IOException;
@@ -53,19 +52,41 @@ public class SquirrelBatch
       }
 
 
-
+      net.sourceforge.squirrel_sql.client.cli.CliInitializer.initializeSquirrelInCliMode(ShellMode.BATCH, args[0], args[1]);
 
       String alias = SquirrelBatchOptions.ALIAS.getValue(commandLine);
 
       if(null == alias)
       {
-         throw new UnsupportedOperationException("NYI no Alias");
+         String url = SquirrelBatchOptions.URL.getValue(commandLine);
+         String user = SquirrelBatchOptions.USER.getValue(commandLine);
+
+         String password = null;
+         if( SquirrelBatchOptions.USER.hasParam(commandLine) )
+         {
+            password = SquirrelBatchOptions.PASSWORD.getValue(commandLine);
+         }
+
+         String driver = SquirrelBatchOptions.DRIVER.getValue(commandLine);
+         String drivercp = SquirrelBatchOptions.DRIVERCP.getValue(commandLine);
+
+         SquirrelCli.connect(url, user, password, driver, drivercp);
+      }
+      else
+      {
+         if (SquirrelBatchOptions.PASSWORD.hasParam(commandLine))
+         {
+            String password = SquirrelBatchOptions.PASSWORD.getValue(commandLine);
+            SquirrelCli.connect(alias, password);
+         }
+         else
+         {
+            SquirrelCli.connect(alias);
+         }
       }
 
-      net.sourceforge.squirrel_sql.client.cli.CliInitializer.initializeSquirrelInCliMode(ShellMode.BATCH, args[0], args[1]);
 
 
-      net.sourceforge.squirrel_sql.client.cli.SquirrelCli.connect(alias);
 
 
       String sql = SquirrelBatchOptions.SQL.getValue(commandLine);

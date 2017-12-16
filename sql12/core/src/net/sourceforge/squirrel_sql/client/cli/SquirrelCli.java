@@ -1,9 +1,14 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
+import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.io.File;
@@ -12,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 
 public class SquirrelCli
@@ -19,6 +25,11 @@ public class SquirrelCli
    private static ISQLAlias _aliasToConnectTo;
 
    public static void connect(String aliasName)
+   {
+      connect(aliasName, null);
+   }
+
+   public static void connect(String aliasName, String password)
    {
       Iterator<ISQLAlias> aliasIterator = Main.getApplication().getDataCache().aliases();
 
@@ -29,6 +40,19 @@ public class SquirrelCli
          if(aliasName.equals(alias.getName()))
          {
             _aliasToConnectTo = alias;
+
+            if(null != password)
+            {
+               try
+               {
+                  _aliasToConnectTo.setPassword(password);
+               }
+               catch (ValidationException e)
+               {
+                  throw new RuntimeException(e);
+               }
+            }
+
 
             if (CliInitializer.getShellMode() == ShellMode.CLI)
             {
@@ -41,6 +65,47 @@ public class SquirrelCli
 
       throw new IllegalArgumentException("Alias name \"" + aliasName + "\" not found.");
    }
+
+   public static void connect(String url, String user, String password, String driver, String drivercp)
+   {
+      try
+      {
+         SQLDriver sqlDriver = new SQLDriver(new UidIdentifier());
+         sqlDriver.setDriverClassName(driver);
+
+         String classPathSeparator = System.getProperty("path.separator");
+         sqlDriver.setJarFileNames(drivercp.split(Pattern.quote(classPathSeparator)));
+
+         sqlDriver.setName("temporaryDriver_" + url + "_" + sqlDriver.getIdentifier().toString());
+
+         Main.getApplication().getDataCache().addDriver(sqlDriver, NullMessageHandler.getInstance());
+
+
+         SQLAlias alias = new SQLAlias(new UidIdentifier());
+
+         alias.setName("temporaryAlias_" + url + "_" + sqlDriver.getIdentifier().toString());
+
+         alias.setUrl(url);
+         alias.setUserName(user);
+
+         if (null != password)
+         {
+            alias.setPassword(password);
+         }
+
+         alias.setDriverIdentifier(sqlDriver.getIdentifier());
+
+         _aliasToConnectTo = alias;
+
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+
+   }
+
+
 
    public static void exec(String sql)
    {
