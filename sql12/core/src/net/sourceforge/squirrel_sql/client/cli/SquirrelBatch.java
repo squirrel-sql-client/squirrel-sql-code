@@ -54,9 +54,21 @@ public class SquirrelBatch
 
       net.sourceforge.squirrel_sql.client.cli.CliInitializer.initializeSquirrelInCliMode(ShellMode.BATCH, args[0], args[1]);
 
-      String alias = SquirrelBatchOptions.ALIAS.getValue(commandLine);
 
-      if(null == alias)
+      if(SquirrelBatchOptions.ALIAS.hasParam(commandLine))
+      {
+         String alias = SquirrelBatchOptions.ALIAS.getValue(commandLine);
+         if (SquirrelBatchOptions.PASSWORD.hasParam(commandLine))
+         {
+            String password = SquirrelBatchOptions.PASSWORD.getValue(commandLine);
+            SquirrelCli.connect(alias, password);
+         }
+         else
+         {
+            SquirrelCli.connect(alias);
+         }
+      }
+      else
       {
          String url = SquirrelBatchOptions.URL.getValue(commandLine);
          String user = SquirrelBatchOptions.USER.getValue(commandLine);
@@ -72,21 +84,11 @@ public class SquirrelBatch
 
          SquirrelCli.connect(url, user, password, driver, drivercp);
       }
-      else
+
+      if (SquirrelBatchOptions.MAX_ROWS.hasParam(commandLine))
       {
-         if (SquirrelBatchOptions.PASSWORD.hasParam(commandLine))
-         {
-            String password = SquirrelBatchOptions.PASSWORD.getValue(commandLine);
-            SquirrelCli.connect(alias, password);
-         }
-         else
-         {
-            SquirrelCli.connect(alias);
-         }
+         SquirrelCli.setMaxRows(Integer.parseInt(SquirrelBatchOptions.MAX_ROWS.getValue(commandLine)));
       }
-
-
-
 
 
       String sql = SquirrelBatchOptions.SQL.getValue(commandLine);

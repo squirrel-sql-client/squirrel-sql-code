@@ -15,5 +15,5 @@ if [ $# == 0 ]; then
    export _JAVA_OPTIONS="-Dsquirrel.home=$SQUIRREL_HOME -Dsquirrel.userdir=$SQUIRREL_USER_DIR"
    $JAVA_HOME/bin/jshell --class-path $CLASSPATH  /home/gerd/work/java/squirrel/squirrel-sql-git/sql12/squirrelcli/startsquirrelcli.jsh
 else
-   $JAVA_HOME/bin/java --class-path $CLASSPATH  net.sourceforge.squirrel_sql.client.cli.SquirrelBatch "$SQUIRREL_HOME" "$SQUIRREL_USER_DIR" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}"
+   $JAVA_HOME/bin/java --class-path $CLASSPATH  net.sourceforge.squirrel_sql.client.cli.SquirrelBatch "$SQUIRREL_HOME" "$SQUIRREL_USER_DIR" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" "${14}" "${15}" "${16}" "${17}"
 fi

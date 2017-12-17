@@ -105,6 +105,18 @@ public class SquirrelCli
 
    }
 
+   public static void setMaxRows(int maxRows)
+   {
+      if (0 < maxRows)
+      {
+         Main.getApplication().getSquirrelPreferences().getSessionProperties().setSQLLimitRows(true);
+         Main.getApplication().getSquirrelPreferences().getSessionProperties().setSQLNbrRowsToShow(maxRows);
+      }
+      else
+      {
+         Main.getApplication().getSquirrelPreferences().getSessionProperties().setSQLLimitRows(false);
+      }
+   }
 
 
    public static void exec(String sql)

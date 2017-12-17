@@ -15,6 +15,7 @@ public enum SquirrelBatchOptions
    DRIVER(new Option("driver", true, "JDBC driver class name")),
    DRIVERCP(new Option("drivercp", true, "JDBC driver class path (a Java classpath)")),
    SQL(new Option("sql", true, "SQL statement or SQL script file")),
+   MAX_ROWS(new Option("maxrows", true, "Max rows of SQL query. 0 means no maximum. For default see SQuirreL GUI -> New Session Properties -> tab SQL")),
    HELP(new Option("help", false, "Print help"));
 
    private Option _option;
@@ -51,7 +52,7 @@ public enum SquirrelBatchOptions
 
       if(commandLine.hasOption(ALIAS._option.getOpt()))
       {
-         return null;
+         // Nothing more necessary. We assume the password is stored or can be null.
       }
       else if(commandLine.hasOption(URL._option.getOpt()))
       {
@@ -67,20 +68,25 @@ public enum SquirrelBatchOptions
          {
             return "Missing parameter " + USER._option.getOpt();
          }
-//         else if(false == commandLine.hasOption(PASSWORD._option.getOpt()))
-//         {
-//            return "Missing parameter " + PASSWORD._option.getOpt();
-//         }
-
-         return null;
-
       }
       else
       {
          return "One of the parameters " + ALIAS._option.getOpt() + ", " + URL._option.getOpt() + " must be passed";
       }
 
+      if(commandLine.hasOption(MAX_ROWS._option.getOpt()))
+      {
+         try
+         {
+            Integer.parseInt(commandLine.getOptionValue(MAX_ROWS._option.getOpt()));
+         }
+         catch (NumberFormatException e)
+         {
+            return MAX_ROWS._option.getOpt() + " must be an integer";
+         }
+      }
 
+      return null;
    }
 
    public String getValue(CommandLine commandLine)
