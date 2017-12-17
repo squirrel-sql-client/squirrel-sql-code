@@ -109,5 +109,8 @@ public class SquirrelBatch
       }
 
       net.sourceforge.squirrel_sql.client.cli.SquirrelCli.exec(sql);
+
+      net.sourceforge.squirrel_sql.client.cli.SquirrelCli.close();
+
    }
 }

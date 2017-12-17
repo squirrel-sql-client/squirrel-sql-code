@@ -34,10 +34,12 @@ public class CliTest
             "/home/gerd/programme/datennbanken/postgresql-9.1.1/jdbc/postgresql-42.1.4.jar");
 
 
-      setMaxRows(0);
+      setMaxRows(333);
 
       exec("SELECT * FROM articles");
       //exec("select * from receipts");
+
+      close();
    }
 
    private static void testNewAlias()

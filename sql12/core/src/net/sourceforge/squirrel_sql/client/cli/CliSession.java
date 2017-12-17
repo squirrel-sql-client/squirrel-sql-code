@@ -15,6 +15,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 
+import java.sql.SQLException;
+
 public class CliSession extends CliSessionAdapter
 {
    private final SQLConnection _sqlConnection;
@@ -75,5 +77,13 @@ public class CliSession extends CliSessionAdapter
    public SessionProperties getProperties()
    {
       return _sessionProperties;
+   }
+
+   @Override
+   public void close() throws SQLException
+   {
+      // Close on _sqlConnection will start threads
+      // that will prevent ending the process when in Batch mode.
+      _sqlConnection.getConnection().close();
    }
 }

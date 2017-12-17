@@ -9,20 +9,16 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
 
 public class SquirrelCli
 {
-   private static ISQLAlias _aliasToConnectTo;
+
+   private static CliConnectionData _cliConnectionData = new CliConnectionData();
 
    public static void connect(String aliasName)
    {
@@ -39,13 +35,13 @@ public class SquirrelCli
 
          if(aliasName.equals(alias.getName()))
          {
-            _aliasToConnectTo = alias;
+            _cliConnectionData.setAlias(alias);
 
             if(null != password)
             {
                try
                {
-                  _aliasToConnectTo.setPassword(password);
+                  _cliConnectionData.getAlias().setPassword(password);
                }
                catch (ValidationException e)
                {
@@ -53,6 +49,7 @@ public class SquirrelCli
                }
             }
 
+            _cliConnectionData.createCliSession();
 
             if (CliInitializer.getShellMode() == ShellMode.CLI)
             {
@@ -95,7 +92,9 @@ public class SquirrelCli
 
          alias.setDriverIdentifier(sqlDriver.getIdentifier());
 
-         _aliasToConnectTo = alias;
+         _cliConnectionData.setAlias(alias);
+
+         _cliConnectionData.createCliSession();
 
       }
       catch (Exception e)
@@ -116,6 +115,16 @@ public class SquirrelCli
       {
          Main.getApplication().getSquirrelPreferences().getSessionProperties().setSQLLimitRows(false);
       }
+
+      try
+      {
+         // We clear the current Session for the changes to take effect in the next exec() call.
+         _cliConnectionData.closeCliSession();
+      }
+      catch (Exception e)
+      {
+         //
+      }
    }
 
 
@@ -123,19 +132,35 @@ public class SquirrelCli
    {
       //System.out.println("sql = " + sql);
 
-      if(null == _aliasToConnectTo)
-      {
-         System.err.println("ERROR: No database connection has been opened. Call connect(...) to open a connection.");
-         return;
-      }
+      _cliConnectionData.ensureCliSessionCreated();
 
-      CliSession cliSession = new CliSession(_aliasToConnectTo);
 
-      ISQLExecuterHandler sqlExecuterHandlerProxy = new CliSQLExecuterHandler(cliSession);
+      ISQLExecuterHandler sqlExecuterHandlerProxy = new CliSQLExecuterHandler(_cliConnectionData.getCliSession());
 
-      SQLExecuterTask sqlExecuterTask = new SQLExecuterTask(cliSession, sql, sqlExecuterHandlerProxy);
+      SQLExecuterTask sqlExecuterTask = new SQLExecuterTask(_cliConnectionData.getCliSession(), sql, sqlExecuterHandlerProxy);
       sqlExecuterTask.setExecuteEditableCheck(false);
 
       sqlExecuterTask.run();
+   }
+
+   public static void close()
+   {
+      try
+      {
+
+
+         if (_cliConnectionData.closeCliSession() && CliInitializer.getShellMode() == ShellMode.CLI)
+         {
+            System.err.println("Database connection closed. Alias is still valid. Next exec() call will reconnect.");
+         }
+
+      }
+      catch (Exception e)
+      {
+         if (CliInitializer.getShellMode() == ShellMode.CLI)
+         {
+            System.err.println("Failed to close connection " + e.getClass().getName() + ": " + e.getMessage());
+         }
+      }
    }
 }
