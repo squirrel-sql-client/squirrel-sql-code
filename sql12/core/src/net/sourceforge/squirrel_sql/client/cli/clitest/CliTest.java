@@ -11,11 +11,36 @@ public class CliTest
 {
    public static void main(String[] args)
    {
-      testSetRowlimit();
+      testOutfile();
+      //testSetRowlimit();
       //testNewAlias();
       //testAliasAutoLogon();
       //testAliasPassword();
 
+   }
+
+   private static void testOutfile()
+   {
+      System.setProperty("squirrel.home", "/home/gerd/work/java/squirrel/squirrel-sql-git/sql12/output/dist/");
+      System.setProperty("squirrel.userdir", "/home/gerd/work/java/squirrel/userdir/");
+
+
+      CliInitializer.initializeSquirrelInCliMode(ShellMode.CLI);
+
+      connect(
+            "jdbc:postgresql://localhost/pos_central",
+            "gerd",
+            null,
+            "org.postgresql.Driver",
+            "/home/gerd/programme/datennbanken/postgresql-9.1.1/jdbc/postgresql-42.1.4.jar");
+
+
+      setMaxRows(333);
+
+      exec("SELECT * FROM articles", "/home/gerd/tmp/sara/anna/blabberart.txt");
+      //exec("select * from receipts");
+
+      close();
    }
 
    private static void testSetRowlimit()

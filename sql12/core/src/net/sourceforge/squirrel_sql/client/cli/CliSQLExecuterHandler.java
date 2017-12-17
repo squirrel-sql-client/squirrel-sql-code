@@ -1,26 +1,69 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.ResultAsText;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.ResultAsTextLineCallback;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
 {
-
    private CliSession _cliSession;
 
-   public CliSQLExecuterHandler(CliSession cliSession)
+   private String _outputFile;
+   private PrintWriter _printWriter;
+   private FileWriter _fileWriter;
+   private BufferedWriter _bufferedWriter;
+   private long _counter;
+
+   public CliSQLExecuterHandler(CliSession cliSession, String outputFile)
    {
-      _cliSession = cliSession;
+      try
+      {
+         _cliSession = cliSession;
+
+         if(null != outputFile)
+         {
+            tryInitFile(outputFile);
+         }
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   private void tryInitFile(String outputFile) throws IOException
+   {
+      _outputFile = outputFile;
+      File file = new File(_outputFile);
+
+      if(null != file.getParentFile())
+      {
+         file.getParentFile().mkdirs();
+      }
+
+      file.createNewFile();
+
+      if(false == file.exists())
+      {
+         throw new IllegalArgumentException("Failed to create file: " + file.getPath());
+      }
+
+
+      _fileWriter = new FileWriter(outputFile, true);
+      _bufferedWriter = new BufferedWriter(_fileWriter);
+      _printWriter = new PrintWriter(_bufferedWriter);
    }
 
    @Override
@@ -87,15 +130,81 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
 
    private void onAddLine(String line)
    {
-      System.out.print(line);
+      if(null != _printWriter)
+      {
+         _printWriter.print(line);
+
+         if(++_counter % 10000L == 0)
+         {
+            System.out.println(_counter + " lines written to " + _outputFile);
+         }
+      }
+      else
+      {
+         System.out.print(line);
+      }
    }
 
    @Override
    public void sqlCloseExecutionHandler(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
    {
+      closeOutputFile();
+
+
       if (0 < sqlExecErrorMsgs.size())
       {
          System.out.println(sqlExecErrorMsgs.get(0));
+      }
+   }
+
+   private void closeOutputFile()
+   {
+      try
+      {
+         if(null != _printWriter)
+         {
+            _printWriter.flush();
+            _printWriter.close();
+         }
+         if(null != _bufferedWriter)
+         {
+            _bufferedWriter.flush();
+            _bufferedWriter.close();
+         }
+      }
+      catch (IOException e)
+      {
+         //
+      }
+      finally
+      {
+         if(null != _fileWriter)
+         {
+            try
+            {
+               _fileWriter.flush();
+            }
+            catch (Exception e)
+            {
+               //
+            }
+            finally
+            {
+               try
+               {
+                  _fileWriter.close();
+               }
+               catch (Exception e)
+               {
+                  //
+               }
+            }
+         }
+      }
+
+      if(null != _outputFile)
+      {
+         System.out.println("Finshed writing file " + _outputFile);
       }
    }
 }

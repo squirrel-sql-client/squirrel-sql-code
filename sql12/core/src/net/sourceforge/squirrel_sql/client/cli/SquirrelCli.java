@@ -130,12 +130,16 @@ public class SquirrelCli
 
    public static void exec(String sql)
    {
+      exec(sql, null);
+   }
+
+   public static void exec(String sql, String outputFile)
+   {
       //System.out.println("sql = " + sql);
 
       _cliConnectionData.ensureCliSessionCreated();
 
-
-      ISQLExecuterHandler sqlExecuterHandlerProxy = new CliSQLExecuterHandler(_cliConnectionData.getCliSession());
+      ISQLExecuterHandler sqlExecuterHandlerProxy = new CliSQLExecuterHandler(_cliConnectionData.getCliSession(), outputFile);
 
       SQLExecuterTask sqlExecuterTask = new SQLExecuterTask(_cliConnectionData.getCliSession(), sql, sqlExecuterHandlerProxy);
       sqlExecuterTask.setExecuteEditableCheck(false);
