@@ -12,6 +12,7 @@ SQUIRREL_USER_DIR=/home/gerd/work/java/squirrel/userdir
 # ./startsquirrelcli.sh "connect(PostgreSQL p_c)"  "select * from barcodes" | less
 
 if [ $# == 0 ]; then
+   echo "Entering Java 9 JShell based mode. JAVA 9 is required."
    export _JAVA_OPTIONS="-Dsquirrel.home=$SQUIRREL_HOME -Dsquirrel.userdir=$SQUIRREL_USER_DIR"
    $JAVA_HOME/bin/jshell --class-path $CLASSPATH  /home/gerd/work/java/squirrel/squirrel-sql-git/sql12/squirrelcli/startsquirrelcli.jsh
 else
