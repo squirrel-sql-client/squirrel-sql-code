@@ -167,4 +167,9 @@ public class SquirrelCli
          }
       }
    }
+
+   public static void help()
+   {
+      SquirrelCliHelp.printHelp();
+   }
 }

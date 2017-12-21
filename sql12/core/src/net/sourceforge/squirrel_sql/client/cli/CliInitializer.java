@@ -33,9 +33,11 @@ public class CliInitializer
       if (shellMode == ShellMode.CLI)
       {
          System.out.println();
-         System.out.println("SQuirreL CLI environment information:");
-         System.out.println("  squirrelHome = " + squirrelHomeDir);
-         System.out.println("  squirrelUser = " + squirrelUserDir);
+         System.out.println("------------------------------------------------------------------");
+         System.out.println("-- Welcome to the SQuirreL CLI (Command Line Interface)");
+         System.out.println("-- Enter help() for information.");
+         System.out.println("-- Enter /exit to leave.");
+         System.out.println("------------------------------------------------------------------");
          System.out.println();
       }
 
@@ -58,12 +60,6 @@ public class CliInitializer
       application.initAppFiles();
       application.initDriverManager();
       application.initDataCache();
-
-      if (shellMode == ShellMode.CLI && application.getSquirrelPreferences().getSessionProperties().getSQLLimitRows())
-      {
-         System.out.println("NOTE: SQL results are limited to " + application.getSquirrelPreferences().getSessionProperties().getSQLNbrRowsToShow() + " rows.");
-         System.out.println();
-      }
    }
 
    private static void initLogging()
