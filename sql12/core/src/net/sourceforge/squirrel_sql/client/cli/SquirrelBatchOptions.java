@@ -16,6 +16,7 @@ public enum SquirrelBatchOptions
    DRIVERCP(new Option("drivercp", true, "JDBC driver class path (a Java classpath)")),
    SQL(new Option("sql", true, "SQL statement or SQL script file")),
    MAX_ROWS(new Option("maxrows", true, "Max rows of SQL query. 0 means no maximum. For default see SQuirreL GUI -> New Session Properties -> tab SQL")),
+   USERDIR(new Option("userdir", true, "The user directory of your SQuirreL installation. Needed only if a non standard user directory is used.")),
    HELP(new Option("help", false, "Print help"));
 
    private Option _option;

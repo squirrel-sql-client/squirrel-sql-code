@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 public class SquirrelCliHelp
 {
@@ -29,6 +31,12 @@ public class SquirrelCliHelp
       System.out.println();
       String squirrelHomeDir =  System.getProperty("squirrel.home");
       String squirrelUserDir =  System.getProperty("squirrel.userdir");
+
+      if(StringUtilities.isEmpty(squirrelUserDir, true))
+      {
+         squirrelUserDir = ApplicationFiles.getStandardUserDir();
+      }
+
       System.out.println("SQuirreL CLI needs a proper installation of the SQuirreL UI application. Here's some information about the installation:");
       System.out.println("  Installation home directory: -home=" + squirrelHomeDir);
       System.out.println("  User data directory: -userdir=" + squirrelUserDir);

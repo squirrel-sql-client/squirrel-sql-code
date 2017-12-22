@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -33,7 +35,21 @@ public class SquirrelBatch
          HelpFormatter formatter = new HelpFormatter();
          formatter.printHelp("squirrelcli.sh or squirrelcli.bat", SquirrelBatchOptions.getOptions());
 
-         System.out.println("\nNote: No parameter enters Java 9 JShell based CLI.\n");
+         System.out.println("\nNote: No parameter (or -userdir only) enters Java 9 JShell based CLI.\n");
+
+         System.out.println();
+         String squirrelHomeDir = args[0];
+         String squirrelUserDir = ApplicationFiles.getStandardUserDir();
+
+         if(StringUtilities.isEmpty(getUserDir(commandLine), true))
+         {
+            squirrelUserDir = getUserDir(commandLine);
+         }
+
+         System.out.println("SQuirreL CLI needs a proper installation of the SQuirreL UI application. Here's some information about the installation:");
+         System.out.println("  Installation home directory: -home=" + squirrelHomeDir);
+         System.out.println("  User data directory: -userdir=" + squirrelUserDir);
+
 
          return;
       }
@@ -52,7 +68,7 @@ public class SquirrelBatch
       }
 
 
-      net.sourceforge.squirrel_sql.client.cli.CliInitializer.initializeSquirrelInCliMode(ShellMode.BATCH, args[0], args[1]);
+      net.sourceforge.squirrel_sql.client.cli.CliInitializer.initializeSquirrelInCliMode(ShellMode.BATCH, args[0], getUserDir(commandLine));
 
 
       if(SquirrelBatchOptions.ALIAS.hasParam(commandLine))
@@ -112,5 +128,15 @@ public class SquirrelBatch
 
       net.sourceforge.squirrel_sql.client.cli.SquirrelCli.close();
 
+   }
+
+   private static String getUserDir(CommandLine commandLine)
+   {
+      if(SquirrelBatchOptions.USERDIR.hasParam(commandLine))
+      {
+         return SquirrelBatchOptions.USERDIR.getValue(commandLine);
+      }
+
+      return null;
    }
 }

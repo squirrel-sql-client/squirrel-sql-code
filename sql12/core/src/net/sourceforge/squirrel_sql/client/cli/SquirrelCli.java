@@ -51,11 +51,6 @@ public class SquirrelCli
 
             _cliConnectionData.createCliSession();
 
-            if (CliInitializer.getShellMode() == ShellMode.CLI)
-            {
-               System.out.println("Connected to Alias \"" + aliasName + "\"");
-            }
-
             return;
          }
       }
