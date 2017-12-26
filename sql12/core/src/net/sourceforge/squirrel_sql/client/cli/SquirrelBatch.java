@@ -2,11 +2,7 @@ package net.sourceforge.squirrel_sql.client.cli;
 
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -109,9 +105,16 @@ public class SquirrelBatch
 
       String sql = SquirrelBatchOptions.SQL.getValue(commandLine);
 
-      Path path = Paths.get(sql);
+      Path path = null;
+      try
+      {
+         path = Paths.get(sql);
+      }
+      catch (Exception e)
+      {
+      }
 
-      if(Files.isRegularFile(path))
+      if(null != path && Files.isRegularFile(path))
       {
          try
          {
