@@ -13,9 +13,15 @@ public class SquirrelBatch
 {
    public static void main(String[] args) throws ParseException
    {
-//      for (String arg : args)
+
+      String squirrelHomeDir = System.getProperty("squirrel.home");
+
+//      System.out.println("###############################squirrelHome = " + squirrelHomeDir);
+//
+//      for (int i = 0; i < args.length; i++)
 //      {
-//         System.out.println(arg);
+//         String arg = args[i];
+//         System.out.println("*********SQUIRRELBATCH " + (i+1) + ":  " + arg);
 //      }
 
 
@@ -34,7 +40,6 @@ public class SquirrelBatch
          System.out.println("\nNote: No parameter (or -userdir only) enters Java 9 JShell based CLI.\n");
 
          System.out.println();
-         String squirrelHomeDir = args[0];
          String squirrelUserDir = ApplicationFiles.getStandardUserDir();
 
          if(StringUtilities.isEmpty(getUserDir(commandLine), true))
@@ -64,7 +69,7 @@ public class SquirrelBatch
       }
 
 
-      net.sourceforge.squirrel_sql.client.cli.CliInitializer.initializeSquirrelInCliMode(ShellMode.BATCH, args[0], getUserDir(commandLine));
+      net.sourceforge.squirrel_sql.client.cli.CliInitializer.initializeSquirrelInCliMode(ShellMode.BATCH, squirrelHomeDir, getUserDir(commandLine));
 
 
       if(SquirrelBatchOptions.ALIAS.hasParam(commandLine))
