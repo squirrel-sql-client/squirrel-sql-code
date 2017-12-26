@@ -57,7 +57,6 @@ IF "%EXECDONE%" == "0" IF "%3" == "" IF NOT "%2" == "" IF "%1" == "-userdir" (
    %JAVA_HOME%\bin\jshell.exe --class-path %TMP_CP%  %SQUIRREL_CLI_HOME%/startsquirrelcli.jsh
 )
 
-@rem What we do below cannot be done inside an if block (funny windows shell). That's why we do a GOTO here.
 IF "%EXECDONE%" == "0" (
    set _JAVA_OPTIONS=-Dsquirrel.home="%SQUIRREL_CLI_HOME%\.."
    %JAVA_HOME%\bin\java --class-path %TMP_CP% net.sourceforge.squirrel_sql.client.cli.SquirrelBatch %*
