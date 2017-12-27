@@ -61,7 +61,7 @@ IF "%EXECDONE%" == "0" (
    @rem TODO: find a way to pass more than 9 parameters to SquirrelBatch without using _JAVA_OPTIONS
    @rem because using _JAVA_OPTIONS always leads to a "Picked up _JAVA_OPTIONS..." output.
    set _JAVA_OPTIONS=-Dsquirrel.home="%SQUIRREL_CLI_HOME%\.."
-   %JAVA_HOME%\bin\java --class-path %TMP_CP% net.sourceforge.squirrel_sql.client.cli.SquirrelBatch %*
+   %JAVA_HOME%\bin\java -cp %TMP_CP% net.sourceforge.squirrel_sql.client.cli.SquirrelBatch %*
 )
 
 :ExitForWrongJavaVersion

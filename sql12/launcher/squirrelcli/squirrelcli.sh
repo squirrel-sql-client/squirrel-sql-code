@@ -90,14 +90,14 @@ buildCPFromDir "$UNIX_STYLE_HOME"
 # Launch SQuirreL CLI
 if [ $# == 0 ]; then
    echo "Entering Java 9 JShell based mode. JAVA 9 is required."
-   export _JAVA_OPTIONS="-Dsquirrel.home=$SQUIRREL_CLI_HOME/.."
-   $JAVA_HOME/bin/jshell --class-path $TMP_CP  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
+   export _JAVA_OPTIONS="-Dsquirrel.home='$SQUIRREL_CLI_HOME'/.."
+   $JAVA_HOME/bin/jshell --class-path "$TMP_CP"  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
 elif [ $# == 2 ] && [ $1 == "-userdir" ]; then
    echo "Entering Java 9 JShell based mode. JAVA 9 is required."
-   export _JAVA_OPTIONS="-Dsquirrel.home=$SQUIRREL_CLI_HOME/.. -Dsquirrel.userdir=$2"
-   $JAVA_HOME/bin/jshell --class-path $TMP_CP  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
+   export _JAVA_OPTIONS="-Dsquirrel.home='$SQUIRREL_CLI_HOME'/.. -Dsquirrel.userdir='$2'"
+   $JAVA_HOME/bin/jshell --class-path "$TMP_CP"  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
 else
-   $JAVA_HOME/bin/java --class-path $TMP_CP "-Dsquirrel.home=$SQUIRREL_CLI_HOME/.." net.sourceforge.squirrel_sql.client.cli.SquirrelBatch "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" "${14}" "${15}" "${16}" "${17}"
+   $JAVA_HOME/bin/java -cp "$TMP_CP" -Dsquirrel.home="$SQUIRREL_CLI_HOME"/.. net.sourceforge.squirrel_sql.client.cli.SquirrelBatch "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" "${14}" "${15}" "${16}" "${17}"
 fi
 
 
