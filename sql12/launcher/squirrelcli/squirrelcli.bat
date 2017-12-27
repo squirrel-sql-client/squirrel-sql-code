@@ -47,14 +47,14 @@ IF "%1" == "" (
    set EXECDONE=1
    echo "Entering Java 9 JShell based mode. JAVA 9 is required."
    set _JAVA_OPTIONS=-Dsquirrel.home="%SQUIRREL_CLI_HOME%\.."
-   %JAVA_HOME%\bin\jshell.exe --class-path %TMP_CP%  %SQUIRREL_CLI_HOME%/startsquirrelcli.jsh
+   %JAVA_HOME%\bin\jshell.exe --class-path %TMP_CP%  "%SQUIRREL_CLI_HOME%/startsquirrelcli.jsh"
 )
 
 IF "%EXECDONE%" == "0" IF "%3" == "" IF NOT "%2" == "" IF "%1" == "-userdir" (
    set EXECDONE=1
    echo "Entering Java 9 JShell based mode. JAVA 9 is required."
    set _JAVA_OPTIONS=-Dsquirrel.home="%SQUIRREL_CLI_HOME%\.." -Dsquirrel.userdir="%2"
-   %JAVA_HOME%\bin\jshell.exe --class-path %TMP_CP%  %SQUIRREL_CLI_HOME%/startsquirrelcli.jsh
+   %JAVA_HOME%\bin\jshell.exe --class-path %TMP_CP%  "%SQUIRREL_CLI_HOME%/startsquirrelcli.jsh"
 )
 
 IF "%EXECDONE%" == "0" (
