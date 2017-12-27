@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#412 Provided Command Line Interface (CLI).
+  See Readme.txt in the squirrelcli/ subdirectory of your SQuirreL installation.
+
 Launch script improvements:
  - Several improvements to the MAC launch scripts provided by Harry Evans in bug #1321.
  - '-Xmx256m' was removed from all scripts as a consequence of Java 1.8 being required.
