@@ -62,6 +62,7 @@
 			<!-- <include name="*.*" /> -->
 			<!-- </fileset> -->
 			<file targetdir="$INSTALL_PATH" src="launcher/icons" />
+			<file targetdir="$INSTALL_PATH" src="launcher/squirrelcli" />
 			<file targetdir="$INSTALL_PATH" src="launcher/squirrel-sql.bat" />
 			<file targetdir="$INSTALL_PATH" src="launcher/addpath.bat" />
 			<file targetdir="$INSTALL_PATH" src="launcher/squirrel-sql.sh" />
@@ -73,11 +74,15 @@
 				<include name="*.jar" />
 			</fileset>
 
+			<!-- Replace INSTALL_PATH variable -->
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.bat" />
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.sh" type="shell" />
+			<parsable targetfile="$INSTALL_PATH/squirrelcli/squirrelcli.bat" />
+			<parsable targetfile="$INSTALL_PATH/squirrelcli/squirrelcli.sh" type="shell" />
 
 			<!-- Make Unix script executable. -->
 			<executable targetfile="$INSTALL_PATH/squirrel-sql.sh" stage="never" />
+			<executable targetfile="$INSTALL_PATH/squirrelcli/squirrelcli.sh" stage="never" />
 
 		</pack>
 
