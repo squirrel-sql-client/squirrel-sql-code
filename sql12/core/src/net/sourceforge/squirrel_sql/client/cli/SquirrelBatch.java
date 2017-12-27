@@ -42,7 +42,7 @@ public class SquirrelBatch
          System.out.println();
          String squirrelUserDir = ApplicationFiles.getStandardUserDir();
 
-         if(StringUtilities.isEmpty(getUserDir(commandLine), true))
+         if(false == StringUtilities.isEmpty(getUserDir(commandLine), true))
          {
             squirrelUserDir = getUserDir(commandLine);
          }

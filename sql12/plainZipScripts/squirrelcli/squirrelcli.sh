@@ -49,13 +49,13 @@ esac
 # the script cannot be modified by the installer to hard-code the install path.  We prefer to specify squirrel
 # home as an absolute path, so that the command will work when exec'd from any location. So we attempt to
 # detect the absolute path using dirname "$0", which should work in most cases.
-SQUIRREL_SQL_HOME=$(dirname "$0")
+SQUIRREL_CLI_HOME=$(dirname "$0")
 
 # SQuirreL home in Unix format.
 if $cygwin ; then
-        UNIX_STYLE_HOME=`cygpath "$SQUIRREL_SQL_HOME"`
+        UNIX_STYLE_HOME=`cygpath "$SQUIRREL_CLI_HOME"`
 else
-        UNIX_STYLE_HOME="$SQUIRREL_SQL_HOME"
+        UNIX_STYLE_HOME="$SQUIRREL_CLI_HOME"
 fi
 
 cd "$UNIX_STYLE_HOME"
@@ -93,14 +93,14 @@ buildCPFromDir "$UNIX_STYLE_HOME"
 # Launch SQuirreL CLI
 if [ $# == 0 ]; then
    echo "Entering Java 9 JShell based mode. JAVA 9 is required."
-   export _JAVA_OPTIONS="-Dsquirrel.home=$SQUIRREL_SQL_HOME"
+   export _JAVA_OPTIONS="-Dsquirrel.home=$SQUIRREL_CLI_HOME/.."
    $JAVA_HOME/bin/jshell --class-path $TMP_CP  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
 elif [ $# == 2 ] && [ $1 == "-userdir" ]; then
    echo "Entering Java 9 JShell based mode. JAVA 9 is required."
-   export _JAVA_OPTIONS="-Dsquirrel.home=$SQUIRREL_SQL_HOME -Dsquirrel.userdir=$2"
+   export _JAVA_OPTIONS="-Dsquirrel.home=$SQUIRREL_CLI_HOME/.. -Dsquirrel.userdir=$2"
    $JAVA_HOME/bin/jshell --class-path $TMP_CP  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
 else
-   $JAVA_HOME/bin/java --class-path $TMP_CP  net.sourceforge.squirrel_sql.client.cli.SquirrelBatch "$SQUIRREL_SQL_HOME" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" "${14}" "${15}" "${16}" "${17}"
+   $JAVA_HOME/bin/java --class-path $TMP_CP "-Dsquirrel.home=$SQUIRREL_CLI_HOME/.." net.sourceforge.squirrel_sql.client.cli.SquirrelBatch "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" "${14}" "${15}" "${16}" "${17}"
 fi
 
 
