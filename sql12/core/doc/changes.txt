@@ -1,8 +1,9 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not yet released, available in our GIT repository and in snapshots and future releases.
-===============================================================================================
+3.8.1 (12/29/2017)
+==================
+
 
 Enhancements:
 
