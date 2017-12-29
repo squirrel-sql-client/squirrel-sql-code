@@ -54,8 +54,7 @@ public class SequenceDetailsTab extends BasePreparedStatementTab
 
 	/** SQL that retrieves the data. */
 	private static final String SQL =
-        "SELECT last_value, max_value, min_value, cache_value, increment_by, is_cycled " +
-        "FROM  ";
+        "SELECT * FROM  ";
     
 	public SequenceDetailsTab()
 	{

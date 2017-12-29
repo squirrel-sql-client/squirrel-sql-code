@@ -40,6 +40,8 @@ Added default driver definitions for OpenEdge and older 9.1E and 10.0B Progress 
 
 Bug fixes:
 
+#1327 Postgres Plugin: Sequence details are not fetched on PostgreSQL 10+
+
 #1099 Mac OS: Introduced Harry Evans' application name fix to the Mac OS launch script.
 
 #1324 SQL script generation corrupts data when remapping newlines.
