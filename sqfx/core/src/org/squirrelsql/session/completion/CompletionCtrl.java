@@ -1,12 +1,9 @@
 package org.squirrelsql.session.completion;
 
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import org.squirrelsql.services.Utils;
@@ -15,7 +12,6 @@ import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.sql.WordBoundaryCheck;
 import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
-import org.squirrelsql.workaround.KeyMatchWA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,6 +134,12 @@ public class CompletionCtrl
       {
       }
       else if(KeyCode.PAGE_UP.equals(keyEvent.getCode()))
+      {
+      }
+      else if(KeyCode.SPACE.equals(keyEvent.getCode()))
+      {
+      }
+      else if(KeyCode.CONTROL.equals(keyEvent.getCode()))
       {
       }
       else

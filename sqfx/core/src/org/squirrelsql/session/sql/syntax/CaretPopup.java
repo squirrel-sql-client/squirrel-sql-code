@@ -90,6 +90,7 @@ public class CaretPopup
       // and the content has been experienced to keep on firing events even though it's not visible anymore.
       _popup.hide();
       _popup.getContent().clear();
+      _popup = new Popup();
    }
 
 }
