@@ -1,7 +1,5 @@
 package org.squirrelsql.workaround;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
@@ -131,9 +129,9 @@ public class RichTextFxWA
 
    private static Point2D getCoordinates(CodeArea sqlTextArea, int col, int line, LetterPos letterPos)
    {
-      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(getFont(sqlTextArea));
+      StringWidthWA.computeFontHeight(getFont(sqlTextArea));
 
-      float lineHeight = fontMetrics.getLineHeight() + fontMetrics.getLeading() + (float)AppState.get().getSettingsManager().getSettings().getLineHeightOffset();
+      float lineHeight = (float) StringWidthWA.computeFontHeight(getFont(sqlTextArea)) + (float)AppState.get().getSettingsManager().getSettings().getLineHeightOffset();
 
       float y;
 
@@ -149,11 +147,11 @@ public class RichTextFxWA
       float x;
       if (LetterPos.LEFT_UPPER == letterPos)
       {
-         x = fontMetrics.computeStringWidth("a") * col;
+         x = (float) (StringWidthWA.computeTextWidth(getFont(sqlTextArea),"a") * col);
       }
       else
       {
-         x = fontMetrics.computeStringWidth("a") * col + 3;
+         x = (float) (StringWidthWA.computeTextWidth(getFont(sqlTextArea), "a") * col + 3);
       }
 
       Point2D p = new Point2D(x, y);

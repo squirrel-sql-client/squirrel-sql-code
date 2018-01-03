@@ -4,7 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.stage.Popup;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.MouseOverTextEvent;
+import org.fxmisc.richtext.event.MouseOverTextEvent;
 import org.squirrelsql.session.parser.kernel.ErrorInfo;
 
 import java.time.Duration;

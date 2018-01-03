@@ -20,4 +20,13 @@ public class StringWidthWA
       double textWidth = Math.ceil(helper.getLayoutBounds().getWidth());
       return textWidth;
    }
+
+   public static double computeFontHeight(Font font)
+   {
+      Text helper = new Text("Äp");
+      helper.setFont(font);
+
+      return helper.getLayoutBounds().getHeight();
+   }
+
 }

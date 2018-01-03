@@ -89,7 +89,7 @@ public class CtrlLeftRightHandler
       }
       else
       {
-         _sqlTextArea.positionCaret(pos);
+         _sqlTextArea.moveTo(pos);
       }
    }
 
@@ -135,7 +135,7 @@ public class CtrlLeftRightHandler
       }
       else
       {
-         _sqlTextArea.positionCaret(pos);
+         _sqlTextArea.moveTo(pos);
       }
    }
 

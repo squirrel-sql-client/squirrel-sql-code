@@ -1,10 +1,10 @@
 package org.squirrelsql.session.sql.syntax;
 
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.stage.Popup;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.PopupAlignment;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.Utils;
 
@@ -13,13 +13,18 @@ import org.squirrelsql.services.Utils;
  */
 public class CaretPopup
 {
+   private static enum PopupAlignment
+   {
+      CARET_TOP, CARET_BOTTOM;
+   }
+
+
    private Popup _popup = new Popup();
    private CodeArea _codeArea;
 
    public CaretPopup(CodeArea codeArea)
    {
       _codeArea = codeArea;
-      _codeArea.setPopupWindow(_popup);
    }
 
    public Popup getPopup()
@@ -34,8 +39,7 @@ public class CaretPopup
 
    public void showAtCaretTop()
    {
-      // -9 is a correction to make the top left of the popup cleanly cover the the CodeArea's caret.
-      _show(0, -9, PopupAlignment.CARET_TOP);
+      _show(0, 0, PopupAlignment.CARET_TOP);
    }
 
    public void showAtCaretBottom(double xDisplacementFromCaret)
@@ -62,34 +66,22 @@ public class CaretPopup
 
       Point2D popupAnchorOffset = new Point2D(xDisplacementFromCaretBuf, yDisplacementFromCaretBuf);
 
-      _codeArea.setPopupAnchorOffset(popupAnchorOffset);
-      _codeArea.setPopupAlignment(popupAlignment);
+      Bounds caretBounds = _codeArea.getCaretBounds().get();
 
-      makePopupAlignmentWork();
+      double anchorX = caretBounds.getMinX() + popupAnchorOffset.getX();
+      double anchorY;
 
-      _popup.show(AppState.get().getPrimaryStage());
-
-
-   }
-
-   /**
-    * This is a workaround for issue #128 of RichtextFx.
-    * See: https://github.com/TomasMikula/RichTextFX/issues/128
-    */
-   private void makePopupAlignmentWork()
-   {
-      int caretPosition = _codeArea.getCaretPosition();
-
-      if(0 != caretPosition)
+      if (popupAlignment == PopupAlignment.CARET_TOP)
       {
-         _codeArea.positionCaret(caretPosition - 1);
-         _codeArea.positionCaret(caretPosition);
+         anchorY = caretBounds.getMinY() + popupAnchorOffset.getY();
       }
       else
       {
-         _codeArea.positionCaret(caretPosition + 1);
-         _codeArea.positionCaret(caretPosition);
+         anchorY = caretBounds.getMaxY() + popupAnchorOffset.getY();
       }
+
+      _popup.show(AppState.get().getPrimaryStage(), anchorX, anchorY);
+
    }
 
    public void hideAndClearContent()

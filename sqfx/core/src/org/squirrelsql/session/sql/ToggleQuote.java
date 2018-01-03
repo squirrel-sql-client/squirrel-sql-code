@@ -51,7 +51,7 @@ public class ToggleQuote
       {
          int caretPosition = sqlTextAreaServices.getTextArea().getCaretPosition();
          sqlTextAreaServices.replaceCurrentSql(replacement, false);
-         sqlTextAreaServices.getTextArea().positionCaret(caretPosition);
+         sqlTextAreaServices.getTextArea().moveTo(caretPosition);
       }
    }
 

@@ -1,7 +1,5 @@
 package org.squirrelsql.table.tableselection;
 
-import com.sun.javafx.scene.control.skin.TableColumnHeader;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -13,6 +11,8 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.skin.TableColumnHeader;
+import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
