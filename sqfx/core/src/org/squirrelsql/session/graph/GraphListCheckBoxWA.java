@@ -23,7 +23,7 @@ public class GraphListCheckBoxWA extends BorderPane
    public GraphListCheckBoxWA(GraphListCheckBoxSelectionListener graphListCheckBoxSelectionListener)
    {
       _graphListCheckBoxSelectionListener = graphListCheckBoxSelectionListener;
-      addEventHandler(MouseEvent.MOUSE_CLICKED, e -> onClicked());
+      addEventHandler(MouseEvent.MOUSE_PRESSED, e -> onClicked());
       updateGraphics();
    }
 
