@@ -83,6 +83,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    private boolean schemaCheck = true;
    private StatementWrapper _statementWrapper;
    private String _tableToBeEdited;
+   private boolean _executeEditableCheck = true;
 
    public SQLExecuterTask(ISession session, String sql,ISQLExecuterHandler handler)
    {
@@ -119,6 +120,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
    public void setExecutionListeners(ISQLExecutionListener[] executionListeners) {
        _executionListeners = executionListeners;
+   }
+
+   public void setExecuteEditableCheck(boolean executeEditableCheck)
+   {
+      _executeEditableCheck = executeEditableCheck;
    }
 
    /**
@@ -484,7 +490,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
       EditableSqlCheck edittableCheck = new EditableSqlCheck(exInfo);
 
-      if (edittableCheck.allowsEditing())
+      if (_executeEditableCheck && edittableCheck.allowsEditing())
       {
          TableInfo ti = getTableName(edittableCheck.getTableNameFromSQL());
          _dataSetUpdateableTableModel.setTableInfo(ti);

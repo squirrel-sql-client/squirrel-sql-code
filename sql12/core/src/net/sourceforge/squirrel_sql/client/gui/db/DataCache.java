@@ -234,9 +234,7 @@ public class DataCache
     * 			Thrown if <TT>ISQLDriver</TT> is null.
     */
    public void addDriver(ISQLDriver sqlDriver, IMessageHandler messageHandler)
-      throws ClassNotFoundException, IllegalAccessException,
-            InstantiationException, DuplicateObjectException,
-            MalformedURLException
+         throws DuplicateObjectException
    {
       if (sqlDriver == null)
       {

@@ -32,6 +32,9 @@ import net.sourceforge.squirrel_sql.client.ApplicationArguments;
  */
 public class ApplicationFiles
 {
+	public static final String STANDARD_RELATIVE_USER_DIR = ".squirrel-sql";
+
+
 	/** Name of directory to contain users settings. */
 	private String _userSettingsDir;
 
@@ -74,8 +77,7 @@ public class ApplicationFiles
 		_userSettingsDir = args.getUserSettingsDirectoryOverride();
 		if (_userSettingsDir == null)
 		{
-			_userSettingsDir = System.getProperty(IJavaPropertyNames.USER_HOME)
-											+ File.separator + ".squirrel-sql";
+			_userSettingsDir = getStandardUserDir();
 		}
 		try
 		{
@@ -98,6 +100,13 @@ public class ApplicationFiles
 			System.out.println(ex.toString());
 		}
 	}
+
+	public static String getStandardUserDir()
+	{
+		return System.getProperty(IJavaPropertyNames.USER_HOME)
+				+ File.separator + STANDARD_RELATIVE_USER_DIR;
+	}
+
 
 	public File getUserSettingsDirectory()
 	{

@@ -1,6 +1,18 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in our GIT repository and in snapshots and future releases.
+===============================================================================================
+
+Enhancements:
+
+#412 Provided Command Line Interface (CLI).
+  See Readme.txt in the squirrelcli/ subdirectory of your SQuirreL installation.
+
+
+
+
+
 3.8.1 (12/29/2017)
 ==================
 
