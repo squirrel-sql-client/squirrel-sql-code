@@ -35,6 +35,7 @@ import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.services.SplitPositionSaver;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
+import org.squirrelsql.session.graph.graphdesktop.DesktopPane;
 import org.squirrelsql.session.graph.graphdesktop.Window;
 import org.squirrelsql.session.graph.whereconfig.WhereConfigCtrl;
 import org.squirrelsql.session.objecttree.ObjectTreeFilterCtrl;
@@ -54,7 +55,7 @@ public class GraphPaneCtrl
    private GraphChannel _graphChannel;
    private Session _session;
    private GraphPersistenceWrapper _graphPersistenceWrapper;
-   private final Pane _desktopPane = new Pane();
+   private final DesktopPane _desktopPane = new DesktopPane();
    private final DrawLinesCtrl _drawLinesCtrl;
 
    private final Props _props = new Props(getClass());
