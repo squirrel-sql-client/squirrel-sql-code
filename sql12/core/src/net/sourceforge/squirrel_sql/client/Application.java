@@ -213,7 +213,7 @@ public class Application implements IApplication
 		SquirrelSplashScreen splash = null;
 		if (args.getShowSplashScreen())
 		{
-			splash = new SquirrelSplashScreen(_prefs, 17);
+			splash = new SquirrelSplashScreen(_prefs, 18);
 		}
 
       executeStartupTasks(splash, args);
@@ -802,6 +802,11 @@ public class Application implements IApplication
 		}
 
 		// i18n[Application.splash.loadsqlhistory=Loading SQL history...]
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.recentfiles"));
+		loadRecentFileHistory();
+
+
+		// i18n[Application.splash.loadsqlhistory=Loading SQL history...]
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadsqlhistory"));
 		loadSQLHistory();
 
@@ -946,7 +951,13 @@ public class Application implements IApplication
 			}
 		}
 	}
-	
+
+	private void loadRecentFileHistory()
+	{
+		getRecentFilesManager().initJSonBean(new ApplicationFiles().getRecentFilesJsonBeanFile());
+	}
+
+
 	/**
 	 * Load the configurations for WIKI tables.
 	 * @see WikiTableConfigurationStorage

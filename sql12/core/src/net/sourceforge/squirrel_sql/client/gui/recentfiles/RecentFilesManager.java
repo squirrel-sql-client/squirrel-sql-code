@@ -131,10 +131,10 @@ public class RecentFilesManager
 
    private void checkIfOlderVersionWarningIsNeeded()
    {
-      File oldVerionFile = new ApplicationFiles().getRecentFilesXmlBeanFile_oldXmlVersion();
-      if(oldVerionFile.exists())
+      File oldVersionFile = new ApplicationFiles().getRecentFilesXmlBeanFile_oldXmlVersion();
+      if(oldVersionFile.exists())
       {
-         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("RecentFilesManager.old.version.warning", oldVerionFile.getPath()));
+         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("RecentFilesManager.old.version.warning", oldVersionFile.getPath()));
       }
    }
 

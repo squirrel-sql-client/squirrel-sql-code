@@ -275,32 +275,28 @@ public class RecentFilesController
    {
       DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
-      _dialog.treFiles.setModel(new DefaultTreeModel(root));
-      _dialog.treFiles.setRootVisible(false);
 
       _dialog.treFiles.setCellRenderer(new RecentFilesTreeCellRenderer(_app));
 
 
       _recentFilesNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.recentFiles.global"));
-      root.add(_recentFilesNode);
       addFileKidsToNode(_recentFilesNode, _app.getRecentFilesManager().getRecentFiles(), Preferences.userRoot().getBoolean(PREF_KEY_RECENT_FILES_EXPANDED, true));
+      root.add(_recentFilesNode);
 
 
       _favouriteFilesNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.favouritFiles.global"));
+      addFileKidsToNode(_favouriteFilesNode, _app.getRecentFilesManager().getFavouriteFiles(), Preferences.userRoot().getBoolean(PREF_KEY_FAVOURITE_FILES_EXPANDED, true));
       root.add(_favouriteFilesNode);
-      addFileKidsToNode(_favouriteFilesNode, _app.getRecentFilesManager().getFavouriteFiles(), Preferences.userRoot().getBoolean(PREF_KEY_FAVOURITE_FILES_EXPANDED, false));
 
 
       _recentFilesForAliasNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.recentFiles.alias", _selectedAlias.getName()));
+      addFileKidsToNode(_recentFilesForAliasNode, _app.getRecentFilesManager().getRecentFilesForAlias(_selectedAlias), Preferences.userRoot().getBoolean(PREF_KEY_RECENT_ALIAS_FILES_EXPANDED, true));
       root.add(_recentFilesForAliasNode);
-      addFileKidsToNode(_recentFilesForAliasNode, _app.getRecentFilesManager().getRecentFilesForAlias(_selectedAlias), Preferences.userRoot().getBoolean(PREF_KEY_RECENT_ALIAS_FILES_EXPANDED, false));
 
 
       _favouriteFilesForAliasNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.favouritFiles.alias", _selectedAlias.getName()));
+      addFileKidsToNode(_favouriteFilesForAliasNode, _app.getRecentFilesManager().getFavouriteFilesForAlias(_selectedAlias), Preferences.userRoot().getBoolean(PREF_KEY_FAVOURITE_ALIAS_FILES_EXPANDED, true));
       root.add(_favouriteFilesForAliasNode);
-      addFileKidsToNode(_favouriteFilesForAliasNode, _app.getRecentFilesManager().getFavouriteFilesForAlias(_selectedAlias), Preferences.userRoot().getBoolean(PREF_KEY_FAVOURITE_ALIAS_FILES_EXPANDED, false));
-
-
 
       _dialog.treFiles.addMouseListener(new MouseAdapter()
       {
@@ -310,7 +306,12 @@ public class RecentFilesController
          }
       });
 
+
+      _dialog.treFiles.setModel(new DefaultTreeModel(root));
+      _dialog.treFiles.setRootVisible(false);
+
       initDnD();
+
    }
 
    private void initDnD()

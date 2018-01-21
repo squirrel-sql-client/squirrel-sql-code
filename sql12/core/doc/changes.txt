@@ -10,7 +10,9 @@ Enhancements:
   See Readme.txt in the squirrelcli/ subdirectory of your SQuirreL installation.
 
 
+Bug fixes:
 
+Recent file feature: Files were not loaded.
 
 
 3.8.1 (12/29/2017)
