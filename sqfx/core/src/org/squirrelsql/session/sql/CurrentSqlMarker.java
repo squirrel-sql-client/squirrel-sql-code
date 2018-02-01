@@ -18,7 +18,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.Settings;
 import org.squirrelsql.workaround.KeyMatchWA;
@@ -92,16 +91,6 @@ public class CurrentSqlMarker
          }
       });
 
-      AppState.get().getSettingsManager().getSettings().lineHeightOffsetProperty().addListener(new ChangeListener<Number>()
-      {
-         @Override
-         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
-         {
-            refreshCurrentSqlMark();
-         }
-      });
-
-
       _stackPane.heightProperty().addListener(new ChangeListener<Number>()
       {
          @Override
@@ -138,11 +127,16 @@ public class CurrentSqlMarker
 
       checkBindings(contentRegion);
 
-      CodeArea sqlTextArea = _sqlTextAreaServices.getTextArea();
 
+      Bounds bounds = RichTextFxWA.getBoundsForCaretBounds(currentSqlCaretBounds, _sqlTextAreaServices.getTextArea());
 
+      if(null == bounds)
+      {
+         return;
+      }
 
-      Bounds bounds = RichTextFxWA.getBoundsForCaretBounds(_sqlTextAreaServices.getTextAreaVirtualScroll(), currentSqlCaretBounds);
+      // Shows that as of 1.2.2018 the bounds are not right when scrolling down.
+      //System.out.println("Painting " + System.currentTimeMillis() + "    " + bounds);
 
 
       Settings settings = AppState.get().getSettingsManager().getSettings();

@@ -1,6 +1,7 @@
 package org.squirrelsql.services;
 
 import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -135,7 +136,8 @@ public class Dao
            InputStreamReader isr = new InputStreamReader(is, JsonEncoding.UTF8.getJavaName());)
       {
 
-         ObjectMapper mapper = new ObjectMapper();
+         ObjectMapper mapper = createObjectMapper();
+
          T ret = mapper.readValue(isr, SimpleType.construct(defaultObject.getClass()));
          return ret;
       }
@@ -143,6 +145,13 @@ public class Dao
       {
          throw new RuntimeException(e);
       }
+   }
+
+   private static ObjectMapper createObjectMapper()
+   {
+      ObjectMapper mapper = new ObjectMapper();
+      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      return mapper;
    }
 
 
@@ -158,7 +167,7 @@ public class Dao
       try(FileInputStream is = new FileInputStream(file);
           InputStreamReader isr = new InputStreamReader(is, JsonEncoding.UTF8.getJavaName()))
       {
-         ObjectMapper mapper = new ObjectMapper();
+         ObjectMapper mapper = createObjectMapper();
          List<T> drivers = mapper.readValue(isr, CollectionType.construct(List.class, SimpleType.construct(objectType)));
          return drivers;
       }
@@ -178,7 +187,7 @@ public class Dao
    {
       try (FileOutputStream fos = new FileOutputStream(file))
       {
-         ObjectMapper mapper = new ObjectMapper();
+         ObjectMapper mapper = createObjectMapper();
          ObjectWriter objectWriter = mapper.writerWithDefaultPrettyPrinter();
 
          // This version of objectWriter.writeValue() ensures,
