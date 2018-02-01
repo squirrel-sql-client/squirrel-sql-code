@@ -1,6 +1,5 @@
 package org.squirrelsql.services;
 
-import com.sun.javafx.scene.control.skin.TextAreaSkin;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -9,6 +8,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.skin.TextAreaSkin;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
@@ -110,16 +110,13 @@ public class GuiUtils
 
    public static void addContextMenuItemToStandardTextAreaMenu(final TextArea textArea, MenuItem menuItem)
    {
-      TextAreaSkin customContextSkin = new TextAreaSkin(textArea)
+      if(null == textArea.getContextMenu())
       {
-         @Override
-         public void populateContextMenu(ContextMenu contextMenu)
-         {
-            super.populateContextMenu(contextMenu);
-            contextMenu.getItems().add(new SeparatorMenuItem());
-            contextMenu.getItems().add(menuItem);
-         }
-      };
-      textArea.setSkin(customContextSkin);
+         textArea.setContextMenu(new ContextMenu());
+      }
+
+
+      textArea.getContextMenu().getItems().add(new SeparatorMenuItem());
+      textArea.getContextMenu().getItems().add(menuItem);
    }
 }

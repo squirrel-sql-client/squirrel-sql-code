@@ -1,13 +1,12 @@
 package org.squirrelsql.session.completion;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import javafx.scene.control.ListView;
 import javafx.scene.text.Font;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.schemainfo.FullyQualifiedTableName;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
+import org.squirrelsql.workaround.StringWidthWA;
 
 import java.util.List;
 
@@ -21,12 +20,11 @@ public class CompletionUtil
 
    private static  void adjustPreferredListWidth(ListView listView, Font textComponentFont)
    {
-      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(textComponentFont);
 
       double maxItemWidth = 0;
       for (Object item : listView.getItems())
       {
-         maxItemWidth = Math.max(fontMetrics.computeStringWidth(item.toString()), maxItemWidth);
+         maxItemWidth = Math.max(StringWidthWA.computeTextWidth(textComponentFont, item.toString()), maxItemWidth);
       }
       listView.setPrefWidth(maxItemWidth + 35);
    }

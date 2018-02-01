@@ -1,6 +1,5 @@
 package org.squirrelsql.session.graph.graphdesktop;
 
-import com.sun.javafx.collections.ImmutableObservableList;
 import javafx.beans.Observable;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ObservableNumberValue;
@@ -254,7 +253,7 @@ public class NodeUtil {
          public ObservableList<?> getDependencies() {
             return (dependencies.length == 1)?
                   FXCollections.singletonObservableList(dependencies[0])
-                  : new ImmutableObservableList<Observable>(dependencies);
+                  : FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(dependencies));
          }
       };
    }

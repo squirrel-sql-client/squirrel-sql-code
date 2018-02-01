@@ -697,15 +697,19 @@ public class DefaultWindowSkin extends SkinBase<Window>
    @Override
    protected void layoutChildren(double x, double y, double w, double h)
    {
-
       super.layoutChildren(x, y, w, h);
 
-      root.relocate(0, 0);
-      root.resize(root.getWidth()
-                  + getSkinnable().getInsets().getLeft() + getSkinnable().getInsets().getRight(),
-            root.getHeight()
-                  + getSkinnable().getInsets().getTop() + getSkinnable().getInsets().getBottom());
+//      root.relocate(0, 0);
+//      root.resize(root.getWidth()
+//                  + getSkinnable().getInsets().getLeft() + getSkinnable().getInsets().getRight(),
+//            root.getHeight()
+//                  + getSkinnable().getInsets().getTop() + getSkinnable().getInsets().getBottom());
 
+      doLayoutChildren();
+   }
+
+   private void doLayoutChildren()
+   {
       titleBar.relocate(0, 0);
       double titleBarWidth = titleBar.prefWidth(0);
       double windowWidth = root.getWidth();

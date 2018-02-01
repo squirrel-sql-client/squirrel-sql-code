@@ -61,6 +61,25 @@ public class ColumnListCtrl
       _listView.setOnDragDetected(e -> onDragDetected(e));
       _listView.setOnDragOver(e -> onDragOver(e));
       _listView.setOnDragDropped(e -> onDragDropped(e));
+
+      _graphChannel.getQueryChannel().addQueryChannelListener(() -> forceListGuiUpdate());
+   }
+
+   /**
+    * Needed when ordering of a column was changed for the first time.
+    * Without this code the column UI failed to update.
+    *
+    * Column changes happen in {@link OrderByPane}
+    */
+   private void forceListGuiUpdate()
+   {
+      Integer[] selectedIndices = _listView.getSelectionModel().getSelectedIndices().toArray(new Integer[0]);
+      _listView.getSelectionModel().clearSelection();
+
+      for (Integer selectedIndex : selectedIndices)
+      {
+         _listView.getSelectionModel().select(selectedIndex);
+      }
    }
 
    private ColumnConfigurationPersistence getColumnConfiguration(ColumnInfo columnInfo, HashMap<String, ColumnConfigurationPersistence> columnConfigurationByColumnName)

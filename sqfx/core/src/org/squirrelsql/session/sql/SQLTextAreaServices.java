@@ -1,7 +1,5 @@
 package org.squirrelsql.session.sql;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
@@ -26,6 +24,7 @@ import org.squirrelsql.session.sql.syntax.SyntaxConstants;
 import org.squirrelsql.workaround.CodeAreaRepaintWA;
 import org.squirrelsql.workaround.FocusNodeWA;
 import org.squirrelsql.workaround.RichTextFxWA;
+import org.squirrelsql.workaround.StringWidthWA;
 
 public class SQLTextAreaServices
 {
@@ -379,8 +378,7 @@ public class SQLTextAreaServices
 
    public double getStringWidth(String str)
    {
-      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(RichTextFxWA.getFont(_sqlTextAreaVirtualScroll.getContent()));
-      return fontMetrics.computeStringWidth(str);
+      return StringWidthWA.computeTextWidth(RichTextFxWA.getFont(_sqlTextAreaVirtualScroll.getContent()), str);
    }
 
    public void setLexAndParseResultListener(LexAndParseResultListener lexAndParseResultListener)

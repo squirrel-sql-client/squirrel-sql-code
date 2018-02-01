@@ -1,7 +1,5 @@
 package org.squirrelsql;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
@@ -12,7 +10,9 @@ import javafx.scene.text.Font;
 import org.squirrelsql.services.GuiUtils;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.workaround.StringWidthWA;
 import org.squirrelsql.services.rightmousemenuhandler.RightMouseMenuHandler;
+
 
 import java.sql.SQLException;
 
@@ -125,12 +125,11 @@ public class MessagePanelCtrl
 
       String[] splits = s.trim().split("\n");
 
-      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
 
       rows = splits.length;
       for (String split : splits)
       {
-         textWidth = Math.max(textWidth, fontMetrics.computeStringWidth(split));
+         textWidth = Math.max(textWidth, StringWidthWA.computeTextWidth(font, split));
       }
 
       return new TextBounds(textWidth + 35, rows);

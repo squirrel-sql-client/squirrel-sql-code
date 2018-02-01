@@ -84,7 +84,7 @@ public class ToggleCommentLinesCommand
       else
       {
          sqlTextAreaServices.replaceCurrentSql(replacement, false);
-         sqlTextAreaServices.getTextArea().positionCaret(caretPosition);
+         sqlTextAreaServices.getTextArea().moveTo(caretPosition);
       }
    }
 

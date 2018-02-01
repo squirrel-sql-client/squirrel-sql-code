@@ -51,6 +51,7 @@ public class AggregateFunctionPane extends BorderPane
    {
       _columnConfigurationPersistence.getAggregateFunctionPersistence().setAggregateFunction(agg);
       _setCenter(agg.createImage());
+      _queryChannel.fireChanged();
    }
 
    private void updateGraphics()

@@ -1,7 +1,5 @@
 package org.squirrelsql.services;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
 import org.squirrelsql.workaround.ColorWA;
 
@@ -19,8 +17,6 @@ public class Settings
    private int _currentSqlMarkColor_R = ColorWA.getRed(Color.LIGHTSTEELBLUE);
    private int _currentSqlMarkColor_G = ColorWA.getGreen(Color.LIGHTSTEELBLUE);
    private int _currentSqlMarkColor_B = ColorWA.getBlue(Color.LIGHTSTEELBLUE);
-
-   private DoubleProperty _lineHeightOffsetProperty = new SimpleDoubleProperty(1.4d);
 
    public boolean isMultibleLinesInCells()
    {
@@ -132,18 +128,4 @@ public class Settings
       _currentSqlMarkColor_B = currentSqlMarkColor_B;
    }
 
-   public DoubleProperty lineHeightOffsetProperty()
-   {
-      return _lineHeightOffsetProperty;
-   }
-
-   public double getLineHeightOffset()
-   {
-      return _lineHeightOffsetProperty.get();
-   }
-
-   public void setLineHeightOffset(double lineHeightOffsetProperty)
-   {
-      this._lineHeightOffsetProperty.set(lineHeightOffsetProperty);
-   }
 }

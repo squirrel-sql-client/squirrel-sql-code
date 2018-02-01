@@ -1,7 +1,5 @@
 package org.squirrelsql;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
@@ -17,15 +15,12 @@ import java.awt.image.BufferedImage;
 public class VerticalToggleButton extends ToggleButton
 {
    private static final int WIDHT_MARGIN = 15;
-   private static final int HEIGHT_MARGIN = 5;
+   private static final int HEIGHT_MARGIN = -4;
 
    public VerticalToggleButton(String caption)
    {
       Font f = getFont();
-      FontMetrics fm = Toolkit.getToolkit().getFontLoader().getFontMetrics(f);
-
-      int captionHeight = toInt(fm.getXheight());
-      //int captionWidth = toInt(fm.computeStringWidth(caption));
+      int captionHeight = toInt(StringWidthWA.computeFontHeight(f));
       int captionWidth = toInt(StringWidthWA.computeTextWidth(f, caption));
       BufferedImage bi = new BufferedImage(captionHeight + 2 * HEIGHT_MARGIN, captionWidth + 2 * WIDHT_MARGIN, BufferedImage.TYPE_INT_ARGB);
 
@@ -48,7 +43,7 @@ public class VerticalToggleButton extends ToggleButton
 
       g.rotate(-Math.PI / 2);
       g.translate(-bi.getHeight(), bi.getWidth());
-      g.drawString(caption, WIDHT_MARGIN, - fm.getDescent());
+      g.drawString(caption, WIDHT_MARGIN, 0);
 
       WritableImage writableImage = SwingFXUtils.toFXImage(bi, new WritableImage(captionWidth, captionHeight));
 

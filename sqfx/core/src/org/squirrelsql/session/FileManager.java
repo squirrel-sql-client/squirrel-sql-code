@@ -146,7 +146,7 @@ public class FileManager
          text = normalizeText(text);
 
          _sqlTextAreaServices.setText(text);
-         _sqlTextAreaServices.getTextArea().positionCaret(0);
+         _sqlTextAreaServices.getTextArea().moveTo(0);
 
 
          _sessionTabHeaderCtrl.setFile(file);

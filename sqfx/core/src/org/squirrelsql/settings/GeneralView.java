@@ -28,8 +28,5 @@ public class GeneralView
 
 
    @FXML AnchorPane apMarkCurrentSql;
-   @FXML Slider sldLineHeightOffset;
-   @FXML TextField txtLineHeightOffset;
-   @FXML Button btnApplyLineHeightOffset;
 
 }

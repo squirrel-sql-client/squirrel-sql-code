@@ -48,8 +48,8 @@ public class ObjectTreeFindCtrl
 
       _completionCtrl = new CompletionCtrl(_session, new TextFieldTextComponentAdapter(_view.txtText));
 
-      _view.txtText.setOnKeyPressed(e -> onHandleKeyEvent(e, false));
-      _view.txtText.setOnKeyTyped(e -> onHandleKeyEvent(e, true));
+      _view.txtText.setOnKeyReleased(e -> onHandleKeyEvent(e, false));
+      //_view.txtText.setOnKeyTyped(e -> onHandleKeyEvent(e, true));
 
    }
 
@@ -60,7 +60,8 @@ public class ObjectTreeFindCtrl
 
    private void onHandleKeyEvent(KeyEvent keyEvent, boolean consumeOnly)
    {
-      if ( KeyMatchWA.matches(keyEvent, StdActionCfg.SQL_CODE_COMPLETION.getActionCfg().getKeyCodeCombination()) )
+      //if ( KeyMatchWA.matches(keyEvent, StdActionCfg.SQL_CODE_COMPLETION.getActionCfg().getKeyCodeCombination()) )
+      if ( StdActionCfg.SQL_CODE_COMPLETION.getActionCfg().getKeyCodeCombination().match(keyEvent) )
       {
          if (false == consumeOnly)
          {
@@ -69,7 +70,7 @@ public class ObjectTreeFindCtrl
          keyEvent.consume();
          return;
       }
-      if ( KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ENTER)))
+      else if ( KeyCode.ENTER.equals(keyEvent.getCode()) )
       {
          if (false == consumeOnly)
          {

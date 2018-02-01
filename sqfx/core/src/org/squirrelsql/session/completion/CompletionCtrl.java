@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import org.squirrelsql.services.Utils;
@@ -13,7 +12,6 @@ import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.sql.WordBoundaryCheck;
 import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
-import org.squirrelsql.workaround.KeyMatchWA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +83,7 @@ public class CompletionCtrl
       listView.getSelectionModel().selectFirst();
 
 
-      listView.setOnKeyTyped(keyEvent -> onHandleKeyOnPopupList((KeyEvent)keyEvent, listView));
+      listView.setOnKeyReleased(keyEvent -> onHandleKeyOnPopupList((KeyEvent)keyEvent, listView));
 
       listView.setOnMouseClicked(event -> onMouseClickedList(event, listView));
 
@@ -110,18 +108,39 @@ public class CompletionCtrl
 
    private void onHandleKeyOnPopupList(KeyEvent keyEvent, ListView<CompletionCandidate> listView)
    {
-      if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ENTER)))
+      //if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ENTER)))
+      if (KeyCode.ENTER.equals(keyEvent.getCode()))
       {
          onCompletionSelected(keyEvent, listView, false);
       }
-      else if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.TAB)))
+      //else if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.TAB)))
+      else if (KeyCode.TAB.equals(keyEvent.getCode()))
       {
          onCompletionSelected(keyEvent, listView, true);
       }
-      else if(KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ESCAPE)))
+      //else if(KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ESCAPE)))
+      else if(KeyCode.ESCAPE.equals(keyEvent.getCode()))
       {
          _textComponentAdapter.closePopup();
          keyEvent.consume();
+      }
+      else if(KeyCode.DOWN.equals(keyEvent.getCode()))
+      {
+      }
+      else if(KeyCode.UP.equals(keyEvent.getCode()))
+      {
+      }
+      else if(KeyCode.PAGE_DOWN.equals(keyEvent.getCode()))
+      {
+      }
+      else if(KeyCode.PAGE_UP.equals(keyEvent.getCode()))
+      {
+      }
+      else if(KeyCode.SPACE.equals(keyEvent.getCode()))
+      {
+      }
+      else if(KeyCode.CONTROL.equals(keyEvent.getCode()))
+      {
       }
       else
       {

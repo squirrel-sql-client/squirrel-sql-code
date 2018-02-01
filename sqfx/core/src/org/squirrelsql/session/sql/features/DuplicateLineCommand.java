@@ -58,7 +58,7 @@ public class DuplicateLineCommand
 
       sqlTextAreaServices.getTextArea().insertText(lineBeg, line);
 
-      sqlTextAreaServices.getTextArea().positionCaret(caretPosition + line.length());
+      sqlTextAreaServices.getTextArea().moveTo(caretPosition + line.length());
    }
 
 }
