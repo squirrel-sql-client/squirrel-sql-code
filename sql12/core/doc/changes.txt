@@ -12,6 +12,9 @@ Enhancements:
 
 Bug fixes:
 
+#1330 Plugin SQLReplace does not function in SQL Worksheets (ctrl+n)
+  Also added a small help file for the Plugin.
+
 Recent file feature: Files were not loaded.
 
 

@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
@@ -211,7 +213,22 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 
 			initSQLReplace(sqlPaneAPI, session);
 
-			return new PluginSessionCallbackAdaptor(this);
+			PluginSessionCallback ret = new PluginSessionCallback()
+			{
+				@Override
+				public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+				{
+					initSQLReplace(sqlPaneAPI, session);
+				}
+
+				@Override
+				public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+				{
+				}
+			};
+
+
+			return ret;
 		}
 		catch (Exception e)
 		{
