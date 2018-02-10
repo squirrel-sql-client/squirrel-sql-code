@@ -12,6 +12,9 @@ Enhancements:
 
 Bug fixes:
 
+Fix problem in RotatedTableCtrl with rawtype columns (BINARY, VARBINARY,(VAR)CHAR FOR BIT DATA, BLOB)
+ Thanks to Stefan Mueller for the patch.
+
 #1330 Plugin SQLReplace does not function in SQL Worksheets (ctrl+n)
   Also added a small help file for the Plugin.
 
