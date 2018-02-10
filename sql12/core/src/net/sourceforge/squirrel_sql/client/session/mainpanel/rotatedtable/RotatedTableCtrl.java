@@ -67,7 +67,33 @@ public class RotatedTableCtrl implements LazyTabControllerCtrl
             for (int j = 0; j < rowCount; j++)
             {
                Object[] row = rsds.getAllDataForReadOnly().get(j);
-               rotatedRow[j + 1] = row[i];
+
+               if (row[i] instanceof Byte[] || row[i] instanceof byte[]) {
+                  Byte[] cellObjBytes = null;
+                  if (row[i] instanceof Byte[]) {
+                     cellObjBytes = (Byte[]) row[i];
+                  } else {
+                     byte[] cellObjBytesPrimitives = (byte[]) row[i];
+                     cellObjBytes = new Byte[cellObjBytesPrimitives.length];
+                     int k = 0;
+                     for (byte b : cellObjBytesPrimitives) {
+                        cellObjBytes[k++] = b;
+                     }
+                  }
+
+                  Formatter formatter = new Formatter();
+                  String format = "%02x";
+                  for (byte b : cellObjBytes) {
+                     formatter.format(format, b);
+                     format = "  %02x";
+                  }
+                  String cellObjStr = formatter.toString();
+                  formatter.close();
+
+                  rotatedRow[j + 1] = cellObjStr;
+               } else {
+                  rotatedRow[j + 1] = row[i];
+               }
             }
 
             rotatedRows.add(rotatedRow);
