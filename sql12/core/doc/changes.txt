@@ -12,6 +12,8 @@ Enhancements:
 
 Bug fixes:
 
+Fixed NullPointer in the 'Show foreign key references' feature. (See right mouse menu of SQL results.)
+
 #1334 The 'Limit read' feature of CHAR, VARCHAR, LONGVARCHAR type columns was declared unstable,
   see menu File --> Global preferences --> tab Data type controls --> section CHAR, VARCHAR, LONGVARCHAR.
   Corresponding Errors are now clearly telling about the instability.

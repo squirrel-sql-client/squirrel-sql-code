@@ -80,10 +80,13 @@ public class ShowReferencesCommand
       {
          ResultMetaDataTable buf = inStatColumnInfo.getColDef().getResultMetaDataTable();
 
-         ret.put(buf.getQualifiedName().toLowerCase() , buf);
+         if (null != buf)
+         {
+            ret.put(buf.getQualifiedName().toLowerCase() , buf);
+         }
       }
 
-      return new ArrayList<ResultMetaDataTable>(ret.values());
+      return new ArrayList<>(ret.values());
    }
 
 }
