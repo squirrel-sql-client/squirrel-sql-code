@@ -27,17 +27,14 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.util.ArrayList;
-
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateCheck;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -46,6 +43,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.SwingUtilities;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.util.ArrayList;
 
 /**
  * This class can be used to execute SQL.
@@ -734,8 +737,20 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          }
       }
 
-      // Try again with double quotes removed.
-      return getTableName(tableNameFromSQL.replaceAll("\"", ""));
+      //////////////////////////////////////////////////////////////
+      // If we didn't already, try again with double quotes removed.
+      String tableNameFromSQLDoubleQuotesRemoved = tableNameFromSQL.replaceAll("\"", "");
+
+      if(tableNameFromSQL.equals(tableNameFromSQLDoubleQuotesRemoved))
+      {
+         return null;
+      }
+      else
+      {
+         return getTableName(tableNameFromSQLDoubleQuotesRemoved);
+      }
+      //
+      //////////////////////////////////////////////////////////////
    }
 
 
