@@ -12,6 +12,13 @@ Enhancements:
 
 Bug fixes:
 
+#1334 The 'Limit read' feature of CHAR, VARCHAR, LONGVARCHAR type columns was declared unstable,
+  see menu File --> Global preferences --> tab Data type controls --> section CHAR, VARCHAR, LONGVARCHAR.
+  Corresponding Errors are now clearly telling about the instability.
+
+SQLs that used double quoted table or schema names do now have a chance to be identified as editable.
+
+
 Fix problem in RotatedTableCtrl with rawtype columns (BINARY, VARBINARY,(VAR)CHAR FOR BIT DATA, BLOB)
  Thanks to Stefan Mueller for the patch.
 

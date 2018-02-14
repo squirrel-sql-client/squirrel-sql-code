@@ -96,6 +96,12 @@ public class ListMessageHandler implements IMessageHandler
       _errMsgs.add(msg);
    }
 
+   @Override
+   public void showErrorMessage(String string, Throwable ex)
+   {
+      _errMsgs.add(string + " | " + ex.getMessage());
+   }
+
    public void showWarningMessage(String msg)
    {
       _warningMsgs.add(msg);

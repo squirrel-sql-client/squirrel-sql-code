@@ -499,7 +499,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       {
          _dataSetUpdateableTableModel.setTableInfo(null);
       }
-      if (schemaCheck) {
+
+      if (schemaCheck)
+      {
           _schemaInfoUpdateCheck.addExecutionInfo(exInfo);
       }
 
@@ -717,22 +719,23 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       String[] parts = tableNameFromSQL.split("\\.");
       if (parts.length == 2)
       {
-         String catalog = parts[0];
+         String catalogOrSchema = parts[0];
          String simpleName = parts[1];
-         tables = _session.getSchemaInfo().getITableInfos(catalog, null, simpleName);
+         tables = _session.getSchemaInfo().getITableInfos(catalogOrSchema, null, simpleName);
          if (tables != null && tables.length > 0)
          {
             return (TableInfo) tables[0];
          }
-         // Ok, maybe catalog was really a schema instead.
-         tables = _session.getSchemaInfo().getITableInfos(null, catalog, simpleName);
+         // Ok, maybe catalogOrSchema was really a schema instead.
+         tables = _session.getSchemaInfo().getITableInfos(null, catalogOrSchema, simpleName);
          if (tables != null && tables.length > 0)
          {
             return (TableInfo) tables[0];
          }
       }
-      return null;
 
+      // Try again with double quotes removed.
+      return getTableName(tableNameFromSQL.replaceAll("\"", ""));
    }
 
 

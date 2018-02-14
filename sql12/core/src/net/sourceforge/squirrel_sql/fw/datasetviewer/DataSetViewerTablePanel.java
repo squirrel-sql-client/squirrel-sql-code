@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLengthFeatureUnstable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DefaultFindService;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService;
@@ -730,10 +731,15 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	 * Re-read the contents of this cell from the database.
 	 * If there is a problem, the message will have a non-zero length after return.
 	 */
-	public Object reReadDatum(Object[] values, int col, StringBuffer message) {
-		// call the underlying model to get the whole data, if possible
-		return ((IDataSetUpdateableTableModel)_updateableModel).
-			reReadDatum(values, _colDefs, col, message);
+	public Object reReadDatum(Object[] values, int col, StringBuffer message)
+	{
+		if(null == _updateableModel)
+		{
+			LimitReadLengthFeatureUnstable.unknownTable();
+			return values[col];
+		}
+
+		return ((IDataSetUpdateableTableModel)_updateableModel).reReadDatum(values, _colDefs, col, message);
 	}
 	
 	/**

@@ -15,6 +15,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLengthFeatureUnstable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -382,6 +383,10 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    /**
     * Re-read the value for a single cell in the table, if possible.
     * If there is a problem, the message has a non-zero length when this returns.
+    *
+    *
+    * NOTE: THIS METHOD IS UNSTABLE. For details  see {@link LimitReadLengthFeatureUnstable}
+    *
     */
    public Object reReadDatum(
       Object[] values,
@@ -391,7 +396,10 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       // if we could not identify which table to edit, tell user
       if (ti == null)
+      {
+         LimitReadLengthFeatureUnstable.unknownTable();
          return TI_ERROR_MESSAGE;
+      }
 
       // get WHERE clause
       // The -1 says to ignore the last arg and use the contents of the values array
@@ -454,16 +462,13 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
       catch (Exception ex)
       {
-          // i18n[DataSetUpdateableTableModelImpl.error.rereadingdb=There was a problem reported while re-reading the DB.  The DB message was:\n{0}]
           message.append(
               s_stringMgr.getString(
                           "DataSetUpdateableTableModelImpl.error.rereadingdb", 
                           ex.getMessage()));
 
-         // It would be nice to tell the user what happened, but if we try to
-         // put up a dialog box at this point, we run into trouble in some
-         // cases where the field continually tries to re-read after the dialog
-         // closes (because it is being re-painted).
+
+          LimitReadLengthFeatureUnstable.someErrorReReading(ex);
       }
 
 

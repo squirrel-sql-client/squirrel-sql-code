@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLengthFeatureUnstable;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 /**
@@ -52,6 +53,8 @@ public interface IDataSetUpdateableTableModel extends IDataSetUpdateableModel
 	/**
 	 * Re-read the value for a single cell in the table, if possible.
 	 * If there is a problem, the message has a non-zero length when this returns.
+	 *
+	 * NOTE: THIS METHOD IS UNSTABLE. For details  see {@link LimitReadLengthFeatureUnstable}
 	 */
 	public Object reReadDatum(
 		Object[] values,

@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -31,11 +32,11 @@ import java.io.OutputStreamWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -45,14 +46,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.JTextComponent;
 
+import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -112,11 +114,6 @@ public class DataTypeString extends BaseDataTypeComponent
 	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
 	/**
-	 * default length of strings when truncated
-	 */
-	private final static int DEFAULT_LIMIT_READ_LENGTH = 100;
-
-	/**
 	 * Name of this class, which is needed because the class name is needed
 	 * by the static method getControlPanel, so we cannot use something
 	 * like getClass() to find this name.
@@ -143,34 +140,6 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * Oracle does not allow that type to be used in a WHERE clause
 	 */
 	private static boolean _useLongInWhere = true;
-
-	/**
-	 * If <tt>true</tt> then limit the size of string data that is read
-	 * during the initial table load.
-	 */
-	private static boolean _limitRead = false;
-
-	/**
-	 * If <tt>_limitRead</tt> is <tt>true</tt> then this is how many characters
-	 * to read during the initial table load.
-	 */
-	private static int _limitReadLength = DEFAULT_LIMIT_READ_LENGTH;
-
-	/**
-	 * If <tt>_limitRead</tt> is <tt>true</tt> and
-	 * this is <tt>true</tt>, then only columns whose label is listed in
-	 * <tt>_limitReadColumnList</tt> are limited.
-	 */
-	private static boolean _limitReadOnSpecificColumns = false;
-
-	/**
-	 * If <tt>_limitRead</tt> is <tt>true</tt> and
-	 * <tt>_limitReadOnSpecificColumns is <tt>true</tt>, then only columns whose label is listed here.
-	 * The column names are converted to ALL CAPS before being put on this list
-	 * so that they will match the label retrieved from _colDef.
-	 */
-	private static HashMap<String, String> _limitReadColumnNameMap = 
-	    new HashMap<String, String>();
 
 
 	/**
@@ -215,24 +184,24 @@ public class DataTypeString extends BaseDataTypeComponent
 			if (useLongInWhereString != null && useLongInWhereString.equals("false"))
 				_useLongInWhere = false;
 
-			_limitRead = false;	// set to default
+			LimitReadLengthFeatureUnstable._limitRead = false;	// set to default
 			String limitReadString = DTProperties.get(thisClassName, "limitRead");
 			if (limitReadString != null && limitReadString.equals("true"))
-				_limitRead = true;
+				LimitReadLengthFeatureUnstable._limitRead = true;
 
-			_limitReadLength = DEFAULT_LIMIT_READ_LENGTH;	// set to default
+			LimitReadLengthFeatureUnstable._limitReadLength = LimitReadLengthFeatureUnstable.DEFAULT_LIMIT_READ_LENGTH;	// set to default
 			String limitReadLengthString = DTProperties.get(thisClassName, "limitReadLength");
 			if (limitReadLengthString != null)
-				_limitReadLength = Integer.parseInt(limitReadLengthString);
+				LimitReadLengthFeatureUnstable._limitReadLength = Integer.parseInt(limitReadLengthString);
 
-			_limitReadOnSpecificColumns = false;	// set to default
+			LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns = false;	// set to default
 			String limitReadOnSpecificColumnsString = DTProperties.get(thisClassName, "limitReadOnSpecificColumns");
 			if (limitReadOnSpecificColumnsString != null && limitReadOnSpecificColumnsString.equals("true"))
-				_limitReadOnSpecificColumns = true;
+				LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns = true;
 
 			// the list of specific column names is in comma-separated format
 			// with a comma in front of the first entry as well
-			_limitReadColumnNameMap.clear();	// empty the map of old values
+			LimitReadLengthFeatureUnstable._limitReadColumnNameMap.clear();	// empty the map of old values
 
 			String nameString = DTProperties.get(thisClassName, "limitReadColumnNames");
 			int start = 0;
@@ -250,7 +219,7 @@ public class DataTypeString extends BaseDataTypeComponent
 					start = nameString.length();
 				}
 
-				_limitReadColumnNameMap.put(name, null);
+				LimitReadLengthFeatureUnstable._limitReadColumnNameMap.put(name, null);
 			}
 
 			propertiesAlreadyLoaded = true;
@@ -310,35 +279,35 @@ public class DataTypeString extends BaseDataTypeComponent
 	@Override
 	public boolean needToReRead(Object originalValue) {
 		// if we are not limiting anything, return false
-		if (_limitRead == false)
+		if (LimitReadLengthFeatureUnstable._limitRead == false)
 			return false;
 
 		// if the value is null, then it was read ok
 		if (originalValue == null)
 			return false;
 
-		if (((String)originalValue).endsWith("...") && (((String)originalValue).length() == _limitReadLength + 3))
+		if (((String)originalValue).endsWith("...") && (((String)originalValue).length() == LimitReadLengthFeatureUnstable._limitReadLength + 3))
 		    return true;
 
 		// we are limiting some things.
 		// if the string we have is less than the limit, then we are ok
 		// and do not need to re-read (because we already have the whole thing).
-		if (((String)originalValue).length() < _limitReadLength)
+		if (((String)originalValue).length() < LimitReadLengthFeatureUnstable._limitReadLength)
 			return false;
 
 		// if the data is longer than the limit, then we have previously
 		// re-read the contents and we do not need to re-read it again
-		if (((String)originalValue).length() > _limitReadLength)
+		if (((String)originalValue).length() > LimitReadLengthFeatureUnstable._limitReadLength)
 			return false;
 
 		// if we are limiting all columns, then we need to re-read
 		// because we do not know if we have all the data or not
-		if (_limitReadOnSpecificColumns == false)
+		if (LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns == false)
 			return true;
 
 		// check for the case where we are limiting some columns
 		// but not limiting this particular column
-		if (_limitReadColumnNameMap.containsKey(_colDef.getColumnName()))
+		if (LimitReadLengthFeatureUnstable._limitReadColumnNameMap.containsKey(_colDef.getColumnName()))
 			return true;	// column is limited and length == limit, so need to re-read
 		else return false;	// column is not limited, so we have the whole thing
 	}
@@ -559,15 +528,15 @@ public class DataTypeString extends BaseDataTypeComponent
 			// if this column is being limited, then truncate the data if needed
 			// (start with a quick check for the data being shorter than the limit,
 			// in which case we don't need to worry about it).
-			if (limitDataRead == true && _limitRead == true
-				&& data.length() >= _limitReadLength) {
+			if (limitDataRead == true && LimitReadLengthFeatureUnstable._limitRead == true
+				&& data.length() >= LimitReadLengthFeatureUnstable._limitReadLength) {
 
 				// data is longer than the limit, so we need to do more checking
-				if (_limitReadOnSpecificColumns == false ||
-					(_limitReadOnSpecificColumns == true &&
-						_limitReadColumnNameMap.containsKey(_colDef.getColumnName()))) {
+				if (LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns == false ||
+					(LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns == true &&
+						LimitReadLengthFeatureUnstable._limitReadColumnNameMap.containsKey(_colDef.getColumnName()))) {
 					// this column is limited, so truncate the data
-					data = data.substring(0, _limitReadLength) + "...";
+					data = data.substring(0, LimitReadLengthFeatureUnstable._limitReadLength) + "...";
 				}
 
 			}
@@ -800,7 +769,7 @@ public class DataTypeString extends BaseDataTypeComponent
 		 // created, we need to load the properties from the DTProperties.
 		 loadProperties();
 
-		return new ClobOkJPanel();
+		return new DataTypeStringPanel();
 		
 		
 	 }
@@ -816,13 +785,11 @@ public class DataTypeString extends BaseDataTypeComponent
 	  * Inner class that extends OkJPanel so that we can call the ok()
 	  * method to save the data when the user is happy with it.
 	  */
-	 private static class ClobOkJPanel extends OkJPanel {
+	 private static class DataTypeStringPanel extends OkJPanel {
 		/*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
-
-        private static final long serialVersionUID = -578848466466561988L;
 
         // check box for whether to show newlines as "\n" for in-cell display
 		private JCheckBox _makeNewlinesVisibleInCellChk =
@@ -854,7 +821,7 @@ public class DataTypeString extends BaseDataTypeComponent
 			new JTextArea(5, 12);
 
 
-		public ClobOkJPanel() {
+		public DataTypeStringPanel() {
 
 			/* set up the controls */
 
@@ -865,7 +832,7 @@ public class DataTypeString extends BaseDataTypeComponent
 			_useLongInWhereChk.setSelected(_useLongInWhere);
 
 			// checkbox for limit/no-limit on data read during initial table load
-			_limitReadChk.setSelected(_limitRead);
+			_limitReadChk.setSelected(LimitReadLengthFeatureUnstable._limitRead);
 			_limitReadChk.addChangeListener(new ChangeListener(){
 				@Override
 				public void stateChanged(ChangeEvent e) {
@@ -878,10 +845,10 @@ public class DataTypeString extends BaseDataTypeComponent
 
 
 			// fill in the current limit length
-			_limitReadLengthTextField.setInt(_limitReadLength);
+			_limitReadLengthTextField.setInt(LimitReadLengthFeatureUnstable._limitReadLength);
 
 			// set the flag for whether or not to limit only on specific fields
-			_limitReadOnSpecificColumnsChk.setSelected(_limitReadOnSpecificColumns);
+			_limitReadOnSpecificColumnsChk.setSelected(LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns);
 			_limitReadOnSpecificColumnsChk.addChangeListener(new ChangeListener(){
 				@Override
 				public void stateChanged(ChangeEvent e) {
@@ -891,7 +858,7 @@ public class DataTypeString extends BaseDataTypeComponent
 			});
 
 			// fill in list of column names to check against
-			Iterator<String> names = _limitReadColumnNameMap.keySet().iterator();
+			Iterator<String> names = LimitReadLengthFeatureUnstable._limitReadColumnNameMap.keySet().iterator();
 			StringBuffer namesText = new StringBuffer();
 			while (names.hasNext()) {
 				if (namesText.length() > 0)
@@ -931,22 +898,51 @@ public class DataTypeString extends BaseDataTypeComponent
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(_useLongInWhereChk, gbc);
 
-			gbc.gridy++;
 			gbc.gridx = 0;
+			gbc.gridy++;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			JPanel limitReadPanelWithUnstableWarning = createLimitReadPanelWithUnstableWarning();
+			add(limitReadPanelWithUnstableWarning, gbc);
+
+
+		} // end of constructor for inner class
+
+		private JPanel createLimitReadPanelWithUnstableWarning()
+		{
+			JPanel ret = new JPanel(new GridBagLayout());
+
+			ret.setBorder(BorderFactory.createEtchedBorder());
+
+			GridBagConstraints gbc;
+
+			gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+
+
+			gbc.gridwidth = 3;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			MultipleLineLabel lbl = new MultipleLineLabel(LimitReadLengthFeatureUnstable.getUnstableWarningForGUI());
+			lbl.setForeground(Color.red);
+			ret.add(lbl, gbc);
+
+			gbc.fill = GridBagConstraints.NONE;
+
+
+			gbc.gridy++;
 			gbc.gridwidth = 1;
-			add(_limitReadChk, gbc);
+			ret.add(_limitReadChk, gbc);
 
 			gbc.gridx++;
 			gbc.gridwidth = 1;
-			add(_limitReadLengthTextField, gbc);
+			ret.add(_limitReadLengthTextField, gbc);
 
 			gbc.gridy++;
 			gbc.gridx = 0;
 			gbc.gridwidth = 1;
-			add(_limitReadOnSpecificColumnsChk, gbc);
+			ret.add(_limitReadOnSpecificColumnsChk, gbc);
 
 			gbc.gridx++;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			gbc.insets.bottom = 5;
 			JScrollPane scrollPane = new JScrollPane();
 
 			// If we don't always show the scrollbars the whole DataTypePreferencesPanel is flickering like hell.
@@ -954,10 +950,10 @@ public class DataTypeString extends BaseDataTypeComponent
 			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 			scrollPane.setViewportView(_limitReadColumnNameTextArea);
-			add(scrollPane, gbc);
+			ret.add(scrollPane, gbc);
 
-
-		} // end of constructor for inner class
+			return ret;
+		}
 
 
 		/**
@@ -975,22 +971,22 @@ public class DataTypeString extends BaseDataTypeComponent
 			DTProperties.put(thisClassName,
 				"useLongInWhere", Boolean.valueOf(_useLongInWhere).toString());
 
-			_limitRead = _limitReadChk.isSelected();
+			LimitReadLengthFeatureUnstable._limitRead = _limitReadChk.isSelected();
 			DTProperties.put(thisClassName,
-				"limitRead", Boolean.valueOf(_limitRead).toString());
+				"limitRead", Boolean.valueOf(LimitReadLengthFeatureUnstable._limitRead).toString());
 
-			_limitReadLength = _limitReadLengthTextField.getInt();
+			LimitReadLengthFeatureUnstable._limitReadLength = _limitReadLengthTextField.getInt();
 			DTProperties.put(thisClassName,
-				"limitReadLength", Integer.toString(_limitReadLength));
+				"limitReadLength", Integer.toString(LimitReadLengthFeatureUnstable._limitReadLength));
 
-			_limitReadOnSpecificColumns = _limitReadOnSpecificColumnsChk.isSelected();
+			LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns = _limitReadOnSpecificColumnsChk.isSelected();
 			DTProperties.put(thisClassName,
-				"limitReadOnSpecificColumns", Boolean.valueOf(_limitReadOnSpecificColumns).toString());
+				"limitReadOnSpecificColumns", Boolean.valueOf(LimitReadLengthFeatureUnstable._limitReadOnSpecificColumns).toString());
 
 			// Handle list of column names
 
 			// remove old name list from map
-			_limitReadColumnNameMap.clear();
+			LimitReadLengthFeatureUnstable._limitReadColumnNameMap.clear();
 			// extract column names from text area
 			String columnNameText = _limitReadColumnNameTextArea.getText();
 
@@ -1016,7 +1012,7 @@ public class DataTypeString extends BaseDataTypeComponent
 				if (name.length() == 0)
 					continue;	// skip blank lines
 
-				_limitReadColumnNameMap.put(name.trim().toUpperCase(), null);
+				LimitReadLengthFeatureUnstable._limitReadColumnNameMap.put(name.trim().toUpperCase(), null);
 
 				// add name to comma-separated string for saving in properties
 				propertyString += "," + name.trim().toUpperCase();

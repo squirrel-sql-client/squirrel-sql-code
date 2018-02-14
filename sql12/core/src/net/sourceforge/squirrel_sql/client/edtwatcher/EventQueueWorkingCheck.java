@@ -65,6 +65,11 @@ public class EventQueueWorkingCheck implements Runnable
 
          for( ThreadInfo info : threadInfo )
          {
+            if(null == info)
+            {
+               continue;
+            }
+
             pw.println("Threadname: " + info.getThreadName());
             pw.println("ThreadId: " + info.getThreadId());
             pw.println("Threadstate: " + info.getThreadState());

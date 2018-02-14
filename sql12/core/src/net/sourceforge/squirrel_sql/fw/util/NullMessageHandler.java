@@ -60,6 +60,12 @@ public class NullMessageHandler implements IMessageHandler
 		// Empty.
 	}
 
+   @Override
+   public void showErrorMessage(String string, Throwable ex)
+   {
+
+   }
+
    public void showWarningMessage(String msg)
    {
       // Empty.

@@ -191,7 +191,9 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 
 		// first look to see if they are identical objects, e.g. both null
 		if (newValue == oldValue)
-			return new int[0];	// the caller does not need to know that nothing happened
+		{
+			return new int[0];   // the caller does not need to know that nothing happened
+		}
 
 		// if either of the values is null and the other is not, then the data has
 		// changed and we fall-through to the change process.  Otherwise, check
@@ -199,7 +201,9 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		if (oldValue != null && newValue != null) {
 			// ask the DataType object if the two values are the same
 			if (CellComponentFactory.areEqual( _colDefs[col], oldValue, newValue))
-				return new int[0];	// the caller does not need to know that nothing happened
+			{
+				return new int[0];   // the caller does not need to know that nothing happened
+			}
 
 			// if we reach this point, the value has been changed,
 			// so fall through to next section
@@ -208,10 +212,13 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// call the function in the app code that checks for unexpected
 		// conditions in the current DB
 		if (getUpdateableModelReference() != null)
-			message = ((IDataSetUpdateableTableModel)getUpdateableModelReference()).
-				getWarningOnCurrentData(getRow(row), _colDefs, col, oldValue);
+		{
+			message = ((IDataSetUpdateableTableModel) getUpdateableModelReference()).
+					getWarningOnCurrentData(getRow(row), _colDefs, col, oldValue);
+		}
 
-		if (message != null) {
+		if (message != null)
+		{
 			// set up dialog to ask user if it is ok to proceed
 			// IMPORTANT: this dialog is SYNCHRONOUS (ie. we do not proceed until
 			// user gives a response).  This is critical since this function provides
@@ -219,6 +226,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			// i18n[baseDataSetViewerDestination.warning=Warning]
 			int option = JOptionPane.showConfirmDialog(GUIUtils.getOwningFrame(getComponent()), message, s_stringMgr.getString("baseDataSetViewerDestination.warning"),
 				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
 			if ( option != JOptionPane.YES_OPTION)
 			{
 				return new int[0];	// no update done to underlying data
@@ -228,8 +236,10 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// call the function in the app code that checks for unexpected
 		// conditions in the DB as it will be after doing the update
 		if (getUpdateableModelReference() != null)
-			message = ((IDataSetUpdateableTableModel)getUpdateableModelReference()).
-				getWarningOnProjectedUpdate(getRow(row), _colDefs, col, newValue);
+		{
+			message = ((IDataSetUpdateableTableModel) getUpdateableModelReference()).
+					getWarningOnProjectedUpdate(getRow(row), _colDefs, col, newValue);
+		}
 
 		if (message != null) {
 			// set up dialog to ask user if it is ok to proceed
@@ -255,7 +265,8 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		message = ((IDataSetUpdateableTableModel)getUpdateableModelReference()).
 			updateTableComponent(getRow(row), _colDefs, col, oldValue, newValue);
 
-		if (message != null) {
+		if (message != null)
+		{
 			// tell user that there was a problem
 			// i18n[baseDataSetViewerDestination.error=Error]
 			JOptionPane.showMessageDialog(GUIUtils.getOwningFrame(getComponent()), message, s_stringMgr.getString("baseDataSetViewerDestination.error"),

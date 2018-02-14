@@ -200,8 +200,13 @@ public class MessagePanel extends JTextPane implements IMessageHandler
         privateShowMessage(th, formatter, _saSetError);
 	}
 
+	@Override
+	public void showErrorMessage(String msg, Throwable ex)
+	{
+		addLineOnEDT(msg + " | " + ex.getMessage(), _saSetError);
+	}
 
-   /**
+	/**
     * Show a message.
     *
     * @param msg	The message to be shown.
@@ -250,21 +255,29 @@ public class MessagePanel extends JTextPane implements IMessageHandler
                                    final ExceptionFormatter formatter, 
                                    final SimpleAttributeSet saSet)
    {
-      if (th != null) {
-          
-          String message = "";
-          if (formatter == null) {
-              message = defaultExceptionFormatter.format(th);
-          } else {
-              try {
-                  message = formatter.format(th);
-              } catch (Exception e) {
-                  s_log.error("Unable to format message: "+e.getMessage(), e);
-              }
-          }
-          privateShowMessage(message, saSet);
-          s_log.error("privateShowMessage: Exception was "+th.getMessage(), th);
-      }
+		if (th != null)
+		{
+
+			String message = "";
+			if (formatter == null)
+			{
+				message = defaultExceptionFormatter.format(th);
+			}
+			else
+			{
+				try
+				{
+					message = formatter.format(th);
+				}
+				catch (Exception e)
+				{
+					s_log.error("Unable to format message: " + e.getMessage(), e);
+				}
+			}
+
+			privateShowMessage(message, saSet);
+			s_log.error("privateShowMessage: Exception was " + th.getMessage(), th);
+		}
    }
    
 	/**
@@ -281,6 +294,11 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 		}
 
 		// Thread safe support for every call to this method:
+		addLineOnEDT(msg, saSet);
+	}
+
+	private void addLineOnEDT(String msg, SimpleAttributeSet saSet)
+	{
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			public void run()
