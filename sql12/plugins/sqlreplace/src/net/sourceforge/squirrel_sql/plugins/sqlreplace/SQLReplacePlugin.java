@@ -218,7 +218,7 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 				@Override
 				public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
 				{
-					initSQLReplace(sqlPaneAPI, session);
+					initSQLReplace(sqlInternalFrame.getSQLPanelAPI(), sess);
 				}
 
 				@Override
