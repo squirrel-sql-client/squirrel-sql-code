@@ -12,6 +12,8 @@ Enhancements:
 
 Bug fixes:
 
+Improved repaint behavior when rows are deleted in a table.
+
 Fixed NullPointer in the 'Show foreign key references' feature. (See right mouse menu of SQL results.)
 
 #1334 The 'Limit read' feature of CHAR, VARCHAR, LONGVARCHAR type columns was declared unstable,
