@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
@@ -52,7 +53,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 public interface ISession extends IHasIdentifier
 {
 
-   public interface IMainPanelTabIndexes extends MainPanel.ITabIndexes
+   interface IMainPanelTabIndexes extends MainPanel.ITabIndexes
    {
       // Empty body.
    }
@@ -414,4 +415,8 @@ public interface ISession extends IHasIdentifier
    void removeSimpleSessionListener(SimpleSessionListener simpleSessionListener);
 
 
+
+   Object getSessionLocal(Object key);
+
+   void putSessionLocal(Object key, Object value);
 }

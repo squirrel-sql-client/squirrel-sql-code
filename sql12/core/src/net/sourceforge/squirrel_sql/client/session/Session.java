@@ -152,6 +152,9 @@ class Session implements ISession
    private SessionConnectionKeepAlive _sessionConnectionKeepAlive = null;
    private SimpleSessionListenerManager _simpleSessionListenerManager;
 
+
+   private HashMap<Object, Object> _sessionLocales = new HashMap<>();
+
    /**
     * Create a new session.
     *
@@ -1299,5 +1302,17 @@ class Session implements ISession
    public void removeSimpleSessionListener(SimpleSessionListener simpleSessionListener)
    {
       _simpleSessionListenerManager.removeListener(simpleSessionListener);
+   }
+
+   @Override
+   public void putSessionLocal(Object key, Object value)
+   {
+      _sessionLocales.put(key, value);
+   }
+
+   @Override
+   public Object getSessionLocal(Object key)
+   {
+      return _sessionLocales.get(key);
    }
 }

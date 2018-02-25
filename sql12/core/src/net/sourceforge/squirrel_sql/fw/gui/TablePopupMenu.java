@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataModelImplementationDet
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.gui.action.*;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
+import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ITableActionCallback;
@@ -59,14 +60,15 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_INSERT_STATEMENT = 8;
 		int COPY_COLUMN_HEADER = 9;
 		int SHOW_REFERENCES = 10;
-		int EXPORT_CSV = 11;
-		int SELECT_ALL = 12;
-		int ADJUST_ALL_COL_WIDTHS_ACTION = 13;
-		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 14;
-		int SHOW_ROW_NUMBERS = 15;
-		int COPY_WIKI = 16;
-		int SELECT_ROWS = 17;
-		int LAST_ENTRY = 18;
+		int COPY_SELECTED_ROWS_TO_OWN_WINDOW = 11;
+		int EXPORT_CSV = 12;
+		int SELECT_ALL = 13;
+		int ADJUST_ALL_COL_WIDTHS_ACTION = 14;
+		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 15;
+		int SHOW_ROW_NUMBERS = 16;
+		int COPY_WIKI = 17;
+		int SELECT_ROWS = 18;
+		int LAST_ENTRY = 19;
    }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
@@ -91,6 +93,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyInsertStatementAction _copyInsertStatement = new CopyInsertStatementAction();
 	private CopyColumnHeaderAction _copyColumnHeader = new CopyColumnHeaderAction();
 	private ShowReferencesAction _showReferences = new ShowReferencesAction();
+	private CopySelectedRowsToOwnWindowAction _copySelectedRowsToOwnWindow = new CopySelectedRowsToOwnWindowAction();
 	private ExportCsvAction _exportCvs = new ExportCsvAction();
    private AdjustAllColWidthsAction _adjustAllColWidthsAction = new AdjustAllColWidthsAction();
 	private AlwaysAdjustAllColWidthsAction _alwaysAdjustAllColWidthsAction = new AlwaysAdjustAllColWidthsAction();
@@ -163,6 +166,10 @@ public class TablePopupMenu extends BasePopupMenu
 			addSeparator();
 			_menuItems[IOptionTypes.SHOW_REFERENCES] = add(_showReferences);
 		}
+
+		addSeparator();
+		_menuItems[IOptionTypes.COPY_SELECTED_ROWS_TO_OWN_WINDOW] = add(_copySelectedRowsToOwnWindow);
+
 
 		addSeparator();
 		_menuItems[IOptionTypes.EXPORT_CSV] = add(_exportCvs);
@@ -484,6 +491,22 @@ public class TablePopupMenu extends BasePopupMenu
          if (_table != null)
          {
             new ShowReferencesCommand(_table, _updateableModel, (JFrame) GUIUtils.getOwningFrame(_table), _session).execute();
+         }
+      }
+   }
+
+   private class CopySelectedRowsToOwnWindowAction extends BaseAction
+   {
+		CopySelectedRowsToOwnWindowAction()
+      {
+         super(s_stringMgr.getString("TablePopupMenu.CopySelectedRowsToOwnWindow"));
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+         if (_table != null)
+         {
+            new CopySelectedRowsToOwnWindowCommand(_table, _session).execute();
          }
       }
    }

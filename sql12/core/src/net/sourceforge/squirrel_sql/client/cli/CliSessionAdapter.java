@@ -354,4 +354,17 @@ public class CliSessionAdapter implements ISession
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
    }
+
+   @Override
+   public Object getSessionLocal(Object key)
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
+   public void putSessionLocal(Object key, Object value)
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
 }

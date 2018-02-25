@@ -176,6 +176,11 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		return _table;
 	}
 
+	public JTable getTable()
+	{
+		return _table;
+	}
+
 	/*
 	 * @see BaseDataSetViewerDestination#addRow(Object[])
 	 */
