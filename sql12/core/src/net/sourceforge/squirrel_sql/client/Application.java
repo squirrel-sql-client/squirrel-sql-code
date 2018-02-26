@@ -36,6 +36,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
+import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import org.apache.commons.lang.StringUtils;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -169,6 +170,8 @@ public class Application implements IApplication
 	private RecentFilesManager _recentFilesManager = new RecentFilesManager();
 
 	private PasteHistory _pasteHistory = new PasteHistory();
+
+	private RowsWindowFrameRegistry _rowsWindowFrameRegistry = new RowsWindowFrameRegistry();
 
 	/**
 	 * Default ctor.
@@ -1397,7 +1400,13 @@ public class Application implements IApplication
 		return _pasteHistory;
 	}
 
-	protected void exitApplication(int code){
+   @Override
+   public RowsWindowFrameRegistry getRowsWindowFrameRegistry()
+   {
+		return _rowsWindowFrameRegistry;
+   }
+
+   protected void exitApplication(int code){
        System.exit(code);
    }
    

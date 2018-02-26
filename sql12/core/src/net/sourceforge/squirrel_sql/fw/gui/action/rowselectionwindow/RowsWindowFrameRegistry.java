@@ -11,19 +11,6 @@ public class RowsWindowFrameRegistry
 
    private int _counter = 0;
 
-   public RowsWindowFrameRegistry(ISession session)
-   {
-      session.addSimpleSessionListener(() -> onSessionClosed());
-   }
-
-   private void onSessionClosed()
-   {
-      for (RowsWindowFrame rowsWindowFrame : _rowsWindowFrames.toArray(new RowsWindowFrame[_rowsWindowFrames.size()]))
-      {
-         rowsWindowFrame.close();
-      }
-   }
-
    public void add(RowsWindowFrame rowsWindowFrame)
    {
       rowsWindowFrame.setMyCounterId(++_counter);

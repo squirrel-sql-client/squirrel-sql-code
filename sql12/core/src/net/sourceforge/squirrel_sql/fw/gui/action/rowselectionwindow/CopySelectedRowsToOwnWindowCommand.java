@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
@@ -13,23 +14,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import javax.swing.event.MenuKeyEvent;
-import javax.swing.event.MenuKeyListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableColumnModel;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Window;
-import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
@@ -62,12 +54,12 @@ public class CopySelectedRowsToOwnWindowCommand
 
       ArrayList<Object[]> rows = RowSelectionTableUtil.getSelectedRows(_table);
 
-      ArrayList<RowsWindowFrame> rowsWindowFrames = RowsWindowFrameRegistryProvider.getRegistry(_session).getMatchingWindows(columnDisplayDefinitionsSortedByModelIndex);
+      ArrayList<RowsWindowFrame> rowsWindowFrames = Main.getApplication().getRowsWindowFrameRegistry().getMatchingWindows(columnDisplayDefinitionsSortedByModelIndex);
 
       if(0 == rowsWindowFrames.size())
       {
          RowsWindowFrame rowsWindowFrame = openWindowForTable(rows, columnDisplayDefinitionsSortedByModelIndex);
-         RowsWindowFrameRegistryProvider.getRegistry(_session).add(rowsWindowFrame);
+         Main.getApplication().getRowsWindowFrameRegistry().add(rowsWindowFrame);
       }
       else
       {
@@ -157,7 +149,7 @@ public class CopySelectedRowsToOwnWindowCommand
       if(null == rowsWindowFrame)
       {
          RowsWindowFrame newRowsWindowFrame = openWindowForTable(rows, columnDisplayDefinitions);
-         RowsWindowFrameRegistryProvider.getRegistry(_session).add(newRowsWindowFrame);
+         Main.getApplication().getRowsWindowFrameRegistry().add(newRowsWindowFrame);
       }
       else
       {

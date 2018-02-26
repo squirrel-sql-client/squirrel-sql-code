@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -61,6 +62,17 @@ public class RowsWindowFrame extends JDialog
       int width = Preferences.userRoot().getInt(PREF_KEY_ROWS_WINDOW_FRAME_WIDTH, 300);
       int height = Preferences.userRoot().getInt(PREF_KEY_ROWS_WINDOW_FRAME_HIGHT, 300);
 
+
+      addWindowListener(new WindowAdapter()
+      {
+         @Override
+         public void windowClosing(WindowEvent e)
+         {
+            onWindowClosing();
+         }
+      });
+
+
       setSize(new Dimension(width, height));
 
       setVisible(true);
@@ -73,7 +85,7 @@ public class RowsWindowFrame extends JDialog
       Preferences.userRoot().putInt(PREF_KEY_ROWS_WINDOW_FRAME_WIDTH, size.width);
       Preferences.userRoot().putInt(PREF_KEY_ROWS_WINDOW_FRAME_HIGHT, size.height);
 
-      RowsWindowFrameRegistryProvider.getRegistry(_session).remove(this);
+      Main.getApplication().getRowsWindowFrameRegistry().remove(this);
    }
 
    public void appendSelectedRows(List<Object[]> rows, ArrayList<ColumnDisplayDefinition> columnDisplayDefinitions)
