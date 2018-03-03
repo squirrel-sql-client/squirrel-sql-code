@@ -183,6 +183,7 @@ public class FXMessageBox
 
       GuiUtils.makeEscapeClosable(totalPane);
 
+      GuiUtils.centerWithinParent(dialog);
       // Below method is supported JavaFX 2.2 or later.
       dialog.showAndWait();
 

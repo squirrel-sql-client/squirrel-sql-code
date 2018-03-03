@@ -8,7 +8,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.skin.TextAreaSkin;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
@@ -37,6 +36,20 @@ public class GuiUtils
 
    public static void centerWithinParent(Stage stage)
    {
+
+//      if(false == stage.isShowing())
+//      {
+//         throw new IllegalArgumentException("Stage must be showing to be positioned");
+//      }
+
+      double stageWidth = stage.getScene().getWidth();
+      double stageHeight = stage.getScene().getHeight();
+
+      centerWithinParent(stage, stageWidth, stageHeight);
+   }
+
+   public static void centerWithinParent(Stage stage, double stageWidth, double stageHeight)
+   {
       Window owner = stage.getOwner();
 
       if(null == owner)
@@ -44,34 +57,31 @@ public class GuiUtils
          throw new IllegalArgumentException("Owner must not be null");
       }
 
-      if(false == stage.isShowing())
-      {
-         throw new IllegalArgumentException("Stage must be showing to be positioned");
-      }
+      stage.setX(owner.getX() + owner.getWidth() / 2 - stageWidth / 2);
+      stage.setY(owner.getY() + owner.getHeight() / 2 - stageHeight / 2);
+   }
 
-      stage.setX(owner.getX() + owner.getWidth() / 2 - stage.getScene().getWidth() / 2);
-      stage.setY(owner.getY() + owner.getHeight() / 2 - stage.getScene().getHeight() / 2);
-      stage.show();
-
-
+   public static Stage createFixedSizeModalDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix)
+   {
+      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.WINDOW_MODAL, AppState.get().getPrimaryStage(), false);
    }
 
    public static Stage createModalDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix)
    {
-      return createModalDialog(region, pref, initialWidth, initialHeight, prefPrefix, AppState.get().getPrimaryStage());
+      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.WINDOW_MODAL, AppState.get().getPrimaryStage(), true);
    }
 
    public static Stage createModalDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix, Stage owner)
    {
-      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.WINDOW_MODAL, owner);
+      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.WINDOW_MODAL, owner, true);
    }
 
    public static Stage createNonModalDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix)
    {
-      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.NONE, AppState.get().getPrimaryStage());
+      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.NONE, AppState.get().getPrimaryStage(), true);
    }
 
-   private static Stage _createDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix, Modality modality, Stage owner)
+   private static Stage _createDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix, Modality modality, Stage owner, boolean restoreStageDimension)
    {
       Stage ret = createWindow(region, owner);
 
@@ -79,7 +89,16 @@ public class GuiUtils
 
       makeEscapeClosable(region);
 
-      new StageDimensionSaver(prefPrefix, ret, pref, initialWidth, initialHeight, owner);
+      if (restoreStageDimension)
+      {
+         new StageDimensionSaver(prefPrefix, ret, pref, initialWidth, initialHeight, owner);
+      }
+      else
+      {
+         ret.setWidth(initialWidth);
+         ret.setHeight(initialHeight);
+         centerWithinParent(ret, initialWidth, initialHeight);
+      }
 
       return ret;
    }

@@ -82,7 +82,7 @@ public class SimpleProgressCtrl
 
    private void showDialogAndStartService()
    {
-      _dialog = GuiUtils.createModalDialog(_fxmlHelper.getRegion(), new Pref(getClass()), 600, 400, "SimpleProgressCtrl");
+      _dialog = GuiUtils.createFixedSizeModalDialog(_fxmlHelper.getRegion(), new Pref(getClass()), 600, 400, "SimpleProgressCtrl");
 
       _dialog.setTitle(_title);
       _dialog.setOnCloseRequest(e -> cancelInBackground());
