@@ -16,6 +16,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+#565 Double clicking selection should stop at '=' '>' '<' chars.
+
 Improved repaint behavior when rows are deleted in a table.
 
 Fixed NullPointer in the 'Show foreign key references' feature. (See right mouse menu of SQL results.)

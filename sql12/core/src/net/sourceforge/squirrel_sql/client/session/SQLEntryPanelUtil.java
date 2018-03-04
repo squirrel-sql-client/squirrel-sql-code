@@ -37,6 +37,9 @@ public class SQLEntryPanelUtil
          ')' == c ||
          ',' == c ||
          ';' == c ||
+         '=' == c ||
+         '>' == c ||
+         '<' == c ||
          '\'' == c ||
          Character.isWhitespace(c) ||
          (treatDotAsStop && '.' == c);
