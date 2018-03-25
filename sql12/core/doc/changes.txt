@@ -16,6 +16,10 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+#740 The 'Copy as INSERT-VALUES/UPDATE-SET statement' functions generate 'PressCtrlH' instead of table name.
+  This problem is not generally solvable. Improvements were implemented to provide a table name in more occasions.
+  Note: PressCtrlH is meant to be a hint to use the editor's replace function to correct a generated script.
+
 #565 Double clicking selection should stop at '=' '>' '<' chars.
 
 Improved repaint behavior when rows are deleted in a table.

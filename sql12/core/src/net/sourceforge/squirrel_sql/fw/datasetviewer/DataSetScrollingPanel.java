@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -40,7 +41,7 @@ public class DataSetScrollingPanel extends JScrollPane
       this(destClassName, updateableModel, null, session);
 	}
 
-	public DataSetScrollingPanel(String destClassName, IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails, ISession session)
+	public DataSetScrollingPanel(String destClassName, IDataSetUpdateableModel updateableModel, DataModelImplementationDetails dataModelImplementationDetails, ISession session)
 		throws DataSetException
 	{
 		_session = session;
@@ -53,12 +54,12 @@ public class DataSetScrollingPanel extends JScrollPane
 		load(ds, null);
 	}
 
-	public void load(IDataSet ds, IDataModelImplementationDetails dataModelImplementationDetails)
+	public void load(IDataSet ds, DataModelImplementationDetails dataModelImplementationDetails)
 	{
 		load(ds, null, dataModelImplementationDetails);
 	}
 
-	private void load(IDataSet ds, String destClassName, IDataModelImplementationDetails dataModelImplementationDetails)
+	private void load(IDataSet ds, String destClassName, DataModelImplementationDetails dataModelImplementationDetails)
 	{
 		try
 		{
@@ -84,7 +85,7 @@ public class DataSetScrollingPanel extends JScrollPane
 		}
 	}
 
-	private void createUserInterface(String destClassName, IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails)
+	private void createUserInterface(String destClassName, IDataSetUpdateableModel updateableModel, DataModelImplementationDetails dataModelImplementationDetails)
 		throws DataSetException
 	{
 		setBorder(BorderFactory.createEmptyBorder());

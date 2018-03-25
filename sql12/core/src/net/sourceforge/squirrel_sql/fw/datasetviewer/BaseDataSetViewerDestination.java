@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -67,7 +68,7 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
     * this added info.  Therefore we need to initialize that class in two stages.
     */
    @Override
-   public void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails, ISession session)
+   public void init(IDataSetUpdateableModel updateableModel, DataModelImplementationDetails dataModelImplementationDetails, ISession session)
    {
    }
 
@@ -189,7 +190,7 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	 * If no instance can be made then the default
 	 * will be returned.
 	 */
-	public static IDataSetViewer getInstance(String sName, IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails, ISession session)
+	public static IDataSetViewer getInstance(String sName, IDataSetUpdateableModel updateableModel, DataModelImplementationDetails dataModelImplementationDetails, ISession session)
 	{
 		IDataSetViewer dsv = null;
 		try

@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -211,7 +211,7 @@ public class RowsWindowFrame extends JDialog
       {
          SimpleDataSet ods = new SimpleDataSet(allRows, columnDisplayDefinitions.toArray(new ColumnDisplayDefinition[columnDisplayDefinitions.size()]));
          DataSetViewerTablePanel dsv = new DataSetViewerTablePanel();
-         dsv.init(null, new DefaultDataModelImplementationDetails(_session), _session);
+         dsv.init(null, new DataModelImplementationDetails(_session), _session);
          dsv.show(ods);
          return dsv;
       }

@@ -25,6 +25,7 @@ import java.awt.datatransfer.StringSelection;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -41,19 +42,20 @@ public class TableCopyInsertStatementCommand extends TableCopySqlPartCommandBase
     * The table we are copying data from.
     */
    private final JTable _table;
-   private final String _statementSeparator;
+   private final DataModelImplementationDetails _dataModelImplementationDetails;
 
    /**
     * Ctor specifying the <TT>JTable</TT> to get the data from.
     *
-    * @param	table	The <TT>JTable</TT> to get data from.
     * @param statementSeparatorFromModel
+    * @param   table   The <TT>JTable</TT> to get data from.
+    * @param dataModelImplementationDetails
     * @throws	IllegalArgumentException Thrown if <tt>null</tt> <tt>JTable</tt> passed.
     */
-   public TableCopyInsertStatementCommand(JTable table, String statementSeparator)
+   public TableCopyInsertStatementCommand(JTable table, DataModelImplementationDetails dataModelImplementationDetails)
    {
       super();
-      _statementSeparator = statementSeparator;
+      _dataModelImplementationDetails = dataModelImplementationDetails;
       if (table == null)
       {
          throw new IllegalArgumentException("JTable == null");
@@ -99,7 +101,7 @@ public class TableCopyInsertStatementCommand extends TableCopySqlPartCommandBase
 
                if (firstCol)
                {
-            	  colNames.append("INSERT INTO "+getTableName(colDef)+" (");
+            	  colNames.append("INSERT INTO "+ _dataModelImplementationDetails.getTableName(colDef)+" (");
                   firstCol = false;
                   vals.append("(");
                }
@@ -120,13 +122,13 @@ public class TableCopyInsertStatementCommand extends TableCopySqlPartCommandBase
 
             buf.append(colNames).append(" VALUES ").append(vals);
 
-            if(1 < _statementSeparator.length())
+            if(1 < _dataModelImplementationDetails.getStatementSeparator().length())
             {
-               buf.append(" ").append(_statementSeparator).append("\n");
+               buf.append(" ").append(_dataModelImplementationDetails.getStatementSeparator()).append("\n");
             }
             else
             {
-               buf.append(_statementSeparator).append("\n");
+               buf.append(_dataModelImplementationDetails.getStatementSeparator()).append("\n");
             }
 
             colNames.setLength(0);

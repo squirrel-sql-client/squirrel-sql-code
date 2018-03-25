@@ -18,11 +18,24 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
-import net.sourceforge.squirrel_sql.fw.gui.action.*;
+import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.ShowReferencesCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.ShowRowNumbersCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyHtmlCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInStatementCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInsertStatementCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyUpdateStatementCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyWhereStatementCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectEntireRowsCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
@@ -31,8 +44,14 @@ import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ITableActionCallback
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
+import java.awt.Component;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -112,7 +131,7 @@ public class TablePopupMenu extends BasePopupMenu
 	// to tell the application to set up an editable display panel
 	private IDataSetUpdateableModel _updateableModel = null;
 
-   private IDataModelImplementationDetails _dataModelImplementationDetails;
+   private DataModelImplementationDetails _dataModelImplementationDetails;
    // pointer to the viewer
 	// This is needed for insert and delete operations
 	private DataSetViewerTablePanel _viewer = null;
@@ -129,7 +148,7 @@ public class TablePopupMenu extends BasePopupMenu
 	public TablePopupMenu(boolean allowEditing,
 								 IDataSetUpdateableModel updateableModel,
 								 DataSetViewerTablePanel viewer,
-								 IDataModelImplementationDetails dataModelImplementationDetails,
+								 DataModelImplementationDetails dataModelImplementationDetails,
 								 ISession session)
 	{
 		// save the pointer needed to enable editing of data on-demand
@@ -221,7 +240,7 @@ public class TablePopupMenu extends BasePopupMenu
 	 * Constructor used when creating menu for use in cell editor.
 	 */
 	public TablePopupMenu(IDataSetUpdateableModel updateableModel,
-								 DataSetViewerTablePanel viewer, JTable table, IDataModelImplementationDetails dataModelImplementationDetails)
+								 DataSetViewerTablePanel viewer, JTable table, DataModelImplementationDetails dataModelImplementationDetails)
 	{
 		super();
 		// save the pointer needed to enable editing of data on-demand
@@ -285,13 +304,7 @@ public class TablePopupMenu extends BasePopupMenu
 	}
 
 
-   private String getStatementSeparatorFromModel()
-   {
-      return _dataModelImplementationDetails.getStatementSeparator();
-   }
-
-
-   private class CopyAction extends BaseAction
+	private class CopyAction extends BaseAction
 	{
 		CopyAction()
 		{
@@ -418,7 +431,7 @@ public class TablePopupMenu extends BasePopupMenu
 		{
 			if (_table != null)
 			{
-				new TableCopyUpdateStatementCommand(_table).execute();
+				new TableCopyUpdateStatementCommand(_table, _dataModelImplementationDetails).execute();
 			}
 		}
 	}
@@ -434,7 +447,7 @@ public class TablePopupMenu extends BasePopupMenu
 		{
 			if (_table != null)
 			{
-				new TableCopyInsertStatementCommand(_table, getStatementSeparatorFromModel()).execute();
+				new TableCopyInsertStatementCommand(_table, _dataModelImplementationDetails).execute();
 			}
 		}
 

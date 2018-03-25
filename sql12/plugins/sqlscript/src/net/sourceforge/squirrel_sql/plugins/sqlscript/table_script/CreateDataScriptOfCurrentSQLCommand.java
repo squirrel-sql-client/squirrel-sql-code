@@ -25,8 +25,10 @@ import java.sql.Statement;
 
 import javax.swing.*;
 
+import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -95,20 +97,18 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
    
                      ResultSet srcResult = stmt.executeQuery(sql);
                      ResultSetMetaData metaData = srcResult.getMetaData();
-                     //String sTable = metaData.getTableName(1);
+                     //String tableName = metaData.getTableName(1);
    
                      ITableInfo tInfo = new TableInfo(metaData.getCatalogName(1), metaData.getSchemaName(1),
                           metaData.getTableName(1), "TABLE", "", _session.getMetaData());
    
-                     String sTable = ScriptUtil.getTableName(tInfo);
+                     String tableName = ScriptUtil.getTableName(tInfo);
    
-                     if (sTable == null || sTable.equals(""))
+                     if (StringUtilities.isEmpty(tableName, true))
                      {
-                        int iFromIndex =
-                            StringUtilities.getTokenBeginIndex(sql, "from");
-                        sTable = getNextToken(sql, iFromIndex + "from".length());
+                        tableName = new EditableSqlCheck(sql).getTableNameFromSQL();
                      }
-                     genInserts(srcResult, sTable, sbRows, false);
+                     genInserts(srcResult, tableName, sbRows, false);
                   }
                   finally
                   {
@@ -140,25 +140,4 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
       });
       showAbortFrame();
    }
-
-   private String getNextToken(String selectSQL, int startPos)
-   {
-      int curPos = startPos;
-      while(curPos < selectSQL.length() && true == Character.isWhitespace(selectSQL.charAt(curPos)))
-      {
-         // Move over leading whitespaces
-         ++curPos;
-      }
-
-      int startPosTrimed = curPos;
-
-
-      while(curPos < selectSQL.length() && false == Character.isWhitespace(selectSQL.charAt(curPos)))
-      {
-         ++curPos;
-      }
-
-      return selectSQL.substring(startPosTrimed, curPos);
-   }
-
 }

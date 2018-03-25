@@ -24,7 +24,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.*;
@@ -147,7 +146,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _session = session;
       _sqlResultExecuterPanelFacade = sqlResultExecuterPanelFacade;
       _id = id;
-      init(creator, exInfo);
+      _exInfo = exInfo;
+      init(creator);
 
 
 
@@ -160,7 +160,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#reInit(net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel, net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo)
      */
-	private void init(IDataSetUpdateableTableModel creator, SQLExecutionInfo exInfo)
+	private void init(IDataSetUpdateableTableModel creator)
 	{
 		_creator = creator;
 		_creator.addListener(new DataSetUpdateableTableModelListener()
@@ -171,13 +171,13 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 			}
 		});
 
-		_allowEditing = new EditableSqlCheck(exInfo).allowsEditing();
+		_allowEditing = new EditableSqlCheck(_exInfo).allowsEditing();
 
 		final SessionProperties props = _session.getProperties();
 
 		if (_allowEditing)
 		{
-         IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator, new DefaultDataModelImplementationDetails(_session), _session);
+         IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
 
          _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer, _session.getApplication().getMessageHandler(), _session);
          _selectRowColLabelController.setDataSetViewer(dataSetViewer);
@@ -191,7 +191,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 			// edited column belongs to.  Therefore limit the output
 			// to be read-only
          IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(
-               props.getReadOnlySQLResultsOutputClassName(), null, new DefaultDataModelImplementationDetails(_session), _session);
+               props.getReadOnlySQLResultsOutputClassName(), null, new DataModelImplementationDetails(_session, _exInfo), _session);
 
 
          //dataSetViewer.setSession(_session);
@@ -207,7 +207,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       if (_session.getProperties().getShowResultsMetaData())
       {
-         _metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName(), null, new DefaultDataModelImplementationDetails(_session), _session);
+         _metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName(), null, new DataModelImplementationDetails(_session, _exInfo), _session);
          _metaDataSp.setViewportView(_metaDataOutput.getComponent());
          _metaDataSp.setRowHeader(null);
       }
@@ -248,11 +248,10 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	/**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#showResults(net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet, net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet, net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo)
      */
-	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, SQLExecutionInfo exInfo)
+	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds)
 		throws DataSetException
 	{
-		_exInfo = exInfo;
-		_sql = StringUtilities.cleanString(exInfo.getSQL());
+		_sql = StringUtilities.cleanString(_exInfo.getSQL());
 
 
       _rsds = rsds;
@@ -464,7 +463,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
             {
                TableState resultSortableTableState = getTableState(_dataSetViewerFindDecorator.getDataSetViewer());
 
-               IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _creator, new DefaultDataModelImplementationDetails(_session), _session);
+               IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
                // _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer);
                _dataSetViewerFindDecorator.replaceDataSetViewer(dataSetViewer);
 
@@ -490,7 +489,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
             TableState resultSortableTableState = getTableState(_dataSetViewerFindDecorator.getDataSetViewer());
 
-            IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(readOnlyOutput, _creator, new DefaultDataModelImplementationDetails(_session), _session);
+            IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(readOnlyOutput, _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
             _dataSetViewerFindDecorator.replaceDataSetViewer(dataSetViewer);
 
 

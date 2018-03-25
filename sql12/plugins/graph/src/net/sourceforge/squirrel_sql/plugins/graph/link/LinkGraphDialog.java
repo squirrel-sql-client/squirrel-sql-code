@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph.link;
 
 import com.jidesoft.swing.MultilineLabel;
-import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
@@ -60,7 +60,7 @@ public class LinkGraphDialog extends JDialog
 
       gbc = new GridBagConstraints(0, 4, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0);
       tblGraphFiles = new DataSetViewerTablePanel();
-      tblGraphFiles.init(null, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION, new DefaultDataModelImplementationDetails(session), session);
+      tblGraphFiles.init(null, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION, new DataModelImplementationDetails(session), session);
       content.add(new JScrollPane(tblGraphFiles.getComponent()), gbc);
 
       gbc = new GridBagConstraints(0, 5, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);

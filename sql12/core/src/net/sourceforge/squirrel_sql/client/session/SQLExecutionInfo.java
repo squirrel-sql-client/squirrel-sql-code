@@ -64,7 +64,6 @@ public class SQLExecutionInfo
 	 */
 	public SQLExecutionInfo(int idx, String sql, int maxRows, String tableToBeEdited)
 	{
-		super();
       _tableToBeEdited = tableToBeEdited;
       if (sql == null)
 		{

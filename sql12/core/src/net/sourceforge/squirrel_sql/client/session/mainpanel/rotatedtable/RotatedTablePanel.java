@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.rotatedtable;
 
-import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 
@@ -16,7 +16,7 @@ public class RotatedTablePanel extends JPanel
       setLayout(new GridLayout(1, 1));
 
       table = new DataSetViewerTablePanel();
-      table.init(null, new DefaultDataModelImplementationDetails(session), session);
+      table.init(null, new DataModelImplementationDetails(session), session);
       add(new JScrollPane(table.getComponent()));
 
    }

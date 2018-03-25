@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.LazyTabControllerCtrl;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.*;
@@ -281,7 +281,7 @@ public class OverviewCtrl implements LazyTabControllerCtrl
          SimpleDataSet ods = new SimpleDataSet(allRows, columnDisplayDefinitions);
 
          DataSetViewerTablePanel dsv = new DataSetViewerTablePanel();
-         dsv.init(null, new DefaultDataModelImplementationDetails(_session), _session);
+         dsv.init(null, new DataModelImplementationDetails(_session), _session);
          dsv.show(ods);
          return dsv;
       }

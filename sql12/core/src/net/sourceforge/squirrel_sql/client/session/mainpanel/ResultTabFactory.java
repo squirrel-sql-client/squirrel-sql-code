@@ -34,7 +34,7 @@ public class ResultTabFactory
 
 
       ResultTab tab = new ResultTab(_session, _sqlResultExecuterPanelFacade, _idFactory.createIdentifier(), exInfo, creator, resultTabListener);
-      tab.showResults(rsds, mdds, exInfo);
+      tab.showResults(rsds, mdds);
       return tab;
    }
 

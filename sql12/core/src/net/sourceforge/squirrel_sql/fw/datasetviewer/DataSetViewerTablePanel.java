@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLengthFeatureUnstable;
@@ -41,7 +42,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -67,15 +67,8 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	private IDataSetUpdateableModel _updateableModel;
    private DataSetViewerTableListSelectionHandler _selectionHandler;
 
-   private IDataModelImplementationDetails _dataModelImplementationDetails =
-         new IDataModelImplementationDetails()
-         {
-            @Override
-            public String getStatementSeparator()
-            {
-               return ";";
-            }
-         };
+   private DataModelImplementationDetails _dataModelImplementationDetails = new DataModelImplementationDetails();
+
    private ContinueReadHandler _continueReadHandler;
    private RowColSelectedCountListener _rowColSelectedCountListener;
 
@@ -94,12 +87,12 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
       init(updateableModel, listSelectionMode, null, session);
 	}
 
-   public void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails, ISession session)
+   public void init(IDataSetUpdateableModel updateableModel, DataModelImplementationDetails dataModelImplementationDetails, ISession session)
    {
       init(updateableModel, ListSelectionModel.SINGLE_INTERVAL_SELECTION, dataModelImplementationDetails, session);
    }
 
-   public void init(IDataSetUpdateableModel updateableModel, int listSelectionMode, IDataModelImplementationDetails dataModelImplementationDetails, ISession session)
+   public void init(IDataSetUpdateableModel updateableModel, int listSelectionMode, DataModelImplementationDetails dataModelImplementationDetails, ISession session)
    {
       if (null != dataModelImplementationDetails)
       {
@@ -140,7 +133,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		return _updateableModel;
 	}
 
-   public IDataModelImplementationDetails getDataModelImplementationDetails()
+   public DataModelImplementationDetails getDataModelImplementationDetails()
    {
       return _dataModelImplementationDetails;
    }

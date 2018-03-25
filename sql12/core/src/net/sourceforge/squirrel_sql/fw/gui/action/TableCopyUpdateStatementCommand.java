@@ -25,6 +25,7 @@ import java.awt.datatransfer.StringSelection;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -41,16 +42,19 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
     * The table we are copying data from.
     */
    private final JTable _table;
+   private DataModelImplementationDetails _dataModelImplementationDetails;
 
    /**
     * Ctor specifying the <TT>JTable</TT> to get the data from.
     *
-    * @param	table	The <TT>JTable</TT> to get data from.
+    * @param   table   The <TT>JTable</TT> to get data from.
+    * @param dataModelImplementationDetails
     * @throws	IllegalArgumentException Thrown if <tt>null</tt> <tt>JTable</tt> passed.
     */
-   public TableCopyUpdateStatementCommand(JTable table)
+   public TableCopyUpdateStatementCommand(JTable table, DataModelImplementationDetails dataModelImplementationDetails)
    {
       super();
+      _dataModelImplementationDetails = dataModelImplementationDetails;
       if (table == null)
       {
          throw new IllegalArgumentException("JTable == null");
@@ -62,7 +66,7 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
     * Execute this command.
     */
    @Override
-public void execute()
+   public void execute()
    {
       int nbrSelRows = _table.getSelectedRowCount();
       int nbrSelCols = _table.getSelectedColumnCount();
@@ -95,7 +99,7 @@ public void execute()
 
                if (firstCol)
                {
-            	  buf.append("UPDATE "+getTableName(colDef)+" SET ");
+            	  buf.append("UPDATE "+ _dataModelImplementationDetails.getTableName(colDef)+" SET ");
                   firstCol = false;
                }
                else

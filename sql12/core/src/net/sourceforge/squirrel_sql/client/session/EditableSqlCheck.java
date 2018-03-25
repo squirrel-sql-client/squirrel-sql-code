@@ -12,6 +12,11 @@ public class EditableSqlCheck
 
    private String _tableNameFromSQL = null;
 
+   public EditableSqlCheck(String sql)
+   {
+      _tableNameFromSQL = getTableFromSQLIntern(sql);
+   }
+
    public EditableSqlCheck(SQLExecutionInfo exInfo)
    {
       if(null == exInfo || null == exInfo.getSQL())

@@ -17,7 +17,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
@@ -79,7 +79,7 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 					// should be no problem
 				}
 									
-				_comp = new DataSetScrollingPanel(getDestinationClassName(), modelReference, new DefaultDataModelImplementationDetails(getSession()), getSession());
+				_comp = new DataSetScrollingPanel(getDestinationClassName(), modelReference, new DataModelImplementationDetails(getSession()), getSession());
 			}
 			catch (Exception ex)
 			{
@@ -128,7 +128,7 @@ public abstract class BaseDataSetTab extends BaseObjectTab
          {
             try
             {
-               getComponent().load(createDataSet(), new DefaultDataModelImplementationDetails(session));
+               getComponent().load(createDataSet(), new DataModelImplementationDetails(session));
             }
             catch (DataSetException e)
             {

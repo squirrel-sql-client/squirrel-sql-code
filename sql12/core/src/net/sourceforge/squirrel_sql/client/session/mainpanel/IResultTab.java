@@ -35,7 +35,6 @@ public interface IResultTab {
      *
      * @param	rsds	<TT>ResultSetDataSet</TT> to show results for.
      * @param	mdds	<TT>ResultSetMetaDataDataSet</TT> for rsds.
-     * @param	exInfo	Execution info.
      *
      * @throws	IllegalArgumentException
      * 			Thrown if <tt>null</tt> <tt>SQLExecutionInfo</tt> passed.
@@ -43,8 +42,7 @@ public interface IResultTab {
      * @throws	DataSetException
      * 			Thrown if error occurred processing dataset.
      */
-    void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds,
-            SQLExecutionInfo exInfo) throws DataSetException;
+    void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds) throws DataSetException;
 
     /**
      * Clear results and current SQL script.

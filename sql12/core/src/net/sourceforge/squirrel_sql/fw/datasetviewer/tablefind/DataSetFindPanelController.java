@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.util.*;
@@ -206,14 +207,7 @@ public class DataSetFindPanelController
 
          DataSetViewerTablePanel dsv = new DataSetViewerTablePanel();
 
-         IDataModelImplementationDetails dataModelImplementationDetails = new IDataModelImplementationDetails()
-         {
-            @Override
-            public String getStatementSeparator()
-            {
-               return ";";
-            }
-         };
+         DataModelImplementationDetails dataModelImplementationDetails = new DataModelImplementationDetails();
 
          dsv.init(null, dataModelImplementationDetails, session);
          dsv.show(ods);

@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
@@ -98,8 +98,9 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 			String destClassName = props.getMetaDataOutputClassName();
 			try
 			{
-				_comp = new DataSetScrollingPanel(destClassName, null, new DefaultDataModelImplementationDetails(session), session);
-			} catch (Exception e)
+				_comp = new DataSetScrollingPanel(destClassName, null, new DataModelImplementationDetails(session), session);
+			}
+			catch (Exception e)
 			{
 				s_log.error("Unexpected exception from call to getComponent: " + e.getMessage(), e);
 			}
@@ -125,7 +126,7 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
          pstmt = createStatement();
          rs = pstmt.executeQuery();
          final IDataSet ds = createDataSetFromResultSet(rs);
-         _comp.load(ds, new DefaultDataModelImplementationDetails(getSession()));
+         _comp.load(ds, new DataModelImplementationDetails(getSession()));
       }
       catch (SQLException ex)
       {
