@@ -16,6 +16,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+#1337 Version check dialog told Java 8 was needed for version 3.x instead of 3.8.1
+
 #740 The 'Copy as INSERT-VALUES/UPDATE-SET statement' functions generate 'PressCtrlH' instead of table name.
   This problem is not generally solvable. Improvements were implemented to provide a table name in more occasions.
   Note: PressCtrlH is meant to be a hint to use the editor's replace function to correct a generated script.

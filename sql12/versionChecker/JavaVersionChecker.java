@@ -52,7 +52,7 @@ public class JavaVersionChecker
 		if (!checkVersion(jvmVersion, args)) {
 			String javaHome = System.getProperty(JAVA_HOME_PROPERTY);
 			JOptionPane.showMessageDialog(null, 
-				"Your Java Virtual Machine must be at least "+args[0]+" to run SQuirreL 3.x and above\n" +				
+				"Your Java Virtual Machine must be at least "+args[0]+" to run SQuirreL 3.8.1 and above\n" +
 				"  JVM Version used: "+jvmVersion+ "\n" +
 				"  JVM Location: "+javaHome);
 			System.exit(1);
