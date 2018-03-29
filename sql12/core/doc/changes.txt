@@ -13,6 +13,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 #412 Provided Command Line Interface (CLI).
   See Readme.txt in the squirrelcli/ subdirectory of your SQuirreL installation.
 
+Allowed Java version 10 in starter scripts
+
 
 Bug fixes:
 
