@@ -84,7 +84,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 			throw new IllegalArgumentException("SQLPanel == null");
 		}
 		_panel = panel;
-        _panel.getSQLEntryPanel().addUndoableEditListener(new SQLEntryUndoListener());
+      _panel.getSQLEntryPanel().addUndoableEditListener(new SQLEntryUndoListener());
       initToolsPopUp();
 
       createStandardEntryAreaMenuItems();

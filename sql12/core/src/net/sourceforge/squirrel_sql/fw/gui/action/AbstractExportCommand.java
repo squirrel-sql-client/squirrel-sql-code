@@ -59,10 +59,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author Stefan Willinger
  * 
  */
-public abstract class AbstractExportCommand {
-	static final StringManager s_stringMgr = StringManagerFactory
-			.getStringManager(AbstractExportCommand.class);
-	
+public abstract class AbstractExportCommand
+{
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AbstractExportCommand.class);
+   private static ILogger s_log = LoggerController.createLogger(AbstractExportCommand.class);
+
 	 static interface i18n {
 	       //i18n[TableExportCsvCommand.missingClobDataMsg=Found Clob placeholder 
 	       //({0}) amongst data to be exported. Continue exporting cell data?]
@@ -75,8 +76,7 @@ public abstract class AbstractExportCommand {
 	       String ANOTHER_EXPORT_IS_ACTIVE = s_stringMgr.getString("AbstractExportCommand.anotherExportIsActive");
 	       String TITLE_ANOTHER_EXPORT_IS_ACTIVE = s_stringMgr.getString("AbstractExportCommand.anotherExportIsActive.title");
 	   }
-	
-	static ILogger s_log = LoggerController.createLogger(AbstractExportCommand.class);
+
 	private ProgressAbortCallback progressController = null;
 	private File targetFile;
 	
@@ -90,7 +90,8 @@ public abstract class AbstractExportCommand {
 	/**
 	 * @param progressController
 	 */
-	public AbstractExportCommand() {
+	public AbstractExportCommand()
+   {
 
 	}
 
@@ -100,59 +101,13 @@ public abstract class AbstractExportCommand {
 	 * @param data The data to export
 	 * @return the number of written data rows or a negative value, if not the whole data are exported.
 	 */
-	protected long writeFile(final TableExportCsvController ctrl, IExportData data) {
-		File file = null;
-		try {
+   protected long writeFile(final TableExportCsvController ctrl, IExportData data)
+   {
+      return ExportFileWriter.writeFile(TableExportPreferencesDAO.loadPreferences(), data, progressController, ctrl.getOwningFrame());
+   }
 
-			file = ctrl.getFile();
-			if (null != file.getParentFile()) {
-				file.getParentFile().mkdirs();
-			}
 
-			boolean includeHeaders = ctrl.includeHeaders();
-
-         if (ExportFormat.EXPORT_FORMAT_CSV == ctrl.getExportFormat())
-         {
-            return new DataExportCSVWriter(file, ctrl, includeHeaders, progressController).write(data);
-         }
-         else if (ExportFormat.EXPORT_FORMAT_XLSX == ctrl.getExportFormat() || ExportFormat.EXPORT_FORMAT_XLS == ctrl.getExportFormat())
-         {
-            return new DataExportExcelWriter(file, ctrl, includeHeaders, ctrl.getExportFormat(), progressController).write(data);
-         }
-         else if (ExportFormat.EXPORT_FORMAT_XML == ctrl.getExportFormat())
-         {
-            return new DataExportXMLWriter(file, ctrl, includeHeaders, progressController).write(data);
-         }
-         else
-         {
-            throw new IllegalStateException("Unknown export format " + ctrl.getExportFormat());
-         }
-
-		} catch (Exception e) {
-
-			Object[] params = new Object[] { file, e.getMessage() };
-			// i18n[TableExportCsvCommand.failedToWriteFile=Failed to write
-			// file\n{0}\nError message\n{1}\nSee last log entry for details.]
-			final String msg = s_stringMgr.getString("TableExportCsvCommand.failedToWriteFile", params);
-			s_log.error(msg, e);
-
-         Runnable runnable = new Runnable()
-         {
-            public void run()
-            {
-               JOptionPane.showMessageDialog(ctrl.getOwningFrame(), msg);
-            }
-         };
-
-         GUIUtils.processOnSwingEventThread(runnable, true);
-
-         return -1;
-		} 
-
-	}
-
-	
-	   private void executeCommand(String command, final JFrame owner)
+   private void executeCommand(String command, final JFrame owner)
 	   {
 	      try
 	      {
@@ -386,29 +341,17 @@ public abstract class AbstractExportCommand {
 	 * @throws ExportDataException if any problem occurs while creating the data.
 	 */
 	protected abstract IExportData createExportData(TableExportCsvController ctrl) throws ExportDataException;
-	
-	/**
-	 * @return the progressController
-	 */
-	public ProgressAbortCallback getProgressController() {
-		return progressController;
-	}
 
-	/**
-	 * @param progressController the progressController to set
-	 */
-	public void setProgressController(ProgressAbortCallback progressController) {
-		this.progressController = progressController;
-	}
-
-	/**
+   /**
 	 * @param string
 	 */
-	protected void progress(String task) {
-		if(progressController != null){
-			progressController.currentlyLoading(task);
-		}
-	}
+   protected void progress(String task)
+   {
+      if (progressController != null)
+      {
+         progressController.currentlyLoading(task);
+      }
+   }
 
 	/**
 	 * @return the targetFile

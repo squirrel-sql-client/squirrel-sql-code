@@ -362,11 +362,14 @@ public class GUIUtils
 		}
 		else
 		{
-            if (SwingUtilities.isEventDispatchThread()) {
-                todo.run();
-            } else {
-                SwingUtilities.invokeLater(todo);
-            }
+			if (SwingUtilities.isEventDispatchThread())
+			{
+				todo.run();
+			}
+			else
+			{
+				SwingUtilities.invokeLater(todo);
+			}
 		}
 	}
 

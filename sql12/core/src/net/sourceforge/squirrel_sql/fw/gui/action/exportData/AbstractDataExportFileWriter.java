@@ -23,9 +23,8 @@ import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.plaf.SliderUI;
-
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -75,15 +74,9 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 	 * The target file.
 	 */
 	private File file;
-	/**
-	 * Controller for exporting data. 
-	 */
-	private TableExportCsvController ctrl;
-	/**
-	 * Flag, if the header line should be included
-	 */
-	private boolean includeHeaders;
-	
+
+	private TableExportPreferences _prefs;
+
 	/**
 	 * Progress controller with the opportunity to abort the operation.
 	 */
@@ -98,14 +91,14 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 		beforeRows();
 	 * Construct this one.
 	 * @param file The target file.
-	 * @param ctrl The controller to use
+	 * @param prefs The controller to use
 	 * @param includeHeaders  Flag, if the header line should be exported
 	 * @param progressController ProgressController to use.
 	 */
-	public AbstractDataExportFileWriter(File file, TableExportCsvController ctrl, boolean includeHeaders, ProgressAbortCallback progressController) {
+	public AbstractDataExportFileWriter(File file, TableExportPreferences prefs, ProgressAbortCallback progressController)
+	{
 		this.file = file;
-		this.ctrl = ctrl;
-		this.includeHeaders = includeHeaders;
+		this._prefs = prefs;
 		this.progressController = progressController;
 	}
 
@@ -116,7 +109,8 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 
 		beforeWorking(file);
 
-		if (includeHeaders) {
+		if (_prefs.isWithHeaders())
+		{
 			Iterator<String> headers = data.getHeaders();
 
 			int colIdx = 0;
@@ -283,29 +277,15 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 	/**
 	 * @return the ctrl
 	 */
-	public TableExportCsvController getCtrl() {
-		return ctrl;
+	public TableExportPreferences getPrefs() {
+		return _prefs;
 	}
 
 	/**
-	 * @param ctrl the ctrl to set
+	 * @param prefs the ctrl to set
 	 */
-	public void setCtrl(TableExportCsvController ctrl) {
-		this.ctrl = ctrl;
-	}
-
-	/**
-	 * @return the includeHeaders
-	 */
-	public boolean isIncludeHeaders() {
-		return includeHeaders;
-	}
-
-	/**
-	 * @param includeHeaders the includeHeaders to set
-	 */
-	public void setIncludeHeaders(boolean includeHeaders) {
-		this.includeHeaders = includeHeaders;
+	public void setPrefs(TableExportPreferences prefs) {
+		this._prefs = prefs;
 	}
 
 	/**

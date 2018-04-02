@@ -38,78 +38,84 @@ import javax.swing.*;
 
 /**
  * Command for exporting a result set to a file.
- * 
+ *
  * @author Stefan Willinger
- * 
  */
-public class ResultSetExportCommand extends AbstractExportCommand  {
-	static final StringManager s_stringMgr = StringManagerFactory
-			.getStringManager(ResultSetExportCommand.class);
+public class ResultSetExportCommand extends AbstractExportCommand
+{
+   static final StringManager s_stringMgr = StringManagerFactory
+         .getStringManager(ResultSetExportCommand.class);
 
-	static ILogger log = LoggerController.createLogger(ResultSetExportCommand.class);
+   static ILogger log = LoggerController.createLogger(ResultSetExportCommand.class);
 
-	static interface i18n {
-		// i18n[ResultSetExportCommand.errorExecuteStatement="Could not create the data for exporting."]
-		String ERROR_EXECUTE_STATEMENT = s_stringMgr
-				.getString("ResultSetExportCommand.errorExecuteStatement");
-		
-		String EXECUTING_QUERY = s_stringMgr.getString("ResultSetExportCommand.executingQuery");
+   static interface i18n
+   {
+      // i18n[ResultSetExportCommand.errorExecuteStatement="Could not create the data for exporting."]
+      String ERROR_EXECUTE_STATEMENT = s_stringMgr
+            .getString("ResultSetExportCommand.errorExecuteStatement");
 
-	}
+      String EXECUTING_QUERY = s_stringMgr.getString("ResultSetExportCommand.executingQuery");
 
-	private ResultSet resultSet;
+   }
 
-	private DialectType dialect;
+   private ResultSet resultSet;
 
-	private String sql;
+   private DialectType dialect;
 
-	private Statement stmt;
+   private String sql;
 
-	private ProgressAbortFactoryCallback progressControllerFactory;
+   private Statement stmt;
 
-	public ResultSetExportCommand(Statement stmt, String sql, DialectType dialect,
-			ProgressAbortFactoryCallback progressControllerFactory) {
-		super();
-		this.sql = sql;
-		this.stmt = stmt;
-		this.dialect = dialect;
-		this.progressControllerFactory = progressControllerFactory;
-	}
+   private ProgressAbortFactoryCallback progressControllerFactory;
 
-	/**
-	 * 
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#checkMissingData(java.lang.String)
-	 */
-	@Override
-	protected boolean checkMissingData(String sepChar) {
-		return false;
-	}
+   public ResultSetExportCommand(Statement stmt, String sql, DialectType dialect, ProgressAbortFactoryCallback progressControllerFactory)
+   {
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createExportData()
-	 */
-	@Override
-	protected IExportData createExportData(TableExportCsvController ctrl) throws ExportDataException{
-		try {
-			super.progress(i18n.EXECUTING_QUERY);
-			ResultSetExportCsvController controller = (ResultSetExportCsvController)ctrl;
-			if(controller.exportComplete() == false){
-				stmt.setMaxRows(controller.getMaxRows());
-			}
-			this.resultSet = stmt.executeQuery(sql);
-			return new ResultSetExportData(this.resultSet, dialect);
-		} catch (SQLException e) {
-			log.error(i18n.ERROR_EXECUTE_STATEMENT, e);
-			throw new ExportDataException(i18n.ERROR_EXECUTE_STATEMENT, e);
-		}
-	}
+      this.sql = sql;
+      this.stmt = stmt;
+      this.dialect = dialect;
+      this.progressControllerFactory = progressControllerFactory;
+   }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createTableExportController()
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#checkMissingData(java.lang.String)
+    */
+   @Override
+   protected boolean checkMissingData(String sepChar)
+   {
+      return false;
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createExportData()
+    */
+   @Override
+   protected IExportData createExportData(TableExportCsvController ctrl) throws ExportDataException
+   {
+      try
+      {
+         super.progress(i18n.EXECUTING_QUERY);
+         ResultSetExportCsvController controller = (ResultSetExportCsvController) ctrl;
+         if (controller.exportComplete() == false)
+         {
+            stmt.setMaxRows(controller.getMaxRows());
+         }
+         this.resultSet = stmt.executeQuery(sql);
+         return new ResultSetExportData(this.resultSet, dialect);
+      }
+      catch (SQLException e)
+      {
+         log.error(i18n.ERROR_EXECUTE_STATEMENT, e);
+         throw new ExportDataException(i18n.ERROR_EXECUTE_STATEMENT, e);
+      }
+   }
+
+   /**
     * @param owner
-	 */
-	@Override
-	protected TableExportCsvController createTableExportController(final JFrame owner)
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createTableExportController()
+    */
+   @Override
+   protected TableExportCsvController createTableExportController(final JFrame owner)
    {
       try
       {
@@ -133,21 +139,24 @@ public class ResultSetExportCommand extends AbstractExportCommand  {
       }
    }
 
-	/**
-	 * Create a new {@link ProgressAbortCallback}.
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createProgressController()
-	 * @see ProgressAbortFactoryCallback
-	 */
-	@Override
-	protected ProgressAbortCallback createProgressController() {
-		return this.progressControllerFactory.create();
-	}
+   /**
+    * Create a new {@link ProgressAbortCallback}.
+    *
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createProgressController()
+    * @see ProgressAbortFactoryCallback
+    */
+   @Override
+   protected ProgressAbortCallback createProgressController()
+   {
+      return this.progressControllerFactory.getOrCreate();
+   }
 
-	/**
-	 * @return the sql
-	 */
-	public String getSql() {
-		return sql;
-	}
+   /**
+    * @return the sql
+    */
+   public String getSql()
+   {
+      return sql;
+   }
 
 }

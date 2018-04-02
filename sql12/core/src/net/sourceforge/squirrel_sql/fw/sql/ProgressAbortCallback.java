@@ -26,7 +26,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * @see ProgressCallBack
  * @see IAbortController
  */
-public interface ProgressAbortCallback extends ProgressCallBack, IAbortController {
+public interface ProgressAbortCallback extends ProgressCallBack, IAbortController
+{
 	/**
 	 * Display the status of the current running sub-task.
 	 * @param status status to display.

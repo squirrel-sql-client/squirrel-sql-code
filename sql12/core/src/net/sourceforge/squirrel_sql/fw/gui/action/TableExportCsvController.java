@@ -8,31 +8,15 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
-import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvDlg.LineSeparator;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class TableExportCsvController
 {
-   private static final String PREF_KEY_CSV_FILE = "SquirrelSQL.csvexport.csvfile";
-   private static final String PREF_KEY_CSV_ENCODING = "SquirrelSQL.csvexport.csvencoding";
-   private static final String PREF_KEY_WITH_HEADERS = "SquirrelSQL.csvexport.withColumnHeaders";
-   private static final String PREF_KEY_SEPERATOR_TAB = "SquirrelSQL.csvexport.sepearatorTab";
-   private static final String PREF_KEY_SEPERATOR_CHAR = "SquirrelSQL.csvexport.sepearatorChar";
-   private static final String PREF_KEY_LINE_SEPERATOR = "SquirrelSQL.csvexport.lineSeparator";
-   private static final String PREF_KEY_EXPORT_COMPLETE = "SquirrelSQL.csvexport.exportcomplete";
-   private static final String PREF_KEY_USE_GLOBAL_PREFS_FORMATING = "SquirrelSQL.csvexport.useGlobalPrefsFomating";
-   private static final String PREF_KEY_EXECUTE_COMMAND = "SquirrelSQL.csvexport.executeCommand";
-   private static final String PREF_KEY_COMMAND = "SquirrelSQL.csvexport.commandString";
-   private static final String PREF_KEY_FORMAT_CSV = "SquirrelSQL.csvexport.formatCSV";
-   private static final String PREF_KEY_FORMAT_XLS = "SquirrelSQL.csvexport.formatXLS"; // is xlsx
-   private static final String PREF_KEY_FORMAT_XLS_OLD = "SquirrelSQL.csvexport.formatXLS_OLD"; // is xls
-   private static final String PREF_KEY_FORMAT_XML = "SquirrelSQL.csvexport.formatXML";
 
 
    private static final StringManager s_stringMgr =
@@ -191,6 +175,8 @@ public class TableExportCsvController
          _dlg.txtSeparatorChar.setEnabled(true);
          _dlg.lblCharset.setEnabled(true);
          _dlg.charsets.setEnabled(true);
+         _dlg.lblLineSeparator.setEnabled(true);
+         _dlg._lineSeparators.setEnabled(true);
 
          if(_dlg.chkSeparatorTab.isSelected())
          {
@@ -216,6 +202,8 @@ public class TableExportCsvController
          _dlg.chkSeparatorTab.setEnabled(false);
          _dlg.txtSeparatorChar.setEnabled(false);
          _dlg.charsets.setEnabled(false);
+         _dlg.lblLineSeparator.setEnabled(false);
+         _dlg._lineSeparators.setEnabled(false);
          if(replaceEnding)
          {
             replaceFileEnding();
@@ -228,6 +216,8 @@ public class TableExportCsvController
          _dlg.chkSeparatorTab.setEnabled(false);
          _dlg.txtSeparatorChar.setEnabled(false);
          _dlg.charsets.setEnabled(false);
+         _dlg.lblLineSeparator.setEnabled(false);
+         _dlg._lineSeparators.setEnabled(false);
          if(replaceEnding)
          {
             replaceFileEnding();
@@ -438,62 +428,97 @@ public class TableExportCsvController
 	   return false;
    }
 
-protected void writePrefs()
+   protected void writePrefs()
    {
-      Preferences.userRoot().put(PREF_KEY_CSV_FILE, _dlg.txtFile.getText());
-      Preferences.userRoot().put(PREF_KEY_CSV_ENCODING, _dlg.charsets.getSelectedItem().toString());
-      Preferences.userRoot().putBoolean(PREF_KEY_WITH_HEADERS, _dlg.chkWithHeaders.isSelected());
-      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_CSV, _dlg.radFormatCSV.isSelected());
-      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLSX.isSelected());
-      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS_OLD, _dlg.radFormatXLS.isSelected());
-      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
-      Preferences.userRoot().putBoolean(PREF_KEY_SEPERATOR_TAB, _dlg.chkSeparatorTab.isSelected());
-      Preferences.userRoot().put(PREF_KEY_SEPERATOR_CHAR, _dlg.txtSeparatorChar.getText());
-      Preferences.userRoot().put(PREF_KEY_LINE_SEPERATOR, ((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
-      Preferences.userRoot().putBoolean(PREF_KEY_EXPORT_COMPLETE, _dlg.radComplete.isSelected());
-      Preferences.userRoot().putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, _dlg.radUseGlobalPrefsFormating.isSelected());
-      Preferences.userRoot().putBoolean(PREF_KEY_EXECUTE_COMMAND, _dlg.chkExecCommand.isSelected());
-      Preferences.userRoot().put(PREF_KEY_COMMAND, _dlg.txtCommand.getText());
+      TableExportPreferences tableExportPreferences = new TableExportPreferences();
+      writeControlsToPrefs(tableExportPreferences);
+
+      TableExportPreferencesDAO.savePreferences(tableExportPreferences);
+   }
+   protected void writeControlsToPrefs(TableExportPreferences prefs)
+   {
+
+      // Preferences.userRoot().put(PREF_KEY_CSV_FILE, );
+      prefs.setCsvFile(_dlg.txtFile.getText());
+
+      //Preferences.userRoot().put(PREF_KEY_CSV_ENCODING, _dlg.charsets.getSelectedItem().toString());
+      prefs.setCsvEncoding(_dlg.charsets.getSelectedItem().toString());
+
+      //Preferences.userRoot().putBoolean(PREF_KEY_WITH_HEADERS, _dlg.chkWithHeaders.isSelected());
+      prefs.setWithHeaders(_dlg.chkWithHeaders.isSelected());
+
+      //Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_CSV, _dlg.radFormatCSV.isSelected());
+      prefs.setFormatCSV(_dlg.radFormatCSV.isSelected());
+
+      //Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLSX.isSelected());
+      prefs.setFormatXLS(_dlg.radFormatXLSX.isSelected());
+
+      //Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS_OLD, _dlg.radFormatXLS.isSelected());
+      prefs.setFormatXLSOld(_dlg.radFormatXLS.isSelected());
+
+      //Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
+      prefs.setFormatXML(_dlg.radFormatXML.isSelected());
+
+      //Preferences.userRoot().putBoolean(PREF_KEY_SEPERATOR_TAB, _dlg.chkSeparatorTab.isSelected());
+      prefs.setSeperatorTab(_dlg.chkSeparatorTab.isSelected());
+
+      //Preferences.userRoot().put(PREF_KEY_SEPERATOR_CHAR, _dlg.txtSeparatorChar.getText());
+      prefs.setSeperatorChar(_dlg.txtSeparatorChar.getText());
+
+      //Preferences.userRoot().put(PREF_KEY_LINE_SEPERATOR, ((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
+      prefs.setLineSeperator(((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
+
+      //Preferences.userRoot().putBoolean(PREF_KEY_EXPORT_COMPLETE, _dlg.radComplete.isSelected());
+      prefs.setExportComplete(_dlg.radComplete.isSelected());
+
+      //Preferences.userRoot().putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, _dlg.radUseGlobalPrefsFormating.isSelected());
+      prefs.setUseGlobalPrefsFormating(_dlg.radUseGlobalPrefsFormating.isSelected());
+
+      //Preferences.userRoot().putBoolean(PREF_KEY_EXECUTE_COMMAND, _dlg.chkExecCommand.isSelected());
+      prefs.setExecuteCommand(_dlg.chkExecCommand.isSelected());
+
+      // Preferences.userRoot().put(PREF_KEY_COMMAND, _dlg.txtCommand.getText());
+      prefs.setCommand(_dlg.txtCommand.getText());
    }
 
 	
    private void initDlg()
    {
-      Preferences userRoot = Preferences.userRoot();
+      TableExportPreferences prefs = TableExportPreferencesDAO.loadPreferences();
 
-      if (formatIsNewXlsx(userRoot))
+      if (formatIsNewXlsx(prefs))
       {
-         _dlg.txtFile.setText(replaceXlsByXlsx(userRoot.get(PREF_KEY_CSV_FILE, null)));
+         _dlg.txtFile.setText(replaceXlsByXlsx(prefs.getCsvFile()));
       }
       else
       {
-         _dlg.txtFile.setText(userRoot.get(PREF_KEY_CSV_FILE, null));
+         _dlg.txtFile.setText(prefs.getCsvFile());
       }
 
-      _dlg.charsets.setSelectedItem(userRoot.get(PREF_KEY_CSV_ENCODING, Charset.defaultCharset().name()));
-      _dlg.chkWithHeaders.setSelected(userRoot.getBoolean(PREF_KEY_WITH_HEADERS, true));
+      _dlg.charsets.setSelectedItem(prefs.getCsvEncoding());
+      _dlg.chkWithHeaders.setSelected(prefs.isWithHeaders());
 
 
-      _dlg.chkSeparatorTab.setSelected(userRoot.getBoolean(PREF_KEY_SEPERATOR_TAB, false));
+      _dlg.chkSeparatorTab.setSelected(prefs.isSeperatorTab());
 
       if(false == _dlg.chkSeparatorTab.isSelected())
       {
-         _dlg.txtSeparatorChar.setText(userRoot.get(PREF_KEY_SEPERATOR_CHAR, ","));
+         _dlg.txtSeparatorChar.setText(prefs.getSeperatorChar());
       }
 
-      if(userRoot.getBoolean(PREF_KEY_FORMAT_CSV, true))
+      if(prefs.isFormatCSV())
       {
          _dlg.radFormatCSV.setSelected(true);
       }
-      else if(formatIsNewXlsx(userRoot))
+      else if(formatIsNewXlsx(prefs))
       {
          _dlg.radFormatXLSX.setSelected(true);
       }
-      else if(userRoot.getBoolean(PREF_KEY_FORMAT_XLS_OLD, false))
+      else if(prefs.isFormatXLSOld())
       {
          _dlg.radFormatXLS.setSelected(true);
       }
-      else if(userRoot.getBoolean(PREF_KEY_FORMAT_XML, false))
+      else if(prefs.isFormatXML())
       {
          _dlg.radFormatXML.setSelected(true);
       }
@@ -502,14 +527,11 @@ protected void writePrefs()
          _dlg.radFormatCSV.setSelected(true);
       }
 
-
       onFormat(false);
 
+      initSelectionPanel(prefs);
 
-
-      initSelectionPanel(userRoot);
-
-      if(userRoot.getBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, true))
+      if(prefs.isUseGlobalPrefsFormating())
       {
          _dlg.radUseGlobalPrefsFormating.setSelected(true);
       }
@@ -519,20 +541,20 @@ protected void writePrefs()
       }
 
 
-      _dlg.chkExecCommand.setSelected(userRoot.getBoolean(PREF_KEY_EXECUTE_COMMAND, false));
+      _dlg.chkExecCommand.setSelected(prefs.isExecuteCommand());
       onChkExecCommand();
 
-      _dlg.txtCommand.setText(userRoot.get(PREF_KEY_COMMAND, "openoffice.org-2.0 -calc %file"));
-      
-      LineSeparator preferredLineSeparator = 
-      	LineSeparator.valueOf(userRoot.get(PREF_KEY_LINE_SEPERATOR, LineSeparator.DEFAULT.name()));
-      
+      _dlg.txtCommand.setText(prefs.getCommand());
+
+
+      LineSeparator preferredLineSeparator = LineSeparator.valueOf(prefs.getLineSeperator());
+
       _dlg._lineSeparators.setSelectedItem(preferredLineSeparator);
    }
 
-   private boolean formatIsNewXlsx(Preferences userRoot)
+   private boolean formatIsNewXlsx(TableExportPreferences preferences)
    {
-      return userRoot.getBoolean(PREF_KEY_FORMAT_XLS, false);
+      return preferences.isFormatXLS();
    }
 
    private String replaceXlsByXlsx(String fileName)
@@ -550,8 +572,10 @@ protected void writePrefs()
     * Initialize the values for the selection panel from the saved properties.
     * @param userRoot the saved properties.
     */
-   protected void initSelectionPanel(Preferences userRoot) {
-	   if(userRoot.getBoolean(PREF_KEY_EXPORT_COMPLETE, true))
+   protected void initSelectionPanel(TableExportPreferences userRoot)
+   {
+
+	   if(userRoot.isExportComplete())
 	   {
 		   _dlg.radComplete.setSelected(true);
 	   }
@@ -674,31 +698,6 @@ protected void writePrefs()
       }
    }
 
-   public ExportFormat getExportFormat()
-   {
-      if(_dlg.radFormatCSV.isSelected())
-      {
-         return ExportFormat.EXPORT_FORMAT_CSV;
-      }
-      else if(_dlg.radFormatXLSX.isSelected())
-      {
-         return ExportFormat.EXPORT_FORMAT_XLSX;
-      }
-      else if(_dlg.radFormatXLS.isSelected())
-      {
-         return ExportFormat.EXPORT_FORMAT_XLS;
-      }
-      else if(_dlg.radFormatXML.isSelected())
-      {
-         return ExportFormat.EXPORT_FORMAT_XML;
-      }
-      else
-      {
-         throw new IllegalStateException("No valid output format");
-      }
-
-   }
-   
    protected TableExportCsvDlg getDialog() {
 	   return this._dlg;
    }

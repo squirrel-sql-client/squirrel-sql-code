@@ -23,149 +23,166 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 
 /**
  * Exports {@link IExportData} to a CSV file.
  * <b>Note:</b> This class is the result of a refactoring task. The code was taken from TableExportCsvCommand.
- * @author Stefan Willinger
  *
+ * @author Stefan Willinger
  */
-public class DataExportCSVWriter extends AbstractDataExportFileWriter {
+public class DataExportCSVWriter extends AbstractDataExportFileWriter
+{
 
-	private List<String> headerCells = new ArrayList<String>();
-	private List<String> aRow = new ArrayList<String>();
-	private BufferedWriter bw;
-	
+   private List<String> headerCells = new ArrayList<String>();
+   private List<String> aRow = new ArrayList<String>();
+   private BufferedWriter bw;
 
-	/**
-	 * @param file
-	 * @param ctrl
-	 * @param progressController 
-	 */
-	public DataExportCSVWriter(File file, TableExportCsvController ctrl, boolean includeHeaders, ProgressAbortCallback progressController) {
-		super(file, ctrl, includeHeaders,progressController);
-	}
 
-	protected String getDataCSV(String sepChar, IExportDataCell cellObj, boolean useGlobalFormatting) {
-		if (cellObj.getObject() == null) {
-			return "";
-		} 
-		
-		String value;
-		if(cellObj.getColumnDisplayDefinition() != null && useGlobalFormatting){
-			
-			value = CellComponentFactory
-			.renderObject(cellObj.getObject(), cellObj.getColumnDisplayDefinition());
-		}else{
-			value = cellObj.getObject().toString();
-		}
+   /**
+    * @param file
+    * @param prefs
+    * @param progressController
+    */
+   public DataExportCSVWriter(File file, TableExportPreferences prefs, ProgressAbortCallback progressController)
+   {
+      super(file, prefs, progressController);
+   }
 
-			return getDataCSV(sepChar, value);
-	}
-	
-	/**
-	 * Converts a value into a CSV-value.
-	 * @param sepChar separator char to use.
-	 * @param value the original strinv value
-	 * @return a value, representing a csv column.
-	 */
-	public static String getDataCSV(String sepChar, String value) {
-		if (value == null) {
-			return "";
-		} 
-		
-		String ret = value.toString().trim();
+   protected String getDataCSV(String sepChar, IExportDataCell cellObj, boolean useGlobalFormatting)
+   {
+      if (cellObj.getObject() == null)
+      {
+         return "";
+      }
 
-			if (0 <= ret.indexOf(sepChar) || 0 <= ret.indexOf('\n') ||  0 <= ret.indexOf('\r') || 0 <= ret.indexOf('"')) {
-				ret = "\"" + ret.replaceAll("\"", "\"\"") + "\"";
-			}
+      String value;
+      if (cellObj.getColumnDisplayDefinition() != null && useGlobalFormatting)
+      {
 
-			return ret;
-	}
+         value = CellComponentFactory
+               .renderObject(cellObj.getObject(), cellObj.getColumnDisplayDefinition());
+      }
+      else
+      {
+         value = cellObj.getObject().toString();
+      }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterWorking()
-	 */
-	@Override
-	protected void afterWorking() throws Exception {
-		bw.flush();
-		bw.close();
-	}
+      return getDataCSV(sepChar, value);
+   }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addHeaderCell(int, int, java.lang.String)
-	 */
-	@Override
-	protected void addHeaderCell(int colIdx, String columnName) throws Exception {
-		this.headerCells.add(getDataCSV(getCtrl().getSeparatorChar(), columnName));
-	}
+   /**
+    * Converts a value into a CSV-value.
+    *
+    * @param sepChar separator char to use.
+    * @param value   the original strinv value
+    * @return a value, representing a csv column.
+    */
+   public static String getDataCSV(String sepChar, String value)
+   {
+      if (value == null)
+      {
+         return "";
+      }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeWorking(java.io.File)
-	 */
-	@Override
-	protected void beforeWorking(File file) throws Exception {
-		bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),
-				getCtrl().getCSVCharset()));
+      String ret = value.toString().trim();
 
-	}
+      if (0 <= ret.indexOf(sepChar) || 0 <= ret.indexOf('\n') || 0 <= ret.indexOf('\r') || 0 <= ret.indexOf('"'))
+      {
+         ret = "\"" + ret.replaceAll("\"", "\"\"") + "\"";
+      }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addCell(int, int, net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell)
-	 */
-	@Override
-	protected void addCell(IExportDataCell cell) throws Exception {
-		String cellObjData = getDataCSV(getCtrl().getSeparatorChar(), cell, getCtrl().useGloablPrefsFormatting());
-		this.aRow.add(cellObjData);
+      return ret;
+   }
 
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterWorking()
+    */
+   @Override
+   protected void afterWorking() throws Exception
+   {
+      bw.flush();
+      bw.close();
+   }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterHeader()
-	 */
-	@Override
-	protected void afterHeader() throws Exception {
-		writeARow(this.headerCells);
-		super.afterHeader();
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addHeaderCell(int, int, java.lang.String)
+    */
+   @Override
+   protected void addHeaderCell(int colIdx, String columnName)
+   {
+      this.headerCells.add(getDataCSV(getPrefs().getSeperatorChar(), columnName));
+   }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeRow()
-	 */
-	@Override
-	public void beforeRow(int rowIdx) throws Exception{
-		super.beforeRow(rowIdx);
-		this.aRow.clear();
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeWorking(java.io.File)
+    */
+   @Override
+   protected void beforeWorking(File file) throws Exception
+   {
+      bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Charset.forName(getPrefs().getCsvEncoding())));
+   }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterRow()
-	 */
-	@Override
-	public void afterRow() throws Exception{
-		writeARow(this.aRow);
-		super.afterRow();
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addCell(int, int, net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell)
+    */
+   @Override
+   protected void addCell(IExportDataCell cell)
+   {
+      String cellObjData = getDataCSV(getPrefs().getSeperatorChar(), cell, getPrefs().isUseGlobalPrefsFormating());
+      this.aRow.add(cellObjData);
+   }
 
-	private void writeARow(List<String> data) throws IOException {
-		Iterator<String> it = data.iterator();
-		while (it.hasNext()) {
-			bw.write(it.next());
-			if (it.hasNext()) {
-				bw.write(getCtrl().getSeparatorChar());
-			}
-		}
-		bw.write(getCtrl().getLineSeparator());
-	}
-	
-	
-	
-	
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterHeader()
+    */
+   @Override
+   protected void afterHeader() throws Exception
+   {
+      writeARow(this.headerCells);
+      super.afterHeader();
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeRow()
+    */
+   @Override
+   public void beforeRow(int rowIdx) throws Exception
+   {
+      super.beforeRow(rowIdx);
+      this.aRow.clear();
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterRow()
+    */
+   @Override
+   public void afterRow() throws Exception
+   {
+      writeARow(this.aRow);
+      super.afterRow();
+   }
+
+   private void writeARow(List<String> data) throws IOException
+   {
+      Iterator<String> it = data.iterator();
+      while (it.hasNext())
+      {
+         bw.write(it.next());
+         if (it.hasNext())
+         {
+            bw.write(getPrefs().getSeperatorChar());
+         }
+      }
+      bw.write(getPrefs().getLineSeperator());
+   }
+
+
 }

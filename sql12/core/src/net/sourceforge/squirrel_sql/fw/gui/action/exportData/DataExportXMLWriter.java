@@ -19,22 +19,19 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 
 import org.w3c.dom.Document;
@@ -50,7 +47,8 @@ import org.w3c.dom.Element;
  * @author Stefan Willinger
  *
  */
-public class DataExportXMLWriter extends AbstractDataExportFileWriter {
+public class DataExportXMLWriter extends AbstractDataExportFileWriter
+{
 	
 	private DocumentBuilderFactory factory;
 	private DocumentBuilder builder;
@@ -60,17 +58,15 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter {
 	private Element rows;
 	private Element row;
 
-	
-	
-
 	/**
 	 * @param file
-	 * @param ctrl
+	 * @param prefs
 	 * @param includeHeaders
 	 * @param progressController 
 	 */
-	public DataExportXMLWriter(File file, TableExportCsvController ctrl, boolean includeHeaders, ProgressAbortCallback progressController) {
-		super(file, ctrl, includeHeaders, progressController);
+	public DataExportXMLWriter(File file, TableExportPreferences prefs, ProgressAbortCallback progressController)
+	{
+		super(file, prefs, progressController);
 	}
 
 	/**
@@ -109,10 +105,14 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter {
 	@Override
 	protected void addCell(IExportDataCell cell) throws Exception {
 		String strCellValue = "";
-		if(cell.getObject() != null){
-			if (getCtrl().useGloablPrefsFormatting() && cell.getColumnDisplayDefinition() != null){
+		if(cell.getObject() != null)
+		{
+			if (getPrefs().isUseGlobalPrefsFormating() && cell.getColumnDisplayDefinition() != null)
+			{
 				strCellValue = CellComponentFactory.renderObject(cell.getObject(), cell.getColumnDisplayDefinition());
-			} else {
+			}
+			else
+				{
 				strCellValue = cell.getObject().toString();
 			}
 		}

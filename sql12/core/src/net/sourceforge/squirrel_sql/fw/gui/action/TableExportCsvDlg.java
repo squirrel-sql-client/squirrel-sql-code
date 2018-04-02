@@ -12,10 +12,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class TableExportCsvDlg extends JDialog
 {
-	private static final long serialVersionUID = 1L;
-
-	private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(TableExportCsvDlg.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportCsvDlg.class);
 
    JTextField txtFile;
    JButton btnFile;
@@ -43,21 +40,6 @@ public class TableExportCsvDlg extends JDialog
    JComboBox charsets;
 	JComboBox _lineSeparators;
 
-	public enum LineSeparator {
-		DEFAULT,
-		CRLF,
-		LF;
-		
-		public String toString() {
-			if (this == DEFAULT) {
-				return s_stringMgr.getString("TableExportCsvDlg.defaultLabel");
-			}
-			if (this == CRLF) {
-				return "CRLF (\\r\\n)";
-			}
-			return "LF (\\n)";
-		}
-	};
 
 	
    public TableExportCsvDlg(JFrame owner)

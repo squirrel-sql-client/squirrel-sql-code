@@ -38,7 +38,6 @@ import javax.swing.event.ChangeListener;
  */
 public class ResultSetExportCsvController extends TableExportCsvController {
 
-	private static final String PREF_KEY_LIMIT_ROWS = "SquirrelSQL.sqlexport.limitRows";
 
    public ResultSetExportCsvController(JFrame owner)
    {
@@ -78,24 +77,30 @@ public class ResultSetExportCsvController extends TableExportCsvController {
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController#writePrefs()
 	 */
 	@Override
-	protected void writePrefs() {
-		super.writePrefs();
+	protected void writeControlsToPrefs(TableExportPreferences prefs)
+	{
+		super.writeControlsToPrefs(prefs);
+
 		ResultSetExportDialog dlg = (ResultSetExportDialog) super.getDialog();
 		
-		 Preferences.userRoot().put(PREF_KEY_LIMIT_ROWS, dlg.txtLimitRows.getText());
+		//Preferences.userRoot().put(PREF_KEY_LIMIT_ROWS, dlg.txtLimitRows.getText());
+		prefs.setLimitRows(dlg.txtLimitRows.getText());
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController#initSelectionPanel(java.util.prefs.Preferences)
 	 */
 	@Override
-	protected void initSelectionPanel(Preferences userRoot) {
-		super.initSelectionPanel(userRoot);
+	protected void initSelectionPanel(TableExportPreferences prefs)
+	{
+		super.initSelectionPanel(prefs);
 		 
 		ResultSetExportDialog dlg = (ResultSetExportDialog) super.getDialog();
-		dlg.txtLimitRows.setText(userRoot.get(PREF_KEY_LIMIT_ROWS, "100"));
-		
-		if(dlg.radComplete.isSelected()){
+
+		dlg.txtLimitRows.setText(prefs.getLimitRows());
+
+		if(dlg.radComplete.isSelected())
+		{
 			dlg.txtLimitRows.setEnabled(false);
 		}
 	}

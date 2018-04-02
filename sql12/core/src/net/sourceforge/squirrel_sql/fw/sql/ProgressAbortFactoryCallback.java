@@ -18,8 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.fw.sql;
 
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
-
 /**
  * Callback to create instances of {@link ProgressAbortCallback}.
  * Thin interface is a part between the connection of the framework classes and the GUI.
@@ -27,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
  * @see ProgressCallBack
  * @see IAbortController
  */
-public interface ProgressAbortFactoryCallback {
-	ProgressAbortCallback create();
+public interface ProgressAbortFactoryCallback
+{
+	ProgressAbortCallback getOrCreate();
 }

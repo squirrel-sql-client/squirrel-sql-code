@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.gui;
+package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
 /**
  * Interface, to handle a cancel event of a {@link ProgressAbortDialog}

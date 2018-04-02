@@ -26,8 +26,8 @@ import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.*;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
@@ -185,10 +185,6 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 		SQLScriptPreferencesManager.unload();
 	}
 
-	public boolean allowsSessionStartedInBackground()
-	{
-		return true;
-	}
 
 	/**
 	 * Called when a session started. Add commands to popup menu in object tree.
@@ -200,13 +196,9 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				addActionsToPopup(session);
-			}
-		});
+		addActionsToPopup(session);
+		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+		sqlPaneAPI.addSQLExecutionListener(new SQLToFileHandler(session, sqlPaneAPI));
 
 		PluginSessionCallback ret = new PluginSessionCallback()
 		{
@@ -233,6 +225,8 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 
 				mnu = sqlInternalFrame.getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateFileOfCurrentSQLAction.class));
 				_resources.configureMenuItem(coll.get(CreateFileOfCurrentSQLAction.class), mnu);
+
+				sqlInternalFrame.getSQLPanelAPI().addSQLExecutionListener(new SQLToFileHandler(sess, sqlInternalFrame.getSQLPanelAPI()));
 
 			}
 
