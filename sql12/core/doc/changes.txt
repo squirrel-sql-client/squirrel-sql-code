@@ -8,8 +8,8 @@ Enhancements:
 
 #438 Run query output to a file by defining the file as part of the SQL statement
   Example:
-    @file '/tmp/artfile.xlsx' SELECT * FROM customers
-  will write the result of 'SELECT * FROM customers' to '/tmp/artfile.xlsx'
+    @file '/tmp/customers.xlsx' SELECT * FROM customers
+  will write the result of 'SELECT * FROM customers' to '/tmp/customers.xlsx'
   The settings for the output will be taken from the 'Store result of SQL to file' dialog.
 
 New right mouse menu entry 'Copy selected rows to new window' available in all tables.
