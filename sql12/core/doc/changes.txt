@@ -11,6 +11,7 @@ Enhancements:
     @file '/tmp/customers.xlsx' SELECT * FROM customers
   will write the result of 'SELECT * FROM customers' to '/tmp/customers.xlsx'
   The settings for the output will be taken from the 'Store result of SQL to file' dialog.
+  Please note the single quotes around the file name.
 
 New right mouse menu entry 'Copy selected rows to new window' available in all tables.
   If windows with with matching column names and column types already exist another pop up menu allows to append
