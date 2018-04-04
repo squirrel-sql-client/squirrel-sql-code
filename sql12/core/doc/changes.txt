@@ -13,14 +13,14 @@ Enhancements:
   The settings for the output will be taken from the 'Store result of SQL to file' dialog.
   Please note the single quotes around the file name.
 
+Allowed Java version 10 in starter scripts.
+
 New right mouse menu entry 'Copy selected rows to new window' available in all tables.
   If windows with with matching column names and column types already exist another pop up menu allows to append
   the selected rows to one of these windows.
 
 #412 Provided Command Line Interface (CLI).
   See Readme.txt in the squirrelcli/ subdirectory of your SQuirreL installation.
-
-Allowed Java version 10 in starter scripts
 
 
 Bug fixes:
