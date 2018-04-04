@@ -682,7 +682,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _dataSetViewerFindDecorator.getDataSetViewer();
 
       _tabResultTabs.setSelectedIndex(0);
-      FindColumnCtrl findColumnCtrl = new FindColumnCtrl(GUIUtils.getOwningFrame(this), dataSetViewerTablePanel);
+      FindColumnCtrl findColumnCtrl = new FindColumnCtrl(GUIUtils.getOwningFrame(_tabResultTabs), dataSetViewerTablePanel);
 
       if(null != findColumnCtrl.getColumnToGoTo())
       {
@@ -703,6 +703,12 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          _session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("ResultTab.tableSearchNotSupported"));
          s_log.warn(s_stringMgr.getString("ResultTab.tableSearchNotSupported"));
       }
+   }
+
+   @Override
+   public void findColumn()
+   {
+      onFindColumn();
    }
 
 

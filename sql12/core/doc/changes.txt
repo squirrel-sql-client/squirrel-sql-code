@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+'Find column'-button now also available when result was moved to own window.
+
 #438 Run query output to a file by defining the file as part of the SQL statement
   Example:
     @file '/tmp/customers.xlsx' SELECT * FROM customers

@@ -62,8 +62,9 @@ public class ResultFrame extends SessionDialogWidget
    private ResultFrameListener _resultFrameListener;
    private JButton _btnReturnToTab;
    private TabButton _btnToggleFind;
+   private TabButton _btnFindColumn;
    private JCheckBox _chkOnTop;
-   private JButton _btnReRun;
+   private TabButton _btnReRun;
    private JPanel _centerPanel;
 
    /**
@@ -127,6 +128,15 @@ public class ResultFrame extends SessionDialogWidget
          }
       });
 
+      _btnFindColumn.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onFindColumn();
+         }
+      });
+
       if (false == isOnRerun)
       {
          showFrame(this, false);
@@ -136,6 +146,11 @@ public class ResultFrame extends SessionDialogWidget
    private void onFind()
    {
       _tab.toggleShowFindPanel();
+   }
+
+   private void onFindColumn()
+   {
+      _tab.findColumn();
    }
 
    private void onRerun()
@@ -280,16 +295,22 @@ public class ResultFrame extends SessionDialogWidget
       gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5), 0,0);
       pnlButtons.add(new JPanel(), gbc);
 
-      ImageIcon iconFind = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND);
-      _btnToggleFind = new TabButton(iconFind);
-      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      pnlButtons.add(_btnToggleFind, gbc);
-
       ImageIcon iconReRun = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.RERUN);
       _btnReRun = new TabButton(iconReRun);
       _btnReRun.setToolTipText(s_stringMgr.getString("ResultFrame.rerun"));
-      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       pnlButtons.add(_btnReRun, gbc);
+
+
+      ImageIcon iconFindColumn = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND_COLUMN);
+      _btnFindColumn = new TabButton(iconFindColumn);
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      pnlButtons.add(_btnFindColumn, gbc);
+
+      ImageIcon iconFind = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND);
+      _btnToggleFind = new TabButton(iconFind);
+      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
+      pnlButtons.add(_btnToggleFind, gbc);
 
       return pnlButtons;
    }

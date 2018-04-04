@@ -72,6 +72,7 @@ public class SquirrelResources extends Resources
 		String ALIAS_PROPERTIES = "aliasProperties";
 
       String FIND = "find";
+      String FIND_COLUMN = "findColumn";
       String FILTER = "filter";
 
       String AUTOHIDE_ON = "autohideOn";

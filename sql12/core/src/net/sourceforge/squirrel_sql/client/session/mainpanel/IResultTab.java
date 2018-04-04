@@ -84,4 +84,6 @@ public interface IResultTab {
     TableState getResultSortableTableState();
 
    void toggleShowFindPanel();
+
+   void findColumn();
 }
