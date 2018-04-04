@@ -6,8 +6,6 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
-'Find column'-button now also available when result was moved to own window.
-
 #438 Run query output to a file by defining the file as part of the SQL statement
   Example:
     @file '/tmp/customers.xlsx' SELECT * FROM customers
@@ -26,6 +24,8 @@ Allowed Java version 10 in starter scripts
 
 
 Bug fixes:
+
+'Find column'-button now also available when result was moved to own window.
 
 MAC launch scripts: Added double quotes to the definition of the IZPACK_JAVA_HOME variable
   as requested by Pete K. in bug #1321
