@@ -24,4 +24,22 @@ public enum LineSeparator
       }
       return "LF (\\n)";
    }
+
+   public String getSeparator()
+   {
+      String result = null;
+      switch (this)
+      {
+         case DEFAULT:
+            result = System.getProperty("line.separator");
+            break;
+         case LF:
+            result = "\n";
+            break;
+         case CRLF:
+            result = "\r\n";
+            break;
+      }
+      return result;
+   }
 }

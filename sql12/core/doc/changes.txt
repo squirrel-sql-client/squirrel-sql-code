@@ -25,6 +25,8 @@ Allowed Java version 10 in starter scripts
 
 Bug fixes:
 
+CSV export --> Corrected line separator. This bug was lately introduced with feature #438.
+
 'Find column'-button now also available when result was moved to own window.
 
 MAC launch scripts: Added double quotes to the definition of the IZPACK_JAVA_HOME variable

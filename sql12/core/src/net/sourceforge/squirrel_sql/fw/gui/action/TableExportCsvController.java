@@ -17,12 +17,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class TableExportCsvController
 {
-
-
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(TableExportCsvController.class);
-
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportCsvController.class);
 
    private TableExportCsvDlg _dlg;
    private boolean _ok = false;
@@ -637,45 +632,10 @@ public class TableExportCsvController
          return _dlg.txtSeparatorChar.getText();
       }
    }
-   
-   public String getLineSeparator() {
-   	LineSeparator lineSepChoice = (LineSeparator)_dlg._lineSeparators.getSelectedItem();
-   	String result = null;
-   	switch (lineSepChoice) {
-   	case DEFAULT:
-   		result = System.getProperty("line.separator");
-   		break;
-   	case LF:
-   		result = "\n";
-   		break;
-   	case CRLF:
-   		result = "\r\n";
-   		break;
-   	}
-   	return result;
-   }
-   
-   public Charset getCSVCharset() {
-	   try {
-		   return Charset.forName(_dlg.charsets.getSelectedItem().toString());
-	   } catch (IllegalCharsetNameException icne) {
-		   return Charset.defaultCharset();
-	   }
-   }
-
-   boolean includeHeaders()
-   {
-      return _dlg.chkWithHeaders.isSelected();
-   }
 
    boolean exportComplete()
    {
       return _dlg.radComplete.isSelected();
-   }
-
-   public boolean useGloablPrefsFormatting()
-   {
-      return _dlg.radUseGlobalPrefsFormating.isSelected();
    }
 
    String getCommand()

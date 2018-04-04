@@ -24,11 +24,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.gui.action.LineSeparator;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 
@@ -127,8 +129,21 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
    @Override
    protected void beforeWorking(File file) throws Exception
    {
-      bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Charset.forName(getPrefs().getCsvEncoding())));
+      bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), getCSVCharset()));
    }
+
+   public Charset getCSVCharset()
+   {
+      try
+      {
+         return Charset.forName(getPrefs().getCsvEncoding());
+      }
+      catch (IllegalCharsetNameException icne)
+      {
+         return Charset.defaultCharset();
+      }
+   }
+
 
    /**
     * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addCell(int, int, net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell)
@@ -181,7 +196,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
             bw.write(getPrefs().getSeperatorChar());
          }
       }
-      bw.write(getPrefs().getLineSeperator());
+      bw.write(LineSeparator.valueOf(getPrefs().getLineSeperator()).getSeparator());
    }
 
 
