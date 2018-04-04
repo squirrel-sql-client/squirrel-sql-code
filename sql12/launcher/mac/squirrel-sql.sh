@@ -31,7 +31,7 @@ buildCPFromDir()
 } 
 
 # IZPACK_JAVA_HOME is filtered in by the IzPack installer when this script is installed
-IZPACK_JAVA_HOME=/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home
+IZPACK_JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"
 
 # We detect the java executable to use according to the following algorithm:
 #
