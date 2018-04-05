@@ -32,11 +32,8 @@ set SQUIRREL_CLI_HOME=%basedir%
 if ErrorLevel 1 goto ExitForWrongJavaVersion
 
 :launchsquirrel
-@rem build SQuirreL's classpath
-set TMP_CP="%SQUIRREL_CLI_HOME%\..\squirrel-sql.jar"
-dir /b "%SQUIRREL_CLI_HOME%\..\lib\*.*" >"%TEMP%\squirrel-lib.tmp"
-FOR /F "usebackq" %%I IN ("%TEMP%\squirrel-lib.tmp") DO CALL "%SQUIRREL_CLI_HOME%\..\addpath.bat" "%SQUIRREL_CLI_HOME%\..\lib\%%I"
-SET SQUIRREL_CP=%TMP_CP%
+SET CP="%SQUIRREL_CLI_HOME%\..\squirrel-sql.jar;%SQUIRREL_CLI_HOME%\..\lib\*"
+echo "CP=%CP%"
 
 @rem Launch SQuirreL CLI
 set EXECDONE=0
@@ -45,23 +42,23 @@ set _JAVA_OPTIONS=
 
 IF "%1" == "" (
    set EXECDONE=1
-   echo "Entering Java 9 JShell based mode. JAVA 9 is required."
+   echo "Entering Java 9 JShell based mode. JAVA 9 or higher is required."
    set _JAVA_OPTIONS=-Dsquirrel.home="%SQUIRREL_CLI_HOME%\.."
-   %JAVA_HOME%\bin\jshell.exe --class-path %TMP_CP%  "%SQUIRREL_CLI_HOME%/startsquirrelcli.jsh"
+   %JAVA_HOME%\bin\jshell.exe --class-path %CP%  "%SQUIRREL_CLI_HOME%/startsquirrelcli.jsh"
 )
 
 IF "%EXECDONE%" == "0" IF "%3" == "" IF NOT [%2] == "" IF "%1" == "-userdir" (
    set EXECDONE=1
-   echo "Entering Java 9 JShell based mode. JAVA 9 is required."
+   echo "Entering Java 9 JShell based mode. JAVA 9 or higher is required."
    set _JAVA_OPTIONS=-Dsquirrel.home="%SQUIRREL_CLI_HOME%\.." -Dsquirrel.userdir="%2"
-   %JAVA_HOME%\bin\jshell.exe --class-path %TMP_CP%  "%SQUIRREL_CLI_HOME%/startsquirrelcli.jsh"
+   %JAVA_HOME%\bin\jshell.exe --class-path %CP%  "%SQUIRREL_CLI_HOME%/startsquirrelcli.jsh"
 )
 
 IF "%EXECDONE%" == "0" (
    @rem TODO: find a way to pass more than 9 parameters to SquirrelBatch without using _JAVA_OPTIONS
    @rem because using _JAVA_OPTIONS always leads to a "Picked up _JAVA_OPTIONS..." output.
    set _JAVA_OPTIONS=-Dsquirrel.home="%SQUIRREL_CLI_HOME%\.."
-   %JAVA_HOME%\bin\java -cp %TMP_CP% net.sourceforge.squirrel_sql.client.cli.SquirrelBatch %*
+   %JAVA_HOME%\bin\java -cp %CP% net.sourceforge.squirrel_sql.client.cli.SquirrelBatch %*
 )
 
 :ExitForWrongJavaVersion

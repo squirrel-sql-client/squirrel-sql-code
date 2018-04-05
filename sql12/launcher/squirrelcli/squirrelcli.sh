@@ -1,26 +1,5 @@
 #! /bin/sh
 
-# This function sets a global variable named "CP" to a command-path separated list of jars located beneath the
-# specified folder.  If the specified folder contains a lib directory, then jars beneath the lib folder are
-# @ added as well as the squirrel-sql.jar file located in the directory specified as the first argument to
-# this function.
-buildCPFromDir()
-{
-	CP=""
-	if [ -d "$1"/lib ]; then
-		# First entry in classpath is the Squirrel application.
-		CP="$1/squirrel-sql.jar"
-
-		# Then add all library jars to the classpath.
-		for a in "$1"/lib/*; do
-			CP="$CP":"$a"
-		done
-	else
-		for a in "$1"/*; do
-			CP="$CP":"$a"
-		done
-	fi
-}
 
 # IZPACK_JAVA_HOME is filtered in by the IzPack installer when this script is installed
 IZPACK_JAVA_HOME=%JAVA_HOME
@@ -69,35 +48,24 @@ if [ "$?" != "0" ]; then
   exit
 fi
 
-# Build a command-path separated list of installed jars from the lib folder and squirrel-sql.jar
-buildCPFromDir "$UNIX_STYLE_HOME/.."
-TMP_CP=$CP
-
-# Now add the system classpath to the classpath. If running
-# Cygwin we also need to change the classpath to Windows format.
 if $cygwin ; then
-        TMP_CP=`cygpath -w -p $TMP_CP`
-        TMP_CP=$TMP_CP';'$CLASSPATH
+    CP="$UNIX_STYLE_HOME"/../squirrel-sql.jar;"$UNIX_STYLE_HOME"/../lib/*
 else
-        TMP_CP=$TMP_CP:$CLASSPATH
+    CP="$UNIX_STYLE_HOME"/../squirrel-sql.jar:"$UNIX_STYLE_HOME"/../lib/*
 fi
-
-
-# Now, pickup all jars once again from the installation and lib directories. The variable "CP" is assigned this value.
-buildCPFromDir "$UNIX_STYLE_HOME"
 
 
 # Launch SQuirreL CLI
 if [ $# == 0 ]; then
-   echo "Entering Java 9 JShell based mode. JAVA 9 is required."
+   echo "Entering Java 9 JShell based mode. JAVA 9 or higher is required."
    export _JAVA_OPTIONS="-Dsquirrel.home='$SQUIRREL_CLI_HOME'/.."
-   $JAVA_HOME/bin/jshell --class-path "$TMP_CP"  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
+   $JAVA_HOME/bin/jshell --class-path "$CP"  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
 elif [ $# == 2 ] && [ $1 == "-userdir" ]; then
-   echo "Entering Java 9 JShell based mode. JAVA 9 is required."
+   echo "Entering Java 9 JShell based mode. JAVA 9 or higher is required."
    export _JAVA_OPTIONS="-Dsquirrel.home='$SQUIRREL_CLI_HOME'/.. -Dsquirrel.userdir='$2'"
-   $JAVA_HOME/bin/jshell --class-path "$TMP_CP"  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
+   $JAVA_HOME/bin/jshell --class-path "$CP"  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
 else
-   $JAVA_HOME/bin/java -cp "$TMP_CP" -Dsquirrel.home="$SQUIRREL_CLI_HOME"/.. net.sourceforge.squirrel_sql.client.cli.SquirrelBatch "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" "${14}" "${15}" "${16}" "${17}"
+   $JAVA_HOME/bin/java -cp "$CP" -Dsquirrel.home="$SQUIRREL_CLI_HOME"/.. net.sourceforge.squirrel_sql.client.cli.SquirrelBatch "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}" "${14}" "${15}" "${16}" "${17}"
 fi
 
 

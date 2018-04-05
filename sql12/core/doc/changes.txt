@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#566 Simplified launch scripts by using wildcards to build the classpath.
+  This was done for the SQuirreL application and CLI launch scripts.
+
 #438 Run query output to a file by defining the file as part of the SQL statement
   Example:
     @file '/tmp/customers.xlsx' SELECT * FROM customers
