@@ -24,11 +24,13 @@ import java.util.concurrent.Executors;
 
 public class SQLToFileHandler implements ISQLExecutionListener
 {
+   private final static ILogger s_log = LoggerController.createLogger(SQLToFileHandler.class);
+
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLToFileHandler.class);
    private ISession _session;
    private ISQLPanelAPI _sqlPaneAPI;
 
-   public final static ILogger s_log = LoggerController.createLogger(SQLToFileHandler.class);
+   private boolean _abortExecution = false;
 
 
    public SQLToFileHandler(ISession session, ISQLPanelAPI sqlPaneAPI)
@@ -148,9 +150,16 @@ public class SQLToFileHandler implements ISQLExecutionListener
 
          callResultSetExport(prefs, file , sqlToWriteToFile);
 
+         if(_abortExecution)
+         {
+            _abortExecution = false;
+            break;
+         }
 
       }
 
+
+      _sqlPaneAPI.getSQLEntryPanel().requestFocus();
 
       if (0 == sqlsNotToWriteToFile.length())
       {
@@ -199,6 +208,8 @@ public class SQLToFileHandler implements ISQLExecutionListener
       {
          s_log.error(e);
          Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("SQLToFileHandler.error.writing.file", file.getPath(), e));
+
+         _abortExecution = _session.getProperties().getAbortOnError();
       }
       finally
       {
