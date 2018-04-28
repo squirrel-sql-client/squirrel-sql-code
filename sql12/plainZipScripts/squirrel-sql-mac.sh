@@ -46,7 +46,7 @@ if $macosx ; then
 
 ##################################################################################################
 # CHANGE_HERE
-# Mac users are not able which of the three lines below works correctly, see bugs 1287, 1321, 1310.
+# Mac users are not able to agree upon which of the three lines below works correctly, see bugs 1287, 1321, 1310.
 # Thus if you have problems running SQuirreL on IOS please try out the alternative lines
 ##################################################################################################
     SQUIRREL_SQL_HOME=`dirname "$0"`/Contents/Resources/Java
