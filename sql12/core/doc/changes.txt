@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Cell data popup dialog --> Browse button now remembers last directory.
+
 Reworked corrections/abbreviations dialog. See Session toolbar button 'Configure auto correct /abreviation'.
 
 #438 The 'Run query output to a file'-feature does now respect the 'Abort on error ...'-property.

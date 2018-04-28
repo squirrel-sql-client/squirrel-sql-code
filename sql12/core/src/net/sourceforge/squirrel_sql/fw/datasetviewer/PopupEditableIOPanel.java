@@ -32,8 +32,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+ import java.util.prefs.Preferences;
 
-import javax.swing.JButton;
+ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -57,11 +58,12 @@ import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
  * Class to handle IO between user and editable text, text and object,
  * and text/object to/from file.
  */
-public class PopupEditableIOPanel extends JPanel implements ActionListener {
+public class PopupEditableIOPanel extends JPanel implements ActionListener
+{
+	private static final String PREF_KEY_LAST_BROWSE_FILE = "SquirrelSQL.last.browse.file";
 
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(PopupEditableIOPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PopupEditableIOPanel.class);
 	public static final String ACTION_BROWSE = "browse";
 	public static final String ACTION_EXPORT = "export";
 	public static final String ACTION_REFORMAT = "reformat";
@@ -252,13 +254,6 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 		// add button for Brows
 		// i18n[popupeditableIoPanel.browse=Browse]
 
-		JButton reformatButton = new JButton(s_stringMgr.getString("popupEditableIoPanel.reformatXml"));
-		reformatButton.setActionCommand(ACTION_REFORMAT);
-		reformatButton.addActionListener(this);
-
-		gbc.gridx++;
-		eiPanel.add(reformatButton, gbc);
-
 		JButton browseButton = new JButton(s_stringMgr.getString("popupeditableIoPanel.browse"));
 		browseButton.setActionCommand(ACTION_BROWSE);
 		browseButton.addActionListener(this);
@@ -279,7 +274,11 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 		// import and external processing can only be done if
 		// panel is editable
 		if ( isEditable == false)
+		{
+			addReformatButton(eiPanel, gbc);
+
 			return eiPanel;
+		}
 
 		// Add import control
 		// i18n[popupeditableIoPanel.import44=Import]
@@ -289,6 +288,9 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 
 		gbc.gridx++;
 		eiPanel.add(importButton, gbc);
+
+		addReformatButton(eiPanel, gbc);
+
 
 		// add external processing command field and button
 		gbc.gridy++;
@@ -357,6 +359,16 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 		return eiPanel;
 	}
 
+	private void addReformatButton(JPanel eiPanel, GridBagConstraints gbc)
+	{
+		JButton reformatButton = new JButton(s_stringMgr.getString("popupEditableIoPanel.reformatXml"));
+		reformatButton.setActionCommand(ACTION_REFORMAT);
+		reformatButton.addActionListener(this);
+
+		gbc.gridx++;
+		eiPanel.add(reformatButton, gbc);
+	}
+
 
 	/**
 	 * Return the contents of the editable text area as an Object
@@ -397,39 +409,8 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 
 		if (e.getActionCommand().equals(ACTION_BROWSE))
 		{
-			JFileChooser chooser = new JFileChooser();
-			String filename = fileNameField.getText();
-			if (filename != null && !"".equals(filename))
-			{
-				File f = new File(filename);
-				String path = f.getAbsolutePath();
-				if (path != null && !"".equals(path))
-				{
-					chooser.setCurrentDirectory(new File(path));
-				}
-			}
-			int returnVal = chooser.showOpenDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION)
-			{
-				//	System.out.println("You chose to open this file: " +
-				//		chooser.getSelectedFile().getName());
-				try
-				{
-					fileNameField.setText(chooser.getSelectedFile().getCanonicalPath());
-				}
-				catch (Exception ex)
-				{
-					// should not happen since the file that was selected was
-					// just being shown in the Chooser dialog, but just to be safe...
-					JOptionPane.showMessageDialog(this,
-							// i18n[popupeditableIoPanel.errorGettingPath=Error getting full path name for selected file]
-							s_stringMgr.getString("popupeditableIoPanel.errorGettingPath"),
-							// i18n[popupeditableIoPanel.fileChooserError=File Chooser Error]
-							s_stringMgr.getString("popupeditableIoPanel.fileChooserError"), JOptionPane.ERROR_MESSAGE);
-				}
-			}
+			onBrowse();
 		}
-
 		else if (e.getActionCommand().equals(ACTION_APPLY))
 		{
 			// If file name default and cmd is null or empty,
@@ -453,7 +434,6 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 			}
 
 		}
-
 		else if (e.getActionCommand().equals(ACTION_IMPORT))
 		{
 
@@ -507,7 +487,6 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 					((String) externalCommandCombo.getEditor().getItem()));
 
 		}
-
 		else
 		{
 
@@ -830,6 +809,55 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 				file.delete();
 			}
 		} // end of combined export and execute operations
+	}
+
+	private void onBrowse()
+	{
+		JFileChooser chooser = new JFileChooser();
+
+		String lastDirPref = Preferences.userRoot().get(PREF_KEY_LAST_BROWSE_FILE, chooser.getCurrentDirectory().getPath());
+
+		if (false == StringUtilities.isEmpty(lastDirPref, true) && new File(lastDirPref).exists())
+		{
+			chooser.setCurrentDirectory(new File(lastDirPref));
+		}
+
+
+		String filename = fileNameField.getText();
+		if (filename != null && !"".equals(filename))
+		{
+			File f = new File(filename);
+			String path = f.getAbsolutePath();
+			if (path != null && !"".equals(path))
+			{
+				chooser.setCurrentDirectory(new File(path));
+			}
+		}
+		int returnVal = chooser.showOpenDialog(this);
+		if (returnVal == JFileChooser.APPROVE_OPTION)
+		{
+			//	System.out.println("You chose to open this file: " +
+			//		chooser.getSelectedFile().getName());
+			try
+			{
+				if (null != chooser.getSelectedFile())
+				{
+					Preferences.userRoot().put(PREF_KEY_LAST_BROWSE_FILE, chooser.getSelectedFile().getParent());
+				}
+
+				fileNameField.setText(chooser.getSelectedFile().getCanonicalPath());
+			}
+			catch (Exception ex)
+			{
+				// should not happen since the file that was selected was
+				// just being shown in the Chooser dialog, but just to be safe...
+				JOptionPane.showMessageDialog(this,
+						// i18n[popupeditableIoPanel.errorGettingPath=Error getting full path name for selected file]
+						s_stringMgr.getString("popupeditableIoPanel.errorGettingPath"),
+						// i18n[popupeditableIoPanel.fileChooserError=File Chooser Error]
+						s_stringMgr.getString("popupeditableIoPanel.fileChooserError"), JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 	/**
