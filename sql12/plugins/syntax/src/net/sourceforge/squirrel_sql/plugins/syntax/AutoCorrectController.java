@@ -1,12 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.util.*;
 import java.awt.event.ActionListener;
@@ -30,28 +31,20 @@ public class AutoCorrectController
 
       AutoCorrectData autoCorrectData = syntaxPugin.getAutoCorrectProviderImpl().getAutoCorrectData();
 
-      Vector<Vector<String>> data = new Vector<Vector<String>>();
+      Vector<Vector<String>> data = new Vector<>();
 
       for(Enumeration<String> e=autoCorrectData.getAutoCorrectsHash().keys(); e.hasMoreElements();)
       {
          String error = e.nextElement();
-         Vector<String> row = new Vector<String>();
+         Vector<String> row = new Vector<>();
          row.add(error);
          String corr = autoCorrectData.getAutoCorrectsHash().get(error);
-
-         corr = corr.replaceAll("\n","\\\\n");
 
          row.add(corr);
          data.add(row);
       }
 
-      Collections.sort(data, new Comparator<Vector<String>>()
-      {
-         public int compare(Vector<String> row1, Vector<String> row2)
-         {
-            return row1.get(0).compareTo(row2.get(0));
-         }
-      });
+      data.sort(Comparator.comparing(row -> row.get(0)));
 
 
 
@@ -71,7 +64,7 @@ public class AutoCorrectController
 
       _dlg.chkEnable.setSelected(autoCorrectData.isEnableAutoCorrects());
 
-      _dlg.setSize(550, 280);
+      _dlg.setSize(550, 500);
 
       GUIUtils.centerWithinParent(_dlg);
 
@@ -86,11 +79,11 @@ public class AutoCorrectController
       });
 
 
-      _dlg.btnAddRow.addActionListener(new ActionListener()
+      _dlg.btnNew.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
          {
-            onAddRow();
+            onNew();
          }
       });
 
@@ -112,6 +105,41 @@ public class AutoCorrectController
       });
 
 
+      _dlg.tblAutoCorrects.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+         @Override
+         public void valueChanged(ListSelectionEvent e)
+         {
+            onSelectionChanged(e);
+         }
+      });
+
+      _dlg.tblAutoCorrects.getSelectionModel().setSelectionInterval(0,0);
+
+   }
+
+   private void onSelectionChanged(ListSelectionEvent e)
+   {
+      if(1 == _dlg.tblAutoCorrects.getSelectedRows().length)
+      {
+         int selRow = _dlg.tblAutoCorrects.getSelectedRows()[0];
+
+         DefaultTableModel dtm = (DefaultTableModel) _dlg.tblAutoCorrects.getModel();
+
+         Vector<Vector<String>> dataVector = dtm.getDataVector();
+
+         Vector<String> row = dataVector.get(selRow);
+
+         _dlg._txtAbreviation.setText(row.get(0));
+
+         String correction = row.get(1);
+         _dlg._txtCorrection.setText(correction);
+
+      }
+      else
+      {
+         _dlg._txtAbreviation.setText(null);
+         _dlg._txtCorrection.setText(null);
+      }
    }
 
    private void onClose()
@@ -123,7 +151,6 @@ public class AutoCorrectController
    private void onRemoveRows()
    {
       DefaultTableModel dtm = (DefaultTableModel) _dlg.tblAutoCorrects.getModel();
-
       int selRow = _dlg.tblAutoCorrects.getSelectedRow();
 
       while(-1 != selRow)
@@ -131,23 +158,58 @@ public class AutoCorrectController
          dtm.removeRow(selRow);
          selRow = _dlg.tblAutoCorrects.getSelectedRow();
       }
+
+      save();
    }
 
    private void onApply()
    {
-      TableCellEditor cellEditor = _dlg.tblAutoCorrects.getCellEditor();
-      if(null != cellEditor)
+      if(    StringUtilities.isEmpty(_dlg._txtAbreviation.getText(), true)
+          || StringUtilities.isEmpty(_dlg._txtCorrection.getText(), true))
       {
-         cellEditor.stopCellEditing();
+         return;
       }
-
 
       DefaultTableModel dtm = (DefaultTableModel) _dlg.tblAutoCorrects.getModel();
 
-      Vector<Vector> dataVector = dtm.getDataVector();
+      Vector<Vector<String>> dataVector = dtm.getDataVector();
 
-      Hashtable<String, String> newAutoCorrects =
-          new Hashtable<String, String>();
+      boolean found = false;
+      for (int i = 0; i < dataVector.size(); i++)
+      {
+         Vector<String> row = dataVector.get(i);
+         if (_dlg._txtAbreviation.getText().equalsIgnoreCase(row.get(0)))
+         {
+            row.set(1, _dlg._txtCorrection.getText());
+            dtm.fireTableRowsUpdated(i,i);
+            found = true;
+            break;
+         }
+      }
+
+      if(false == found)
+      {
+         Vector<String> row = new Vector<>();
+
+         row.add(_dlg._txtAbreviation.getText());
+         row.add(_dlg._txtCorrection.getText());
+         dtm.addRow(row);
+
+         _dlg.tblAutoCorrects.getSelectionModel().setSelectionInterval(dtm.getRowCount()-1, dtm.getRowCount()-1);
+      }
+
+      save();
+
+   }
+
+   private void save()
+   {
+      DefaultTableModel dtm = (DefaultTableModel) _dlg.tblAutoCorrects.getModel();
+
+      Vector<Vector<String>> dataVector = dtm.getDataVector();
+
+
+      Hashtable<String, String> newAutoCorrects = new Hashtable<>();
 
       for (int i = 0; i < dataVector.size(); i++)
       {
@@ -158,25 +220,15 @@ public class AutoCorrectController
 
          if(null != error && null != corr && 0 != error.trim().length() && 0 != corr.trim().length() && false == error.equals(corr))
          {
-            corr = corr.replaceAll("\\\\n", "\n");
             newAutoCorrects.put(error.trim().toUpperCase(), corr);
          }
       }
 
       _syntaxPugin.getAutoCorrectProviderImpl().setAutoCorrects(newAutoCorrects, _dlg.chkEnable.isSelected());
-
-
-
    }
 
-   private void onAddRow()
+   private void onNew()
    {
-      DefaultTableModel dtm = (DefaultTableModel) _dlg.tblAutoCorrects.getModel();
-
-      Vector<String> newRow = new Vector<String>();
-      newRow.add("");
-      newRow.add("");
-
-      dtm.addRow(newRow);
+      _dlg.tblAutoCorrects.clearSelection();
    }
 }
