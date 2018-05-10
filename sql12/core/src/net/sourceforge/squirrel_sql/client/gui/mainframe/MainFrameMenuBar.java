@@ -373,6 +373,7 @@ final class MainFrameMenuBar extends JMenuBar
       menu.addSeparator();
       addToMenu(rsrc, FindAliasAction.class, menu);
       addToMenu(rsrc, SortAliasesAction.class, menu);
+      addToMenu(rsrc, ColorAliasAction.class, menu);
       menu.addSeparator();
       addToMenuAsCheckBoxMenuItem(rsrc, ToggleTreeViewAction.class, menu);
       addToMenu(rsrc, NewAliasFolderAction.class, menu);

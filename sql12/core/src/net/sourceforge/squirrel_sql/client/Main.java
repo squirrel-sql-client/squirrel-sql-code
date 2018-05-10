@@ -108,18 +108,23 @@ public class Main
       });
 
 
-      Runnable runnable = new Runnable()
-      {
-         
-
-		public void run()
-         {
-            application = new Application();
-            application.startup();
-         }
-      };
+      Runnable runnable = () -> doApplicationStartup();
 
       SwingUtilities.invokeLater(runnable);
+   }
+
+   private static void doApplicationStartup()
+   {
+      try
+      {
+         application = new Application();
+         application.startup();
+      }
+      catch (Throwable e)
+      {
+         e.printStackTrace();
+         throw new RuntimeException(e);
+      }
    }
 
    private static void doLogging(AWTEvent event, Throwable t)

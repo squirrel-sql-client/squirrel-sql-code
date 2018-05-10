@@ -47,7 +47,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    JTree _tree = new JTree()
    {
-
 		public String getToolTipText(MouseEvent event)
       {
          return JTreeAliasesListImpl.this.getToolTipText(event);    //To change body of overridden methods use File | Settings | File Templates.
@@ -63,6 +62,8 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private boolean _dontReactToAliasAdd = false ;
 
+   AliasColorer _aliasColorer;
+
 
    public JTreeAliasesListImpl(IApplication app, AliasesListModel aliasesListModel)
    {
@@ -72,6 +73,9 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
       DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
       root.removeAllChildren();
+
+      root.setUserObject(new AliasFolder("AliasRootNode", AliasFolder.NO_COLOR_RGB));
+
       _tree.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
       _tree.setToolTipText("init");
 
@@ -113,11 +117,13 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private void initRenderer()
    {
+      _aliasColorer = new AliasColorer(_tree);
+
       DefaultTreeCellRenderer treeCellRenderer = new DefaultTreeCellRenderer()
       {
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus)
          {
-            return modifyRenderer(super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus), value);
+            return modifyRenderer(this, super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus), value);
          }
       };
 
@@ -143,15 +149,16 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    }
 
-   private Component modifyRenderer(Component component, Object node)
+   private Component modifyRenderer(DefaultTreeCellRenderer defaultTreeCellRenderer, Component component, Object node)
    {
       JLabel ret = (JLabel) component;
       ret.setEnabled(true);
 
+      DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) node;
+      _aliasColorer.colorAliasRendererComponent(defaultTreeCellRenderer, dmtn, ret);
 
       if (null != _pathsToPaste && PasteMode.CUT.equals(_pasteMode))
       {
-         DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) node;
 
          boolean found = false;
          for (TreePath treePath : _pathsToPaste)
@@ -405,13 +412,18 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       {
          toFill.add((SQLAlias) node.getUserObject());
       }
-      else
+      else if(node.getUserObject() instanceof AliasFolder)
       {
          for (int i = 0; i < node.getChildCount(); i++)
          {
-              fillAllAliasesFrom((DefaultMutableTreeNode) node.getChildAt(i), toFill);
+            fillAllAliasesFrom((DefaultMutableTreeNode) node.getChildAt(i), toFill);
          }
       }
+      else
+      {
+         AliasTreeUtil.throwUnknownUserObjectException(node);
+      }
+
    }
 
    private void onAliasAdded(ListDataEvent e)
@@ -443,10 +455,15 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
             int formerSilblingIx = treeModel.getIndexOfChild(parentNode, selNode);
             treeModel.insertNodeInto(newNode, parentNode, formerSilblingIx + 1);
          }
-         else
+         else if(selNode.getUserObject() instanceof AliasFolder)
          {
             selNode.add(newNode);
          }
+         else
+         {
+            AliasTreeUtil.throwUnknownUserObjectException(selNode);
+         }
+
       }
 
       treeModel.nodeStructureChanged((DefaultMutableTreeNode)treeModel.getRoot());
@@ -520,7 +537,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
                removeAlias(toDel);
             }
          }
-         else
+         else if(selNode.getUserObject() instanceof AliasFolder)
          {
             if (Dialogs.showYesNo(_app.getMainFrame(), s_stringMgr.getString("JTreeAliasesListImpl.confirmDeleteFolder", selNode.getUserObject())))
             {
@@ -532,6 +549,10 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
                dtm.nodesWereRemoved(parent, new int[]{indexOfChild}, new Object[]{selNode});
                //dtm.nodeStructureChanged(parent);
             }
+         }
+         else
+         {
+            AliasTreeUtil.throwUnknownUserObjectException(selNode);
          }
       }
       else if(1 < selectionPaths.length)
@@ -549,11 +570,16 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
                   SQLAlias toDel = (SQLAlias) selNode.getUserObject();
                  removeAlias(toDel);
                }
-               else
+               else if(selNode.getUserObject() instanceof AliasFolder)
                {
                   removeAllAliasesFromNode(selNode);
                   selNode.removeFromParent();
                }
+               else
+               {
+                  AliasTreeUtil.throwUnknownUserObjectException(selNode);
+               }
+
             }
 
             final DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
@@ -588,7 +614,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       {
          _app.getWindowManager().showModifyAliasInternalFrame((ISQLAlias) selNode.getUserObject());
       }
-      else
+      else if(selNode.getUserObject() instanceof AliasFolder)
       {
          String title = s_stringMgr.getString("JTreeAliasesListImpl.EditAliasFolderDlgTitle");
          String text = s_stringMgr.getString("JTreeAliasesListImpl.EditAliasFolderDlgText");
@@ -605,11 +631,16 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
             return;
          }
 
-         selNode.setUserObject(folderName);
+         selNode.setUserObject(new AliasFolder(folderName, (((AliasFolder) selNode.getUserObject()).getColorRGB())));
 
          DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
          treeModel.nodeChanged(selNode);
       }
+      else
+      {
+         AliasTreeUtil.throwUnknownUserObjectException(selNode);
+      }
+
    }
 
    public boolean isEmpty()
@@ -646,6 +677,12 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    }
 
+   @Override
+   public void colorSelected()
+   {
+      AliasColorSelectionHandler.selectColor(_tree);
+   }
+
    private void removeAllAliasesFromNode(DefaultMutableTreeNode selNode)
    {
       if(selNode.getUserObject() instanceof SQLAlias)
@@ -654,7 +691,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          removeAlias(toDel);
 
       }
-      else
+      else if(selNode.getUserObject() instanceof AliasFolder)
       {
          ArrayList<DefaultMutableTreeNode> buf = new ArrayList<DefaultMutableTreeNode>();
 
@@ -668,6 +705,11 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
             removeAllAliasesFromNode(defaultMutableTreeNode);
          }
       }
+      else
+      {
+         AliasTreeUtil.throwUnknownUserObjectException(selNode);
+      }
+
    }
 
    private void removeAlias(SQLAlias toDel)
@@ -746,7 +788,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
       TreePath selPath = _tree.getSelectionPath();
 
-      DefaultMutableTreeNode newFolder = GUIUtils.createFolderNode(folderName);
+      DefaultMutableTreeNode newFolder = GUIUtils.createFolderNode(new AliasFolder(folderName, AliasFolder.NO_COLOR_RGB));
 
 
       if(null != selPath)
@@ -888,9 +930,9 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
             }
             return new DefaultMutableTreeNode(newAlias);
          }
-         else
+         else if(nodeToCopy.getUserObject() instanceof AliasFolder)
          {
-            DefaultMutableTreeNode ret = GUIUtils.createFolderNode((String) nodeToCopy.getUserObject());
+            DefaultMutableTreeNode ret = GUIUtils.createFolderNode((AliasFolder) nodeToCopy.getUserObject());
 
             for (int i = 0; i < nodeToCopy.getChildCount(); i++)
             {
@@ -898,6 +940,11 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
             }
             return ret;
          }
+         else
+         {
+            throw AliasTreeUtil.createUnkonownUserObjectException(nodeToCopy);
+         }
+
       }
       catch (Exception e)
       {

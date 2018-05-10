@@ -25,8 +25,6 @@ import java.io.Serializable;
 
 public class SQLAliasColorProperties implements Serializable
 {
-   private static final long serialVersionUID = 1L;
-
    private boolean overrideToolbarBackgroundColor = false;
    
    private int toolbarBackgroundColorRgbValue = 0;
@@ -38,7 +36,11 @@ public class SQLAliasColorProperties implements Serializable
    private boolean overrideStatusBarBackgroundColor = false;
 
    private int statusBarBackgroundColorRgbValue = 0;
-   
+
+   private boolean overrideAliasBackgroundColor = false;
+
+   private int aliasBackgroundColorRgbValue = 0;
+
    /**
 	 * @return the overrideToolbarBackgroundColor
 	 */
@@ -133,6 +135,31 @@ public class SQLAliasColorProperties implements Serializable
 	public void setStatusBarBackgroundColorRgbValue(int statusBarBackgroundColorRgbValue)
 	{
 		this.statusBarBackgroundColorRgbValue = statusBarBackgroundColorRgbValue;
+	}
+
+
+
+	public boolean isOverrideAliasBackgroundColor()
+	{
+		return overrideAliasBackgroundColor;
+	}
+
+	public void setOverrideAliasBackgroundColor(boolean overrideStatusBarBackgroundColor)
+	{
+		this.overrideAliasBackgroundColor = overrideStatusBarBackgroundColor;
+	}
+
+	public int getAliasBackgroundColorRgbValue()
+	{
+		return aliasBackgroundColorRgbValue;
+	}
+
+	/**
+	 * @param statusBarBackgroundColorRgbValue the statusBarBackgroundColor to set
+	 */
+	public void setAliasBackgroundColorRgbValue(int statusBarBackgroundColorRgbValue)
+	{
+		this.aliasBackgroundColorRgbValue = statusBarBackgroundColorRgbValue;
 	}
 
 	

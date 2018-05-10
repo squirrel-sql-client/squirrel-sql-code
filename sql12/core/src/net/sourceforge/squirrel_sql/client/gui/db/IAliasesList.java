@@ -42,4 +42,6 @@ public interface IAliasesList extends IBaseList
    boolean isEmpty();
 
    void goToAlias(ISQLAlias aliasToGoTo);
+
+   void colorSelected();
 }

@@ -155,7 +155,14 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
       }
    }
 
-   public void modifySelected()
+	@Override
+	public void colorSelected()
+	{
+		AliasColorSelectionHandler.selectColor(_model);
+	}
+
+
+	public void modifySelected()
    {
       if(null != getList().getSelectedValue())
       {

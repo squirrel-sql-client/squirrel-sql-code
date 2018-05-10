@@ -5,4 +5,6 @@ public interface IToogleableAliasesList extends IAliasesList
    void setViewAsTree(boolean selected);
 
    IAliasTreeInterface getAliasTreeInterface();
+
+   void colorSelected();
 }

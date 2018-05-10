@@ -41,8 +41,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparable<Object>
 {
     /** Internationalized strings for this class. */
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SQLAlias.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLAlias.class);
 
 
    private interface IStrings

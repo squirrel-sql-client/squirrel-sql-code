@@ -87,6 +87,13 @@ public class AliasesList implements IToogleableAliasesList
       getCurrentImpl().deleteSelected();
    }
 
+   @Override
+   public void colorSelected()
+   {
+      getCurrentImpl().colorSelected();
+   }
+
+
    public void modifySelected()
    {
       getCurrentImpl().modifySelected();

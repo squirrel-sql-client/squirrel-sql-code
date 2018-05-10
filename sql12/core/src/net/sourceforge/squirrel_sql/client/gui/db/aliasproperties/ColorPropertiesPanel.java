@@ -70,7 +70,9 @@ public class ColorPropertiesPanel extends JPanel
 
 	private Color toolbarBackgroundColor = null;
 
-	private JCheckBox syncComponentBackgroundColorChk = null;
+
+	private JButton syncComponentBackgroundColorBtn = null;
+
 
 	// Object Tree
 
@@ -96,6 +98,19 @@ public class ColorPropertiesPanel extends JPanel
 
 	private Color statusBarBackgroundColor = null;
 
+
+	// Alias
+	private JCheckBox aliasBackgroundColorChk = new JCheckBox("");
+
+	private JButton aliasBackgroundColorBtn = null;
+
+	private JLabel aliasBackgroundLbl = null;
+
+	private JPanel aliasBackgroundColorPnl = new JPanel();
+
+	private Color aliasBackgroundColor = null;
+
+
 	public interface i18n
 	{
 		// i18n[ColorPropertiesPanel.backgroundColorLabel=Background Color]
@@ -112,6 +127,10 @@ public class ColorPropertiesPanel extends JPanel
 		// i18n[ColorPropertiesPanel.statusBarBackgroundColorBtnLabel=Choose Status Bar Color]
 		String STATUS_BAR_BACKGROUND_COLOR_BUTTON_LABEL =
 			s_stringMgr.getString("ColorPropertiesPanel.statusBarBackgroundColorBtnLabel");
+
+		// i18n[ColorPropertiesPanel.statusBarBackgroundColorBtnLabel=Choose Status Bar Color]
+		String ALIAS_BACKGROUND_COLOR_BUTTON_LABEL =
+			s_stringMgr.getString("ColorPropertiesPanel.aliasBackgroundColorBtnLabel");
 
 		// i18n[ColorPropertiesPanel.toolbarBackgroundColorChooserDialogTitle=Select Background Color for
 		// Toolbar]
@@ -135,6 +154,9 @@ public class ColorPropertiesPanel extends JPanel
 		// Status Bar]
 		String STATUS_BAR_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE =
 			s_stringMgr.getString("ColorPropertiesPanel.statusBarBackgroundColorChooserDialogTitle");
+
+		String ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE =
+			s_stringMgr.getString("ColorPropertiesPanel.aliasBackgroundColorChooserDialogTitle");
 
 	}
 
@@ -188,6 +210,14 @@ public class ColorPropertiesPanel extends JPanel
 				_props.setStatusBarBackgroundColorRgbValue(statusBarBackgroundColor.getRGB());
 			}
 		}
+		if (aliasBackgroundColorChk.isSelected())
+		{
+			if (aliasBackgroundColor != null)
+			{
+				_props.setOverrideAliasBackgroundColor(true);
+				_props.setAliasBackgroundColorRgbValue(aliasBackgroundColor.getRGB());
+			}
+		}
 		else
 		{
 			_props.setOverrideStatusBarBackgroundColor(false);
@@ -216,50 +246,56 @@ public class ColorPropertiesPanel extends JPanel
 		add(createInfoPanel(), gbc);
 
 		prepareNewRow(gbc);
-
 		addToolbarColorComponents(gbc);
 
 		prepareNewRow(gbc);
-
 		addSyncComponentColorsWithToolbarCheckBox(gbc);
 
+		gbc.insets.top = 20;
 		prepareNewRow(gbc);
-
 		addObjectTreeColorComponents(gbc);
+		gbc.insets.top = 5;
 
 		prepareNewRow(gbc);
-
 		addStatusBarColorComponents(gbc);
+
+		prepareNewRow(gbc);
+		addAliasColorComponents(gbc);
 	}
 
 	private void addSyncComponentColorsWithToolbarCheckBox(final GridBagConstraints gbc)
 	{
 		++gbc.gridx;
 		gbc.gridwidth = 2;
-		syncComponentBackgroundColorChk = new JCheckBox(i18n.SYNC_COMPONENT_BACKGROUND_COLOR_CHK_LABEL);
-		add(syncComponentBackgroundColorChk, gbc);
+		syncComponentBackgroundColorBtn = new JButton(i18n.SYNC_COMPONENT_BACKGROUND_COLOR_CHK_LABEL);
+		add(syncComponentBackgroundColorBtn, gbc);
 
-		syncComponentBackgroundColorChk.addActionListener(new ActionListener()
+		syncComponentBackgroundColorBtn.addActionListener(new ActionListener()
 		{
 
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if (syncComponentBackgroundColorChk.isSelected())
-				{
-					objectTreeBackgroundColorChk.setSelected(true);
-					objectTreeBackgroundColor = toolbarBackgroundColor;
-					objectTreeBackgroundColorBtn.setEnabled(true);
-					objectTreeBackgroundColorPnl.setBackground(toolbarBackgroundColor);
-					objectTreeBackgroundColorPnl.setEnabled(true);
-					objectTreeBackgroundLbl.setEnabled(true);
-					statusBarBackgroundColorChk.setSelected(true);
-					statusBarBackgroundColor = toolbarBackgroundColor;
-					statusBarBackgroundColorBtn.setEnabled(true);
-					statusBarBackgroundColorPnl.setBackground(toolbarBackgroundColor);
-					statusBarBackgroundColorPnl.setEnabled(true);
-					statusBarBackgroundLbl.setEnabled(true);
-				}
+				objectTreeBackgroundColorChk.setSelected(true);
+				objectTreeBackgroundColor = toolbarBackgroundColor;
+				objectTreeBackgroundColorBtn.setEnabled(true);
+				objectTreeBackgroundColorPnl.setBackground(toolbarBackgroundColor);
+				objectTreeBackgroundColorPnl.setEnabled(true);
+				objectTreeBackgroundLbl.setEnabled(true);
+
+				statusBarBackgroundColorChk.setSelected(true);
+				statusBarBackgroundColor = toolbarBackgroundColor;
+				statusBarBackgroundColorBtn.setEnabled(true);
+				statusBarBackgroundColorPnl.setBackground(toolbarBackgroundColor);
+				statusBarBackgroundColorPnl.setEnabled(true);
+				statusBarBackgroundLbl.setEnabled(true);
+
+				aliasBackgroundColorChk.setSelected(true);
+				aliasBackgroundColor = toolbarBackgroundColor;
+				aliasBackgroundColorBtn.setEnabled(true);
+				aliasBackgroundColorPnl.setBackground(toolbarBackgroundColor);
+				aliasBackgroundColorPnl.setEnabled(true);
+				aliasBackgroundLbl.setEnabled(true);
 			}
 		});
 	}
@@ -280,7 +316,7 @@ public class ColorPropertiesPanel extends JPanel
 		gbc.anchor = GridBagConstraints.EAST;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		statusBarBackgroundColorChk.setSelected(_props.isOverrideStatusBarBackgroundColor());
-		statusBarBackgroundColorBtn.setEnabled(_props.isOverrideObjectTreeBackgroundColor());
+		statusBarBackgroundColorBtn.setEnabled(_props.isOverrideStatusBarBackgroundColor());
 
 		statusBarBackgroundLbl = new JLabel(i18n.BACKGROUND_COLOR_LABEL);
 		statusBarBackgroundLbl.setEnabled(_props.isOverrideStatusBarBackgroundColor());
@@ -324,8 +360,8 @@ public class ColorPropertiesPanel extends JPanel
 			{
 				Color startColor = statusBarBackgroundColor == null ? Color.WHITE : statusBarBackgroundColor;
 				Color newColor =
-					JColorChooser.showDialog(null, i18n.STATUS_BAR_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE,
-						startColor);
+						JColorChooser.showDialog(null, i18n.STATUS_BAR_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+
 				if (newColor != null)
 				{
 					statusBarBackgroundColor = newColor;
@@ -335,6 +371,80 @@ public class ColorPropertiesPanel extends JPanel
 			}
 		});
 	}
+
+	private void addAliasColorComponents(GridBagConstraints gbc)
+	{
+		// Object Tree Color checkbox
+		aliasBackgroundColorChk.setSelected(_props.isOverrideAliasBackgroundColor());
+		add(aliasBackgroundColorChk, gbc);
+
+		// Set object tree color button
+		++gbc.gridx;
+		aliasBackgroundColorBtn = new JButton(i18n.ALIAS_BACKGROUND_COLOR_BUTTON_LABEL);
+		add(aliasBackgroundColorBtn, gbc);
+
+		// Set object tree color panel
+		++gbc.gridx;
+		gbc.anchor = GridBagConstraints.EAST;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		aliasBackgroundColorChk.setSelected(_props.isOverrideAliasBackgroundColor());
+		aliasBackgroundColorBtn.setEnabled(_props.isOverrideAliasBackgroundColor());
+
+		aliasBackgroundLbl = new JLabel(i18n.BACKGROUND_COLOR_LABEL);
+		aliasBackgroundLbl.setEnabled(_props.isOverrideAliasBackgroundColor());
+
+		aliasBackgroundColorPnl.add(aliasBackgroundLbl);
+		aliasBackgroundColorPnl.setEnabled(_props.isOverrideAliasBackgroundColor());
+
+		if (_props.isOverrideAliasBackgroundColor())
+		{
+			aliasBackgroundColor = new Color(_props.getAliasBackgroundColorRgbValue());
+			aliasBackgroundColorPnl.setBackground(aliasBackgroundColor);
+		}
+		add(aliasBackgroundColorPnl, gbc);
+
+		aliasBackgroundColorChk.addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (aliasBackgroundColorChk.isSelected())
+				{
+					aliasBackgroundColorBtn.setEnabled(true);
+					aliasBackgroundColorPnl.setEnabled(true);
+					aliasBackgroundLbl.setEnabled(true);
+				}
+				else
+				{
+					aliasBackgroundColorBtn.setEnabled(false);
+					aliasBackgroundColorPnl.setEnabled(false);
+					aliasBackgroundLbl.setEnabled(false);
+				}
+			}
+		});
+
+		aliasBackgroundColorBtn.addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				Color startColor = aliasBackgroundColor == null ? Color.WHITE : aliasBackgroundColor;
+				Color newColor =
+						JColorChooser.showDialog(null, i18n.ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+
+				if (newColor != null)
+				{
+					aliasBackgroundColor = newColor;
+					aliasBackgroundColorPnl.setBackground(newColor);
+					aliasBackgroundColorPnl.validate();
+				}
+			}
+		});
+
+	}
+
 
 	private void prepareNewRow(final GridBagConstraints gbc)
 	{

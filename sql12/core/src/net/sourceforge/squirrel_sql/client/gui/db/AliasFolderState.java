@@ -14,6 +14,7 @@ public class AliasFolderState implements Comparable<AliasFolderState>
    private AliasFolderState[] _kids = new AliasFolderState[0];
    private IIdentifier _aliasIdentifier;
    private String _folderName;
+   private int _colorRGB = AliasFolder.NO_COLOR_RGB;
    private boolean _isSelected;
    private boolean _isExpanded;
 
@@ -49,15 +50,22 @@ public class AliasFolderState implements Comparable<AliasFolderState>
          _aliasIdentifier = alias.getIdentifier();
          _aliasName = alias.getName();
       }
-      else
+      else if(dmtn.getUserObject() instanceof AliasFolder)
       {
-         _folderName = dmtn.getUserObject().toString();
+         _folderName = ((AliasFolder)dmtn.getUserObject()).getFolderName();
+
+         _colorRGB = ((AliasFolder)dmtn.getUserObject()).getColorRGB();
+
          _kids = new AliasFolderState[dmtn.getChildCount()];
          for (int i = 0; i < dmtn.getChildCount(); i++)
          {
             AliasFolderState state = new AliasFolderState((DefaultMutableTreeNode) dmtn.getChildAt(i), tree);
             _kids[i] = state;
          }
+      }
+      else
+      {
+         AliasTreeUtil.throwUnknownUserObjectException(dmtn);
       }
    }
 
@@ -111,11 +119,21 @@ public class AliasFolderState implements Comparable<AliasFolderState>
       _isExpanded = expanded;
    }
 
+   public int getColorRGB()
+   {
+      return _colorRGB;
+   }
+
+   public void setColorRGB(int colorRGB)
+   {
+      _colorRGB = colorRGB;
+   }
+
    public void applyNodes(DefaultMutableTreeNode parent, AliasesListModel aliasesListModel)
    {
       if(null != _folderName)
       {
-         _node = GUIUtils.createFolderNode(_folderName);
+         _node = GUIUtils.createFolderNode(new AliasFolder(_folderName, _colorRGB));
          parent.add(_node);
          for (AliasFolderState kid : _kids)
          {
