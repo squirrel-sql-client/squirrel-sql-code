@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorer;
+import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -62,7 +64,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private boolean _dontReactToAliasAdd = false ;
 
-   AliasColorer _aliasColorer;
+   TreeAliasColorer _aliasColorer;
 
 
    public JTreeAliasesListImpl(IApplication app, AliasesListModel aliasesListModel)
@@ -117,7 +119,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private void initRenderer()
    {
-      _aliasColorer = new AliasColorer(_tree);
+      _aliasColorer = new TreeAliasColorer(_tree);
 
       DefaultTreeCellRenderer treeCellRenderer = new DefaultTreeCellRenderer()
       {
@@ -680,7 +682,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    @Override
    public void colorSelected()
    {
-      AliasColorSelectionHandler.selectColor(_tree);
+      TreeAliasColorSelectionHandler.selectColor(_tree);
    }
 
    private void removeAllAliasesFromNode(DefaultMutableTreeNode selNode)

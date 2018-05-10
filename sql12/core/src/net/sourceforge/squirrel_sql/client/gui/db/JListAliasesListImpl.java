@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.gui.ModifiedDefaultListCellRenderer;
+import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.ListAliasColorSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -56,7 +56,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
       _model = aliasesListModel;
 		getList().setLayout(new BorderLayout());
 
-		getList().setCellRenderer(new ModifiedDefaultListCellRenderer());
+		getList().setCellRenderer(new AliasListCellRenderer());
 
 
 		_model.addListDataListener(new ListDataListener()
@@ -158,7 +158,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 	@Override
 	public void colorSelected()
 	{
-		AliasColorSelectionHandler.selectColor(_model);
+		ListAliasColorSelectionHandler.selectColor(getList());
 	}
 
 

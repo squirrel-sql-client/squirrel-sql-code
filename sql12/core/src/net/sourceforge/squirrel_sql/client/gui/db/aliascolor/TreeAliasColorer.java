@@ -1,4 +1,7 @@
-package net.sourceforge.squirrel_sql.client.gui.db;
+package net.sourceforge.squirrel_sql.client.gui.db.aliascolor;
+
+import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 
 import javax.swing.JLabel;
 import javax.swing.JTree;
@@ -6,13 +9,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.Color;
 
-public class AliasColorer
+public class TreeAliasColorer
 {
 
    private final Color _backgroundNonSelectionColor;
    private final Color _backgroundSelectionColor;
 
-   public AliasColorer(JTree tree)
+   public TreeAliasColorer(JTree tree)
    {
       DefaultTreeCellRenderer defaultTreeCellRenderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
 
@@ -32,10 +35,9 @@ public class AliasColorer
       {
          SQLAlias sqlAlias = (SQLAlias) node.getUserObject();
 
-         if(sqlAlias.getColorProperties().isOverrideObjectTreeBackgroundColor())
+         if(sqlAlias.getColorProperties().isOverrideAliasBackgroundColor())
          {
-            //cellRendererComp.setForeground(new Color(sqlAlias.getColorProperties().getObjectTreeBackgroundColorRgbValue()));
-            colorRenderer(defaultTreeCellRenderer, sqlAlias.getColorProperties().getObjectTreeBackgroundColorRgbValue());
+            colorRenderer(defaultTreeCellRenderer, sqlAlias.getColorProperties().getAliasBackgroundColorRgbValue());
          }
       }
       else if(node.getUserObject() instanceof AliasFolder)
@@ -59,9 +61,9 @@ public class AliasColorer
       }
    }
 
-   private void colorRenderer(DefaultTreeCellRenderer defaultTreeCellRenderer, int objectTreeBackgroundColorRgbValue)
+   private void colorRenderer(DefaultTreeCellRenderer defaultTreeCellRenderer, int aliasBackgroundColorRgbValue)
    {
-      defaultTreeCellRenderer.setBackgroundNonSelectionColor(new Color(objectTreeBackgroundColorRgbValue));
-      defaultTreeCellRenderer.setBackgroundSelectionColor(new Color(objectTreeBackgroundColorRgbValue).darker());
+      defaultTreeCellRenderer.setBackgroundNonSelectionColor(new Color(aliasBackgroundColorRgbValue));
+      defaultTreeCellRenderer.setBackgroundSelectionColor(new Color(aliasBackgroundColorRgbValue).darker());
    }
 }

@@ -1,0 +1,117 @@
+package net.sourceforge.squirrel_sql.client.gui.db.aliascolor;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasTreeUtil;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.ColorPropertiesPanel;
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JColorChooser;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.Color;
+import java.awt.MouseInfo;
+import java.awt.Point;
+
+public class ListAliasColorSelectionHandler
+{
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ListAliasColorSelectionHandler.class);
+
+   public static void selectColor(JList list)
+   {
+      int[] selectedIndices = list.getSelectedIndices();
+
+      if(0 == selectedIndices.length)
+      {
+         Dialogs.showOk(Main.getApplication().getMainFrame(), s_stringMgr.getString("select.alias.to.color"));
+         return;
+      }
+
+
+      SQLAlias sqlAlias = ((SQLAlias)list.getModel().getElementAt(selectedIndices[0]));
+
+      Color startColor = null;
+
+      if(sqlAlias.getColorProperties().isOverrideAliasBackgroundColor())
+      {
+         startColor = new Color(sqlAlias.getColorProperties().getAliasBackgroundColorRgbValue());
+      }
+
+
+      if(null != startColor)
+      {
+         JPopupMenu popupMenu = new JPopupMenu();
+
+         popupMenu.add(createChooseColorItem(list, startColor));
+         popupMenu.add(createRemoveColorItem(list));
+
+         Point p = MouseInfo.getPointerInfo().getLocation();
+
+         SwingUtilities.convertPointFromScreen(p, list);
+
+         popupMenu.show(list, p.x, p.y);
+      }
+      else
+      {
+         colorSelection(list, null, false);
+      }
+   }
+
+   private static JMenuItem createRemoveColorItem(JList list)
+   {
+      JMenuItem ret = new JMenuItem(s_stringMgr.getString("remove.color"));
+      ret.addActionListener(e -> colorSelection(list, null, true));
+      return ret;
+   }
+
+   private static JMenuItem createChooseColorItem(JList list, Color startColor)
+   {
+      JMenuItem ret = new JMenuItem(s_stringMgr.getString("choose.color"));
+      ret.addActionListener(e -> colorSelection(list, startColor, false));
+      return ret;
+   }
+
+   private static void colorSelection(JList list, Color startColor, boolean remove)
+   {
+
+      Color newColor = null;
+
+      if (false == remove)
+      {
+         newColor = JColorChooser.showDialog(list, ColorPropertiesPanel.i18n.ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+
+         if(null == newColor)
+         {
+            return;
+         }
+      }
+
+      int[] selectedIndices = list.getSelectedIndices();
+
+      for (int selectedIndex : selectedIndices)
+      {
+         SQLAlias sqlAlias = (SQLAlias) list.getModel().getElementAt(selectedIndex);
+
+         if (remove)
+         {
+            sqlAlias.getColorProperties().setOverrideAliasBackgroundColor(false);
+         }
+         else
+         {
+            sqlAlias.getColorProperties().setOverrideAliasBackgroundColor(true);
+            sqlAlias.getColorProperties().setAliasBackgroundColorRgbValue(newColor.getRGB());
+         }
+
+      }
+
+      list.repaint();
+   }
+}

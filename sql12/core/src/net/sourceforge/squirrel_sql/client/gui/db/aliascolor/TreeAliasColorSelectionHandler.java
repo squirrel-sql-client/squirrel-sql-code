@@ -1,6 +1,9 @@
-package net.sourceforge.squirrel_sql.client.gui.db;
+package net.sourceforge.squirrel_sql.client.gui.db.aliascolor;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasTreeUtil;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.ColorPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -17,20 +20,15 @@ import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Point;
 
-public class AliasColorSelectionHandler
+public class TreeAliasColorSelectionHandler
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasColorSelectionHandler.class);
-
-   public static void selectColor(AliasesListModel model)
-   {
-
-   }
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TreeAliasColorSelectionHandler.class);
 
    public static void selectColor(JTree aliasTree)
    {
       TreePath[] selectionPaths = aliasTree.getSelectionPaths();
 
-      if(0 == selectionPaths.length)
+      if(null == selectionPaths || 0 == selectionPaths.length)
       {
          Dialogs.showOk(Main.getApplication().getMainFrame(), s_stringMgr.getString("select.alias.to.color"));
          return;
@@ -54,7 +52,7 @@ public class AliasColorSelectionHandler
       }
       else
       {
-         colorSelection(aliasTree, startColor, false);
+         colorSelection(aliasTree, null, false);
       }
    }
 
@@ -83,12 +81,12 @@ public class AliasColorSelectionHandler
          {
             if (remove)
             {
-               ((SQLAlias)selNode.getUserObject()).getColorProperties().setOverrideObjectTreeBackgroundColor(false);
+               ((SQLAlias)selNode.getUserObject()).getColorProperties().setOverrideAliasBackgroundColor(false);
             }
             else
             {
-               ((SQLAlias)selNode.getUserObject()).getColorProperties().setOverrideObjectTreeBackgroundColor(true);
-               ((SQLAlias)selNode.getUserObject()).getColorProperties().setObjectTreeBackgroundColorRgbValue(newColor.getRGB());
+               ((SQLAlias)selNode.getUserObject()).getColorProperties().setOverrideAliasBackgroundColor(true);
+               ((SQLAlias)selNode.getUserObject()).getColorProperties().setAliasBackgroundColorRgbValue(newColor.getRGB());
             }
          }
          else if(selNode.getUserObject() instanceof AliasFolder)
@@ -138,9 +136,9 @@ public class AliasColorSelectionHandler
       {
          SQLAlias sel = (SQLAlias) selNode.getUserObject();
 
-         if(sel.getColorProperties().isOverrideObjectTreeBackgroundColor())
+         if(sel.getColorProperties().isOverrideAliasBackgroundColor())
          {
-            ret = new Color(sel.getColorProperties().getObjectTreeBackgroundColorRgbValue());
+            ret = new Color(sel.getColorProperties().getAliasBackgroundColorRgbValue());
          }
       }
       else if(selNode.getUserObject() instanceof AliasFolder)
