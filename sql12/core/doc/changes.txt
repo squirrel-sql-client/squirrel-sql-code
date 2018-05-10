@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Aliases can be colored. This feature for example can be used to mark important Aliases.
+
 Cell data popup dialog --> Browse button now remembers last directory.
 
 Reworked corrections/abbreviations dialog. See Session toolbar button 'Configure auto correct /abreviation'.
