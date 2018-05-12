@@ -49,17 +49,30 @@ if $macosx ; then
 # Mac users are not able to agree upon which of the three lines below works correctly, see bugs 1287, 1321, 1310.
 # Thus if you have problems running SQuirreL on IOS please try out the alternative lines
 ##################################################################################################
-    SQUIRREL_SQL_HOME=`dirname "$0"`/Contents/Resources/Java
-#    SQUIRREL_SQL_HOME=$(echo $ABSPATH | grep -o '^/.*/Contents/')Resources/Java
-#    SQUIRREL_SQL_HOME=`dirname "$0"`/../Resources/Java
+
+#Alternative 1
+SQUIRREL_SQL_HOME=`dirname "$0"`/Contents/Resources/Java
+
+#Alternative 2
+#SQUIRREL_SQL_HOME=$(echo $ABSPATH | grep -o '^/.*/Contents/')Resources/Java
+
+#Alternative 3
+#SQUIRREL_SQL_HOME=`dirname "$0"`/../Resources/Java
+
+#Alternative 4 (thanks to Frank Kemmer)
+#APP_MacOS_DIR=$(dirname "$0")
+#APP_CONTENTS_DIR=$(dirname "${APP_MacOS_DIR}")
+#SQUIRREL_SQL_HOME="${APP_CONTENTS_DIR}/Resources/Java"
+#echo "### SQUIRREL_SQL_HOME: [${SQUIRREL_SQL_HOME}]"
 
 
 
-    if [ ! -d "$SQUIRREL_SQL_HOME" ]; then
-        # We assume that this is the ZIP file extracted on MacOS,
-        # so, fall-back to the defult path
-        SQUIRREL_SQL_HOME=`dirname "$0"`
-    fi
+
+if [ ! -d "$SQUIRREL_SQL_HOME" ]; then
+    # We assume that this is the ZIP file extracted on MacOS,
+    # so, fall-back to the defult path
+    SQUIRREL_SQL_HOME=`dirname "$0"`
+fi
 else
     SQUIRREL_SQL_HOME='/Applications/SQuirreLSQL.app'
 fi

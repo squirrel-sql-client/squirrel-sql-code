@@ -37,6 +37,9 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+Added new alternative to fix MAC OS launch script problem with setting SQUIRREL_SQL_HOME.
+  Thanks to Frank Kemmer
+
 CSV export --> Corrected line separator. This bug was lately introduced with feature #438.
 
 'Find column'-button now also available when result was moved to own window.
