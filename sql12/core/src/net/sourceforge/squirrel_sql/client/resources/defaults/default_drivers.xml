@@ -2,6 +2,17 @@
 
 <Beans>
 
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>SAS</name>
+		<driverClassName>com.sas.rio.MVADriver</driverClassName>
+		<url>jdbc:sasiom://&lt;host_name&gt;:&lt;port_number&gt;</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-68</string>
+		</identifier>
+		<websiteUrl>https://support.sas.com/downloads/package.htm?pid=689</websiteUrl>
+	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<name>Progress 9.1E and 10.0B</name>
