@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Added SAS default driver definition.
+ Thanks to Luca Vercelli
+
 Aliases can be colored. This feature for example can be used to mark important Aliases.
 
 Cell data popup dialog --> Browse button now remembers last directory.
