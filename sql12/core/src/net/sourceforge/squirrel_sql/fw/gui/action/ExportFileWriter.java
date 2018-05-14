@@ -57,6 +57,10 @@ public class ExportFileWriter
          {
             return new DataExportXMLWriter(file, prefs, progressController).write(data);
          }
+         else if (prefs.isFormatJSON())
+         {
+            return new DataExportJSONWriter(file, prefs, progressController).write(data);
+         }
          else
          {
             throw new IllegalStateException("None of the format flags is true");

@@ -35,6 +35,9 @@ public class TableExportPreferences
    // PREF_KEY_FORMAT_XML
    private boolean _formatXML = false;
 
+   // PREF_KEY_FORMAT_JSON
+   private boolean _formatJSON = false;
+
    // PREF_KEY_EXPORT_COMPLETE
    private boolean _exportComplete = true;
 
@@ -142,6 +145,16 @@ public class TableExportPreferences
    public void setFormatXML(boolean formatXml)
    {
       _formatXML = formatXml;
+   }
+
+   public boolean isFormatJSON()
+   {
+      return _formatJSON;
+   }
+
+   public void setFormatJSON(boolean formatJSON)
+   {
+      _formatJSON = formatJSON;
    }
 
    public boolean isExportComplete()

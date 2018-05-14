@@ -124,6 +124,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
             prefs.setFormatXLSOld(false);
             prefs.setFormatXLS(false);
             prefs.setFormatXML(false);
+            prefs.setFormatJSON(false);
          }
          else if(fileName.toUpperCase().endsWith("XLS"))
          {
@@ -131,6 +132,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
             prefs.setFormatXLSOld(true);
             prefs.setFormatXLS(false);
             prefs.setFormatXML(false);
+            prefs.setFormatJSON(false);
          }
          else if(fileName.toUpperCase().endsWith("XLSX"))
          {
@@ -138,6 +140,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
             prefs.setFormatXLSOld(false);
             prefs.setFormatXLS(true);
             prefs.setFormatXML(false);
+            prefs.setFormatJSON(false);
          }
          else if(fileName.toUpperCase().endsWith("XML"))
          {
@@ -145,6 +148,15 @@ public class SQLToFileHandler implements ISQLExecutionListener
             prefs.setFormatXLSOld(false);
             prefs.setFormatXLS(false);
             prefs.setFormatXML(true);
+            prefs.setFormatJSON(false);
+         }
+         else if(fileName.toUpperCase().endsWith("JSON"))
+         {
+            prefs.setFormatCSV(false);
+            prefs.setFormatXLSOld(false);
+            prefs.setFormatXLS(false);
+            prefs.setFormatXML(false);
+            prefs.setFormatJSON(true);
          }
          // else use the prefs predefined format
 

@@ -124,6 +124,14 @@ public class TableExportCsvController
          }
       });
 
+      _dlg.radFormatJSON.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onFormat(true);
+         }
+      });
+
 
       _dlg.chkSeparatorTab.addActionListener(new ActionListener()
       {
@@ -204,7 +212,7 @@ public class TableExportCsvController
             replaceFileEnding();
          }
       }
-      else if (_dlg.radFormatXML.isSelected())
+      else if (_dlg.radFormatXML.isSelected() || _dlg.radFormatJSON.isSelected())
       {
          _dlg.lblSeparator.setEnabled(false);
          _dlg.lblCharset.setEnabled(false);
@@ -243,6 +251,10 @@ public class TableExportCsvController
       else if (_dlg.radFormatXML.isSelected())
       {
          newEnding = "xml";
+      }
+      else if (_dlg.radFormatJSON.isSelected())
+      {
+         newEnding = "json";
       }
       else
       {
@@ -454,6 +466,9 @@ public class TableExportCsvController
       //Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
       prefs.setFormatXML(_dlg.radFormatXML.isSelected());
 
+      //Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
+      prefs.setFormatJSON(_dlg.radFormatJSON.isSelected());
+
       //Preferences.userRoot().putBoolean(PREF_KEY_SEPERATOR_TAB, _dlg.chkSeparatorTab.isSelected());
       prefs.setSeperatorTab(_dlg.chkSeparatorTab.isSelected());
 
@@ -516,6 +531,10 @@ public class TableExportCsvController
       else if(prefs.isFormatXML())
       {
          _dlg.radFormatXML.setSelected(true);
+      }
+      else if(prefs.isFormatJSON())
+      {
+         _dlg.radFormatJSON.setSelected(true);
       }
       else
       {

@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Added JSON to export formats. See right mouse menu on tables or tools popup (ctrl+t) on SQLs.
+
 Added SAS default driver definition.
  Thanks to Luca Vercelli
 

@@ -18,6 +18,7 @@ public class TableExportPreferencesDAO
    private static final String PREF_KEY_FORMAT_XLS = "SquirrelSQL.csvexport.formatXLS"; // is xlsx
    private static final String PREF_KEY_FORMAT_XLS_OLD = "SquirrelSQL.csvexport.formatXLS_OLD"; // is xls
    private static final String PREF_KEY_FORMAT_XML = "SquirrelSQL.csvexport.formatXML";
+   private static final String PREF_KEY_FORMAT_JSON = "SquirrelSQL.csvexport.formatJSON";
 
    private static final String PREF_KEY_LIMIT_ROWS = "SquirrelSQL.sqlexport.limitRows";
 
@@ -40,6 +41,7 @@ public class TableExportPreferencesDAO
       ret.setFormatXLS(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_XLS, ret.isFormatXLS()));
       ret.setFormatXLSOld(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_XLS_OLD, ret.isFormatXLSOld()));
       ret.setFormatXML(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_XML, ret.isFormatXML()));
+      ret.setFormatJSON(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_JSON, ret.isFormatJSON()));
 
       ret.setLimitRows(Preferences.userRoot().get(PREF_KEY_LIMIT_ROWS, ret.getLimitRows()));
 
@@ -62,6 +64,7 @@ public class TableExportPreferencesDAO
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS, prefs.isFormatXLS());
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS_OLD, prefs.isFormatXLSOld());
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XML, prefs.isFormatXML());
+      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_JSON, prefs.isFormatJSON());
 
       Preferences.userRoot().put(PREF_KEY_LIMIT_ROWS, prefs.getLimitRows());
    }
