@@ -208,8 +208,7 @@ public class RowDataInputFrame extends JDialog
 					colWidth = IDataSetViewer.MAX_COLUMN_WIDTH * _multiplier;
 				}
 
-				TableColumn col = new TableColumn(i, colWidth,
-					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);
+				TableColumn col = new TableColumn(i, colWidth, CellComponentFactory.getTableCellRenderer(colDefs[i]), null);
 				col.setHeaderValue(colDef.getColumnName());
 				cm.addColumn(col);
 			}
@@ -271,15 +270,21 @@ public class RowDataInputFrame extends JDialog
 			addMouseListener(m);
 		}
 
-		public boolean isCellEditable(int row, int col) {
+		public boolean isCellEditable(int row, int col)
+		{
 			if (row > 0)
-				return false;	// only the first row (containing data) is editable
-			return CellComponentFactory.isEditableInCell(_colDefs[col], getValueAt(row,col));
+			{
+				return false;   // only the first row (containing data) is editable
+			}
+			return CellComponentFactory.isEditableInCell(_colDefs[col], getValueAt(row, col));
 		}
 
-		public TableCellRenderer getCellRenderer(int row, int column) {
+		public TableCellRenderer getCellRenderer(int row, int column)
+		{
 			if (row == 0)
+			{
 				return CellComponentFactory.getTableCellRenderer(_colDefs[column]);
+			}
 			// for entries past the first one, use the default renderer
 			return new RowDataDescriptionRenderer();
 		}

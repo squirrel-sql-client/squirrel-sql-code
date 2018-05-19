@@ -553,8 +553,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
                colWidth = colDef.getAbsoluteWidth();
             }
 
-            ExtTableColumn col = new ExtTableColumn(i, colWidth,
-					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);
+            ExtTableColumn col = new ExtTableColumn(i, colWidth, CellComponentFactory.getTableCellRenderer(colDefs[i]), null);
 
             String headerValue = colDef.getColumnHeading();
             col.setHeaderValue(headerValue);
