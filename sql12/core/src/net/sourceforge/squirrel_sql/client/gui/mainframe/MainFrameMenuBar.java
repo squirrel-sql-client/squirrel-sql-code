@@ -445,6 +445,8 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, CloseAllSQLResultTabsAction.class, menu);
 		addToMenu(rsrc, CloseCurrentSQLResultTabAction.class, menu);
 		addToMenu(rsrc, CloseAllSQLResultTabsButCurrentAction.class, menu);
+		addToMenu(rsrc, CloseAllSQLResultTabsToLeftAction.class, menu);
+		addToMenu(rsrc, CloseAllSQLResultTabsToRightAction.class, menu);
 		addToMenu(rsrc, CloseAllSQLResultWindowsAction.class, menu);
 		return menu;
 	}

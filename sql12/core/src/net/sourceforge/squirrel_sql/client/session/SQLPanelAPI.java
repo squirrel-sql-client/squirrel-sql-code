@@ -115,6 +115,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction("tabprevious", ac.get(GotoPreviousResultsTabAction.class));
       _toolsPopupController.addAction("tabcloseall", ac.get(CloseAllSQLResultTabsAction.class));
       _toolsPopupController.addAction("tabcloseallbutcur", ac.get(CloseAllSQLResultTabsButCurrentAction.class));
+      _toolsPopupController.addAction("tabclosealltoleft", ac.get(CloseAllSQLResultTabsToLeftAction.class));
+      _toolsPopupController.addAction("tabclosealltoRight", ac.get(CloseAllSQLResultTabsToRightAction.class));
       _toolsPopupController.addAction("tabclosecur", ac.get(CloseCurrentSQLResultTabAction.class));
       _toolsPopupController.addAction("tabsticky", ac.get(ToggleCurrentSQLResultTabStickyAction.class));
 
@@ -699,6 +701,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
    public void closeAllButCurrentResultTabs()
    {
       _panel.getSQLExecPanel().closeAllButCurrentResultTabs();
+   }
+
+   @Override
+   public void closeAllToResultTabs(boolean left)
+   {
+		_panel.getSQLExecPanel().closeAllToResultTabs(left);
    }
 
    public void closeCurrentResultTab()

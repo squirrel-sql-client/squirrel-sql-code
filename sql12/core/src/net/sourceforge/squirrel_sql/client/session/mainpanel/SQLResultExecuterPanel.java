@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsToLeftAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsToRightAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
@@ -369,7 +371,7 @@ public class SQLResultExecuterPanel extends JPanel
    /**
 	 * Close all the Results frames.
 	 */
-	public synchronized void closeAllSQLResultFrames()
+	public void closeAllSQLResultFrames()
 	{
       for (ResultFrame sqlResultFrame : _sqlResultFrames)
       {
@@ -380,7 +382,7 @@ public class SQLResultExecuterPanel extends JPanel
 	/**
 	 * Close all the Results tabs.
 	 */
-	public synchronized void closeAllSQLResultTabs()
+	public void closeAllSQLResultTabs()
 	{
       ArrayList<Component> allTabs = getAllTabs();
 
@@ -405,7 +407,7 @@ public class SQLResultExecuterPanel extends JPanel
       return allTabs;
    }
 
-   public synchronized void closeAllButCurrentResultTabs()
+   public void closeAllButCurrentResultTabs()
    {
       Component selectedTab = _tabbedExecutionsPanel.getSelectedComponent();
 
@@ -422,7 +424,37 @@ public class SQLResultExecuterPanel extends JPanel
       }
    }
 
-   public synchronized void toggleCurrentSQLResultTabSticky()
+   public void closeAllToResultTabs(boolean left)
+   {
+      int selectedIndex = _tabbedExecutionsPanel.getSelectedIndex();
+
+      ArrayList<Component> tabsToClose = new ArrayList<>();
+
+      if(left)
+      {
+         for (int i = 0; i < selectedIndex; i++)
+         {
+            tabsToClose.add(_tabbedExecutionsPanel.getComponentAt(i));
+         }
+      }
+      else
+      {
+         for (int i = selectedIndex + 1; i < _tabbedExecutionsPanel.getTabCount(); i++)
+         {
+            tabsToClose.add(_tabbedExecutionsPanel.getComponentAt(i));
+         }
+      }
+
+      for (Component component : tabsToClose)
+      {
+         if (false == component instanceof CancelPanel)
+         {
+            closeTab(component);
+         }
+      }
+   }
+
+   public void toggleCurrentSQLResultTabSticky()
    {
       if (null != _stickyTab)
       {
@@ -939,54 +971,40 @@ public class SQLResultExecuterPanel extends JPanel
       String closeLabel = s_stringMgr.getString("SQLResultExecuterPanel.close");
       JMenuItem mnuClose = new JMenuItem(closeLabel);
       initAccelerator(CloseCurrentSQLResultTabAction.class, mnuClose);
-      mnuClose.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            closeCurrentResultTab();
-         }
-      });
+      mnuClose.addActionListener(e -> closeCurrentResultTab());
       popup.add(mnuClose);
 
       // i18n[SQLResultExecuterPanel.closeAllButThis=Close all but this]
-      String cabtLabel = 
-          s_stringMgr.getString("SQLResultExecuterPanel.closeAllButThis");
+      String cabtLabel = s_stringMgr.getString("SQLResultExecuterPanel.closeAllButThis");
       JMenuItem mnuCloseAllButThis = new JMenuItem(cabtLabel);
       initAccelerator(CloseAllSQLResultTabsButCurrentAction.class, mnuCloseAllButThis);
-      mnuCloseAllButThis.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            closeAllButCurrentResultTabs();
-         }
-      });
+      mnuCloseAllButThis.addActionListener(e -> closeAllButCurrentResultTabs());
       popup.add(mnuCloseAllButThis);
+
+      String closeAlltoLeftLabel = s_stringMgr.getString("SQLResultExecuterPanel.closeAllToLeft");
+      JMenuItem mnuCloseAllToLeft = new JMenuItem(closeAlltoLeftLabel);
+      initAccelerator(CloseAllSQLResultTabsToLeftAction.class, mnuCloseAllToLeft);
+      mnuCloseAllToLeft.addActionListener(e -> closeAllToResultTabs(true));
+      popup.add(mnuCloseAllToLeft);
+
+      String closeAlltoRightLabel = s_stringMgr.getString("SQLResultExecuterPanel.closeAllToRight");
+      JMenuItem mnuCloseAllToRight = new JMenuItem(closeAlltoRightLabel);
+      initAccelerator(CloseAllSQLResultTabsToRightAction.class, mnuCloseAllToLeft);
+      mnuCloseAllToRight.addActionListener(e -> closeAllToResultTabs(false));
+      popup.add(mnuCloseAllToRight);
 
       // i18n[SQLResultExecuterPanel.closeAll=Close all]
       String caLabel = s_stringMgr.getString("SQLResultExecuterPanel.closeAll");
       JMenuItem mnuCloseAll = new JMenuItem(caLabel);
       initAccelerator(CloseAllSQLResultTabsAction.class, mnuCloseAll);
-      mnuCloseAll.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            closeAllSQLResultTabs();
-         }
-      });
+      mnuCloseAll.addActionListener(e -> closeAllSQLResultTabs());
       popup.add(mnuCloseAll);
 
       // i18n[SQLResultExecuterPanel.toggleSticky=Toggle sticky]
-      String tsLabel = 
-          s_stringMgr.getString("SQLResultExecuterPanel.toggleSticky");
+      String tsLabel = s_stringMgr.getString("SQLResultExecuterPanel.toggleSticky");
       JMenuItem mnuToggleSticky = new JMenuItem(tsLabel);
       initAccelerator(ToggleCurrentSQLResultTabStickyAction.class, mnuToggleSticky);
-      mnuToggleSticky.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            toggleCurrentSQLResultTabSticky();
-         }
-      });
+      mnuToggleSticky.addActionListener(e -> toggleCurrentSQLResultTabSticky());
       popup.add(mnuToggleSticky);
 
       _tabbedExecutionsPanel.addMouseListener(new MouseAdapter()

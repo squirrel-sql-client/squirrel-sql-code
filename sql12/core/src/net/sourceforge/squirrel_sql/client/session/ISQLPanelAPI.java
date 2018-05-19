@@ -226,7 +226,9 @@ public interface ISQLPanelAPI
 	 */
    void closeAllButCurrentResultTabs();
 
-   /**
+	void closeAllToResultTabs(boolean left);
+
+	/**
 	 * Close the selected result tab.
 	 */
    void closeCurrentResultTab();

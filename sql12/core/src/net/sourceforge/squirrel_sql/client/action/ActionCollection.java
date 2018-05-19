@@ -447,6 +447,8 @@ public class ActionCollection
 		add(new CloseAllButCurrentSessionsAction(_app));
 		add(new CloseAllSQLResultTabsAction(_app));
 		add(new CloseAllSQLResultTabsButCurrentAction(_app));
+		add(new CloseAllSQLResultTabsToLeftAction(_app));
+		add(new CloseAllSQLResultTabsToRightAction(_app));
 		add(new CloseCurrentSQLResultTabAction(_app));
 		add(new ToggleCurrentSQLResultTabStickyAction(_app));
 		add(new CloseAllSQLResultWindowsAction(_app));
