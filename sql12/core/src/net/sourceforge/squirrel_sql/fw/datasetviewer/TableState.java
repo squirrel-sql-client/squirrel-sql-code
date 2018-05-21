@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.rowcolor.RowColorHandlerState;
 import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
@@ -19,6 +21,7 @@ public class TableState
    private HashMap<Integer, Integer> _columnWidthsByModelIndex = new HashMap<Integer, Integer>();
    private HashMap<Integer, Integer> _columnIndexByModelIndex = new HashMap<Integer, Integer>();
    private int _selectedRow;
+   private RowColorHandlerState _rowColorHandlerState;
 
    public TableState(JTable table)
    {
@@ -42,7 +45,10 @@ public class TableState
       _visibleRect = table.getVisibleRect();
 
 
-
+      if(table instanceof DataSetViewerTable)
+      {
+         _rowColorHandlerState = ((DataSetViewerTable) table).getRowColorHandler().getState();
+      }
    }
 
    public void apply(final JTable table)
@@ -86,6 +92,12 @@ public class TableState
       {
          table.getSelectionModel().setSelectionInterval(_selectedRow, _selectedRow);
       }
+
+      if(table instanceof DataSetViewerTable)
+      {
+         ((DataSetViewerTable) table).getRowColorHandler().applyState(_rowColorHandlerState);
+      }
+
 
       table.scrollRectToVisible(_visibleRect);
    }

@@ -148,11 +148,9 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       setAutoLogon(rhs.isAutoLogon());
       setUseDriverProperties(rhs.getUseDriverProperties());
       setDriverProperties(rhs.getDriverPropertiesClone());
-      _schemaProperties = 
-          (SQLAliasSchemaProperties) Utilities.cloneObject(rhs._schemaProperties, 
-                                                           getClass().getClassLoader());
-      _colorProperties = 
-      	(SQLAliasColorProperties) Utilities.cloneObject(rhs._colorProperties, getClass().getClassLoader());
+      _schemaProperties = Utilities.cloneObject(rhs._schemaProperties,
+                                                             getClass().getClassLoader());
+      _colorProperties = Utilities.cloneObject(rhs._colorProperties, getClass().getClassLoader());
       
       _connectionProperties = new SQLAliasConnectionProperties();
       SQLAliasConnectionProperties rhsConnProps = rhs.getConnectionProperties();

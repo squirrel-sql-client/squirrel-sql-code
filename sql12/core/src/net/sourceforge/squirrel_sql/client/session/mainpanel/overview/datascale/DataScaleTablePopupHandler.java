@@ -163,7 +163,7 @@ public class DataScaleTablePopupHandler
             DataScaleTableModel model = _dataScaleTable.getDataScaleTableModel();
 
             SortableTableModel sortableTableModel = (SortableTableModel) _dataScaleTable.getModel();
-            int transformedRow = sortableTableModel.transfromToModelRow(rowIx);
+            int transformedRow = sortableTableModel.transformToModelRow(rowIx);
             _dataScalePopupWasOpenedAt = model.getDataScaleAt(transformedRow);
 
 

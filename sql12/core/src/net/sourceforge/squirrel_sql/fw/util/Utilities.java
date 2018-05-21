@@ -339,7 +339,7 @@ public class Utilities
     *
     * Caution super class members are not cloned if a super class is not serializable.
     */
-   public static Object cloneObject(Object toClone, final ClassLoader classLoader)
+   public static <T> T cloneObject(T toClone, final ClassLoader classLoader)
    {
       if(null == toClone)
       {
@@ -366,7 +366,7 @@ public class Utilities
             Object copy = oIn.readObject();
             oIn.close();
 
-            return copy;
+            return (T) copy;
          }
          catch (Exception e)
          {

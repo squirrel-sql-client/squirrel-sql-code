@@ -241,7 +241,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 
 	public void sessionCreated(ISession session)
 	{
-		CodeCompletionPreferences prefs = (CodeCompletionPreferences) Utilities.cloneObject(_newSessionPrefs, getClass().getClassLoader());
+		CodeCompletionPreferences prefs = Utilities.cloneObject(_newSessionPrefs, getClass().getClassLoader());
 		session.putPluginObject(this, PLUGIN_OBJECT_PREFS_KEY, prefs);
 	}
 

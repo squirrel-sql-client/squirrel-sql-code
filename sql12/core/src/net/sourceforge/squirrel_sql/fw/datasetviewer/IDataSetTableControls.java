@@ -26,14 +26,14 @@ import javax.swing.JTable;
  * for a particular instance.
  * When we create the JTable and its associated (concrete) AbstractTableModel
  * objects, we do so within wrapper functions that define how the various
- * features of those objects operate.  This is currently done in MyJTable and
+ * features of those objects operate.  This is currently done in DataSetViewerTable and
  * MyTable within DataSetViewerTablePanel.  However, since some of the tables
  * are read-only and others are editable, there are some aspects of the table
  * operation that must be defined by the caller/creator of the table rather than
- * within the MyJTable and MyTable wrapper functions.  This means that the
+ * within the DataSetViewerTable and MyTable wrapper functions.  This means that the
  * wrapper functions must be able to make a callback to the creator object
  * so that the creator handle those operations.  We put the actual work into the
- * creator/caller object rather than MyJTable and MyTable.
+ * creator/caller object rather than DataSetViewerTable and MyTable.
  */
 public interface IDataSetTableControls
 {
@@ -42,12 +42,12 @@ public interface IDataSetTableControls
 	 * whether the table as a whole may be edited, so we do not distinguish
 	 * between different columns in the table.
 	 */
-	public boolean isTableEditable();
+	boolean isTableEditable();
 
 	/**
 	 * See if a particular column is editable.
 	 */
-	public boolean isColumnEditable(int col, Object originalValue);
+	boolean isColumnEditable(int col, Object originalValue);
 	
 	/**
 	 * See if a value in a column has been limited in some way and
@@ -56,18 +56,18 @@ public interface IDataSetTableControls
 	 * to be able to view the entire contents of the cell even if it was not
 	 * completely loaded during the initial table setup.
 	 */
-	public boolean needToReRead(int col, Object originalValue);
+	boolean needToReRead(int col, Object originalValue);
 	
 	/**
 	 * Re-read the contents of this cell from the database.
 	 * If there is a problem, the message will have a non-zero length after return.
 	 */
-	public Object reReadDatum(Object[] values, int col, StringBuffer message);
+	Object reReadDatum(Object[] values, int col, StringBuffer message);
 	
 	/**
 	 * Set up the CellEditors for the various types of data.
 	 */
-	public void setCellEditors(JTable table);
+	void setCellEditors(DataSetViewerTable table);
 	
 	/**
 	 * Call the object that represents the underlaying data model
@@ -75,20 +75,16 @@ public interface IDataSetTableControls
     *
     * @return the column indexes to update with the new value
 	 */
-	public int[] changeUnderlyingValueAt(
-		int rowIndex,
-		int columnIndex,
-		Object newValue,
-		Object oldValue);
+	int[] changeUnderlyingValueAt(int rowIndex, int columnIndex, Object newValue, Object oldValue);
 	
 	/**
 	 * Delete a set of rows from the table.
 	 * The indexes are the row indexes in the SortableModel.
 	 */
-	public void deleteRows(int[] rows);
+	void deleteRows(int[] rows);
 	
 	/**
 	 * Initiate operations to insert a new row into the table.
 	 */
-	public void insertRow();
+	void insertRow();
 }

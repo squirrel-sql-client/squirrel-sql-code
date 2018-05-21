@@ -40,14 +40,12 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	/** Specifies whether to show the column headings. */
 	private boolean _showHeadings = true;
 
-	/** Column definitions. */
-	protected ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
+	private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
 
 	/** reference to the object generating the data being displayed */
 	private IDataSetUpdateableModel _updateableModelReference = null;
 	
-	/** reference to DefaultCellEditor currently in operation, if any */
-	protected DefaultCellEditor currentCellEditor = null;
+	private DefaultCellEditor currentCellEditor = null;
 	
 	
 	public void init(IDataSetUpdateableModel updateableObject, ISession session)
@@ -244,4 +242,25 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 
 	}
 
+	/** reference to DefaultCellEditor currently in operation, if any */
+	protected DefaultCellEditor getCurrentCellEditor()
+	{
+		return currentCellEditor;
+	}
+
+	protected void setCurrentCellEditor(DefaultCellEditor currentCellEditor)
+	{
+		this.currentCellEditor = currentCellEditor;
+	}
+
+	/** Column definitions. */
+	protected ColumnDisplayDefinition[] getColDefs()
+	{
+		return _colDefs;
+	}
+
+	protected void setColDefs(ColumnDisplayDefinition[] colDefs)
+	{
+		_colDefs = colDefs;
+	}
 }

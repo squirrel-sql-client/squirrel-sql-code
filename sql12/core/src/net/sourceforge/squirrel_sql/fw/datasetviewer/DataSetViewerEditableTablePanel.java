@@ -82,7 +82,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	 */
 	public boolean isColumnEditable(int col, Object originalValue)
 	{
-		if (_colDefs == null)
+		if (getColDefs() == null)
 			return false;	// cannot edit something that we do not know anything about
 
 		if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX == col)
@@ -92,7 +92,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		if ( ((IDataSetUpdateableTableModel)getUpdateableModel()).getRowidCol() == col)
 			return false;
 
-		return CellComponentFactory.isEditableInCell(_colDefs[col], originalValue);
+		return CellComponentFactory.isEditableInCell(getColDefs()[col], originalValue);
 	}
 	
 	/**
@@ -101,16 +101,16 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	 * parameters (e.g. nullable or not nullable) we set the cell editors on the columns
 	 * rather than on the table as a whole.
 	 */
-	public void setCellEditors(JTable table)
+	public void setCellEditors(DataSetViewerTable table)
 	{
 		// we need to table column model to be able to add CellEditors to the
 		// individual columns
-		cellPopupMenu = new TablePopupMenu(getUpdateableModel(), this, table, getDataModelImplementationDetails());
+		cellPopupMenu = new TablePopupMenu(getUpdateableModel(), this, table);
 		
-		for (int i=0; i < _colDefs.length; i++) {
+		for (int i = 0; i < getColDefs().length; i++) {
 			// use factory to get the appropriate editor
 			DefaultCellEditor editor =
-				CellComponentFactory.getInCellEditor(table, _colDefs[i]);
+				CellComponentFactory.getInCellEditor(table, getColDefs()[i]);
 			
 			// add right-click menu to cell editor
 			editor.getComponent().addMouseListener(
@@ -201,7 +201,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// the object contents.
 		if (oldValue != null && newValue != null) {
 			// ask the DataType object if the two values are the same
-			if (CellComponentFactory.areEqual( _colDefs[col], oldValue, newValue))
+			if (CellComponentFactory.areEqual( getColDefs()[col], oldValue, newValue))
 			{
 				return new int[0];   // the caller does not need to know that nothing happened
 			}
@@ -215,7 +215,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		if (getUpdateableModelReference() != null)
 		{
 			message = ((IDataSetUpdateableTableModel) getUpdateableModelReference()).
-					getWarningOnCurrentData(getRow(row), _colDefs, col, oldValue);
+					getWarningOnCurrentData(getRow(row), getColDefs(), col, oldValue);
 		}
 
 		if (message != null)
@@ -239,7 +239,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		if (getUpdateableModelReference() != null)
 		{
 			message = ((IDataSetUpdateableTableModel) getUpdateableModelReference()).
-					getWarningOnProjectedUpdate(getRow(row), _colDefs, col, newValue);
+					getWarningOnProjectedUpdate(getRow(row), getColDefs(), col, newValue);
 		}
 
 		if (message != null) {
@@ -264,7 +264,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// IDataSetUpdateableTableModel object set in our super class.)
 
 		message = ((IDataSetUpdateableTableModel)getUpdateableModelReference()).
-			updateTableComponent(getRow(row), _colDefs, col, oldValue, newValue);
+			updateTableComponent(getRow(row), getColDefs(), col, oldValue, newValue);
 
 		if (message != null)
 		{
@@ -284,9 +284,9 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// more than once, we need to tell the caller to update all columns.
 		// Otherwise generation of where clauses for further editing will fail.
 		ArrayList<Integer> buf = new ArrayList<Integer>();
-		for (int i = 0; i < _colDefs.length; i++)
+		for (int i = 0; i < getColDefs().length; i++)
 		{
-			if(_colDefs[i].getFullTableColumnName().equalsIgnoreCase(_colDefs[col].getFullTableColumnName()))
+			if(getColDefs()[i].getFullTableColumnName().equalsIgnoreCase(getColDefs()[col].getFullTableColumnName()))
 			{
 				buf.add(Integer.valueOf(i));
 			}
@@ -337,25 +337,25 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		}
 		
 		//cancel any current cell editing operations
-		if (currentCellEditor != null) {
-			currentCellEditor.cancelCellEditing();
-			currentCellEditor = null;
+		if (getCurrentCellEditor() != null) {
+			getCurrentCellEditor().cancelCellEditing();
+			setCurrentCellEditor(null);
 		}
 		
 		// create data structure containing contents of rows to be deleted
-		// We cannot use the getRow() method because that uses MyJTable whereas
+		// We cannot use the getRow() method because that uses DataSetViewerTable whereas
 		// the indexes that we have are indexes in the SortableTableModel.
 		SortableTableModel tableModel = (SortableTableModel)((JTable)getComponent()).getModel();
 
-		Object[][] rowData = new Object[rows.length][_colDefs.length];
+		Object[][] rowData = new Object[rows.length][getColDefs().length];
 		for (int i=0; i<rows.length; i++) {
-			for (int j=0; j<_colDefs.length; j++)
+			for (int j = 0; j< getColDefs().length; j++)
 				rowData[i][j] = tableModel.getValueAt(rows[i],j);
 		}
 		
 		// tell creator to delete from DB
 		String message = 
-			((IDataSetUpdateableTableModel)getUpdateableModel()).deleteRows(rowData, _colDefs);
+			((IDataSetUpdateableTableModel)getUpdateableModel()).deleteRows(rowData, getColDefs());
 
 		if (message != null)
 		{
@@ -375,7 +375,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// SortableTableModel, not the Actual model.  Thus the row
 		// indexes to delete are given in the SortableTableModel row numbers,
 		// so we must work through that model model to actually do the delete.
-		MyJTable myJTable = (MyJTable) getComponent();
+		DataSetViewerTable myJTable = (DataSetViewerTable) getComponent();
 		((SortableTableModel) myJTable.getModel()).deleteRows(rows);
       myJTable.clearSelection();
 		myJTable.invalidate();
@@ -397,21 +397,21 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// get the default values from the DB for the table columns
 		String[] dbDefaultValues = 
 			((IDataSetUpdateableTableModel)getUpdateableModelReference()).
-				getDefaultValues(_colDefs);
+				getDefaultValues(getColDefs());
 		
 		// based on defaults from DB, get the default object instance
 		// for each column
 		Object[] initialValues = new Object[dbDefaultValues.length];
 		for (int i=0; i< initialValues.length; i++) {
 			initialValues[i] = CellComponentFactory.getDefaultValue(
-				_colDefs[i], dbDefaultValues[i]);
+				getColDefs()[i], dbDefaultValues[i]);
 		}
 
 		// The following only works if SwingUtilities.getRoot(table) returns
 		// and instanceof BaseMDIParentFrame.
 		// If SwingTUilities.getRoot(table) returns and instance of Dialog or
 		// Frame, then other code must be used.
-		RowDataInputFrame rdif = new RowDataInputFrame( table, _colDefs, initialValues, this);
+		RowDataInputFrame rdif = new RowDataInputFrame( table, getColDefs(), initialValues, this);
 //		((IMainFrame)comp).addInternalFrame(rdif, false);
 //		rdif.setLayer(JLayeredPane.POPUP_LAYER);
 		rdif.pack();
@@ -462,7 +462,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 
 		String message = 
 			((IDataSetUpdateableTableModel)getUpdateableModelReference()).
-				insertRow(values, _colDefs);
+				insertRow(values, getColDefs());
 		
 		if (message != null) {
 			// there was a problem inserting into the DB

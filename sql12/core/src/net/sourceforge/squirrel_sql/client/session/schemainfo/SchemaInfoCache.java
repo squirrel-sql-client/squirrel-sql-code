@@ -140,8 +140,7 @@ public class SchemaInfoCache implements Serializable
 
             for (int i = 0; i < allowedSchemas.length; i++)
             {
-               SchemaLoadInfo buf = (SchemaLoadInfo) Utilities.cloneObject(
-                     schemaLoadInfos[0], getClass().getClassLoader());
+               SchemaLoadInfo buf = Utilities.cloneObject(schemaLoadInfos[0], getClass().getClassLoader());
                buf.schemaName = allowedSchemas[i];
                
                ret.add(buf);
@@ -175,8 +174,7 @@ public class SchemaInfoCache implements Serializable
             schemaLoadInfos[i].schemaName = schemaName;
             if(null != tableTypes)
             {
-               SchemaLoadInfo buf = (SchemaLoadInfo) Utilities.cloneObject(
-                     schemaLoadInfos[i], getClass().getClassLoader());
+               SchemaLoadInfo buf = Utilities.cloneObject(schemaLoadInfos[i], getClass().getClassLoader());
                buf.tableTypes = tableTypes;
                return new SchemaLoadInfo[]{buf};
             }

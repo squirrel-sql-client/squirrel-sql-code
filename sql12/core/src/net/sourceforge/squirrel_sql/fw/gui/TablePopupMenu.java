@@ -18,11 +18,12 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.gui.action.ColorSelectedRowsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.ShowReferencesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.ShowRowNumbersCommand;
@@ -80,21 +81,22 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_COLUMN_HEADER = 9;
 		int SHOW_REFERENCES = 10;
 		int COPY_SELECTED_ROWS_TO_OWN_WINDOW = 11;
-		int EXPORT_CSV = 12;
-		int SELECT_ALL = 13;
-		int ADJUST_ALL_COL_WIDTHS_ACTION = 14;
-		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 15;
-		int SHOW_ROW_NUMBERS = 16;
-		int COPY_WIKI = 17;
-		int SELECT_ROWS = 18;
-		int LAST_ENTRY = 19;
+		int COLOR_SELECTED_ROWS = 12;
+		int EXPORT_CSV = 13;
+		int SELECT_ALL = 14;
+		int ADJUST_ALL_COL_WIDTHS_ACTION = 15;
+		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 16;
+		int SHOW_ROW_NUMBERS = 17;
+		int COPY_WIKI = 18;
+		int SELECT_ROWS = 19;
+		int LAST_ENTRY = 20;
    }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
 	private final JMenuItem[] _menuItems = new JMenuItem[IOptionTypes.LAST_ENTRY + 1];
 
-	private JTable _table;
+	private DataSetViewerTable _table;
 
 	private JCheckBoxMenuItem _alwaysAdjustAllColWidtshActionItem;
 	private JCheckBoxMenuItem _showRowNumbersItem;
@@ -113,6 +115,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyColumnHeaderAction _copyColumnHeader = new CopyColumnHeaderAction();
 	private ShowReferencesAction _showReferences = new ShowReferencesAction();
 	private CopySelectedRowsToOwnWindowAction _copySelectedRowsToOwnWindow = new CopySelectedRowsToOwnWindowAction();
+	private ColorSelectedRowsAction _colorSelectedRows = new ColorSelectedRowsAction();
 	private ExportCsvAction _exportCvs = new ExportCsvAction();
    private AdjustAllColWidthsAction _adjustAllColWidthsAction = new AdjustAllColWidthsAction();
 	private AlwaysAdjustAllColWidthsAction _alwaysAdjustAllColWidthsAction = new AlwaysAdjustAllColWidthsAction();
@@ -131,7 +134,6 @@ public class TablePopupMenu extends BasePopupMenu
 	// to tell the application to set up an editable display panel
 	private IDataSetUpdateableModel _updateableModel = null;
 
-   private DataModelImplementationDetails _dataModelImplementationDetails;
    // pointer to the viewer
 	// This is needed for insert and delete operations
 	private DataSetViewerTablePanel _viewer = null;
@@ -148,13 +150,11 @@ public class TablePopupMenu extends BasePopupMenu
 	public TablePopupMenu(boolean allowEditing,
 								 IDataSetUpdateableModel updateableModel,
 								 DataSetViewerTablePanel viewer,
-								 DataModelImplementationDetails dataModelImplementationDetails,
 								 ISession session)
 	{
 		// save the pointer needed to enable editing of data on-demand
 		_updateableModel = updateableModel;
 
-      _dataModelImplementationDetails = dataModelImplementationDetails;
 
 		// save the pointer needed for insert and delete operations
 		_viewer = viewer;
@@ -188,6 +188,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		addSeparator();
 		_menuItems[IOptionTypes.COPY_SELECTED_ROWS_TO_OWN_WINDOW] = add(_copySelectedRowsToOwnWindow);
+		_menuItems[IOptionTypes.COLOR_SELECTED_ROWS] = add(_colorSelectedRows);
 
 
 		addSeparator();
@@ -239,13 +240,11 @@ public class TablePopupMenu extends BasePopupMenu
 	/**
 	 * Constructor used when creating menu for use in cell editor.
 	 */
-	public TablePopupMenu(IDataSetUpdateableModel updateableModel,
-								 DataSetViewerTablePanel viewer, JTable table, DataModelImplementationDetails dataModelImplementationDetails)
+	public TablePopupMenu(IDataSetUpdateableModel updateableModel, DataSetViewerTablePanel viewer, DataSetViewerTable table)
 	{
 		super();
 		// save the pointer needed to enable editing of data on-demand
 		_updateableModel = updateableModel;
-      _dataModelImplementationDetails = dataModelImplementationDetails;
 
       // save the pointer needed for insert and delete operations
 		_viewer = viewer;
@@ -270,7 +269,7 @@ public class TablePopupMenu extends BasePopupMenu
 		add(_print);
 	}
 
-	public void setTable(JTable value)
+	public void setTable(DataSetViewerTable value)
 	{
 		_table = value;
 		replaceStandardTableCopyAction();
@@ -431,7 +430,7 @@ public class TablePopupMenu extends BasePopupMenu
 		{
 			if (_table != null)
 			{
-				new TableCopyUpdateStatementCommand(_table, _dataModelImplementationDetails).execute();
+				new TableCopyUpdateStatementCommand(_table, _viewer.getDataModelImplementationDetails()).execute();
 			}
 		}
 	}
@@ -447,7 +446,7 @@ public class TablePopupMenu extends BasePopupMenu
 		{
 			if (_table != null)
 			{
-				new TableCopyInsertStatementCommand(_table, _dataModelImplementationDetails).execute();
+				new TableCopyInsertStatementCommand(_table, _viewer.getDataModelImplementationDetails()).execute();
 			}
 		}
 
@@ -520,6 +519,22 @@ public class TablePopupMenu extends BasePopupMenu
          if (_table != null)
          {
             new CopySelectedRowsToOwnWindowCommand(_table, _session).execute();
+         }
+      }
+   }
+
+   private class ColorSelectedRowsAction extends BaseAction
+   {
+		ColorSelectedRowsAction()
+      {
+         super(s_stringMgr.getString("TablePopupMenu.ColorSelectedRows"));
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+         if (_table != null)
+         {
+            new ColorSelectedRowsCommand(_table).execute();
          }
       }
    }

@@ -77,7 +77,7 @@ public class DataScaleTable extends SortableTable
          DataScaleTableModel model = getDataScaleTableModel();
 
          SortableTableModel sortableTableModel = (SortableTableModel) getModel();
-         return new DataScaleTableCellEditor(model.getDataScaleAt(sortableTableModel.transfromToModelRow(row)));
+         return new DataScaleTableCellEditor(model.getDataScaleAt(sortableTableModel.transformToModelRow(row)));
       }
    }
 
@@ -102,7 +102,7 @@ public class DataScaleTable extends SortableTable
          public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
          {
             SortableTableModel sortableTableModel = (SortableTableModel) getModel();
-            return dataScaleTableModel.getDataScaleAt(sortableTableModel.transfromToModelRow(row)).getPanel();
+            return dataScaleTableModel.getDataScaleAt(sortableTableModel.transformToModelRow(row)).getPanel();
          }
       };
    }

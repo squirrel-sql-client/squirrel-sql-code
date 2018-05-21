@@ -225,7 +225,7 @@ public class CellComponentFactory
    /**
     * Get a TableCellRenderer for the given column.
     */
-   public static TableCellRenderer getTableCellRenderer(ColumnDisplayDefinition colDef)
+   public static CellRenderer getTableCellRenderer(ColumnDisplayDefinition colDef)
    {
       return new CellRenderer(getDataTypeObject(null, colDef));
    }

@@ -32,7 +32,7 @@ public class RowSelectionTableUtil
 
       for (int i = 0; i < selectedRows.length; i++)
       {
-         Object[] row = tableModel.getRowAt(sortableTableModel.transfromToModelRow(selectedRows[i]));
+         Object[] row = tableModel.getRowAt(sortableTableModel.transformToModelRow(selectedRows[i]));
          rows.add(row);
       }
       return rows;

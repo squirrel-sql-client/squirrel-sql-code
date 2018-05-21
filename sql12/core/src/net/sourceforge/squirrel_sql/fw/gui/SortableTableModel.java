@@ -115,11 +115,14 @@ public class SortableTableModel extends AbstractTableModel
 		}
 		else
 		{
-            if (row < _indexes.length) {
-                return _actualModel.getValueAt(_indexes[row].intValue(), col);
-            } else {
-                return null;
-            }
+			if (row < _indexes.length)
+			{
+				return _actualModel.getValueAt(_indexes[row].intValue(), col);
+			}
+			else
+			{
+				return null;
+			}
 		}
 	}
 
@@ -296,17 +299,17 @@ public class SortableTableModel extends AbstractTableModel
 	 * When the table is sorted table methods like getSelectedRow() return row indices that
 	 * correspond to the view not to the model. This method transforms the view index to
 	 * the model index.
-	 * @param row The view row index.
+	 * @param viewRow The view row index.
 	 * @return The model row index. -1 if no model index corresponding to row was found.
 	 */
-	public int transfromToModelRow(int row)
+	public int transformToModelRow(int viewRow)
 	{
-		if(0 > row || row >= _indexes.length)
+		if(0 > viewRow || viewRow >= _indexes.length)
 		{
 			return -1;
 		}
 
-		return _indexes[row].intValue();
+		return _indexes[viewRow].intValue();
 	}
 
    public void removeSortingListener(SortingListener sortingListener)

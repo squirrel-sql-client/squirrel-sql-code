@@ -7,11 +7,11 @@ import java.util.ArrayList;
 public class DataSetViewerTableListSelectionHandler
 {
    private ArrayList<RowSelectionListener> _rowSelectionListeners = new ArrayList<RowSelectionListener>();
-   private DataSetViewerTablePanel.MyJTable _table;
+   private DataSetViewerTable _table;
 
    private int[] _formerSelectedIxs = new int[0];
 
-   public DataSetViewerTableListSelectionHandler(DataSetViewerTablePanel.MyJTable table)
+   public DataSetViewerTableListSelectionHandler(DataSetViewerTable table)
    {
       _table = table;
       _table.getSelectionModel().addListSelectionListener(new ListSelectionListener()

@@ -422,8 +422,7 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 
 		if (null != sourcePrefs)
 		{
-			OracleAliasPrefs targetPrefs = (OracleAliasPrefs) Utilities.cloneObject(
-			   sourcePrefs, getClass().getClassLoader());
+			OracleAliasPrefs targetPrefs = Utilities.cloneObject(sourcePrefs, getClass().getClassLoader());
 			targetPrefs.setAliasIdentifier(target.getIdentifier());
 			_oracleAliasPrefsByAliasIdentifier.put(targetPrefs.getAliasIdentifier(), targetPrefs);
 		}

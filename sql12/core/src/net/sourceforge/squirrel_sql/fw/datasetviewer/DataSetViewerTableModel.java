@@ -37,7 +37,6 @@ public final class DataSetViewerTableModel extends AbstractTableModel
 
    DataSetViewerTableModel(IDataSetTableControls creator)
 	{
-		super();
 		_creator = creator;
 	}
 

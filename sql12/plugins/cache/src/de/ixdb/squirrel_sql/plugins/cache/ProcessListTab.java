@@ -4,7 +4,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 
@@ -168,7 +167,7 @@ public class ProcessListTab  implements IMainPanelTab
    private void onTerminate()
    {
       int selectedRow = _pnlProcessList.tblProcessList.getSelectedRow();
-      selectedRow = _pnlProcessList.tblProcessList.getSortableTableModel().transfromToModelRow(selectedRow);
+      selectedRow = _pnlProcessList.tblProcessList.getSortableTableModel().transformToModelRow(selectedRow);
 
       String msg;
       if(-1 == selectedRow)
