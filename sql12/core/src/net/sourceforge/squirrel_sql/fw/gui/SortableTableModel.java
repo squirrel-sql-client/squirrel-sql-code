@@ -312,6 +312,31 @@ public class SortableTableModel extends AbstractTableModel
 		return _indexes[viewRow].intValue();
 	}
 
+	/**
+	 * When the table is sorted table methods like getSelectedRow() return row indices that
+	 * correspond to the view not to the model. This method transforms the model index to
+	 * the view index.
+	 *
+	 * Note: This method is more expensive than {@link #transformToModelRow(int)}
+	 *
+	 * @param modelRow The model row index.
+	 * @return The view row index. -1 if no view index corresponding to row was found.
+	 */
+	public int transformToViewRow(int modelRow)
+	{
+		Integer viewRowInteger = Integer.valueOf(modelRow);
+
+		for (int i = 0; i < _indexes.length; i++)
+		{
+			if(viewRowInteger.equals(_indexes[i]))
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
    public void removeSortingListener(SortingListener sortingListener)
    {
       _sortingListeners.remove(sortingListener);

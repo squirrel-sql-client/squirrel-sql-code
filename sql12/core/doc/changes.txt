@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Two new right mouse menus on result tables: 'Color selected rows' and 'Go to color'.
+
 New right mouse menu entries on SQL result tabs: 'close all to left' and 'close all to right'
 
 Added JSON to export formats. See right mouse menu on tables or tools popup (ctrl+t) on SQLs.

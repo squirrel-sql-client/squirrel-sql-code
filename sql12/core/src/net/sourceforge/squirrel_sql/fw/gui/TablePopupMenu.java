@@ -23,7 +23,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
-import net.sourceforge.squirrel_sql.fw.gui.action.ColorSelectedRowsCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectedRowsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.ShowReferencesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.ShowRowNumbersCommand;
@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectEntireRowsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.GotoColorMenuController;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
@@ -61,7 +62,6 @@ import java.awt.print.PrinterJob;
 
 public class TablePopupMenu extends BasePopupMenu
 {
-	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TablePopupMenu.class);
 
 	private ISession _session;
@@ -82,14 +82,15 @@ public class TablePopupMenu extends BasePopupMenu
 		int SHOW_REFERENCES = 10;
 		int COPY_SELECTED_ROWS_TO_OWN_WINDOW = 11;
 		int COLOR_SELECTED_ROWS = 12;
-		int EXPORT_CSV = 13;
-		int SELECT_ALL = 14;
-		int ADJUST_ALL_COL_WIDTHS_ACTION = 15;
-		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 16;
-		int SHOW_ROW_NUMBERS = 17;
-		int COPY_WIKI = 18;
-		int SELECT_ROWS = 19;
-		int LAST_ENTRY = 20;
+		int GOTO_COLOR = 13;
+		int EXPORT_CSV = 14;
+		int SELECT_ALL = 15;
+		int ADJUST_ALL_COL_WIDTHS_ACTION = 16;
+		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 17;
+		int SHOW_ROW_NUMBERS = 18;
+		int COPY_WIKI = 19;
+		int SELECT_ROWS = 20;
+		int LAST_ENTRY = 21;
    }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
@@ -114,8 +115,11 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyInsertStatementAction _copyInsertStatement = new CopyInsertStatementAction();
 	private CopyColumnHeaderAction _copyColumnHeader = new CopyColumnHeaderAction();
 	private ShowReferencesAction _showReferences = new ShowReferencesAction();
+
 	private CopySelectedRowsToOwnWindowAction _copySelectedRowsToOwnWindow = new CopySelectedRowsToOwnWindowAction();
 	private ColorSelectedRowsAction _colorSelectedRows = new ColorSelectedRowsAction();
+	private GotoColorMenuController _gotoColorMenuController = new GotoColorMenuController();
+
 	private ExportCsvAction _exportCvs = new ExportCsvAction();
    private AdjustAllColWidthsAction _adjustAllColWidthsAction = new AdjustAllColWidthsAction();
 	private AlwaysAdjustAllColWidthsAction _alwaysAdjustAllColWidthsAction = new AlwaysAdjustAllColWidthsAction();
@@ -188,10 +192,13 @@ public class TablePopupMenu extends BasePopupMenu
 
 		addSeparator();
 		_menuItems[IOptionTypes.COPY_SELECTED_ROWS_TO_OWN_WINDOW] = add(_copySelectedRowsToOwnWindow);
-		_menuItems[IOptionTypes.COLOR_SELECTED_ROWS] = add(_colorSelectedRows);
+		addSeparator();
 
+		_menuItems[IOptionTypes.COLOR_SELECTED_ROWS] = add(_colorSelectedRows);
+		_menuItems[IOptionTypes.GOTO_COLOR] = add(_gotoColorMenuController.getParentMenu());
 
 		addSeparator();
+
 		_menuItems[IOptionTypes.EXPORT_CSV] = add(_exportCvs);
       addSeparator();
       _menuItems[IOptionTypes.ADJUST_ALL_COL_WIDTHS_ACTION] = add(_adjustAllColWidthsAction);
@@ -294,6 +301,7 @@ public class TablePopupMenu extends BasePopupMenu
 	 */
 	public void show(Component invoker, int x, int y)
 	{
+		_gotoColorMenuController.createSubMenus(_table);
 		super.show(invoker, x, y);
 	}
 
@@ -540,7 +548,7 @@ public class TablePopupMenu extends BasePopupMenu
    }
 
 
-   private class AdjustAllColWidthsAction extends BaseAction
+	private class AdjustAllColWidthsAction extends BaseAction
 	{
 
 		AdjustAllColWidthsAction()

@@ -21,9 +21,9 @@ public class RowColorHandler
    {
       for (int row : _dataSetViewerTable.getSelectedRows())
       {
-         if(null != _colorByRow.get(row))
+         if(null != _colorByRow.get(_dataSetViewerTable.getSortableTableModel().transformToModelRow(row)))
          {
-            return _colorByRow.get(row);
+            return _colorByRow.get(_dataSetViewerTable.getSortableTableModel().transformToModelRow(row));
          }
       }
 
@@ -94,5 +94,11 @@ public class RowColorHandler
    public void applyState(RowColorHandlerState rowColorHandlerState)
    {
       _colorByRow = rowColorHandlerState.getColorByRow();
+   }
+
+
+   public HashMap<Integer, Color> getColorByRow()
+   {
+      return _colorByRow;
    }
 }

@@ -1,14 +1,14 @@
-package net.sourceforge.squirrel_sql.fw.gui.action;
+package net.sourceforge.squirrel_sql.fw.gui.action.colorrows;
 
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.ColorPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.MouseInfo;
@@ -72,7 +72,8 @@ public class ColorSelectedRowsCommand
 
       if (false == remove)
       {
-         newColor = JColorChooser.showDialog(_table, ColorPropertiesPanel.i18n.ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+         //newColor = JColorChooser.showDialog(_table, ColorPropertiesPanel.i18n.ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+         newColor = JColorChooser.showDialog(GUIUtils.getOwningFrame(_table), ColorPropertiesPanel.i18n.ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
 
          if (null == newColor)
          {
