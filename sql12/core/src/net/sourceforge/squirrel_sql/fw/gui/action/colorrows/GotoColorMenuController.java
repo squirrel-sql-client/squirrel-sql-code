@@ -27,7 +27,7 @@ public class GotoColorMenuController
    {
       _parentMenu.removeAll();
 
-      if(0 == table.getRowColorHandler().getColorByRow().size())
+      if(0 == table.getColoringService().getRowColorHandler().getColorByRow().size())
       {
          JMenuItem menuItem = new JMenuItem(s_stringMgr.getString("GotoColorMenuController.no.colored.rows"));
          menuItem.setEnabled(false);
@@ -63,7 +63,7 @@ public class GotoColorMenuController
    {
       HashMap<Color, Integer> minViewIndexByColor = new HashMap<>();
 
-      for (Map.Entry<Integer, Color> modelRowColorEntry : table.getRowColorHandler().getColorByRow().entrySet())
+      for (Map.Entry<Integer, Color> modelRowColorEntry : table.getColoringService().getRowColorHandler().getColorByRow().entrySet())
       {
          Integer viewRow = table.getSortableTableModel().transformToViewRow(modelRowColorEntry.getKey());
 

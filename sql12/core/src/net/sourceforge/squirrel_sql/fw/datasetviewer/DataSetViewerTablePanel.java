@@ -242,7 +242,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 
    public FindService createFindService()
    {
-      return new DefaultFindService(_table, getColumnDefinitions(), _table.getDataSetViewerTableModel());
+      return new DefaultFindService(_table, getColumnDefinitions());
    }
 
 

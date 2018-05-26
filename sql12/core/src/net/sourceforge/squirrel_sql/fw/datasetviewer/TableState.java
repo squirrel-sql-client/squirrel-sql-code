@@ -3,7 +3,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.rowcolor.RowColorHandlerState;
 import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
@@ -47,7 +46,7 @@ public class TableState
 
       if(table instanceof DataSetViewerTable)
       {
-         _rowColorHandlerState = ((DataSetViewerTable) table).getRowColorHandler().getState();
+         _rowColorHandlerState = ((DataSetViewerTable) table).getColoringService().getRowColorHandler().getState();
       }
    }
 
@@ -95,7 +94,7 @@ public class TableState
 
       if(table instanceof DataSetViewerTable)
       {
-         ((DataSetViewerTable) table).getRowColorHandler().applyState(_rowColorHandlerState);
+         ((DataSetViewerTable) table).getColoringService().getRowColorHandler().applyState(_rowColorHandlerState);
       }
 
 

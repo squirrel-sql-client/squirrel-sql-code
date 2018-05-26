@@ -28,7 +28,7 @@ public class ColorSelectedRowsCommand
 
    public void execute()
    {
-      Color startColor = _table.getRowColorHandler().getFirstColorInSelection();
+      Color startColor = _table.getColoringService().getRowColorHandler().getFirstColorInSelection();
 
 
       if (null != startColor)
@@ -81,7 +81,7 @@ public class ColorSelectedRowsCommand
          }
       }
 
-      _table.getRowColorHandler().setColorForSelectedRows(newColor);
+      _table.getColoringService().getRowColorHandler().setColorForSelectedRows(newColor);
    }
 
 }

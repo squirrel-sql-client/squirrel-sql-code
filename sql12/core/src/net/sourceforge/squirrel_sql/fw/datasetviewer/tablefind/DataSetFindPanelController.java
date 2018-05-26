@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.*;
 import org.apache.commons.lang.StringUtils;
 
@@ -28,8 +29,8 @@ public class DataSetFindPanelController
    private DataSetViewerTablePanel _dataSetViewerTablePanel;
    private FindService _findService;
 
-   private FindMarkColor _currentColor = new FindMarkColor(SquirrelConstants.TRACE_COLOR);
-   private FindMarkColor _traceColor = new FindMarkColor(SquirrelConstants.TRACE_COLOR_CURRENT);
+   private Color _currentColor = SquirrelConstants.TRACE_COLOR;
+   private Color _traceColor = SquirrelConstants.TRACE_COLOR_CURRENT;
    private FindTrace _trace = new FindTrace();
    private String _currentSearchString = null;
    private IMessageHandler _messageHandler;
@@ -191,6 +192,8 @@ public class DataSetFindPanelController
       dlg.setLocation(_dataSetViewerTablePanel.getComponent().getLocationOnScreen());
       dlg.setSize(_findService.getVisibleSize());
       dlg.setVisible(true);
+
+      GUIUtils.centerWithinParent(dlg);
    }
 
 
@@ -314,7 +317,7 @@ public class DataSetFindPanelController
          _findService.setFindServiceCallBack(new FindServiceCallBack()
          {
             @Override
-            public FindMarkColor getBackgroundColor(int viewRow, int viewColumn)
+            public Color getBackgroundColor(int viewRow, int viewColumn)
             {
                return onGetBackgroundColor(viewRow, viewColumn);
             }
@@ -390,7 +393,7 @@ public class DataSetFindPanelController
       _trace.clear();
    }
 
-   private FindMarkColor onGetBackgroundColor(int viewRow, int viewColumn)
+   private Color onGetBackgroundColor(int viewRow, int viewColumn)
    {
       String searchString = "" + _dataSetFindPanel.cboString.getEditor().getItem();
       if(null == searchString)

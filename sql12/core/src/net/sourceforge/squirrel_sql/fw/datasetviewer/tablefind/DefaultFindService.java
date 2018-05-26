@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
@@ -18,15 +19,13 @@ import java.util.List;
 
 public class DefaultFindService implements FindService
 {
-   private JTable _table;
+   private DataSetViewerTable _table;
    private ColumnDisplayDefinition[] _columnDefinitions;
-   private DataSetViewerTableModel _dataSetViewerTableModel;
 
-   public DefaultFindService(JTable table, ColumnDisplayDefinition[] columnDefinitions, DataSetViewerTableModel dataSetViewerTableModel)
+   public DefaultFindService(DataSetViewerTable table, ColumnDisplayDefinition[] columnDefinitions)
    {
       _table = table;
       _columnDefinitions = columnDefinitions;
-      _dataSetViewerTableModel = dataSetViewerTableModel;
    }
 
    @Override
@@ -89,7 +88,7 @@ public class DefaultFindService implements FindService
 
       for (Integer row : rowIndexes)
       {
-         ret.add(_dataSetViewerTableModel.getRowAt(row));
+         ret.add(_table.getDataSetViewerTableModel().getRowAt(row));
       }
       return ret;
    }
@@ -103,13 +102,7 @@ public class DefaultFindService implements FindService
    @Override
    public void setFindServiceCallBack(final FindServiceCallBack findServiceCallBack)
    {
-      for (int i = 0; i < _table.getColumnModel().getColumnCount(); i++)
-      {
-         if (RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX !=  _table.getColumnModel().getColumn(i).getModelIndex())
-         {
-            _table.getColumnModel().getColumn(i).setCellRenderer(new FindServiceCellRendererDecorator(_table.getColumnModel().getColumn(i).getCellRenderer(), findServiceCallBack));
-         }
-      }
+      _table.getColoringService().getFindColorHandler().setFindServiceCallBack(findServiceCallBack);
 
       if (_table.getModel() instanceof SortableTableModel)
       {

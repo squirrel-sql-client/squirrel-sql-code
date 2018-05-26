@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -129,6 +130,10 @@ public class CopySelectedRowsToOwnWindowCommand
          {
             ExtTableColumn col = (ExtTableColumn) columnModel.getColumn(i);
             sortedMap.put(col.getModelIndex(), col.getColumnDisplayDefinition());
+         }
+         else if (columnModel.getColumn(i) instanceof RowNumberTableColumn)
+         {
+            // The row number column is just ignored by this copying
          }
          else
          {

@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.rowcolor.RowColorHandler;
-import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColoringService;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -15,7 +14,7 @@ import java.awt.*;
 public final class CellRenderer extends DefaultTableCellRenderer implements SquirrelTableCellRenderer
 {
    private final IDataTypeComponent _dataTypeObject;
-   private RowColorHandler _rowColorHandler;
+   private ColoringService _coloringService;
 
    CellRenderer(IDataTypeComponent dataTypeObject)
    {
@@ -36,29 +35,10 @@ public final class CellRenderer extends DefaultTableCellRenderer implements Squi
     */
    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
    {
-
       JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-      // if text cannot be edited in the cell but can be edited in
-      //				the popup, show that by changing the text colors.
-      if (_dataTypeObject != null &&
-          _dataTypeObject.isEditableInCell(value) == false &&
-          _dataTypeObject.isEditableInPopup(value) == true)
-      {
-         // Use a CYAN background to indicate that the cell is
-         // editable in the popup
-         setBackground(SquirrelConstants.MULTI_LINE_CELL_COLOR);
-      }
-      else
-      {
-         // since the previous entry might have changed the color,
-         // we need to reset the color back to default value for table cells,
-         // taking into account whether the cell is selected or not.
-         setBackground(_rowColorHandler.getBackgroundForRow(row, isSelected));
-      }
-
       label.putClientProperty("html.disable", Boolean.TRUE);
 
+      _coloringService.colorCell(this, _dataTypeObject, table, value, isSelected, hasFocus, row, column);
 
       return label;
    }
@@ -85,8 +65,8 @@ public final class CellRenderer extends DefaultTableCellRenderer implements Squi
       }
    }
 
-   public void setRowColorHandler(RowColorHandler rowColorHandler)
+   public void setColoringService(ColoringService coloringService)
    {
-      _rowColorHandler = rowColorHandler;
+      _coloringService = coloringService;
    }
 }

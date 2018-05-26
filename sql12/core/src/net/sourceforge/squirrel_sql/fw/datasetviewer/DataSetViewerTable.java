@@ -46,7 +46,8 @@ public final class DataSetViewerTable extends JTable
    private RowNumberTableColumn _rntc;
    private ButtonTableHeader _tableHeader = new ButtonTableHeader();
 
-   private RowColorHandler _rowColorHandler = new RowColorHandler(this);
+
+   private ColoringService _coloringService = new ColoringService(this);
 
 
    DataSetViewerTable(DataSetViewerTablePanel dataSetViewerTablePanel, IDataSetTableControls creator, IDataSetUpdateableModel updateableObject, int listSelectionMode, ISession session)
@@ -281,7 +282,7 @@ public final class DataSetViewerTable extends JTable
          }
 
          CellRenderer tableCellRenderer = CellComponentFactory.getTableCellRenderer(colDefs[i]);
-         tableCellRenderer.setRowColorHandler(_rowColorHandler);
+         tableCellRenderer.setColoringService(_coloringService);
 
          ExtTableColumn col = new ExtTableColumn(i, colWidth, tableCellRenderer, null);
 
@@ -402,8 +403,8 @@ public final class DataSetViewerTable extends JTable
       _tableHeader.initColWidths();
    }
 
-   public RowColorHandler getRowColorHandler()
+   public ColoringService getColoringService()
    {
-      return _rowColorHandler;
+      return _coloringService;
    }
 }
