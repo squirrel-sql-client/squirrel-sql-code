@@ -9,6 +9,13 @@ import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import javax.swing.JTable;
 import java.awt.Color;
 
+
+/**
+ * Central class to color result tables.
+ *
+ * The several functions that use coloring are explicitly
+ * named and declared here so this class can clearly define coloring priorities.
+ */
 public class ColoringService
 {
    private RowColorHandler _rowColorHandler;
@@ -52,6 +59,7 @@ public class ColoringService
       {
          customBackground = findBackground;
       }
+
 
 
       if (null != customBackground)
