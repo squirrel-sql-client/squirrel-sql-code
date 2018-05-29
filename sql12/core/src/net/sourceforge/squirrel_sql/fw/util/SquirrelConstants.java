@@ -9,6 +9,8 @@ public class SquirrelConstants
 
    public static final Color  MULTI_LINE_CELL_COLOR = Color.cyan;
    public static final Color CELL_EDITABLE_COLOR = Color.yellow;
+
+   public static final Color DUPLICATE_COLOR = Color.orange;
    
    
    /*

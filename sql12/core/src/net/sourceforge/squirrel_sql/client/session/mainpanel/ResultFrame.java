@@ -63,6 +63,7 @@ public class ResultFrame extends SessionDialogWidget
    private JButton _btnReturnToTab;
    private TabButton _btnToggleFind;
    private TabButton _btnFindColumn;
+   private TabToggleButton _btnMarkDuplicates;
    private JCheckBox _chkOnTop;
    private TabButton _btnReRun;
    private JPanel _centerPanel;
@@ -102,40 +103,16 @@ public class ResultFrame extends SessionDialogWidget
       getContentPane().add(_centerPanel, BorderLayout.CENTER);
       _centerPanel.add(_tab.getOutputComponent());
 
-      _chkOnTop.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onStayOnTopChanged();
-         }
-      });
+      _chkOnTop.addActionListener(e -> onStayOnTopChanged());
 
-      _btnReRun.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onRerun();
-         }
-      });
+      _btnReRun.addActionListener(e -> onRerun());
 
-      _btnToggleFind.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onFind();
-         }
-      });
+      _btnMarkDuplicates.setSelected(_tab.isMarkDuplicates());
+      _btnMarkDuplicates.addActionListener(e -> onMarkDuplicates());
 
-      _btnFindColumn.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onFindColumn();
-         }
-      });
+      _btnToggleFind.addActionListener(e -> onFind());
+
+      _btnFindColumn.addActionListener(e -> onFindColumn());
 
       if (false == isOnRerun)
       {
@@ -151,6 +128,11 @@ public class ResultFrame extends SessionDialogWidget
    private void onFindColumn()
    {
       _tab.findColumn();
+   }
+
+   private void onMarkDuplicates()
+   {
+      _tab.markDuplicates();
    }
 
    private void onRerun()
@@ -302,14 +284,19 @@ public class ResultFrame extends SessionDialogWidget
       pnlButtons.add(_btnReRun, gbc);
 
 
+      ImageIcon iconMarkDuplicates = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.MARK_DUPLICATES);
+      _btnMarkDuplicates = new TabToggleButton(iconMarkDuplicates);
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      pnlButtons.add(_btnMarkDuplicates, gbc);
+
       ImageIcon iconFindColumn = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND_COLUMN);
       _btnFindColumn = new TabButton(iconFindColumn);
-      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       pnlButtons.add(_btnFindColumn, gbc);
 
       ImageIcon iconFind = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND);
       _btnToggleFind = new TabButton(iconFind);
-      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
+      gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
       pnlButtons.add(_btnToggleFind, gbc);
 
       return pnlButtons;

@@ -19,8 +19,8 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
@@ -86,4 +86,9 @@ public interface IResultTab {
    void toggleShowFindPanel();
 
    void findColumn();
+
+   void markDuplicates();
+
+   boolean isMarkDuplicates();
+
 }

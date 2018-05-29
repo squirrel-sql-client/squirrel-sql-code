@@ -709,7 +709,13 @@ public class SQLResultExecuterPanel extends JPanel
 
 
       addResultsTab(tab, null);
-	}
+
+      tab.wasReturnedToTabbedPane();
+
+      _tabbedExecutionsPanel.setSelectedComponent(tab);
+
+
+   }
 
     /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter#getSelectedResultTab()

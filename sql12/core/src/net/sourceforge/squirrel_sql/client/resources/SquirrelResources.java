@@ -73,6 +73,7 @@ public class SquirrelResources extends Resources
 
       String FIND = "find";
       String FIND_COLUMN = "findColumn";
+      String MARK_DUPLICATES = "duplicate";
       String FILTER = "filter";
 
       String AUTOHIDE_ON = "autohideOn";

@@ -23,13 +23,16 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.findcolumn.FindColumnCtrl;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.AdditionalResultTabsController;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CloseAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindColumnAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
@@ -111,6 +114,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private ResultLabelNameSwitcher _resultLabelNameSwitcher;
    private AdditionalResultTabsController _additionalResultTabsController;
+   private TabToggleButton _btnToggleMarkDuplicates;
 
    /**
     * Ctor.
@@ -432,7 +436,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
     /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#reRunSQL()
      */
-    public void reRunSQL() {
+    public void reRunSQL()
+    {
         _resultTabListener.rerunSQL(_exInfo.getSQL(), ResultTab.this);
     }
     
@@ -587,10 +592,14 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       ret.add(_readMoreResultsHandler.getLoadingLabel());
       ret.add(new TabButton(getRerunCurrentSQLResultTabAction()));
-      ret.add(new TabButton(new FindColumnAction(_session.getApplication())));
-      ret.add(new TabButton(new FindInResultAction(_session.getApplication())));
-      ret.add(new TabButton(new CreateResultTabFrameAction(_session.getApplication())));
-      ret.add(new TabButton(new CloseAction()));
+
+      _btnToggleMarkDuplicates = new TabToggleButton(new MarkDuplicatesToggleAction(this));
+      ret.add(_btnToggleMarkDuplicates);
+
+      ret.add(new TabButton(new FindColumnAction(this)));
+      ret.add(new TabButton(new FindInResultAction(this)));
+      ret.add(new TabButton(new CreateResultTabFrameAction(_sqlResultExecuterPanelFacade, this)));
+      ret.add(new TabButton(new CloseAction(_session, this)));
       return ret;
    }
 
@@ -602,75 +611,21 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
  
 	   return rtn;
    }
-   
-   private class CloseAction extends SquirrelAction
-	{
-		CloseAction()
-		{
-			super(
-				_session.getApplication(),
-				_session.getApplication().getResources());
-		}
 
-		public void actionPerformed(ActionEvent evt)
-		{
-			closeTab();
-		}
-	}
 
-	private class CreateResultTabFrameAction extends SquirrelAction
-	{
-		CreateResultTabFrameAction(IApplication app)
-		{
-			super(app, app.getResources());
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			_sqlResultExecuterPanelFacade.createSQLResultFrame(ResultTab.this);
-		}
-	}
-
-   public class RerunAction  extends SquirrelAction
+   @Override
+   public void toggleShowFindPanel()
    {
-      RerunAction(IApplication app)
+      _tabResultTabs.setSelectedIndex(0);
+      if(false == _dataSetViewerFindDecorator.toggleShowFindPanel())
       {
-         super(app, app.getResources());
-      }
-
-      public void actionPerformed(ActionEvent evt)
-      {
-         reRunSQL();   
+         _session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("ResultTab.tableSearchNotSupported"));
+         s_log.warn(s_stringMgr.getString("ResultTab.tableSearchNotSupported"));
       }
    }
 
-   public class FindInResultAction  extends SquirrelAction
-   {
-      FindInResultAction(IApplication app)
-      {
-         super(app, app.getResources());
-      }
-
-      public void actionPerformed(ActionEvent evt)
-      {
-         toggleShowFindPanel();
-      }
-   }
-
-   public class FindColumnAction extends SquirrelAction
-   {
-      FindColumnAction(IApplication app)
-      {
-         super(app, app.getResources());
-      }
-
-      public void actionPerformed(ActionEvent evt)
-      {
-         onFindColumn();
-      }
-   }
-
-   private void onFindColumn()
+   @Override
+   public void findColumn()
    {
       if(false == _dataSetViewerFindDecorator.getDataSetViewer() instanceof DataSetViewerTablePanel)
       {
@@ -694,22 +649,39 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       }
    }
 
+
    @Override
-   public void toggleShowFindPanel()
+   public void markDuplicates()
    {
+      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _dataSetViewerFindDecorator.getDataSetViewer();
+
+      MarkDuplicatesHandler markDuplicatesHandler = dataSetViewerTablePanel.getTable().getColoringService().getMarkDuplicatesHandler();
+
       _tabResultTabs.setSelectedIndex(0);
-      if(false == _dataSetViewerFindDecorator.toggleShowFindPanel())
-      {
-         _session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("ResultTab.tableSearchNotSupported"));
-         s_log.warn(s_stringMgr.getString("ResultTab.tableSearchNotSupported"));
-      }
+
+      markDuplicatesHandler.markDuplicates(_btnToggleMarkDuplicates.isSelected());
    }
 
    @Override
-   public void findColumn()
+   public boolean isMarkDuplicates()
    {
-      onFindColumn();
+      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _dataSetViewerFindDecorator.getDataSetViewer();
+
+      MarkDuplicatesHandler markDuplicatesHandler = dataSetViewerTablePanel.getTable().getColoringService().getMarkDuplicatesHandler();
+
+      return markDuplicatesHandler.isMarkDuplicates();
+
    }
+
+   public void wasReturnedToTabbedPane()
+   {
+      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _dataSetViewerFindDecorator.getDataSetViewer();
+
+      MarkDuplicatesHandler markDuplicatesHandler = dataSetViewerTablePanel.getTable().getColoringService().getMarkDuplicatesHandler();
+
+      _btnToggleMarkDuplicates.setSelected(markDuplicatesHandler.isMarkDuplicates());
+   }
+
 
 
    /**

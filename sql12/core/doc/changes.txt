@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New toolbar button on the upper right of an SQL result tab: 'Mark duplicate values in columns'
+
 Two new right mouse menus on result tables: 'Color selected rows' and 'Go to color'.
 
 New right mouse menu entries on SQL result tabs: 'close all to left' and 'close all to right'

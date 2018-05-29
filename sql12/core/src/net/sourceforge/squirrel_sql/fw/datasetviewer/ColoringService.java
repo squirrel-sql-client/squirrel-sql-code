@@ -20,11 +20,13 @@ public class ColoringService
 {
    private RowColorHandler _rowColorHandler;
    private FindColorHandler _findColorHandler;
+   private MarkDuplicatesHandler _markDuplicatesHandler;
 
    public ColoringService(DataSetViewerTable dataSetViewerTable)
    {
       _rowColorHandler = new RowColorHandler(dataSetViewerTable);
       _findColorHandler = new FindColorHandler();
+      _markDuplicatesHandler = new MarkDuplicatesHandler(dataSetViewerTable);
    }
 
    public void colorCell(CellRenderer cellRenderer, IDataTypeComponent dataTypeObject, JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
@@ -60,6 +62,12 @@ public class ColoringService
          customBackground = findBackground;
       }
 
+      Color markDuplicateBackground = _markDuplicatesHandler.getBackgroundForCell(row, column, value);
+      if(null != markDuplicateBackground)
+      {
+         customBackground = markDuplicateBackground;
+      }
+
 
 
       if (null != customBackground)
@@ -77,5 +85,10 @@ public class ColoringService
    public FindColorHandler getFindColorHandler()
    {
       return _findColorHandler;
+   }
+
+   public MarkDuplicatesHandler getMarkDuplicatesHandler()
+   {
+      return _markDuplicatesHandler;
    }
 }
