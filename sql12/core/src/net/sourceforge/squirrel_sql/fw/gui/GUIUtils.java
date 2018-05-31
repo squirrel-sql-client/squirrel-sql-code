@@ -541,4 +541,43 @@ public class GUIUtils
 		comp.requestFocusInWindow();
 		comp.requestFocus();
 	}
+
+	public static void forceScrollToBegin(JScrollPane scrollPane)
+	{
+		final Timer[] timerRef = new Timer[1];
+
+		timerRef[0] = new Timer(100, new ActionListener()
+		{
+			private int maxCount = 0;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+            int hValue = scrollPane.getHorizontalScrollBar().getValue();
+            int vValue = scrollPane.getVerticalScrollBar().getValue();
+            if ( (0 == hValue && 0 == vValue)  || maxCount > 15)
+				{
+					timerRef[0].stop();
+					return;
+				}
+            scrollPane.scrollRectToVisible(new Rectangle(0,0, 1,1));
+            scrollPane.getHorizontalScrollBar().setValue(0);
+            scrollPane.getVerticalScrollBar().setValue(0);
+            ++maxCount;
+
+            //System.out.println("GUIUtils.actionPerformed v = " + vValue + " h = " + hValue);
+
+			}
+		});
+
+		timerRef[0].setRepeats(true);
+
+		timerRef[0].start();
+
+      scrollPane.scrollRectToVisible(new Rectangle(0,0, 1,1));
+      scrollPane.getHorizontalScrollBar().setValue(0);
+      scrollPane.getVerticalScrollBar().setValue(0);
+	}
+
+
 }

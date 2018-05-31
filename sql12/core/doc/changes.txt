@@ -49,6 +49,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+'New Session Properties' --> tab SQL was not initially scrolled to top.
+
 #1341 Squirrel was started twice by squirrel-sql.bat in the plain zip versions of snapshot-20180406_0118.
 
 Added new alternative to fix MAC OS launch script problem with setting SQUIRREL_SQL_HOME.
