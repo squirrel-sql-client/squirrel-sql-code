@@ -19,15 +19,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * If one session tab is renamed and then the session itself is renamed, all tabs including the renamed one are renamed.
  * @author Vladislav Vavra
  */
-public class RenameSessionAction  extends SquirrelAction
-									implements ISessionAction
+public class RenameSessionAction  extends SquirrelAction implements ISessionAction
 {
-	
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RenameSessionAction.class);
+
 	private ISession _session;
 
-    private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(RenameSessionAction.class);	
-	
 	public RenameSessionAction(IApplication app)
 	{
 		super(app);
@@ -45,11 +42,24 @@ public class RenameSessionAction  extends SquirrelAction
 	{
 		setSession(_app.getSessionManager().getActiveSession());
 
-      String newTitle = JOptionPane.showInputDialog(_app.getMainFrame(),
+        String oldTitle;
+
+        if(!_session.getActiveSessionWindow().equals(_app.getWindowManager().getAllFramesOfSession(_session.getIdentifier())[0]))
+        {
+            oldTitle = _session.getActiveSessionWindow().getTitle();
+        }
+        else
+        {
+            oldTitle = _session.getTitle();
+        }
+
+        String newTitle = (String) JOptionPane.showInputDialog(_app.getMainFrame(),
             s_stringMgr.getString("RenameSessionAction.label"),
             s_stringMgr.getString("RenameSessionAction.title"),
-            JOptionPane.QUESTION_MESSAGE);
-
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                oldTitle);
       
       if(null == newTitle)
       {
@@ -72,14 +82,16 @@ public class RenameSessionAction  extends SquirrelAction
 	/**
 	 * Method for propagating new session title into gui.
 	 */
-	private void updateGui() {
+	private void updateGui()
+	{
 		_app.getMainFrame().repaint();
 		ISessionWidget[] sessionSheets = _app.getWindowManager().getAllFramesOfSession(_session.getIdentifier());
-		if(sessionSheets.length==0) return;
-			
+		if (sessionSheets.length == 0) return;
+
 		sessionSheets[0].setTitle(_session.getTitle());
-		for(int i=1;i<sessionSheets.length;i++) {
-			sessionSheets[i].setTitle(_session.getTitle()+" (" + (i + 1) + ")");
-		}		
+		for (int i = 1; i < sessionSheets.length; i++)
+		{
+			sessionSheets[i].setTitle(_session.getTitle() + " (" + (i + 1) + ")");
+		}
 	}
 }
