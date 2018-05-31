@@ -189,7 +189,7 @@ public class DataScale implements Comparable<DataScale>
       {
          if(btn == intervalButtonClicked)
          {
-            btn.setBackground(SquirrelConstants.TRACE_COLOR);
+            btn.setBackground(SquirrelConstants.FIND_COLOR);
          }
          else
          {

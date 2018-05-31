@@ -7,6 +7,7 @@ Not yet released, available in our GIT repository and in snapshots and future re
 Enhancements:
 
 New toolbar button on the upper right of an SQL result tab: 'Mark duplicate values in columns'
+  The mark's brightness alters between succeeding non unique values.
 
 Two new right mouse menus on result tables: 'Color selected rows' and 'Go to color'.
 

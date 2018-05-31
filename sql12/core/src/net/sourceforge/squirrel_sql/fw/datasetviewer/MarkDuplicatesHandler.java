@@ -3,13 +3,15 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 
 import java.awt.Color;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeMap;
 
 public class MarkDuplicatesHandler
 {
    private DataSetViewerTable _dataSetViewerTable;
-   private HashMap<Integer, HashSet<Object>> _duplicateValuesByColumnModelIndex;
+   private HashMap<Integer, TreeMap<Object, Color>> _duplicateValuesByColumnModelIndex;
 
    public MarkDuplicatesHandler(DataSetViewerTable dataSetViewerTable)
    {
@@ -31,12 +33,19 @@ public class MarkDuplicatesHandler
 
 
          DataSetViewerTableModel dataSetViewerTableModel = _dataSetViewerTable.getDataSetViewerTableModel();
+
+
+         // Without this comparator TreeMap breaks on null keys
+         Comparator treeMapKeyComparator = Comparator.nullsFirst(Comparator.naturalOrder());
+
+
          for (int i = 0; i < dataSetViewerTableModel.getColumnCount(); ++i)
          {
             int columnModelIndex = _dataSetViewerTable.getColumnModel().getColumn(i).getModelIndex();
 
-            HashSet<Object> duplicateValues = new HashSet<>();
-            _duplicateValuesByColumnModelIndex.put(columnModelIndex, duplicateValues);
+            TreeMap<Object, Color> colorByDuplicateValue = new TreeMap<>(treeMapKeyComparator);
+
+            _duplicateValuesByColumnModelIndex.put(columnModelIndex, colorByDuplicateValue);
 
             HashSet<Object> buf = new HashSet<>();
 
@@ -47,12 +56,27 @@ public class MarkDuplicatesHandler
 
                if(buf.contains(val))
                {
-                  duplicateValues.add(val);
+                  colorByDuplicateValue.put(val, null);
                }
                else
                {
                   buf.add(val);
                }
+            }
+
+            int count = 0;
+            for (Object value : colorByDuplicateValue.keySet())
+            {
+               if(0 == ++count % 2)
+               {
+                  colorByDuplicateValue.put(value, SquirrelConstants.DUPLICATE_COLOR_DARKER);
+               }
+               else
+               {
+                  colorByDuplicateValue.put(value, SquirrelConstants.DUPLICATE_COLOR);
+               }
+
+
             }
          }
       }
@@ -78,12 +102,7 @@ public class MarkDuplicatesHandler
       }
 
 
-      if(_duplicateValuesByColumnModelIndex.get(columnModelIndex).contains(value))
-      {
-         return SquirrelConstants.DUPLICATE_COLOR;
-      }
-
-      return null;
+      return _duplicateValuesByColumnModelIndex.get(columnModelIndex).get(value);
    }
 
 

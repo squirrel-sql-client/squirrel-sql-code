@@ -29,8 +29,8 @@ public class DataSetFindPanelController
    private DataSetViewerTablePanel _dataSetViewerTablePanel;
    private FindService _findService;
 
-   private Color _currentColor = SquirrelConstants.TRACE_COLOR;
-   private Color _traceColor = SquirrelConstants.TRACE_COLOR_CURRENT;
+   private Color _currentColor = SquirrelConstants.FIND_COLOR;
+   private Color _traceColor = SquirrelConstants.FIND_COLOR_CURRENT;
    private FindTrace _trace = new FindTrace();
    private String _currentSearchString = null;
    private IMessageHandler _messageHandler;
