@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Version check message was improved. It was misleading as mentioned in feature request #568.
+
 When a Session tab is renamed the rename dialog's text box now contains the old name.
   Thanks to Chris B for the code.
 

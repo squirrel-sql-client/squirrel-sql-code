@@ -18,6 +18,9 @@
         <mkdir dir="output/dist/plugins"/>
         <mkdir dir="output/izPackInstallJars"/>
         <mkdir dir="output/plainZip/work"/>
+
+        <delete dir="versionChecker/output"/>
+        <mkdir dir="versionChecker/output/work/bin"/>
     </target>
 
 
@@ -32,6 +35,8 @@
     </target>
 
     <target name="buildExInstaller" description="buildExInstaller" depends="cleanAllAndInit">
+        <antcall target="compileVersionCheck"/>
+
         <antcall target="compileCore"/>
         <antcall target="createPlainZip"><param name="plainZipNamePostfix" value="base"/></antcall>
         <antcall target="compileStandardPlugins"/>
@@ -95,6 +100,21 @@
         </mapper>
     </pathconvert>
 
+    <target name="compileVersionCheck" description="compileVersionCheck">
+        <javac source="1.3" target="1.3"
+               includeantruntime="false"
+               srcdir="versionChecker/src"
+               destdir="versionChecker/output/work/bin"
+               debug="true">
+        </javac>
+
+        <jar jarfile="versionChecker/output/versioncheck.jar" basedir="versionChecker/output/work/bin">
+        </jar>
+
+    </target>
+
+
+
     <target name="compileCore" description="compileCore">
         <javac source="${targetVM}" target="${targetVM}"
             includeantruntime="false"
@@ -123,6 +143,9 @@
             <fileset dir="core/lib">
                 <include name="**/*" />
             </fileset>
+        </copy>
+        <copy todir="output/dist/lib">
+            <file file="versionChecker/output/versioncheck.jar"/>
         </copy>
         <copy todir="output/dist/">
             <fileset dir="launcher">
