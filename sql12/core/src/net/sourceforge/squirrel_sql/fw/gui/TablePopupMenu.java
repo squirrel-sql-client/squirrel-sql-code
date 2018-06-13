@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelecte
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ITableActionCallback;
+import net.sourceforge.squirrel_sql.fw.gui.copyseparatedby.TableCopySeparatedByCommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -74,23 +75,24 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_HTML = 2;
 		int COPY_ALIGNED = 3;
 		int COPY_MARKDOWN = 4;
-		int COPY_IN_STATEMENT = 5;
-		int COPY_WHERE_STATEMENT = 6;
-		int COPY_UPDATE_STATEMENT = 7;
-		int COPY_INSERT_STATEMENT = 8;
-		int COPY_COLUMN_HEADER = 9;
-		int SHOW_REFERENCES = 10;
-		int COPY_SELECTED_ROWS_TO_OWN_WINDOW = 11;
-		int COLOR_SELECTED_ROWS = 12;
-		int GOTO_COLOR = 13;
-		int EXPORT_CSV = 14;
-		int SELECT_ALL = 15;
-		int ADJUST_ALL_COL_WIDTHS_ACTION = 16;
-		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 17;
-		int SHOW_ROW_NUMBERS = 18;
-		int COPY_WIKI = 19;
-		int SELECT_ROWS = 20;
-		int LAST_ENTRY = 21;
+		int COPY_SEPARATED_BY = 5;
+		int COPY_IN_STATEMENT = 6;
+		int COPY_WHERE_STATEMENT = 7;
+		int COPY_UPDATE_STATEMENT = 8;
+		int COPY_INSERT_STATEMENT = 9;
+		int COPY_COLUMN_HEADER = 10;
+		int SHOW_REFERENCES = 11;
+		int COPY_SELECTED_ROWS_TO_OWN_WINDOW = 12;
+		int COLOR_SELECTED_ROWS = 13;
+		int GOTO_COLOR = 14;
+		int EXPORT_CSV = 15;
+		int SELECT_ALL = 16;
+		int ADJUST_ALL_COL_WIDTHS_ACTION = 17;
+		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 18;
+		int SHOW_ROW_NUMBERS = 19;
+		int COPY_WIKI = 20;
+		int SELECT_ROWS = 21;
+		int LAST_ENTRY = 22;
    }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
@@ -108,6 +110,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
 	private CopyAlignedAction _copyAligned = new CopyAlignedAction();
 	private CopyAsMarkdownAction _copyAsMarkdown = new CopyAsMarkdownAction();
+	private CopySeparatedByAction _copySeparatedBy = new CopySeparatedByAction();
 
 	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
 	private CopyWhereStatementAction _copyWhereStatement = new CopyWhereStatementAction();
@@ -171,6 +174,7 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
 		_menuItems[IOptionTypes.COPY_ALIGNED] = add(_copyAligned);
 		_menuItems[IOptionTypes.COPY_MARKDOWN] = add(_copyAsMarkdown);
+		_menuItems[IOptionTypes.COPY_SEPARATED_BY] = add(_copySeparatedBy);
 
 		_menuItems[IOptionTypes.COPY_WIKI] = add(copyWikiTableActionFactory.createMenueItem(new ITableActionCallback() {
 			@Override
@@ -389,6 +393,22 @@ public class TablePopupMenu extends BasePopupMenu
 			if (_table != null)
 			{
 				new TableCopyAsMarkdownCommand(_table, _session).execute();
+			}
+		}
+	}
+
+	private class CopySeparatedByAction extends BaseAction
+	{
+		CopySeparatedByAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.copyseparatedby"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+				new TableCopySeparatedByCommand(_table).execute();
 			}
 		}
 	}

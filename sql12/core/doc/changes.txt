@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New right mouse menu on result tables: 'Copy separated by ...' which opens a small
+  configuration dialog to enter cell and row separators and then copies values to clipboard.
+
 Version check message was improved. It was misleading as mentioned in feature request #568.
 
 When a Session tab is renamed the rename dialog's text box now contains the old name.
