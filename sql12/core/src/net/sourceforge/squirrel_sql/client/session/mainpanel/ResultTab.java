@@ -538,7 +538,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _tabResultTabs = UIFactory.getInstance().createTabbedPane(sqlResultsTabPlacement);
 
 		JPanel panel = new JPanel();
-      panel.setLayout(new BorderLayout());
+      panel.setLayout(new BorderLayout(15, 0));
 		panel.add(createRightPanel(), BorderLayout.EAST);
 		panel.add(_currentSqlLblCtrl.getLabel(), BorderLayout.CENTER);
 		add(panel, BorderLayout.NORTH);
@@ -576,7 +576,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private JPanel createRightPanel()
    {
-      JPanel ret = new JPanel(new BorderLayout(5,0));
+      JPanel ret = new JPanel(new BorderLayout());
 
       ret.add(createButtonsPanel(), BorderLayout.EAST);
 

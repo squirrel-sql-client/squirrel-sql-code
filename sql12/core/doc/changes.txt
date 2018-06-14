@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Improved layout of upper part of result tab.
+
 New right mouse menu on result tables: 'Copy separated by ...' which opens a small
   configuration dialog to enter cell and row separators and then copies values to clipboard.
 

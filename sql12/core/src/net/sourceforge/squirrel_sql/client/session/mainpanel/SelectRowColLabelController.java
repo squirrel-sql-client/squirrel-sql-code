@@ -39,7 +39,6 @@ public class SelectRowColLabelController extends Component
 
    private void onRowColSelectedCountChanged(int selectedRowCount, int selectedColumnCount)
    {
-      s_stringMgr.getString("SelectRowColLabelController.RowColSelectedCountLabel", selectedRowCount, selectedColumnCount);
-      _lbl.setText("Rows: " + selectedRowCount + ", Cols: " + selectedColumnCount);
+      _lbl.setText(s_stringMgr.getString("SelectRowColLabelController.RowColSelectedCountLabel", selectedRowCount, selectedColumnCount));
    }
 }
