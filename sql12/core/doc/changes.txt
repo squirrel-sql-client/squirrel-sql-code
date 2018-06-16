@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Find Alias dialog (ctrl alt shift F) now has a check box to remember the last search string.
+
 Improved layout of upper part of result tab.
 
 New right mouse menu on result tables: 'Copy separated by ...' which opens a small

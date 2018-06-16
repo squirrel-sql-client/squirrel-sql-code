@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.mainframe.action;
+package net.sourceforge.squirrel_sql.client.mainframe.action.findaliases;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
