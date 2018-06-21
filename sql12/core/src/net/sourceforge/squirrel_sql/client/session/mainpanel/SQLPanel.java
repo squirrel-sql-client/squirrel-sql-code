@@ -209,6 +209,7 @@ public class SQLPanel extends JPanel
 					public void run()
 					{
 						_panelAPI.setEntireSQLScript(sqlContents);
+						_panelAPI.resetUnsavedEdits();
 					}
 				};
 

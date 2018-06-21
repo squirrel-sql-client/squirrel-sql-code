@@ -264,20 +264,20 @@ public class SessionManager
    public synchronized boolean closeSession(ISession session, boolean doNothingAndReturnTrueWhenInClosing)
    {
 
+      if(isInCloseSession(session))
+      {
+         if (doNothingAndReturnTrueWhenInClosing)
+         {
+            return true;
+         }
+         else
+         {
+            return false;
+         }
+      }
+
       try
       {
-         if(_inCloseSession.contains(session.getIdentifier()))
-         {
-            if (doNothingAndReturnTrueWhenInClosing)
-            {
-               return true;
-            }
-            else
-            {
-               return false;
-            }
-         }
-
          _inCloseSession.add(session.getIdentifier());
          if (confirmClose(session))
          {
@@ -346,6 +346,11 @@ public class SessionManager
       }
 
       return false;
+   }
+
+   public boolean isInCloseSession(ISession session)
+   {
+      return _inCloseSession.contains(session.getIdentifier());
    }
 
    /**
@@ -536,16 +541,19 @@ public class SessionManager
    {
       if (!_app.getSquirrelPreferences().getConfirmSessionClose())
       {
-            return session.confirmClose();
-        }
+         return session.confirmClose();
+      }
 
-      final String msg = s_stringMgr.getString("SessionManager.confirmClose",
-                     session.getTitle());
-      if (!Dialogs.showYesNo(SessionUtils.getOwningFrame(session), msg)) {
-            return false;
-        } else {
-            return session.confirmClose();
-        }
+      final String msg = s_stringMgr.getString("SessionManager.confirmClose", session.getTitle());
+
+      if (!Dialogs.showYesNo(SessionUtils.getOwningFrame(session), msg))
+      {
+         return false;
+      }
+      else
+      {
+         return session.confirmClose();
+      }
    }
 
    protected void fireConnectionClosedForReconnect(Session session)

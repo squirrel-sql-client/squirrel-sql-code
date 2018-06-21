@@ -61,6 +61,11 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+Reloading last SQL contents (*) did mark the SQL editor dirty i.e. unsaved buffer edits confirm firm was triggered.
+  (*) See See menu File --> Global Preferences --> Tab SQL --> Section General --> Check box 'Reload last SQL editor contents when Session is opened'
+
+Close confirmations now also work for extra SQL Worksheets (ctrl N).
+
 'New Session Properties' --> tab SQL was not initially scrolled to top.
 
 #1341 Squirrel was started twice by squirrel-sql.bat in the plain zip versions of snapshot-20180406_0118.
@@ -238,7 +243,7 @@ The limit string loading size option (see menu File --> Global Preferences --> T
 Table types shown in Object tree can now be filtered, see menu File --> New Session Properties --> tab Object tree --> section Filters
 
 #470 New global preference to auto-save current SQL commands into file at exit and auto-reload them at startup into SQL editor pane.
-  See menu File --> Global Preferences --> Tab SQL --> Check box --> Section General
+  See menu File --> Global Preferences --> Tab SQL --> Section General --> Check box 'Reload last SQL editor contents when Session is opened'
  Thanks to Krzysztof Szymko for the patch.
 
 

@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
@@ -94,7 +95,17 @@ public class SQLInternalFrame extends SessionTabWidget
 
          public boolean widgetClosing(WidgetEvent e)
          {
-            _sqlPanel.sessionWindowClosing();
+				// When the Session itself is closing confirms are handled by SessionManager.confirmClose()
+				if (false == Main.getApplication().getSessionManager().isInCloseSession(session))
+				{
+
+					if(false == _sqlPanel.getSQLPanelAPI().confirmClose())
+					{
+						return false;
+					}
+				}
+
+				_sqlPanel.sessionWindowClosing();
             return true;
          }
 		});

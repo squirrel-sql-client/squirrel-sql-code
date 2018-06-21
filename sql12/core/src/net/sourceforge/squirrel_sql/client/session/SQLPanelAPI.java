@@ -844,6 +844,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		_panel.toggleMinimizeResults();
 	}
 
+	@Override
+	public void resetUnsavedEdits()
+	{
+		unsavedEdits = false;
+	}
+
 	private boolean showConfirmSaveDialog()
    {
        File file = _fileManager.getFile();

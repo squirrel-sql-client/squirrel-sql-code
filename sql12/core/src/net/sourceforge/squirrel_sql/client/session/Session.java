@@ -41,6 +41,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
@@ -1124,19 +1125,49 @@ class Session implements ISession
      */
     public boolean confirmClose()
     {
-       if(getActiveSessionWindow() instanceof SQLInternalFrame || getActiveSessionWindow() instanceof SessionInternalFrame)
+//       if(getActiveSessionWindow() instanceof SQLInternalFrame)
+//       {
+//          return getSQLPanelAPIOfActiveSessionWindow().confirmClose();
+//       }
+//
+//       if(getActiveSessionWindow() instanceof SessionInternalFrame)
+//       {
+//          ISessionWidget[] frames = getApplication().getWindowManager().getAllFramesOfSession(getIdentifier());
+//
+//          for (ISessionWidget frame : frames)
+//          {
+//             if(frame instanceof SQLInternalFrame)
+//             {
+//                if( false == ((SQLInternalFrame)frame).getSQLPanelAPI().confirmClose())
+//                {
+//                   frame.moveToFront();
+//                   return false;
+//                }
+//             }
+//          }
+//
+//          return getSQLPanelAPIOfActiveSessionWindow().confirmClose();
+//       }
+//
+//       return true;
+
+       ISessionWidget[] frames = getApplication().getWindowManager().getAllFramesOfSession(getIdentifier());
+
+       for (ISessionWidget frame : frames)
        {
-          if (getSQLPanelAPIOfActiveSessionWindow().confirmClose())
+          if(frame instanceof SQLInternalFrame)
           {
-             return true;
-          }
-          else
-          {
-             return false;
+             if( false == ((SQLInternalFrame)frame).getSQLPanelAPI().confirmClose())
+             {
+                frame.moveToFront();
+                return false;
+             }
           }
        }
-       
-       return true;
+
+       return getSessionInternalFrame().getSQLPanelAPI().confirmClose();
+
+
 
     }
 

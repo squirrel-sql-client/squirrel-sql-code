@@ -317,5 +317,7 @@ public interface ISQLPanelAPI
 	ArrayList<SQLHistoryItem> getSQLHistoryItems();
 
 	void toggleMinimizeResults();
+
+	void resetUnsavedEdits();
 }
 
