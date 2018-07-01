@@ -291,7 +291,7 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider#
-	 *      setSourceSession(net.sourceforge.squirrel_sql.client.session.ISession)
+	 *      initCopy(net.sourceforge.squirrel_sql.client.session.ISession)
 	 */
 	@Override
 	public void setSourceSession(ISession session)

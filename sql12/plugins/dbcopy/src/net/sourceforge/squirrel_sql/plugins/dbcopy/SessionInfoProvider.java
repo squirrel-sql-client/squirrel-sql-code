@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
  */
 public interface SessionInfoProvider {
     
-    void setSourceSession(ISession session);
+    void initCopy(ISession session);
     
     ISession getSourceSession();
     

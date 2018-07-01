@@ -56,7 +56,7 @@ public class PasteTableAsOrFilteredAction extends SquirrelAction implements ISes
     public PasteTableAsOrFilteredAction(Resources rsrc, DBCopyPlugin plugin)
     {
        super(Main.getApplication(), rsrc);
-       _sessionInfoProv = plugin;
+       _sessionInfoProv = plugin.getSessionInfoProvider();
     }
 
     /* (non-Javadoc)

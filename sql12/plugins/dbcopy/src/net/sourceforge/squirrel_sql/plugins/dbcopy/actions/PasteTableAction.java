@@ -51,7 +51,7 @@ public class PasteTableAction extends SquirrelAction
     									DBCopyPlugin plugin) {
         super(app, rsrc);
         this.app = app;
-        sessionInfoProv = plugin;
+        sessionInfoProv = plugin.getSessionInfoProvider();
     }
 
     /* (non-Javadoc)

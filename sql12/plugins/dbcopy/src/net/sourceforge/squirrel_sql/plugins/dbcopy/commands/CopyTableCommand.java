@@ -116,7 +116,7 @@ public class CopyTableCommand implements ICommand
 				}
 			}
 
-			_plugin.setSourceSession(_session);
+			_plugin.getSessionInfoProvider().initCopy(_session);
 			final IDatabaseObjectInfo[] fdbObjs = dbObjs;
 			final SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
 			_session.getApplication().getThreadPool().addTask(new Runnable()
@@ -153,12 +153,12 @@ public class CopyTableCommand implements ICommand
 			selectedTables = SQLUtilities.getInsertionOrder(selectedTables, md, cb);
 			cb.setVisible(false);
 			cb.dispose();
-			_plugin.setSourceDatabaseObjects(DBUtil.convertTableToObjectList(selectedTables));
+			_plugin.getSessionInfoProvider().setSourceDatabaseObjects(DBUtil.convertTableToObjectList(selectedTables));
 
 		}
 		else
 		{
-			_plugin.setSourceDatabaseObjects(DBUtil.convertTableToObjectList(selectedTables));
+			_plugin.getSessionInfoProvider().setSourceDatabaseObjects(DBUtil.convertTableToObjectList(selectedTables));
 		}
 	}
 

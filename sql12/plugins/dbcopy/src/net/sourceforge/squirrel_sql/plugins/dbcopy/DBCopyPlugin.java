@@ -19,8 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.util.List;
-
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -34,9 +32,6 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.CopyTableAction;
@@ -49,26 +44,17 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
  * The class that sets up the various resources required by SQuirreL to implement a plugin. This plugin
  * implements the ability to copy tables and various other table-related objects from one database to another.
  */
-public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoProvider
+public class DBCopyPlugin extends DefaultSessionPlugin
 {
 
 	public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.dbcopy.dbcopy";
 
-	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(DBCopyPlugin.class);
 
 	private PluginResources _resources;
 
-	private ISession copySourceSession = null;
+	private SessionInfoProviderImpl _sessionInfoProvider = new SessionInfoProviderImpl();
 
-	private ISession copyDestSession = null;
-
-	private List<IDatabaseObjectInfo> selectedDatabaseObjects = null;
-
-	private IDatabaseObjectInfo selectedDestDatabaseObject = null;
-
-   private String _pasteToTableName;
-	private String _whereClause;
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin#sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession)
@@ -85,9 +71,9 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	 */
 	public void sessionEnding(final ISession session)
 	{
-		if (session.equals(copySourceSession))
+		if (session.equals(_sessionInfoProvider.getCopySourceSession()))
 		{
-			copySourceSession = null;
+			_sessionInfoProvider.dispose();
 			// Can't paste from a session that is no longer around.
 			setPasteMenuEnabled(false);
 		}
@@ -194,7 +180,7 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	public void unload()
 	{
 		super.unload();
-		copySourceSession = null;
+		_sessionInfoProvider.dispose();
 		setPasteMenuEnabled(false);
 		PreferencesManager.unload();
 	}
@@ -229,26 +215,6 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 		});
 	}
 
-	/**
-	 * @param selectedDatabaseObjects
-	 *           The selectedDatabaseObjects to set.
-	 */
-	public void setSourceDatabaseObjects(List<IDatabaseObjectInfo> dbObjList)
-	{
-		if (dbObjList != null)
-		{
-			selectedDatabaseObjects = dbObjList;
-			int sourceObjectCount = 0;
-			if (s_log.isDebugEnabled())
-			{
-				for (IDatabaseObjectInfo info : dbObjList)
-				{
-					s_log.debug("setSelectedDatabaseObjects: IDatabaseObjectInfo[" + (sourceObjectCount++) + "]="
-						+ info);
-				}
-			}
-		}
-	}
 
 	/**
 	 * Create panel for the Global Properties dialog.
@@ -316,110 +282,8 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#getSourceSession()
-	 */
-	public ISession getSourceSession()
+	public SessionInfoProvider getSessionInfoProvider()
 	{
-		return copySourceSession;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#setSourceSession(net.sourceforge.squirrel_sql.client.session.ISession)
-	 */
-	public void setSourceSession(ISession session)
-	{
-		if (session != null)
-		{
-			copySourceSession = session;
-		}
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#getSourceDatabaseObjects()
-	 */
-	public List<IDatabaseObjectInfo> getSourceDatabaseObjects()
-	{
-		return selectedDatabaseObjects;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#getDestSession()
-	 */
-	public ISession getDestSession()
-	{
-		return copyDestSession;
-	}
-
-   @Override
-   public void setPasteToTableName(String pasteToTableName)
-   {
-      _pasteToTableName = pasteToTableName;
-   }
-
-   @Override
-   public String getPasteToTableName()
-   {
-      return _pasteToTableName;
-   }
-
-	@Override
-	public void setWhereClause(String whereClause)
-	{
-		_whereClause = whereClause;
-	}
-
-	@Override
-	public String getWhereClause()
-	{
-		return _whereClause;
-	}
-
-
-	@Override
-   public TableInfo getPasteToTableInfo(ISQLConnection destConn, String destSchema, String destCatalog)
-   {
-      if(null == _pasteToTableName)
-      {
-         return null;
-      }
-
-      if(1 != selectedDatabaseObjects.size() || false == selectedDatabaseObjects.get(0) instanceof TableInfo)
-      {
-         throw new IllegalStateException("Invalid paste table as state");
-      }
-
-      TableInfo ret = new TableInfo(destCatalog, destSchema, _pasteToTableName, "TABLE", null, destConn.getSQLMetaData());
-      return ret;
-   }
-
-   @Override
-   public boolean isCopiedFormDestinationSession()
-   {
-      return copyDestSession.equals(copySourceSession);
-   }
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#setDestSession(net.sourceforge.squirrel_sql.client.session.ISession)
-	 */
-	public void setDestSession(ISession session)
-	{
-		copyDestSession = session;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#getDestDatabaseObject()
-	 */
-	public IDatabaseObjectInfo getDestDatabaseObject()
-	{
-		return selectedDestDatabaseObject;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#setDestDatabaseObject(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
-	 */
-	public void setDestDatabaseObject(IDatabaseObjectInfo info)
-	{
-		selectedDestDatabaseObject = info;
+		return _sessionInfoProvider;
 	}
 }
