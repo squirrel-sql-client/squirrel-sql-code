@@ -64,6 +64,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+#1282 Session menu now has a scroll bar if it's too long to fit on screen.
+
 Corrections/abbreviations dialog didn't scroll right when new row was added.
 
 DBCopy-Plugin: When 'Paste table as/filtered...' was used before simple 'Paste table' information of the first action were not cleaned.

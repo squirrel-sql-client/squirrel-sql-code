@@ -98,7 +98,7 @@ public class JScrollPopupMenu extends JPopupMenu
    public void remove(int index)
    {
       // can't remove the scrollbar
-      ++index;
+      //++index;
 
       super.remove(index);
 
@@ -128,7 +128,7 @@ public class JScrollPopupMenu extends JPopupMenu
                {
                   unit = preferredSize.height;
                }
-               if (i++ < maximumVisibleRows)
+               if (false == comp instanceof JPopupMenu.Separator && i++ < maximumVisibleRows)
                {
                   extent += preferredSize.height;
                }

@@ -287,7 +287,7 @@ final class MainFrameMenuBar extends JMenuBar
 
    private JMenu createSessionMenu(Resources rsrc)
 	{
-		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.SESSION);
+		JMenu menu = rsrc.createScrollMenu(SquirrelResources.IMenuResourceKeys.SESSION);
 		addToMenu(rsrc, SessionPropertiesAction.class, menu);
 		addToMenu(rsrc, DumpSessionAction.class, menu);
 		menu.addSeparator();

@@ -399,54 +399,7 @@ public class GUIUtils
 		wind.setLocation(x, y);
 	}
 
-   /**
-    * Inserts newlines at or before lineLength at spaces or commas. If no space 
-    * or comma can be found, the resultant line will not be broken up by 
-    * newlines.
-    * 
-    * @param line the line to word-wrap
-    * @param lineLength the maximum length any segment should be. 
-    * @return a line with newlines inserted
-    */
-   public static String getWrappedLine(String line, int lineLength) {
-       if (line.length() <= lineLength) {
-           return line;
-       }
-       StringBuffer result = new StringBuffer();
-       char[] lineChars = line.toCharArray();
-       int lastBreakCharIdx = -1;
-       ArrayList<Integer> breakPoints = new ArrayList<Integer>();
-       
-       // look for places to break the string
-       for (int i = 0; i < lineChars.length; i++) {
-           char curr = lineChars[i];
-           if (curr == ' ' || curr == ',') {
-               lastBreakCharIdx = i;
-           }
-           if (i > 0 && (i % lineLength == 0) && lastBreakCharIdx != -1) {
-               breakPoints.add(Integer.valueOf(lastBreakCharIdx));
-           }
-       }
-       if (lastBreakCharIdx != lineChars.length) {
-           breakPoints.add(Integer.valueOf(lineChars.length));
-       }
-       int lastBreakPointIdx = 0;
-       for (Iterator<Integer> iter = breakPoints.iterator(); iter.hasNext();) {
-           int breakPointIdx = (iter.next()).intValue() + 1;
-           if (breakPointIdx > line.length()) {
-               breakPointIdx = line.length();
-           }
-           String part = line.substring(lastBreakPointIdx, breakPointIdx);
-           result.append(part.trim());
-           if (!part.trim().endsWith("\\n")) { 
-               result.append("\n");
-           }
-           lastBreakPointIdx = breakPointIdx;
-       }
-       return result.toString();
-   }
-
-   public static Point getScreenLocationFor(Component component)
+	public static Point getScreenLocationFor(Component component)
    {
       Component comp = component;
 
@@ -577,6 +530,31 @@ public class GUIUtils
       scrollPane.scrollRectToVisible(new Rectangle(0,0, 1,1));
       scrollPane.getHorizontalScrollBar().setValue(0);
       scrollPane.getVerticalScrollBar().setValue(0);
+	}
+
+	public static int getMinHeightOfAllScreens()
+	{
+		//return Toolkit.getDefaultToolkit().getScreenSize().height;
+
+		//Rectangle virtualBounds = new Rectangle();
+
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] gs = ge.getScreenDevices();
+
+		int minHight = Integer.MAX_VALUE;
+		for (int j = 0; j < gs.length; j++)
+		{
+			GraphicsDevice gd = gs[j];
+			GraphicsConfiguration[] gc = gd.getConfigurations();
+
+			for (int i = 0; i < gc.length; i++)
+			{
+				//virtualBounds = virtualBounds.union(gc[i].getBounds());
+				minHight = Math.min(gc[i].getBounds().height, minHight);
+			}
+		}
+
+		return minHight;
 	}
 
 

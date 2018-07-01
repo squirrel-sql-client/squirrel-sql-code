@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Toolkit;
 import java.net.URL;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -25,6 +26,8 @@ import java.util.ResourceBundle;
 
 import javax.swing.*;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.JScrollMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -192,6 +195,31 @@ public abstract class Resources implements IResources
 	public JMenu createMenu(String menuKey) throws MissingResourceException
 	{
 		JMenu menu = new JMenu();
+		initMenu(menuKey, menu);
+		return menu;
+	}
+
+	public JScrollMenu createScrollMenu(String menuKey) throws MissingResourceException
+	{
+		JScrollMenu menu = new JScrollMenu();
+		initMenu(menuKey, menu);
+
+		menu.setMaximumVisibleRows(getMaxVisibleMenuRowsCount());
+
+		return menu;
+	}
+
+	private int getMaxVisibleMenuRowsCount()
+	{
+		JMenuItem menuItem = new JMenuItem("Test");
+		//double maxVisibleRowsCount = ((double)Toolkit.getDefaultToolkit().getScreenSize().height) / ((double)menuItem.getPreferredSize().height) - 3;
+		double maxVisibleRowsCount = ((double)GUIUtils.getMinHeightOfAllScreens()) / ((double)menuItem.getPreferredSize().height) - 3;
+
+		return (int) maxVisibleRowsCount;
+	}
+
+	private void initMenu(String menuKey, JMenu menu)
+	{
 		final String fullKey = Keys.MENU + "." + menuKey;
 		menu.setText(getResourceString(fullKey, MenuProperties.TITLE));
 		String mn = getResourceString(fullKey, MenuProperties.MNEMONIC);
@@ -199,8 +227,8 @@ public abstract class Resources implements IResources
 		{
 			menu.setMnemonic(mn.charAt(0));
 		}
-		return menu;
 	}
+
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#setupAction(javax.swing.Action, boolean)
