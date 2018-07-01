@@ -41,7 +41,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.CopyTableAction;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.PasteTableAction;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.PasteTableAsAction;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.PasteTableAsOrFilteredAction;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.gui.DBCopyGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 
@@ -66,9 +66,11 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	private List<IDatabaseObjectInfo> selectedDatabaseObjects = null;
 
 	private IDatabaseObjectInfo selectedDestDatabaseObject = null;
-   private String _pasteToTableName;
 
-   /**
+   private String _pasteToTableName;
+	private String _whereClause;
+
+	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin#sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession)
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session)
@@ -181,7 +183,7 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 
       coll.add(new CopyTableAction(app, _resources, this));
 		coll.add(new PasteTableAction(app, _resources, this));
-		coll.add(new PasteTableAsAction(app, _resources, this));
+		coll.add(new PasteTableAsOrFilteredAction(_resources, this));
 
 		setPasteMenuEnabled(false);
 	}
@@ -294,23 +296,23 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 		api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, coll.get(CopyTableAction.class));
 
 		api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, coll.get(PasteTableAction.class));
-		api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, coll.get(PasteTableAsAction.class));
+		api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, coll.get(PasteTableAsOrFilteredAction.class));
 
 		// Copy action object tree types
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CopyTableAction.class));
 
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(PasteTableAction.class));
-		api.addToPopup(DatabaseObjectType.TABLE, coll.get(PasteTableAsAction.class));
+		api.addToPopup(DatabaseObjectType.TABLE, coll.get(PasteTableAsOrFilteredAction.class));
 
 		// Paste action object tree types
 		api.addToPopup(DatabaseObjectType.SCHEMA, coll.get(PasteTableAction.class));
-		api.addToPopup(DatabaseObjectType.SCHEMA, coll.get(PasteTableAsAction.class));
+		api.addToPopup(DatabaseObjectType.SCHEMA, coll.get(PasteTableAsOrFilteredAction.class));
 
 		// MySQL shows databases as "CATALOGS" not "SCHEMAS"
 		api.addToPopup(DatabaseObjectType.CATALOG, coll.get(PasteTableAction.class));
-		api.addToPopup(DatabaseObjectType.CATALOG, coll.get(PasteTableAsAction.class));
+		api.addToPopup(DatabaseObjectType.CATALOG, coll.get(PasteTableAsOrFilteredAction.class));
 
-		api.addToPopup(DatabaseObjectType.SESSION, coll.get(PasteTableAsAction.class));
+		api.addToPopup(DatabaseObjectType.SESSION, coll.get(PasteTableAsOrFilteredAction.class));
 
 	}
 
@@ -361,7 +363,20 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
       return _pasteToTableName;
    }
 
-   @Override
+	@Override
+	public void setWhereClause(String whereClause)
+	{
+		_whereClause = whereClause;
+	}
+
+	@Override
+	public String getWhereClause()
+	{
+		return _whereClause;
+	}
+
+
+	@Override
    public TableInfo getPasteToTableInfo(ISQLConnection destConn, String destSchema, String destCatalog)
    {
       if(null == _pasteToTableName)
@@ -384,7 +399,7 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
       return copyDestSession.equals(copySourceSession);
    }
 
-   /**
+	/**
 	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#setDestSession(net.sourceforge.squirrel_sql.client.session.ISession)
 	 */
 	public void setDestSession(ISession session)

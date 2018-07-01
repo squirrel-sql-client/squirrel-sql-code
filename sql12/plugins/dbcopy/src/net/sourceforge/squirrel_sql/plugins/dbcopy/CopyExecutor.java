@@ -29,12 +29,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.AnalysisEvent;
@@ -56,6 +58,9 @@ import org.hibernate.MappingException;
  */
 public class CopyExecutor extends I18NBaseObject {
 
+   private final static ILogger s_log = LoggerController.createLogger(CopyExecutor.class);
+
+
     /** the class that provides out session information */
     SessionInfoProvider prov = null;
     
@@ -75,12 +80,10 @@ public class CopyExecutor extends I18NBaseObject {
     private boolean currentAutoCommitValue = true;    
     
     /** the user's preferences */
-    private static DBCopyPreferenceBean prefs = 
-                                            PreferencesManager.getPreferences();    
+    private static DBCopyPreferenceBean prefs = PreferencesManager.getPreferences();
     
     /** Logger for this class. */
-    private final static ILogger log = 
-                         LoggerController.createLogger(CopyExecutor.class);
+    private final static ILogger log = LoggerController.createLogger(CopyExecutor.class);
         
     /** the list of ITableInfos that represent the user's last selection. */
     private ArrayList<ITableInfo> selectedTableInfos = null;    
@@ -137,11 +140,13 @@ public class CopyExecutor extends I18NBaseObject {
     /**
      * Performs the table copy operation.
      */
-    private void _execute() {
+    private void _execute()
+    {
         start = System.currentTimeMillis();
         boolean encounteredException = false;
         ISQLConnection destConn = destSession.getSQLConnection();
-        if (!analyzeTables()) {
+        if (!analyzeTables())
+        {
             return;
         }
         setupAutoCommit(destConn);
@@ -151,51 +156,68 @@ public class CopyExecutor extends I18NBaseObject {
 
         //String destSchema = prov.getDestDatabaseObject().getSimpleName();  used to break, when a table was selected
 
-       String destSchema = DBUtil.getSchemaNameFromDbObject(prov.getDestDatabaseObject());
+        String destSchema = DBUtil.getSchemaNameFromDbObject(prov.getDestDatabaseObject());
 
-       String destCatalog = prov.getDestDatabaseObject().getCatalogName();
+        String destCatalog = prov.getDestDatabaseObject().getCatalogName();
 
-       TableInfo pasteToTableInfo = prov.getPasteToTableInfo(destConn, destSchema, destCatalog);
+        TableInfo pasteToTableInfo = prov.getPasteToTableInfo(destConn, destSchema, destCatalog);
 
-       int sourceObjectCount = 0;
-        for (IDatabaseObjectInfo info : sourceObjs) {
-            if (! (info instanceof ITableInfo)) {
+        int sourceObjectCount = 0;
+        for (IDatabaseObjectInfo info : sourceObjs)
+        {
+            if (!(info instanceof ITableInfo))
+            {
                 continue;
             }
-            ITableInfo sourceTI = (ITableInfo)info;
-            sendTableCopyStarted(chooseDestTableInfo(sourceTI, pasteToTableInfo), sourceObjectCount+1);
-            try {
+            ITableInfo sourceTI = (ITableInfo) info;
+            sendTableCopyStarted(chooseDestTableInfo(sourceTI, pasteToTableInfo), sourceObjectCount + 1);
+            try
+            {
                 int destTableCount = DBUtil.getTableCount(destSession,
-                                                          destCatalog,
-                                                          destSchema,
-                                                          chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName(),
-                                                          DialectFactory.DEST_TYPE);
-                if (destTableCount == -1) {
+                      destCatalog,
+                      destSchema,
+                      chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName(),
+                      DialectFactory.DEST_TYPE,
+                      prov.getWhereClause());
+
+                if (destTableCount == -1)
+                {
                     createTable(sourceTI, chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName(), destSchema, destCatalog);
-                } 
-                if (destTableCount > 0) {
-                    try {
-                        if (pref.appendRecordsToExisting()) {
+                }
+
+                if (destTableCount > 0)
+                {
+                    try
+                    {
+                        if (pref.appendRecordsToExisting())
+                        {
                             /* Do nothing */
-                        } else if (pref.deleteTableData(chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName())) {
+                        }
+                        else if (pref.deleteTableData(chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName()))
+                        {
                             // Yes || Yes to all
                             DBUtil.deleteDataInExistingTable(destSession,
-                                                             destCatalog,
-                                                             destSchema,
-                                                             chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName());
-                        } else {
+                                  destCatalog,
+                                  destSchema,
+                                  chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName());
+                        }
+                        else
+                        {
                             continue; // skip this table, try the next.
                         }
-                        
-                    } catch (UserCancelledOperationException e) {
+
+                    }
+                    catch (UserCancelledOperationException e)
+                    {
                         cancelled = true;
                         break;
                     }
-                } 
-                
+                }
+
                 copyTable(sourceTI, pasteToTableInfo, counts[sourceObjectCount]);
-                
-                if (sourceObjectCount == sourceObjs.size() - 1 && !cancelled) {
+
+                if (sourceObjectCount == sourceObjs.size() - 1 && !cancelled)
+                {
                     // We just copied the last table.  Now it is safe to copy the
                     // constraints.(Well, that is, if all FK dependencies are met
                     // in the group of tables being copied. 
@@ -204,46 +226,75 @@ public class CopyExecutor extends I18NBaseObject {
                     // those missing tables to the list.
                     copyConstraints(sourceObjs);
                 }
-                if (!cancelled) {
-                    sendTableCopyFinished(chooseDestTableInfo(sourceTI, pasteToTableInfo), sourceObjectCount+1);
+                if (!cancelled)
+                {
+                    sendTableCopyFinished(chooseDestTableInfo(sourceTI, pasteToTableInfo), sourceObjectCount + 1);
                     sleep(prefs.getTableDelayMillis());
                 }
-            } catch (SQLException e) {
+            }
+            catch (SQLException e)
+            {
                 encounteredException = true;
                 sendErrorEvent(ErrorEvent.SQL_EXCEPTION_TYPE, e);
                 break;
-            } catch (MappingException e) {
+            }
+            catch (MappingException e)
+            {
                 encounteredException = true;
                 sendErrorEvent(ErrorEvent.MAPPING_EXCEPTION_TYPE, e);
                 break;
-            } catch (UserCancelledOperationException e) {
+            }
+            catch (UserCancelledOperationException e)
+            {
                 cancelled = true;
                 break;
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 encounteredException = true;
                 sendErrorEvent(ErrorEvent.GENERIC_EXCEPTION, e);
                 break;
             }
             sourceObjectCount++;
-        }        
+        }
         restoreAutoCommit(destConn);
-        if (cancelled) {
+        if (cancelled)
+        {
             sendErrorEvent(ErrorEvent.USER_CANCELLED_EXCEPTION_TYPE);
             return;
         }
-        if (encounteredException) {
-            return;
-        }         
-        end = System.currentTimeMillis();
-        
-        ISession session = prov.getDestSession();
-        if (session.getSessionSheet() != null) {
-      	  session.getSchemaInfo().reload(DBUtil.getSchemaFromDbObject(prov.getDestDatabaseObject(), session.getSchemaInfo()));
-      	  session.getSchemaInfo().fireSchemaInfoUpdate();
+        if (encounteredException)
+        {
+           try
+           {
+              // An error may have occurred after the table was created
+              // especially by an erroneous WHERE-Clause the user entered.
+              // We try to reload the Object tree to make the new table visible.
+              reloadObjectTree();
+           }
+           catch (Exception e)
+           {
+              // Do nothing. The orginal exception is the important one.
+           }
+
+           return;
         }
+        end = System.currentTimeMillis();
+
+       reloadObjectTree();
 
         notifyCopyFinished();
     }
+
+   private void reloadObjectTree()
+   {
+      ISession session = prov.getDestSession();
+      if (session.getSessionSheet() != null)
+      {
+          session.getSchemaInfo().reload(DBUtil.getSchemaFromDbObject(prov.getDestDatabaseObject(), session.getSchemaInfo()));
+          session.getSchemaInfo().fireSchemaInfoUpdate();
+      }
+   }
 
    private ITableInfo chooseDestTableInfo(ITableInfo sourceTI, TableInfo pasteToTableInfo)
    {
@@ -457,72 +508,87 @@ public class CopyExecutor extends I18NBaseObject {
             CopyTableListener listener = i.next();
             listener.tableCopyFinished(event);
         }
-    }    
-    
-    /**
-     * Send an error event message to all CopyTableListeners
-     * @param type the type of the ErrorEvent.
-     */
-    private void sendErrorEvent(int type) {
-        sendErrorEvent(type, null);
     }
 
-    /**
-     * Send an error event message to all CopyTableListeners
-     * @param type the type of the ErrorEvent.
-     * @param e the exception that was encountered.
-     */    
-    private void sendErrorEvent(int type, Exception e) {
-        ErrorEvent event = new ErrorEvent(prov, type);
-        event.setException(e);
-        Iterator<CopyTableListener> i = listeners.iterator();
-        while (i.hasNext()) {
-            CopyTableListener listener = i.next();
-            listener.handleError(event);
-        }        
-    }
-    
-    private void sendRecordEvent(int number, int count) {
-        RecordEvent event = new RecordEvent(prov, number, count);
-        Iterator<CopyTableListener> i = listeners.iterator();
-        while (i.hasNext()) {
-            CopyTableListener listener = i.next();
-            listener.recordCopied(event);
-        }
-    }
-    
-    private void sendStatementEvent(String sql, String[] vals) {
-        StatementEvent event = 
+   /**
+    * Send an error event message to all CopyTableListeners
+    *
+    * @param type the type of the ErrorEvent.
+    */
+   private void sendErrorEvent(int type)
+   {
+      sendErrorEvent(type, null);
+   }
+
+   /**
+    * Send an error event message to all CopyTableListeners
+    *
+    * @param type the type of the ErrorEvent.
+    * @param e    the exception that was encountered.
+    */
+   private void sendErrorEvent(int type, Exception e)
+   {
+      Main.getApplication().getMessageHandler().showErrorMessage(e);
+      s_log.error(e);
+
+      ErrorEvent event = new ErrorEvent(prov, type);
+      event.setException(e);
+      Iterator<CopyTableListener> i = listeners.iterator();
+      while (i.hasNext())
+      {
+         CopyTableListener listener = i.next();
+         listener.handleError(event);
+      }
+   }
+
+   private void sendRecordEvent(int number, int count)
+   {
+      RecordEvent event = new RecordEvent(prov, number, count);
+      Iterator<CopyTableListener> i = listeners.iterator();
+      while (i.hasNext())
+      {
+         CopyTableListener listener = i.next();
+         listener.recordCopied(event);
+      }
+   }
+
+   private void sendStatementEvent(String sql, String[] vals)
+   {
+      StatementEvent event =
             new StatementEvent(sql, StatementEvent.INSERT_RECORD_TYPE);
-        event.setBindValues(vals);
-        Iterator<CopyTableListener> i = listeners.iterator();
-        while (i.hasNext()) {
-            CopyTableListener listener = i.next();
-            listener.statementExecuted(event);
-        }        
-    }
-    
-    private void notifyCopyFinished() {
-        int seconds = (int)getElapsedSeconds();
-        Iterator<CopyTableListener> i = listeners.iterator();
-        while (i.hasNext()) {
-            CopyTableListener listener = i.next();
-            listener.copyFinished(seconds);
-        }
-    }
-    
-    /**
-     * 
-     * @return
-     */
-    private long getElapsedSeconds() {
-        long result = 1;
-        double elapsed = end - start;
-        if (elapsed > 1000) {
-            result = Math.round(elapsed / 1000);
-        }
-        return result;
-    }
+      event.setBindValues(vals);
+      Iterator<CopyTableListener> i = listeners.iterator();
+      while (i.hasNext())
+      {
+         CopyTableListener listener = i.next();
+         listener.statementExecuted(event);
+      }
+   }
+
+   private void notifyCopyFinished()
+   {
+      int seconds = (int) getElapsedSeconds();
+      Iterator<CopyTableListener> i = listeners.iterator();
+      while (i.hasNext())
+      {
+         CopyTableListener listener = i.next();
+         listener.copyFinished(seconds);
+      }
+   }
+
+   /**
+    * @return
+    */
+   private long getElapsedSeconds()
+   {
+      long result = 1;
+      double elapsed = end - start;
+      if (elapsed > 1000)
+      {
+         result = Math.round(elapsed / 1000);
+      }
+      return result;
+   }
     
     /**
      * 
@@ -570,7 +636,7 @@ public class CopyExecutor extends I18NBaseObject {
             boolean doubleQuoteTableName = false;
             boolean doubleQuoteColumnNames = false;
 
-            String selectSQL = DBUtil.getSelectQuery(prov,sourceColList,sourceTableInfo,doubleQuoteTableName);
+            String selectSQL = DBUtil.getSelectQuery(prov,sourceColList,sourceTableInfo, doubleQuoteTableName, prov.getWhereClause());
             try
             {
                 rs = DBUtil.executeQuery(prov.getSourceSession(), selectSQL);
@@ -581,7 +647,7 @@ public class CopyExecutor extends I18NBaseObject {
                 {
                     log.info("Failed to execute SELECT-SQL without double quoting. Now trying with double quoting table name", e);
                     doubleQuoteTableName = true;
-                    selectSQL = DBUtil.getSelectQuery(prov, sourceColList,sourceTableInfo, doubleQuoteTableName);
+                    selectSQL = DBUtil.getSelectQuery(prov, sourceColList,sourceTableInfo, doubleQuoteTableName, prov.getWhereClause());
                     rs = DBUtil.executeQuery(prov.getSourceSession(), selectSQL);
                 }
                 catch (Exception e1)
@@ -593,7 +659,7 @@ public class CopyExecutor extends I18NBaseObject {
 
                     sourceColList = DBUtil.getColumnList(sourceInfos, doubleQuoteColumnNames);
                     destColList = DBUtil.getColumnList(destInfos, doubleQuoteColumnNames);
-                    selectSQL = DBUtil.getSelectQuery(prov, sourceColList,sourceTableInfo, doubleQuoteTableName);
+                    selectSQL = DBUtil.getSelectQuery(prov, sourceColList,sourceTableInfo, doubleQuoteTableName, prov.getWhereClause());
                     rs = DBUtil.executeQuery(prov.getSourceSession(), selectSQL);
                 }
             }
@@ -885,22 +951,27 @@ public class CopyExecutor extends I18NBaseObject {
         if (prefs.isCommitAfterTableDefs() && !currentAutoCommitValue) {
             commitConnection(destCon);
         }
-        
-        if (prefs.isCopyIndexDefs() && (null == prov.getPasteToTableName() || false == prov.isCopiedFormDestinationSession() ) ) {
+
+        if (prefs.isCopyIndexDefs() && (null == prov.getPasteToTableName() || false == prov.isCopiedFormDestinationSession()))
+        {
             Collection<String> indices = null;
             ISQLDatabaseMetaData sqlmd = sourceSession.getMetaData();
             CreateScriptPreferences prefs = new CreateScriptPreferences();
             prefs.setQualifyTableNames(null != destSchema);
 
-           if (this.prefs.isCopyPrimaryKeys()) {
+            if (this.prefs.isCopyPrimaryKeys())
+            {
                 PrimaryKeyInfo[] pkList = sqlmd.getPrimaryKey(ti);
                 List<PrimaryKeyInfo> pkList2 = Arrays.asList(pkList);
                 indices = DialectUtils.createIndexes(ti, destTableName, destSchema, sqlmd, pkList2, prefs);
-            } else {
+            }
+            else
+            {
                 indices = DialectUtils.createIndexes(ti, destTableName, destSchema, sqlmd, null, prefs);
             }
             Iterator<String> i = indices.iterator();
-            while (i.hasNext()) {
+            while (i.hasNext())
+            {
                 String createIndicesSql = i.next();
                 DBUtil.executeUpdate(destCon, createIndicesSql, true);
             }

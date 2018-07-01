@@ -18,59 +18,45 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.actions;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.*;
 import java.util.List;
 
 
-public class PasteTableAsAction extends SquirrelAction
-                                     implements ISessionAction {
+public class PasteTableAsOrFilteredAction extends SquirrelAction implements ISessionAction
+{
 
 	/** Current plugin. */
-	private final SessionInfoProvider sessionInfoProv;
+	private final SessionInfoProvider _sessionInfoProv;
 
-    /** The IApplication that we can use to display error dialogs */
-    private IApplication app = null;
 
-    /** Logger for this class. */
-    private final static ILogger log =
-                         LoggerController.createLogger(PasteTableAsAction.class);
-
-    /** Internationalized strings for this class */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(PasteTableAsAction.class);
+   /** Internationalized strings for this class */
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PasteTableAsOrFilteredAction.class);
 
     /**
      * Creates a new SQuirreL action that gets fired whenever the user chooses
      * the paste operation.
      *
-     * @param app
      * @param rsrc
      * @param plugin
      */
-    public PasteTableAsAction(IApplication app, Resources rsrc,
-                              DBCopyPlugin plugin) {
-        super(app, rsrc);
-        this.app = app;
-        sessionInfoProv = plugin;
+    public PasteTableAsOrFilteredAction(Resources rsrc, DBCopyPlugin plugin)
+    {
+       super(Main.getApplication(), rsrc);
+       _sessionInfoProv = plugin;
     }
 
     /* (non-Javadoc)
@@ -78,42 +64,40 @@ public class PasteTableAsAction extends SquirrelAction
      */
     public void actionPerformed(ActionEvent evt) {
 
-       if(null == sessionInfoProv.getSourceDatabaseObjects())
+       if(null == _sessionInfoProv.getSourceDatabaseObjects())
        {
           return;
        }
 
-       Frame owningFrame = SessionUtils.getOwningFrame(sessionInfoProv.getDestSession());
+       Frame owningFrame = SessionUtils.getOwningFrame(_sessionInfoProv.getDestSession());
 
-       if(1 != sessionInfoProv.getSourceDatabaseObjects().size())
+       if(1 != _sessionInfoProv.getSourceDatabaseObjects().size())
        {
 
           JOptionPane.showMessageDialog(owningFrame, s_stringMgr.getString("EditPasteTableNameDlg.onlyOneTableMsg"));
           return;
        }
 
-       String destTableName = null;
-       List<ITableInfo> selectedTables = sessionInfoProv.getDestSession().getObjectTreeAPIOfActiveSessionWindow().getSelectedTables();
+       List<ITableInfo> selectedTables = _sessionInfoProv.getDestSession().getObjectTreeAPIOfActiveSessionWindow().getSelectedTables();
+
+       String destTableName = _sessionInfoProv.getSourceDatabaseObjects().get(0).getSimpleName();
 
        if(1 == selectedTables.size())
        {
           destTableName = selectedTables.get(0).getSimpleName();
        }
 
-       EditPasteTableNameDlg dlg = new EditPasteTableNameDlg(owningFrame, destTableName);
-       GUIUtils.centerWithinParent(dlg);
-       dlg.setVisible(true);
+       EditPasteTableNameCtrl ctrl = new EditPasteTableNameCtrl(owningFrame, destTableName);
 
-       if(null == dlg.getTableName())
+       if(null == ctrl.getTableName())
        {
           return;
        }
 
-       PasteTableUtil.excePasteTable(sessionInfoProv, app, dlg.getTableName());
+       _sessionInfoProv.setWhereClause(ctrl.getWhereClause());
+       _sessionInfoProv.setPasteToTableName(ctrl.getTableName());
 
-
-       System.out.println("dlg.getTableName() = " + dlg.getTableName());
-
+       PasteTableUtil.excePasteTable(_sessionInfoProv, Main.getApplication());
     }
 
    /**
@@ -122,6 +106,6 @@ public class PasteTableAsAction extends SquirrelAction
 	 * @param	session		The current session.
 	 */
     public void setSession(ISession session) {
-        sessionInfoProv.setDestSession(session);        
+        _sessionInfoProv.setDestSession(session);
     }
 }

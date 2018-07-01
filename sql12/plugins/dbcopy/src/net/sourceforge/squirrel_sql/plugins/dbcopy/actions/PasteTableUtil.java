@@ -20,69 +20,81 @@ public class PasteTableUtil
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PasteTableUtil.class);
 
 
-   public static void excePasteTable(SessionInfoProvider sessionInfoProv, IApplication app1, String pasteToTableName)
+   public static void excePasteTable(SessionInfoProvider sessionInfoProv, IApplication app1)
    {
       ISession destSession = sessionInfoProv.getDestSession();
       IObjectTreeAPI api =
-          destSession.getObjectTreeAPIOfActiveSessionWindow();
-      if (api == null) {
-          return;
+            destSession.getObjectTreeAPIOfActiveSessionWindow();
+      if (api == null)
+      {
+         return;
       }
       IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
-      if (dbObjs.length > 1) {
-          sessionInfoProv.setDestDatabaseObject(null);
-          //i18n[PasteTableAction.error.multischemapaste=The paste
-          //operation may only be applied to one schema at a time]
-          String msg =
-             s_stringMgr.getString("PasteTableAction.error.multischemapaste");
-          app1.showErrorDialog(msg);
+      if (dbObjs.length > 1)
+      {
+         sessionInfoProv.setDestDatabaseObject(null);
+         //i18n[PasteTableAction.error.multischemapaste=The paste
+         //operation may only be applied to one schema at a time]
+         String msg =
+               s_stringMgr.getString("PasteTableAction.error.multischemapaste");
+         app1.showErrorDialog(msg);
 
-          return;
-      } else {
+         return;
+      }
+      else
+      {
          // When the user pastes on a TABLE label which is located under a
          // schema/catalog, build the schema DatabaseObjectInfo.
-         if (DatabaseObjectType.TABLE_TYPE_DBO.equals(dbObjs[0].getDatabaseObjectType())) {
+         if (DatabaseObjectType.TABLE_TYPE_DBO.equals(dbObjs[0].getDatabaseObjectType()))
+         {
             IDatabaseObjectInfo tableLabelInfo = dbObjs[0];
             ISQLConnection destCon = destSession.getSQLConnection();
             SQLDatabaseMetaData md = null;
-            if (destCon != null) {
+            if (destCon != null)
+            {
                md = destCon.getSQLMetaData();
             }
             IDatabaseObjectInfo schema =
-               new DatabaseObjectInfo(null,
-                                 tableLabelInfo.getSchemaName(),
-                                 tableLabelInfo.getSchemaName(),
-                                 DatabaseObjectType.SCHEMA,
-                                 md);
+                  new DatabaseObjectInfo(null,
+                        tableLabelInfo.getSchemaName(),
+                        tableLabelInfo.getSchemaName(),
+                        DatabaseObjectType.SCHEMA,
+                        md);
             sessionInfoProv.setDestDatabaseObject(schema);
-         } else {
+         }
+         else
+         {
             sessionInfoProv.setDestDatabaseObject(dbObjs[0]);
          }
-
-         sessionInfoProv.setPasteToTableName(pasteToTableName);
-
       }
 
-      try {
-          IDatabaseObjectInfo info
-                          = sessionInfoProv.getDestDatabaseObject();
-          if (info == null || destSession == null) {
-              return;
-          }
-          if (!checkSession(destSession, info, app1)) {
-              return;
-          }
-      } catch (UserCancelledOperationException e) {
-          return;
+      try
+      {
+         IDatabaseObjectInfo info
+               = sessionInfoProv.getDestDatabaseObject();
+         if (info == null || destSession == null)
+         {
+            return;
+         }
+         if (!checkSession(destSession, info, app1))
+         {
+            return;
+         }
       }
-      if (sessionInfoProv.getSourceSession() == null) {
-          return;
+      catch (UserCancelledOperationException e)
+      {
+         return;
       }
-      if (!sourceDestSchemasDiffer()) {
-          // TODO: tell the user that the selected destination schema is
-          // the same as the source schema.
-          //monitor.showMessageDialog(...)
-          return;
+      if (sessionInfoProv.getSourceSession() == null)
+      {
+         return;
+      }
+      if (!sourceDestSchemasDiffer())
+      {
+         // TODO: tell the user that the selected destination schema is
+         // the same as the source schema.
+         //monitor.showMessageDialog(...)
+         return;
       }
       new PasteTableCommand(sessionInfoProv).execute();
    }

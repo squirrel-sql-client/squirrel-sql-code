@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#323 The 'Copy table as ...' feature was turned into 'Copy table as/filtered ...' and now allows
+  to provide an optional WHERE clause.
+
 Find Alias dialog (ctrl alt shift F) now has a check box to remember the last search string.
 
 Improved layout of upper part of result tab.

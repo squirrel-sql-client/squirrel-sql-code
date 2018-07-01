@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.ColTypeMapper;
@@ -424,12 +425,7 @@ public class DBUtil extends I18NBaseObject
 			SQLUtilities.closeStatement(stmt);
 			throw e;
 		}
-		if (log.isDebugEnabled())
-		{
-			// i18n[DBUtil.info.executequery=executeQuery: Running SQL:\n '{0}']
-			String msg = s_stringMgr.getString("DBUtil.info.executequery", sql);
-			log.debug(msg);
-		}
+
 		try
 		{
 			lastStatement = sql;
@@ -452,17 +448,25 @@ public class DBUtil extends I18NBaseObject
 	 *        the SQLConnection to use to execute the count query.
 	 * @param tableName
 	 *        the name of the table. This name should already be qualified by the schema.
-	 * 
+	 *
+	 * @param whereClause
 	 * @return -1 if the table does not exist, otherwise the record count is returned.
 	 */
-	private static int getTableCount(ISession session, String tableName)
+	private static int getTableCount(ISession session, String tableName, String whereClause)
 	{
 		int result = -1;
 		ResultSet rs = null;
 		try
 		{
 			String sql = "select count(*) from " + tableName;
+
+			if(false == StringUtilities.isEmpty(whereClause, true))
+			{
+				sql += " " + whereClause;
+			}
+
 			rs = executeQuery(session, sql);
+
 			if (rs.next())
 			{
 				result = rs.getInt(1);
@@ -487,11 +491,14 @@ public class DBUtil extends I18NBaseObject
 	 * 
 	 * @return -1 if the table does not exist, otherwise the record count is returned.
 	 */
-	public static int getTableCount(ISession session, String catalog, String schema, String tableName,
-	      int sessionType) throws UserCancelledOperationException
+	public static int getTableCount(ISession session, String catalog, String schema, String tableName, int sessionType) throws UserCancelledOperationException
+	{
+		return getTableCount(session, catalog, schema, tableName, sessionType, null);
+	}
+	public static int getTableCount(ISession session, String catalog, String schema, String tableName, int sessionType, String whereClause) throws UserCancelledOperationException
 	{
 		String table = getQualifiedObjectName(session, catalog, schema, tableName, sessionType);
-		return getTableCount(session, table);
+		return getTableCount(session, table, whereClause);
 	}
 
 	public static ITableInfo getTableInfo(ISession session, String schema, String tableName)
@@ -1619,10 +1626,11 @@ public class DBUtil extends I18NBaseObject
 	 * @param columnList
 	 * @param ti
 	 * @param doubleQuoteTableName
+	 * @param whereClause
 	 * @return
 	 * @throws SQLException
 	 */
-	public static String getSelectQuery(SessionInfoProvider prov, String columnList, ITableInfo ti, boolean doubleQuoteTableName)
+	public static String getSelectQuery(SessionInfoProvider prov, String columnList, ITableInfo ti, boolean doubleQuoteTableName, String whereClause)
 	      throws SQLException, UserCancelledOperationException
 	{
 		StringBuilder result = new StringBuilder("select ");
@@ -1632,6 +1640,13 @@ public class DBUtil extends I18NBaseObject
 
 		String tableName = getQualifiedObjectName(sourceSession, ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), DialectFactory.SOURCE_TYPE, doubleQuoteTableName);
 		result.append(tableName);
+
+		if(false == StringUtilities.isEmpty(whereClause, true))
+		{
+			result.append(" ").append(whereClause);
+		}
+
+
 		return result.toString();
 	}
 

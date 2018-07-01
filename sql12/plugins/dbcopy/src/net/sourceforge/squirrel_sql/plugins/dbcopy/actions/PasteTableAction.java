@@ -58,7 +58,7 @@ public class PasteTableAction extends SquirrelAction
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent evt) {
-       PasteTableUtil.excePasteTable(sessionInfoProv, app, null);
+       PasteTableUtil.excePasteTable(sessionInfoProv, app);
     }
 
    /**

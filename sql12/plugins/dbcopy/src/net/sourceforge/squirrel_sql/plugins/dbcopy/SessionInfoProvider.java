@@ -31,21 +31,21 @@ import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
  */
 public interface SessionInfoProvider {
     
-    public void setSourceSession(ISession session);
+    void setSourceSession(ISession session);
     
-    public ISession getSourceSession();
+    ISession getSourceSession();
     
-    public void setSourceDatabaseObjects(List<IDatabaseObjectInfo> dbObjList);
+    void setSourceDatabaseObjects(List<IDatabaseObjectInfo> dbObjList);
     
-    public List<IDatabaseObjectInfo> getSourceDatabaseObjects();
+    List<IDatabaseObjectInfo> getSourceDatabaseObjects();
     
-    public IDatabaseObjectInfo getDestDatabaseObject();
+    IDatabaseObjectInfo getDestDatabaseObject();
     
-    public void setDestDatabaseObject(IDatabaseObjectInfo info);
+    void setDestDatabaseObject(IDatabaseObjectInfo info);
     
-    public void setDestSession(ISession session);
+    void setDestSession(ISession session);
     
-    public ISession getDestSession();
+    ISession getDestSession();
 
     void setPasteToTableName(String pasteToTableName);
 
@@ -54,4 +54,8 @@ public interface SessionInfoProvider {
     TableInfo getPasteToTableInfo(ISQLConnection destConn, String destSchema, String destCatalog);
 
     boolean isCopiedFormDestinationSession();
+
+    void setWhereClause(String whereClause);
+
+    String getWhereClause();
 }

@@ -38,6 +38,11 @@ public interface IMessageHandler {
      */
     void showMessage(String msg);
 
+    default void showErrorMessage(Throwable th)
+    {
+        showErrorMessage(th, null);
+    }
+
     /**
      * Show an error message describing the passed exception. The implementation
      * of <TT>IMessageHandler</TT> may or may not treat this differently to
