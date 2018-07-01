@@ -196,6 +196,10 @@ public class AutoCorrectController
          dtm.addRow(row);
 
          _dlg.tblAutoCorrects.getSelectionModel().setSelectionInterval(dtm.getRowCount()-1, dtm.getRowCount()-1);
+
+         Rectangle cellRect = _dlg.tblAutoCorrects.getCellRect(dtm.getRowCount() - 1, 0, true);
+
+         _dlg.tblAutoCorrects.scrollRectToVisible(cellRect);
       }
 
       save();

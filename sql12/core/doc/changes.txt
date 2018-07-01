@@ -64,6 +64,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+Corrections/abbreviations dialog didn't scroll right when new row was added.
+
 DBCopy-Plugin: When 'Paste table as/filtered...' was used before simple 'Paste table' information of the first action were not cleaned.
 
 Reloading last SQL contents (*) did mark the SQL editor dirty i.e. unsaved buffer edits confirm firm was triggered.
