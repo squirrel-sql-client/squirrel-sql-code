@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 /**
  * This class represents SQL history.
@@ -27,7 +28,7 @@ import java.util.List;
  */
 public class SQLHistory
 {
-	private List<SQLHistoryItem> _history = new ArrayList<SQLHistoryItem>();
+	private List<SQLHistoryItem> _history = new ArrayList<>();
 
 	public SQLHistory()
 	{
@@ -43,6 +44,9 @@ public class SQLHistory
 	public synchronized void setData(SQLHistoryItem[] data)
 	{
 		_history.clear();
+
+		Arrays.sort(data, Comparator.comparing(SQLHistoryItem::getLastUsageTime, Comparator.nullsLast(Comparator.reverseOrder())));
+
 		_history.addAll(Arrays.asList(data));
 	}
 
@@ -60,6 +64,6 @@ public class SQLHistory
 			// Empty body.
 		}
 
-		_history.add(obj);
+		_history.add(0, obj);
 	}
 }

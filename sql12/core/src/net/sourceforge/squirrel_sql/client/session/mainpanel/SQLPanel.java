@@ -561,16 +561,10 @@ public class SQLPanel extends JPanel
 		_sqlComboListener.stopListening();
 		try
 		{
-			int beforeSize = 0;
-			int afterSize = _sqlCombo.getItemCount();
-			do
-			{
-				beforeSize = afterSize;
-				_sqlCombo.removeItem(sql);
-				afterSize = _sqlCombo.getItemCount();
-			} while (beforeSize != afterSize);
-			_sqlCombo.insertItemAt(sql, afterSize);
-			_sqlCombo.setSelectedIndex(afterSize);
+			_sqlCombo.removeItem(sql);
+			_sqlCombo.insertItemAt(sql, 0);
+			_sqlCombo.setSelectedIndex(0);
+
          _sqlCombo.repaint();
 		}
 		finally
@@ -864,7 +858,7 @@ public class SQLPanel extends JPanel
 		_sqlCombo.setEditable(false);
 		if (_sqlCombo.getItemCount() > 0)
 		{
-			_sqlCombo.setSelectedIndex(_sqlCombo.getItemCount() - 1);
+			_sqlCombo.setSelectedIndex(0);
 		}
 
 		{

@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#567 SQL History dropdown is now sorted youngest to oldest instead of oldest to youngest.
+
 #323 DBCopy-Plugin: The 'Paste table as ...' feature was turned into 'Paste table as/filtered ...' and now allows
   to provide an optional WHERE clause.
 

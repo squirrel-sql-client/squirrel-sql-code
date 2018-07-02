@@ -17,8 +17,7 @@ public class SQLHistoryDlg extends JDialog
    private static final String PREF_KEY_SQL_HISTORY_DLG_DIV_LOC = "Squirrel.sqlHistoryDlgDivLoc";
 
    /** Internationalized strings for this class. */
-   private static final StringManager s_stringMgr =
-       StringManagerFactory.getStringManager(SQLHistoryDlg.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLHistoryDlg.class);
 
 
    SortableTable tblHistoryItems;

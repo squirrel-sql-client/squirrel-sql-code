@@ -1014,7 +1014,7 @@ public class Application implements IApplication
 				if (data.length > maxSize)
 				{
 					SQLHistoryItem[] reducedData = new SQLHistoryItem[maxSize];
-					System.arraycopy(data, data.length - maxSize, reducedData, 0, maxSize);
+					System.arraycopy(data, 0, reducedData, 0, maxSize);
 					_sqlHistory.setData(reducedData);
 				}
 			}

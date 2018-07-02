@@ -42,7 +42,7 @@ public class SQLHistoryItemWrapper
          ret.add(new SQLHistoryItemWrapper(item, ++i));
       }
 
-      Collections.reverse(ret);
+      //Collections.reverse(ret);
 
       return ret;
    }
