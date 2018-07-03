@@ -93,7 +93,10 @@ public class StatementWrapper implements StatementCallback
 
    public void cancel() throws SQLException
    {
-      _statement.cancel();
+      if (null != _statement)
+      {
+         _statement.cancel();
+      }
    }
 
    public ResultSetWrapper getResultSetWrapper() throws SQLException
