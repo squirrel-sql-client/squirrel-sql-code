@@ -30,10 +30,7 @@ package net.sourceforge.squirrel_sql.client.session;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateCheck;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -79,12 +76,11 @@ public class SQLExecuterTask implements Runnable
 
    private int _currentQueryIndex = 0;
    private ISQLExecutionListener[] _executionListeners;
-   //private DataSetUpdateableTableModelImpl _dataSetUpdateableTableModel;
    private SchemaInfoUpdateCheck _schemaInfoUpdateCheck;
    private IQueryTokenizer _tokenizer = null;
    /** Whether or not to check if the schema should be updated */
    private boolean schemaCheck = true;
-   private StatementWrapper _statementWrapper;
+   private StatementWrapper _currentStatementWrapper;
    private String _tableToBeEdited;
    private boolean _executeEditableCheck = true;
 
@@ -101,19 +97,14 @@ public class SQLExecuterTask implements Runnable
    public SQLExecuterTask(ISession session, String sql, ISQLExecuterHandler handler, ISQLExecutionListener[] executionListeners, String tableToBeEdited)
    {
       _tableToBeEdited = tableToBeEdited;
-      if (sql == null) {
-          if (s_log.isDebugEnabled()) {
-              s_log.debug("init(): expected non-null sql");
-              return;
-          }
-      }
       _session = session;
       _schemaInfoUpdateCheck = new SchemaInfoUpdateCheck(_session);
       _sql = sql;
       _tokenizer = _session.getQueryTokenizer();
       _tokenizer.setScriptToTokenize(_sql);
       _handler = handler;
-      if (_handler == null) {
+      if (_handler == null)
+      {
           _handler = new DefaultSQLExecuterHandler(session);
       }
       _executionListeners = executionListeners;
@@ -151,109 +142,109 @@ public class SQLExecuterTask implements Runnable
       int statementCount = 0;
       final SessionProperties props = _session.getProperties();
 
-      ArrayList<String> sqlExecErrorMsgs = new ArrayList<String>();
+
+      ArrayList<String> sqlExecErrorMsgs = new ArrayList<>();
 
       try
       {
          final ISQLConnection conn = _session.getSQLConnection();
-         _statementWrapper = new StatementWrapper(conn.createStatement(), _session);
 
-         try
+         final boolean correctlySupportsMaxRows = conn.getSQLMetaData().correctlySupportsSetMaxRows();
+
+         if(_tokenizer.getQueryCount() == 0)
          {
-            _statementWrapper.setFetchSize();
+            throw new IllegalArgumentException("No SQL selected for execution.");
+         }
 
-             
-            final boolean correctlySupportsMaxRows = conn.getSQLMetaData().correctlySupportsSetMaxRows();
+         _currentQueryIndex = 0;
 
-            //boolean maxRowsHasBeenSet = false;
+         int processedStatementCount = 0;
+         statementCount = _tokenizer.getQueryCount();
+
+         _handler.sqlStatementCount(statementCount);
+
+         while (_tokenizer.hasQuery() && !_stopExecution)
+         {
+            String querySql = _tokenizer.nextQuery();
+            if (querySql == null)
+            {
+               continue;
+            }
+
+            ++processedStatementCount;
+            if (_handler != null)
+            {
+               _handler.sqlToBeExecuted(querySql);
+            }
+
+            _currentStatementWrapper = new StatementWrapper(conn.createStatement(), _session);
+            _currentStatementWrapper.setFetchSize();
             if (correctlySupportsMaxRows)
             {
-               _statementWrapper.setMaxRows();
+               _currentStatementWrapper.setMaxRows();
             }
 
-            if(_tokenizer.getQueryCount() == 0)
+
+            // Some driver don't correctly support setMaxRows. In
+            // these cases use setMaxRows only if this is a
+            // SELECT.
+            if (false == correctlySupportsMaxRows)
             {
-               throw new IllegalArgumentException("No SQL selected for execution.");
-            }
-
-            _currentQueryIndex = 0;
-
-            int processedStatementCount = 0;
-            statementCount = _tokenizer.getQueryCount();
-
-            _handler.sqlStatementCount(statementCount);
-
-            while (_tokenizer.hasQuery() && !_stopExecution)
-            {
-               String querySql = _tokenizer.nextQuery();
-               if (querySql != null)
+               if (isSelectStatement(querySql))
                {
-                  ++processedStatementCount;
-                  if (_handler != null)
-                  {
-                     _handler.sqlToBeExecuted(querySql);
-                  }
+                  _currentStatementWrapper.setMaxRows();
+               }
+               else if (_currentStatementWrapper.isMaxRowsWasSet())
+               {
+                  _currentStatementWrapper.closeIfContinueReadIsNotActive();
+                  _currentStatementWrapper = new StatementWrapper(conn.createStatement(), _session);
+               }
+            }
 
-                  // Some driver don't correctly support setMaxRows. In
-                  // these cases use setMaxRows only if this is a
-                  // SELECT.
-                  if (false == correctlySupportsMaxRows)
-                  {
-                     if (isSelectStatement(querySql))
-                     {
-                        _statementWrapper.setMaxRows();
-                     }
-                     else if (_statementWrapper.isMaxRowsWasSet())
-                     {
-                        _statementWrapper.closeIfContinueReadIsNotActive();
-                        _statementWrapper = new StatementWrapper(conn.createStatement(), _session);
-                     }
-                  }
+            try
+            {
+               lastExecutedStatement = querySql;
 
-                  try
+               if (!processQuery(querySql, processedStatementCount, statementCount, _currentStatementWrapper))
+               {
+                  break;
+               }
+            }
+            catch (SQLException ex)
+            {
+               // If the user has cancelled the query, don't bother logging
+               // an error message.  It is likely that the cancel request
+               // interfered with the attempt to fetch results from the
+               // ResultSet, which is to be expected when the Statement is
+               // closed.  So, let's not bug the user with obvious error
+               // messages that we can do nothing about.
+               if (_stopExecution)
+               {
+                  break;
+               }
+               else
+               {
+                  if (props.getAbortOnError())
                   {
-                     lastExecutedStatement = querySql;
-
-                     if (!processQuery(querySql, processedStatementCount, statementCount, _statementWrapper))
-                     {
-                        break;
-                     }
+                     throw ex;
                   }
-                  catch (SQLException ex)
+                  else
                   {
-                     // If the user has cancelled the query, don't bother logging
-                     // an error message.  It is likely that the cancel request
-                     // interfered with the attempt to fetch results from the
-                     // ResultSet, which is to be expected when the Statement is
-                     // closed.  So, let's not bug the user with obvious error
-                     // messages that we can do nothing about.
-                     if (_stopExecution) {
-                         break;
-                     } else {
-                         if (props.getAbortOnError())
-                         {
-                            throw ex;
-                         }
-                         else
-                         {
-                            if(1 < statementCount)
-                            {
-                               sqlExecErrorMsgs.add(handleError(ex, "Error occurred in:\n" + lastExecutedStatement));
-                            }
-                            else
-                            {
-                               sqlExecErrorMsgs.add(handleError(ex, null));
-                            }
-                         }
+                     if (1 < statementCount)
+                     {
+                        sqlExecErrorMsgs.add(handleError(ex, "Error occurred in:\n" + lastExecutedStatement));
+                     }
+                     else
+                     {
+                        sqlExecErrorMsgs.add(handleError(ex, null));
                      }
                   }
                }
             }
-
-         }
-         finally
-         {
-            _statementWrapper.closeIfContinueReadIsNotActive();
+            finally
+            {
+               _currentStatementWrapper.closeIfContinueReadIsNotActive();
+            }
          }
       }
       catch (final Throwable ex)
@@ -281,17 +272,6 @@ public class SQLExecuterTask implements Runnable
             if (_handler != null)
             {
                _handler.sqlExecutionCancelled();
-            }
-            try
-            {
-               if (_statementWrapper != null)
-               {
-                  _statementWrapper.cancel();
-               }
-            }
-            catch (Throwable th)
-            {
-               s_log.error("Error occurred cancelling SQL", th);
             }
          }
          if (_handler != null)
@@ -359,9 +339,9 @@ public class SQLExecuterTask implements Runnable
 
       _stopExecution = true;
 
-      if (null != _statementWrapper)
+      if (null != _currentStatementWrapper)
       {
-         CancelStatementThread cst = new CancelStatementThread(_statementWrapper, _session.getApplication().getMessageHandler());
+         CancelStatementThread cst = new CancelStatementThread(_currentStatementWrapper, _session.getApplication().getMessageHandler());
          cst.tryCancel();
       }
    }
