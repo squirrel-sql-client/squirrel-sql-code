@@ -66,6 +66,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+Editing results didn't work when multiple SQLs were executed using statement separator.
+
 Column search feature: Moving multiple columns to table begin did not work right.
 
 #1282 Session menu now has a scroll bar if it's too long to fit on screen.

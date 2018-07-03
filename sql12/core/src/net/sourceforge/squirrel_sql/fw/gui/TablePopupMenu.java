@@ -628,11 +628,6 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class MakeEditableAction extends BaseAction
 	{
-		/**
-		 * serialVersionUID
-		 */
-		private static final long serialVersionUID = 8437698495240738702L;
-
 		MakeEditableAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.makeeditable"));

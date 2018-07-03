@@ -56,7 +56,7 @@ import java.util.ArrayList;
  * (asynchronus execution)
  *  or standalone in the main Swing thread (synchronus execution).
  */
-public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
+public class SQLExecuterTask implements Runnable
 {
 
 
@@ -79,7 +79,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
    private int _currentQueryIndex = 0;
    private ISQLExecutionListener[] _executionListeners;
-   private DataSetUpdateableTableModelImpl _dataSetUpdateableTableModel;
+   //private DataSetUpdateableTableModelImpl _dataSetUpdateableTableModel;
    private SchemaInfoUpdateCheck _schemaInfoUpdateCheck;
    private IQueryTokenizer _tokenizer = null;
    /** Whether or not to check if the schema should be updated */
@@ -117,8 +117,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
           _handler = new DefaultSQLExecuterHandler(session);
       }
       _executionListeners = executionListeners;
-      _dataSetUpdateableTableModel = new DataSetUpdateableTableModelImpl();
-      _dataSetUpdateableTableModel.setSession(_session);
    }
 
    public void setExecutionListeners(ISQLExecutionListener[] executionListeners) {
@@ -144,12 +142,10 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
    public void run()
    {
-       if (_sql == null) {
-           if (s_log.isDebugEnabled()) {
-               s_log.debug("init(): expected non-null sql.  Skipping execution");
-           }
-           return;
-       }
+      if (_sql == null)
+      {
+         return;
+      }
 
       String lastExecutedStatement = null;
       int statementCount = 0;
@@ -384,6 +380,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       boolean supportsMultipleResultSets = _session.getSQLConnection().getSQLMetaData().supportsMultipleResultSets();
       boolean inFirstLoop = true;
 
+      DataSetUpdateableTableModelImpl dataSetUpdateableTableModel = new DataSetUpdateableTableModelImpl();
+      dataSetUpdateableTableModel.setSession(_session);
+
       // Loop while we either have a ResultSet to process or rows have
       // been updated/inserted/deleted.
       while (true)
@@ -420,7 +419,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          	boolean moreResultsReceived = false;
             while(true)
             {
-               if (!processResultSet(res, exInfo))
+               if (!processResultSet(res, exInfo, dataSetUpdateableTableModel))
                {
                   return false;
                }
@@ -496,11 +495,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       if (_executeEditableCheck && edittableCheck.allowsEditing())
       {
          TableInfo ti = getTableName(edittableCheck.getTableNameFromSQL());
-         _dataSetUpdateableTableModel.setTableInfo(ti);
+         dataSetUpdateableTableModel.setTableInfo(ti);
       }
       else
       {
-         _dataSetUpdateableTableModel.setTableInfo(null);
+         dataSetUpdateableTableModel.setTableInfo(null);
       }
 
       if (schemaCheck)
@@ -546,7 +545,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 
 
-   private boolean processResultSet(final ResultSetWrapper rs, final SQLExecutionInfo exInfo)
+   private boolean processResultSet(final ResultSetWrapper rs, final SQLExecutionInfo exInfo, DataSetUpdateableTableModelImpl dataSetUpdateableTableModel)
    {
       if (_stopExecution)
       {
@@ -557,7 +556,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       {
          try
          {
-            _handler.sqlResultSetAvailable(rs, exInfo, this);
+            _handler.sqlResultSetAvailable(rs, exInfo, dataSetUpdateableTableModel);
          }
          catch (DataSetException ex)
          {
@@ -752,86 +751,4 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       //
       //////////////////////////////////////////////////////////////
    }
-
-
-   ////////////////////////////////////////////////////////
-   // Implementataion of IDataSetUpdateableTableModel:
-   // Delegation to _dataSetUpdateableTableModel
-   public String getWarningOnCurrentData(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object oldValue)
-   {
-      return _dataSetUpdateableTableModel.getWarningOnCurrentData(values, colDefs, col, oldValue);
-   }
-
-   public String getWarningOnProjectedUpdate(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object newValue)
-   {
-      return _dataSetUpdateableTableModel.getWarningOnProjectedUpdate(values, colDefs, col, newValue);
-   }
-
-   public Object reReadDatum(Object[] values, ColumnDisplayDefinition[] colDefs, int col, StringBuffer message)
-   {
-      return _dataSetUpdateableTableModel.reReadDatum(values, colDefs, col, message);
-   }
-
-   public String updateTableComponent(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object oldValue, Object newValue)
-   {
-      return _dataSetUpdateableTableModel.updateTableComponent(values, colDefs, col, oldValue, newValue);
-   }
-
-   public int getRowidCol()
-   {
-      return _dataSetUpdateableTableModel.getRowidCol();
-   }
-
-   public String deleteRows(Object[][] rowData, ColumnDisplayDefinition[] colDefs)
-   {
-      return _dataSetUpdateableTableModel.deleteRows(rowData, colDefs);
-   }
-
-   public String[] getDefaultValues(ColumnDisplayDefinition[] colDefs)
-   {
-      return _dataSetUpdateableTableModel.getDefaultValues(colDefs);
-   }
-
-   public String insertRow(Object[] values, ColumnDisplayDefinition[] colDefs)
-   {
-      return _dataSetUpdateableTableModel.insertRow(values, colDefs);
-   }
-
-   public void addListener(DataSetUpdateableTableModelListener l)
-   {
-      _dataSetUpdateableTableModel.addListener(l);
-   }
-
-   public void removeListener(DataSetUpdateableTableModelListener l)
-   {
-      _dataSetUpdateableTableModel.removeListener(l);
-   }
-
-   public void forceEditMode(boolean mode)
-   {
-      _dataSetUpdateableTableModel.forceEditMode(mode);
-   }
-
-   public boolean editModeIsForced()
-   {
-      return _dataSetUpdateableTableModel.editModeIsForced();
-   }
-
-
-   @Override
-   public ITableInfo getTableInfo()
-   {
-      return _dataSetUpdateableTableModel.getTableInfo();
-   }
-
-   @Override
-   public ISession getSession()
-   {
-      return _dataSetUpdateableTableModel.getSession();
-   }
-
-   //
-   //////////////////////////////////////////////////////////////////////////////////
-
-
 }
