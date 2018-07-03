@@ -987,6 +987,13 @@ public class SQLResultExecuterPanel extends JPanel
       mnuCloseAllButThis.addActionListener(e -> closeAllButCurrentResultTabs());
       popup.add(mnuCloseAllButThis);
 
+      // i18n[SQLResultExecuterPanel.closeAll=Close all]
+      String caLabel = s_stringMgr.getString("SQLResultExecuterPanel.closeAll");
+      JMenuItem mnuCloseAll = new JMenuItem(caLabel);
+      initAccelerator(CloseAllSQLResultTabsAction.class, mnuCloseAll);
+      mnuCloseAll.addActionListener(e -> closeAllSQLResultTabs());
+      popup.add(mnuCloseAll);
+
       String closeAlltoLeftLabel = s_stringMgr.getString("SQLResultExecuterPanel.closeAllToLeft");
       JMenuItem mnuCloseAllToLeft = new JMenuItem(closeAlltoLeftLabel);
       initAccelerator(CloseAllSQLResultTabsToLeftAction.class, mnuCloseAllToLeft);
@@ -999,12 +1006,6 @@ public class SQLResultExecuterPanel extends JPanel
       mnuCloseAllToRight.addActionListener(e -> closeAllToResultTabs(false));
       popup.add(mnuCloseAllToRight);
 
-      // i18n[SQLResultExecuterPanel.closeAll=Close all]
-      String caLabel = s_stringMgr.getString("SQLResultExecuterPanel.closeAll");
-      JMenuItem mnuCloseAll = new JMenuItem(caLabel);
-      initAccelerator(CloseAllSQLResultTabsAction.class, mnuCloseAll);
-      mnuCloseAll.addActionListener(e -> closeAllSQLResultTabs());
-      popup.add(mnuCloseAll);
 
       // i18n[SQLResultExecuterPanel.toggleSticky=Toggle sticky]
       String tsLabel = s_stringMgr.getString("SQLResultExecuterPanel.toggleSticky");
