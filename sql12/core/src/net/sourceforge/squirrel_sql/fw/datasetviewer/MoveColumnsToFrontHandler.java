@@ -8,22 +8,18 @@ public class MoveColumnsToFrontHandler
 {
    public static void moveColumnsToFront(JTable table, ArrayList<ExtTableColumn> columnsToMoveToFront)
    {
-      ArrayList<Integer> indicesToMove = new ArrayList<Integer>();
+      int nextIndexToMoveTo = 0;
 
       for (ExtTableColumn extTableColumn : columnsToMoveToFront)
       {
          for (int i = 0; i < table.getColumnModel().getColumnCount(); i++)
          {
-            if(extTableColumn == (ExtTableColumn) table.getColumnModel().getColumn(i))
+            if(extTableColumn == table.getColumnModel().getColumn(i))
             {
-               indicesToMove.add(i);
+               table.getColumnModel().moveColumn(i, nextIndexToMoveTo++);
+               break;
             }
          }
-      }
-
-      for (int i = 0; i < indicesToMove.size(); i++)
-      {
-         table.getColumnModel().moveColumn(indicesToMove.get(i), i);
       }
 
 
