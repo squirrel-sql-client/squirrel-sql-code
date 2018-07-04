@@ -482,7 +482,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 
       JMenuItem mnu = sqlPanelAPI.addToSQLEntryAreaMenu(action);
       mnu.setText((String) action.getValue(Action.SHORT_DESCRIPTION));
-      _resources.configureMenuItem(action, mnu);
+      _resources.configureMenuItem(action, mnu, true);
    }
 
 

@@ -66,6 +66,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+#1348 Shortcut is displayed twice in flyover/tooltip
+
 Reading on SQL results (see combo box on upper right) didn't work when multiple SQLs were executed.
 
 Canceling SQL executions raised NullPointerException.

@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Toolkit;
 import java.net.URL;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -34,7 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public abstract class Resources implements IResources
 {
-	private interface ActionProperties
+	public interface ActionProperties
 	{
 		String DISABLED_IMAGE = "disabledimage";
 
@@ -47,14 +46,14 @@ public abstract class Resources implements IResources
 		String TOOLTIP = "tooltip";
 	}
 
-	private interface MenuProperties
+	public interface MenuProperties
 	{
 		String TITLE = "title";
 
 		String MNEMONIC = "mnemonic";
 	}
 
-	private interface MenuItemProperties extends MenuProperties
+	public interface MenuItemProperties extends MenuProperties
 	{
 		String ACCELERATOR = "accelerator";
 	}
@@ -108,17 +107,59 @@ public abstract class Resources implements IResources
 		return null;
 	}
 
+
 	private String getAcceleratorString(Action action)
+	{
+		String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
+		return getAcceleratorString(action, fullKey, false);
+	}
+
+
+	private String getAcceleratorString(Action action, String fullKey, boolean forAppend)
 	{
 		try
 		{
-			final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
-			return getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
-		} catch (MissingResourceException e)
+			if (false == StringUtilities.isEmpty(getResourceString(fullKey, MenuItemProperties.ACCELERATOR), true))
+			{
+				if (forAppend)
+				{
+					return "  (" + getResourceString(fullKey, MenuItemProperties.ACCELERATOR) + ")";
+				}
+				else
+				{
+					return getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
+				}
+			}
+		}
+		catch (MissingResourceException e)
+		{
+			// Some actions don't have accelerators
+		}
+
+		if (null != action.getValue(Action.ACCELERATOR_KEY))
+		{
+			if (forAppend)
+			{
+				return "  (" + action.getValue(Action.ACCELERATOR_KEY) + ")";
+			}
+			else
+			{
+				return action.getValue(Action.ACCELERATOR_KEY).toString();
+			}
+		}
+
+		if (forAppend)
+		{
+			return "";
+		}
+		else
 		{
 			return null;
 		}
+
 	}
+
+
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#addToPopupMenu(javax.swing.Action, javax.swing.JPopupMenu)
@@ -148,7 +189,7 @@ public abstract class Resources implements IResources
 			}
 		}
 
-		String toolTipText = getToolTipTextWithAccelerator(action, fullKey);
+		String toolTipText = getToolTipText(action, fullKey, true);
 
 		item.setToolTipText(toolTipText);
 
@@ -365,10 +406,12 @@ public abstract class Resources implements IResources
 		return _bundle.getString(key);
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#configureMenuItem(javax.swing.Action, javax.swing.JMenuItem)
-	 */
 	public void configureMenuItem(Action action, JMenuItem item) throws MissingResourceException
+	{
+		configureMenuItem(action, item, false);
+	}
+
+	public void configureMenuItem(Action action, JMenuItem item, boolean appendAccelereatorToToolTip) throws MissingResourceException
 	{
 		Utilities.checkNull("configureMenuItem", "action", action, "item", item);
 		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
@@ -391,14 +434,14 @@ public abstract class Resources implements IResources
 			}
 		}
 
-		String toolTipText = getToolTipTextWithAccelerator(action, fullKey);
+		String toolTipText = getToolTipText(action, fullKey, appendAccelereatorToToolTip);
 
 		item.setToolTipText(toolTipText);
 
 		// item.setIcon(null);
 	}
 
-	private String getToolTipTextWithAccelerator(Action action, String fullKey)
+	private String getToolTipText(Action action, String fullKey, boolean withAccelerator)
 	{
 		String toolTipText = (String) action.getValue(Action.SHORT_DESCRIPTION);
 
@@ -406,19 +449,16 @@ public abstract class Resources implements IResources
 		{
 			toolTipText = "";
 		}
-		try
+
+		if (withAccelerator)
 		{
-			String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
-			if (null != accel && accel.length() > 0)
-			{
-				toolTipText += "  (" + accel + ")";
-			}
-		} catch (MissingResourceException e)
-		{
-			// Some actions dont have accelerators
+			toolTipText += getAcceleratorString(action, fullKey, true);
 		}
+
+
 		return toolTipText;
 	}
+
 
 	protected ResourceBundle getBundle()
 	{
