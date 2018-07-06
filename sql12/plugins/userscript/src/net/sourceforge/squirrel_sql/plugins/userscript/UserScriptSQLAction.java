@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.userscript;
 
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.plugins.userscript.kernel.UserScriptAdmin;
 
 public class UserScriptSQLAction extends UserScriptAction

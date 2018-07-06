@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.util;
+package net.sourceforge.squirrel_sql.fw.resources;
 
 import java.util.MissingResourceException;
 
@@ -31,8 +31,45 @@ import javax.swing.KeyStroke;
 
 public interface IResources
 {
+	interface ActionProperties
+	{
+		String DISABLED_IMAGE = "disabledimage";
 
-	public static final String ACCELERATOR_STRING = "SQuirreLAcceleratorString";
+		String IMAGE = "image";
+
+		String NAME = "name";
+
+		String ROLLOVER_IMAGE = "rolloverimage";
+
+		String TOOLTIP = "tooltip";
+	}
+
+	interface MenuProperties
+	{
+		String TITLE = "title";
+
+		String MNEMONIC = "mnemonic";
+	}
+
+	interface MenuItemProperties extends MenuProperties
+	{
+		String ACCELERATOR = "accelerator";
+	}
+
+	interface Keys
+	{
+		String ACTION = "action";
+
+		String MENU = "menu";
+
+		String MENU_ITEM = "menuitem";
+	}
+
+
+	String ACCELERATOR_STRING = "SQuirreLAcceleratorString";
+
+
+
 
 	KeyStroke getKeyStroke(Action action);
 

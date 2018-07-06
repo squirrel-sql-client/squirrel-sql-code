@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsActi
 import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseSessionWindowAction;
 import net.sourceforge.squirrel_sql.client.session.action.RenameSessionAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
 
 //
 public class DockTabDesktopPane extends JComponent implements IDesktopContainer

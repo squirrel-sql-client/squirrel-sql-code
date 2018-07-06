@@ -22,7 +22,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.fw.resources.IResources;
 
 class RenameSavedQueriesFolderAction extends BaseFavouriteAction {
 

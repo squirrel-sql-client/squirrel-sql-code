@@ -18,7 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.fw.resources.IResources;
 /**
  * This class contains the different database object types for MySQL.
  *

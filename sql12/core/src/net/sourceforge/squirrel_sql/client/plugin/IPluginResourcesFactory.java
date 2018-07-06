@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 
-import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.fw.resources.IResources;
 
 /*
  * Copyright (C) 2011 Rob Manning

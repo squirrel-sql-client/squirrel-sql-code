@@ -9,14 +9,9 @@ import com.intersys.objects.CacheReader;
 import com.intersys.objects.Database;
 import com.intersys.objects.CacheException;
 import net.n3.nanoxml.*;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.io.StringReader;
 import java.util.Vector;
 import java.util.regex.Matcher;

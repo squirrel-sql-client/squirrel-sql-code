@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.favs;
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.fw.resources.IResources;
 
 class NewSavedQueriesFolderAction extends BaseFavouriteAction {
 	public NewSavedQueriesFolderAction(IApplication app, IResources resources) {

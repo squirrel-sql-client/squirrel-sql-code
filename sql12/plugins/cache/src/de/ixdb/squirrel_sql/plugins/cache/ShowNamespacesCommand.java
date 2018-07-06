@@ -4,17 +4,12 @@ import com.intersys.cache.jbind.JBindDatabase;
 import com.intersys.objects.CacheDatabase;
 import com.intersys.objects.CacheQuery;
 import com.intersys.objects.Database;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.sql.ResultSet;
 import java.util.*;
 

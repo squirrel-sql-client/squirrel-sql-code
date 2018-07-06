@@ -8,7 +8,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
 
 /**
  * Menu item that allows user to export the source information into XML files.

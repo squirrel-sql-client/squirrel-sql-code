@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 
 import javax.swing.*;

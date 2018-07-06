@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.util;
+package net.sourceforge.squirrel_sql.fw.resources;
 
 /*
  * Copyright (C) 2001-2003 Colin Bell
@@ -28,44 +28,13 @@ import javax.swing.*;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.JScrollMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public abstract class Resources implements IResources
 {
-	public interface ActionProperties
-	{
-		String DISABLED_IMAGE = "disabledimage";
-
-		String IMAGE = "image";
-
-		String NAME = "name";
-
-		String ROLLOVER_IMAGE = "rolloverimage";
-
-		String TOOLTIP = "tooltip";
-	}
-
-	public interface MenuProperties
-	{
-		String TITLE = "title";
-
-		String MNEMONIC = "mnemonic";
-	}
-
-	public interface MenuItemProperties extends MenuProperties
-	{
-		String ACCELERATOR = "accelerator";
-	}
-
-	private interface Keys
-	{
-		String ACTION = "action";
-
-		String MENU = "menu";
-
-		String MENU_ITEM = "menuitem";
-	}
 
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(Resources.class);
@@ -92,7 +61,7 @@ public abstract class Resources implements IResources
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#getKeyStroke(javax.swing.Action)
+	 * @see IResources#getKeyStroke(javax.swing.Action)
 	 */
 	public KeyStroke getKeyStroke(Action action)
 	{
@@ -162,7 +131,7 @@ public abstract class Resources implements IResources
 
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#addToPopupMenu(javax.swing.Action, javax.swing.JPopupMenu)
+	 * @see IResources#addToPopupMenu(javax.swing.Action, javax.swing.JPopupMenu)
 	 */
 	public JMenuItem addToPopupMenu(Action action, javax.swing.JPopupMenu menu)
 	      throws MissingResourceException
@@ -197,7 +166,7 @@ public abstract class Resources implements IResources
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#addToMenuAsCheckBoxMenuItem(javax.swing.Action, javax.swing.JMenu)
+	 * @see IResources#addToMenuAsCheckBoxMenuItem(javax.swing.Action, javax.swing.JMenu)
 	 */
 	public JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Action action, JMenu menu)
 	      throws MissingResourceException
@@ -210,7 +179,7 @@ public abstract class Resources implements IResources
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#addToMenuAsCheckBoxMenuItem(javax.swing.Action, javax.swing.JPopupMenu)
+	 * @see IResources#addToMenuAsCheckBoxMenuItem(javax.swing.Action, javax.swing.JPopupMenu)
 	 */
 	public JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Action action, JPopupMenu popupMenu)
 	{
@@ -221,7 +190,7 @@ public abstract class Resources implements IResources
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#addToMenu(javax.swing.Action, javax.swing.JMenu)
+	 * @see IResources#addToMenu(javax.swing.Action, javax.swing.JMenu)
 	 */
 	public JMenuItem addToMenu(Action action, JMenu menu) throws MissingResourceException
 	{
@@ -231,7 +200,7 @@ public abstract class Resources implements IResources
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#createMenu(java.lang.String)
+	 * @see IResources#createMenu(java.lang.String)
 	 */
 	public JMenu createMenu(String menuKey) throws MissingResourceException
 	{
@@ -272,7 +241,7 @@ public abstract class Resources implements IResources
 
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#setupAction(javax.swing.Action, boolean)
+	 * @see IResources#setupAction(javax.swing.Action, boolean)
 	 */
 	public void setupAction(Action action, boolean showColoricons)
 	{
@@ -346,7 +315,7 @@ public abstract class Resources implements IResources
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#getIcon(java.lang.String)
+	 * @see IResources#getIcon(java.lang.String)
 	 */
 	public ImageIcon getIcon(String keyName)
 	{
@@ -354,7 +323,7 @@ public abstract class Resources implements IResources
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#getIcon(java.lang.Class, java.lang.String)
+	 * @see IResources#getIcon(java.lang.Class, java.lang.String)
 	 */
 	public ImageIcon getIcon(Class<?> objClass, String propName)
 	{
@@ -362,7 +331,7 @@ public abstract class Resources implements IResources
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#getIcon(java.lang.String, java.lang.String)
+	 * @see IResources#getIcon(java.lang.String, java.lang.String)
 	 */
 	public ImageIcon getIcon(String keyName, String propName)
 	{
@@ -398,7 +367,7 @@ public abstract class Resources implements IResources
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#getString(java.lang.String)
+	 * @see IResources#getString(java.lang.String)
 	 */
 	public String getString(String key)
 	{

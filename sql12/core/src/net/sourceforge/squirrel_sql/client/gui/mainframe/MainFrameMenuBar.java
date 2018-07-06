@@ -28,7 +28,7 @@ import javax.swing.JMenuBar;
 
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.util.SystemProperties;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
