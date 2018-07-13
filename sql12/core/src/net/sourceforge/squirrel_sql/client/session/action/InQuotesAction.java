@@ -33,11 +33,9 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
  *
  * @author  Gerd Wagner
  */
-public class InQuotesAction extends SquirrelAction
-					implements ISQLPanelAction
+public class InQuotesAction extends SquirrelAction implements ISQLPanelAction
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(InQuotesAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(InQuotesAction.class);
 
 
 	/** Logger for this class. */

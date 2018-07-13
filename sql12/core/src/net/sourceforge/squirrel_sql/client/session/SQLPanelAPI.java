@@ -169,10 +169,11 @@ public class SQLPanelAPI implements ISQLPanelAPI
       item = getSQLEntryPanel().addToSQLEntryAreaMenu(formatSqlAction);
       resources.configureMenuItem(formatSqlAction, item);
 
-
+		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
       getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(InQuotesAction.class));
       getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(RemoveQuotesAction.class));
       getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(ConvertToStringBufferAction.class));
+		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
 
       JMenuItem mnu;
       mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(RemoveNewLinesAction.class));
