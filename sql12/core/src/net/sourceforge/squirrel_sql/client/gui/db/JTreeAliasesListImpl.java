@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorer;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorSelectionHandler;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -105,13 +107,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       });
 
 
-      _app.addApplicationListener(new ApplicationListener()
-      {
-         public void saveApplicationState()
-         {
-            onSaveApplicationState();
-         }
-      });
+      _app.addApplicationListener(() -> onSaveApplicationState());
 
       initTree();
 
@@ -614,7 +610,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       if(selNode.getUserObject() instanceof SQLAlias)
       {
-         _app.getWindowManager().showModifyAliasInternalFrame((ISQLAlias) selNode.getUserObject());
+         AliasWindowManager.showModifyAliasInternalFrame((ISQLAlias) selNode.getUserObject());
       }
       else if(selNode.getUserObject() instanceof AliasFolder)
       {
@@ -821,6 +817,8 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       //_tree.expandPath(new TreePath(newFolder.getPath()));
       _tree.setSelectionPath(new TreePath(newFolder.getPath()));
+
+      ((DefaultTreeModel) _tree.getModel()).nodeChanged(newFolder);
       
    }
 
@@ -976,4 +974,14 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       }
    }
 
+   @Override
+   public void aliasChanged(ISQLAlias sqlAlias)
+   {
+      DefaultMutableTreeNode node = findNode((SQLAlias) sqlAlias, (DefaultMutableTreeNode) _tree.getModel().getRoot());
+
+      if (null != node)
+      {
+         ((DefaultTreeModel)_tree.getModel()).nodeChanged(node);
+      }
+   }
 }

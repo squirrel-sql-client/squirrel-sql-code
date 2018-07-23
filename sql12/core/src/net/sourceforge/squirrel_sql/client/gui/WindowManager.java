@@ -20,27 +20,14 @@ package net.sourceforge.squirrel_sql.client.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Window;
-import java.beans.PropertyVetoException;
-
-import javax.swing.Action;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.RepaintManager;
-import javax.swing.SwingUtilities;
-import javax.swing.event.EventListenerList;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversList;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
@@ -59,7 +46,29 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.util.ThreadCheckingRepaintManager;
-import net.sourceforge.squirrel_sql.client.mainframe.action.*;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AliasFileOpenAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseAllAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ColorAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CopyToPasteAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CreateDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CutAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ExpandAllAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.NewAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.PasteAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ShowDriverWebsiteAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.SortAliasesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ToggleTreeViewAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
@@ -75,12 +84,21 @@ import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.gui.debug.DebugEventListener;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.Action;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.RepaintManager;
+import javax.swing.SwingUtilities;
+import javax.swing.event.EventListenerList;
+import java.awt.Window;
+import java.beans.PropertyVetoException;
 /**
  * This class manages the windows for the application.
  *
@@ -120,8 +138,6 @@ public class WindowManager
 	/** Window manager for driver windows. */
 	private final DriverWindowManager _driverWinMgr;
 
-	/** Window manager for aliases windows. */
-	private final AliasWindowManager _aliasWinMgr;
 
 	/** Applications main frame. */
 	private MainFrame _mainFrame;
@@ -179,7 +195,6 @@ public class WindowManager
 
 		_app = app;
 
-		_aliasWinMgr = new AliasWindowManager(_app);
 		_driverWinMgr = new DriverWindowManager(_app);
 
 		GUIUtils.processOnSwingEventThread(new Runnable()
@@ -222,54 +237,6 @@ public class WindowManager
 	public WindowState getDriversWindowState()
 	{
 		return new WindowState(_driversListWindow.getInternalFrame());
-	}
-
-   /**
-    * Get a maintenance sheet for the passed alias. If a maintenance sheet already
-    * exists it will be brought to the front. If one doesn't exist it will be
-    * created.
-    *
-    * @param	alias	The alias that user has requested to modify.
-    *
-    * @throws	IllegalArgumentException
-    *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
-    */
-   public void showModifyAliasInternalFrame(final ISQLAlias alias)
-   {
-      if (alias == null)
-      {
-         throw new IllegalArgumentException("ISQLAlias == null");
-      }
-
-      _aliasWinMgr.showModifyAliasInternalFrame(alias);
-   }
-
-	/**
-	 * Create and show a new maintenance window to allow the user to create a
-	 * new alias.
-	 */
-	public void showNewAliasInternalFrame()
-	{
-		_aliasWinMgr.showNewAliasInternalFrame();
-	}
-
-	/**
-	 * Create and show a new maintenance sheet that will allow the user to create a
-	 * new alias that is a copy of the passed one.
-	 *
-	 * @return	The new maintenance sheet.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
-	 */
-	public void showCopyAliasInternalFrame(final SQLAlias alias)
-	{
-		if (alias == null)
-		{
-			throw new IllegalArgumentException("ISQLAlias == null");
-		}
-
-		_aliasWinMgr.showCopyAliasInternalFrame(alias);
 	}
 
 	/**

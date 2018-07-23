@@ -68,6 +68,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+#1352 After "Modify Alias..." a longer Alias name is cut off and displayed with "..." in Aliases tree view
+
 #1348 Shortcut is displayed twice in flyover/tooltip
 
 Reading on SQL results (see combo box on upper right) didn't work when multiple SQLs were executed.

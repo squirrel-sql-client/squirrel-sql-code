@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowManager;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -54,6 +55,6 @@ public class CreateAliasCommand implements ICommand
     */
 	public void execute()
 	{
-		_app.getWindowManager().showNewAliasInternalFrame();
-	}
+      AliasWindowManager.showNewAliasInternalFrame();
+   }
 }

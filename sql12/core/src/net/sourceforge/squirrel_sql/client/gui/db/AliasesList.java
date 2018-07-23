@@ -155,5 +155,10 @@ public class AliasesList implements IToogleableAliasesList
       _jTreeImpl.removeMouseListener(mouseListener);
    }
 
-
+   @Override
+   public void aliasChanged(ISQLAlias sqlAlias)
+   {
+      _jListImpl.aliasChanged(sqlAlias);
+      _jTreeImpl.aliasChanged(sqlAlias);
+   }
 }

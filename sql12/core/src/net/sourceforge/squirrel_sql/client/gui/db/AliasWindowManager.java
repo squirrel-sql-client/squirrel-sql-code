@@ -17,116 +17,31 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.JInternalFrame;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-/**
- * This class manages the windows relating to JDBC aliases.
- *
- * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
- * @author <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
- */
 public class AliasWindowManager
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(AliasWindowManager.class);
-
-	/** Application API. */
-	private final IApplication _app;
-
-	/** Window Factory for alias maintenace windows. */
-	private final AliasWindowFactory _aliasWinFactory;
-
-	/**
-	 * Ctor.
-	 *
-	 * @param	app		Application API.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
-	 */
-	public AliasWindowManager(IApplication app)
+	public static AliasInternalFrame showModifyAliasInternalFrame(final ISQLAlias alias)
 	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("IApplication == null");
-		}
-
-		_app = app;
-		_aliasWinFactory = new AliasWindowFactory(_app);
+		return moveToFront(AliasWindowFactory.getModifySheet(alias));
 	}
 
-	/**
-	 * Get a maintenance sheet for the passed alias. If a maintenance sheet already
-	 * exists it will be brought to the front. If one doesn't exist it will be
-	 * created.
-	 *
-	 * @param	alias	The alias that user has requested to modify.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
-	 */
-	public void showModifyAliasInternalFrame(final ISQLAlias alias)
+	public static AliasInternalFrame showNewAliasInternalFrame()
 	{
-		if (alias == null)
-		{
-			throw new IllegalArgumentException("ISQLAlias == null");
-		}
-
-		moveToFront(_aliasWinFactory.getModifySheet(alias));
+		return moveToFront(AliasWindowFactory.getCreateSheet());
 	}
 
-	/**
-	 * Create and show a new maintenance window to allow the user to create a
-	 * new alias.
-	 */
-	public void showNewAliasInternalFrame()
+	public static AliasInternalFrame showCopyAliasInternalFrame(final SQLAlias alias)
 	{
-		moveToFront(_aliasWinFactory.getCreateSheet());
+		return moveToFront(AliasWindowFactory.getCopySheet(alias));
 	}
 
-	/**
-	 * Create and show a new maintenance sheet that will allow the user to create a
-	 * new alias that is a copy of the passed one.
-	 *
-	 * @return	The new maintenance sheet.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
-	 */
-	public void showCopyAliasInternalFrame(final SQLAlias alias)
+	public static AliasInternalFrame moveToFront(final AliasInternalFrame fr)
 	{
-		if (alias == null)
-		{
-			throw new IllegalArgumentException("ISQLAlias == null");
-		}
-
-		moveToFront(_aliasWinFactory.getCopySheet(alias));
-	}
-
-	public void moveToFront(final AliasInternalFrame fr)
-	{
-		if (fr != null)
-		{
-			GUIUtils.processOnSwingEventThread(new Runnable()
-			{
-				public void run()
-				{
-					fr.moveToFront();
-				}
-			});
-		}
-		else
-		{
-			s_log.debug("JInternalFrame == null");
-		}
+		GUIUtils.processOnSwingEventThread(() -> fr.moveToFront());
+		return fr;
 	}
 
 }

@@ -166,7 +166,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
    {
       if(null != getList().getSelectedValue())
       {
-         _app.getWindowManager().showModifyAliasInternalFrame((ISQLAlias) getList().getSelectedValue());
+         AliasWindowManager.showModifyAliasInternalFrame((ISQLAlias) getList().getSelectedValue());
       }
    }
 
@@ -216,4 +216,10 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
    {
       return PREF_KEY_SELECTED_ALIAS_INDEX;
    }
+
+	@Override
+	public void aliasChanged(ISQLAlias sqlAlias)
+	{
+
+	}
 }
