@@ -6,7 +6,6 @@ import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
 import javax.swing.*;
-import javax.swing.text.Keymap;
 import java.awt.event.*;
 import java.util.prefs.Preferences;
 
@@ -34,8 +33,18 @@ public class FindInObjectTreeController
              onEnter();
           }
       };
-      JComponent comp = _filterEditSQLEntryPanel.getTextComponent();
-      comp.registerKeyboardAction(findAction, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), JComponent.WHEN_FOCUSED);
+
+      Action transferFocusAction = new AbstractAction("ObjectTree.TransferFocus")
+      {
+          public void actionPerformed(ActionEvent e)
+          {
+             _filterEditSQLEntryPanel.getTextComponent().transferFocus();
+          }
+      };
+
+      _filterEditSQLEntryPanel.getTextComponent().registerKeyboardAction(findAction, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), JComponent.WHEN_FOCUSED);
+
+      _filterEditSQLEntryPanel.getTextComponent().registerKeyboardAction(transferFocusAction, KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK, false), JComponent.WHEN_FOCUSED);
 
 
       boolean filter = Preferences.userRoot().getBoolean(PREF_KEY_OBJECT_TREE_SEARCH_FILTER, false);
