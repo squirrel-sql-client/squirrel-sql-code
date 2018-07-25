@@ -17,6 +17,7 @@ import java.util.prefs.Preferences;
 import static java.lang.Math.*;
 import java.awt.event.*;
 import java.awt.*;
+import java.util.regex.Pattern;
 
 
 public class SQLHistoryController
@@ -316,7 +317,7 @@ public class SQLHistoryController
             ucfilter = filter.toUpperCase();
             return itemWrapper.getUpperCaseSQL().endsWith(ucfilter);
          case REG_EX:
-            return itemWrapper.getUpperCaseSQL().matches(filter);
+            return Pattern.compile(filter, Pattern.CASE_INSENSITIVE).matcher(itemWrapper.getUpperCaseSQL()).matches();
       }
 
       throw new IllegalArgumentException("How can I ever get here?????");

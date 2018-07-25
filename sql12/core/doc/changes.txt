@@ -68,6 +68,9 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+#1354 Regex filter in SQL history is limited to capital letters
+  Thanks to Chris B for the fix.
+
 #1353 Object tree search field's focus can now be transferred using shift+tab
 
 #1352 After "Modify Alias..." a longer Alias name is cut off and displayed with "..." in Aliases tree view
