@@ -169,32 +169,43 @@ public class SQLPanelAPI implements ISQLPanelAPI
       item = getSQLEntryPanel().addToSQLEntryAreaMenu(formatSqlAction);
       resources.configureMenuItem(formatSqlAction, item);
 
-		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
-      getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(InQuotesAction.class));
-      getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(RemoveQuotesAction.class));
-      getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(ConvertToStringBufferAction.class));
+
+
 		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
 
-      JMenuItem mnu;
-      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(RemoveNewLinesAction.class));
-      resources.configureMenuItem(ac.get(RemoveNewLinesAction.class), mnu);
+		item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(InQuotesAction.class));
+		resources.configureMenuItem(ac.get(InQuotesAction.class), item);
+
+		item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(RemoveQuotesAction.class));
+		resources.configureMenuItem(ac.get(RemoveQuotesAction.class), item);
+
+      getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(ConvertToStringBufferAction.class));
+
+		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
+
+
+
+
+
+      item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(RemoveNewLinesAction.class));
+      resources.configureMenuItem(ac.get(RemoveNewLinesAction.class), item);
 
       getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(EscapeDateAction.class));
 
-      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(CutSqlAction.class));
-      resources.configureMenuItem(ac.get(CutSqlAction.class), mnu);
+      item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(CutSqlAction.class));
+      resources.configureMenuItem(ac.get(CutSqlAction.class), item);
 
-      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(CopySqlAction.class));
-      resources.configureMenuItem(ac.get(CopySqlAction.class), mnu);
+      item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(CopySqlAction.class));
+      resources.configureMenuItem(ac.get(CopySqlAction.class), item);
 
-      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(PasteFromHistoryAction.class));
-      resources.configureMenuItem(ac.get(PasteFromHistoryAction.class), mnu);
+      item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(PasteFromHistoryAction.class));
+      resources.configureMenuItem(ac.get(PasteFromHistoryAction.class), item);
 
-      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(PasteFromHistoryAltAcceleratorAction.class));
-      resources.configureMenuItem(ac.get(PasteFromHistoryAltAcceleratorAction.class), mnu);
+      item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(PasteFromHistoryAltAcceleratorAction.class));
+      resources.configureMenuItem(ac.get(PasteFromHistoryAltAcceleratorAction.class), item);
 
-      mnu = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(ToggleMinimizeResultsAction.class));
-      resources.configureMenuItem(ac.get(ToggleMinimizeResultsAction.class), mnu);
+      item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(ToggleMinimizeResultsAction.class));
+      resources.configureMenuItem(ac.get(ToggleMinimizeResultsAction.class), item);
 
    }
 
