@@ -20,6 +20,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.prefs.Preferences;
 
 public class ShowReferencesCtrl
@@ -190,7 +192,12 @@ public class ShowReferencesCtrl
 
    private void appendReferenceChilds(DefaultMutableTreeNode refTypeNode, Collection<ReferenceKey> referenceKeys)
    {
-      for (ReferenceKey referenceKey : referenceKeys)
+      ArrayList<ReferenceKey> sortedClone = new ArrayList<>(referenceKeys);
+
+      sortedClone.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.toString(), o2.toString()));
+
+
+      for (ReferenceKey referenceKey : sortedClone)
       {
          DefaultMutableTreeNode child = new DefaultMutableTreeNode(referenceKey)
          {

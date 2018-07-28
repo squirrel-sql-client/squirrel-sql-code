@@ -68,6 +68,7 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+Tree nodes of the 'Show foreign key references' dialog are now shown in alphabetical order.
 
 #1349 Added missing keyboard short cuts to SQL editors right mouse menu.
 
