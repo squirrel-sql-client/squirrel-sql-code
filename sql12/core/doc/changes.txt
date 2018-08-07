@@ -68,6 +68,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+#1315 MySQL: Tables are not listed in Object tree for certain JDBC driver/RDBMS versions
+
 Tree nodes of the 'Show foreign key references' dialog are now shown in alphabetical order.
 
 #1349 Added missing keyboard short cuts to SQL editors right mouse menu.

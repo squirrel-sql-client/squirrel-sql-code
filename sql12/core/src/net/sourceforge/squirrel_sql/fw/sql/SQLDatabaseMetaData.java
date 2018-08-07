@@ -989,8 +989,27 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 					supportsSuperTables = false;
 				}
 			}
+
 			// store all plain table info we have.
-			tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
+			try
+			{
+				tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
+			}
+			catch (SQLException e)
+			{
+				if(null != tableNamePattern)
+				{
+					throw e;
+				}
+
+				// According to bug #1315, which links here https://bugs.mysql.com/bug.php?id=90887
+				// some JDBC drivers don't support nulls as tableNamePattern.
+
+				s_log.warn("DatabaseMetaData.getTables(...) threw an error when called with tableNamePattern = null. Trying tableNamePattern %. The error was: " + e);
+				tabResult = md.getTables(catalog, schemaPattern, "%", types);
+			}
+
+
 			int count = 0;
 			while (tabResult != null && tabResult.next())
 			{
