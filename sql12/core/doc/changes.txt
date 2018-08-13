@@ -6,7 +6,7 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
-SQL comments are now maintained in SQL History.
+SQL comments are now maintained in SQL history as well as SQL result header and info tab.
 
 SQL Editor: Grouped right mouse entries concerning quotes, see comment in bug #1349.
 

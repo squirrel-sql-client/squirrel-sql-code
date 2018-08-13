@@ -31,7 +31,7 @@ public class QueryInfoPanel extends JPanel
 
       _queryTxt.setRows(6);
       _queryTxt.setEditable(false);
-      _queryTxt.setText(exInfo.getSQL());
+      _queryTxt.setText(exInfo.getQueryHolder().getOriginalQuery());
 
 
       _queryScrollPane.scrollRectToVisible(new Rectangle(0,0,1,1));

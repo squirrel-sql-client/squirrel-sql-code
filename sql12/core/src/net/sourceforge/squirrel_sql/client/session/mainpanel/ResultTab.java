@@ -255,7 +255,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds)
 		throws DataSetException
 	{
-		_sql = StringUtilities.cleanString(_exInfo.getSQL());
+		_sql = StringUtilities.cleanString(_exInfo.getQueryHolder().getOriginalQuery());
 
 
       _rsds = rsds;

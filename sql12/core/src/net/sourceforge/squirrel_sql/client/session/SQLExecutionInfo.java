@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
+
 import java.util.Calendar;
 import java.util.Date;
 /**
@@ -41,7 +43,7 @@ public class SQLExecutionInfo
 	private Date _resultsProcessingEnd;
 
 	/** SQL script executed. */
-	private String _sql;
+	private QueryHolder _sql;
 
 	/** Number of rows query limited to. */
 	private final int _maxRows;
@@ -62,7 +64,7 @@ public class SQLExecutionInfo
     * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> sql passed.
 	 */
-	public SQLExecutionInfo(int idx, String sql, int maxRows, String tableToBeEdited)
+	public SQLExecutionInfo(int idx, QueryHolder sql, int maxRows, String tableToBeEdited)
 	{
       _tableToBeEdited = tableToBeEdited;
       if (sql == null)
@@ -91,8 +93,14 @@ public class SQLExecutionInfo
 	 */
 	public String getSQL()
 	{
+		return _sql.getQuery();
+	}
+
+	public QueryHolder getQueryHolder()
+	{
 		return _sql;
 	}
+
 
 	/**
 	 * Retrieve the SQL Execution start time.

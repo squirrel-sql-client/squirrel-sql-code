@@ -351,7 +351,7 @@ public class SQLExecuterTask implements Runnable
    {
       ++_currentQueryIndex;
 
-      final SQLExecutionInfo exInfo = new SQLExecutionInfo(	_currentQueryIndex, sql.getQuery(), statementWrapper.getMaxRows(), _tableToBeEdited);
+      final SQLExecutionInfo exInfo = new SQLExecutionInfo(	_currentQueryIndex, sql, statementWrapper.getMaxRows(), _tableToBeEdited);
       boolean firstResultIsResultSet = statementWrapper.execute(sql.getQuery());
       exInfo.sqlExecutionComplete();
 
