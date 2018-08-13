@@ -93,7 +93,7 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                   final Statement stmt = conn.createStatement();
                   try
                   {
-                     String sql = qt.nextQuery();
+                     String sql = qt.nextQuery().getQuery();
    
                      ResultSet srcResult = stmt.executeQuery(sql);
                      ResultSetMetaData metaData = srcResult.getMetaData();

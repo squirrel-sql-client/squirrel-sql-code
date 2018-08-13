@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
+import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -129,33 +130,46 @@ public class MysqlQueryTokenizer extends QueryTokenizer implements IQueryTokeniz
      *   
      * </code>
      */
-    private void breakApartNewLines() {
-        ArrayList<String> tmp = new ArrayList<String>();
+    private void breakApartNewLines()
+    {
+        ArrayList<QueryHolder> tmp = new ArrayList<>();
         String procSep = _prefs.getProcedureSeparator();
-        for (Iterator<String> iter = _queries.iterator(); iter.hasNext();) {
-            String next = iter.next();
-            if (next.startsWith(procSep)) {
-                tmp.add(procSep);
-                String[] parts = next.split(procSep+"\\n+");
-                for (int i = 0; i < parts.length; i++) {
-                    if (!"".equals(parts[i]) && !procSep.equals(parts[i])) {
-                        tmp.add(parts[i]);
+        for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext(); )
+        {
+            String next = iter.next().getQuery();
+            if (next.startsWith(procSep))
+            {
+                tmp.add(new QueryHolder(procSep));
+                String[] parts = next.split(procSep + "\\n+");
+                for (int i = 0; i < parts.length; i++)
+                {
+                    if (!"".equals(parts[i]) && !procSep.equals(parts[i]))
+                    {
+                        tmp.add(new QueryHolder(parts[i]));
                     }
                 }
-            } else if (next.endsWith(procSep)) { 
+            }
+            else if (next.endsWith(procSep))
+            {
                 String chopped = StringUtilities.chop(next);
-                tmp.add(chopped);
-                tmp.add(procSep);
-            } else if (next.indexOf(procSep) != -1 ) {
-                String[] parts = next.split("\\"+procSep);
-                for (int i = 0; i < parts.length; i++) {
-                    tmp.add(parts[i]);
-                    if (i < parts.length - 1) {
-                        tmp.add(procSep);
+                tmp.add(new QueryHolder(chopped));
+                tmp.add(new QueryHolder(procSep));
+            }
+            else if (next.indexOf(procSep) != -1)
+            {
+                String[] parts = next.split("\\" + procSep);
+                for (int i = 0; i < parts.length; i++)
+                {
+                    tmp.add(new QueryHolder(parts[i]));
+                    if (i < parts.length - 1)
+                    {
+                        tmp.add(new QueryHolder(procSep));
                     }
                 }
-            } else {
-                tmp.add(next);
+            }
+            else
+            {
+                tmp.add(new QueryHolder(next));
             }
         }
         _queries = tmp;
@@ -170,65 +184,82 @@ public class MysqlQueryTokenizer extends QueryTokenizer implements IQueryTokeniz
      *                     pattern and this is true, we will exclude it from 
      *                     our list of sql queries.
      */
-    private void joinFragments(Pattern pattern, boolean skipStraySep) {
-        
+    private void joinFragments(Pattern pattern, boolean skipStraySep)
+    {
+
         boolean inMultiSQLStatement = false;
         StringBuilder collector = null;
-        ArrayList<String> tmp = new ArrayList<String>();
+        ArrayList<QueryHolder> tmp = new ArrayList<>();
         String procSep = _prefs.getProcedureSeparator();
         String stmtSep = _prefs.getStatementSeparator();
-        for (Iterator<String> iter = _queries.iterator(); iter.hasNext();) {
-            String next = iter.next();
-            
+        for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext(); )
+        {
+            String next = iter.next().getQuery();
+
             // DELIMITER sets the separator that tells us when a procedure.  
             // This is MySQL-specific
-            if (next.startsWith("DELIMITER")) {
+            if (next.startsWith("DELIMITER"))
+            {
                 String[] parts = StringUtilities.split(next, ' ', true);
-                if (parts.length == 2) {
+                if (parts.length == 2)
+                {
                     procSep = parts[1];
-                } else {
+                }
+                else
+                {
                     s_log.error(
-                        "Found DELIMITER keyword, followed by "+
-                        (parts.length-1)+" elements; expected only one: "+next+
-                        "\nSkipping DELIMITER directive.");
+                          "Found DELIMITER keyword, followed by " +
+                                (parts.length - 1) + " elements; expected only one: " + next +
+                                "\nSkipping DELIMITER directive.");
                 }
             }
-            
-            if (pattern.matcher(next.toUpperCase()).matches()) {
+
+            if (pattern.matcher(next.toUpperCase()).matches())
+            {
                 inMultiSQLStatement = true;
                 collector = new StringBuilder(next);
                 collector.append(stmtSep);
                 continue;
-            } 
-            if (next.startsWith(procSep)) {
+            }
+            if (next.startsWith(procSep))
+            {
                 inMultiSQLStatement = false;
-                if (collector != null) {
-                    tmp.add(collector.toString());
+                if (collector != null)
+                {
+                    tmp.add(new QueryHolder(collector.toString()));
                     collector = null;
-                } else {
-                    if (skipStraySep) {
+                }
+                else
+                {
+                    if (skipStraySep)
+                    {
                         // Stray sep - or we failed to find pattern
-                        if (s_log.isDebugEnabled()) {
+                        if (s_log.isDebugEnabled())
+                        {
                             s_log.debug(
-                                "Detected stray proc separator("+procSep+"). Skipping");
+                                  "Detected stray proc separator(" + procSep + "). Skipping");
                         }
-                    } else {
-                        tmp.add(next);
+                    }
+                    else
+                    {
+                        tmp.add(new QueryHolder(next));
                     }
                 }
                 continue;
             }
-            if (inMultiSQLStatement) {
+            if (inMultiSQLStatement)
+            {
                 collector.append(next);
                 collector.append(stmtSep);
                 continue;
-            } 
-            tmp.add(next);
+            }
+            tmp.add(new QueryHolder(next));
         }
         // We got to the end of the script without finding a proc separator.
         // Just add it as if we had.
-        if (collector != null && inMultiSQLStatement) {
-            tmp.add(collector.toString());
+        if (collector != null && inMultiSQLStatement)
+        {
+            tmp.add(new QueryHolder(collector.toString()));
         }
         _queries = tmp;
     }

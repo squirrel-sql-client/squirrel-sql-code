@@ -73,6 +73,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -1140,9 +1141,9 @@ public class SQLPanel extends JPanel
 	 */
 	private class SQLExecutorHistoryListener extends SQLExecutionAdapter
 	{
-      public void statementExecuted(String sql)
+      public void statementExecuted(QueryHolder sql)
       {
-         _panelAPI.addSQLToHistory(sql);
+         _panelAPI.addSQLToHistory(sql.getOriginalQuery());
       }
 	}
 }

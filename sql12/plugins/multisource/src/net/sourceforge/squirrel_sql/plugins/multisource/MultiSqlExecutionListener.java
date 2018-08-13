@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.multisource;
 
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
+import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 /**
@@ -16,7 +17,7 @@ public class MultiSqlExecutionListener extends SQLExecutionAdapter
 	}
 
 	@Override
-	public void statementExecuted(String sql) {	
+	public void statementExecuted(QueryHolder sql) {
 	}
 
 	@Override

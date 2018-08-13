@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetComm
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlparam.gui.AskParamValueDialog;
@@ -72,7 +73,7 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 	 * @param sql
 	 */
 	@Override
-	public void statementExecuted(String sql) {
+	public void statementExecuted(QueryHolder sql) {
 		// log.info("SQL executed: " + sql);
 	}
 

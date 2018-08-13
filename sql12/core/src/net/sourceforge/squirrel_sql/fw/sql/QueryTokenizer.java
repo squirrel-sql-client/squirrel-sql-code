@@ -31,33 +31,36 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class QueryTokenizer implements IQueryTokenizer
 {
-	protected ArrayList<String> _queries = new ArrayList<String>();
+	protected ArrayList<QueryHolder> _queries = new ArrayList<>();
     
-	protected Iterator<String> _queryIterator;
+	protected Iterator<QueryHolder> _queryIterator;
 
-    protected String _querySep = null;
-    
-    protected String _lineCommentBegin = null;
-    
-    protected boolean _removeMultiLineComment = true;
+   protected String _querySep = null;
 
-    protected ITokenizerFactory _tokenizerFactory = null;
-    
-    /** Logger for this class. */
-    private final static ILogger s_log =
-        LoggerController.createLogger(QueryTokenizer.class); 
-    
-    public QueryTokenizer() {}
-    
-	public QueryTokenizer(String querySep, 
-                          String lineCommentBegin, 
-                          boolean removeMultiLineComment)
-	{
-        _querySep = querySep;
-        _lineCommentBegin = lineCommentBegin;
-        _removeMultiLineComment = removeMultiLineComment;
-        setFactory();
-	}
+   protected String _lineCommentBegin = null;
+
+   protected boolean _removeMultiLineComment = true;
+
+   protected ITokenizerFactory _tokenizerFactory = null;
+
+   /**
+    * Logger for this class.
+    */
+   private final static ILogger s_log = LoggerController.createLogger(QueryTokenizer.class);
+
+   public QueryTokenizer()
+   {
+   }
+
+   public QueryTokenizer(String querySep,
+                         String lineCommentBegin,
+                         boolean removeMultiLineComment)
+   {
+      _querySep = querySep;
+      _lineCommentBegin = lineCommentBegin;
+      _removeMultiLineComment = removeMultiLineComment;
+      setFactory();
+   }
 
     public QueryTokenizer(IQueryTokenizerPreferenceBean prefs) {
         this(prefs.getStatementSeparator(), 
@@ -145,7 +148,7 @@ public class QueryTokenizer implements IQueryTokenizer
 		return _queryIterator.hasNext();
 	}
 
-	public String nextQuery()
+	public QueryHolder nextQuery()
 	{
 		return _queryIterator.next();
 	}
@@ -159,6 +162,7 @@ public class QueryTokenizer implements IQueryTokenizer
         script = script.replace('\r', ' ');
 
         StringBuffer curQuery = new StringBuffer();
+        StringBuffer curOriginalQuery = new StringBuffer();
 
         boolean isInLiteral = false;
         boolean isInMultiLineComment = false;
@@ -204,6 +208,7 @@ public class QueryTokenizer implements IQueryTokenizer
                 if((isInMultiLineComment && _removeMultiLineComment) || isInLineComment)
                 {
                     // This is responsible that comments are not in curQuery
+                    curOriginalQuery.append(c);
                     continue;
                 }
                 //
@@ -211,6 +216,7 @@ public class QueryTokenizer implements IQueryTokenizer
             }
 
             curQuery.append(c);
+            curOriginalQuery.append(c);
 
             if ('\'' == c)
             {
@@ -246,17 +252,19 @@ public class QueryTokenizer implements IQueryTokenizer
                     String newQuery = curQuery.toString().trim();
                     if(0 < newQuery.length())
                     {
-                        _queries.add(curQuery.toString().trim());
+                        _queries.add(new QueryHolder(curQuery.toString().trim(), curOriginalQuery.toString().trim()));
                     }
                 }
                 curQuery.setLength(0);
+                curOriginalQuery.setLength(0);
             }
         }
 
         String lastQuery = curQuery.toString().trim();
+        String lastOriginalQuery = curOriginalQuery.toString().trim();
         if(0 < lastQuery.length())
         {
-            _queries.add(lastQuery.trim());
+            _queries.add(new QueryHolder(lastQuery, lastOriginalQuery));
         }
 
         _queryIterator = _queries.iterator();
@@ -294,40 +302,45 @@ public class QueryTokenizer implements IQueryTokenizer
         }
     }
 
-    /**
-     * @return the query statement separator
-     */
-    public String getQuerySep() {
-        return _querySep;
-    }
+   /**
+    * @return the query statement separator
+    */
+   public String getQuerySep()
+   {
+      return _querySep;
+   }
 
-    /**
-     * @param sep the value to use for the query statement separator
-     */
-    public void setQuerySep(String sep) {
-        _querySep = sep;
-    }
+   /**
+    * @param sep the value to use for the query statement separator
+    */
+   public void setQuerySep(String sep)
+   {
+      _querySep = sep;
+   }
 
-    /**
-     * @return the _lineCommentBegin
-     */
-    public String getLineCommentBegin() {
-        return _lineCommentBegin;
-    }
+   /**
+    * @return the _lineCommentBegin
+    */
+   public String getLineCommentBegin()
+   {
+      return _lineCommentBegin;
+   }
 
-    /**
-     * @param commentBegin the _lineCommentBegin to set
-     */
-    public void setLineCommentBegin(String commentBegin) {
-        _lineCommentBegin = commentBegin;
-    }
+   /**
+    * @param commentBegin the _lineCommentBegin to set
+    */
+   public void setLineCommentBegin(String commentBegin)
+   {
+      _lineCommentBegin = commentBegin;
+   }
 
-    /**
-     * @return the _removeMultiLineComment
-     */
-    public boolean isRemoveMultiLineComment() {
-        return _removeMultiLineComment;
-    }
+   /**
+    * @return the _removeMultiLineComment
+    */
+   public boolean isRemoveMultiLineComment()
+   {
+      return _removeMultiLineComment;
+   }
 
    @Override
    public TokenizerSessPropsInteractions getTokenizerSessPropsInteractions()
@@ -351,89 +364,112 @@ public class QueryTokenizer implements IQueryTokenizer
      * @param lineCommentBegin
      * @param removeMultiLineComment
      */
-    protected void expandFileIncludes(String scriptIncludePrefix) {
-        if (scriptIncludePrefix == null) {
-            s_log.error("scriptIncludePrefix cannot be null ");
-            return;
-        }
-        ArrayList<String> tmp = new ArrayList<String>();
-        for (Iterator<String> iter = _queries.iterator(); iter.hasNext();) {
-            String sql = iter.next();
-            if (sql.startsWith(scriptIncludePrefix)) {
-                try {
-                    String filename = 
-                        sql.substring(scriptIncludePrefix.length());
-                    List<String> fileSQL = getStatementsFromIncludeFile(filename);
-                    tmp.addAll(fileSQL);
-                } catch (Exception e) {
-                    s_log.error(
-                       "Unexpected error while attempting to include file " +
-                       "from "+sql, e);
-                }
-                
-            } else {
-                tmp.add(sql);
-            }
-        }
-        _queries = tmp;
-    }
-    
-    protected List<String> getStatementsFromIncludeFile(String filename) 
-        throws Exception 
+    protected void expandFileIncludes(String scriptIncludePrefix)
     {
-        if (filename.startsWith("'")) {
-            filename = filename.substring(1);
-        }
-        if (filename.endsWith("'")) {
-            filename = StringUtilities.chop(filename);
-        }
-        if (filename.endsWith("\n")) {
-      	  filename = StringUtilities.chop(filename);
-        }
-        ArrayList<String> result = new ArrayList<String>();
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Attemping to open file '"+filename+"'");
-        }
-        File f = new File(filename);
+       if (scriptIncludePrefix == null)
+       {
+          s_log.error("scriptIncludePrefix cannot be null ");
+          return;
+       }
+       ArrayList<QueryHolder> tmp = new ArrayList<>();
+       for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext(); )
+       {
+          QueryHolder sql = iter.next();
+          if (sql.getQuery().startsWith(scriptIncludePrefix))
+          {
+             try
+             {
+                String filename = sql.getQuery().substring(scriptIncludePrefix.length());
+                List<String> fileSQLs = getStatementsFromIncludeFile(filename);
+
+                for (String fileSQL : fileSQLs)
+                {
+                   tmp.add(new QueryHolder(fileSQL));
+                }
+
+             }
+             catch (Exception e)
+             {
+                s_log.error("Unexpected error while attempting to include file from " + sql, e);
+             }
+
+          }
+          else
+          {
+             tmp.add(sql);
+          }
+       }
+       _queries = tmp;
+    }
+
+   private List<String> getStatementsFromIncludeFile(String filename)
+   {
+      if (filename.startsWith("'"))
+      {
+         filename = filename.substring(1);
+      }
+      if (filename.endsWith("'"))
+      {
+         filename = StringUtilities.chop(filename);
+      }
+      if (filename.endsWith("\n"))
+      {
+         filename = StringUtilities.chop(filename);
+      }
+      ArrayList<String> result = new ArrayList<String>();
+      if (s_log.isDebugEnabled())
+      {
+         s_log.debug("Attemping to open file '" + filename + "'");
+      }
+      File f = new File(filename);
         /*
         if (f.canRead()) {
         */
-            StringBuffer fileLines = new StringBuffer();
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(f));
-                String next = reader.readLine();
-                while (next != null) {
-                    fileLines.append(next);
-                    fileLines.append("\n");
-                    next = reader.readLine();
-                }
-            } catch (Exception e) {
-                s_log.error(
-                    "Unexpected exception while reading lines from file " +
-                    "("+filename+")", e);
-            }
-            if (fileLines.toString().length() > 0) {
-                IQueryTokenizer qt = null;
-                if (_tokenizerFactory != null) {
-                    qt = _tokenizerFactory.getTokenizer();
-                } else {
-                    qt = new QueryTokenizer(_querySep, 
-                                            _lineCommentBegin, 
-                                            _removeMultiLineComment);
-                }
-                qt.setScriptToTokenize(fileLines.toString());
-                while (qt.hasQuery()) {
-                    String sql = qt.nextQuery();
-                    result.add(sql);
-                }
-            }
+      StringBuffer fileLines = new StringBuffer();
+      try
+      {
+         BufferedReader reader = new BufferedReader(new FileReader(f));
+         String next = reader.readLine();
+         while (next != null)
+         {
+            fileLines.append(next);
+            fileLines.append("\n");
+            next = reader.readLine();
+         }
+      }
+      catch (Exception e)
+      {
+         s_log.error(
+               "Unexpected exception while reading lines from file " +
+                     "(" + filename + ")", e);
+      }
+      if (fileLines.toString().length() > 0)
+      {
+         IQueryTokenizer qt = null;
+         if (_tokenizerFactory != null)
+         {
+            qt = _tokenizerFactory.getTokenizer();
+         }
+         else
+         {
+            qt = new QueryTokenizer(_querySep,
+                  _lineCommentBegin,
+                  _removeMultiLineComment);
+         }
+         qt.setScriptToTokenize(fileLines.toString());
+         while (qt.hasQuery())
+         {
+            String sql = qt.nextQuery().getQuery();
+            result.add(sql);
+         }
+      }
             /*
         } else {
             s_log.error("Unable to open file: "+filename+" for reading");
         }
         */
-        return result;
-    }
+      return result;
+   }
 
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer#getSQLStatementSeparator()

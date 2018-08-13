@@ -103,7 +103,7 @@ public abstract class AbstractDataScriptCommand extends WindowAdapter{
 			getSession().showWarningMessage(s_stringMgr.getString("AbstractDataScriptCommand.moreThanOnQuery"));
 		}
 		
-		String currentSQL = qt.nextQuery();
+		String currentSQL = qt.nextQuery().getQuery();
 
 		if(StringUtils.startsWithIgnoreCase(currentSQL, "select") == false){
 			// i18n[CreateFileOfCurrentSQLCommand.notASelect=The selected SQL is not a SELECT statement.]

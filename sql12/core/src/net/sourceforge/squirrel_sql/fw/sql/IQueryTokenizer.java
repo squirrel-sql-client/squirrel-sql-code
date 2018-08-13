@@ -24,7 +24,7 @@ public interface IQueryTokenizer {
      * 
      * @return the next statement or null if there is no next statement.
      */
-    String nextQuery();
+    QueryHolder nextQuery();
     
     /**
      * Sets the script to be tokenized into one or more queries that should be 

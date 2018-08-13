@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
+import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -111,32 +112,32 @@ public class NetezzaQueryTokenizer extends QueryTokenizer implements IQueryToken
 	 */
 	private void breakApartNewLines()
 	{
-		ArrayList<String> tmp = new ArrayList<String>();
+		ArrayList<QueryHolder> tmp = new ArrayList<>();
 		String procSep = _prefs.getProcedureSeparator();
-		for (Iterator<String> iter = _queries.iterator(); iter.hasNext();)
+		for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext();)
 		{
-			String next = iter.next();
+			String next = iter.next().getQuery();
 			if (next.startsWith(procSep))
 			{
-				tmp.add(procSep);
+				tmp.add(new QueryHolder(procSep));
 				String[] parts = next.split(procSep + "\\n+");
 				for (int i = 0; i < parts.length; i++)
 				{
 					if (!"".equals(parts[i]) && !procSep.equals(parts[i]))
 					{
-						tmp.add(parts[i]);
+						tmp.add(new QueryHolder(parts[i]));
 					}
 				}
 			}
 			else if (next.endsWith(procSep))
 			{
 				String chopped = StringUtilities.chop(next);
-				tmp.add(chopped);
-				tmp.add(procSep);
+				tmp.add(new QueryHolder(chopped));
+				tmp.add(new QueryHolder(procSep));
 			}
 			else
 			{
-				tmp.add(next);
+				tmp.add(new QueryHolder(next));
 			}
 		}
 		_queries = tmp;
@@ -156,12 +157,12 @@ public class NetezzaQueryTokenizer extends QueryTokenizer implements IQueryToken
 
 		boolean inMultiSQLStatement = false;
 		StringBuffer collector = null;
-		ArrayList<String> tmp = new ArrayList<String>();
+		ArrayList<QueryHolder> tmp = new ArrayList<>();
 		String procSep = _prefs.getProcedureSeparator();
 		String stmtSep = _prefs.getStatementSeparator();
-		for (Iterator<String> iter = _queries.iterator(); iter.hasNext();)
+		for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext();)
 		{
-			String next = iter.next();
+			String next = iter.next().getQuery();
 			if (pattern.matcher(next.toUpperCase()).matches())
 			{
 				inMultiSQLStatement = true;
@@ -178,7 +179,7 @@ public class NetezzaQueryTokenizer extends QueryTokenizer implements IQueryToken
 					// statement.
 					collector.append(procSep);
 					collector.append(stmtSep);
-					tmp.add(collector.toString());
+					tmp.add(new QueryHolder(collector.toString()));
 					collector = null;
 				}
 				else
@@ -193,7 +194,7 @@ public class NetezzaQueryTokenizer extends QueryTokenizer implements IQueryToken
 					}
 					else
 					{
-						tmp.add(next);
+						tmp.add(new QueryHolder(next));
 					}
 				}
 				continue;
@@ -204,7 +205,7 @@ public class NetezzaQueryTokenizer extends QueryTokenizer implements IQueryToken
 				collector.append(stmtSep);
 				continue;
 			}
-			tmp.add(next);
+			tmp.add(new QueryHolder(next));
 		}
 		_queries = tmp;
 	}

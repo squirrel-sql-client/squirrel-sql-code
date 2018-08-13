@@ -97,7 +97,7 @@ public class ValidateSQLCommand implements ICommand
          {
             // TODO: When message are can have some text in red (error)
             // and some normal then put out errors in red.
-            ValidatorResult rc = val.validate(qt.nextQuery());
+            ValidatorResult rc = val.validate(qt.nextQuery().getQuery());
             results.append(rc.getData());
          }
          _results = results.toString().trim();

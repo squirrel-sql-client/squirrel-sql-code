@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+SQL comments are now maintained in SQL History.
+
 SQL Editor: Grouped right mouse entries concerning quotes, see comment in bug #1349.
 
 #567 SQL History dropdown is now sorted youngest to oldest instead of oldest to youngest.

@@ -84,7 +84,7 @@ public class HQLPanelController
 
       while (qt.hasQuery())
       {
-         String hqlQuery = qt.nextQuery();
+         String hqlQuery = qt.nextQuery().getQuery();
          _hibernateTabController.displayObjects(_con, hqlQuery);
       }
    }

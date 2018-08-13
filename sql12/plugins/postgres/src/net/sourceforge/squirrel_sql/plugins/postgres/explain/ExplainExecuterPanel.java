@@ -142,7 +142,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		tokenizer.setScriptToTokenize(sql);
 		while (tokenizer.hasQuery())
 		{
-			String query = tokenizer.nextQuery();
+			String query = tokenizer.nextQuery().getQuery();
 				result.append("BEGIN").append(tokenizer.getSQLStatementSeparator());
 				result.append(EXPLAIN_PREFIX).append(query).append(tokenizer.getSQLStatementSeparator());
 				result.append("ROLLBACK").append(tokenizer.getSQLStatementSeparator());

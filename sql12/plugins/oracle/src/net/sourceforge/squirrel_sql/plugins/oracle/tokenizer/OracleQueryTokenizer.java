@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
+import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -145,10 +146,10 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 	 */
 	private void removeSqlPlusSetCommands()
 	{
-		ArrayList<String> tmp = new ArrayList<String>();
-		for (Iterator<String> iter = _queries.iterator(); iter.hasNext();)
+		ArrayList<QueryHolder> tmp = new ArrayList<>();
+		for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext();)
 		{
-			String next = iter.next();
+			String next = iter.next().getQuery();
 			String[] parts = next.split("\\n");
 			StringBuilder noCommandStr = new StringBuilder();
 			for (String part : parts)
@@ -158,7 +159,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 					noCommandStr.append(part).append("\n");
 				}
 			}
-			tmp.add(noCommandStr.toString());
+			tmp.add(new QueryHolder(noCommandStr.toString()));
 		}
 		_queries = tmp;
 	}
@@ -186,11 +187,11 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 	private void removeRemainingSlashes()
 	{
 
-		ArrayList<String> tmp = new ArrayList<String>();
+		ArrayList<QueryHolder> tmp = new ArrayList<>();
 		boolean foundEOLSlash = false;
-		for (Iterator<String> iter = _queries.iterator(); iter.hasNext();)
+		for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext(); )
 		{
-			String next = iter.next();
+			String next = iter.next().getQuery();
 			if (slashPattern.matcher(next).matches())
 			{
 				foundEOLSlash = true;
@@ -201,24 +202,27 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 					if (slashPattern.matcher(part).matches())
 					{
 						int lastIndex = part.lastIndexOf("/");
-						tmp.add(part.substring(0, lastIndex));
-					} else
+						tmp.add(new QueryHolder(part.substring(0, lastIndex)));
+					}
+					else
 					{
 						if (part.endsWith("/"))
 						{
 							part = part.substring(0, part.lastIndexOf("/"));
 						}
-						tmp.add(part);
+						tmp.add(new QueryHolder(part));
 					}
 				}
-			} else if (next.endsWith("/"))
+			}
+			else if (next.endsWith("/"))
 			{
 				foundEOLSlash = true;
 				int lastIndex = next.lastIndexOf("/");
-				tmp.add(next.substring(0, lastIndex));
-			} else
+				tmp.add(new QueryHolder(next.substring(0, lastIndex)));
+			}
+			else
 			{
-				tmp.add(next);
+				tmp.add(new QueryHolder(next));
 			}
 		}
 		if (foundEOLSlash == true)
@@ -234,25 +238,26 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 	 */
 	private void breakApartNewLines()
 	{
-		ArrayList<String> tmp = new ArrayList<String>();
+		ArrayList<QueryHolder> tmp = new ArrayList<>();
 		String sep = _prefs.getProcedureSeparator();
-		for (Iterator<String> iter = _queries.iterator(); iter.hasNext();)
+		for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext(); )
 		{
-			String next = iter.next();
+			String next = iter.next().getQuery();
 			if (next.startsWith(sep))
 			{
-				tmp.add(sep);
+				tmp.add(new QueryHolder(sep));
 				String[] parts = next.split(sep + "\\n+");
 				for (int i = 0; i < parts.length; i++)
 				{
 					if (!"".equals(parts[i]) && !sep.equals(parts[i]))
 					{
-						tmp.add(parts[i]);
+						tmp.add(new QueryHolder(parts[i]));
 					}
 				}
-			} else
+			}
+			else
 			{
-				tmp.add(next);
+				tmp.add(new QueryHolder(next));
 			}
 		}
 		_queries = tmp;
@@ -271,11 +276,11 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 
 		boolean inMultiSQLStatement = false;
 		StringBuffer collector = null;
-		ArrayList<String> tmp = new ArrayList<String>();
+		ArrayList<QueryHolder> tmp = new ArrayList<>();
 		String sep = _prefs.getProcedureSeparator();
-		for (Iterator<String> iter = _queries.iterator(); iter.hasNext();)
+		for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext();)
 		{
-			String next = iter.next();
+			String next = iter.next().getQuery();
 			if (pattern.matcher(next.toUpperCase()).matches())
 			{
 				inMultiSQLStatement = true;
@@ -288,7 +293,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 				inMultiSQLStatement = false;
 				if (collector != null)
 				{
-					tmp.add(collector.toString());
+					tmp.add(new QueryHolder(collector.toString()));
 					collector = null;
 				} else
 				{
@@ -301,7 +306,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 						}
 					} else
 					{
-						tmp.add(next);
+						tmp.add(new QueryHolder(next));
 					}
 				}
 				continue;
@@ -312,7 +317,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 				collector.append(";");
 				continue;
 			}
-			tmp.add(next);
+			tmp.add(new QueryHolder(next));
 		}
 		_queries = tmp;
 	}

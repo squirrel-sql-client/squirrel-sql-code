@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferencesDAO;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ResultSetExportData;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -57,7 +58,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
 
       while(queryTokenizer.hasQuery())
       {
-         String query = queryTokenizer.nextQuery();
+         String query = queryTokenizer.nextQuery().getQuery();
 
          if(false == query.trim().toUpperCase().startsWith("@FILE"))
          {
@@ -231,7 +232,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
 
 
    @Override
-   public void statementExecuted(String sql) {}
+   public void statementExecuted(QueryHolder sql) {}
 
    @Override
    public void executionFinished() {}
