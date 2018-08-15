@@ -339,6 +339,11 @@ public class Utilities
     *
     * Caution super class members are not cloned if a super class is not serializable.
     */
+   public static <T> T cloneObject(T toClone)
+   {
+      return cloneObject(toClone, Utilities.class.getClassLoader());
+   }
+
    public static <T> T cloneObject(T toClone, final ClassLoader classLoader)
    {
       if(null == toClone)

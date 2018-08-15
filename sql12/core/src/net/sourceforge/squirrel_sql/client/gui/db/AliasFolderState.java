@@ -7,9 +7,11 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.*;
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 
-public class AliasFolderState implements Comparable<AliasFolderState>
+public class AliasFolderState implements Comparable<AliasFolderState>, Serializable
 {
    private AliasFolderState[] _kids = new AliasFolderState[0];
    private IIdentifier _aliasIdentifier;
@@ -186,13 +188,20 @@ public class AliasFolderState implements Comparable<AliasFolderState>
       }
    }
 
-   public void sort()
+   public void sort(boolean asc)
    {
-      Arrays.sort(_kids);
+      if (asc)
+      {
+         Arrays.sort(_kids);
+      }
+      else
+      {
+         Arrays.sort(_kids, Collections.reverseOrder());
+      }
 
       for (AliasFolderState kid : _kids)
       {
-         kid.sort();
+         kid.sort(asc);
       }
    }
 

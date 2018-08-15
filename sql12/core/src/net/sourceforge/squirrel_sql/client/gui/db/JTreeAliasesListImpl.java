@@ -2,8 +2,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorer;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorSelectionHandler;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -17,7 +15,6 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.ApplicationListener;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
@@ -42,6 +39,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(JTreeAliasesListImpl.class);
    private TreeDnDHandler _treeDnDHandler;
+   private AliasSortState _aliasSortState;
 
    private static enum PasteMode
 	{
@@ -110,6 +108,8 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       _app.addApplicationListener(() -> onSaveApplicationState());
 
       initTree();
+
+      _aliasSortState = new AliasSortState(_tree);
 
    }
 
@@ -506,11 +506,13 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
       AliasFolderState state = new AliasFolderState(root, _tree);
 
-      state.sort();
+      state = _aliasSortState.sort(state);
 
       root.removeAllChildren();
 
+      _aliasSortState.disableListener();
       applyAliasFolderState(root, state);
+      _aliasSortState.enableListener();
    }
 
    public void requestFocus()

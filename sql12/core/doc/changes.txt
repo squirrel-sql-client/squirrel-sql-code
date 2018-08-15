@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Alias Tree: Sorting now works the same way as column sorting (ascending, descending, former state).
+
+Alias Tree: Improved drag and drop behavior. Sorting now works the same way as column sorting (ascending, descending, former state).
+
 SQL comments are now maintained in SQL history as well as SQL result header and info tab.
 
 SQL Editor: Grouped right mouse entries concerning quotes, see comment in bug #1349.
