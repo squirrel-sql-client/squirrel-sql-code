@@ -67,7 +67,7 @@ public class TreeDnDHandler
    {
       TreePath[] toPaste;
 
-      TreePath targetPath = _tree.getPathForLocation(dtde.getLocation().x, dtde.getLocation().y);
+      TreePath targetPath = _tree.getClosestPathForLocation(dtde.getLocation().x, dtde.getLocation().y);
 
       if(false == dtde.isLocalTransfer())
       {
@@ -133,7 +133,7 @@ public class TreeDnDHandler
             cutNodes = cutDragedNodes(pathsToPaste, targetPath, dtm);
             for (int i = 0; i < cutNodes.size(); i++)
             {
-               selNode.add(cutNodes.get(i));
+               selNode.insert(cutNodes.get(i), 0);
             }
             dtm.nodeStructureChanged(selNode);
          }
@@ -145,7 +145,14 @@ public class TreeDnDHandler
                cutNodes = cutDragedNodes(pathsToPaste, targetPath, dtm);
                for (int i = 0; i < cutNodes.size(); i++)
                {
-                  parent.insert(cutNodes.get(i), parent.getIndex(selNode) + 1);
+                  if (null == selNode.getPreviousSibling())
+                  {
+                     parent.insert(cutNodes.get(i), 0);
+                  }
+                  else
+                  {
+                     parent.insert(cutNodes.get(i), parent.getIndex(selNode) + 1);
+                  }
                }
                dtm.nodeStructureChanged(parent);
             }
