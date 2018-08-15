@@ -9,7 +9,9 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.TooManyListenersException;
+import java.util.TreeSet;
 
 /**
  * If a tree is bssed upon DefaultTreeModel and DefaultMutableTreeNodes this class
@@ -134,8 +136,8 @@ public class TreeDnDHandler
             for (int i = 0; i < cutNodes.size(); i++)
             {
                selNode.insert(cutNodes.get(i), 0);
+               dtm.nodesWereInserted(selNode, new int[]{0});
             }
-            dtm.nodeStructureChanged(selNode);
          }
          else
          {
@@ -148,13 +150,15 @@ public class TreeDnDHandler
                   if (null == selNode.getPreviousSibling())
                   {
                      parent.insert(cutNodes.get(i), 0);
+                     dtm.nodesWereInserted(parent, new int[]{0});
                   }
                   else
                   {
-                     parent.insert(cutNodes.get(i), parent.getIndex(selNode) + 1);
+                     int childIndex = parent.getIndex(selNode) + 1;
+                     parent.insert(cutNodes.get(i), childIndex);
+                     dtm.nodesWereInserted(parent, new int[]{childIndex});
                   }
                }
-               dtm.nodeStructureChanged(parent);
             }
          }
       }
