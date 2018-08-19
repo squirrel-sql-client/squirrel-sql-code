@@ -9,13 +9,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.Color;
 
-public class TreeAliasColorer
+public class AliasTreeColorer
 {
 
    private final Color _backgroundNonSelectionColor;
    private final Color _backgroundSelectionColor;
 
-   public TreeAliasColorer(JTree tree)
+   public AliasTreeColorer(JTree tree)
    {
       DefaultTreeCellRenderer defaultTreeCellRenderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
 

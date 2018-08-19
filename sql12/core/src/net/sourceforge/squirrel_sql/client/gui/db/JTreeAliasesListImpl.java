@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorer;
+import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.AliasTreeColorer;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
@@ -41,13 +41,8 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    private TreeDnDHandler _treeDnDHandler;
    private AliasSortState _aliasSortState;
 
-   private static enum PasteMode
-	{
-		COPY, CUT;
-	}
 
-
-   JTree _tree = new JTree()
+   private JTree _tree = new JTree()
    {
 		public String getToolTipText(MouseEvent event)
       {
@@ -59,12 +54,11 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    private IApplication _app;
    private AliasesListModel _aliasesListModel;
 
-   private TreePath[] _pathsToPaste;
-   private PasteMode _pasteMode;
+   private AliasTreePasteState _aliasPasteState = new AliasTreePasteState();
 
    private boolean _dontReactToAliasAdd = false ;
 
-   TreeAliasColorer _aliasColorer;
+   private AliasTreeColorer _aliasColorer;
 
 
    public JTreeAliasesListImpl(IApplication app, AliasesListModel aliasesListModel)
@@ -81,7 +75,11 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       _tree.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
       _tree.setToolTipText("init");
 
-      initRenderer();
+      _aliasColorer = new AliasTreeColorer(_tree);
+
+      _tree.setCellRenderer(new AliasTreeCellRenderer(_aliasPasteState, _aliasColorer));
+
+      initCancelCutAction();
 
       initDnD();
 
@@ -113,66 +111,27 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    }
 
-   private void initRenderer()
+   private void initCancelCutAction()
    {
-      _aliasColorer = new TreeAliasColorer(_tree);
-
-      DefaultTreeCellRenderer treeCellRenderer = new DefaultTreeCellRenderer()
-      {
-			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus)
-         {
-            return modifyRenderer(this, super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus), value);
-         }
-      };
-
-      _tree.setCellRenderer(treeCellRenderer);
-
-
       AbstractAction cancelCutAction = new AbstractAction()
       {
 			public void actionPerformed(ActionEvent actionEvent)
          {
-            if (null != _pathsToPaste && PasteMode.CUT.equals(_pasteMode))
+            if (null != _aliasPasteState.getPathsToPaste() && AliasTreePasteMode.CUT.equals(_aliasPasteState.getPasteMode()))
             {
-               _pathsToPaste = null;
+               _aliasPasteState.setPathsToPaste(null);
                _tree.repaint();
             }
          }
       };
+
       KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
       _tree.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "cancelCutAction");
       _tree.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "cancelCutAction");
       _tree.getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "cancelCutAction");
       _tree.getActionMap().put("cancelCutAction", cancelCutAction);
-
    }
 
-   private Component modifyRenderer(DefaultTreeCellRenderer defaultTreeCellRenderer, Component component, Object node)
-   {
-      JLabel ret = (JLabel) component;
-      ret.setEnabled(true);
-
-      DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) node;
-      _aliasColorer.colorAliasRendererComponent(defaultTreeCellRenderer, dmtn, ret);
-
-      if (null != _pathsToPaste && PasteMode.CUT.equals(_pasteMode))
-      {
-
-         boolean found = false;
-         for (TreePath treePath : _pathsToPaste)
-         {
-            if(treePath.getLastPathComponent() == dmtn)
-            {
-               found = true;
-               break;
-            }
-         }
-         ret.setEnabled(!found);
-         ret.setDisabledIcon(ret.getIcon());
-      }
-
-      return component;
-   }
 
    private void initDnD()
    {
@@ -451,11 +410,14 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
             DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) selPath.getParentPath().getLastPathComponent();
 
             int formerSilblingIx = treeModel.getIndexOfChild(parentNode, selNode);
-            treeModel.insertNodeInto(newNode, parentNode, formerSilblingIx + 1);
+            int insertIndex = formerSilblingIx + 1;
+            parentNode.insert(newNode, insertIndex);
+            treeModel.nodesWereInserted(parentNode, new int[]{insertIndex});
          }
          else if(selNode.getUserObject() instanceof AliasFolder)
          {
-            selNode.add(newNode);
+            selNode.insert(newNode, 0);
+            treeModel.nodesWereInserted(selNode, new int[]{0});
          }
          else
          {
@@ -463,8 +425,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          }
 
       }
-
-      treeModel.nodeStructureChanged((DefaultMutableTreeNode)treeModel.getRoot());
 
       _tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(newNode)));
    }
@@ -547,7 +507,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
                int indexOfChild = dtm.getIndexOfChild(parent, selNode);
                selNode.removeFromParent();
                dtm.nodesWereRemoved(parent, new int[]{indexOfChild}, new Object[]{selNode});
-               //dtm.nodeStructureChanged(parent);
             }
          }
          else
@@ -804,8 +763,8 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          }
          else
          {
-            tn.add(newFolder);
-            treeModel.nodeStructureChanged(tn);
+            tn.insert(newFolder, 0);
+            treeModel.nodesWereInserted(tn, new int[]{0});
          }
       }
       else
@@ -826,8 +785,8 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    public void cutSelected()
    {
-      _pathsToPaste = _tree.getSelectionPaths();
-      _pasteMode = PasteMode.CUT;
+      _aliasPasteState.setPathsToPaste(_tree.getSelectionPaths());
+      _aliasPasteState.setPasteMode(AliasTreePasteMode.CUT);
       _tree.repaint();
    }
 
@@ -835,24 +794,24 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    {
       try
       {
-         if (null == _pathsToPaste)
+         if (null == _aliasPasteState.getPathsToPaste())
          {
             return;
          }
 
-         switch (_pasteMode)
+         switch (_aliasPasteState.getPasteMode())
          {
             case COPY:
-               execCopyToPaste(_pathsToPaste, _tree.getSelectionPath());
+               execCopyToPaste(_aliasPasteState.getPathsToPaste(), _tree.getSelectionPath());
                break;
             case CUT:
-               _treeDnDHandler.execCut(_pathsToPaste, _tree.getSelectionPath());
+               _treeDnDHandler.execCut(_aliasPasteState.getPathsToPaste(), _tree.getSelectionPath());
                break;
          }
       }
       finally
       {
-         _pathsToPaste = null;
+         _aliasPasteState.setPathsToPaste(null);
       }
    }
 
@@ -874,9 +833,9 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
          for (int i = 0; i < copiedNodes.length; i++)
          {
-            root.add(copiedNodes[i]);
+            root.insert(copiedNodes[i], 0);
+            dtm.nodesWereInserted(root, new int[]{0});
          }
-         dtm.nodeStructureChanged(root);
       }
       else
       {
@@ -887,18 +846,19 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
             DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selNode.getParent();
             for (int i = 0; i < copiedNodes.length; i++)
             {
-               parent.insert(copiedNodes[i], parent.getIndex(selNode) + 1);
+               int insertIndex = parent.getIndex(selNode) + 1;
+               parent.insert(copiedNodes[i], insertIndex);
+               dtm.nodesWereInserted(parent, new int[]{insertIndex});
             }
-            dtm.nodeStructureChanged(parent);
 
          }
          else
          {
             for (int i = 0; i < copiedNodes.length; i++)
             {
-               selNode.add(copiedNodes[i]);
+               selNode.insert(copiedNodes[i], 0);
+               dtm.nodesWereInserted(selNode, new int[]{0});
             }
-            dtm.nodeStructureChanged(selNode);
          }
       }
 
@@ -956,8 +916,8 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    public void copyToPasteSelected()
    {
-      _pathsToPaste = _tree.getSelectionPaths();
-      _pasteMode = PasteMode.COPY;
+      _aliasPasteState.setPathsToPaste(_tree.getSelectionPaths());
+      _aliasPasteState.setPasteMode(AliasTreePasteMode.COPY);
    }
 
    public void collapseAll()
