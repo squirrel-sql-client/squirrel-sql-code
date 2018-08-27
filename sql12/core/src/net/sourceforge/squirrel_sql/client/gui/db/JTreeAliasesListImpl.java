@@ -805,7 +805,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
                execCopyToPaste(_aliasPasteState.getPathsToPaste(), _tree.getSelectionPath());
                break;
             case CUT:
-               _treeDnDHandler.execCut(_aliasPasteState.getPathsToPaste(), _tree.getSelectionPath());
+               _treeDnDHandler.execCut(_aliasPasteState.getPathsToPaste(), _tree.getSelectionPath(), false);
                break;
          }
       }
