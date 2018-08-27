@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import java.awt.Rectangle;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
@@ -97,13 +98,34 @@ public class TreeDnDHandler
 
       if(0 != (DnDConstants.ACTION_COPY_OR_MOVE & dtde.getDropAction()))
       {
-         execCut(toPaste, targetPath);
+         execCut(toPaste, targetPath, isPlaceAbove(dtde));
          _treeDnDHandlerCallback.dndExecuted();
       }
    }
 
+   private boolean isPlaceAbove(DropTargetDropEvent dtde)
+   {
+      int row = _tree.getRowForLocation(dtde.getLocation().x, dtde.getLocation().y);
 
-   public void execCut(TreePath[] pathsToPaste, TreePath targetPath)
+      if(-1 == row)
+      {
+         return false;
+      }
+
+      Rectangle rowBounds = _tree.getRowBounds(row);
+
+      int distToTopOfRow = Math.abs(rowBounds.y - dtde.getLocation().y);
+
+      if(distToTopOfRow * 4 < rowBounds.height)
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+
+   public void execCut(TreePath[] pathsToPaste, TreePath targetPath, boolean placeAbove)
    {
       DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
 
@@ -130,7 +152,7 @@ public class TreeDnDHandler
       {
          DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) targetPath.getLastPathComponent();
 
-         if (_treeDnDHandlerCallback.nodeAcceptsKids(selNode))
+         if (false == placeAbove && _treeDnDHandlerCallback.nodeAcceptsKids(selNode))
          {
             cutNodes = cutDragedNodes(pathsToPaste, targetPath, dtm);
             for (int i = 0; i < cutNodes.size(); i++)
