@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Upgraded to latest RSyntax version (2.6.1).
+
 Alias Tree: Sorting now works the same way as column sorting (ascending, descending, former state).
 
 Alias Tree: Improved drag and drop behavior. Sorting now works the same way as column sorting (ascending, descending, former state).
@@ -73,6 +75,9 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 
 Bug fixes:
+
+Corrected outdated editor information in the Syntax Plugin prefrences UI, see menu File --> New Session Properties --> tab Syntax.
+
 
 #1315 MySQL: Tables are not listed in Object tree for certain JDBC driver/RDBMS versions
 
