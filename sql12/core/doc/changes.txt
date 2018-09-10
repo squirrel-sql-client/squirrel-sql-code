@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#570 Cancel option for 'New file', 'Close file' and 'Open file'
+
 Upgraded to latest RSyntax version (2.6.1).
 
 Alias Tree: Sorting now works the same way as column sorting (ascending, descending, former state).

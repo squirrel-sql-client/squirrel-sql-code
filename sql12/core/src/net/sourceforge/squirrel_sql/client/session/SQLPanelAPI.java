@@ -258,11 +258,15 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _closeFile(true);
    }
 
-   private void _closeFile(boolean clearEditor)
+   private boolean _closeFile(boolean clearEditor)
    {
       if (unsavedEdits)
       {
-         showConfirmSaveDialog();
+         if(false == showConfirmSaveDialog())
+			{
+				return false;
+			}
+
       }
       if (clearEditor)
       {
@@ -276,7 +280,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
             getSession().getApplication().getActionCollection();
       actions.enableAction(FileSaveAction.class, true);
       _fileManager.clearCurrentFile();
-   }
+
+		return true;
+	}
 
 	public void fileReload()
 	{
@@ -290,7 +296,10 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 		int caretPosition = getSQLEntryPanel().getCaretPosition();
 
-		_closeFile(true);
+		if(false == _closeFile(true))
+		{
+			return;
+		}
 
 		fileOpen(file);
 
@@ -335,7 +344,10 @@ public class SQLPanelAPI implements ISQLPanelAPI
    {
 		if (unsavedEdits)
 		{
-			showConfirmSaveDialog();
+			if(false == showConfirmSaveDialog())
+			{
+				return;
+			}
 		}
 		if (_fileManager.open(false))
 		{
@@ -869,7 +881,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
        // i18n[SQLPanelAPI.untitledLabel=Untitled]
        String filename = s_stringMgr.getString("SQLPanelAPI.untitledLabel");
        
-       if (file != null) {
+       if (file != null)
+       {
            filename = file.getAbsolutePath();
        }
        String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges",
@@ -882,14 +895,18 @@ public class SQLPanelAPI implements ISQLPanelAPI
                                  ": "+_panel.getSession().getAlias().getName());
        
        JFrame f = (JFrame) SessionUtils.getOwningFrame(this);
-       int option = 
-           JOptionPane.showConfirmDialog(f, 
-                                         msg, 
-                                         title, 
-                                         JOptionPane.YES_NO_OPTION);
-       if (option == JOptionPane.YES_OPTION) {
+
+       int option = JOptionPane.showConfirmDialog(f, msg, title, JOptionPane.YES_NO_CANCEL_OPTION);
+
+       if (option == JOptionPane.YES_OPTION)
+       {
            return fileSave();
        }
+       else if(option == JOptionPane.CANCEL_OPTION)
+		 {
+		 	return false;
+		 }
+
        return true;
    }   
    
