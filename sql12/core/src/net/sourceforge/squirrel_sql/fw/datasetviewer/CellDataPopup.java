@@ -107,13 +107,29 @@ public class CellDataPopup
 			}
 		}
 
-		Point parentBounds = parent.getLocation();
+		Point dialogPos = parent.getLocation();
 
-      parentBounds.x += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).x;
-      parentBounds.y += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).y;
+      dialogPos.x += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).x;
+      dialogPos.y += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).y;
 
-		dialog.setLocation(parentBounds);
-      dialog.setSize(dim);
+//		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//
+//		if (dialogPos.x + dim.width > screenSize.getWidth())
+//		{
+//			dialogPos.x = (int)screenSize.getWidth() - dim.width;
+//		}
+//
+//		if (dialogPos.y + dim.height > screenSize.getHeight())
+//		{
+//			dialogPos.y = (int)screenSize.getHeight() - dim.height;
+//		}
+
+
+		Rectangle dialogRect = GUIUtils.ensureBoundsOnOneScreen(new Rectangle(dialogPos.x, dialogPos.y, dim.width, dim.height));
+
+
+		dialog.setBounds(dialogRect);
+      //dialog.setSize(dim);
 
       dialog.addWindowListener(new WindowAdapter()
 		{
