@@ -78,6 +78,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+#1357 Switching a result set to be editable makes row numbers invisible
+
 Corrected outdated editor information in the Syntax Plugin prefrences UI, see menu File --> New Session Properties --> tab Syntax.
 
 

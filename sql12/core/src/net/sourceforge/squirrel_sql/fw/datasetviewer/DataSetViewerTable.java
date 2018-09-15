@@ -4,7 +4,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.rowcolor.RowColorHandler;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
@@ -314,7 +313,23 @@ public final class DataSetViewerTable extends JTable
          getColumnModel().addColumn(_rntc);
          getColumnModel().moveColumn(getColumnModel().getColumnCount() - 1, 0);
       }
+
+      _tablePopupMenu.ensureRowNumersMenuItemIsUpToDate(show);
    }
+
+   public boolean isShowingRowNumbers()
+   {
+      try
+      {
+         getColumnModel().getColumnIndex(RowNumberTableColumn.ROW_NUMBER_COL_IDENTIFIER);
+         return true;
+      }
+      catch (IllegalArgumentException e)
+      {
+         return false;
+      }
+   }
+
 
    private void createGUI(boolean allowUpdate, IDataSetUpdateableModel updateableObject, int selectionMode, ISession session)
    {

@@ -314,6 +314,20 @@ public class TablePopupMenu extends BasePopupMenu
 		super.show(evt);
 	}
 
+	public void ensureRowNumersMenuItemIsUpToDate(boolean currentState)
+	{
+		if( currentState == _showRowNumbersItem.isSelected())
+		{
+			return;
+		}
+
+		_showRowNumbersItem.setAction(null);
+		_showRowNumbersItem.setSelected(currentState);
+		_showRowNumbersItem.setAction(_showRowNumbersAction);
+	}
+
+
+
 
 	private class CopyAction extends BaseAction
 	{

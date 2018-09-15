@@ -22,6 +22,8 @@ public class TableState
    private int _selectedRow;
    private RowColorHandlerState _rowColorHandlerState;
 
+   private boolean _isShowingRowNumbers;
+
    public TableState(JTable table)
    {
 
@@ -47,6 +49,7 @@ public class TableState
       if(table instanceof DataSetViewerTable)
       {
          _rowColorHandlerState = ((DataSetViewerTable) table).getColoringService().getRowColorHandler().getState();
+         _isShowingRowNumbers = ((DataSetViewerTable) table).isShowingRowNumbers();
       }
    }
 
@@ -95,6 +98,12 @@ public class TableState
       if(table instanceof DataSetViewerTable)
       {
          ((DataSetViewerTable) table).getColoringService().getRowColorHandler().applyState(_rowColorHandlerState);
+
+         if(_isShowingRowNumbers)
+         {
+            ((DataSetViewerTable) table).setShowRowNumbers(true);
+         }
+
       }
 
 
