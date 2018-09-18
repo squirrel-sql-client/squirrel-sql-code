@@ -622,8 +622,8 @@ public class GUIUtils
 			}
 		}
 
-		rectInScreenCoordinates.x = rectInScreenCoordinates.x - minDx;
-		rectInScreenCoordinates.y = rectInScreenCoordinates.y - minDy;
+		rectInScreenCoordinates.x = Math.max(0, rectInScreenCoordinates.x - minDx);
+		rectInScreenCoordinates.y = Math.max(0, rectInScreenCoordinates.y - minDy);
 
 		return rectInScreenCoordinates;
 
