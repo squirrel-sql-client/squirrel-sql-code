@@ -78,6 +78,8 @@ New right mouse menu entry 'Copy selected rows to new window' available in all t
 
 Bug fixes:
 
+#1360 Fixed typo in error message
+
 #1358 Window "Value of column" out of sight
 
 #1357 Switching a result set to be editable makes row numbers invisible
