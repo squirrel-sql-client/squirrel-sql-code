@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Introduced Java 11 compatibility.
+
 #570 Cancel option for 'New file', 'Close file' and 'Open file'
 
 Upgraded to latest RSyntax version (2.6.1).
