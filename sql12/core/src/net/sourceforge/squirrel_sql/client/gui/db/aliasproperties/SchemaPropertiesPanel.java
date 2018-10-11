@@ -43,7 +43,7 @@ public class SchemaPropertiesPanel extends JPanel
       // Code completion and Syntax highlighting will work only for loaded schemas.
       // If Schemas take a long time to load you may cache them on your hard disk.
       // Then loading will take long only when you open a Session for the first time.
-      // You can always refesh the cache either by using the Session's 'Refresh all' toolbar button
+      // You can always refresh the cache either by using the Session's 'Refresh all' toolbar button
       // or by using the 'Refresh Item' right mouse menu on an Object tree node.]
       MultipleLineLabel lblHint = new MultipleLineLabel(s_stringMgr.getString("SchemaPropertiesPanel.hint"));
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
