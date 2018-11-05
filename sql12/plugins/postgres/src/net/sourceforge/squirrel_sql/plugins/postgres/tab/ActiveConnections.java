@@ -33,6 +33,16 @@ public class ActiveConnections extends BaseDataSetTab {
 			+ "FROM pg_stat_activity "
 			+ "ORDER BY query_start DESC NULLS LAST ";
 
+    /**
+     * pg_stat_activity.procpid renamed to pid in postgres 9.2
+     * pg_stat_activity.current_query disappears and is replaced by two columns:
+     * state: is the session running a query, waiting
+     * query: what is the last run (or still running if stat is "active") query
+     */
+    private static final String QUERY_92 = "SELECT datid,datname,pid,query_start,state,query,client_addr::TEXT,client_hostname::TEXT,client_port,backend_start,xact_start,usesysid,usename,application_name"
+        + " FROM pg_stat_activity"
+       + " ORDER BY query_start DESC NULLS LAST";
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab#createDataSet()
 	 */
@@ -42,7 +52,7 @@ public class ActiveConnections extends BaseDataSetTab {
 		try {
 			ISQLConnection con = session.getSQLConnection();
 			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(QUERY);
+			ResultSet rs = isPostgres92(con) ? stmt.executeQuery(QUERY_92) : stmt.executeQuery(QUERY);
 			ResultSetDataSet rsds = new ResultSetDataSet();
 			rsds.setResultSet(rs, DialectType.POSTGRES);
 			
@@ -50,6 +60,18 @@ public class ActiveConnections extends BaseDataSetTab {
 		} catch (SQLException ex) {
 			throw new DataSetException(ex);
 		}
+	}
+
+	private boolean isPostgres92(ISQLConnection con) throws SQLException {
+	    int databaseMajorVersion = con.getSQLMetaData().getDatabaseMajorVersion();
+	    int databaseMinorVersion = 0;
+
+        String databaseProductVersion = con.getSQLMetaData().getDatabaseProductVersion();
+        if (databaseProductVersion.contains(".")) {
+            databaseMinorVersion = Integer.parseInt(databaseProductVersion.split("\\.")[1]);
+        }
+
+	    return (databaseMajorVersion == 9 && databaseMinorVersion >= 2) || (databaseMajorVersion >= 10);
 	}
 
 	/**
