@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Bug fixes:
 
+#1365 Column order mixed up after "show row numbers" and "make editable" or "rerun"
+
 #1364 Connections tab shows no data on PostgreSQL 9.2+
 Thanks to Krzysztof Szymko for the fix
 

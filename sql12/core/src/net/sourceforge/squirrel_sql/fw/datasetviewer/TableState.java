@@ -37,11 +37,19 @@ public class TableState
 
       _selectedRow = table.getSelectedRow();
 
+      int decrementForRowNumberColumn = 0;
       for (int i = 0; i < table.getColumnModel().getColumnCount(); i++)
       {
          TableColumn column = table.getColumnModel().getColumn(i);
+
+         if(column instanceof RowNumberTableColumn)
+         {
+            decrementForRowNumberColumn = 1;
+            continue;
+         }
+
          _columnWidthsByModelIndex.put(column.getModelIndex(), column.getWidth());
-         _columnIndexByModelIndex.put(column.getModelIndex(), i);
+         _columnIndexByModelIndex.put(column.getModelIndex(), i - decrementForRowNumberColumn);
       }
       _visibleRect = table.getVisibleRect();
 
