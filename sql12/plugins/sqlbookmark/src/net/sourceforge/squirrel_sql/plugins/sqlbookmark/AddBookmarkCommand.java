@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -36,104 +37,93 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * Initiate the addition of a new SQL Bookmark.
- *
+ * <p>
  * The SQL for the bookmark is taken from the current SQL Edit buffer.
  * The user is prompted for a name for the bookmark.
  *
- * @author      Joseph Mocker
+ * @author Joseph Mocker
  **/
-public class AddBookmarkCommand implements ICommand {
+public class AddBookmarkCommand implements ICommand
+{
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AddBookmarkCommand.class);
-
-
-	 private static ILogger logger =
-	LoggerController.createLogger(AddBookmarkCommand.class);
-
-    /** Parent frame. */
-    private final Frame frame;
-
-    /** The session that we are saving a script for. */
-    private final ISession session;
-
-    /** The current plugin. */
-    private SQLBookmarkPlugin plugin;
-
-    /**
-     * Ctor.
-     *
-     * @param   frame   Parent Frame.
-     * @param   session The session that we are saving a script for.
-     * @param   plugin  The current plugin.
-     *
-     * @throws  IllegalArgumentException
-     *          Thrown if a <TT>null</TT> <TT>ISession</TT> or <TT>IPlugin</TT>
-     *          passed.
-     */
-    public AddBookmarkCommand(Frame frame, ISession session, SQLBookmarkPlugin plugin)
-        throws IllegalArgumentException {
-        super();
-        if (session == null) {
-            throw new IllegalArgumentException("Null ISession passed");
-        }
-        if (plugin == null) {
-            throw new IllegalArgumentException("Null IPlugin passed");
-        }
-        this.frame = frame;
-        this.session = session;
-        this.plugin = plugin;
-    }
-
-    /**
-     * Execute the addition of the bookmark.
-     */
-    public void execute() {
-        if (session == null) {
-           return;
-        }
-
-       ISQLEntryPanel sqlEntryPanel;
-
-       if(session.getActiveSessionWindow() instanceof SessionInternalFrame)
-       {
-          sqlEntryPanel = ((SessionInternalFrame)session.getActiveSessionWindow()).getMainSQLPanelAPI().getSQLEntryPanel();
-       }
-       else if(session.getActiveSessionWindow() instanceof SQLInternalFrame)
-       {
-          sqlEntryPanel = ((SQLInternalFrame)session.getActiveSessionWindow()).getMainSQLPanelAPI().getSQLEntryPanel();
-       }
-       else
-       {
-          return;
-       }
-
-       String sql = sqlEntryPanel.getSQLToBeExecuted();
-       if(null == sql || 0 == sql.trim().length())
-       {
-			 // i18n[sqlbookmark.noAdd=No text to be added.]
-			 JOptionPane.showMessageDialog(frame, s_stringMgr.getString("sqlbookmark.noAdd"));
-          return;
-       }
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AddBookmarkCommand.class);
 
 
+   private final Frame frame;
 
-           AddBookmarkDialog abd = new AddBookmarkDialog(frame, plugin);
-           GUIUtils.centerWithinParent(abd);
-           abd.setVisible(true);
+   private final ISession session;
 
-           if(false == abd.isOK())
-            return;
+   private SQLBookmarkPlugin plugin;
+
+   public AddBookmarkCommand(Frame frame, ISession session, SQLBookmarkPlugin plugin)
+         throws IllegalArgumentException
+   {
+      if (session == null)
+      {
+         throw new IllegalArgumentException("Null ISession passed");
+      }
+      if (plugin == null)
+      {
+         throw new IllegalArgumentException("Null IPlugin passed");
+      }
+      this.frame = frame;
+      this.session = session;
+      this.plugin = plugin;
+   }
+
+   public void execute()
+   {
+      if (session == null)
+      {
+         return;
+      }
+
+      ISQLEntryPanel sqlEntryPanel;
+
+//       if(session.getActiveSessionWindow() instanceof SessionInternalFrame)
+//       {
+//          sqlEntryPanel = ((SessionInternalFrame)session.getActiveSessionWindow()).getMainSQLPanelAPI().getSQLEntryPanel();
+//       }
+//       else if(session.getActiveSessionWindow() instanceof SQLInternalFrame)
+//       {
+//          sqlEntryPanel = ((SQLInternalFrame)session.getActiveSessionWindow()).getMainSQLPanelAPI().getSQLEntryPanel();
+//       }
+//       else
+//       {
+//          return;
+//       }
+
+      sqlEntryPanel = FrameWorkAcessor.getSQLPanelAPI(session).getSQLEntryPanel();
 
 
-	    Bookmark bookmark = new Bookmark(abd.getBookmarkName(), abd.getDescription(), sql);
+      String sql = sqlEntryPanel.getSQLToBeExecuted();
+      if (null == sql || 0 == sql.trim().length())
+      {
+         // i18n[sqlbookmark.noAdd=No text to be added.]
+         JOptionPane.showMessageDialog(frame, s_stringMgr.getString("sqlbookmark.noAdd"));
+         return;
+      }
 
-       if (!plugin.getBookmarkManager().add(bookmark))
-       {
-          plugin.addBookmarkItem(bookmark);
-       }
 
-       plugin.getBookmarkManager().save();
-    }
+      AddBookmarkDialog abd = new AddBookmarkDialog(frame, plugin);
+      GUIUtils.centerWithinParent(abd);
+      abd.requestFocusLater();
+      abd.setVisible(true);
+
+      if (false == abd.isOK())
+      {
+         return;
+      }
+
+
+      Bookmark bookmark = new Bookmark(abd.getBookmarkName(), abd.getDescription(), sql);
+
+      if (!plugin.getBookmarkManager().add(bookmark))
+      {
+         plugin.addBookmarkItem(bookmark);
+      }
+
+      plugin.getBookmarkManager().save();
+   }
 
 }

@@ -395,17 +395,7 @@ public class MainPanel extends JPanel
 	}
 
 
-	/**
-	 * Use where absolutely necessary only.
-	 * Prefer delegation methods to this class where possible.
-	 * See methods below.
-	 */
-	JTabbedPane getTabbedPane()
-	{
-		return _tabPnl;
-	}
-
-   public IMainPanelTab getMainPanelTabAt(int tabIndex)
+	public IMainPanelTab getMainPanelTabAt(int tabIndex)
    {
       return _tabs.get(tabIndex);
    }

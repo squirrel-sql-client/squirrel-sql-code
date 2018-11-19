@@ -6,6 +6,8 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.B
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandlerUtil;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -41,12 +43,19 @@ public class AdditionalSQLTab extends BaseSQLTab
       _titleWithoutFile = s_stringMgr.getString("AdditionalSQLTab.title", _tabNumber);
       ImageIcon icon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ADD_TAB);
 
-      _tabComponent = new ButtonTabComponent(getSession().getSessionSheet().getTabbedPane(), _titleWithoutFile, icon);
+      //_tabComponent = new ButtonTabComponent(getSession().getSessionSheet().getTabbedPane(), _titleWithoutFile, icon);
+      _tabComponent = new ButtonTabComponent(_titleWithoutFile, icon);
 
       _tabComponent.getClosebutton().addActionListener(e -> onClose());
       _tabComponent.getToWindowButton().setVisible(false);
 
       _titleFileHandler = new TitleFilePathHandler(() -> setTitle(_titleWithoutFile));
+   }
+
+   @Override
+   protected SQLPanel createSqlPanel()
+   {
+      return new SQLPanel(getSession(), SQLPanelPosition.ADDITIONAL_TAB_IN_SESSION_WINDOW);
    }
 
    private void setTitle(String title)

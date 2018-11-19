@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -27,6 +28,17 @@ public class ButtonTabComponent extends JPanel
    private Font _defaultFont = null; // the default font of the title label
    private Font _selectedFont = null; // the font of the title label if tab is selected
    private Color _selectedColor = null; // the foreground color of the title lable if tab is selected
+
+   /**
+    * With htis constructor the tab title won't turn to bold when it is selected
+    *
+    * @param title
+    * @param icon
+    */
+   public ButtonTabComponent(String title, Icon icon)
+   {
+      this(null, title, icon);
+   }
 
    public ButtonTabComponent(JTabbedPane tabbedPane, String title, Icon icon)
    {
@@ -81,7 +93,15 @@ public class ButtonTabComponent extends JPanel
       {
          _defaultFont = _label.getFont().deriveFont(~Font.BOLD);
          _selectedFont = _label.getFont().deriveFont(Font.BOLD);
-         _selectedColor = getSelectedColor(_tabbedPane);
+
+         if (null != _tabbedPane)
+         {
+            _selectedColor = getSelectedColor(_tabbedPane);
+         }
+         else
+         {
+            _selectedColor = getSelectedColor(UIFactory.getInstance().createTabbedPane());
+         }
       }
    }
 
@@ -100,11 +120,14 @@ public class ButtonTabComponent extends JPanel
    // calculate the tab index of this tab component
    private int getTabIndex()
    {
-      for (int i = 0; i < _tabbedPane.getTabCount(); i++)
+      if (null != _tabbedPane)
       {
-         if (this.equals(_tabbedPane.getTabComponentAt(i)))
+         for (int i = 0; i < _tabbedPane.getTabCount(); i++)
          {
-            return i;
+            if (this.equals(_tabbedPane.getTabComponentAt(i)))
+            {
+               return i;
+            }
          }
       }
       return -1;
@@ -115,6 +138,12 @@ public class ButtonTabComponent extends JPanel
    @Override
    public void paint(Graphics g)
    {
+      if(null == _tabbedPane)
+      {
+         super.paint(g);
+         return;
+      }
+
       int tabIndex = getTabIndex();
       if (tabIndex >= 0)
       {
@@ -250,15 +279,22 @@ public class ButtonTabComponent extends JPanel
          }
          else
          {
-            // find out if the tab is selected
-            int tabIndex = tabComponent.getTabIndex();
-            if (tabIndex == tabComponent._tabbedPane.getSelectedIndex())
+            if (null != tabComponent._tabbedPane)
             {
-               g2.setColor(tabComponent._selectedColor);
+               // find out if the tab is selected
+               int tabIndex = tabComponent.getTabIndex();
+               if (tabIndex == tabComponent._tabbedPane.getSelectedIndex())
+               {
+                  g2.setColor(tabComponent._selectedColor);
+               }
+               else
+               {
+                  g2.setColor(tabComponent._tabbedPane.getForegroundAt(tabIndex));
+               }
             }
             else
             {
-               g2.setColor(tabComponent._tabbedPane.getForegroundAt(tabIndex));
+               g2.setColor(tabComponent._selectedColor);
             }
          }
 

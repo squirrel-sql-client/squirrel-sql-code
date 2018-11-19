@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.filemanager.SQLPanelSelection
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SqlPanelListener;
 import net.sourceforge.squirrel_sql.client.util.PrintUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -120,7 +121,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
       _toolsPopupController.addAction("sqlhist", ac.get(OpenSqlHistoryAction.class));
 
-      if (_panel.isInMainSessionWindow())
+      if (isInMainSessionWindow())
       {
          _toolsPopupController.addAction("viewinobjecttree", ac.get(ViewObjectAtCursorInObjectTreeAction.class));
       }
@@ -135,8 +136,13 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction("pastehist", ac.get(PasteFromHistoryAction.class));
    }
 
+	public boolean isInMainSessionWindow()
+	{
+		return SQLPanelPosition.MAIN_TAB_IN_SESSION_WINDOW == _panel.getSQLPanelPosition()  || SQLPanelPosition.ADDITIONAL_TAB_IN_SESSION_WINDOW == _panel.getSQLPanelPosition();
+	}
 
-   private void createStandardEntryAreaMenuItems()
+
+	private void createStandardEntryAreaMenuItems()
    {
       JMenuItem item;
       SquirrelResources resources = getSession().getApplication().getResources();
@@ -148,7 +154,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
       item = getSQLEntryPanel().addToSQLEntryAreaMenu(toolsPopupAction);
       resources.configureMenuItem(toolsPopupAction, item);
 
-      if(_panel.isInMainSessionWindow())
+      if(isInMainSessionWindow())
       {
          Action vioAction = ac.get(ViewObjectAtCursorInObjectTreeAction.class);
          item = getSQLEntryPanel().addToSQLEntryAreaMenu(vioAction);
@@ -833,11 +839,6 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	{
 		return _panel.getSession();
 	}
-
-   public boolean isInMainSessionWindow()
-   {
-      return _panel.isInMainSessionWindow();
-   }
 
 	public boolean confirmClose()
 	{

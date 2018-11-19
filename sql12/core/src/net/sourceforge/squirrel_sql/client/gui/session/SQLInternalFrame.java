@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 
 import javax.swing.*;
@@ -60,7 +61,7 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
 
 	private void createGUI(ISession session)
 	{
-      _sqlPanel = new SQLPanel(session, false);
+      _sqlPanel = new SQLPanel(session, SQLPanelPosition.IN_SQL_WORKSHEET);
 
 		setVisible(false);
 		final IApplication app = Main.getApplication();

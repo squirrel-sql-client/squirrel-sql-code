@@ -55,10 +55,12 @@ public abstract class BaseSQLTab extends BaseMainPanelTab
    {
       if(null == _sqlPanel)
       {
-         _sqlPanel = new SQLPanel(getSession(), true);
+         _sqlPanel = createSqlPanel();
       }
       return _sqlPanel;
    }
+
+   protected abstract SQLPanel createSqlPanel();
 
    /**
     * @see IMainPanelTab#setSession(ISession)

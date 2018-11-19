@@ -303,18 +303,6 @@ public class SessionPanel extends JPanel
 	}
 
 
-
-	/**
-	 * Use where absolutely necessary only.
-	 * Prefer delegation methods to {@link _mainTabPane} where possible.
-	 * See methods below.
-	 */
-	public JTabbedPane getTabbedPane()
-	{
-		return _mainTabPane.getTabbedPane();
-	}
-
-
 	public int getTabCount()
 	{
 		return _mainTabPane.getMainTabCount();
@@ -356,7 +344,7 @@ public class SessionPanel extends JPanel
 		return getMainSQLPanel().getSQLEntryPanel();
 	}
 
-	SQLPanel getMainSQLPanel()
+	public SQLPanel getMainSQLPanel()
 	{
 		return _mainTabPane.getMainSQLPanel();
 	}

@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 public class AddBookmarkDialog extends JDialog
 {
@@ -186,5 +187,10 @@ public class AddBookmarkDialog extends JDialog
    public String getBookmarkName()
    {
       return txtName.getText().trim();
+   }
+
+   public void requestFocusLater()
+   {
+      SwingUtilities.invokeLater(() -> txtName.requestFocus());
    }
 }

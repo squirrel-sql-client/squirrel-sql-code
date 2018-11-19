@@ -164,16 +164,13 @@ public class SQLPanel extends JPanel
    private static final String PREFS_KEY_SPLIT_DIVIDER_LOC = "squirrelSql_sqlPanel_divider_loc";
    private static final String PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL = "squirrelSql_sqlPanel_divider_loc_horizontal";
 
-   /**
-    * true if this panel is within a SessionInternalFrame
-    * false if this panle is within a SQLInternalFrame
-    */
-   private boolean _inMainSessionWindow;
-	transient private SQLPanel.SQLExecutorHistoryListener _sqlExecutorHistoryListener = new SQLExecutorHistoryListener();
+
+	private SQLPanel.SQLExecutorHistoryListener _sqlExecutorHistoryListener = new SQLExecutorHistoryListener();
    private ArrayList<SqlPanelListener> _sqlPanelListeners = new ArrayList<SqlPanelListener>();
    private IUndoHandler _undoHandler;
    private ResultLimitAndReadOnPanelSmallPanel _resultLimitAndReadOnPanelSmallPanel = new ResultLimitAndReadOnPanelSmallPanel();
 	private ToggleResultMinimizeHandler _toggleResultMinimizeHandler;
+	private SQLPanelPosition _sqlPanelPosition;
 
 
 	/**
@@ -184,9 +181,9 @@ public class SQLPanel extends JPanel
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public SQLPanel(ISession session, boolean isInMainSessionWindow)
+	public SQLPanel(ISession session, SQLPanelPosition sqlPanelPosition)
 	{
-		_inMainSessionWindow = isInMainSessionWindow;
+		_sqlPanelPosition = sqlPanelPosition;
 		setSession(session);
 		createGUI();
 		propertiesHaveChanged(null);
@@ -199,7 +196,7 @@ public class SQLPanel extends JPanel
       _toggleResultMinimizeHandler = new ToggleResultMinimizeHandler(_splitPane);
 
 
-		if(isInMainSessionWindow() && Main.getApplication().getSquirrelPreferences().isReloadSqlContents())
+		if(SQLPanelPosition.MAIN_TAB_IN_SESSION_WINDOW == _sqlPanelPosition && Main.getApplication().getSquirrelPreferences().isReloadSqlContents())
 		{
 			final String sqlContents = ReloadSqlContentsHelper.getLastSqlContent(session.getAlias());
 
@@ -444,7 +441,7 @@ public class SQLPanel extends JPanel
 
 		if(Main.getApplication().getSquirrelPreferences().isReloadSqlContents())
 		{
-			if (isInMainSessionWindow())
+			if (SQLPanelPosition.MAIN_TAB_IN_SESSION_WINDOW == _sqlPanelPosition)
 			{
 				String entireSQLScript = _panelAPI.getEntireSQLScript();
 
@@ -1003,12 +1000,12 @@ public class SQLPanel extends JPanel
       return _undoHandler.getRedoAction();
    }
 
-   public boolean isInMainSessionWindow()
-   {
-      return _inMainSessionWindow;
-   }
+	public SQLPanelPosition getSQLPanelPosition()
+	{
+		return _sqlPanelPosition;
+	}
 
-   /**
+	/**
 	 * Listens for changes in the execution jtabbedpane and then fires
 	 * activation events
 	 */
