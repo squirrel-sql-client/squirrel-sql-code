@@ -3,7 +3,6 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAccessor;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -69,55 +68,19 @@ public class ToolsPopupHandler
    }
 
 
-   void initToolsPopup(SessionInternalFrame sif, ActionCollection coll)
+   void initToolsPopup(ActionCollection coll, ISQLPanelAPI sqlPanelAPI)
    {
-      ISQLEntryPanel sep = sif.getSQLPanelAPI().getSQLEntryPanel();
-      JComponent septc = sep.getTextComponent();
-
-      sif.addToToolsPopUp(SyntaxPlugin.i18n.FIND, coll.get(FindAction.class));
-      sif.addToToolsPopUp(SyntaxPlugin.i18n.FIND_SELECTED , coll.get(FindSelectedAction.class));
-      sif.addToToolsPopUp(SyntaxPlugin.i18n.REPEAT_LAST_FIND , coll.get(RepeatLastFindAction.class));
-      sif.addToToolsPopUp(SyntaxPlugin.i18n.MARK_SELECTED , coll.get(MarkSelectedAction.class));
-      sif.addToToolsPopUp(SyntaxPlugin.i18n.REPLACE, coll.get(ReplaceAction.class));
-      sif.addToToolsPopUp(SyntaxPlugin.i18n.UNMARK, coll.get(UnmarkAction.class));
-      sif.addToToolsPopUp(SyntaxPlugin.i18n.GO_TO_LINE, coll.get(GoToLineAction.class));
-      sif.addToToolsPopUp(SyntaxPlugin.i18n.AUTO_CORR, coll.get(ConfigureAutoCorrectAction.class));
-      sif.addToToolsPopUp(SyntaxPlugin.i18n.DUP_LINE, coll.get(DuplicateLineAction.class));
-      sif.addToToolsPopUp(SyntaxPlugin.i18n.COMMENT, coll.get(CommentAction.class));
-      sif.addToToolsPopUp(SyntaxPlugin.i18n.UNCOMMENT, coll.get(UncommentAction.class));
-
-      if (sep.getTextComponent() instanceof SquirrelRSyntaxTextArea)
-      {
-         SquirrelRSyntaxTextArea rsEdit = (SquirrelRSyntaxTextArea) sep.getTextComponent();
-
-         Action toUpperAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaUpperSelectionCaseAction);
-         toUpperAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_UPPER_CASE);
-         sif.addToToolsPopUp(SyntaxPlugin.i18n.TO_UPPER_CASE, toUpperAction);
-
-         Action toLowerAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaLowerSelectionCaseAction);
-         toLowerAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_LOWER_CASE);
-         sif.addToToolsPopUp(SyntaxPlugin.i18n.TO_LOWER_CASE, toLowerAction);
-
-         sif.addToToolsPopUp(SyntaxPlugin.i18n.COPY_AS_RTF,_syntaxPugin.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));
-      }
-
-   }
-
-   void initToolsPopup(SQLInternalFrame sqlInternalFrame, ActionCollection coll)
-   {
-      sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.FIND , coll.get(FindAction.class));
-      sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.FIND_SELECTED , coll.get(FindSelectedAction.class));
-      sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.REPEAT_LAST_FIND , coll.get(RepeatLastFindAction.class));
-      sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.MARK_SELECTED , coll.get(MarkSelectedAction.class));
-      sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.REPLACE , coll.get(ReplaceAction.class));
-      sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.UNMARK , coll.get(UnmarkAction.class));
-      sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.GO_TO_LINE , coll.get(GoToLineAction.class));
-      sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.AUTO_CORR , coll.get(ConfigureAutoCorrectAction.class));
-      sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.DUP_LINE , coll.get(DuplicateLineAction.class));
-      sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.COMMENT , coll.get(CommentAction.class));
-      sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.UNCOMMENT , coll.get(UncommentAction.class));
-
-      ISQLPanelAPI sqlPanelAPI = sqlInternalFrame.getSQLPanelAPI();
+      sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.FIND, coll.get(FindAction.class));
+      sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.FIND_SELECTED , coll.get(FindSelectedAction.class));
+      sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.REPEAT_LAST_FIND , coll.get(RepeatLastFindAction.class));
+      sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.MARK_SELECTED , coll.get(MarkSelectedAction.class));
+      sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.REPLACE, coll.get(ReplaceAction.class));
+      sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.UNMARK, coll.get(UnmarkAction.class));
+      sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.GO_TO_LINE, coll.get(GoToLineAction.class));
+      sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.AUTO_CORR, coll.get(ConfigureAutoCorrectAction.class));
+      sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.DUP_LINE, coll.get(DuplicateLineAction.class));
+      sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.COMMENT, coll.get(CommentAction.class));
+      sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.UNCOMMENT, coll.get(UncommentAction.class));
 
       if (sqlPanelAPI.getSQLEntryPanel().getTextComponent() instanceof SquirrelRSyntaxTextArea)
       {
@@ -125,15 +88,13 @@ public class ToolsPopupHandler
 
          Action toUpperAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaUpperSelectionCaseAction);
          toUpperAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_UPPER_CASE);
-         sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.TO_UPPER_CASE, toUpperAction);
+         sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.TO_UPPER_CASE, toUpperAction);
 
          Action toLowerAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaLowerSelectionCaseAction);
          toLowerAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_LOWER_CASE);
-         sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.TO_LOWER_CASE, toLowerAction);
+         sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.TO_LOWER_CASE, toLowerAction);
 
-         sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.COPY_AS_RTF,_syntaxPugin.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));
+         sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.COPY_AS_RTF,_syntaxPugin.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));
       }
    }
-
-
 }

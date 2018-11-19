@@ -174,7 +174,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 			IMessageHandler messageHandler = session.getApplication().getMessageHandler();
 			MultiSqlExecutionListener sqlExecutionListener = new MultiSqlExecutionListener(messageHandler);
 			
-			session.getSessionSheet().getSQLPaneAPI().addSQLExecutionListener(sqlExecutionListener);
+			session.getSessionSheet().getMainSQLPaneAPI().addSQLExecutionListener(sqlExecutionListener);
 			// Load session configuration information if URL says virtual
 			if (session.getAlias() != null) {
 				isTrial = MultiSourcePlugin.isTrial(session.getSQLConnection().getConnection());
@@ -234,7 +234,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 				}
 			}
 		}
-		return new PluginSessionCallbackAdaptor(this);
+		return new PluginSessionCallbackAdaptor();
 	}
 
 	/**

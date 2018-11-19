@@ -78,7 +78,7 @@ public class RemoveQuotesAction extends SquirrelAction
       {
          try
          {
-            //new RemoveQuotesCommand(_session.getSQLPanelAPI(_plugin)).execute();
+            //new RemoveQuotesCommand(_session.getMainSQLPanelAPI(_plugin)).execute();
             new RemoveQuotesCommand(FrameWorkAcessor.getSQLPanelAPI(_session)).execute();
          }
          catch (Throwable ex)

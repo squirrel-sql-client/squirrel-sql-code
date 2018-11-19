@@ -89,8 +89,8 @@ abstract class AbstractTableListCommand implements ICommand
 		final String cmdStr = checkSQL(cmd.toString());
 		if (cmdStr != null && cmdStr.length() > 0)
 		{
-			_session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(cmdStr, true);
-			_session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();
+			_session.getSessionInternalFrame().getMainSQLPanelAPI().appendSQLScript(cmdStr, true);
+			_session.getSessionInternalFrame().getMainSQLPanelAPI().executeCurrentSQL();
 			_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
 		}
 	}

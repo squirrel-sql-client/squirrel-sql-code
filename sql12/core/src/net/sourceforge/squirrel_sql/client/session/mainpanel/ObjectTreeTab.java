@@ -64,14 +64,6 @@ public class ObjectTreeTab extends BaseMainPanelTab
 	}
 
 	/**
-	 * @see BaseMainPanelTab#refreshComponent()
-	 */
-	protected void refreshComponent()
-	{
-		// Empty method.
-	}
-
-	/**
 	 * Return the component to be displayed in this tab.
 	 *
 	 * @return	the component to be displayed in this tab.

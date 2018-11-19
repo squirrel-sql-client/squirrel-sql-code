@@ -100,7 +100,7 @@ public class HibernatePlugin extends DefaultSessionPlugin
 
          session.getSessionSheet().insertMainTab(hibernateTabController, 2, false);
 
-         return new PluginSessionCallbackAdaptor(this);
+         return new PluginSessionCallbackAdaptor();
 		}
 		catch(Exception e)
 		{

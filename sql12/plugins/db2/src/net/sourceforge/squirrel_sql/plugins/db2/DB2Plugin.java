@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.plugins.db2;
  */
 
 import java.sql.SQLException;
-import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -240,7 +239,7 @@ public class DB2Plugin extends DefaultSessionPlugin
 			s_log.error("Problem installing exception formatter: " + e.getMessage());
 		}
 
-		return new PluginSessionCallbackAdaptor(this);
+		return new PluginSessionCallbackAdaptor();
 	}
 
 	@Override

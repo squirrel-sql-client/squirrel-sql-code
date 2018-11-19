@@ -82,7 +82,7 @@ public class AliasFileOpenAction extends SquirrelAction
       {
          public void run()
          {
-            sessionInternalFrame.getSQLPanelAPI().fileOpen(fileToOpen);
+            sessionInternalFrame.getMainSQLPanelAPI().fileOpen(fileToOpen);
          }
       });
    }

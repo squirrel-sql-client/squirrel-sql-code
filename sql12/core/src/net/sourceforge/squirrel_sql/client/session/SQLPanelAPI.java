@@ -24,7 +24,6 @@ package net.sourceforge.squirrel_sql.client.session;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
@@ -33,6 +32,8 @@ import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileManager;
+import net.sourceforge.squirrel_sql.client.session.filemanager.SQLPanelSelectionHandler;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
@@ -54,28 +55,17 @@ import java.util.ArrayList;
  */
 public class SQLPanelAPI implements ISQLPanelAPI
 {
-	/** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(SQLPanelAPI.class);
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLPanelAPI.class);
 
-	/** The SQL Panel. */
 	private SQLPanel _panel;
 
    private ToolsPopupController _toolsPopupController;
    private FileManager _fileManager = new FileManager(this);
 
-   private boolean fileOpened = false;
-   private boolean fileSaved = false;
-    private boolean unsavedEdits = false;
+	private boolean fileOpened = false;
+	private boolean fileSaved = false;
+	private boolean unsavedEdits = false;
    
-   /**
-	 * Ctor specifying the panel.
-	 *
-	 * @param	panel	<TT>SQLPanel</TT> is the SQL Panel.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <T>null</TT> <TT>SQLPanel</TT> passed.
-	 */
 	public SQLPanelAPI(SQLPanel panel)
 	{
 		super();
@@ -215,44 +205,40 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction(selectionString, action);
    }
 
+   @Override
    public boolean fileSave()
    {
-      if (_fileManager.save()) {
-          fileSaved = true;
-          unsavedEdits = false;
-          getActiveSessionTabWidget().setUnsavedEdits(false);
-          ActionCollection actions = 
-              getSession().getApplication().getActionCollection();
-          actions.enableAction(FileSaveAction.class, false);
-          return true;
-      } else {
-          return false;
-      }
+		if (_fileManager.save())
+		{
+			fileSaved = true;
+			unsavedEdits = false;
+			setUnsavedEdits(false);
+			ActionCollection actions =
+					getSession().getApplication().getActionCollection();
+			actions.enableAction(FileSaveAction.class, false);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
    }
 
-   private SessionTabWidget getActiveSessionTabWidget()
-   {
-      return (SessionTabWidget) getSession().getActiveSessionWindow();
-   }
-
-   /* (non-Javadoc)
-   * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileAppend()
-   */
-   public void fileAppend() {
-       if (_fileManager.open(true)) {
-           fileOpened = true;
-           fileSaved = false;
-           unsavedEdits = false;
-           ActionCollection actions = 
-               getSession().getApplication().getActionCollection();
-           actions.enableAction(FileSaveAction.class, true);           
-       }
-   }
+   @Override
+	public void fileAppend()
+	{
+		if (_fileManager.open(true))
+		{
+			fileOpened = true;
+			fileSaved = false;
+			unsavedEdits = false;
+			ActionCollection actions =
+					getSession().getApplication().getActionCollection();
+			actions.enableAction(FileSaveAction.class, true);
+		}
+	}
    
-   
-   /* (non-Javadoc)
-    * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileClose()
-    */
+   @Override
    public void fileClose()
    {
       _closeFile(true);
@@ -272,8 +258,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
       {
          setEntireSQLScript("");
       }
-      getActiveSessionTabWidget().setSqlFile(null);
-      fileOpened = false;
+		clearSqlFile();
+		fileOpened = false;
       fileSaved = false;
       unsavedEdits = false;
       ActionCollection actions =
@@ -283,6 +269,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 		return true;
 	}
+
 
 	public void fileReload()
 	{
@@ -327,14 +314,15 @@ public class SQLPanelAPI implements ISQLPanelAPI
     */
    public void fileSaveAs()
    {
-       if (_fileManager.saveAs()) {
-           fileSaved = true;
-           unsavedEdits = false;
-           getActiveSessionTabWidget().setUnsavedEdits(false);
-           ActionCollection actions = 
-               getSession().getApplication().getActionCollection();
-           actions.enableAction(FileSaveAction.class, false);         
-       }
+		if (_fileManager.saveAs())
+		{
+			fileSaved = true;
+			unsavedEdits = false;
+			setUnsavedEdits(false);
+			ActionCollection actions =
+					getSession().getApplication().getActionCollection();
+			actions.enableAction(FileSaveAction.class, false);
+		}
    }
 
    /* (non-Javadoc)
@@ -349,6 +337,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 				return;
 			}
 		}
+
 		if (_fileManager.open(false))
 		{
 			fileOpened = true;
@@ -389,19 +378,22 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 	}
 
-	/* (non-Javadoc)
+	/*
     * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#filePrint()
     */
-   public void filePrint() {
-       if (_panel == null) {
-           throw new IllegalStateException("_panel is null");
-       }
-       ISQLEntryPanel panel = _panel.getSQLEntryPanel();
-       if (panel == null) {
-           throw new IllegalStateException("_panel.getSQLEntryPanel() is null");
-       }
-       PrintUtilities.printComponent(panel.getTextComponent());
-   }       
+	public void filePrint()
+	{
+		if (_panel == null)
+		{
+			throw new IllegalStateException("_panel is null");
+		}
+		ISQLEntryPanel panel = _panel.getSQLEntryPanel();
+		if (panel == null)
+		{
+			throw new IllegalStateException("_panel.getMainSQLEntryPanel() is null");
+		}
+		PrintUtilities.printComponent(panel.getTextComponent());
+	}
    
    public void showToolsPopup()
    {
@@ -531,9 +523,10 @@ public class SQLPanelAPI implements ISQLPanelAPI
      * 
      * @return an implementation of ISQLResultExecuter 
      */
-    public ISQLResultExecuter getSQLResultExecuter() {
-        return _panel.getSQLExecPanel();
-    }
+	 public ISQLResultExecuter getSQLResultExecuter()
+	 {
+		 return _panel.getSQLExecPanel();
+	 }
     
 	/**
 	 * Return the entire contents of the SQL entry area.
@@ -560,7 +553,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 *
 	 * @return	the SQL script to be executed.
 	 */
-	public synchronized String getSQLScriptToBeExecuted()
+	public String getSQLScriptToBeExecuted()
 	{
 		return _panel.getSQLEntryPanel().getSQLToBeExecuted();
 	}
@@ -571,7 +564,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 *
 	 * @param	sqlScript	The script to be appended.
 	 */
-	public synchronized void appendSQLScript(String sqlScript)
+	public void appendSQLScript(String sqlScript)
 	{
 		_panel.getSQLEntryPanel().appendText(sqlScript);
 	}
@@ -584,7 +577,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
 	 */
-	public synchronized void appendSQLScript(String sqlScript, boolean select)
+	public void appendSQLScript(String sqlScript, boolean select)
 	{
         _panel.getSQLEntryPanel().appendText(sqlScript, select);
 	}
@@ -595,7 +588,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 *
 	 * @param	sqlScript	The script to be placed in the SQL entry area.
 	 */
-	public synchronized void setEntireSQLScript(String sqlScript)
+	public void setEntireSQLScript(String sqlScript)
 	{
 		_panel.getSQLEntryPanel().setText(sqlScript);
 		_panel.getSQLEntryPanel().setCaretPosition(0);
@@ -609,7 +602,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
 	 */
-	public synchronized void setEntireSQLScript(String sqlScript, boolean select)
+	public void setEntireSQLScript(String sqlScript, boolean select)
 	{
 		_panel.getSQLEntryPanel().setText(sqlScript, select);
 	}
@@ -622,19 +615,22 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * @param	select		If <TT>true</TT> then select the passed script
 	 * 						in the sql entry area.
 	 */
-	public synchronized void replaceSelectedSQLScript(String sqlScript, boolean select)
+	public void replaceSelectedSQLScript(String sqlScript, boolean select)
 	{
 		if (sqlScript == null)
 		{
 			sqlScript = "";
 		}
+
 		final ISQLEntryPanel pnl = _panel.getSQLEntryPanel();
 		int selStart = -1;
+
 		if (select)
 		{
 			selStart = pnl.getSelectionStart();
 		}
 		pnl.replaceSelection(sqlScript);
+
 		if (select)
 		{
 			int entireLen = getEntireSQLScript().length();
@@ -642,11 +638,13 @@ public class SQLPanelAPI implements ISQLPanelAPI
 			{
 				selStart = 0;
 			}
+
 			int selEnd = selStart + sqlScript.length() - 1;
 			if (selEnd > entireLen - 1)
 			{
 				selEnd = entireLen - 1;
 			}
+
 			if (selStart <= selEnd)
 			{
 				pnl.setSelectionStart(selStart);
@@ -661,7 +659,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 *
 	 * @return	the current selections start position.
 	 */
-	public synchronized int getSQLScriptSelectionStart()
+	public int getSQLScriptSelectionStart()
 	{
 		return _panel.getSQLEntryPanel().getSelectionStart();
 	}
@@ -672,7 +670,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 *
 	 * @return	the current selections end position.
 	 */
-	public synchronized int getSQLScriptSelectionEnd()
+	public int getSQLScriptSelectionEnd()
 	{
 		return _panel.getSQLEntryPanel().getSelectionEnd();
 	}
@@ -683,7 +681,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 *
 	 * param	start	the new selections start position.
 	 */
-	public synchronized void setSQLScriptSelectionStart(int start)
+	public void setSQLScriptSelectionStart(int start)
 	{
 		_panel.getSQLEntryPanel().setSelectionStart(start);
 	}
@@ -694,15 +692,11 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 *
 	 * param	start	the new selections start position.
 	 */
-	public synchronized void setSQLScriptSelectionEnd(int end)
+	public void setSQLScriptSelectionEnd(int end)
 	{
 		_panel.getSQLEntryPanel().setSelectionEnd(end);
 	}
 
-	/**
-	 * Execute the current SQL. Not <TT>synchronized</TT> as multiple SQL statements
-	 * can be executed simultaneously.
-	 */
 	public void executeCurrentSQL()
 	{
 		_panel.runCurrentExecuter();
@@ -775,7 +769,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>sql</TT> passed.
 	 */
-	public synchronized void addSQLToHistory(String sql)
+	public void addSQLToHistory(String sql)
 	{
 		if (sql == null)
 		{
@@ -845,12 +839,14 @@ public class SQLPanelAPI implements ISQLPanelAPI
       return _panel.isInMainSessionWindow();
    }
 
-   public boolean confirmClose() {
-       if (unsavedEdits) {
-           return showConfirmSaveDialog();
-       }
-       return true;
-   }
+	public boolean confirmClose()
+	{
+		if (unsavedEdits)
+		{
+			return showConfirmSaveDialog();
+		}
+		return true;
+	}
 
    public void addSqlPanelListener(SqlPanelListener sqlPanelListener)
    {
@@ -885,14 +881,11 @@ public class SQLPanelAPI implements ISQLPanelAPI
        {
            filename = file.getAbsolutePath();
        }
-       String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges",
-                                          filename);
+       String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges",filename);
        
        
        
-       String title = 
-           s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle",
-                                 ": "+_panel.getSession().getAlias().getName());
+       String title =  s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle",": "+_panel.getSession().getAlias().getName());
        
        JFrame f = (JFrame) SessionUtils.getOwningFrame(this);
 
@@ -910,31 +903,48 @@ public class SQLPanelAPI implements ISQLPanelAPI
        return true;
    }   
    
-   /**
-    * A class to listen for events that indicate that the content in the 
-    * SQLEntryPanel has changed and could be lost.
-    */
-   private class SQLEntryUndoListener implements UndoableEditListener {
 
-    /* (non-Javadoc)
-     * @see javax.swing.event.UndoableEditListener#undoableEditHappened(javax.swing.event.UndoableEditEvent)
-     */
-    public void undoableEditHappened(UndoableEditEvent e) {
-        IApplication app = getSession().getApplication();
-        SquirrelPreferences prefs = app.getSquirrelPreferences();
-        
-        if (fileOpened || fileSaved) {
-            if (prefs.getWarnForUnsavedFileEdits()) {
-                unsavedEdits = true;
-            }
-            getActiveSessionTabWidget().setUnsavedEdits(true);
-            ActionCollection actions = 
-                getSession().getApplication().getActionCollection();
-            actions.enableAction(FileSaveAction.class, true);
-        } else if (prefs.getWarnForUnsavedBufferEdits()) {
-            unsavedEdits = true;
-        }
-    }
-       
-   }   
+	private void setUnsavedEdits(boolean b)
+	{
+		SQLPanelSelectionHandler.setUnsavedEdits(this, b);
+	}
+
+	private void clearSqlFile()
+	{
+		SQLPanelSelectionHandler.setSqlFile(this, null);
+	}
+
+	/**
+	 * A class to listen for events that indicate that the content in the
+	 * SQLEntryPanel has changed and could be lost.
+	 */
+	private class SQLEntryUndoListener implements UndoableEditListener
+	{
+
+		/*
+		 * @see javax.swing.event.UndoableEditListener#undoableEditHappened(javax.swing.event.UndoableEditEvent)
+		 */
+		public void undoableEditHappened(UndoableEditEvent e)
+		{
+			IApplication app = getSession().getApplication();
+			SquirrelPreferences prefs = app.getSquirrelPreferences();
+
+			if (fileOpened || fileSaved)
+			{
+				if (prefs.getWarnForUnsavedFileEdits())
+				{
+					unsavedEdits = true;
+				}
+				setUnsavedEdits(true);
+				ActionCollection actions =
+						getSession().getApplication().getActionCollection();
+				actions.enableAction(FileSaveAction.class, true);
+			}
+			else if (prefs.getWarnForUnsavedBufferEdits())
+			{
+				unsavedEdits = true;
+			}
+		}
+	}
+
 }

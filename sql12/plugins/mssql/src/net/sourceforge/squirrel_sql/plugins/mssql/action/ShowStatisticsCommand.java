@@ -23,8 +23,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 
-import javax.swing.*;
-
 public class ShowStatisticsCommand implements ICommand {
 	private ISession _session;
 	private final MssqlPlugin _plugin;
@@ -61,8 +59,8 @@ public class ShowStatisticsCommand implements ICommand {
         sqlBuffer.append(sqlSep);
         sqlBuffer.append("\n");
         
-        _session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(sqlBuffer.toString(), true);
-		_session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();
+        _session.getSessionInternalFrame().getMainSQLPanelAPI().appendSQLScript(sqlBuffer.toString(), true);
+		_session.getSessionInternalFrame().getMainSQLPanelAPI().executeCurrentSQL();
 		_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
 	}
 }

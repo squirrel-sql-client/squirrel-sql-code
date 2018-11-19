@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -214,7 +215,7 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 		log.info("Initializing plugin");
-		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
 
 		initSQLParam(sqlPaneAPI, session);
 
@@ -223,16 +224,21 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 			@Override
 			public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, final ISession sess)
 			{
-				initSQLParam(sqlInternalFrame.getSQLPanelAPI(), sess);
+				initSQLParam(sqlInternalFrame.getMainSQLPanelAPI(), sess);
 			}
 
 			@Override
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
 			{
-				// Nothing to do if object tree is opened.
 			}
-			
-		};
+
+         @Override
+         public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+         {
+            initSQLParam(additionalSQLTab.getSQLPanelAPI(), additionalSQLTab.getSQLPanelAPI().getSession());
+         }
+
+      };
 
 		return ret;
 	}
@@ -243,8 +249,9 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	 * @param session the session to be closed
 	 */
 	@Override
-	public void sessionEnding(ISession session) {
-		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+	public void sessionEnding(ISession session)
+	{
+		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
 		ISQLExecutionListener listener = panelListenerMap.remove(sqlPaneAPI);
 		removeSQLExecutionListener(sqlPaneAPI, listener);
 	}
@@ -260,19 +267,16 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	{
 		final SQLParamPlugin plugin = this;
 		
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				log.info("Adding SQL execution listener.");
-                ISQLExecutionListener listener = 
-                    new SQLParamExecutionListener(plugin, session);
-				sqlPaneAPI.addSQLExecutionListener(listener);
-                panelListenerMap.put(sqlPaneAPI, listener);
-			}
+		GUIUtils.processOnSwingEventThread(() -> addSqlParamExecutionListener(plugin, session, sqlPaneAPI));
+	}
 
-		});
+	private void addSqlParamExecutionListener(SQLParamPlugin plugin, ISession session, ISQLPanelAPI sqlPaneAPI)
+	{
+		log.info("Adding SQL execution listener.");
+		ISQLExecutionListener listener =
+			 new SQLParamExecutionListener(plugin, session);
+		sqlPaneAPI.addSQLExecutionListener(listener);
+		panelListenerMap.put(sqlPaneAPI, listener);
 	}
 
 	/**

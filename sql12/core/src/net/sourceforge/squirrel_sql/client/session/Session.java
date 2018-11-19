@@ -41,7 +41,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
@@ -55,6 +54,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionComman
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessorDummy;
@@ -341,7 +341,7 @@ class Session implements ISession
              *  This helps users, they often open and close sessions without restarting SQuirrel.
              */
             if(_sessionInternalFrame != null){
-            	_sessionInternalFrame.getSQLPanelAPI().closeAllSQLResultTabs();
+            	_sessionInternalFrame.getMainSQLPanelAPI().closeAllSQLResultTabs();
             }
             
             
@@ -421,7 +421,6 @@ class Session implements ISession
     */
    public ISQLConnection getSQLConnection()
    {
-        checkThread();
       return _conn;
    }
 
@@ -838,7 +837,7 @@ class Session implements ISession
 
       if(null == pep)
       {
-         ISQLPanelAPI panelAPI = getSqlPanelApi(entryPanelIdentifier);
+         ISQLPanelAPI panelAPI = SessionUtils.getSqlPanelApi(entryPanelIdentifier, getIdentifier());
 
          if(null != panelAPI)
          {
@@ -853,57 +852,6 @@ class Session implements ISession
          _parserEventsProcessorsByEntryPanelIdentifier.put(entryPanelIdentifier, pep);
       }
       return pep;
-   }
-
-   private ISQLPanelAPI getSqlPanelApi(IIdentifier entryPanelIdentifier)
-   {
-      ISessionWidget[] frames = getApplication().getWindowManager().getAllFramesOfSession(getIdentifier());
-
-      for (int i = 0; i < frames.length; i++)
-      {
-         if(frames[i] instanceof SQLInternalFrame)
-         {
-            ISQLPanelAPI sqlPanelAPI = ((SQLInternalFrame)frames[i]).getSQLPanelAPI();
-            IIdentifier id = sqlPanelAPI.getSQLEntryPanel().getIdentifier();
-
-            if(id.equals(entryPanelIdentifier))
-            {
-               return sqlPanelAPI;
-            }
-         }
-
-         if(frames[i] instanceof SessionInternalFrame)
-         {
-            ISQLPanelAPI sqlPanelAPI = ((SessionInternalFrame)frames[i]).getSQLPanelAPI();
-            IIdentifier sqlEditorID = sqlPanelAPI.getSQLEntryPanel().getIdentifier();
-
-            if(sqlEditorID.equals(entryPanelIdentifier))
-            {
-               return sqlPanelAPI;
-            }
-
-            IObjectTreeAPI objectTreeApi = ((SessionInternalFrame)frames[i]).getObjectTreeAPI();
-            IIdentifier findEditorID = objectTreeApi.getFindController().getFindEntryPanel().getIdentifier();
-
-            if(findEditorID.equals(entryPanelIdentifier))
-            {
-               return null;
-            }
-         }
-
-         if(frames[i] instanceof ObjectTreeInternalFrame)
-         {
-            IObjectTreeAPI objectTreeApi = ((ObjectTreeInternalFrame)frames[i]).getObjectTreeAPI();
-            IIdentifier findEditorID = objectTreeApi.getFindController().getFindEntryPanel().getIdentifier();
-
-            if(findEditorID.equals(entryPanelIdentifier))
-            {
-               return null;
-            }
-         }
-      }
-
-      throw new IllegalStateException("Session has no entry panel for ID=" + entryPanelIdentifier);
    }
 
    public void setActiveSessionWindow(ISessionWidget activeActiveSessionWindow)
@@ -926,11 +874,11 @@ class Session implements ISession
       ISQLPanelAPI sqlPanelAPI;
       if(isSessionWidgetActive())
       {
-         sqlPanelAPI = ((SessionInternalFrame)_activeActiveSessionWindow).getSQLPanelAPI();
+         sqlPanelAPI = ((SessionInternalFrame)_activeActiveSessionWindow).getSelectedOrMainSQLPanelAPI();
       }
       else if(_activeActiveSessionWindow instanceof SQLInternalFrame)
       {
-         sqlPanelAPI = ((SQLInternalFrame)_activeActiveSessionWindow).getSQLPanelAPI();
+         sqlPanelAPI = ((SQLInternalFrame)_activeActiveSessionWindow).getMainSQLPanelAPI();
       }
       else
       {
@@ -1063,25 +1011,6 @@ class Session implements ISession
         });
     }
 
-    /**
-     * Check the thread of the caller to see if it is the event dispatch thread
-     * and if we are debugging print a debug log message with the call trace.
-     */
-    private void checkThread() {
-        /* This is extremely useful when trying to track down Swing UI freezing.
-         * However, it currently fills the log which obscures other debug 
-         * messages even though UI performance is acceptable, so it is commented 
-         * out until it is needed later. 
-        if (s_log.isDebugEnabled() && SwingUtilities.isEventDispatchThread()) {
-            try {
-                throw new Exception("GUI Thread is doing database work");
-            } catch (Exception e) {
-                s_log.debug(e.getMessage(), e);
-            }
-        }
-        */
-    }
-
    private class SQLConnectionListener implements PropertyChangeListener
    {
       public void propertyChange(PropertyChangeEvent evt)
@@ -1120,44 +1049,15 @@ class Session implements ISession
         return _finishedLoading && _pluginsFinishedLoading;
     }
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.client.session.ISession#confirmCloseWithUnsavedEdits()
-     */
     public boolean confirmClose()
     {
-//       if(getActiveSessionWindow() instanceof SQLInternalFrame)
-//       {
-//          return getSQLPanelAPIOfActiveSessionWindow().confirmClose();
-//       }
-//
-//       if(getActiveSessionWindow() instanceof SessionInternalFrame)
-//       {
-//          ISessionWidget[] frames = getApplication().getWindowManager().getAllFramesOfSession(getIdentifier());
-//
-//          for (ISessionWidget frame : frames)
-//          {
-//             if(frame instanceof SQLInternalFrame)
-//             {
-//                if( false == ((SQLInternalFrame)frame).getSQLPanelAPI().confirmClose())
-//                {
-//                   frame.moveToFront();
-//                   return false;
-//                }
-//             }
-//          }
-//
-//          return getSQLPanelAPIOfActiveSessionWindow().confirmClose();
-//       }
-//
-//       return true;
-
        ISessionWidget[] frames = getApplication().getWindowManager().getAllFramesOfSession(getIdentifier());
 
        for (ISessionWidget frame : frames)
        {
           if(frame instanceof SQLInternalFrame)
           {
-             if( false == ((SQLInternalFrame)frame).getSQLPanelAPI().confirmClose())
+             if( false == ((SQLInternalFrame)frame).getMainSQLPanelAPI().confirmClose())
              {
                 frame.moveToFront();
                 return false;
@@ -1165,10 +1065,15 @@ class Session implements ISession
           }
        }
 
-       return getSessionInternalFrame().getSQLPanelAPI().confirmClose();
+       for (SQLPanel sqlPanel : getSessionInternalFrame().getSessionPanel().getAllSQLPanels())
+       {
+          if(false == sqlPanel.getSQLPanelAPI().confirmClose())
+          {
+             return false;
+          }
+       }
 
-
-
+       return true;
     }
 
     /**

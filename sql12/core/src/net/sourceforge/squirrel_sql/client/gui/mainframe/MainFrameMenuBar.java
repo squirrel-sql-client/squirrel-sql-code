@@ -25,8 +25,11 @@ import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
+import net.sourceforge.squirrel_sql.client.action.ChanneledAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
+import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.util.SystemProperties;
@@ -505,7 +508,13 @@ final class MainFrameMenuBar extends JMenuBar
 		Action act = _actions.get(actionClass);
 		if (act != null)
 		{
-			rsrc.addToMenu(act, menu);
+			JMenuItem menuItem = rsrc.addToMenu(act, menu);
+
+			if(act instanceof ChanneledAction)
+			{
+				((ChanneledAction)act).getActionChannel().addBoundMenuItem(menuItem);
+			}
+
 		}
 		else
 		{

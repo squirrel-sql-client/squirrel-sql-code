@@ -43,8 +43,9 @@ import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.NewAliasConnectionAction;
 import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.NewSQLWorksheetAction;
+import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
+import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.SQLWorksheetTypeChooser;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleAutoCommitAction;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
@@ -128,8 +129,10 @@ class MainFrameToolBar extends ToolBar
 
       addSeparator();
 
-      add(actions.get(NewSQLWorksheetAction.class));
-      add(actions.get(NewObjectTreeAction.class));
+		//add(actions.get(NewSQLWorksheetAction.class));
+		add(new SQLWorksheetTypeChooser((NewSQLWorksheetAction) actions.get(NewSQLWorksheetAction.class)).getComponent());
+
+		add(actions.get(NewObjectTreeAction.class));
       add(actions.get(NewAliasConnectionAction.class));
    }
 

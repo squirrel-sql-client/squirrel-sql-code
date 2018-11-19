@@ -143,7 +143,7 @@ public class I18nPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(ISession session)
 	{
-		return new PluginSessionCallbackAdaptor(this);
+		return new PluginSessionCallbackAdaptor();
 	}
 
 }

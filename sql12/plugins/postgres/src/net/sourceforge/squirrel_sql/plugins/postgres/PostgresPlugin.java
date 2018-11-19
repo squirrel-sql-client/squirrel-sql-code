@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.SchemaExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
@@ -237,23 +238,25 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
             }
         });
 
-        return new PluginSessionCallback() {
+        return new PluginSessionCallback()
+        {
 
             @Override
-            public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, final ISession sess) {
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        sqlInternalFrame.getSQLPanelAPI().addExecutor(new ExplainExecuterPanel(sess));
-                    }
-                });
+            public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, final ISession sess)
+            {
+                SwingUtilities.invokeLater(() -> sqlInternalFrame.getMainSQLPanelAPI().addExecutor(new ExplainExecuterPanel(sess)));
             }
 
             @Override
-            public void objectTreeInternalFrameOpened(final ObjectTreeInternalFrame objectTreeInternalFrame,
-                final ISession sess) {
+            public void objectTreeInternalFrameOpened(final ObjectTreeInternalFrame objectTreeInternalFrame, final ISession sess)
+            {
                 // Plugin supports only the main session window
+            }
+
+            @Override
+            public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+            {
+                SwingUtilities.invokeLater(() -> additionalSQLTab.getSQLPanelAPI().addExecutor(new ExplainExecuterPanel(additionalSQLTab.getSession())));
             }
         };
     }

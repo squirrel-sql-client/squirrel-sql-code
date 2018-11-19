@@ -204,11 +204,11 @@ public class GraphPlugin extends DefaultSessionPlugin
       session.addToToolbar(coll.get(CopyGraphAction.class));
       session.addToToolbar(coll.get(PasteGraphAction.class));
 
-      ISQLPanelAPI sqlPanelAPI = session.getSessionInternalFrame().getSQLPanelAPI();
+      ISQLPanelAPI sqlPanelAPI = session.getSessionInternalFrame().getMainSQLPanelAPI();
       sqlPanelAPI.addToToolsPopUp("addtograph", coll.get(AddTableAtQursorToGraph.class));
       sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(AddTableAtQursorToGraph.class));
 
-      return new PluginSessionCallbackAdaptor(this);
+      return new PluginSessionCallbackAdaptor();
    }
 
 

@@ -18,7 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlreplace;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,11 +29,11 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -209,7 +208,7 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 	{
 		try
 		{
-			ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+			ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
 
 			initSQLReplace(sqlPaneAPI, session);
 
@@ -218,14 +217,20 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 				@Override
 				public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
 				{
-					initSQLReplace(sqlInternalFrame.getSQLPanelAPI(), sess);
+					initSQLReplace(sqlInternalFrame.getMainSQLPanelAPI(), sess);
 				}
 
 				@Override
 				public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
 				{
 				}
-			};
+
+            @Override
+            public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+            {
+					initSQLReplace(additionalSQLTab.getSQLPanelAPI(), additionalSQLTab.getSession());
+            }
+         };
 
 
 			return ret;
@@ -314,7 +319,7 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 	@Override
 	public void sessionEnding(ISession session)
 	{
-		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
 		ISQLExecutionListener listener = panelListenerMap.remove(sqlPaneAPI);
 		sqlPaneAPI.removeSQLExecutionListener(listener);
 	}

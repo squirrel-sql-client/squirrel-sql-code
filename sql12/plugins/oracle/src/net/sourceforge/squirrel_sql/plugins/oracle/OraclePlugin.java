@@ -56,6 +56,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp;
@@ -489,21 +490,26 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 			}
 
 			@Override
-			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,
-			      ISession sess)
+			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,ISession sess)
 			{
 				onObjectTreeInternalFrameOpened(objectTreeInternalFrame);
 			}
 
-		};
+         @Override
+         public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+         {
+            onAdditionalSQLTabOpened(additionalSQLTab);
+         }
+
+      };
 
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
-				sqlPaneAPI.addExecutor(new ExplainPlanExecuter(session, sqlPaneAPI));
+				ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
+				initSQLPanel(session, sqlPaneAPI);
 				updateObjectTree(session.getSessionSheet().getObjectTreePanel());
 			}
 		});
@@ -593,22 +599,32 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 		session.addToToolbar(coll.get(NewSessionInfoWorksheetAction.class));
 		session.addToToolbar(coll.get(NewSGATraceWorksheetAction.class));
 
-		session.getSessionInternalFrame().addToToolsPopUp(
-		   "oracleoutput", coll.get(NewDBOutputWorksheetAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp(
-		   "oracleinvalid", coll.get(NewInvalidObjectsWorksheetAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp(
-		   "oracleinfo", coll.get(NewSessionInfoWorksheetAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp(
-		   "oraclesga", coll.get(NewSGATraceWorksheetAction.class));
+		ISQLPanelAPI sqlPanelAPI = session.getSessionInternalFrame().getMainSQLPanelAPI();
 
+		sqlPanelAPI.addToToolsPopUp("oracleoutput", coll.get(NewDBOutputWorksheetAction.class));
+		sqlPanelAPI.addToToolsPopUp("oracleinvalid", coll.get(NewInvalidObjectsWorksheetAction.class));
+		sqlPanelAPI.addToToolsPopUp("oracleinfo", coll.get(NewSessionInfoWorksheetAction.class));
+		sqlPanelAPI.addToToolsPopUp("oraclesga", coll.get(NewSGATraceWorksheetAction.class));
 	}
 
 	private void onSQLInternaFrameOpened(SQLInternalFrame sqlInternalFrame, final ISession session)
 	{
-		final ISQLPanelAPI panel = sqlInternalFrame.getSQLPanelAPI();
-		panel.addExecutor(new ExplainPlanExecuter(session, panel));
+		final ISQLPanelAPI panel = sqlInternalFrame.getMainSQLPanelAPI();
+		initSQLPanel(session, panel);
 	}
+
+
+	private void onAdditionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+	{
+		final ISQLPanelAPI panel = additionalSQLTab.getSQLPanelAPI();
+		initSQLPanel(additionalSQLTab.getSession(), panel);
+	}
+
+	private void initSQLPanel(ISession session, ISQLPanelAPI sqlPanelAPI)
+	{
+		sqlPanelAPI.addExecutor(new ExplainPlanExecuter(session, sqlPanelAPI));
+	}
+
 
 	private void onObjectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame)
 	{

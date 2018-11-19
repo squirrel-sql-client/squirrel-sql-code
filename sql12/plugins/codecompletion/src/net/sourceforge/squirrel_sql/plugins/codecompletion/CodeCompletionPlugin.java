@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
@@ -258,7 +259,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
-		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
       initCodeCompletionSqlEditor(sqlPaneAPI, session);
 
       initCodeCompletionObjectTreeFind(session, session.getSessionSheet().getObjectTreePanel());
@@ -267,14 +268,20 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 		{
 			public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, final ISession sess)
 			{
-            initCodeCompletionSqlEditor(sqlInternalFrame.getSQLPanelAPI(), sess);
+            initCodeCompletionSqlEditor(sqlInternalFrame.getMainSQLPanelAPI(), sess);
 			}
 
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
 			{
             initCodeCompletionObjectTreeFind(sess, objectTreeInternalFrame.getObjectTreePanel());
 			}
-		};
+
+         @Override
+         public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+         {
+				initCodeCompletionSqlEditor(additionalSQLTab.getSQLPanelAPI(), additionalSQLTab.getSession());
+         }
+      };
 
 		return ret;
 	}

@@ -32,16 +32,14 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -57,30 +55,16 @@ import java.util.Vector;
 
 public class SessionPanel extends JPanel
 {
-    private static final long serialVersionUID = 1L;
-
-    /** Logger for this class. */
-    @SuppressWarnings("unused")
-	private static final ILogger s_log =
-		LoggerController.createLogger(SessionPanel.class);
-
-	/** Internationalized strings for this class. */
-	@SuppressWarnings("unused")
-    private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SessionPanel.class);
-
-	/** Application API. */
-	private final transient IApplication _app;
+	private final IApplication _app;
 
 	/** ID of the session for this window. */
-	private transient IIdentifier _sessionId;
+	private IIdentifier _sessionId;
 
-	/** Listener to the sessions properties. */
-	private transient PropertyChangeListener _propsListener;
+	private PropertyChangeListener _propsListener;
 
-	private transient MainPanel _mainTabPane;
+	private MainPanel _mainTabPane;
 
-	private transient IMainPanelFactory _mainPanelFactory;
+	private IMainPanelFactory _mainPanelFactory;
 
 	/** Toolbar for window. */
 	private MyToolBar _toolBar;
@@ -107,7 +91,8 @@ public class SessionPanel extends JPanel
 		SessionColoringUtil.colorStatusbar(session, _statusBar);
 	}
 
-   protected void initialize(ISession session) {
+   protected void initialize(ISession session)
+	{
       createGUI(session);
 		propertiesHaveChanged(null);
 
@@ -123,40 +108,20 @@ public class SessionPanel extends JPanel
    
    public void addToToolsPopUp(String selectionString, Action action)
    {
-      getSQLPaneAPI().addToToolsPopUp(selectionString, action);
+      getMainSQLPaneAPI().addToToolsPopUp(selectionString, action);
    }
 
 
-//	public void setVisible(boolean value)
-//	{
 	public void addNotify()
 	{
-//		super.setVisible(value);
 		super.addNotify();
-//		if (!_hasBeenVisible && value == true)
 		if (!_hasBeenVisible)
 		{
 			_hasBeenVisible = true;
-//			_msgSplit.setDividerLocation(0.9d);
-//			_msgSplit.setResizeWeight(1.0);
-
-			// Done this late so that plugins have time to register expanders
-			// with the object tree prior to it being built.
-//			getSession().getObjectTreeAPI(_app.getDummyAppPlugin()).refreshTree();
 			_mainTabPane.getObjectTreePanel().refreshTree();
 		}
 	}
 
-	public boolean hasConnection()
-	{
-		return getSession().getSQLConnection() != null;
-	}
-
-	/**
-	 * Retrieve the session attached to this window.
-	 *
-	 * @return	the session attached to this window.
-	 */
 	public ISession getSession()
 	{
 		return _app.getSessionManager().getSession(_sessionId);
@@ -183,172 +148,21 @@ public class SessionPanel extends JPanel
 		}
 	}
 
-   public void sessionWindowClosing()
-   {
-      _mainTabPane.sessionWindowClosing();
-   }
-
-
-	/*
-	 * TODO: This should not be public. Check all usages of it
-	 * and put appropriate methods in an API object.
-	 */
-	public ObjectTreePanel getObjectTreePanel()
-	{
-		return _mainTabPane.getObjectTreePanel();
-	}
-
-	void closeConnection()
-	{
-		try
-		{
-			getSession().closeSQLConnection();
-		}
-		catch (SQLException ex)
-		{
-			showError(ex);
-		}
-	}
-
-	/**
-	 * Select a tab in the main tabbed pane.
-	 *
-	 * @param	tabIndex	The tab to select. @see #IMainTabIndexes
-	 *
-	 * @throws	llegalArgumentException
-	 *			Thrown if an invalid <TT>tabIndex</TT> passed.
-	 */
-	public void selectMainTab(int tabIndex)
-	{
-		final JTabbedPane tabPnl = _mainTabPane.getTabbedPane();
-		if (tabIndex >= tabPnl.getTabCount())
-		{
-			throw new IllegalArgumentException("" + tabIndex
-					+ " is not a valid index into the main tabbed pane.");
-		}
-		if (tabPnl.getSelectedIndex() != tabIndex)
-		{
-			tabPnl.setSelectedIndex(tabIndex);
-		}
-	}
-
-   public int getSelectedMainTabIndex()
-   {
-      return _mainTabPane.getTabbedPane().getSelectedIndex();
-   }
-
-   public IMainPanelTab getSelectedMainTab()
-   {
-      return _mainTabPane.getSelectedMainTab();
-   }
-
-
-
-   /**
-	 * Add a tab to the main tabbed panel.
-	 *
-	 * tab	Describes the tab to be added.
-    *
-    * @return The index of th added tab.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If <TT>tab</TT> is <TT>null</TT>.
-	 */
-	public int addMainTab(IMainPanelTab tab)
-	{
-		if (tab == null)
-		{
-			throw new IllegalArgumentException("IMainPanelTab == null");
-		}
-		return _mainTabPane.addMainPanelTab(tab);
-	}
-
-   public void insertMainTab(IMainPanelTab tab, int idx)
-   {
-      insertMainTab(tab, idx, true);
-   }
-
-	public void insertMainTab(IMainPanelTab tab, int idx, boolean selectInsertedTab)
-	{
-		if (tab == null)
-		{
-			throw new IllegalArgumentException("Null IMainPanelTab passed");
-		}
-		if(idx == MainPanel.ITabIndexes.SQL_TAB || idx == MainPanel.ITabIndexes.OBJECT_TREE_TAB)
-		{
-			throw new IllegalArgumentException("Index " + idx + "conflicts with standard tabs");
-		}
-
-		_mainTabPane.insertMainPanelTab(tab, idx, selectInsertedTab);
-	}
-
-	public int removeMainTab(IMainPanelTab tab)
-	{
-		if (tab == null)
-		{
-			throw new IllegalArgumentException("Null IMainPanelTab passed");
-		}
-		return _mainTabPane.removeMainPanelTab(tab);
-	}
 
 	public void setStatusBarMessage(final String msg)
 	{
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				_statusBar.setText(msg);
-			}
-		});
+		GUIUtils.processOnSwingEventThread(() -> _statusBar.setText(msg));
 	}
 
    public void setStatusBarProgress(final String msg, final int minimum, final int maximum, final int value)
    {
-      GUIUtils.processOnSwingEventThread(new Runnable()
-      {
-         public void run()
-         {
-            _statusBar.setStatusBarProgress(msg, minimum, maximum, value);
-         }
-      });
+      GUIUtils.processOnSwingEventThread(() -> _statusBar.setStatusBarProgress(msg, minimum, maximum, value));
    }
 
    public void setStatusBarProgressFinished()
    {
-      GUIUtils.processOnSwingEventThread(new Runnable()
-      {
-         public void run()
-         {
-            _statusBar.setStatusBarProgressFinished();
-         }
-      });
-
+      GUIUtils.processOnSwingEventThread(() -> _statusBar.setStatusBarProgressFinished());
    }
-
-
-
-    public String getStatusBarMessage() {
-        return _statusBar.getText();
-    }
-    
-	SQLPanel getSQLPanel()
-	{
-		return _mainTabPane.getSQLPanel();
-	}
-
-	public ISQLPanelAPI getSQLPaneAPI()
-	{
-		return _mainTabPane.getSQLPanel().getSQLPanelAPI();
-	}
-
-	/**
-	 * TODO: This shouldn't be public. Its only been done for the JComplete
-	 * plugin. At some stage this method will be returned to package visibility.
-	 */
-	public ISQLEntryPanel getSQLEntryPanel()
-	{
-		return getSQLPanel().getSQLEntryPanel();
-	}
 
 	/**
 	 * Add the passed action to the session toolbar.
@@ -394,31 +208,28 @@ public class SessionPanel extends JPanel
 		_statusBar.remove(comp);
 	}
 
-	private void showError(Exception ex)
-	{
-		_app.showErrorDialog(ex);
-	}
-
 	private void propertiesHaveChanged(String propertyName)
 	{
 		final ISession session = getSession();
 		final SessionProperties props = session.getProperties();
 		if (propertyName == null
-			|| propertyName.equals(
+				|| propertyName.equals(
 				SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION))
 		{
-            _app.getThreadPool().addTask(new Runnable() {
-                public void run() {
-                    session.getSQLConnection().setCommitOnClose(
-                            props.getCommitOnClosingConnection());                    
-                }
-            });
+			_app.getThreadPool().addTask(new Runnable()
+			{
+				public void run()
+				{
+					session.getSQLConnection().setCommitOnClose(
+							props.getCommitOnClosingConnection());
+				}
+			});
 		}
 		if (propertyName == null
-			|| propertyName.equals(
+				|| propertyName.equals(
 				SessionProperties.IPropertyNames.SHOW_TOOL_BAR))
 		{
-			synchronized(this)
+			synchronized (this)
 			{
 				boolean show = props.getShowToolBar();
 				if (show != (_toolBar != null))
@@ -430,13 +241,16 @@ public class SessionPanel extends JPanel
 							_toolBar = new MyToolBar(session);
 							for (int i = 0; i < _externallyAddedToolbarActionsAndSeparators.size(); i++)
 							{
-								ToolbarItem toolbarItem =  _externallyAddedToolbarActionsAndSeparators.get(i);
-								
-								if (toolbarItem.isSeparator()) {
+								ToolbarItem toolbarItem = _externallyAddedToolbarActionsAndSeparators.get(i);
+
+								if (toolbarItem.isSeparator())
+								{
 									_toolBar.addSeparator();
-								} else {
-									 _toolBar.add(toolbarItem.getAction());
-								}								
+								}
+								else
+								{
+									_toolBar.add(toolbarItem.getAction());
+								}
 							}
 							add(_toolBar, BorderLayout.NORTH);
 						}
@@ -470,18 +284,14 @@ public class SessionPanel extends JPanel
 		getObjectTreePanel().addTreeSelectionListener(_objTreeSelectionLis);
 
 		addToStatusBar(new SchemaPanel(session));
-		addToStatusBar(new RowColumnLabel(_mainTabPane.getSQLPanel().getSQLEntryPanel()));
+		addToStatusBar(new RowColumnLabel(_mainTabPane.getMainSQLPanel().getSQLEntryPanel()));
 		validate();
 	}
 
-   public boolean isSQLTabSelected()
-   {
-      return MainPanel.ITabIndexes.SQL_TAB ==_mainTabPane.getTabbedPane().getSelectedIndex();
-   }
 
    public boolean isObjectTreeTabSelected()
    {
-      return MainPanel.ITabIndexes.OBJECT_TREE_TAB ==_mainTabPane.getTabbedPane().getSelectedIndex();
+      return MainPanel.ITabIndexes.OBJECT_TREE_TAB ==_mainTabPane.getSelectedMainTabIndex();
    }
 
 	/**
@@ -492,12 +302,25 @@ public class SessionPanel extends JPanel
 		_mainPanelFactory = panelFactory;
 	}
 
-   public int getTabCount()
-   {
-      return _mainTabPane.getTabbedPane().getTabCount();
-   }
 
-   public int getMainTabIndex(IMainPanelTab mainPanelTab)
+
+	/**
+	 * Use where absolutely necessary only.
+	 * Prefer delegation methods to {@link _mainTabPane} where possible.
+	 * See methods below.
+	 */
+	public JTabbedPane getTabbedPane()
+	{
+		return _mainTabPane.getTabbedPane();
+	}
+
+
+	public int getTabCount()
+	{
+		return _mainTabPane.getMainTabCount();
+	}
+
+	public int getMainPanelTabIndex(IMainPanelTab mainPanelTab)
    {
       return _mainTabPane.getTabIndex(mainPanelTab);
    }
@@ -512,10 +335,141 @@ public class SessionPanel extends JPanel
 		return _toolBar._catalogsPanel.getSelectedCatalog();
 	}
 
+	public IMainPanelTab getMainPanelTabAt(int tabIndex)
+	{
+		return _mainTabPane.getMainPanelTabAt(tabIndex);
+	}
+
+	public ISQLPanelAPI getMainSQLPaneAPI()
+	{
+		return _mainTabPane.getMainSQLPanel().getSQLPanelAPI();
+	}
+
+	public ISQLPanelAPI getSelectedOrMainSQLPanelAPI()
+	{
+		return _mainTabPane.getSelectedOrMainSQLPanel().getSQLPanelAPI();
+	}
+
+
+	public ISQLEntryPanel getMainSQLEntryPanel()
+	{
+		return getMainSQLPanel().getSQLEntryPanel();
+	}
+
+	SQLPanel getMainSQLPanel()
+	{
+		return _mainTabPane.getMainSQLPanel();
+	}
+
+	public java.util.List<SQLPanel> getAllSQLPanels()
+	{
+		return _mainTabPane.getAllSQLPanels();
+	}
+
+	public SQLPanel getSelectedSQLPanel()
+	{
+		return _mainTabPane.getSelectedSQLPanel();
+	}
+
+	public SQLPanel getSelectedOrMainSQLPanel()
+	{
+		return _mainTabPane.getSelectedOrMainSQLPanel();
+	}
+
+
+	public boolean isAnSQLTabSelected()
+	{
+		return _mainTabPane.getSelectedMainTab() instanceof SQLTab || _mainTabPane.getSelectedMainTab() instanceof AdditionalSQLTab;
+	}
+
+	public void sessionWindowClosing()
+	{
+		_mainTabPane.sessionWindowClosing();
+	}
+
+
+	public ObjectTreePanel getObjectTreePanel()
+	{
+		return _mainTabPane.getObjectTreePanel();
+	}
+
+	public void selectMainTab(int tabIndex)
+	{
+		if (tabIndex >= _mainTabPane.getMainTabCount())
+		{
+			throw new IllegalArgumentException("" + tabIndex + " is not a valid index into the main tabbed pane.");
+		}
+		if (_mainTabPane.getSelectedMainTabIndex() != tabIndex)
+		{
+			_mainTabPane.selectMainTab(tabIndex);
+		}
+	}
+
+	public void selectMainTab(IMainPanelTab mainPanelTab)
+	{
+		int mainTabIndex = getMainPanelTabIndex(mainPanelTab);
+
+		if(-1 == mainTabIndex)
+		{
+			throw new IllegalStateException("Couldn't find index for IMainPanelTab: " + mainPanelTab);
+		}
+
+
+		selectMainTab(mainTabIndex);
+	}
+
+
+	public int getSelectedMainTabIndex()
+	{
+		return _mainTabPane.getSelectedMainTabIndex();
+	}
+
+	public IMainPanelTab getSelectedMainTab()
+	{
+		return _mainTabPane.getSelectedMainTab();
+	}
+
+
+
+	public int addMainTab(IMainPanelTab tab)
+	{
+		if (tab == null)
+		{
+			throw new IllegalArgumentException("IMainPanelTab == null");
+		}
+		return _mainTabPane.addMainPanelTab(tab);
+	}
+
+	public void insertMainTab(IMainPanelTab tab, int idx)
+	{
+		insertMainTab(tab, idx, true);
+	}
+
+	public void insertMainTab(IMainPanelTab tab, int idx, boolean selectInsertedTab)
+	{
+		if (tab == null)
+		{
+			throw new IllegalArgumentException("Null IMainPanelTab passed");
+		}
+		if(idx == MainPanel.ITabIndexes.SQL_TAB || idx == MainPanel.ITabIndexes.OBJECT_TREE_TAB)
+		{
+			throw new IllegalArgumentException("Index " + idx + "conflicts with standard tabs");
+		}
+
+		_mainTabPane.insertMainPanelTab(tab, idx, selectInsertedTab);
+	}
+
+	public int removeMainTab(IMainPanelTab tab)
+	{
+		if (tab == null)
+		{
+			throw new IllegalArgumentException("Null IMainPanelTab passed");
+		}
+		return _mainTabPane.removeMainPanelTab(tab);
+	}
 
 	private class MyToolBar extends ToolBar
    {
-      private static final long serialVersionUID = 1L;
       private IObjectTreeListener _lis;
       private CatalogsPanel _catalogsPanel;
 

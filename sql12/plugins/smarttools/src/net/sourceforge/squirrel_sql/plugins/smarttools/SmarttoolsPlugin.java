@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -172,7 +173,12 @@ public class SmarttoolsPlugin extends DefaultSessionPlugin {
 						ISession sess) {
 					// plugin supports Session main window only
 				}
-			};
+
+            @Override
+            public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+            {
+            }
+         };
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -178,7 +178,7 @@ public class InformixPlugin extends DefaultSessionPlugin
 		});
 		InformixExceptionFormatter formatter = new InformixExceptionFormatter(session);
 		session.setExceptionFormatter(formatter);
-		return new PluginSessionCallbackAdaptor(this);
+		return new PluginSessionCallbackAdaptor();
 	}
 
 	/**

@@ -34,12 +34,10 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 
-public class SessionInternalFrame extends SessionTabWidget
-					implements ISQLInternalFrame, IObjectTreeInternalFrame
+public class SessionInternalFrame extends SessionTabWidget implements ISQLInternalFrame, IObjectTreeInternalFrame
 {
-    static final long serialVersionUID = 6961615570741567740L;
-    
     /** Application API. */
 	private final IApplication _app;
 
@@ -58,12 +56,18 @@ public class SessionInternalFrame extends SessionTabWidget
 		return _sessionPanel;
 	}
 
-	public ISQLPanelAPI getSQLPanelAPI()
+	public ISQLPanelAPI getMainSQLPanelAPI()
 	{
-		return _sessionPanel.getSQLPaneAPI();
+		return _sessionPanel.getMainSQLPaneAPI();
 	}
 
-	public IObjectTreeAPI getObjectTreeAPI()
+   public ISQLPanelAPI getSelectedOrMainSQLPanelAPI()
+   {
+      return _sessionPanel.getSelectedOrMainSQLPanelAPI();
+   }
+
+
+   public IObjectTreeAPI getObjectTreeAPI()
 	{
 		return _sessionPanel.getObjectTreePanel();
 	}
@@ -135,25 +139,13 @@ public class SessionInternalFrame extends SessionTabWidget
 
    public void requestFocus()
    {
-      if (ISession.IMainPanelTabIndexes.SQL_TAB == getSession().getSelectedMainTabIndex())
+      if(_sessionPanel.getSelectedMainTab() instanceof BaseSQLTab)
       {
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               _sessionPanel.getSQLEntryPanel().requestFocus();
-            }
-         });
+         SwingUtilities.invokeLater( () -> requestFocusOnSqlEditor());
       }
       else if (ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB == getSession().getSelectedMainTabIndex())
       {
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               _sessionPanel.getObjectTreePanel().requestFocus();
-            }
-         });
+         SwingUtilities.invokeLater(() -> _sessionPanel.getObjectTreePanel().requestFocus());
       }
 
    }
@@ -168,9 +160,15 @@ public class SessionInternalFrame extends SessionTabWidget
    {
       super.moveToFront();
       
-      if(MainPanel.ITabIndexes.SQL_TAB == _sessionPanel.getSelectedMainTabIndex())
-      {
-         _sessionPanel.getSQLEntryPanel().requestFocus();
-      }
+//      if(_sessionPanel.getSelectedMainTab() instanceof BaseSQLTab)
+//      {
+//         requestFocusOnSqlEditor();
+//      }
+      requestFocus();
+   }
+
+   private void requestFocusOnSqlEditor()
+   {
+      ((BaseSQLTab) _sessionPanel.getSelectedMainTab()).getSQLPanel().getSQLEntryPanel().requestFocus();
    }
 }

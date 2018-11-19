@@ -1,6 +1,0 @@
-User Scripts Plugin
-===========================
-
-0.01
-====
-- Initial release

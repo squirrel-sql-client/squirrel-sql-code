@@ -106,7 +106,7 @@ class CreateMysqlTableScriptCommand implements ICommand
 				}
 			}
 
-			_session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(buf.toString(), true);
+			_session.getSessionInternalFrame().getMainSQLPanelAPI().appendSQLScript(buf.toString(), true);
 			_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
 		}
 		catch (SQLException ex)

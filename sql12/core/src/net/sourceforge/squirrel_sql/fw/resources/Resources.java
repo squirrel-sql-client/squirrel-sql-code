@@ -18,12 +18,6 @@ package net.sourceforge.squirrel_sql.fw.resources;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.net.URL;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
-import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.JScrollMenu;
@@ -32,6 +26,19 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import java.net.URL;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public abstract class Resources implements IResources
 {
@@ -77,7 +84,7 @@ public abstract class Resources implements IResources
 	}
 
 
-	private String getAcceleratorString(Action action)
+	public String getAcceleratorString(Action action)
 	{
 		String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
 		return getAcceleratorString(action, fullKey, false);

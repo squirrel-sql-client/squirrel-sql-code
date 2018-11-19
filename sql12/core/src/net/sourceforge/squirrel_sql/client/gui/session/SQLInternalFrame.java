@@ -25,32 +25,25 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.*;
-import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SQLInternalFrame extends SessionTabWidget
-								implements ISQLInternalFrame
+public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFrame
 {
-	/** Application API. */
-	private final IApplication _app;
 
 	private SQLPanel _sqlPanel;
-	/** Toolbar for window. */
-	private SQLToolBar _toolBar;
+
+	private SQLInternalFrameToolBar _toolBar;
 
 	private StatusBar _statusBar = new StatusBar();
 
 	public SQLInternalFrame(ISession session)
 	{
 		super(session.getTitle(), true, true, true, true, session);
-		_app = session.getApplication();
 		setVisible(false);
 		createGUI(session);
 	}
@@ -60,15 +53,17 @@ public class SQLInternalFrame extends SessionTabWidget
 		return _sqlPanel;
 	}
 
-	public ISQLPanelAPI getSQLPanelAPI()
+	public ISQLPanelAPI getMainSQLPanelAPI()
 	{
 		return _sqlPanel.getSQLPanelAPI();
 	}
 
 	private void createGUI(ISession session)
 	{
+      _sqlPanel = new SQLPanel(session, false);
+
 		setVisible(false);
-		final IApplication app = session.getApplication();
+		final IApplication app = Main.getApplication();
 		Icon icon = app.getResources().getIcon(getClass(), "frameIcon"); //i18n
 		if (icon != null)
 		{
@@ -110,13 +105,10 @@ public class SQLInternalFrame extends SessionTabWidget
          }
 		});
 
-		_sqlPanel = new SQLPanel(getSession(), false);
-
-
 		// Needed to make the panel set the divider location from preferences
       _sqlPanel.setVisible(true);
 
-		_toolBar = new SQLToolBar(getSession(), _sqlPanel.getSQLPanelAPI());
+		_toolBar = new SQLInternalFrameToolBar(getSession(), _sqlPanel.getSQLPanelAPI());
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		contentPanel.add(_toolBar, BorderLayout.NORTH);
 		contentPanel.add(_sqlPanel, BorderLayout.CENTER);
@@ -166,7 +158,7 @@ public class SQLInternalFrame extends SessionTabWidget
 
    public void addToToolsPopUp(String selectionString, Action action)
    {
-      getSQLPanelAPI().addToToolsPopUp(selectionString, action);
+      getMainSQLPanelAPI().addToToolsPopUp(selectionString, action);
    }
 
    public boolean hasSQLPanelAPI()
@@ -175,54 +167,17 @@ public class SQLInternalFrame extends SessionTabWidget
    }
 
 
-   /** The class representing the toolbar at the top of a sql internal frame*/
-	private class SQLToolBar extends ToolBar
+	@Override
+	public void dispose()
 	{
-		SQLToolBar(ISession session, ISQLPanelAPI panel)
-		{
-			super();
-			createGUI(session, panel);
-
-			SessionColoringUtil.colorToolbar(session, this);
-		}
-
-		private void createGUI(ISession session, ISQLPanelAPI panel)
-		{
-			ActionCollection actions = session.getApplication().getActionCollection();
-			setUseRolloverButtons(true);
-			setFloatable(false);
-			add(actions.get(ExecuteSqlAction.class));
-			addSeparator();
-			add(actions.get(ExecuteAllSqlsAction.class));
-			addSeparator();
-			add(actions.get(FileNewAction.class));
-			add(actions.get(FileDetachAction.class));
-			add(actions.get(FileOpenAction.class));
-			add(actions.get(FileOpenRecentAction.class));
-			add(actions.get(FileAppendAction.class));
-			add(actions.get(FileSaveAction.class));
-			add(actions.get(FileSaveAsAction.class));
-         add(actions.get(FileCloseAction.class));
-         add(actions.get(FilePrintAction.class));
-         add(actions.get(FileReloadAction.class));
-			addSeparator();
-			add(actions.get(PreviousSqlAction.class));
-			add(actions.get(NextSqlAction.class));
-			add(actions.get(SelectSqlAction.class));
-		}
+		super.dispose();
 	}
 
+	@Override
+	public void moveToFront()
+	{
+		super.moveToFront();
+		_sqlPanel.getSQLEntryPanel().requestFocus();
+	}
 
-   @Override
-   public void dispose()
-   {
-      super.dispose();    //To change body of overridden methods use File | Settings | File Templates.
-   }
-
-   @Override
-   public void moveToFront()
-   {
-      super.moveToFront();
-      _sqlPanel.getSQLEntryPanel().requestFocus();
-   }
 }

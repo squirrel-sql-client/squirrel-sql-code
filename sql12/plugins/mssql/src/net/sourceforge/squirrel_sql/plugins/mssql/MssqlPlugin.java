@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -527,18 +528,20 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
 
 		return mssqlMenu;
     }
-    
-    private class MssqlPluginSessionCallback implements PluginSessionCallback {
+
+    private class MssqlPluginSessionCallback implements PluginSessionCallback
+    {
         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
         {
-           // TODO
-           // Plugin supports only the main session window
         }
 
         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
         {
-           // TODO
-           // Plugin supports only the main session window
-        }        
+        }
+
+        @Override
+        public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+        {
+        }
     }
 }

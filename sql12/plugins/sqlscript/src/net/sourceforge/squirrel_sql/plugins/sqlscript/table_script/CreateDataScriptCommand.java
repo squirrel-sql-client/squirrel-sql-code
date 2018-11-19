@@ -149,7 +149,7 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
                   if (sbRows.length() > 0)
                   {
 
-                     //_session.getSQLPanelAPI(_plugin).appendSQLScript(sbRows.toString(), true);
+                     //_session.getMainSQLPanelAPI(_plugin).appendSQLScript(sbRows.toString(), true);
                      FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbRows.toString(), true);
 
                      _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);

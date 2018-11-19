@@ -111,7 +111,7 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 
 	private void validateSQL()
 	{
-		final ISQLPanelAPI api = _session.getSessionInternalFrame().getSQLPanelAPI();
+		final ISQLPanelAPI api = _session.getSessionInternalFrame().getMainSQLPanelAPI();
 		final String sql = api.getSQLScriptToBeExecuted();
 		if (sql != null && sql.trim().length() > 0)
 		{

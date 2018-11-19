@@ -22,13 +22,13 @@ public class FrameWorkAcessor
 	public static ISQLPanelAPI getSQLPanelAPI(ISession session, SQLScriptPlugin plugin)
 	{
 		// old version before multible sesssion windows
-		//return session.getSQLPanelAPI(plugin);
+		//return session.getMainSQLPanelAPI(plugin);
 
 		if(session.getActiveSessionWindow() instanceof ObjectTreeInternalFrame)
 		{
 			// i18n[sqlscript.scriptWritten=Script was written to the SQL editor of the main session window.]
 			session.showMessage(s_stringMgr.getString("sqlscript.scriptWritten"));
-			return session.getSessionSheet().getSQLPaneAPI();
+			return session.getSessionSheet().getMainSQLPaneAPI();
 		}
 		else
 		{

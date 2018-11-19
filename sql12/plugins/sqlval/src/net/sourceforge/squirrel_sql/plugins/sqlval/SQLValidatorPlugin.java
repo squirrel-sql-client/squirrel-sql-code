@@ -263,10 +263,10 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(ISession session)
 	{
-      session.getSessionInternalFrame().getSQLPanelAPI().addSQLPanelListener(_lis);
+      session.getSessionInternalFrame().getMainSQLPanelAPI().addSQLPanelListener(_lis);
       setupSQLEntryArea(session);
 
-      return new PluginSessionCallbackAdaptor(this);
+      return new PluginSessionCallbackAdaptor();
 	}
 
 	/**
@@ -276,7 +276,7 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	 */
 	public void sessionEnding(ISession session)
 	{
-		session.getSessionInternalFrame().getSQLPanelAPI().removeSQLPanelListener(_lis);
+		session.getSessionInternalFrame().getMainSQLPanelAPI().removeSQLPanelListener(_lis);
         WebServiceSessionProperties wssp = getWebServiceSessionProperties(session);
         if (wssp != null) {
             WebServiceSession wss = wssp.getWebServiceSession();
@@ -316,7 +316,7 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 
 	private void setupSQLEntryArea(ISession session)
 	{
-		final ISQLPanelAPI api = session.getSessionInternalFrame().getSQLPanelAPI();
+		final ISQLPanelAPI api = session.getSessionInternalFrame().getMainSQLPanelAPI();
 		final ActionCollection coll = getApplication().getActionCollection();
 		api.addToSQLEntryAreaMenu(coll.get(ValidateSQLAction.class));
 	}

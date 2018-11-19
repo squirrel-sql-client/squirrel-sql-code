@@ -54,6 +54,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -302,9 +303,9 @@ public class ActionCollection
 			if ((isSessionInternalFrame) && (act instanceof ISQLPanelAction))
 			{
             SessionInternalFrame sif = (SessionInternalFrame) frame;
-            if(sif.getSessionPanel().isSQLTabSelected())
+            if(sif.getSessionPanel().isAnSQLTabSelected())
             {
-   				((ISQLPanelAction)act).setSQLPanel(sif.getSessionPanel().getSQLPaneAPI());
+   				((ISQLPanelAction)act).setSQLPanel(sif.getSessionPanel().getSelectedSQLPanel().getSQLPanelAPI());
             }
             else
             {

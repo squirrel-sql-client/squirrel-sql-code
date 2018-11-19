@@ -57,7 +57,7 @@ public class ScriptDB2ProcedureAction extends SquirrelAction {
 
             SessionInternalFrame sessMainFrm = _session
                     .getSessionInternalFrame();
-            sessMainFrm.getSQLPanelAPI().appendSQLScript(script.toString());
+            sessMainFrm.getMainSQLPanelAPI().appendSQLScript(script.toString());
             sessMainFrm.getSessionPanel().selectMainTab(
                     ISession.IMainPanelTabIndexes.SQL_TAB);
         } catch (Exception e) {

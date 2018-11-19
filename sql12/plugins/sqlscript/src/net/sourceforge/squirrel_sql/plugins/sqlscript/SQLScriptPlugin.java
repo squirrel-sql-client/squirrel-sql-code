@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -28,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
@@ -197,7 +199,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 		addActionsToPopup(session);
-		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
 		sqlPaneAPI.addSQLExecutionListener(new SQLToFileHandler(session, sqlPaneAPI));
 
 		PluginSessionCallback ret = new PluginSessionCallback()
@@ -209,24 +211,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 				sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class)); 
 				sqlInternalFrame.addToToolbar(coll.get(CreateFileOfCurrentSQLAction.class));
 
-				sqlInternalFrame.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
-				sqlInternalFrame.addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
-				sqlInternalFrame.addToToolsPopUp("sql2file", coll.get(CreateFileOfCurrentSQLAction.class));
-
-				JMenuItem mnu;
-
-				sqlInternalFrame.getSQLPanelAPI().addSeparatorToSQLEntryAreaMenu();
-
-				mnu = sqlInternalFrame.getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateTableOfCurrentSQLAction.class));
-				_resources.configureMenuItem(coll.get(CreateTableOfCurrentSQLAction.class), mnu);
-
-				mnu = sqlInternalFrame.getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class));
-				_resources.configureMenuItem(coll.get(CreateDataScriptOfCurrentSQLAction.class), mnu);
-
-				mnu = sqlInternalFrame.getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateFileOfCurrentSQLAction.class));
-				_resources.configureMenuItem(coll.get(CreateFileOfCurrentSQLAction.class), mnu);
-
-				sqlInternalFrame.getSQLPanelAPI().addSQLExecutionListener(new SQLToFileHandler(sess, sqlInternalFrame.getSQLPanelAPI()));
+				initSqlPanelApi(sqlInternalFrame.getMainSQLPanelAPI());
 
 			}
 
@@ -245,10 +230,17 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 				objectTreeInternalFrame.getObjectTreeAPI().addToPopup(
 				   DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
 			}
-		};
+
+         @Override
+         public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+         {
+				initSqlPanelApi(additionalSQLTab.getSQLPanelAPI());
+         }
+      };
 
 		return ret;
 	}
+
 
 	private void addActionsToPopup(ISession session)
 	{
@@ -262,26 +254,32 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 		session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
 		session.addToToolbar(coll.get(CreateFileOfCurrentSQLAction.class));
 
-		session.getSessionInternalFrame().addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp("sql2file", coll.get(CreateFileOfCurrentSQLAction.class));
 
+		initSqlPanelApi(session.getSessionInternalFrame().getMainSQLPanelAPI());
+	}
 
+	private void initSqlPanelApi(ISQLPanelAPI sqlPanelAPI)
+	{
+		ActionCollection coll = Main.getApplication().getActionCollection();
+		sqlPanelAPI.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
+		sqlPanelAPI.addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
+		sqlPanelAPI.addToToolsPopUp("sql2file", coll.get(CreateFileOfCurrentSQLAction.class));
 
 		JMenuItem mnu;
+		sqlPanelAPI.addSeparatorToSQLEntryAreaMenu();
 
-		session.getSessionInternalFrame().getSQLPanelAPI().addSeparatorToSQLEntryAreaMenu();
-
-		mnu = session.getSessionInternalFrame().getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateTableOfCurrentSQLAction.class));
+		mnu = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CreateTableOfCurrentSQLAction.class));
 		_resources.configureMenuItem(coll.get(CreateTableOfCurrentSQLAction.class), mnu);
 
-		mnu = session.getSessionInternalFrame().getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class));
+		mnu = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class));
 		_resources.configureMenuItem(coll.get(CreateDataScriptOfCurrentSQLAction.class), mnu);
 
-		mnu = session.getSessionInternalFrame().getSQLPanelAPI().addToSQLEntryAreaMenu(coll.get(CreateFileOfCurrentSQLAction.class));
+		mnu = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CreateFileOfCurrentSQLAction.class));
 		_resources.configureMenuItem(coll.get(CreateFileOfCurrentSQLAction.class), mnu);
 
+		sqlPanelAPI.addSQLExecutionListener(new SQLToFileHandler(sqlPanelAPI.getSession(), sqlPanelAPI));
 	}
+
 
 	private void createMenu()
 	{

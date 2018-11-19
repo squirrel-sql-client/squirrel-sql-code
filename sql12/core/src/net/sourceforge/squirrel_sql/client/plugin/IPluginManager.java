@@ -25,6 +25,7 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
 
 public interface IPluginManager
@@ -39,7 +40,7 @@ public interface IPluginManager
 	 * @throws IllegalArgumentException
 	 *            Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
-	public abstract void sessionCreated(ISession session);
+	void sessionCreated(ISession session);
 
 	/**
 	 * A new session is starting.
@@ -49,7 +50,7 @@ public interface IPluginManager
 	 * @throws IllegalArgumentException
 	 *            Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
-	public abstract void sessionStarted(final ISession session);
+	void sessionStarted(final ISession session);
 
 	/**
 	 * A session is ending.
@@ -59,48 +60,45 @@ public interface IPluginManager
 	 * @throws IllegalArgumentException
 	 *            Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
-	public abstract void sessionEnding(ISession session);
+	void sessionEnding(ISession session);
 
-	public abstract void unloadPlugin(String pluginInternalName);
+	void unloadPlugin(String pluginInternalName);
 
 	/**
 	 * Unload all plugins.
 	 */
-	public abstract void unloadPlugins();
+	void unloadPlugins();
 
-	public abstract PluginInfo[] getPluginInformation();
+	PluginInfo[] getPluginInformation();
 
-	public abstract SessionPluginInfo[] getPluginInformation(ISession session);
+	SessionPluginInfo[] getPluginInformation(ISession session);
 
-	public abstract IPluginDatabaseObjectType[] getDatabaseObjectTypes(ISession session);
+	IPluginDatabaseObjectType[] getDatabaseObjectTypes(ISession session);
 
 	/**
 	 * Retrieve an array of all the <TT>URL</TT> objects that are used to find plugin classes.
 	 * 
 	 * @return <TT>URL[]</TT>.
 	 */
-	public abstract URL[] getPluginURLs();
+	URL[] getPluginURLs();
 
-	public abstract PluginStatus[] getPluginStatuses();
+	PluginStatus[] getPluginStatuses();
 
-	public abstract void setPluginStatuses(PluginStatus[] values);
+	void setPluginStatuses(PluginStatus[] values);
 
 	/**
 	 * Retrieve loaded session plugins
 	 * 
 	 * @return <TT>Iterator</TT> over a collection of <TT>ISessionPlugin</TT> objects.
 	 */
-	public abstract Iterator<SessionPluginInfo> getSessionPluginIterator();
+	Iterator<SessionPluginInfo> getSessionPluginIterator();
 
-	/**
-	 * TODO: Clean this mess up!!!! Load plugins. Load all plugin jars into class loader.
-	 */
-	public abstract void loadPlugins();
+	void loadPlugins();
 
 	/**
 	 * Initialize plugins.
 	 */
-	public abstract void initializePlugins();
+	void initializePlugins();
 
 	/**
 	 * Sets the ClassLoaderListener to notify when archive files containing classes are loaded.
@@ -108,14 +106,14 @@ public interface IPluginManager
 	 * @param listener
 	 *           a ClassLoaderListener implementation
 	 */
-	public abstract void setClassLoaderListener(ClassLoaderListener listener);
+	void setClassLoaderListener(ClassLoaderListener listener);
 
 	/**
 	 * Retrieve information about plugin load times
 	 * 
 	 * @return <TT>Iterator</TT> over a collection of <TT>PluginLoadInfo</TT> objects.
 	 */
-	public abstract Iterator<PluginLoadInfo> getPluginLoadInfoIterator();
+	Iterator<PluginLoadInfo> getPluginLoadInfoIterator();
 
 	/**
 	 * Allows plugins to access each other without imports.
@@ -130,13 +128,13 @@ public interface IPluginManager
 	 *         methods in the toBintTo interface and external service object must be identical. This method
 	 *         returns null if the plugin can not be found / is not loaded.
 	 */
-	public abstract Object bindExternalPluginService(String internalNameOfPlugin, Class<?> toBindTo);
+	Object bindExternalPluginService(String internalNameOfPlugin, Class<?> toBindTo);
 
-	public abstract IAliasPropertiesPanelController[] getAliasPropertiesPanelControllers(SQLAlias alias);
+	IAliasPropertiesPanelController[] getAliasPropertiesPanelControllers(SQLAlias alias);
 
-	public abstract void aliasCopied(SQLAlias source, SQLAlias target);
+	void aliasCopied(SQLAlias source, SQLAlias target);
 
-	public abstract void aliasRemoved(SQLAlias alias);
+	void aliasRemoved(SQLAlias alias);
 
 	/**
 	 * Loads plugins from the current CLASSPATH using the specified list of plugin classes. Each member of the 
@@ -144,6 +142,7 @@ public interface IPluginManager
 	 * 
 	 * @param pluginList a list of fully qualified class names
 	 */
-	public abstract void loadPluginsFromList(List<String> pluginList);
+	void loadPluginsFromList(List<String> pluginList);
 
+   void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab);
 }

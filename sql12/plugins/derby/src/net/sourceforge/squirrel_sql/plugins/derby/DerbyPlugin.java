@@ -242,7 +242,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
          }
       });
 
-      return new PluginSessionCallbackAdaptor(this);
+      return new PluginSessionCallbackAdaptor();
    }
 
    /**

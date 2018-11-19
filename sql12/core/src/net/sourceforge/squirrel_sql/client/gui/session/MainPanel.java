@@ -33,11 +33,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ObjectTreeTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -51,9 +54,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class MainPanel extends JPanel
 {
-   /**
-	 * IDs of tabs.
-	 */
 	public interface ITabIndexes
 	{
 		int OBJECT_TREE_TAB = 0;
@@ -83,7 +83,7 @@ public class MainPanel extends JPanel
 	 * Collection of <TT>IMainPanelTab</TT> objects displayed in
 	 * this tabbed panel.
 	 */
-	private List<IMainPanelTab> _tabs = new ArrayList<IMainPanelTab>();
+	private List<IMainPanelTab> _tabs = new ArrayList<>();
 
    private static final String PREFS_KEY_SELECTED_TAB_IX = "squirrelSql_mainPanel_sel_tab_ix";
 
@@ -114,7 +114,7 @@ public class MainPanel extends JPanel
 		propertiesHaveChanged(null);
 
 		// Refresh the currently selected tab.
-		(_tabs.get(getTabbedPane().getSelectedIndex())).select();
+		(_tabs.get(_tabPnl.getSelectedIndex())).select();
 	}
 
 	public void addNotify()
@@ -348,7 +348,11 @@ public class MainPanel extends JPanel
 
    public void sessionWindowClosing()
    {
-      getSQLPanel().sessionWindowClosing();
+		for (SQLPanel sqlPanel : getAllSQLPanels())
+		{
+			sqlPanel.sessionWindowClosing();
+		}
+
 		getObjectTreePanel().sessionWindowClosing();
 		int selIx = _tabPnl.getSelectedIndex();
 
@@ -390,18 +394,97 @@ public class MainPanel extends JPanel
 		return (ObjectTreePanel)tab.getComponent();
 	}
 
-	SQLPanel getSQLPanel()
-	{
-		return ((SQLTab)_tabs.get(ITabIndexes.SQL_TAB)).getSQLPanel();
-	}
 
 	/**
-	 * Retrieve the tabbed pane for this component.
-	 *
-	 * @return	The tabbed pane.
+	 * Use where absolutely necessary only.
+	 * Prefer delegation methods to this class where possible.
+	 * See methods below.
 	 */
 	JTabbedPane getTabbedPane()
 	{
 		return _tabPnl;
 	}
+
+   public IMainPanelTab getMainPanelTabAt(int tabIndex)
+   {
+      return _tabs.get(tabIndex);
+   }
+
+	public int getMainTabCount()
+	{
+		return _tabs.size();
+	}
+
+	public int getSelectedMainTabIndex()
+	{
+		return _tabPnl.getSelectedIndex();
+	}
+
+	public void selectMainTab(int tabIndex)
+	{
+		_tabPnl.setSelectedIndex(tabIndex);
+	}
+
+
+	SQLPanel getMainSQLPanel()
+	{
+		for (IMainPanelTab tab : _tabs)
+		{
+			if(tab instanceof SQLTab)
+			{
+				return ((SQLTab)tab).getSQLPanel();
+			}
+		}
+
+		throw new IllegalStateException("No SQLTab instance found. This shouldn't happen.");
+	}
+
+	/**
+	 * @return null if the selected panel is not an SQL panel.
+	 */
+	SQLPanel getSelectedSQLPanel()
+	{
+		IMainPanelTab selectedMainTab = getSelectedMainTab();
+
+		if(selectedMainTab instanceof BaseSQLTab)
+		{
+			return ((BaseSQLTab)selectedMainTab).getSQLPanel();
+		}
+		else if(selectedMainTab instanceof AdditionalSQLTab)
+		{
+			return ((AdditionalSQLTab)selectedMainTab).getSQLPanel();
+		}
+
+		return null;
+	}
+
+	public SQLPanel getSelectedOrMainSQLPanel()
+	{
+		SQLPanel ret = getSelectedSQLPanel();
+
+		if(null != ret)
+		{
+			return ret;
+		}
+
+		return getMainSQLPanel();
+	}
+
+
+	List<SQLPanel> getAllSQLPanels()
+	{
+		ArrayList<SQLPanel> ret = new ArrayList<>();
+
+		for (IMainPanelTab tab : _tabs)
+		{
+			if(tab instanceof BaseSQLTab)
+			{
+				ret.add(((BaseSQLTab) tab).getSQLPanel());
+			}
+		}
+
+		return ret;
+	}
+
+
 }

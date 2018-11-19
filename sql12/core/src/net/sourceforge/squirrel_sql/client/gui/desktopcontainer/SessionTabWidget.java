@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
+import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
+import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandlerUtil;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -23,16 +25,7 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
       _titleWithoutFile = title;
       setupSheet();
 
-      TitleFilePathHandlerListener titleFilePathHandlerListener = new TitleFilePathHandlerListener()
-      {
-         @Override
-         public void refreshFileDisplay()
-         {
-            setTitle(_titleWithoutFile);
-         }
-      };
-
-      _titleFileHandler = new TitleFilePathHandler(_session.getApplication().getResources(), titleFilePathHandlerListener);
+      _titleFileHandler = new TitleFilePathHandler(() -> setTitle(_titleWithoutFile));
    }
 
    public SessionTabWidget(String title, boolean resizeable, ISession session)
@@ -76,26 +69,10 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
    {
       _titleWithoutFile = title;
 
-      if(null == _titleFileHandler) // happens when method is called in boostrap
-      {
-         super.setTitle(_titleWithoutFile);
-         return;
-      }
-
-
-      if (_titleFileHandler.hasFile())
-      {
-         String compositetitle = _titleWithoutFile + _titleFileHandler.getSqlFile();
-
-         super.setTitle(compositetitle);
-         super.addSmallTabButton(_titleFileHandler.getFileMenuSmallButton());
-      }
-      else
-      {
-         super.setTitle(_titleWithoutFile);
-         super.removeSmallTabButton(_titleFileHandler.getFileMenuSmallButton());
-      }
+      TitleFilePathHandlerUtil.setTitle(_titleWithoutFile, _titleFileHandler, this, super::setTitle);
    }
+
+
 
    public void setSqlFile(File sqlFile)
    {
@@ -103,25 +80,8 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
       setTitle(_titleWithoutFile);
    }
 
-   /**
-    * Toggles the "*" at the end of the filename based on the value of
-    * unsavedEdits.  Just to provide the user with a visual hint that they may
-    * need to save their changes.
-    *
-    * @param unsavedEdits
-    */
    public void setUnsavedEdits(boolean unsavedEdits)
    {
-//      String title = super.getTitle();
-//
-//      if (unsavedEdits && !title.endsWith("*"))
-//      {
-//         super.setTitle(title + "*");
-//      }
-//      if (!unsavedEdits && title.endsWith("*"))
-//      {
-//         super.setTitle(title.substring(0, title.length() - 1));
-//      }
       _titleFileHandler.setUnsavedEdits(unsavedEdits);
    }
 

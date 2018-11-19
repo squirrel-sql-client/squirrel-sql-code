@@ -47,6 +47,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -119,7 +120,7 @@ public class PluginManager implements IPluginManager
 	 * 
 	 * @param app
 	 *           Application API.
-	 * @throws IllegalArgumentException.
+	 * @throws IllegalArgumentException
 	 *            Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
 	public PluginManager(IApplication app)
@@ -586,8 +587,7 @@ public class PluginManager implements IPluginManager
 	/**
 	 * Sets the ClassLoaderListener to notify when archive files containing classes are loaded.
 	 * 
-	 * @param listener
-	 *           a ClassLoaderListener implementation
+	 * @param listener a ClassLoaderListener implementation
 	 */
 	public void setClassLoaderListener(ClassLoaderListener listener)
 	{
@@ -598,29 +598,56 @@ public class PluginManager implements IPluginManager
 	{
 		IWidget widget = e.getWidget();
 
-		if (widget instanceof ISessionWidget)
+		if(false == widget instanceof ISessionWidget)
 		{
-			ISession session = ((ISessionWidget) widget).getSession();
+			return;
+		}
 
-			List<PluginSessionCallback> list = _pluginSessionCallbacksBySessionID.get(session.getIdentifier());
 
-			if (null != list)
+		ISession session = ((ISessionWidget) widget).getSession();
+
+		List<PluginSessionCallback> list = _pluginSessionCallbacksBySessionID.get(session.getIdentifier());
+
+		if (null == list)
+		{
+			return;
+		}
+
+
+		for (int i = 0; i < list.size(); i++)
+		{
+			PluginSessionCallback psc = list.get(i);
+
+			if (widget instanceof SQLInternalFrame)
 			{
-				for (int i = 0; i < list.size(); i++)
-				{
-					PluginSessionCallback psc = list.get(i);
-
-					if (widget instanceof SQLInternalFrame)
-					{
-						psc.sqlInternalFrameOpened((SQLInternalFrame) widget, session);
-					} else if (widget instanceof ObjectTreeInternalFrame)
-					{
-						psc.objectTreeInternalFrameOpened((ObjectTreeInternalFrame) widget, session);
-					}
-				}
+				psc.sqlInternalFrameOpened((SQLInternalFrame) widget, session);
+			}
+			else if (widget instanceof ObjectTreeInternalFrame)
+			{
+				psc.objectTreeInternalFrameOpened((ObjectTreeInternalFrame) widget, session);
 			}
 		}
 	}
+
+	@Override
+	public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+	{
+		List<PluginSessionCallback> list = _pluginSessionCallbacksBySessionID.get(additionalSQLTab.getSession().getIdentifier());
+
+		if(null == list)
+		{
+			return;
+		}
+
+		for (PluginSessionCallback pluginSessionCallback : list)
+		{
+			pluginSessionCallback.additionalSQLTabOpened(additionalSQLTab);
+		}
+
+
+	}
+
+
 
 	/**
 	 * Retrieve information about plugin load times

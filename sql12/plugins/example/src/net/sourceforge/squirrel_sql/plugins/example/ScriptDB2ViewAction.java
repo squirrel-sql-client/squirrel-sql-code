@@ -60,7 +60,7 @@ public class ScriptDB2ViewAction extends SquirrelAction
 
          stat.close();
 
-         sessMainFrm.getSQLPanelAPI().appendSQLScript(script.toString());
+         sessMainFrm.getMainSQLPanelAPI().appendSQLScript(script.toString());
          sessMainFrm.getSessionPanel().selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
       }
       catch (Exception e)

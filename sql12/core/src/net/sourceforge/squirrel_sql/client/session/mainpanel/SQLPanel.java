@@ -432,7 +432,7 @@ public class SQLPanel extends JPanel
 	 * Remove all listeners that this component has setup. Close all
 	 * torn off result tab windows.
 	 */
-	void sessionClosing()
+   public void sessionClosing()
 	{
 		if (_propsListener == null)
 		{
@@ -470,10 +470,9 @@ public class SQLPanel extends JPanel
 
       fireSQLEntryAreaClosed();
 
-      if(_hasBeenVisible)
+      if (_hasBeenVisible)
       {
-    	 saveOrientationDependingDividerLocation();
-         
+         saveOrientationDependingDividerLocation();
       }
 
 		_sqlCombo.removeActionListener(_sqlComboListener);

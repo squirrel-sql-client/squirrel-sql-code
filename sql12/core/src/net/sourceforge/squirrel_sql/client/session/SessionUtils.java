@@ -1,6 +1,16 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import java.awt.*;
 
@@ -23,5 +33,97 @@ public class SessionUtils
    public static Frame getOwningFrame(ISQLPanelAPI sqlPanelAPI)
    {
       return GUIUtils.getOwningFrame(sqlPanelAPI.getSQLEntryPanel().getTextComponent());
+   }
+
+   static ISQLPanelAPI getSqlPanelApi(IIdentifier entryPanelIdentifier, IIdentifier sessionIdentifier)
+   {
+      ISessionWidget[] frames = Main.getApplication().getWindowManager().getAllFramesOfSession(sessionIdentifier);
+
+      for (int i = 0; i < frames.length; i++)
+      {
+         if(frames[i] instanceof SQLInternalFrame)
+         {
+            ISQLPanelAPI sqlPanelAPI = ((SQLInternalFrame)frames[i]).getMainSQLPanelAPI();
+            IIdentifier id = sqlPanelAPI.getSQLEntryPanel().getIdentifier();
+
+            if(id.equals(entryPanelIdentifier))
+            {
+               return sqlPanelAPI;
+            }
+         }
+
+         if(frames[i] instanceof SessionInternalFrame)
+         {
+            IIdentifier sqlEditorID;
+            ISQLPanelAPI sqlPanelAPI;
+
+            sqlPanelAPI = ((SessionInternalFrame) frames[i]).getMainSQLPanelAPI();
+            sqlEditorID = sqlPanelAPI.getSQLEntryPanel().getIdentifier();
+
+            if(sqlEditorID.equals(entryPanelIdentifier))
+            {
+               return sqlPanelAPI;
+            }
+
+            IObjectTreeAPI objectTreeApi = ((SessionInternalFrame)frames[i]).getObjectTreeAPI();
+            IIdentifier findEditorID = objectTreeApi.getFindController().getFindEntryPanel().getIdentifier();
+
+            SessionPanel sessionPanel = ((SessionInternalFrame) frames[i]).getSessionPanel();
+
+            for (int j = 0; j < sessionPanel.getTabCount(); j++)
+            {
+
+               if(sessionPanel.getMainPanelTabAt(j) instanceof AdditionalSQLTab)
+               {
+                  sqlPanelAPI = ((AdditionalSQLTab) sessionPanel.getMainPanelTabAt(j)).getSQLPanel().getSQLPanelAPI();
+                  sqlEditorID = sqlPanelAPI.getSQLEntryPanel().getIdentifier();
+
+                  if(sqlEditorID.equals(entryPanelIdentifier))
+                  {
+                     return sqlPanelAPI;
+                  }
+
+               }
+            }
+
+            if(findEditorID.equals(entryPanelIdentifier))
+            {
+               return null;
+            }
+         }
+
+         if(frames[i] instanceof ObjectTreeInternalFrame)
+         {
+            IObjectTreeAPI objectTreeApi = ((ObjectTreeInternalFrame)frames[i]).getObjectTreeAPI();
+            IIdentifier findEditorID = objectTreeApi.getFindController().getFindEntryPanel().getIdentifier();
+
+            if(findEditorID.equals(entryPanelIdentifier))
+            {
+               return null;
+            }
+         }
+      }
+
+      throw new IllegalStateException("Session has no entry panel for ID=" + entryPanelIdentifier);
+   }
+
+   public static IMainPanelTab getOwningIMainPanelTab(ISQLPanelAPI sqlPanelAPI)
+   {
+      SessionPanel sessionSheet = sqlPanelAPI.getSession().getSessionSheet();
+      for (int i = 0; i < sessionSheet.getTabCount(); i++)
+      {
+         IMainPanelTab mainPanelTab = sessionSheet.getMainPanelTabAt(i);
+
+         if(mainPanelTab instanceof BaseSQLTab)
+         {
+            if( ((BaseSQLTab)mainPanelTab).getSQLPanelAPI() == sqlPanelAPI)
+            {
+               return mainPanelTab;
+            }
+         }
+      }
+
+
+      return null;
    }
 }

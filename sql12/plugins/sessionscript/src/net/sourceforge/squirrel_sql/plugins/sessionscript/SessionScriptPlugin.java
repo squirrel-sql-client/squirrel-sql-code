@@ -29,7 +29,6 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -201,7 +200,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 			if (sql != null && sql.length() > 0)
 			{
 				rc = true;
-				final ISQLPanelAPI api = session.getSessionInternalFrame().getSQLPanelAPI();
+				final ISQLPanelAPI api = session.getSessionInternalFrame().getMainSQLPanelAPI();
 
 				SwingUtilities.invokeLater(new Runnable()
 				{
@@ -218,7 +217,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 		{
 			return null;
 		}
-		return new PluginSessionCallbackAdaptor(this);
+		return new PluginSessionCallbackAdaptor();
 	}
 
 	@Override

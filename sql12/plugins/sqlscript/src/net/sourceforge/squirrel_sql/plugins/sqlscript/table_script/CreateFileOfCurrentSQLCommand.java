@@ -86,13 +86,7 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
 
       this.currentSQL = getSelectedSelectStatement();
 
-      getSession().getApplication().getThreadPool().addTask(new Runnable()
-      {
-         public void run()
-         {
-            doCreateFileOfCurrentSQL(owner);
-         }
-      });
+      getSession().getApplication().getThreadPool().addTask(() -> doCreateFileOfCurrentSQL(owner));
 
    }
 

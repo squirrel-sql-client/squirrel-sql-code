@@ -4,5 +4,5 @@ import javax.swing.*;
 
 public interface ToolsPopupAccessor
 {
-   public void addToToolsPopup(String key, Action action);
+   void addToToolsPopup(String key, Action action);
 }

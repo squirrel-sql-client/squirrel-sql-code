@@ -33,7 +33,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.plugins.vertica.VerticaObjectType;
 import net.sourceforge.squirrel_sql.plugins.vertica.exp.TableExpander;
 import net.sourceforge.squirrel_sql.plugins.vertica.exp.UDFExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.vertica.exp.UDTExpanderFactory;
@@ -45,7 +44,6 @@ import net.sourceforge.squirrel_sql.plugins.vertica.tab.ContentPlusTab;
 import net.sourceforge.squirrel_sql.plugins.vertica.tab.DBObjectSourceTab;
 import net.sourceforge.squirrel_sql.plugins.vertica.tab.SequenceDetailTab;
 import net.sourceforge.squirrel_sql.plugins.vertica.tab.UDFDetailTab;
-import net.sourceforge.squirrel_sql.plugins.vertica.tab.UDTDetailTab;
 import net.sourceforge.squirrel_sql.plugins.vertica.tab.ProjectionDetailTab;
 
 /**
@@ -155,7 +153,7 @@ public class VerticaPlugin extends DefaultSessionPlugin
 		});
 
 
-		return new PluginSessionCallbackAdaptor(this);
+		return new PluginSessionCallbackAdaptor();
 	}
 
 	@Override

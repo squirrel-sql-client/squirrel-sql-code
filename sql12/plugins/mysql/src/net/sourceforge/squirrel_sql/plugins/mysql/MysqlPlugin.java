@@ -331,7 +331,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 		installMysqlQueryTokenizer(session);
 
-		return new PluginSessionCallbackAdaptor(this);
+		return new PluginSessionCallbackAdaptor();
 	}
 
 	/**

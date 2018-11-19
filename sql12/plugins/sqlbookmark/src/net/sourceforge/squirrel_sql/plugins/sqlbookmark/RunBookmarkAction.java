@@ -82,11 +82,11 @@ public class RunBookmarkAction extends SquirrelAction
 
             if (session.getActiveSessionWindow() instanceof SessionInternalFrame)
             {
-               sqlEntryPanel = ((SessionInternalFrame) session.getActiveSessionWindow()).getSQLPanelAPI().getSQLEntryPanel();
+               sqlEntryPanel = ((SessionInternalFrame) session.getActiveSessionWindow()).getMainSQLPanelAPI().getSQLEntryPanel();
             }
             else if (session.getActiveSessionWindow() instanceof SQLInternalFrame)
             {
-               sqlEntryPanel = ((SQLInternalFrame) session.getActiveSessionWindow()).getSQLPanelAPI().getSQLEntryPanel();
+               sqlEntryPanel = ((SQLInternalFrame) session.getActiveSessionWindow()).getMainSQLPanelAPI().getSQLEntryPanel();
             }
             else
             {

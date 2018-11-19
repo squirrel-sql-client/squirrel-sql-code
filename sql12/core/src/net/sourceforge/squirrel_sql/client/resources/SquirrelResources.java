@@ -115,6 +115,9 @@ public class SquirrelResources extends Resources
 
       String DIR_GIF = "dir_obj";
       String FILE_GIF = "file_obj";
+
+      String ADD_TAB = "add_tab";
+      String NEW_SQL_WORKSHEET = "new_sql_worksheet";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

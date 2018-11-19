@@ -167,7 +167,7 @@ public class H2Plugin extends DefaultSessionPlugin
 				updateTreeApi(session);
 			}
 		});
-		return new PluginSessionCallbackAdaptor(this);
+		return new PluginSessionCallbackAdaptor();
 	}
 
 	@Override

@@ -22,8 +22,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 
-import javax.swing.*;
-
 public class ShrinkDatabaseFileCommand implements ICommand {
 	private ISession _session;
 	private final MssqlPlugin _plugin;
@@ -54,8 +52,8 @@ public class ShrinkDatabaseFileCommand implements ICommand {
         buf.append(sqlSep);
         buf.append("\n");
 
-        _session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(buf.toString(), true);
-        _session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();
+        _session.getSessionInternalFrame().getMainSQLPanelAPI().appendSQLScript(buf.toString(), true);
+        _session.getSessionInternalFrame().getMainSQLPanelAPI().executeCurrentSQL();
         _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
 	}
 }

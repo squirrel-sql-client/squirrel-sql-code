@@ -179,7 +179,6 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="sqlscript"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="syntax"/></antcall>
 
-        <!--<antcall target="doCompilePlugin"><param name="pluginName" value="cache"/></antcall>-->
         <antcall target="doCompilePlugin"><param name="pluginName" value="dataimport"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="db2"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="derby"/></antcall>
@@ -187,13 +186,11 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="exportconfig"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="favs"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="firebird"/></antcall>
-        <!--<antcall target="doCompilePlugin"><param name="pluginName" value="firebirdmanager"/></antcall>-->
         <antcall target="doCompilePlugin"><param name="pluginName" value="greenplum"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="h2"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="hibernate"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="i18n"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="informix"/></antcall>
-        <!--<antcall target="doCompilePlugin"><param name="pluginName" value="isqlj"/></antcall>-->
         <antcall target="doCompilePlugin"><param name="pluginName" value="mssql"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="multisource"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="mysql"/></antcall>
@@ -207,7 +204,6 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="sqlval"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="swingViolations"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="sybase"/></antcall>
-        <antcall target="doCompilePlugin"><param name="pluginName" value="userscript"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="vertica"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="wikiTableConfigurations"/></antcall>
     </target>

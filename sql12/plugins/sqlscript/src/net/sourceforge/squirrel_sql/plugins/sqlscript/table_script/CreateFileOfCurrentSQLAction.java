@@ -32,57 +32,39 @@ import java.awt.event.ActionEvent;
 
 /**
  * Action to store the result of the current SQL directly into a file.
- * 
+ *
  * @author Stefan Willinger
- * 
  */
-public class CreateFileOfCurrentSQLAction extends SquirrelAction implements ISQLPanelAction {
+public class CreateFileOfCurrentSQLAction extends SquirrelAction implements ISQLPanelAction
+{
 
-	private SQLScriptPlugin plugin;
+   private SQLScriptPlugin plugin;
 
-	/**
-	 * Current session.
-	 */
-	private ISession session;
+   private ISession session;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param app
-	 *            the application
-	 * @param rsrc
-	 *            The resources of the {@link SQLScriptPlugin}
-	 * @param sqlScriptPlugin
-	 *            the {@link SQLScriptPlugin}
-	 */
-	public CreateFileOfCurrentSQLAction(IApplication app, IResources rsrc, SQLScriptPlugin sqlScriptPlugin) {
-		super(app, rsrc);
-		this.plugin = sqlScriptPlugin;
-	}
+   public CreateFileOfCurrentSQLAction(IApplication app, IResources rsrc, SQLScriptPlugin sqlScriptPlugin)
+   {
+      super(app, rsrc);
+      this.plugin = sqlScriptPlugin;
+   }
 
-	/**
-	 * Executes the Action on the current active session.
-	 * 
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 * @see CreateFileOfCurrentSQLCommand#execute()
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		new CreateFileOfCurrentSQLCommand(session, plugin)
-				.execute((JFrame) SessionUtils.getOwningFrame(session));
-	}
+   @Override
+   public void actionPerformed(ActionEvent e)
+   {
+      new CreateFileOfCurrentSQLCommand(session, plugin).execute((JFrame) SessionUtils.getOwningFrame(session));
+   }
 
-	/**
-	 * If no SQLPanel is active, disable this one.
-	 * @see net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction#setSQLPanel(net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI)
-	 */
-	public void setSQLPanel(ISQLPanelAPI panel) {
-		if (null != panel) {
-			session = panel.getSession();
-		} else {
-			session = null;
-		}
-		setEnabled(null != session);
-	}
+   public void setSQLPanel(ISQLPanelAPI panel)
+   {
+      if (null != panel)
+      {
+         session = panel.getSession();
+      }
+      else
+      {
+         session = null;
+      }
+      setEnabled(null != session);
+   }
 
 }

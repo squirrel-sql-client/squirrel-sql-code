@@ -144,7 +144,7 @@ public class OutOfMemoryErrorHandler implements IOutOfMemoryErrorHandler{
 	 *            the session, where to close the result tabs.
 	 */
 	private void closeResultTabs(ISession session) {
-		session.getSessionInternalFrame().getSQLPanelAPI().closeAllSQLResultTabs();
+		session.getSessionInternalFrame().getMainSQLPanelAPI().closeAllSQLResultTabs();
 	}
 	
 }

@@ -198,14 +198,14 @@ public class SchemaInfoUpdateCheck
 
       if (activeSessionWidget instanceof SQLInternalFrame)
       {
-         ISQLEntryPanel sqlEntryPanel = ((SQLInternalFrame) activeSessionWidget).getSQLPanelAPI().getSQLEntryPanel();
+         ISQLEntryPanel sqlEntryPanel = ((SQLInternalFrame) activeSessionWidget).getMainSQLPanelAPI().getSQLEntryPanel();
          sqlEntryPanel.getTextComponent().repaint();
          _session.getParserEventsProcessor(sqlEntryPanel.getIdentifier()).triggerParser();
       }
 
       if (activeSessionWidget instanceof SessionInternalFrame)
       {
-         ISQLEntryPanel sqlEntryPanel = ((SessionInternalFrame) activeSessionWidget).getSQLPanelAPI().getSQLEntryPanel();
+         ISQLEntryPanel sqlEntryPanel = ((SessionInternalFrame) activeSessionWidget).getMainSQLPanelAPI().getSQLEntryPanel();
          sqlEntryPanel.getTextComponent().repaint();
          _session.getParserEventsProcessor(sqlEntryPanel.getIdentifier()).triggerParser();
       }

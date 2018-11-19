@@ -98,10 +98,18 @@ public abstract class BaseMainPanelTab implements IMainPanelTab
       return null;
    }
 
-   /**
-	 * Refresh the component.
+	@Override
+	public String getTitle()
+	{
+		return "";
+	}
+
+	/**
+	 * @see IMainPanelTab#select()
 	 */
-	protected abstract void refreshComponent();
+	protected void refreshComponent()
+	{
+	}
     
     /**
      * When a session is ending, if it happens to be the one this class is using,
@@ -114,4 +122,6 @@ public abstract class BaseMainPanelTab implements IMainPanelTab
             _session = null;
         }
     }
+
+
 }

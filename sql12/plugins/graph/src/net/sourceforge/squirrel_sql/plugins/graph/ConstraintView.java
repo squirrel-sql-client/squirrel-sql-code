@@ -243,7 +243,7 @@ public class ConstraintView implements GraphComponent
       {
          sb.append(lines[i]).append('\n');
       }
-      _session.getSessionSheet().getSQLEntryPanel().appendText(sb.toString());
+      _session.getSessionSheet().getMainSQLEntryPanel().appendText(sb.toString());
    }
 
    private void onShowDDL()

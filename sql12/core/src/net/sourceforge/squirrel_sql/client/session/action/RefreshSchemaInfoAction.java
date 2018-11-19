@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateListener;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -92,10 +93,13 @@ public class RefreshSchemaInfoAction extends SquirrelAction
 
    private void onSchemaInfoUpdated(ISession session)
    {
-      final IParserEventsProcessor parserEventsProcessor = session.getParserEventsProcessor(_session.getSessionSheet().getSQLEntryPanel().getIdentifier());
-      parserEventsProcessor.triggerParser();
-      _session.getSchemaInfo().removeSchemaInfoUpdateListener(_schemaInfoUpdateListener);
-      _schemaInfoUpdateListener = null;
+      for (SQLPanel sqlPanel: _session.getSessionSheet().getAllSQLPanels())
+      {
+         final IParserEventsProcessor parserEventsProcessor = session.getParserEventsProcessor(sqlPanel.getSQLEntryPanel().getIdentifier());
+         parserEventsProcessor.triggerParser();
+         _session.getSchemaInfo().removeSchemaInfoUpdateListener(_schemaInfoUpdateListener);
+         _schemaInfoUpdateListener = null;
+      }
    }
 }
 

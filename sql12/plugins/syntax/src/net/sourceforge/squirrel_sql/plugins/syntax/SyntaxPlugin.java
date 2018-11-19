@@ -20,10 +20,10 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPane
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
@@ -372,9 +373,14 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 				initSqlInternalFrame(sqlInternalFrame);
 			}
 
-			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,
-				ISession sess)
+			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
 			{
+			}
+
+			@Override
+			public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+			{
+				initSqlPanel(additionalSQLTab.getSQLPanelAPI());
 			}
 		};
 
@@ -396,14 +402,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		session.addToToolbar(coll.get(ReplaceAction.class));
 		session.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
 
-		SessionInternalFrame sif = session.getSessionInternalFrame();
-
-		ISQLPanelAPI sqlPanelAPI = sif.getSQLPanelAPI();
-
-		new ToolsPopupHandler(this).initToolsPopup(sif, coll);
-
-      completeSqlPanelEntryAreaMenu(coll, sqlPanelAPI);
-
+		initSqlPanel(session.getSessionInternalFrame().getMainSQLPanelAPI());
 	}
 
    private void initSqlInternalFrame(SQLInternalFrame sqlInternalFrame)
@@ -417,14 +416,17 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		sqlInternalFrame.addToToolbar(replaceAction);
 		sqlInternalFrame.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
 
-		new ToolsPopupHandler(this).initToolsPopup(sqlInternalFrame, coll);
-
-		ISQLPanelAPI sqlPanelAPI = sqlInternalFrame.getSQLPanelAPI();
-
-      completeSqlPanelEntryAreaMenu(coll, sqlPanelAPI);
+		initSqlPanel(sqlInternalFrame.getMainSQLPanelAPI());
 	}
 
-   private void completeSqlPanelEntryAreaMenu(ActionCollection coll, ISQLPanelAPI sqlPanelAPI)
+	private void initSqlPanel(ISQLPanelAPI sqlPanelAPI)
+	{
+		ActionCollection coll = Main.getApplication().getActionCollection();
+		new ToolsPopupHandler(this).initToolsPopup(coll, sqlPanelAPI);
+		completeSqlPanelEntryAreaMenu(coll, sqlPanelAPI);
+	}
+
+	private void completeSqlPanelEntryAreaMenu(ActionCollection coll, ISQLPanelAPI sqlPanelAPI)
    {
       JMenuItem mnuUnmark = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UnmarkAction.class));
       _resources.configureMenuItem(coll.get(UnmarkAction.class), mnuUnmark);
@@ -640,7 +642,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 								{
 									ISQLEntryPanelFactory factory = _plugin.getSQLEntryAreaFactory();
 									ISQLEntryPanel pnl = factory.createSQLEntryPanel(_session);
-									_session.getSQLPanelAPI(_plugin).installSQLEntryPanel(pnl);
+									_session.getMainSQLPanelAPI(_plugin).installSQLEntryPanel(pnl);
 								}
 								*/
 

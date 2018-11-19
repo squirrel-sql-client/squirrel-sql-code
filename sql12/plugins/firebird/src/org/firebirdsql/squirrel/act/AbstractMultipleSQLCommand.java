@@ -66,8 +66,8 @@ abstract class AbstractMultipleSQLCommand implements ICommand
         // Execute the SQL command in the SQL tab and then display the SQL tab.
         if (buf.length() > 0)
         {
-            _session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(buf.toString(), true);
-            _session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();
+            _session.getSessionInternalFrame().getMainSQLPanelAPI().appendSQLScript(buf.toString(), true);
+            _session.getSessionInternalFrame().getMainSQLPanelAPI().executeCurrentSQL();
             _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
         }
     }

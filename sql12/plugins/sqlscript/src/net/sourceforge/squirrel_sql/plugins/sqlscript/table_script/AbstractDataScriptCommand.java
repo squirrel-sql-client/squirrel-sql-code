@@ -33,85 +33,88 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * The base class for data script commands, they depends on the current selected SQL statement.
- * @author Stefan Willinger
  *
+ * @author Stefan Willinger
  */
-public abstract class AbstractDataScriptCommand extends WindowAdapter{
-	
-	private static final StringManager s_stringMgr = StringManagerFactory
-	.getStringManager(AbstractDataScriptCommand.class);
-	
-	/**
-	    * Current session.
-	    */
-	   private final ISession session;
+public abstract class AbstractDataScriptCommand extends WindowAdapter
+{
 
-	   // TODO Refactor - We didn't need the plugin
-	   private final SQLScriptPlugin plugin;
-	   
-	   /**
-	    * Ctor specifying the current session and IAbortController.
-	    */   
-		public AbstractDataScriptCommand(ISession session, SQLScriptPlugin plugin)
-		{
-			super();
-			this.session = session;
-			this.plugin = plugin;
-		}
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AbstractDataScriptCommand.class);
 
-	/**
-	 * @return the _session
-	 */
-	public ISession getSession() {
-		return session;
-	}
+   private final ISession session;
 
-	/**
-	 * @return the _plugin
-	 */
-	public SQLScriptPlugin getPlugin() {
-		return plugin;
-	}
-	
-	/**
-	 * Looks for the current selected SQL statement in the editor pane.
-	 * This ensures, that the selected statement is realy a SELECT statement.
-	 * These errors can occurs,
-	 * <li>no query selected</li>
-	 * <li>more than one query selected</li>
-	 * <li>not a SELECT statement selected</li>
-	 * In all these cases, the user will get a message and <code>null</code> will be returned.
-	 * @return the selected SELECT statement or null, if not exactly one SELECT statement is selected.
-	 */
-	protected String getSelectedSelectStatement() {
-		ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(getSession(), getPlugin());
+   private final SQLScriptPlugin plugin;
 
-		String script = api.getSQLScriptToBeExecuted();
+   /**
+    * Ctor specifying the current session and IAbortController.
+    */
+   public AbstractDataScriptCommand(ISession session, SQLScriptPlugin plugin)
+   {
+      super();
+      this.session = session;
+      this.plugin = plugin;
+   }
 
-		IQueryTokenizer qt = getSession().getQueryTokenizer();
-		qt.setScriptToTokenize(script);
+   /**
+    * @return the _session
+    */
+   public ISession getSession()
+   {
+      return session;
+   }
 
-		if (false == qt.hasQuery()) {
-			// i18n[CreateFileOfCurrentSQLCommand.noQuery=No query found to
-			// create the script from.]
-			getSession().showErrorMessage(s_stringMgr.getString("AbstractDataScriptCommand.noQuery"));
-			return null;
-		}
+   /**
+    * @return the _plugin
+    */
+   public SQLScriptPlugin getPlugin()
+   {
+      return plugin;
+   }
 
-		if(qt.getQueryCount() > 1){
-			// i18n[CreateFileOfCurrentSQLCommand.moreThanOnQuery=There are more than one query selected. Only the first statement will be used.]
-			getSession().showWarningMessage(s_stringMgr.getString("AbstractDataScriptCommand.moreThanOnQuery"));
-		}
-		
-		String currentSQL = qt.nextQuery().getQuery();
+   /**
+    * Looks for the current selected SQL statement in the editor pane.
+    * This ensures, that the selected statement is realy a SELECT statement.
+    * These errors can occurs,
+    * <li>no query selected</li>
+    * <li>more than one query selected</li>
+    * <li>not a SELECT statement selected</li>
+    * In all these cases, the user will get a message and <code>null</code> will be returned.
+    *
+    * @return the selected SELECT statement or null, if not exactly one SELECT statement is selected.
+    */
+   protected String getSelectedSelectStatement()
+   {
+      ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(getSession(), getPlugin());
 
-		if(StringUtils.startsWithIgnoreCase(currentSQL, "select") == false){
-			// i18n[CreateFileOfCurrentSQLCommand.notASelect=The selected SQL is not a SELECT statement.]
-			getSession().showErrorMessage(s_stringMgr.getString("AbstractDataScriptCommand.notASelect"));
-			return null;
-		}
-		return currentSQL;
-	}
-		
-		
+      String script = api.getSQLScriptToBeExecuted();
+
+      IQueryTokenizer qt = getSession().getQueryTokenizer();
+      qt.setScriptToTokenize(script);
+
+      if (false == qt.hasQuery())
+      {
+         // i18n[CreateFileOfCurrentSQLCommand.noQuery=No query found to
+         // create the script from.]
+         getSession().showErrorMessage(s_stringMgr.getString("AbstractDataScriptCommand.noQuery"));
+         return null;
+      }
+
+      if (qt.getQueryCount() > 1)
+      {
+         // i18n[CreateFileOfCurrentSQLCommand.moreThanOnQuery=There are more than one query selected. Only the first statement will be used.]
+         getSession().showWarningMessage(s_stringMgr.getString("AbstractDataScriptCommand.moreThanOnQuery"));
+      }
+
+      String currentSQL = qt.nextQuery().getQuery();
+
+      if (StringUtils.startsWithIgnoreCase(currentSQL, "select") == false)
+      {
+         // i18n[CreateFileOfCurrentSQLCommand.notASelect=The selected SQL is not a SELECT statement.]
+         getSession().showErrorMessage(s_stringMgr.getString("AbstractDataScriptCommand.notASelect"));
+         return null;
+      }
+      return currentSQL;
+   }
+
+
 }

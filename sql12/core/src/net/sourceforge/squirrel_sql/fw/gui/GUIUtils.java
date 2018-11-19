@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -48,6 +50,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
@@ -628,4 +632,26 @@ public class GUIUtils
 		return rectInScreenCoordinates;
 
 	}
+
+   public static void styleAsToolbarButton(AbstractButton btn)
+   {
+      btn.setContentAreaFilled(false);
+      btn.setBorder(BorderFactory.createEtchedBorder());
+
+		btn.setFocusable(false);
+
+      btn.addMouseListener(new MouseAdapter() {
+         @Override
+         public void mouseEntered(MouseEvent e)
+         {
+            btn.setContentAreaFilled(true);
+         }
+
+         @Override
+         public void mouseExited(MouseEvent e)
+         {
+            btn.setContentAreaFilled(false);
+         }
+      });
+   }
 }

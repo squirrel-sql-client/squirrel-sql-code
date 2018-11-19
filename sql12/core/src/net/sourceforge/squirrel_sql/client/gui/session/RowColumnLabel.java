@@ -25,14 +25,7 @@ class RowColumnLabel extends JLabel
 
 		_sqlEntryPanel = sqlEntryPanel;
 
-		sqlEntryPanel.addCaretListener(new CaretListener()
-		{
-			public void caretUpdate(CaretEvent e)
-			{
-				onCaretUpdate(e);
-			}
-
-		});
+		sqlEntryPanel.addCaretListener(e -> onCaretUpdate(e));
 
 		writePosition(0,0, 0);
 

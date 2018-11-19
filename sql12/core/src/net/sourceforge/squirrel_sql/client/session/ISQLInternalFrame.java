@@ -22,8 +22,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 
-/* JASON Class*/
 public interface ISQLInternalFrame
 {
-	public ISQLPanelAPI getSQLPanelAPI();
+	ISQLPanelAPI getMainSQLPanelAPI();
 }

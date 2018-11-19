@@ -243,9 +243,8 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 		else
 		{
-            // i18n[SQLResultExecuterPanel.nosqlselected=No SQL selected for execution.]
-            String msg = 
-                s_stringMgr.getString("SQLResultExecuterPanel.nosqlselected");
+          // i18n[SQLResultExecuterPanel.nosqlselected=No SQL selected for execution.]
+          String msg = s_stringMgr.getString("SQLResultExecuterPanel.nosqlselected");
 			_session.showErrorMessage(msg);
 		}
 	}

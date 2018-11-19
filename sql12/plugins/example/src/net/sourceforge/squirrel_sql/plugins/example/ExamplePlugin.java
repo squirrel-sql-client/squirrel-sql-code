@@ -142,7 +142,7 @@ public class ExamplePlugin extends DefaultSessionPlugin
 		// the message panel.
 		IMessageHandler messageHandler = session.getApplication().getMessageHandler();
 		ExampleSqlExecutionListener sqlExecutionListener = new ExampleSqlExecutionListener(messageHandler);
-		session.getSessionSheet().getSQLPaneAPI().addSQLExecutionListener(sqlExecutionListener);
+		session.getSessionSheet().getMainSQLPaneAPI().addSQLExecutionListener(sqlExecutionListener);
 
 		// We will override the default behavior of formatting exception messages that SQuirreL provides for 
 		// this session with our own.  If this was a real plugin implementation, care would need to be taken 
@@ -151,7 +151,7 @@ public class ExamplePlugin extends DefaultSessionPlugin
 		// last one to register overrides all former registrations and results in a log warning message.
 		session.setExceptionFormatter(new ExampleExceptionFormatter());
 		
-		return new PluginSessionCallbackAdaptor(this);
+		return new PluginSessionCallbackAdaptor();
 	}
 
 	private void addTreeNodeMenuActionsForDB2(ISession session)

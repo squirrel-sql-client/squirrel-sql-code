@@ -23,14 +23,14 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 
 /**
  * @author manningr
  */
 public class DBDiffPluginSessionCallback implements PluginSessionCallback
 {
-
-	DBDiffPlugin _plugin = null;
+	DBDiffPlugin _plugin;
 
 	public DBDiffPluginSessionCallback(DBDiffPlugin plugin)
 	{
@@ -39,8 +39,6 @@ public class DBDiffPluginSessionCallback implements PluginSessionCallback
 
 	public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession session)
 	{
-		// Nothing to do for an SQL internal frame
-
 	}
 
 	public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession session)
@@ -48,4 +46,8 @@ public class DBDiffPluginSessionCallback implements PluginSessionCallback
 		_plugin.addMenuItemsToContextMenu(objectTreeInternalFrame.getObjectTreeAPI());
 	}
 
+   @Override
+   public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+   {
+   }
 }

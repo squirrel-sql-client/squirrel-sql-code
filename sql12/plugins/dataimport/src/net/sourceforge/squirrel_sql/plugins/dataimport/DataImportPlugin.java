@@ -164,7 +164,7 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session) {
 		updateTreeApi(session);
-		return new PluginSessionCallbackAdaptor(this);
+		return new PluginSessionCallbackAdaptor();
 	}
 
 	/**
