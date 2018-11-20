@@ -192,7 +192,7 @@ public class SessionPropertiesSheet extends SessionDialogWidget
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 // TODO: Setup title correctly.
-//		setTitle(getTitle() + ": " + _session.getSessionSheet().getTitle());
+//		setTitle(getTitle() + ": " + _session.getSessionPanel().getTitle());
 
 		// This is a tool window.
 		makeToolWindow(true);

@@ -398,7 +398,7 @@ public class ContentsTab extends BaseTableTab
       boolean result = false;
       ISession session = _treePanel.getSession();
       if (session != null) {
-         SessionPanel sessionPanel = session.getSessionSheet();
+         SessionPanel sessionPanel = session.getSessionPanel();
          if (sessionPanel != null) {
             result = sessionPanel.isObjectTreeTabSelected();
          }

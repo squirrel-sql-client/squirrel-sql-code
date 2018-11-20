@@ -75,7 +75,7 @@ public class DropDatabaseAction	extends SquirrelAction
 			ObjectTreeNode[] nodes = treeAPI.getSelectedNodes();
 			if (dbs.length > 0)
 			{
-				if (Dialogs.showYesNo(_session.getSessionSheet(), MSG, TITLE))
+				if (Dialogs.showYesNo(_session.getSessionPanel(), MSG, TITLE))
 				{
 					try
 					{

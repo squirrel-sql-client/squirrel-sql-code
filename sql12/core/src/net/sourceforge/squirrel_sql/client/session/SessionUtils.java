@@ -109,7 +109,7 @@ public class SessionUtils
 
    public static IMainPanelTab getOwningIMainPanelTab(ISQLPanelAPI sqlPanelAPI)
    {
-      SessionPanel sessionSheet = sqlPanelAPI.getSession().getSessionSheet();
+      SessionPanel sessionSheet = sqlPanelAPI.getSession().getSessionPanel();
       for (int i = 0; i < sessionSheet.getTabCount(); i++)
       {
          IMainPanelTab mainPanelTab = sessionSheet.getMainPanelTabAt(i);

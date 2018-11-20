@@ -134,7 +134,7 @@ public class CliSessionAdapter implements ISession
    }
 
    @Override
-   public SessionPanel getSessionSheet()
+   public SessionPanel getSessionPanel()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
    }

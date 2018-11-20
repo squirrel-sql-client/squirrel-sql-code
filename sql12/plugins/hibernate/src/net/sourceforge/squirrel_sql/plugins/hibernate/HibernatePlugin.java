@@ -98,7 +98,7 @@ public class HibernatePlugin extends DefaultSessionPlugin
          _hqlTabControllerBySessionID.put(session.getIdentifier(), hibernateTabController);
 
 
-         session.getSessionSheet().insertMainTab(hibernateTabController, 2, false);
+         session.getSessionPanel().insertMainTab(hibernateTabController, 2, false);
 
          return new PluginSessionCallbackAdaptor();
 		}

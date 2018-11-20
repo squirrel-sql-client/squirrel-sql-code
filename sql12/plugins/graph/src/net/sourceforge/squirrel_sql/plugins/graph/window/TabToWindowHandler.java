@@ -55,7 +55,7 @@ public class TabToWindowHandler
 
    private void toWindowAtBounds(Rectangle tabBoundsOnScreen)
    {
-      final int tabIdx = _session.getSessionSheet().removeMainTab(_graphMainPanelTab);
+      final int tabIdx = _session.getSessionPanel().removeMainTab(_graphMainPanelTab);
 
       GraphWindowControllerListener listener = new GraphWindowControllerListener()
       {
@@ -80,14 +80,14 @@ public class TabToWindowHandler
    {
       _graphWindowController = null;
 
-      if(tabIdx <_session.getSessionSheet().getTabCount())
+      if(tabIdx <_session.getSessionPanel().getTabCount())
       {
-         _session.getSessionSheet().insertMainTab(_graphMainPanelTab, tabIdx);
+         _session.getSessionPanel().insertMainTab(_graphMainPanelTab, tabIdx);
       }
       else
       {
-         tabIdx = _session.getSessionSheet().addMainTab(_graphMainPanelTab);
-         _session.getSessionSheet().selectMainTab(tabIdx);
+         tabIdx = _session.getSessionPanel().addMainTab(_graphMainPanelTab);
+         _session.getSessionPanel().selectMainTab(tabIdx);
       }
 
    }
@@ -96,11 +96,11 @@ public class TabToWindowHandler
    {
       _lazyLoadListener = lazyLoadListener;
       _graphMainPanelTab.setLazyLoadListener(_lazyLoadListener);
-      int tabIdx = _session.getSessionSheet().addMainTab(_graphMainPanelTab);
+      int tabIdx = _session.getSessionPanel().addMainTab(_graphMainPanelTab);
 
       if (selectTab)
       {
-         _session.getSessionSheet().selectMainTab(tabIdx);
+         _session.getSessionPanel().selectMainTab(tabIdx);
       }
    }
 
@@ -108,7 +108,7 @@ public class TabToWindowHandler
    {
       if (null == _graphWindowController)
       {
-         _session.getSessionSheet().removeMainTab(_graphMainPanelTab);
+         _session.getSessionPanel().removeMainTab(_graphMainPanelTab);
       }
       else
       {
@@ -123,8 +123,8 @@ public class TabToWindowHandler
 
       if (null == _graphWindowController)
       {
-         int index = _session.getSessionSheet().removeMainTab(_graphMainPanelTab);
-         _session.getSessionSheet().insertMainTab(_graphMainPanelTab, index);
+         int index = _session.getSessionPanel().removeMainTab(_graphMainPanelTab);
+         _session.getSessionPanel().insertMainTab(_graphMainPanelTab, index);
       }
       else
       {

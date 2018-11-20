@@ -61,7 +61,7 @@ public class RefreshSchemaInfoAction extends SquirrelAction
 
       if (_session != null)
       {
-         IObjectTreeAPI objectTreeAPI = _session.getSessionSheet().getObjectTreePanel();
+         IObjectTreeAPI objectTreeAPI = _session.getSessionPanel().getObjectTreePanel();
          CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
          cursorChg.show();
          try
@@ -93,7 +93,7 @@ public class RefreshSchemaInfoAction extends SquirrelAction
 
    private void onSchemaInfoUpdated(ISession session)
    {
-      for (SQLPanel sqlPanel: _session.getSessionSheet().getAllSQLPanels())
+      for (SQLPanel sqlPanel: _session.getSessionPanel().getAllSQLPanels())
       {
          final IParserEventsProcessor parserEventsProcessor = session.getParserEventsProcessor(sqlPanel.getSQLEntryPanel().getIdentifier());
          parserEventsProcessor.triggerParser();

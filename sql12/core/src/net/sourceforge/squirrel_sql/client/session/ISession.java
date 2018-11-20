@@ -147,7 +147,7 @@ public interface ISession extends IHasIdentifier
 
    void setMessageHandler(IMessageHandler handler);
 
-   SessionPanel getSessionSheet();
+   SessionPanel getSessionPanel();
 
    SessionInternalFrame getSessionInternalFrame();
 

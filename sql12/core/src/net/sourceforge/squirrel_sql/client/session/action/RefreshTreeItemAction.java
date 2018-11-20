@@ -60,7 +60,7 @@ public class RefreshTreeItemAction extends SquirrelAction
 //			cursorChg.show();
 //			try
 //			{
-//				_session.getSessionSheet().refreshSelectedDatabaseObjects();
+//				_session.getSessionPanel().refreshSelectedDatabaseObjects();
 //			}
 //			catch (BaseSQLException ex)
 //			{
@@ -74,7 +74,7 @@ public class RefreshTreeItemAction extends SquirrelAction
 //				cursorChg.restore();
 //			}
 //		}
-		Dialogs.showNotYetImplemented(_session.getSessionSheet());
+		Dialogs.showNotYetImplemented(_session.getSessionPanel());
 	}
 
 	/*

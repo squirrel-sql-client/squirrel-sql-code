@@ -215,7 +215,7 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 		log.info("Initializing plugin");
-		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
+		ISQLPanelAPI sqlPaneAPI = session.getSessionPanel().getMainSQLPaneAPI();
 
 		initSQLParam(sqlPaneAPI, session);
 
@@ -251,7 +251,7 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	@Override
 	public void sessionEnding(ISession session)
 	{
-		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
+		ISQLPanelAPI sqlPaneAPI = session.getSessionPanel().getMainSQLPaneAPI();
 		ISQLExecutionListener listener = panelListenerMap.remove(sqlPaneAPI);
 		removeSQLExecutionListener(sqlPaneAPI, listener);
 	}

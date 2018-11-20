@@ -142,7 +142,7 @@ public class ExamplePlugin extends DefaultSessionPlugin
 		// the message panel.
 		IMessageHandler messageHandler = session.getApplication().getMessageHandler();
 		ExampleSqlExecutionListener sqlExecutionListener = new ExampleSqlExecutionListener(messageHandler);
-		session.getSessionSheet().getMainSQLPaneAPI().addSQLExecutionListener(sqlExecutionListener);
+		session.getSessionPanel().getMainSQLPaneAPI().addSQLExecutionListener(sqlExecutionListener);
 
 		// We will override the default behavior of formatting exception messages that SQuirreL provides for 
 		// this session with our own.  If this was a real plugin implementation, care would need to be taken 

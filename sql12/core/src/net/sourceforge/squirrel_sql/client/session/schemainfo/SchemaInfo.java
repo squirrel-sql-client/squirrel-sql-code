@@ -216,7 +216,7 @@ public class SchemaInfo
    {
    	GUIUtils.processOnSwingEventThread(new Runnable() {
    		public void run() {
-   			_session.getSessionSheet().setStatusBarProgress(i18n.LOADING_TABLES_MSG, 0, MAX_PROGRESS, 50);
+   			_session.getSessionPanel().setStatusBarProgress(i18n.LOADING_TABLES_MSG, 0, MAX_PROGRESS, 50);
    		}
    	});
    	
@@ -229,7 +229,7 @@ public class SchemaInfo
    	GUIUtils.processOnSwingEventThread(new Runnable() {
    		public void run() {
    			fireSchemaInfoUpdate();
-   			_session.getSessionSheet().setStatusBarProgressFinished();   			
+   			_session.getSessionPanel().setStatusBarProgressFinished();
    		}
    	});
    }
@@ -351,9 +351,9 @@ public class SchemaInfo
       }
       finally
       {
-         if (_session != null && _session.getSessionSheet() != null)
+         if (_session != null && _session.getSessionPanel() != null)
          {
-            _session.getSessionSheet().setStatusBarProgressFinished();
+            _session.getSessionPanel().setStatusBarProgressFinished();
          }
 
          _loading = false;
@@ -559,12 +559,12 @@ public class SchemaInfo
    {
       breathing();
 
-      if (_session == null || _session.getSessionSheet() == null)
+      if (_session == null || _session.getSessionPanel() == null)
       {
          return;
       }
 
-     _session.getSessionSheet().setStatusBarProgress(note, 0, MAX_PROGRESS, value);
+     _session.getSessionPanel().setStatusBarProgress(note, 0, MAX_PROGRESS, value);
      
       if(_inInitialLoad
          && false == _sessionStartupTimeHintShown
@@ -1198,7 +1198,7 @@ public class SchemaInfo
             }
             finally
             {
-               _session.getSessionSheet().setStatusBarProgressFinished();
+               _session.getSessionPanel().setStatusBarProgressFinished();
             }
          }
 
@@ -1602,7 +1602,7 @@ public class SchemaInfo
       }
       finally
       {
-         _session.getSessionSheet().setStatusBarProgressFinished();
+         _session.getSessionPanel().setStatusBarProgressFinished();
          _loading = false;
          _schemasAndCatalogsLoaded = true;
          _tablesLoaded = true;

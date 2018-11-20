@@ -259,10 +259,10 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
-		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
+		ISQLPanelAPI sqlPaneAPI = session.getSessionPanel().getMainSQLPaneAPI();
       initCodeCompletionSqlEditor(sqlPaneAPI, session);
 
-      initCodeCompletionObjectTreeFind(session, session.getSessionSheet().getObjectTreePanel());
+      initCodeCompletionObjectTreeFind(session, session.getSessionPanel().getObjectTreePanel());
 
       PluginSessionCallback ret = new PluginSessionCallback()
 		{

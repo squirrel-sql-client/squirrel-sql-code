@@ -208,7 +208,7 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 	{
 		try
 		{
-			ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
+			ISQLPanelAPI sqlPaneAPI = session.getSessionPanel().getMainSQLPaneAPI();
 
 			initSQLReplace(sqlPaneAPI, session);
 
@@ -319,7 +319,7 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 	@Override
 	public void sessionEnding(ISession session)
 	{
-		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
+		ISQLPanelAPI sqlPaneAPI = session.getSessionPanel().getMainSQLPaneAPI();
 		ISQLExecutionListener listener = panelListenerMap.remove(sqlPaneAPI);
 		sqlPaneAPI.removeSQLExecutionListener(listener);
 	}

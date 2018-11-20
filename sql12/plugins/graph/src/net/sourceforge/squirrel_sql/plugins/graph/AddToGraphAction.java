@@ -33,7 +33,7 @@ public class AddToGraphAction extends SquirrelAction implements ISessionAction
    {
       if (_session != null)
       {
-         ObjectTreeNode[] selectedNodes = _session.getSessionSheet().getObjectTreePanel().getSelectedNodes();
+         ObjectTreeNode[] selectedNodes = _session.getSessionPanel().getObjectTreePanel().getSelectedNodes();
          TableToGraph.sendToGraph(_plugin, _session, TableToAddWrapper.wrap(selectedNodes));
       }
    }

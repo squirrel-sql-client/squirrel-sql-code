@@ -28,7 +28,6 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 /**
@@ -62,8 +61,8 @@ public class NewSQLWorksheetAction extends SquirrelAction implements ISessionAct
             break;
          case SQL_TAB:
             AdditionalSQLTab additionalSQLTab = new AdditionalSQLTab(_session);
-            int tabIndex = _session.getSessionSheet().addMainTab(additionalSQLTab);
-            _session.getSessionSheet().selectMainTab(tabIndex);
+            int tabIndex = _session.getSessionPanel().addMainTab(additionalSQLTab);
+            _session.getSessionPanel().selectMainTab(tabIndex);
             Main.getApplication().getPluginManager().additionalSQLTabOpened(additionalSQLTab);
             break;
          default:

@@ -671,7 +671,7 @@ class Session implements ISession
       return _sessionInternalFrame;
    }
 
-   public synchronized SessionPanel getSessionSheet()
+   public synchronized SessionPanel getSessionPanel()
    {
       return _sessionSheet;
    }

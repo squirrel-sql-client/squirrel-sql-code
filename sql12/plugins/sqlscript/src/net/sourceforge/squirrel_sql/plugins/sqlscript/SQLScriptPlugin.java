@@ -199,7 +199,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 		addActionsToPopup(session);
-		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
+		ISQLPanelAPI sqlPaneAPI = session.getSessionPanel().getMainSQLPaneAPI();
 		sqlPaneAPI.addSQLExecutionListener(new SQLToFileHandler(session, sqlPaneAPI));
 
 		PluginSessionCallback ret = new PluginSessionCallback()

@@ -36,7 +36,6 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.*;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.AnalysisEvent;
@@ -289,7 +288,7 @@ public class CopyExecutor extends I18NBaseObject {
    private void reloadObjectTree()
    {
       ISession session = prov.getDestSession();
-      if (session.getSessionSheet() != null)
+      if (session.getSessionPanel() != null)
       {
           session.getSchemaInfo().reload(DBUtil.getSchemaFromDbObject(prov.getDestDatabaseObject(), session.getSchemaInfo()));
           session.getSchemaInfo().fireSchemaInfoUpdate();

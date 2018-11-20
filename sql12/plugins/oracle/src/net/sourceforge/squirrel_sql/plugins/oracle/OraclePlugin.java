@@ -508,9 +508,9 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 			@Override
 			public void run()
 			{
-				ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getMainSQLPaneAPI();
+				ISQLPanelAPI sqlPaneAPI = session.getSessionPanel().getMainSQLPaneAPI();
 				initSQLPanel(session, sqlPaneAPI);
-				updateObjectTree(session.getSessionSheet().getObjectTreePanel());
+				updateObjectTree(session.getSessionPanel().getObjectTreePanel());
 			}
 		});
 

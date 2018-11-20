@@ -74,7 +74,7 @@ public class SQLPanelSelectionHandler
 
          if (null != mainPanelTab)
          {
-            sqlPanelAPI.getSession().getSessionSheet().selectMainTab(mainPanelTab);
+            sqlPanelAPI.getSession().getSessionPanel().selectMainTab(mainPanelTab);
          }
          else
          {

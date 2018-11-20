@@ -43,7 +43,7 @@ public class AdditionalSQLTab extends BaseSQLTab
       _titleWithoutFile = s_stringMgr.getString("AdditionalSQLTab.title", _tabNumber);
       ImageIcon icon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ADD_TAB);
 
-      //_tabComponent = new ButtonTabComponent(getSession().getSessionSheet().getTabbedPane(), _titleWithoutFile, icon);
+      //_tabComponent = new ButtonTabComponent(getSession().getSessionPanel().getTabbedPane(), _titleWithoutFile, icon);
       _tabComponent = new ButtonTabComponent(_titleWithoutFile, icon);
 
       _tabComponent.getClosebutton().addActionListener(e -> onClose());
@@ -73,7 +73,10 @@ public class AdditionalSQLTab extends BaseSQLTab
 
    private void onClose()
    {
-      getSession().getSessionSheet().removeMainTab(this);
+      if(getSQLPanel().getSQLPanelAPI().confirmClose())
+      {
+         getSession().getSessionPanel().removeMainTab(this);
+      }
    }
 
 
