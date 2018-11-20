@@ -359,4 +359,9 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
       _listeners.add(connectionListener);
    }
 
+   @Override
+   public void mouseWheelClickedOnTab()
+   {
+
+   }
 }

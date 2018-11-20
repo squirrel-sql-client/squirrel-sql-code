@@ -12,7 +12,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 public class AdditionalSQLTab extends BaseSQLTab
@@ -63,6 +66,12 @@ public class AdditionalSQLTab extends BaseSQLTab
       _titleWithoutFile = title;
 
       TitleFilePathHandlerUtil.setTitle(_titleWithoutFile, _titleFileHandler, _tabComponent);
+   }
+
+   @Override
+   public void mouseWheelClickedOnTab()
+   {
+      _tabComponent.doClickClose();
    }
 
    @Override

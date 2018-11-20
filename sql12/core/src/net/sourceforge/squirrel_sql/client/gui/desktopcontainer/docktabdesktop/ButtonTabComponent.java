@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -27,13 +26,10 @@ public class ButtonTabComponent extends JPanel
 
    private Font _defaultFont = null; // the default font of the title label
    private Font _selectedFont = null; // the font of the title label if tab is selected
-   private Color _selectedColor = null; // the foreground color of the title lable if tab is selected
+   private Color _foregroundColor = null; // the foreground color of the title lable if tab is selected
 
    /**
-    * With htis constructor the tab title won't turn to bold when it is selected
-    *
-    * @param title
-    * @param icon
+    * With this constructor the tab title won't turn to bold when it is selected
     */
    public ButtonTabComponent(String title, Icon icon)
    {
@@ -96,16 +92,16 @@ public class ButtonTabComponent extends JPanel
 
          if (null != _tabbedPane)
          {
-            _selectedColor = getSelectedColor(_tabbedPane);
+            _foregroundColor = getForegroundColor(_tabbedPane);
          }
          else
          {
-            _selectedColor = getSelectedColor(UIFactory.getInstance().createTabbedPane());
+            _foregroundColor = getForegroundColor(UIFactory.getInstance().createTabbedPane());
          }
       }
    }
 
-   private Color getSelectedColor(JTabbedPane tabbedPane)
+   private Color getForegroundColor(JTabbedPane tabbedPane)
    {
       Color ret = UIManager.getColor("TabbedPane.selectedForeground");
       // some look and feels may not support the above property so we fall back to foreground color of tabbed pane
@@ -117,8 +113,11 @@ public class ButtonTabComponent extends JPanel
    }
 
 
-   // calculate the tab index of this tab component
-   private int getTabIndex()
+   /**
+    *
+    * @return -1 when {@link _tabbedPane} is null or this component's tab index cant be found
+    */
+   private int getMyTabIndex()
    {
       if (null != _tabbedPane)
       {
@@ -138,14 +137,9 @@ public class ButtonTabComponent extends JPanel
    @Override
    public void paint(Graphics g)
    {
-      if(null == _tabbedPane)
-      {
-         super.paint(g);
-         return;
-      }
+      int tabIndex = getMyTabIndex();
 
-      int tabIndex = getTabIndex();
-      if (tabIndex >= 0)
+      if (tabIndex >= 0) // here _tabbedPane id guaranteed to be not null
       {
          if (tabIndex == _tabbedPane.getSelectedIndex())
          {
@@ -153,7 +147,7 @@ public class ButtonTabComponent extends JPanel
             // check if the foreground color is not set by user through a call to setForegroundAt
             if (_tabbedPane.getForegroundAt(tabIndex) instanceof ColorUIResource)
             {
-               _label.setForeground(_selectedColor);
+               _label.setForeground(_foregroundColor);
             }
             else
             {
@@ -166,6 +160,7 @@ public class ButtonTabComponent extends JPanel
             _label.setForeground(_tabbedPane.getForegroundAt(tabIndex));
          }
       }
+
       super.paint(g);
    }
 
@@ -250,7 +245,7 @@ public class ButtonTabComponent extends JPanel
 
    private static class CloseTabButton extends SmallTabButton
    {
-      private ButtonTabComponent tabComponent = null;
+      private ButtonTabComponent tabComponent;
 
       private CloseTabButton(ButtonTabComponent tabComponent)
       {
@@ -272,30 +267,13 @@ public class ButtonTabComponent extends JPanel
          }
          g2.setStroke(new BasicStroke(2));
 
-         // If tab is selected we want to paint the x with selected foreground color
          if (getModel().isRollover())
          {
             g2.setColor(Color.MAGENTA);
          }
          else
          {
-            if (null != tabComponent._tabbedPane)
-            {
-               // find out if the tab is selected
-               int tabIndex = tabComponent.getTabIndex();
-               if (tabIndex == tabComponent._tabbedPane.getSelectedIndex())
-               {
-                  g2.setColor(tabComponent._selectedColor);
-               }
-               else
-               {
-                  g2.setColor(tabComponent._tabbedPane.getForegroundAt(tabIndex));
-               }
-            }
-            else
-            {
-               g2.setColor(tabComponent._selectedColor);
-            }
+            g2.setColor(tabComponent._foregroundColor);
          }
 
          int delta = 6;

@@ -73,5 +73,7 @@ public interface IMainPanelTab {
 	 * This tab has been selected.
 	 */
 	void select();
+
+	void mouseWheelClickedOnTab();
 }
 

@@ -93,6 +93,11 @@ public abstract class BaseMainPanelTab implements IMainPanelTab
 	}
 
    @Override
+   public void mouseWheelClickedOnTab()
+   {
+   }
+
+   @Override
    public Component getTabComponent()
    {
       return null;

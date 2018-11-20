@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.dndtabbedpane.DnDTabbedPane;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MouseWheelClickOnTabListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,39 +12,39 @@ import java.awt.event.MouseEvent;
 
 public class DesktopTabbedPane extends DnDTabbedPane
 {
-   private IApplication _app;
-
    public DesktopTabbedPane(IApplication app)
    {
       super(app.getMultipleWindowsHandler().getOutwardDndTabbedPaneChanel());
-      _app = app;
       setPaintScrollArea(false);
       setPaintGhost(true);
 
-      addMouseListener(new MouseAdapter()
-      {
-         @Override
-         public void mouseClicked(MouseEvent e)
-         {
-            doCloseOnMiddleMouseClick(e);
-         }
-      });
+
+      GUIUtils.listenToMouseWheelClickOnTab(this, (tabIndex, tabComponent) -> ((ButtonTabComponent)tabComponent).doClickClose());
+
+//      addMouseListener(new MouseAdapter()
+//      {
+//         @Override
+//         public void mouseClicked(MouseEvent e)
+//         {
+//            doCloseOnMiddleMouseClick(e);
+//         }
+//      });
 
    }
 
-   private void doCloseOnMiddleMouseClick(MouseEvent e)
-   {
-      if(SwingUtilities.isMiddleMouseButton (e))
-      {
-         int tab = getUI().tabForCoordinate(this, e.getX(), e.getY());
-         if (-1 != tab)
-         {
-            ButtonTabComponent tabComponent = (ButtonTabComponent) getTabComponentAt(tab);
-            tabComponent.doClickClose();
-
-         }
-      }
-   }
+//   private void doCloseOnMiddleMouseClick(MouseEvent e)
+//   {
+//      if(SwingUtilities.isMiddleMouseButton (e))
+//      {
+//         int tab = getUI().tabForCoordinate(this, e.getX(), e.getY());
+//         if (-1 != tab)
+//         {
+//            ButtonTabComponent tabComponent = (ButtonTabComponent) getTabComponentAt(tab);
+//            tabComponent.doClickClose();
+//
+//         }
+//      }
+//   }
 
 
    @Override

@@ -33,7 +33,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ObjectTreeTab;
@@ -43,6 +42,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -60,23 +60,17 @@ public class MainPanel extends JPanel
 		int SQL_TAB = 1;
 	}
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(MainPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MainPanel.class);
 
-	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(MainPanel.class);
 
-	/** Current session. */
 	transient private ISession _session;
 
-	/** The tabbed pane. */
-	private final JTabbedPane _tabPnl = UIFactory.getInstance().createTabbedPane();
+	/** The tabbed pane for the Session tabs. */
+	private final JTabbedPane _tabbedPane = UIFactory.getInstance().createTabbedPane();
 
-	/** Listener to the sessions properties. */
 	transient private PropertyChangeListener _propsListener;
 
-	/** Listener for changes to the tabbed panel. */
 	transient private ChangeListener _tabPnlListener;
 
 	/**
@@ -87,14 +81,6 @@ public class MainPanel extends JPanel
 
    private static final String PREFS_KEY_SELECTED_TAB_IX = "squirrelSql_mainPanel_sel_tab_ix";
 
-	/**
-	 * ctor specifying the current session.
-	 *
-	 * @param	session		Current session.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a <TT>null</TT> <TT>ISession</TT> passed.
-	 */
 	MainPanel(ISession session)
 	{
 		super(new BorderLayout());
@@ -109,12 +95,21 @@ public class MainPanel extends JPanel
 		addMainPanelTab(new ObjectTreeTab(), Integer.valueOf('O'));
 		addMainPanelTab(new SQLTab(_session), Integer.valueOf('Q'));
 
-		add(_tabPnl, BorderLayout.CENTER);
+		add(_tabbedPane, BorderLayout.CENTER);
 
 		propertiesHaveChanged(null);
 
 		// Refresh the currently selected tab.
-		(_tabs.get(_tabPnl.getSelectedIndex())).select();
+		(_tabs.get(_tabbedPane.getSelectedIndex())).select();
+
+
+		GUIUtils.listenToMouseWheelClickOnTab(_tabbedPane, (tabIndex, tabComponent) -> onMouseWheelClickedOnTab(tabIndex));
+
+	}
+
+	private void onMouseWheelClickedOnTab(int tabIndex)
+	{
+		(_tabs.get(tabIndex)).mouseWheelClickedOnTab();
 	}
 
 	public void addNotify()
@@ -140,7 +135,7 @@ public class MainPanel extends JPanel
 				performStateChanged();
 			}
 		};
-		_tabPnl.addChangeListener(_tabPnlListener);
+		_tabbedPane.addChangeListener(_tabPnlListener);
 	}
 
 	public void removeNotify()
@@ -155,7 +150,7 @@ public class MainPanel extends JPanel
 
 		if (_tabPnlListener != null)
 		{
-			_tabPnl.removeChangeListener(_tabPnlListener);
+			_tabbedPane.removeChangeListener(_tabPnlListener);
 			_tabPnlListener = null;
 		}
 	}
@@ -190,31 +185,31 @@ public class MainPanel extends JPanel
 
       if (idx != -1)
 		{
-			_tabPnl.removeTabAt(idx);
+			_tabbedPane.removeTabAt(idx);
 			_tabs.set(idx, tab);
 		}
 		else
 		{
-			idx = _tabPnl.getTabCount();
+			idx = _tabbedPane.getTabCount();
 			_tabs.add(tab);
 		}
 
-      _tabPnl.insertTab(tab.getTitle(), null, tab.getComponent(), tab.getHint(), idx);
+      _tabbedPane.insertTab(tab.getTitle(), null, tab.getComponent(), tab.getHint(), idx);
       if(null != tab.getTabComponent())
       {
-         _tabPnl.setTabComponentAt(idx, tab.getTabComponent());
+         _tabbedPane.setTabComponentAt(idx, tab.getTabComponent());
       }
 
 
       int prefIx = Preferences.userRoot().getInt(PREFS_KEY_SELECTED_TAB_IX, ITabIndexes.OBJECT_TREE_TAB);
       if(idx == prefIx)
       {
-         _tabPnl.setSelectedIndex(prefIx);
+         _tabbedPane.setSelectedIndex(prefIx);
       }
 
       if(null != mnemonic)
       {
-         _tabPnl.setMnemonicAt(idx, mnemonic.intValue());
+         _tabbedPane.setMnemonicAt(idx, mnemonic.intValue());
 
       }
 
@@ -253,16 +248,16 @@ public class MainPanel extends JPanel
 		}
 
 		_tabs.add(idx, tab);
-		_tabPnl.insertTab(tab.getTitle(), null, tab.getComponent(), tab.getHint(), idx);
+		_tabbedPane.insertTab(tab.getTitle(), null, tab.getComponent(), tab.getHint(), idx);
 
       if(null != tab.getTabComponent())
       {
-         _tabPnl.setTabComponentAt(idx, tab.getTabComponent());
+         _tabbedPane.setTabComponentAt(idx, tab.getTabComponent());
       }
 
       if(selectInsertedTab)
       {
-         _tabPnl.setSelectedIndex(idx);
+         _tabbedPane.setSelectedIndex(idx);
       }
    }
 
@@ -271,11 +266,11 @@ public class MainPanel extends JPanel
       int checkIdx;
       if(null == tab.getTabComponent())
       {
-         checkIdx = _tabPnl.indexOfTab(tab.getTitle());
+         checkIdx = _tabbedPane.indexOfTab(tab.getTitle());
       }
       else
       {
-         checkIdx = _tabPnl.indexOfTabComponent(tab.getTabComponent());
+         checkIdx = _tabbedPane.indexOfTabComponent(tab.getTabComponent());
       }
       return checkIdx;
    }
@@ -294,7 +289,7 @@ public class MainPanel extends JPanel
 		}
 
       _tabs.remove(idx);
-		_tabPnl.removeTabAt(idx);
+		_tabbedPane.removeTabAt(idx);
 
 		return idx;
 	}
@@ -303,7 +298,7 @@ public class MainPanel extends JPanel
 
 	private void updateState()
 	{
-      int idx = _tabPnl.getSelectedIndex();
+      int idx = _tabbedPane.getSelectedIndex();
       if (idx != -1)
       {
          (_tabs.get(idx)).select();
@@ -313,7 +308,7 @@ public class MainPanel extends JPanel
 
    public IMainPanelTab getSelectedMainTab()
    {
-      int idx = _tabPnl.getSelectedIndex();
+      int idx = _tabbedPane.getSelectedIndex();
       if (idx == -1)
       {
          return null;
@@ -354,7 +349,7 @@ public class MainPanel extends JPanel
 		}
 
 		getObjectTreePanel().sessionWindowClosing();
-		int selIx = _tabPnl.getSelectedIndex();
+		int selIx = _tabbedPane.getSelectedIndex();
 
       if(selIx == ITabIndexes.OBJECT_TREE_TAB || selIx == ITabIndexes.SQL_TAB)
       {
@@ -374,7 +369,7 @@ public class MainPanel extends JPanel
 		if (propertyName == null
 			|| propertyName.equals(SessionProperties.IPropertyNames.MAIN_TAB_PLACEMENT))
 		{
-			_tabPnl.setTabPlacement(props.getMainTabPlacement());
+			_tabbedPane.setTabPlacement(props.getMainTabPlacement());
 		}
 	}
 
@@ -383,7 +378,7 @@ public class MainPanel extends JPanel
 		// Needed to guarantee other components a focus lost
 		// and to allow to enter the tabs components via tab
 		// key in a well defined way (the user can see where the focus is).
-		_tabPnl.requestFocusInWindow();
+		_tabbedPane.requestFocusInWindow();
 
 		updateState();
 	}
@@ -407,12 +402,12 @@ public class MainPanel extends JPanel
 
 	public int getSelectedMainTabIndex()
 	{
-		return _tabPnl.getSelectedIndex();
+		return _tabbedPane.getSelectedIndex();
 	}
 
 	public void selectMainTab(int tabIndex)
 	{
-		_tabPnl.setSelectedIndex(tabIndex);
+		_tabbedPane.setSelectedIndex(tabIndex);
 	}
 
 

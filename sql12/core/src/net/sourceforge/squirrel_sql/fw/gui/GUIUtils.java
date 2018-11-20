@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.ButtonTabComponent;
 import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -30,6 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -59,6 +61,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseListener;
+
 /**
  * Common GUI utilities accessed via static methods.
  *
@@ -66,9 +70,7 @@ import java.util.List;
  */
 public class GUIUtils
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(GUIUtils.class);
+	private static final ILogger s_log = LoggerController.createLogger(GUIUtils.class);
 
    /**
     * Centers <CODE>wind</CODE> within its parent. If it has no parent then
@@ -654,4 +656,30 @@ public class GUIUtils
          }
       });
    }
+
+	public static void listenToMouseWheelClickOnTab(JTabbedPane tabbedPane, MouseWheelClickOnTabListener mouseWheelClickOnTabListener)
+	{
+		tabbedPane.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mouseClicked(MouseEvent e)
+			{
+				handleMiddleMouseClick(e, tabbedPane, mouseWheelClickOnTabListener);
+			}
+		});
+
+	}
+
+	private static void handleMiddleMouseClick(MouseEvent e, JTabbedPane tabbedPane, MouseWheelClickOnTabListener mouseWheelClickOnTabListener)
+	{
+		if(SwingUtilities.isMiddleMouseButton (e))
+		{
+			int tabIndex = tabbedPane.getUI().tabForCoordinate(tabbedPane, e.getX(), e.getY());
+			if (-1 != tabIndex)
+			{
+				mouseWheelClickOnTabListener.mouseWheeleClickedOnTabComponent(tabIndex, tabbedPane.getTabComponentAt(tabIndex));
+			}
+		}
+
+	}
 }
