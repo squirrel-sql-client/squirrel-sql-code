@@ -9,6 +9,7 @@ Enhancements:
 #331 Add "New SQL tab" --> The "New SQL Worksheet" tool bar button can now be
   changed into a "New SQL Tab" button which opens a new SQL tab inside the main Session window.
 
+
 Bug fixes:
 
 #1365 Column order mixed up after "show row numbers" and "make editable" or "rerun"
