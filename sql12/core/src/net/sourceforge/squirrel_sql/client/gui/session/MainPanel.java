@@ -60,6 +60,9 @@ public class MainPanel extends JPanel
 		int SQL_TAB = 1;
 	}
 
+	private static final String PREFS_KEY_SELECTED_TAB_IX = "squirrelSql_mainPanel_sel_tab_ix";
+
+
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MainPanel.class);
 
 	private static final ILogger s_log = LoggerController.createLogger(MainPanel.class);
@@ -69,9 +72,9 @@ public class MainPanel extends JPanel
 	/** The tabbed pane for the Session tabs. */
 	private final JTabbedPane _tabbedPane = UIFactory.getInstance().createTabbedPane();
 
-	transient private PropertyChangeListener _propsListener;
+	private PropertyChangeListener _propsListener;
 
-	transient private ChangeListener _tabPnlListener;
+	private ChangeListener _tabPnlListener;
 
 	/**
 	 * Collection of <TT>IMainPanelTab</TT> objects displayed in
@@ -79,7 +82,7 @@ public class MainPanel extends JPanel
 	 */
 	private List<IMainPanelTab> _tabs = new ArrayList<>();
 
-   private static final String PREFS_KEY_SELECTED_TAB_IX = "squirrelSql_mainPanel_sel_tab_ix";
+	private ArrayList<MainPanelTabSelectionListener> _mainPanelTabSelectionListeners = new ArrayList<>();
 
 	MainPanel(ISession session)
 	{
@@ -301,8 +304,16 @@ public class MainPanel extends JPanel
       int idx = _tabbedPane.getSelectedIndex();
       if (idx != -1)
       {
-         (_tabs.get(idx)).select();
-      }
+			IMainPanelTab selectedMainPanelTab = _tabs.get(idx);
+
+			selectedMainPanelTab.select();
+
+			for (MainPanelTabSelectionListener mainPanelTabSelectionListener : _mainPanelTabSelectionListeners.toArray(new MainPanelTabSelectionListener[0]))
+			{
+				mainPanelTabSelectionListener.mainTabSelected(selectedMainPanelTab);
+			}
+
+		}
 		_session.getApplication().getActionCollection().activationChanged(_session.getSessionInternalFrame());
 	}
 
@@ -471,5 +482,14 @@ public class MainPanel extends JPanel
 		return ret;
 	}
 
+	public void addMainPanelTabSelectionListener(MainPanelTabSelectionListener mainPanelTabSelectionListener)
+	{
+		_mainPanelTabSelectionListeners.remove(mainPanelTabSelectionListener);
+		_mainPanelTabSelectionListeners.add(mainPanelTabSelectionListener);
+	}
 
+	public void removeMainPanelTabSelectionListener(MainPanelTabSelectionListener mainPanelTabSelectionListener)
+	{
+		_mainPanelTabSelectionListeners.remove(mainPanelTabSelectionListener);
+	}
 }

@@ -321,6 +321,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void addCaretListener(CaretListener lis)
 	{
+		_myTextArea.removeCaretListener(lis);
 		_myTextArea.addCaretListener(lis);
 	}
 

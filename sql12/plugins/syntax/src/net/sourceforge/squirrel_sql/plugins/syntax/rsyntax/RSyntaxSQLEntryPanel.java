@@ -421,6 +421,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void addCaretListener(CaretListener lis)
 	{
+		_textArea.removeCaretListener(lis);
 		_textArea.addCaretListener(lis);
 	}
 

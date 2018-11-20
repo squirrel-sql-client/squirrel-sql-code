@@ -284,7 +284,7 @@ public class SessionPanel extends JPanel
 		getObjectTreePanel().addTreeSelectionListener(_objTreeSelectionLis);
 
 		addToStatusBar(new SchemaPanel(session));
-		addToStatusBar(new RowColumnLabel(_mainTabPane.getMainSQLPanel().getSQLEntryPanel()));
+		addToStatusBar(new RowColumnLabel(_mainTabPane));
 		validate();
 	}
 

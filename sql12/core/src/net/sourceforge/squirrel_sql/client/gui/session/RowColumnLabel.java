@@ -5,14 +5,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
-import javax.swing.event.CaretListener;
 import javax.swing.event.CaretEvent;
 import javax.swing.border.Border;
 import java.awt.*;
 
 class RowColumnLabel extends JLabel
 {
-	private ISQLEntryPanel _sqlEntryPanel;
+	private RowColumnLabelSQLEntryPanelHandler _rowColumnLabelSqlEntryPanelHandler;
 	private StringBuffer _msg = new StringBuffer();
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RowColumnLabel.class);
@@ -20,23 +19,31 @@ class RowColumnLabel extends JLabel
 
 
    RowColumnLabel(ISQLEntryPanel sqlEntryPanel)
-	{
-		super(" ", JLabel.CENTER);
+   {
+      super(" ", JLabel.CENTER);
+      init(new RowColumnLabelSQLEntryPanelHandler(sqlEntryPanel, e -> onCaretUpdate(e)));
+   }
 
-		_sqlEntryPanel = sqlEntryPanel;
+   RowColumnLabel(MainPanel mainPanel)
+   {
+      super(" ", JLabel.CENTER);
+      init(new RowColumnLabelSQLEntryPanelHandler(mainPanel, e -> onCaretUpdate(e)));
+   }
 
-		sqlEntryPanel.addCaretListener(e -> onCaretUpdate(e));
+   private void init(RowColumnLabelSQLEntryPanelHandler rowColumnLabelSqlEntryPanelHandler)
+   {
+      _rowColumnLabelSqlEntryPanelHandler = rowColumnLabelSqlEntryPanelHandler;
 
-		writePosition(0,0, 0);
+      writePosition(0,0, 0);
 
       setToolTipText(s_stringMgr.getString("RowColumnLabel.tooltip"));
-	}
+   }
 
-	private void onCaretUpdate(CaretEvent e)
+   private void onCaretUpdate(CaretEvent e)
 	{
-		int caretLineNumber = _sqlEntryPanel.getCaretLineNumber();
-		int caretLinePosition = _sqlEntryPanel.getCaretLinePosition();
-      int caretPosition = _sqlEntryPanel.getCaretPosition();
+		int caretLineNumber = _rowColumnLabelSqlEntryPanelHandler.getCaretLineNumber();
+		int caretLinePosition = _rowColumnLabelSqlEntryPanelHandler.getCaretLinePosition();
+      int caretPosition = _rowColumnLabelSqlEntryPanelHandler.getCaretPosition();
 
 		writePosition(caretLineNumber, caretLinePosition, caretPosition);
 	}
