@@ -18,33 +18,8 @@ public class DesktopTabbedPane extends DnDTabbedPane
       setPaintScrollArea(false);
       setPaintGhost(true);
 
-
       GUIUtils.listenToMouseWheelClickOnTab(this, (tabIndex, tabComponent) -> ((ButtonTabComponent)tabComponent).doClickClose());
-
-//      addMouseListener(new MouseAdapter()
-//      {
-//         @Override
-//         public void mouseClicked(MouseEvent e)
-//         {
-//            doCloseOnMiddleMouseClick(e);
-//         }
-//      });
-
    }
-
-//   private void doCloseOnMiddleMouseClick(MouseEvent e)
-//   {
-//      if(SwingUtilities.isMiddleMouseButton (e))
-//      {
-//         int tab = getUI().tabForCoordinate(this, e.getX(), e.getY());
-//         if (-1 != tab)
-//         {
-//            ButtonTabComponent tabComponent = (ButtonTabComponent) getTabComponentAt(tab);
-//            tabComponent.doClickClose();
-//
-//         }
-//      }
-//   }
 
 
    @Override
