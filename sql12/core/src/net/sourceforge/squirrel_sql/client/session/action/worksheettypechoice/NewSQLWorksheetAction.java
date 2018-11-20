@@ -64,6 +64,7 @@ public class NewSQLWorksheetAction extends SquirrelAction implements ISessionAct
             int tabIndex = _session.getSessionPanel().addMainTab(additionalSQLTab);
             _session.getSessionPanel().selectMainTab(tabIndex);
             Main.getApplication().getPluginManager().additionalSQLTabOpened(additionalSQLTab);
+            _session.getSessionInternalFrame().moveToFront();
             break;
          default:
             throw new IllegalStateException("Unknown selected SQLWorksheetTypeEnum " + SQLWorksheetTypeEnum.getSelecteType());

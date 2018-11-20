@@ -194,8 +194,7 @@ public class TabWidget implements IWidget
       return _delegate.getTabHandle();
    }
 
-   public void setSelected(boolean b)
-         throws PropertyVetoException
+   public void setSelected(boolean b) throws PropertyVetoException
    {
       _delegate.setSelected(b);
    }
