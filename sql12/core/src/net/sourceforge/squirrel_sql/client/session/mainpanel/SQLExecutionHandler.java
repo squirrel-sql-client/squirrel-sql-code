@@ -438,7 +438,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
 
    public void sqlExecutionWarning(SQLWarning warn)
    {
-      _session.showMessage(warn);
+      _session.showWarningMessage(warn);
    }
 
    public void sqlStatementCount(int statementCount)

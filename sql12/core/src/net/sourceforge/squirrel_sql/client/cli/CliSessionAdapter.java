@@ -314,6 +314,12 @@ public class CliSessionAdapter implements ISession
    }
 
    @Override
+   public void showWarningMessage(Throwable th)
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
    public SQLConnection createUnmanagedConnection()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");

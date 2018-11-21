@@ -1195,38 +1195,46 @@ class Session implements ISession
     /**
      * @see net.sourceforge.squirrel_sql.client.session.ISession#showMessage(java.lang.Throwable, net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter)
      */
-    public void showMessage(Throwable th) {
-        _msgHandler.showMessage(th, formatter);
+    public void showMessage(Throwable th)
+    {
+       _msgHandler.showMessage(th, formatter);
     }
 
     /**
      * @see net.sourceforge.squirrel_sql.client.session.ISession#showWarningMessage(java.lang.String)
      */
-    public void showWarningMessage(String msg) {
-        _msgHandler.showWarningMessage(msg);
+    public void showWarningMessage(String msg)
+    {
+       _msgHandler.showWarningMessage(msg);
     }
-    
-    /**
+
+   @Override
+   public void showWarningMessage(Throwable th)
+   {
+      _msgHandler.showWarningMessage(th, formatter);
+   }
+
+   /**
      * @see net.sourceforge.squirrel_sql.client.session.ISession#createUnmanagedConnection()
      */
-    public SQLConnection createUnmanagedConnection()
-    {
-       SQLConnectionState connState = new SQLConnectionState();
+   public SQLConnection createUnmanagedConnection()
+   {
+      SQLConnectionState connState = new SQLConnectionState();
 
-       OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,
-             _user, _password, connState.getConnectionProperties());
-       try
-       {
-          cmd.executeAndWait();
-       }
-       catch (Exception e)
-       {
-          showErrorMessage(e);
-          return null;
-       }
+      OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,_user, _password, connState.getConnectionProperties());
 
-       return cmd.getSQLConnection();
-    }
+      try
+      {
+         cmd.executeAndWait();
+      }
+      catch (Exception e)
+      {
+         showErrorMessage(e);
+         return null;
+      }
+
+      return cmd.getSQLConnection();
+   }
 
    @Override
    public void addSimpleSessionListener(SimpleSessionListener simpleSessionListener)

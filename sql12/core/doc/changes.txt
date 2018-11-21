@@ -12,6 +12,9 @@ Enhancements:
 
 Bug fixes:
 
+Logs and message panel: SQLWarnings, that occur during SQL execution, are now displayed as warning instead of error.
+
+
 #1365 Column order mixed up after "show row numbers" and "make editable" or "rerun"
 
 #1364 Connections tab shows no data on PostgreSQL 9.2+

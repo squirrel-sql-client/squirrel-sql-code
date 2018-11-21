@@ -107,6 +107,12 @@ public class ListMessageHandler implements IMessageHandler
       _warningMsgs.add(msg);
    }
 
+   @Override
+   public void showWarningMessage(Throwable th, ExceptionFormatter formatter)
+   {
+      _throwables.add(th);
+   }
+
    /**
     * Return array of stored exceptions.
     *

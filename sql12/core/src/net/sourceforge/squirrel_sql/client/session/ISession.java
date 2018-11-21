@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -388,7 +389,10 @@ public interface ISession extends IHasIdentifier
     */
    void showErrorMessage(String msg);
 
-   void showWarningMessage(String msg);    
+   void showWarningMessage(String msg);
+
+   void showWarningMessage(Throwable th);
+
 
    /**
     * Create a new connection, which is not associated with the current session.

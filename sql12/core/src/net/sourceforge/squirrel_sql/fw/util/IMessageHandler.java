@@ -68,4 +68,5 @@ public interface IMessageHandler {
 
     void showWarningMessage(String msg);
 
+    void showWarningMessage(Throwable th, ExceptionFormatter formatter);
 }
