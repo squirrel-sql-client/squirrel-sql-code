@@ -422,7 +422,7 @@ public class MainPanel extends JPanel
 	}
 
 
-	SQLPanel getMainSQLPanel()
+	public SQLPanel getMainSQLPanel()
 	{
 		for (IMainPanelTab tab : _tabs)
 		{
@@ -438,7 +438,7 @@ public class MainPanel extends JPanel
 	/**
 	 * @return null if the selected panel is not an SQL panel.
 	 */
-	SQLPanel getSelectedSQLPanel()
+	public SQLPanel getSelectedSQLPanel()
 	{
 		IMainPanelTab selectedMainTab = getSelectedMainTab();
 

@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.rowcolumnlabel.RowColumnLabel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;

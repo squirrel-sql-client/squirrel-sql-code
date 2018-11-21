@@ -1,7 +1,9 @@
-package net.sourceforge.squirrel_sql.client.gui.session;
+package net.sourceforge.squirrel_sql.client.gui.session.rowcolumnlabel;
 
+import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 
 import javax.swing.event.CaretEvent;
@@ -61,39 +63,23 @@ public class RowColumnLabelSQLEntryPanelHandler
       });
    }
 
-   public int getCaretLineNumber()
+   public CaretPositionInfo getCaretPositionInfo()
    {
       if (null != _sqlEntryPanel)
       {
-         return _sqlEntryPanel.getCaretLineNumber();
+         return new CaretPositionInfo(_sqlEntryPanel.getCaretLineNumber(), _sqlEntryPanel.getCaretLinePosition(), _sqlEntryPanel.getCaretPosition());
       }
       else
       {
-         return _mainPanel.getSelectedSQLPanel().getSQLEntryPanel().getCaretLineNumber();
-      }
-   }
+         SQLPanel sqlPanel = _mainPanel.getSelectedSQLPanel();
 
-   public int getCaretLinePosition()
-   {
-      if (null != _sqlEntryPanel)
-      {
-         return _sqlEntryPanel.getCaretLinePosition();
-      }
-      else
-      {
-         return _mainPanel.getSelectedSQLPanel().getSQLEntryPanel().getCaretLinePosition();
-      }
-   }
+         if(null == sqlPanel)
+         {
+            return null;
+         }
 
-   public int getCaretPosition()
-   {
-      if (null != _sqlEntryPanel)
-      {
-         return _sqlEntryPanel.getCaretPosition();
-      }
-      else
-      {
-         return _mainPanel.getSelectedSQLPanel().getSQLEntryPanel().getCaretPosition();
+         ISQLEntryPanel sqlEntryPanel = sqlPanel.getSQLEntryPanel();
+         return new CaretPositionInfo(sqlEntryPanel.getCaretLineNumber(), sqlEntryPanel.getCaretLinePosition(), sqlEntryPanel.getCaretPosition());
       }
    }
 }

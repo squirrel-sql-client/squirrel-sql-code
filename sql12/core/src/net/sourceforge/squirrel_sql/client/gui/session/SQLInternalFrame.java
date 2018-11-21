@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.client.gui.session.rowcolumnlabel.RowColumnLabel;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
