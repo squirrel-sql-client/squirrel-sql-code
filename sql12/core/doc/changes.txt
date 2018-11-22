@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Find Alias window (ctrl alt shift F): Last search string is now selected when window is opened.
+
 Improved parsing for SQL editor: Table names tended to be marked as error (red) until another character was entered.
 
 #331 Add "New SQL tab" --> The "New SQL Worksheet" tool bar button can now be

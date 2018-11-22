@@ -107,23 +107,28 @@ public class FindAliasesCtrl
          }
       });
 
-
+      _dlg.chkRememberLastSearch.setFocusable(false);
       _dlg.chkRememberLastSearch.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_FIND_ALIAS_REMEMBER_LAST_SEARCH, false));
 
       if (_dlg.chkRememberLastSearch.isSelected())
       {
-         _dlg.txtToSearch.setText(Preferences.userRoot().get(PREF_KEY_FIND_ALIAS_LAST_SEARCH_STRING, null));
+         String lastSearchString = Preferences.userRoot().get(PREF_KEY_FIND_ALIAS_LAST_SEARCH_STRING, null);
+         _dlg.txtToSearch.setText(lastSearchString);
+
+         if(null != lastSearchString)
+         {
+            _dlg.txtToSearch.selectAll();
+         }
       }
 
-      _dlg.txtToSearch.addKeyListener(new KeyAdapter() {
+      _dlg.txtToSearch.addKeyListener(new KeyAdapter()
+      {
          @Override
          public void keyPressed(KeyEvent e)
          {
             onKeyPressed(e);
          }
       });
-
-
 
       SwingUtilities.invokeLater(() -> _dlg.txtToSearch.requestFocus());
 
