@@ -103,13 +103,7 @@ public class CompleteCodeAction extends SquirrelAction
          _sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
          _sqlEntryPanel.replaceSelection(completionCandidates.getAllCandidatesPrefix(false));
 
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               _cc.show();
-            }
-         });
+         SwingUtilities.invokeLater(() -> _cc.show());
       }
       else if(KeyEvent.VK_TAB == keyCode)
 		{
@@ -117,6 +111,7 @@ public class CompleteCodeAction extends SquirrelAction
 			_sqlEntryPanel.setSelectionEnd(getNextStopCharPos(_sqlEntryPanel.getCaretPosition()));
 			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
          adjustCaret(completion);
+         _sqlEntryPanel.triggerParser();
 		}
 		else
 		{
@@ -124,6 +119,8 @@ public class CompleteCodeAction extends SquirrelAction
 			_sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
 			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
          adjustCaret(completion);
+         _sqlEntryPanel.triggerParser();
+
 		}
 
    }

@@ -322,7 +322,8 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
    }
 
 
-	private void triggerParser()
+   @Override
+	public void triggerParser()
 	{
 		IParserEventsProcessor parserEventsProcessor = _propertiesWrapper.getParserEventsProcessor(getIdentifier(),	_session);
 

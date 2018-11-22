@@ -261,8 +261,12 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
       return sqlEntryScroller;
    }
 
+   @Override
+	public void triggerParser()
+	{
+	}
 
-   private final class MyMouseListener extends MouseAdapter
+	private final class MyMouseListener extends MouseAdapter
 	{
 		public void mousePressed(MouseEvent evt)
 		{
@@ -280,34 +284,35 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 			}
 		}
 
-        /**
-         * This provides the feature which is like in Eclipse when you control
-         * click on an identifier it takes you to the file that contains the 
-         * identifier (method, class, etc) definition.  Similarly, ctrl-clicking 
-         * on an identifier in the SQL editor will invoke the view object at
-         * cursor in object tree action. 
-         */
+		/**
+		 * This provides the feature which is like in Eclipse when you control
+		 * click on an identifier it takes you to the file that contains the
+		 * identifier (method, class, etc) definition.  Similarly, ctrl-clicking
+		 * on an identifier in the SQL editor will invoke the view object at
+		 * cursor in object tree action.
+		 */
 		@Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.isControlDown() && e.getClickCount() == 1) {
-                
-                final Action a = 
-                    _app.getActionCollection().get(ViewObjectAtCursorInObjectTreeAction.class);
-                GUIUtils.processOnSwingEventThread(new Runnable() {
-                    public void run() {
-                        a.actionPerformed(new ActionEvent(this, 1, ViewObjectAtCursorInObjectTreeAction.VIEW_OBJECT_AT_CURSOR_INOBJECT_TREE_ACTION_BY_CTRL_MOUSECLICK));
-                    }
-                });
-            }
-        }
+		public void mouseClicked(MouseEvent e)
+		{
+			if (e.isControlDown() && e.getClickCount() == 1)
+			{
 
-        private void displayPopupMenu(MouseEvent evt)
+				final Action a =
+						_app.getActionCollection().get(ViewObjectAtCursorInObjectTreeAction.class);
+				GUIUtils.processOnSwingEventThread(new Runnable()
+				{
+					public void run()
+					{
+						a.actionPerformed(new ActionEvent(this, 1, ViewObjectAtCursorInObjectTreeAction.VIEW_OBJECT_AT_CURSOR_INOBJECT_TREE_ACTION_BY_CTRL_MOUSECLICK));
+					}
+				});
+			}
+		}
+
+		private void displayPopupMenu(MouseEvent evt)
 		{
 			_textPopupMenu.setTextComponent(getTextComponent());
 			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
 		}
 	}
-
-
-
 }

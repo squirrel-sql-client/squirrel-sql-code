@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.parser;
 
 public interface IParserEventsProcessor
 {
-	public void addParserEventsListener(ParserEventsListener l);
-	public void removeParserEventsListener(ParserEventsListener l);
-   public void triggerParser();
+	void addParserEventsListener(ParserEventsListener l);
+	void removeParserEventsListener(ParserEventsListener l);
+   void triggerParser();
 }

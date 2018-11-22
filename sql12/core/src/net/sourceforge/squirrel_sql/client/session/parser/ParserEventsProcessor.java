@@ -21,8 +21,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 {
 	private Timer _parserTimer;
 	private ParserThread _parserThread;
-	private Vector<ParserEventsListener> _listeners = 
-	    new Vector<ParserEventsListener>();
+	private Vector<ParserEventsListener> _listeners = new Vector<>();
 	private ISession _session;
    private ISQLPanelAPI _sqlPanelApi;
 	private KeyAdapter _triggerParserKeyListener;
@@ -52,33 +51,30 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 
       _parserTimer = new Timer(500, al);
-      _parserTimer.start();
+      _parserTimer.setRepeats(false);
    }
 
 
    private void onParserExitedOnException(final Throwable e)
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				throw new BaseRuntimeException(e);
-			}
-		});
-
+		SwingUtilities.invokeLater(() -> {throw new BaseRuntimeException(e);});
 	}
 
-	public void addParserEventsListener(ParserEventsListener l) {
-        if (_listeners != null && l != null) {
-            _listeners.add(l);
-        }
-    }
-    
-	public void removeParserEventsListener(ParserEventsListener l) {
-        if (_listeners != null && l != null) {
-            _listeners.add(l);
-        }
-    }
+	public void addParserEventsListener(ParserEventsListener l)
+	{
+		if (_listeners != null && l != null)
+		{
+			_listeners.add(l);
+		}
+	}
+
+	public void removeParserEventsListener(ParserEventsListener l)
+	{
+		if (_listeners != null && l != null)
+		{
+			_listeners.add(l);
+		}
+	}
 
 	public void endProcessing()
 	{
@@ -111,13 +107,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 	private void onParsingFinished()
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				fireParsingFinished();
-			}
-		});
+		SwingUtilities.invokeLater(() -> fireParsingFinished());
 	}
 
 	private void fireParsingFinished()
@@ -165,10 +155,6 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 		_parserThread = new ParserThread(new SQLSchemaImpl(_session));
 
 		_sqlPanelApi.getSQLEntryPanel().getTextComponent().addKeyListener(_triggerParserKeyListener);
-
-      // No more automatic restarts because
-      // key events will restart the parser from now on.
-      _parserTimer.setRepeats(false);
 
 		_parserThread.setParsingFinishedListener(new ParsingFinishedListener()
 		{
