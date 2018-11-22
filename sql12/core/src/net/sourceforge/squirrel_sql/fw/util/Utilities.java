@@ -504,4 +504,13 @@ public class Utilities
       return StringUtilities.escapeHtmlChars(sql);
    }
 
+   public static RuntimeException wrapRunntime(Throwable e)
+   {
+      if(e instanceof RuntimeException)
+      {
+         return (RuntimeException) e;
+      }
+
+      return new RuntimeException(e);
+   }
 }

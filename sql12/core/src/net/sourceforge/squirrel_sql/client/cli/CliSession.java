@@ -1,9 +1,7 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -14,6 +12,7 @@ import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import java.sql.SQLException;
 
@@ -51,7 +50,7 @@ public class CliSession extends CliSessionAdapter
       }
       catch (Exception e)
       {
-         throw CliExceptionUtil.wrapRunntime(e);
+         throw Utilities.wrapRunntime(e);
       }
    }
 

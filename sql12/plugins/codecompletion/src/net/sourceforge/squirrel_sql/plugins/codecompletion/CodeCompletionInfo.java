@@ -11,9 +11,9 @@ public abstract class CodeCompletionInfo extends CompletionInfo
    /**
     * Default implementation
     */
-   public ArrayList<CodeCompletionInfo> getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern) throws SQLException
-   {
-      return new ArrayList<CodeCompletionInfo>();
+   public ArrayList<? extends CodeCompletionInfo> getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern)
+	{
+      return new ArrayList<>();
    }
 
 

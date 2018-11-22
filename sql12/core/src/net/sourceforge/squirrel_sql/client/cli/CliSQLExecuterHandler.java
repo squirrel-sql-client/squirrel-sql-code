@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.ResultAsText;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -76,7 +77,7 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
 
       if(null != th)
       {
-         throw CliExceptionUtil.wrapRunntime(th);
+         throw Utilities.wrapRunntime(th);
       }
 
       return postErrorString;

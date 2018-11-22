@@ -19,19 +19,21 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
 public class CodeCompletionTableInfo extends CodeCompletionInfo
 {
    private String _tableName;
    private String _tableType;
-   private ArrayList<CodeCompletionInfo> _colInfos;
+   private ArrayList<CodeCompletionColumnInfo> _colInfos;
    String _toString;
    private String _catalog;
    private String _schema;
@@ -85,86 +87,104 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
       return _tableName;
    }
 
-   public ArrayList<CodeCompletionInfo> getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern)
-      throws SQLException
+   public ArrayList<? extends CodeCompletionInfo> getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern)
    {
-      //System.out.println("getColumns colInfos:" + _colInfos + " schemaInfo :" + schemaInfo + " colNamePattern :" + colNamePattern);
-      //SH
-      if(null == _colInfos || _colInfos.size() == 0)
+      try
       {
-         ExtendedColumnInfo[] schemColInfos = schemaInfo.getExtendedColumnInfos(_catalog, _schema, _tableName);
-
-
-         ArrayList<CodeCompletionInfo> colInfosBuf = new ArrayList<CodeCompletionInfo>();
-         HashSet<String> uniqCols = new HashSet<String>();
-         for (int i = 0; i < schemColInfos.length; i++)
+         if(null == _colInfos || _colInfos.size() == 0)
          {
-            if(   (null == _catalog || null == schemColInfos[i].getCatalog() || ("" + _catalog).equals("" + schemColInfos[i].getCatalog()))
-               && (null == _schema || null == schemColInfos[i].getSchema() || ("" + _schema).equals("" + schemColInfos[i].getSchema()))   )
+            ExtendedColumnInfo[] schemColInfos = schemaInfo.getExtendedColumnInfos(_catalog, _schema, _tableName);
+
+
+            ArrayList<CodeCompletionColumnInfo> colInfosBuf = new ArrayList<>();
+            HashSet<String> uniqCols = new HashSet<>();
+            for (int i = 0; i < schemColInfos.length; i++)
             {
-               String columnName = schemColInfos[i].getColumnName();
-               String columnType = schemColInfos[i].getColumnType();
-               String remarks = schemColInfos[i].getRemarks();
-               int columnSize = schemColInfos[i].getColumnSize();
-               int decimalDigits = schemColInfos[i].getDecimalDigits();
-               boolean nullable = schemColInfos[i].isNullable();
-
-               CodeCompletionColumnInfo buf =
-                  new CodeCompletionColumnInfo(columnName, remarks, columnType, columnSize, decimalDigits, nullable, _useCompletionPrefs, _prefs.isShowRemarksInColumnCompletion());
-
-               String bufStr = buf.toString();
-               if (!uniqCols.contains(bufStr))
+               if(   (null == _catalog || null == schemColInfos[i].getCatalog() || ("" + _catalog).equals("" + schemColInfos[i].getCatalog()))
+                  && (null == _schema || null == schemColInfos[i].getSchema() || ("" + _schema).equals("" + schemColInfos[i].getSchema()))   )
                {
-                  uniqCols.add(bufStr);
-                  colInfosBuf.add(buf);
+                  String columnName = schemColInfos[i].getColumnName();
+                  String columnType = schemColInfos[i].getColumnType();
+                  String remarks = schemColInfos[i].getRemarks();
+                  int columnSize = schemColInfos[i].getColumnSize();
+                  int decimalDigits = schemColInfos[i].getDecimalDigits();
+                  boolean nullable = schemColInfos[i].isNullable();
+
+                  CodeCompletionColumnInfo buf =
+                     new CodeCompletionColumnInfo(columnName, remarks, columnType, columnSize, decimalDigits, nullable, _useCompletionPrefs, _prefs.isShowRemarksInColumnCompletion());
+
+                  String bufStr = buf.toString();
+                  if (!uniqCols.contains(bufStr))
+                  {
+                     uniqCols.add(bufStr);
+                     colInfosBuf.add(buf);
+                  }
+               }
+            }
+
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // According to Stefan Hohenstein this block makes column completion work on db2/400 work in special cases where it didn't work before.
+            // The code is executed only in the peculiar case when no columns could be found for a table.
+            if(colInfosBuf.size() == 0 && _session != null)
+            {
+               SQLDatabaseMetaData sdmd = _session.getSQLConnection().getSQLMetaData();
+               TableColumnInfo[] ti = sdmd.getColumnInfo(_catalog, _schema, _tableName);
+               for(int x = 0; x < ti.length; x++)
+               {
+                  CodeCompletionColumnInfo buf =
+                        new CodeCompletionColumnInfo(
+                              ti[x].getColumnName(),
+                              ti[x].getRemarks(),
+                              ti[x].getTypeName(),
+                              ti[x].getColumnSize(),
+                              ti[x].getDecimalDigits(),
+                              (ti[x].isNullable().equals("NO")) ? false : true,
+                              _useCompletionPrefs,
+                              _prefs.isShowRemarksInColumnCompletion()
+                        );
+
+                  String bufStr = buf.toString();
+                  if (!uniqCols.contains(bufStr))
+                  {
+                     uniqCols.add(bufStr);
+                     colInfosBuf.add(buf);
+                  }
+               }
+            }
+            //
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            _colInfos = colInfosBuf;
+         }
+
+         String trimmedColNamePattern = colNamePattern.trim();
+
+         ArrayList<CodeCompletionColumnInfo> ret = new ArrayList<>();
+
+         if("".equals(trimmedColNamePattern))
+         {
+            ret = _colInfos;
+         }
+         else
+         {
+            for (CodeCompletionColumnInfo colInfo : _colInfos)
+            {
+               if(colInfo.matchesCompletionStringStart(trimmedColNamePattern, _useCompletionPrefs && _prefs.isMatchCamelCase()))
+               {
+                  ret.add(colInfo);
                }
             }
          }
 
+         ret.sort(Comparator.comparing(codeCompletionColumnInfo -> codeCompletionColumnInfo.getCompareString().toUpperCase()));
 
-         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-         // According to Stefan Hohenstein this block makes column completion work on db2/400 work in special cases where it didn't work before.
-         // The code is executed only in the peculiar case when no columns could be found for a table.
-         if(colInfosBuf.size() == 0 && _session != null)
-         {
-            SQLDatabaseMetaData sdmd = _session.getSQLConnection().getSQLMetaData();
-            TableColumnInfo[] ti = sdmd.getColumnInfo(_catalog, _schema, _tableName);
-            for(int x = 0; x < ti.length; x++)
-            {
-               CodeCompletionColumnInfo buf = new CodeCompletionColumnInfo(ti[x].getColumnName(), ti[x].getRemarks(), ti[x].getTypeName(), ti[x].getColumnSize(), ti[x].getDecimalDigits(), (ti[x].isNullable().equals("NO")) ? false : true, _useCompletionPrefs, _prefs.isShowRemarksInColumnCompletion());
-               String bufStr = buf.toString();
-               if (!uniqCols.contains(bufStr))
-               {
-                  uniqCols.add(bufStr);
-                  colInfosBuf.add(buf);
-               }
-            }
-         }
-         //
-         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-         _colInfos = colInfosBuf;
+         return ret;
       }
-
-      String trimmedColNamePattern = colNamePattern.trim();
-
-      if("".equals(trimmedColNamePattern))
+      catch (SQLException e)
       {
-         return _colInfos;
+         throw Utilities.wrapRunntime(e);
       }
-
-      ArrayList<CodeCompletionInfo> ret = new ArrayList<CodeCompletionInfo>();
-
-      for (CodeCompletionInfo colInfo : _colInfos)
-      {
-         if(colInfo.matchesCompletionStringStart(trimmedColNamePattern, _useCompletionPrefs && _prefs.isMatchCamelCase()))
-         {
-            ret.add(colInfo);
-         }
-
-      }
-
-      return ret;
    }
 
    public boolean hasColumns()

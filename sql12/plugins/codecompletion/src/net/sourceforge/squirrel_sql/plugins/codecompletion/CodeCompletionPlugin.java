@@ -288,58 +288,45 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 
 	private void initCodeCompletionSqlEditor(final ISQLPanelAPI sqlPaneAPI, final ISession session)
 	{
-      GUIUtils.processOnSwingEventThread(new Runnable()
-      {
-         public void run()
-         {
-            CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this,  true);
-
-            CompleteCodeAction cca =
-               new CompleteCodeAction(session.getApplication(),
-                  CodeCompletionPlugin.this,
-                  sqlPaneAPI.getSQLEntryPanel(),
-                  session,
-                  c,
-                  null);
-
-            JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cca);
-
-            _resources.configureMenuItem(cca, item);
-
-            JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
-            comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-            sqlPaneAPI.addToToolsPopUp("completecode", cca);
-         }
-
-      });
+      GUIUtils.processOnSwingEventThread(() -> _initCodeCompletionSqlEditor(session, sqlPaneAPI));
    }
+
 
 	private void initCodeCompletionObjectTreeFind(final ISession session, final ObjectTreePanel objectTreePanel)
 	{
-      GUIUtils.processOnSwingEventThread(new Runnable()
-      {
-         public void run()
-         {
-            ISQLEntryPanel findEntryPanel = objectTreePanel.getFindController().getFindEntryPanel();
-
-            CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this, false);
-
-            CompleteCodeAction cca =
-               new CompleteCodeAction(session.getApplication(),
-                  CodeCompletionPlugin.this,
-                  findEntryPanel,
-                  session,
-                  c,
-                  objectTreePanel);
-
-
-            JComponent comp = findEntryPanel.getTextComponent();
-            comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-         }
-
-      });
+      GUIUtils.processOnSwingEventThread(() -> _initCodeCompletionObjectTreeFind(objectTreePanel, session));
    }
+
+	private void _initCodeCompletionSqlEditor(ISession session, ISQLPanelAPI sqlPaneAPI)
+	{
+		CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this,  true);
+
+		CompleteCodeAction cca =
+				new CompleteCodeAction(session.getApplication(),CodeCompletionPlugin.this, sqlPaneAPI.getSQLEntryPanel(), session, c,null);
+
+		JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cca);
+
+		_resources.configureMenuItem(cca, item);
+
+		JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
+		comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+		sqlPaneAPI.addToToolsPopUp("completecode", cca);
+	}
+
+
+	private void _initCodeCompletionObjectTreeFind(ObjectTreePanel objectTreePanel, ISession session)
+	{
+		ISQLEntryPanel findEntryPanel = objectTreePanel.getFindController().getFindEntryPanel();
+
+		CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this, false);
+
+		CompleteCodeAction cca =
+				new CompleteCodeAction(session.getApplication(),CodeCompletionPlugin.this, findEntryPanel, session, c,objectTreePanel);
+
+		JComponent comp = findEntryPanel.getTextComponent();
+		comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+	}
 
 	/**
 	 * Retrieve plugins resources.

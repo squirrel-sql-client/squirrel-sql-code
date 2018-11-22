@@ -145,11 +145,12 @@ public class StandardCompletorModel
    }
 
 
-   private ArrayList<CodeCompletionInfo> getColumnsForName(String catalog, String schema, String name, String colNamePat, int colPos)
+   private ArrayList<? extends CodeCompletionInfo> getColumnsForName(String catalog, String schema, String name, String colNamePat, int colPos)
 	{
 		CodeCompletionInfo[] infos = _codeCompletionInfos.getInfosStartingWith(catalog, schema, name);
       CodeCompletionInfo toReturn = null;
-		if (colPos != -1)
+
+      if (colPos != -1)
 		{
 			// First check aliases
 			for (int j = 0; j < infos.length; j++)
@@ -169,6 +170,7 @@ public class StandardCompletorModel
 				}
 			}
 		}
+
 		if (toReturn == null)
 		{
 			for (int i = 0; i < infos.length; ++i)
@@ -180,18 +182,17 @@ public class StandardCompletorModel
 				}
 			}
 		}
-		if (toReturn != null)
+
+
+
+
+		if (toReturn == null)
 		{
-			try
-			{
-				return toReturn.getColumns(_session.getSchemaInfo(), colNamePat);
-			}
-			catch (SQLException e)
-			{
-				_log.error("Error retrieving columns", e);
-			}
-		}
-		return new ArrayList<CodeCompletionInfo>();
+         return new ArrayList<>();
+      }
+
+
+      return toReturn.getColumns(_session.getSchemaInfo(), colNamePat);
 	}
 
 
