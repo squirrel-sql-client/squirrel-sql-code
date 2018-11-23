@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommandListener;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
@@ -104,8 +105,8 @@ class Session implements ISession
    /** Alias describing how to connect to database. */
    private SQLAlias _alias;
 
-   private final String _user;
-   private final String _password;
+   private String _user;
+   private String _password;
 
    /** Properties for this session. */
    private SessionProperties _props;
@@ -553,8 +554,9 @@ class Session implements ISession
 
    /**
     * Reconnect to the database.
+    * @param reconnectInfo
     */
-   public void reconnect()
+   public void reconnect(ReconnectInfo reconnectInfo)
    {
       final SQLConnectionState connState = new SQLConnectionState();
       if (_conn != null)
@@ -568,8 +570,7 @@ class Session implements ISession
             s_log.error("Unexpected SQLException", ex);
          }
       }
-      final OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,
-                                 _user, _password, connState.getConnectionProperties());
+      final OpenConnectionCommand cmd = new OpenConnectionCommand(_alias, _user, _password, connState.getConnectionProperties(), reconnectInfo);
       try
       {
          closeSQLConnection();
@@ -584,14 +585,7 @@ class Session implements ISession
       }
       try
       {
-         cmd.execute(new OpenConnectionCommandListener()
-         {
-            @Override
-            public void openConnectionFinished(Throwable t)
-            {
-               reconnectDone(connState, cmd, t);
-            }
-         });
+         cmd.execute(t -> reconnectDone(connState, cmd, t, reconnectInfo));
       }
       catch (Throwable t)
       {
@@ -602,7 +596,7 @@ class Session implements ISession
       }
    }
 
-   private void reconnectDone(SQLConnectionState connState, OpenConnectionCommand cmd, Throwable t)
+   private void reconnectDone(SQLConnectionState connState, OpenConnectionCommand cmd, Throwable t, ReconnectInfo reconnectInfo)
    {
       try
       {
@@ -610,6 +604,24 @@ class Session implements ISession
          {
             throw t;
          }
+
+         if(false == StringUtilities.isEmpty(reconnectInfo.getUrl()))
+         {
+            _alias.setUrl(reconnectInfo.getUrl());
+         }
+
+         if(false == StringUtilities.isEmpty(reconnectInfo.getUser()))
+         {
+            _user = reconnectInfo.getUser();
+            _alias.setUserName(_user);
+         }
+
+         if(false == StringUtilities.isEmpty(reconnectInfo.getPassword()))
+         {
+            _password = reconnectInfo.getPassword();
+            _alias.setPassword(_password);
+         }
+
          
          _conn = cmd.getSQLConnection();
          if (connState != null)
@@ -1221,7 +1233,7 @@ class Session implements ISession
    {
       SQLConnectionState connState = new SQLConnectionState();
 
-      OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,_user, _password, connState.getConnectionProperties());
+      OpenConnectionCommand cmd = new OpenConnectionCommand(_alias,_user, _password, connState.getConnectionProperties());
 
       try
       {

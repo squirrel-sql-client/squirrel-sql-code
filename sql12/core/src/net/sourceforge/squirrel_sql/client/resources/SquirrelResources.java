@@ -118,6 +118,9 @@ public class SquirrelResources extends Resources
 
       String ADD_TAB = "add_tab";
       String NEW_SQL_WORKSHEET = "new_sql_worksheet";
+
+      String PLUS = "plus";
+      String MINUS = "minus";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

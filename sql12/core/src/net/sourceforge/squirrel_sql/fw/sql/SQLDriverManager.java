@@ -27,10 +27,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -89,53 +91,71 @@ public class SQLDriverManager
 		_classLoaders.remove(sqlDriver.getIdentifier());
 	}
 
-	public ISQLConnection getConnection(ISQLDriver sqlDriver, ISQLAlias alias,
-											String user, String pw)
-		throws ClassNotFoundException, IllegalAccessException,
-				InstantiationException, MalformedURLException, SQLException
+	public ISQLConnection getConnection(ISQLDriver sqlDriver, ISQLAlias alias, String user, String pw)
 	{
 		return getConnection(sqlDriver, alias, user, pw, null);
 	}
 
-	public synchronized SQLConnection getConnection(ISQLDriver sqlDriver,
-											ISQLAlias alias, String user,
-											String pw,
-											SQLDriverPropertyCollection props)
-		throws ClassNotFoundException, IllegalAccessException,
-			InstantiationException, MalformedURLException, SQLException
+	public synchronized SQLConnection getConnection(ISQLDriver sqlDriver, ISQLAlias alias, String user, String pw, SQLDriverPropertyCollection props)
 	{
-		Properties myProps = new Properties();
-		if (props != null)
-		{
-			props.applyTo(myProps);
-		}
-		if (user != null)
-		{
-			myProps.put("user", user);
-		}
-		if (pw != null)
-		{
-			myProps.put("password", pw);
-		}
+		return getConnection(sqlDriver, alias, user, pw, props, null);
+	}
 
-		Driver driver = _driverInfo.get(sqlDriver.getIdentifier());
-		if (driver == null)
-		{
-            // TODO: Why shouldn't we call registerSQLDriver here? RMM 20070401
-			s_log.debug("Loading driver that wasn't registered: " +
-							sqlDriver.getDriverClassName());
-			ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
-            driver = (Driver)(Class.forName(sqlDriver.getDriverClassName(), 
-                                            false, 
-                                            loader).newInstance());
 
-		}
-		Connection jdbcConn = driver.connect(alias.getUrl(), myProps);
-		if (jdbcConn == null)
+	public synchronized SQLConnection getConnection(ISQLDriver sqlDriver, ISQLAlias alias, String user, String pw, SQLDriverPropertyCollection props, ReconnectInfo reconnectInfo)
+	{
+		try
 		{
-			throw new SQLException(s_stringMgr.getString("SQLDriverManager.error.noconnection"));
+			Properties myProps = new Properties();
+			if (props != null)
+			{
+				props.applyTo(myProps);
+			}
+
+			if(null != reconnectInfo && null != reconnectInfo.getUser())
+			{
+				myProps.put("user", reconnectInfo.getUser());
+			}
+			else if (user != null)
+			{
+				myProps.put("user", user);
+			}
+
+			if(null != reconnectInfo && null != reconnectInfo.getPassword())
+			{
+				myProps.put("user", reconnectInfo.getPassword());
+			}
+			else if (pw != null)
+			{
+				myProps.put("password", pw);
+			}
+
+			Driver driver = _driverInfo.get(sqlDriver.getIdentifier());
+			if (driver == null)
+			{
+				ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
+				driver = (Driver) (Class.forName(sqlDriver.getDriverClassName(),false,loader).newInstance());
+			}
+
+			String url = alias.getUrl();
+
+			if(null != reconnectInfo && null != reconnectInfo.getUrl())
+			{
+				url = reconnectInfo.getUrl();
+			}
+
+			Connection jdbcConn = driver.connect(url, myProps);
+
+			if (jdbcConn == null)
+			{
+				throw new SQLException(s_stringMgr.getString("SQLDriverManager.error.noconnection"));
+			}
+			return new SQLConnection(jdbcConn, props, sqlDriver);
 		}
-		return new SQLConnection(jdbcConn, props, sqlDriver);
+		catch (MalformedURLException | InstantiationException | IllegalAccessException | SQLException | ClassNotFoundException e)
+		{
+			throw Utilities.wrapRunntime(e);
+		}
 	}
 
 	/**

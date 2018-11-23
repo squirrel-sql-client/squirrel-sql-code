@@ -22,6 +22,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.*;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -33,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.*;
 
@@ -44,9 +47,6 @@ import javax.swing.*;
  */
 public class OpenConnectionCommand
 {
-	/** Application API. */
-	private IApplication _app;
-
 	/** The <TT>ISQLAlias</TT> to connect to. */
 	private ISQLAlias _sqlAlias;
 
@@ -55,8 +55,9 @@ public class OpenConnectionCommand
 	private final SQLDriverPropertyCollection _props;
 
 	private SQLConnection _conn;
+   private ReconnectInfo _reconnectInfo;
 
-	/**
+   /**
 	 * Ctor.
 	 *
 	 * @param	app			The <TT>IApplication</TT> that defines app API.
@@ -68,53 +69,38 @@ public class OpenConnectionCommand
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or <TT>ISQLAlias</TT> passed.
 	 */
-	public OpenConnectionCommand(IApplication app, ISQLAlias sqlAlias,
-									String userName, String password,
-									SQLDriverPropertyCollection props)
+	public OpenConnectionCommand(ISQLAlias sqlAlias, String userName, String password, SQLDriverPropertyCollection props)
 	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		if (sqlAlias == null)
+	   this(sqlAlias, userName, password, props, null);
+   }
+
+	public OpenConnectionCommand(ISQLAlias sqlAlias, String userName, String password, SQLDriverPropertyCollection props, ReconnectInfo reconnectInfo)
+	{
+      if (sqlAlias == null)
 		{
 			throw new IllegalArgumentException("Null ISQLAlias passed");
 		}
-		_app = app;
 		_sqlAlias = sqlAlias;
 		_userName = userName;
 		_password = password;
 		_props = props;
+      _reconnectInfo = reconnectInfo;
 	}
 
 	/**
 	 * Display connection internal frame.
     * @param openConnectionCommandListener
     */
-	public void execute(final OpenConnectionCommandListener openConnectionCommandListener) throws BaseException
-	{
+	public void execute(final OpenConnectionCommandListener openConnectionCommandListener)
+   {
       ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-      Runnable taskConnect = new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            executeConnect();
-         }
-      };
+      Runnable taskConnect = () -> executeConnect();
 
       final Future future = executorService.submit(taskConnect);
 
-      Runnable taskAwaitConnect = new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            awaitConnection(future, openConnectionCommandListener);
-         }
-      };
+      Runnable taskAwaitConnect = () -> awaitConnection(future, openConnectionCommandListener);
+
       executorService.submit(taskAwaitConnect);
 	}
 
@@ -160,19 +146,15 @@ public class OpenConnectionCommand
    {
       _conn = null;
       final IIdentifier driverID = _sqlAlias.getDriverIdentifier();
-      final ISQLDriver sqlDriver = _app.getDataCache().getDriver(driverID);
-      final SQLDriverManager mgr = _app.getSQLDriverManager();
+      final ISQLDriver sqlDriver = Main.getApplication().getDataCache().getDriver(driverID);
+      final SQLDriverManager mgr = Main.getApplication().getSQLDriverManager();
       try
       {
-         _conn = mgr.getConnection(sqlDriver, _sqlAlias, _userName, _password, _props);
-      }
-      catch (SQLException ex)
-      {
-         throw new RuntimeException(ex);
+         _conn = mgr.getConnection(sqlDriver, _sqlAlias, _userName, _password, _props, _reconnectInfo);
       }
       catch (Throwable th)
       {
-         throw new RuntimeException(th);
+         throw Utilities.wrapRunntime(th);
       }
    }
 

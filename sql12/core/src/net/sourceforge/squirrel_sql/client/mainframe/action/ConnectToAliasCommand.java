@@ -273,7 +273,7 @@ public class ConnectToAliasCommand implements ICommand
 
          try
          {
-            final OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias, _user, _password, _props);
+            final OpenConnectionCommand cmd = new OpenConnectionCommand(_alias, _user, _password, _props);
 
             cmd.execute(new OpenConnectionCommandListener(){
                @Override

@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 
 import java.sql.SQLException;
-import java.sql.SQLWarning;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -33,11 +32,11 @@ import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
@@ -140,7 +139,7 @@ public interface ISession extends IHasIdentifier
    /**
     * Reconnect to the database.
     */
-   void reconnect();
+   void reconnect(ReconnectInfo reconnectInfo);
 
    Object getPluginObject(IPlugin plugin, String key);
    Object putPluginObject(IPlugin plugin, String key, Object obj);

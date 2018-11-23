@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+When reconnecting a Session (ctrl alt T) the connect data (JDBC-URL, user, password) can now be changed.
+  This can be useful for example for Docker (or similar container) driven tests when the container was restarted with changed port.
+
 Find Alias window (ctrl alt shift F): Last search string is now selected when window is opened.
 
 Improved parsing for SQL editor: Table names tended to be marked as error (red) until another character was entered.
