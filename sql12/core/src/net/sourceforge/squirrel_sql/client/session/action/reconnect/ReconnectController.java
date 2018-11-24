@@ -39,6 +39,9 @@ public class ReconnectController
 
       _reconnectDialog.btnYes.addActionListener( e -> doReconnect(jdbcData));
 
+      _reconnectDialog.btnNo.addActionListener( e -> close());
+      _reconnectDialog.btnCancel.addActionListener( e -> close());
+
       GUIUtils.enableCloseByEscape(_reconnectDialog);
       GUIUtils.centerWithinParent(_reconnectDialog);
 
