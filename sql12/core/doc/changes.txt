@@ -19,6 +19,8 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+"Elapsed execution time" text field, which is visible when SQLs are executed, used to be too small.
+
 Columns in completions list are are now sorted.
 
 Logs and message panel: SQLWarnings, that occur during SQL execution, are now displayed as warning instead of error.
