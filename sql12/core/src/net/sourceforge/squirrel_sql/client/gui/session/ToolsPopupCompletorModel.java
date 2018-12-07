@@ -52,15 +52,14 @@ public class ToolsPopupCompletorModel implements ICompletorModel
       
    }
    
-   private static class ToolsPopupCompletionInfoComparator 
-                           implements Comparator<ToolsPopupCompletionInfo> 
+   private static class ToolsPopupCompletionInfoComparator implements Comparator<ToolsPopupCompletionInfo>
    {
 
         /**
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
-        public int compare(ToolsPopupCompletionInfo arg0,
-                           ToolsPopupCompletionInfo arg1) {
+        public int compare(ToolsPopupCompletionInfo arg0, ToolsPopupCompletionInfo arg1)
+        {
             return arg0.getSelectionString().compareTo(arg1.getSelectionString());
         }
        

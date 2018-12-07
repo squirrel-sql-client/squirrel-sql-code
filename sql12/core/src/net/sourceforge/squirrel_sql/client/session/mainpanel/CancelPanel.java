@@ -2,13 +2,12 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class CancelPanel extends JPanel
 {
@@ -107,8 +106,7 @@ public class CancelPanel extends JPanel
       txtExecTimeCounter = new JTextField();
       txtExecTimeCounter.setEditable(false);
       txtExecTimeCounter.setColumns(10);
-      txtExecTimeCounter.setPreferredSize(new Dimension(120, txtExecTimeCounter.getPreferredSize().height));
-      txtExecTimeCounter.setMinimumSize(new Dimension(120, txtExecTimeCounter.getMinimumSize().height));
+      GUIUtils.forceProperty(() -> checkAndForceExecCounterSize());
       ret.add(txtExecTimeCounter, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
@@ -116,5 +114,15 @@ public class CancelPanel extends JPanel
 
 
       return ret;
+   }
+
+   private boolean checkAndForceExecCounterSize()
+   {
+      int width = 120;
+      txtExecTimeCounter.setPreferredSize(new Dimension(width, txtExecTimeCounter.getPreferredSize().height));
+      txtExecTimeCounter.setMinimumSize(new Dimension(width, txtExecTimeCounter.getMinimumSize().height));
+      //txtExecTimeCounter.setSize(txtExecTimeCounter.getPreferredSize());
+
+      return txtExecTimeCounter.getSize().width == width;
    }
 }

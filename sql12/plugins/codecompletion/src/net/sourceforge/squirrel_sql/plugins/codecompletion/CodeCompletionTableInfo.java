@@ -183,7 +183,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
       }
       catch (SQLException e)
       {
-         throw Utilities.wrapRunntime(e);
+         throw Utilities.wrapRuntime(e);
       }
    }
 

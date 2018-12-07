@@ -36,6 +36,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import org.apache.commons.lang.StringUtils;
 
@@ -107,7 +108,7 @@ public class Application implements IApplication
 
 	private DataCache _cache;
 
-	private ActionCollection _actions;
+	private ActionCollection _actionCollection;
 
 	/** Applications main frame. */
 	// private MainFrame _mainFrame;
@@ -172,6 +173,9 @@ public class Application implements IApplication
 	private PasteHistory _pasteHistory = new PasteHistory();
 
 	private RowsWindowFrameRegistry _rowsWindowFrameRegistry = new RowsWindowFrameRegistry();
+
+	// Must be done here because Plugin loading added more actions to _actionCollection.
+	private ShortcutManager _shortcutManager = new ShortcutManager();
 
 	/**
 	 * Default ctor.
@@ -469,50 +473,65 @@ public class Application implements IApplication
 	 * 
 	 * @return the manager responsible for windows.
 	 */
+	@Override
 	public WindowManager getWindowManager()
 	{
 		return _windowManager;
 	}
 
+	@Override
 	public ActionCollection getActionCollection()
 	{
-		return _actions;
+		return _actionCollection;
 	}
 
+	@Override
 	public SQLDriverManager getSQLDriverManager()
 	{
 		return _driverMgr;
 	}
 
+	@Override
 	public DataCache getDataCache()
 	{
 		return _cache;
 	}
 
+	@Override
 	public IPlugin getDummyAppPlugin()
 	{
 		return _dummyPlugin;
 	}
 
+	@Override
 	public SquirrelResources getResources()
 	{
 		return _resources;
 	}
 
+	@Override
 	public IMessageHandler getMessageHandler()
 	{
 		return getMainFrame().getMessagePanel();
 	}
 
+	@Override
 	public SquirrelPreferences getSquirrelPreferences()
 	{
 		return _prefs;
 	}
 
+	@Override
    public DesktopStyle getDesktopStyle()
    {
       return _desktopStyle;
    }
+
+   @Override
+	public ShortcutManager getShortcutManager()
+	{
+		return _shortcutManager;
+	}
 
    public MainFrame getMainFrame()
 	{
@@ -752,10 +771,10 @@ public class Application implements IApplication
       args.validateArgs(true);
 
       indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingactions"));
-		_actions = new ActionCollection(this);
+		_actionCollection = new ActionCollection(this);
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadinguseracc"));
-		_actions.loadActionKeys(_prefs.getActionKeys());
+		_actionCollection.loadActionKeys(_prefs.getActionKeys());
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createjdbcmgr"));
 		initDriverManager();
@@ -796,9 +815,7 @@ public class Application implements IApplication
 				long created = pli.getCreationTime();
 				long load = pli.getLoadTime();
 				long init = pli.getInitializeTime();
-				Object[] params =
-					new Object[] { pli.getInternalName(), Long.valueOf(created), Long.valueOf(load),
-							Long.valueOf(init), Long.valueOf(created + load + init) };
+				Object[] params = new Object[] { pli.getInternalName(), created, load, init, created + load + init};
 				String pluginLoadMsg = s_stringMgr.getString("Application.splash.loadplugintime", params);
 				s_log.info(pluginLoadMsg);
 			}
@@ -834,8 +851,6 @@ public class Application implements IApplication
 		_windowManager.moveToFront(_windowManager.getMainFrame());
 		_threadPool.setParentForMessages(_windowManager.getMainFrame());
 
-		// _mainFrame.setVisible(true);
-		// _mainFrame.toFront(); // Required on Linux
 
 		new ConnectToStartupAliasesCommand(this).execute();
 
@@ -851,10 +866,9 @@ public class Application implements IApplication
 				s_log.error(s_stringMgr.getString("Application.error.showhelpwindow"), ex);
 			}
 		}
-		
-//		updateCheckTimer = new UpdateCheckTimerImpl(this);
-//		updateCheckTimer.start();
-		
+
+		_shortcutManager.preRegisterActionsThatElseWillBeRegisteredLateOnSessionStart();
+
 		if (args.getShutdownTimerSeconds() != null)
       {
 			_shutdownTimer.setShutdownSeconds(args.getShutdownTimerSeconds());
@@ -1360,14 +1374,6 @@ public class Application implements IApplication
 			_jdbcDebugType = _prefs.getJdbcDebugType();
 		}
 	}
-	
-	/**
-	 * @param shutdownTimer the _shutdownTimer to set
-	 */
-	public void setShutdownTimer(IShutdownTimer shutdownTimer)
-	{
-		_shutdownTimer = shutdownTimer;
-	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.IApplication#getWikiTableConfigFactory()
@@ -1378,11 +1384,7 @@ public class Application implements IApplication
 	}
 
 
-   public void setWikiTableConfigFactory(IWikiTableConfigurationFactory wikiTableConfigFactory) {
-		this.wikiTableConfigFactory = wikiTableConfigFactory;
-	}
-
-   @Override
+	@Override
    public MultipleWindowsHandler getMultipleWindowsHandler()
    {
       return _multipleWindowsHandler;
@@ -1406,8 +1408,4 @@ public class Application implements IApplication
 		return _rowsWindowFrameRegistry;
    }
 
-   protected void exitApplication(int code){
-       System.exit(code);
-   }
-   
 }

@@ -1,5 +1,8 @@
-package net.sourceforge.squirrel_sql.fw.datasetviewer;
+package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 
 import java.awt.Color;

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.datasetviewer.rowcolor;
+package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;

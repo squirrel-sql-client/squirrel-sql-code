@@ -1,8 +1,9 @@
-package net.sourceforge.squirrel_sql.fw.datasetviewer;
+package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.rowcolor.RowColorHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindColorHandler;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 
@@ -21,6 +22,7 @@ public class ColoringService
    private RowColorHandler _rowColorHandler;
    private FindColorHandler _findColorHandler;
    private MarkDuplicatesHandler _markDuplicatesHandler;
+   private ColoringCallback _coloringCallback;
 
    public ColoringService(DataSetViewerTable dataSetViewerTable)
    {
@@ -68,6 +70,16 @@ public class ColoringService
          customBackground = markDuplicateBackground;
       }
 
+      if(null != _coloringCallback)
+      {
+         Color buf = _coloringCallback.getCellColor(row, column, isSelected);
+
+         if(null != buf)
+         {
+            customBackground = buf;
+         }
+
+      }
 
 
       if (null != customBackground)
@@ -90,5 +102,10 @@ public class ColoringService
    public MarkDuplicatesHandler getMarkDuplicatesHandler()
    {
       return _markDuplicatesHandler;
+   }
+
+   public void setColoringCallback(ColoringCallback coloringCallback)
+   {
+      _coloringCallback = coloringCallback;
    }
 }

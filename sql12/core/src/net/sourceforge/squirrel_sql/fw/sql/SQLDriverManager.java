@@ -154,7 +154,7 @@ public class SQLDriverManager
 		}
 		catch (MalformedURLException | InstantiationException | IllegalAccessException | SQLException | ClassNotFoundException e)
 		{
-			throw Utilities.wrapRunntime(e);
+			throw Utilities.wrapRuntime(e);
 		}
 	}
 

@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
@@ -87,6 +88,8 @@ public interface IApplication
 
 	SquirrelResources getResources();
 
+	ShortcutManager getShortcutManager();
+
 
 	/**
 	 * Retrieves the message handler for the application.
@@ -131,7 +134,7 @@ public interface IApplication
 	 */
 	void showErrorDialog(String msg, Throwable th);
 
-	/**
+   /**
 	 * Return the main frame.
 	 *
 	 * @return	The main frame for the app.

@@ -27,6 +27,7 @@ import java.util.*;
 
 import net.sourceforge.squirrel_sql.fw.util.EmptyIterator;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class JavabeanArrayDataSet implements IDataSet
 {
@@ -63,7 +64,7 @@ public class JavabeanArrayDataSet implements IDataSet
       setJavaBeanArray(beans);
 	}
 
-   public JavabeanArrayDataSet(Class beanClass) throws DataSetException
+   public JavabeanArrayDataSet(Class beanClass)
    {
       _beanClass = beanClass;
    }
@@ -83,8 +84,7 @@ public class JavabeanArrayDataSet implements IDataSet
 		return _dataSetDefinition;
 	}
 
-	public synchronized boolean next(IMessageHandler msgHandler)
-		throws DataSetException
+	public synchronized boolean next(IMessageHandler msgHandler) throws DataSetException
 	{
 		if (_dataIter.hasNext())
 		{
@@ -105,13 +105,13 @@ public class JavabeanArrayDataSet implements IDataSet
 		return getter.invoke(bean, (Object[])null);
 	}
 
-   public void setJavaBeanList(List list) throws DataSetException
+   public void setJavaBeanList(List list)
    {
       setJavaBeanArray(list.toArray(new Object[list.size()]));
    }
 
-	public void setJavaBeanArray(Object[] beans) throws DataSetException
-	{
+	public void setJavaBeanArray(Object[] beans)
+   {
       initColsAndBeanInfo(_beanClass);
 
 		if (beans.length > 0)
@@ -125,13 +125,13 @@ public class JavabeanArrayDataSet implements IDataSet
 			}
 			catch (Exception ex)
 			{
-				throw new DataSetException(ex);
+				throw Utilities.wrapRuntime(ex);
 			}
 			_dataIter = _data.iterator();
 		}
 	}
 
-   void initColsAndBeanInfo(Class beanClass) throws DataSetException
+   private void initColsAndBeanInfo(Class beanClass)
    {
       try
       {
@@ -140,12 +140,11 @@ public class JavabeanArrayDataSet implements IDataSet
       }
       catch (IntrospectionException ex)
       {
-         throw new DataSetException(ex);
+         throw Utilities.wrapRuntime(ex);
       }
    }
 
-   private void processBeanInfo(Object bean, BeanInfo info)
-		throws InvocationTargetException, IllegalAccessException
+   private void processBeanInfo(Object bean, BeanInfo info) throws InvocationTargetException, IllegalAccessException
 	{
 		ArrayList line = new ArrayList();
 		for (int i = 0; i < _beanPorpertyColumnDisplayDefinitions.length; ++i)
@@ -162,7 +161,7 @@ public class JavabeanArrayDataSet implements IDataSet
 
    private void initializeCols(BeanInfo info)
 	{
-		_data = new ArrayList<Object[]>();
+		_data = new ArrayList<>();
       _beanPorpertyColumnDisplayDefinitions = createColumnDefinitions(info);
 		_dataSetDefinition = new DataSetDefinition(BeanPorpertyColumnDisplayDefinition.getColDefs(_beanPorpertyColumnDisplayDefinitions));
 	}
@@ -239,8 +238,8 @@ public class JavabeanArrayDataSet implements IDataSet
 
    private boolean isValidProperty(PropertyDescriptor propertyDescriptor)
    {
-      return   false == propertyDescriptor.getReadMethod().getDeclaringClass().equals(Object.class)
-            && false == _ignoreProperties.contains(propertyDescriptor.getName());
+      return    false == _ignoreProperties.contains(propertyDescriptor.getName())
+             && false == propertyDescriptor.getReadMethod().getDeclaringClass().equals(Object.class);
    }
 
    public void setColHeader(String prop, String header)

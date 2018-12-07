@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Ma
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.MarkDuplicatesHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindDecorator;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
@@ -48,7 +49,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 

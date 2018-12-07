@@ -77,7 +77,7 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
 
       if(null != th)
       {
-         throw Utilities.wrapRunntime(th);
+         throw Utilities.wrapRuntime(th);
       }
 
       return postErrorString;

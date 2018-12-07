@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.ColoringService;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
@@ -21,6 +22,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -421,5 +423,12 @@ public final class DataSetViewerTable extends JTable
    public ColoringService getColoringService()
    {
       return _coloringService;
+   }
+
+   public void scrollToVisible(int viewRow, int viewCol)
+   {
+      Rectangle cellRect = getCellRect(viewRow, viewCol, true);
+      scrollRectToVisible(cellRect);
+      repaint(cellRect);
    }
 }

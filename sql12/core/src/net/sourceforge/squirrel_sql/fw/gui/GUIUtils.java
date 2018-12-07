@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.ButtonTabComponent;
 import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -60,8 +59,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseListener;
 
 /**
  * Common GUI utilities accessed via static methods.
@@ -519,6 +516,35 @@ public class GUIUtils
 
 		comp.requestFocusInWindow();
 		comp.requestFocus();
+	}
+
+
+	public static void forceProperty(PropertyCheck propertyCheck)
+	{
+		final Timer[] timerRef = new Timer[1];
+
+		timerRef[0] = new Timer(100, new ActionListener()
+		{
+			private int maxCount = 0;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (propertyCheck.checkAndSetProperty() || maxCount > 15)
+				{
+					timerRef[0].stop();
+					return;
+				}
+				++maxCount;
+
+			}
+		});
+
+		timerRef[0].setRepeats(true);
+
+		timerRef[0].start();
+
+		propertyCheck.checkAndSetProperty();
 	}
 
 	public static void forceScrollToBegin(JScrollPane scrollPane)

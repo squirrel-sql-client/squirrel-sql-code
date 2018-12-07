@@ -57,9 +57,7 @@ public class DefaultFindService implements FindService
    @Override
    public void scrollToVisible(int viewRow, int viewCol)
    {
-      Rectangle cellRect = _table.getCellRect(viewRow, viewCol, true);
-      _table.scrollRectToVisible(cellRect);
-      _table.repaint(cellRect);
+      _table.scrollToVisible(viewRow, viewCol);
    }
 
    @Override

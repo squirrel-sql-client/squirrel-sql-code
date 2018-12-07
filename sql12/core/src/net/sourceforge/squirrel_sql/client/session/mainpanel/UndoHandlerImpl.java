@@ -23,10 +23,8 @@ public class UndoHandlerImpl implements IUndoHandler
          _redoAction = new RedoAction(application, undoManager);
 
          JComponent comp = entry.getTextComponent();
-         comp.registerKeyboardAction(_undoAction, res.getKeyStroke(_undoAction),
-            JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-         comp.registerKeyboardAction(_redoAction, res.getKeyStroke(_redoAction),
-            JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+         comp.registerKeyboardAction(_undoAction, res.getKeyStroke(_undoAction), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+         comp.registerKeyboardAction(_redoAction, res.getKeyStroke(_redoAction), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
          entry.setUndoManager(undoManager);
       }

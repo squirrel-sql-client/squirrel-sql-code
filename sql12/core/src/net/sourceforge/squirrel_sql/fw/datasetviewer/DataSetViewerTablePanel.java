@@ -210,7 +210,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
       return _table.getSelectedRows();
    }
 
-   public int[] getSeletedModelRows()
+   public int[] getSelectedModelRows()
    {
       int[] selectedViewRows = _table.getSelectedRows();
 

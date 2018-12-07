@@ -151,8 +151,13 @@ public class ApplicationFiles
       return new File(_userSettingsDir + File.separator + "RecentFilesJsonBean.json");
    }
 
+	public File getShortCutsJsonBeanFile()
+	{
+		return new File(_userSettingsDir + File.separator + "ShortcutsJsonBean.json");
+	}
 
-   public File getDatabaseAliasesFile_before_version_2_3()
+
+	public File getDatabaseAliasesFile_before_version_2_3()
    {
       return new File(_userSettingsDir + File.separator + "SQLAliases.xml");
    }

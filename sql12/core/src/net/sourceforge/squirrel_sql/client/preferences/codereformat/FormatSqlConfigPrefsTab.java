@@ -9,8 +9,7 @@ import java.awt.*;
 
 public class FormatSqlConfigPrefsTab implements IGlobalPreferencesPanel
 {
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(FormatSqlConfigPrefsTab.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FormatSqlConfigPrefsTab.class);
 
 
    private FormatSqlController _formatSqlController;

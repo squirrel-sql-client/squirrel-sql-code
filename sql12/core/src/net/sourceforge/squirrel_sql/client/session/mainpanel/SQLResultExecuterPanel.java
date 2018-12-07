@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
@@ -1030,10 +1031,9 @@ public class SQLResultExecuterPanel extends JPanel
       Action action = _session.getApplication().getActionCollection().get(actionClass);
 
       String accel = (String) action.getValue(Resources.ACCELERATOR_STRING);
-      if(   null != accel
-         && 0 != accel.trim().length())
+      if(   null != accel && 0 != accel.trim().length())
       {
-         mnuItem.setAccelerator(KeyStroke.getKeyStroke(accel));
+         Main.getApplication().getShortcutManager().setAccelerator(mnuItem, KeyStroke.getKeyStroke(accel), action);
       }
    }
 

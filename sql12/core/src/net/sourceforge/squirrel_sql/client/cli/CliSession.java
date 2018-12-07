@@ -50,7 +50,7 @@ public class CliSession extends CliSessionAdapter
       }
       catch (Exception e)
       {
-         throw Utilities.wrapRunntime(e);
+         throw Utilities.wrapRuntime(e);
       }
    }
 

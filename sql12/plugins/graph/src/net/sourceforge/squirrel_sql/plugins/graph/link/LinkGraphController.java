@@ -169,7 +169,7 @@ public class LinkGraphController
       try
       {
 
-         int[] seletedRowIndexes = _linkGraphDialog.tblGraphFiles.getSeletedModelRows();
+         int[] seletedRowIndexes = _linkGraphDialog.tblGraphFiles.getSelectedModelRows();
 
          for (int seletedRowIndex : seletedRowIndexes)
          {

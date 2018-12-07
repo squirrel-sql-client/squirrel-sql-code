@@ -11,6 +11,7 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.ApplicationListener;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockDelegate;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;
@@ -614,9 +615,9 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       JMenuItem ret = new JMenuItem(action);
 
       String accel = (String) action.getValue(Resources.ACCELERATOR_STRING);
-      if(   null != accel && 0 != accel.trim().length())
+      if(null != accel && 0 != accel.trim().length())
       {
-         ret.setAccelerator(KeyStroke.getKeyStroke(accel));
+         Main.getApplication().getShortcutManager().setAccelerator(ret, KeyStroke.getKeyStroke(accel), action);
       }
 
       return ret;

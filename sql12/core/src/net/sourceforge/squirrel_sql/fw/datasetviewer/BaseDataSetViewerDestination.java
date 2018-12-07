@@ -119,14 +119,14 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>IDataSet</TT> passed.
 	 */
-	public synchronized void show(IDataSet ds, IMessageHandler msgHandler)
-		throws DataSetException
+	public synchronized void show(IDataSet ds, IMessageHandler msgHandler) throws DataSetException
 	{
 
 		// We are displaying a new dataset, so if there was
 		// a cell editor in operation, tell it to cancel.
 		//???? How does this impact popup display?
-		if (currentCellEditor != null) {
+		if (currentCellEditor != null)
+		{
 			currentCellEditor.cancelCellEditing();
 			currentCellEditor = null;
 		}
@@ -137,16 +137,17 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 		}
 
 		clear();
-        if (ds.getDataSetDefinition() != null) {
-    		setColumnDefinitions(ds.getDataSetDefinition().getColumnDefinitions());
-    		final int colCount = ds.getColumnCount();
-    		while (ds.next(msgHandler))
-    		{
-    			addRow(ds, colCount);
-    		}
-    		allRowsAdded();
-    		moveToTop();
-        }
+		if (ds.getDataSetDefinition() != null)
+		{
+			setColumnDefinitions(ds.getDataSetDefinition().getColumnDefinitions());
+			final int colCount = ds.getColumnCount();
+			while (ds.next(msgHandler))
+			{
+				addRow(ds, colCount);
+			}
+			allRowsAdded();
+			moveToTop();
+		}
 	}
 
 

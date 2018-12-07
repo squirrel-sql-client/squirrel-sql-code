@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.rowcolor.RowColorHandlerState;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.RowColorHandlerState;
 import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 

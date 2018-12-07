@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.concurrent.*;
 
 import net.sourceforge.squirrel_sql.client.Main;
@@ -30,11 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
-import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.*;
@@ -154,7 +149,7 @@ public class OpenConnectionCommand
       }
       catch (Throwable th)
       {
-         throw Utilities.wrapRunntime(th);
+         throw Utilities.wrapRuntime(th);
       }
    }
 

@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.resources;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.JScrollMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
@@ -73,7 +74,12 @@ public abstract class Resources implements IResources
 	public KeyStroke getKeyStroke(Action action)
 	{
 		Utilities.checkNull("getKeyStroke", "action", action);
-		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
+		return getKeyStroke(action.getClass());
+	}
+
+	public KeyStroke getKeyStroke(Class<? extends Action> actionClass)
+	{
+		final String fullKey = Keys.MENU_ITEM + "." + actionClass.getName();
 
 		String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
 		if (accel.length() > 0)
@@ -140,8 +146,7 @@ public abstract class Resources implements IResources
 	/**
 	 * @see IResources#addToPopupMenu(javax.swing.Action, javax.swing.JPopupMenu)
 	 */
-	public JMenuItem addToPopupMenu(Action action, javax.swing.JPopupMenu menu)
-	      throws MissingResourceException
+	public JMenuItem addToPopupMenu(Action action, javax.swing.JPopupMenu menu) throws MissingResourceException
 	{
 		Utilities.checkNull("addToPopupMenu", "action", action, "menu", menu);
 		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
@@ -161,7 +166,7 @@ public abstract class Resources implements IResources
 			String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
 			if (accel.length() > 0)
 			{
-				item.setAccelerator(KeyStroke.getKeyStroke(accel));
+				Main.getApplication().getShortcutManager().setAccelerator(item, KeyStroke.getKeyStroke(accel), action);
 			}
 		}
 
@@ -257,9 +262,10 @@ public abstract class Resources implements IResources
 			throw new IllegalArgumentException("Action == null");
 		}
 
-		final String actionClassName = action.getClass().getName();
-		final String key = Keys.ACTION + "." + actionClassName;
-		action.putValue(Action.NAME, getResourceString(key, ActionProperties.NAME));
+		final String key = getActionKey(action.getClass());
+		String actionName = getActionName(action.getClass());
+
+		action.putValue(Action.NAME, actionName);
 
 		String shortDescription = getResourceString(key, ActionProperties.TOOLTIP);
 
@@ -319,6 +325,17 @@ public abstract class Resources implements IResources
 		{
 			// Ignore
 		}
+	}
+
+	public String getActionName(Class<? extends Action> actionClass)
+	{
+		return getResourceString(getActionKey(actionClass), ActionProperties.NAME);
+	}
+
+	private String getActionKey(Class<? extends Action> actionClass)
+	{
+		final String actionClassName = actionClass.getName();
+		return Keys.ACTION + "." + actionClassName;
 	}
 
 	/**
@@ -406,7 +423,7 @@ public abstract class Resources implements IResources
 			String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
 			if (accel.length() > 0)
 			{
-				item.setAccelerator(KeyStroke.getKeyStroke(accel));
+				Main.getApplication().getShortcutManager().setAccelerator(item, KeyStroke.getKeyStroke(accel), action);
 			}
 		}
 

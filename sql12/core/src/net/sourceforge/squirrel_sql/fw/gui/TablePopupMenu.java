@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
@@ -169,7 +170,8 @@ public class TablePopupMenu extends BasePopupMenu
 
 		// add the menu items to the menu
 		_menuItems[IOptionTypes.COPY] = add(_copy);
-		_menuItems[IOptionTypes.COPY].setAccelerator(COPY_STROKE);
+		Main.getApplication().getShortcutManager().setAccelerator(_menuItems[IOptionTypes.COPY], COPY_STROKE, _copy);
+
 		_menuItems[IOptionTypes.COPY_WITH_HEADERS] = add(_copyWithHeaders);
 		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
 		_menuItems[IOptionTypes.COPY_ALIGNED] = add(_copyAligned);

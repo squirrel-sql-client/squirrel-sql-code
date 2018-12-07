@@ -21,8 +21,10 @@ package net.sourceforge.squirrel_sql.client.action;
  */
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
@@ -56,6 +58,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
+import net.sourceforge.squirrel_sql.fw.util.ListMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -372,6 +375,12 @@ public class ActionCollection
 		return _actionColl.values().iterator();
 	}
 
+	public List<Action> getActions()
+	{
+		return new ArrayList<>(_actionColl.values());
+	}
+
+
 	/**
 	 * Specify the current session for actions.
 	 *
@@ -528,5 +537,4 @@ public class ActionCollection
 		add(new PasteFromHistoryAction(_app));
 		add(new PasteFromHistoryAltAcceleratorAction(_app));
 	}
-
 }

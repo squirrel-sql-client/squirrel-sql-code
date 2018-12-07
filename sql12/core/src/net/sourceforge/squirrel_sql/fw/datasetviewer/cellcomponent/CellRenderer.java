@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColoringService;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.ColoringService;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

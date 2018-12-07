@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.datasetviewer.rowcolor;
+package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring;
 
 import java.awt.Color;
 import java.util.HashMap;

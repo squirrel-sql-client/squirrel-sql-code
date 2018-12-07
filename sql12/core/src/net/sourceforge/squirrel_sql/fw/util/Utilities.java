@@ -504,7 +504,7 @@ public class Utilities
       return StringUtilities.escapeHtmlChars(sql);
    }
 
-   public static RuntimeException wrapRunntime(Throwable e)
+   public static RuntimeException wrapRuntime(Throwable e)
    {
       if(e instanceof RuntimeException)
       {
