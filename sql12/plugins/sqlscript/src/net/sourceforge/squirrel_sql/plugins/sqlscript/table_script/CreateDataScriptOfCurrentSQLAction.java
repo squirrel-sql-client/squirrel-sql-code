@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -27,31 +28,38 @@ import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
-public class CreateDataScriptOfCurrentSQLAction extends SquirrelAction implements ISQLPanelAction{
+public class CreateDataScriptOfCurrentSQLAction extends SquirrelAction implements ISQLPanelAction
+{
 
-    private static final long serialVersionUID = 1L;
 
-    /** Current session. */
-    private ISession _session;
+   /**
+    * Current session.
+    */
+   private ISession _session;
 
-	/** Current plugin. */
-	private final SQLScriptPlugin _plugin;
+   /**
+    * Current plugin.
+    */
+   private final SQLScriptPlugin _plugin;
 
-    public CreateDataScriptOfCurrentSQLAction(IApplication app, IResources resources,
-    											SQLScriptPlugin plugin) {
-        super(app, resources);
-        _plugin = plugin;
-    }
+   public CreateDataScriptOfCurrentSQLAction(IApplication app, IResources resources,
+                                             SQLScriptPlugin plugin)
+   {
+      super(app, resources);
+      _plugin = plugin;
+   }
 
-    public void actionPerformed(ActionEvent evt) {
-        if (_session != null) {
-            new CreateDataScriptOfCurrentSQLCommand(_session, _plugin).execute();
-        }
-    }
+   public void actionPerformed(ActionEvent evt)
+   {
+      if (_session != null)
+      {
+         new CreateDataScriptOfCurrentSQLCommand(_session, _plugin).execute();
+      }
+   }
 
    public void setSQLPanel(ISQLPanelAPI panel)
    {
-      if(null != panel)
+      if (null != panel)
       {
          _session = panel.getSession();
       }

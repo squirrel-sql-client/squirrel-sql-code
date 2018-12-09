@@ -22,6 +22,9 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+When the scripting functions "Store result of SQL in table" or "Create Data Script from SQL" were executed in
+  an additional SQL tab the main SQL tab was selected.
+
 #1368 The "Quote SQL" default shortcut was changed from (ctrl alt Q) to (ctrl shift Q).
   If you want the old shortcut back please use the new keyboard shortcuts configuration feature,
   see menu File --> "Global Preferences" --> tab "Keyboard shortcuts"

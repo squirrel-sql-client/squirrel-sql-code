@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -130,7 +131,10 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                      {
                         FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbRows.toString(), true);
 
-                        _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+                        if (false == _session.getSelectedMainTab() instanceof BaseSQLTab)
+                        {
+                           _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+                        }
                      }
                      hideAbortFrame();
                   }

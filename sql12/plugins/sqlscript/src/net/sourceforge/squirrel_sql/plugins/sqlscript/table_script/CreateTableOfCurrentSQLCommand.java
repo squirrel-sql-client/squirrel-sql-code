@@ -28,6 +28,7 @@ import java.sql.Statement;
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -200,7 +201,11 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
                if (scriptOnly && 0 < sbScript.toString().trim().length())
                {
                   FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbScript.toString(), true);
-                  _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+
+                  if (false == _session.getSelectedMainTab() instanceof BaseSQLTab)
+                  {
+                     _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+                  }
                }
             }
          });
