@@ -88,53 +88,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
       ActionCollection ac = getSession().getApplication().getActionCollection();
 
-      _toolsPopupController.addAction("undo", _panel.getUndoAction());
-      _toolsPopupController.addAction("redo", _panel.getRedoAction());
-      _toolsPopupController.addAction("runsql", ac.get(ExecuteSqlAction.class));
-      _toolsPopupController.addAction("runallsqls", ac.get(ExecuteAllSqlsAction.class));
-      _toolsPopupController.addAction("filenew", ac.get(FileNewAction.class));
-      _toolsPopupController.addAction("filedetach", ac.get(FileDetachAction.class));
-      _toolsPopupController.addAction("fileopenrecent", ac.get(FileOpenRecentAction.class));
-      _toolsPopupController.addAction("filesave", ac.get(FileSaveAction.class));
-      _toolsPopupController.addAction("filesaveas", ac.get(FileSaveAsAction.class));
-      _toolsPopupController.addAction("fileappend", ac.get(FileAppendAction.class));
-      _toolsPopupController.addAction("fileclose", ac.get(FileCloseAction.class));
-      _toolsPopupController.addAction("fileprint", ac.get(FilePrintAction.class));
-      _toolsPopupController.addAction("filereload", ac.get(FileReloadAction.class));
-
-      _toolsPopupController.addAction("tabnext", ac.get(GotoNextResultsTabAction.class));
-      _toolsPopupController.addAction("tabprevious", ac.get(GotoPreviousResultsTabAction.class));
-      _toolsPopupController.addAction("tabcloseall", ac.get(CloseAllSQLResultTabsAction.class));
-      _toolsPopupController.addAction("tabcloseallbutcur", ac.get(CloseAllSQLResultTabsButCurrentAction.class));
-      _toolsPopupController.addAction("tabclosealltoleft", ac.get(CloseAllSQLResultTabsToLeftAction.class));
-      _toolsPopupController.addAction("tabclosealltoRight", ac.get(CloseAllSQLResultTabsToRightAction.class));
-      _toolsPopupController.addAction("tabclosecur", ac.get(CloseCurrentSQLResultTabAction.class));
-      _toolsPopupController.addAction("tabsticky", ac.get(ToggleCurrentSQLResultTabStickyAction.class));
-
-      _toolsPopupController.addAction("minres", ac.get(ToggleMinimizeResultsAction.class));
-
-      _toolsPopupController.addAction("sqlprevious", ac.get(PreviousSqlAction.class));
-      _toolsPopupController.addAction("sqlnext", ac.get(NextSqlAction.class));
-      _toolsPopupController.addAction("sqlselect", ac.get(SelectSqlAction.class));
-
-      _toolsPopupController.addAction("format", ac.get(FormatSQLAction.class));
-
-      _toolsPopupController.addAction("sqlhist", ac.get(OpenSqlHistoryAction.class));
-
-      if (isInMainSessionWindow())
-      {
-         _toolsPopupController.addAction("viewinobjecttree", ac.get(ViewObjectAtCursorInObjectTreeAction.class));
-      }
-
-      _toolsPopupController.addAction("quote", ac.get(InQuotesAction.class));
-      _toolsPopupController.addAction("unquote", ac.get(RemoveQuotesAction.class));
-      _toolsPopupController.addAction("quotesb", ac.get(ConvertToStringBufferAction.class));
-      _toolsPopupController.addAction("date", ac.get(EscapeDateAction.class));
-      _toolsPopupController.addAction("sqlcut", ac.get(CutSqlAction.class));
-      _toolsPopupController.addAction("sqlcopy", ac.get(CopySqlAction.class));
-      _toolsPopupController.addAction("remnewlines", ac.get(RemoveNewLinesAction.class));
-      _toolsPopupController.addAction("pastehist", ac.get(PasteFromHistoryAction.class));
-   }
+		Main.getApplication().getActionRegistry().registerToolsPopupActions(ac, _toolsPopupController, _panel, isInMainSessionWindow());
+	}
 
 	public boolean isInMainSessionWindow()
 	{

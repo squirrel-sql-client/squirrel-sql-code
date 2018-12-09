@@ -33,6 +33,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
+import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
 import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
@@ -108,7 +109,7 @@ public class Application implements IApplication
 
 	private DataCache _cache;
 
-	private ActionCollection _actionCollection;
+	private ActionRegistry _actionRegistry;
 
 	/** Applications main frame. */
 	// private MainFrame _mainFrame;
@@ -482,7 +483,13 @@ public class Application implements IApplication
 	@Override
 	public ActionCollection getActionCollection()
 	{
-		return _actionCollection;
+		return _actionRegistry.getActionCollection();
+	}
+
+	@Override
+	public ActionRegistry getActionRegistry()
+	{
+		return _actionRegistry;
 	}
 
 	@Override
@@ -771,10 +778,10 @@ public class Application implements IApplication
       args.validateArgs(true);
 
       indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingactions"));
-		_actionCollection = new ActionCollection(this);
+		_actionRegistry = new ActionRegistry();
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadinguseracc"));
-		_actionCollection.loadActionKeys(_prefs.getActionKeys());
+		_actionRegistry.loadActionKeys(_prefs.getActionKeys());
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createjdbcmgr"));
 		initDriverManager();
@@ -867,7 +874,7 @@ public class Application implements IApplication
 			}
 		}
 
-		_shortcutManager.preRegisterActionsThatElseWillBeRegisteredLateOnSessionStart();
+		_actionRegistry.registerMissingActionsToShortcutManager();
 
 		if (args.getShutdownTimerSeconds() != null)
       {

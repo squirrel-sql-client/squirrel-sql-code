@@ -24,6 +24,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
@@ -77,6 +78,8 @@ public interface IApplication
 	WindowManager getWindowManager();
 
 	ActionCollection getActionCollection();
+
+	ActionRegistry getActionRegistry();
 
 	SQLDriverManager getSQLDriverManager();
 

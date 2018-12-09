@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
@@ -96,8 +97,6 @@ public class TablePopupMenu extends BasePopupMenu
 		int LAST_ENTRY = 22;
    }
 
-	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-
 	private final JMenuItem[] _menuItems = new JMenuItem[IOptionTypes.LAST_ENTRY + 1];
 
 	private DataSetViewerTable _table;
@@ -148,6 +147,18 @@ public class TablePopupMenu extends BasePopupMenu
 	
 	private ICopyWikiTableActionFactory copyWikiTableActionFactory = CopyWikiTableActionFactory.getInstance();
 
+
+	public static String getTableCopyActionName()
+	{
+		return s_stringMgr.getString("TablePopupMenu.copy");
+	}
+
+	public static KeyStroke getTableCopyActionKeyStroke()
+	{
+		return KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+	}
+
+
 	/**
 	 * Constructor used when caller wants to be able to make table editable.
 	 * We need both parameters because there is at least one case where the
@@ -170,7 +181,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		// add the menu items to the menu
 		_menuItems[IOptionTypes.COPY] = add(_copy);
-		Main.getApplication().getShortcutManager().setAccelerator(_menuItems[IOptionTypes.COPY], COPY_STROKE, _copy);
+		Main.getApplication().getShortcutManager().setAccelerator(_menuItems[IOptionTypes.COPY], getTableCopyActionKeyStroke(), _copy);
 
 		_menuItems[IOptionTypes.COPY_WITH_HEADERS] = add(_copyWithHeaders);
 		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
@@ -265,14 +276,6 @@ public class TablePopupMenu extends BasePopupMenu
 		_table = table;
 		replaceStandardTableCopyAction();
 
-// Cut and Paste need to be worked on, so for now do not include them
-// Also, the copy operations do not seem to work right - we may need special
-//    versions for the cellEditor menu.
-//		add(_cut);
-//		add(_copy);
-//		add(_copyHtml);
-//		add(_paste);
-//		addSeparator();
 		add(_select);
 		addSeparator();
 		add(_insertRow);
@@ -296,9 +299,13 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private void replaceStandardTableCopyAction()
 	{
-		_table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(COPY_STROKE, "CopyAction");
-		_table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(COPY_STROKE, "CopyAction");
-		_table.getInputMap(JComponent.WHEN_FOCUSED).put(COPY_STROKE, "CopyAction");
+		ShortcutManager shortcutManager = Main.getApplication().getShortcutManager();
+
+		KeyStroke keyStroke = shortcutManager.getValidKeyStroke(getTableCopyActionName(), getTableCopyActionKeyStroke());
+
+		_table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, "CopyAction");
+		_table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "CopyAction");
+		_table.getInputMap(JComponent.WHEN_FOCUSED).put(keyStroke, "CopyAction");
 		_table.getActionMap().put("CopyAction", _copy);
 	}
 
@@ -335,7 +342,7 @@ public class TablePopupMenu extends BasePopupMenu
 	{
 		CopyAction()
 		{
-			super(s_stringMgr.getString("TablePopupMenu.copy"));
+			super(getTableCopyActionName());
 		}
 
 		public void actionPerformed(ActionEvent evt)

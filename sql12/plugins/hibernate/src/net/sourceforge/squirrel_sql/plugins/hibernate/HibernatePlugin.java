@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import java.util.HashMap;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
@@ -11,6 +13,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompleteCodeAction;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernatePrefsTab;
 
@@ -74,7 +77,12 @@ public class HibernatePlugin extends DefaultSessionPlugin
 	public synchronized void initialize() throws PluginException
    {
 		_resources = new HibernatePluginResources(this);
-   }
+
+		Main.getApplication().getShortcutManager().registerAccelerator(HQLCompleteCodeAction.class, _resources);
+		Main.getApplication().getShortcutManager().registerAccelerator(HQLBookmarksAction.class, _resources);
+		Main.getApplication().getShortcutManager().registerAccelerator(HQLToolsPopUpAction.class, _resources);
+
+	}
 
 
    public void sessionEnding(ISession session)

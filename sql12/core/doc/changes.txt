@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#362/#173 Keyboard shortcuts are now configurable, see menu File --> "Global Preferences" --> tab "Keyboard shortcuts"
+ The default shortcut for the "Quote SQL" action was changed from (ctrl alt Q) to (ctrl shift Q) on account of bug #1368.
+
 When reconnecting a Session (ctrl alt T) the connect data (JDBC-URL, user, password) can now be changed.
   This can be useful for example for Docker (or similar container) driven tests when the container was restarted with changed port.
 
@@ -18,6 +21,10 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 
 Bug fixes:
+
+#1368 The "Quote SQL" default shortcut was changed from (ctrl alt Q) to (ctrl shift Q).
+  If you want the old shortcut back please use the new keyboard shortcuts configuration feature,
+  see menu File --> "Global Preferences" --> tab "Keyboard shortcuts"
 
 "Elapsed execution time" text field, which is visible when SQLs are executed, used to be too small.
 

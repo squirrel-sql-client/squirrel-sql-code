@@ -30,39 +30,25 @@ import java.util.Map;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllButCurrentSessionsAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DisplayPluginSummaryAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DumpApplicationAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.SavePreferencesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
-import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
-import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
-import net.sourceforge.squirrel_sql.fw.util.ListMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 /**
  * This class represents a collection of <TT>Action</CODE> objects for the
  * application.
@@ -71,43 +57,19 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class ActionCollection
 {
-	/** Logger for this class. */
-	private static ILogger s_log;
+	private static ILogger s_log = LoggerController.createLogger(ActionCollection.class);
 
-	/** Application API. */
-	private final IApplication _app;
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ActionCollection.class);
 
 	/** Collection of all Actions keyed by class name. */
 	private final Map<String, Action> _actionColl = new HashMap<String, Action>();
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ActionCollection.class);
-    
-	/**
-	 * Ctor. Disable all actions that are not valid when the
-	 * application is first initialised.
-	 *
-	 * @param	app		Application API.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
-	 */
-	public ActionCollection(IApplication app)
+
+	void doAfterLoadInitalizations()
 	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("IApplication == null");
-		}
-		if (s_log == null)
-		{
-			s_log = LoggerController.createLogger(getClass());
-		}
-		_app = app;
-		preloadActions();
 		enableInternalFrameOptions(false);
 	}
+
 
 	/**
 	 * Add an <TT>Action</TT> to this collection. Normally <TT>get</TT> will
@@ -446,95 +408,4 @@ public class ActionCollection
 		enableAction(CloseAllButCurrentSessionsAction.class, enable);
 	}
 
-	/**
-	 * Load actions.
-	 */
-	private void preloadActions()
-	{
-		add(new AboutAction(_app));
-		add(new CascadeAction(_app));
-		add(new ToolsPopupAction(_app));
-		add(new CloseAllSessionsAction(_app));
-		add(new CloseAllButCurrentSessionsAction(_app));
-		add(new CloseAllSQLResultTabsAction(_app));
-		add(new CloseAllSQLResultTabsButCurrentAction(_app));
-		add(new CloseAllSQLResultTabsToLeftAction(_app));
-		add(new CloseAllSQLResultTabsToRightAction(_app));
-		add(new CloseCurrentSQLResultTabAction(_app));
-		add(new ToggleCurrentSQLResultTabStickyAction(_app));
-		add(new CloseAllSQLResultWindowsAction(_app));
-		add(new ToggleMinimizeResultsAction(_app));
-		add(new ViewObjectAtCursorInObjectTreeAction(_app));
-		add(new CloseSessionAction(_app));
-		add(new CloseSessionWindowAction(_app));
-		add(new CommitAction(_app));
-		add(new CopyQualifiedObjectNameAction(_app));
-		add(new CopySimpleObjectNameAction(_app));
-		add(new DisplayPluginSummaryAction(_app));
-		//add(new DropSelectedTablesAction(_app));
-		add(new DeleteSelectedTablesAction(_app));
-		add(new ShowTableReferencesAction(_app));
-		add(new DumpApplicationAction(_app));
-		add(new SavePreferencesAction(_app));
-		add(new DumpSessionAction(_app));
-		add(new ExecuteSqlAction(_app));
-		add(new ExecuteAllSqlsAction(_app));
-		add(new ExitAction(_app));
-		add(new FileNewAction(_app));
-		add(new FileDetachAction(_app));
-		add(new FileOpenAction(_app));
-		add(new FileOpenRecentAction(_app));
-		add(new FileAppendAction(_app));
-		add(new FileSaveAction(_app));
-		add(new FileSaveAsAction(_app));
-      add(new FileCloseAction(_app));
-      add(new FilePrintAction(_app));
-      add(new FileReloadAction(_app));
-		add(new GlobalPreferencesAction(_app));
-		add(new GotoNextResultsTabAction(_app));
-		add(new GotoPreviousResultsTabAction(_app));
-		add(new InstallDefaultDriversAction(_app));
-		add(new MaximizeAction(_app));
-		add(new NewObjectTreeAction(_app));
-		add(new NewSQLWorksheetAction(_app));
-		add(new NewAliasConnectionAction(_app));
-		add(new NewSessionPropertiesAction(_app));
-		add(new NextSessionAction(_app));
-		add(new PreviousSessionAction(_app));
-		add(new ReconnectAction(_app));
-		add(new RefreshSchemaInfoAction(_app));
-		add(new RefreshObjectTreeItemAction(_app));
-		add(new RollbackAction(_app));
-		add(new SessionPropertiesAction(_app));
-		add(new FilterObjectsAction(_app));
-		add(new SetDefaultCatalogAction(_app));
-		add(new ShowLoadedDriversOnlyAction(_app));
-		add(new ShowNativeSQLAction(_app));
-		add(new SQLFilterAction(_app));
-		add(new EditWhereColsAction(_app));
-		add(new TileAction(_app));
-		add(new TileHorizontalAction(_app));
-		add(new TileVerticalAction(_app));
-		add(new ToggleAutoCommitAction(_app));
-		add(new ViewHelpAction(_app));
-		add(new ViewLogsAction(_app));
-		add(new PreviousSqlAction(_app));
-		add(new NextSqlAction(_app));
-		add(new SelectSqlAction(_app));
-		add(new OpenSqlHistoryAction(_app));
-      add(new FormatSQLAction(_app));
-
-      add(new RenameSessionAction(_app));
-      add(new RerunCurrentSQLResultTabAction(_app));
-
-		add(new InQuotesAction(_app));
-		add(new RemoveQuotesAction(_app));
-		add(new ConvertToStringBufferAction(_app));
-		add(new EscapeDateAction(_app));
-		add(new CutSqlAction(_app));
-		add(new CopySqlAction(_app));
-		add(new RemoveNewLinesAction(_app));
-		add(new PasteFromHistoryAction(_app));
-		add(new PasteFromHistoryAltAcceleratorAction(_app));
-	}
 }

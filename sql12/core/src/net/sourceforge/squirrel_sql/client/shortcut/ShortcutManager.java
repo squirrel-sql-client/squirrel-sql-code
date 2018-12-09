@@ -5,9 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.SimpleType;
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
-import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.Action;
@@ -64,19 +63,6 @@ public class ShortcutManager
       }
    }
 
-   public void preRegisterActionsThatElseWillBeRegisteredLateOnSessionStart()
-   {
-      registerAccelerator(UndoAction.class);
-      registerAccelerator(RedoAction.class);
-   }
-
-   private void registerAccelerator(Class<? extends Action> actionClass)
-   {
-      String actionName = Main.getApplication().getResources().getActionName(actionClass);
-      KeyStroke defaultKeyStroke = Main.getApplication().getResources().getKeyStroke(actionClass);
-      registerAccelerator(actionName, defaultKeyStroke);
-   }
-
    public List<Shortcut> getShortcuts()
    {
       return new ArrayList<>(_shortcuts);
@@ -89,11 +75,43 @@ public class ShortcutManager
 
    public void setAccelerator(JMenuItem item, KeyStroke defaultKeyStroke, String actionName)
    {
-      Shortcut shortcut = registerAccelerator(actionName, defaultKeyStroke);
+      Shortcut shortcut = _registerAccelerator(actionName, defaultKeyStroke);
       item.setAccelerator(shortcut.validKeyStroke());
    }
 
-   private Shortcut registerAccelerator(String actionName, KeyStroke defaultKeyStroke)
+
+   public KeyStroke getValidKeyStroke(String actionName, KeyStroke defaultKeyStroke)
+   {
+      String shortCutString = _shortcutsJsonBeanLoadedAtStartUp.getShortcutByKey().get(ShortcutUtil.generateKey(actionName, defaultKeyStroke));
+
+      if(null != shortCutString)
+      {
+         return KeyStroke.getKeyStroke(shortCutString);
+      }
+
+      return defaultKeyStroke;
+   }
+
+
+   public void registerAccelerator(Class<? extends Action> actionClass)
+   {
+      registerAccelerator(actionClass, Main.getApplication().getResources());
+   }
+
+   public void registerAccelerator(Class<? extends Action> actionClass, Resources pluginResources)
+   {
+      String actionName = pluginResources.getActionName(actionClass);
+      KeyStroke defaultKeyStroke = pluginResources.getKeyStroke(actionClass);
+      _registerAccelerator(actionName, defaultKeyStroke);
+   }
+
+
+   public void  registerAccelerator(String actionName, KeyStroke defaultKeyStroke)
+   {
+      _registerAccelerator(actionName, defaultKeyStroke);
+   }
+
+   private Shortcut _registerAccelerator(String actionName, KeyStroke defaultKeyStroke)
    {
       Shortcut ret = new Shortcut(actionName, defaultKeyStroke);
 
@@ -105,7 +123,10 @@ public class ShortcutManager
       }
 
 
-      _shortcuts.add(ret);
+      if (false == _shortcuts.contains(ret))
+      {
+         _shortcuts.add(ret);
+      }
 
       return ret;
    }
@@ -145,7 +166,4 @@ public class ShortcutManager
          throw Utilities.wrapRuntime(e);
       }
    }
-
-
-
 }
