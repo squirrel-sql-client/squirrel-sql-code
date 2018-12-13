@@ -221,6 +221,8 @@ public interface ISQLPanelAPI
 	 */
 	void closeAllSQLResultTabs();
 
+	void closeAllSQLResultTabs(boolean isMemoryCleanUp);
+
    /**
 	 * Close all the SQL result tabs except from the selected.
 	 */
@@ -237,6 +239,11 @@ public interface ISQLPanelAPI
 	 * Toggle if all further SQL resutls should go to the current tab.
 	 */
    void toggleCurrentSQLResultTabSticky();
+
+	/**
+	 * Toggle if this tab won't be removed automatically.
+	 */
+	void toggleCurrentSQLResultTabAnchored();
 
 
 	/**

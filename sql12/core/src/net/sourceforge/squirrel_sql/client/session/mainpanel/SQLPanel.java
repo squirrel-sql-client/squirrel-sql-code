@@ -187,7 +187,7 @@ public class SQLPanel extends JPanel
 		setSession(session);
 		createGUI();
 		propertiesHaveChanged(null);
-		_sqlExecPanel = new SQLResultExecuterPanel(session, true);
+		_sqlExecPanel = new SQLResultExecuterPanel(session);
 		_sqlExecPanel.addSQLExecutionListener(_sqlExecutorHistoryListener);
 		addExecutor(_sqlExecPanel);
 		_panelAPI = new SQLPanelAPI(this);

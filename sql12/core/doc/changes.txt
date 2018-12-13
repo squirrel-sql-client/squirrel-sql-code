@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Up to now SQL result tabs could be toggled sticky which means all following SQL results will go into the sticky tab.
+  From now on there is also an option to toggle SQL result tabs anchored.
+  An anchored tab will not be removed, when the maximum number of tabs is reached. If you close an anchored tab you will be asked to confirm.
+  Both toggles, sticky and anchored, can be accessed by the tabs right mouse menu.
+
+The text fields of the "Copy separated by ..." dialog now grow with the dialog's size.
+
 #362/#173 Keyboard shortcuts are now configurable, see menu File --> "Global Preferences" --> tab "Keyboard shortcuts"
  The default shortcut for the "Quote SQL" action was changed from (ctrl alt Q) to (ctrl shift Q) on account of bug #1368.
 

@@ -81,6 +81,7 @@ import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogActio
 import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowTableReferencesAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleAutoCommitAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabAnchoredAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleMinimizeResultsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
@@ -133,6 +134,7 @@ public class ActionRegistry
       toolsPopupController.addAction("tabclosealltoRight", ac.get(CloseAllSQLResultTabsToRightAction.class));
       toolsPopupController.addAction("tabclosecur", ac.get(CloseCurrentSQLResultTabAction.class));
       toolsPopupController.addAction("tabsticky", ac.get(ToggleCurrentSQLResultTabStickyAction.class));
+      toolsPopupController.addAction("tabanchored", ac.get(ToggleCurrentSQLResultTabAnchoredAction.class));
 
       toolsPopupController.addAction("minres", ac.get(ToggleMinimizeResultsAction.class));
 
@@ -173,6 +175,7 @@ public class ActionRegistry
       actionCollection.add(new CloseAllSQLResultTabsToRightAction(app));
       actionCollection.add(new CloseCurrentSQLResultTabAction(app));
       actionCollection.add(new ToggleCurrentSQLResultTabStickyAction(app));
+      actionCollection.add(new ToggleCurrentSQLResultTabAnchoredAction(app));
       actionCollection.add(new CloseAllSQLResultWindowsAction(app));
       actionCollection.add(new ToggleMinimizeResultsAction(app));
       actionCollection.add(new ViewObjectAtCursorInObjectTreeAction(app));

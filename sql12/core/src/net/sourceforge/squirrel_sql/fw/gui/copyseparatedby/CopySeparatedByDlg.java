@@ -80,16 +80,16 @@ public class CopySeparatedByDlg extends JDialog
       gbc = new GridBagConstraints(0, 0 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       ret.add(new JLabel(s_stringMgr.getString("CopySeparatedByDlg.cell.separator")), gbc);
 
-      gbc = new GridBagConstraints(1, 0 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      txtCellSeparator.setPreferredSize(new Dimension(70, txtCellSeparator.getPreferredSize().height));
+      gbc = new GridBagConstraints(1, 0 , 1, 1, 1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      //txtCellSeparator.setPreferredSize(new Dimension(70, txtCellSeparator.getPreferredSize().height));
       ret.add(txtCellSeparator, gbc);
 
 
       gbc = new GridBagConstraints(0, 1 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       ret.add(_lblRowSeparator, gbc);
 
-      gbc = new GridBagConstraints(1, 1 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      txtRowSeparator.setPreferredSize(new Dimension(70, txtRowSeparator.getPreferredSize().height));
+      gbc = new GridBagConstraints(1, 1 , 1, 1, 1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      //txtRowSeparator.setPreferredSize(new Dimension(70, txtRowSeparator.getPreferredSize().height));
       ret.add(txtRowSeparator, gbc);
 
       gbc = new GridBagConstraints(0, 2 , 1, 1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
@@ -100,8 +100,8 @@ public class CopySeparatedByDlg extends JDialog
       ret.add(txtLineLength, gbc);
 
 
-      gbc = new GridBagConstraints(2, 2 , 1, 1, 1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      ret.add(new JPanel(), gbc);
+//      gbc = new GridBagConstraints(2, 2 , 1, 1, 1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+//      ret.add(new JPanel(), gbc);
 
 
       return ret;

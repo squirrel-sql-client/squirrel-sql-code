@@ -7,12 +7,12 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import java.awt.event.ActionEvent;
 
 
-public class ToggleCurrentSQLResultTabStickyAction extends SquirrelAction implements ISQLPanelAction
+public class ToggleCurrentSQLResultTabAnchoredAction extends SquirrelAction implements ISQLPanelAction
 {
 
 	private ISQLPanelAPI _panel;
 
-	public ToggleCurrentSQLResultTabStickyAction(IApplication app)
+	public ToggleCurrentSQLResultTabAnchoredAction(IApplication app)
 	{
 		super(app);
 	}
@@ -27,7 +27,7 @@ public class ToggleCurrentSQLResultTabStickyAction extends SquirrelAction implem
 	{
 		if (_panel != null)
 		{
-         _panel.toggleCurrentSQLResultTabSticky();
+         _panel.toggleCurrentSQLResultTabAnchored();
 		}
 	}
 }

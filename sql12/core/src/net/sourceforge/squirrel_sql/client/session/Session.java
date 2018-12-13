@@ -341,8 +341,9 @@ class Session implements ISession
              *  To reduced the used memory by such not reachable sessions, we remove all SQLResultTabs, when the session is closed.
              *  This helps users, they often open and close sessions without restarting SQuirrel.
              */
-            if(_sessionInternalFrame != null){
-            	_sessionInternalFrame.getMainSQLPanelAPI().closeAllSQLResultTabs();
+            if (_sessionInternalFrame != null)
+            {
+               _sessionInternalFrame.getMainSQLPanelAPI().closeAllSQLResultTabs(true);
             }
             
             

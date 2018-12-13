@@ -674,7 +674,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public void closeAllSQLResultTabs()
 	{
-		_panel.getSQLExecPanel().closeAllSQLResultTabs();
+		closeAllSQLResultTabs(false);
+	}
+
+	public void closeAllSQLResultTabs(boolean isMemoryCleanUp)
+	{
+		_panel.getSQLExecPanel().closeAllSQLResultTabs(isMemoryCleanUp);
 	}
 
    public void closeAllButCurrentResultTabs()
@@ -697,6 +702,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
    {
       _panel.getSQLExecPanel().toggleCurrentSQLResultTabSticky();
    }
+
+	@Override
+	public void toggleCurrentSQLResultTabAnchored()
+	{
+		_panel.getSQLExecPanel().toggleCurrentSQLResultTabAnchored();
+	}
 
 	/**
 	 * Close all the "torn off" SQL result frames.
@@ -797,10 +808,17 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 	public boolean confirmClose()
 	{
+		if(false == _panel.getSQLExecPanel().confirmClose())
+		{
+			return false;
+		}
+
+
 		if (unsavedEdits)
 		{
 			return showConfirmSaveDialog();
 		}
+
 		return true;
 	}
 

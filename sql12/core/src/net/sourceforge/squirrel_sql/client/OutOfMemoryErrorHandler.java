@@ -34,117 +34,125 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * chance to free enough memory to keep the GUI responsible, that the user can
  * save his work and restart SQuirrel. The scope is not, to protect the user
  * from getting a {@link OutOfMemoryError}.
- * 
+ *
  * @author Stefan Willinger
- * 
  */
-public class OutOfMemoryErrorHandler implements IOutOfMemoryErrorHandler{
+public class OutOfMemoryErrorHandler implements IOutOfMemoryErrorHandler
+{
 
-	private static final ILogger log = LoggerController.createLogger(OutOfMemoryErrorHandler.class);
+   private static final ILogger log = LoggerController.createLogger(OutOfMemoryErrorHandler.class);
 
-	private static final StringManager stringMgr = StringManagerFactory
-			.getStringManager(OutOfMemoryErrorHandler.class);
+   private static final StringManager stringMgr = StringManagerFactory.getStringManager(OutOfMemoryErrorHandler.class);
 
-	interface i18n {
-		String message = stringMgr.getString("OutOfMemoryErrorHandler.message");
-	}
+   interface i18n
+   {
+      String message = stringMgr.getString("OutOfMemoryErrorHandler.message");
+   }
 
 
-	/**
-	 * The application
-	 */
-	private IApplication application;
+   /**
+    * The application
+    */
+   private IApplication application;
 
-	/**
-	 * Default Constructor. You have to set {@link #application} manually.
-	 */
-	public OutOfMemoryErrorHandler() {
-		super();
-	}
+   public OutOfMemoryErrorHandler()
+   {
+   }
 
-	/**
-	 * Constructor setting the {@link #application}
-	 * 
-	 * @param application
-	 */
-	public OutOfMemoryErrorHandler(IApplication application) {
-		super();
-		setApplication(application);
-	}
 
-	
-	/**
-	 * Gets the application
-	 * 
-	 * @return the application
-	 */
-	public IApplication getApplication() {
-		return application;
-	}
+   /**
+    * Constructor setting the {@link #application}
+    *
+    * @param application
+    */
+   public OutOfMemoryErrorHandler(IApplication application)
+   {
+      setApplication(application);
+   }
 
-	/**
-	 * Sets the application.
-	 * 
-	 * @param application
-	 *            the application to set
-	 * @throws IllegalArgumentException
-	 *             if application is null;
-	 */
-	public void setApplication(IApplication application) {
-		if (application == null) {
-			throw new IllegalArgumentException("application must not be null");
-		}
-		this.application = application;
-	}
 
-	/**
-	 * To free some memory, close all SQL result-tabs of all current sessions.
-	 * This may free some memory.
-	 * @see net.sourceforge.squirrel_sql.client.IOutOfMemoryErrorHandler#handleOutOfMemoryError()
-	 */
-	public synchronized void handleOutOfMemoryError() {
+   /**
+    * Gets the application
+    *
+    * @return the application
+    */
+   public IApplication getApplication()
+   {
+      return application;
+   }
 
-		SessionManager sessionManager = application.getSessionManager();
+   /**
+    * Sets the application.
+    *
+    * @param application the application to set
+    * @throws IllegalArgumentException if application is null;
+    */
+   public void setApplication(IApplication application)
+   {
+      if (application == null)
+      {
+         throw new IllegalArgumentException("application must not be null");
+      }
+      this.application = application;
+   }
 
-		// All sessions, the user has opened
-		ISession[] sessions = sessionManager.getConnectedSessions();
+   /**
+    * To free some memory, close all SQL result-tabs of all current sessions.
+    * This may free some memory.
+    *
+    * @see net.sourceforge.squirrel_sql.client.IOutOfMemoryErrorHandler#handleOutOfMemoryError()
+    */
+   public synchronized void handleOutOfMemoryError()
+   {
 
-		if (sessions.length != 0) {
-			for (ISession session : sessions) {
-				closeResultTabs(session);
-			}
-			showMessage(sessionManager);
-		} else {
-			log.info("A OutOfMemoryError occurred, but there are no sessions connected - so we can't free memory.");
-		}
+      SessionManager sessionManager = application.getSessionManager();
 
-	}
+      // All sessions, the user has opened
+      ISession[] sessions = sessionManager.getConnectedSessions();
 
-	/**
-	 * Inform the user, that a {@link OutOfMemoryError} had occurred.
-	 * 
-	 * @param sessionManager
-	 *            the sessionManager
-	 */
-	private void showMessage(SessionManager sessionManager) {
-		ISession activeSession = sessionManager.getActiveSession();
-		if (activeSession != null) {
-			log.info(i18n.message);
-			activeSession.showErrorMessage(i18n.message);
-			application.showErrorDialog(i18n.message);
-		} else {
-			log.info("A OutOfMemoryError occurred, but there are no active session!");
-		}
-	}
+      if (sessions.length != 0)
+      {
+         for (ISession session : sessions)
+         {
+            closeResultTabs(session);
+         }
+         showMessage(sessionManager);
+      }
+      else
+      {
+         log.info("A OutOfMemoryError occurred, but there are no sessions connected - so we can't free memory.");
+      }
 
-	/**
-	 * Close all result tabs of the session.
-	 * 
-	 * @param session
-	 *            the session, where to close the result tabs.
-	 */
-	private void closeResultTabs(ISession session) {
-		session.getSessionInternalFrame().getMainSQLPanelAPI().closeAllSQLResultTabs();
-	}
-	
+   }
+
+   /**
+    * Inform the user, that a {@link OutOfMemoryError} had occurred.
+    *
+    * @param sessionManager the sessionManager
+    */
+   private void showMessage(SessionManager sessionManager)
+   {
+      ISession activeSession = sessionManager.getActiveSession();
+      if (activeSession != null)
+      {
+         log.info(i18n.message);
+         activeSession.showErrorMessage(i18n.message);
+         application.showErrorDialog(i18n.message);
+      }
+      else
+      {
+         log.info("A OutOfMemoryError occurred, but there are no active session!");
+      }
+   }
+
+   /**
+    * Close all result tabs of the session.
+    *
+    * @param session the session, where to close the result tabs.
+    */
+   private void closeResultTabs(ISession session)
+   {
+      session.getSessionInternalFrame().getMainSQLPanelAPI().closeAllSQLResultTabs(true);
+   }
+
 }
