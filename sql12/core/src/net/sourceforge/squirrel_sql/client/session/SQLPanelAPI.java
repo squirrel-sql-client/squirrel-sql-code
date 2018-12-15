@@ -869,7 +869,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
        {
            return fileSave();
        }
-       else if(option == JOptionPane.CANCEL_OPTION)
+       else if(option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION)
 		 {
 		 	return false;
 		 }
