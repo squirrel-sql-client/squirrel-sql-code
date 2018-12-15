@@ -86,13 +86,17 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 
    private TabIconManager _tabIconManager = new TabIconManager();
 
+   private final ResultTabClosing _resultTabClosing;
+
    public SQLResultExecuterPanel(ISession session)
 	{
       _resultTabFactory = new ResultTabFactory(session, createSQLResultExecuterPanelFacade());
 		setSession(session);
 		createGUI();
 		propertiesHaveChanged(null);
-	}
+
+      _resultTabClosing = new ResultTabClosing(_tabIconManager, _tabbedExecutionsPanel);
+   }
 
    private SQLResultExecuterPanelFacade createSQLResultExecuterPanelFacade()
    {
@@ -101,7 +105,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
          @Override
          public void closeResultTab(ResultTab resultTab)
          {
-            SQLResultExecuterPanel.this.closeResultTab(resultTab);
+            _resultTabClosing.closeTab(resultTab);
          }
 
          @Override
@@ -245,7 +249,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 
       for (ErrorPanel errorPanel : toRemove)
       {
-         closeTab(errorPanel);
+         _resultTabClosing.closeTab(errorPanel);
       }
    }
 
@@ -274,12 +278,9 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
             return;
          }
 
-         ISQLExecutionListener[] executionListeners =
-               _listeners.getListeners(ISQLExecutionListener.class);
+         ISQLExecutionListener[] executionListeners = _listeners.getListeners(ISQLExecutionListener.class);
 
-         ISQLExecutionHandlerListener executionHandlerListener = createSQLExecutionHandlerListener();
-
-         new SQLExecutionHandler((IResultTab)null, _session, sql, executionHandlerListener, executionListeners, tableToBeEdited);
+         new SQLExecutionHandler((IResultTab) null, _session, sql, createSQLExecutionHandlerListener(), executionListeners, tableToBeEdited);
       }
    }
 
@@ -340,9 +341,9 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
       _tabbedExecutionsPanel.remove(errorPanel);
    }
 
-   private void rerunSQL(String sql, IResultTab resultTab)
+   private void rerunSQL(String sql, IResultTab resultTabToReplace)
    {
-      new SQLExecutionHandler(resultTab, _session, sql, createSQLExecutionHandlerListener(), new ISQLExecutionListener[0]);
+      new SQLExecutionHandler(resultTabToReplace, _session, sql, createSQLExecutionHandlerListener(), new ISQLExecutionListener[0]);
    }
 
 
@@ -362,34 +363,14 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 	 */
 	public void closeAllSQLResultTabs()
 	{
-	   closeAllSQLResultTabs(false);
+      closeAllSQLResultTabs(false);
    }
 
 	public void closeAllSQLResultTabs(boolean isMemoryCleanUp)
 	{
       ArrayList<JComponent> allTabs = getAllTabs();
 
-	   if(isMemoryCleanUp)
-      {
-         allTabs.forEach(tab -> closeTab(tab));
-         return;
-      }
-
-
-      AnchorTabClosingHelper anchorTabClosingHelper = new AnchorTabClosingHelper(_tabIconManager, _tabbedExecutionsPanel);
-
-      if (isMemoryCleanUp)
-      {
-         anchorTabClosingHelper.prepareClosing(allTabs);
-      }
-
-      for (JComponent tab : allTabs)
-      {
-         if(anchorTabClosingHelper.shouldClose(tab))
-         {
-            closeTab(tab);
-         }
-      }
+      _resultTabClosing.closeTabs(allTabs, isMemoryCleanUp);
    }
 
    private ArrayList<JComponent> getAllTabs()
@@ -410,27 +391,18 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
    {
       Component selectedTab = _tabbedExecutionsPanel.getSelectedComponent();
 
-      AnchorTabClosingHelper anchorTabClosingHelper = new AnchorTabClosingHelper(_tabIconManager, _tabbedExecutionsPanel);
-
       ArrayList<JComponent> allTabs = getAllTabs();
 
       ArrayList<JComponent> allButCurrent = new ArrayList<>(allTabs);
       allButCurrent.remove(selectedTab);
-      anchorTabClosingHelper.prepareClosing(allButCurrent);
 
-      for (JComponent tab : allTabs)
-      {
-         if(tab != selectedTab && anchorTabClosingHelper.shouldClose(tab))
-         {
-            closeTab(tab);
-         }
 
-      }
+      _resultTabClosing.closeTabs(allButCurrent);
    }
 
    public boolean confirmClose()
    {
-      return new AnchorTabClosingHelper(_tabIconManager, _tabbedExecutionsPanel).confirmSqlPanelClose(getAllTabs());
+      return _resultTabClosing.confirmSqlPanelClose(getAllTabs());
    }
 
 
@@ -455,16 +427,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
          }
       }
 
-      AnchorTabClosingHelper anchorTabClosingHelper = new AnchorTabClosingHelper(_tabIconManager, _tabbedExecutionsPanel);
-      anchorTabClosingHelper.prepareClosing(tabsToClose);
-
-      for (JComponent component : tabsToClose)
-      {
-         if (false == component instanceof CancelPanel && anchorTabClosingHelper.shouldClose(component))
-         {
-            closeTab(component);
-         }
-      }
+      _resultTabClosing.closeTabs(tabsToClose);
    }
 
    public void toggleCurrentSQLResultTabSticky()
@@ -515,7 +478,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 
       int selectedIndex = _tabbedExecutionsPanel.getSelectedIndex();
 
-      if (_tabbedExecutionsPanel.getIconAt(selectedIndex) == _tabIconManager.getAnchorIcon())
+      if (_resultTabClosing.isAnchoredAt(selectedIndex))
       {
          _tabbedExecutionsPanel.setIconAt(selectedIndex, null);
       }
@@ -526,14 +489,10 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
    }
 
 
-   public synchronized void closeCurrentResultTab()
+   public void closeCurrentResultTab()
    {
       JComponent selectedTab = (JComponent) _tabbedExecutionsPanel.getSelectedComponent();
-
-      if(new AnchorTabClosingHelper(_tabIconManager, _tabbedExecutionsPanel).shouldClose(selectedTab))
-      {
-         closeTab(selectedTab);
-      }
+      _resultTabClosing.closeTab(selectedTab);
    }
 
    /**
@@ -553,30 +512,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 		closeAllSQLResultFrames();
 	}
 
-   private void closeTab(Component tab)
-   {
-      if (tab instanceof ErrorPanel)
-      {
-         _tabbedExecutionsPanel.remove(tab);
-      }
-      else if (tab instanceof ResultTab)
-      {
-         closeResultTab((ResultTab) tab);
-      }
-      else if (tab instanceof CancelPanel)
-      {
-         ((CancelPanel)tab).closeBtn.doClick();
-      }
-   }
-
-
-   private void closeResultTab(ResultTab tab)
-   {
-		tab.closeTab();
-		_tabbedExecutionsPanel.remove(tab);
-	}
-
-	/**
+   /**
 	 * Display the next tab in the SQL results.
 	 */
 	public void gotoNextResultsTab()
@@ -648,8 +584,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 		{
 			throw new IllegalArgumentException("Null ResultTab passed");
 		}
-		s_log.debug("SQLPanel.createSQLResultFrame(" + tab.getIdentifier().toString()
-				+ ")");
+
 		_tabbedExecutionsPanel.remove(tab);
 
 
@@ -713,7 +648,8 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
     /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter#getSelectedResultTab()
      */
-    public IResultTab getSelectedResultTab() {
+    public IResultTab getSelectedResultTab()
+    {
         return (IResultTab)_tabbedExecutionsPanel.getSelectedComponent();
     }
 
@@ -793,53 +729,60 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
       {
    		_tabbedExecutionsPanel.addTab(tab.getTitle(), null, tab, tab.getViewableSqlString());
          checkResultTabLimit();
+         return;
       }
-      else
+
+      if (null != resultTabToReplace && _session.getProperties().getKeepTableLayoutOnRerun())
       {
-         if (null != resultTabToReplace && _session.getProperties().getKeepTableLayoutOnRerun())
+         TableState sortableTableState = resultTabToReplace.getResultSortableTableState();
+         if (null != sortableTableState)
          {
-            TableState sortableTableState = resultTabToReplace.getResultSortableTableState();
-            if (null != sortableTableState)
-            {
-               tab.applyResultSortableTableState(sortableTableState);
-            }
+            tab.applyResultSortableTableState(sortableTableState);
          }
+      }
 
 
-         int indexToReplace = -1;
-         ImageIcon tabIcon = null;
+      int indexToReplace = -1;
+      ImageIcon tabIcon = null;
 
-         // Either resultTabToReplace or _stickyTab must be not null here
-         if(null != resultTabToReplace && _stickyTab != resultTabToReplace)
+      boolean replaceStickyTab = null != _stickyTab && (null == resultTabToReplace || _stickyTab == resultTabToReplace);
+
+      if(replaceStickyTab)
+      {
+         // Result goes to _stickyTab
+         indexToReplace = TabbedExcutionPanelUtil.getIndexOfTab(_stickyTab, _tabbedExecutionsPanel);
+         if(-1 == indexToReplace)
          {
-            indexToReplace = TabbedExcutionPanelUtil.getIndexOfTab(resultTabToReplace, _tabbedExecutionsPanel);
+            // sticky tab was closed
+            _stickyTab = null;
          }
          else
          {
-            indexToReplace = TabbedExcutionPanelUtil.getIndexOfTab(_stickyTab, _tabbedExecutionsPanel);
-            if(-1 == indexToReplace)
-            {
-               // sticky tab was closed
-               _stickyTab = null;
-            }
-            else
-            {
-               tabIcon = _tabIconManager.getStickyIcon();
-               _stickyTab = tab;
-            }
+            tabIcon = _tabIconManager.getStickyIcon();
+            _stickyTab = tab;
          }
+      }
+      else if (null != resultTabToReplace)
+      {
+         indexToReplace = TabbedExcutionPanelUtil.getIndexOfTab(resultTabToReplace, _tabbedExecutionsPanel);
 
-
-         if(-1 == indexToReplace)
+         if(_resultTabClosing.isAnchored((JComponent) resultTabToReplace))
          {
-            // Just add the tab
-            addResultsTab(tab, null);
-            return;
+            tabIcon = _tabIconManager.getAnchorIcon();
          }
+      }
 
-         closeTabAt(indexToReplace);
+      if(-1 == indexToReplace)
+      {
+         // Just add the tab
+         addResultsTab(tab, null);
+      }
+      else
+      {
+         _resultTabClosing.closeTabAt(indexToReplace);
          _tabbedExecutionsPanel.insertTab(tab.getTitle(), tabIcon, tab, tab.getViewableSqlString(), indexToReplace);
       }
+
 	}
 
    private void checkResultTabLimit()
@@ -854,13 +797,13 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
             break;
          }
 
-         if(_tabbedExecutionsPanel.getIconAt(indexToRemove) == _tabIconManager.getAnchorIcon())
+         if(_resultTabClosing.isAnchoredAt(indexToRemove))
          {
             ++indexToRemove;
          }
          else
          {
-            closeTabAt(indexToRemove);
+            _resultTabClosing.closeTabAt(indexToRemove);
          }
 
          if(indexToRemove == _tabbedExecutionsPanel.getTabCount() -1)
@@ -868,13 +811,6 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
             break;
          }
       }
-   }
-
-
-   private void closeTabAt(int index)
-   {
-      Component selectedTab = _tabbedExecutionsPanel.getComponentAt(index);
-      closeTab(selectedTab);
    }
 
 
@@ -960,14 +896,17 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
       if(SwingUtilities.isMiddleMouseButton (e))
       {
          int tab = _tabbedExecutionsPanel.getUI().tabForCoordinate(_tabbedExecutionsPanel, e.getX(), e.getY());
-         if (-1 != tab)
-         {
-            Component comp = _tabbedExecutionsPanel.getComponentAt(tab);
 
-            if(comp instanceof IResultTab)
-            {
-               ((IResultTab)comp).closeTab();
-            }
+         if(-1 == tab)
+         {
+            return;
+         }
+
+         Component comp = _tabbedExecutionsPanel.getComponentAt(tab);
+
+         if(comp instanceof IResultTab)
+         {
+            _resultTabClosing.closeTab((JComponent) comp);
          }
       }
    }

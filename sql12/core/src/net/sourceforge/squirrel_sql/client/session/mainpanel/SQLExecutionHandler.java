@@ -409,31 +409,34 @@ class SQLExecutionHandler implements ISQLExecuterHandler
 	   _rsds = new ResultSetDataSet();
       _rsds.setLimitDataRead(true);
 
-	   try {
+      try
+      {
 
-		   SessionProperties props = _session.getProperties();
+         SessionProperties props = _session.getProperties();
 
-		   ResultSetMetaDataDataSet rsmdds = null;
-		   if (props.getShowResultsMetaData())
-		   {
-			   rsmdds = new ResultSetMetaDataDataSet(rs.getResultSet());
-		   }
-		   DialectType dialectType =
-				   DialectFactory.getDialectType(_session.getMetaData());
+         ResultSetMetaDataDataSet rsmdds = null;
+         if (props.getShowResultsMetaData())
+         {
+            rsmdds = new ResultSetMetaDataDataSet(rs.getResultSet());
+         }
+         DialectType dialectType =
+               DialectFactory.getDialectType(_session.getMetaData());
 
          // rsds.setContentsTabResultSet() reads the result set. So results processing on the DB is over
          // and this time is measured. None is interested in the time that it takes us to render Swing tables ...
-		   info.resultsProcessingComplete(_rsds.setSqlExecutionTabResultSet(rs, null, dialectType));
+         info.resultsProcessingComplete(_rsds.setSqlExecutionTabResultSet(rs, null, dialectType));
 
-		   _executionHandlerListener.addResultsTab(info, _rsds, rsmdds, model, _resultTabToReplace);
+         _executionHandlerListener.addResultsTab(info, _rsds, rsmdds, model, _resultTabToReplace);
 
-      }finally{
-    	  /*
-    	   * Make sure, that in any case, even when a exception occurs, the rsds is set to null, so that
-    	   * the GC can clean them.
-    	   */
-    	  _rsds = null;
-   	}
+      }
+      finally
+      {
+         /*
+          * Make sure, that in any case, even when a exception occurs, the rsds is set to null, so that
+          * the GC can clean them.
+          */
+         _rsds = null;
+      }
    }
 
    public void sqlExecutionWarning(SQLWarning warn)

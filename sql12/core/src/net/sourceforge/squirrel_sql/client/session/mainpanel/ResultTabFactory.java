@@ -24,13 +24,7 @@ public class ResultTabFactory
 
    public ResultTab createResultTab(SQLExecutionInfo exInfo, IDataSetUpdateableTableModel creator, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds) throws DataSetException
    {
-      final ResultTabListener resultTabListener = new ResultTabListener()
-      {
-         public void rerunSQL(String sql, IResultTab resultTab)
-         {
-            _sqlResultExecuterPanelFacade.rerunSQL(sql, resultTab);
-         }
-      };
+      final ResultTabListener resultTabListener = (sql, resultTab) -> _sqlResultExecuterPanelFacade.rerunSQL(sql, resultTab);
 
 
       ResultTab tab = new ResultTab(_session, _sqlResultExecuterPanelFacade, _idFactory.createIdentifier(), exInfo, creator, resultTabListener);

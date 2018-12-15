@@ -674,7 +674,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public void closeAllSQLResultTabs()
 	{
-		closeAllSQLResultTabs(false);
+		_panel.getSQLExecPanel().closeAllSQLResultTabs();
 	}
 
 	public void closeAllSQLResultTabs(boolean isMemoryCleanUp)
@@ -682,7 +682,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		_panel.getSQLExecPanel().closeAllSQLResultTabs(isMemoryCleanUp);
 	}
 
-   public void closeAllButCurrentResultTabs()
+	public void closeAllButCurrentResultTabs()
    {
       _panel.getSQLExecPanel().closeAllButCurrentResultTabs();
    }
