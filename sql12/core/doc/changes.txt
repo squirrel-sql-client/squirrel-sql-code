@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New preference to define the maximum column width for text outputs, see menu File --> Global Preferences -->  tab SQL --> section General.
+  This was asked for in bug #1256.
+
 Up to now SQL result tabs could be toggled sticky which means all following SQL results will go into the sticky tab.
   From now on there is also an option to toggle SQL result tabs anchored.
   An anchored tab will not be removed, when the maximum number of tabs is reached. If you close an anchored tab you will be asked to confirm.

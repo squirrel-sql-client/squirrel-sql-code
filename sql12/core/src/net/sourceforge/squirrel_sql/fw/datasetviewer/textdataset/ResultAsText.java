@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
@@ -68,9 +69,12 @@ public class ResultAsText
       //replace FF character (0x0C) with SPACE char
       data = data.replace('\u000C', ' ');
       StringBuffer output = new StringBuffer(data);
-      if (displaySize > IDataSetViewer.MAX_COLUMN_WIDTH)
+
+      int maxTextOutputColumnWidth = Main.getApplication().getSquirrelPreferences().getMaxTextOutputColumnWidth();
+
+      if (displaySize > maxTextOutputColumnWidth)
       {
-         displaySize = IDataSetViewer.MAX_COLUMN_WIDTH;
+         displaySize = maxTextOutputColumnWidth;
       }
 
       if (output.length() > displaySize)

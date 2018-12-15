@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 
 import com.jidesoft.swing.MultilineLabel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -169,6 +170,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		private JButton _btnCurrentSqlMarkColorRGB = new JButton();
 
 		private JCheckBox _chkReloadSqlContentsSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.reload.sql.contents"));
+		private IntegerField _txtMaxTextOutputColumnWidth = new IntegerField();
 
 		private JRadioButton _debugJdbcDont = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugdont"));
 		private JRadioButton _debugJdbcStream = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugstream"));
@@ -199,6 +201,9 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			initCurrentMarkGui();
 
 			_chkReloadSqlContentsSql.setSelected(prefs.isReloadSqlContents());
+			_txtMaxTextOutputColumnWidth.setInt(prefs.getMaxTextOutputColumnWidth());
+
+
 			_debugJdbcStream.setSelected(prefs.isJdbcDebugToStream());
 			_debugJdbcWriter.setSelected(prefs.isJdbcDebugToWriter());
 			_debugJdbcDont.setSelected(prefs.isJdbcDebugDontDebug());
@@ -259,6 +264,13 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			prefs.setCurrentSqlMarkColorRGB((getCurrentSqlMarkColorIcon()).getColor().getRGB());
 
 			prefs.setReloadSqlContents(_chkReloadSqlContentsSql.isSelected());
+
+
+			int maxTextOutputColumnWidth = _txtMaxTextOutputColumnWidth.getInt();
+			if (IDataSetViewer.MIN_COLUMN_WIDTH <= maxTextOutputColumnWidth)
+			{
+				prefs.setMaxTextOutputColumnWidth(maxTextOutputColumnWidth);
+			}
 
 			if (_debugJdbcStream.isSelected())
 			{
@@ -361,7 +373,24 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			gbc.fill = GridBagConstraints.NONE;
 			pnl.add(_chkReloadSqlContentsSql, gbc);
 
+			gbc.gridx = 0;
+			gbc.gridy = 6;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			gbc.fill = GridBagConstraints.NONE;
+			pnl.add(createMaxTextOutputColumnWidthPanel(), gbc);
+
 			return pnl;
+		}
+
+		private JPanel createMaxTextOutputColumnWidthPanel()
+		{
+			//JPanel ret = new JPanel(new GridLayout(1,2,5,0));
+			JPanel ret = new JPanel(new BorderLayout(5,0));
+
+			ret.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.MaxTextOutputColumnWidthPanel.label", IDataSetViewer.MIN_COLUMN_WIDTH)), BorderLayout.WEST);
+			ret.add(_txtMaxTextOutputColumnWidth, BorderLayout.CENTER);
+
+			return ret;
 		}
 
 		private JPanel createCurrentSqlMarkPanel()

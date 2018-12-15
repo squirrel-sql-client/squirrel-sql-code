@@ -152,6 +152,9 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 
 						new PropertyDescriptor(RELOAD_SQL_CONTENTS, SquirrelPreferences.class, "isReloadSqlContents",
 							"setReloadSqlContents"),
+
+						new PropertyDescriptor(MAX_TEXTOUTPUT_COLUMN_WIDTH, SquirrelPreferences.class, "getMaxTextOutputColumnWidth",
+							"setMaxTextOutputColumnWidth"),
 				};
 
 			return result;

@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -100,6 +101,7 @@ public class SquirrelPreferences implements Serializable
       String MAX_COLUMN_ADJUST_LENGTH = "maxColumnAdjustLength";
       String REMEMBER_VALUE_OF_POPUP = "rememberValueOfPopup";
       String RELOAD_SQL_CONTENTS = "ReloadSqlContents";
+      String MAX_TEXTOUTPUT_COLUMN_WIDTH = "MaxTextOutputColumnWidth";
    }
 
    public interface IJdbcDebugTypes
@@ -259,6 +261,9 @@ public class SquirrelPreferences implements Serializable
 	private boolean _rememberValueOfPopup = false;
 
 	private boolean _reloadSqlContents;
+
+	private int _maxTextOutputColumnWidth = IDataSetViewer.MAX_COLUMN_WIDTH;
+
 
 	/**
 	 * Default ctor.
@@ -1291,6 +1296,13 @@ public class SquirrelPreferences implements Serializable
 		_reloadSqlContents = reloadSqlContents;
 	}
 
+	public int getMaxTextOutputColumnWidth()
+	{
+		return _maxTextOutputColumnWidth;
+	}
 
-
+	public void setMaxTextOutputColumnWidth(int maxTextOutputColumnWidth)
+	{
+		_maxTextOutputColumnWidth = maxTextOutputColumnWidth;
+	}
 }
