@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -37,7 +38,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class ResultSetDataSet implements IDataSet {
+public class ResultSetDataSet implements IDataSet
+{
    private final static ILogger s_log = LoggerController.createLogger(ResultSetDataSet.class);
 
    // TODO: These 2 should be handled with an Iterator.
@@ -51,19 +53,23 @@ public class ResultSetDataSet implements IDataSet {
 
    private List<Object[]> _alData;
 
-   /** If <TT>true</TT> cancel has been requested. */
+   /**
+    * If <TT>true</TT> cancel has been requested.
+    */
    private volatile boolean _cancel = false;
 
-   /** the result set reader, which we will notify of cancel requests */
+   /**
+    * the result set reader, which we will notify of cancel requests
+    */
    private ResultSetReader _rdr = null;
 
    /**
-    * The type of dialect of the session from which this data set came.  
+    * The type of dialect of the session from which this data set came.
     * Plugins can now override behavior for standard SQL types, so
-    * it is necessary to know the current dialect so that the correct plugin 
-    * DataTypeComponent can be chosen for rendering this dataset, if one has 
-    * been registered. 
-    */   
+    * it is necessary to know the current dialect so that the correct plugin
+    * DataTypeComponent can be chosen for rendering this dataset, if one has
+    * been registered.
+    */
    private DialectType _dialectType = null;
 
    private final TableColumnInfo[] tableColumnInfos;
@@ -72,49 +78,49 @@ public class ResultSetDataSet implements IDataSet {
 
    /**
     * Default constructor.
- * @param tableColumnInfos 
+    *
+    * @param tableColumnInfos
     */
-   public ResultSetDataSet(TableColumnInfo[] tableColumnInfos) {
+   public ResultSetDataSet(TableColumnInfo[] tableColumnInfos)
+   {
       super();
-	this.tableColumnInfos = tableColumnInfos;
+      this.tableColumnInfos = tableColumnInfos;
    }
 
-   public ResultSetDataSet() {
-	   this.tableColumnInfos = new TableColumnInfo[]{};
-}
+   public ResultSetDataSet()
+   {
+      this.tableColumnInfos = new TableColumnInfo[]{};
+   }
 
-/**
+   /**
     * Form used by Tabs other than ContentsTab
-    * 
-    * @param rs
-    *           the ResultSet to set.
-    * @param dialectType
-    *           the type of dialect in use.
+    *
+    * @param rs          the ResultSet to set.
+    * @param dialectType the type of dialect in use.
     * @throws DataSetException
     */
    public int setResultSet(ResultSet rs, DialectType dialectType) throws DataSetException
    {
       return _setResultSet(new ResultSetWrapper(rs), null, null, false, false, dialectType);
    }
-   
-   
+
+
    /**
-    * Content Tab may wish to limit data read for big columns. 
+    * Content Tab may wish to limit data read for big columns.
+    *
     * @param limitDataRead
     */
-   public void setLimitDataRead(boolean limitDataRead) {
-	   this._limitDataRead = limitDataRead;
+   public void setLimitDataRead(boolean limitDataRead)
+   {
+      this._limitDataRead = limitDataRead;
    }
 
-/**
+   /**
     * Form used by ContentsTab, and for SQL results
-    * 
-    * @param rs
-    *           the ResultSet to set.
-    * @param fullTableName
-    *           the fully-qualified table name
-    * @param dialectType
-    *           the type of dialect in use.
+    *
+    * @param rs            the ResultSet to set.
+    * @param fullTableName the fully-qualified table name
+    * @param dialectType   the type of dialect in use.
     * @throws DataSetException
     */
    public int setContentsTabResultSet(ResultSet rs, String fullTableName, DialectType dialectType) throws DataSetException
@@ -143,7 +149,6 @@ public class ResultSetDataSet implements IDataSet {
     * Tab classes
     *
     * @return The number of rows read from the ResultSet
-    *
     */
    private int _setResultSet(ResultSetWrapper rs,
                              String fullTableName,
@@ -185,16 +190,15 @@ public class ResultSetDataSet implements IDataSet {
                fullTableName,
                columnIndices,
                computeWidths);
-         
-        
-         
+
+
          _dataSetDefinition = new DataSetDefinition(colDefs, columnIndices);
 
          // Read the entire row, since some drivers complain if columns are
          // read out of sequence
          _rdr = new ResultSetReader(rs, dialectType);
 
-         for (;;)
+         for (; ; )
          {
             if (_cancel)
             {
@@ -271,20 +275,24 @@ public class ResultSetDataSet implements IDataSet {
    }
 
    @Override
-public final int getColumnCount() {
+   public final int getColumnCount()
+   {
       return _columnCount;
    }
 
    @Override
-public DataSetDefinition getDataSetDefinition() {
+   public DataSetDefinition getDataSetDefinition()
+   {
       return _dataSetDefinition;
    }
 
    @Override
-public synchronized boolean next(IMessageHandler msgHandler)
-         throws DataSetException {
+   public synchronized boolean next(IMessageHandler msgHandler)
+         throws DataSetException
+   {
       // TODO: This should be handled with an Iterator
-      if (++_iCurrent < _alData.size()) {
+      if (++_iCurrent < _alData.size())
+      {
          _currentRow = _alData.get(_iCurrent);
          return true;
       }
@@ -293,19 +301,24 @@ public synchronized boolean next(IMessageHandler msgHandler)
 
    /*
     * (non-Javadoc)
-    * 
+    *
     * @see net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet#get(int)
     */
    @Override
-public Object get(int columnIndex) {
-      if (_currentRow != null) {
+   public Object get(int columnIndex)
+   {
+      if (_currentRow != null)
+      {
          return _currentRow[columnIndex];
-      } else {
+      }
+      else
+      {
          return null;
       }
    }
 
-   public void cancelProcessing() {
+   public void cancelProcessing()
+   {
       _rdr.setStopExecution(true);
       _cancel = true;
    }
@@ -313,31 +326,37 @@ public Object get(int columnIndex) {
    // SS: Modified to auto-compute column widths if <computeWidths> is true
    private ColumnDisplayDefinition[] createColumnDefinitions(
          ResultSetMetaData md, String fullTableName, int[] columnIndices,
-         boolean computeWidths) throws SQLException {
+         boolean computeWidths) throws SQLException
+   {
       // TODO?? ColumnDisplayDefinition should also have the Type (String, Date,
       // Double,Integer,Boolean)
       int[] colWidths = null;
 
       // SS: update dynamic column widths
-      if (computeWidths) {
+      if (computeWidths)
+      {
          colWidths = new int[_columnCount];
-         for (int i = 0; i < _alData.size(); i++) {
+         for (int i = 0; i < _alData.size(); i++)
+         {
             Object[] row = _alData.get(i);
-            for (int col = 0; i < _columnCount; i++) {
-               if (row[col] != null) {
+            for (int col = 0; i < _columnCount; i++)
+            {
+               if (row[col] != null)
+               {
                   int colWidth = row[col].toString().length();
-                  if (colWidth > colWidths[col]) {
+                  if (colWidth > colWidths[col])
+                  {
                      colWidths[col] = colWidth + 2;
                   }
                }
             }
          }
       }
-      
-      
+
 
       ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[_columnCount];
-      for (int i = 0; i < _columnCount; ++i) {
+      for (int i = 0; i < _columnCount; ++i)
+      {
          int idx = columnIndices != null ? columnIndices[i] : i + 1;
 
          // save various info about the column for use in user input validation
@@ -359,34 +378,46 @@ public Object get(int columnIndex) {
             isNullable = false;
 
          int precis;
-         try {
+         try
+         {
             precis = md.getPrecision(idx);
-         } catch (NumberFormatException ignore) {
+         }
+         catch (NumberFormatException ignore)
+         {
             precis = Integer.MAX_VALUE; // Oracle throws this ex on BLOB data
-                                          // types
+            // types
          }
 
          boolean isSigned = true;
-         try {
+         try
+         {
             isSigned = md.isSigned(idx); // HSQLDB 1.7.1 throws error.
-         } catch (SQLException ignore) {
+         }
+         catch (SQLException ignore)
+         {
             // Empty block
          }
 
          boolean isCurrency = false;
 
-         try {
+         try
+         {
             // Matt Dahlman: this causes problems with the JDBC driver delivered
             // with Teradata V2R05.00.00.11
             isCurrency = md.isCurrency(idx);
-         } catch (SQLException e) {
+         }
+         catch (SQLException e)
+         {
             s_log.error("Failed to call ResultSetMetaData.isCurrency()", e);
          }
 
          boolean isAutoIncrement = false;
-         try {
+         try
+         {
             isAutoIncrement = md.isAutoIncrement(idx);
-         } catch (SQLException e) {
+         }
+         catch (SQLException e)
+         {
             s_log.error("Failed to call ResultSetMetaData.isAutoIncrement()", e);
          }
 
@@ -405,34 +436,36 @@ public Object get(int columnIndex) {
          // DBMSs, while it is correct for those DBMSs in the getColumns() info.  Therefore,
          // we collect the collumn nullability information from getColumns() and pass that
          // info to the ResultSet to override what it got from the ResultSetMetaData.
-         
-         if (i < tableColumnInfos.length) {
-             TableColumnInfo info = tableColumnInfos[i];
-             if (info.isNullAllowed() == DatabaseMetaData.columnNoNulls) {
-                 isNullable = false;
-             }
+
+         if (i < tableColumnInfos.length)
+         {
+            TableColumnInfo info = tableColumnInfos[i];
+            if (info.isNullAllowed() == DatabaseMetaData.columnNoNulls)
+            {
+               isNullable = false;
+            }
          }
-         
-         String columnName =  getColumnName(i,md,idx);
-         String columnTypeName = getColumnTypeName(i,md, idx);
-         int baseColumnType = getColumnType(i,md,idx);
-		   int columnType = fixColumnType(columnName, baseColumnType, columnTypeName);
-         
+
+         String columnName = getColumnName(i, md, idx);
+         String columnTypeName = getColumnTypeName(i, md, idx);
+         int baseColumnType = getColumnType(i, md, idx);
+         int columnType = fixColumnType(columnName, baseColumnType, columnTypeName);
+
          columnDefs[i] = new ColumnDisplayDefinition(computeWidths ? colWidths[i] : Math.min(md.getColumnDisplaySize(idx), 1000),
-                                                     fullTableName + ":" + md.getColumnLabel(idx),
-                                                     columnName,
-                                                     md.getColumnLabel(idx),
-                                                     columnType,
-                                                     columnTypeName,
-                                                     isNullable,
-                                                     md.getColumnDisplaySize(idx),
-                                                     precis,
-                                                     md.getScale(idx),
-                                                     isSigned,
-                                                     isCurrency,
-                                                     isAutoIncrement,
-                                                     _dialectType,
-                                                     createResultSetMetaDataTable(md, idx));
+               fullTableName + ":" + md.getColumnLabel(idx),
+               columnName,
+               md.getColumnLabel(idx),
+               columnType,
+               columnTypeName,
+               isNullable,
+               md.getColumnDisplaySize(idx),
+               precis,
+               md.getScale(idx),
+               isSigned,
+               isCurrency,
+               isAutoIncrement,
+               _dialectType,
+               createResultSetMetaDataTable(md, idx));
       }
       return columnDefs;
    }
@@ -441,7 +474,7 @@ public Object get(int columnIndex) {
    {
       try
       {
-         if(StringUtilities.isEmpty(md.getTableName(idx)))
+         if (StringUtilities.isEmpty(md.getTableName(idx)))
          {
             return null;
          }
@@ -456,66 +489,79 @@ public Object get(int columnIndex) {
    }
 
 
-   private String getColumnName(int i, ResultSetMetaData md, int idx) throws SQLException {
-	   if (i < tableColumnInfos.length) {
-		   return tableColumnInfos[i].getColumnName();
-	   }
-	   return md.getColumnName(idx);
-   }
-   private String getColumnTypeName(int i, ResultSetMetaData md, int idx) throws SQLException {
-	   if (i < tableColumnInfos.length) {
-		   return tableColumnInfos[i].getTypeName();
-	   }
-	   return md.getColumnTypeName(idx);
-   }
-   private int getColumnType(int i,ResultSetMetaData md, int idx) throws SQLException {
-	   if (i < tableColumnInfos.length) {
-		   return tableColumnInfos[i].getDataType();
-	   }
-	   return md.getColumnType(idx);
+   private String getColumnName(int i, ResultSetMetaData md, int idx) throws SQLException
+   {
+      if (i < tableColumnInfos.length)
+      {
+         return tableColumnInfos[i].getColumnName();
+      }
+      return md.getColumnName(idx);
    }
 
-/**
-    * The following is a synopsis of email conversations with David Crawshaw, who maintains the SQLite JDBC 
-    * driver: 
-    * 
-    * SQLite's JDBC driver returns Types.NULL as the column type if the table has no rows.  Columns don't 
-    * necessarily have a type attribute; the type is associated with the values in the column (this is 
-    * referred to as manifest typing).  Columns can have an affinity (a preferred storage option) which 
-    * looks just like a type in the create table statement; however, it can be whatever the user chooses, and 
-    * not necessarily a standard SQL type.  Even still, SQLite exposes no API call to retrieve the column 
+   private String getColumnTypeName(int i, ResultSetMetaData md, int idx) throws SQLException
+   {
+      if (i < tableColumnInfos.length)
+      {
+         return tableColumnInfos[i].getTypeName();
+      }
+      return md.getColumnTypeName(idx);
+   }
+
+   private int getColumnType(int i, ResultSetMetaData md, int idx) throws SQLException
+   {
+      if (i < tableColumnInfos.length)
+      {
+         return tableColumnInfos[i].getDataType();
+      }
+      return md.getColumnType(idx);
+   }
+
+   /**
+    * The following is a synopsis of email conversations with David Crawshaw, who maintains the SQLite JDBC
+    * driver:
+    * <p>
+    * SQLite's JDBC driver returns Types.NULL as the column type if the table has no rows.  Columns don't
+    * necessarily have a type attribute; the type is associated with the values in the column (this is
+    * referred to as manifest typing).  Columns can have an affinity (a preferred storage option) which
+    * looks just like a type in the create table statement; however, it can be whatever the user chooses, and
+    * not necessarily a standard SQL type.  Even still, SQLite exposes no API call to retrieve the column
     * affinity (or storage clause).  However, it does make the type name that the user used available and that
-    * may possibly be a valid standard SQL type.  
-    * 
-    * So, if the specified column type code is Types.NULL, this method attempts to adjust the type code from 
-    * Types.NULL to a sensible Type based on the column type name reported by the driver.  If the column type 
-    * name doesn't match (ignoring case) an existing JDBC type, then this method returns Types.VARCHAR.  
-    * 
-    * @param columnName the name of the column
-    * @param columnType the type code that was given by the jdbc driver.
+    * may possibly be a valid standard SQL type.
+    * <p>
+    * So, if the specified column type code is Types.NULL, this method attempts to adjust the type code from
+    * Types.NULL to a sensible Type based on the column type name reported by the driver.  If the column type
+    * name doesn't match (ignoring case) an existing JDBC type, then this method returns Types.VARCHAR.
+    *
+    * @param columnName     the name of the column
+    * @param columnType     the type code that was given by the jdbc driver.
     * @param columnTypeName the type name of the column that was given by the jdbc driver
-    * 
     * @return a type code that is not Types.NULL.
     */
-   private int fixColumnType(String columnName, int columnType, String columnTypeName) {
-   	int result = columnType;
-   	if (columnType == Types.NULL) {
-   		result = JDBCTypeMapper.getJdbcType(columnTypeName);
-   		if (result == Types.NULL) {
-   			result = Types.VARCHAR;
-   		}
-   	}
-   	if (result != columnType) {
-			if (s_log.isDebugEnabled()) {
-				s_log.debug("Converting type code for column "+columnName+
-					". Original column type code and name were Types.NULL and "+columnTypeName+
-					"; New type code is "+JDBCTypeMapper.getJdbcTypeName(result));
-			}   		
-   	}
-   	return result;
+   private int fixColumnType(String columnName, int columnType, String columnTypeName)
+   {
+      int result = columnType;
+      if (columnType == Types.NULL)
+      {
+         result = JDBCTypeMapper.getJdbcType(columnTypeName);
+         if (result == Types.NULL)
+         {
+            result = Types.VARCHAR;
+         }
+      }
+      if (result != columnType)
+      {
+         if (s_log.isDebugEnabled())
+         {
+            s_log.debug("Converting type code for column " + columnName +
+                  ". Original column type code and name were Types.NULL and " + columnTypeName +
+                  "; New type code is " + JDBCTypeMapper.getJdbcTypeName(result));
+         }
+      }
+      return result;
    }
-   
-   private void reset() {
+
+   private void reset()
+   {
       _iCurrent = -1;
       _currentRow = null;
       _columnCount = 0;
@@ -523,54 +569,68 @@ public Object get(int columnIndex) {
       _alData = null;
    }
 
-   public void resetCursor() {
+   public void resetCursor()
+   {
       _iCurrent = -1;
       _currentRow = null;
    }
 
    /**
-    * Removes the row at the specified index. 
-    * 
+    * Removes the row at the specified index.
+    *
     * @param index the row number starting at 0.
     * @return the object at the specified row or null if there is not row at the
-    *         specified index.
+    * specified index.
     */
-   public Object removeRow(int index) {
-      if (_alData.size() > index) {
+   public Object removeRow(int index)
+   {
+      if (_alData.size() > index)
+      {
          return _alData.remove(index);
-      } else {
+      }
+      else
+      {
          return null;
       }
    }
-   
+
    @Override
-public String toString() {
-   	StringBuilder result = new StringBuilder();
-   	if (_dataSetDefinition != null) {
-   		for (ColumnDisplayDefinition colDef : _dataSetDefinition.getColumnDefinitions()) {
-   			String columnName = "Column";
-   			if (colDef != null) {
-   				columnName = colDef.getColumnName();
-   			} 
-   			result.append(columnName);
-   			result.append("\t");
-   		}
-   		result.append("\n");
-   	}
-   	
-   	
-   	for (Object[] row : _alData) {
-   		for (Object rowItem : row) {
-   			if (rowItem == null) {
-   				result.append("<null>");
-   			} else {
-   				result.append(rowItem.toString());
-   			}
-   			result.append("\t");
-   		}
-   		result.append("\n");
-   	}
-   	return result.toString();
+   public String toString()
+   {
+      StringBuilder result = new StringBuilder();
+      if (_dataSetDefinition != null)
+      {
+         for (ColumnDisplayDefinition colDef : _dataSetDefinition.getColumnDefinitions())
+         {
+            String columnName = "Column";
+            if (colDef != null)
+            {
+               columnName = colDef.getColumnName();
+            }
+            result.append(columnName);
+            result.append("\t");
+         }
+         result.append("\n");
+      }
+
+
+      for (Object[] row : _alData)
+      {
+         for (Object rowItem : row)
+         {
+            if (rowItem == null)
+            {
+               result.append("<null>");
+            }
+            else
+            {
+               result.append(rowItem.toString());
+            }
+            result.append("\t");
+         }
+         result.append("\n");
+      }
+      return result.toString();
    }
 
 
@@ -583,7 +643,7 @@ public String toString() {
    {
       try
       {
-         for (;;)
+         for (; ; )
          {
             Object[] row = createRow(_dataSetDefinition.getColumnIndices(), true, _dataSetDefinition.getColumnDefinitions(), BlockMode.FOLLOW_UP_BLOCK);
             if (null == row)
