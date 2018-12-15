@@ -77,7 +77,14 @@ class EditExtrasUtilities
 	 */
 	static String unquoteText(String textToUnquote)
 	{
-		// new line to the begining so that sb.append( will be removed                             
+
+		if(false == isQuoted(textToUnquote))
+		{
+			return textToUnquote;
+		}
+
+
+		// new line to the begining so that sb.append( will be removed
 		// new line to the end so that a semi colon at the end will be removed.                    
 		textToUnquote = "\n" + textToUnquote + "\n";
 
@@ -94,17 +101,12 @@ class EditExtrasUtilities
 				{
 					// Some people put new line characters in their SQL to have nice debug output. 
 					// Remove these new line characters too.                                       
-					trimmedToken =
-						trimmedToken.substring(0, trimmedToken.length() - 2);
+					trimmedToken = trimmedToken.substring(0, trimmedToken.length() - 2);
 				}
 
 				if (trimmedToken.endsWith("\\"))
 				{
-					ret.append(
-						trimmedToken.substring(
-							0,
-							trimmedToken.length() - 1)).append(
-						"\"");
+					ret.append(trimmedToken, 0, trimmedToken.length() - 1).append("\"");
 				}
 				else
 				{
@@ -117,6 +119,11 @@ class EditExtrasUtilities
 			ret.setLength(ret.length() - 1);
 		}
 		return ret.toString();
+	}
+
+	private static boolean isQuoted(String textToUnquote)
+	{
+		return -1 < textToUnquote.indexOf('"');
 	}
 
 	static String trimRight(String toTrim)                   

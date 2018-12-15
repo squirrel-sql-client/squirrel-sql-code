@@ -32,6 +32,8 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+#1367 "Remove quotes" on an unquoted SQL statement deletes that statement
+
 #1366 Clicking X in dialog "Unsaved changes" is now the same as "Cancel" but was the same as "No".
 
 When the scripting functions "Store result of SQL in table" or "Create Data Script from SQL" were executed in

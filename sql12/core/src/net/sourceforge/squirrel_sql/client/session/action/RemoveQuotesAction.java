@@ -34,22 +34,12 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
  *
  * @author Gerd Wagner
  */
-public class RemoveQuotesAction extends SquirrelAction
-      implements ISQLPanelAction
+public class RemoveQuotesAction extends SquirrelAction implements ISQLPanelAction
 {
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(RemoveQuotesAction.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RemoveQuotesAction.class);
 
+   private static final ILogger s_log = LoggerController.createLogger(RemoveQuotesAction.class);
 
-   /**
-    * Logger for this class.
-    */
-   private static final ILogger s_log =
-         LoggerController.createLogger(RemoveQuotesAction.class);
-
-   /**
-    * Current session.
-    */
    private ISession _session;
 
 
