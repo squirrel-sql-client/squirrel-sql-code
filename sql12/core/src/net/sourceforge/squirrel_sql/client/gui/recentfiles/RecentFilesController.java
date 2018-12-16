@@ -471,14 +471,16 @@ public class RecentFilesController
          return;
       }
 
-      TreePath firstSelectedPath = _dialog.treFiles.getSelectionPath();
+      TreePath clickedPath  = _dialog.treFiles.getPathForLocation(evt.getX(), evt.getY());
 
-      if(null == firstSelectedPath)
+      if(null == clickedPath)
       {
          return;
       }
 
-      DefaultMutableTreeNode node = (DefaultMutableTreeNode) firstSelectedPath.getLastPathComponent();
+      _dialog.treFiles.setSelectionPath(clickedPath);
+
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) clickedPath.getLastPathComponent();
 
       if( false == node.getUserObject() instanceof File )
       {
