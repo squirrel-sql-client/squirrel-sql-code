@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -29,11 +30,18 @@ public class RecentFilesDialog extends JDialog
    JButton btnRemoveSeleted;
 
 
-   public RecentFilesDialog(Frame parent, boolean isCalledFromAliasView)
+   public RecentFilesDialog(Frame parent, boolean isCalledFromAliasView, ISQLAlias alias)
    {
       super(parent, true);
 
-      setTitle(s_stringMgr.getString("recentfiles.RecentFilesDialog.title"));
+      if (isCalledFromAliasView)
+      {
+         setTitle(s_stringMgr.getString("recentfiles.RecentFilesDialog.title.connect", alias.getName()));
+      }
+      else
+      {
+         setTitle(s_stringMgr.getString("recentfiles.RecentFilesDialog.title"));
+      }
 
       getContentPane().setLayout(new GridBagLayout());
 
@@ -48,7 +56,7 @@ public class RecentFilesDialog extends JDialog
       getContentPane().add(createConfigPanel(), gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5), 0,0);
-      getContentPane().add(createButtonsPanel(isCalledFromAliasView), gbc);
+      getContentPane().add(createButtonsPanel(isCalledFromAliasView, alias), gbc);
 
       setSize(getDim());
 
@@ -86,7 +94,7 @@ public class RecentFilesDialog extends JDialog
       );
    }
 
-   private JPanel createButtonsPanel(boolean isCalledFromAliasView)
+   private JPanel createButtonsPanel(boolean isCalledFromAliasView, ISQLAlias alias)
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
@@ -105,7 +113,7 @@ public class RecentFilesDialog extends JDialog
       gbc = new GridBagConstraints(0,gridy,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       if (isCalledFromAliasView)
       {
-         btnOpenFile = new JButton(s_stringMgr.getString("recentfiles.RecentFilesDialog.openFileInNewSession"));
+         btnOpenFile = new JButton(s_stringMgr.getString("recentfiles.RecentFilesDialog.openFileInNewSession.for.alias", alias.getName()));
       }
       else
       {

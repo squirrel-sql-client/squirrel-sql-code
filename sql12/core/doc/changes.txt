@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New right mouse menu item in "Recent files" dialog: "Open in file manager"
+
 New preference to define the maximum column width for text outputs, see menu File --> Global Preferences -->  tab SQL --> section General.
   This was asked for in bug #1256.
 

@@ -47,15 +47,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class MessagePanel extends JTextPane implements IMessageHandler
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(MessagePanel.class);
+	private static final ILogger s_log = LoggerController.createLogger(MessagePanel.class);
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(MessagePanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MessagePanel.class);
 
-   /** Popup menu for this component. */
 	private final TextPopupMenu _popupMenu = new MessagePanelPopupMenu();
 
 	/**

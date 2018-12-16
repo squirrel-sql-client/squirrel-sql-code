@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.dnd.DropedFileExtractor;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -9,25 +10,43 @@ import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.Desktop;
+import java.awt.Frame;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.prefs.Preferences;
 
 public class RecentFilesController
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RecentFilesDialog.class);
+
+   private static final ILogger s_log = LoggerController.createLogger(RecentFilesController.class);
+
    private static final String PREF_KEY_RECENT_FILES_EXPANDED = "Squirrel.recentFiles.expanded";
    private static final String PREF_KEY_FAVOURITE_FILES_EXPANDED = "Squirrel.favouriteFiles.expanded";
    private static final String PREF_KEY_RECENT_ALIAS_FILES_EXPANDED = "Squirrel.recentAliasFiles.expanded";
@@ -56,12 +75,12 @@ public class RecentFilesController
    }
 
 
-   private void init(IApplication app, final Frame parent, final ISQLAlias selectedAlias, boolean showAppendOption)
+   private void init(IApplication app, final Frame parent, final ISQLAlias alias, boolean isCalledFromAliasView)
    {
       _app = app;
       _parent = parent;
-      _selectedAlias = selectedAlias;
-      _dialog = new RecentFilesDialog(_parent, showAppendOption);
+      _selectedAlias = alias;
+      _dialog = new RecentFilesDialog(_parent, isCalledFromAliasView, alias);
 
       _dialog.btnClose.addActionListener(new ActionListener()
       {
@@ -111,7 +130,7 @@ public class RecentFilesController
          @Override
          public void actionPerformed(ActionEvent e)
          {
-            onAddToFavourites(selectedAlias);
+            onAddToFavourites(alias);
          }
       });
 
@@ -304,6 +323,18 @@ public class RecentFilesController
          {
             onMouseClickedTree(evt);
          }
+
+         @Override
+         public void mousePressed(MouseEvent evt)
+         {
+            maybeShowTreePopup(evt);
+         }
+
+         @Override
+         public void mouseReleased(MouseEvent evt)
+         {
+            maybeShowTreePopup(evt);
+         }
       });
 
 
@@ -432,6 +463,71 @@ public class RecentFilesController
          _dialog.dispose();
       }
    }
+
+   private void maybeShowTreePopup(MouseEvent evt)
+   {
+      if(false == evt.isPopupTrigger())
+      {
+         return;
+      }
+
+      TreePath firstSelectedPath = _dialog.treFiles.getSelectionPath();
+
+      if(null == firstSelectedPath)
+      {
+         return;
+      }
+
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) firstSelectedPath.getLastPathComponent();
+
+      if( false == node.getUserObject() instanceof File )
+      {
+         return;
+      }
+      File file = (File) node.getUserObject();
+
+      JPopupMenu popUp = new JPopupMenu();
+
+      JMenuItem menuItem;
+
+      if (file.isDirectory())
+      {
+         menuItem = new JMenuItem(s_stringMgr.getString("RecentFilesController.open.in.file.manager"));
+      }
+      else
+      {
+         menuItem = new JMenuItem(s_stringMgr.getString("RecentFilesController.open.parent.in.file.manager"));
+      }
+
+      popUp.add(menuItem);
+
+
+      menuItem.addActionListener(e -> onOpenInFileManager(file));
+      popUp.show(evt.getComponent(), evt.getX(), evt.getY());
+   }
+
+   private void onOpenInFileManager(File file)
+   {
+      try
+      {
+         Desktop desktop = Desktop.getDesktop();
+         if (file.isDirectory())
+         {
+            desktop.open(file);
+         }
+         else
+         {
+            desktop.open(file.getParentFile());
+         }
+      }
+      catch (IOException e)
+      {
+         String msg = s_stringMgr.getString("RecentFilesController.failed.to open.file", e.getMessage());
+         s_log.error(msg, e);
+         Main.getApplication().getMessageHandler().showErrorMessage(msg);
+      }
+   }
+
 
    private File findFileToOpen(MouseEvent evt)
    {
