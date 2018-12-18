@@ -38,8 +38,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 /**
@@ -327,7 +325,7 @@ public class ResultFrame extends SessionDialogWidget
 	{
 		if (_tab != null)
 		{
-			_tab.closeTab();
+			_tab.disposeTab();
 			_tab = null;
 		}
 		super.dispose();

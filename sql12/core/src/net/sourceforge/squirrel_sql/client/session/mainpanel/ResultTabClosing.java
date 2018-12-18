@@ -19,8 +19,6 @@ public class ResultTabClosing
    private final TabIconManager _tabIconManager;
    private final JTabbedPane _tabbedExecutionsPanel;
 
-   private Component _tabBeingClosed;
-
    public ResultTabClosing(TabIconManager tabIconManager, JTabbedPane tabbedExecutionsPanel)
    {
       _tabIconManager = tabIconManager;
@@ -106,11 +104,6 @@ public class ResultTabClosing
 
    void closeTab(JComponent tab)
    {
-      if(tab == _tabBeingClosed)
-      {
-         return;
-      }
-
       if(isAnchored(tab))
       {
          String msg = s_stringMgr.getString("AnchorTabClosingHelper.removeAnchoredPanel.close.anchored.msg");
@@ -150,28 +143,18 @@ public class ResultTabClosing
 
    private void _closeTab(Component tab)
    {
-      try
+      if (tab instanceof ErrorPanel)
       {
-         _tabBeingClosed = tab;
-         if (tab instanceof ErrorPanel)
-         {
-            _tabbedExecutionsPanel.remove(tab);
-         }
-         else if (tab instanceof ResultTab)
-         {
-            ((ResultTab) tab).closeTab();
-            _tabbedExecutionsPanel.remove((ResultTab) tab);
-         }
-         else if (tab instanceof CancelPanel)
-         {
-            ((CancelPanel)tab).closeBtn.doClick();
-         }
+         _tabbedExecutionsPanel.remove(tab);
       }
-      finally
+      else if (tab instanceof ResultTab)
       {
-         _tabBeingClosed = null;
+         ((ResultTab) tab).disposeTab();
+         _tabbedExecutionsPanel.remove(tab);
+      }
+      else if (tab instanceof CancelPanel)
+      {
+         ((CancelPanel) tab).closeBtn.doClick();
       }
    }
-
-
 }

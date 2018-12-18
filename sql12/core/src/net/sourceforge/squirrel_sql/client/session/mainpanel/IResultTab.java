@@ -44,12 +44,7 @@ public interface IResultTab {
      */
     void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds) throws DataSetException;
 
-    /**
-     * Clear results and current SQL script.
-     */
-    void clear();
-
-    /**
+   /**
      * Return the current SQL script.
      *
      * @return	Current SQL script.
@@ -68,7 +63,7 @@ public interface IResultTab {
      */
     String getTitle();
 
-   void closeTab();
+   void disposeTab();
 
     void returnToTabbedPane();
 

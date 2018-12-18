@@ -108,7 +108,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private ResultTabListener _resultTabListener;
    private ReadMoreResultsHandler _readMoreResultsHandler;
-   private boolean _tabIsClosing;
    private SelectRowColLabelController _selectRowColLabelController = new SelectRowColLabelController();
 
 
@@ -351,14 +350,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    }
 
    /**
-     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#clear()
-     */
-	public void clear()
-	{
-      closeTab();
-	}
-
-	/**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#getSqlString()
      */
 	public String getSqlString()
@@ -387,36 +378,21 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		return title.substring(0, 15);
 	}
 
-   public void closeTab()
+   public void disposeTab()
    {
-      if(_tabIsClosing)
+      if (_metaDataOutput != null)
       {
-         return;
+         _metaDataOutput.clear();
       }
-
-      try
+      if (_dataSetViewerFindDecorator != null)
       {
-         _tabIsClosing = true;
-
-         if (_metaDataOutput != null)
-         {
-            _metaDataOutput.clear();
-         }
-         if (_dataSetViewerFindDecorator != null)
-         {
-            _dataSetViewerFindDecorator.getDataSetViewer().clear();
-         }
-         _exInfo = null;
-         _currentSqlLblCtrl.clear();
-         _sql = "";
-
-         _sqlResultExecuterPanelFacade.closeResultTab(this);
-         _rsds.closeStatementAndResultSet();
+         _dataSetViewerFindDecorator.getDataSetViewer().clear();
       }
-      finally
-      {
-         _tabIsClosing = false;
-      }
+      _exInfo = null;
+      _currentSqlLblCtrl.clear();
+      _sql = "";
+
+      _rsds.closeStatementAndResultSet();
    }
 
 	/**
@@ -599,7 +575,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       ret.add(new TabButton(new FindColumnAction(this)));
       ret.add(new TabButton(new FindInResultAction(this)));
       ret.add(new TabButton(new CreateResultTabFrameAction(_sqlResultExecuterPanelFacade, this)));
-      ret.add(new TabButton(new CloseAction(_session, this)));
+      ret.add(new TabButton(new CloseAction(_sqlResultExecuterPanelFacade, this)));
       return ret;
    }
 
