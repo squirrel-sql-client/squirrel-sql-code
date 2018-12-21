@@ -524,7 +524,10 @@ public class SessionManager
          {
             // Lazily create the event:
             if (evt == null)
+            {
                evt = new SessionEvent(session);
+            }
+
             ((ISessionListener)listeners[i + 1]).sessionActivated(evt);
          }
       }

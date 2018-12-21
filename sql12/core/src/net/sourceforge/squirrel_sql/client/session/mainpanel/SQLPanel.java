@@ -196,23 +196,9 @@ public class SQLPanel extends JPanel
       _toggleResultMinimizeHandler = new ToggleResultMinimizeHandler(_splitPane);
 
 
-		if(SQLPanelPosition.MAIN_TAB_IN_SESSION_WINDOW == _sqlPanelPosition && Main.getApplication().getSquirrelPreferences().isReloadSqlContents())
+		if(SQLPanelPosition.MAIN_TAB_IN_SESSION_WINDOW == _sqlPanelPosition)
 		{
-			final String sqlContents = ReloadSqlContentsHelper.getLastSqlContent(session.getAlias());
-
-			if (null != sqlContents)
-			{
-				Runnable runnable = new Runnable()
-				{
-					public void run()
-					{
-						_panelAPI.setEntireSQLScript(sqlContents);
-						_panelAPI.resetUnsavedEdits();
-					}
-				};
-
-				SwingUtilities.invokeLater(runnable);
-			}
+			SessionStartupMainSQLTabContentLoader.handleLoadFileAtSessionStart(session, _panelAPI);
 		}
 
 	}

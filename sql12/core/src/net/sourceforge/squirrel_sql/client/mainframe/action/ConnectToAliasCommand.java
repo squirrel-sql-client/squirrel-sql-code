@@ -359,12 +359,10 @@ public class ConnectToAliasCommand implements ICommand
 			}
 		}
 
-		private ISession createSession(ISQLDriver sqlDriver,
-												SQLConnection conn)
+		private ISession createSession(ISQLDriver sqlDriver, SQLConnection conn)
 		{
 			SessionManager sm = _app.getSessionManager();
-			final ISession session = sm.createSession(_app, sqlDriver,
-												_alias, conn, _user, _password);
+			final ISession session = sm.createSession(_app, sqlDriver, _alias, conn, _user, _password);
 			_callback.sessionCreated(session);
 			SwingUtilities.invokeLater(new Runner(session, _connSheet, _callback));
 			return session;

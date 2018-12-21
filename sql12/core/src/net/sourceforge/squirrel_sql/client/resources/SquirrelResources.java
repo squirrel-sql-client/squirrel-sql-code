@@ -121,7 +121,8 @@ public class SquirrelResources extends Resources
 
       String PLUS = "plus";
       String MINUS = "minus";
-   }
+		String FILE_ARROW = "file_arrow";
+	}
 
 	public SquirrelResources(String rsrcBundleBaseName)
 		throws IllegalArgumentException

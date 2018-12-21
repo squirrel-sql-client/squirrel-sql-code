@@ -10,8 +10,7 @@ import java.io.File;
 
 public abstract class SessionTabWidget extends TabWidget implements ISessionWidget
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SessionTabWidget.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionTabWidget.class);
 
 
    private ISession _session;
@@ -74,7 +73,7 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
 
 
 
-   public void setSqlFile(File sqlFile)
+   public void setMainSqlFile(File sqlFile)
    {
       _titleFileHandler.setSqlFile(sqlFile);
       setTitle(_titleWithoutFile);

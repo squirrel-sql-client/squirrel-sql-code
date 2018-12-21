@@ -7,6 +7,7 @@ public class AliasFileXmlBean
    private ArrayList<String> _recentFiles = new ArrayList<String>();
    private ArrayList<String> _favouriteFiles = new ArrayList<String>();
    private String _alisaIdentifierString;
+   private String _openAtStartupFile;
 
    public ArrayList<String> getRecentFiles()
    {
@@ -36,5 +37,15 @@ public class AliasFileXmlBean
    public void setFavouriteFiles(ArrayList<String> favouriteFiles)
    {
       _favouriteFiles = favouriteFiles;
+   }
+
+   public void setOpenAtStartupFile(String openAtStartupFile)
+   {
+      _openAtStartupFile = openAtStartupFile;
+   }
+
+   public String getOpenAtStartupFile()
+   {
+      return _openAtStartupFile;
    }
 }

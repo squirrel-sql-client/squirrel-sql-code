@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesController;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SessionStartupMainSQLTabContentLoader;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -46,45 +47,7 @@ public class AliasFileOpenAction extends SquirrelAction
       }
 
 
-      ICompletionCallback callback = new ICompletionCallback()
-      {
-         @Override
-         public void connected(ISQLConnection conn)
-         {
-         }
-
-         @Override
-         public void sessionCreated(ISession session)
-         {
-         }
-
-         @Override
-         public void sessionInternalFrameCreated(SessionInternalFrame sessionInternalFrame)
-         {
-            onSessionInternalFrameCreated(sessionInternalFrame, fileToOpen);
-         }
-
-         @Override
-         public void errorOccured(Throwable th, boolean stopConnection)
-         {
-         }
-      };
-
-      new ConnectToAliasCommand(getApplication(), selectedAlias, true, callback).execute();
-
-
+      SessionStartupMainSQLTabContentLoader.startSessionWithFile(selectedAlias, fileToOpen);
 
    }
-
-   private void onSessionInternalFrameCreated(final SessionInternalFrame sessionInternalFrame, final File fileToOpen)
-   {
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            sessionInternalFrame.getMainSQLPanelAPI().fileOpen(fileToOpen);
-         }
-      });
-   }
-
 }

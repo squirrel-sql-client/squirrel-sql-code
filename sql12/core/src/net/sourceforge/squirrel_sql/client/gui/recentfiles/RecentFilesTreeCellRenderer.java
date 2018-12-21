@@ -1,13 +1,13 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
-import java.io.File;
 
 public class RecentFilesTreeCellRenderer extends DefaultTreeCellRenderer
 {
@@ -25,16 +25,20 @@ public class RecentFilesTreeCellRenderer extends DefaultTreeCellRenderer
 
       DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) value;
 
-      if(false == dmtn.getUserObject() instanceof File)
+      if(false == dmtn.getUserObject() instanceof RecentFileWrapper)
       {
          return treeCellRendererComponent;
       }
 
-      File file = (File) dmtn.getUserObject();
+      RecentFileWrapper fileWrapper = (RecentFileWrapper) dmtn.getUserObject();
 
-      if(file.isDirectory())
+      if(fileWrapper.getFile().isDirectory())
       {
          treeCellRendererComponent.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.DIR_GIF));
+      }
+      else if(fileWrapper.isOpenAtSessionStart())
+      {
+         treeCellRendererComponent.setIcon(getOpenAtStartupIcon());
       }
       else
       {
@@ -42,9 +46,10 @@ public class RecentFilesTreeCellRenderer extends DefaultTreeCellRenderer
       }
 
       return treeCellRendererComponent;
+   }
 
-
-
-
+   static ImageIcon getOpenAtStartupIcon()
+   {
+      return Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FILE_ARROW);
    }
 }

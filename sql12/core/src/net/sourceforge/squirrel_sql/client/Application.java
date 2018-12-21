@@ -1,8 +1,5 @@
 package net.sourceforge.squirrel_sql.client;
 
-/*
- * TODO: finish i18n
- */
 
 /*
  * Copyright (C) 2001-2006 Colin Bell
@@ -94,11 +91,8 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
  */
 public class Application implements IApplication
 {	
-
-	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(Application.class);
 
-	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(Application.class);
 
 	private SquirrelPreferences _prefs;
@@ -111,8 +105,6 @@ public class Application implements IApplication
 
 	private ActionRegistry _actionRegistry;
 
-	/** Applications main frame. */
-	// private MainFrame _mainFrame;
 	/** Object to manage plugins. */
 	private IPluginManager _pluginManager;
 
@@ -945,7 +937,6 @@ public class Application implements IApplication
 	/**
 	 * Load application level SQL History for the current user.
 	 */
-	@SuppressWarnings("unchecked")
 	private void loadSQLHistory()
 	{
 		try
@@ -986,7 +977,6 @@ public class Application implements IApplication
 	 * Load the configurations for WIKI tables.
 	 * @see WikiTableConfigurationStorage
 	 */
-	@SuppressWarnings("unchecked")
 	private void loadUserSpecificWikiTableConfigurations()
 	{
 		try

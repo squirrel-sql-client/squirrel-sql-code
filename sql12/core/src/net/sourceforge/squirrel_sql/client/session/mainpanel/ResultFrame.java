@@ -48,10 +48,9 @@ import java.util.ArrayList;
  */
 public class ResultFrame extends SessionDialogWidget
 {
-	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ResultFrame.class);
 
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultFrame.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultFrame.class);
 
    private ISession _session;
    /** SQL Results. */

@@ -10,6 +10,8 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -196,5 +198,35 @@ public class RecentFilesManager
    public void setFavouriteFilesForAlias(ISQLAlias alias, ArrayList<String> files)
    {
       findOrCreateAliasFile(alias).setFavouriteFiles(files);
+   }
+
+   public void setOpenAtStartupFile(ISQLAlias alias, String openAtStartupFile)
+   {
+      AliasFileXmlBean aliasFile = findOrCreateAliasFile(alias);
+
+      if (null != openAtStartupFile)
+      {
+         boolean found = false;
+         for (String favouriteFile : aliasFile.getFavouriteFiles())
+         {
+            if(openAtStartupFile.equals(favouriteFile))
+            {
+               found = true;
+               break;
+            }
+         }
+
+         if(false == found)
+         {
+            throw new IllegalStateException("The startup file \"" +  openAtStartupFile + " \"is not one of the Alias favourite files.");
+         }
+      }
+
+      aliasFile.setOpenAtStartupFile(openAtStartupFile);
+   }
+
+   public String getOpenAtStartupFileForAlias(ISQLAlias alias)
+   {
+      return findAliasFile(alias).getOpenAtStartupFile();
    }
 }

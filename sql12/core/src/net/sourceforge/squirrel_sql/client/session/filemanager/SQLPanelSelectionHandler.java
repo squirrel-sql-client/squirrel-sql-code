@@ -24,7 +24,7 @@ public class SQLPanelSelectionHandler
       {
          if(SessionUtils.getOwningIMainPanelTab(sqlPanelAPI) instanceof SQLTab)
          {
-            getActiveSessionTabWidget(sqlPanelAPI).setSqlFile(file);
+            getActiveSessionTabWidget(sqlPanelAPI).setMainSqlFile(file);
          }
          else if(SessionUtils.getOwningIMainPanelTab(sqlPanelAPI) instanceof AdditionalSQLTab)
          {
@@ -37,7 +37,7 @@ public class SQLPanelSelectionHandler
       }
       else
       {
-         getActiveSessionTabWidget(sqlPanelAPI).setSqlFile(file);
+         getActiveSessionTabWidget(sqlPanelAPI).setMainSqlFile(file);
       }
    }
 

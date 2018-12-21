@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Option to open SQL file at Session startup,
+  see the new right mouse menu item in "Recent files" dialog --> Section "Favorite files for Alias": "Toggle open this file at Session start"
+
 New right mouse menu item in "Recent files" dialog: "Open in file manager"
 
 New preference to define the maximum column width for text outputs, see menu File --> Global Preferences -->  tab SQL --> section General.

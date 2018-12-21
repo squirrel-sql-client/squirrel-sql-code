@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -90,7 +91,7 @@ public class RecentFilesDialog extends JDialog
    {
       return new Dimension(
             Preferences.userRoot().getInt(PREF_KEY_RECENT_FILES_DIALOG_WIDTH, 500),
-            Preferences.userRoot().getInt(PREF_KEY_RECENT_FILES_DIALOG_HEIGHT, 500)
+            Preferences.userRoot().getInt(PREF_KEY_RECENT_FILES_DIALOG_HEIGHT, 550)
       );
    }
 
@@ -154,8 +155,15 @@ public class RecentFilesDialog extends JDialog
       btnRemoveSeleted = new JButton(s_stringMgr.getString("recentfiles.RecentFilesDialog.removeSelectedFiles"));
       ret.add(btnRemoveSeleted, gbc);
 
-      gbc = new GridBagConstraints(0,3,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+      gbc = new GridBagConstraints(0,3,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,0,5), 0,0);
+      JLabel lblNote = new JLabel(s_stringMgr.getString("recentfiles.RecentFilesDialog.open.at.startup.note"));
+      lblNote.setIcon(RecentFilesTreeCellRenderer.getOpenAtStartupIcon());
+      lblNote.setHorizontalTextPosition(SwingConstants.LEADING);
+      ret.add(lblNote, gbc);
+
+      gbc = new GridBagConstraints(0,4,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
       ret.add(new JPanel(), gbc);
+
 
 
       return ret;
