@@ -26,11 +26,6 @@ public class SessionStartupMainSQLTabContentLoader
 
    private static final String NO_STARTUP_LOADING = "Dummy marker to switch of standard startup loading.";
 
-
-   /**
-    * Note: There is one mor way to load the main SQL editor at Session startup, see {@link AliasFileOpenAction}
-    *
-    */
    static void handleLoadFileAtSessionStart(ISession session, final ISQLPanelAPI panelAPI)
    {
       if(NO_STARTUP_LOADING.equals(session.getSessionLocal(SessionStartupMainSQLTabContentLoader.class)))
