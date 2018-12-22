@@ -37,6 +37,10 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+#1370 v.3.9.0 Export tab delimited CSV file no longer working
+  Note: The "export complete" dialog now offers to open the export file's path in the OS specific file manager.
+
+
 #1367 "Remove quotes" on an unquoted SQL statement deletes that statement
 
 #1366 Clicking X in dialog "Unsaved changes" is now the same as "Cancel" but was the same as "No".

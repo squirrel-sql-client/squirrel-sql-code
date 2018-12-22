@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -246,23 +247,8 @@ public abstract class AbstractExportCommand
             {
                // i18n[TableExportCsvCommand.writeFileSuccess=Export to file
                // "{0}" is complete.]
-               final String msg =
-                     s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", NumberFormat.getIntegerInstance().format(writtenRows),
-                           ctrl.getFile().getAbsolutePath());
-               if (s_log.isInfoEnabled())
-               {
-                  s_log.info(msg);
-               }
-
-               Runnable runnable = new Runnable()
-               {
-                  public void run()
-                  {
-                     JOptionPane.showMessageDialog(owner, msg);
-                  }
-               };
-
-               GUIUtils.processOnSwingEventThread(runnable, true);
+               TableExportCsvController finalCtrl = ctrl;
+               GUIUtils.processOnSwingEventThread(() -> showExportSuccessMessage(owner, writtenRows, finalCtrl.getFile()), true);
 
             }
          }
@@ -288,6 +274,40 @@ public abstract class AbstractExportCommand
          {
             this.fileContainer.remove(this.targetFile);
          }
+      }
+   }
+
+   private void showExportSuccessMessage(JFrame owner, long writtenRows, File exportFile)
+   {
+      try
+      {
+         String[] selectionValues =
+               {
+                     s_stringMgr.getString("TableExportCsvCommand.export.completed.ok"),
+                     s_stringMgr.getString("TableExportCsvCommand.export.completed.ok.show.in.file.manager"),
+               };
+
+         String formattedWrittenRows = NumberFormat.getIntegerInstance().format(writtenRows);
+
+         int selectIndex = JOptionPane.showOptionDialog(
+               owner,
+               s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", formattedWrittenRows, exportFile.getAbsolutePath()),
+               s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess.title"),
+               JOptionPane.DEFAULT_OPTION,
+               JOptionPane.INFORMATION_MESSAGE,
+               null,
+               selectionValues,
+               selectionValues[0]);
+
+         if (selectIndex == 1)
+         {
+            Desktop desktop = Desktop.getDesktop();
+            desktop.open(exportFile.getParentFile());
+         }
+      }
+      catch (IOException e)
+      {
+         s_log.error("Failed to open path to file " + exportFile.getAbsolutePath(), e);
       }
    }
 

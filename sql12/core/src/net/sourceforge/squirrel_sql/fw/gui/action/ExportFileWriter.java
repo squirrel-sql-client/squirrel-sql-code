@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportCSVWriter;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportExcelWriter;
+import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportJSONWriter;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportXMLWriter;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;

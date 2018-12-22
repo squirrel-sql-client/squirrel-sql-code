@@ -94,7 +94,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
          return "";
       }
 
-      String ret = value.toString().trim();
+      String ret = value.trim();
 
       if (0 <= ret.indexOf(sepChar) || 0 <= ret.indexOf('\n') || 0 <= ret.indexOf('\r') || 0 <= ret.indexOf('"'))
       {
@@ -120,7 +120,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
    @Override
    protected void addHeaderCell(int colIdx, String columnName)
    {
-      this.headerCells.add(getDataCSV(getPrefs().getSeperatorChar(), columnName));
+      this.headerCells.add(getDataCSV(getSeperatorCharRespectTab(), columnName));
    }
 
    /**
@@ -151,7 +151,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
    @Override
    protected void addCell(IExportDataCell cell)
    {
-      String cellObjData = getDataCSV(getPrefs().getSeperatorChar(), cell, getPrefs().isUseGlobalPrefsFormating());
+      String cellObjData = getDataCSV(getSeperatorCharRespectTab(), cell, getPrefs().isUseGlobalPrefsFormating());
       this.aRow.add(cellObjData);
    }
 
@@ -193,10 +193,22 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
          bw.write(it.next());
          if (it.hasNext())
          {
-            bw.write(getPrefs().getSeperatorChar());
+            bw.write(getSeperatorCharRespectTab());
          }
       }
       bw.write(LineSeparator.valueOf(getPrefs().getLineSeperator()).getSeparator());
+   }
+
+   private String getSeperatorCharRespectTab()
+   {
+      if (getPrefs().isSeperatorTab())
+      {
+         return "\t";
+      }
+      else
+      {
+         return getPrefs().getSeperatorChar();
+      }
    }
 
 
