@@ -3,6 +3,56 @@
 <Beans>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.word.WordDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-72</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT Word Embedded</name>
+		<url>jdbc:word:///&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/word.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.word.WordDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-71</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT Word Client</name>
+		<url>jdbc:word://&lt;server:port&gt;/&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/word.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.pdf.PDFDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-70</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT PDF Embedded</name>
+		<url>jdbc:pdf:///&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/pdf.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.pdf.PDFDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-69</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT PDF Client</name>
+		<url>jdbc:pdf://&lt;server:port&gt;/&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/pdf.html</websiteUrl>
+	</Bean>
+
+
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<name>SAS</name>
 		<driverClassName>com.sas.rio.MVADriver</driverClassName>
 		<url>jdbc:sasiom://&lt;host_name&gt;:&lt;port_number&gt;</url>
