@@ -663,10 +663,15 @@ public class GUIUtils
 
    public static void styleAsToolbarButton(AbstractButton btn)
    {
+   	styleAsToolbarButton(btn, false);
+	}
+
+   public static void styleAsToolbarButton(AbstractButton btn, boolean focusable)
+   {
       btn.setContentAreaFilled(false);
       btn.setBorder(BorderFactory.createEtchedBorder());
 
-		btn.setFocusable(false);
+		btn.setFocusable(focusable);
 
       btn.addMouseListener(new MouseAdapter() {
          @Override

@@ -124,7 +124,7 @@ public class SQLWorksheetTypeChooser
       JPanel ret  = new JPanel(new GridBagLayout());
 
       _btnAction = new JButton(icon);
-      GUIUtils.styleAsToolbarButton(_btnAction);
+      GUIUtils.styleAsToolbarButton(_btnAction, true);
 
       GridBagConstraints gbc;
 
