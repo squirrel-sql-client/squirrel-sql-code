@@ -37,6 +37,8 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+#1373 Substance L&F prevents application from starting.
+
 #1372 Toolbar button "New SQL Worksheet" / "New SQL Tab" is ignored for keyboard tab order.
 
 #1370 v.3.9.0 Export tab delimited CSV file no longer working

@@ -11,16 +11,35 @@ import java.awt.Color;
 
 public class AliasTreeColorer
 {
-
-   private final Color _backgroundNonSelectionColor;
-   private final Color _backgroundSelectionColor;
+   private Color _backgroundNonSelectionColor;
+   private Color _backgroundSelectionColor;
 
    public AliasTreeColorer(JTree tree)
    {
-      DefaultTreeCellRenderer defaultTreeCellRenderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
 
-      _backgroundNonSelectionColor = defaultTreeCellRenderer.getBackgroundNonSelectionColor();
-      _backgroundSelectionColor = defaultTreeCellRenderer.getBackgroundSelectionColor();
+      // For example the SubstanceDefaultTreeCellRenderer is not derived from DefaultTreeCellRenderer.
+      // That is why these if clauses exist.
+      // See also bug #1373.
+      if (tree.getCellRenderer() instanceof DefaultTreeCellRenderer)
+      {
+         DefaultTreeCellRenderer defaultTreeCellRenderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
+
+         _backgroundNonSelectionColor = defaultTreeCellRenderer.getBackgroundNonSelectionColor();
+         _backgroundSelectionColor = defaultTreeCellRenderer.getBackgroundSelectionColor();
+      }
+      else if(tree.getCellRenderer() instanceof JLabel)
+      {
+         JLabel labelCellRenderer = (JLabel) tree.getCellRenderer();
+         _backgroundNonSelectionColor = labelCellRenderer.getBackground();
+         _backgroundSelectionColor = labelCellRenderer.getBackground().darker();
+      }
+      else
+      {
+         JLabel labelCellRenderer = new JLabel();
+         _backgroundNonSelectionColor = labelCellRenderer.getBackground();
+         _backgroundSelectionColor = labelCellRenderer.getBackground().darker();
+      }
+
    }
 
    public void colorAliasRendererComponent(DefaultTreeCellRenderer defaultTreeCellRenderer, DefaultMutableTreeNode node, JLabel cellRendererComp)
