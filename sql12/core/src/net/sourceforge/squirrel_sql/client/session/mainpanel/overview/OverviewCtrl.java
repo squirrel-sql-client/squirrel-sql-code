@@ -24,7 +24,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class OverviewCtrl implements LazyTabControllerCtrl
 {
@@ -159,13 +159,13 @@ public class OverviewCtrl implements LazyTabControllerCtrl
       if(_overviewPanel.btnCreateBarChart.isSelected())
       {
          _overviewPanel.split.setDividerSize(_overviewPanel.standardDividerSize);
-         int distToRight = Preferences.userRoot().getInt(PREF_KEY_CHART_PANEL_SPLIT, Math.max(0, _overviewPanel.split.getWidth() - _chartConfigController.getPanel().getPreferredSize().width));
+         int distToRight = Props.getInt(PREF_KEY_CHART_PANEL_SPLIT, Math.max(0, _overviewPanel.split.getWidth() - _chartConfigController.getPanel().getPreferredSize().width));
          _overviewPanel.split.setDividerLocation(_overviewPanel.split.getWidth() - distToRight);
       }
       else
       {
          int distToRight = _overviewPanel.split.getWidth() - _overviewPanel.split.getDividerLocation();
-         Preferences.userRoot().putInt(PREF_KEY_CHART_PANEL_SPLIT, distToRight);
+         Props.putInt(PREF_KEY_CHART_PANEL_SPLIT, distToRight);
 
          _overviewPanel.split.setDividerSize(0);
          _overviewPanel.split.setDividerLocation(Integer.MAX_VALUE);

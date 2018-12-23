@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.I
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 
 /**
@@ -183,7 +184,7 @@ public class DataTypeShort extends BaseDataTypeComponent
 	 */
 	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
 		// handle null, which is shown as the special string "<null>"
-		if (value.equals("<null>") || value.equals(""))
+		if (value.equals(StringUtilities.NULL_AS_STRING) || value.equals(""))
 			return null;
 
 		// Do the conversion into the object in a safe manner
@@ -318,7 +319,7 @@ public class DataTypeShort extends BaseDataTypeComponent
 				if ( DataTypeShort.this._isNullable) {
 
 					// user enters something when field is null
-					if (text.equals("<null>")) {
+					if (text.equals(StringUtilities.NULL_AS_STRING)) {
 						if ((c==KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
 							// delete when null => original value
 							DataTypeShort.this._textComponent.restoreText();
@@ -335,7 +336,7 @@ public class DataTypeShort extends BaseDataTypeComponent
 						if ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
 							if (text.length() <= 1 ) {
 								// about to delete last thing in field, so replace with null
-								DataTypeShort.this._textComponent.updateText("<null>");
+								DataTypeShort.this._textComponent.updateText(StringUtilities.NULL_AS_STRING);
 								e.consume();
 							}
 						}

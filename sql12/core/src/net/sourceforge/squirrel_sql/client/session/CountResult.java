@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 import java.util.ArrayList;
 
 public class CountResult
@@ -44,7 +46,7 @@ public class CountResult
    {
       if(null == paramValue)
       {
-         return "<null>";
+         return StringUtilities.NULL_AS_STRING;
       }
 
       String ret = "" + paramValue;

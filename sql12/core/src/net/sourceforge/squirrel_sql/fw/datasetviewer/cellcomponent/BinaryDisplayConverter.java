@@ -17,8 +17,10 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
- 
+
+
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 /**
  * @author gwg
  *
@@ -160,7 +162,7 @@ public class BinaryDisplayConverter {
 		if (data.length() == 0)
 			return new Byte[0];
 		
-		if (data.equals("<null>"))
+		if (data.equals(StringUtilities.NULL_AS_STRING))
 			return null;
 		
 		int stringIndex = 0;

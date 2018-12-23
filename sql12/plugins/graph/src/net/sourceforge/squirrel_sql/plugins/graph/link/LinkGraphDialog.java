@@ -14,7 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 
 public class LinkGraphDialog extends JDialog
@@ -108,8 +108,8 @@ public class LinkGraphDialog extends JDialog
    private void onWindowClosing()
    {
       Dimension size = getSize();
-      Preferences.userRoot().putInt(PREF_KEY_LINK_SHEET_WIDTH, size.width);
-      Preferences.userRoot().putInt(PREF_KEY_LINK_SHEET_HEIGHT, size.height);
+      Props.putInt(PREF_KEY_LINK_SHEET_WIDTH, size.width);
+      Props.putInt(PREF_KEY_LINK_SHEET_HEIGHT, size.height);
    }
 
    private JPanel createFolderButtonsPanel()
@@ -138,8 +138,8 @@ public class LinkGraphDialog extends JDialog
    private Dimension getDimension()
    {
       return new Dimension(
-            Preferences.userRoot().getInt(PREF_KEY_LINK_SHEET_WIDTH, 800),
-            Preferences.userRoot().getInt(PREF_KEY_LINK_SHEET_HEIGHT, 500)
+            Props.getInt(PREF_KEY_LINK_SHEET_WIDTH, 800),
+            Props.getInt(PREF_KEY_LINK_SHEET_HEIGHT, 500)
       );
    }
 

@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlCon
 import net.sourceforge.squirrel_sql.client.preferences.shortcut.ShortcutPrefsTab;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -41,7 +42,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.prefs.Preferences;
+
 /**
  * This sheet allows the user to maintain global preferences.
  * JASON: Rename to GlobalPreferencesInternalFrame
@@ -129,8 +130,8 @@ public class GlobalPreferencesSheet extends DialogWidget
 	private Dimension getDimension()
 	{
 		return new Dimension(
-			Preferences.userRoot().getInt(PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH, 650),
-			Preferences.userRoot().getInt(PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT, 600)
+			Props.getInt(PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH, 650),
+			Props.getInt(PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT, 600)
 		);
 	}
 
@@ -207,8 +208,8 @@ public class GlobalPreferencesSheet extends DialogWidget
    public void dispose()
    {
       Dimension size = getSize();
-      Preferences.userRoot().putInt(PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH, size.width);
-      Preferences.userRoot().putInt(PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT, size.height);
+      Props.putInt(PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH, size.width);
+      Props.putInt(PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT, size.height);
 
       for (Iterator<IGlobalPreferencesPanel> it = _panels.iterator(); it.hasNext();)
       {

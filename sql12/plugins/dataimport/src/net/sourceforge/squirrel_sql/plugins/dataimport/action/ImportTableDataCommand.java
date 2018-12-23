@@ -21,7 +21,7 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.*;
 
@@ -93,7 +93,7 @@ public class ImportTableDataCommand implements ICommand {
 				null) != JOptionPane.YES_OPTION)
 			return;
 			
-		JFileChooser openFile = new JFileChooser(Preferences.userRoot().get(PREFS_KEY_LAST_IMPORT_DIRECTORY, System.getProperty("user.home")));
+		JFileChooser openFile = new JFileChooser(Props.getString(PREFS_KEY_LAST_IMPORT_DIRECTORY, System.getProperty("user.home")));
 
 		int res = openFile.showOpenDialog(session.getApplication().getMainFrame());
 
@@ -101,7 +101,7 @@ public class ImportTableDataCommand implements ICommand {
 			File importFile = openFile.getSelectedFile();
 
 			if(null != importFile.getParent()){
-				Preferences.userRoot().put(PREFS_KEY_LAST_IMPORT_DIRECTORY, importFile.getParent());
+				Props.putString(PREFS_KEY_LAST_IMPORT_DIRECTORY, importFile.getParent());
 			}
 
 			try {

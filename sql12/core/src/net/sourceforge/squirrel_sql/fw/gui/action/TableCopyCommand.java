@@ -25,6 +25,7 @@ import javax.swing.table.TableCellRenderer;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 public class TableCopyCommand implements ICommand
 {
@@ -32,7 +33,7 @@ public class TableCopyCommand implements ICommand
 //	private static final StringManager s_stringMgr =
 //		StringManagerFactory.getStringManager(TableCopyCommand.class);
 
-	private final static String NULL_CELL = "<null>";
+	private final static String NULL_CELL = StringUtilities.NULL_AS_STRING;
 
 	private JTable _table;
 	private boolean _withHeaders;

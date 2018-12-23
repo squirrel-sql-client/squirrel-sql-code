@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class DockHandle
 {
@@ -68,12 +68,12 @@ public class DockHandle
 
    public int getDividerLocation()
    {
-      return Preferences.userRoot().getInt(PREFS_KEY_DOCK_DIVIDER_LOC + _title, 150);
+      return Props.getInt(PREFS_KEY_DOCK_DIVIDER_LOC + _title, 150);
    }
 
    public void storeDividerLocation(int dividerLocation)
    {
-      Preferences.userRoot().putInt(PREFS_KEY_DOCK_DIVIDER_LOC + _title, dividerLocation);
+      Props.putInt(PREFS_KEY_DOCK_DIVIDER_LOC + _title, dividerLocation);
    }
 
    public void addDockHandleListener(DockHandleListener dockHandleListener)

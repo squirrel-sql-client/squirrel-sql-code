@@ -1,12 +1,12 @@
 package net.sourceforge.squirrel_sql.client.gui.mainframe;
 
 import net.sourceforge.squirrel_sql.client.session.MessagePanel;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.prefs.Preferences;
 
 public class SplitPnResizeHandler
 {
@@ -34,7 +34,7 @@ public class SplitPnResizeHandler
          public void actionPerformed(ActionEvent e)
          {
             int msgPanelHeight = _splitPn.getBottomComponent().getSize().height;
-            Preferences.userRoot().putInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, msgPanelHeight);
+            Props.putInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, msgPanelHeight);
          }
       };
       _msgPnl.addToMessagePanelPopup(saveSplitDividerLocAction);
@@ -45,7 +45,7 @@ public class SplitPnResizeHandler
       {
          public void actionPerformed(ActionEvent e)
          {
-            Preferences.userRoot().putInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, 0);
+            Props.putInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, 0);
             setUnexpanded();
          }
       };
@@ -57,7 +57,7 @@ public class SplitPnResizeHandler
       {
          public void actionPerformed(ActionEvent e)
          {
-            int prefMsgPanelHeight = Preferences.userRoot().getInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, -1);
+            int prefMsgPanelHeight = Props.getInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, -1);
             if(-1 != prefMsgPanelHeight)
             {
                if (0 == prefMsgPanelHeight)
@@ -87,7 +87,7 @@ public class SplitPnResizeHandler
       if(false == m_hasBeenVisible)
       {
          m_hasBeenVisible = true;
-         final int prefMsgPanelHeight = Preferences.userRoot().getInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, -1);
+         final int prefMsgPanelHeight = Props.getInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, -1);
 
          SwingUtilities.invokeLater(new Runnable()
          {

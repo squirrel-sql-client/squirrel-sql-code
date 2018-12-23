@@ -445,49 +445,49 @@ public class TableExportCsvController
    protected void writeControlsToPrefs(TableExportPreferences prefs)
    {
 
-      // Preferences.userRoot().put(PREF_KEY_CSV_FILE, );
+      // Preferences.put(PREF_KEY_CSV_FILE, );
       prefs.setCsvFile(_dlg.txtFile.getText());
 
-      //Preferences.userRoot().put(PREF_KEY_CSV_ENCODING, _dlg.charsets.getSelectedItem().toString());
+      //Preferences.put(PREF_KEY_CSV_ENCODING, _dlg.charsets.getSelectedItem().toString());
       prefs.setCsvEncoding(_dlg.charsets.getSelectedItem().toString());
 
-      //Preferences.userRoot().putBoolean(PREF_KEY_WITH_HEADERS, _dlg.chkWithHeaders.isSelected());
+      //Preferences.putBoolean(PREF_KEY_WITH_HEADERS, _dlg.chkWithHeaders.isSelected());
       prefs.setWithHeaders(_dlg.chkWithHeaders.isSelected());
 
-      //Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_CSV, _dlg.radFormatCSV.isSelected());
+      //Preferences.putBoolean(PREF_KEY_FORMAT_CSV, _dlg.radFormatCSV.isSelected());
       prefs.setFormatCSV(_dlg.radFormatCSV.isSelected());
 
-      //Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLSX.isSelected());
+      //Preferences.putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLSX.isSelected());
       prefs.setFormatXLS(_dlg.radFormatXLSX.isSelected());
 
-      //Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS_OLD, _dlg.radFormatXLS.isSelected());
+      //Preferences.putBoolean(PREF_KEY_FORMAT_XLS_OLD, _dlg.radFormatXLS.isSelected());
       prefs.setFormatXLSOld(_dlg.radFormatXLS.isSelected());
 
-      //Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
+      //Preferences.putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
       prefs.setFormatXML(_dlg.radFormatXML.isSelected());
 
-      //Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
+      //Preferences.putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
       prefs.setFormatJSON(_dlg.radFormatJSON.isSelected());
 
-      //Preferences.userRoot().putBoolean(PREF_KEY_SEPERATOR_TAB, _dlg.chkSeparatorTab.isSelected());
+      //Preferences.putBoolean(PREF_KEY_SEPERATOR_TAB, _dlg.chkSeparatorTab.isSelected());
       prefs.setSeperatorTab(_dlg.chkSeparatorTab.isSelected());
 
-      //Preferences.userRoot().put(PREF_KEY_SEPERATOR_CHAR, _dlg.txtSeparatorChar.getText());
+      //Preferences.put(PREF_KEY_SEPERATOR_CHAR, _dlg.txtSeparatorChar.getText());
       prefs.setSeperatorChar(_dlg.txtSeparatorChar.getText());
 
-      //Preferences.userRoot().put(PREF_KEY_LINE_SEPERATOR, ((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
+      //Preferences.put(PREF_KEY_LINE_SEPERATOR, ((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
       prefs.setLineSeperator(((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
 
-      //Preferences.userRoot().putBoolean(PREF_KEY_EXPORT_COMPLETE, _dlg.radComplete.isSelected());
+      //Preferences.putBoolean(PREF_KEY_EXPORT_COMPLETE, _dlg.radComplete.isSelected());
       prefs.setExportComplete(_dlg.radComplete.isSelected());
 
-      //Preferences.userRoot().putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, _dlg.radUseGlobalPrefsFormating.isSelected());
+      //Preferences.putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, _dlg.radUseGlobalPrefsFormating.isSelected());
       prefs.setUseGlobalPrefsFormating(_dlg.radUseGlobalPrefsFormating.isSelected());
 
-      //Preferences.userRoot().putBoolean(PREF_KEY_EXECUTE_COMMAND, _dlg.chkExecCommand.isSelected());
+      //Preferences.putBoolean(PREF_KEY_EXECUTE_COMMAND, _dlg.chkExecCommand.isSelected());
       prefs.setExecuteCommand(_dlg.chkExecCommand.isSelected());
 
-      // Preferences.userRoot().put(PREF_KEY_COMMAND, _dlg.txtCommand.getText());
+      // Preferences.put(PREF_KEY_COMMAND, _dlg.txtCommand.getText());
       prefs.setCommand(_dlg.txtCommand.getText());
    }
 

@@ -2,11 +2,11 @@ package net.sourceforge.squirrel_sql.fw.gui.copyseparatedby;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JOptionPane;
-import java.util.prefs.Preferences;
 
 public class CopySeparatedByCtrl
 {
@@ -29,9 +29,9 @@ public class CopySeparatedByCtrl
       _copySeparatedByDlg = new CopySeparatedByDlg(GUIUtils.getOwningFrame(table));
       _enableRowSeparator = enableRowSeparator;
 
-      _copySeparatedByDlg.txtCellSeparator.setText(Preferences.userRoot().get(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR, ","));
-      _copySeparatedByDlg.txtLineLength.setInt(Preferences.userRoot().getInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, 100));
-      _copySeparatedByDlg.txtRowSeparator.setText(Preferences.userRoot().get(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR, "\\n"));
+      _copySeparatedByDlg.txtCellSeparator.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR, ","));
+      _copySeparatedByDlg.txtLineLength.setInt(Props.getInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, 100));
+      _copySeparatedByDlg.txtRowSeparator.setText(Props.getString(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR, "\\n"));
 
       if(false == _enableRowSeparator)
       {
@@ -69,7 +69,7 @@ public class CopySeparatedByCtrl
       {
          text = _copySeparatedByDlg.txtCellSeparator.getText();
       }
-      Preferences.userRoot().put(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR, text);
+      Props.putString(PREF_KEY_COPYSEPARATEDBYCTRL_CELL_SEPARATOR, text);
 
 
 
@@ -78,7 +78,7 @@ public class CopySeparatedByCtrl
          _cellSeparator = doReplacements(_copySeparatedByDlg.txtCellSeparator.getText());
       }
 
-      Preferences.userRoot().putInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, _copySeparatedByDlg.txtLineLength.getInt());
+      Props.putInt(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_PREFERED_LINE_LEN, _copySeparatedByDlg.txtLineLength.getInt());
       _preferedLineLength = _copySeparatedByDlg.txtLineLength.getInt();
 
       if(_enableRowSeparator && null != _copySeparatedByDlg.txtRowSeparator.getText())
@@ -88,7 +88,7 @@ public class CopySeparatedByCtrl
          {
             text = _copySeparatedByDlg.txtRowSeparator.getText();
          }
-         Preferences.userRoot().put(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR, text);
+         Props.putString(PREF_KEY_COPYSEPARATEDBYCTRL_ROW_SEPARATOR, text);
 
          _rowSeparator = doReplacements(_copySeparatedByDlg.txtRowSeparator.getText());
       }

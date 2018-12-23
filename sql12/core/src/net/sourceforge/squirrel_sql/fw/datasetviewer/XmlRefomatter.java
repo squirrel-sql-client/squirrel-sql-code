@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  
  import net.sourceforge.squirrel_sql.fw.util.StringManager;
  import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
  import javax.swing.JOptionPane;
  import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class XmlRefomatter
    public static String reformatXml(String xml)
 	{
 		// do a simple check to see if the string might contain XML or not
-		if (xml.indexOf("<") == -1 || xml.equals("<null>")) {
+		if (xml.indexOf("<") == -1 || xml.equals(StringUtilities.NULL_AS_STRING)) {
 			// no tags, so cannot be XML
 			JOptionPane.showMessageDialog(null,
 				// i18n[xmlRefomatter.noXml=The data does not contain any XML tags.  No reformatting done.]

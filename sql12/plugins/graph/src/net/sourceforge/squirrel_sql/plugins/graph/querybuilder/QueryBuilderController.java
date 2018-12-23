@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.*;
@@ -14,7 +15,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.prefs.Preferences;
 
 public class QueryBuilderController
 {
@@ -226,24 +226,24 @@ public class QueryBuilderController
          }
       });
 
-      int sqlHeight = Preferences.userRoot().getInt(PREF_KEY_SQL_DOCK_HEIGHT, 250);
+      int sqlHeight = Props.getInt(PREF_KEY_SQL_DOCK_HEIGHT, 250);
       _sqlDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQuerySQLPanelCtrl.getGraphQuerySQLPanel(), sqlHeight);
       _graphDockHandleAdmin.add(_sqlDockHandle, _btnSQL);
 
-      int resHeight = Preferences.userRoot().getInt(PREF_KEY_RESULT_DOCK_HEIGHT, 250);
+      int resHeight = Props.getInt(PREF_KEY_RESULT_DOCK_HEIGHT, 250);
       _resultDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQueryResultPanelCtrl.getGraphQueryResultPanel(), resHeight);
       _graphDockHandleAdmin.add(_resultDockHandle, _btnResult);
 
-      int selectHeight = Preferences.userRoot().getInt(PREF_KEY_ORDER_DOCK_HEIGHT, 250);
+      int selectHeight = Props.getInt(PREF_KEY_ORDER_DOCK_HEIGHT, 250);
       _selectDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQuerySelectPanelCtrl.getGraphQueryOrderPanel(), selectHeight);
       _graphDockHandleAdmin.add(_selectDockHandle, _btnSelect);
 
 
-      int whereHeight = Preferences.userRoot().getInt(PREF_KEY_WHERE_DOCK_HEIGHT, 250);
+      int whereHeight = Props.getInt(PREF_KEY_WHERE_DOCK_HEIGHT, 250);
       _whereDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQueryWherePanelCtrl.getGraphQueryWherePanel(), whereHeight);
       _graphDockHandleAdmin.add(_whereDockHandle, _btnWhere);
 
-      int orderHeight = Preferences.userRoot().getInt(PREF_KEY_ORDER_DOCK_HEIGHT, 250);
+      int orderHeight = Props.getInt(PREF_KEY_ORDER_DOCK_HEIGHT, 250);
       _orderDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQueryOrderPanelCtrl.getGraphQueryOrderPanel(), orderHeight);
       _graphDockHandleAdmin.add(_orderDockHandle, _btnOrder);
 
@@ -251,8 +251,8 @@ public class QueryBuilderController
 
    private void onSessionClosing()
    {
-      Preferences.userRoot().putInt(PREF_KEY_SQL_DOCK_HEIGHT, _sqlDockHandle.getLastHeigth());
-      Preferences.userRoot().putInt(PREF_KEY_RESULT_DOCK_HEIGHT, _resultDockHandle.getLastHeigth());
+      Props.putInt(PREF_KEY_SQL_DOCK_HEIGHT, _sqlDockHandle.getLastHeigth());
+      Props.putInt(PREF_KEY_RESULT_DOCK_HEIGHT, _resultDockHandle.getLastHeigth());
 
       // To prevent memory leaks
       _session.getApplication().getSessionManager().removeSessionListener(_sessionAdapter);

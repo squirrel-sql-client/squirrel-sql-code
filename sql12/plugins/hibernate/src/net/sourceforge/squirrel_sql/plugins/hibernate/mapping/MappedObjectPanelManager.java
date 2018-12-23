@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.plugins.hibernate.ConnectionListener;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
@@ -19,7 +20,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Collections;
-import java.util.prefs.Preferences;
 
 public class MappedObjectPanelManager
 {
@@ -93,7 +93,7 @@ public class MappedObjectPanelManager
          }
       });
 
-      _panel.chkShowQualified.setSelected(Preferences.userRoot().getBoolean(PERF_KEY_OBJ_TAB_CHKSHOWQUALIFIED, false));
+      _panel.chkShowQualified.setSelected(Props.getBoolean(PERF_KEY_OBJ_TAB_CHKSHOWQUALIFIED, false));
 
    }
 
@@ -239,6 +239,6 @@ public class MappedObjectPanelManager
    public void closing()
    {
       _panel.closing();
-      Preferences.userRoot().putBoolean(PERF_KEY_OBJ_TAB_CHKSHOWQUALIFIED, _panel.chkShowQualified.isSelected());
+      Props.putBoolean(PERF_KEY_OBJ_TAB_CHKSHOWQUALIFIED, _panel.chkShowQualified.isSelected());
    }
 }

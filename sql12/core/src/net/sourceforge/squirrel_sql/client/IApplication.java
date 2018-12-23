@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.Past
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
+import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
@@ -262,4 +263,6 @@ public interface IApplication
 	PasteHistory getPasteHistory();
 
 	RowsWindowFrameRegistry getRowsWindowFrameRegistry();
+
+	PropsImpl getPropsImpl();
 }

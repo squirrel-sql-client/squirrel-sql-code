@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
@@ -63,7 +64,7 @@ public class ResultDataSet implements IDataSet
 
       if(hpr.isNull())
       {
-         return "<null>";
+         return StringUtilities.NULL_AS_STRING;
       }
 
 

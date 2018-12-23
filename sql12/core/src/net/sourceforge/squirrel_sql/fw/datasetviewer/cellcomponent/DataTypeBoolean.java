@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.I
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 /**
  * @author gwg This class provides the display components for handling Boolean data types, specifically SQL
@@ -175,7 +176,7 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer)
 	{
 		// handle null, which is shown as the special string "<null>"
-		if (value.equals("<null>") || value.equals("")) return null;
+		if (value.equals(StringUtilities.NULL_AS_STRING) || value.equals("")) return null;
 
 		// Do the conversion into the object in a safe manner
 		try
@@ -311,7 +312,7 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 			{
 
 				// user enters something when field is null
-				if (text.equals("<null>"))
+				if (text.equals(StringUtilities.NULL_AS_STRING))
 				{
 					// delete when null => original value
 					DataTypeBoolean.this._textComponent.restoreText();
@@ -320,7 +321,7 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 				else
 				{
 					// when field is not null delete means set to null, so do it
-					DataTypeBoolean.this._textComponent.updateText("<null>");
+					DataTypeBoolean.this._textComponent.updateText(StringUtilities.NULL_AS_STRING);
 					e.consume();
 				}
 			}

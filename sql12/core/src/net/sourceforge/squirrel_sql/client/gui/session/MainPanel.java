@@ -25,7 +25,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -204,7 +204,7 @@ public class MainPanel extends JPanel
       }
 
 
-      int prefIx = Preferences.userRoot().getInt(PREFS_KEY_SELECTED_TAB_IX, ITabIndexes.OBJECT_TREE_TAB);
+      int prefIx = Props.getInt(PREFS_KEY_SELECTED_TAB_IX, ITabIndexes.OBJECT_TREE_TAB);
       if(idx == prefIx)
       {
          _tabbedPane.setSelectedIndex(prefIx);
@@ -364,7 +364,7 @@ public class MainPanel extends JPanel
 
       if(selIx == ITabIndexes.OBJECT_TREE_TAB || selIx == ITabIndexes.SQL_TAB)
       {
-         Preferences.userRoot().putInt(PREFS_KEY_SELECTED_TAB_IX, selIx);
+         Props.putInt(PREFS_KEY_SELECTED_TAB_IX, selIx);
       }
    }
 

@@ -33,6 +33,10 @@ import org.apache.commons.lang.StringUtils;
  */
 public class StringUtilities
 {
+
+   public static final String NULL_AS_STRING = "<null>";
+
+
 	/**
 	 * Clean the passed string. Replace whitespace characters with a single
 	 * space. If a <TT>null</TT> string passed return an empty string. E.G.

@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.prefs.Preferences;
 
 public class HibernateTabPanel extends JPanel
 {
@@ -55,7 +55,7 @@ public class HibernateTabPanel extends JPanel
       add(_tabObjectsHql, gbc);
 
 
-      _tabObjectsHql.setSelectedIndex(Preferences.userRoot().getInt(PERF_KEY_LAST_SELECTED_TAB, 0));
+      _tabObjectsHql.setSelectedIndex(Props.getInt(PERF_KEY_LAST_SELECTED_TAB, 0));
 
 
       SwingUtilities.invokeLater(new Runnable()
@@ -63,7 +63,7 @@ public class HibernateTabPanel extends JPanel
          public void run()
          {
             _splitHqlSql.setDividerLocation(0.5);
-//            double loc = Preferences.userRoot().getDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, 0.5);
+//            double loc = Preferences.getDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, 0.5);
 //            loc = Math.min(0.95, loc);
 //            loc = Math.max(loc, 0.05);
          }
@@ -74,8 +74,8 @@ public class HibernateTabPanel extends JPanel
 
    public void closing()
    {
-//      Preferences.userRoot().putDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, ((double) _splitHqlSql.getDividerLocation())/ ((double) _splitHqlSql.getHeight()) );
-      Preferences.userRoot().putInt(PERF_KEY_LAST_SELECTED_TAB, _tabObjectsHql.getSelectedIndex());
+//      Preferences.putDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, ((double) _splitHqlSql.getDividerLocation())/ ((double) _splitHqlSql.getHeight()) );
+      Props.putInt(PERF_KEY_LAST_SELECTED_TAB, _tabObjectsHql.getSelectedIndex());
    }
 
 

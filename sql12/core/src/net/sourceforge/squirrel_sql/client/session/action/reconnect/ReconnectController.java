@@ -7,7 +7,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.jfree.util.ObjectUtilities;
 
 import javax.swing.SwingUtilities;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class ReconnectController
 {
@@ -25,7 +25,7 @@ public class ReconnectController
       _reconnectDialog.txtUser.setText(jdbcData.getUser());
       _reconnectDialog.txtPassword.setText(jdbcData.getPassword());
 
-      if(Preferences.userRoot().getBoolean(PREF_KEY_RECONNECT_COLLAPSED, true))
+      if(Props.getBoolean(PREF_KEY_RECONNECT_COLLAPSED, true))
       {
          _reconnectDialog.collapse();
       }
@@ -47,7 +47,7 @@ public class ReconnectController
 
       _reconnectDialog.setVisible(true);
 
-      Preferences.userRoot().putBoolean(PREF_KEY_RECONNECT_COLLAPSED, _reconnectDialog.isCollapsed());
+      Props.putBoolean(PREF_KEY_RECONNECT_COLLAPSED, _reconnectDialog.isCollapsed());
    }
 
    private void doReconnect(JdbcConnectionData jdbcData)

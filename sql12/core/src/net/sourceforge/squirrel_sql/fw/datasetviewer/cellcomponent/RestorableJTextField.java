@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 import javax.swing.JTextField;
 
 /**
@@ -28,7 +30,7 @@ public class RestorableJTextField extends JTextField
 	 */
 	public void setText(String originalValue) {
 		if (originalValue == null)
-			_originalValue = "<null>";
+			_originalValue = StringUtilities.NULL_AS_STRING;
 		else _originalValue = originalValue;
 		super.setText(_originalValue);
 	}

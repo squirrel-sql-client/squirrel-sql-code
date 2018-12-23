@@ -36,7 +36,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 /**
  * This sheet shows the SQuirreL log files.
@@ -114,8 +114,8 @@ public class ViewLogsSheet extends DialogWidget
 	private Dimension getDimension()
 	{
 		return new Dimension(
-				Preferences.userRoot().getInt(PREF_KEY_LOGS_SHEET_WIDTH, 500),
-				Preferences.userRoot().getInt(PREF_KEY_LOGS_SHEET_HEIGHT, 400)
+				Props.getInt(PREF_KEY_LOGS_SHEET_WIDTH, 500),
+				Props.getInt(PREF_KEY_LOGS_SHEET_HEIGHT, 400)
 		);
 	}
 
@@ -166,8 +166,8 @@ public class ViewLogsSheet extends DialogWidget
 		ViewLogsSheet.disposeInstance();
 
 		Dimension size = getSize();
-		Preferences.userRoot().putInt(PREF_KEY_LOGS_SHEET_WIDTH, size.width);
-		Preferences.userRoot().putInt(PREF_KEY_LOGS_SHEET_HEIGHT, size.height);
+		Props.putInt(PREF_KEY_LOGS_SHEET_WIDTH, size.width);
+		Props.putInt(PREF_KEY_LOGS_SHEET_HEIGHT, size.height);
 
 
 		super.dispose();

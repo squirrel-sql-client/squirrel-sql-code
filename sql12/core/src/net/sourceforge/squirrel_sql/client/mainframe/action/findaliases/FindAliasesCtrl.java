@@ -7,8 +7,8 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasComman
 import net.sourceforge.squirrel_sql.client.mainframe.action.FindAliasListCellRenderer;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.CloseByEscapeListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -22,7 +22,6 @@ import java.awt.event.*;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
-import java.util.prefs.Preferences;
 
 public class FindAliasesCtrl
 {
@@ -75,7 +74,7 @@ public class FindAliasesCtrl
 
       _dlg.chkLeaveOpen.setFocusable(false);
 
-      _dlg.chkLeaveOpen.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_FIND_ALIAS_CHECK_LEAVE_OPEN, false));
+      _dlg.chkLeaveOpen.setSelected(Props.getBoolean(PREF_KEY_FIND_ALIAS_CHECK_LEAVE_OPEN, false));
 
 
       _dlg.btnConnect.addActionListener(e -> onConnect());
@@ -108,11 +107,11 @@ public class FindAliasesCtrl
       });
 
       _dlg.chkRememberLastSearch.setFocusable(false);
-      _dlg.chkRememberLastSearch.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_FIND_ALIAS_REMEMBER_LAST_SEARCH, false));
+      _dlg.chkRememberLastSearch.setSelected(Props.getBoolean(PREF_KEY_FIND_ALIAS_REMEMBER_LAST_SEARCH, false));
 
       if (_dlg.chkRememberLastSearch.isSelected())
       {
-         String lastSearchString = Preferences.userRoot().get(PREF_KEY_FIND_ALIAS_LAST_SEARCH_STRING, null);
+         String lastSearchString = Props.getString(PREF_KEY_FIND_ALIAS_LAST_SEARCH_STRING, null);
          _dlg.txtToSearch.setText(lastSearchString);
 
          if(null != lastSearchString)
@@ -309,17 +308,17 @@ public class FindAliasesCtrl
 
    private void onClosing()
    {
-      Preferences.userRoot().putInt(PREF_KEY_FIND_ALIAS_SHEET_WIDTH, _dlg.getWidth());
-      Preferences.userRoot().putInt(PREF_KEY_FIND_ALIAS_SHEET_HEIGHT, _dlg.getHeight());
+      Props.putInt(PREF_KEY_FIND_ALIAS_SHEET_WIDTH, _dlg.getWidth());
+      Props.putInt(PREF_KEY_FIND_ALIAS_SHEET_HEIGHT, _dlg.getHeight());
 
-      Preferences.userRoot().putBoolean(PREF_KEY_FIND_ALIAS_CHECK_LEAVE_OPEN, _dlg.chkLeaveOpen.isSelected());
+      Props.putBoolean(PREF_KEY_FIND_ALIAS_CHECK_LEAVE_OPEN, _dlg.chkLeaveOpen.isSelected());
 
 
-      Preferences.userRoot().putBoolean(PREF_KEY_FIND_ALIAS_REMEMBER_LAST_SEARCH, _dlg.chkRememberLastSearch.isSelected());
+      Props.putBoolean(PREF_KEY_FIND_ALIAS_REMEMBER_LAST_SEARCH, _dlg.chkRememberLastSearch.isSelected());
 
       if (_dlg.chkRememberLastSearch.isSelected())
       {
-         Preferences.userRoot().put(PREF_KEY_FIND_ALIAS_LAST_SEARCH_STRING, _dlg.txtToSearch.getText());
+         Props.putString(PREF_KEY_FIND_ALIAS_LAST_SEARCH_STRING, _dlg.txtToSearch.getText());
       }
 
    }
@@ -328,8 +327,8 @@ public class FindAliasesCtrl
    private Dimension getDimension()
    {
       return new Dimension(
-            Preferences.userRoot().getInt(PREF_KEY_FIND_ALIAS_SHEET_WIDTH, 600),
-            Preferences.userRoot().getInt(PREF_KEY_FIND_ALIAS_SHEET_HEIGHT, 400)
+            Props.getInt(PREF_KEY_FIND_ALIAS_SHEET_WIDTH, 600),
+            Props.getInt(PREF_KEY_FIND_ALIAS_SHEET_HEIGHT, 400)
       );
    }
 

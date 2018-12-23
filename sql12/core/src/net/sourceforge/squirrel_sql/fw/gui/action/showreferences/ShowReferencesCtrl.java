@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -20,9 +21,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.prefs.Preferences;
 
 public class ShowReferencesCtrl
 {
@@ -90,8 +88,8 @@ public class ShowReferencesCtrl
       GUIUtils.enableCloseByEscape(_window);
 
 
-      int width = Preferences.userRoot().getInt(PREF_KEY_SHOW_REFERENCES_WIDTH, 300);
-      int height = Preferences.userRoot().getInt(PREF_KEY_SHOW_REFERENCES_HEIGHT, 300);
+      int width = Props.getInt(PREF_KEY_SHOW_REFERENCES_WIDTH, 300);
+      int height = Props.getInt(PREF_KEY_SHOW_REFERENCES_HEIGHT, 300);
 
       _window.setSize(width, height);
       GUIUtils.centerWithinParent(_window);
@@ -115,7 +113,7 @@ public class ShowReferencesCtrl
          }
       });
 
-      _window.chkShowQualified.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_SHOW_REFERENCES_QUALIFIED, false));
+      _window.chkShowQualified.setSelected(Props.getBoolean(PREF_KEY_SHOW_REFERENCES_QUALIFIED, false));
       onChkShowQualified();
 
       _window.setVisible(true);
@@ -247,8 +245,8 @@ public class ShowReferencesCtrl
 
    private void onClose()
    {
-      Preferences.userRoot().putInt(PREF_KEY_SHOW_REFERENCES_WIDTH, _window.getSize().width);
-      Preferences.userRoot().putInt(PREF_KEY_SHOW_REFERENCES_HEIGHT, _window.getSize().height);
-      Preferences.userRoot().putBoolean(PREF_KEY_SHOW_REFERENCES_QUALIFIED, _window.chkShowQualified.isSelected());
+      Props.putInt(PREF_KEY_SHOW_REFERENCES_WIDTH, _window.getSize().width);
+      Props.putInt(PREF_KEY_SHOW_REFERENCES_HEIGHT, _window.getSize().height);
+      Props.putBoolean(PREF_KEY_SHOW_REFERENCES_QUALIFIED, _window.chkShowQualified.isSelected());
    }
 }

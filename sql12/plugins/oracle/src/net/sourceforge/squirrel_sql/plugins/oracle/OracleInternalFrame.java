@@ -13,7 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class OracleInternalFrame extends SessionDialogWidget
 {
@@ -44,12 +44,12 @@ public class OracleInternalFrame extends SessionDialogWidget
    protected void initFromPrefs(String repl, OracleInternalFrameCallback callBack)
    {
       _repl = repl;
-      final int x = Preferences.userRoot().getInt(PREF_KEY_ORACLE_FRAME_X.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), 0);
-      final int y = Preferences.userRoot().getInt(PREF_KEY_ORACLE_FRAME_Y.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), 0);
-      final int width = Preferences.userRoot().getInt(PREF_KEY_ORACLE_FRAME_WIDTH.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), 400);
-      final int height = Preferences.userRoot().getInt(PREF_KEY_ORACLE_FRAME_HEIGHT.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), 200);
-      final boolean stayOnTop = Preferences.userRoot().getBoolean(PREF_KEY_ORACLE_FRAME_STAY_ON_TOP.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), false);
-      int autoRefeshPeriod = Preferences.userRoot().getInt(PREF_KEY_ORACLE_FRAME_AUTO_REFRESH_SEC.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), 10);
+      final int x = Props.getInt(PREF_KEY_ORACLE_FRAME_X.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), 0);
+      final int y = Props.getInt(PREF_KEY_ORACLE_FRAME_Y.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), 0);
+      final int width = Props.getInt(PREF_KEY_ORACLE_FRAME_WIDTH.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), 400);
+      final int height = Props.getInt(PREF_KEY_ORACLE_FRAME_HEIGHT.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), 200);
+      final boolean stayOnTop = Props.getBoolean(PREF_KEY_ORACLE_FRAME_STAY_ON_TOP.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), false);
+      int autoRefeshPeriod = Props.getInt(PREF_KEY_ORACLE_FRAME_AUTO_REFRESH_SEC.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), 10);
       autoRefeshPeriod = Math.max(1,autoRefeshPeriod);
 
       callBack.createPanelAndToolBar(stayOnTop, autoRefeshPeriod);
@@ -96,13 +96,13 @@ public class OracleInternalFrame extends SessionDialogWidget
       Rectangle rect = getBounds();
 
       if (rect != null) {
-	      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_X.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.x);
-	      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_Y.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.y);
-	      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_WIDTH.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.width);
-	      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_HEIGHT.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.height);
+	      Props.putInt(PREF_KEY_ORACLE_FRAME_X.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.x);
+	      Props.putInt(PREF_KEY_ORACLE_FRAME_Y.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.y);
+	      Props.putInt(PREF_KEY_ORACLE_FRAME_WIDTH.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.width);
+	      Props.putInt(PREF_KEY_ORACLE_FRAME_HEIGHT.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.height);
       }
-      Preferences.userRoot().putBoolean(PREF_KEY_ORACLE_FRAME_STAY_ON_TOP.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), stayOnTop);
-      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_AUTO_REFRESH_SEC.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), autoRefreshPeriod);
+      Props.putBoolean(PREF_KEY_ORACLE_FRAME_STAY_ON_TOP.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), stayOnTop);
+      Props.putInt(PREF_KEY_ORACLE_FRAME_AUTO_REFRESH_SEC.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), autoRefreshPeriod);
    }
 
    public class OracleToolBar extends ToolBar

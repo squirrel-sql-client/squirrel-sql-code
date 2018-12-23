@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -40,7 +41,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 public class SessionPropertiesSheet extends SessionDialogWidget
 {
@@ -87,8 +87,8 @@ public class SessionPropertiesSheet extends SessionDialogWidget
 	private Dimension getDimension()
 	{
 		return new Dimension(
-			Preferences.userRoot().getInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, 500),
-			Preferences.userRoot().getInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, 600)
+			Props.getInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, 500),
+			Props.getInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, 600)
 		);
 	}
 
@@ -181,8 +181,8 @@ public class SessionPropertiesSheet extends SessionDialogWidget
 	public void dispose()
 	{
 		Dimension size = getSize();
-		Preferences.userRoot().putInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, size.width);
-		Preferences.userRoot().putInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, size.height);
+		Props.putInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, size.width);
+		Props.putInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, size.height);
 
 		super.dispose();	 //To change body of overridden methods use File | Settings | File Templates.
 	}

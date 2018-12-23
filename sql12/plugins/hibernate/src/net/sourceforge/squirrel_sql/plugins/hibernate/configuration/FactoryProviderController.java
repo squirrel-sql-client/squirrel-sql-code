@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.configuration;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -11,7 +12,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.prefs.Preferences;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -90,7 +90,7 @@ public class FactoryProviderController
 
    private void onWriteExampleFactorProvider()
    {
-      String dirPath = Preferences.userRoot().get(HibernateConfigController.PERF_KEY_LAST_DIR, System.getProperty("user.home"));
+      String dirPath = Props.getString(HibernateConfigController.PERF_KEY_LAST_DIR, System.getProperty("user.home"));
 
       JFileChooser fc = new JFileChooser(dirPath);
 
@@ -149,7 +149,7 @@ public class FactoryProviderController
          s_log.error(msg, e);
       }
 
-      Preferences.userRoot().put(HibernateConfigController.PERF_KEY_LAST_DIR, dir.getPath());
+      Props.putString(HibernateConfigController.PERF_KEY_LAST_DIR, dir.getPath());
    }
 
    public String getClassName()

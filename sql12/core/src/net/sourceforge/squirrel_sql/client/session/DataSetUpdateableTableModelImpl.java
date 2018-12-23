@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -642,7 +643,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                value = colValue;
 
             // convert user representation of null into an actual null
-            if (value != null && value.toString().equals("<null>"))
+            if (value != null && value.toString().equals(StringUtilities.NULL_AS_STRING))
                value = null;
 
             // do different things depending on data type

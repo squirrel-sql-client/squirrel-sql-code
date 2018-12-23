@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 
 public class TableScriptConfigCtrl
@@ -31,11 +31,11 @@ public class TableScriptConfigCtrl
       _dlg = new TableScriptConfigFrame(_mainFrame);
 
       String buf;
-      buf = Preferences.userRoot().get(PREFS_KEY_CONSTRAINTS_AND_INDEXES_AT_END, "" + _constAndIndAtEnd);
+      buf = Props.getString(PREFS_KEY_CONSTRAINTS_AND_INDEXES_AT_END, "" + _constAndIndAtEnd);
       _dlg.optConstAndIndAtEnd.setSelected(Boolean.valueOf(buf).booleanValue());
       _dlg.optConstAndIndAfterTable.setSelected(!Boolean.valueOf(buf).booleanValue());
 
-      buf = Preferences.userRoot().get(PREFS_KEY_CONSTRAINTS_TO_TABLES_NOT_IN_SCRIPT, "" + _constToTablesNotInScript);
+      buf = Props.getString(PREFS_KEY_CONSTRAINTS_TO_TABLES_NOT_IN_SCRIPT, "" + _constToTablesNotInScript);
       _dlg.constToTablesNotInScript.setSelected(Boolean.valueOf(buf).booleanValue());
 
       _dlg.btnOk.addActionListener(new ActionListener()
@@ -66,8 +66,8 @@ public class TableScriptConfigCtrl
       _constAndIndAtEnd = _dlg.optConstAndIndAtEnd.isSelected();
       _constToTablesNotInScript = _dlg.constToTablesNotInScript.isSelected();
 
-      Preferences.userRoot().put(PREFS_KEY_CONSTRAINTS_AND_INDEXES_AT_END, "" + _constAndIndAtEnd);
-      Preferences.userRoot().put(PREFS_KEY_CONSTRAINTS_TO_TABLES_NOT_IN_SCRIPT, "" + _constToTablesNotInScript);
+      Props.putString(PREFS_KEY_CONSTRAINTS_AND_INDEXES_AT_END, "" + _constAndIndAtEnd);
+      Props.putString(PREFS_KEY_CONSTRAINTS_TO_TABLES_NOT_IN_SCRIPT, "" + _constToTablesNotInScript);
 
 		_isOk = true;
 

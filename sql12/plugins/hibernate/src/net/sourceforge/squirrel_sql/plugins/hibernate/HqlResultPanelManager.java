@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.EntryPanelManager;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects.ObjectResultController;
 
 import javax.swing.*;
@@ -11,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.prefs.Preferences;
 
 public class HqlResultPanelManager extends EntryPanelManager
 {
@@ -44,12 +44,12 @@ public class HqlResultPanelManager extends EntryPanelManager
          }
       );
 
-      _hqlResultPanel.chkLimitObjectCount.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, false));
-      _hqlResultPanel.nbrLimitRows.setInt(Preferences.userRoot().getInt(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT_VAL, 100));
+      _hqlResultPanel.chkLimitObjectCount.setSelected(Props.getBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, false));
+      _hqlResultPanel.nbrLimitRows.setInt(Props.getInt(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT_VAL, 100));
       _hqlResultPanel.nbrLimitRows.setEnabled(_hqlResultPanel.chkLimitObjectCount.isSelected());
 
 
-      int ordinalToSelect = Preferences.userRoot().getInt(PREF_KEY_USE_CONNECTION_OF, HqlResultPanel.UseConnectionOf.OF_HIBBERNAT_CONFIG.ordinal());
+      int ordinalToSelect = Props.getInt(PREF_KEY_USE_CONNECTION_OF, HqlResultPanel.UseConnectionOf.OF_HIBBERNAT_CONFIG.ordinal());
       _hqlResultPanel.cboUseConnectionOf.setSelectedItem(HqlResultPanel.UseConnectionOf.getByOrdinal(ordinalToSelect));
 
 
@@ -80,7 +80,7 @@ public class HqlResultPanelManager extends EntryPanelManager
       }
 
       HqlResultPanel.UseConnectionOf seleted = (HqlResultPanel.UseConnectionOf) _hqlResultPanel.cboUseConnectionOf.getSelectedItem();
-      Preferences.userRoot().putInt(PREF_KEY_USE_CONNECTION_OF, seleted.ordinal());
+      Props.putInt(PREF_KEY_USE_CONNECTION_OF, seleted.ordinal());
    }
 
    private void onLimitRowsChanged()
@@ -92,12 +92,12 @@ public class HqlResultPanelManager extends EntryPanelManager
 
          if(locc.checkAndRemember())
          {
-            Preferences.userRoot().putBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, true);
+            Props.putBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, true);
          }
       }
       else
       {
-         Preferences.userRoot().putBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, false);
+         Props.putBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, false);
       }
 
      _hqlResultPanel.nbrLimitRows.setEnabled(_hqlResultPanel.chkLimitObjectCount.isSelected());
@@ -107,9 +107,9 @@ public class HqlResultPanelManager extends EntryPanelManager
    private void onSessionClosing()
    {
       // Omitted intentionally
-      //Preferences.userRoot().putBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, _hibernateSQLPanel.chkLimitObjectCount.isSelected());
+      //Preferences.putBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, _hibernateSQLPanel.chkLimitObjectCount.isSelected());
 
-      Preferences.userRoot().putInt(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT_VAL, _hqlResultPanel.nbrLimitRows.getInt());
+      Props.putInt(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT_VAL, _hqlResultPanel.nbrLimitRows.getInt());
    }
 
 

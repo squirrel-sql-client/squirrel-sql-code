@@ -41,7 +41,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 		String UNSUPPORTED = "<Unsupported>";
 		// i18n[resultSetMentaDataSet.propName=Property Name]
 		String NAME_COLUMN = s_stringMgr.getString("resultSetMentaDataSet.propName");
-//		String NULL = "<null>";
+//		String NULL = StringUtilities.NULL_AS_STRING;
 		// i18n[resultSetMentaDataSet.val=Value]
 		String VALUE_COLUMN = s_stringMgr.getString("resultSetMentaDataSet.val");
 	}

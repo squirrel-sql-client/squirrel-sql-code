@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.gui.titlefilepath;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -12,7 +13,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
-import java.util.prefs.Preferences;
 
 public class TitleFilePathHandler
 {
@@ -64,14 +64,14 @@ public class TitleFilePathHandler
       _popUp.add(mnuRememberCheckboxes);
       mnuRememberCheckboxes.addActionListener(e -> onRememberCheckboxes());
 
-      _chkMnuShowFileName.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_FILE_NAME, false));
-      _chkMnuShowFilePath.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_PATH_NAME, false));
+      _chkMnuShowFileName.setSelected(Props.getBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_FILE_NAME, false));
+      _chkMnuShowFilePath.setSelected(Props.getBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_PATH_NAME, false));
    }
 
    private void onRememberCheckboxes()
    {
-      Preferences.userRoot().putBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_FILE_NAME, _chkMnuShowFileName.isSelected());
-      Preferences.userRoot().putBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_PATH_NAME, _chkMnuShowFilePath.isSelected());
+      Props.putBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_FILE_NAME, _chkMnuShowFileName.isSelected());
+      Props.putBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_PATH_NAME, _chkMnuShowFilePath.isSelected());
    }
 
    private void onChkMnuShowFilePath()

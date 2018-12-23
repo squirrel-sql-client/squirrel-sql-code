@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -76,7 +77,7 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 	protected IToolkitBeepHelper _beepHelper = new ToolkitBeepHelper();
 
 	/** The text value that is placed in the cell to indicate a null value */
-	public static final String NULL_VALUE_PATTERN = "<null>";
+	public static final String NULL_VALUE_PATTERN = StringUtilities.NULL_AS_STRING;
 
 	/**
 	 * Sets the display definition of the Column being operated upon.

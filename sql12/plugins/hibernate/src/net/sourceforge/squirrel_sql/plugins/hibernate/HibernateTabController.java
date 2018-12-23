@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -22,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.prefs.Preferences;
 
 public class HibernateTabController implements IMainPanelTab, IHibernateTabController, IHibernateConnectionProvider
 {
@@ -152,7 +152,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
       if (null != reader)
       {
-         loadConfigs(reader, Preferences.userRoot().get(PREF_KEY_LAST_SELECTED_CONFIG, null));
+         loadConfigs(reader, Props.getString(PREF_KEY_LAST_SELECTED_CONFIG, null));
       }
    }
 
@@ -286,7 +286,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
       if(null != cfg)
       {
-         Preferences.userRoot().put(PREF_KEY_LAST_SELECTED_CONFIG, cfg.getName());
+         Props.putString(PREF_KEY_LAST_SELECTED_CONFIG, cfg.getName());
       }
 
       _panel.closing();

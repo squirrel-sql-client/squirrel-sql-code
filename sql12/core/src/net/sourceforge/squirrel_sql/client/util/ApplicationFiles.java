@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import net.sourceforge.squirrel_sql.fw.util.IJavaPropertyNames;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+
 /**
  * This class contains information about files and directories used by the
  * application.
@@ -32,109 +34,125 @@ import net.sourceforge.squirrel_sql.client.ApplicationArguments;
  */
 public class ApplicationFiles
 {
-	public static final String STANDARD_RELATIVE_USER_DIR = ".squirrel-sql";
+   public static final String STANDARD_RELATIVE_USER_DIR = ".squirrel-sql";
 
 
-	/** Name of directory to contain users settings. */
-	private String _userSettingsDir;
+   /**
+    * Name of directory to contain users settings.
+    */
+   private String _userSettingsDir;
 
-	/** Name of folder that contains Squirrel app. */
-	private final File _squirrelHomeDir;
+   /**
+    * Name of folder that contains Squirrel app.
+    */
+   private final File _squirrelHomeDir;
 
-	/** Name of folder that contains plugins. */
-	private String _squirrelPluginsDir;
+   /**
+    * Name of folder that contains plugins.
+    */
+   private String _squirrelPluginsDir;
 
-	/** Documentation folder. */
-	private String _documentationDir;
+   /**
+    * Documentation folder.
+    */
+   private String _documentationDir;
 
-	/** Name of folder that contains library jars */
-	private String _libraryDir;
-	
-	/** Name of folder that contains update files */
-	private String _updateDir;
-	
-	/** Flag for cleaning up execution log files on app entry. **/
-	private static boolean needExecutionLogCleanup = true;
+   /**
+    * Name of folder that contains library jars
+    */
+   private String _libraryDir;
 
-	/** Flag for cleaning up debug log files on app entry. **/
-	private static boolean needDebugLogCleanup = true;
+   /**
+    * Name of folder that contains update files
+    */
+   private String _updateDir;
 
-	/**
-	 * Ctor.
-	 */
-	public ApplicationFiles()
-	{
-		ApplicationArguments args = ApplicationArguments.getInstance();
+   /**
+    * Flag for cleaning up execution log files on app entry.
+    **/
+   private static boolean needExecutionLogCleanup = true;
 
-		final String homeDir = args.getSquirrelHomeDirectory();
-		_squirrelHomeDir = new File(homeDir != null ? homeDir : System.getProperty(IJavaPropertyNames.USER_DIR));
-		String homeDirPath = _squirrelHomeDir.getPath() + File.separator;
-		_squirrelPluginsDir = homeDirPath + "plugins";
-		_documentationDir = homeDirPath + "doc";
-		_libraryDir = homeDirPath + "lib";
-		_updateDir = homeDirPath + "update";
+   /**
+    * Flag for cleaning up debug log files on app entry.
+    **/
+   private static boolean needDebugLogCleanup = true;
 
-		_userSettingsDir = args.getUserSettingsDirectoryOverride();
-		if (_userSettingsDir == null)
-		{
-			_userSettingsDir = getStandardUserDir();
-		}
-		try
-		{
-			new File(_userSettingsDir).mkdirs();
-		}
-		catch (Exception ex)
-		{
-			System.out.println(
-				"Error creating user settings directory: " + _userSettingsDir);
-			System.out.println(ex.toString());
-		}
-		try
-		{
-			final File logsDir = getExecutionLogFile().getParentFile();
-			logsDir.mkdirs();
-		}
-		catch (Exception ex)
-		{
-			System.out.println("Error creating logs directory");
-			System.out.println(ex.toString());
-		}
-	}
+   /**
+    * Ctor.
+    */
+   public ApplicationFiles()
+   {
+      ApplicationArguments args = ApplicationArguments.getInstance();
 
-	public static String getStandardUserDir()
-	{
-		return System.getProperty(IJavaPropertyNames.USER_HOME)
-				+ File.separator + STANDARD_RELATIVE_USER_DIR;
-	}
+      final String homeDir = args.getSquirrelHomeDirectory();
+      _squirrelHomeDir = new File(homeDir != null ? homeDir : System.getProperty(IJavaPropertyNames.USER_DIR));
+      String homeDirPath = _squirrelHomeDir.getPath() + File.separator;
+      _squirrelPluginsDir = homeDirPath + "plugins";
+      _documentationDir = homeDirPath + "doc";
+      _libraryDir = homeDirPath + "lib";
+      _updateDir = homeDirPath + "update";
+
+      _userSettingsDir = args.getUserSettingsDirectoryOverride();
+      if (_userSettingsDir == null)
+      {
+         _userSettingsDir = getStandardUserDir();
+      }
+      try
+      {
+         new File(_userSettingsDir).mkdirs();
+      }
+      catch (Exception ex)
+      {
+         System.out.println(
+               "Error creating user settings directory: " + _userSettingsDir);
+         System.out.println(ex.toString());
+      }
+      try
+      {
+         final File logsDir = getExecutionLogFile().getParentFile();
+         logsDir.mkdirs();
+      }
+      catch (Exception ex)
+      {
+         System.out.println("Error creating logs directory");
+         System.out.println(ex.toString());
+      }
+   }
+
+   public static String getStandardUserDir()
+   {
+      return System.getProperty(IJavaPropertyNames.USER_HOME)
+            + File.separator + STANDARD_RELATIVE_USER_DIR;
+   }
 
 
-	public File getUserSettingsDirectory()
-	{
-		return new File(_userSettingsDir);
-	}
+   public File getUserSettingsDirectory()
+   {
+      return new File(_userSettingsDir);
+   }
 
-	public File getPluginsDirectory()
-	{
-		return new File(_squirrelPluginsDir);
-	}
+   public File getPluginsDirectory()
+   {
+      return new File(_squirrelPluginsDir);
+   }
 
-	public File getLibraryDirectory() 
-	{
-	   return new File(_libraryDir);
-	}
-	
-   public File getUpdateDirectory() 
+   public File getLibraryDirectory()
+   {
+      return new File(_libraryDir);
+   }
+
+   public File getUpdateDirectory()
    {
       return new File(_updateDir);
    }
 
-	/**
-	 * @return file that contains database aliases.
-	 */
-	public File getDatabaseAliasesFile()
-	{
-		return new File(_userSettingsDir + File.separator + "SQLAliases23.xml");
-	}
+   /**
+    * @return file that contains database aliases.
+    */
+   public File getDatabaseAliasesFile()
+   {
+      return new File(_userSettingsDir + File.separator + "SQLAliases23.xml");
+   }
 
    public File getDatabaseAliasesTreeStructureFile()
    {
@@ -151,249 +169,264 @@ public class ApplicationFiles
       return new File(_userSettingsDir + File.separator + "RecentFilesJsonBean.json");
    }
 
-	public File getShortCutsJsonBeanFile()
-	{
-		return new File(_userSettingsDir + File.separator + "ShortcutsJsonBean.json");
-	}
+   public File getShortCutsJsonBeanFile()
+   {
+      return new File(_userSettingsDir + File.separator + "ShortcutsJsonBean.json");
+   }
 
 
-	public File getDatabaseAliasesFile_before_version_2_3()
+   public File getDatabaseAliasesFile_before_version_2_3()
    {
       return new File(_userSettingsDir + File.separator + "SQLAliases.xml");
    }
 
 
    /**
-	 * @return file that contains JDBC driver definitions.
-	 */
-	public File getDatabaseDriversFile()
-	{
-		return new File(_userSettingsDir + File.separator + "SQLDrivers.xml");
-	}
+    * @return file that contains JDBC driver definitions.
+    */
+   public File getDatabaseDriversFile()
+   {
+      return new File(_userSettingsDir + File.separator + "SQLDrivers.xml");
+   }
 
-	/**
-	 * @return file that contains JDBC driver definitions.
-	 */
-	public File getUserPreferencesFile()
-	{
-		return new File(_userSettingsDir + File.separator + "prefs.xml");
-	}
+   /**
+    * @return file that contains JDBC driver definitions.
+    */
+   public File getUserPreferencesFile()
+   {
+      return new File(_userSettingsDir + File.separator + "prefs.xml");
+   }
 
-	/**
-	 * @return file that contains the selections user chose for Cell import/export.
-	 */
-	public File getCellImportExportSelectionsFile()
-	{
-		return new File(_userSettingsDir + File.separator + "cellImportExport.xml");
-	}
+   /**
+    * @return file that contains the selections user chose for Cell import/export.
+    */
+   public File getCellImportExportSelectionsFile()
+   {
+      return new File(_userSettingsDir + File.separator + "cellImportExport.xml");
+   }
 
-	/**
-	 * @return file that contains the selections user chose
-	 * for DataType-specific properties.
-	 */
-	public File getDTPropertiesFile()
-	{
-		return new File(_userSettingsDir + File.separator + "DTproperties.xml");
-	}
+   /**
+    * @return file that contains the selections user chose
+    * for DataType-specific properties.
+    */
+   public File getDTPropertiesFile()
+   {
+      return new File(_userSettingsDir + File.separator + "DTproperties.xml");
+   }
 
-	/**
-	 * @return file that contains the selections user chose for specific columns to use
-	 * in the WHERE clause when editing a cell in a DB table.
-	 */
-	public File getEditWhereColsFile()
-	{
-		return new File(_userSettingsDir + File.separator + "editWhereCols.xml");
-	}
+   /**
+    * @return file that contains the selections user chose for specific columns to use
+    * in the WHERE clause when editing a cell in a DB table.
+    */
+   public File getEditWhereColsFile()
+   {
+      return new File(_userSettingsDir + File.separator + "editWhereCols.xml");
+   }
 
-	/**
-	 * @return file to log execution information to.
-	 */
-	public File getExecutionLogFile()
-	{
-		final String dirPath = _userSettingsDir + File.separator + "logs";
-		final String logBaseName = "squirrel-sql.log";
+   /**
+    * @return file to log execution information to.
+    */
+   public File getExecutionLogFile()
+   {
+      final String dirPath = _userSettingsDir + File.separator + "logs";
+      final String logBaseName = "squirrel-sql.log";
 
-		if (needExecutionLogCleanup) {
-			// first time through this method in program, so go cleanup
-			// old log files
-			deleteOldFiles(dirPath, logBaseName);
-			needExecutionLogCleanup = false;
-		}
-		return new File(dirPath	+ File.separator + logBaseName);
-	}
+      if (needExecutionLogCleanup)
+      {
+         // first time through this method in program, so go cleanup
+         // old log files
+         deleteOldFiles(dirPath, logBaseName);
+         needExecutionLogCleanup = false;
+      }
+      return new File(dirPath + File.separator + logBaseName);
+   }
 
-	/**
-	 * @return file to log JDBC debug information to.
-	 */
-	public File getJDBCDebugLogFile()
-	{
-		final String dirPath = _userSettingsDir + File.separator + "logs";
-		final String logBaseName = "jdbcdebug.log";
+   /**
+    * @return file to log JDBC debug information to.
+    */
+   public File getJDBCDebugLogFile()
+   {
+      final String dirPath = _userSettingsDir + File.separator + "logs";
+      final String logBaseName = "jdbcdebug.log";
 
-		if (needDebugLogCleanup) {
-			// first time through this method in program, so go cleanup
-			// old log files
-			deleteOldFiles(dirPath, logBaseName);
-			needDebugLogCleanup = false;
-		}
-		return new File(dirPath	+ File.separator + logBaseName);
-	}
+      if (needDebugLogCleanup)
+      {
+         // first time through this method in program, so go cleanup
+         // old log files
+         deleteOldFiles(dirPath, logBaseName);
+         needDebugLogCleanup = false;
+      }
+      return new File(dirPath + File.separator + logBaseName);
+   }
 
-	/**
-	 * @return file to log debug information to.
-	 */
+   /**
+    * @return file to log debug information to.
+    */
 //	public File getDebugLogFile()
 //	{
 //		return new File(_userSettingsDir + File.separator + "squirrel-sql-debug.log");
 //	}
 
- 	/**
- 	 * @return serialized Vector containing history of SQL queries executed
- 	 */
- 	public File getUserSQLHistoryFile()
- 	{
- 		return new File(_userSettingsDir + File.separator + "sql_history.xml");
- 	}
+   /**
+    * @return serialized Vector containing history of SQL queries executed
+    */
+   public File getUserSQLHistoryFile()
+   {
+      return new File(_userSettingsDir + File.separator + "sql_history.xml");
+   }
 
-	public File getSquirrelHomeDir()
-	{
-		return _squirrelHomeDir;
-	}
+   public File getSquirrelHomeDir()
+   {
+      return _squirrelHomeDir;
+   }
 
 
-	/**
-	 * @return directory that contains plugin specific user settings
-	 */
-	public File getPluginsUserSettingsDirectory()
-	{
-		return new File(_userSettingsDir + File.separator + "plugins");
-	}
+   /**
+    * @return directory that contains plugin specific user settings
+    */
+   public File getPluginsUserSettingsDirectory()
+   {
+      return new File(_userSettingsDir + File.separator + "plugins");
+   }
 
-	/**
-	 * @return the quickstart guide.
-	 */
-	public File getQuickStartGuideFile()
-	{
-		return new File(_documentationDir + File.separator + "quick_start.html");
-	}
+   /**
+    * @return the quickstart guide.
+    */
+   public File getQuickStartGuideFile()
+   {
+      return new File(_documentationDir + File.separator + "quick_start.html");
+   }
 
-	/**
-	 * @return the FAQ.
-	 */
-	public File getFAQFile()
-	{
-		return new File(_documentationDir + File.separator + "faq.html");
-	}
+   /**
+    * @return the FAQ.
+    */
+   public File getFAQFile()
+   {
+      return new File(_documentationDir + File.separator + "faq.html");
+   }
 
-	/**
-	 * @return the changelog.
-	 */
-	public File getChangeLogFile()
-	{
-		return new File(_documentationDir + File.separator + "changes.txt");
-	}
+   /**
+    * @return the changelog.
+    */
+   public File getChangeLogFile()
+   {
+      return new File(_documentationDir + File.separator + "changes.txt");
+   }
 
-	/**
-	 * @return the licence file.
-	 */
-	public File getLicenceFile()
-	{
-		return new File(_documentationDir + File.separator + "licences/squirrel_licence.txt");
-	}
+   /**
+    * @return the licence file.
+    */
+   public File getLicenceFile()
+   {
+      return new File(_documentationDir + File.separator + "licences/squirrel_licence.txt");
+   }
 
- 	/**
- 	 * @return the Welcome document..
- 	 */
- 	public File getWelcomeFile()
- 	{
- 		return new File(_documentationDir + File.separator + "welcome.html");
- 	}
+   /**
+    * @return the Welcome document..
+    */
+   public File getWelcomeFile()
+   {
+      return new File(_documentationDir + File.separator + "welcome.html");
+   }
 
-	/**
-	 * Internal method to remove old files such as log files.
-	 * The dirPath is the path name of the directory containing the files.
-	 * The fileBase is the base name of all files in the set to be culled,
-	 * i.e. this method removes old versions of files named <fileBase>*,
-	 * but not the file named <fileBase> or recent versions of that file.
-	 * It is assumed that files are named with dates such that the names of
-	 * older files are alphabetically before newer files.
-	 */
-	private void deleteOldFiles(String dirPath, String fileBase) {
+   /**
+    * Internal method to remove old files such as log files.
+    * The dirPath is the path name of the directory containing the files.
+    * The fileBase is the base name of all files in the set to be culled,
+    * i.e. this method removes old versions of files named <fileBase>*,
+    * but not the file named <fileBase> or recent versions of that file.
+    * It is assumed that files are named with dates such that the names of
+    * older files are alphabetically before newer files.
+    */
+   private void deleteOldFiles(String dirPath, String fileBase)
+   {
 
-		// the number of files to keep is arbitrarilly set here
-		final int numberToKeep = 3;
+      // the number of files to keep is arbitrarilly set here
+      final int numberToKeep = 3;
 
-		// define filter to select only names using the fileBase
-		class OldFileNameFilter implements FilenameFilter {
-			String fBase;
-			OldFileNameFilter(String fileBase) {
-				fBase = fileBase;
-			}
-			public boolean accept (File dir, String name) {
-				if (name.startsWith(fBase))
-					return true;
-				return false;
-			}
-		}
+      // define filter to select only names using the fileBase
+      class OldFileNameFilter implements FilenameFilter
+      {
+         String fBase;
 
-		// get the directory
-		File dir = new File(dirPath);
+         OldFileNameFilter(String fileBase)
+         {
+            fBase = fileBase;
+         }
 
-		// create filename filter and attach to directory
-		OldFileNameFilter fileFilter = new OldFileNameFilter(fileBase);
+         public boolean accept(File dir, String name)
+         {
+            if (name.startsWith(fBase))
+               return true;
+            return false;
+         }
+      }
 
-		// get list of files using that base name
-		String fileNames[] = dir.list(fileFilter);
-		if (fileNames == null || fileNames.length <= numberToKeep)
-			return;	// not too many old files
+      // get the directory
+      File dir = new File(dirPath);
 
-		// we do not expect a lot of files in this directory,
-		// so just do things linearly
+      // create filename filter and attach to directory
+      OldFileNameFilter fileFilter = new OldFileNameFilter(fileBase);
 
-		// sort the list
-		Arrays.sort(fileNames);
+      // get list of files using that base name
+      String fileNames[] = dir.list(fileFilter);
+      if (fileNames == null || fileNames.length <= numberToKeep)
+         return;   // not too many old files
 
-		// If the file using the base name with no extention exists,
-		// it is first.  The other files are in order from oldest to newest.
-		// The set of files to delete is slightly different depending on
-		// whether the base name file exists or not.
-		int startIndex = 0;
-		int endIndex = fileNames.length - numberToKeep;
-		if (fileNames[0].equals(fileBase)) {
-			// since the base name file exists, we need to skip it
-			// and bump up the endIndex
-			startIndex = 1;
-			endIndex++;
-		}
+      // we do not expect a lot of files in this directory,
+      // so just do things linearly
 
-		for (int i = startIndex; i < endIndex; i++) {
-			// delete the old file
-			File oldFile = new File(dirPath + File.separator + fileNames[i]);
-			oldFile.delete();
-		}
-	}
+      // sort the list
+      Arrays.sort(fileNames);
 
-	public File getSQuirrelJarFile()
-	{
-		File ret = new File(_squirrelHomeDir.getPath() + File.separator + "lib" + File.separator + "squirrel-sql.jar");
+      // If the file using the base name with no extention exists,
+      // it is first.  The other files are in order from oldest to newest.
+      // The set of files to delete is slightly different depending on
+      // whether the base name file exists or not.
+      int startIndex = 0;
+      int endIndex = fileNames.length - numberToKeep;
+      if (fileNames[0].equals(fileBase))
+      {
+         // since the base name file exists, we need to skip it
+         // and bump up the endIndex
+         startIndex = 1;
+         endIndex++;
+      }
 
-		if(false == ret.exists())
-		{
-			ret = new File(_squirrelHomeDir.getPath() +  File.separator + "squirrel-sql.jar");
-		}
-		return ret;
-	}
+      for (int i = startIndex; i < endIndex; i++)
+      {
+         // delete the old file
+         File oldFile = new File(dirPath + File.separator + fileNames[i]);
+         oldFile.delete();
+      }
+   }
 
-	public File getFwJarFile()
-	{
-		return new File(_squirrelHomeDir.getPath() + File.separator + "lib" + File.separator + "fw.jar");		
-	}
-	
-	/**
- 	 * @return serialized List containing user specific configurations for WIKI tables. 
- 	 */
- 	public File getUserSpecificWikiConfigurationsFile()
- 	{
- 		return new File(_userSettingsDir + File.separator + "userSpecificWikiTableConfigurations.xml");
- 	}
+   public File getSQuirrelJarFile()
+   {
+      File ret = new File(_squirrelHomeDir.getPath() + File.separator + "lib" + File.separator + "squirrel-sql.jar");
+
+      if (false == ret.exists())
+      {
+         ret = new File(_squirrelHomeDir.getPath() + File.separator + "squirrel-sql.jar");
+      }
+      return ret;
+   }
+
+   public File getFwJarFile()
+   {
+      return new File(_squirrelHomeDir.getPath() + File.separator + "lib" + File.separator + "fw.jar");
+   }
+
+   /**
+    * @return serialized List containing user specific configurations for WIKI tables.
+    */
+   public File getUserSpecificWikiConfigurationsFile()
+   {
+      return new File(_userSettingsDir + File.separator + "userSpecificWikiTableConfigurations.xml");
+   }
+
+   public File getPropsFile()
+   {
+      return new File(_userSettingsDir + File.separator + "props.properties");
+   }
 }

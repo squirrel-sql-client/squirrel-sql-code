@@ -32,7 +32,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
- import java.util.prefs.Preferences;
+ import net.sourceforge.squirrel_sql.fw.props.Props;
 
  import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -815,7 +815,7 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener
 	{
 		JFileChooser chooser = new JFileChooser();
 
-		String lastDirPref = Preferences.userRoot().get(PREF_KEY_LAST_BROWSE_FILE, chooser.getCurrentDirectory().getPath());
+		String lastDirPref = Props.getString(PREF_KEY_LAST_BROWSE_FILE, chooser.getCurrentDirectory().getPath());
 
 		if (false == StringUtilities.isEmpty(lastDirPref, true) && new File(lastDirPref).exists())
 		{
@@ -842,7 +842,7 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener
 			{
 				if (null != chooser.getSelectedFile())
 				{
-					Preferences.userRoot().put(PREF_KEY_LAST_BROWSE_FILE, chooser.getSelectedFile().getParent());
+					Props.putString(PREF_KEY_LAST_BROWSE_FILE, chooser.getSelectedFile().getParent());
 				}
 
 				fileNameField.setText(chooser.getSelectedFile().getCanonicalPath());
@@ -1123,7 +1123,7 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener
 	private String getTextAreaCannonicalForm() {
 		// handle null
 		if (_ta.getText() == null ||
-			_ta.getText().equals("<null>") ||
+			_ta.getText().equals(StringUtilities.NULL_AS_STRING) ||
 			_ta.getText().length() == 0)
 			return _ta.getText();
 

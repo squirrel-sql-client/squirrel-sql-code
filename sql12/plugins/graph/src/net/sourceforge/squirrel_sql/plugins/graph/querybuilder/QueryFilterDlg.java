@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class QueryFilterDlg extends JDialog
 {
@@ -88,8 +88,8 @@ public class QueryFilterDlg extends JDialog
 
       getRootPane().setDefaultButton(_btnOk);
 
-      int width = Preferences.userRoot().getInt(PREF_KEY_QUERY_FILTER_WIDTH, 500);
-      int height = Preferences.userRoot().getInt(PREF_KEY_QUERY_FILTER_HEIGHT, MIN_HEIGHT);
+      int width = Props.getInt(PREF_KEY_QUERY_FILTER_WIDTH, 500);
+      int height = Props.getInt(PREF_KEY_QUERY_FILTER_HEIGHT, MIN_HEIGHT);
 
 
       setSize(new Dimension(width, height));
@@ -132,8 +132,8 @@ public class QueryFilterDlg extends JDialog
 
    void saveCurrentSize()
    {
-      Preferences.userRoot().putInt(PREF_KEY_QUERY_FILTER_WIDTH, getSize().width);
-      Preferences.userRoot().putInt(PREF_KEY_QUERY_FILTER_HEIGHT, Math.max(getSize().height, MIN_HEIGHT));
+      Props.putInt(PREF_KEY_QUERY_FILTER_WIDTH, getSize().width);
+      Props.putInt(PREF_KEY_QUERY_FILTER_HEIGHT, Math.max(getSize().height, MIN_HEIGHT));
    }
 
 }

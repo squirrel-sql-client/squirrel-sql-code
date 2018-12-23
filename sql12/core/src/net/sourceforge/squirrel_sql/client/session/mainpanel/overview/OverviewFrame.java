@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -12,7 +13,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.prefs.Preferences;
 
 public class OverviewFrame extends DialogWidget
 {
@@ -63,8 +63,8 @@ public class OverviewFrame extends DialogWidget
       cont.add(new JScrollPane(simpleTable.getComponent()), BorderLayout.CENTER);
 
 
-      int width = Preferences.userRoot().getInt(PREF_KEY_OVERVIEW_FRAME_WIDTH, 300);
-      int hight = Preferences.userRoot().getInt(PREF_KEY_OVERVIEW_FRAME_HIGHT, 300);
+      int width = Props.getInt(PREF_KEY_OVERVIEW_FRAME_WIDTH, 300);
+      int hight = Props.getInt(PREF_KEY_OVERVIEW_FRAME_HIGHT, 300);
 
       setSize(new Dimension(width, hight));
 
@@ -84,8 +84,8 @@ public class OverviewFrame extends DialogWidget
    {
       Dimension size = getSize();
 
-      Preferences.userRoot().putInt(PREF_KEY_OVERVIEW_FRAME_WIDTH, size.width);
-      Preferences.userRoot().putInt(PREF_KEY_OVERVIEW_FRAME_HIGHT, size.height);
+      Props.putInt(PREF_KEY_OVERVIEW_FRAME_WIDTH, size.width);
+      Props.putInt(PREF_KEY_OVERVIEW_FRAME_HIGHT, size.height);
    }
 
 

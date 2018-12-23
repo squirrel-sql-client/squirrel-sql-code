@@ -958,10 +958,10 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
 //            // used earlier. We use this little (ugly) trick to keep users being confused by
 //            // a bottom tab placing. This was introduced for 1.2 beta 7.
 //            // TODO: Remove some time later
-//            if(Preferences.userRoot().getBoolean("Squirrel.TabPlacementCorrectionONFirstStartOf1_2_beta7", true))
+//            if(Preferences.getBoolean("Squirrel.TabPlacementCorrectionONFirstStartOf1_2_beta7", true))
 //            {
 //               value = SwingConstants.TOP;
-//               Preferences.userRoot().putBoolean("Squirrel.TabPlacementCorrectionONFirstStartOf1_2_beta7", false);
+//               Preferences.putBoolean("Squirrel.TabPlacementCorrectionONFirstStartOf1_2_beta7", false);
 //            }
 //         }
 

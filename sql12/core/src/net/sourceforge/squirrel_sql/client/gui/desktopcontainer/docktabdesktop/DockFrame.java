@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -9,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.prefs.Preferences;
 
 public class DockFrame extends JPanel
 {
@@ -57,7 +57,7 @@ public class DockFrame extends JPanel
       _iconAutohideOn = app.getResources().getIcon(SquirrelResources.IImageNames.AUTOHIDE_ON);
 
 
-      if(Preferences.userRoot().getBoolean(PREFS_KEY_DOCK_AUTO_HIDE_ON + _title, true))
+      if(Props.getBoolean(PREFS_KEY_DOCK_AUTO_HIDE_ON + _title, true))
       {
          _btnAutoHide = new JButton(_iconAutohideOn);
       }
@@ -96,12 +96,12 @@ public class DockFrame extends JPanel
       if(_btnAutoHide.getIcon() == _iconAutohideOn)
       {
          _btnAutoHide.setIcon(_iconAutohideOff);
-         Preferences.userRoot().putBoolean(PREFS_KEY_DOCK_AUTO_HIDE_ON + _title, false);
+         Props.putBoolean(PREFS_KEY_DOCK_AUTO_HIDE_ON + _title, false);
       }
       else if(_btnAutoHide.getIcon() == _iconAutohideOff)
       {
          _btnAutoHide.setIcon(_iconAutohideOn);
-         Preferences.userRoot().putBoolean(PREFS_KEY_DOCK_AUTO_HIDE_ON + _title, true);
+         Props.putBoolean(PREFS_KEY_DOCK_AUTO_HIDE_ON + _title, true);
       }
       else
       {

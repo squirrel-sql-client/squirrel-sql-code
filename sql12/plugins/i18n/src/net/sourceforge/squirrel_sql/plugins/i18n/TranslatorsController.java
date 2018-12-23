@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -85,7 +85,7 @@ public class TranslatorsController
 			public void actionPerformed(ActionEvent e)
 			{
 				String includeTimestamp = Boolean.valueOf(_panel.cbxIncludeTimestamp.isSelected()).toString();
-				Preferences.userRoot().put(PREF_KEY_INCLUDE_TIMESTAMP, includeTimestamp);
+				Props.putString(PREF_KEY_INCLUDE_TIMESTAMP, includeTimestamp);
 			}
 		});
 
@@ -95,7 +95,7 @@ public class TranslatorsController
 			{
 				onLoadBundels(_app);
 				String excludeComplete = Boolean.valueOf(_panel.cbxExcludeComplete.isSelected()).toString();
-				Preferences.userRoot().put(TranslatorsPanel.PREF_KEY_EXCLUDE_COMPLETE, excludeComplete);
+				Props.putString(TranslatorsPanel.PREF_KEY_EXCLUDE_COMPLETE, excludeComplete);
 			}
 		});
 
@@ -183,7 +183,7 @@ public class TranslatorsController
 		Locale[] availableLocales = LocaleUtils.getAvailableLocales();
 
 		Locale selectedLocale = Locale.getDefault();
-		String prefLocale = Preferences.userRoot().get(PREF_KEY_SELECTED_LOCALE, null);
+		String prefLocale = Props.getString(PREF_KEY_SELECTED_LOCALE, null);
 
 		for (int i = 0; i < availableLocales.length; i++)
 		{
@@ -204,16 +204,16 @@ public class TranslatorsController
 			}
 		});
 
-		String workDir = Preferences.userRoot().get(PREF_KEY_WORK_DIR, null);
+		String workDir = Props.getString(PREF_KEY_WORK_DIR, null);
 		_panel.txtWorkingDir.setText(workDir);
 
-		String editorCommand = Preferences.userRoot().get(PREF_KEY_EDITOR_COMMAND, null);
+		String editorCommand = Props.getString(PREF_KEY_EDITOR_COMMAND, null);
 		_panel.txtEditorCommand.setText(editorCommand);
 
-		String nativeToAsciiCommand = Preferences.userRoot().get(PREF_KEY_NATIVE2ASCII_COMMAND, null);
+		String nativeToAsciiCommand = Props.getString(PREF_KEY_NATIVE2ASCII_COMMAND, null);
 		_panel.txtNativeToAsciiCommand.setText(nativeToAsciiCommand);
 
-		String nativeToAsciiOutDir = Preferences.userRoot().get(PREF_KEY_NATIVE2ASCII_OUT_DIR, null);
+		String nativeToAsciiOutDir = Props.getString(PREF_KEY_NATIVE2ASCII_OUT_DIR, null);
 		_panel.txtNativeToAsciiOutDir.setText(nativeToAsciiOutDir);
 
 	}
@@ -404,11 +404,11 @@ public class TranslatorsController
 
 	public void uninitialize()
 	{
-		Preferences.userRoot().put(PREF_KEY_SELECTED_LOCALE, "" + _panel.cboLocales.getSelectedItem());
-		Preferences.userRoot().put(PREF_KEY_WORK_DIR, _panel.txtWorkingDir.getText());
-		Preferences.userRoot().put(PREF_KEY_EDITOR_COMMAND, _panel.txtEditorCommand.getText());
-		Preferences.userRoot().put(PREF_KEY_NATIVE2ASCII_COMMAND, _panel.txtNativeToAsciiCommand.getText());
-		Preferences.userRoot().put(PREF_KEY_NATIVE2ASCII_OUT_DIR, _panel.txtNativeToAsciiOutDir.getText());
+		Props.putString(PREF_KEY_SELECTED_LOCALE, "" + _panel.cboLocales.getSelectedItem());
+		Props.putString(PREF_KEY_WORK_DIR, _panel.txtWorkingDir.getText());
+		Props.putString(PREF_KEY_EDITOR_COMMAND, _panel.txtEditorCommand.getText());
+		Props.putString(PREF_KEY_NATIVE2ASCII_COMMAND, _panel.txtNativeToAsciiCommand.getText());
+		Props.putString(PREF_KEY_NATIVE2ASCII_OUT_DIR, _panel.txtNativeToAsciiOutDir.getText());
 	}
 
 	private void maybeShowPopup(MouseEvent e)

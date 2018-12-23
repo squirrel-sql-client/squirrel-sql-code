@@ -8,7 +8,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.*;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class AutoCorrector
 {
@@ -44,7 +44,7 @@ public class AutoCorrector
             //To change body of implemented methods use File | Settings | File Templates.
          }
       });
-      _autocorrectionsCount = Preferences.userRoot().getInt(PREFS_KEY_AUTO_COORECTIONS_COUNT, 0);
+      _autocorrectionsCount = Props.getInt(PREFS_KEY_AUTO_COORECTIONS_COUNT, 0);
 
    }
 
@@ -73,7 +73,7 @@ public class AutoCorrector
 						String[] params = new String[]{autoCorrCandidate, corr};
 						// i18n[syntax.hasBeenAutocorr={0} has been auto corrected / extended to {1}. To configure auto correct / abreviations see Menu Session --> Syntax --> Configure auto correct / abreviation]
                   _plugin.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("syntax.hasBeenAutocorr", params));
-                  Preferences.userRoot().putInt(PREFS_KEY_AUTO_COORECTIONS_COUNT, ++_autocorrectionsCount);
+                  Props.putInt(PREFS_KEY_AUTO_COORECTIONS_COUNT, ++_autocorrectionsCount);
                }
 
                SwingUtilities.invokeLater(new Runnable()

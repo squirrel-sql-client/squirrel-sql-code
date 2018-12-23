@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -13,7 +14,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.prefs.Preferences;
+
 import static java.lang.Math.*;
 import java.awt.event.*;
 import java.awt.*;
@@ -91,7 +92,7 @@ public class SQLHistoryController
          tcm.addColumn(col);
          String header = SQLHistoryItemWrapper.getColumns()[i];
          col.setHeaderValue(header);
-         col.setPreferredWidth(Preferences.userRoot().getInt(PREF_KEY_SQL_HISTORY_COL_NAME_PREFIX_ + header, 50));
+         col.setPreferredWidth(Props.getInt(PREF_KEY_SQL_HISTORY_COL_NAME_PREFIX_ + header, 50));
       }
 
 
@@ -366,7 +367,7 @@ public class SQLHistoryController
       for (int i = 0; i < tcm.getColumnCount(); i++)
       {
          TableColumn col = tcm.getColumn(i);
-         Preferences.userRoot().putInt(PREF_KEY_SQL_HISTORY_COL_NAME_PREFIX_ + col.getHeaderValue(), max(col.getWidth(), 10));
+         Props.putInt(PREF_KEY_SQL_HISTORY_COL_NAME_PREFIX_ + col.getHeaderValue(), max(col.getWidth(), 10));
       }
    }
 

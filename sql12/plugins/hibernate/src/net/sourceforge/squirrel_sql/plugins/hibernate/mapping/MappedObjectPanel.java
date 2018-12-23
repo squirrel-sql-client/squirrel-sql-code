@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.prefs.Preferences;
 
 public class MappedObjectPanel extends JPanel
 {
@@ -41,7 +40,7 @@ public class MappedObjectPanel extends JPanel
          public void run()
          {
             _split.setDividerLocation(0.3);
-//            double loc = Preferences.userRoot().getDouble(PERF_KEY_OBJ_TAB_DIV_LOC, 0.5);
+//            double loc = Preferences.getDouble(PERF_KEY_OBJ_TAB_DIV_LOC, 0.5);
 //            loc = Math.min(0.95, loc);
 //            loc = Math.max(loc, 0.05);
 //            _split.setDividerLocation(loc);
@@ -71,6 +70,6 @@ public class MappedObjectPanel extends JPanel
 
    public void closing()
    {
-      //Preferences.userRoot().putDouble(PERF_KEY_OBJ_TAB_DIV_LOC, ((double) _split.getDividerLocation())/ ((double) _split.getWidth()) );
+      //Preferences.putDouble(PERF_KEY_OBJ_TAB_DIV_LOC, ((double) _split.getDividerLocation())/ ((double) _split.getWidth()) );
    }
 }

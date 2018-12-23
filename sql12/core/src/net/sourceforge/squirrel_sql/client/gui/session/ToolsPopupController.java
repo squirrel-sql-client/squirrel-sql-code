@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.Action;
 
@@ -58,7 +58,7 @@ public class ToolsPopupController
       });
 
 
-      _ctrlTCount = Preferences.userRoot().getInt(PREFS_KEY_CTRL_T_COUNT, 0);
+      _ctrlTCount = Props.getInt(PREFS_KEY_CTRL_T_COUNT, 0);
 
       if(3 > _ctrlTCount)
       {
@@ -78,8 +78,8 @@ public class ToolsPopupController
    {
       if(3 > _ctrlTCount)
       {
-         int ctrlTCount = Preferences.userRoot().getInt(PREFS_KEY_CTRL_T_COUNT, 0);
-         Preferences.userRoot().putInt(PREFS_KEY_CTRL_T_COUNT, ++ctrlTCount);
+         int ctrlTCount = Props.getInt(PREFS_KEY_CTRL_T_COUNT, 0);
+         Props.putInt(PREFS_KEY_CTRL_T_COUNT, ++ctrlTCount);
       }
 
       _toolsCompletor.show();

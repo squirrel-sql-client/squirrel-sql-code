@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.ScaleFactory;
 
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class CallDepthComboModel
 {
@@ -38,7 +38,7 @@ public class CallDepthComboModel
 
    public static CallDepthComboModel getDefaultSelected()
    {
-      int callDepth = Preferences.userRoot().getInt(PREF_KEY_OVERVIEW_BAR_CHART_CALL_DEPTH, ScaleFactory.DEFAULT_CALL_DEPTH);
+      int callDepth = Props.getInt(PREF_KEY_OVERVIEW_BAR_CHART_CALL_DEPTH, ScaleFactory.DEFAULT_CALL_DEPTH);
 
       for (CallDepthComboModel callDepthComboModel : createModels())
       {
@@ -73,7 +73,7 @@ public class CallDepthComboModel
 
    public static void saveSelection(CallDepthComboModel selectedItem)
    {
-      Preferences.userRoot().putInt(PREF_KEY_OVERVIEW_BAR_CHART_CALL_DEPTH, selectedItem._callDepth);
+      Props.putInt(PREF_KEY_OVERVIEW_BAR_CHART_CALL_DEPTH, selectedItem._callDepth);
    }
 
    public int getCallDepth()

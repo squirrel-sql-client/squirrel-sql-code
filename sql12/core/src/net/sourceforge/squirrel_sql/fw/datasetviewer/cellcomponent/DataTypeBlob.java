@@ -54,6 +54,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.E
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 /**
  * @author gwg
@@ -294,7 +295,7 @@ public class DataTypeBlob extends BaseDataTypeComponent
 	 */
 	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
 		// handle null, which is shown as the special string "<null>"
-		if (value.equals("<null>"))
+		if (value.equals(StringUtilities.NULL_AS_STRING))
 			return null;
 
 		// Do the conversion into the object in a safe manner
@@ -420,7 +421,7 @@ public class DataTypeBlob extends BaseDataTypeComponent
 				if ( DataTypeBlob.this._isNullable) {
 
 					// user enters something when field is null
-					if (text.equals("<null>")) {
+					if (text.equals(StringUtilities.NULL_AS_STRING)) {
 						if ((c==KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
 							// delete when null => original value
 							DataTypeBlob.this._textComponent.restoreText();
@@ -437,7 +438,7 @@ public class DataTypeBlob extends BaseDataTypeComponent
 						if ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
 							if (text.length() <= 1 ) {
 								// about to delete last thing in field, so replace with null
-								DataTypeBlob.this._textComponent.updateText("<null>");
+								DataTypeBlob.this._textComponent.updateText(StringUtilities.NULL_AS_STRING);
 								e.consume();
 							}
 						}

@@ -55,6 +55,7 @@ import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -307,7 +308,7 @@ public class DataTypeTime extends BaseDataTypeComponent
     */
    public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
       // handle null, which is shown as the special string "<null>"
-      if (value.equals("<null>") || value.equals(""))
+      if (value.equals(StringUtilities.NULL_AS_STRING) || value.equals(""))
          return null;
 
       // Do the conversion into the object in a safe manner
@@ -442,7 +443,7 @@ public class DataTypeTime extends BaseDataTypeComponent
             if ( DataTypeTime.this._isNullable) {
 
                // user enters something when field is null
-               if (text.equals("<null>")) {
+               if (text.equals(StringUtilities.NULL_AS_STRING)) {
                   if ((c==KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
                      // delete when null => original value
                      DataTypeTime.this._textComponent.restoreText();
@@ -459,7 +460,7 @@ public class DataTypeTime extends BaseDataTypeComponent
                   if ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
                      if (text.length() <= 1 ) {
                         // about to delete last thing in field, so replace with null
-                        DataTypeTime.this._textComponent.updateText("<null>");
+                        DataTypeTime.this._textComponent.updateText(StringUtilities.NULL_AS_STRING);
                         e.consume();
                      }
                   }

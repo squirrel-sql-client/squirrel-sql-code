@@ -41,6 +41,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.E
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -222,7 +223,7 @@ public class DataTypeFloat extends FloatingPointBase
    @Override
    public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
       // handle null, which is shown as the special string "<null>"
-      if (value.equals("<null>") || value.equals(""))
+      if (value.equals(StringUtilities.NULL_AS_STRING) || value.equals(""))
          return null;
 
       // Do the conversion into the object in a safe manner
@@ -367,7 +368,7 @@ public class DataTypeFloat extends FloatingPointBase
             if ( DataTypeFloat.this._isNullable) {
 
                // user enters something when field is null
-               if (text.equals("<null>")) {
+               if (text.equals(StringUtilities.NULL_AS_STRING)) {
                   if ((c==KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
                      // delete when null => original value
                      DataTypeFloat.this._textComponent.restoreText();
@@ -384,7 +385,7 @@ public class DataTypeFloat extends FloatingPointBase
                   if ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
                      if (text.length() <= 1 ) {
                         // about to delete last thing in field, so replace with null
-                        DataTypeFloat.this._textComponent.updateText("<null>");
+                        DataTypeFloat.this._textComponent.updateText(StringUtilities.NULL_AS_STRING);
                         e.consume();
                      }
                   }

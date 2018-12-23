@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionProp
 import net.sourceforge.squirrel_sql.client.session.properties.SessionObjectTreePropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionSQLPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -39,7 +40,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 // JASON: Rename to NewSessionPropertiesInternalFrame
 public class NewSessionPropertiesSheet extends DialogWidget
@@ -89,8 +89,8 @@ public class NewSessionPropertiesSheet extends DialogWidget
 	private Dimension getDimension()
 	{
 		return new Dimension(
-			Preferences.userRoot().getInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, 500),
-			Preferences.userRoot().getInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, 600)
+			Props.getInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, 500),
+			Props.getInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, 600)
 		);
 	}
 
@@ -117,8 +117,8 @@ public class NewSessionPropertiesSheet extends DialogWidget
 	public void dispose()
 	{
 		Dimension size = getSize();
-		Preferences.userRoot().putInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, size.width);
-		Preferences.userRoot().putInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, size.height);
+		Props.putInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, size.width);
+		Props.putInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, size.height);
 
 		synchronized (getClass())
 		{

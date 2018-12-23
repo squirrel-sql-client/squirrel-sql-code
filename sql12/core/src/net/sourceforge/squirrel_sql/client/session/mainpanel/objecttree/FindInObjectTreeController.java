@@ -7,7 +7,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class FindInObjectTreeController
 {
@@ -47,7 +47,7 @@ public class FindInObjectTreeController
       _filterEditSQLEntryPanel.getTextComponent().registerKeyboardAction(transferFocusAction, KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK, false), JComponent.WHEN_FOCUSED);
 
 
-      boolean filter = Preferences.userRoot().getBoolean(PREF_KEY_OBJECT_TREE_SEARCH_FILTER, false);
+      boolean filter = Props.getBoolean(PREF_KEY_OBJECT_TREE_SEARCH_FILTER, false);
       _findInObjectTreePanel._btnApplyAsFilter.setSelected(filter);
 
 
@@ -107,6 +107,6 @@ public class FindInObjectTreeController
 
    public void dispose()
    {
-      Preferences.userRoot().putBoolean(PREF_KEY_OBJECT_TREE_SEARCH_FILTER, _findInObjectTreePanel._btnApplyAsFilter.isSelected());
+      Props.putBoolean(PREF_KEY_OBJECT_TREE_SEARCH_FILTER, _findInObjectTreePanel._btnApplyAsFilter.isSelected());
    }
 }

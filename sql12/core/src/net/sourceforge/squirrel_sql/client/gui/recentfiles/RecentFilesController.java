@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -37,7 +38,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 public class RecentFilesController
 {
@@ -158,10 +158,10 @@ public class RecentFilesController
    {
       JTree tre = _dialog.treFiles;
       tre.isCollapsed(new TreePath(_recentFilesNode.getPath()));
-      Preferences.userRoot().putBoolean(PREF_KEY_RECENT_FILES_EXPANDED, tre.isExpanded(new TreePath(_recentFilesNode.getPath())));
-      Preferences.userRoot().putBoolean(PREF_KEY_FAVOURITE_FILES_EXPANDED, tre.isExpanded(new TreePath(_favouriteFilesNode.getPath())));
-      Preferences.userRoot().putBoolean(PREF_KEY_RECENT_ALIAS_FILES_EXPANDED, tre.isExpanded(new TreePath(_recentFilesForAliasNode.getPath())));
-      Preferences.userRoot().putBoolean(PREF_KEY_FAVOURITE_ALIAS_FILES_EXPANDED, tre.isExpanded(new TreePath(_favouriteFilesForAliasNode.getPath())));
+      Props.putBoolean(PREF_KEY_RECENT_FILES_EXPANDED, tre.isExpanded(new TreePath(_recentFilesNode.getPath())));
+      Props.putBoolean(PREF_KEY_FAVOURITE_FILES_EXPANDED, tre.isExpanded(new TreePath(_favouriteFilesNode.getPath())));
+      Props.putBoolean(PREF_KEY_RECENT_ALIAS_FILES_EXPANDED, tre.isExpanded(new TreePath(_recentFilesForAliasNode.getPath())));
+      Props.putBoolean(PREF_KEY_FAVOURITE_ALIAS_FILES_EXPANDED, tre.isExpanded(new TreePath(_favouriteFilesForAliasNode.getPath())));
    }
 
    private void onRemoveSelected()
@@ -283,22 +283,22 @@ public class RecentFilesController
 
 
       _recentFilesNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.recentFiles.global"));
-      addFileKidsToNode(_recentFilesNode, _app.getRecentFilesManager().getRecentFiles(), Preferences.userRoot().getBoolean(PREF_KEY_RECENT_FILES_EXPANDED, true));
+      addFileKidsToNode(_recentFilesNode, _app.getRecentFilesManager().getRecentFiles(), Props.getBoolean(PREF_KEY_RECENT_FILES_EXPANDED, true));
       root.add(_recentFilesNode);
 
 
       _favouriteFilesNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.favouritFiles.global"));
-      addFileKidsToNode(_favouriteFilesNode, _app.getRecentFilesManager().getFavouriteFiles(), Preferences.userRoot().getBoolean(PREF_KEY_FAVOURITE_FILES_EXPANDED, true));
+      addFileKidsToNode(_favouriteFilesNode, _app.getRecentFilesManager().getFavouriteFiles(), Props.getBoolean(PREF_KEY_FAVOURITE_FILES_EXPANDED, true));
       root.add(_favouriteFilesNode);
 
 
       _recentFilesForAliasNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.recentFiles.alias", _selectedAlias.getName()));
-      addFileKidsToNode(_recentFilesForAliasNode, _app.getRecentFilesManager().getRecentFilesForAlias(_selectedAlias), Preferences.userRoot().getBoolean(PREF_KEY_RECENT_ALIAS_FILES_EXPANDED, true));
+      addFileKidsToNode(_recentFilesForAliasNode, _app.getRecentFilesManager().getRecentFilesForAlias(_selectedAlias), Props.getBoolean(PREF_KEY_RECENT_ALIAS_FILES_EXPANDED, true));
       root.add(_recentFilesForAliasNode);
 
 
       _favouriteFilesForAliasNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.favouritFiles.alias", _selectedAlias.getName()));
-      addFileKidsToNode(_favouriteFilesForAliasNode, _app.getRecentFilesManager().getFavouriteFilesForAlias(_selectedAlias), Preferences.userRoot().getBoolean(PREF_KEY_FAVOURITE_ALIAS_FILES_EXPANDED, true));
+      addFileKidsToNode(_favouriteFilesForAliasNode, _app.getRecentFilesManager().getFavouriteFilesForAlias(_selectedAlias), Props.getBoolean(PREF_KEY_FAVOURITE_ALIAS_FILES_EXPANDED, true));
       root.add(_favouriteFilesForAliasNode);
 
 

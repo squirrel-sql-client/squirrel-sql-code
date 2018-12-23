@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -43,7 +44,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
-import java.util.prefs.Preferences;
 
 /**
  * This window shows all the database aliases defined in the system.
@@ -241,7 +241,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
                public void run()
                {
                   ToggleTreeViewAction actViewAsTree = (ToggleTreeViewAction) actions.get(ToggleTreeViewAction.class);
-                  actViewAsTree.getToggleComponentHolder().setSelected(Preferences.userRoot().getBoolean(PREF_KEY_VIEW_ALIASES_AS_TREE, false));
+                  actViewAsTree.getToggleComponentHolder().setSelected(Props.getBoolean(PREF_KEY_VIEW_ALIASES_AS_TREE, false));
                   actViewAsTree.actionPerformed(new ActionEvent(this, 1, "actionPerformed"));
                   enableDisableActions();
                }
@@ -251,7 +251,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
       private void onSaveApplicationState()
       {
          IToggleAction actViewAsTree = (IToggleAction) _app.getActionCollection().get(ToggleTreeViewAction.class);
-         Preferences.userRoot().putBoolean(PREF_KEY_VIEW_ALIASES_AS_TREE, actViewAsTree.getToggleComponentHolder().isSelected());
+         Props.putBoolean(PREF_KEY_VIEW_ALIASES_AS_TREE, actViewAsTree.getToggleComponentHolder().isSelected());
       }
       
 

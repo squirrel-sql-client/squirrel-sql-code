@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
@@ -25,7 +26,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.prefs.Preferences;
 
 public class LinkGraphController
 {
@@ -316,11 +316,11 @@ public class LinkGraphController
 
       javabeanArrayDataSet.setColHeader("name", COL_HEADER_NAME);
       javabeanArrayDataSet.setColPos("name", 1);
-      javabeanArrayDataSet.setAbsoluteWidht("name", Preferences.userRoot().getInt(PREF_KEY_LINK_COL_WIDTH_NAME, 200));
+      javabeanArrayDataSet.setAbsoluteWidht("name", Props.getInt(PREF_KEY_LINK_COL_WIDTH_NAME, 200));
 
       javabeanArrayDataSet.setColHeader("graphFileName", COL_HEADER_FILE);
       javabeanArrayDataSet.setColPos("graphFileName", 2);
-      javabeanArrayDataSet.setAbsoluteWidht("graphFileName", Preferences.userRoot().getInt(PREF_KEY_LINK_COL_WIDTH_FILE, 200));
+      javabeanArrayDataSet.setAbsoluteWidht("graphFileName", Props.getInt(PREF_KEY_LINK_COL_WIDTH_FILE, 200));
 
       javabeanArrayDataSet.setJavaBeanList(_graphFileDisplayBeans);
 
@@ -368,7 +368,7 @@ public class LinkGraphController
 
    private void onWindowClosing()
    {
-      Preferences.userRoot().putInt(PREF_KEY_LINK_COL_WIDTH_NAME, _linkGraphDialog.tblGraphFiles.getColumnWidthForHeader(COL_HEADER_NAME));
-      Preferences.userRoot().putInt(PREF_KEY_LINK_COL_WIDTH_FILE, _linkGraphDialog.tblGraphFiles.getColumnWidthForHeader(COL_HEADER_FILE));
+      Props.putInt(PREF_KEY_LINK_COL_WIDTH_NAME, _linkGraphDialog.tblGraphFiles.getColumnWidthForHeader(COL_HEADER_NAME));
+      Props.putInt(PREF_KEY_LINK_COL_WIDTH_FILE, _linkGraphDialog.tblGraphFiles.getColumnWidthForHeader(COL_HEADER_FILE));
    }
 }

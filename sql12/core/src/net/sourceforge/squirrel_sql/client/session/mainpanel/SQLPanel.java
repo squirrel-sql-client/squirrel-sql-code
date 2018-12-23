@@ -36,7 +36,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.Action;
 import javax.swing.Box;
@@ -484,9 +484,9 @@ public class SQLPanel extends JPanel
    private void saveOrientationDependingDividerLocation() {
 	   int dividerLoc = _splitPane.getDividerLocation();
 	   if(_splitPane.getOrientation() == JSplitPane.VERTICAL_SPLIT){
-		   Preferences.userRoot().putInt(PREFS_KEY_SPLIT_DIVIDER_LOC, dividerLoc);
+		   Props.putInt(PREFS_KEY_SPLIT_DIVIDER_LOC, dividerLoc);
 	   }else{
-		   Preferences.userRoot().putInt(PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL, dividerLoc);
+		   Props.putInt(PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL, dividerLoc);
 	   }
    }
 
@@ -960,14 +960,14 @@ public class SQLPanel extends JPanel
 	   if(orientation == JSplitPane.VERTICAL_SPLIT){
 		   int def = parentDim.height-200;
 		   if(useDefault == false){
-			   dividerLoc = Preferences.userRoot().getInt(PREFS_KEY_SPLIT_DIVIDER_LOC, def);
+			   dividerLoc = Props.getInt(PREFS_KEY_SPLIT_DIVIDER_LOC, def);
 		   }else{
 			   dividerLoc = def;
 		   }
 	   }else{
 		   int def = parentDim.width/2;
 		   if(useDefault == false){
-			   dividerLoc = Preferences.userRoot().getInt(PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL, def);
+			   dividerLoc = Props.getInt(PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL, def);
 		   }else{
 			   dividerLoc = def;
 		   }

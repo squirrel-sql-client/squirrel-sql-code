@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTable;
@@ -8,7 +9,6 @@ import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.prefs.Preferences;
 
 public class SQLHistoryDlg extends JDialog
 {
@@ -60,7 +60,7 @@ public class SQLHistoryDlg extends JDialog
       Dimension size = getDimension(mainFrame);
       setSize(size);
 
-      splSpilt.setDividerLocation(Preferences.userRoot().getInt(PREF_KEY_SQL_HISTORY_DLG_DIV_LOC, size.height / 3));
+      splSpilt.setDividerLocation(Props.getInt(PREF_KEY_SQL_HISTORY_DLG_DIV_LOC, size.height / 3));
 
 
       addWindowListener(new WindowAdapter()
@@ -147,8 +147,8 @@ public class SQLHistoryDlg extends JDialog
 
    private Dimension getDimension(JFrame mainFrame)
    {
-      int prefWidth = Preferences.userRoot().getInt(PREF_KEY_SQL_HISTORY_DLG_WIDTH, 600);
-      int perfHeight = Preferences.userRoot().getInt(PREF_KEY_SQL_HISTORY_DLG_HEIGHT, 600);
+      int prefWidth = Props.getInt(PREF_KEY_SQL_HISTORY_DLG_WIDTH, 600);
+      int perfHeight = Props.getInt(PREF_KEY_SQL_HISTORY_DLG_HEIGHT, 600);
       return new Dimension(
          Math.min(prefWidth, mainFrame.getSize().width),
          Math.min(perfHeight, mainFrame.getSize().height)
@@ -159,9 +159,9 @@ public class SQLHistoryDlg extends JDialog
    private void onWindowClosed()
    {
       Dimension size = getSize();
-      Preferences.userRoot().putInt(PREF_KEY_SQL_HISTORY_DLG_WIDTH, size.width);
-      Preferences.userRoot().putInt(PREF_KEY_SQL_HISTORY_DLG_HEIGHT, size.height);
-      Preferences.userRoot().putInt(PREF_KEY_SQL_HISTORY_DLG_DIV_LOC, splSpilt.getDividerLocation());
+      Props.putInt(PREF_KEY_SQL_HISTORY_DLG_WIDTH, size.width);
+      Props.putInt(PREF_KEY_SQL_HISTORY_DLG_HEIGHT, size.height);
+      Props.putInt(PREF_KEY_SQL_HISTORY_DLG_DIV_LOC, splSpilt.getDividerLocation());
    }
 
    static enum FilterCboItems

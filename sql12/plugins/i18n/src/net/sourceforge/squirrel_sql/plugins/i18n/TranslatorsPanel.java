@@ -4,7 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -71,12 +71,12 @@ public class TranslatorsPanel extends JPanel
 
 
       String includeTimestamp = 
-          Preferences.userRoot().get(PREF_KEY_INCLUDE_TIMESTAMP, "true");
+          Props.getString(PREF_KEY_INCLUDE_TIMESTAMP, "true");
       
       cbxIncludeTimestamp.setSelected(includeTimestamp.equals("true"));
 
       String excludeComplete = 
-          Preferences.userRoot().get(PREF_KEY_EXCLUDE_COMPLETE, "false");
+          Props.getString(PREF_KEY_EXCLUDE_COMPLETE, "false");
       
       cbxExcludeComplete.setSelected(excludeComplete.equals("true"));
    }

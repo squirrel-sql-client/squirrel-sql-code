@@ -6,7 +6,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
-import java.util.prefs.Preferences;
 
 public class DataScaleTableModel extends AbstractTableModel
 {

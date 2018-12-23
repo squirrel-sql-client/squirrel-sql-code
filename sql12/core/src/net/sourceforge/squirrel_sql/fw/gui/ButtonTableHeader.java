@@ -22,7 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -269,12 +269,12 @@ public class ButtonTableHeader extends JTableHeader
 
    public static boolean isAlwaysAdjustAllColWidths()
    {
-      return Preferences.userRoot().getBoolean(PREF_KEY_ALWAYS_ADJUST_ALL_COLUMN_HEADERS, false);
+      return Props.getBoolean(PREF_KEY_ALWAYS_ADJUST_ALL_COLUMN_HEADERS, false);
    }
 
    public static void setAlwaysAdjustAllColWidths(boolean b)
    {
-      Preferences.userRoot().putBoolean(PREF_KEY_ALWAYS_ADJUST_ALL_COLUMN_HEADERS, b);
+      Props.putBoolean(PREF_KEY_ALWAYS_ADJUST_ALL_COLUMN_HEADERS, b);
    }
 
    public void initColWidths()

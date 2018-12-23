@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class GraphToFilesCtrlr
 {
@@ -72,7 +72,7 @@ public class GraphToFilesCtrlr
    {
       try
       {
-         String lastDir = Preferences.userRoot().get(PREF_KEY_LAST_IMAGE_DIR, System.getProperty("user.home"));
+         String lastDir = Props.getString(PREF_KEY_LAST_IMAGE_DIR, System.getProperty("user.home"));
          JFileChooser fc = new JFileChooser(lastDir);
          // i18n[graphToFile.fileChooserTitle=Save image file(s)]
          fc.setDialogTitle(s_stringMgr.getString("graphToFile.fileChooserTitle"));
@@ -105,7 +105,7 @@ public class GraphToFilesCtrlr
                   }
                   ImageIO.write(_images[0], "jpg", selectedFile);
 
-                  Preferences.userRoot().put(PREF_KEY_LAST_IMAGE_DIR, selectedFile.getParent());
+                  Props.putString(PREF_KEY_LAST_IMAGE_DIR, selectedFile.getParent());
 
                }
                else
@@ -117,7 +117,7 @@ public class GraphToFilesCtrlr
                      File f = new File(selectedFile, "Page_" + (i+1) + ".jpg");
                      ImageIO.write(_images[i], "jpg", f);
                   }
-                  Preferences.userRoot().put(PREF_KEY_LAST_IMAGE_DIR, selectedFile.getPath());
+                  Props.putString(PREF_KEY_LAST_IMAGE_DIR, selectedFile.getPath());
                }
             }
 

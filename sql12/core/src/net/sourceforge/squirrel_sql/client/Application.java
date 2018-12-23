@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
+import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
 import org.apache.commons.lang.StringUtils;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -170,6 +171,8 @@ public class Application implements IApplication
 	// Must be done here because Plugin loading added more actions to _actionCollection.
 	private ShortcutManager _shortcutManager = new ShortcutManager();
 
+	private PropsImpl _propsImpl;
+
 	/**
 	 * Default ctor.
 	 */
@@ -284,42 +287,45 @@ public class Application implements IApplication
       }
 
       _prefs.setFirstRun(false);
-      s_log.info("Application.shutdown->_saveApplicationState: _prefs.setFirstRun(false) ELAPSED: " + (System.currentTimeMillis() - begin));
+      s_log.info("saveApplicationState: _prefs.setFirstRun(false) ELAPSED: " + (System.currentTimeMillis() - begin));
 
       for (ApplicationListener l : _listeners.toArray(new ApplicationListener[0]))
       {
          l.saveApplicationState();
       }
-      s_log.info("Application.shutdown->_saveApplicationState: _listeners ELAPSED: " + (System.currentTimeMillis() - begin));
+      s_log.info("saveApplicationState: _listeners ELAPSED: " + (System.currentTimeMillis() - begin));
 
       saveDrivers();
-      s_log.info("Application.shutdown->_saveApplicationState: saveDrivers() ELAPSED: " + (System.currentTimeMillis() - begin));
+      s_log.info("saveApplicationState: saveDrivers() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       saveAliases();
-      s_log.info("Application.shutdown->_saveApplicationState: saveAliases() ELAPSED: " + (System.currentTimeMillis() - begin));
+      s_log.info("saveApplicationState: saveAliases() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       _recentFilesManager.saveJsonBean(_appFiles.getRecentFilesJsonBeanFile());
-      s_log.info("Application.shutdown->_saveApplicationState: saveRecentFiles() ELAPSED: " + (System.currentTimeMillis() - begin));
+      s_log.info("saveApplicationState: saveRecentFiles() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       // Save Application level SQL history.
       saveSQLHistory();
-      s_log.info("Application.shutdown->_saveApplicationState: saveSQLHistory() ELAPSED: " + (System.currentTimeMillis() - begin));
+      s_log.info("saveApplicationState: saveSQLHistory() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       // Save options selected for Cell Import Export operations
       saveCellImportExportInfo();
-      s_log.info("Application.shutdown->_saveApplicationState: saveCellImportExportInfo() ELAPSED: " + (System.currentTimeMillis() - begin));
+      s_log.info("saveApplicationState: saveCellImportExportInfo() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       // Save options selected for Edit Where Columns
       saveEditWhereColsInfo();
-      s_log.info("Application.shutdown->_saveApplicationState: saveEditWhereColsInfo() ELAPSED: " + (System.currentTimeMillis() - begin));
+      s_log.info("saveApplicationState: saveEditWhereColsInfo() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       // Save options selected for DataType-specific properties
       saveDataTypePreferences();
-      s_log.info("Application.shutdown->_saveApplicationState: saveDataTypePreferences() ELAPSED: " + (System.currentTimeMillis() - begin));
+      s_log.info("saveApplicationState: saveDataTypePreferences() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       // Save user specific WIKI configurations
       saveUserSpecificWikiConfigurations();
-      s_log.info("Application.shutdown->_saveApplicationState: saveUserSpecificWikiConfigurations() ELAPSED: " + (System.currentTimeMillis() - begin));
+      s_log.info("saveApplicationState: saveUserSpecificWikiConfigurations() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      _propsImpl.saveProperties();
+		s_log.info("saveApplicationState: _propsImpl.saveProperties() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       _prefs.save();
    }
@@ -1403,6 +1409,17 @@ public class Application implements IApplication
    public RowsWindowFrameRegistry getRowsWindowFrameRegistry()
    {
 		return _rowsWindowFrameRegistry;
+   }
+
+   @Override
+   public PropsImpl getPropsImpl()
+   {
+		if(null == _propsImpl)
+		{
+			_propsImpl = new PropsImpl();
+		}
+
+		return _propsImpl;
    }
 
 }

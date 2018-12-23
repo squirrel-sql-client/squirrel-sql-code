@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 public class PrimitiveValue
 {
    private HibernatePropertyReader _hpr;
@@ -18,7 +20,7 @@ public class PrimitiveValue
    {
       if(null == value)
       {
-         return "<null>";
+         return StringUtilities.NULL_AS_STRING;
       }
 
       return value;

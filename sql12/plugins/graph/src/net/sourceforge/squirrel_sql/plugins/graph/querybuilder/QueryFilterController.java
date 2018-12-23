@@ -13,7 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class QueryFilterController
 {
@@ -49,7 +49,7 @@ public class QueryFilterController
       _queryFilterDlg = new QueryFilterDlg(parent, new GraphPluginResources(graphPlugin), tableName + "." + _columnInfo.toString());
 
 
-      boolean applyQuotes = Preferences.userRoot().getBoolean(PREF_KEY_QUERY_ALWAYS_APPEND_QUOTES, false);
+      boolean applyQuotes = Props.getBoolean(PREF_KEY_QUERY_ALWAYS_APPEND_QUOTES, false);
       _queryFilterDlg._chkApplyQuotes.setSelected(applyQuotes);
 
 
@@ -202,7 +202,7 @@ public class QueryFilterController
       _queryFilterListener.filterChanged();
       _queryFilterDlg.saveCurrentSize();
 
-      Preferences.userRoot().putBoolean(PREF_KEY_QUERY_ALWAYS_APPEND_QUOTES, _queryFilterDlg._chkApplyQuotes.isSelected());
+      Props.putBoolean(PREF_KEY_QUERY_ALWAYS_APPEND_QUOTES, _queryFilterDlg._chkApplyQuotes.isSelected());
       close();
 
       _columnInfo.getColumnInfoModelEventDispatcher().fireChanged(TableFramesModelChangeType.COLUMN_WHERE);

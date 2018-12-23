@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class TableExportPreferencesDAO
 {
@@ -27,45 +27,45 @@ public class TableExportPreferencesDAO
    {
       TableExportPreferences ret = new TableExportPreferences();
 
-      ret.setCsvFile(Preferences.userRoot().get(PREF_KEY_CSV_FILE, ret.getCsvFile()));
-      ret.setCsvEncoding(Preferences.userRoot().get(PREF_KEY_CSV_ENCODING, ret.getCsvEncoding()));
-      ret.setWithHeaders(Preferences.userRoot().getBoolean(PREF_KEY_WITH_HEADERS, ret.isWithHeaders()));
-      ret.setSeperatorTab(Preferences.userRoot().getBoolean(PREF_KEY_SEPERATOR_TAB, ret.isSeperatorTab()));
-      ret.setSeperatorChar(Preferences.userRoot().get(PREF_KEY_SEPERATOR_CHAR, ret.getSeperatorChar()));
-      ret.setLineSeperator(Preferences.userRoot().get(PREF_KEY_LINE_SEPERATOR, ret.getLineSeperator()));
-      ret.setExportComplete(Preferences.userRoot().getBoolean(PREF_KEY_EXPORT_COMPLETE, ret.isExportComplete()));
-      ret.setUseGlobalPrefsFormating(Preferences.userRoot().getBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, ret.isUseGlobalPrefsFormating()));
-      ret.setExecuteCommand(Preferences.userRoot().getBoolean(PREF_KEY_EXECUTE_COMMAND, ret.isExecuteCommand()));
-      ret.setCommand(Preferences.userRoot().get(PREF_KEY_COMMAND, ret.getCommand()));
-      ret.setFormatCSV(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_CSV, ret.isFormatCSV()));
-      ret.setFormatXLS(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_XLS, ret.isFormatXLS()));
-      ret.setFormatXLSOld(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_XLS_OLD, ret.isFormatXLSOld()));
-      ret.setFormatXML(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_XML, ret.isFormatXML()));
-      ret.setFormatJSON(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_JSON, ret.isFormatJSON()));
+      ret.setCsvFile(Props.getString(PREF_KEY_CSV_FILE, ret.getCsvFile()));
+      ret.setCsvEncoding(Props.getString(PREF_KEY_CSV_ENCODING, ret.getCsvEncoding()));
+      ret.setWithHeaders(Props.getBoolean(PREF_KEY_WITH_HEADERS, ret.isWithHeaders()));
+      ret.setSeperatorTab(Props.getBoolean(PREF_KEY_SEPERATOR_TAB, ret.isSeperatorTab()));
+      ret.setSeperatorChar(Props.getString(PREF_KEY_SEPERATOR_CHAR, ret.getSeperatorChar()));
+      ret.setLineSeperator(Props.getString(PREF_KEY_LINE_SEPERATOR, ret.getLineSeperator()));
+      ret.setExportComplete(Props.getBoolean(PREF_KEY_EXPORT_COMPLETE, ret.isExportComplete()));
+      ret.setUseGlobalPrefsFormating(Props.getBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, ret.isUseGlobalPrefsFormating()));
+      ret.setExecuteCommand(Props.getBoolean(PREF_KEY_EXECUTE_COMMAND, ret.isExecuteCommand()));
+      ret.setCommand(Props.getString(PREF_KEY_COMMAND, ret.getCommand()));
+      ret.setFormatCSV(Props.getBoolean(PREF_KEY_FORMAT_CSV, ret.isFormatCSV()));
+      ret.setFormatXLS(Props.getBoolean(PREF_KEY_FORMAT_XLS, ret.isFormatXLS()));
+      ret.setFormatXLSOld(Props.getBoolean(PREF_KEY_FORMAT_XLS_OLD, ret.isFormatXLSOld()));
+      ret.setFormatXML(Props.getBoolean(PREF_KEY_FORMAT_XML, ret.isFormatXML()));
+      ret.setFormatJSON(Props.getBoolean(PREF_KEY_FORMAT_JSON, ret.isFormatJSON()));
 
-      ret.setLimitRows(Preferences.userRoot().get(PREF_KEY_LIMIT_ROWS, ret.getLimitRows()));
+      ret.setLimitRows(Props.getString(PREF_KEY_LIMIT_ROWS, ret.getLimitRows()));
 
       return ret;
    }
 
    public static void savePreferences(TableExportPreferences prefs)
    {
-      Preferences.userRoot().put(PREF_KEY_CSV_FILE, prefs.getCsvFile());
-      Preferences.userRoot().put(PREF_KEY_CSV_ENCODING, prefs.getCsvEncoding());
-      Preferences.userRoot().putBoolean(PREF_KEY_WITH_HEADERS, prefs.isWithHeaders());
-      Preferences.userRoot().putBoolean(PREF_KEY_SEPERATOR_TAB, prefs.isSeperatorTab());
-      Preferences.userRoot().put(PREF_KEY_SEPERATOR_CHAR, prefs.getSeperatorChar());
-      Preferences.userRoot().put(PREF_KEY_LINE_SEPERATOR, prefs.getLineSeperator());
-      Preferences.userRoot().putBoolean(PREF_KEY_EXPORT_COMPLETE, prefs.isExportComplete());
-      Preferences.userRoot().putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, prefs.isUseGlobalPrefsFormating());
-      Preferences.userRoot().putBoolean(PREF_KEY_EXECUTE_COMMAND, prefs.isExecuteCommand());
-      Preferences.userRoot().put(PREF_KEY_COMMAND, prefs.getCommand());
-      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_CSV, prefs.isFormatCSV());
-      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS, prefs.isFormatXLS());
-      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS_OLD, prefs.isFormatXLSOld());
-      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XML, prefs.isFormatXML());
-      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_JSON, prefs.isFormatJSON());
+      Props.putString(PREF_KEY_CSV_FILE, prefs.getCsvFile());
+      Props.putString(PREF_KEY_CSV_ENCODING, prefs.getCsvEncoding());
+      Props.putBoolean(PREF_KEY_WITH_HEADERS, prefs.isWithHeaders());
+      Props.putBoolean(PREF_KEY_SEPERATOR_TAB, prefs.isSeperatorTab());
+      Props.putString(PREF_KEY_SEPERATOR_CHAR, prefs.getSeperatorChar());
+      Props.putString(PREF_KEY_LINE_SEPERATOR, prefs.getLineSeperator());
+      Props.putBoolean(PREF_KEY_EXPORT_COMPLETE, prefs.isExportComplete());
+      Props.putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, prefs.isUseGlobalPrefsFormating());
+      Props.putBoolean(PREF_KEY_EXECUTE_COMMAND, prefs.isExecuteCommand());
+      Props.putString(PREF_KEY_COMMAND, prefs.getCommand());
+      Props.putBoolean(PREF_KEY_FORMAT_CSV, prefs.isFormatCSV());
+      Props.putBoolean(PREF_KEY_FORMAT_XLS, prefs.isFormatXLS());
+      Props.putBoolean(PREF_KEY_FORMAT_XLS_OLD, prefs.isFormatXLSOld());
+      Props.putBoolean(PREF_KEY_FORMAT_XML, prefs.isFormatXML());
+      Props.putBoolean(PREF_KEY_FORMAT_JSON, prefs.isFormatJSON());
 
-      Preferences.userRoot().put(PREF_KEY_LIMIT_ROWS, prefs.getLimitRows());
+      Props.putString(PREF_KEY_LIMIT_ROWS, prefs.getLimitRows());
    }
 }

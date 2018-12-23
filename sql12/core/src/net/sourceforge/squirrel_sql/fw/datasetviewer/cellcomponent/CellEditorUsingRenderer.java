@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
 
@@ -42,7 +44,7 @@ public class CellEditorUsingRenderer extends DefaultCellEditor {
 				// be used.  It is just there as defensive programming.
 				if (CellEditorUsingRenderer.this._dataTypeObject != null)
 					textField.setText(_dataTypeObject.renderObject(value));
-				else textField.setText((value != null) ? value.toString() : "<null>");
+				else textField.setText((value != null) ? value.toString() : StringUtilities.NULL_AS_STRING);
             }
 
 	    	public Object getCellEditorValue() {

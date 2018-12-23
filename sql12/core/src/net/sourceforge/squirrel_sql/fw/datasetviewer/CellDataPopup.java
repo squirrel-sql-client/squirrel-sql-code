@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 import java.awt.*;
 import java.awt.event.*;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.*;
 
@@ -82,8 +82,8 @@ public class CellDataPopup
 		Dimension dim;
 		if (Main.getApplication().getSquirrelPreferences().isRememberValueOfPopup())
 		{
-			int width = Preferences.userRoot().getInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, 600);
-			int height = Preferences.userRoot().getInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, 300);
+			int width = Props.getInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, 600);
+			int height = Props.getInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, 300);
 			dim = new Dimension(width, height);
 		}
 		else
@@ -136,8 +136,8 @@ public class CellDataPopup
 			@Override
 			public void windowClosing(WindowEvent e)
 			{
-				Preferences.userRoot().putInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, dialog.getSize().width);
-				Preferences.userRoot().putInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, dialog.getSize().height);
+				Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, dialog.getSize().width);
+				Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, dialog.getSize().height);
 			}
 		});
 

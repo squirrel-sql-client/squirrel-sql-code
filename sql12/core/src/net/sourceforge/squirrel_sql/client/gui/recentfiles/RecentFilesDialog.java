@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -11,7 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.prefs.Preferences;
 
 public class RecentFilesDialog extends JDialog
 {
@@ -82,16 +81,16 @@ public class RecentFilesDialog extends JDialog
 
    private void onWindowClosing()
    {
-      Preferences.userRoot().putInt(PREF_KEY_RECENT_FILES_DIALOG_WIDTH, getSize().width);
-      Preferences.userRoot().putInt(PREF_KEY_RECENT_FILES_DIALOG_HEIGHT, getSize().height);
+      Props.putInt(PREF_KEY_RECENT_FILES_DIALOG_WIDTH, getSize().width);
+      Props.putInt(PREF_KEY_RECENT_FILES_DIALOG_HEIGHT, getSize().height);
    }
 
 
    private Dimension getDim()
    {
       return new Dimension(
-            Preferences.userRoot().getInt(PREF_KEY_RECENT_FILES_DIALOG_WIDTH, 500),
-            Preferences.userRoot().getInt(PREF_KEY_RECENT_FILES_DIALOG_HEIGHT, 550)
+            Props.getInt(PREF_KEY_RECENT_FILES_DIALOG_WIDTH, 500),
+            Props.getInt(PREF_KEY_RECENT_FILES_DIALOG_HEIGHT, 550)
       );
    }
 

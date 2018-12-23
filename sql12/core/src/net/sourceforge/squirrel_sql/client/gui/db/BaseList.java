@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public abstract class BaseList implements IBaseList
 {
@@ -66,7 +66,7 @@ public abstract class BaseList implements IBaseList
 
    private void setSelIxFromPrefs()
    {
-      int selIx = Preferences.userRoot().getInt(getSelIndexPrefKey(), 0);
+      int selIx = Props.getInt(getSelIndexPrefKey(), 0);
       if(selIx >= 0 && selIx < _list.getModel().getSize())
       {
          _list.setSelectedIndex(selIx);
@@ -75,7 +75,7 @@ public abstract class BaseList implements IBaseList
 
    private void onSaveApplicationState()
    {
-      Preferences.userRoot().putInt(getSelIndexPrefKey(), getList().getSelectedIndex());
+      Props.putInt(getSelIndexPrefKey(), getList().getSelectedIndex());
    }
 
    protected JList getList()

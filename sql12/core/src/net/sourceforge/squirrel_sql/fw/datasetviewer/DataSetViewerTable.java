@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -139,7 +140,7 @@ public final class DataSetViewerTable extends JTable
 
       // handle special case of delete with <null> contents
       if (e.getKeyChar() == '\b' && getEditorComponent() != null &&
-            ((RestorableJTextField) getEditorComponent()).getText().equals("<null>"))
+            ((RestorableJTextField) getEditorComponent()).getText().equals(StringUtilities.NULL_AS_STRING))
       {
          //ignore the user input
          return;
@@ -157,7 +158,7 @@ public final class DataSetViewerTable extends JTable
          if (e.getID() == KeyEvent.KEY_TYPED && ((RestorableJTextField) getEditorComponent()).getText().length() == 7)
          {
             // check that we did not just add a char to a <null>
-            if (((RestorableJTextField) getEditorComponent()).getText().equals("<null>" + e.getKeyChar()))
+            if (((RestorableJTextField) getEditorComponent()).getText().equals(StringUtilities.NULL_AS_STRING + e.getKeyChar()))
             {
                // replace the null with just the char
                ((RestorableJTextField) getEditorComponent()).updateText("" + e.getKeyChar());

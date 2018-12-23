@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.plugins.derby.types;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 /**
  * Stores the data (text) of a Clob.  Clobs are invalidated after a transaction
  * is complete, so we always read fully and store the entire value.
@@ -67,7 +70,7 @@ public class DerbyClobDescriptor {
 	{
 		if (_data == null)
 		{
-			return "<null>";
+			return StringUtilities.NULL_AS_STRING;
 		} else {
 			return _data;	// we have the whole contents of the CLOB
 		}

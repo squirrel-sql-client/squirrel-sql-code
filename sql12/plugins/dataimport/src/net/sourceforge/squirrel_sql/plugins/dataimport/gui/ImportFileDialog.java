@@ -42,7 +42,7 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Vector;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 /**
  * This dialog has some options to specify how the file is imported into
@@ -117,16 +117,16 @@ public class ImportFileDialog extends DialogWidget
 	private Dimension getDimension()
 	{
 		return new Dimension(
-				Preferences.userRoot().getInt(PREF_KEY_IMPORT_DIALOG_WIDTH, 600),
-				Preferences.userRoot().getInt(PREF_KEY_IMPORT_DIALOG_HEIGHT, 600)
+				Props.getInt(PREF_KEY_IMPORT_DIALOG_WIDTH, 600),
+				Props.getInt(PREF_KEY_IMPORT_DIALOG_HEIGHT, 600)
 		);
 	}
 
 	public void dispose()
 	{
 		Dimension size = getSize();
-		Preferences.userRoot().putInt(PREF_KEY_IMPORT_DIALOG_WIDTH, size.width);
-		Preferences.userRoot().putInt(PREF_KEY_IMPORT_DIALOG_HEIGHT, size.height);
+		Props.putInt(PREF_KEY_IMPORT_DIALOG_WIDTH, size.width);
+		Props.putInt(PREF_KEY_IMPORT_DIALOG_HEIGHT, size.height);
 
 		super.dispose();
 	}

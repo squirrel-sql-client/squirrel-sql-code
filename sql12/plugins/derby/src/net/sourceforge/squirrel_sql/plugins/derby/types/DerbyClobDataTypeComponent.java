@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.E
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 /**
  * @author manningr
@@ -228,8 +229,8 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
    @Override
    public Object validateAndConvert(String value, Object originalValue,
          StringBuffer messageBuffer) {
-      // handle null, which is shown as the special string "<null>"
-      if (value.equals("<null>")) {
+      // handle null, which is shown as the special string StringUtilities.NULL_AS_STRING
+      if (value.equals(StringUtilities.NULL_AS_STRING)) {
          return null;
       }
 
@@ -383,7 +384,7 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
          if (DerbyClobDataTypeComponent.this._isNullable) {
 
             // user enters something when field is null
-            if (text.equals("<null>")) {
+            if (text.equals(StringUtilities.NULL_AS_STRING)) {
                if ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
                   // delete when null => original value
                   DerbyClobDataTypeComponent.this._textComponent.restoreText();
@@ -399,7 +400,7 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
                   if (text.length() <= 1) {
                      // about to delete last thing in field, so replace with
                      // null
-                     DerbyClobDataTypeComponent.this._textComponent.updateText("<null>");
+                     DerbyClobDataTypeComponent.this._textComponent.updateText(StringUtilities.NULL_AS_STRING);
                      e.consume();
                   }
                }

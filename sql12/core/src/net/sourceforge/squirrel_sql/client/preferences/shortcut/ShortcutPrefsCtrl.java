@@ -6,7 +6,7 @@ import net.sourceforge.squirrel_sql.client.shortcut.ShortcutUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.ColoringCallback;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 
 public class ShortcutPrefsCtrl
@@ -44,9 +43,9 @@ public class ShortcutPrefsCtrl
 
    public void applyChanges()
    {
-      Preferences.userRoot().putInt(PREF_KEY_ACTION_NAME_COL_WIDTH, _shortcutPrefsPanel.tblShortcuts.getColumnWidthForHeader(COL_HEADER_ACTION_NAME));
-      Preferences.userRoot().putInt(PREF_KEY_VALID_SHORTCUT_COL_WIDTH, _shortcutPrefsPanel.tblShortcuts.getColumnWidthForHeader(COL_HEADER_VALID_SHORTCUT));
-      Preferences.userRoot().putInt(PREF_KEY_DEFAULT_SHORTCUT_COL_WIDTH, _shortcutPrefsPanel.tblShortcuts.getColumnWidthForHeader(COL_HEADER_DEFAULT_SHORTCUT));
+      Props.putInt(PREF_KEY_ACTION_NAME_COL_WIDTH, _shortcutPrefsPanel.tblShortcuts.getColumnWidthForHeader(COL_HEADER_ACTION_NAME));
+      Props.putInt(PREF_KEY_VALID_SHORTCUT_COL_WIDTH, _shortcutPrefsPanel.tblShortcuts.getColumnWidthForHeader(COL_HEADER_VALID_SHORTCUT));
+      Props.putInt(PREF_KEY_DEFAULT_SHORTCUT_COL_WIDTH, _shortcutPrefsPanel.tblShortcuts.getColumnWidthForHeader(COL_HEADER_DEFAULT_SHORTCUT));
 
 
       Main.getApplication().getShortcutManager().save();
@@ -62,15 +61,15 @@ public class ShortcutPrefsCtrl
 
       _shortcutDataSet.setColHeader("actionName", COL_HEADER_ACTION_NAME);
       _shortcutDataSet.setColPos("actionName", 1);
-      _shortcutDataSet.setAbsoluteWidht("actionName", Preferences.userRoot().getInt(PREF_KEY_ACTION_NAME_COL_WIDTH, 200));
+      _shortcutDataSet.setAbsoluteWidht("actionName", Props.getInt(PREF_KEY_ACTION_NAME_COL_WIDTH, 200));
 
       _shortcutDataSet.setColHeader("validKeyStroke", COL_HEADER_VALID_SHORTCUT);
       _shortcutDataSet.setColPos("validKeyStroke", 2);
-      _shortcutDataSet.setAbsoluteWidht("validKeyStroke", Preferences.userRoot().getInt(PREF_KEY_VALID_SHORTCUT_COL_WIDTH, 200));
+      _shortcutDataSet.setAbsoluteWidht("validKeyStroke", Props.getInt(PREF_KEY_VALID_SHORTCUT_COL_WIDTH, 200));
 
       _shortcutDataSet.setColHeader("defaultKeyStroke", COL_HEADER_DEFAULT_SHORTCUT);
       _shortcutDataSet.setColPos("defaultKeyStroke", 2);
-      _shortcutDataSet.setAbsoluteWidht("defaultKeyStroke", Preferences.userRoot().getInt(PREF_KEY_DEFAULT_SHORTCUT_COL_WIDTH, 200));
+      _shortcutDataSet.setAbsoluteWidht("defaultKeyStroke", Props.getInt(PREF_KEY_DEFAULT_SHORTCUT_COL_WIDTH, 200));
 
       _shortcutDataSet.setIgnoreProperty("userKeyStroke");
 

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -115,7 +116,7 @@ public class DataExportJSONWriter extends AbstractDataExportFileWriter
       }
       else
       {
-         objectNode.put(fieldName, "<null>");
+         objectNode.put(fieldName, StringUtilities.NULL_AS_STRING);
       }
 
       _currentValues.add(objectNode);

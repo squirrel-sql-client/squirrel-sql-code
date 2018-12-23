@@ -2,12 +2,12 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.prefs.Preferences;
 
 public class AliasPropertiesInternalFrame extends DialogWidget
 {
@@ -59,8 +59,8 @@ public class AliasPropertiesInternalFrame extends DialogWidget
    private Dimension getDimension()
    {
       return new Dimension(
-         Preferences.userRoot().getInt(PREF_KEY_ALIAS_PROPS_SHEET_WIDTH, 600),
-         Preferences.userRoot().getInt(PREF_KEY_ALIAS_PROPS_SHEET_HEIGHT, 600)
+         Props.getInt(PREF_KEY_ALIAS_PROPS_SHEET_WIDTH, 600),
+         Props.getInt(PREF_KEY_ALIAS_PROPS_SHEET_HEIGHT, 600)
       );
    }
 
@@ -68,8 +68,8 @@ public class AliasPropertiesInternalFrame extends DialogWidget
    public void dispose()
    {
       Dimension size = getSize();
-      Preferences.userRoot().putInt(PREF_KEY_ALIAS_PROPS_SHEET_WIDTH, size.width);
-      Preferences.userRoot().putInt(PREF_KEY_ALIAS_PROPS_SHEET_HEIGHT, size.height);
+      Props.putInt(PREF_KEY_ALIAS_PROPS_SHEET_WIDTH, size.width);
+      Props.putInt(PREF_KEY_ALIAS_PROPS_SHEET_HEIGHT, size.height);
 
       super.dispose();
    }

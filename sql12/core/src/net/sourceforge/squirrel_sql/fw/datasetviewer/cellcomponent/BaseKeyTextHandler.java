@@ -25,6 +25,7 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang.StringUtils;
 
 public class BaseKeyTextHandler extends KeyAdapter {
@@ -108,7 +109,7 @@ public class BaseKeyTextHandler extends KeyAdapter {
 			boolean ok = true;
 			if(colDef.isSigned() == false){
 				ok = false;
-			}else if(!text.equals("<null>") && text.length() != 0){
+			}else if(!text.equals(StringUtilities.NULL_AS_STRING) && text.length() != 0){
 				int caretPosition = textComponent.getCaretPosition();
 				if(caretPosition != 0 || isSignCharacter(text.charAt(0))){
 					ok = false;

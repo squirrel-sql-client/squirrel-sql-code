@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetail
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.*;
 import org.apache.commons.lang.StringUtils;
 
@@ -12,7 +13,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 public class DataSetFindPanelController
 {
@@ -122,7 +122,7 @@ public class DataSetFindPanelController
 
       for (int i = 0; i <  MAX_HIST_LENGTH; i++)
       {
-         String item = Preferences.userRoot().get(PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF + i, null);
+         String item = Props.getString(PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF + i, null);
          if (null != item)
          {
             _dataSetFindPanel.cboString.addItem(item);
@@ -436,7 +436,7 @@ public class DataSetFindPanelController
       {
          if (MAX_HIST_LENGTH > i)
          {
-            Preferences.userRoot().put(PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF + i, "" + _dataSetFindPanel.cboString.getItemAt(i));
+            Props.putString(PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF + i, "" + _dataSetFindPanel.cboString.getItemAt(i));
          }
          else
          {

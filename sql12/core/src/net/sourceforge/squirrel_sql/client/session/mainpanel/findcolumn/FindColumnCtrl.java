@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class FindColumnCtrl
 {
@@ -394,16 +394,16 @@ public class FindColumnCtrl
 
    private void onClosing()
    {
-      Preferences.userRoot().putInt(PREF_KEY_FIND_COLUMN_SHEET_WIDTH, _findColumnDlg.getWidth());
-      Preferences.userRoot().putInt(PREF_KEY_FIND_COLUMN_SHEET_HEIGHT, _findColumnDlg.getHeight());
+      Props.putInt(PREF_KEY_FIND_COLUMN_SHEET_WIDTH, _findColumnDlg.getWidth());
+      Props.putInt(PREF_KEY_FIND_COLUMN_SHEET_HEIGHT, _findColumnDlg.getHeight());
    }
 
 
    private Dimension getDimension()
    {
       return new Dimension(
-            Preferences.userRoot().getInt(PREF_KEY_FIND_COLUMN_SHEET_WIDTH, 600),
-            Preferences.userRoot().getInt(PREF_KEY_FIND_COLUMN_SHEET_HEIGHT, 500)
+            Props.getInt(PREF_KEY_FIND_COLUMN_SHEET_WIDTH, 600),
+            Props.getInt(PREF_KEY_FIND_COLUMN_SHEET_HEIGHT, 500)
       );
    }
 

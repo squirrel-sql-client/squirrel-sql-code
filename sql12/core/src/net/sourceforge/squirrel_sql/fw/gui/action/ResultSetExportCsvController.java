@@ -18,8 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import java.util.prefs.Preferences;
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -83,7 +81,7 @@ public class ResultSetExportCsvController extends TableExportCsvController {
 
 		ResultSetExportDialog dlg = (ResultSetExportDialog) super.getDialog();
 		
-		//Preferences.userRoot().put(PREF_KEY_LIMIT_ROWS, dlg.txtLimitRows.getText());
+		//Preferences.put(PREF_KEY_LIMIT_ROWS, dlg.txtLimitRows.getText());
 		prefs.setLimitRows(dlg.txtLimitRows.getText());
 	}
 

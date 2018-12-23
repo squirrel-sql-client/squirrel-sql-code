@@ -4,7 +4,7 @@ import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 
 import javax.swing.*;
 import java.util.HashMap;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class FileChooserManager
 {
@@ -34,7 +34,7 @@ public class FileChooserManager
       _fileAppenixes.put(sqlFilter, FILE_ENDING_SQL);
 
 
-      String fileEndingPref = Preferences.userRoot().get(PREF_PRE_SELECTED_FILE_FILTER, FILE_ENDING_NONE);
+      String fileEndingPref = Props.getString(PREF_PRE_SELECTED_FILE_FILTER, FILE_ENDING_NONE);
 
       if(FILE_ENDING_SQL.equals(fileEndingPref))
       {
@@ -60,11 +60,11 @@ public class FileChooserManager
    {
       if (null != getSelectedFileEnding())
       {
-         Preferences.userRoot().put(PREF_PRE_SELECTED_FILE_FILTER, getSelectedFileEnding());
+         Props.putString(PREF_PRE_SELECTED_FILE_FILTER, getSelectedFileEnding());
       }
       else
       {
-         Preferences.userRoot().put(PREF_PRE_SELECTED_FILE_FILTER, FILE_ENDING_NONE);
+         Props.putString(PREF_PRE_SELECTED_FILE_FILTER, FILE_ENDING_NONE);
       }
    }
 }

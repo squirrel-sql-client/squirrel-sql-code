@@ -10,7 +10,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class PasteFromHistoryController
 {
@@ -141,8 +141,8 @@ public class PasteFromHistoryController
    private Dimension getDimension()
    {
       return new Dimension(
-            Preferences.userRoot().getInt(PREF_KEY_PASTE_HIST_DIALOG_WIDTH, 800),
-            Preferences.userRoot().getInt(PREF_KEY_PASTE_HIST_DIALOG_HEIGHT, 500)
+            Props.getInt(PREF_KEY_PASTE_HIST_DIALOG_WIDTH, 800),
+            Props.getInt(PREF_KEY_PASTE_HIST_DIALOG_HEIGHT, 500)
       );
    }
 
@@ -169,8 +169,8 @@ public class PasteFromHistoryController
    private void onWindowClosing()
    {
       Dimension size = _dlg.getSize();
-      Preferences.userRoot().putInt(PREF_KEY_PASTE_HIST_DIALOG_WIDTH, size.width);
-      Preferences.userRoot().putInt(PREF_KEY_PASTE_HIST_DIALOG_HEIGHT, size.height);
+      Props.putInt(PREF_KEY_PASTE_HIST_DIALOG_WIDTH, size.width);
+      Props.putInt(PREF_KEY_PASTE_HIST_DIALOG_HEIGHT, size.height);
    }
 
 }

@@ -1,13 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 
 public class CreateTableOfCurrentSQLCtrl
@@ -40,9 +38,9 @@ public class CreateTableOfCurrentSQLCtrl
       });
 
 
-      String tempSqlResultTable = Preferences.userRoot().get(PREFS_KEY_LAST_TABLE_NAME, "tempSqlResultTable");
-      boolean dropTable = Preferences.userRoot().getBoolean(PREFS_KEY_DROP_TABLE, false);
-      boolean scriptOnly = Preferences.userRoot().getBoolean(PREFS_KEY_SCRIPT_ONLY, true);
+      String tempSqlResultTable = Props.getString(PREFS_KEY_LAST_TABLE_NAME, "tempSqlResultTable");
+      boolean dropTable = Props.getBoolean(PREFS_KEY_DROP_TABLE, false);
+      boolean scriptOnly = Props.getBoolean(PREFS_KEY_SCRIPT_ONLY, true);
 
 
       _dlg.txtTableName.setText(tempSqlResultTable);
@@ -66,9 +64,9 @@ public class CreateTableOfCurrentSQLCtrl
    private void onOK()
    {
       _isOk = true;
-      Preferences.userRoot().put(PREFS_KEY_LAST_TABLE_NAME, _dlg.txtTableName.getText());
-      Preferences.userRoot().putBoolean(PREFS_KEY_DROP_TABLE, _dlg.chkDropTable.isSelected());
-      Preferences.userRoot().putBoolean(PREFS_KEY_SCRIPT_ONLY, _dlg.chkScriptOnly.isSelected());
+      Props.putString(PREFS_KEY_LAST_TABLE_NAME, _dlg.txtTableName.getText());
+      Props.putBoolean(PREFS_KEY_DROP_TABLE, _dlg.chkDropTable.isSelected());
+      Props.putBoolean(PREFS_KEY_SCRIPT_ONLY, _dlg.chkScriptOnly.isSelected());
       close();
    }
 

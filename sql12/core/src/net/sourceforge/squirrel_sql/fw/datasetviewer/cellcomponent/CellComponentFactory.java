@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -214,7 +215,7 @@ public class CellComponentFactory
       // default behavior: toString
       if (null == value)
       {
-         return "<null>";
+         return StringUtilities.NULL_AS_STRING;
       }
       else
       {
@@ -327,7 +328,7 @@ public class CellComponentFactory
       // THIS MAY NOT BE THE BEST BEHAVIOR HERE!!!!!!!
 
       // Default Operation
-      if (inputValue.equals("<null>"))
+      if (inputValue.equals(StringUtilities.NULL_AS_STRING))
          return null;
       else return inputValue;
    }
@@ -437,7 +438,7 @@ public class CellComponentFactory
       // THIS MAY NOT BE THE BEST BEHAVIOR HERE!!!!!!!
 
       // Default Operation
-      if (inputValue.equals("<null>"))
+      if (inputValue.equals(StringUtilities.NULL_AS_STRING))
       {
          return null;
       }

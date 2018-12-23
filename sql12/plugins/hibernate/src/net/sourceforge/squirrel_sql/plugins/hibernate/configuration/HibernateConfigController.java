@@ -7,7 +7,7 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -366,7 +366,7 @@ public class HibernateConfigController
 
    private void onAddClassPathDir()
    {
-      String dirPath = Preferences.userRoot().get(PERF_KEY_LAST_DIR, System.getProperty("user.home"));
+      String dirPath = Props.getString(PERF_KEY_LAST_DIR, System.getProperty("user.home"));
 
       JFileChooser fc = new JFileChooser(dirPath);
 
@@ -405,13 +405,13 @@ public class HibernateConfigController
 
       if (0 < files.length)
       {
-         Preferences.userRoot().put(PERF_KEY_LAST_DIR, files[0].getPath());
+         Props.putString(PERF_KEY_LAST_DIR, files[0].getPath());
       }
    }
 
 	private void onAddClasspathEntry()
 	{
-		String dirPath = Preferences.userRoot().get(PERF_KEY_LAST_DIR, System.getProperty("user.home"));
+		String dirPath = Props.getString(PERF_KEY_LAST_DIR, System.getProperty("user.home"));
 
 		JFileChooser fc = new JFileChooser(dirPath);
 
@@ -453,11 +453,11 @@ public class HibernateConfigController
 		{
 			if (null == files[0].getParent())
 			{
-				Preferences.userRoot().put(PERF_KEY_LAST_DIR, files[0].getPath());
+				Props.putString(PERF_KEY_LAST_DIR, files[0].getPath());
 			}
 			else
 			{
-				Preferences.userRoot().put(PERF_KEY_LAST_DIR, files[0].getParent());
+				Props.putString(PERF_KEY_LAST_DIR, files[0].getParent());
 			}
 		}
 	}

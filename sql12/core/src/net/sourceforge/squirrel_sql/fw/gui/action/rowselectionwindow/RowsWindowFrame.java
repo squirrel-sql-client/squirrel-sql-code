@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -28,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 public class RowsWindowFrame extends JDialog
 {
@@ -59,8 +59,8 @@ public class RowsWindowFrame extends JDialog
       _dataSetViewerTablePanel = createDataSetViewerTablePanel(rows, _columnDisplayDefinitions);
       _contentPanel.add(new JScrollPane(_dataSetViewerTablePanel.getComponent()));
 
-      int width = Preferences.userRoot().getInt(PREF_KEY_ROWS_WINDOW_FRAME_WIDTH, 300);
-      int height = Preferences.userRoot().getInt(PREF_KEY_ROWS_WINDOW_FRAME_HIGHT, 300);
+      int width = Props.getInt(PREF_KEY_ROWS_WINDOW_FRAME_WIDTH, 300);
+      int height = Props.getInt(PREF_KEY_ROWS_WINDOW_FRAME_HIGHT, 300);
 
 
       addWindowListener(new WindowAdapter()
@@ -82,8 +82,8 @@ public class RowsWindowFrame extends JDialog
    {
       Dimension size = getSize();
 
-      Preferences.userRoot().putInt(PREF_KEY_ROWS_WINDOW_FRAME_WIDTH, size.width);
-      Preferences.userRoot().putInt(PREF_KEY_ROWS_WINDOW_FRAME_HIGHT, size.height);
+      Props.putInt(PREF_KEY_ROWS_WINDOW_FRAME_WIDTH, size.width);
+      Props.putInt(PREF_KEY_ROWS_WINDOW_FRAME_HIGHT, size.height);
 
       Main.getApplication().getRowsWindowFrameRegistry().remove(this);
    }

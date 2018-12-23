@@ -620,7 +620,7 @@ public class ResultSetDataSet implements IDataSet
          {
             if (rowItem == null)
             {
-               result.append("<null>");
+               result.append(StringUtilities.NULL_AS_STRING);
             }
             else
             {

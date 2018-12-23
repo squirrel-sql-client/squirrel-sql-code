@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Locale;
 import java.util.Arrays;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import java.net.URL;
 
 public class I18nBundle implements Comparable<I18nBundle>
@@ -31,7 +31,7 @@ public class I18nBundle implements Comparable<I18nBundle>
 	/**
 	 * The localizations that already exist in SQuirreL.
 	 * When missing props are generated for the first time this
-	 * Props file will be copied to the work dir.
+	 * Preferences file will be copied to the work dir.
 	 */
 	private I18nProps _localizedProps;
 
@@ -130,7 +130,7 @@ public class I18nBundle implements Comparable<I18nBundle>
 			PrintWriter pw = new PrintWriter(fos);
 
             String includeTimestamp = 
-                Preferences.userRoot().get(PREF_KEY_INCLUDE_TIMESTAMP, "true");
+                Props.getString(PREF_KEY_INCLUDE_TIMESTAMP, "true");
 
             if (includeTimestamp.equals("true")) {
                 //i18n[I18n.TranlationsGenerationMessage=\n#\n#Missing 

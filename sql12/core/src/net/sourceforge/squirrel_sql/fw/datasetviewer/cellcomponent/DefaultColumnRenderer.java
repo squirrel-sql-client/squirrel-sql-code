@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 /**
  * Default renderer.
  *
@@ -49,7 +51,7 @@ public class DefaultColumnRenderer
 	/**
 	 * Return the rendered version of the passed object. If the passed object
 	 * is not <TT>null</TT> then <TT>toString() is called on it else
-	 * "<null>" is returned.
+	 * StringUtilities.NULL_AS_STRING is returned.
 	 * 
 	 * 
 	 * @param	obj	Object to be rendered.
@@ -63,6 +65,6 @@ public class DefaultColumnRenderer
 		{
 			return obj.toString();
 		}
-		return "<null>";
+		return StringUtilities.NULL_AS_STRING;
 	}
 }

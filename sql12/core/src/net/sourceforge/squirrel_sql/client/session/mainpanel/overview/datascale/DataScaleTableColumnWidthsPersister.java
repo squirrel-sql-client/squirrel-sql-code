@@ -5,7 +5,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.prefs.Preferences;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class DataScaleTableColumnWidthsPersister
 {
@@ -63,11 +63,11 @@ public class DataScaleTableColumnWidthsPersister
    {
       if(DataScaleTableModel.COL_NAME_COLUMN.equals(colName))
       {
-         return Preferences.userRoot().getInt(PREF_KEY_COL_WIDTH_COLUMN, DEFAULT_COL_WIDTH_COLUMN);
+         return Props.getInt(PREF_KEY_COL_WIDTH_COLUMN, DEFAULT_COL_WIDTH_COLUMN);
       }
       else if(DataScaleTableModel.COL_NAME_DATA.equals(colName))
       {
-         return Preferences.userRoot().getInt(PREF_KEY_COL_WIDTH_DATA, DEFAULT_COL_WIDTH_DATA);
+         return Props.getInt(PREF_KEY_COL_WIDTH_DATA, DEFAULT_COL_WIDTH_DATA);
       }
       else
       {
@@ -95,8 +95,8 @@ public class DataScaleTableColumnWidthsPersister
 
       }
 
-      Preferences.userRoot().putInt(PREF_KEY_COL_WIDTH_COLUMN, wColumn);
-      Preferences.userRoot().putInt(PREF_KEY_COL_WIDTH_DATA, wData);
+      Props.putInt(PREF_KEY_COL_WIDTH_COLUMN, wColumn);
+      Props.putInt(PREF_KEY_COL_WIDTH_DATA, wData);
 
       //System.out.println("DataScaleTableColumnWidthsPersister.saveColumnWidths wC=" + wColumn + ";  wD=" +wData);
 
