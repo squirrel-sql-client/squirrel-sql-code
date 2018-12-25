@@ -45,6 +45,8 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+#1375 Bad MACOSX_SQUIRREL_PROPS in squirrel-sql-mac.sh
+
 #1373 Substance L&F prevents application from starting.
 
 #1372 Toolbar button "New SQL Worksheet" / "New SQL Tab" is ignored for keyboard tab order.
