@@ -45,6 +45,8 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+#1376 New function "open SQL file at session startup" causes Nullpointer exception
+
 #1375 Bad MACOSX_SQUIRREL_PROPS in squirrel-sql-mac.sh
 
 #1373 Substance L&F prevents application from starting.

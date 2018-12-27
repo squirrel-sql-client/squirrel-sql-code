@@ -227,6 +227,13 @@ public class RecentFilesManager
 
    public String getOpenAtStartupFileForAlias(ISQLAlias alias)
    {
-      return findAliasFile(alias).getOpenAtStartupFile();
+      AliasFileXmlBean aliasFile = findAliasFile(alias);
+
+      if (null == aliasFile)
+      {
+         return null;
+      }
+
+      return aliasFile.getOpenAtStartupFile();
    }
 }
