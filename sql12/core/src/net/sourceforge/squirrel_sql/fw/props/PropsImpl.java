@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.fw.props;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.Timer;
 import java.io.File;
@@ -18,6 +20,8 @@ public class PropsImpl
    private Timer _propsWriteTimer;
 
    private final SortedProperties _properties;
+
+   private final static ILogger s_log = LoggerController.createLogger(PropsImpl.class);
 
    public PropsImpl()
    {
@@ -81,6 +85,12 @@ public class PropsImpl
 
    public void put(String propKey, String stringValue)
    {
+      if(NULL_PROP.equals(stringValue))
+      {
+         String msg = "The property value \"" + NULL_PROP + "\" cannot be read. When it is read null will be returned instead.";
+         s_log.error(msg, new IllegalArgumentException(msg));
+      }
+
       putProperty(propKey, stringValue);
    }
 
