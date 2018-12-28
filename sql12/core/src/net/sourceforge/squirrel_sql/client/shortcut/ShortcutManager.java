@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.shortcut;
 
 import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.SimpleType;
@@ -51,6 +52,7 @@ public class ShortcutManager
 
 
          ObjectMapper mapper = new ObjectMapper();
+         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
          _shortcutsJsonBeanLoadedAtStartUp = mapper.readValue(isr, SimpleType.construct(ShortcutsJsonBean.class));
 
 

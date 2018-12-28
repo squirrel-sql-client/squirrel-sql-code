@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -31,7 +30,7 @@ public class DataExportJSONWriter extends AbstractDataExportFileWriter
    }
 
    @Override
-   protected void beforeWorking(File file) throws Exception
+   protected void beforeWorking(File file)
    {
       _mapper = new ObjectMapper();
 
@@ -54,7 +53,7 @@ public class DataExportJSONWriter extends AbstractDataExportFileWriter
    }
 
    @Override
-   public void beforeRow(int rowIdx) throws Exception
+   public void beforeRow(int rowIdx)
    {
       _currentRow = _mapper.createObjectNode();
       _rows.add(_currentRow);
@@ -65,7 +64,7 @@ public class DataExportJSONWriter extends AbstractDataExportFileWriter
    }
 
    @Override
-   protected void addCell(IExportDataCell cell) throws Exception
+   protected void addCell(IExportDataCell cell)
    {
       ObjectNode objectNode = _mapper.createObjectNode();
 
@@ -124,7 +123,7 @@ public class DataExportJSONWriter extends AbstractDataExportFileWriter
 
 
    @Override
-   protected void addHeaderCell(int colIdx, String columnName) throws Exception
+   protected void addHeaderCell(int colIdx, String columnName)
    {
       _columns.add(_mapper.createObjectNode().put("name", columnName));
    }
@@ -135,70 +134,4 @@ public class DataExportJSONWriter extends AbstractDataExportFileWriter
       String jsonString = _mapper.writerWithDefaultPrettyPrinter().writeValueAsString(_root);
       Files.write(getFile().toPath(), jsonString.getBytes());
    }
-
-   public static void main(String[] args) throws JsonProcessingException
-   {
-      ObjectMapper mapper = new ObjectMapper();
-
-      ObjectNode root = mapper.createObjectNode();
-
-      ObjectNode tableNode = mapper.createObjectNode();
-
-      root.set("table", tableNode);
-
-      ArrayNode columns = mapper.createArrayNode();
-      tableNode.set("columns", columns);
-
-      columns.add(mapper.createObjectNode().put("name", "id"));
-      columns.add(mapper.createObjectNode().put("name", "number"));
-      columns.add(mapper.createObjectNode().put("name", "description"));
-
-
-
-
-
-      ArrayNode rows = mapper.createArrayNode();
-      tableNode.set("rows", rows);
-
-
-
-
-
-      ObjectNode row;
-      ArrayNode values;
-
-      row = mapper.createObjectNode();
-      rows.add(row);
-
-      row.put("rowNumber", 1);
-      values = mapper.createArrayNode();
-
-      row.set("values", values);
-
-      values.add(mapper.createObjectNode().put("value", 252469));
-      values.add(mapper.createObjectNode().put("value", "00010069 00"));
-      values.add(mapper.createObjectNode().put("value", "Siemens Glaskeramik-Kochstelle\\n80 Cm, Facetten-Design"));
-
-
-
-      row = mapper.createObjectNode();
-      rows.add(row);
-
-      row.put("rowNumber", 2);
-      values = mapper.createArrayNode();
-
-      row.set("values", values);
-
-      values.add(mapper.createObjectNode().put("value", 252497));
-      values.add(mapper.createObjectNode().put("value", "00010097 00"));
-      values.add(mapper.createObjectNode().put("value", "Siemens Basic-Glaskeram.-Koch\\nstelle, 60 Cm, Edelstahlrahmen"));
-
-
-
-
-      System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(root));
-
-   }
-
-
 }
