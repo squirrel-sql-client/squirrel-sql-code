@@ -15,7 +15,7 @@ SQuirreL does not use the JDK Preference API anymore. Instead the according prop
 Added new default driver definition for HXTT Word and HXTT PDF.
 
 Option to open SQL file at Session startup,
-  see the new right mouse menu item in "Recent files" dialog --> Section "Favorite files for Alias": "Toggle open this file at Session start"
+  see the new right mouse menu item in "Recent files" dialog --> Section "Favourite files for Alias": "Toggle open this file at Session start"
 
 New right mouse menu item in "Recent files" dialog: "Open in file manager"
 
