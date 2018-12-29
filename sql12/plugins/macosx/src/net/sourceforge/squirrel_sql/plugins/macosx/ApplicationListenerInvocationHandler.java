@@ -68,7 +68,7 @@ public class ApplicationListenerInvocationHandler implements InvocationHandler
       try
       {
          _setHandled.invoke(applicationEvent, new Object[]{Boolean.TRUE});
-         new AboutCommand(_app).execute();
+         new AboutCommand().execute();
       }
       catch (Exception e)
       {

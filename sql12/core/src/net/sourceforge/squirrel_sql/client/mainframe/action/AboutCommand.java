@@ -30,32 +30,11 @@ import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
  */
 public class AboutCommand implements ICommand
 {
-	/** Application API. */
-	private IApplication _app;
-
-	/**
-	 * Ctor.
-	 *
-	 * @param	app	 Application API.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
-	 */
-	public AboutCommand(IApplication app)
-	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		_app = app;
-	}
-
 	/**
 	 * Display the About Box.
     */
 	public void execute()
 	{
-		AboutBoxDialog.showAboutBox(_app);
+		AboutBoxDialog.showAboutBox();
 	}
 }

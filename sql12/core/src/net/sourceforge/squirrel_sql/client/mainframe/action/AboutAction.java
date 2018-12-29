@@ -53,6 +53,6 @@ public class AboutAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		new AboutCommand(getApplication()).execute();
+		new AboutCommand().execute();
 	}
 }
