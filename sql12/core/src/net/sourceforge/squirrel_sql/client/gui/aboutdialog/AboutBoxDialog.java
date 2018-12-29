@@ -43,19 +43,12 @@ public class AboutBoxDialog extends JDialog
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AboutBoxDialog.class);
 
-   private JTabbedPane _tabPnl;
-
-   private SystemPanel _systemPnl;
-
-   private ThreadPanel _threadPnl;
-
    private final JButton _closeBtn = new JButton(s_stringMgr.getString("AboutBoxDialog.close"));
 
 
    private AboutBoxDialog()
    {
       super(Main.getApplication().getMainFrame(), s_stringMgr.getString("AboutBoxDialog.about"), true);
-      setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
       createGUI();
 
       GUIUtils.enableCloseByEscape(this);
@@ -63,9 +56,6 @@ public class AboutBoxDialog extends JDialog
 
    /**
     * Show the About Box.
-    *
-    * @param   app      Application API.
-    * @throws IllegalArgumentException Thrown if a <TT>null</TT> <TT>IApplication</TT> object passed.
     */
    public static void showAboutBox() throws IllegalArgumentException
    {
@@ -79,35 +69,36 @@ public class AboutBoxDialog extends JDialog
       contentPane.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
 
-      _tabPnl = UIFactory.getInstance().createTabbedPane();
+      JTabbedPane tabPnl = UIFactory.getInstance().createTabbedPane();
 
-      _tabPnl.add(s_stringMgr.getString("AboutBoxDialog.about"), new AboutPanel(Main.getApplication()));
+      tabPnl.add(s_stringMgr.getString("AboutBoxDialog.about"), new AboutPanel(Main.getApplication()));
 
-      _tabPnl.add(s_stringMgr.getString("AboutBoxDialog.credits"), new CreditsPanel(Main.getApplication())); // i18n
+      tabPnl.add(s_stringMgr.getString("AboutBoxDialog.credits"), new CreditsPanel(Main.getApplication())); // i18n
 
-      _systemPnl = new SystemPanel();
-      _tabPnl.add(s_stringMgr.getString("AboutBoxDialog.system"), _systemPnl);
+      SystemPanel systemPnl = new SystemPanel();
+      tabPnl.add(s_stringMgr.getString("AboutBoxDialog.system"), systemPnl);
 
-      _threadPnl = new ThreadPanel();
-      _tabPnl.add(s_stringMgr.getString("AboutBoxDialog.threads"), _threadPnl);
+      tabPnl.add(s_stringMgr.getString("AboutBoxDialog.threads"), new ThreadPanel());
 
-      _tabPnl.addChangeListener(new ChangeListener()
+      tabPnl.add(s_stringMgr.getString("AboutBoxDialog.command.line"), new CommandlinePanel());
+
+      tabPnl.addChangeListener(new ChangeListener()
       {
          public void stateChanged(ChangeEvent evt)
          {
-            String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
+            String title = tabPnl.getTitleAt(tabPnl.getSelectedIndex());
             if (title.equals(s_stringMgr.getString("AboutBoxDialog.system")))
             {
-               _systemPnl.getMemoryPanel().startTimer();
+               systemPnl.getMemoryPanel().startTimer();
             }
             else
             {
-               _systemPnl.getMemoryPanel().stopTimer();
+               systemPnl.getMemoryPanel().stopTimer();
             }
          }
       });
 
-      contentPane.add(_tabPnl, BorderLayout.CENTER);
+      contentPane.add(tabPnl, BorderLayout.CENTER);
 
       contentPane.add(createButtonBar(), BorderLayout.SOUTH);
 
@@ -117,19 +108,19 @@ public class AboutBoxDialog extends JDialog
       {
          public void windowActivated(WindowEvent evt)
          {
-            String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
+            String title = tabPnl.getTitleAt(tabPnl.getSelectedIndex());
             if (title.equals(s_stringMgr.getString("AboutBoxDialog.system")))
             {
-               _systemPnl.getMemoryPanel().startTimer();
+               systemPnl.getMemoryPanel().startTimer();
             }
          }
 
          public void windowDeactivated(WindowEvent evt)
          {
-            String title = _tabPnl.getTitleAt(_tabPnl.getSelectedIndex());
+            String title = tabPnl.getTitleAt(tabPnl.getSelectedIndex());
             if (title.equals(s_stringMgr.getString("AboutBoxDialog.system")))
             {
-               _systemPnl.getMemoryPanel().stopTimer();
+               systemPnl.getMemoryPanel().stopTimer();
             }
          }
       });

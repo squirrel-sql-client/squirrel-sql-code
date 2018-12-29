@@ -29,6 +29,7 @@ import java.util.*;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.metal.OceanTheme;
 
 import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
 import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
@@ -764,10 +765,13 @@ public class Application implements IApplication
 				ClassLoaderListener listener = splash.getClassLoaderListener();
 				_pluginManager.setClassLoaderListener(listener);
 			}
-			
-			if (args.getPluginList() != null) {
+
+			if (args.getPluginList() != null)
+			{
 				_pluginManager.loadPluginsFromList(args.getPluginList());
-			} else {
+			}
+			else
+			{
 				_pluginManager.loadPlugins();
 			}
 		}
@@ -1283,11 +1287,11 @@ public class Application implements IApplication
 		String userSpecifiedOverride = System.getProperty("swing.defaultlaf");
 		if (userSpecifiedOverride != null && !"".equals(userSpecifiedOverride)) { return; }
 
-		String lafClassName =
-			args.useNativeLAF() ? UIManager.getSystemLookAndFeelClassName() : MetalLookAndFeel.class.getName();
+		String lafClassName = args.useNativeLAF() ? UIManager.getSystemLookAndFeelClassName() : MetalLookAndFeel.class.getName();
 
 		if (!args.useDefaultMetalTheme())
 		{
+			// Will be overwritten if the L&F Plugin is used.
 			MetalLookAndFeel.setCurrentTheme(new AllBluesBoldMetalTheme());
 		}
 

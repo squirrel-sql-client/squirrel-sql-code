@@ -24,8 +24,6 @@ final class CreditsPanel extends JScrollPane
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreditsPanel.class);
 
-
-
    CreditsPanel(IApplication app)
    {
       setBorder(BorderFactory.createEmptyBorder());

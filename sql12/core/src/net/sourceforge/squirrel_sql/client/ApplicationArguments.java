@@ -65,7 +65,7 @@ public class ApplicationArguments implements IApplicationArguments
 		String[] LOG_FILE = { "l", "log-config-file",
 											"Logging configuration file"};
 		String[] USE_DEFAULT_METAL_THEME = { "m", "use-default-metal-theme",
-											"Use default metal theme"};
+											"Use default metal theme (not valid if L&F Plugin is used)"};
 		String[] USE_NATIVE_LAF = { "n", "native-laf",
 									"Use native look and feel"};
 		String[] NO_PLUGINS = {"nop", "no-plugins", "Don't load plugins"};
@@ -82,6 +82,21 @@ public class ApplicationArguments implements IApplicationArguments
 		String[] DETECT_LONG_RUNNING_SWING_EDT_EVENTS = { "detectEDT", "detect-long-running-swing-edt-events",
 			"Detect long running Swing Event Dispatch Thread events" };
 
+
+		String[][] ALL_OPTIONS =
+		{
+			HELP,
+			SQUIRREL_HOME,
+			LOG_FILE,
+			USE_DEFAULT_METAL_THEME,
+			USE_NATIVE_LAF,
+			NO_SPLASH,
+			USER_SETTINGS_DIR,
+			UI_DEBUG,
+			PLUGIN_LIST,
+			SHUTDOWN_TIMEOUT_SECONDS,
+			DETECT_LONG_RUNNING_SWING_EDT_EVENTS
+		};
 	}
 
 	/** Only instance of this class. */
@@ -344,7 +359,8 @@ public class ApplicationArguments implements IApplicationArguments
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getUserInterfaceDebugEnabled()
 	 */
-	public boolean getUserInterfaceDebugEnabled() {
+	public boolean getUserInterfaceDebugEnabled()
+	{
 		return _cmdLine.hasOption(IOptions.UI_DEBUG[0]);
 	}
 	

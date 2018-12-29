@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+About dialog displays supported and current command line arguments.
+
 SQuirreL does not use the JDK Preference API anymore. Instead the according properties are
   written to the file <userdir>/props.properties. If one now copies a <userdir> from one machine to another
   those properties are copied, too. For user convenience the JDK Preference API is still checked for properties
