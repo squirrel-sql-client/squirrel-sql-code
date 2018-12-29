@@ -19,8 +19,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  */
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
+import net.sourceforge.squirrel_sql.client.gui.aboutdialog.AboutBoxDialog;
 
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
