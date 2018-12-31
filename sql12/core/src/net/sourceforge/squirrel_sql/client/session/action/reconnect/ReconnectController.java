@@ -4,10 +4,10 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import org.jfree.util.ObjectUtilities;
 
 import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class ReconnectController
 {
@@ -54,17 +54,17 @@ public class ReconnectController
    {
       _reconnectInfo.setReconnectRequested(true);
 
-      if(false == ObjectUtilities.equal(_reconnectDialog.txtUrl.getText(), jdbcData.getUrl()))
+      if(false == Utilities.equalsRespectNull(_reconnectDialog.txtUrl.getText(), jdbcData.getUrl()))
       {
          _reconnectInfo.setUrl(_reconnectDialog.txtUrl.getText());
       }
 
-      if(false == ObjectUtilities.equal(_reconnectDialog.txtUser.getText(), jdbcData.getUser()))
+      if(false == Utilities.equalsRespectNull(_reconnectDialog.txtUser.getText(), jdbcData.getUser()))
       {
          _reconnectInfo.setUser(_reconnectDialog.txtUrl.getText());
       }
 
-      if(false == ObjectUtilities.equal(new String(_reconnectDialog.txtPassword.getPassword()), jdbcData.getPassword()))
+      if(false == Utilities.equalsRespectNull(new String(_reconnectDialog.txtPassword.getPassword()), jdbcData.getPassword()))
       {
          _reconnectInfo.setPassword(new String(_reconnectDialog.txtPassword.getPassword()));
       }

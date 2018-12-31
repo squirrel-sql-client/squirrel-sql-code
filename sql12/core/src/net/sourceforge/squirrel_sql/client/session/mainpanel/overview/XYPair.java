@@ -6,7 +6,7 @@ import java.util.Collections;
 public class XYPair implements Comparable<XYPair>
 {
    private final Double _x;
-   private final Double _y;
+   private Double _y;
 
    public XYPair(Double x, Double y)
    {
@@ -43,5 +43,10 @@ public class XYPair implements Comparable<XYPair>
 
       return ret;
 
+   }
+
+   public void setY(double y)
+   {
+      _y = y;
    }
 }

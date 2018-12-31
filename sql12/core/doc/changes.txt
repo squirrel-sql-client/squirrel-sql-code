@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Charts for SQL results now allow to plot differences of column values.
+  See tab "Overview/Charts" of a SQL result --> Toggle button "Charts" on the right --> tab "Differences".
+  Possible application: A program may log steps into a database table.
+  If the differences between log timestamps are plotted against the timestamps themselves
+  the plot shows if and how the program's performance changes.
+  With this feature the JFreeChart version SQuirreL uses was upgraded to version 1.5.0.
+
 About dialog displays supported and current command line arguments.
 
 SQuirreL does not use the JDK Preference API anymore. Instead the according properties are

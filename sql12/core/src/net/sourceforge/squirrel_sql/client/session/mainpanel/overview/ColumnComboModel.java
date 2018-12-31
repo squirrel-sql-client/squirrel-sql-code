@@ -17,7 +17,7 @@ public class ColumnComboModel
       _columnIndexInDataScale = columnIndexInDataScale;
    }
 
-   public static ColumnComboModel[] createColumnComboModels(DataScaleTable dataScaleTable, boolean numbersOnly)
+   public static ColumnComboModel[] createColumnComboModels(DataScaleTable dataScaleTable, boolean numbersAndTemporalOnly)
    {
       ArrayList<ColumnComboModel> ret = new ArrayList<ColumnComboModel>();
 
@@ -25,7 +25,7 @@ public class ColumnComboModel
       {
          ColumnDisplayDefinition columnDisplayDefinition = dataScaleTable.getColumnDisplayDefinitions()[i];
 
-         if(numbersOnly && false == IndexedColumnFactory.isNumber(columnDisplayDefinition))
+         if(numbersAndTemporalOnly && false == IndexedColumnFactory.isNumber(columnDisplayDefinition) && false == IndexedColumnFactory.isTemporal(columnDisplayDefinition))
          {
             continue;
          }

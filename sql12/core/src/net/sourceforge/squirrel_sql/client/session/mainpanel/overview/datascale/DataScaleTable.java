@@ -14,6 +14,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DataScaleTable extends SortableTable
@@ -168,7 +169,14 @@ public class DataScaleTable extends SortableTable
 
                if (null != row[i])
                {
-                  value = ((Number) row[i]).doubleValue();
+                  if (row[i] instanceof Date)
+                  {
+                     value = ((Date) row[i]).getTime();
+                  }
+                  else
+                  {
+                     value = ((Number) row[i]).doubleValue();
+                  }
                }
 
                ret.add(value);

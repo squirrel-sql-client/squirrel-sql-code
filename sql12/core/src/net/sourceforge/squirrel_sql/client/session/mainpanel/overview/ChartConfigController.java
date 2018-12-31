@@ -22,6 +22,7 @@ public class ChartConfigController
                   new ChartConfigPanelTabController(app, ChartConfigPanelTabMode.SINGLE_COLUMN),
                   new ChartConfigPanelTabController(app, ChartConfigPanelTabMode.TWO_COLUMN),
                   new ChartConfigPanelTabController(app, ChartConfigPanelTabMode.XY_CHART),
+                  new ChartConfigPanelTabController(app, ChartConfigPanelTabMode.DIFFERENCES_CHART),
             };
 
 

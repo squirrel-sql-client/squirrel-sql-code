@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -15,6 +16,9 @@ public class ChartConfigPanelTab extends JPanel
    JButton btnChart;
    JComboBox cboCallDepth;
    JComboBox cboYAxisKind;
+
+   JComboBox cboTimeScale;
+
    private ChartConfigPanelTabMode _chartConfigPanelTabMode;
 
 
@@ -63,9 +67,31 @@ public class ChartConfigPanelTab extends JPanel
          cboYColumns = new JComboBox();
          add(cboYColumns, gbc);
       }
+      else if(chartConfigPanelTabMode == ChartConfigPanelTabMode.DIFFERENCES_CHART)
+      {
+         gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,10,5,5),0,0);
+         add(new JLabel(s_stringMgr.getString("OverviewPanel.YAxis")), gbc);
+
+         gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0,10,5,5),0,0);
+         cboYColumns = new JComboBox();
+         add(cboYColumns, gbc);
+
+         gbc = new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,10,5,5),0,0);
+         add(new JLabel(s_stringMgr.getString("OverviewPanel.time.scale")), gbc);
+
+         gbc = new GridBagConstraints(3,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5),0,0);
+         cboTimeScale = new JComboBox();
+         add(cboTimeScale, gbc);
 
 
-      if(chartConfigPanelTabMode != ChartConfigPanelTabMode.XY_CHART)
+         gbc = new GridBagConstraints(0,2, GridBagConstraints.REMAINDER,1,0,0,GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(10,10,0,5),0,0);
+         MultipleLineLabel lblDesc= new MultipleLineLabel(s_stringMgr.getString("OverviewPanel.differences.description"));
+         lblDesc.setFont(lblDesc.getFont().deriveFont(Font.BOLD));
+         add(lblDesc, gbc);
+      }
+
+
+      if(chartConfigPanelTabMode != ChartConfigPanelTabMode.XY_CHART && chartConfigPanelTabMode != ChartConfigPanelTabMode.DIFFERENCES_CHART)
       {
          gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,10,5,5),0,0);
          add(new JLabel(s_stringMgr.getString("OverviewPanel.maxBarCount")), gbc);

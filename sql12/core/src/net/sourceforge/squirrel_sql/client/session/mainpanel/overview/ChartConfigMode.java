@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.IndexedColumnFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.util.ArrayList;
 
@@ -18,10 +19,12 @@ public enum ChartConfigMode
 //   XY_MIN("overview.ChartConfigMode.modusMin", "overview.ChartConfigMode.modusMinAxisLabel", SquirrelResources.IImageNames.AGG_MIN),
 //   XY_MAX("overview.ChartConfigMode.modusMax", "overview.ChartConfigMode.modusMaxAxisLabel", SquirrelResources.IImageNames.AGG_MAX);
 
+
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChartConfigController.class);
+
    private final String _modusI18nKey;
    private String _axisLabelI18nKey;
    private final String _modusIconName;
-   private StringManager _s_stringMgr;
 
    ChartConfigMode(String modusI18nKey, String axisLabelI18nKey, String modusIconName)
    {
@@ -33,15 +36,9 @@ public enum ChartConfigMode
 
 
 
-   public static ChartConfigMode[] getAvailableValues(ColumnDisplayDefinition columnDisplayDefinition, ChartConfigPanelTabMode chartConfigPanelTabMode, StringManager s_stringMgr)
+   public static ChartConfigMode[] getAvailableValues(ColumnDisplayDefinition columnDisplayDefinition, ChartConfigPanelTabMode chartConfigPanelTabMode)
    {
       ArrayList<ChartConfigMode> ret = new ArrayList<ChartConfigMode>();
-
-      for (ChartConfigMode chartConfigMode : values())
-      {
-         chartConfigMode.setStringManager(s_stringMgr);
-      }
-
       if (ChartConfigPanelTabMode.SINGLE_COLUMN == chartConfigPanelTabMode)
       {
          ret.add(COUNT);
@@ -70,22 +67,17 @@ public enum ChartConfigMode
       return ret.toArray(new ChartConfigMode[ret.size()]);
    }
 
-   private void setStringManager(StringManager s_stringMgr)
-   {
-      _s_stringMgr = s_stringMgr;
-   }
-
    @Override
    public String toString()
    {
-      return _s_stringMgr.getString(_modusI18nKey);
+      return s_stringMgr.getString(_modusI18nKey);
    }
 
    public String getYAxisLabel(DataScale yAxisDataScale)
    {
       if(null == yAxisDataScale)
       {
-         return _s_stringMgr.getString(_axisLabelI18nKey);
+         return s_stringMgr.getString(_axisLabelI18nKey);
       }
       else
       {
@@ -100,7 +92,7 @@ public enum ChartConfigMode
             col = yAxisDataScale.getColumnDisplayDefinition().getColumnName();
          }
 
-         return _s_stringMgr.getString(_axisLabelI18nKey, col);
+         return s_stringMgr.getString(_axisLabelI18nKey, col);
       }
    }
 }

@@ -1,19 +1,27 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.*;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScale;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScaleTable;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import org.jfree.chart.*;
-import org.jfree.chart.block.*;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItem;
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.LegendItemSource;
+import org.jfree.chart.block.BlockContainer;
+import org.jfree.chart.block.BorderArrangement;
+import org.jfree.chart.block.LabelBlock;
 import org.jfree.chart.title.LegendTitle;
-import org.jfree.ui.HorizontalAlignment;
-import org.jfree.ui.RectangleEdge;
+import org.jfree.chart.ui.HorizontalAlignment;
+import org.jfree.chart.ui.RectangleEdge;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import java.awt.Font;
+import java.awt.Frame;
 
 public class ChartHandler
 {
@@ -22,7 +30,7 @@ public class ChartHandler
 
    public static final int MAX_LEGEND_ENTRIES = 10;
 
-   public static void doChart(DataScale xAxisDataScale, DataScale yAxisDataScale, DataScaleTable dataScaleTable, Integer callDepth, ChartConfigPanelTabMode chartConfigPanelTabMode, ChartConfigMode mode, SquirrelResources resources, Frame parent)
+   public static void doChart(DataScale xAxisDataScale, DataScale yAxisDataScale, DataScaleTable dataScaleTable, Integer callDepth, ChartConfigPanelTabMode chartConfigPanelTabMode, ChartConfigMode mode, Frame parent, TimeScale timeScale)
    {
       try
       {
@@ -33,12 +41,12 @@ public class ChartHandler
          String label;
 
 
-         if (chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
+         if (chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART || chartConfigPanelTabMode == ChartConfigPanelTabMode.DIFFERENCES_CHART)
          {
-            XYChartCreator XYChartCreator = new XYChartCreator(xAxisDataScale, yAxisDataScale, dataScaleTable);
-            title = XYChartCreator.getTitle();
-            chart = XYChartCreator.getChart();
-            label = XYChartCreator.getLabel();
+            XYChartCreator xyChartCreator = new XYChartCreator(xAxisDataScale, yAxisDataScale, dataScaleTable, chartConfigPanelTabMode == ChartConfigPanelTabMode.DIFFERENCES_CHART, timeScale);
+            title = xyChartCreator.getTitle();
+            chart = xyChartCreator.getChart();
+            label = xyChartCreator.getLabel();
          }
          else
          {
@@ -51,7 +59,7 @@ public class ChartHandler
 
          JFrame f = new JFrame(title);
 
-         final ImageIcon icon = resources.getIcon(SquirrelResources.IImageNames.APPLICATION_ICON);
+         final ImageIcon icon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.APPLICATION_ICON);
          if (icon != null)
          {
             f.setIconImage(icon.getImage());

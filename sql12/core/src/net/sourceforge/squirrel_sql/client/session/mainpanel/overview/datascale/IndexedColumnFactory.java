@@ -53,6 +53,19 @@ public class IndexedColumnFactory
       }
    }
 
+   public static boolean isTemporal(ColumnDisplayDefinition columnDisplayDefinition)
+   {
+      switch(columnDisplayDefinition.getSqlType())
+      {
+         case Types.TIMESTAMP:
+         case Types.DATE:
+         case Types.TIME:
+            return true;
+         default:
+            return false;
+      }
+   }
+
    public static boolean isOrderable(ColumnDisplayDefinition columnDisplayDefinition)
    {
       switch(columnDisplayDefinition.getSqlType())

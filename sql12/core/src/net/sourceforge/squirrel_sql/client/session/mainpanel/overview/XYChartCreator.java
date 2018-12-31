@@ -2,39 +2,52 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScale;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScaleTable;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.IndexedColumnFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
+import java.sql.Types;
 import java.util.ArrayList;
 
 class XYChartCreator
 {
-   private DataScale _xAxisDataScale;
-   private DataScale _yAxisDataScale;
-   private DataScaleTable _dataScaleTable;
    private String _title;
    private JFreeChart _chart;
    private String _label;
 
-   public XYChartCreator(DataScale xAxisDataScale, DataScale yAxisDataScale, DataScaleTable dataScaleTable)
+   public XYChartCreator(DataScale xAxisDataScale, DataScale yAxisDataScale, DataScaleTable dataScaleTable, boolean isDifferencesChart, TimeScale timeScale)
    {
-      _xAxisDataScale = xAxisDataScale;
-      _yAxisDataScale = yAxisDataScale;
-      _dataScaleTable = dataScaleTable;
-
-      _title = "Chart for x = " + _xAxisDataScale.getColumnDisplayDefinition().getColumnName() + ", y = " + _yAxisDataScale.getColumnDisplayDefinition().getColumnName();
-
-      String category = _xAxisDataScale.getColumnDisplayDefinition().getColumnName();
+      if (isDifferencesChart)
+      {
+         _title = "Difference chart for x = " + xAxisDataScale.getColumnDisplayDefinition().getColumnName() + ", y = \u0394 (" + yAxisDataScale.getColumnDisplayDefinition().getColumnName() + ")";
+      }
+      else
+      {
+         _title = "Chart for x = " + xAxisDataScale.getColumnDisplayDefinition().getColumnName() + ", y = " + yAxisDataScale.getColumnDisplayDefinition().getColumnName();
+      }
 
       DefaultXYDataset defaultXYDataset = new DefaultXYDataset();
 
-
-      ArrayList<Double> xValues = _dataScaleTable.getDoubleValuesForColumn(_xAxisDataScale.getColumnDisplayDefinition());
-      ArrayList<Double> yValues = _dataScaleTable.getDoubleValuesForColumn(_yAxisDataScale.getColumnDisplayDefinition());
+      ArrayList<Double> xValues = dataScaleTable.getDoubleValuesForColumn(xAxisDataScale.getColumnDisplayDefinition());
+      ArrayList<Double> yValues = dataScaleTable.getDoubleValuesForColumn(yAxisDataScale.getColumnDisplayDefinition());
 
       ArrayList<XYPair> pairs = XYPair.createSortedPairs(xValues, yValues);
+
+      if(isDifferencesChart)
+      {
+         convertYValuesToDifferences(pairs, timeScale);
+      }
 
       double[][] series = new double[2][pairs.size()];
 
@@ -48,19 +61,99 @@ class XYChartCreator
       defaultXYDataset.addSeries(_title, series);
 
 
-      _chart =  ChartFactory.createXYLineChart(
-            _title,   // chart title
-            category,               // domain axis label
-            _yAxisDataScale.getColumnDisplayDefinition().getColumnName(),  // range axis label
-            defaultXYDataset,                  // data
-            PlotOrientation.VERTICAL,
-            false,                     // include legend
-            true,                     // tooltips?
-            false                     // URLs?
-      );
+      createChart(_title, defaultXYDataset, xAxisDataScale.getColumnDisplayDefinition(), yAxisDataScale.getColumnDisplayDefinition(), isDifferencesChart);
 
       _label = "";
    }
+
+   private void createChart(String title, DefaultXYDataset defaultXYDataset, ColumnDisplayDefinition xColumnDisplayDefinition, ColumnDisplayDefinition yColumnDisplayDefinition, boolean isDifferencesChart)
+   {
+//      _chart =  ChartFactory.createXYLineChart(
+//            title,   // chart title
+//            xColumnDisplayDefinition.getColumnName(),  // domain axis label
+//            yColumnDisplayDefinition.getColumnName(),  // range axis label
+//            defaultXYDataset,                  // data
+//            PlotOrientation.VERTICAL,
+//            false,                     // include legend
+//            true,                     // tooltips?
+//            false                     // URLs?
+//      );
+
+      ValueAxis xAxis;
+      if(IndexedColumnFactory.isTemporal(xColumnDisplayDefinition))
+      {
+         xAxis = new DateAxis(xColumnDisplayDefinition.getColumnName());
+      }
+      else
+      {
+         xAxis = new NumberAxis(xColumnDisplayDefinition.getColumnName());
+         ((NumberAxis)xAxis).setAutoRangeIncludesZero(false);
+      }
+
+      ValueAxis yAxis;
+      if(false == isDifferencesChart && IndexedColumnFactory.isTemporal(yColumnDisplayDefinition))
+      {
+         yAxis = new DateAxis(yColumnDisplayDefinition.getColumnName());
+      }
+      else
+      {
+         if (isDifferencesChart)
+         {
+            yAxis = new NumberAxis("\u0394 (" + yColumnDisplayDefinition.getColumnName() + ")");
+         }
+         else
+         {
+            yAxis = new NumberAxis(yColumnDisplayDefinition.getColumnName());
+         }
+         ((NumberAxis)yAxis).setAutoRangeIncludesZero(false);
+      }
+
+
+      XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
+      XYPlot plot = new XYPlot(defaultXYDataset, xAxis, yAxis, renderer);
+      plot.setOrientation(PlotOrientation.VERTICAL);
+      renderer.setDefaultToolTipGenerator(new StandardXYToolTipGenerator());
+
+      _chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, false);
+      StandardChartTheme.createJFreeTheme().apply(_chart);
+   }
+
+   private void convertYValuesToDifferences(ArrayList<XYPair> pairsSortedByXValues, TimeScale timeScale)
+   {
+      if(pairsSortedByXValues.size() < 2)
+      {
+         return;
+      }
+
+
+      double formerYValue = pairsSortedByXValues.get(0).getY();
+
+      for (int i = 0; i < pairsSortedByXValues.size(); i++)
+      {
+         if( i < pairsSortedByXValues.size() - 1)
+         {
+            double buf = pairsSortedByXValues.get(i).getY();
+
+            double diff = pairsSortedByXValues.get(i + 1).getY() - formerYValue;
+
+            if(null != timeScale)
+            {
+               diff = timeScale.scale(diff);
+            }
+
+            pairsSortedByXValues.get(i).setY(diff);
+
+            formerYValue = buf;
+         }
+         else
+         {
+            // There is no difference for the last row. So we take the former one as a sort of continuation.
+            pairsSortedByXValues.get(i).setY(pairsSortedByXValues.get(i-1).getY());
+         }
+      }
+   }
+
+
 
    public String getTitle()
    {
