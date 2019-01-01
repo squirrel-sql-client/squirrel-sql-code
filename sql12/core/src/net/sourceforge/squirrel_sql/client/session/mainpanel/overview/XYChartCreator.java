@@ -18,6 +18,8 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
 import java.sql.Types;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 class XYChartCreator
@@ -112,10 +114,39 @@ class XYChartCreator
       XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
       XYPlot plot = new XYPlot(defaultXYDataset, xAxis, yAxis, renderer);
       plot.setOrientation(PlotOrientation.VERTICAL);
-      renderer.setDefaultToolTipGenerator(new StandardXYToolTipGenerator());
+
+      StandardXYToolTipGenerator toolTipGenerator = createToolTipGenerator(xColumnDisplayDefinition, yColumnDisplayDefinition, isDifferencesChart);
+      renderer.setDefaultToolTipGenerator(toolTipGenerator);
 
       _chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, false);
       StandardChartTheme.createJFreeTheme().apply(_chart);
+   }
+
+   private StandardXYToolTipGenerator createToolTipGenerator(ColumnDisplayDefinition xColumnDisplayDefinition, ColumnDisplayDefinition yColumnDisplayDefinition, boolean isDifferencesChart)
+   {
+      StandardXYToolTipGenerator toolTipGenerator;
+
+      boolean isXTemporal = IndexedColumnFactory.isTemporal(xColumnDisplayDefinition);
+
+      boolean isYTemporal = IndexedColumnFactory.isTemporal(yColumnDisplayDefinition) && false == isDifferencesChart;
+
+      if (isXTemporal && isYTemporal)
+      {
+         toolTipGenerator = new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, DateFormat.getInstance(), DateFormat.getInstance());
+      }
+      else if (false == isXTemporal && isYTemporal)
+      {
+         toolTipGenerator = new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, NumberFormat.getNumberInstance(), DateFormat.getInstance());
+      }
+      else if (isXTemporal && false == isYTemporal)
+      {
+         toolTipGenerator = new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, DateFormat.getInstance(), NumberFormat.getNumberInstance());
+      }
+      else
+      {
+         toolTipGenerator = new StandardXYToolTipGenerator();
+      }
+      return toolTipGenerator;
    }
 
    private void convertYValuesToDifferences(ArrayList<XYPair> pairsSortedByXValues, TimeScale timeScale)
