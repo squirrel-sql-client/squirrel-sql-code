@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui.copyseparatedby;
+package net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;

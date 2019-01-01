@@ -1,30 +1,27 @@
-package net.sourceforge.squirrel_sql.fw.gui;
+package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.ResultAsText;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.ResultAsTextLineCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.steppschuh.markdowngenerator.table.Table;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class TableCopyAsMarkdownCommand
+public class TableCopyAlignedCommand
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableCopyAsMarkdownCommand.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableCopyAlignedCommand.class);
 
-   private final ISession _session;
-   private final JTable _table;
+   private JTable _table;
+   private ISession _session;
 
-   public TableCopyAsMarkdownCommand(JTable table, ISession session)
+   public TableCopyAlignedCommand(JTable table, ISession session)
    {
       _session = session;
       _table = table;
@@ -48,7 +45,7 @@ public class TableCopyAsMarkdownCommand
          }
          else
          {
-            _session.showErrorMessage(s_stringMgr.getString("TableCopyAsMarkdownCommand.failed.to.copy"));
+            _session.showErrorMessage(s_stringMgr.getString("TableCopyAlignedCommand.failed.to.copy"));
             return;
          }
       }
@@ -56,17 +53,17 @@ public class TableCopyAsMarkdownCommand
 
       ColumnDisplayDefinition[] colDefs = columnDisplayDefinitions.toArray(new ColumnDisplayDefinition[columnDisplayDefinitions.size()]);
 
-      String[] colNames = new String[colDefs.length];
-
-      for (int i = 0; i < colDefs.length; i++)
+      final StringBuffer text = new StringBuffer();
+      ResultAsTextLineCallback resultAsTextLineCallback = new ResultAsTextLineCallback()
       {
-         colNames[i] = colDefs[i].getColumnName();
-      }
+         @Override
+         public void addLine(String line)
+         {
+            text.append(line);
+         }
+      };
 
-
-
-      Table.Builder tableBuilder = new Table.Builder();
-      tableBuilder.addRow(colNames);
+      ResultAsText resultAsText = new ResultAsText(colDefs, true, resultAsTextLineCallback);
 
       for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
       {
@@ -76,33 +73,14 @@ public class TableCopyAsMarkdownCommand
          for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
          {
             Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-
-            if(cellObj instanceof String && -1 < ((String)cellObj).indexOf('\n'))
-            {
-               int lineBreakPos = ((String)cellObj).indexOf('\n');
-               row[curIx] = ((String)cellObj).substring(0, lineBreakPos);
-            }
-            else if(null == cellObj)
-            {
-               row[curIx] = BaseDataTypeComponent.NULL_VALUE_PATTERN;
-            }
-            else
-            {
-               row[curIx] = cellObj;
-            }
+            row[curIx] = cellObj;
             ++curIx;
          }
 
-         tableBuilder.addRow(row);
+         resultAsText.addRow(row);
       }
 
-      String markdownTable = tableBuilder.build().toString();
-
-      int width = markdownTable.indexOf('\n');
-
-      String line = new String(new char[width]).replace('\0', '-') + "\n";
-
-      StringSelection ss = new StringSelection(line + markdownTable + "\n" + line);
+      StringSelection ss = new StringSelection(text.toString());
       Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
    }
 }

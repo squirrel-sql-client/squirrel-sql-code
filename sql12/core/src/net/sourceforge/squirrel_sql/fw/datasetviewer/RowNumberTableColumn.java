@@ -12,8 +12,7 @@ import java.awt.*;
 
 public class RowNumberTableColumn extends TableColumn
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(RowNumberTableColumn.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RowNumberTableColumn.class);
 
 	public static final int ROW_NUMBER_MODEL_INDEX = -42;
 

@@ -25,10 +25,12 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
-import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectedRowsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.ShowReferencesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.ShowRowNumbersCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyAlignedCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyAsMarkdownCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyColumnHeaderCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyHtmlCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInStatementCommand;
@@ -39,21 +41,21 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectEntireRowsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectedRowsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.GotoColorMenuController;
+import net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby.TableCopySeparatedByCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableActionFactory;
-import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ITableActionCallback;
-import net.sourceforge.squirrel_sql.fw.gui.copyseparatedby.TableCopySeparatedByCommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -68,38 +70,6 @@ public class TablePopupMenu extends BasePopupMenu
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TablePopupMenu.class);
 
 	private ISession _session;
-
-
-	public interface IOptionTypes
-	{
-		int COPY = 0;
-		int COPY_WITH_HEADERS = 1;
-		int COPY_HTML = 2;
-		int COPY_ALIGNED = 3;
-		int COPY_MARKDOWN = 4;
-		int COPY_SEPARATED_BY = 5;
-		int COPY_IN_STATEMENT = 6;
-		int COPY_WHERE_STATEMENT = 7;
-		int COPY_UPDATE_STATEMENT = 8;
-		int COPY_INSERT_STATEMENT = 9;
-		int COPY_COLUMN_HEADER = 10;
-		int SHOW_REFERENCES = 11;
-		int COPY_SELECTED_ROWS_TO_OWN_WINDOW = 12;
-		int COLOR_SELECTED_ROWS = 13;
-		int GOTO_COLOR = 14;
-		int EXPORT_CSV = 15;
-		int SELECT_ALL = 16;
-		int ADJUST_ALL_COL_WIDTHS_ACTION = 17;
-		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 18;
-		int SHOW_ROW_NUMBERS = 19;
-		int COPY_WIKI = 20;
-		int SELECT_ROWS = 21;
-		int LAST_ENTRY = 22;
-   }
-
-	private final JMenuItem[] _menuItems = new JMenuItem[IOptionTypes.LAST_ENTRY + 1];
-
-	private DataSetViewerTable _table;
 
 	private JCheckBoxMenuItem _alwaysAdjustAllColWidtshActionItem;
 	private JCheckBoxMenuItem _showRowNumbersItem;
@@ -143,7 +113,7 @@ public class TablePopupMenu extends BasePopupMenu
 
    // pointer to the viewer
 	// This is needed for insert and delete operations
-	private DataSetViewerTablePanel _viewer = null;
+	private DataSetViewerTablePanel _dataSetViewerTablePanel;
 	
 	private ICopyWikiTableActionFactory copyWikiTableActionFactory = CopyWikiTableActionFactory.getInstance();
 
@@ -168,7 +138,7 @@ public class TablePopupMenu extends BasePopupMenu
 	 */
 	public TablePopupMenu(boolean allowEditing,
 								 IDataSetUpdateableModel updateableModel,
-								 DataSetViewerTablePanel viewer,
+								 DataSetViewerTablePanel dataSetViewerTablePanel,
 								 ISession session)
 	{
 		// save the pointer needed to enable editing of data on-demand
@@ -176,61 +146,60 @@ public class TablePopupMenu extends BasePopupMenu
 
 
 		// save the pointer needed for insert and delete operations
-		_viewer = viewer;
+		_dataSetViewerTablePanel = dataSetViewerTablePanel;
 		_session = session;
 
+
 		// add the menu items to the menu
-		_menuItems[IOptionTypes.COPY] = add(_copy);
-		Main.getApplication().getShortcutManager().setAccelerator(_menuItems[IOptionTypes.COPY], getTableCopyActionKeyStroke(), _copy);
+		JMenuItem mnuCopy = add(_copy);
+		Main.getApplication().getShortcutManager().setAccelerator(mnuCopy, getTableCopyActionKeyStroke(), _copy);
+		replaceStandardTableCopyAction();
 
-		_menuItems[IOptionTypes.COPY_WITH_HEADERS] = add(_copyWithHeaders);
-		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
-		_menuItems[IOptionTypes.COPY_ALIGNED] = add(_copyAligned);
-		_menuItems[IOptionTypes.COPY_MARKDOWN] = add(_copyAsMarkdown);
-		_menuItems[IOptionTypes.COPY_SEPARATED_BY] = add(_copySeparatedBy);
 
-		_menuItems[IOptionTypes.COPY_WIKI] = add(copyWikiTableActionFactory.createMenueItem(new ITableActionCallback() {
-			@Override
-			public JTable getJTable() {
-				return _table;
-			}
-		}));
-		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_copyInStatement);
-		_menuItems[IOptionTypes.COPY_WHERE_STATEMENT] = add(_copyWhereStatement);
-		_menuItems[IOptionTypes.COPY_UPDATE_STATEMENT] = add(_copyUpdateStatement);
-      _menuItems[IOptionTypes.COPY_INSERT_STATEMENT] = add(_copyInsertStatement);
-      _menuItems[IOptionTypes.COPY_COLUMN_HEADER] = add(_copyColumnHeader);
+
+		add(_copyWithHeaders);
+		add(_copyHtml);
+		add(_copyAligned);
+		add(_copyAsMarkdown);
+		add(_copySeparatedBy);
+
+		add(copyWikiTableActionFactory.createMenueItem(() -> _dataSetViewerTablePanel.getTable()));
+		add(_copyInStatement);
+		add(_copyWhereStatement);
+		add(_copyUpdateStatement);
+      add(_copyInsertStatement);
+      add(_copyColumnHeader);
 
 		if (null != _session)
 		{
 			addSeparator();
-			_menuItems[IOptionTypes.SHOW_REFERENCES] = add(_showReferences);
+			add(_showReferences);
 		}
 
 		addSeparator();
-		_menuItems[IOptionTypes.COPY_SELECTED_ROWS_TO_OWN_WINDOW] = add(_copySelectedRowsToOwnWindow);
-		addSeparator();
-
-		_menuItems[IOptionTypes.COLOR_SELECTED_ROWS] = add(_colorSelectedRows);
-		_menuItems[IOptionTypes.GOTO_COLOR] = add(_gotoColorMenuController.getParentMenu());
+		add(_copySelectedRowsToOwnWindow);
 
 		addSeparator();
+		add(_colorSelectedRows);
+		add(_gotoColorMenuController.getParentMenu());
 
-		_menuItems[IOptionTypes.EXPORT_CSV] = add(_exportCvs);
+		addSeparator();
+
+		add(_exportCvs);
       addSeparator();
-      _menuItems[IOptionTypes.ADJUST_ALL_COL_WIDTHS_ACTION] = add(_adjustAllColWidthsAction);
+      add(_adjustAllColWidthsAction);
 
       _alwaysAdjustAllColWidtshActionItem = new JCheckBoxMenuItem();
 		_alwaysAdjustAllColWidtshActionItem.setSelected(ButtonTableHeader.isAlwaysAdjustAllColWidths());
 		_alwaysAdjustAllColWidtshActionItem.setAction(_alwaysAdjustAllColWidthsAction);
-      _menuItems[IOptionTypes.ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION] = add(_alwaysAdjustAllColWidtshActionItem);
+      add(_alwaysAdjustAllColWidtshActionItem);
 
       addSeparator();
       
       _showRowNumbersItem = new JCheckBoxMenuItem();
 		_showRowNumbersItem.setSelected(false);
 		_showRowNumbersItem.setAction(_showRowNumbersAction);
-		_menuItems[IOptionTypes.SHOW_ROW_NUMBERS] = add(_showRowNumbersItem);
+		add(_showRowNumbersItem);
 
 
 		if (allowEditing)
@@ -244,14 +213,15 @@ public class TablePopupMenu extends BasePopupMenu
 			add(_undoMakeEditable);
 		}
 		addSeparator();
-		_menuItems[IOptionTypes.SELECT_ALL] = add(_select);
+		add(_select);
 		
-		_menuItems[IOptionTypes.SELECT_ROWS] = add(_selectRows);
+		add(_selectRows);
 		
 
 		// add entries for insert and delete rows
 		// only if table is updateable and already editable (ie. allowEditing is false)
-		if (_updateableModel != null && allowEditing==false) {
+		if (_updateableModel != null && allowEditing == false)
+		{
 			addSeparator();
 			add(_insertRow);
 			add(_deleteRows);
@@ -264,17 +234,13 @@ public class TablePopupMenu extends BasePopupMenu
 	/**
 	 * Constructor used when creating menu for use in cell editor.
 	 */
-	public TablePopupMenu(IDataSetUpdateableModel updateableModel, DataSetViewerTablePanel viewer, DataSetViewerTable table)
+	public TablePopupMenu(IDataSetUpdateableModel updateableModel, DataSetViewerTablePanel dataSetViewerTablePanel, DataSetViewerTable table)
 	{
-		super();
 		// save the pointer needed to enable editing of data on-demand
 		_updateableModel = updateableModel;
 
       // save the pointer needed for insert and delete operations
-		_viewer = viewer;
-
-		_table = table;
-		replaceStandardTableCopyAction();
+		_dataSetViewerTablePanel = dataSetViewerTablePanel;
 
 		add(_select);
 		addSeparator();
@@ -283,12 +249,6 @@ public class TablePopupMenu extends BasePopupMenu
 
 		addSeparator();
 		add(_print);
-	}
-
-	public void setTable(DataSetViewerTable value)
-	{
-		_table = value;
-		replaceStandardTableCopyAction();
 	}
 
 	public void reset()
@@ -303,10 +263,10 @@ public class TablePopupMenu extends BasePopupMenu
 
 		KeyStroke keyStroke = shortcutManager.getValidKeyStroke(getTableCopyActionName(), getTableCopyActionKeyStroke());
 
-		_table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, "CopyAction");
-		_table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "CopyAction");
-		_table.getInputMap(JComponent.WHEN_FOCUSED).put(keyStroke, "CopyAction");
-		_table.getActionMap().put("CopyAction", _copy);
+		_dataSetViewerTablePanel.getTable().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, "CopyAction");
+		_dataSetViewerTablePanel.getTable().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "CopyAction");
+		_dataSetViewerTablePanel.getTable().getInputMap(JComponent.WHEN_FOCUSED).put(keyStroke, "CopyAction");
+		_dataSetViewerTablePanel.getTable().getActionMap().put("CopyAction", _copy);
 	}
 
 	/**
@@ -314,7 +274,7 @@ public class TablePopupMenu extends BasePopupMenu
 	 */
 	public void show(Component invoker, int x, int y)
 	{
-		_gotoColorMenuController.createSubMenus(_table);
+		_gotoColorMenuController.createSubMenus(_dataSetViewerTablePanel.getTable());
 		super.show(invoker, x, y);
 	}
 
@@ -347,10 +307,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableCopyCommand(_table, false).execute();
-			}
+			new TableCopyCommand(_dataSetViewerTablePanel.getTable(), false).execute();
 		}
 	}
 
@@ -363,10 +320,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableCopyCommand(_table, true).execute();
-			}
+			new TableCopyCommand(_dataSetViewerTablePanel.getTable(), true).execute();
 		}
 	}
 
@@ -381,10 +335,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableCopyHtmlCommand(_table).execute();
-			}
+			new TableCopyHtmlCommand(_dataSetViewerTablePanel.getTable()).execute();
 		}
 	}
 	
@@ -397,10 +348,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableCopyAlignedCommand(_table, _session).execute();
-			}
+			new TableCopyAlignedCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
 		}
 	}
 
@@ -413,10 +361,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableCopyAsMarkdownCommand(_table, _session).execute();
-			}
+			new TableCopyAsMarkdownCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
 		}
 	}
 
@@ -429,10 +374,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableCopySeparatedByCommand(_table).execute();
-			}
+			new TableCopySeparatedByCommand(_dataSetViewerTablePanel.getTable()).execute();
 		}
 	}
 
@@ -447,10 +389,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableCopyInStatementCommand(_table).execute();
-			}
+			new TableCopyInStatementCommand(_dataSetViewerTablePanel.getTable()).execute();
 		}
 	}
 
@@ -463,10 +402,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableCopyWhereStatementCommand(_table).execute();
-			}
+			new TableCopyWhereStatementCommand(_dataSetViewerTablePanel.getTable()).execute();
 		}
 	}
 
@@ -479,10 +415,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableCopyUpdateStatementCommand(_table, _viewer.getDataModelImplementationDetails()).execute();
-			}
+			new TableCopyUpdateStatementCommand(_dataSetViewerTablePanel.getTable(), _dataSetViewerTablePanel.getDataModelImplementationDetails()).execute();
 		}
 	}
 
@@ -495,10 +428,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableCopyInsertStatementCommand(_table, _viewer.getDataModelImplementationDetails()).execute();
-			}
+			new TableCopyInsertStatementCommand(_dataSetViewerTablePanel.getTable(), _dataSetViewerTablePanel.getDataModelImplementationDetails()).execute();
 		}
 
    }
@@ -512,10 +442,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableCopyColumnHeaderCommand(_table).execute();
-			}
+			new TableCopyColumnHeaderCommand(_dataSetViewerTablePanel.getTable()).execute();
 		}
 
    }
@@ -530,15 +457,14 @@ public class TablePopupMenu extends BasePopupMenu
 
       public void actionPerformed(ActionEvent evt)
       {
-         if (_table != null)
-         {
-            try {
-				new TableExportCsvCommand(_table).execute((JFrame) GUIUtils.getOwningFrame(_table));
-			} catch (ExportDataException e) {
-				// should never happen. Just convert it to a Runtime Exception.
-				throw new RuntimeException(e);
+			try
+			{
+				new TableExportCsvCommand(_dataSetViewerTablePanel.getTable()).execute((JFrame) GUIUtils.getOwningFrame(_dataSetViewerTablePanel.getTable()));
 			}
-         }
+			catch (ExportDataException e)
+			{
+				throw Utilities.wrapRuntime(e);
+			}
       }
    }
 
@@ -551,10 +477,7 @@ public class TablePopupMenu extends BasePopupMenu
 
       public void actionPerformed(ActionEvent evt)
       {
-         if (_table != null)
-         {
-            new ShowReferencesCommand(_table, _updateableModel, (JFrame) GUIUtils.getOwningFrame(_table), _session).execute();
-         }
+         new ShowReferencesCommand(_dataSetViewerTablePanel.getTable(), _updateableModel, (JFrame) GUIUtils.getOwningFrame(_dataSetViewerTablePanel.getTable()), _session).execute();
       }
    }
 
@@ -567,10 +490,7 @@ public class TablePopupMenu extends BasePopupMenu
 
       public void actionPerformed(ActionEvent evt)
       {
-         if (_table != null)
-         {
-            new CopySelectedRowsToOwnWindowCommand(_table, _session).execute();
-         }
+         new CopySelectedRowsToOwnWindowCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
       }
    }
 
@@ -583,10 +503,7 @@ public class TablePopupMenu extends BasePopupMenu
 
       public void actionPerformed(ActionEvent evt)
       {
-         if (_table != null)
-         {
-            new ColorSelectedRowsCommand(_table).execute();
-         }
+         new ColorSelectedRowsCommand(_dataSetViewerTablePanel.getTable()).execute();
       }
    }
 
@@ -601,13 +518,10 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
+			if(_dataSetViewerTablePanel.getTable().getTableHeader() instanceof ButtonTableHeader)
 			{
-            if(_table.getTableHeader() instanceof ButtonTableHeader)
-            {
-               ((ButtonTableHeader)_table.getTableHeader()).adjustAllColWidths(true);
-            }
-         }
+				(_dataSetViewerTablePanel.getTable().getButtonTableHeader()).adjustAllColWidths(true);
+			}
 		}
 	}
 
@@ -623,9 +537,9 @@ public class TablePopupMenu extends BasePopupMenu
 		public void actionPerformed(ActionEvent evt)
 		{
          ButtonTableHeader.setAlwaysAdjustAllColWidths(_alwaysAdjustAllColWidtshActionItem.isSelected());
-         if (_table != null && _alwaysAdjustAllColWidtshActionItem.isSelected())
+         if (_alwaysAdjustAllColWidtshActionItem.isSelected())
 			{
-            ((ButtonTableHeader)_table.getTableHeader()).adjustAllColWidths(true);
+            (_dataSetViewerTablePanel.getTable().getButtonTableHeader()).adjustAllColWidths(true);
 			}
 		}
 	}
@@ -639,11 +553,8 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				JCheckBoxMenuItem mnu = (JCheckBoxMenuItem) evt.getSource();
-				new ShowRowNumbersCommand(_viewer, mnu.isSelected()).execute();
-			}
+			JCheckBoxMenuItem mnu = (JCheckBoxMenuItem) evt.getSource();
+			new ShowRowNumbersCommand(_dataSetViewerTablePanel, mnu.isSelected()).execute();
 		}
 	}
 
@@ -690,14 +601,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				int selectedRows[] = _table.getSelectedRows();
+			int selectedRows[] = _dataSetViewerTablePanel.getTable().getSelectedRows();
 
-				// Tell the DataSetViewer to delete the rows
-				// Note: rows are indexes in the SORTABLE model, not the ACTUAL model
-				_viewer.deleteRows(selectedRows);
-			}
+			// Tell the DataSetViewer to delete the rows
+			// Note: rows are indexes in the SORTABLE model, not the ACTUAL model
+			_dataSetViewerTablePanel.deleteRows(selectedRows);
 		}
 	}
 
@@ -710,7 +618,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			_viewer.insertRow();
+			_dataSetViewerTablePanel.insertRow();
 		}
 	}
 
@@ -723,10 +631,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableSelectAllCellsCommand(_table).execute();
-			}
+			new TableSelectAllCellsCommand(_dataSetViewerTablePanel.getTable()).execute();
 		}
 	}
 
@@ -745,10 +650,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			if (_table != null)
-			{
-				new TableSelectEntireRowsCommand(_table).execute();
-			}
+			new TableSelectEntireRowsCommand(_dataSetViewerTablePanel.getTable()).execute();
 		}
 	}
 	
@@ -762,25 +664,22 @@ public class TablePopupMenu extends BasePopupMenu
 
       public void actionPerformed(ActionEvent evt)
       {
-         if (_table != null)
-         {
-            try
-            {
+			try
+			{
 
-               PrinterJob printerJob = PrinterJob.getPrinterJob();
+				PrinterJob printerJob = PrinterJob.getPrinterJob();
 
-               printerJob.setPrintable(_viewer);
+				printerJob.setPrintable(_dataSetViewerTablePanel);
 
-               if (printerJob.printDialog())
-               {
-                  printerJob.print();
-               }
-            }
-            catch (Exception e)
-            {
-               throw new RuntimeException(e);
-            }
-         }
+				if (printerJob.printDialog())
+				{
+					printerJob.print();
+				}
+			}
+			catch (Exception e)
+			{
+				throw new RuntimeException(e);
+			}
       }
    }
 

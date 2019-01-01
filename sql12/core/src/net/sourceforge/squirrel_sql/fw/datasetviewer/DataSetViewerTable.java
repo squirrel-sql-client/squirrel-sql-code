@@ -8,7 +8,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.ColoringService;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
-import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -42,17 +41,17 @@ public final class DataSetViewerTable extends JTable
    private final int _multiplier;
    private static final String data = "THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG";
 
-   private TablePopupMenu _tablePopupMenu;
+   private TablePopupMenuHandler _tablePopupMenuHandler;
 
    private RectangleSelectionHandler _rectangleSelectionHandler = new RectangleSelectionHandler(this);
-   private RowNumberTableColumn _rntc;
+   private RowNumberTableColumn _rowNumberTableColumn;
    private ButtonTableHeader _tableHeader = new ButtonTableHeader();
 
 
    private ColoringService _coloringService = new ColoringService(this);
 
 
-   DataSetViewerTable(DataSetViewerTablePanel dataSetViewerTablePanel, IDataSetTableControls creator, IDataSetUpdateableModel updateableObject, int listSelectionMode, ISession session)
+   DataSetViewerTable(DataSetViewerTablePanel dataSetViewerTablePanel, IDataSetViewAccess dataSetViewAccess, IDataSetUpdateableModel updateableObject, int listSelectionMode, ISession session)
    {
       super(new SortableTableModel(new DataSetViewerTableModel(dataSetViewerTablePanel)));
       _dataSetViewerTablePanel = dataSetViewerTablePanel;
@@ -65,11 +64,14 @@ public final class DataSetViewerTable extends JTable
       // it would be confusing to include the "Make Editable" option
       // when we are already in edit mode, so only allow that option when
       // the background model is updateable AND we are not already editing
-      if (updateableObject != null && !creator.isTableEditable())
+      if (updateableObject != null && !dataSetViewAccess.isTableEditable())
+      {
          allowUpdate = true;
+      }
+
       createGUI(allowUpdate, updateableObject, listSelectionMode, session);
 
-      // just in case table is editable, call creator to set up cell editors
+      // just in case table is editable, call dataSetViewAccess to set up cell editors
       _dataSetViewerTablePanel.setCellEditors(this);
 
       /*
@@ -231,7 +233,7 @@ public final class DataSetViewerTable extends JTable
 
       // just in case table is editable, call creator to set up cell editors
       _dataSetViewerTablePanel.setCellEditors(this);
-      _tablePopupMenu.reset();
+      _tablePopupMenuHandler.reset();
    }
 
    public DataSetViewerTableModel getDataSetViewerTableModel()
@@ -249,7 +251,7 @@ public final class DataSetViewerTable extends JTable
     */
    private void displayPopupMenu(MouseEvent evt)
    {
-      _tablePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+      _tablePopupMenuHandler.displayPopupMenu(evt);
    }
 
 
@@ -258,7 +260,7 @@ public final class DataSetViewerTable extends JTable
       //_colDefs = hdgs;
       TableColumnModel cm = new DefaultTableColumnModel();
 
-      _rntc = new RowNumberTableColumn();
+      _rowNumberTableColumn = new RowNumberTableColumn();
 
       for (int i = 0; i < colDefs.length; ++i)
       {
@@ -309,15 +311,15 @@ public final class DataSetViewerTable extends JTable
          // Column not in model
       }
 
-      getColumnModel().removeColumn(_rntc);
+      getColumnModel().removeColumn(_rowNumberTableColumn);
       if (show)
       {
          _tableHeader.columnIndexWillBeAdded(0);
-         getColumnModel().addColumn(_rntc);
+         getColumnModel().addColumn(_rowNumberTableColumn);
          getColumnModel().moveColumn(getColumnModel().getColumnCount() - 1, 0);
       }
 
-      _tablePopupMenu.ensureRowNumersMenuItemIsUpToDate(show);
+      _tablePopupMenuHandler.ensureRowNumersMenuItemIsUpToDate(show);
    }
 
    public boolean isShowingRowNumbers()
@@ -347,8 +349,7 @@ public final class DataSetViewerTable extends JTable
       setTableHeader(_tableHeader);
       _tableHeader.setTable(this);
 
-      _tablePopupMenu = new TablePopupMenu(allowUpdate, updateableObject, _dataSetViewerTablePanel, session);
-      _tablePopupMenu.setTable(this);
+      _tablePopupMenuHandler = new TablePopupMenuHandler(allowUpdate, updateableObject, _dataSetViewerTablePanel, session);
 
       addMouseListener(new MouseAdapter()
       {
@@ -431,5 +432,10 @@ public final class DataSetViewerTable extends JTable
       Rectangle cellRect = getCellRect(viewRow, viewCol, true);
       scrollRectToVisible(cellRect);
       repaint(cellRect);
+   }
+
+   public ButtonTableHeader getButtonTableHeader()
+   {
+      return (ButtonTableHeader) getTableHeader();
    }
 }

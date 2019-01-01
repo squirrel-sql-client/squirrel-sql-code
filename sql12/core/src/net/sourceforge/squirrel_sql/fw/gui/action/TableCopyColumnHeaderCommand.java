@@ -1,14 +1,10 @@
-package net.sourceforge.squirrel_sql.fw.gui;
+package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableCopySqlPartCommandBase;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
-import javax.swing.*;
+import javax.swing.JTable;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
 public class TableCopyColumnHeaderCommand implements ICommand
@@ -25,7 +21,7 @@ public class TableCopyColumnHeaderCommand implements ICommand
    {
       int nbrSelCols = _table.getSelectedColumnCount();
       int[] selCols = _table.getSelectedColumns();
-      if (0 == selCols.length )
+      if (0 == selCols.length)
       {
          return;
       }
@@ -35,7 +31,7 @@ public class TableCopyColumnHeaderCommand implements ICommand
       {
          TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);
 
-         if(0 == buf.length())
+         if (0 == buf.length())
          {
             buf.append(col.getHeaderValue());
          }

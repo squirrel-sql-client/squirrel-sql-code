@@ -40,7 +40,7 @@ import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implements IDataSetTableControls, Printable
+public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implements IDataSetViewAccess, Printable
 {
 
 	private DataSetViewerTable _table = null;
@@ -52,7 +52,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
    private ContinueReadHandler _continueReadHandler;
    private RowColSelectedCountListener _rowColSelectedCountListener;
 
-   public DataSetViewerTablePanel()
+	public DataSetViewerTablePanel()
 	{
 	}
 
@@ -295,7 +295,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 
 	/////////////////////////////////////////////////////////////////////////
 	//
-	// Implement the IDataSetTableControls interface,
+	// Implement the IDataSetViewAccess interface,
 	// functions needed to support table operations
 	//
 	// These functions are called from within DataSetViewerTable and MyTable to tell

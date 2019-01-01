@@ -17,8 +17,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
-import javax.swing.JTable;
+
 /**
  * @author gwg
  *
@@ -35,7 +34,7 @@ import javax.swing.JTable;
  * so that the creator handle those operations.  We put the actual work into the
  * creator/caller object rather than DataSetViewerTable and MyTable.
  */
-public interface IDataSetTableControls
+public interface IDataSetViewAccess
 {
 	/**
 	 * Tell the table that it is editable.  At this level we just want to know

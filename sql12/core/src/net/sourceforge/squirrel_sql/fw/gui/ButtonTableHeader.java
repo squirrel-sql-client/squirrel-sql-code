@@ -45,9 +45,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTable
 public class ButtonTableHeader extends JTableHeader
 {
    /** Logger for this class. */
-   private static ILogger s_log =
-      LoggerController.createLogger(ButtonTableHeader.class);
-
+   private static ILogger s_log = LoggerController.createLogger(ButtonTableHeader.class);
 
    private static final String PREF_KEY_ALWAYS_ADJUST_ALL_COLUMN_HEADERS = "Squirrel.alwaysAdoptAllColumnHeaders";
 

@@ -32,12 +32,12 @@ public final class DataSetViewerTableModel extends AbstractTableModel
 {
    private List<Object[]> _data = new ArrayList<Object[]>();
    private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
-   private IDataSetTableControls _creator = null;
+   private IDataSetViewAccess _dataSetViewAccess = null;
 
 
-   DataSetViewerTableModel(IDataSetTableControls creator)
+   DataSetViewerTableModel(IDataSetViewAccess dataSetViewAccess)
 	{
-		_creator = creator;
+		_dataSetViewAccess = dataSetViewAccess;
 	}
 
 	/**
@@ -63,10 +63,10 @@ public final class DataSetViewerTableModel extends AbstractTableModel
 			return false;
 		}
 
-		if (_creator.needToReRead(col, getValueAt(row, col)))
+		if (_dataSetViewAccess.needToReRead(col, getValueAt(row, col)))
 		{
 			StringBuffer message = new StringBuffer();
-			Object newValue = _creator.reReadDatum(_data.get(row), col, message);
+			Object newValue = _dataSetViewAccess.reReadDatum(_data.get(row), col, message);
 			if (message.length() > 0)
 			{
 				// there was a problem with the read
@@ -78,7 +78,7 @@ public final class DataSetViewerTableModel extends AbstractTableModel
 			(_data.get(row))[col] = newValue;
 		}
 
-		return _creator.isColumnEditable(col, getValueAt(row, col));
+		return _dataSetViewAccess.isColumnEditable(col, getValueAt(row, col));
 	}
 
 	public Object getValueAt(int row, int col)
@@ -159,13 +159,14 @@ public final class DataSetViewerTableModel extends AbstractTableModel
 	 * If the creator succeeds in changing the underlying data,
 	 * then update the JTable as well.
 	 */
-	public void setValueAt(Object newValue, int row, int col) {
-      int[] colsToUpdate = _creator.changeUnderlyingValueAt(row, col, newValue, getValueAt(row, col));
+	public void setValueAt(Object newValue, int row, int col)
+	{
+		int[] colsToUpdate = _dataSetViewAccess.changeUnderlyingValueAt(row, col, newValue, getValueAt(row, col));
 
-      for (int i = 0; i < colsToUpdate.length; i++)
-      {
-         _data.get(row)[ colsToUpdate[i] ] = newValue;
-      }
+		for (int i = 0; i < colsToUpdate.length; i++)
+		{
+			_data.get(row)[colsToUpdate[i]] = newValue;
+		}
 	}
 	
 	/**
