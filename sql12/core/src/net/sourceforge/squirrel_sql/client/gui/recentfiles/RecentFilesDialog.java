@@ -200,6 +200,7 @@ public class RecentFilesDialog extends JDialog
 
       gbc = new GridBagConstraints(1,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       txtNumberRecentFiles = new IntegerField(4);
+      txtNumberRecentFiles.setMinimumSize(new Dimension(50, txtNumberRecentFiles.getMinimumSize().height));
       ret.add(txtNumberRecentFiles, gbc);
 
       return ret;
