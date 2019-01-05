@@ -20,7 +20,11 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.plugin.*;
+import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -32,7 +36,6 @@ import net.sourceforge.squirrel_sql.plugins.graph.link.CopyGraphAction;
 import net.sourceforge.squirrel_sql.plugins.graph.link.LinkGraphAction;
 import net.sourceforge.squirrel_sql.plugins.graph.link.PasteGraphAction;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
