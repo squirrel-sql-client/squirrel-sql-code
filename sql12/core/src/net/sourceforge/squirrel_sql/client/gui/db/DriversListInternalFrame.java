@@ -45,6 +45,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ShowDriverWebsiteAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+
 /**
  * This windows displays a list of JDBC drivers and allows the user
  * to maintain their details, add new ones etc.
@@ -162,14 +163,19 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 			_driversList = list;
 
 			final ActionCollection actions = app.getActionCollection();
-			_pm.add(actions.get(CreateDriverAction.class));
+			addToPopup(actions.get(CreateDriverAction.class), _pm);
 			_pm.addSeparator();
-			_pm.add(actions.get(ModifyDriverAction.class));
-			_pm.add(actions.get(CopyDriverAction.class));
-            _pm.add(actions.get(ShowDriverWebsiteAction.class));
-            _pm.addSeparator();
-			_pm.add(actions.get(DeleteDriverAction.class));
+			addToPopup(actions.get(ModifyDriverAction.class), _pm);
+			addToPopup(actions.get(CopyDriverAction.class), _pm);
+			addToPopup(actions.get(ShowDriverWebsiteAction.class), _pm);
 			_pm.addSeparator();
+			addToPopup(actions.get(DeleteDriverAction.class), _pm);
+			_pm.addSeparator();
+		}
+
+		private void addToPopup(Action action, BasePopupMenu popup)
+		{
+			_app.getResources().configureMenuItem(action, popup.add(action));
 		}
 
 		public ToolBar getToolBar()

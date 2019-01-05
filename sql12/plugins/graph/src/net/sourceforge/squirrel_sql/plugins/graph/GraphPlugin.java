@@ -32,7 +32,10 @@ import net.sourceforge.squirrel_sql.plugins.graph.link.CopyGraphAction;
 import net.sourceforge.squirrel_sql.plugins.graph.link.LinkGraphAction;
 import net.sourceforge.squirrel_sql.plugins.graph.link.PasteGraphAction;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin;
 
+import javax.swing.Action;
+import javax.swing.JMenu;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -51,6 +54,13 @@ public class GraphPlugin extends DefaultSessionPlugin
    private static ILogger s_log = LoggerController.createLogger(GraphPlugin.class);
 
    private PluginResources _resources;
+
+   private interface IMenuResourceKeys
+   {
+      String MENU = "graph";
+   }
+
+
 
    /**
     * Return the internal name of this plugin.
@@ -146,14 +156,31 @@ public class GraphPlugin extends DefaultSessionPlugin
             this);
 
 
+      createMenu();
+   }
+
+   private void createMenu()
+   {
+      IApplication app = getApplication();
 
       ActionCollection coll = app.getActionCollection();
-      coll.add(new AddToGraphAction(app, _resources, this));
-      coll.add(new NewQueryBuilderWindowAction(app, _resources, this));
-      coll.add(new LinkGraphAction(app, _resources, this));
-      coll.add(new CopyGraphAction(app, _resources, this));
-      coll.add(new PasteGraphAction(app, _resources, this));
-      coll.add(new AddTableAtQursorToGraph(app, _resources, this));
+
+      JMenu menu = _resources.createMenu(GraphPlugin.IMenuResourceKeys.MENU);
+      app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+
+      addToCollectionAndMenu(coll, menu, new AddToGraphAction(app, _resources, this));
+      addToCollectionAndMenu(coll, menu, new NewQueryBuilderWindowAction(app, _resources, this));
+      addToCollectionAndMenu(coll, menu, new LinkGraphAction(app, _resources, this));
+      addToCollectionAndMenu(coll, menu, new CopyGraphAction(app, _resources, this));
+      addToCollectionAndMenu(coll, menu, new PasteGraphAction(app, _resources, this));
+      addToCollectionAndMenu(coll, menu, new AddTableAtQursorToGraph(app, _resources, this));
+
+   }
+
+   private void addToCollectionAndMenu(ActionCollection coll, JMenu graphMenu, Action action)
+   {
+      coll.add(action);
+      _resources.addToMenu(action, graphMenu);
    }
 
    /**

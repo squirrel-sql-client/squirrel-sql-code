@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Extension of keyboard shortcuts configuration: Actions that don't have default shortcuts can now be assigned shortcuts.
+
 Charts for SQL results now allow to plot differences of column values.
   See tab "Overview/Charts" of a SQL result --> Toggle button "Charts" on the right --> tab "Differences".
   Possible application: A program may log steps into a database table.

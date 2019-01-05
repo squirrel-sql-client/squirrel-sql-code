@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAccessor;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortcutUtil;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirreLRSyntaxTextAreaUI;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
@@ -56,11 +57,11 @@ public class ToolsPopupHandler
          SquirrelRSyntaxTextArea rsEdit = (SquirrelRSyntaxTextArea) isqlEntryPanel.getTextComponent();
 
          Action toUpperAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaUpperSelectionCaseAction);
-         toUpperAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_UPPER_CASE);
+         toUpperAction.putValue(Resources.ACCELERATOR_STRING, ShortcutUtil.getKeystrokeString(SquirreLRSyntaxTextAreaUI.getToUpperCaseKeyStroke()));
          tpa.addToToolsPopup(SyntaxPlugin.i18n.TO_UPPER_CASE, toUpperAction);
 
          Action toLowerAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaLowerSelectionCaseAction);
-         toLowerAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_LOWER_CASE);
+         toLowerAction.putValue(Resources.ACCELERATOR_STRING, ShortcutUtil.getKeystrokeString(SquirreLRSyntaxTextAreaUI.getToLowerCaseKeyStroke()));
          tpa.addToToolsPopup(SyntaxPlugin.i18n.TO_LOWER_CASE, toLowerAction);
          
          tpa.addToToolsPopup(SyntaxPlugin.i18n.COPY_AS_RTF,_syntaxPugin.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));
@@ -87,11 +88,11 @@ public class ToolsPopupHandler
          SquirrelRSyntaxTextArea rsEdit = (SquirrelRSyntaxTextArea) sqlPanelAPI.getSQLEntryPanel().getTextComponent();
 
          Action toUpperAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaUpperSelectionCaseAction);
-         toUpperAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_UPPER_CASE);
+         toUpperAction.putValue(Resources.ACCELERATOR_STRING, ShortcutUtil.getKeystrokeString(SquirreLRSyntaxTextAreaUI.getToUpperCaseKeyStroke()));
          sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.TO_UPPER_CASE, toUpperAction);
 
          Action toLowerAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaLowerSelectionCaseAction);
-         toLowerAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_LOWER_CASE);
+         toLowerAction.putValue(Resources.ACCELERATOR_STRING, ShortcutUtil.getKeystrokeString(SquirreLRSyntaxTextAreaUI.getToLowerCaseKeyStroke()));
          sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.TO_LOWER_CASE, toLowerAction);
 
          sqlPanelAPI.addToToolsPopUp(SyntaxPlugin.i18n.COPY_AS_RTF,_syntaxPugin.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.type.SimpleType;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.Action;
@@ -100,21 +101,43 @@ public class ShortcutManager
       registerAccelerator(actionClass, Main.getApplication().getResources());
    }
 
-   public void registerAccelerator(Class<? extends Action> actionClass, Resources pluginResources)
+   public String registerAccelerator(Class<? extends Action> actionClass, Resources pluginResources)
    {
       String actionName = pluginResources.getActionName(actionClass);
-      KeyStroke defaultKeyStroke = pluginResources.getKeyStroke(actionClass);
-      _registerAccelerator(actionName, defaultKeyStroke);
+      KeyStroke defaultKeyStroke = pluginResources.getShortCutReader().getDefaultShortcutAsKeyStroke(pluginResources.getFullMenuItemKey(actionClass), actionName);
+
+      return _registerAccelerator(actionName, defaultKeyStroke).getValidKeyStroke();
    }
 
 
-   public void  registerAccelerator(String actionName, KeyStroke defaultKeyStroke)
+   public String registerAccelerator(String actionName, KeyStroke defaultKeyStroke)
    {
-      _registerAccelerator(actionName, defaultKeyStroke);
+      return _registerAccelerator(actionName, defaultKeyStroke).getValidKeyStroke();
    }
 
    private Shortcut _registerAccelerator(String actionName, KeyStroke defaultKeyStroke)
    {
+      if(StringUtilities.isEmpty(actionName, true))
+      {
+         return new Shortcut(actionName, defaultKeyStroke);
+      }
+
+
+//      if (null != keyStroke)
+//      {
+//         Shortcut nullShortcut = new Shortcut(actionName, null);
+//
+//         if (_shortcuts.contains(nullShortcut))
+//         {
+//            String userShortCutString = _shortcutsJsonBeanLoadedAtStartUp.getShortcutByKey().get(nullShortcut.generateKey());
+//            if(null != userShortCutString)
+//            {
+//               nullShortcut.setUserKeyStroke(KeyStroke.getKeyStroke(userShortCutString));
+//            }
+//            return nullShortcut;
+//         }
+//      }
+
       Shortcut ret = new Shortcut(actionName, defaultKeyStroke);
 
       String userShortCutString = _shortcutsJsonBeanLoadedAtStartUp.getShortcutByKey().get(ret.generateKey());
@@ -123,7 +146,6 @@ public class ShortcutManager
       {
          ret.setUserKeyStroke(KeyStroke.getKeyStroke(userShortCutString));
       }
-
 
       if (false == _shortcuts.contains(ret))
       {

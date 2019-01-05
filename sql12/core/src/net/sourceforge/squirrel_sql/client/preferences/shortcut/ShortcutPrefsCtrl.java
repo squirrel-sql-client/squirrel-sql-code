@@ -118,7 +118,8 @@ public class ShortcutPrefsCtrl
       for (Shortcut shortcut : _shortcuts)
       {
          if(    shortcut != _shortcuts.get(modelRow)
-             && shortcut.getValidKeyStroke().equals(_shortcuts.get(modelRow).getValidKeyStroke()))
+             && null != shortcut.getValidKeyStroke() && null != _shortcuts.get(modelRow).getValidKeyStroke()
+             && Utilities.equalsRespectNull(shortcut.getValidKeyStroke(), _shortcuts.get(modelRow).getValidKeyStroke()))
          {
             return new Color(255, 100, 100);
          }

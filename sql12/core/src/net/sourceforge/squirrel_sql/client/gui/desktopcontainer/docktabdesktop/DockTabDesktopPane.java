@@ -615,10 +615,10 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       JMenuItem ret = new JMenuItem(action);
 
       String accel = (String) action.getValue(Resources.ACCELERATOR_STRING);
-      if(null != accel && 0 != accel.trim().length())
-      {
+//      if(null != accel && 0 != accel.trim().length())
+//      {
          Main.getApplication().getShortcutManager().setAccelerator(ret, KeyStroke.getKeyStroke(accel), action);
-      }
+//      }
 
       return ret;
    }

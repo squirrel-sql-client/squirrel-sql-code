@@ -984,10 +984,10 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
       Action action = _session.getApplication().getActionCollection().get(actionClass);
 
       String accel = (String) action.getValue(Resources.ACCELERATOR_STRING);
-      if(   null != accel && 0 != accel.trim().length())
-      {
+//      if(   null != accel && 0 != accel.trim().length())
+//      {
          Main.getApplication().getShortcutManager().setAccelerator(mnuItem, KeyStroke.getKeyStroke(accel), action);
-      }
+//      }
    }
 
    private void maybeShowPopup(MouseEvent e, JPopupMenu popup)

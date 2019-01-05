@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.resources;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortCutReader;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.JScrollMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
@@ -37,35 +37,29 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import java.net.URL;
-import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 public abstract class Resources implements IResources
 {
-
-	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(Resources.class);
 
-	/** Applications resource bundle. */
-	private final ResourceBundle _bundle;
+	private final ResourceBundleHandler _bundleHandler;
 
-	/** To load resources */
+	private final ShortCutReader _shortCutReader;
+
 	private ClassLoader _classLoader;
 
-	/** Path to images. */
-	private final String _imagePath;
-
-	protected Resources(String rsrcBundleBaseName, ClassLoader cl) {
-		super();
-		if (rsrcBundleBaseName == null || rsrcBundleBaseName.trim().length() == 0)
+	protected Resources(String rsrcBundleBaseName, ClassLoader cl)
+	{
+		if (StringUtilities.isEmpty(rsrcBundleBaseName, true))
 		{
 			throw new IllegalArgumentException("Null or empty rsrcBundleBaseName passed");
 		}
 
 		_classLoader = cl;
-		_bundle = ResourceBundle.getBundle(rsrcBundleBaseName, Locale.getDefault(), cl);
-		_imagePath = _bundle.getString("path.images");
+		_bundleHandler = new ResourceBundleHandler(rsrcBundleBaseName, cl);
+
+		_shortCutReader = new ShortCutReader(_bundleHandler);
 	}
 
 	/**
@@ -74,71 +68,50 @@ public abstract class Resources implements IResources
 	public KeyStroke getKeyStroke(Action action)
 	{
 		Utilities.checkNull("getKeyStroke", "action", action);
-		return getKeyStroke(action.getClass());
+		return _shortCutReader.getShortcutAsKeyStroke(getFullMenuItemKey(action.getClass()), action);
 	}
 
-	public KeyStroke getKeyStroke(Class<? extends Action> actionClass)
+	public String getFullMenuItemKey(Class<? extends Action> actionClass)
 	{
-		final String fullKey = Keys.MENU_ITEM + "." + actionClass.getName();
-
-		String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
-		if (accel.length() > 0)
-		{
-			return KeyStroke.getKeyStroke(accel);
-		}
-		return null;
+		return Keys.MENU_ITEM + "." + actionClass.getName();
 	}
 
 
 	public String getAcceleratorString(Action action)
 	{
-		String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
+		String fullKey = getFullMenuItemKey(action.getClass());
 		return getAcceleratorString(action, fullKey, false);
 	}
 
 
 	private String getAcceleratorString(Action action, String fullKey, boolean forAppend)
 	{
-		try
-		{
-			if (false == StringUtilities.isEmpty(getResourceString(fullKey, MenuItemProperties.ACCELERATOR), true))
-			{
-				if (forAppend)
-				{
-					return "  (" + getResourceString(fullKey, MenuItemProperties.ACCELERATOR) + ")";
-				}
-				else
-				{
-					return getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
-				}
-			}
-		}
-		catch (MissingResourceException e)
-		{
-			// Some actions don't have accelerators
-		}
 
-		if (null != action.getValue(Action.ACCELERATOR_KEY))
+		String buf = _shortCutReader.getShortcutAsString(fullKey, action);
+
+		if(null == buf)
 		{
 			if (forAppend)
 			{
-				return "  (" + action.getValue(Action.ACCELERATOR_KEY) + ")";
+				return "";
 			}
 			else
 			{
-				return action.getValue(Action.ACCELERATOR_KEY).toString();
+				return null;
 			}
-		}
-
-		if (forAppend)
-		{
-			return "";
 		}
 		else
 		{
-			return null;
-		}
+			if (forAppend)
+			{
+				return "  (" + buf + ")";
+			}
+			else
+			{
+				return buf;
+			}
 
+		}
 	}
 
 
@@ -149,7 +122,7 @@ public abstract class Resources implements IResources
 	public JMenuItem addToPopupMenu(Action action, javax.swing.JPopupMenu menu) throws MissingResourceException
 	{
 		Utilities.checkNull("addToPopupMenu", "action", action, "menu", menu);
-		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
+		final String fullKey = getFullMenuItemKey(action.getClass());
 		final JMenuItem item = menu.add(action);
 
 		if (action.getValue(Action.MNEMONIC_KEY) == null)
@@ -161,14 +134,7 @@ public abstract class Resources implements IResources
 			}
 		}
 
-		if (action.getValue(Action.ACCELERATOR_KEY) == null)
-		{
-			String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
-			if (accel.length() > 0)
-			{
-				Main.getApplication().getShortcutManager().setAccelerator(item, KeyStroke.getKeyStroke(accel), action);
-			}
-		}
+		item.setAccelerator(_shortCutReader.getShortcutAsKeyStroke(fullKey, action));
 
 		String toolTipText = getToolTipText(action, fullKey, true);
 
@@ -395,8 +361,7 @@ public abstract class Resources implements IResources
 	 */
 	public String getString(String key)
 	{
-		Utilities.checkNull("getString", "key", key);
-		return _bundle.getString(key);
+		return _bundleHandler.getString(key);
 	}
 
 	public void configureMenuItem(Action action, JMenuItem item) throws MissingResourceException
@@ -407,7 +372,7 @@ public abstract class Resources implements IResources
 	public void configureMenuItem(Action action, JMenuItem item, boolean appendAccelereatorToToolTip) throws MissingResourceException
 	{
 		Utilities.checkNull("configureMenuItem", "action", action, "item", item);
-		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
+		final String fullKey = getFullMenuItemKey(action.getClass());
 
 		if (action.getValue(Action.MNEMONIC_KEY) == null)
 		{
@@ -418,14 +383,7 @@ public abstract class Resources implements IResources
 			}
 		}
 
-		if (action.getValue(Action.ACCELERATOR_KEY) == null)
-		{
-			String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
-			if (accel.length() > 0)
-			{
-				Main.getApplication().getShortcutManager().setAccelerator(item, KeyStroke.getKeyStroke(accel), action);
-			}
-		}
+		item.setAccelerator(_shortCutReader.getShortcutAsKeyStroke(fullKey, action));
 
 		String toolTipText = getToolTipText(action, fullKey, appendAccelereatorToToolTip);
 
@@ -453,9 +411,9 @@ public abstract class Resources implements IResources
 	}
 
 
-	protected ResourceBundle getBundle()
+	protected ResourceBundleHandler getBundleHandler()
 	{
-		return _bundle;
+		return _bundleHandler;
 	}
 
 	private ImageIcon privateGetIcon(String iconName)
@@ -501,11 +459,16 @@ public abstract class Resources implements IResources
 
 	private String getResourceString(String keyName, String propName) throws MissingResourceException
 	{
-		return _bundle.getString(keyName + "." + propName);
+		return _bundleHandler.getResourceString(keyName, propName);
 	}
 
 	private String getImagePathName(String iconName)
 	{
-		return _imagePath + iconName;
+		return _bundleHandler.getImagePath() + iconName;
+	}
+
+	public ShortCutReader getShortCutReader()
+	{
+		return _shortCutReader;
 	}
 }

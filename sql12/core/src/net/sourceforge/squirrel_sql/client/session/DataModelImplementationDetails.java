@@ -41,14 +41,17 @@ public class DataModelImplementationDetails
 
       if(false == StringUtilities.isEmpty(colDef.getTableName(), true))
       {
-         colDef.getTableName();
+         return colDef.getTableName();
       }
 
-      Matcher matcher = FILL_COLUMN_NAME_PATTERN.matcher(colDef.getFullTableColumnName());
-
-      if (matcher.matches())
+      if (false == StringUtilities.isEmpty(colDef.getFullTableColumnName(), true))
       {
-         return matcher.group(1);
+         Matcher matcher = FILL_COLUMN_NAME_PATTERN.matcher(colDef.getFullTableColumnName());
+
+         if (matcher.matches())
+         {
+            return matcher.group(1);
+         }
       }
 
       return "PressCtrlH";

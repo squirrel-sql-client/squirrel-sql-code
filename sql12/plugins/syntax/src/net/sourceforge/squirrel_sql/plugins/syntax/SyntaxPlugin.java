@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortcutUtil;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
@@ -247,6 +248,17 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		createMenu();
 		
 		createAdditionalActions();
+		preRegisterShortcuts();
+
+	}
+
+	private void preRegisterShortcuts()
+	{
+		SquirreLRSyntaxTextAreaUI.getToUpperCaseKeyStroke();
+		SquirreLRSyntaxTextAreaUI.getToLowerCaseKeyStroke();
+
+		SquirreLRSyntaxTextAreaUI.getLineUpKeyStroke();
+		SquirreLRSyntaxTextAreaUI.getLineDownKeyStroke();
 	}
 
 	/**
@@ -254,12 +266,13 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 	 * These actions are not part of the menu, but needs to be initialized with the resources of the syntax plugin.
 	 * Some of these actions may be depend on a concrete editor. 
 	 */
-	private void createAdditionalActions() {
+	private void createAdditionalActions()
+	{
 		IApplication app = getApplication();
 		ActionCollection coll = app.getActionCollection();
-		
+
 		coll.add(new SquirrelCopyAsRtfAction(getApplication(), _resources));
-		
+
 	}
 
 	private void createMenu()
@@ -464,19 +477,19 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 
          SquirrelRSyntaxTextArea rsEdit = (SquirrelRSyntaxTextArea) sqlPanelAPI.getSQLEntryPanel().getTextComponent();
 
-         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaUpperSelectionCaseAction, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_TO_UPPER_CASE, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_UPPER_CASE, s_stringMgr.getString("SyntaxPlugin.ToUpperShortDescription"));
-         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaLowerSelectionCaseAction, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_TO_LOWER_CASE, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_LOWER_CASE, s_stringMgr.getString("SyntaxPlugin.ToLowerShortDescription"));
+         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaUpperSelectionCaseAction, SquirreLRSyntaxTextAreaUI.getToUpperCaseKeyStroke(), s_stringMgr.getString("SyntaxPlugin.ToUpperShortDescription"));
+         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaLowerSelectionCaseAction, SquirreLRSyntaxTextAreaUI.getToLowerCaseKeyStroke(), s_stringMgr.getString("SyntaxPlugin.ToLowerShortDescription"));
 
-         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaLineUpAction, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_LINE_UP, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_LINE_UP, s_stringMgr.getString("SyntaxPlugin.LineUpShortDescription"));
-         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaLineDownAction, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_LINE_DOWN, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_LINE_DOWN, s_stringMgr.getString("SyntaxPlugin.LineDownShortDescription"));
+         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaLineUpAction, SquirreLRSyntaxTextAreaUI.getLineUpKeyStroke(), s_stringMgr.getString("SyntaxPlugin.LineUpShortDescription"));
+         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaLineDownAction, SquirreLRSyntaxTextAreaUI.getLineDownKeyStroke(), s_stringMgr.getString("SyntaxPlugin.LineDownShortDescription"));
 
       }
    }
 
-   private void configureRichTextAction(ISQLPanelAPI sqlPanelAPI, SquirrelRSyntaxTextArea rsEdit, String rtaKey, KeyStroke acceleratorKeyStroke, String acceleratorDescription, String shortDescription)
+   private void configureRichTextAction(ISQLPanelAPI sqlPanelAPI, SquirrelRSyntaxTextArea rsEdit, String rtaKey, KeyStroke acceleratorKeyStroke, String shortDescription)
    {
       Action action = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, rtaKey);
-      action.putValue(Resources.ACCELERATOR_STRING, acceleratorDescription);
+      action.putValue(Resources.ACCELERATOR_STRING, ShortcutUtil.getKeystrokeString(acceleratorKeyStroke));
 
       action.putValue(Action.SHORT_DESCRIPTION, shortDescription);
       action.putValue(Action.MNEMONIC_KEY, 0);

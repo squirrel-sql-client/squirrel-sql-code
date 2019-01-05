@@ -906,7 +906,7 @@ public class WindowManager
 		actions.add(new DeleteDriverAction(_app, dl));
 		actions.add(new CopyDriverAction(_app, dl));
 		actions.add(new CreateDriverAction(_app));
-        actions.add(new ShowDriverWebsiteAction(_app, dl));
+      actions.add(new ShowDriverWebsiteAction(_app, dl));
 
 		_driversListWindow = new DriversListInternalFrame(_app, dl);
 	}

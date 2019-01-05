@@ -128,7 +128,7 @@ public class SquirrelResources extends Resources
 		throws IllegalArgumentException
 	{
 		super(rsrcBundleBaseName, SquirrelResources.class.getClassLoader());
-		_defaultsPath = getBundle().getString("path.defaults");
+		_defaultsPath = getBundleHandler().getString("path.defaults");
 	}
 
 	public URL getDefaultDriversUrl()
@@ -138,6 +138,6 @@ public class SquirrelResources extends Resources
 
 	public URL getCreditsURL()
 	{
-		return getClass().getResource(getBundle().getString("Credits.file"));
+		return getClass().getResource(getBundleHandler().getString("Credits.file"));
 	}
 }

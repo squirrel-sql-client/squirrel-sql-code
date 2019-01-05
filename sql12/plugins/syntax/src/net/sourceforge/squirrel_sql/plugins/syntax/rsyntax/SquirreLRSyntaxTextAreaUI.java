@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLEntryPanelUtil;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaDefaultInputMap;
@@ -19,15 +20,11 @@ import java.awt.event.KeyEvent;
 
 public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
 {
-   public static final String RS_ACCELERATOR_STRING_TO_UPPER_CASE = "ctrl shift u";
-   public static final String RS_ACCELERATOR_STRING_TO_LOWER_CASE = "ctrl shift l";
-   public static final KeyStroke RS_ACCELERATOR_KEY_STROKE_TO_UPPER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
-   public static final KeyStroke RS_ACCELERATOR_KEY_STROKE_TO_LOWER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+   private static final KeyStroke RS_KEY_STROKE_TO_UPPER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+   private static final KeyStroke RS_KEY_STROKE_TO_LOWER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
 
-   public static final String RS_ACCELERATOR_LINE_UP = "ctrl shift up";
-   public static final String RS_ACCELERATOR_LINE_DOWN = "ctrl shift down";
-   public static final KeyStroke RS_ACCELERATOR_KEY_STROKE_LINE_UP = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
-   public static final KeyStroke RS_ACCELERATOR_KEY_STROKE_LINE_DOWN = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+   private static final KeyStroke RS_KEY_STROKE_LINE_UP = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+   private static final KeyStroke RS_KEY_STROKE_LINE_DOWN = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
 
    private static final EditorKit _squirrel_defaultKit =
       new RSyntaxTextAreaEditorKit()
@@ -55,14 +52,18 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
 
       InputMap map = new InputMapUIResource();
       InputMap shared = (InputMap)UIManager.get("RSyntaxTextAreaUI.inputMap");
-      if (shared==null) {
+
+      if (shared == null)
+      {
          shared = new RSyntaxTextAreaDefaultInputMap();
          modifiyKeystrokes(shared);
          UIManager.put("RSyntaxTextAreaUI.inputMap", shared);
       }
+
       //KeyStroke[] keys = shared.allKeys();
       //for (int i=0; i<keys.length; i++)
       //	System.err.println(keys[i] + " -> " + shared.get(keys[i]));
+
       map.setParent(shared);
       return map;
    }
@@ -87,11 +88,11 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
        */
       shared.remove(KeyStroke.getKeyStroke(' '));
 
-      shared.put(RS_ACCELERATOR_KEY_STROKE_TO_UPPER_CASE, RTextAreaEditorKit.rtaUpperSelectionCaseAction);
-      shared.put(RS_ACCELERATOR_KEY_STROKE_TO_LOWER_CASE, RTextAreaEditorKit.rtaLowerSelectionCaseAction);
+      shared.put(getToUpperCaseKeyStroke(), RTextAreaEditorKit.rtaUpperSelectionCaseAction);
+      shared.put(getToLowerCaseKeyStroke(), RTextAreaEditorKit.rtaLowerSelectionCaseAction);
 
-      shared.put(RS_ACCELERATOR_KEY_STROKE_LINE_UP, RTextAreaEditorKit.rtaLineUpAction);
-      shared.put(RS_ACCELERATOR_KEY_STROKE_LINE_DOWN, RTextAreaEditorKit.rtaLineDownAction);
+      shared.put(getLineUpKeyStroke(), RTextAreaEditorKit.rtaLineUpAction);
+      shared.put(getLineDownKeyStroke(), RTextAreaEditorKit.rtaLineDownAction);
 
       
 
@@ -140,6 +141,29 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       }
       throw new IllegalStateException("Action " + actionName + "not found");
    }
+
+   public static KeyStroke getToUpperCaseKeyStroke()
+   {
+      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaUpperSelectionCaseAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_TO_UPPER_CASE));
+   }
+
+   public static KeyStroke getToLowerCaseKeyStroke()
+   {
+      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaLowerSelectionCaseAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_TO_LOWER_CASE));
+   }
+
+   public static KeyStroke getLineUpKeyStroke()
+   {
+      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaLineUpAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_LINE_UP));
+   }
+
+   public static KeyStroke getLineDownKeyStroke()
+   {
+      return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaLineDownAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_LINE_DOWN));
+   }
+
+
+
 
    @Override
    public EditorKit getEditorKit(JTextComponent tc)
