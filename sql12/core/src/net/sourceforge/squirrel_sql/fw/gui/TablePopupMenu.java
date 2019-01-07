@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.gui;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
@@ -53,14 +52,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
 import java.awt.Component;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterJob;
 
@@ -75,7 +70,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private JCheckBoxMenuItem _showRowNumbersItem;
 
 
-	private CopyAction _copy = new CopyAction();
+	private DataSetViewerTableCopyAction _copy;
 	private CopyWithHeadersAction _copyWithHeaders = new CopyWithHeadersAction();
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
 	private CopyAlignedAction _copyAligned = new CopyAlignedAction();
@@ -118,17 +113,6 @@ public class TablePopupMenu extends BasePopupMenu
 	private ICopyWikiTableActionFactory copyWikiTableActionFactory = CopyWikiTableActionFactory.getInstance();
 
 
-	public static String getTableCopyActionName()
-	{
-		return s_stringMgr.getString("TablePopupMenu.copy");
-	}
-
-	public static KeyStroke getTableCopyActionKeyStroke()
-	{
-		return KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-	}
-
-
 	/**
 	 * Constructor used when caller wants to be able to make table editable.
 	 * We need both parameters because there is at least one case where the
@@ -151,9 +135,9 @@ public class TablePopupMenu extends BasePopupMenu
 
 
 		// add the menu items to the menu
+		_copy = new DataSetViewerTableCopyAction(dataSetViewerTablePanel.getTable());
 		JMenuItem mnuCopy = add(_copy);
-		Main.getApplication().getShortcutManager().setAccelerator(mnuCopy, getTableCopyActionKeyStroke(), _copy);
-		replaceStandardTableCopyAction();
+		Main.getApplication().getShortcutManager().setAccelerator(mnuCopy, DataSetViewerTableCopyAction.getTableCopyActionKeyStroke(), _copy);
 
 
 
@@ -257,18 +241,6 @@ public class TablePopupMenu extends BasePopupMenu
 	}
 
 
-	private void replaceStandardTableCopyAction()
-	{
-		ShortcutManager shortcutManager = Main.getApplication().getShortcutManager();
-
-		KeyStroke keyStroke = shortcutManager.getValidKeyStroke(getTableCopyActionName(), getTableCopyActionKeyStroke());
-
-		_dataSetViewerTablePanel.getTable().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, "CopyAction");
-		_dataSetViewerTablePanel.getTable().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "CopyAction");
-		_dataSetViewerTablePanel.getTable().getInputMap(JComponent.WHEN_FOCUSED).put(keyStroke, "CopyAction");
-		_dataSetViewerTablePanel.getTable().getActionMap().put("CopyAction", _copy);
-	}
-
 	/**
 	 * Show the menu.
 	 */
@@ -295,21 +267,6 @@ public class TablePopupMenu extends BasePopupMenu
 		_showRowNumbersItem.setAction(_showRowNumbersAction);
 	}
 
-
-
-
-	private class CopyAction extends BaseAction
-	{
-		CopyAction()
-		{
-			super(getTableCopyActionName());
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			new TableCopyCommand(_dataSetViewerTablePanel.getTable(), false).execute();
-		}
-	}
 
 	private class CopyWithHeadersAction extends BaseAction
 	{

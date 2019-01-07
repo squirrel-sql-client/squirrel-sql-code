@@ -56,6 +56,8 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+Copy on tables didn't work as usual until the table's right mouse menu was opened the first time.
+
 #1376 New function "open SQL file at session startup" causes Nullpointer exception
 
 #1375 Bad MACOSX_SQUIRREL_PROPS in squirrel-sql-mac.sh

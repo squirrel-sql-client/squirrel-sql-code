@@ -91,7 +91,7 @@ import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAct
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
-import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.DataSetViewerTableCopyAction;
 
 /**
  * Supposed to be the place where actions are
@@ -268,7 +268,7 @@ public class ActionRegistry
 
       shortcutManager.registerAccelerator(UndoAction.class);
       shortcutManager.registerAccelerator(RedoAction.class);
-      shortcutManager.registerAccelerator(TablePopupMenu.getTableCopyActionName(), TablePopupMenu.getTableCopyActionKeyStroke());
+      shortcutManager.registerAccelerator(DataSetViewerTableCopyAction.getTableCopyActionName(), DataSetViewerTableCopyAction.getTableCopyActionKeyStroke());
 
    }
 
