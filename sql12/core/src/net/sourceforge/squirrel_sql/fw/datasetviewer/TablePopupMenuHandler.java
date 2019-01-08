@@ -22,6 +22,9 @@ public class TablePopupMenuHandler
       _dataSetViewerTablePanel = dataSetViewerTablePanel;
       _session = session;
 
+      // The TablePopupMenu MUST be created that early
+      // to make the shortcuts, that are defined in TablePopupMenu,
+      // work right from beginning of the time the table exists.
       createTableMenuPopupWhenTableIsPresent();
 
    }
