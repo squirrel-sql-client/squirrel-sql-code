@@ -44,16 +44,4 @@ public class DataSetViewerTableCopyAction extends BaseAction
       return KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
    }
 
-   public static void replaceStandardTableCopyAction(DataSetViewerTable dataSetViewerTable)
-   {
-      ShortcutManager shortcutManager = Main.getApplication().getShortcutManager();
-
-      KeyStroke keyStroke = shortcutManager.getValidKeyStroke(getTableCopyActionName(), getTableCopyActionKeyStroke());
-
-      dataSetViewerTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, "CopyAction");
-      dataSetViewerTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "CopyAction");
-      dataSetViewerTable.getInputMap(JComponent.WHEN_FOCUSED).put(keyStroke, "CopyAction");
-      dataSetViewerTable.getActionMap().put("CopyAction", new DataSetViewerTableCopyAction(dataSetViewerTable));
-   }
-
 }

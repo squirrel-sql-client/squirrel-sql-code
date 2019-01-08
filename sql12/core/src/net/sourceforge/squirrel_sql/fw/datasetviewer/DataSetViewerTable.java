@@ -351,7 +351,6 @@ public final class DataSetViewerTable extends JTable
       _tableHeader.setTable(this);
 
       _tablePopupMenuHandler = new TablePopupMenuHandler(allowUpdate, updateableObject, _dataSetViewerTablePanel, session);
-      DataSetViewerTableCopyAction.replaceStandardTableCopyAction(this);
 
       addMouseListener(new MouseAdapter()
       {

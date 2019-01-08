@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Made most menu entries of the table's right mouse menu work with keyboard shortcuts.
+  Note: Most menus don't have predefined keyboard shortcuts.
+        They may be defined using menu File --> "Global Preferences" --> tab "Keyboard shortcuts"
+
 Extension of keyboard shortcuts configuration: Actions that don't have default shortcuts can now be assigned shortcuts.
 
 Charts for SQL results now allow to plot differences of column values.

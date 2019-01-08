@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
@@ -51,9 +52,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -122,7 +127,7 @@ public class TablePopupMenu extends BasePopupMenu
 	 */
 	public TablePopupMenu(boolean allowEditing,
 								 IDataSetUpdateableModel updateableModel,
-								 DataSetViewerTablePanel dataSetViewerTablePanel,
+								 DataSetViewerTablePanel dataSetViewerTable,
 								 ISession session)
 	{
 		// save the pointer needed to enable editing of data on-demand
@@ -130,76 +135,76 @@ public class TablePopupMenu extends BasePopupMenu
 
 
 		// save the pointer needed for insert and delete operations
-		_dataSetViewerTablePanel = dataSetViewerTablePanel;
+		_dataSetViewerTablePanel = dataSetViewerTable;
 		_session = session;
 
 
-		// add the menu items to the menu
-		_copy = new DataSetViewerTableCopyAction(dataSetViewerTablePanel.getTable());
-		JMenuItem mnuCopy = add(_copy);
-		Main.getApplication().getShortcutManager().setAccelerator(mnuCopy, DataSetViewerTableCopyAction.getTableCopyActionKeyStroke(), _copy);
+		_copy = new DataSetViewerTableCopyAction(dataSetViewerTable.getTable());
+		addAction(_copy, DataSetViewerTableCopyAction.getTableCopyActionKeyStroke());
 
 
+		addAction(_copyWithHeaders);
+		addAction(_copyHtml);
+		addAction(_copyAligned);
+		addAction(_copyAsMarkdown);
+		addAction(_copySeparatedBy);
 
-		add(_copyWithHeaders);
-		add(_copyHtml);
-		add(_copyAligned);
-		add(_copyAsMarkdown);
-		add(_copySeparatedBy);
-
+		// This is a JMenu with sub menu items that's why we can't use addMenuItem(...).
 		add(copyWikiTableActionFactory.createMenueItem(() -> _dataSetViewerTablePanel.getTable()));
-		add(_copyInStatement);
-		add(_copyWhereStatement);
-		add(_copyUpdateStatement);
-      add(_copyInsertStatement);
-      add(_copyColumnHeader);
+
+		addAction(_copyInStatement);
+		addAction(_copyWhereStatement);
+		addAction(_copyUpdateStatement);
+      addAction(_copyInsertStatement);
+      addAction(_copyColumnHeader);
 
 		if (null != _session)
 		{
 			addSeparator();
-			add(_showReferences);
+			addAction(_showReferences);
 		}
 
 		addSeparator();
-		add(_copySelectedRowsToOwnWindow);
+		addAction(_copySelectedRowsToOwnWindow);
 
 		addSeparator();
-		add(_colorSelectedRows);
+		addAction(_colorSelectedRows);
+
+		// This is a JMenu with sub menu items that's why we can't use addMenuItem(...).
 		add(_gotoColorMenuController.getParentMenu());
-
 		addSeparator();
 
-		add(_exportCvs);
+		addAction(_exportCvs);
       addSeparator();
-      add(_adjustAllColWidthsAction);
+      addAction(_adjustAllColWidthsAction);
 
       _alwaysAdjustAllColWidtshActionItem = new JCheckBoxMenuItem();
 		_alwaysAdjustAllColWidtshActionItem.setSelected(ButtonTableHeader.isAlwaysAdjustAllColWidths());
 		_alwaysAdjustAllColWidtshActionItem.setAction(_alwaysAdjustAllColWidthsAction);
-      add(_alwaysAdjustAllColWidtshActionItem);
+		addMenuItem(_alwaysAdjustAllColWidtshActionItem);
 
       addSeparator();
       
       _showRowNumbersItem = new JCheckBoxMenuItem();
 		_showRowNumbersItem.setSelected(false);
 		_showRowNumbersItem.setAction(_showRowNumbersAction);
-		add(_showRowNumbersItem);
+		addMenuItem(_showRowNumbersItem);
 
 
 		if (allowEditing)
 		{
 			addSeparator();
-			add(_makeEditable);
+			addAction(_makeEditable);
 		}
 //		if  ( ! allowEditing )
 		if (updateableModel != null && updateableModel.editModeIsForced())
 		{
-			add(_undoMakeEditable);
+			addAction(_undoMakeEditable);
 		}
 		addSeparator();
-		add(_select);
+		addAction(_select);
 		
-		add(_selectRows);
+		addAction(_selectRows);
 		
 
 		// add entries for insert and delete rows
@@ -207,12 +212,54 @@ public class TablePopupMenu extends BasePopupMenu
 		if (_updateableModel != null && allowEditing == false)
 		{
 			addSeparator();
-			add(_insertRow);
-			add(_deleteRows);
+			addAction(_insertRow);
+			addAction(_deleteRows);
 		}
 
 		addSeparator();
-		add(_print);
+		addAction(_print);
+	}
+
+	private void addMenuItem(JMenuItem menuItem)
+	{
+		String actionName = menuItem.getText();
+		KeyStroke validKeyStroke = Main.getApplication().getShortcutManager().setAccelerator(menuItem, null, actionName);
+		add(menuItem);
+
+		if (null != validKeyStroke)
+		{
+			DataSetViewerTable table = _dataSetViewerTablePanel.getTable();
+			table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(validKeyStroke, actionName);
+			table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(validKeyStroke, actionName);
+			table.getInputMap(JComponent.WHEN_FOCUSED).put(validKeyStroke, actionName);
+			table.getActionMap().put(actionName, new AbstractAction(){
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					menuItem.doClick();
+				}
+			});
+		}
+	}
+
+	private void addAction(Action action)
+	{
+		addAction(action, null);
+	}
+
+	private void addAction(Action action, KeyStroke defaultKeyStroke)
+	{
+		KeyStroke validKeyStroke = Main.getApplication().getShortcutManager().setAccelerator(add(action), defaultKeyStroke, action);
+
+		if (null != validKeyStroke)
+		{
+			DataSetViewerTable table = _dataSetViewerTablePanel.getTable();
+			table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(validKeyStroke, action.getClass().getName());
+			table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(validKeyStroke, action.getClass().getName());
+			table.getInputMap(JComponent.WHEN_FOCUSED).put(validKeyStroke, action.getClass().getName());
+			table.getActionMap().put(action.getClass().getName(), action);
+		}
+
 	}
 
 	/**
@@ -255,7 +302,7 @@ public class TablePopupMenu extends BasePopupMenu
 		super.show(evt);
 	}
 
-	public void ensureRowNumersMenuItemIsUpToDate(boolean currentState)
+	public void ensureRowNumbersMenuItemIsUpToDate(boolean currentState)
 	{
 		if( currentState == _showRowNumbersItem.isSelected())
 		{

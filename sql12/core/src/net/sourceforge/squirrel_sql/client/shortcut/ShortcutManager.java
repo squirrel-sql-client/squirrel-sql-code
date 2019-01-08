@@ -71,15 +71,18 @@ public class ShortcutManager
       return new ArrayList<>(_shortcuts);
    }
 
-   public void setAccelerator(JMenuItem item, KeyStroke defaultKeyStroke, Action action)
+   public KeyStroke setAccelerator(JMenuItem item, KeyStroke defaultKeyStroke, Action action)
    {
-      setAccelerator(item, defaultKeyStroke, (String) action.getValue(Action.NAME));
+      return setAccelerator(item, defaultKeyStroke, (String) action.getValue(Action.NAME));
    }
 
-   public void setAccelerator(JMenuItem item, KeyStroke defaultKeyStroke, String actionName)
+   public KeyStroke setAccelerator(JMenuItem item, KeyStroke defaultKeyStroke, String actionName)
    {
       Shortcut shortcut = _registerAccelerator(actionName, defaultKeyStroke);
+
       item.setAccelerator(shortcut.validKeyStroke());
+
+      return KeyStroke.getKeyStroke(shortcut.getValidKeyStroke());
    }
 
 
@@ -121,22 +124,6 @@ public class ShortcutManager
       {
          return new Shortcut(actionName, defaultKeyStroke);
       }
-
-
-//      if (null != keyStroke)
-//      {
-//         Shortcut nullShortcut = new Shortcut(actionName, null);
-//
-//         if (_shortcuts.contains(nullShortcut))
-//         {
-//            String userShortCutString = _shortcutsJsonBeanLoadedAtStartUp.getShortcutByKey().get(nullShortcut.generateKey());
-//            if(null != userShortCutString)
-//            {
-//               nullShortcut.setUserKeyStroke(KeyStroke.getKeyStroke(userShortCutString));
-//            }
-//            return nullShortcut;
-//         }
-//      }
 
       Shortcut ret = new Shortcut(actionName, defaultKeyStroke);
 
