@@ -38,7 +38,10 @@ public final class CellRenderer extends DefaultTableCellRenderer implements Squi
       JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       label.putClientProperty("html.disable", Boolean.TRUE);
 
-      _coloringService.colorCell(this, _dataTypeObject, table, value, isSelected, hasFocus, row, column);
+      if (null != _coloringService)
+      {
+         _coloringService.colorCell(this, _dataTypeObject, table, value, isSelected, hasFocus, row, column);
+      }
 
       return label;
    }
