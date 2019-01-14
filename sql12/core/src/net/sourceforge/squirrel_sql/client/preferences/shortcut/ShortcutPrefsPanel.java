@@ -25,6 +25,7 @@ public class ShortcutPrefsPanel extends JPanel
 
    JTextField txtShortcut = new JTextField(20);
    JButton btnApply = new JButton(s_stringMgr.getString("ShortcutPrefsPanel.btn.apply"));
+   JButton btnRemove = new JButton(s_stringMgr.getString("ShortcutPrefsPanel.btn.remove"));
    JButton btnRestoreDefault = new JButton(s_stringMgr.getString("ShortcutPrefsPanel.btn.restore.default"));;
    JButton btnRestoreAll = new JButton(s_stringMgr.getString("ShortcutPrefsPanel.btn.restore.all"));;
 
@@ -72,12 +73,15 @@ public class ShortcutPrefsPanel extends JPanel
       ret.add(btnApply, gbc);
 
       gbc = new GridBagConstraints(1,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      ret.add(btnRestoreDefault, gbc);
+      ret.add(btnRemove, gbc);
 
       gbc = new GridBagConstraints(1,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      ret.add(btnRestoreDefault, gbc);
+
+      gbc = new GridBagConstraints(1,4,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       ret.add(btnRestoreAll, gbc);
 
-      gbc = new GridBagConstraints(0,4,2,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,5,2,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       ret.add(new MultipleLineLabel(s_stringMgr.getString("ShortcutPrefsPanel.notes")), gbc);
 
 

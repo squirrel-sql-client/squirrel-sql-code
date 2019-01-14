@@ -86,19 +86,6 @@ public class ShortcutManager
    }
 
 
-   public KeyStroke getValidKeyStroke(String actionName, KeyStroke defaultKeyStroke)
-   {
-      String shortCutString = _shortcutsJsonBeanLoadedAtStartUp.getShortcutByKey().get(ShortcutUtil.generateKey(actionName, defaultKeyStroke));
-
-      if(null != shortCutString)
-      {
-         return KeyStroke.getKeyStroke(shortCutString);
-      }
-
-      return defaultKeyStroke;
-   }
-
-
    public void registerAccelerator(Class<? extends Action> actionClass)
    {
       registerAccelerator(actionClass, Main.getApplication().getResources());
@@ -133,6 +120,10 @@ public class ShortcutManager
       {
          ret.setUserKeyStroke(KeyStroke.getKeyStroke(userShortCutString));
       }
+      else if (_shortcutsJsonBeanLoadedAtStartUp.getShortcutByKey().containsKey(ret.generateKey()))
+      {
+         ret.setUserKeyStrokeEmpty();
+      }
 
       if (false == _shortcuts.contains(ret))
       {
@@ -151,7 +142,7 @@ public class ShortcutManager
          {
             if(shortcut.hasUserKeyStroke())
             {
-               bean.getShortcutByKey().put(shortcut.generateKey(), shortcut.generateUsrKeyStrokeString());
+               bean.getShortcutByKey().put(shortcut.generateKey(), shortcut.generateUserKeyStrokeString());
             }
          }
 

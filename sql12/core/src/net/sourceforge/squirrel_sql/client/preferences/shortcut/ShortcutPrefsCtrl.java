@@ -90,6 +90,8 @@ public class ShortcutPrefsCtrl
 
       _shortcutPrefsPanel.btnApply.addActionListener(e -> onApply());
 
+      _shortcutPrefsPanel.btnRemove.addActionListener(e -> onRemove());
+
       _shortcutPrefsPanel.btnRestoreDefault.addActionListener(e -> onRestore());
 
       _shortcutPrefsPanel.btnRestoreAll.addActionListener(e -> onRestoreAll());
@@ -121,13 +123,27 @@ public class ShortcutPrefsCtrl
              && null != shortcut.getValidKeyStroke() && null != _shortcuts.get(modelRow).getValidKeyStroke()
              && Utilities.equalsRespectNull(shortcut.getValidKeyStroke(), _shortcuts.get(modelRow).getValidKeyStroke()))
          {
-            return new Color(255, 100, 100);
+            if (isSelected)
+            {
+               return new Color(255, 100, 100).darker();
+            }
+            else
+            {
+               return new Color(255, 100, 100);
+            }
          }
       }
 
       if(_shortcuts.get(modelRow).hasUserKeyStroke())
       {
-         return Color.green;
+         if (isSelected)
+         {
+            return Color.green.darker();
+         }
+         else
+         {
+            return Color.green;
+         }
       }
 
       return null;
@@ -200,6 +216,15 @@ public class ShortcutPrefsCtrl
       displayShortcuts();
 
    }
+
+   private void onRemove()
+   {
+      Shortcut selectedShortcut = getSelectedShortcut();
+      selectedShortcut.setUserKeyStrokeEmpty();
+
+      displayShortcuts();
+   }
+
 
 
    private void onRestore()

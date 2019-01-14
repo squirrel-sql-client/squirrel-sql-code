@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Extension of keyboard shortcuts configuration: Existing default shortcuts can now also be removed instead of just replaced.
+
 Made most menu entries of the table's right mouse menu work with keyboard shortcuts.
   Note: Most menus don't have predefined keyboard shortcuts.
         They may be defined using menu File --> "Global Preferences" --> tab "Keyboard shortcuts"
