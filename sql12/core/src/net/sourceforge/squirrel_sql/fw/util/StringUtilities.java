@@ -371,4 +371,20 @@ public class StringUtilities
       return s;
    }
 
+   public static String shorten(String in, int maxLen, String incompleteIndikator)
+   {
+      if(in.length() <= maxLen)
+      {
+         return in;
+      }
+
+      if (null == incompleteIndikator)
+      {
+         return in.substring(in.length() - maxLen);
+      }
+      else
+      {
+         return incompleteIndikator +  in.substring(in.length() - maxLen);
+      }
+   }
 }

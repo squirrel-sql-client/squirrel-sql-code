@@ -60,6 +60,8 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+Export SQL result to file function: Write success dialog didn't display long export file paths well.
+
 #1380 'Insert row' window didn't repaint right because of NullPointerException
 
 Copy on tables didn't work as usual until the table's right mouse menu was opened the first time.

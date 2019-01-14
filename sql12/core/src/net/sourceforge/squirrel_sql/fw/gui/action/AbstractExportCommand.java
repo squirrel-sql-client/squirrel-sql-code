@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -289,9 +290,11 @@ public abstract class AbstractExportCommand
 
          String formattedWrittenRows = NumberFormat.getIntegerInstance().format(writtenRows);
 
+         String fileName = StringUtilities.shorten(exportFile.getAbsolutePath(), 300, "...");
+
          int selectIndex = JOptionPane.showOptionDialog(
                owner,
-               s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", formattedWrittenRows, exportFile.getAbsolutePath()),
+               s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", formattedWrittenRows, fileName),
                s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess.title"),
                JOptionPane.DEFAULT_OPTION,
                JOptionPane.INFORMATION_MESSAGE,
