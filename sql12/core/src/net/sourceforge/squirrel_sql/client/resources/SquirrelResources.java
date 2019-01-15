@@ -33,7 +33,7 @@ public class SquirrelResources extends Resources
    public interface IMenuResourceKeys
 	{
 		String ALIASES = "aliases";
-		String CLOSE_ALL_SQL_RESULTS = "close_all_sql_results";
+		String RESULTS_TABS = "result_tabs";
 		String DRIVERS = "drivers";
 //		String EDIT = "edit";
 		String OSX_FILE = "osxFile";

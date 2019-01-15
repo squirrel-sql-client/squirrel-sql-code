@@ -82,7 +82,7 @@ public interface IResultTab {
 
    void findColumn();
 
-   void markDuplicates();
+   void markDuplicates(ActionEvent e);
 
    boolean isMarkDuplicates();
 

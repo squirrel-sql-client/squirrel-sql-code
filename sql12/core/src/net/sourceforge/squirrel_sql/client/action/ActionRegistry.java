@@ -72,7 +72,7 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoActio
 import net.sourceforge.squirrel_sql.client.session.action.RemoveNewLinesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RemoveQuotesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RenameSessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.RerunCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
 import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
@@ -90,6 +90,10 @@ import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInOb
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindColumnAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.gui.DataSetViewerTableCopyAction;
 
@@ -239,7 +243,14 @@ public class ActionRegistry
       actionCollection.add(new FormatSQLAction(app));
 
       actionCollection.add(new RenameSessionAction(app));
-      actionCollection.add(new RerunCurrentSQLResultTabAction(app));
+
+      actionCollection.add(new RerunCurrentSQLResultTabAction());
+      actionCollection.add(new CreateResultTabFrameAction());
+      actionCollection.add(new FindInResultAction());
+      actionCollection.add(new FindColumnAction());
+      actionCollection.add(new MarkDuplicatesToggleAction());
+
+
 
       actionCollection.add(new InQuotesAction(app));
       actionCollection.add(new RemoveQuotesAction(app));

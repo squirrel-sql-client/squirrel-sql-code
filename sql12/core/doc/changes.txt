@@ -62,6 +62,8 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+Keyboard shortcuts configuration: Result tab toolbar functions didn't allow user defined short cuts.
+
 Export SQL result to file function: Write success dialog didn't display long export file paths well.
 
 #1380 'Insert row' window didn't repaint right because of NullPointerException

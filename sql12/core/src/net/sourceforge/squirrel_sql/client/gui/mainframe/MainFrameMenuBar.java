@@ -31,6 +31,11 @@ import net.sourceforge.squirrel_sql.client.action.ChanneledAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindColumnAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.util.SystemProperties;
@@ -306,19 +311,13 @@ final class MainFrameMenuBar extends JMenuBar
 		menu.addSeparator();
       menu.add(createFileMenu(rsrc));
       menu.addSeparator();
-		addToMenu(rsrc, GotoPreviousResultsTabAction.class, menu);
-		addToMenu(rsrc, GotoNextResultsTabAction.class, menu);
-		addToMenu(rsrc, ToggleCurrentSQLResultTabStickyAction.class, menu);
-		addToMenu(rsrc, ToggleCurrentSQLResultTabAnchoredAction.class, menu);
-		addToMenu(rsrc, RerunCurrentSQLResultTabAction.class, menu);
-		menu.addSeparator();
 		addToMenu(rsrc, ShowNativeSQLAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, ReconnectAction.class, menu);
 		addToMenu(rsrc, CloseSessionWindowAction.class, menu);
 		addToMenu(rsrc, CloseSessionAction.class, menu);
 	   addToMenu(rsrc, RenameSessionAction.class, menu);
-		menu.add(createSQLResultsCloseMenu(rsrc));
+		menu.add(createSQLResultTabMenu(rsrc));
 		menu.addSeparator();
 		addToMenu(rsrc, PreviousSessionAction.class, menu);
 		addToMenu(rsrc, NextSessionAction.class, menu);
@@ -446,15 +445,30 @@ final class MainFrameMenuBar extends JMenuBar
 		return menu;
 	}
 
-	private JMenu createSQLResultsCloseMenu(Resources rsrc)
+	private JMenu createSQLResultTabMenu(Resources rsrc)
 	{
-		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.CLOSE_ALL_SQL_RESULTS);
+		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.RESULTS_TABS);
+
+		addToMenu(rsrc, GotoPreviousResultsTabAction.class, menu);
+		addToMenu(rsrc, GotoNextResultsTabAction.class, menu);
+		addToMenu(rsrc, ToggleCurrentSQLResultTabStickyAction.class, menu);
+		addToMenu(rsrc, ToggleCurrentSQLResultTabAnchoredAction.class, menu);
+
+		menu.addSeparator();
+		addToMenu(rsrc, CreateResultTabFrameAction.class, menu);
+		addToMenu(rsrc, FindInResultAction.class, menu);
+		addToMenu(rsrc, FindColumnAction.class, menu);
+		addToMenu(rsrc, MarkDuplicatesToggleAction.class, menu);
+		addToMenu(rsrc, RerunCurrentSQLResultTabAction.class, menu);
+
+		menu.addSeparator();
 		addToMenu(rsrc, CloseAllSQLResultTabsAction.class, menu);
 		addToMenu(rsrc, CloseCurrentSQLResultTabAction.class, menu);
 		addToMenu(rsrc, CloseAllSQLResultTabsButCurrentAction.class, menu);
 		addToMenu(rsrc, CloseAllSQLResultTabsToLeftAction.class, menu);
 		addToMenu(rsrc, CloseAllSQLResultTabsToRightAction.class, menu);
 		addToMenu(rsrc, CloseAllSQLResultWindowsAction.class, menu);
+
 		return menu;
 	}
 

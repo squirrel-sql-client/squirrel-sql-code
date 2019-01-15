@@ -2,25 +2,41 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecuterPanelFacade;
 
 import java.awt.event.ActionEvent;
 
-public class CreateResultTabFrameAction extends SquirrelAction
+public class CreateResultTabFrameAction extends SquirrelAction  implements ISQLPanelAction
 {
-   private SQLResultExecuterPanelFacade _sqlResultExecuterPanelFacade;
-   private ResultTab _resultTab;
+   private ResultTabProvider _resultTabProvider;
 
-   public CreateResultTabFrameAction(SQLResultExecuterPanelFacade sqlResultExecuterPanelFacade, ResultTab resultTab)
+   public CreateResultTabFrameAction(ResultTab resultTab)
    {
       super(Main.getApplication(), Main.getApplication().getResources());
-      _sqlResultExecuterPanelFacade = sqlResultExecuterPanelFacade;
-      _resultTab = resultTab;
+      _resultTabProvider = new ResultTabProvider(resultTab);
+   }
+
+   /**
+    * Just to load this action into Session menu.
+    */
+   public CreateResultTabFrameAction()
+   {
+      this(null);
+   }
+
+   @Override
+   public void setSQLPanel(ISQLPanelAPI panel)
+   {
+      _resultTabProvider.setSQLPanelAPI(panel);
    }
 
    public void actionPerformed(ActionEvent evt)
    {
-      _sqlResultExecuterPanelFacade.createSQLResultFrame(_resultTab);
+      if(_resultTabProvider.hasResultTab())
+      {
+         _resultTabProvider.getResultTab().getSQLResultExecuterPanelFacade().createSQLResultFrame(_resultTabProvider.getResultTab());
+      }
    }
 }

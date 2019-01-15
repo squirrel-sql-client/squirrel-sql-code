@@ -25,7 +25,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.*;
-import net.sourceforge.squirrel_sql.client.session.action.RerunCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.findcolumn.FindColumnCtrl;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.AdditionalResultTabsController;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CloseAction;
@@ -49,6 +49,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -574,14 +575,14 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       ret.add(new TabButton(new FindColumnAction(this)));
       ret.add(new TabButton(new FindInResultAction(this)));
-      ret.add(new TabButton(new CreateResultTabFrameAction(_sqlResultExecuterPanelFacade, this)));
-      ret.add(new TabButton(new CloseAction(_sqlResultExecuterPanelFacade, this)));
+      ret.add(new TabButton(new CreateResultTabFrameAction(this)));
+      ret.add(new TabButton(new CloseAction(this)));
       return ret;
    }
 
    private RerunCurrentSQLResultTabAction getRerunCurrentSQLResultTabAction()
    {
-	   RerunCurrentSQLResultTabAction rtn = new RerunCurrentSQLResultTabAction(_session.getApplication(), this);
+	   RerunCurrentSQLResultTabAction rtn = new RerunCurrentSQLResultTabAction(this);
 	   
 	   rtn.setSQLPanel( _session.getSQLPanelAPIOfActiveSessionWindow() );
  
@@ -627,8 +628,16 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 
    @Override
-   public void markDuplicates()
+   public void markDuplicates(ActionEvent e)
    {
+      if(e.getSource() != _btnToggleMarkDuplicates)
+      {
+         // Happens through shortcut or menu.
+         _btnToggleMarkDuplicates.doClick();
+         return;
+      }
+
+
       DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _dataSetViewerFindDecorator.getDataSetViewer();
 
       MarkDuplicatesHandler markDuplicatesHandler = dataSetViewerTablePanel.getTable().getColoringService().getMarkDuplicatesHandler();
@@ -680,4 +689,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    }
 
 
+   public SQLResultExecuterPanelFacade getSQLResultExecuterPanelFacade()
+   {
+      return _sqlResultExecuterPanelFacade;
+   }
 }

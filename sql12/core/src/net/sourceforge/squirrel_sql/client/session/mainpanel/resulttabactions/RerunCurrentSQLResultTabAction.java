@@ -8,37 +8,32 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
 
 import java.awt.event.ActionEvent;
 
-public class FindInResultAction extends SquirrelAction implements ISQLPanelAction
+public class RerunCurrentSQLResultTabAction extends SquirrelAction implements ISQLPanelAction
 {
    private ResultTabProvider _resultTabProvider;
 
-   public FindInResultAction(ResultTab resultTab)
-   {
-      super(Main.getApplication(), Main.getApplication().getResources());
+	public RerunCurrentSQLResultTabAction(ResultTab resultTab)
+	{
+		super(Main.getApplication());
       _resultTabProvider = new ResultTabProvider(resultTab);
    }
 
-   /**
-    * Just to load this action into Session menu.
-    */
-   public FindInResultAction()
-   {
+	public RerunCurrentSQLResultTabAction()
+	{
       this(null);
    }
 
+	public void setSQLPanel(ISQLPanelAPI panel)
+	{
+      setEnabled(_resultTabProvider.setSQLPanelAPI(panel));
+	}
 
-   @Override
-   public void setSQLPanel(ISQLPanelAPI panel)
+   public synchronized void actionPerformed(ActionEvent evt)
    {
-      _resultTabProvider.setSQLPanelAPI(panel);
-   }
-
-   public void actionPerformed(ActionEvent evt)
-   {
-      if(_resultTabProvider.hasResultTab())
+      if (_resultTabProvider.hasResultTab())
       {
-         _resultTabProvider.getResultTab().toggleShowFindPanel();
+         _resultTabProvider.getResultTab().reRunSQL();
       }
-
    }
 }
+

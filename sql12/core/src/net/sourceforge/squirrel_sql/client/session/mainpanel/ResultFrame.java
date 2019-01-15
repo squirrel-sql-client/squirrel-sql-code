@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 /**
@@ -105,7 +106,7 @@ public class ResultFrame extends SessionDialogWidget
       _btnReRun.addActionListener(e -> onRerun());
 
       _btnMarkDuplicates.setSelected(_tab.isMarkDuplicates());
-      _btnMarkDuplicates.addActionListener(e -> onMarkDuplicates());
+      _btnMarkDuplicates.addActionListener(e -> onMarkDuplicates(e));
 
       _btnToggleFind.addActionListener(e -> onFind());
 
@@ -127,9 +128,9 @@ public class ResultFrame extends SessionDialogWidget
       _tab.findColumn();
    }
 
-   private void onMarkDuplicates()
+   private void onMarkDuplicates(ActionEvent e)
    {
-      _tab.markDuplicates();
+      _tab.markDuplicates(e);
    }
 
    private void onRerun()
