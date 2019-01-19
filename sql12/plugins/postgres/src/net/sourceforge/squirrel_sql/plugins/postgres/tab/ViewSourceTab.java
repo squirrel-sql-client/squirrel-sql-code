@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.postgres.tab;
  */
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 /**
  * This class will display the source for a view.  This will work for databases that support the SQL standard
@@ -48,10 +49,22 @@ public class ViewSourceTab extends FormattedSourceTab
 	@Override
    protected String getSqlStatement()
    {
-		return
-		"select view_definition " + 
-		"from information_schema.views " + 
-		"where table_schema = ? " + 
-		"and table_name = ? ";
+   	// This was the version before bug #1306
+//		return
+//		"select view_definition " +
+//		"from information_schema.views " +
+//		"where table_schema = ? " +
+//		"and table_name = ? ";
+
+		return "select pg_get_viewdef(?::regclass::oid)";
    }
+
+	@Override
+	protected String[] getBindValues()
+	{
+		IDatabaseObjectInfo databaseObjectInfo = getDatabaseObjectInfo();
+
+		//return new String[]{databaseObjectInfo.getSchemaName() + "." + databaseObjectInfo.getSimpleName()};
+		return new String[]{databaseObjectInfo.getQualifiedName()};
+	}
 }
