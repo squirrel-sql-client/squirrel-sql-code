@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.RSyntaxSQLEntryAreaFactory;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 
 import java.util.HashMap;
 
@@ -16,7 +17,7 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
 		StringManagerFactory.getStringManager(SQLEntryPanelFactoryProxy.class);
 
 
-   private SyntaxPlugin _syntaxPugin;
+   private SyntaxPlugin _syntaxPlugin;
 
    /** The original Squirrel SQL CLient factory for creating SQL entry panels. */
    private ISQLEntryPanelFactory _originalFactory;
@@ -24,11 +25,11 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
    private RSyntaxSQLEntryAreaFactory _rsyntaxFactory;
 
 
-   SQLEntryPanelFactoryProxy(SyntaxPlugin syntaxPugin, ISQLEntryPanelFactory originalFactory)
+   SQLEntryPanelFactoryProxy(SyntaxPlugin syntaxPlugin, ISQLEntryPanelFactory originalFactory)
    {
       _originalFactory = originalFactory;
-      _rsyntaxFactory = new RSyntaxSQLEntryAreaFactory(syntaxPugin);
-      _syntaxPugin = syntaxPugin;
+      _rsyntaxFactory = new RSyntaxSQLEntryAreaFactory(syntaxPlugin);
+      _syntaxPlugin = syntaxPlugin;
    }
 
    public void sessionEnding(ISession session)
@@ -53,17 +54,23 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
       if (prefs.getUseRSyntaxTextArea())
       {
          newPnl = _rsyntaxFactory.createSQLEntryPanel(session, props);
+
+         if(_syntaxPlugin.getSyntaxPreferences().isReplaceTabsBySpaces())
+         {
+            ((SquirrelRSyntaxTextArea)newPnl.getTextComponent()).setTabsEmulated(true);
+         }
       }
       else
       {
          newPnl = _originalFactory.createSQLEntryPanel(session, props);
       }
 
-      new ToolsPopupHandler(_syntaxPugin).initToolsPopup(props, newPnl);
+      newPnl.getTextComponent().setTabSize(_syntaxPlugin.getSyntaxPreferences().getTabLength());
 
-      new AutoCorrector(newPnl.getTextComponent(), _syntaxPugin);
 
-      new TabKeyHandler(newPnl.getTextComponent(), _syntaxPugin);
+      new ToolsPopupHandler(_syntaxPlugin).initToolsPopup(props, newPnl);
+
+      new AutoCorrector(newPnl.getTextComponent(), _syntaxPlugin);
 
       if(null == pnl || false == newPnl.getClass().equals(pnl.getClass()))
       {
@@ -77,23 +84,23 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
 
    private SyntaxPreferences getPreferences(ISession session)
    {
-      return (SyntaxPreferences)session.getPluginObject(_syntaxPugin,
+      return (SyntaxPreferences)session.getPluginObject(_syntaxPlugin,
          IConstants.ISessionKeys.PREFS);
    }
 
    private void removePanel(ISession session)
    {
-      session.removePluginObject(_syntaxPugin, IConstants.ISessionKeys.SQL_ENTRY_CONTROL);
+      session.removePluginObject(_syntaxPlugin, IConstants.ISessionKeys.SQL_ENTRY_CONTROL);
    }
 
    private ISQLEntryPanel getPanel(ISession session)
    {
-      return (ISQLEntryPanel)session.getPluginObject(_syntaxPugin, IConstants.ISessionKeys.SQL_ENTRY_CONTROL);
+      return (ISQLEntryPanel)session.getPluginObject(_syntaxPlugin, IConstants.ISessionKeys.SQL_ENTRY_CONTROL);
    }
 
    private void savePanel(ISession session, ISQLEntryPanel pnl)
    {
-      session.putPluginObject(_syntaxPugin, IConstants.ISessionKeys.SQL_ENTRY_CONTROL, pnl);
+      session.putPluginObject(_syntaxPlugin, IConstants.ISessionKeys.SQL_ENTRY_CONTROL, pnl);
    }
 
 
