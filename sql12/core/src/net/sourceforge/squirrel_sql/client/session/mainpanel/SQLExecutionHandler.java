@@ -402,12 +402,17 @@ class SQLExecutionHandler implements ISQLExecuterHandler
          throws DataSetException
    {
 	   // i18n[SQLResultExecuterPanel.outputStatus=Building output...]
-	   String outputStatus = s_stringMgr.getString("SQLResultExecuterPanel.outputStatus");
-
-	   _cancelPanelCtrl.setStatusLabel(outputStatus);
 
 	   _rsds = new ResultSetDataSet();
+
+      _cancelPanelCtrl.setStatusLabel(s_stringMgr.getString("SQLResultExecuterPanel.outputStatus"));
+      _cancelPanelCtrl.setResultSetDataSetInProgress(_rsds);
+
+
       _rsds.setLimitDataRead(true);
+
+
+
 
       try
       {
@@ -419,8 +424,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
          {
             rsmdds = new ResultSetMetaDataDataSet(rs.getResultSet());
          }
-         DialectType dialectType =
-               DialectFactory.getDialectType(_session.getMetaData());
+         DialectType dialectType = DialectFactory.getDialectType(_session.getMetaData());
 
          // rsds.setContentsTabResultSet() reads the result set. So results processing on the DB is over
          // and this time is measured. None is interested in the time that it takes us to render Swing tables ...

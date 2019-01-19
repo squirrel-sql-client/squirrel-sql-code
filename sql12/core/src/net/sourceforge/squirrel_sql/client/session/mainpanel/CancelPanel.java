@@ -18,6 +18,7 @@ public class CancelPanel extends JPanel
    JButton cancelBtn;
    JButton closeBtn;
    JTextField txtExecTimeCounter;
+   JTextField txtNumberOfRowsRead;
 
 
    public CancelPanel(ISession session)
@@ -106,17 +107,28 @@ public class CancelPanel extends JPanel
       txtExecTimeCounter = new JTextField();
       txtExecTimeCounter.setEditable(false);
       txtExecTimeCounter.setColumns(10);
-      GUIUtils.forceProperty(() -> checkAndForceExecCounterSize());
+      GUIUtils.forceProperty(() -> checkAndForceSize(txtExecTimeCounter));
       ret.add(txtExecTimeCounter, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
       ret.add(new JLabel(s_stringMgr.getString("SQLResultExecuterPanel.execMillis")), gbc);
 
 
+      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SQLResultExecuterPanel.numberOfRowsRead")), gbc);
+
+      gbc = new GridBagConstraints(1,1,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      txtNumberOfRowsRead = new JTextField();
+      txtNumberOfRowsRead.setEditable(false);
+      txtNumberOfRowsRead.setColumns(10);
+      GUIUtils.forceProperty(() -> checkAndForceSize(txtNumberOfRowsRead));
+      ret.add(txtNumberOfRowsRead, gbc);
+
       return ret;
    }
 
-   private boolean checkAndForceExecCounterSize()
+
+   private boolean checkAndForceSize(JTextField txtExecTimeCounter)
    {
       int width = 120;
       txtExecTimeCounter.setPreferredSize(new Dimension(width, txtExecTimeCounter.getPreferredSize().height));

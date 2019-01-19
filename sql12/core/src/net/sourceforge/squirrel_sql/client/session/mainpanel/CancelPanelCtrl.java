@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -34,24 +35,11 @@ class CancelPanelCtrl
       _listener = listener;
       _panel = new CancelPanel(session);
 
-      _panel.cancelBtn.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onCancel();
-         }
-      });
+      _panel.cancelBtn.addActionListener(e -> onCancel());
 
-      _panel.closeBtn.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onClose();
-         }
-      });
-      _timer = new TimerHolder(_panel.txtExecTimeCounter);
+      _panel.closeBtn.addActionListener(e -> onClose());
+
+      _timer = new TimerHolder(_panel.txtExecTimeCounter, _panel.txtNumberOfRowsRead);
    }
    void incCurrentQueryIndex()
    {
@@ -130,5 +118,10 @@ class CancelPanelCtrl
    public void wasRemoved()
    {
       _timer.stop();
+   }
+
+   public void setResultSetDataSetInProgress(ResultSetDataSet rsds)
+   {
+      _timer.setResultSetDataSetInProgress(rsds);
    }
 }
