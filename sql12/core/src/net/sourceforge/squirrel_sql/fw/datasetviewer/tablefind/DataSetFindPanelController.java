@@ -45,80 +45,24 @@ public class DataSetFindPanelController
       _messageHandler = messageHandler;
       _dataSetFindPanel = new DataSetFindPanel();
 
-      _dataSetFindPanel.btnDown.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onFind(FindMode.FORWARD);
-         }
-      });
+      _dataSetFindPanel.btnDown.addActionListener(e -> onFind(FindMode.FORWARD));
 
-      _dataSetFindPanel.btnUp.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onFind(FindMode.BACKWARD);
-         }
-      });
+      _dataSetFindPanel.btnUp.addActionListener(e -> onFind(FindMode.BACKWARD));
 
-      _dataSetFindPanel.btnHighlightFindResult.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onFind(FindMode.HIGHLIGHT);
-         }
-      });
+      _dataSetFindPanel.btnHighlightFindResult.addActionListener(e -> onFind(FindMode.HIGHLIGHT));
 
-      _dataSetFindPanel.btnUnhighlightResult.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            clearFind();
-         }
-      });
+      _dataSetFindPanel.btnUnhighlightResult.addActionListener(e -> clearFind());
 
-      _dataSetFindPanel.btnShowRowsFoundInTable.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onShowRowsFoundInTable(session);
-         }
-      });
+      _dataSetFindPanel.btnShowRowsFoundInTable.addActionListener(e -> onShowRowsFoundInTable(session));
 
 
 
 
-      _dataSetFindPanel.btnHideFindPanel.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            dataSetFindPanelListener.hideFindPanel();
-         }
-      });
+      _dataSetFindPanel.btnHideFindPanel.addActionListener(e -> dataSetFindPanelListener.hideFindPanel());
 
-      _dataSetFindPanel.chkCaseSensitive.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            clearFind();
-         }
-      });
+      _dataSetFindPanel.chkCaseSensitive.addActionListener(e -> clearFind());
 
-      _dataSetFindPanel.cboMatchType.addItemListener(new ItemListener()
-      {
-         @Override
-         public void itemStateChanged(ItemEvent e)
-         {
-            clearFind();
-         }
-      });
+      _dataSetFindPanel.cboMatchType.addItemListener(e -> clearFind());
 
       for (int i = 0; i <  MAX_HIST_LENGTH; i++)
       {

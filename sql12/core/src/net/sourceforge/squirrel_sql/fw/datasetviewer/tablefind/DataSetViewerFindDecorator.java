@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
@@ -14,6 +15,7 @@ public class DataSetViewerFindDecorator
 {
    private IDataSetViewer _dataSetViewer;
    private boolean _putTableInScrollpane;
+   private ISession _session;
    private final JSplitPane _split;
    private boolean _findPanelOpen;
 
@@ -30,6 +32,7 @@ public class DataSetViewerFindDecorator
    {
       _dataSetViewer = dataSetViewer;
       _putTableInScrollpane = putTableInScrollpane;
+      _session = session;
 
       _split = new JSplitPane();
       _split.setDividerSize(0);
@@ -111,6 +114,13 @@ public class DataSetViewerFindDecorator
          _split.setLeftComponent(new NullPanel());
          _split.setDividerLocation(0);
          _dataSetFindPanelController.wasHidden();
+
+         ISQLPanelAPI sqlPanelAPI = _session.getSQLPanelAPIOfActiveSessionWindow();
+
+         if(null != sqlPanelAPI)
+         {
+            sqlPanelAPI.getSQLEntryPanel().requestFocus();
+         }
       }
 
       return true;
