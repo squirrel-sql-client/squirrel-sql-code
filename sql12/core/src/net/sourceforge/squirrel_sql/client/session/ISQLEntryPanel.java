@@ -186,4 +186,5 @@ public interface ISQLEntryPanel extends IHasIdentifier
 
 	void triggerParser();
 
+	void goToLastEditLocation();
 }

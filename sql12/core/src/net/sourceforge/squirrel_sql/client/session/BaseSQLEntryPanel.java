@@ -49,20 +49,16 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
    private BoundsOfSqlHandler _boundsOfSqlHandler;
 
+	private LastEditLocationHandler _lastEditLocationHandler;
 
-   protected BaseSQLEntryPanel(IApplication app)
+
+	protected BaseSQLEntryPanel(IApplication app)
 	{
 		_entryPanelIdentifier = ENTRY_PANEL_IDENTIFIER_FACTORY.createIdentifier();
 		_textPopupMenu = new TextPopupMenu();
 		_app = app;
 
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-            initLater();
-			}
-		});
+		SwingUtilities.invokeLater(() -> initLater());
 
 	}
 
@@ -70,6 +66,8 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
    {
       getTextComponent().addMouseListener(_sqlEntryMouseListener);
       _boundsOfSqlHandler = new BoundsOfSqlHandler(getTextComponent());
+
+		_lastEditLocationHandler = new LastEditLocationHandler(getTextComponent());
    }
 
    public IIdentifier getIdentifier()
@@ -266,7 +264,13 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 	{
 	}
 
-	private final class MyMouseListener extends MouseAdapter
+   @Override
+   public void goToLastEditLocation()
+   {
+      _lastEditLocationHandler.goToLastEditLocation();
+   }
+
+   private final class MyMouseListener extends MouseAdapter
 	{
 		public void mousePressed(MouseEvent evt)
 		{

@@ -54,6 +54,7 @@ import net.sourceforge.squirrel_sql.client.session.action.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FormatSQLAction;
+import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.InQuotesAction;
@@ -95,7 +96,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Fi
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
-import net.sourceforge.squirrel_sql.fw.gui.DataSetViewerTableCopyAction;
 
 /**
  * Supposed to be the place where actions are
@@ -145,6 +145,7 @@ public class ActionRegistry
       toolsPopupController.addAction("sqlprevious", ac.get(PreviousSqlAction.class));
       toolsPopupController.addAction("sqlnext", ac.get(NextSqlAction.class));
       toolsPopupController.addAction("sqlselect", ac.get(SelectSqlAction.class));
+      toolsPopupController.addAction("sqllastedit", ac.get(SelectSqlAction.class));
 
       toolsPopupController.addAction("format", ac.get(FormatSQLAction.class));
 
@@ -239,6 +240,7 @@ public class ActionRegistry
       actionCollection.add(new PreviousSqlAction(app));
       actionCollection.add(new NextSqlAction(app));
       actionCollection.add(new SelectSqlAction(app));
+      actionCollection.add(new GoToLastEditLocationAction(app));
       actionCollection.add(new OpenSqlHistoryAction(app));
       actionCollection.add(new FormatSQLAction(app));
 

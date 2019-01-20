@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New tool bar button: Got to last edit location. Moves the SQL editor's cursor to the last edited location.
+
 SQL execution: When result rows are being read, the number of rows read is displayed below the elapsed execution time.
 
 Extension of keyboard shortcuts configuration: Existing default shortcuts can now also be removed instead of just replaced.

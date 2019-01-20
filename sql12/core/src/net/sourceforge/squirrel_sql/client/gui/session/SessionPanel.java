@@ -524,6 +524,7 @@ public class SessionPanel extends JPanel
          add(actions.get(PreviousSqlAction.class));
          add(actions.get(NextSqlAction.class));
          add(actions.get(SelectSqlAction.class));
+         add(actions.get(GoToLastEditLocationAction.class));
       }
    }
 
