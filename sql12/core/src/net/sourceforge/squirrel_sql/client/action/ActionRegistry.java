@@ -279,7 +279,7 @@ public class ActionRegistry
 
       shortcutManager.registerAccelerator(UndoAction.class);
       shortcutManager.registerAccelerator(RedoAction.class);
-      shortcutManager.registerAccelerator(DataSetViewerTableCopyAction.getTableCopyActionName(), DataSetViewerTableCopyAction.getTableCopyActionKeyStroke());
+      //shortcutManager.registerAccelerator(DataSetViewerTableCopyAction.getTableCopyActionName(), DataSetViewerTableCopyAction.getTableCopyActionKeyStroke());
 
    }
 

@@ -55,10 +55,8 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
       {
          newPnl = _rsyntaxFactory.createSQLEntryPanel(session, props);
 
-         if(_syntaxPlugin.getSyntaxPreferences().isReplaceTabsBySpaces())
-         {
-            ((SquirrelRSyntaxTextArea)newPnl.getTextComponent()).setTabsEmulated(true);
-         }
+         boolean replaceTabsBySpaces = _syntaxPlugin.getSyntaxPreferences().isReplaceTabsBySpaces();
+         ((SquirrelRSyntaxTextArea)newPnl.getTextComponent()).setTabsEmulated(replaceTabsBySpaces);
       }
       else
       {
