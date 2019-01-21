@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New right mouse menu item on tables "Copy colored rows to new window",
+  which copies all rows that were colored before to a new window.
+
 When "Find in SQL result" panel is hidden the SQL editor regains focus.
   This is convenient when a keyboard shortcut was assigned to the "Find in SQL result" function.
 

@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectEntireRowsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectedRowsCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.CopyColoredRowsToNewWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.GotoColorMenuController;
 import net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby.TableCopySeparatedByCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
@@ -92,6 +93,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopySelectedRowsToOwnWindowAction _copySelectedRowsToOwnWindow = new CopySelectedRowsToOwnWindowAction();
 	private ColorSelectedRowsAction _colorSelectedRows = new ColorSelectedRowsAction();
 	private GotoColorMenuController _gotoColorMenuController = new GotoColorMenuController();
+	private CopyColoredRowsToNewWindowAction _copyColoredRowsToNewWindow = new CopyColoredRowsToNewWindowAction();
 
 	private ExportCsvAction _exportCvs = new ExportCsvAction();
    private AdjustAllColWidthsAction _adjustAllColWidthsAction = new AdjustAllColWidthsAction();
@@ -172,6 +174,8 @@ public class TablePopupMenu extends BasePopupMenu
 
 		// This is a JMenu with sub menu items that's why we can't use addMenuItem(...).
 		add(_gotoColorMenuController.getParentMenu());
+
+		add(_copyColoredRowsToNewWindow);
 		addSeparator();
 
 		addAction(_exportCvs);
@@ -508,6 +512,19 @@ public class TablePopupMenu extends BasePopupMenu
       public void actionPerformed(ActionEvent evt)
       {
          new ColorSelectedRowsCommand(_dataSetViewerTablePanel.getTable()).execute();
+      }
+   }
+
+   private class CopyColoredRowsToNewWindowAction extends BaseAction
+   {
+		CopyColoredRowsToNewWindowAction()
+      {
+         super(s_stringMgr.getString("TablePopupMenu.CopyColoredRowsToNewWindow"));
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+         new CopyColoredRowsToNewWindowCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
       }
    }
 
