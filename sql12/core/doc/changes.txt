@@ -69,6 +69,10 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+ClassCastException when exporting result table. Could be reproduced as follows:
+  Choose to show row numbers. --> select a part of table and choose "Select entire rows afterwards".
+  --> Export CSV/Excel/Json results in ClassCastException.
+
 #1306 Postgres Plugin: source code for views does not display
   Thanks to Mikhail Kiselev for suggesting the new way to query the source code.
 
