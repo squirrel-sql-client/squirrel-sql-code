@@ -16,14 +16,6 @@ package net.sourceforge.squirrel_sql.plugins.dataimport;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Date;
-import java.util.List;
-
-import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -37,308 +29,257 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ColumnMappingTableModel;
-import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ProgressBarDialog;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.UnsupportedFormatException;
-import net.sourceforge.squirrel_sql.plugins.dataimport.prefs.DataImportPreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.dataimport.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.dataimport.util.DateUtils;
+
+import javax.swing.JOptionPane;
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Executors;
 
 /**
  * This class does the main work for importing the file into the database.
- * 
+ *
  * @author Thorsten Mürell
  */
 public class ImportDataIntoTableExecutor
 {
-	private final static ILogger log = LoggerController.createLogger(ImportDataIntoTableExecutor.class);
+   private final static ILogger log = LoggerController.createLogger(ImportDataIntoTableExecutor.class);
 
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager stringMgr =
-			StringManagerFactory.getStringManager(ImportDataIntoTableExecutor.class);
+   private static final StringManager stringMgr = StringManagerFactory.getStringManager(ImportDataIntoTableExecutor.class);
 
-	/**
-	 * the thread we do the work in
-	 */
-	private Thread execThread = null;
+   private ISession _session;
+   private ITableInfo _table;
+   private TableColumnInfo[] _columns;
+   private ColumnMappingTableModel _columnMappingModel;
+   private IFileImporter _importer;
+   private List<String> _importerColumns;
+   private boolean skipHeader = false;
 
-	private ISession session = null;
-	private ITableInfo table = null;
-	private TableColumnInfo[] columns = null;
-	private ColumnMappingTableModel columnMapping = null;
-	private IFileImporter importer = null;
-	private List<String> importerColumns = null;
-	private boolean skipHeader = false;
-
-	private final boolean _singleTransaction;
-	private final int _commitAfterEveryInserts;
+   private final boolean _singleTransaction;
+   private final int _commitAfterEveryInserts;
+   private boolean _deleteExistingData;
 
 
-	/**
-	 * The standard constructor
-	 *
-	 * @param session                 The session
-	 * @param table                   The table to import into
-	 * @param columns                 The columns of the destination table
-	 * @param importerColumns         The columns of the importer
-	 * @param mapping                 The mapping of the columns
-	 * @param importer                The file importer
-	 * @param singleTransaction
-	 * @param commitAfterEveryInserts
-	 */
-	public ImportDataIntoTableExecutor(ISession session,
-												  ITableInfo table,
-												  TableColumnInfo[] columns,
-												  List<String> importerColumns,
-												  ColumnMappingTableModel mapping,
-												  IFileImporter importer,
-												  boolean singleTransaction,
-												  int commitAfterEveryInserts)
-	{
-		this.session = session;
-		this.table = table;
-		this.columns = columns;
-		this.columnMapping = mapping;
-		this.importer = importer;
-		this.importerColumns = importerColumns;
+   /**
+    * The standard constructor
+    *
+    * @param session                 The session
+    * @param table                   The table to import into
+    * @param columns                 The columns of the destination table
+    * @param importerColumns         The columns of the importer
+    * @param mapping                 The mapping of the columns
+    * @param importer                The file importer
+    * @param singleTransaction
+    * @param commitAfterEveryInserts
+    * @param selected
+    */
+   public ImportDataIntoTableExecutor(ISession session,
+                                      ITableInfo table,
+                                      TableColumnInfo[] columns,
+                                      List<String> importerColumns,
+                                      ColumnMappingTableModel mapping,
+                                      IFileImporter importer,
+                                      boolean singleTransaction,
+                                      int commitAfterEveryInserts,
+                                      boolean deleteExistingData)
+   {
+      _session = session;
+      _table = table;
+      _columns = columns;
+      _columnMappingModel = mapping;
+      _importer = importer;
+      _importerColumns = importerColumns;
 
-		_singleTransaction = singleTransaction;
-		_commitAfterEveryInserts = commitAfterEveryInserts;
-	}
+      _singleTransaction = singleTransaction;
+      _commitAfterEveryInserts = commitAfterEveryInserts;
+      _deleteExistingData = deleteExistingData;
+   }
 
-	/**
-     * If the header should be skipped
-     * 
-     * @param skip
-     */
-    public void setSkipHeader(boolean skip) {
-    	skipHeader = skip;
-    }
+   /**
+    * If the header should be skipped
+    *
+    * @param skip
+    */
+   public void setSkipHeader(boolean skip)
+   {
+      skipHeader = skip;
+   }
 
-	/**
+   /**
     * Starts the thread that executes the insert operation.
     */
    public void execute()
 	{
-		Runnable runnable = new Runnable()
-      {
-         @Override
-        public void run()
-         {
-            _execute(_singleTransaction, _commitAfterEveryInserts);
-         }
-      };
-		execThread = new Thread(runnable);
+      ImportProgressCtrl importProgressCtrl = new ImportProgressCtrl(_table);
+
+      Thread execThread = new Thread(() -> _execute(_singleTransaction, _commitAfterEveryInserts, _deleteExistingData, importProgressCtrl));
 		execThread.setName("Dataimport Executor Thread");
 		execThread.setUncaughtExceptionHandler(createUncaughtExceptionHandler());
 		execThread.start();
 	}
 
-	/**
-     * Performs the table copy operation.
-	  * @param singleTransaction
-	  * @param commitAfterEveryInserts
-	  */
-	 private void _execute(boolean singleTransaction, int commitAfterEveryInserts)
-	 {
-		 // Create column list
-		 String columnList = createColumnList();
-		 ISQLConnection conn = session.getSQLConnection();
+   /**
+    * Performs the table copy operation.
+    *  @param singleTransaction
+    * @param commitAfterEveryInserts
+    * @param deleteExistingData
+    * @param importProgressCtrl
+    */
+   private void _execute(boolean singleTransaction, int commitAfterEveryInserts, boolean deleteExistingData, ImportProgressCtrl importProgressCtrl)
+   {
+      ISQLConnection conn = _session.getSQLConnection();
 
-		 StringBuffer insertSQL = new StringBuffer();
-		 insertSQL.append("insert into ").append(table.getQualifiedName());
-		 insertSQL.append(" (").append(columnList).append(") ");
-		 insertSQL.append("VALUES ");
-		 insertSQL.append(" (").append(getQuestionMarks(getColumnCount())).append(")");
+      StringBuffer insertSQL = new StringBuffer();
+      insertSQL.append("insert into ").append(_table.getQualifiedName());
+      insertSQL.append(" (").append(createColumnList()).append(") ");
+      insertSQL.append("VALUES ");
+      insertSQL.append(" (").append(getQuestionMarks(_columnMappingModel.getColumnCountExcludingSkipped(_columns))).append(")");
 
-		 PreparedStatement stmt = null;
-		 int currentRow = 0;
-		 boolean success = false;
+      PreparedStatement stmt = null;
+      int currentRow = 0;
+      boolean success = false;
 
-		 boolean originalAutoCommit = getOriginalAutoCommit(conn);
+      boolean originalAutoCommit = getOriginalAutoCommit(conn);
 
-		 try
-		 {
-			 conn.setAutoCommit(false);
+      try
+      {
+         conn.setAutoCommit(false);
 
-			 DataImportPreferenceBean settings = PreferencesManager.getPreferences();
-			 importer.open();
-			 if (skipHeader)
-				 importer.next();
+         _importer.open();
 
-			 if (settings.isUseTruncate())
-			 {
-				 String sql = "DELETE FROM " + table.getQualifiedName();
-				 stmt = conn.prepareStatement(sql);
-				 stmt.execute();
-				 stmt.close();
-			 }
+         if (skipHeader)
+         {
+            _importer.next();
+         }
 
-			 stmt = conn.prepareStatement(insertSQL.toString());
-			 //i18n[ImportDataIntoTableExecutor.importingDataInto=Importing data into {0}]
-			 ProgressBarDialog.getDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.importingDataInto", table.getSimpleName()), false, null);
-			 int inputLines = importer.getRows();
-			 if (inputLines > 0)
-			 {
-				 ProgressBarDialog.setBarMinMax(0, inputLines == -1 ? 5000 : inputLines);
-			 }
-			 else
-			 {
-				 ProgressBarDialog.setIndeterminate();
-			 }
+         if (deleteExistingData)
+         {
+            String sql = "DELETE FROM " + _table.getQualifiedName();
+            stmt = conn.prepareStatement(sql);
+            stmt.executeUpdate();
+            stmt.close();
+         }
 
-			 while (importer.next())
-			 {
-				 currentRow++;
-				 if (inputLines > 0)
-				 {
-					 ProgressBarDialog.incrementBar(1);
-				 }
-				 stmt.clearParameters();
-				 int i = 1;
-				 for (TableColumnInfo column : columns)
-				 {
-					 String mapping = getMapping(column);
-					 try
-					 {
-						 if (SpecialColumnMapping.SKIP.getVisibleString().equals(mapping))
-						 {
-							 continue;
-						 }
-						 else if (SpecialColumnMapping.FIXED_VALUE.getVisibleString().equals(mapping))
-						 {
-							 bindFixedColumn(stmt, i++, column);
-						 }
-						 else if (SpecialColumnMapping.AUTO_INCREMENT.getVisibleString().equals(mapping))
-						 {
-							 bindAutoincrementColumn(stmt, i++, column, currentRow);
-						 }
-						 else if (SpecialColumnMapping.NULL.getVisibleString().equals(mapping))
-						 {
-							 stmt.setNull(i++, column.getDataType());
-						 }
-						 else
-						 {
-							 bindColumn(stmt, i++, column);
-						 }
-					 }
-					 catch (UnsupportedFormatException ufe)
-					 {
-						 // i18n[ImportDataIntoTableExecutor.wrongFormat=Imported column has not the required format.\nLine is: {0}, column is: {1}]
-						 showMessageDialogOnEDT(stringMgr.getString("ImportDataIntoTableExecutor.wrongFormat", ufe.getMessage(), currentRow, i - 1, column.getColumnName()));
-						 throw ufe;
-					 }
-				 }
-				 stmt.execute();
+         stmt = conn.prepareStatement(insertSQL.toString());
 
-				 if (false == singleTransaction)
-				 {
-					 if(0 < currentRow && 0 == currentRow % commitAfterEveryInserts)
-                {
-                   conn.commit();
-                }
-				 }
-			 }
-			 importer.close();
-			 success = true;
-		 }
-		 catch (SQLException sqle)
-		 {
-			 //i18n[ImportDataIntoTableExecutor.sqlException=A database error occurred while inserting data]
-			 //i18n[ImportDataIntoTableExecutor.error=Error]
-			 _showMessageDialogOnEDT(
-					 stringMgr.getString("ImportDataIntoTableExecutor.sqlException", sqle.getMessage(), Integer.toString(currentRow)),
-					 stringMgr.getString("ImportDataIntoTableExecutor.error"));
+         while (_importer.next())
+         {
 
+            if(importProgressCtrl.isCanceled())
+            {
+               break;
+            }
 
-			 String query = stmt == null ? "null" : stmt.toString();
-			 if (query.length() >= 1024000)
-			 {   //with the safety switch off it's possible that this query is a few Mb long !
-				 query = query.substring(0, 1024000) + "... (truncated)";
-			 }
-			 log.error("Failing query: " + query);
-			 log.error("Failing line in CVS file: " + currentRow);
-			 log.error("Database error", sqle);
-		 }
-		 catch (UnsupportedFormatException ufe)
-		 {
-			 log.error("Unsupported format.", ufe);
-		 }
-		 catch (IOException ioe)
-		 {
-			 //i18n[ImportDataIntoTableExecutor.ioException=An error occurred while reading the input file.]
-			 _showMessageDialogOnEDT(
-					 stringMgr.getString("ImportDataIntoTableExecutor.ioException", ioe.getMessage(), Integer.toString(currentRow)),
-					 stringMgr.getString("ImportDataIntoTableExecutor.error"));
+            currentRow++;
 
-			 log.error("Error while reading file", ioe);
-		 }
-		 finally
-		 {
-			 try
-			 {
-			     try
-			     {
-			         importer.close();
-			         finishTransaction(conn, success);
-			     } catch (IOException ioe)
-			     {
-			         log.error("Error while closing file", ioe);
-			     }
-			 }
-			 finally
-			 {
-				 setOriginalAutoCommit(conn, originalAutoCommit);
-				 SQLUtilities.closeStatement(stmt);
-				 ProgressBarDialog.dispose();
-			 }
-		 }
+            importProgressCtrl.setCurrentRow(currentRow);
 
-		 if (success)
-		 {
-		     GUIUtils.processOnSwingEventThread(new Runnable()
-		     {
-		         @Override
-		         public void run()
-		         {
-		             IObjectTreeAPI treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-		             treeAPI.refreshSelectedNodes();
-		         }
-		     });
+            stmt.clearParameters();
+            int i = 1;
+            for (TableColumnInfo column : _columns)
+            {
+               String mapping = _columnMappingModel.getMapping(column);
+               if (SpecialColumnMapping.SKIP.getVisibleString().equals(mapping))
+               {
+                  continue;
+               }
+               else if (SpecialColumnMapping.FIXED_VALUE.getVisibleString().equals(mapping))
+               {
+                  bindFixedColumn(stmt, i++, column);
+               }
+               else if (SpecialColumnMapping.AUTO_INCREMENT.getVisibleString().equals(mapping))
+               {
+                  bindAutoincrementColumn(stmt, i++, column, currentRow);
+               }
+               else if (SpecialColumnMapping.NULL.getVisibleString().equals(mapping))
+               {
+                  stmt.setNull(i++, column.getDataType());
+               }
+               else
+               {
+                  bindColumn(stmt, i++, column);
+               }
+            }
+            stmt.executeUpdate();
 
-			 //i18n[ImportDataIntoTableExecutor.success={0,choice,0#No records|1#One record|1<{0} records} successfully inserted.]
-			 showMessageDialogOnEDT(stringMgr.getString("ImportDataIntoTableExecutor.success", currentRow));
-		 }
-	 }
+            if (false == singleTransaction)
+            {
+               if (0 < currentRow && 0 == currentRow % commitAfterEveryInserts)
+               {
+                  conn.commit();
+               }
+            }
+         }
+         _importer.close();
+         success = true;
+      }
+      catch (SQLException sqle)
+      {
+         importProgressCtrl.failedWithSQLException(sqle, stmt);
+      }
+      catch (UnsupportedFormatException ufe)
+      {
+         importProgressCtrl.failedWithUnsupportedFormatException(ufe);
+      }
+      catch (IOException ioe)
+      {
+         importProgressCtrl.failedWithIoException(ioe);
+      }
+      finally
+      {
+         try
+         {
+            try
+            {
+               _importer.close();
+               finishTransaction(conn, success);
+            }
+            catch (IOException ioe)
+            {
+               log.error("Error while closing file", ioe);
+            }
+         }
+         finally
+         {
+            setOriginalAutoCommit(conn, originalAutoCommit);
+            SQLUtilities.closeStatement(stmt);
+         }
+      }
 
-	private Thread.UncaughtExceptionHandler createUncaughtExceptionHandler()
-	{
-		return new Thread.UncaughtExceptionHandler()
-		{
-			@Override
-			public void uncaughtException(Thread t, final Throwable e)
-			{
-				GUIUtils.processOnSwingEventThread(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						throw new RuntimeException(e);
-					}
-				});
-			}
-		};
-	}
+      if (success)
+      {
+         GUIUtils.processOnSwingEventThread(new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               IObjectTreeAPI treeAPI = _session.getSessionInternalFrame().getObjectTreeAPI();
+               treeAPI.refreshSelectedNodes();
+            }
+         });
+
+         importProgressCtrl.finishedSuccessFully();
+      }
+   }
+
+   private Thread.UncaughtExceptionHandler createUncaughtExceptionHandler()
+   {
+      return (t, e) -> GUIUtils.processOnSwingEventThread(() -> {throw new RuntimeException(e);});
+   }
 
 
-	private void finishTransaction(ISQLConnection conn, boolean success)
-	{
-		try
-		{
-			if(success)
+   private void finishTransaction(ISQLConnection conn, boolean success)
+   {
+      try
+      {
+         if (success)
          {
             conn.commit();
          }
@@ -346,342 +287,353 @@ public class ImportDataIntoTableExecutor
          {
             conn.rollback();
          }
-		}
-		catch (SQLException e)
-		{
-			try
-			{
-				conn.rollback();
-			}
-			catch (SQLException e1)
-			{
-				log.error("Finally failed to rollback connection");
-			}
-			throw new RuntimeException(e);
-		}
-	}
+      }
+      catch (SQLException e)
+      {
+         try
+         {
+            conn.rollback();
+         }
+         catch (SQLException e1)
+         {
+            log.error("Finally failed to rollback connection");
+         }
+         throw new RuntimeException(e);
+      }
+   }
 
-	private void setOriginalAutoCommit(ISQLConnection conn, boolean originalAutoCommit)
-	{
-		try
-		{
-			conn.setAutoCommit(originalAutoCommit);
-		}
-		catch (SQLException e)
-		{
-			_showMessageDialogOnEDT(
-					stringMgr.getString("ImportDataIntoTableExecutor.reestablish.autocommit.failed"),
-					stringMgr.getString("ImportDataIntoTableExecutor.reestablish.autocommit.failed.title"),
-					JOptionPane.ERROR_MESSAGE);
+   private void setOriginalAutoCommit(ISQLConnection conn, boolean originalAutoCommit)
+   {
+      try
+      {
+         conn.setAutoCommit(originalAutoCommit);
+      }
+      catch (SQLException e)
+      {
+         EDTMessageBoxUtil.showMessageDialogOnEDT(
+               stringMgr.getString("ImportDataIntoTableExecutor.reestablish.autocommit.failed"),
+               stringMgr.getString("ImportDataIntoTableExecutor.reestablish.autocommit.failed.title"),
+               JOptionPane.ERROR_MESSAGE);
 
-			throw new RuntimeException(e);
-		}
-	}
+         throw new RuntimeException(e);
+      }
+   }
 
-	private boolean getOriginalAutoCommit(ISQLConnection conn)
-	{
-		try
-		{
-			return conn.getAutoCommit();
-		}
-		catch (SQLException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-
-	private void _showMessageDialogOnEDT(String string, String title)
-	{
-		_showMessageDialogOnEDT(string, title, JOptionPane.ERROR_MESSAGE);
-	}
-
-	private void showMessageDialogOnEDT(final String message)
-	{
-		_showMessageDialogOnEDT(message, null, JOptionPane.DEFAULT_OPTION);
-	}
+   private boolean getOriginalAutoCommit(ISQLConnection conn)
+   {
+      try
+      {
+         return conn.getAutoCommit();
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
 
-	private void _showMessageDialogOnEDT(final String message, final String title, final int messageType)
-	{
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				if (null == title)
-				{
-					JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), message);
-				}
-				else
-				{
-					JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), message, title, messageType);
-				}
-			}
-		}, true);
-	}
+   private void bindAutoincrementColumn(PreparedStatement stmt, int index, TableColumnInfo column, int counter) throws SQLException, UnsupportedFormatException
+   {
+      long value = 0;
+      String fixedValue = _columnMappingModel.getFixedValue(column);
+      try
+      {
+         value = Long.parseLong(fixedValue);
+         value += counter;
+      }
+      catch (NumberFormatException nfe)
+      {
+         throw new UnsupportedFormatException("Could not interpret value for column " + column.getColumnName() + " as value of type long. The value is: " + fixedValue, nfe);
+      }
+      switch (column.getDataType())
+      {
+         case Types.BIGINT:
+            stmt.setLong(index, value);
+            break;
+         case Types.INTEGER:
+         case Types.NUMERIC:
+            stmt.setInt(index, (int) value);
+            break;
+         default:
+            throw new UnsupportedFormatException("Autoincrement column " + column.getColumnName() + "  is not numeric");
+      }
+   }
 
-
-	private void bindAutoincrementColumn(PreparedStatement stmt, int index, TableColumnInfo column, int counter) throws SQLException, UnsupportedFormatException  {
-    	long value = 0;
-		String fixedValue = getFixedValue(column);
-    	try {
-			value = Long.parseLong(fixedValue);
-    		value += counter;
-    	} catch (NumberFormatException nfe) {
-    		throw new UnsupportedFormatException("Could not interpret value for column " + column.getColumnName() + " as value of type long. The value is: " + fixedValue, nfe);
-    	}
-    	switch (column.getDataType()) {
-    	case Types.BIGINT:
-   			stmt.setLong(index, value);
-    		break;
-    	case Types.INTEGER:
-    	case Types.NUMERIC:
-   			stmt.setInt(index, (int)value);
-    		break;
-    	default:
-    		throw new UnsupportedFormatException("Autoincrement column " + column.getColumnName() + "  is not numeric");
-    	}
-	}
-
-	private void bindFixedColumn(PreparedStatement stmt, int index, TableColumnInfo column) throws SQLException, IOException, UnsupportedFormatException {
-    	String value = getFixedValue(column);
-    	Date d = null;
-    	switch (column.getDataType()) {
-    	case Types.BIGINT:
-    		try {
-    			stmt.setLong(index, Long.parseLong(value));
-    		} catch (NumberFormatException nfe) {
-    			throw new UnsupportedFormatException(nfe);
-			}
-    		break;
-    	case Types.INTEGER:
-    	case Types.NUMERIC:
-    		setIntOrUnsignedInt(stmt, index, column);
-    		break;
-    	case Types.DATE:
-    		// Null values should be allowed
-    		setDateOrNull(stmt, index, value);
-    		break;
-    	case Types.TIMESTAMP:
-    		// Null values should be allowed
-    		setTimeStampOrNull(stmt, index, value);
-    		break;
-    	case Types.TIME:    	
-    		// Null values should be allowed
-    		setTimeOrNull(stmt, index, value);
-    		break;
-    	default:
-    		stmt.setString(index, value);
-    	}
-    }
-
-	private void setDateOrNull(PreparedStatement stmt, int index,
-			String value) throws UnsupportedFormatException, SQLException {
-		if (null != value) {
-			Date d = DateUtils.parseSQLFormats(value);
-			if (d == null)
-				throw new UnsupportedFormatException("Could not interpret value as date type. Value is: " + value);
-			stmt.setDate(index, new java.sql.Date(d.getTime()));
-		} else {
-			stmt.setNull(index, Types.DATE);
-		}
-	}
-	
-	private void setTimeStampOrNull(PreparedStatement stmt, int index,
-			String value) throws UnsupportedFormatException, SQLException {
-		if (null != value) {
-			Date d = DateUtils.parseSQLFormats(value);
-			if (d == null)
-				throw new UnsupportedFormatException("Could not interpret value as date type. Value is: " + value);
-			stmt.setTimestamp(index, new java.sql.Timestamp(d.getTime()));
-		} else {
-			stmt.setNull(index, Types.TIMESTAMP);
-		}
-	}
-	
-	private void setTimeOrNull(PreparedStatement stmt, int index, String value)
-			throws UnsupportedFormatException, SQLException {
-		if (null != value) {
-			Date d = DateUtils.parseSQLFormats(value);
-			if (d == null)
-				throw new UnsupportedFormatException("Could not interpret value as date type. Value is: " + value);
-			stmt.setTime(index, new java.sql.Time(d.getTime()));
-		} else {
-			stmt.setNull(index, Types.TIME);
-		}
-	}
-    
-    private void bindColumn(PreparedStatement stmt, int index, TableColumnInfo column) throws SQLException, UnsupportedFormatException, IOException {
-    	int mappedColumn = getMappedColumn(column);
-		switch (column.getDataType()) {
-    	case Types.BIGINT:    		
-    		setLongOrNull(stmt, index, mappedColumn);    		
-    		break;
-    	case Types.INTEGER:
-    	case Types.NUMERIC:
-    		setIntOrUnsignedInt(stmt, index, column);
-    		break;
-    	case Types.DATE:
-    		setDateOrNull(stmt, index, mappedColumn);
-    		break;
-    	case Types.TIMESTAMP:
-    		setTimestampOrNull(stmt, index, mappedColumn);
-    		break;
-    	case Types.TIME:
-    		setTimeOrNull(stmt, index, mappedColumn);
-    		break;
-    	default:
-    		setStringOrNull(stmt, index, mappedColumn);
-    	}
-    }
-
-	private void setStringOrNull(PreparedStatement stmt, int index,
-			int mappedColumn) throws SQLException, IOException {
-		String string = importer.getString(mappedColumn);
-		if (null != string) {
-			stmt.setString(index, string);
-		} else {
-			stmt.setNull(index, Types.VARCHAR);
-		}
-	}
-
-	private void setTimeOrNull(PreparedStatement stmt, int index,
-			int mappedColumn) throws SQLException, IOException,
-			UnsupportedFormatException {
-		Date date = importer.getDate(mappedColumn);
-		if (null != date) {
-			stmt.setTime(index, new java.sql.Time(date.getTime()));
-		} else {
-			stmt.setNull(index, Types.TIME);
-		}
-	}
-
-	private void setTimestampOrNull(PreparedStatement stmt, int index,
-			int mappedColumn) throws SQLException, IOException,
-			UnsupportedFormatException {
-		Date date = importer.getDate(mappedColumn);
-		if (null != date) {
-			stmt.setTimestamp(index, new java.sql.Timestamp(date.getTime()));
-		} else {
-			stmt.setNull(index, Types.TIMESTAMP);
-		}
-	}
-
-	private void setDateOrNull(PreparedStatement stmt, int index,
-			int mappedColumn) throws SQLException, IOException,
-			UnsupportedFormatException {
-		Date date = importer.getDate(mappedColumn);
-		if (null != date) {
-			stmt.setDate(index, new java.sql.Date(date.getTime()));
-		} else {
-			stmt.setNull(index, Types.DATE);
-		}
-
-	}
-    
-	/*
-	 * 1968807: Unsigned INT problem with IMPORT FILE functionality
-	 * 
-	 * If we are working with a signed integer, then it should be ok to store in
-	 * a Java integer which is always signed. However, if we are working with an
-	 * unsigned integer type, Java doesn't have this so use a long instead.
-	 */    
-    private void setIntOrUnsignedInt(PreparedStatement stmt, int index, TableColumnInfo column) 
-    	throws SQLException, UnsupportedFormatException, IOException 
-    {
-    	int mappedColumn = getMappedColumn(column);
-  		String columnTypeName = column.getTypeName(); 
- 		if (columnTypeName != null 
- 				&& (columnTypeName.endsWith("UNSIGNED") || columnTypeName.endsWith("unsigned"))) 
- 		{
- 			setLongOrNull(stmt, index, mappedColumn);			
- 		}
- 		
- 		try {
- 			setIntOrNull(stmt, index, mappedColumn);			
- 		} catch (UnsupportedFormatException e) {
- 			//
- 			// Too much logs slow down the system in case of 
- 			// large imports ( > 10000)
- 			//
- 			// log.error("bindColumn: integer storage overflowed.  Exception was "+e.getMessage()+
- 			//			 ".  Re-trying as a long.", e);
- 			/* try it as a long in case the database driver didn't correctly identify an unsigned field */
- 			setLongOrNull(stmt, index, mappedColumn);			
- 		}
-    }
-
-	private void setLongOrNull(PreparedStatement stmt, int index,
-			int mappedColumn) throws IOException, UnsupportedFormatException,
-			SQLException {
-		Long long1 = importer.getLong(mappedColumn);
-		if (null == long1) {
-			stmt.setNull(index, Types.INTEGER);
-		} else {
-			stmt.setLong(index, long1);
-		}
-	}
-
-	private void setIntOrNull(PreparedStatement stmt, int index,
-			int mappedColumn) throws IOException, UnsupportedFormatException,
-			SQLException {
-		Integer int1 = importer.getInt(mappedColumn);
-		if (null == int1) {
-			stmt.setNull(index, Types.INTEGER);
-		} else {
-			stmt.setInt(index, int1);
-		}
-	}
-    
-    private int getMappedColumn(TableColumnInfo column) {
-    	return importerColumns.indexOf(getMapping(column));
-    }
-    
-    private String getMapping(TableColumnInfo column) {
-		int pos = columnMapping.findTableColumn(column.getColumnName());
-		return columnMapping.getValueAt(pos, 1).toString();
-    }
-    
-    private String getFixedValue(TableColumnInfo column) {
-		int pos = columnMapping.findTableColumn(column.getColumnName());
-		return columnMapping.getValueAt(pos, 2).toString();
-    }
-    
-    private String createColumnList() {
-    	StringBuffer columnsList = new StringBuffer();
-    	for (TableColumnInfo column : columns) {
-    		String mapping = getMapping(column);
-    		if (SpecialColumnMapping.SKIP.getVisibleString().equals(mapping)) continue;
-    		
-    		if (columnsList.length() != 0) {
-    			columnsList.append(", ");
-    		}
-    		columnsList.append(column.getColumnName());
-    	}
-    	return columnsList.toString();
-    }
-    
-    private int getColumnCount() {
-    	int count = 0;
-    	for (TableColumnInfo column : columns) {
-    		int pos = columnMapping.findTableColumn(column.getColumnName());
-    		String mapping = columnMapping.getValueAt(pos, 1).toString();
-    		if (!SpecialColumnMapping.SKIP.getVisibleString().equals(mapping)) {
-    			count++;
-    		}
-    	}
-    	return count;
-    }
-    
-    private String getQuestionMarks(int count) {
-        StringBuffer result = new StringBuffer();
-        for (int i = 0; i < count; i++) {
-            result.append("?");
-            if (i < count-1) {
-                result.append(", ");
+   private void bindFixedColumn(PreparedStatement stmt, int index, TableColumnInfo column) throws SQLException, IOException, UnsupportedFormatException
+   {
+      String value = _columnMappingModel.getFixedValue(column);
+      Date d = null;
+      switch (column.getDataType())
+      {
+         case Types.BIGINT:
+            try
+            {
+               stmt.setLong(index, Long.parseLong(value));
             }
-        }
-        return result.toString();
-    }    
+            catch (NumberFormatException nfe)
+            {
+               throw new UnsupportedFormatException(nfe);
+            }
+            break;
+         case Types.INTEGER:
+         case Types.NUMERIC:
+            setIntOrUnsignedInt(stmt, index, column);
+            break;
+         case Types.DATE:
+            // Null values should be allowed
+            setDateOrNull(stmt, index, value);
+            break;
+         case Types.TIMESTAMP:
+            // Null values should be allowed
+            setTimeStampOrNull(stmt, index, value);
+            break;
+         case Types.TIME:
+            // Null values should be allowed
+            setTimeOrNull(stmt, index, value);
+            break;
+         default:
+            stmt.setString(index, value);
+      }
+   }
+
+   private void setDateOrNull(PreparedStatement stmt, int index,
+                              String value) throws UnsupportedFormatException, SQLException
+   {
+      if (null != value)
+      {
+         Date d = DateUtils.parseSQLFormats(value);
+         if (d == null)
+            throw new UnsupportedFormatException("Could not interpret value as date type. Value is: " + value);
+         stmt.setDate(index, new java.sql.Date(d.getTime()));
+      }
+      else
+      {
+         stmt.setNull(index, Types.DATE);
+      }
+   }
+
+   private void setTimeStampOrNull(PreparedStatement stmt, int index,
+                                   String value) throws UnsupportedFormatException, SQLException
+   {
+      if (null != value)
+      {
+         Date d = DateUtils.parseSQLFormats(value);
+         if (d == null)
+            throw new UnsupportedFormatException("Could not interpret value as date type. Value is: " + value);
+         stmt.setTimestamp(index, new java.sql.Timestamp(d.getTime()));
+      }
+      else
+      {
+         stmt.setNull(index, Types.TIMESTAMP);
+      }
+   }
+
+   private void setTimeOrNull(PreparedStatement stmt, int index, String value)
+         throws UnsupportedFormatException, SQLException
+   {
+      if (null != value)
+      {
+         Date d = DateUtils.parseSQLFormats(value);
+         if (d == null)
+            throw new UnsupportedFormatException("Could not interpret value as date type. Value is: " + value);
+         stmt.setTime(index, new java.sql.Time(d.getTime()));
+      }
+      else
+      {
+         stmt.setNull(index, Types.TIME);
+      }
+   }
+
+   private void bindColumn(PreparedStatement stmt, int index, TableColumnInfo column) throws SQLException, IOException
+   {
+      int mappedColumn = getMappedColumn(column);
+      switch (column.getDataType())
+      {
+         case Types.BIGINT:
+            setLong(stmt, index, mappedColumn);
+            break;
+         case Types.INTEGER:
+         case Types.SMALLINT:
+            setIntOrUnsignedInt(stmt, index, column);
+            break;
+         case Types.NUMERIC:
+         case Types.FLOAT:
+         case Types.DOUBLE:
+         case Types.DECIMAL:
+            setDouble(stmt, index, column);
+            break;
+         case Types.DATE:
+            setDate(stmt, index, mappedColumn);
+            break;
+         case Types.TIMESTAMP:
+            setTimestamp(stmt, index, mappedColumn);
+            break;
+         case Types.TIME:
+            setTime(stmt, index, mappedColumn);
+            break;
+         default:
+            setString(stmt, index, mappedColumn);
+      }
+   }
+
+   private void setString(PreparedStatement stmt, int index,
+                          int mappedColumn) throws SQLException, IOException
+   {
+      String string = _importer.getString(mappedColumn);
+      if (null != string)
+      {
+         stmt.setString(index, string);
+      }
+      else
+      {
+         stmt.setNull(index, Types.VARCHAR);
+      }
+   }
+
+   private void setTime(PreparedStatement stmt, int index, int mappedColumn)
+         throws SQLException, IOException
+   {
+      Date date = _importer.getDate(mappedColumn);
+      if (null != date)
+      {
+         stmt.setTime(index, new java.sql.Time(date.getTime()));
+      }
+      else
+      {
+         stmt.setNull(index, Types.TIME);
+      }
+   }
+
+   private void setTimestamp(PreparedStatement stmt, int index, int mappedColumn)
+         throws SQLException, IOException
+   {
+      Date date = _importer.getDate(mappedColumn);
+      if (null != date)
+      {
+         stmt.setTimestamp(index, new java.sql.Timestamp(date.getTime()));
+      }
+      else
+      {
+         stmt.setNull(index, Types.TIMESTAMP);
+      }
+   }
+
+   private void setDate(PreparedStatement stmt, int index, int mappedColumn)
+         throws SQLException, IOException
+   {
+      Date date = _importer.getDate(mappedColumn);
+      if (null != date)
+      {
+         stmt.setDate(index, new java.sql.Date(date.getTime()));
+      }
+      else
+      {
+         stmt.setNull(index, Types.DATE);
+      }
+
+   }
+
+   /*
+    * 1968807: Unsigned INT problem with IMPORT FILE functionality
+    *
+    * If we are working with a signed integer, then it should be ok to store in
+    * a Java integer which is always signed. However, if we are working with an
+    * unsigned integer type, Java doesn't have this so use a long instead.
+    */
+   private void setIntOrUnsignedInt(PreparedStatement stmt, int index, TableColumnInfo column)
+         throws SQLException, IOException
+   {
+      int mappedColumn = getMappedColumn(column);
+      String columnTypeName = column.getTypeName();
+      if (columnTypeName != null && (columnTypeName.toUpperCase().endsWith("UNSIGNED")))
+      {
+         setLong(stmt, index, mappedColumn);
+      }
+
+      setInt(stmt, index, mappedColumn);
+   }
+
+   private void setDouble(PreparedStatement stmt, int index, TableColumnInfo column)
+         throws SQLException, IOException
+   {
+      Double d = _importer.getDouble(getMappedColumn(column));
+      if (null == d)
+      {
+         stmt.setNull(index, column.getDataType());
+      }
+      else
+      {
+         stmt.setDouble(index, d);
+      }
+   }
+
+   private void setLong(PreparedStatement stmt, int index, int mappedColumn)
+         throws IOException, SQLException
+   {
+      Long long1 = _importer.getLong(mappedColumn);
+      if (null == long1)
+      {
+         stmt.setNull(index, Types.INTEGER);
+      }
+      else
+      {
+         stmt.setLong(index, long1);
+      }
+   }
+
+   private void setInt(PreparedStatement stmt, int index, int mappedColumn)
+         throws IOException, SQLException
+   {
+      Integer int1 = _importer.getInt(mappedColumn);
+      if (null == int1)
+      {
+         stmt.setNull(index, Types.INTEGER);
+      }
+      else
+      {
+         stmt.setInt(index, int1);
+      }
+   }
+
+   private int getMappedColumn(TableColumnInfo column)
+   {
+      return _importerColumns.indexOf(_columnMappingModel.getMapping(column));
+   }
+
+   private String createColumnList()
+   {
+      StringBuffer columnsList = new StringBuffer();
+      for (TableColumnInfo column : _columns)
+      {
+         String mapping = _columnMappingModel.getMapping(column);
+
+         if (SpecialColumnMapping.SKIP.getVisibleString().equals(mapping))
+         {
+            continue;
+         }
+
+         if (columnsList.length() != 0)
+         {
+            columnsList.append(", ");
+         }
+         columnsList.append(column.getColumnName());
+      }
+      return columnsList.toString();
+   }
+
+
+   private String getQuestionMarks(int count)
+   {
+      StringBuffer result = new StringBuffer();
+      for (int i = 0; i < count; i++)
+      {
+         result.append("?");
+         if (i < count - 1)
+         {
+            result.append(", ");
+         }
+      }
+      return result.toString();
+   }
 
 }

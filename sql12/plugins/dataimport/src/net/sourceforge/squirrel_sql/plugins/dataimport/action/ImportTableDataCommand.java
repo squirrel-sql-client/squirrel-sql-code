@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.*;
@@ -38,191 +39,184 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.dataimport.EDTMessageBoxUtil;
 import net.sourceforge.squirrel_sql.plugins.dataimport.ImportFileType;
-import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportFileDialog;
+import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportFileDialogCtrl;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FileImporterFactory;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 
 /**
  * This command shows the necessary dialogs to import a file.
- * 
+ *
  * @author Thorsten Mürell
  */
-public class ImportTableDataCommand implements ICommand {
-	private static final StringManager stringMgr =
-		StringManagerFactory.getStringManager(ImportTableDataCommand.class);
+public class ImportTableDataCommand implements ICommand
+{
+   private static final StringManager stringMgr = StringManagerFactory.getStringManager(ImportTableDataCommand.class);
 
-   /** Logger for this class. */
-   private final static ILogger s_log = 
-       LoggerController.createLogger(ImportTableDataCommand.class);
-	
-	private static final String PREFS_KEY_LAST_IMPORT_DIRECTORY = "squirrelsql_dataimport_last_import_directory";
-
-
-	private ISession session;
-	private ITableInfo table;
-
-
-	/**
-	 * The constructor.
-	 * 
-	 * @param session The session to work in
-	 * @param table The table to import the data
-	 */
-	public ImportTableDataCommand(ISession session, ITableInfo table) {
-		super();
-		this.session = session;
-		this.table = table;
-	}
-
-	/**
-	 * This is the command action.
-	 * 
-	 * It shows a file open dialog and then the specific import options for the file
-	 * importer.
-	 * 
-	 * Then the column mapping dialog is shown.
+   /**
+    * Logger for this class.
     */
-	public void execute() {
-		// Show a warning dialog and let the user confirm it.
-		if (JOptionPane.showConfirmDialog(session.getApplication().getMainFrame(),
-				stringMgr.getString("ImportTableDataCommand.truncateWarning"),
-				stringMgr.getString("ImportTableDataCommand.warning"),
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.WARNING_MESSAGE,
-				null) != JOptionPane.YES_OPTION)
-			return;
-			
-		JFileChooser openFile = new JFileChooser(Props.getString(PREFS_KEY_LAST_IMPORT_DIRECTORY, System.getProperty("user.home")));
+   private final static ILogger s_log = LoggerController.createLogger(ImportTableDataCommand.class);
 
-		int res = openFile.showOpenDialog(session.getApplication().getMainFrame());
-
-		if (res == JFileChooser.APPROVE_OPTION) {
-			File importFile = openFile.getSelectedFile();
-
-			if(null != importFile.getParent()){
-				Props.putString(PREFS_KEY_LAST_IMPORT_DIRECTORY, importFile.getParent());
-			}
-
-			try {
-				TableColumnInfo[] columns = session.getMetaData().getColumnInfo(table);
-
-				ImportFileType type = determineType(importFile);
+   private static final String PREFS_KEY_LAST_IMPORT_DIRECTORY = "squirrelsql_dataimport_last_import_directory";
 
 
-
-				IFileImporter importer = FileImporterFactory.createImporter(type, importFile);
-
-				if (importer.getConfigurationPanel() != null) {
-					//i18n[ImportTableDataCommand.settingsDialogTitle=Import file settings]
-					final JDialog dialog = new JDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.settingsDialogTitle"), true);
-					StateListener dialogState = new StateListener(dialog);
-					dialog.setLayout(new BorderLayout());
-					dialog.add(importer.getConfigurationPanel(), BorderLayout.CENTER);
-					OkClosePanel buttons = new OkClosePanel();
-					//i18n[ImportTableDataCommand.cancel=Cancel]
-					buttons.getCloseButton().setText(stringMgr.getString("ImportTableDataCommand.cancel"));
-					buttons.addListener(dialogState);
-					dialog.add(buttons, BorderLayout.SOUTH);
-					dialog.pack();
-					GUIUtils.centerWithinParent(dialog);
-					dialog.setVisible(true);
-					if (!dialogState.isOkPressed()) {
-						return;
-					}
-				}
+   private ISession session;
+   private ITableInfo table;
 
 
-				final ImportFileDialog importFileDialog = new ImportFileDialog(session, importFile, importer, table, columns);
+   /**
+    * @param session The session to work in
+    * @param table   The table to import the data
+    */
+   public ImportTableDataCommand(ISession session, ITableInfo table)
+   {
+      this.session = session;
+      this.table = table;
+   }
 
-				importFileDialog.setPreviewData(importer.getPreview(10));
+   /**
+    * This is the command action.
+    * <p>
+    * It shows a file open dialog and then the specific import options for the file
+    * importer.
+    * <p>
+    * Then the column mapping dialog is shown.
+    */
+   public void execute()
+   {
+      JFileChooser openFile = new JFileChooser(Props.getString(PREFS_KEY_LAST_IMPORT_DIRECTORY, System.getProperty("user.home")));
 
-				GUIUtils.processOnSwingEventThread(new Runnable() {
-					public void run() {
-						session.getApplication().getMainFrame().addWidget(importFileDialog);
-						importFileDialog.moveToFront();
-						DialogWidget.centerWithinDesktop(importFileDialog);
-						importFileDialog.setVisible(true);
-					}
-				}, true);
+      int res = openFile.showOpenDialog(session.getApplication().getMainFrame());
 
-			} catch (SQLException e) {
-				s_log.error("execute: unexpected exception - "+e.getMessage(), e);
-				//i18n[ImportTableDataCommand.sqlErrorOccured=An error occurred while reading database data.]
-				//i18n[ImportTableDataCommand.error=Error]
-				JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.sqlErrorOccured"), stringMgr.getString("ImportTableDataCommand.error"), JOptionPane.ERROR_MESSAGE);
-			} catch (IOException e) {
-				s_log.error("execute: unexpected exception - "+e.getMessage(), e);
-				//i18n[ImportTableDataCommand.ioErrorOccured=An error occurred while reading import file data.]
-				JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.ioErrorOccured"), stringMgr.getString("ImportTableDataCommand.error"), JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
+      if (res == JFileChooser.APPROVE_OPTION)
+      {
+         File importFile = openFile.getSelectedFile();
 
-	private ImportFileType determineType(File f) {
-		// TODO: Implement this better
-		if (f.getName().toLowerCase().endsWith("xls") || f.getName().toLowerCase().endsWith("xlsx")) {
-			if (s_log.isInfoEnabled()) {
-				s_log.info("determineType: filename ("+f.getName()+") ends with 'xls'.  Assuming it is an " +
-						"Excel spreadsheet");
-			}
-			return ImportFileType.XLS;
-		}
-		if (s_log.isInfoEnabled()) {
-			s_log.info("determineType: filename ("+f.getName()+") doesn't end with 'xls'.  Assuming it is a " +
-					"CSV file");
-		}		
-		return ImportFileType.CSV;
-	}
+         if (null != importFile.getParent())
+         {
+            Props.putString(PREFS_KEY_LAST_IMPORT_DIRECTORY, importFile.getParent());
+         }
 
-	private class StateListener implements IOkClosePanelListener {
-		private boolean okPressed = false;
-		private JDialog dialog = null;
+         try
+         {
+            TableColumnInfo[] columns = session.getMetaData().getColumnInfo(table);
 
-		/**
-		 * The constructor
-		 * 
-		 * @param dialog The dialog
-		 */
-		public StateListener(JDialog dialog) {
-			this.dialog = dialog;
-		}
+            ImportFileType type = determineType(importFile);
 
-		/**
-		 * Invoked on cancel press
-		 * 
-		 * @param evt The event
-		 */
-		public void cancelPressed(OkClosePanelEvent evt) { /* Not needed */ }
 
-		/**
-		 * Invoked on close press
-		 * 
-		 * @param evt The event
-		 */
-		public void closePressed(OkClosePanelEvent evt) {
-			okPressed = false;
-			dialog.dispose();
-		}
+            IFileImporter importer = FileImporterFactory.createImporter(type, importFile);
 
-		/**
-		 * Invoked on ok press
-		 * 
-		 * @param evt The event
-		 */
-		public void okPressed(OkClosePanelEvent evt) {
-			okPressed = true;
-			dialog.dispose();
-		}
+            if (importer.getConfigurationPanel() != null)
+            {
+               //i18n[ImportTableDataCommand.settingsDialogTitle=Import file settings]
+               final JDialog dialog = new JDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.settingsDialogTitle"), true);
+               StateListener dialogState = new StateListener(dialog);
+               dialog.setLayout(new BorderLayout());
+               dialog.add(importer.getConfigurationPanel(), BorderLayout.CENTER);
+               OkClosePanel buttons = new OkClosePanel();
+               //i18n[ImportTableDataCommand.cancel=Cancel]
+               buttons.getCloseButton().setText(stringMgr.getString("ImportTableDataCommand.cancel"));
+               buttons.addListener(dialogState);
+               dialog.add(buttons, BorderLayout.SOUTH);
+               dialog.pack();
+               GUIUtils.centerWithinParent(dialog);
+               dialog.setVisible(true);
+               if (!dialogState.isOkPressed())
+               {
+                  return;
+               }
+            }
 
-		/**
-		 * Returns if the OK button was pressed.
-		 * 
-		 * @return true or false
-		 */
-		public boolean isOkPressed() {
-			return okPressed;
-		}
-	}
+
+            final ImportFileDialogCtrl importFileDialogCtrl = new ImportFileDialogCtrl(session, importFile, importer, table, columns);
+
+            importFileDialogCtrl.setPreviewData(importer.getPreview(10));
+
+            importFileDialogCtrl.show();
+
+         }
+         catch (SQLException e)
+         {
+            s_log.error("execute: unexpected exception - " + e.getMessage(), e);
+            //i18n[ImportTableDataCommand.sqlErrorOccured=An error occurred while reading database data.]
+            //i18n[ImportTableDataCommand.error=Error]
+            EDTMessageBoxUtil.showMessageDialogOnEDT(stringMgr.getString("ImportTableDataCommand.sqlErrorOccured"), stringMgr.getString("ImportTableDataCommand.error"));
+         }
+         catch (IOException e)
+         {
+            s_log.error("execute: unexpected exception - " + e.getMessage(), e);
+            //i18n[ImportTableDataCommand.ioErrorOccured=An error occurred while reading import file data.]
+            EDTMessageBoxUtil.showMessageDialogOnEDT(stringMgr.getString("ImportTableDataCommand.ioErrorOccured"), stringMgr.getString("ImportTableDataCommand.error"));
+         }
+      }
+   }
+
+   private ImportFileType determineType(File f)
+   {
+      if (f.getName().toLowerCase().endsWith("xls") || f.getName().toLowerCase().endsWith("xlsx"))
+      {
+         return ImportFileType.XLS;
+      }
+
+      return ImportFileType.CSV;
+   }
+
+   private class StateListener implements IOkClosePanelListener
+   {
+      private boolean okPressed = false;
+      private JDialog dialog = null;
+
+      /**
+       * The constructor
+       *
+       * @param dialog The dialog
+       */
+      public StateListener(JDialog dialog)
+      {
+         this.dialog = dialog;
+      }
+
+      /**
+       * Invoked on cancel press
+       *
+       * @param evt The event
+       */
+      public void cancelPressed(OkClosePanelEvent evt)
+      { /* Not needed */ }
+
+      /**
+       * Invoked on close press
+       *
+       * @param evt The event
+       */
+      public void closePressed(OkClosePanelEvent evt)
+      {
+         okPressed = false;
+         dialog.dispose();
+      }
+
+      /**
+       * Invoked on ok press
+       *
+       * @param evt The event
+       */
+      public void okPressed(OkClosePanelEvent evt)
+      {
+         okPressed = true;
+         dialog.dispose();
+      }
+
+      /**
+       * Returns if the OK button was pressed.
+       *
+       * @return true or false
+       */
+      public boolean isOkPressed()
+      {
+         return okPressed;
+      }
+   }
 
 }

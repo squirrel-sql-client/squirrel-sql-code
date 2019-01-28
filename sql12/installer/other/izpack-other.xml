@@ -87,7 +87,7 @@
 		</pack>
 
 		<pack name="Standard" required="no" depends="Base" installGroups="StandardPlugins">
-			<description>Standard Plugins: Code completion, Graph, Look &amp; Feel, SQL Script, Syntax, DB Copy, DB Diff, Refactoring</description>
+			<description>Standard Plugins: Code completion, Graph, Look &amp; Feel, SQL Script, Syntax, DB Copy, DB Diff, Refactoring, Data Import</description>
 
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/codecompletion.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/codecompletion" />
@@ -115,6 +115,9 @@
 
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/refactoring.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/refactoring" />
+
+			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dataimport.jar" />
+			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dataimport" />
 
 		</pack>
 
@@ -161,15 +164,6 @@
             <file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/vertica.jar"/>
             <file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/vertica"/>
         </pack>
-
-
-        <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Data import">
-			<description>
-				This plugin allows you import files into the database.
-         </description>
-			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dataimport.jar" />
-			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dataimport" />
-		</pack>
 
 		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - DB2">
 			<description>

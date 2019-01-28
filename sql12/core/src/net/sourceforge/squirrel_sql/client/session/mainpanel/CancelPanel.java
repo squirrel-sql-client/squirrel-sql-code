@@ -107,7 +107,7 @@ public class CancelPanel extends JPanel
       txtExecTimeCounter = new JTextField();
       txtExecTimeCounter.setEditable(false);
       txtExecTimeCounter.setColumns(10);
-      GUIUtils.forceProperty(() -> checkAndForceSize(txtExecTimeCounter));
+      GUIUtils.forceWidth(txtExecTimeCounter, 120);
       ret.add(txtExecTimeCounter, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
@@ -121,20 +121,11 @@ public class CancelPanel extends JPanel
       txtNumberOfRowsRead = new JTextField();
       txtNumberOfRowsRead.setEditable(false);
       txtNumberOfRowsRead.setColumns(10);
-      GUIUtils.forceProperty(() -> checkAndForceSize(txtNumberOfRowsRead));
+      GUIUtils.forceWidth(txtNumberOfRowsRead, 120);
       ret.add(txtNumberOfRowsRead, gbc);
 
       return ret;
    }
 
 
-   private boolean checkAndForceSize(JTextField txtExecTimeCounter)
-   {
-      int width = 120;
-      txtExecTimeCounter.setPreferredSize(new Dimension(width, txtExecTimeCounter.getPreferredSize().height));
-      txtExecTimeCounter.setMinimumSize(new Dimension(width, txtExecTimeCounter.getMinimumSize().height));
-      //txtExecTimeCounter.setSize(txtExecTimeCounter.getPreferredSize());
-
-      return txtExecTimeCounter.getSize().width == width;
-   }
 }

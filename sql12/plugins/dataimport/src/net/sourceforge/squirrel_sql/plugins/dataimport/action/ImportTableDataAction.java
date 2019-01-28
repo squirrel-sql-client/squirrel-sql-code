@@ -16,6 +16,7 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.action;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -29,59 +30,38 @@ import net.sourceforge.squirrel_sql.fw.resources.IResources;
 
 /**
  * An action to import table data from a file.
- * 
+ *
  * @author Thorsten Mürell
  */
-public class ImportTableDataAction extends SquirrelAction implements ISessionAction {
-	private static final long serialVersionUID = -8807675482631144975L;
-	private ISession session;
-	
-	/**
-	 * The standard constructor.
-	 * 
-	 * @param app The application
-	 * @param resources The resources to work with
-	 */
-	public ImportTableDataAction(IApplication app, IResources resources) {
-		super(app, resources);
-	}
+public class ImportTableDataAction extends SquirrelAction implements ISessionAction
+{
+   private ISession session;
 
-	/**
-	 * Sets the session.
-	 * 
-	 * @param session The session
-	 */
-	@Override
-    public void setSession(ISession session) {
-		this.session = session;
-	}
+   public ImportTableDataAction(IApplication app, IResources resources)
+   {
+      super(app, resources);
+   }
 
-	/**
-	 * This method is the actual action method.
-	 * 
-	 * @param ev The action event
-	 */
-	@Override
-    public void actionPerformed(ActionEvent ev) {
-		if (session != null)
-		{
-			IObjectTreeAPI treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-			IDatabaseObjectInfo[] tables = treeAPI.getSelectedDatabaseObjects();
-			if (tables.length == 1 && tables[0] instanceof ITableInfo) {
-			try
-			{
-				new ImportTableDataCommand(session, (ITableInfo) tables[0]).execute();
-			}
-			catch (Throwable th)
-			{
-				session.showErrorMessage(th);
-			}
-			}
-			else
-			{
-				session.showErrorMessage("Importing data into a table works with one table only!");
-			}
-		}
-	}
+   @Override
+   public void setSession(ISession session)
+   {
+      this.session = session;
+   }
+
+   @Override
+   public void actionPerformed(ActionEvent ev)
+   {
+      if (session != null)
+      {
+         IObjectTreeAPI treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+         IDatabaseObjectInfo[] tables = treeAPI.getSelectedDatabaseObjects();
+         if (tables.length != 1 || false == tables[0] instanceof ITableInfo)
+         {
+
+         }
+
+         new ImportTableDataCommand(session, (ITableInfo) tables[0]).execute();
+      }
+   }
 
 }

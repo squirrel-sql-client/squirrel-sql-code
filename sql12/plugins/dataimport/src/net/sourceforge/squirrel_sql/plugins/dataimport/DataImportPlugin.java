@@ -28,166 +28,174 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.plugins.dataimport.action.ImportTableDataAction;
-import net.sourceforge.squirrel_sql.plugins.dataimport.prefs.PreferencesManager;
 
 /**
  * Plugin to import data into a table
- * 
+ *
  * @author Thorsten Mürell
  */
-public class DataImportPlugin extends DefaultSessionPlugin {
-	
-	private IResources _resources;
+public class DataImportPlugin extends DefaultSessionPlugin
+{
 
-	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
-	/**
-	 * @param resourcesFactory the resourcesFactory to set
-	 */
-	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
-	{
-		_resourcesFactory = resourcesFactory;
-	}
+   private IResources _resources;
 
+   private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
 
-	/**
-	 * Return the internal name of this plugin.
-	 *
-	 * @return  the internal name of this plugin.
-	 */
-	public String getInternalName() {
-		return "dataimport";
-	}
-
-	/**
-	 * Return the descriptive name of this plugin.
-	 *
-	 * @return  the descriptive name of this plugin.
-	 */
-	public String getDescriptiveName() {
-		return "Data Import Plugin";
-	}
-
-	/**
-	 * Returns the current version of this plugin.
-	 *
-	 * @return  the current version of this plugin.
-	 */
-	public String getVersion() {
-		return "0.06";
-	}
-
-	/**
-	 * Returns the authors name.
-	 *
-	 * @return  the authors name.
-	 */
-	public String getAuthor() {
-		return "Thorsten M\u00FCrell";
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getContributors()
-	 */
-	@Override
-	public String getContributors() {
-		return "Guido Wojke,P_W999";
-	}
+   /**
+    * @param resourcesFactory the resourcesFactory to set
+    */
+   public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
+   {
+      _resourcesFactory = resourcesFactory;
+   }
 
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getChangeLogFileName()
-	 */
-	@Override
-	public String getChangeLogFileName() {
-		return "changes.txt";
-	}
+   /**
+    * Return the internal name of this plugin.
+    *
+    * @return the internal name of this plugin.
+    */
+   public String getInternalName()
+   {
+      return "dataimport";
+   }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getLicenceFileName()
-	 */
-	@Override
-	public String getLicenceFileName() {
-		return "licence.txt";
-	}
-	
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getHelpFileName()
-	 */
-	@Override
-	public String getHelpFileName() {
-		return "doc/readme.html";
-	}
+   /**
+    * Return the descriptive name of this plugin.
+    *
+    * @return the descriptive name of this plugin.
+    */
+   public String getDescriptiveName()
+   {
+      return "Data Import Plugin";
+   }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#load(net.sourceforge.squirrel_sql.client.IApplication)
-	 */
-	@Override
-	public void load(IApplication app) throws PluginException {
-		super.load(app);
-		_resources = this._resourcesFactory.createResource(getClass().getName(), this);
-	}
+   /**
+    * Returns the current version of this plugin.
+    *
+    * @return the current version of this plugin.
+    */
+   public String getVersion()
+   {
+      return "1.0";
+   }
 
-	/**
-	 * Initialize this plugin.
-	 */
-	@Override
-	public synchronized void initialize() throws PluginException {
-		super.initialize();
-		
-		PreferencesManager.initialize(this);
+   /**
+    * Returns the authors name.
+    *
+    * @return the authors name.
+    */
+   public String getAuthor()
+   {
+      return "Thorsten M\u00FCrell,Gerd Wagner";
+   }
 
-		IApplication app = getApplication();
-		ActionCollection coll = app.getActionCollection();
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getContributors()
+    */
+   @Override
+   public String getContributors()
+   {
+      return "Guido Wojke,P_W999";
+   }
 
-		coll.add(new ImportTableDataAction(app, _resources));
-	}
 
-	/**
-	 * Application is shutting down so save preferences.
-	 */
-	@Override
-	public void unload() {
-		super.unload();
-		PreferencesManager.unload();
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getChangeLogFileName()
+    */
+   @Override
+   public String getChangeLogFileName()
+   {
+      return "changes.txt";
+   }
 
-	/**
-	 * Called when a session started.
-	 *
-	 * @param   session     The session that is starting.
-	 *
-	 * @return  <TT>true</TT> to indicate that this plugin is
-	 *          applicable to passed session.
-	 */
-	public PluginSessionCallback sessionStarted(final ISession session) {
-		updateTreeApi(session);
-		return new PluginSessionCallbackAdaptor();
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getLicenceFileName()
+    */
+   @Override
+   public String getLicenceFileName()
+   {
+      return "licence.txt";
+   }
 
-	/**
-	 * @param session
-	 */
-	private void updateTreeApi(ISession session) {
-		IObjectTreeAPI treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-		final ActionCollection coll = getApplication().getActionCollection();
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getHelpFileName()
+    */
+   @Override
+   public String getHelpFileName()
+   {
+      return "doc/readme.html";
+   }
 
-		treeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(ImportTableDataAction.class));        
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#load(net.sourceforge.squirrel_sql.client.IApplication)
+    */
+   @Override
+   public void load(IApplication app) throws PluginException
+   {
+      super.load(app);
+      _resources = this._resourcesFactory.createResource(getClass().getName(), this);
+   }
 
-	/**
-	 * Create preferences panel for the Global Preferences dialog.
-	 *
-	 * @return  Preferences panel.
-	 */
-	@Override
-	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-		// Not yet ready
-        // DataImportGlobalPreferencesTab tab = new DataImportGlobalPreferencesTab();
-        // return new IGlobalPreferencesPanel[] { tab };
-        return null;
-		
-	}
+   /**
+    * Initialize this plugin.
+    */
+   @Override
+   public synchronized void initialize() throws PluginException
+   {
+      super.initialize();
+
+
+      IApplication app = getApplication();
+      ActionCollection coll = app.getActionCollection();
+
+      coll.add(new ImportTableDataAction(app, _resources));
+   }
+
+   /**
+    * Application is shutting down so save preferences.
+    */
+   @Override
+   public void unload()
+   {
+      super.unload();
+   }
+
+   /**
+    * Called when a session started.
+    *
+    * @param session The session that is starting.
+    * @return <TT>true</TT> to indicate that this plugin is
+    * applicable to passed session.
+    */
+   public PluginSessionCallback sessionStarted(final ISession session)
+   {
+      updateTreeApi(session);
+      return new PluginSessionCallbackAdaptor();
+   }
+
+   /**
+    * @param session
+    */
+   private void updateTreeApi(ISession session)
+   {
+      IObjectTreeAPI treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+      final ActionCollection coll = getApplication().getActionCollection();
+
+      treeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(ImportTableDataAction.class));
+   }
+
+   /**
+    * Create preferences panel for the Global Preferences dialog.
+    *
+    * @return Preferences panel.
+    */
+   @Override
+   public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
+   {
+      return new IGlobalPreferencesPanel[0];
+   }
 }

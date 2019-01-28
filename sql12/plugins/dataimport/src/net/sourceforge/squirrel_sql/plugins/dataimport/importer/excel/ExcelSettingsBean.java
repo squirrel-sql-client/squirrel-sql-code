@@ -16,30 +16,32 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer.excel;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.io.Serializable;
 
 /**
  * This class holds the settings for the excel import.
- * 
+ *
  * @author Thorsten Mürell
  */
-public class ExcelSettingsBean implements Cloneable, Serializable {
-	private static final long serialVersionUID = 4141322162824378258L;
-	
-	private String sheetName = null;
+public class ExcelSettingsBean implements Cloneable, Serializable
+{
+   private String sheetName = null;
 
-	/**
-	 * @return the sheetName
-	 */
-	public String getSheetName() {
-		return sheetName;
-	}
+   /**
+    * @return the sheetName
+    */
+   public String getSheetName()
+   {
+      return sheetName;
+   }
 
-	/**
-	 * @param sheetName the sheetName to set
-	 */
-	public void setSheetName(String sheetName) {
-		this.sheetName = sheetName;
-	}
+   /**
+    * @param sheetName the sheetName to set
+    */
+   public void setSheetName(String sheetName)
+   {
+      this.sheetName = sheetName;
+   }
 
 }

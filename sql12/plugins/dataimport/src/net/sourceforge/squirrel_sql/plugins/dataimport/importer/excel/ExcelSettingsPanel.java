@@ -16,6 +16,7 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer.excel;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -35,92 +36,108 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 /**
  * This panel holds the excel specific settings for the importer.
- * 
+ *
  * @author Thorsten Mürell
  */
-public class ExcelSettingsPanel extends JPanel {
+public class ExcelSettingsPanel extends JPanel
+{
 
-	
-	private static final StringManager stringMgr =
-		StringManagerFactory.getStringManager(ExcelSettingsPanel.class);
-	
-	private ExcelSettingsBean settings = null;
-	private Workbook wb = null;
-	
-	private JComboBox sheetName = null;
-	
-	/**
-	 * The standard constructor
-	 * 
-	 * @param settings The settings holder
-	 * @param f The import file.
-	 */
-	public ExcelSettingsPanel(ExcelSettingsBean settings, File f) {
-		this.settings = settings;
-		try {
-			this.wb = WorkbookFactory.create(f);
-		} catch (Exception e) {
-			this.wb = null;
-		}
-		init();
-		loadSettings();
-	}
-	
-	private void init() {
-		ActionListener stateChangedListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ExcelSettingsPanel.this.stateChanged();
-			}
-		};
-		sheetName = new JComboBox();
-		if (wb != null) {
-                    int nSheets= wb.getNumberOfSheets();
-			for (int i= 0; i < nSheets; i++) {
-				sheetName.addItem(wb.getSheetAt(i).getSheetName());
-			}
-		}
-		sheetName.addActionListener(stateChangedListener);
-		
-		
-		final FormLayout layout = new FormLayout(
-				// Columns
-				"pref, 6dlu, pref:grow",
-				// Rows
-				"pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu");
 
-		PanelBuilder builder = new PanelBuilder(layout);
-		CellConstraints cc = new CellConstraints();
-		builder.setDefaultDialogBorder();
-		
-		int y = 1;
-		//i18n[ExcelSettingsPanel.xlsSettings=Excel import settings]
-		builder.addSeparator(stringMgr.getString("ExcelSettingsPanel.xlsSettings"), cc.xywh(1, y, 3, 1));
-		
-		y += 2;
-		//i18n[ExcelSettingsPanel.sheetName=Sheet name]
-		builder.add(new JLabel(stringMgr.getString("ExcelSettingsPanel.sheetName")), cc.xy(1, y));
-		builder.add(sheetName, cc.xy(3, y));
-		
-		add(builder.getPanel());
-	}
-	
-	
-	private void applySettings() {
-		if (sheetName.getSelectedItem() != null) {
-			settings.setSheetName(sheetName.getSelectedItem().toString());
-		}
-	}
-	
-	private void loadSettings() {
-		if (settings.getSheetName() == null) {
-			sheetName.setSelectedIndex(0);
-		} else {
-			sheetName.setSelectedItem(settings.getSheetName());
-		}
-	}
-	
-	private void stateChanged() {
-		applySettings();
-	}
-	
+   private static final StringManager stringMgr = StringManagerFactory.getStringManager(ExcelSettingsPanel.class);
+
+   private ExcelSettingsBean _settings;
+   private Workbook _workbook;
+
+   private JComboBox _sheetName = null;
+
+   /**
+    * The standard constructor
+    *
+    * @param settings The settings holder
+    * @param f        The import file.
+    */
+   public ExcelSettingsPanel(ExcelSettingsBean settings, File f)
+   {
+      this._settings = settings;
+      try
+      {
+         this._workbook = WorkbookFactory.create(f);
+      }
+      catch (Exception e)
+      {
+         this._workbook = null;
+      }
+      init();
+      loadSettings();
+   }
+
+   private void init()
+   {
+      ActionListener stateChangedListener = new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            ExcelSettingsPanel.this.stateChanged();
+         }
+      };
+      _sheetName = new JComboBox();
+      if (_workbook != null)
+      {
+         int nSheets = _workbook.getNumberOfSheets();
+         for (int i = 0; i < nSheets; i++)
+         {
+            _sheetName.addItem(_workbook.getSheetAt(i).getSheetName());
+         }
+      }
+      _sheetName.addActionListener(stateChangedListener);
+
+
+      final FormLayout layout = new FormLayout(
+            // Columns
+            "pref, 6dlu, pref:grow",
+            // Rows
+            "pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu");
+
+      PanelBuilder builder = new PanelBuilder(layout);
+      CellConstraints cc = new CellConstraints();
+      builder.setDefaultDialogBorder();
+
+      int y = 1;
+      //i18n[ExcelSettingsPanel.xlsSettings=Excel import settings]
+      builder.addSeparator(stringMgr.getString("ExcelSettingsPanel.xlsSettings"), cc.xywh(1, y, 3, 1));
+
+      y += 2;
+      //i18n[ExcelSettingsPanel.sheetName=Sheet name]
+      builder.add(new JLabel(stringMgr.getString("ExcelSettingsPanel.sheetName")), cc.xy(1, y));
+      builder.add(_sheetName, cc.xy(3, y));
+
+      add(builder.getPanel());
+   }
+
+
+   private void applySettings()
+   {
+      if (_sheetName.getSelectedItem() != null)
+      {
+         _settings.setSheetName(_sheetName.getSelectedItem().toString());
+      }
+   }
+
+   private void loadSettings()
+   {
+      if (_settings.getSheetName() == null)
+      {
+         _sheetName.setSelectedIndex(0);
+      }
+      else
+      {
+         _sheetName.setSelectedItem(_settings.getSheetName());
+      }
+   }
+
+   private void stateChanged()
+   {
+      applySettings();
+   }
+
 }

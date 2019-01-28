@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDialogDelegate;
 import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -31,6 +33,7 @@ import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -361,38 +364,30 @@ public class GUIUtils
 			throw new IllegalArgumentException("Runnable == null");
 		}
 
+		if (SwingUtilities.isEventDispatchThread())
+		{
+			todo.run();
+			return;
+		}
+
 		if (wait)
 		{
-			if (SwingUtilities.isEventDispatchThread())
+			try
 			{
-				todo.run();
+				SwingUtilities.invokeAndWait(todo);
 			}
-			else
+			catch (InvocationTargetException ex)
 			{
-				try
-				{
-					SwingUtilities.invokeAndWait(todo);
-				}
-				catch (InvocationTargetException ex)
-				{
-					throw new BaseRuntimeException(ex);
-				}
-				catch (InterruptedException ex)
-				{
-					throw new BaseRuntimeException(ex);
-				}
+				throw new BaseRuntimeException(ex);
+			}
+			catch (InterruptedException ex)
+			{
+				throw new BaseRuntimeException(ex);
 			}
 		}
 		else
 		{
-			if (SwingUtilities.isEventDispatchThread())
-			{
-				todo.run();
-			}
-			else
-			{
-				SwingUtilities.invokeLater(todo);
-			}
+			SwingUtilities.invokeLater(todo);
 		}
 	}
 
@@ -475,7 +470,37 @@ public class GUIUtils
       dialog.getRootPane().getActionMap().put("CloseAction", closeAction);
    }
 
-   public static DefaultMutableTreeNode createFolderNode(Object userObject)
+	public static void enableCloseByEscape(DialogWidget dialogWidget)
+	{
+		enableCloseByEscape(dialogWidget, null);
+	}
+
+	public static void enableCloseByEscape(DialogWidget dialogWidget, final CloseByEscapeForDialogWidgetListener closeByEscapeListener)
+	{
+		AbstractAction closeAction = new AbstractAction()
+		{
+
+			public void actionPerformed(ActionEvent actionEvent)
+			{
+				if(null != closeByEscapeListener)
+				{
+					closeByEscapeListener.willCloseByEcape(dialogWidget);
+				}
+
+				dialogWidget.setVisible(false);
+				dialogWidget.dispose();
+			}
+		};
+
+		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		dialogWidget.getDelegate().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
+		dialogWidget.getDelegate().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
+		dialogWidget.getDelegate().getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
+		dialogWidget.getDelegate().getRootPane().getActionMap().put("CloseAction", closeAction);
+	}
+
+
+	public static DefaultMutableTreeNode createFolderNode(Object userObject)
    {
       DefaultMutableTreeNode newFolder  = new DefaultMutableTreeNode(userObject)
       {
@@ -546,6 +571,21 @@ public class GUIUtils
 
 		propertyCheck.checkAndSetProperty();
 	}
+
+	public static void forceWidth(JTextField txt, int width)
+	{
+		forceProperty(() -> checkAndForceSize(txt, width));
+	}
+
+	private static boolean checkAndForceSize(JTextField txt, int width)
+	{
+		txt.setPreferredSize(new Dimension(width, txt.getPreferredSize().height));
+		txt.setMinimumSize(new Dimension(width, txt.getMinimumSize().height));
+		//txt.setSize(txt.getPreferredSize());
+
+		return txt.getSize().width == width;
+	}
+
 
 	public static void forceScrollToBegin(JScrollPane scrollPane)
 	{

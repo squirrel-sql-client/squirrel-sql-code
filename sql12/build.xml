@@ -165,6 +165,7 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="sqlbookmark"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="sqlscript"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="syntax"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="dataimport"/></antcall>
     </target>
 
 
@@ -179,7 +180,6 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="sqlscript"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="syntax"/></antcall>
 
-        <antcall target="doCompilePlugin"><param name="pluginName" value="dataimport"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="db2"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="derby"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="example"/></antcall>

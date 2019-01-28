@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Brushed up the Data Import Plugin quite a bit and made it a standard Plugin.
+  See Object tree --> right mouse menu of table --> menu item "Import file (MS Excel or CSV)"
+
 New right mouse menu item on tables "Copy colored rows to new window",
   which copies all rows that were colored before to a new window.
 
