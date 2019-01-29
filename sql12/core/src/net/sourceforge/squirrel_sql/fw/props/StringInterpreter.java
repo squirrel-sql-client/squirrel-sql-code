@@ -14,9 +14,14 @@ public class StringInterpreter
 
    public static <T>  T interpret(String value, Class<T> clazz, T defaultValue)
    {
+      return interpret(value, clazz, defaultValue, false);
+   }
+
+   public static <T>  T interpret(String value, Class<T> clazz, T defaultValue, boolean allowWhiteSpacesOnly)
+   {
       try
       {
-         return (T)_interpret(value, clazz, defaultValue);
+         return (T)_interpret(value, clazz, defaultValue, allowWhiteSpacesOnly);
       }
       catch (ParseException| NumberFormatException e)
       {
@@ -25,9 +30,9 @@ public class StringInterpreter
    }
 
 
-   private static Object _interpret(String value, Class clazz, Object defaultValue) throws ParseException
+   private static Object _interpret(String value, Class clazz, Object defaultValue, boolean allowWhiteSpacesOnly) throws ParseException
    {
-      if(StringUtilities.isEmpty(value, true))
+      if(StringUtilities.isEmpty(value, false == allowWhiteSpacesOnly))
       {
          return defaultValue;
       }

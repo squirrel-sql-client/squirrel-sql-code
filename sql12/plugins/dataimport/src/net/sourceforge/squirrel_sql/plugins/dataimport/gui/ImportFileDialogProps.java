@@ -13,6 +13,9 @@ public class ImportFileDialogProps
    private static final String PREF_KEY_SAVE_MODE = "Squirrel.dataimport.dialog.save_mode";
    private static final String PREF_KEY_TRIM_VALUES = "Squirrel.dataimport.trim_values";
 
+   private static final String PREF_KEY_CSV_DATE_FORMAT = "Squirrel.dataimport.CSV.date.format";
+   private static final String PREF_KEY_CSV_SEPARATOR = "Squirrel.dataimport.CSV.separator";
+
 
    public static void setDialogWidth(int width)
    {
@@ -93,5 +96,27 @@ public class ImportFileDialogProps
    public static void setTrimValues(boolean b)
    {
       Props.putBoolean(PREF_KEY_TRIM_VALUES, b);
+   }
+
+
+
+   public static void setCSVSeparator(char sep)
+   {
+      Props.putString(PREF_KEY_CSV_SEPARATOR,"" + sep);
+   }
+
+   public static char getCSVSeparator()
+   {
+      return Props.getString(PREF_KEY_CSV_SEPARATOR,";", true).charAt(0);
+   }
+
+   public static void setCSVDateFormat(String format)
+   {
+      Props.putString(PREF_KEY_CSV_DATE_FORMAT,"" + format);
+   }
+
+   public static String getCSVDateFormat()
+   {
+      return Props.getString(PREF_KEY_CSV_DATE_FORMAT,"yyyy-MM-dd HH:mm:ss");
    }
 }

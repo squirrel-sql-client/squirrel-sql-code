@@ -80,7 +80,12 @@ public class PropsImpl
 
    public String getString(String propKey, String defaultString)
    {
-      return StringInterpreter.interpret(getProperty(propKey), String.class, defaultString);
+      return getString(propKey, defaultString, false);
+   }
+
+   public String getString(String propKey, String defaultString, boolean allowWhiteSpacesOnly)
+   {
+      return StringInterpreter.interpret(getProperty(propKey), String.class, defaultString, allowWhiteSpacesOnly);
    }
 
    public void put(String propKey, String stringValue)

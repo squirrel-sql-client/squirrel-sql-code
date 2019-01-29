@@ -16,62 +16,70 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.io.Serializable;
 import java.nio.charset.Charset;
 
 /**
  * This class holds the configuration variables for the CSV importer.
- * 
+ *
  * @author Thorsten Mürell
  */
-public class CSVSettingsBean implements Cloneable, Serializable {
+public class CSVSettingsBean implements Cloneable, Serializable
+{
 
-	private char seperator = ';';
-	
-	private transient Charset importCharset = Charset.defaultCharset();
-	
-	private String dateFormat = "yyyy-MM-dd HH:mm:ss";
+   private char seperator = ';';
 
-	/**
-	 * @return the importCharset
-	 */
-	public Charset getImportCharset() {
-		return importCharset;
-	}
+   private transient Charset importCharset = Charset.defaultCharset();
 
-	/**
-	 * @param importCharset the importCharset to set
-	 */
-	public void setImportCharset(Charset importCharset) {
-		this.importCharset = importCharset;
-	}
+   private String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
-	/**
-	 * @return the seperator
-	 */
-	public char getSeperator() {
-		return seperator;
-	}
+   /**
+    * @return the importCharset
+    */
+   public Charset getImportCharset()
+   {
+      return importCharset;
+   }
 
-	/**
-	 * @param seperator the seperator to set
-	 */
-	public void setSeperator(char seperator) {
-		this.seperator = seperator;
-	}
+   /**
+    * @param importCharset the importCharset to set
+    */
+   public void setImportCharset(Charset importCharset)
+   {
+      this.importCharset = importCharset;
+   }
 
-	/**
-	 * @return the dateFormat
-	 */
-	public String getDateFormat() {
-		return dateFormat;
-	}
+   /**
+    * @return the seperator
+    */
+   public char getSeperator()
+   {
+      return seperator;
+   }
 
-	/**
-	 * @param dateFormat the dateFormat to set
-	 */
-	public void setDateFormat(String dateFormat) {
-		this.dateFormat = dateFormat;
-	}
-	
+   /**
+    * @param seperator the seperator to set
+    */
+   public void setSeperator(char seperator)
+   {
+      this.seperator = seperator;
+   }
+
+   /**
+    * @return the dateFormat
+    */
+   public String getDateFormat()
+   {
+      return dateFormat;
+   }
+
+   /**
+    * @param dateFormat the dateFormat to set
+    */
+   public void setDateFormat(String dateFormat)
+   {
+      this.dateFormat = dateFormat;
+   }
+
 }

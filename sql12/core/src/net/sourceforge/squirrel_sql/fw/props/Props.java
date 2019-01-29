@@ -27,7 +27,12 @@ public class Props
 
    public static String getString(String propKey, String defaultString)
    {
-      return Main.getApplication().getPropsImpl().getString(propKey, defaultString);
+      return getString(propKey, defaultString, false);
+   }
+
+   public static String getString(String propKey, String defaultString, boolean allowWhiteSpacesOnly)
+   {
+      return Main.getApplication().getPropsImpl().getString(propKey, defaultString, allowWhiteSpacesOnly);
    }
 
    public static void putString(String propKey, String stringValue)

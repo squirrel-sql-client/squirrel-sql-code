@@ -78,14 +78,17 @@ public class ImportFileDialog extends DialogWidget
 
       //i18n[ImportFileDialogCtrl.chkHeadersIncluded=Headers in first line]
       chkHeadersIncluded = new JCheckBox(stringMgr.getString("ImportFileDialog.headersIncluded"));
+      chkHeadersIncluded.setToolTipText(stringMgr.getString("ImportFileDialog.headersIncluded.tooltip"));
       chkHeadersIncluded.setSelected(true);
 
       // i18n[ImportFileDialogCtrl.btnSuggestColumns=Suggest columns (find matching columns)]
       btnSuggestColumns = new JToggleButton(stringMgr.getString("ImportFileDialog.suggestColumns"));
+      btnSuggestColumns.setToolTipText(stringMgr.getString("ImportFileDialog.suggestColumns.tooltip"));
       btnSuggestColumns.setSelected(false);
 
 
       chkTrimValues = new JCheckBox(stringMgr.getString("ImportFileDialog.trim.values"));
+      chkTrimValues.setToolTipText(stringMgr.getString("ImportFileDialog.trim.values.tooltip"));
       chkTrimValues.setSelected(true);
 
       chkSafeMode = new JCheckBox(stringMgr.getString("ImportFileDialog.safetySwitch"));

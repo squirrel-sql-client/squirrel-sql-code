@@ -37,6 +37,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportFileDialog;
+import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportFileDialogProps;
 
 /**
  * This class contains the panel for the CSV settings.
@@ -165,6 +167,9 @@ public class CSVSettingsPanel extends JPanel
       }
       settings.setImportCharset(Charset.forName(encoding.getSelectedItem().toString()));
       settings.setDateFormat(dateFormat.getText());
+
+      ImportFileDialogProps.setCSVSeparator(settings.getSeperator());
+      ImportFileDialogProps.setCSVDateFormat(settings.getDateFormat());
    }
 
    private void loadSettings()

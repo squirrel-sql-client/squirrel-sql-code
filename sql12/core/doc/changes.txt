@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Small improvements of Data Import Plugin:
+  - Icon
+  - Several tooltips
+  - CSV separator and date format are remembered
+
 Brushed up the Data Import Plugin quite a bit and made it a standard Plugin.
   See Object tree --> right mouse menu of table --> menu item "Import file (MS Excel or CSV)"
 
