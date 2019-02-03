@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.Window;
 
 
 /**
@@ -37,7 +38,7 @@ import javax.swing.event.ChangeListener;
 public class ResultSetExportCsvController extends TableExportCsvController {
 
 
-   public ResultSetExportCsvController(JFrame owner)
+   public ResultSetExportCsvController(Window owner)
    {
       super(owner);
    }
@@ -55,15 +56,21 @@ public class ResultSetExportCsvController extends TableExportCsvController {
     * @param owner
 	 */
 	@Override
-	protected ResultSetExportDialog createDialog(JFrame owner) {
+	protected ResultSetExportDialog createDialog(Window owner)
+	{
 		final ResultSetExportDialog dlg = new ResultSetExportDialog(owner);
-		 
-		dlg.radComplete.addChangeListener(new ChangeListener() {
+
+		dlg.radComplete.addChangeListener(new ChangeListener()
+		{
 			@Override
-			public void stateChanged(ChangeEvent e) {
-				if(dlg.radComplete.isSelected()){
+			public void stateChanged(ChangeEvent e)
+			{
+				if (dlg.radComplete.isSelected())
+				{
 					dlg.txtLimitRows.setEnabled(false);
-				}else{
+				}
+				else
+				{
 					dlg.txtLimitRows.setEnabled(true);
 				}
 			}

@@ -59,7 +59,9 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JWindow;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -467,7 +469,7 @@ public class TablePopupMenu extends BasePopupMenu
       {
 			try
 			{
-				new TableExportCsvCommand(_dataSetViewerTablePanel.getTable()).execute((JFrame) GUIUtils.getOwningFrame(_dataSetViewerTablePanel.getTable()));
+				new TableExportCsvCommand(_dataSetViewerTablePanel.getTable()).execute(SwingUtilities.windowForComponent(_dataSetViewerTablePanel.getTable()));
 			}
 			catch (ExportDataException e)
 			{

@@ -15,6 +15,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.JOptionPane;
 import java.awt.Frame;
+import java.awt.Window;
 import java.io.File;
 
 public class ExportFileWriter
@@ -33,7 +34,7 @@ public class ExportFileWriter
    {
       return writeFile(prefs, data, progressController, null);
    }
-   public static long writeFile(TableExportPreferences prefs, IExportData data, ProgressAbortCallback progressController, Frame ownerFrame)
+   public static long writeFile(TableExportPreferences prefs, IExportData data, ProgressAbortCallback progressController, Window ownerFrame)
    {
 
       File file = null;

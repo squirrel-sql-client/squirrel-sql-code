@@ -22,10 +22,10 @@ public class TableExportCsvController
    private TableExportCsvDlg _dlg;
    private boolean _ok = false;
 
-   private JFrame _owner;
+   private Window _owner;
 
 
-   TableExportCsvController(JFrame owner)
+   TableExportCsvController(Window owner)
    {
       _owner = owner;
       _dlg = createDialog(owner);
@@ -53,7 +53,8 @@ public class TableExportCsvController
 
    }
 
-   protected TableExportCsvDlg createDialog(JFrame owner) {
+   protected TableExportCsvDlg createDialog(Window owner)
+   {
       return new TableExportCsvDlg(owner);
    }
 
@@ -681,7 +682,7 @@ public class TableExportCsvController
 	   return this._dlg;
    }
 
-   public Frame getOwningFrame()
+   public Window getOwningWindow()
    {
       return _owner;
    }

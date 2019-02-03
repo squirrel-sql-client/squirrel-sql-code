@@ -22,6 +22,7 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 
 import javax.swing.*;
 
@@ -47,7 +48,7 @@ public class ResultSetExportDialog extends TableExportCsvDlg {
 
 	IntegerField txtLimitRows;
 
-   public ResultSetExportDialog(JFrame owner)
+   public ResultSetExportDialog(Window owner)
    {
       super(owner);
    }

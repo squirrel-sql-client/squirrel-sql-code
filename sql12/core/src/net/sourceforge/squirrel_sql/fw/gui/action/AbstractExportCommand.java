@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import java.awt.Desktop;
+import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -105,11 +106,11 @@ public abstract class AbstractExportCommand
 	 */
    protected long writeFile(final TableExportCsvController ctrl, IExportData data)
    {
-      return ExportFileWriter.writeFile(TableExportPreferencesDAO.loadPreferences(), data, progressController, ctrl.getOwningFrame());
+      return ExportFileWriter.writeFile(TableExportPreferencesDAO.loadPreferences(), data, progressController, ctrl.getOwningWindow());
    }
 
 
-   private void executeCommand(String command, final JFrame owner)
+   private void executeCommand(String command, final Window owner)
 	   {
 	      try
 	      {
@@ -134,7 +135,7 @@ public abstract class AbstractExportCommand
          }
 	   }
 
-   public void execute(final JFrame owner) throws ExportDataException
+   public void execute(final Window owner) throws ExportDataException
    {
       try
       {
@@ -278,7 +279,7 @@ public abstract class AbstractExportCommand
       }
    }
 
-   private void showExportSuccessMessage(JFrame owner, long writtenRows, File exportFile)
+   private void showExportSuccessMessage(Window owner, long writtenRows, File exportFile)
    {
       try
       {
@@ -328,7 +329,7 @@ public abstract class AbstractExportCommand
 	 * @return
     * @param owner
 	 */
-	protected TableExportCsvController createTableExportController(final JFrame owner) {
+	protected TableExportCsvController createTableExportController(final Window owner) {
 
       try
       {

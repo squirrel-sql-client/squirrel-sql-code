@@ -80,6 +80,8 @@ Improved parsing for SQL editor: Table names tended to be marked as error (red) 
 
 Bug fixes:
 
+Export CSV/Excel/Json dialog didn't show up over the right window when the result to export wasn't in the main application window.
+
 ClassCastException when exporting result table. Could be reproduced as follows:
   Choose to show row numbers. --> select a part of table and choose "Select entire rows afterwards".
   --> Export CSV/Excel/Json results in ClassCastException.

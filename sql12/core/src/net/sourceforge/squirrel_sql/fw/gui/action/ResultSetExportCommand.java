@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
+import java.awt.Window;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -115,7 +116,7 @@ public class ResultSetExportCommand extends AbstractExportCommand
     * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createTableExportController()
     */
    @Override
-   protected TableExportCsvController createTableExportController(final JFrame owner)
+   protected TableExportCsvController createTableExportController(final Window owner)
    {
       try
       {

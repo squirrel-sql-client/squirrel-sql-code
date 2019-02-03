@@ -43,9 +43,10 @@ public class TableExportCsvDlg extends JDialog
 
 
 	
-   public TableExportCsvDlg(JFrame owner)
+   public TableExportCsvDlg(Window owner)
    {
-      super(owner, true);
+      super(owner);
+      setModal(true);
 
       // i18n[TableExportCSVDlg.exportTitleNew=CSV / MS Excel / XML export]
       setTitle(s_stringMgr.getString("TableExportCSVDlg.exportTitleNew"));
