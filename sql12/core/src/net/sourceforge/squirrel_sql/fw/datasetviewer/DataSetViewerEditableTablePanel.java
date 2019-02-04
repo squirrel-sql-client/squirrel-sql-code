@@ -225,7 +225,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			// user gives a response).  This is critical since this function provides
 			// a return value to its caller that depends on the user input.
 			// i18n[baseDataSetViewerDestination.warning=Warning]
-			int option = JOptionPane.showConfirmDialog(GUIUtils.getOwningFrame(getComponent()), message, s_stringMgr.getString("baseDataSetViewerDestination.warning"),
+			int option = JOptionPane.showConfirmDialog(SwingUtilities.windowForComponent(getComponent()), message, s_stringMgr.getString("baseDataSetViewerDestination.warning"),
 				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
 			if ( option != JOptionPane.YES_OPTION)
@@ -248,7 +248,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			// user gives a response).  This is critical since this function provides
 			// a return value to its caller that depends on the user input.
 			// i18n[baseDataSetViewerDestination.warning2=Warning]
-			int option = JOptionPane.showConfirmDialog(GUIUtils.getOwningFrame(getComponent()), message, s_stringMgr.getString("baseDataSetViewerDestination.warning2"),
+			int option = JOptionPane.showConfirmDialog(SwingUtilities.windowForComponent(getComponent()), message, s_stringMgr.getString("baseDataSetViewerDestination.warning2"),
 				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if ( option != JOptionPane.YES_OPTION)
 			{
@@ -270,7 +270,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		{
 			// tell user that there was a problem
 			// i18n[baseDataSetViewerDestination.error=Error]
-			JOptionPane.showMessageDialog(GUIUtils.getOwningFrame(getComponent()), message, s_stringMgr.getString("baseDataSetViewerDestination.error"),
+			JOptionPane.showMessageDialog(SwingUtilities.windowForComponent(getComponent()), message, s_stringMgr.getString("baseDataSetViewerDestination.error"),
 				JOptionPane.ERROR_MESSAGE);
 
 			// tell caller that the underlying data was not updated
@@ -310,8 +310,9 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	{
 		// The list of rows may be empty, in which case
 		// we tell user they should select something first
-		if (rows.length == 0) {
-			JOptionPane.showMessageDialog(GUIUtils.getOwningFrame(getComponent()),
+		if (rows.length == 0)
+		{
+			JOptionPane.showMessageDialog(SwingUtilities.windowForComponent(getComponent()),
 			   // i18n[dataSetViewerEditableTablePanel.selectionNeeded=You must select something in the table to delete.]
 				s_stringMgr.getString("dataSetViewerEditableTablePanel.selectionNeeded"));
 			return;
@@ -322,13 +323,12 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		String msg = s_stringMgr.getString("dataSetViewerEditableTablePanel.deleteRosQuestion", rows.length);
 
 		// Non-empty set of rows to delete.  Make sure user wants to delete
-		int option = JOptionPane.showConfirmDialog(
-            GUIUtils.getOwningFrame(getComponent()),
-			msg,
-			// i18n[dataSetViewerEditableTablePanel.warning=Warning]
-			s_stringMgr.getString("dataSetViewerEditableTablePanel.warning"),
-			JOptionPane.YES_NO_OPTION,
-			JOptionPane.WARNING_MESSAGE);
+		int option =
+				JOptionPane.showConfirmDialog(
+						SwingUtilities.windowForComponent(getComponent()),
+						msg, s_stringMgr.getString("dataSetViewerEditableTablePanel.warning"),
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.WARNING_MESSAGE);
 
 
 		if ( option != JOptionPane.YES_OPTION)
@@ -360,7 +360,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		if (message != null)
 		{
 			// tell user that there was a problem
-			JOptionPane.showMessageDialog(GUIUtils.getOwningFrame(getComponent()),
+			JOptionPane.showMessageDialog(SwingUtilities.windowForComponent(getComponent()),
 				// i18n[dataSetViewerEditableTablePanel.noRowsDeleted={0}\nNo rows deleted from database.]
 				s_stringMgr.getString("dataSetViewerEditableTablePanel.noRowsDeleted", message),
 				// i18n[dataSetViewerEditableTablePanel.error=Error]
@@ -466,7 +466,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		
 		if (message != null) {
 			// there was a problem inserting into the DB
-			JOptionPane.showMessageDialog(GUIUtils.getOwningFrame(getComponent()),
+			JOptionPane.showMessageDialog(SwingUtilities.windowForComponent(getComponent()),
 				// i18n[dataSetViewereditableTablePanel.error2=Error]
 				message, s_stringMgr.getString("dataSetViewereditableTablePanel.error2"),
 				JOptionPane.ERROR_MESSAGE);
