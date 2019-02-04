@@ -130,6 +130,15 @@
                 <exclude name="**/*.java" />
             </fileset>
         </copy>
+        <!--
+            Add splash screen image to the JAR so that Java can pick
+            it up without the command line argument
+        -->
+        <copy todir="output/work/bin/icons">
+            <fileset dir="launcher/icons">
+                <include name="**/splash.jpg" />
+            </fileset>
+        </copy>
         <replace file="output/work/bin/net/sourceforge/squirrel_sql/client/Version.properties" token="squirrelsql.version.value" value="${squirrelsql.version}"/>
         <jar jarfile="output/dist/squirrel-sql.jar" basedir="output/work/bin">
             <manifest>

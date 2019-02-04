@@ -20,11 +20,18 @@ package net.sourceforge.squirrel_sql.client.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.URI;
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.Arrays;
 
 import net.sourceforge.squirrel_sql.fw.util.IJavaPropertyNames;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * This class contains information about files and directories used by the
@@ -36,6 +43,7 @@ public class ApplicationFiles
 {
    public static final String STANDARD_RELATIVE_USER_DIR = ".squirrel-sql";
 
+   private static ILogger s_log = LoggerController.createLogger(ApplicationFiles.class);
 
    /**
     * Name of directory to contain users settings.
@@ -85,7 +93,7 @@ public class ApplicationFiles
       ApplicationArguments args = ApplicationArguments.getInstance();
 
       final String homeDir = args.getSquirrelHomeDirectory();
-      _squirrelHomeDir = new File(homeDir != null ? homeDir : System.getProperty(IJavaPropertyNames.USER_DIR));
+      _squirrelHomeDir = homeDir != null ? new File(homeDir) : getDefaultSquirrelHomeDir();
       String homeDirPath = _squirrelHomeDir.getPath() + File.separator;
       _squirrelPluginsDir = homeDirPath + "plugins";
       _documentationDir = homeDirPath + "doc";
@@ -119,10 +127,28 @@ public class ApplicationFiles
       }
    }
 
+   private static File getDefaultSquirrelHomeDir()
+   {
+      try
+      {
+         ProtectionDomain protectionDomain = ApplicationFiles.class.getProtectionDomain();
+         CodeSource codeSource = protectionDomain.getCodeSource();
+         URL location = codeSource.getLocation();
+         URI uri = location.toURI();
+         return new File(uri).getParentFile();
+
+      }
+      catch (Exception ex)
+      {
+         s_log.warn("Application home directory is neither specified nor could be established; using current directory as best guess", ex);
+
+         return new File(System.getProperty(IJavaPropertyNames.USER_DIR));
+      }
+   }
+
    public static String getStandardUserDir()
    {
-      return System.getProperty(IJavaPropertyNames.USER_HOME)
-            + File.separator + STANDARD_RELATIVE_USER_DIR;
+      return System.getProperty(IJavaPropertyNames.USER_HOME)  + File.separator + STANDARD_RELATIVE_USER_DIR;
    }
 
 

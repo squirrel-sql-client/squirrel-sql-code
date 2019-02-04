@@ -18,11 +18,13 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.io.File;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.Log4jLoggerFactory;
 
@@ -59,33 +61,38 @@ public class SquirrelLoggerFactory extends Log4jLoggerFactory
 	private void initialize(FileAppender fa, boolean doStartupLogging)
 	{
 		String configFileName = ApplicationArguments.getInstance().getLoggingConfigFileName();
-		if (configFileName != null)
+		if (configFileName != null && isFileAccessible(new File(configFileName)))
 		{
 			PropertyConfigurator.configure(configFileName);
 		}
 		else
 		{
-         Properties props = new Properties();
-         props.setProperty("log4j.rootLogger", "debug, SquirrelAppender");
-         props.setProperty("log4j.appender.SquirrelAppender", "net.sourceforge.squirrel_sql.client.SquirrelFileSizeRollingAppender");
-         props.setProperty("log4j.appender.SquirrelAppender.layout", "org.apache.log4j.PatternLayout");
-         props.setProperty("log4j.appender.SquirrelAppender.layout.ConversionPattern", "%d{ISO8601} [%t] %-5p %c %x - %m%n");
+			File squirrelHomeDir = new ApplicationFiles().getSquirrelHomeDir();
+			File defaultLogConfigFile = new File(squirrelHomeDir, "log4j.properties");
+			if (isFileAccessible(defaultLogConfigFile))
+			{
+				PropertyConfigurator.configure(defaultLogConfigFile.getAbsolutePath());
+			}
+			else
+			{
+				Properties props = new Properties();
+				props.setProperty("log4j.rootLogger", "debug, SquirrelAppender");
+				props.setProperty("log4j.appender.SquirrelAppender", "net.sourceforge.squirrel_sql.client.SquirrelFileSizeRollingAppender");
+				props.setProperty("log4j.appender.SquirrelAppender.layout", "org.apache.log4j.PatternLayout");
+				props.setProperty("log4j.appender.SquirrelAppender.layout.ConversionPattern", "%d{ISO8601} [%t] %-5p %c %x - %m%n");
 
-         PropertyConfigurator.configure(props);
-
-
-//			Logger.getRootLogger().removeAllAppenders();
-//			BasicConfigurator.configure(fa);
-//			final ILogger log = createLogger(getClass());
-//			if (log.isInfoEnabled()) {
-//				log.info("No logger configuration file passed on command line arguments. Using default log file: "
-//					+ fa.getFile());
-//			}
+				PropertyConfigurator.configure(props);
+			}
 		}
 		if (doStartupLogging)
 		{
 			doStartupLogging();
 		}
+	}
+
+	private static boolean isFileAccessible(File configFile)
+	{
+		return configFile != null && configFile.exists() && configFile.isFile() && configFile.canRead();
 	}
 
 	private void doStartupLogging()
