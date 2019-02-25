@@ -619,9 +619,17 @@ public class AliasInternalFrame extends DialogWidget
 		private class DriverComparator implements Comparator<ISQLDriver>,
 		                                          Serializable
 		{
-			public int compare(ISQLDriver o1, ISQLDriver o2)
+			public int compare(ISQLDriver leftDriver, ISQLDriver rightDriver)
 			{
-				return o1.toString().compareToIgnoreCase(o2.toString());
+				if (leftDriver.isJDBCDriverClassLoaded() && !rightDriver.isJDBCDriverClassLoaded()) {
+					return -1;
+				}
+
+				if (!leftDriver.isJDBCDriverClassLoaded() && rightDriver.isJDBCDriverClassLoaded()) {
+					return 1;
+				}
+
+				return leftDriver.toString().compareToIgnoreCase(rightDriver.toString());
 			}
 
 		}
