@@ -1,11 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
+import net.sourceforge.squirrel_sql.fw.gui.TableCopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
 
 public class TableCopyColumnHeaderCommand implements ICommand
 {
@@ -40,7 +39,7 @@ public class TableCopyColumnHeaderCommand implements ICommand
             buf.append("," + col.getHeaderValue());
          }
       }
-      final StringSelection ss = new StringSelection(buf.toString());
-      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+
+      TableCopyToClipboardUtil.copyToClip(buf);
    }
 }

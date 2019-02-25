@@ -2,11 +2,9 @@ package net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.gui.TableCopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
 
 public class TableCopySeparatedByCommand
 {
@@ -104,9 +102,7 @@ public class TableCopySeparatedByCommand
          }
       }
 
-      StringSelection ss = new StringSelection(sb.toString());
-      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
-
+      TableCopyToClipboardUtil.copyToClip(sb);
    }
 
    private int getDistToLastNewLine(StringBuilder sb)

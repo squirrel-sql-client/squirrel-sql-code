@@ -17,15 +17,14 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
 
-import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
-
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
+import net.sourceforge.squirrel_sql.fw.gui.TableCopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
 
 public class TableCopyCommand implements ICommand
 {
@@ -95,8 +94,8 @@ public class TableCopyCommand implements ICommand
 					buf.append('\n');
 				}
 			}
-			StringSelection ss = new StringSelection(buf.toString());
-			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+
+			TableCopyToClipboardUtil.copyToClip(buf);
 		}
 	}
 }

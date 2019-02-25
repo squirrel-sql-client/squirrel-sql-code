@@ -5,13 +5,12 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.ResultAsText;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.ResultAsTextLineCallback;
+import net.sourceforge.squirrel_sql.fw.gui.TableCopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.JTable;
 import javax.swing.table.TableColumn;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 
 public class TableCopyAlignedCommand
@@ -80,7 +79,6 @@ public class TableCopyAlignedCommand
          resultAsText.addRow(row);
       }
 
-      StringSelection ss = new StringSelection(text.toString());
-      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+      TableCopyToClipboardUtil.copyToClip(text);
    }
 }

@@ -4,14 +4,13 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.gui.TableCopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.steppschuh.markdowngenerator.table.Table;
 
-import javax.swing.*;
+import javax.swing.JTable;
 import javax.swing.table.TableColumn;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 
 public class TableCopyAsMarkdownCommand
@@ -99,7 +98,7 @@ public class TableCopyAsMarkdownCommand
 
       String line = new String(new char[width]).replace('\0', '-') + "\n";
 
-      StringSelection ss = new StringSelection(line + markdownTable + "\n" + line);
-      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+      TableCopyToClipboardUtil.copyToClip(line + markdownTable + "\n" + line);
+
    }
 }

@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Data copied from tables are now added to paste history.
+  Note: Paste history can be accessed through ctrl+shift+v or ctrl+shift+insert.
+
 Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checked blue) drivers are now displayed on top of the drop-down.
   Thanks to Peter G. Horvath for the patch.
 
@@ -428,7 +431,7 @@ The SQL result panel can now be hidden and restore by the new 'Toggle minimize r
         See menu File --> New Session Properties --> Tab 'Code completion' --> Checkbox at bottom.
 
 
-The new paste history can be called using ctrl+shift+V oder ctrl+shift+insert. It offers to paste
+The new paste history can be called using ctrl+shift+V or ctrl+shift+insert. It offers to paste
   the content of former copy or cut actions.
 
 Enhancement of feature request #545: New table right mouse menu 'Copy as markdown table'

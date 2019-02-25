@@ -19,16 +19,14 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-
-import javax.swing.JTable;
-import javax.swing.table.TableColumn;
-
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+import net.sourceforge.squirrel_sql.fw.gui.TableCopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 
 /**
  * This command gets the current selected text from a <TT>JTable</TT>
@@ -135,8 +133,8 @@ public class TableCopyInsertStatementCommand extends TableCopySqlPartCommandBase
             vals.setLength(0);
 
          }
-         final StringSelection ss = new StringSelection(buf.toString());
-         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+
+         TableCopyToClipboardUtil.copyToClip(buf);
       }
    }
 
