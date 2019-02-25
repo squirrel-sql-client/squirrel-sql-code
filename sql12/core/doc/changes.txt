@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checked blue) drivers are now displayed on top of the drop-down.
+  Thanks to Peter G. Horvath for the patch.
+
 
 Squirrel can now be started by the "java -jar squirrel-sql.jar" command. Nonetheless the the existing starter scripts work as usual.
  Thanks to Peter G. Horvath for the merge request.

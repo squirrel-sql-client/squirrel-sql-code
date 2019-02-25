@@ -621,11 +621,13 @@ public class AliasInternalFrame extends DialogWidget
 		{
 			public int compare(ISQLDriver leftDriver, ISQLDriver rightDriver)
 			{
-				if (leftDriver.isJDBCDriverClassLoaded() && !rightDriver.isJDBCDriverClassLoaded()) {
+				if (leftDriver.isJDBCDriverClassLoaded() && !rightDriver.isJDBCDriverClassLoaded())
+				{
 					return -1;
 				}
 
-				if (!leftDriver.isJDBCDriverClassLoaded() && rightDriver.isJDBCDriverClassLoaded()) {
+				if (!leftDriver.isJDBCDriverClassLoaded() && rightDriver.isJDBCDriverClassLoaded())
+				{
 					return 1;
 				}
 
