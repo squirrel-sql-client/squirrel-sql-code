@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Tooltips for result tab menu items "Toggle sticky" and "Toggle anchored"
+
 #577 Caret color of SQL editor can be adjusted, see menu File -> New Session Properties -> tab Syntax.
   This feature is helpful if SQuirreL is run in "fashionable" black. To run SQuirreL in black:
   - Choose the Metal-Charcoal Look and Feel

@@ -957,12 +957,14 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
       JMenuItem mnuToggleSticky = new JMenuItem(tsLabel);
       initAccelerator(ToggleCurrentSQLResultTabStickyAction.class, mnuToggleSticky);
       mnuToggleSticky.addActionListener(e -> toggleCurrentSQLResultTabSticky());
+      mnuToggleSticky.setToolTipText(s_stringMgr.getString("SQLResultExecuterPanel.toggleSticky.tooltip"));
       popup.add(mnuToggleSticky);
 
       String taLabel = s_stringMgr.getString("SQLResultExecuterPanel.toggleAnchored");
       JMenuItem mnuToggleAnchored = new JMenuItem(taLabel);
       initAccelerator(ToggleCurrentSQLResultTabAnchoredAction.class, mnuToggleAnchored);
       mnuToggleAnchored.addActionListener(e -> toggleCurrentSQLResultTabAnchored());
+      mnuToggleAnchored.setToolTipText(s_stringMgr.getString("SQLResultExecuterPanel.toggleAnchored.tooltip"));
       popup.add(mnuToggleAnchored);
 
       _tabbedExecutionsPanel.addMouseListener(new MouseAdapter()
