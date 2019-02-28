@@ -1,8 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliascolor;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasTreeUtil;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.ColorPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
@@ -13,10 +11,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JTree;
 import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Point;

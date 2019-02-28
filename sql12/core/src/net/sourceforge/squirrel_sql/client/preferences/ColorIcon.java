@@ -81,8 +81,11 @@ public class ColorIcon implements Icon
 
    public void paintIcon(Component c, Graphics g, int x, int y)
    {
-      g.setColor(border);
-      g.drawRect(x, y, iWidth - 1, iHeight - 2);
+      if (null != border)
+      {
+         g.setColor(border);
+         g.drawRect(x, y, iWidth - 1, iHeight - 2);
+      }
 
       x += insets.left;
       y += insets.top;

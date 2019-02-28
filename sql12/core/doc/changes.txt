@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#577 Caret color of SQL editor can be adjusted, see menu File -> New Session Properties -> tab Syntax.
+  This feature is helpful if SQuirreL is run in "fashionable" black. To run SQuirreL in black:
+  - Choose the Metal-Charcoal Look and Feel
+  - In the Syntax properties choose the white spaces to be black
+  - Adjust the caret color to some light color.
+
+
 Data copied from tables are now added to paste history.
   Note: Paste history can be accessed through ctrl+shift+v or ctrl+shift+insert.
 

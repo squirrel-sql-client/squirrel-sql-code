@@ -17,11 +17,13 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.awt.Color;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+
 /**
  * This JavaBean class represents the user specific
  * preferences for this plugin.
@@ -30,18 +32,21 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  */
 public class SyntaxPreferences implements Serializable, Cloneable
 {
-   public interface IPropertyNames {
-//		String BLINK_CARET = "blinkCaret";
+   public static final int NO_CARET_COLOR = -1;
+
+   public interface IPropertyNames
+   {
+      //		String BLINK_CARET = "blinkCaret";
 //		String BLOCK_CARET_ENABLED = "blockCaretEnabled";
 //		String BRACKET_HIGHLIGHTING = "bracketHighlighting";
 //		String BRACKET_HIGHLIGHT_COLOR = "bracketHighlightColor";
 //		String CARET_COLOR = "caretColor";
       String COLUMN_STYLE = "columnStyle";
       String COMMENT_STYLE = "commentStyle";
-//		String CURRENT_LINE_HIGHLIGHTING = "currentLineHighlighting";
+      //		String CURRENT_LINE_HIGHLIGHTING = "currentLineHighlighting";
 //		String CURRENT_LINE_HIGHLIGHT_COLOR = "currentLineHighlightColor";
       String DATA_TYPE_STYLE = "dataTypeStyle";
-//		String EOL_MARKERS = "eolMarkers";
+      //		String EOL_MARKERS = "eolMarkers";
 //		String EOL_MARKER_COLOR = "eolMarkerColor";
       String ERROR_STYLE = "errorStyle";
       String FUNCTION_STYLE = "functionStyle";
@@ -50,7 +55,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
       String OPERATOR_STYLE = "operatorStyle";
       String RESERVED_WORD_STYLE = "reservedWordStyle";
       String SEPARATOR_STYLE = "separatorStyle";
-//		String LINE_NUMBER_COLOR = "lineNumberColor";
+      //		String LINE_NUMBER_COLOR = "lineNumberColor";
 //		String SELECTION_COLOR = "selectionColor";
 //		String SHOW_LINE_NBRS = "showLineNumbers";
       String TABLE_STYLE = "tableStyle";
@@ -63,136 +68,141 @@ public class SyntaxPreferences implements Serializable, Cloneable
       String TEXT_LIMIT_LINE_WIDTH = "textLimitLineWidth";
       String HIGHLIGHT_CURRENT_LINE = "highlightCurrentLine";
       String LINE_NUMBERS_ENABLED = "lineNumbersEnabled";
-    }
+      String CARET_COLOR_RGB = "caretColorRGB";
+   }
 
-	/** Object to handle property change events. */
-	private transient PropertyChangeReporter _propChgReporter;
+   /**
+    * Object to handle property change events.
+    */
+   private transient PropertyChangeReporter _propChgReporter;
 
    private boolean _usePlainTextControl = false;
    private boolean _useRSyntaxTextArea = true;
 
-	/** If <TT>true</TT> use the block caret. */
+   /** If <TT>true</TT> use the block caret. */
 //	private boolean _blockCaretEnabled = false;
 
-	/** If <TT>true</TT> caret should blink. */
+   /** If <TT>true</TT> caret should blink. */
 //	private boolean _blinkCaret = true;
 
-	/** If <TT>true</TT> show EOL markers. */
+   /** If <TT>true</TT> show EOL markers. */
 //	private boolean _showEndOfLineMarkers = false;
 
-	/** If <TT>true</TT> show matching brackets. */
+   /** If <TT>true</TT> show matching brackets. */
 //	private boolean _bracketHighlighting = true;
 
-	/** If <TT>true</TT> the current line should be highlighted. */
+   /** If <TT>true</TT> the current line should be highlighted. */
 //	private boolean _currentLineHighlighting = true;
 
-	/** If <TT>true</TT> line numbers should be displayed. */
+   /**
+    * If <TT>true</TT> line numbers should be displayed.
+    */
 //	private boolean _showLineNumbers = false;
 
-	private SyntaxStyle _columnStyle = new SyntaxStyle();
-	private SyntaxStyle _commentStyle = new SyntaxStyle();
-	private SyntaxStyle _dataTypeStyle = new SyntaxStyle();
-	private SyntaxStyle _errorStyle = new SyntaxStyle();
-	private SyntaxStyle _functionStyle = new SyntaxStyle();
-	private SyntaxStyle _identifierStyle = new SyntaxStyle();
-	private SyntaxStyle _literalStyle = new SyntaxStyle();
-	private SyntaxStyle _operatorStyle = new SyntaxStyle();
-	private SyntaxStyle _reservedWordStyle = new SyntaxStyle();
-	private SyntaxStyle _separatorStyle = new SyntaxStyle();
-	private SyntaxStyle _tableStyle = new SyntaxStyle();
-	private SyntaxStyle _whiteSpaceStyle = new SyntaxStyle();
+   private SyntaxStyle _columnStyle = new SyntaxStyle();
+   private SyntaxStyle _commentStyle = new SyntaxStyle();
+   private SyntaxStyle _dataTypeStyle = new SyntaxStyle();
+   private SyntaxStyle _errorStyle = new SyntaxStyle();
+   private SyntaxStyle _functionStyle = new SyntaxStyle();
+   private SyntaxStyle _identifierStyle = new SyntaxStyle();
+   private SyntaxStyle _literalStyle = new SyntaxStyle();
+   private SyntaxStyle _operatorStyle = new SyntaxStyle();
+   private SyntaxStyle _reservedWordStyle = new SyntaxStyle();
+   private SyntaxStyle _separatorStyle = new SyntaxStyle();
+   private SyntaxStyle _tableStyle = new SyntaxStyle();
+   private SyntaxStyle _whiteSpaceStyle = new SyntaxStyle();
 
 
    private boolean _textLimitLineVisible = false;
    private int _textLimitLineWidth = 80;
 
-	private int _tabLength = 5;
-	private boolean _replaceTabsBySpaces = false;
+   private int _tabLength = 5;
+   private boolean _replaceTabsBySpaces = false;
 
-	private boolean _highlightCurrentLine = true;
+   private boolean _highlightCurrentLine = true;
 
    private boolean _lineNumbersEnabled = false;
 
-	/**
+   /**
     * Indicates, that copy in rich text format should be used as default copy action (if possible)
     */
    private boolean _useCopyAsRtf = false;
 
+   private int _caretColorRGB = NO_CARET_COLOR;
+
    public SyntaxPreferences()
-	{
-		super();
+   {
+      _columnStyle.setName(IConstants.IStyleNames.COLUMN);
+      _columnStyle.setBackgroundRGB(Color.white.getRGB());
+      _columnStyle.setTextRGB(-10066432);
+      _columnStyle.setBold(false);
+      _columnStyle.setItalic(false);
 
-		_columnStyle.setName(IConstants.IStyleNames.COLUMN);
-		_columnStyle.setBackgroundRGB(Color.white.getRGB());
-		_columnStyle.setTextRGB(-10066432);
-		_columnStyle.setBold(false);
-		_columnStyle.setItalic(false);
+      _commentStyle.setName(IConstants.IStyleNames.COMMENT);
+      _commentStyle.setBackgroundRGB(Color.white.getRGB());
+      _commentStyle.setTextRGB(Color.lightGray.darker().getRGB());
+      _commentStyle.setBold(false);
+      _commentStyle.setItalic(false);
 
-		_commentStyle.setName(IConstants.IStyleNames.COMMENT);
-		_commentStyle.setBackgroundRGB(Color.white.getRGB());
-		_commentStyle.setTextRGB(Color.lightGray.darker().getRGB());
-		_commentStyle.setBold(false);
-		_commentStyle.setItalic(false);
+      _dataTypeStyle.setName(IConstants.IStyleNames.DATA_TYPE);
+      _dataTypeStyle.setBackgroundRGB(Color.white.getRGB());
+      _dataTypeStyle.setTextRGB(Color.yellow.darker().getRGB());
+      _dataTypeStyle.setBold(false);
+      _dataTypeStyle.setItalic(false);
 
-		_dataTypeStyle.setName(IConstants.IStyleNames.DATA_TYPE);
-		_dataTypeStyle.setBackgroundRGB(Color.white.getRGB());
-		_dataTypeStyle.setTextRGB(Color.yellow.darker().getRGB());
-		_dataTypeStyle.setBold(false);
-		_dataTypeStyle.setItalic(false);
+      _errorStyle.setName(IConstants.IStyleNames.ERROR);
+      _errorStyle.setBackgroundRGB(Color.white.getRGB());
+      _errorStyle.setTextRGB(Color.red.getRGB());
+      _errorStyle.setBold(false);
+      _errorStyle.setItalic(false);
 
-		_errorStyle.setName(IConstants.IStyleNames.ERROR);
-		_errorStyle.setBackgroundRGB(Color.white.getRGB());
-		_errorStyle.setTextRGB(Color.red.getRGB());
-		_errorStyle.setBold(false);
-		_errorStyle.setItalic(false);
+      _functionStyle.setName(IConstants.IStyleNames.FUNCTION);
+      _functionStyle.setBackgroundRGB(Color.white.getRGB());
+      _functionStyle.setTextRGB(Color.black.getRGB());
+      _functionStyle.setBold(false);
+      _functionStyle.setItalic(false);
 
-		_functionStyle.setName(IConstants.IStyleNames.FUNCTION);
-		_functionStyle.setBackgroundRGB(Color.white.getRGB());
-		_functionStyle.setTextRGB(Color.black.getRGB());
-		_functionStyle.setBold(false);
-		_functionStyle.setItalic(false);
+      _identifierStyle.setName(IConstants.IStyleNames.IDENTIFIER);
+      _identifierStyle.setBackgroundRGB(Color.white.getRGB());
+      _identifierStyle.setTextRGB(Color.black.getRGB());
+      _identifierStyle.setBold(false);
+      _identifierStyle.setItalic(false);
 
-		_identifierStyle.setName(IConstants.IStyleNames.IDENTIFIER);
-		_identifierStyle.setBackgroundRGB(Color.white.getRGB());
-		_identifierStyle.setTextRGB(Color.black.getRGB());
-		_identifierStyle.setBold(false);
-		_identifierStyle.setItalic(false);
+      _literalStyle.setName(IConstants.IStyleNames.LITERAL);
+      _literalStyle.setBackgroundRGB(Color.white.getRGB());
+      _literalStyle.setTextRGB(11546720);
+      _literalStyle.setBold(false);
+      _literalStyle.setItalic(false);
 
-		_literalStyle.setName(IConstants.IStyleNames.LITERAL);
-		_literalStyle.setBackgroundRGB(Color.white.getRGB());
-		_literalStyle.setTextRGB(11546720);
-		_literalStyle.setBold(false);
-		_literalStyle.setItalic(false);
+      _operatorStyle.setName(IConstants.IStyleNames.OPERATOR);
+      _operatorStyle.setBackgroundRGB(Color.white.getRGB());
+      _operatorStyle.setTextRGB(Color.black.getRGB());
+      _operatorStyle.setBold(true);
+      _operatorStyle.setItalic(false);
 
-		_operatorStyle.setName(IConstants.IStyleNames.OPERATOR);
-		_operatorStyle.setBackgroundRGB(Color.white.getRGB());
-		_operatorStyle.setTextRGB(Color.black.getRGB());
-		_operatorStyle.setBold(true);
-		_operatorStyle.setItalic(false);
+      _reservedWordStyle.setName(IConstants.IStyleNames.RESERVED_WORD);
+      _reservedWordStyle.setBackgroundRGB(Color.white.getRGB());
+      _reservedWordStyle.setTextRGB(Color.blue.getRGB());
+      _reservedWordStyle.setBold(false);
+      _reservedWordStyle.setItalic(false);
 
-		_reservedWordStyle.setName(IConstants.IStyleNames.RESERVED_WORD);
-		_reservedWordStyle.setBackgroundRGB(Color.white.getRGB());
-		_reservedWordStyle.setTextRGB(Color.blue.getRGB());
-		_reservedWordStyle.setBold(false);
-		_reservedWordStyle.setItalic(false);
+      _separatorStyle.setName(IConstants.IStyleNames.SEPARATOR);
+      _separatorStyle.setBackgroundRGB(Color.white.getRGB());
+      _separatorStyle.setTextRGB(0x000080); // Navy.
+      _separatorStyle.setBold(false);
+      _separatorStyle.setItalic(false);
 
-		_separatorStyle.setName(IConstants.IStyleNames.SEPARATOR);
-		_separatorStyle.setBackgroundRGB(Color.white.getRGB());
-		_separatorStyle.setTextRGB(0x000080); // Navy.
-		_separatorStyle.setBold(false);
-		_separatorStyle.setItalic(false);
+      _tableStyle.setName(IConstants.IStyleNames.TABLE);
+      _tableStyle.setBackgroundRGB(Color.white.getRGB());
+      _tableStyle.setTextRGB(-16738048);
+      _tableStyle.setBold(false);
+      _tableStyle.setItalic(false);
 
-		_tableStyle.setName(IConstants.IStyleNames.TABLE);
-		_tableStyle.setBackgroundRGB(Color.white.getRGB());
-		_tableStyle.setTextRGB(-16738048);
-		_tableStyle.setBold(false);
-		_tableStyle.setItalic(false);
-
-		_whiteSpaceStyle.setName(IConstants.IStyleNames.WHITESPACE);
-		_whiteSpaceStyle.setBackgroundRGB(Color.white.getRGB());
-		_whiteSpaceStyle.setTextRGB(Color.black.getRGB());
-		_whiteSpaceStyle.setBold(false);
-		_whiteSpaceStyle.setItalic(false);
+      _whiteSpaceStyle.setName(IConstants.IStyleNames.WHITESPACE);
+      _whiteSpaceStyle.setBackgroundRGB(Color.white.getRGB());
+      _whiteSpaceStyle.setTextRGB(Color.black.getRGB());
+      _whiteSpaceStyle.setBold(false);
+      _whiteSpaceStyle.setItalic(false);
 
 //		final TextAreaDefaults dfts = TextAreaDefaults.getDefaults();
 //		_columnStyle = dfts.styles[Token.COLUMN];
@@ -205,58 +215,31 @@ public class SyntaxPreferences implements Serializable, Cloneable
 //		_operatorStyle = dfts.styles[Token.OPERATOR];
 //		_otherStyle = dfts.styles[Token.NULL];
 //		_tableStyle = dfts.styles[Token.TABLE];
-	}
+   }
 
-	public Object clone() throws CloneNotSupportedException
-	{
-		try
-		{
-			SyntaxPreferences prefs = (SyntaxPreferences)super.clone();
-			prefs._propChgReporter = null;
-
-			return prefs;
-		}
-		catch (CloneNotSupportedException ex)
-		{
-			throw new InternalError(ex.getMessage()); // Impossible.
-		}
-	}
-
-	public void addPropertyChangeListener(PropertyChangeListener listener)
-	{
-		getPropertyChangeReporter().addPropertyChangeListener(listener);
-	}
-
-	public void removePropertyChangeListener(PropertyChangeListener listener)
-	{
-		getPropertyChangeReporter().removePropertyChangeListener(listener);
-	}
-
-
-   /**
-    * @deprecated Oster editor has been removed. This is just here to automatically switch
-    * users of the Oster editor to RSyntax
-    */
-	public void setUseOsterTextControl(boolean data)
-	{
-      if(data)
-      {
-         setUseRSyntaxTextArea(true);
-      }
-	}
-
-
-
-   /**
-    * @deprecated Netbeans editor has been removed. This is just here to automatically switch
-    * users of the Netbeans editor to RSyntax
-    */
-   public void setUseNetbeansTextControl(boolean data)
+   public Object clone() throws CloneNotSupportedException
    {
-      if(data)
+      try
       {
-         setUseRSyntaxTextArea(true);
+         SyntaxPreferences prefs = (SyntaxPreferences) super.clone();
+         prefs._propChgReporter = null;
+
+         return prefs;
       }
+      catch (CloneNotSupportedException ex)
+      {
+         throw new InternalError(ex.getMessage()); // Impossible.
+      }
+   }
+
+   public void addPropertyChangeListener(PropertyChangeListener listener)
+   {
+      getPropertyChangeReporter().addPropertyChangeListener(listener);
+   }
+
+   public void removePropertyChangeListener(PropertyChangeListener listener)
+   {
+      getPropertyChangeReporter().removePropertyChangeListener(listener);
    }
 
 
@@ -301,46 +284,46 @@ public class SyntaxPreferences implements Serializable, Cloneable
          final Boolean oldValue = Boolean.valueOf(_textLimitLineVisible);
          _textLimitLineVisible = data;
          getPropertyChangeReporter().firePropertyChange(IPropertyNames.TEXT_LIMIT_LINE_VISIBLE,
-            oldValue, Boolean.valueOf(_textLimitLineVisible));
+               oldValue, Boolean.valueOf(_textLimitLineVisible));
       }
    }
 
-	public boolean isReplaceTabsBySpaces()
-	{
-		return _replaceTabsBySpaces;
-	}
+   public boolean isReplaceTabsBySpaces()
+   {
+      return _replaceTabsBySpaces;
+   }
 
-	public void setReplaceTabsBySpaces(boolean data)
-	{
-		if (_replaceTabsBySpaces != data)
-		{
-			final Boolean oldValue = Boolean.valueOf(_replaceTabsBySpaces);
-			_replaceTabsBySpaces = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.REPLACE_TABS_BY_SPACES,
-					oldValue, Boolean.valueOf(_replaceTabsBySpaces));
-		}
+   public void setReplaceTabsBySpaces(boolean data)
+   {
+      if (_replaceTabsBySpaces != data)
+      {
+         final Boolean oldValue = Boolean.valueOf(_replaceTabsBySpaces);
+         _replaceTabsBySpaces = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.REPLACE_TABS_BY_SPACES,
+               oldValue, Boolean.valueOf(_replaceTabsBySpaces));
+      }
 
-	}
+   }
 
-	public int getTabLength()
-	{
-		return _tabLength;
-	}
+   public int getTabLength()
+   {
+      return _tabLength;
+   }
 
-	public void setTabLength(int data)
-	{
-		if (_tabLength != data)
-		{
-			final Integer oldValue = _tabLength;
-			_tabLength = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.TAB_LENGTH,
-					oldValue, (Integer)_tabLength);
-		}
+   public void setTabLength(int data)
+   {
+      if (_tabLength != data)
+      {
+         final Integer oldValue = _tabLength;
+         _tabLength = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TAB_LENGTH,
+               oldValue, (Integer) _tabLength);
+      }
 
-	}
+   }
 
 
-	public int getTextLimitLineWidth()
+   public int getTextLimitLineWidth()
    {
       return _textLimitLineWidth;
    }
@@ -352,7 +335,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
          final Integer oldValue = Integer.valueOf(_textLimitLineWidth);
          _textLimitLineWidth = data;
          getPropertyChangeReporter().firePropertyChange(IPropertyNames.TEXT_LIMIT_LINE_WIDTH,
-            oldValue, Integer.valueOf(_textLimitLineWidth));
+               oldValue, Integer.valueOf(_textLimitLineWidth));
       }
 
    }
@@ -371,7 +354,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
          final Boolean oldValue = Boolean.valueOf(_highlightCurrentLine);
          _highlightCurrentLine = data;
          getPropertyChangeReporter().firePropertyChange(IPropertyNames.HIGHLIGHT_CURRENT_LINE,
-            oldValue, Boolean.valueOf(_highlightCurrentLine));
+               oldValue, Boolean.valueOf(_highlightCurrentLine));
       }
 
    }
@@ -387,288 +370,301 @@ public class SyntaxPreferences implements Serializable, Cloneable
       {
          final Boolean oldValue = Boolean.valueOf(_lineNumbersEnabled);
          _lineNumbersEnabled = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.LINE_NUMBERS_ENABLED,
-            oldValue, Boolean.valueOf(_lineNumbersEnabled));
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.LINE_NUMBERS_ENABLED, oldValue, Boolean.valueOf(_lineNumbersEnabled));
       }
 
    }
 
+   public int getCaretColorRGB()
+   {
+      return _caretColorRGB;
+   }
+
+   public void setCaretColorRGB(int caretColorRGB)
+   {
+      final int oldValue = _caretColorRGB;
+      _caretColorRGB = caretColorRGB;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.CARET_COLOR_RGB, oldValue, _caretColorRGB);
+   }
 
    public SyntaxStyle getCommentStyle()
-	{
-		return _commentStyle;
-	}
+   {
+      return _commentStyle;
+   }
 
-	public void setCommentStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
+   public void setCommentStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
 
-		if (_commentStyle != data)
-		{
-			final SyntaxStyle oldValue = _commentStyle;
-			_commentStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.COMMENT_STYLE,
-				oldValue, _commentStyle);
-		}
-	}
+      if (_commentStyle != data)
+      {
+         final SyntaxStyle oldValue = _commentStyle;
+         _commentStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.COMMENT_STYLE,
+               oldValue, _commentStyle);
+      }
+   }
 
-	public SyntaxStyle getDataTypeStyle()
-	{
-		return _dataTypeStyle;
-	}
+   public SyntaxStyle getDataTypeStyle()
+   {
+      return _dataTypeStyle;
+   }
 
-	public void setDataTypeStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
+   public void setDataTypeStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
 
-		if (_dataTypeStyle != data)
-		{
-			final SyntaxStyle oldValue = _dataTypeStyle;
-			_dataTypeStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.DATA_TYPE_STYLE,
-				oldValue, _dataTypeStyle);
-		}
-	}
+      if (_dataTypeStyle != data)
+      {
+         final SyntaxStyle oldValue = _dataTypeStyle;
+         _dataTypeStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.DATA_TYPE_STYLE,
+               oldValue, _dataTypeStyle);
+      }
+   }
 
-	public SyntaxStyle getErrorStyle()
-	{
-		return _errorStyle;
-	}
+   public SyntaxStyle getErrorStyle()
+   {
+      return _errorStyle;
+   }
 
-	public void setErrorStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
+   public void setErrorStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
 
-		if (_errorStyle != data)
-		{
-			final SyntaxStyle oldValue = _errorStyle;
-			_errorStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.ERROR_STYLE,
-				oldValue, _errorStyle);
-		}
-	}
+      if (_errorStyle != data)
+      {
+         final SyntaxStyle oldValue = _errorStyle;
+         _errorStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.ERROR_STYLE,
+               oldValue, _errorStyle);
+      }
+   }
 
-	public SyntaxStyle getFunctionStyle()
-	{
-		return _functionStyle;
-	}
+   public SyntaxStyle getFunctionStyle()
+   {
+      return _functionStyle;
+   }
 
-	public void setFunctionStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
+   public void setFunctionStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
 
-		if (_functionStyle != data)
-		{
-			final SyntaxStyle oldValue = _functionStyle;
-			_functionStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.FUNCTION_STYLE,
-				oldValue, _functionStyle);
-		}
-	}
+      if (_functionStyle != data)
+      {
+         final SyntaxStyle oldValue = _functionStyle;
+         _functionStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.FUNCTION_STYLE,
+               oldValue, _functionStyle);
+      }
+   }
 
-	public SyntaxStyle getIdentifierStyle()
-	{
-		return _identifierStyle;
-	}
+   public SyntaxStyle getIdentifierStyle()
+   {
+      return _identifierStyle;
+   }
 
-	public void setIdentifierStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
+   public void setIdentifierStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
 
-		if (_identifierStyle != data)
-		{
-			final SyntaxStyle oldValue = _identifierStyle;
-			_identifierStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.IDENTIFIER_STYLE,
-				oldValue, _identifierStyle);
-		}
-	}
-
-
-	public SyntaxStyle getLiteralStyle()
-	{
-		return _literalStyle;
-	}
-
-	public void setLiteralStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
-
-		if (_literalStyle != data)
-		{
-			final SyntaxStyle oldValue = _literalStyle;
-			_literalStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.LITERAL_STYLE,
-				oldValue, _literalStyle);
-		}
-	}
-
-	public SyntaxStyle getTableStyle()
-	{
-		return _tableStyle;
-	}
-
-	public void setTableStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
-
-		if (_tableStyle != data)
-		{
-			final SyntaxStyle oldValue = _tableStyle;
-			_tableStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.TABLE_STYLE,
-				oldValue, _tableStyle);
-		}
-	}
-
-	public SyntaxStyle getColumnStyle()
-	{
-		return _columnStyle;
-	}
-
-	public void setColumnStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
-
-		if (_columnStyle != data)
-		{
-			final SyntaxStyle oldValue = _columnStyle;
-			_columnStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.COLUMN_STYLE,
-				oldValue, _columnStyle);
-		}
-	}
-
-	public SyntaxStyle getOperatorStyle()
-	{
-		return _operatorStyle;
-	}
-
-	public void setOperatorStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
-
-		if (_operatorStyle != data)
-		{
-			final SyntaxStyle oldValue = _operatorStyle;
-			_operatorStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.OPERATOR_STYLE,
-				oldValue, _operatorStyle);
-		}
-	}
-
-	public SyntaxStyle getReservedWordStyle()
-	{
-		return _reservedWordStyle;
-	}
-
-	public void setReservedWordStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
-
-		if (_reservedWordStyle != data)
-		{
-			final SyntaxStyle oldValue = _reservedWordStyle;
-			_reservedWordStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.RESERVED_WORD_STYLE,
-				oldValue, _reservedWordStyle);
-		}
-	}
-
-	public SyntaxStyle getSeparatorStyle()
-	{
-		return _separatorStyle;
-	}
-
-	public void setSeparatorStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
-
-		if (_separatorStyle != data)
-		{
-			final SyntaxStyle oldValue = _separatorStyle;
-			_separatorStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.SEPARATOR_STYLE,
-				oldValue, _separatorStyle);
-		}
-	}
-
-	public SyntaxStyle getWhiteSpaceStyle()
-	{
-		return _whiteSpaceStyle;
-	}
-
-	public void setWhiteSpaceStyle(SyntaxStyle data)
-	{
-		if (data == null)
-		{
-			throw new IllegalArgumentException("SyntaxStyle==null");
-		}
-
-		if (_whiteSpaceStyle != data)
-		{
-			final SyntaxStyle oldValue = _whiteSpaceStyle;
-			_whiteSpaceStyle = data;
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.WHITE_SPACE_STYLE,
-				oldValue, _whiteSpaceStyle);
-		}
-	}
+      if (_identifierStyle != data)
+      {
+         final SyntaxStyle oldValue = _identifierStyle;
+         _identifierStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.IDENTIFIER_STYLE,
+               oldValue, _identifierStyle);
+      }
+   }
 
 
-	private synchronized PropertyChangeReporter getPropertyChangeReporter()
-	{
-		if (_propChgReporter == null)
-		{
-			_propChgReporter = new PropertyChangeReporter(this);
-		}
+   public SyntaxStyle getLiteralStyle()
+   {
+      return _literalStyle;
+   }
 
-		return _propChgReporter;
-	}
+   public void setLiteralStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
 
-	/**
-	 * @return the useCopyAsRtf
-	 */
-	public boolean isUseCopyAsRtf() {
-		return _useCopyAsRtf;
-	}
+      if (_literalStyle != data)
+      {
+         final SyntaxStyle oldValue = _literalStyle;
+         _literalStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.LITERAL_STYLE,
+               oldValue, _literalStyle);
+      }
+   }
 
-	/**
-	 * @param _useCopyAsRtf the useCopyAsRtf to set
-	 */
-	public void setUseCopyAsRtf(boolean useCopyAsRtf) {
-		this._useCopyAsRtf = useCopyAsRtf;
-	}
+   public SyntaxStyle getTableStyle()
+   {
+      return _tableStyle;
+   }
+
+   public void setTableStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
+
+      if (_tableStyle != data)
+      {
+         final SyntaxStyle oldValue = _tableStyle;
+         _tableStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TABLE_STYLE,
+               oldValue, _tableStyle);
+      }
+   }
+
+   public SyntaxStyle getColumnStyle()
+   {
+      return _columnStyle;
+   }
+
+   public void setColumnStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
+
+      if (_columnStyle != data)
+      {
+         final SyntaxStyle oldValue = _columnStyle;
+         _columnStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.COLUMN_STYLE,
+               oldValue, _columnStyle);
+      }
+   }
+
+   public SyntaxStyle getOperatorStyle()
+   {
+      return _operatorStyle;
+   }
+
+   public void setOperatorStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
+
+      if (_operatorStyle != data)
+      {
+         final SyntaxStyle oldValue = _operatorStyle;
+         _operatorStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.OPERATOR_STYLE,
+               oldValue, _operatorStyle);
+      }
+   }
+
+   public SyntaxStyle getReservedWordStyle()
+   {
+      return _reservedWordStyle;
+   }
+
+   public void setReservedWordStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
+
+      if (_reservedWordStyle != data)
+      {
+         final SyntaxStyle oldValue = _reservedWordStyle;
+         _reservedWordStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.RESERVED_WORD_STYLE,
+               oldValue, _reservedWordStyle);
+      }
+   }
+
+   public SyntaxStyle getSeparatorStyle()
+   {
+      return _separatorStyle;
+   }
+
+   public void setSeparatorStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
+
+      if (_separatorStyle != data)
+      {
+         final SyntaxStyle oldValue = _separatorStyle;
+         _separatorStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.SEPARATOR_STYLE,
+               oldValue, _separatorStyle);
+      }
+   }
+
+   public SyntaxStyle getWhiteSpaceStyle()
+   {
+      return _whiteSpaceStyle;
+   }
+
+   public void setWhiteSpaceStyle(SyntaxStyle data)
+   {
+      if (data == null)
+      {
+         throw new IllegalArgumentException("SyntaxStyle==null");
+      }
+
+      if (_whiteSpaceStyle != data)
+      {
+         final SyntaxStyle oldValue = _whiteSpaceStyle;
+         _whiteSpaceStyle = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.WHITE_SPACE_STYLE,
+               oldValue, _whiteSpaceStyle);
+      }
+   }
+
+
+   private synchronized PropertyChangeReporter getPropertyChangeReporter()
+   {
+      if (_propChgReporter == null)
+      {
+         _propChgReporter = new PropertyChangeReporter(this);
+      }
+
+      return _propChgReporter;
+   }
+
+   /**
+    * @return the useCopyAsRtf
+    */
+   public boolean isUseCopyAsRtf()
+   {
+      return _useCopyAsRtf;
+   }
+
+   /**
+    * @param _useCopyAsRtf the useCopyAsRtf to set
+    */
+   public void setUseCopyAsRtf(boolean useCopyAsRtf)
+   {
+      this._useCopyAsRtf = useCopyAsRtf;
+   }
+
 }

@@ -18,12 +18,8 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -48,8 +44,7 @@ import net.sourceforge.squirrel_sql.plugins.syntax.prefspanel.StylesList;
 public class SyntaxPreferencesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SyntaxPreferencesPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SyntaxPreferencesPanel.class);
 
 
 	/** Logger for this class. */
@@ -72,7 +67,6 @@ public class SyntaxPreferencesPanel
 	 */
 	public SyntaxPreferencesPanel(SyntaxPreferences prefs, SyntaxPluginResources rsrc)
 	{
-		super();
 		if (prefs == null)
 		{
 			throw new IllegalArgumentException("Null SyntaxPreferences passed");
@@ -174,6 +168,11 @@ public class SyntaxPreferencesPanel
 		private final JTextField _txtTabLength = new JTextField();
 		private final JCheckBox _chkReplaceTabsBySpaces = new JCheckBox(s_stringMgr.getString("syntax.replaceTabsBySpaces"));
 
+
+		private final AdjustCaretColorCtrl _adjustCaretColorCtrl = new AdjustCaretColorCtrl();
+
+
+
 		private StylesListSelectionListener _listLis;
 
 
@@ -232,9 +231,11 @@ public class SyntaxPreferencesPanel
 
 			_txtTabLength.setText("" + prefs.getTabLength());
 			_chkReplaceTabsBySpaces.setSelected(prefs.isReplaceTabsBySpaces());
-			
-			
+
 			updateControlStatus();
+
+
+			_adjustCaretColorCtrl.loadData(prefs);
 		}
 
 
@@ -278,6 +279,8 @@ public class SyntaxPreferencesPanel
 			prefs.setTableStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.TABLES));
 			prefs.setWhiteSpaceStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.WHITE_SPACE));
 			prefs.setDataTypeStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.DATA_TYPES));
+
+			_adjustCaretColorCtrl.applyChanges(prefs);
 		}
 
 		private void fillTabLength(SyntaxPreferences prefs)
@@ -347,8 +350,7 @@ public class SyntaxPreferencesPanel
     	  _useCopyAsRtf.setEnabled(useRSyntaxControl);
       }
 
-		private void createUserInterface(SyntaxPreferences prefs,
-											SyntaxPluginResources rsrc)
+		private void createUserInterface(SyntaxPreferences prefs, SyntaxPluginResources rsrc)
 		{
 			setLayout(new GridBagLayout());
 			GridBagConstraints gbc;
@@ -358,46 +360,15 @@ public class SyntaxPreferencesPanel
          bg.add(_plainActiveOpt);
 
 
-         _rsyntaxActiveOpt.addChangeListener(new ChangeListener()
-         {
-            public void stateChanged(ChangeEvent evt)
-            {
-               updateControlStatus();
-            }
-         });
+         _rsyntaxActiveOpt.addChangeListener(evt -> updateControlStatus());
 
-         _plainActiveOpt.addChangeListener(new ChangeListener()
-         {
-            public void stateChanged(ChangeEvent evt)
-            {
-               updateControlStatus();
-            }
-         });
+         _plainActiveOpt.addChangeListener(evt -> updateControlStatus());
 
-         _chkTextLimitLineVisible.addActionListener(new ActionListener()
-         {
-            public void actionPerformed(ActionEvent e)
-            {
-               updateControlStatus();
-            }
-         });
+         _chkTextLimitLineVisible.addActionListener(e -> updateControlStatus());
 
-         _chkHighlightCurrentLine.addActionListener(new ActionListener()
-         {
-            public void actionPerformed(ActionEvent e)
-            {
-               updateControlStatus();
-            }
-         });
+         _chkHighlightCurrentLine.addActionListener(e -> updateControlStatus());
 
-         _chkLineNumbersEnabled.addActionListener(new ActionListener()
-         {
-            public void actionPerformed(ActionEvent e)
-            {
-               updateControlStatus();
-            }
-         });
-
+         _chkLineNumbersEnabled.addActionListener(e -> updateControlStatus());
 
 
 
@@ -428,7 +399,8 @@ public class SyntaxPreferencesPanel
 
 		}
 
-      private JPanel createOptionsPanel()
+
+		private JPanel createOptionsPanel()
       {
          JPanel pnlRet = new JPanel(new GridBagLayout());
 
@@ -456,6 +428,9 @@ public class SyntaxPreferencesPanel
          gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
          pnlRet.add(createTabConfigPanel(), gbc);
 
+         gbc = new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+         pnlRet.add(_adjustCaretColorCtrl.createCaretColorPanel(), gbc);
+
          return pnlRet;
       }
 
@@ -476,6 +451,7 @@ public class SyntaxPreferencesPanel
 
 			return ret;
 		}
+
 
 		private JPanel createPnlLineLimit()
       {

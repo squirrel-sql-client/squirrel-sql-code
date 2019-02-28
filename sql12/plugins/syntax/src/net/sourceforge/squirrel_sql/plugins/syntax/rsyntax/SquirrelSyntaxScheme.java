@@ -19,7 +19,7 @@ public class SquirrelSyntaxScheme extends SyntaxScheme
       super(true);
    }
 
-   public void initSytles(SyntaxPreferences prefs, FontInfo fontInfo)
+   public void initStyles(SyntaxPreferences prefs, FontInfo fontInfo)
    {
       super.restoreDefaults(fontInfo.createFont());
       Style[] stylesBuf = new Style[SquirrelTokenMarker.getNumTokenTypes()];

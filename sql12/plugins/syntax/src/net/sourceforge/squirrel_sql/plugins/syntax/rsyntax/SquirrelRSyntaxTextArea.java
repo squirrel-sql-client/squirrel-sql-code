@@ -82,6 +82,11 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
       Color bg = new Color(prefs.getWhiteSpaceStyle().getBackgroundRGB());
       setBackground(bg);
 
+      if (SyntaxPreferences.NO_CARET_COLOR != prefs.getCaretColorRGB())
+      {
+         setCaretColor(new Color(prefs.getCaretColorRGB()));
+      }
+
       setMarginLineEnabled(prefs.isTextLimitLineVisible());
       setMarginLinePosition(prefs.getTextLimitLineWidth());
       setHighlightCurrentLine(prefs.isHighlightCurrentLine());
@@ -164,7 +169,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    public void updateFromPreferences()
    {
       setFont(_session.getProperties().getFontInfo().createFont());
-      _squirrelSyntaxScheme.initSytles(_prefs, _session.getProperties().getFontInfo());
+      _squirrelSyntaxScheme.initStyles(_prefs, _session.getProperties().getFontInfo());
       new RSyntaxTextAreaEditorKit.IncreaseFontSizeAction().actionPerformedImpl(new ActionEvent(this, 1, "foo"), this);
       new RSyntaxTextAreaEditorKit.DecreaseFontSizeAction().actionPerformedImpl(new ActionEvent(this, 1, "bar"), this);
       repaint();
