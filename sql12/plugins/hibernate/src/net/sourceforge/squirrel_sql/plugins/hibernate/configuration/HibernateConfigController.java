@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.configuration;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
@@ -51,6 +49,8 @@ public class HibernateConfigController
 	/** factory for creating FileWrappers which insulate the application from direct reference to File */
 	private FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
 
+	private JpaConnectionConfigCtrl _jpaConnectionConfigCtrl;
+
 	public HibernateConfigController(HibernatePlugin plugin)
 	{
 		_plugin = plugin;
@@ -60,118 +60,34 @@ public class HibernateConfigController
 
 		_hibernatePrefsListener = _plugin.removeHibernatePrefsListener();
 
+		_jpaConnectionConfigCtrl = new JpaConnectionConfigCtrl(_panel._jpaConnectionConfigPanel, _plugin);
 
-		_panel.btnNewConfig.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				onNewConfig();
-			}
-		});
+		_panel.btnNewConfig.addActionListener(e -> onNewConfig());
 
-		_panel.btnRemoveConfig.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				onRemoveConfig();
-			}
-		});
+		_panel.btnRemoveConfig.addActionListener(e -> onRemoveConfig());
 
-		_panel.btnClassPathAdd.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				onAddClasspathEntry();
-			}
-		});
+		_panel.btnClassPathAdd.addActionListener(e -> onAddClasspathEntry());
 
-		_panel.btnClassPathDirAdd.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				onAddClassPathDir();
-			}
-		});
+		_panel.btnClassPathDirAdd.addActionListener(e -> onAddClassPathDir());
 
-		_panel.btnClassPathRemove.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				onRemoveSelectedClasspathEntries();
-			}
-		});
+		_panel.btnClassPathRemove.addActionListener(e -> onRemoveSelectedClasspathEntries());
 
-		_panel.btnClassPathMoveUp.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				onMoveUpClasspathEntries();
-			}
-		});
+		_panel.btnClassPathMoveUp.addActionListener(e -> onMoveUpClasspathEntries());
 
-		_panel.btnClassPathMoveDown.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				onMoveDownClasspathEntries();
-			}
-		});
+		_panel.btnClassPathMoveDown.addActionListener(e -> onMoveDownClasspathEntries());
 
-		_panel.btnEditFactoryProviderInfo.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				onFactoryProviderInfo();
-			}
-		});
 
-		_panel.btnApplyConfigChanges.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				onApplyConfigChanges(false);
-			}
-		});
+		_panel.btnApplyConfigChanges.addActionListener(e -> onApplyConfigChanges(false));
 
-		_panel.cboConfigs.addItemListener(new ItemListener()
-		{
-			public void itemStateChanged(ItemEvent e)
-			{
-				onSelectedConfigChanged(e);
-			}
-		});
+		_panel.cboConfigs.addItemListener(e -> onSelectedConfigChanged(e));
 
-		ItemListener radObtainSessFactListener = new ItemListener()
-		{
-			public void itemStateChanged(ItemEvent e)
-			{
-				onObtainSessFactChanged();
-			}
-		};
 
-		_panel.radConfiguration.addItemListener(radObtainSessFactListener);
-		_panel.radJPA.addItemListener(radObtainSessFactListener);
-		_panel.radUserDefProvider.addItemListener(radObtainSessFactListener);
-
-		ItemListener radProcessListener = new ItemListener()
-		{
-			public void itemStateChanged(ItemEvent e)
-			{
-				onProcessChanged();
-			}
-		};
+		ItemListener radProcessListener = e -> onProcessChanged();
 
 		_panel.radCreateProcess.addItemListener(radProcessListener);
 		_panel.radInVM.addItemListener(radProcessListener);
 
-		_panel.btnProcessDetails.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				onProcessDetails();
-			}
-		});
+		_panel.btnProcessDetails.addActionListener(e -> onProcessDetails());
 	}
 
 	private void onProcessDetails()
@@ -189,24 +105,6 @@ public class HibernateConfigController
 		_panel.btnProcessDetails.setEnabled(_panel.radCreateProcess.isSelected());
 	}
 
-	private void onObtainSessFactChanged()
-	{
-		if (_panel.radUserDefProvider.isSelected())
-		{
-			_panel.btnEditFactoryProviderInfo.setEnabled(true);
-			_panel.txtPersistenceUnitName.setEnabled(false);
-		}
-		else if (_panel.radJPA.isSelected())
-		{
-			_panel.btnEditFactoryProviderInfo.setEnabled(false);
-			_panel.txtPersistenceUnitName.setEnabled(true);
-		}
-		else if (_panel.radConfiguration.isSelected())
-		{
-			_panel.btnEditFactoryProviderInfo.setEnabled(false);
-			_panel.txtPersistenceUnitName.setEnabled(false);
-		}
-	}
 
 	private void onRemoveConfig()
 	{
@@ -261,33 +159,11 @@ public class HibernateConfigController
 
 	private boolean onApplyConfigChanges(boolean silent)
 	{
-		String provider = _panel.txtFactoryProvider.getText();
-		String persistenceUnitName = _panel.txtPersistenceUnitName.getText();
-
-		if (_panel.radUserDefProvider.isSelected() && (null == provider || 0 == provider.trim().length()))
+		if(false == _jpaConnectionConfigCtrl.checkValid(silent))
 		{
-			if (false == silent)
-			{
-				// i18n[HibernateConfigController.noProviderMsg=Missing SessionFactoryImplProvider .\nChanges
-				// cannot be applied.]
-				JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(),
-					s_stringMgr.getString("HibernateController.noProviderMsg"));
-			}
 			return false;
 		}
 
-		if (_panel.radJPA.isSelected()
-			&& (null == persistenceUnitName || 0 == persistenceUnitName.trim().length()))
-		{
-			if (false == silent)
-			{
-				// i18n[HibernateConfigController.noPersistenceUnitName=Missing Persitence-Unit name .\nChanges
-				// cannot be applied.]
-				JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(),
-					s_stringMgr.getString("HibernateController.noPersistenceUnitName"));
-			}
-			return false;
-		}
 
 		String cfgName = _panel.txtConfigName.getText();
 
@@ -312,8 +188,8 @@ public class HibernateConfigController
 			cfg = new HibernateConfiguration();
 		}
 
-		cfg.setProvider(provider);
-		cfg.setPersistenceUnitName(persistenceUnitName);
+		_jpaConnectionConfigCtrl.saveConfiguration(cfg);
+
 		cfg.setName(cfgName);
 
 		ClassPathItem[] classPathEntries = new ClassPathItem[getClassPathListModel().getSize()];
@@ -324,22 +200,6 @@ public class HibernateConfigController
 		}
 
       cfg.setClassPathItems(classPathEntries);
-
-		if (_panel.radUserDefProvider.isSelected())
-		{
-			cfg.setUserDefinedProvider(true);
-			cfg.setJPA(false);
-		}
-		else if (_panel.radJPA.isSelected())
-		{
-			cfg.setUserDefinedProvider(false);
-			cfg.setJPA(true);
-		}
-		else
-		{
-			cfg.setUserDefinedProvider(false);
-			cfg.setJPA(false);
-		}
 
 		cfg.setUseProcess(_panel.radCreateProcess.isSelected());
 
@@ -355,16 +215,8 @@ public class HibernateConfigController
 		return true;
 	}
 
-	private void onFactoryProviderInfo()
-	{
-		String className =
-			new FactoryProviderController(_plugin, _panel.txtFactoryProvider.getText()).getClassName();
-		_panel.txtFactoryProvider.setText(className);
 
-	}
-
-
-   private void onAddClassPathDir()
+	private void onAddClassPathDir()
    {
       String dirPath = Props.getString(PERF_KEY_LAST_DIR, System.getProperty("user.home"));
 
@@ -535,6 +387,8 @@ public class HibernateConfigController
 	private void initConfig(HibernateConfiguration cfg)
 	{
 
+		_jpaConnectionConfigCtrl.init(cfg);
+
 		if (null == cfg)
 		{
 			_panel.txtConfigName.setText(null);
@@ -542,10 +396,7 @@ public class HibernateConfigController
 
 			getClassPathListModel().clear();
 
-			_panel.txtFactoryProvider.setText(null);
 
-			_panel.radConfiguration.setSelected(true);
-			onObtainSessFactChanged();
 
 			_panel.radCreateProcess.setSelected(true);
 
@@ -564,23 +415,6 @@ public class HibernateConfigController
 		{
 			getClassPathListModel().addItem(path);
 		}
-
-		if (cfg.isUserDefinedProvider())
-		{
-			_panel.radUserDefProvider.setSelected(true);
-		}
-		else if (cfg.isJPA())
-		{
-			_panel.radJPA.setSelected(true);
-		}
-		else
-		{
-			_panel.radConfiguration.setSelected(true);
-		}
-		onObtainSessFactChanged();
-
-		_panel.txtFactoryProvider.setText(cfg.getProvider());
-		_panel.txtPersistenceUnitName.setText(cfg.getPersistenceUnitName());
 
 		_panel.radCreateProcess.setSelected(cfg.isUseProcess());
 		_panel.btnProcessDetails.setEnabled(cfg.isUseProcess());

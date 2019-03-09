@@ -9,30 +9,42 @@ import java.util.List;
 class ReflectionCaller
 {
    private Object _callee;
-
-
-   ReflectionCaller(Object callee)
-   {
-      _callee = callee;
-   }
+   private boolean _treatClassCalleeAsType;
 
    ReflectionCaller()
    {
       this(null);
    }
 
+   ReflectionCaller(Object callee)
+   {
+      this(callee, true);
+   }
+
+   ReflectionCaller(Object callee, boolean treatClassCalleeAsType)
+   {
+      _callee = callee;
+      _treatClassCalleeAsType = treatClassCalleeAsType;
+   }
+
 
    ReflectionCaller getClass(String className, ClassLoader cl)
    {
+      return new ReflectionCaller(getClassPlain(className, cl), _treatClassCalleeAsType);
+   }
+
+   public static Class getClassPlain(String className, ClassLoader cl)
+   {
       try
       {
-         return new ReflectionCaller(cl.loadClass(className));
+         return cl.loadClass(className);
       }
       catch (ClassNotFoundException e)
       {
          throw new RuntimeException(e);
       }
    }
+
 
    ReflectionCaller callConstructor(Class[] paramTypes, Object[] params)
    {
@@ -52,7 +64,7 @@ class ReflectionCaller
    {
       try
       {
-         return new ReflectionCaller(getCalleeClass().newInstance());
+         return new ReflectionCaller(getCalleeClass().newInstance(), _treatClassCalleeAsType);
       }
       catch (Exception e)
       {
@@ -74,7 +86,7 @@ class ReflectionCaller
 
          for (Object callee : callees)
          {
-            ret.add(new ReflectionCaller(callee));
+            ret.add(new ReflectionCaller(callee, _treatClassCalleeAsType));
          }
 
          return ret;
@@ -105,7 +117,7 @@ class ReflectionCaller
 
          for (Object callee : callees)
          {
-            ret.add(new ReflectionCaller(callee));
+            ret.add(new ReflectionCaller(callee, _treatClassCalleeAsType));
          }
 
          return ret;
@@ -121,7 +133,7 @@ class ReflectionCaller
    {
       try
       {
-         return new ReflectionCaller(getCalleeClass().getDeclaredField(fieldName).get(_callee));
+         return new ReflectionCaller(getCalleeClass().getDeclaredField(fieldName).get(_callee), _treatClassCalleeAsType);
       }
       catch (Exception e)
       {
@@ -131,7 +143,7 @@ class ReflectionCaller
 
    Class getCalleeClass()
    {
-      if(_callee instanceof Class)
+      if(_treatClassCalleeAsType && _callee instanceof Class)
       {
          return (Class) _callee;
       }
@@ -145,7 +157,7 @@ class ReflectionCaller
    /**
     * Though this method should normaly be redundant with
     * callMethod(String methodName, Object... params)
-    * NoSuchMethodErrors occur if it isn't there. 
+    * NoSuchMethodErrors occur if it isn't there.
     */
    ReflectionCaller callMethod(String methodName)
    {
@@ -174,7 +186,7 @@ class ReflectionCaller
          Method meth = getDeclaredMethodIncludingSuper(methodName, paramTypes);
          meth.setAccessible(true);
 
-         return new ReflectionCaller(meth.invoke(_callee, paramValues));
+         return new ReflectionCaller(meth.invoke(_callee, paramValues), _treatClassCalleeAsType);
       }
       catch (Exception e)
       {
@@ -185,7 +197,7 @@ class ReflectionCaller
 
 
    private Method getDeclaredMethodIncludingSuper(String methodName, Class... paramTypes)
-      throws NoSuchMethodException
+         throws NoSuchMethodException
    {
       Class clazz = getCalleeClass();
 
@@ -203,6 +215,25 @@ class ReflectionCaller
          {
             throwBuf = e;
          }
+
+         for (Class anInterface : clazz.getInterfaces())
+         {
+            try
+            {
+               Method ret = anInterface.getDeclaredMethod(methodName, paramTypes);
+
+               if(ret.isDefault())
+               {
+                  ret.setAccessible(true);
+                  return ret;
+               }
+            }
+            catch (NoSuchMethodException e)
+            {
+               throwBuf = e;
+            }
+         }
+
          clazz = clazz.getSuperclass();
       }
 
@@ -226,7 +257,7 @@ class ReflectionCaller
          Class<?> clazz = cl.loadClass(className);
          Method method = clazz.getDeclaredMethod(methName, paramTypes);
          method.setAccessible(true);
-         return new ReflectionCaller(method.invoke(clazz, args));
+         return new ReflectionCaller(method.invoke(clazz, args), _treatClassCalleeAsType);
       }
       catch (Exception e)
       {
@@ -234,5 +265,9 @@ class ReflectionCaller
       }
    }
 
-
+   public ReflectionCaller setTreatClassCalleeAsType(boolean b)
+   {
+      _treatClassCalleeAsType = b;
+      return this;
+   }
 }

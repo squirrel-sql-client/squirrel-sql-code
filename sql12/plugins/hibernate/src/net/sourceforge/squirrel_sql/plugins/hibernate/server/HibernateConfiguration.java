@@ -4,10 +4,7 @@ import java.io.Serializable;
 
 public class HibernateConfiguration implements Serializable
 {
-   private String _provider;
    private String _name;
-   private boolean _userDefinedProvider;
-   private boolean _jpa;
    private String _persistenceUnitName;
    private boolean _useProcess = false;
    private String _command;
@@ -15,15 +12,6 @@ public class HibernateConfiguration implements Serializable
    private int _processPort;
    private ClassPathItem[] _classPathItems;
 
-   public String getProvider()
-   {
-      return _provider;
-   }
-
-   public void setProvider(String provider)
-   {
-      this._provider = provider;
-   }
 
    public String getName()
    {
@@ -38,27 +26,6 @@ public class HibernateConfiguration implements Serializable
    public String toString()
    {
       return _name;
-   }
-
-   public void setUserDefinedProvider(boolean userDefinedProvider)
-   {
-      _userDefinedProvider = userDefinedProvider;
-   }
-
-
-   public boolean isUserDefinedProvider()
-   {
-      return _userDefinedProvider;
-   }
-
-   public boolean isJPA()
-   {
-      return _jpa;
-   }
-
-   public void setJPA(boolean b)
-   {
-      _jpa = b;
    }
 
    public void setPersistenceUnitName(String persistenceUnitName)
@@ -119,32 +86,6 @@ public class HibernateConfiguration implements Serializable
    public ClassPathItem[] getClassPathItems()
    {
       return _classPathItems;
-   }
-
-   /**
-    * @deprecated Use getClassPathItems() instead
-    */
-   public String[] getClassPathEntries()
-   {
-      return new String[0];
-   }
-
-   /**
-    * @deprecated Use setClassPathItems() instead
-    */
-   public void setClassPathEntries(String[] classPathEntries)
-   {
-      if (null == _classPathItems)
-      {
-         _classPathItems = new ClassPathItem[classPathEntries.length];
-
-         for (int i = 0; i < classPathEntries.length; i++)
-         {
-            _classPathItems[i] = new ClassPathItem();
-            _classPathItems[i].setPath(classPathEntries[i]);
-            _classPathItems[i].setJarDir(false);
-         }
-      }
    }
 
 }

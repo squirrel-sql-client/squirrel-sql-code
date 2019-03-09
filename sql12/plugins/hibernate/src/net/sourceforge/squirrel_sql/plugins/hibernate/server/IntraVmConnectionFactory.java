@@ -6,7 +6,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 public class IntraVmConnectionFactory
-{                                              
+{
    public HibernateServerConnection createHibernateConnection(HibernateConfiguration cfg, boolean isServer)
    {
       try
@@ -15,39 +15,24 @@ public class IntraVmConnectionFactory
 
          Thread.currentThread().setContextClassLoader(cl);
 
-         Object sessionFactoryImpl = null;
+         FactoryWrapper factoryWrapper;
 
-         if (cfg.isUserDefinedProvider())
-         {
-            String provider = cfg.getProvider();
-            Class<?> providerClass = cl.loadClass(provider);
+         String persistenceUnitName = cfg.getPersistenceUnitName();
+         Class<?> persistenceClass = cl.loadClass("javax.persistence.Persistence");
 
-            Object sessionFactoryProviderImpl = providerClass.newInstance();
+         Method createMeth = persistenceClass.getMethod("createEntityManagerFactory", String.class);
+         Object entityManagerFactory = createMeth.invoke(persistenceClass, persistenceUnitName);
 
-            sessionFactoryImpl =
-                  new ReflectionCaller(sessionFactoryProviderImpl).callMethod("getSessionFactoryImpl").getCallee();
-         }
-         else if (cfg.isJPA())
-         {
-            String persistenceUnitName = cfg.getPersistenceUnitName();
-            Class<?> persistenceClass = cl.loadClass("javax.persistence.Persistence");
 
-            Method createMeth = persistenceClass.getMethod("createEntityManagerFactory", String.class);
-            Object hibernateEntityManagerFactory = createMeth.invoke(persistenceClass, persistenceUnitName);
-            ReflectionCaller rc = new ReflectionCaller(hibernateEntityManagerFactory);
-            sessionFactoryImpl = rc.callMethod("getSessionFactory").getCallee();
-         }
-         else
-         {
-            Class<?> confiugrationClass = cl.loadClass("org.hibernate.cfg.Configuration");
-            ReflectionCaller rc = new ReflectionCaller(confiugrationClass.newInstance());
+         ReflectionCaller sessionFactoryImplementorRc =
+               new ReflectionCaller(entityManagerFactory).callMethod("unwrap", cl.loadClass("org.hibernate.engine.spi.SessionFactoryImplementor"));
 
-            sessionFactoryImpl = rc.callMethod("configure").callMethod("buildSessionFactory").getCallee();
-         }
+         factoryWrapper = new FactoryWrapper(sessionFactoryImplementorRc.getCallee());
+         factoryWrapper.setEntityManagerFactory(entityManagerFactory);
 
          Thread.currentThread().setContextClassLoader(null);
 
-         return new HibernateServerConnectionImpl(sessionFactoryImpl, cl, isServer);
+         return new HibernateServerConnectionImpl(factoryWrapper, cl, isServer);
       }
       catch (Exception e)
       {
@@ -55,8 +40,7 @@ public class IntraVmConnectionFactory
       }
    }
 
-   private static URLClassLoader getClassLoader(HibernateConfiguration cfg)
-         throws Exception
+   private URLClassLoader getClassLoader(HibernateConfiguration cfg) throws Exception
    {
       String[] classpath = ClassPathUtil.classPathAsStringArray(cfg.getClassPathItems());
 
@@ -67,6 +51,7 @@ public class IntraVmConnectionFactory
          classpathUrls[i] = new File(classpath[i]).toURI().toURL();
       }
 
-      return new URLClassLoader(classpathUrls, null);
+      //return new URLClassLoader(classpathUrls, this.getClass().getClassLoader());
+      return new URLClassLoader(classpathUrls, ClassLoader.getSystemClassLoader().getParent());
    }
 }

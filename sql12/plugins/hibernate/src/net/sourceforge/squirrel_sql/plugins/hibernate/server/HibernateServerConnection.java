@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface HibernateServerConnection extends Remote
 {
-   ArrayList<String> generateSQL(String hqlQuery)
+   String generateSQL(String hqlQuery)
          throws RemoteException;
 
    void closeConnection()
