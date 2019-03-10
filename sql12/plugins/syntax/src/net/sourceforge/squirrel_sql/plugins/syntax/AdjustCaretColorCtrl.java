@@ -57,8 +57,6 @@ public class AdjustCaretColorCtrl
 
    private void onAdjustCaretColor()
    {
-
-
       Color color = null;
 
       if (_chkAdjustCaretColor.isSelected())
@@ -72,21 +70,22 @@ public class AdjustCaretColorCtrl
       }
       else
       {
-         adjustLabel(null);
+         adjustLabel(SyntaxPreferences.NO_CARET_COLOR );
       }
    }
 
-   private void adjustLabel(Integer caretColorRGB)
+   private void adjustLabel(int caretColorRGB)
    {
-      if(null != caretColorRGB)
-      {
-         _lblCaretColor.setBorder(BorderFactory.createLineBorder(Color.black));
-         _colorIcon.setColor(new Color(caretColorRGB));
-      }
-      else
+      if(SyntaxPreferences.NO_CARET_COLOR  == caretColorRGB)
       {
          _lblCaretColor.setBorder(BorderFactory.createEtchedBorder());
          _colorIcon.setColor(_chkAdjustCaretColor.getBackground());
+
+      }
+      else
+      {
+         _lblCaretColor.setBorder(BorderFactory.createLineBorder(Color.black));
+         _colorIcon.setColor(new Color(caretColorRGB));
       }
    }
 

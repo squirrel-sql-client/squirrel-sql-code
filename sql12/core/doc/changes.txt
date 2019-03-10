@@ -24,6 +24,10 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
   Thanks to Peter G. Horvath for the patch.
 
 
+Bug fixes:
+
+Small UI fix concerning caret color configuration
+
 3.9.1 (02/24/2018)
 ==================
 
