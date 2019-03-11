@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
-import net.sourceforge.squirrel_sql.client.session.EntryPanelManager;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-public class HqlResultPanelManager extends EntryPanelManager
+public class HqlResultPanelManager
 {
    private static final String PREF_KEY_VIEW_LIMIT_OBJECT_COUNT = "SquirrelSQL.hibernate.limitObjectsCount";
    private static final String PREF_KEY_VIEW_LIMIT_OBJECT_COUNT_VAL = "SquirrelSQL.hibernate.limitObjectsCountVal";
@@ -25,9 +25,6 @@ public class HqlResultPanelManager extends EntryPanelManager
 
    public HqlResultPanelManager(final ISession session, HibernatePluginResources resource)
    {
-      super(session);
-      init(null, null);
-
       _objectResultController = new ObjectResultController(session, resource);
       _hqlResultPanel = new HqlResultPanel(_objectResultController.getPanel(), resource);
 
@@ -87,7 +84,7 @@ public class HqlResultPanelManager extends EntryPanelManager
    {
       if(_hqlResultPanel.chkLimitObjectCount.isSelected())
       {
-         LimitObjectCountDialog locc = new LimitObjectCountDialog(getSession().getApplication().getMainFrame());
+         LimitObjectCountDialog locc = new LimitObjectCountDialog(Main.getApplication().getMainFrame());
          _hqlResultPanel.chkLimitObjectCount.setSelected(locc.check());
 
          if(locc.checkAndRemember())

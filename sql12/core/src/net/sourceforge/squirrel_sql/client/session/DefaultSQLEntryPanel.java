@@ -36,8 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(DefaultSQLEntryPanel.class);
+	private static ILogger s_log = LoggerController.createLogger(DefaultSQLEntryPanel.class);
 
 	/** Current session. */
 	private ISession _session;

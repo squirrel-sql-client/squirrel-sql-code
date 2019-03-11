@@ -18,8 +18,7 @@ import java.awt.event.ActionEvent;
 public class HQLEntryPanelManager extends EntryPanelManager
 {
 
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(HQLEntryPanelManager.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(HQLEntryPanelManager.class);
 
    private HqlSyntaxHighlightTokenMatcherProxy _hqlSyntaxHighlightTokenMatcherProxy = new HqlSyntaxHighlightTokenMatcherProxy();
    private HibernatePluginResources _resources;
