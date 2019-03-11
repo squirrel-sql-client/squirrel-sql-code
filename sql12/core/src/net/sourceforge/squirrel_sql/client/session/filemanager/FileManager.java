@@ -47,18 +47,14 @@ public class FileManager
       return saveIntern(true);
    }
 
-   public boolean open(File f)
+   public void open(File f)
    {
-      return open(f, false);
+      open(f, false);
    }
 
-   public boolean open(File f, boolean appendToExisting)
+   public void open(File f, boolean appendToExisting)
    {
-      boolean result = false;
-
       SQLPanelSelectionHandler.selectSqlPanel(_sqlPanelAPI);
-
-      result = true;
 
       if (false == appendToExisting)
       {
@@ -66,7 +62,6 @@ public class FileManager
       }
 
       loadScript(f);
-      return result;
    }
 
 
