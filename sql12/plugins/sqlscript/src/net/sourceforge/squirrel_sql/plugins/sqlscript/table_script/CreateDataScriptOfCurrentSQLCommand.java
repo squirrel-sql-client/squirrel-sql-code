@@ -104,6 +104,12 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                {
                   tableName = new EditableSqlCheck(sql).getTableNameFromSQL();
                }
+
+               if (StringUtilities.isEmpty(tableName, true))
+               {
+                  tableName = "PressCtrlH";
+               }
+
                genInserts(srcResult, tableName, sbRows, false);
             }
             finally
@@ -160,6 +166,6 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
 
       }
 
-      return "PressCtrlH";
+      return null;
    }
 }
