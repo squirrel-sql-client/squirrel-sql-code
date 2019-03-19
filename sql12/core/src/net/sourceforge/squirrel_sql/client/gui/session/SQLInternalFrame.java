@@ -62,7 +62,7 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
 
 	private void createGUI(ISession session)
 	{
-      _sqlPanel = new SQLPanel(session, SQLPanelPosition.IN_SQL_WORKSHEET);
+      _sqlPanel = new SQLPanel(session, SQLPanelPosition.IN_SQL_WORKSHEET, super.getTitleFileHandler());
 
 		setVisible(false);
 		final IApplication app = Main.getApplication();

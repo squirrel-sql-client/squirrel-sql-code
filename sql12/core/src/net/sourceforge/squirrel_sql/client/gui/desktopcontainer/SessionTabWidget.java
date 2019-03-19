@@ -76,12 +76,16 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
    public void setMainSqlFile(File sqlFile)
    {
       _titleFileHandler.setSqlFile(sqlFile);
-      setTitle(_titleWithoutFile);
    }
 
-   public void setUnsavedEdits(boolean unsavedEdits)
+   public void displayUnsavedEditsInTabComponent(boolean unsavedEdits)
    {
       _titleFileHandler.setUnsavedEdits(unsavedEdits);
+   }
+
+   protected TitleFilePathHandler getTitleFileHandler()
+   {
+      return _titleFileHandler;
    }
 
    /**

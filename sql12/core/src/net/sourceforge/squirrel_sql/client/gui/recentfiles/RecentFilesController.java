@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.dnd.DropedFileExtractor;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
@@ -66,10 +67,10 @@ public class RecentFilesController
    }
 
 
-   public RecentFilesController(ISQLPanelAPI panel)
+   public RecentFilesController(FileHandler fileHandler)
    {
-      Frame parent = GUIUtils.getOwningFrame(panel.getSQLEntryPanel().getTextComponent());
-      init(panel.getSession().getApplication(), parent, panel.getSession().getAlias(), false);
+      Frame parent = GUIUtils.getOwningFrame(fileHandler.getFileEditorAPI().getTextComponent());
+      init(Main.getApplication(), parent, fileHandler.getFileEditorAPI().getSession().getAlias(), false);
    }
 
 

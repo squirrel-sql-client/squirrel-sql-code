@@ -180,6 +180,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 			setSelectionStart(0);
 		}
 		triggerParser();
+		setCaretPosition(0);
 	}
 
 	/**

@@ -31,6 +31,11 @@ public class ButtonTabComponent extends JPanel
    /**
     * With this constructor the tab title won't turn to bold when it is selected
     */
+   public ButtonTabComponent(String title)
+   {
+      this(title, null);
+   }
+
    public ButtonTabComponent(String title, Icon icon)
    {
       this(null, title, icon);
@@ -51,7 +56,11 @@ public class ButtonTabComponent extends JPanel
 
       _label.setText(title);
       _label.setOpaque(false);
-      _label.setIcon(icon);
+
+      if (null != icon)
+      {
+         _label.setIcon(icon);
+      }
 
       // get the defaults for rendering the title label
       initLabelDefaults();

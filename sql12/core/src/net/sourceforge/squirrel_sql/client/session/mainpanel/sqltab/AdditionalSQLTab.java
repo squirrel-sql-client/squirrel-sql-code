@@ -46,19 +46,20 @@ public class AdditionalSQLTab extends BaseSQLTab
       _titleWithoutFile = s_stringMgr.getString("AdditionalSQLTab.title", _tabNumber);
       ImageIcon icon = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ADD_TAB);
 
+      _titleFileHandler = new TitleFilePathHandler(() -> setTitle(_titleWithoutFile));
+
       //_tabComponent = new ButtonTabComponent(getSession().getSessionPanel().getTabbedPane(), _titleWithoutFile, icon);
       _tabComponent = new ButtonTabComponent(_titleWithoutFile, icon);
 
       _tabComponent.getClosebutton().addActionListener(e -> onClose());
       _tabComponent.getToWindowButton().setVisible(false);
 
-      _titleFileHandler = new TitleFilePathHandler(() -> setTitle(_titleWithoutFile));
    }
 
    @Override
    protected SQLPanel createSqlPanel()
    {
-      return new SQLPanel(getSession(), SQLPanelPosition.ADDITIONAL_TAB_IN_SESSION_WINDOW);
+      return new SQLPanel(getSession(), SQLPanelPosition.ADDITIONAL_TAB_IN_SESSION_WINDOW, _titleFileHandler);
    }
 
    private void setTitle(String title)
@@ -95,13 +96,7 @@ public class AdditionalSQLTab extends BaseSQLTab
    }
 
 
-   public void setSqlFile(File sqlFile)
-   {
-      _titleFileHandler.setSqlFile(sqlFile);
-      setTitle(_titleWithoutFile);
-   }
-
-   public void setUnsavedEdits(boolean hasUnsavedEdits)
+   public void displayUnsavedEditsInTabComponent(boolean hasUnsavedEdits)
    {
       _titleFileHandler.setUnsavedEdits(hasUnsavedEdits);
    }

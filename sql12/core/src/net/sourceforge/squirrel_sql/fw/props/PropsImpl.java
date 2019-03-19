@@ -117,6 +117,11 @@ public class PropsImpl
          String oldPref = Preferences.userRoot().get(propKey, NULL_PROP);
          putProperty(propKey, oldPref);
 
+         if(false == NULL_PROP.equals(oldPref))
+         {
+            Preferences.userRoot().remove(propKey);
+         }
+
          ret = oldPref;
       }
 

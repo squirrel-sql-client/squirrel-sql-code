@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -22,13 +24,13 @@ public class HQLPanelController
    private AbstractAction _runHQL;
    private HQLEntryPanelManager _hqlEntryPanelManager;
 
-   public HQLPanelController(IHibernateTabController hibernateTabController, ISession sess, HibernatePluginResources resource)
+   public HQLPanelController(IHibernateTabController hibernateTabController, ISession sess, HibernatePluginResources resource, TitleFilePathHandler titleFileHandler)
    {
       _hibernateTabController = hibernateTabController;
       _sess = sess;
       _resource = resource;
 
-      _hqlEntryPanelManager = new HQLEntryPanelManager(_sess, resource, hibernateTabController.getHibernateConnectionProvider());
+      _hqlEntryPanelManager = new HQLEntryPanelManager(_sess, resource, hibernateTabController.getHibernateConnectionProvider(), titleFileHandler);
 
    }
 
@@ -112,5 +114,10 @@ public class HQLPanelController
    public void requestFocus()
    {
       _hqlEntryPanelManager.requestFocus();
+   }
+
+   public IFileEditorAPI getFileEditorAPIOrNull()
+   {
+      return _hqlEntryPanelManager;
    }
 }

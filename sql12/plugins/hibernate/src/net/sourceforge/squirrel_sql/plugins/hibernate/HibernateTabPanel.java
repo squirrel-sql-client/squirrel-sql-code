@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.ButtonTabComponent;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -19,11 +20,12 @@ public class HibernateTabPanel extends JPanel
    JComboBox cboConfigurations;
    JToggleButton btnConnected;
    JButton btnOpenConfigs;
+   JTabbedPane tabHibernateTabbedPane;
+   ButtonTabComponent tabComponentOfHqlTab;
 
-   private JSplitPane _splitHqlSql;
+   JSplitPane splitHqlSql;
    private JPanel _toolbar;
    private int _curXOfToolbar;
-   private JTabbedPane _tabObjectsHql;
    private HibernatePluginResources _resource;
 
 
@@ -38,31 +40,39 @@ public class HibernateTabPanel extends JPanel
       _toolbar = createToolbar();
       add(_toolbar, gbc);
 
-      _splitHqlSql = new JSplitPane(JSplitPane.VERTICAL_SPLIT, hqlTextComp, hqlResultComp);
+      splitHqlSql = new JSplitPane(JSplitPane.VERTICAL_SPLIT, hqlTextComp, hqlResultComp);
 
-      _tabObjectsHql = new JTabbedPane();
+      tabHibernateTabbedPane = new JTabbedPane();
 
       // i18n[HibernateTabPanel.mappedObjects=Mapped objects]
-      _tabObjectsHql.add(s_stringMgr.getString("HQLTabPanel.mappedObjects"), mappedObjectComp);
+      tabHibernateTabbedPane.add(s_stringMgr.getString("HQLTabPanel.mappedObjects"), mappedObjectComp);
+
+
+
 
       // i18n[HibernateTabPanel.hql=HQL]
-      _tabObjectsHql.add(s_stringMgr.getString("HQLTabPanel.hql"), _splitHqlSql);
+      tabHibernateTabbedPane.add(getHqlTabTitle(), splitHqlSql);
+
+      tabComponentOfHqlTab = new ButtonTabComponent(getHqlTabTitle());
+      tabComponentOfHqlTab.getClosebutton().setVisible(false);
+      tabComponentOfHqlTab.getToWindowButton().setVisible(false);
+      tabHibernateTabbedPane.setTabComponentAt(1, tabComponentOfHqlTab);
 
 
 
 
       gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0 );
-      add(_tabObjectsHql, gbc);
+      add(tabHibernateTabbedPane, gbc);
 
 
-      _tabObjectsHql.setSelectedIndex(Props.getInt(PERF_KEY_LAST_SELECTED_TAB, 0));
+      tabHibernateTabbedPane.setSelectedIndex(Props.getInt(PERF_KEY_LAST_SELECTED_TAB, 0));
 
 
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
          {
-            _splitHqlSql.setDividerLocation(0.5);
+            splitHqlSql.setDividerLocation(0.5);
 //            double loc = Preferences.getDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, 0.5);
 //            loc = Math.min(0.95, loc);
 //            loc = Math.max(loc, 0.05);
@@ -71,11 +81,16 @@ public class HibernateTabPanel extends JPanel
 
    }
 
+   public String getHqlTabTitle()
+   {
+      return s_stringMgr.getString("HQLTabPanel.hql");
+   }
+
 
    public void closing()
    {
-//      Preferences.putDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, ((double) _splitHqlSql.getDividerLocation())/ ((double) _splitHqlSql.getHeight()) );
-      Props.putInt(PERF_KEY_LAST_SELECTED_TAB, _tabObjectsHql.getSelectedIndex());
+//      Preferences.putDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, ((double) splitHqlSql.getDividerLocation())/ ((double) splitHqlSql.getHeight()) );
+      Props.putInt(PERF_KEY_LAST_SELECTED_TAB, tabHibernateTabbedPane.getSelectedIndex());
    }
 
 

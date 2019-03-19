@@ -23,11 +23,23 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.rowcolumnlabel.RowColumnLabel;
+import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileDetachAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileNewAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenRecentAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FilePrintAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileReloadAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
@@ -63,9 +75,7 @@ public class SessionPanel extends JPanel
 
 	private PropertyChangeListener _propsListener;
 
-	private MainPanel _mainTabPane;
-
-	private IMainPanelFactory _mainPanelFactory;
+	private MainPanel _mainPanel;
 
 	/** Toolbar for window. */
 	private MyToolBar _toolBar;
@@ -76,16 +86,14 @@ public class SessionPanel extends JPanel
 	private boolean _hasBeenVisible;
 
 	private transient ObjectTreeSelectionListener _objTreeSelectionLis = null;
+	private TitleFilePathHandler _titleFileHandler = null;
 
-   public SessionPanel(ISession session)
+	public SessionPanel(ISession session, TitleFilePathHandler titleFileHandler)
 	{
 		super(new BorderLayout());
 
-		if (session == null)
-		{
-			throw new IllegalArgumentException("ISession == null");
-		}
-        
+		_titleFileHandler = titleFileHandler;
+
 		_app = session.getApplication();
 		_sessionId = session.getIdentifier();
 
@@ -119,7 +127,7 @@ public class SessionPanel extends JPanel
 		if (!_hasBeenVisible)
 		{
 			_hasBeenVisible = true;
-			_mainTabPane.getObjectTreePanel().refreshTree();
+			_mainPanel.getObjectTreePanel().refreshTree();
 		}
 	}
 
@@ -144,7 +152,7 @@ public class SessionPanel extends JPanel
 				session.getProperties().removePropertyChangeListener(_propsListener);
 				_propsListener = null;
 			}
-			_mainTabPane.sessionClosing(session);
+			_mainPanel.sessionClosing(session);
 			_sessionId = null;
 		}
 	}
@@ -273,9 +281,9 @@ public class SessionPanel extends JPanel
 	{
 		final IApplication app = session.getApplication();
 
-		_mainTabPane = _mainPanelFactory.createMainPanel(session);
+		_mainPanel = new MainPanel(session, _titleFileHandler);
 
-		add(_mainTabPane, BorderLayout.CENTER);
+		add(_mainPanel, BorderLayout.CENTER);
 
 		Font fn = app.getFontInfoStore().getStatusBarFontInfo().createFont();
 		_statusBar.setFont(fn);
@@ -285,33 +293,25 @@ public class SessionPanel extends JPanel
 		getObjectTreePanel().addTreeSelectionListener(_objTreeSelectionLis);
 
 		addToStatusBar(new SchemaPanel(session));
-		addToStatusBar(new RowColumnLabel(_mainTabPane));
+		addToStatusBar(new RowColumnLabel(_mainPanel));
 		validate();
 	}
 
 
    public boolean isObjectTreeTabSelected()
    {
-      return MainPanel.ITabIndexes.OBJECT_TREE_TAB ==_mainTabPane.getSelectedMainTabIndex();
+      return MainPanel.ITabIndexes.OBJECT_TREE_TAB == _mainPanel.getSelectedMainTabIndex();
    }
-
-	/**
-	 * @param panelFactory the _mainPanelFactory to set
-	 */
-	public void setMainPanelFactory(IMainPanelFactory panelFactory)
-	{
-		_mainPanelFactory = panelFactory;
-	}
 
 
 	public int getTabCount()
 	{
-		return _mainTabPane.getMainTabCount();
+		return _mainPanel.getMainTabCount();
 	}
 
 	public int getMainPanelTabIndex(IMainPanelTab mainPanelTab)
    {
-      return _mainTabPane.getTabIndex(mainPanelTab);
+      return _mainPanel.getTabIndex(mainPanelTab);
    }
 
 	public String getSelectedCatalogFromCatalogsComboBox()
@@ -326,17 +326,17 @@ public class SessionPanel extends JPanel
 
 	public IMainPanelTab getMainPanelTabAt(int tabIndex)
 	{
-		return _mainTabPane.getMainPanelTabAt(tabIndex);
+		return _mainPanel.getMainPanelTabAt(tabIndex);
 	}
 
 	public ISQLPanelAPI getMainSQLPaneAPI()
 	{
-		return _mainTabPane.getMainSQLPanel().getSQLPanelAPI();
+		return _mainPanel.getMainSQLPanel().getSQLPanelAPI();
 	}
 
 	public ISQLPanelAPI getSelectedOrMainSQLPanelAPI()
 	{
-		return _mainTabPane.getSelectedOrMainSQLPanel().getSQLPanelAPI();
+		return _mainPanel.getSelectedOrMainSQLPanel().getSQLPanelAPI();
 	}
 
 
@@ -347,50 +347,50 @@ public class SessionPanel extends JPanel
 
 	public SQLPanel getMainSQLPanel()
 	{
-		return _mainTabPane.getMainSQLPanel();
+		return _mainPanel.getMainSQLPanel();
 	}
 
 	public java.util.List<SQLPanel> getAllSQLPanels()
 	{
-		return _mainTabPane.getAllSQLPanels();
+		return _mainPanel.getAllSQLPanels();
 	}
 
 	public SQLPanel getSelectedSQLPanel()
 	{
-		return _mainTabPane.getSelectedSQLPanel();
+		return _mainPanel.getSelectedSQLPanel();
 	}
 
 	public SQLPanel getSelectedOrMainSQLPanel()
 	{
-		return _mainTabPane.getSelectedOrMainSQLPanel();
+		return _mainPanel.getSelectedOrMainSQLPanel();
 	}
 
 
 	public boolean isAnSQLTabSelected()
 	{
-		return _mainTabPane.getSelectedMainTab() instanceof SQLTab || _mainTabPane.getSelectedMainTab() instanceof AdditionalSQLTab;
+		return _mainPanel.getSelectedMainTab() instanceof SQLTab || _mainPanel.getSelectedMainTab() instanceof AdditionalSQLTab;
 	}
 
 	public void sessionWindowClosing()
 	{
-		_mainTabPane.sessionWindowClosing();
+		_mainPanel.sessionWindowClosing();
 	}
 
 
 	public ObjectTreePanel getObjectTreePanel()
 	{
-		return _mainTabPane.getObjectTreePanel();
+		return _mainPanel.getObjectTreePanel();
 	}
 
 	public void selectMainTab(int tabIndex)
 	{
-		if (tabIndex >= _mainTabPane.getMainTabCount())
+		if (tabIndex >= _mainPanel.getMainTabCount())
 		{
 			throw new IllegalArgumentException("" + tabIndex + " is not a valid index into the main tabbed pane.");
 		}
-		if (_mainTabPane.getSelectedMainTabIndex() != tabIndex)
+		if (_mainPanel.getSelectedMainTabIndex() != tabIndex)
 		{
-			_mainTabPane.selectMainTab(tabIndex);
+			_mainPanel.selectMainTab(tabIndex);
 		}
 	}
 
@@ -410,12 +410,12 @@ public class SessionPanel extends JPanel
 
 	public int getSelectedMainTabIndex()
 	{
-		return _mainTabPane.getSelectedMainTabIndex();
+		return _mainPanel.getSelectedMainTabIndex();
 	}
 
 	public IMainPanelTab getSelectedMainTab()
 	{
-		return _mainTabPane.getSelectedMainTab();
+		return _mainPanel.getSelectedMainTab();
 	}
 
 
@@ -426,7 +426,7 @@ public class SessionPanel extends JPanel
 		{
 			throw new IllegalArgumentException("IMainPanelTab == null");
 		}
-		return _mainTabPane.addMainPanelTab(tab);
+		return _mainPanel.addMainPanelTab(tab);
 	}
 
 	public void insertMainTab(IMainPanelTab tab, int idx)
@@ -445,7 +445,7 @@ public class SessionPanel extends JPanel
 			throw new IllegalArgumentException("Index " + idx + "conflicts with standard tabs");
 		}
 
-		_mainTabPane.insertMainPanelTab(tab, idx, selectInsertedTab);
+		_mainPanel.insertMainPanelTab(tab, idx, selectInsertedTab);
 	}
 
 	public int removeMainTab(IMainPanelTab tab)
@@ -454,7 +454,17 @@ public class SessionPanel extends JPanel
 		{
 			throw new IllegalArgumentException("Null IMainPanelTab passed");
 		}
-		return _mainTabPane.removeMainPanelTab(tab);
+		return _mainPanel.removeMainPanelTab(tab);
+	}
+
+	public IFileEditorAPI getActiveIFileEditorAPIOrNull()
+	{
+		return getSelectedMainTab().getActiveFileEditorAPIOrNull();
+	}
+
+	public void performStateChanged()
+	{
+		_mainPanel.performStateChanged();
 	}
 
 	private class MyToolBar extends ToolBar
@@ -475,7 +485,7 @@ public class SessionPanel extends JPanel
          if (!_hasBeenVisible)
          {
             _hasBeenVisible = true;
-            _mainTabPane.getObjectTreePanel().refreshTree();
+            _mainPanel.getObjectTreePanel().refreshTree();
          }
       }
 

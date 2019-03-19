@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
@@ -107,22 +108,18 @@ public class SessionUtils
       throw new IllegalStateException("Session has no entry panel for ID=" + entryPanelIdentifier);
    }
 
-   public static IMainPanelTab getOwningIMainPanelTab(ISQLPanelAPI sqlPanelAPI)
+   public static IMainPanelTab getOwningIMainPanelTab(IFileEditorAPI fileEditorAPI)
    {
-      SessionPanel sessionSheet = sqlPanelAPI.getSession().getSessionPanel();
+      SessionPanel sessionSheet = fileEditorAPI.getSession().getSessionPanel();
       for (int i = 0; i < sessionSheet.getTabCount(); i++)
       {
          IMainPanelTab mainPanelTab = sessionSheet.getMainPanelTabAt(i);
 
-         if(mainPanelTab instanceof BaseSQLTab)
+         if(mainPanelTab.getActiveFileEditorAPIOrNull() == fileEditorAPI)
          {
-            if( ((BaseSQLTab)mainPanelTab).getSQLPanelAPI() == sqlPanelAPI)
-            {
-               return mainPanelTab;
-            }
+            return mainPanelTab;
          }
       }
-
 
       return null;
    }

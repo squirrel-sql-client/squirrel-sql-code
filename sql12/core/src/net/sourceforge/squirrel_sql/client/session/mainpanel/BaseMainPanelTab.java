@@ -17,12 +17,13 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
-import java.awt.*;
+import java.awt.Component;
 
 /**
  * Base class for tabs to the added to the main tabbed panel.
@@ -97,7 +98,13 @@ public abstract class BaseMainPanelTab implements IMainPanelTab
    {
    }
 
-   @Override
+	@Override
+	public IFileEditorAPI getActiveFileEditorAPIOrNull()
+	{
+		return null;
+	}
+
+	@Override
    public Component getTabComponent()
    {
       return null;

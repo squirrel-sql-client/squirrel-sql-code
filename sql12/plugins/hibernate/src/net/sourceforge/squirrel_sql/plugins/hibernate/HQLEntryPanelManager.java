@@ -1,10 +1,15 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.session.EntryPanelManager;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompleteCodeAction;
@@ -13,12 +18,15 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.util.HqlQueryErrorUtil;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
-public class HQLEntryPanelManager extends EntryPanelManager
+public class HQLEntryPanelManager extends EntryPanelManager implements IFileEditorAPI
 {
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(HQLEntryPanelManager.class);
+
+   private final FileHandler _fileHandler;
 
    private HqlSyntaxHighlightTokenMatcherProxy _hqlSyntaxHighlightTokenMatcherProxy = new HqlSyntaxHighlightTokenMatcherProxy();
    private HibernatePluginResources _resources;
@@ -26,7 +34,7 @@ public class HQLEntryPanelManager extends EntryPanelManager
    private ToolsPopupController _toolsPopupController;
 
 
-   public HQLEntryPanelManager(final ISession session, HibernatePluginResources resources, IHibernateConnectionProvider connectionProvider)
+   public HQLEntryPanelManager(final ISession session, HibernatePluginResources resources, IHibernateConnectionProvider connectionProvider, TitleFilePathHandler titleFileHandler)
    {
       super(session);
       _connectionProvider = connectionProvider;
@@ -41,6 +49,13 @@ public class HQLEntryPanelManager extends EntryPanelManager
       tpap.apply(this);
       initCodeCompletion();
       initBookmarks();
+
+      _fileHandler = new FileHandler(this, titleFileHandler);
+
+      _fileHandler.replaceSqlFileExtensionFilterBy(new FileExtensionFilter("HQL files", new String[]{".hql"}), ".hql");
+
+      getEntryPanel().addUndoableEditListener(_fileHandler.createEditListener());
+
 
 
       // i18n[HQLEntryPanelManager.quoteHQL=Quote HQL]
@@ -198,5 +213,71 @@ public class HQLEntryPanelManager extends EntryPanelManager
    {
       JComponent comp = getEntryPanel().getTextComponent();
       comp.registerKeyboardAction(action, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+   }
+
+   @Override
+   public void selectWidgetOrTab()
+   {
+
+   }
+
+   @Override
+   public Frame getOwningFrame()
+   {
+      return GUIUtils.getOwningFrame(getComponent());
+   }
+
+   @Override
+   public void appendSQLScript(String sqlScript, boolean select)
+   {
+      getEntryPanel().appendText(sqlScript, select);
+   }
+
+   @Override
+   public void setEntireSQLScript(String sqlScript)
+   {
+      getEntryPanel().setText(sqlScript);
+   }
+
+   @Override
+   public ISession getSession()
+   {
+      return super.getSession();
+   }
+
+   @Override
+   public String getEntireSQLScript()
+   {
+      return getEntryPanel().getText();
+   }
+
+   @Override
+   public int getCaretPosition()
+   {
+      return getEntryPanel().getCaretPosition();
+   }
+
+   @Override
+   public String getText()
+   {
+      return getEntireSQLScript();
+   }
+
+   @Override
+   public void setCaretPosition(int caretPos)
+   {
+      getEntryPanel().setCaretPosition(caretPos);
+   }
+
+   @Override
+   public JTextArea getTextComponent()
+   {
+      return getEntryPanel().getTextComponent();
+   }
+
+   @Override
+   public FileHandler getFileHandler()
+   {
+      return _fileHandler;
    }
 }

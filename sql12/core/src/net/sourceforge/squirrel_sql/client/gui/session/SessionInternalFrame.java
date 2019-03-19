@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 
 public class SessionInternalFrame extends SessionTabWidget implements ISQLInternalFrame, IObjectTreeInternalFrame
@@ -130,8 +131,7 @@ public class SessionInternalFrame extends SessionTabWidget implements ISQLIntern
 			}
 		});
 
-		_sessionPanel = new SessionPanel(session);
-		_sessionPanel.setMainPanelFactory(new MainPanelFactory());
+		_sessionPanel = new SessionPanel(session, getTitleFileHandler());
 		_sessionPanel.initialize(session);
 		setContentPane(_sessionPanel);
 		validate();
@@ -170,5 +170,10 @@ public class SessionInternalFrame extends SessionTabWidget implements ISQLIntern
    private void requestFocusOnSqlEditor()
    {
       ((BaseSQLTab) _sessionPanel.getSelectedMainTab()).getSQLPanel().getSQLEntryPanel().requestFocus();
+   }
+
+   public IFileEditorAPI getActiveIFileEditorAPIOrNull()
+   {
+      return getSessionPanel().getActiveIFileEditorAPIOrNull();
    }
 }

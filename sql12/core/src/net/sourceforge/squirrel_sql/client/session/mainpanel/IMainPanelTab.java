@@ -20,13 +20,15 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import java.awt.Component;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 
 /**
  * This interface defines the behaviour for a tab in the main tabbed panel.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface IMainPanelTab {
+public interface IMainPanelTab
+{
 	/**
 	 * Return the title for the tab.
 	 *
@@ -75,5 +77,7 @@ public interface IMainPanelTab {
 	void select();
 
 	void mouseWheelClickedOnTab();
+
+	IFileEditorAPI getActiveFileEditorAPIOrNull();
 }
 

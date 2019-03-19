@@ -23,6 +23,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.BaseMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
@@ -92,6 +93,12 @@ public abstract class BaseSQLTab extends BaseMainPanelTab
       SwingUtilities.invokeLater(() -> _sqlPanel.getSQLEntryPanel().requestFocus());
    }
 
+   @Override
+   public IFileEditorAPI getActiveFileEditorAPIOrNull()
+   {
+      return getSQLPanelAPI();
+   }
+
    public SQLPanel getSQLPanel()
    {
       return _sqlPanel;
@@ -101,4 +108,6 @@ public abstract class BaseSQLTab extends BaseMainPanelTab
    {
       return _sqlPanel.getSQLPanelAPI();
    }
+
+
 }

@@ -659,8 +659,7 @@ public class DriverInternalFrame extends DialogWidget
 				_chooser.setFileHidingEnabled(false);
 				_chooser.setMultiSelectionEnabled(true);
 				_chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				_chooser.addChoosableFileFilter(new FileExtensionFilter(
-					s_stringMgr.getString("DriverInternalFrame.jarfiles"), new String[] { ".jar", ".zip" }));
+				_chooser.addChoosableFileFilter(new FileExtensionFilter( s_stringMgr.getString("DriverInternalFrame.jarfiles"), new String[] { ".jar", ".zip" }));
 			}
 			int returnVal = _chooser.showOpenDialog(getParent());
 			if (returnVal == JFileChooser.APPROVE_OPTION)

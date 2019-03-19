@@ -36,6 +36,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.Action;
@@ -90,8 +92,7 @@ public class SQLPanel extends JPanel
 	private static final ILogger s_log = LoggerController.createLogger(SQLPanel.class);
 
     /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(SQLPanel.class);   
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLPanel.class);
     
 	/** Used to separate lines in the SQL entry area. */
 	private final static String LINE_SEPARATOR = "\n";
@@ -176,12 +177,13 @@ public class SQLPanel extends JPanel
 	/**
 	 * Ctor.
 	 *
-	 * @param	session	 Current session.
+	 * @param   session    Current session.
 	 *
+	 * @param titleFileHandler
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public SQLPanel(ISession session, SQLPanelPosition sqlPanelPosition)
+	public SQLPanel(ISession session, SQLPanelPosition sqlPanelPosition, TitleFilePathHandler titleFileHandler)
 	{
 		_sqlPanelPosition = sqlPanelPosition;
 		setSession(session);
@@ -190,7 +192,7 @@ public class SQLPanel extends JPanel
 		_sqlExecPanel = new SQLResultExecuterPanel(session);
 		_sqlExecPanel.addSQLExecutionListener(_sqlExecutorHistoryListener);
 		addExecutor(_sqlExecPanel);
-		_panelAPI = new SQLPanelAPI(this);
+		_panelAPI = new SQLPanelAPI(this, titleFileHandler);
       _resultLimitAndReadOnPanelSmallPanel.loadData(session.getProperties());
 
       _toggleResultMinimizeHandler = new ToggleResultMinimizeHandler(_splitPane);

@@ -18,12 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.client.gui.dnd;
 
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetListener;
-import java.io.File;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -31,49 +25,65 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetListener;
+import java.io.File;
+
 /**
- * A utility class that can be used to add the ability to drag a file from the 
+ * A utility class that can be used to add the ability to drag a file from the
  * desktop to a session sql editor panel.
- * 
+ *
  * @author manningr
  */
-public class FileEditorDropTargetListener extends DropTargetAdapter 
-                                          implements DropTargetListener {
+public class FileEditorDropTargetListener extends DropTargetAdapter
+      implements DropTargetListener
+{
 
    static final ILogger s_log =
          LoggerController.createLogger(DropedFileExtractor.class);
-   /** Internationalized strings for this class. */
+   /**
+    * Internationalized strings for this class.
+    */
    private static final StringManager s_stringMgr =
          StringManagerFactory.getStringManager(DropedFileExtractor.class);
 
 
-   /** the session we are listening for drops into */
-    private ISession _session;
-    
-    public FileEditorDropTargetListener(ISession session) {
-        this._session = session;
-    }
-    
-    /**
-     * @see java.awt.dnd.DropTargetListener#drop(java.awt.dnd.DropTargetDropEvent)
-     */
-    public void drop(DropTargetDropEvent dtde) {
-        try {
-           File fileToOpen = DropedFileExtractor.getFile(dtde, _session.getApplication());
+   /**
+    * the session we are listening for drops into
+    */
+   private ISession _session;
 
-           if (fileToOpen != null) {
-                if (s_log.isInfoEnabled()) {
-                    s_log.info("drop: path="+fileToOpen.getAbsolutePath());
-                }            
-                ISQLPanelAPI api = 
-                    _session.getSQLPanelAPIOfActiveSessionWindow(); 
-                api.fileOpen(fileToOpen);
-            }            
-        } catch (Exception e) {
-            s_log.error("drop: Unexpected exception "+e.getMessage(),e);
-        }
+   public FileEditorDropTargetListener(ISession session)
+   {
+      this._session = session;
+   }
 
-    }
+   /**
+    * @see java.awt.dnd.DropTargetListener#drop(java.awt.dnd.DropTargetDropEvent)
+    */
+   public void drop(DropTargetDropEvent dtde)
+   {
+      try
+      {
+         File fileToOpen = DropedFileExtractor.getFile(dtde, _session.getApplication());
+
+         if (fileToOpen != null)
+         {
+            if (s_log.isInfoEnabled())
+            {
+               s_log.info("drop: path=" + fileToOpen.getAbsolutePath());
+            }
+            ISQLPanelAPI api = _session.getSQLPanelAPIOfActiveSessionWindow();
+            api.getFileHandler().fileOpen(fileToOpen);
+         }
+      }
+      catch (Exception e)
+      {
+         s_log.error("drop: Unexpected exception " + e.getMessage(), e);
+      }
+
+   }
 
 
 }

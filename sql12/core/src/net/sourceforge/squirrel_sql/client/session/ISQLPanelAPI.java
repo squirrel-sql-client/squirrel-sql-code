@@ -25,6 +25,7 @@ import javax.swing.JMenuItem;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SqlPanelListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
@@ -38,7 +39,7 @@ import java.util.ArrayList;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface ISQLPanelAPI
+public interface ISQLPanelAPI extends IFileEditorAPI
 {
 	void addExecutor(ISQLResultExecuter exec);
 
@@ -109,12 +110,6 @@ public interface ISQLPanelAPI
      */
     ISQLResultExecuter getSQLResultExecuter();
     
-	/**
-	 * Return the entire contents of the SQL entry area.
-	 *
-	 * @return	the entire contents of the SQL entry area.
-	 */
-	String getEntireSQLScript();
 
 	/**
 	 * Return the selected contents of the SQL entry area.
@@ -138,23 +133,7 @@ public interface ISQLPanelAPI
 	 */
 	void appendSQLScript(String sqlScript);
 
-	/**
-	 * Append the passed SQL script to the SQL entry area and specify
-	 * whether it should be selected.
-	 *
-	 * @param	sqlScript	The script to be appended.
-	 * @param	select		If <TT>true</TT> then select the passed script
-	 * 						in the sql entry area.
-	 */
-	void appendSQLScript(String sqlScript, boolean select);
 
-	/**
-	 * Replace the contents of the SQL entry area with the passed
-	 * SQL script without selecting it.
-	 *
-	 * @param	sqlScript	The script to be placed in the SQL entry area.
-	 */
-	void setEntireSQLScript(String sqlScript);
 
 	/**
 	 * Replace the contents of the SQL entry area with the passed
@@ -287,33 +266,9 @@ public interface ISQLPanelAPI
 
 	void addSeparatorToSQLEntryAreaMenu();
 
-	ISession getSession();
-
 	boolean isInMainSessionWindow();
 
 	void addToToolsPopUp(String selectionString, Action action);
-
-	boolean fileSave();
-
-	void fileSaveAs();
-
-	void fileOpen();
-	
-	void fileOpen(File f);
-
-   void fileOpen(File f, boolean append);
-
-	void fileAppend();
-
-	void fileClose();
-
-	void fileNew();
-
-   void fileDetach();
-
-   void filePrint();
-
-	void fileReload();
 
 	void showToolsPopup();
 

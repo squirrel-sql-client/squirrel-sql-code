@@ -18,31 +18,33 @@ public class FileChooserManager
    private JFileChooser _fileChooser;
 
    private HashMap<FileExtensionFilter, String> _fileAppenixes = new HashMap<FileExtensionFilter, String>();
-
+   private final FileExtensionFilter _txtFilter;
+   private final FileExtensionFilter _sqlFilter;
+   private boolean _saveFileFilterProps = true;
 
 
    public FileChooserManager()
    {
       _fileChooser = new JFileChooser();
 
-      FileExtensionFilter txtFilter = new FileExtensionFilter("Text files", new String[]{FILE_ENDING_TXT});
-      _fileChooser.addChoosableFileFilter(txtFilter);
-      _fileAppenixes.put(txtFilter, FILE_ENDING_TXT);
+      _txtFilter = new FileExtensionFilter("Text files", new String[]{FILE_ENDING_TXT});
+      _fileChooser.addChoosableFileFilter(_txtFilter);
+      _fileAppenixes.put(_txtFilter, FILE_ENDING_TXT);
 
-      FileExtensionFilter sqlFilter = new FileExtensionFilter("SQL files", new String[]{FILE_ENDING_SQL});
-      _fileChooser.addChoosableFileFilter(sqlFilter);
-      _fileAppenixes.put(sqlFilter, FILE_ENDING_SQL);
+      _sqlFilter = new FileExtensionFilter("SQL files", new String[]{FILE_ENDING_SQL});
+      _fileChooser.addChoosableFileFilter(_sqlFilter);
+      _fileAppenixes.put(_sqlFilter, FILE_ENDING_SQL);
 
 
       String fileEndingPref = Props.getString(PREF_PRE_SELECTED_FILE_FILTER, FILE_ENDING_NONE);
 
       if(FILE_ENDING_SQL.equals(fileEndingPref))
       {
-         _fileChooser.setFileFilter(sqlFilter);
+         _fileChooser.setFileFilter(_sqlFilter);
       }
       else if(FILE_ENDING_TXT.equals(fileEndingPref))
       {
-         _fileChooser.setFileFilter(txtFilter);
+         _fileChooser.setFileFilter(_txtFilter);
       }
    }
 
@@ -58,6 +60,12 @@ public class FileChooserManager
 
    public void saveWasApproved()
    {
+      if(false == _saveFileFilterProps)
+      {
+         return;
+      }
+
+
       if (null != getSelectedFileEnding())
       {
          Props.putString(PREF_PRE_SELECTED_FILE_FILTER, getSelectedFileEnding());
@@ -66,5 +74,18 @@ public class FileChooserManager
       {
          Props.putString(PREF_PRE_SELECTED_FILE_FILTER, FILE_ENDING_NONE);
       }
+   }
+
+   public void replaceSqlFileExtensionFilterBy(FileExtensionFilter fileExtensionFilter, String fileEndingWithDot)
+   {
+      _fileChooser.removeChoosableFileFilter(_sqlFilter);
+      _fileChooser.addChoosableFileFilter(fileExtensionFilter);
+      _fileChooser.setFileFilter(fileExtensionFilter);
+
+      _fileAppenixes.remove(_sqlFilter);
+      _fileAppenixes.put(fileExtensionFilter, fileEndingWithDot);
+
+      _saveFileFilterProps = false;
+
    }
 }

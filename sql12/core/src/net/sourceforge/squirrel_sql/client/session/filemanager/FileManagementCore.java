@@ -1,10 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.filemanager;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -20,21 +21,29 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 
-public class FileManager
+public class FileManagementCore
 {
-   private ISQLPanelAPI _sqlPanelAPI;
+   private IFileEditorAPI _fileEditorAPI;
+   private TitleFilePathHandler _titleFilePathHandler;
 
    private File _toSaveTo = null;
 
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FileManager.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FileManagementCore.class);
    
    private FileChooserManager _fileChooserManager = new FileChooserManager();
 
    private IOUtilities ioUtil = new IOUtilitiesImpl();
 
-   public FileManager(ISQLPanelAPI sqlPanelAPI)
+   public FileManagementCore(IFileEditorAPI fileEditorAPI, TitleFilePathHandler titleFilePathHandler)
    {
-      _sqlPanelAPI = sqlPanelAPI;
+      _fileEditorAPI = fileEditorAPI;
+
+      if(null == titleFilePathHandler)
+      {
+         throw new IllegalStateException("titleFilePathHandler must not be null");
+      }
+
+      _titleFilePathHandler = titleFilePathHandler;
    }
 
    public boolean save()
@@ -47,18 +56,13 @@ public class FileManager
       return saveIntern(true);
    }
 
-   public void open(File f)
-   {
-      open(f, false);
-   }
-
    public void open(File f, boolean appendToExisting)
    {
-      SQLPanelSelectionHandler.selectSqlPanel(_sqlPanelAPI);
+      _fileEditorAPI.selectWidgetOrTab();
 
       if (false == appendToExisting)
       {
-         _sqlPanelAPI.setEntireSQLScript("");
+         _fileEditorAPI.setEntireSQLScript("");
       }
 
       loadScript(f);
@@ -71,7 +75,7 @@ public class FileManager
       JFileChooser chooser = _fileChooserManager.getFileChooser();
       chooser.setAccessory(new ChooserPreviewer());
 
-      SquirrelPreferences prefs = _sqlPanelAPI.getSession().getApplication().getSquirrelPreferences();
+      SquirrelPreferences prefs = Main.getApplication().getSquirrelPreferences();
 
 
       if (prefs.isFileOpenInPreviousDir())
@@ -91,9 +95,9 @@ public class FileManager
          }
       }
 
-      Frame frame = SessionUtils.getOwningFrame(_sqlPanelAPI);
+      Frame frame = _fileEditorAPI.getOwningFrame();
 
-      SQLPanelSelectionHandler.selectSqlPanel(_sqlPanelAPI);
+      _fileEditorAPI.selectWidgetOrTab();
 
 
       if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
@@ -103,7 +107,7 @@ public class FileManager
 
          if (!appendToExisting)
          {
-            _sqlPanelAPI.setEntireSQLScript("");
+            _fileEditorAPI.setEntireSQLScript("");
          }
 
          loadScript(selectedFile);
@@ -114,7 +118,7 @@ public class FileManager
 
    private void loadScript(File file)
    {
-       SquirrelPreferences prefs = _sqlPanelAPI.getSession().getApplication().getSquirrelPreferences();
+       SquirrelPreferences prefs = Main.getApplication().getSquirrelPreferences();
       FileInputStream fis = null;
       BufferedInputStream bis = null;
       try
@@ -129,13 +133,13 @@ public class FileManager
             sb.append(new String(bytes, 0, iRead));
             iRead = bis.read(bytes);
          }
-         _sqlPanelAPI.appendSQLScript(convertPlatformEOLToLineFeed(sb.toString()), true);
+         _fileEditorAPI.appendSQLScript(convertPlatformEOLToLineFeed(sb.toString()), true);
          setFile(file);
          memorizeFile(file, prefs);
       }
       catch (java.io.IOException io)
       {
-         _sqlPanelAPI.getSession().showErrorMessage(io);
+         Main.getApplication().getMessageHandler().showErrorMessage(io);
       }
       finally
       {
@@ -147,7 +151,7 @@ public class FileManager
    private void memorizeFile(File file, SquirrelPreferences prefs)
    {
       prefs.setFilePreviousDir(file.getAbsolutePath());
-      _sqlPanelAPI.getSession().getApplication().getRecentFilesManager().fileTouched(file.getAbsolutePath(), _sqlPanelAPI.getSession().getAlias());
+      Main.getApplication().getRecentFilesManager().fileTouched(file.getAbsolutePath(), _fileEditorAPI.getSession().getAlias());
    }
 
    private boolean saveIntern(boolean toNewFile)
@@ -160,8 +164,8 @@ public class FileManager
 
       JFileChooser chooser = _fileChooserManager.getFileChooser();
 
-      SquirrelPreferences prefs = _sqlPanelAPI.getSession().getApplication().getSquirrelPreferences();
-      Frame frame = SessionUtils.getOwningFrame(_sqlPanelAPI);
+      SquirrelPreferences prefs = _fileEditorAPI.getSession().getApplication().getSquirrelPreferences();
+      Frame frame = _fileEditorAPI.getOwningFrame();
 
       for (; ;)
       {
@@ -185,7 +189,7 @@ public class FileManager
             }
          }
 
-         SQLPanelSelectionHandler.selectSqlPanel(_sqlPanelAPI);
+         _fileEditorAPI.selectWidgetOrTab();
 
          if (null != _toSaveTo)
          {
@@ -265,7 +269,7 @@ public class FileManager
       }
 
 
-      SquirrelPreferences prefs = _sqlPanelAPI.getSession().getApplication().getSquirrelPreferences();
+      SquirrelPreferences prefs = _fileEditorAPI.getSession().getApplication().getSquirrelPreferences();
 
       if (doSave)
       {
@@ -287,11 +291,11 @@ public class FileManager
             // i18n[FileManager.savedfile=Saved to {0}]
             String msg = s_stringMgr.getString("FileManager.savedfile",
                                                file.getAbsolutePath());
-            _sqlPanelAPI.getSession().showMessage(msg);
+            _fileEditorAPI.getSession().showMessage(msg);
          }
          catch (IOException ex)
          {
-            _sqlPanelAPI.getSession().showErrorMessage(ex);
+            _fileEditorAPI.getSession().showErrorMessage(ex);
          }
          finally
          {
@@ -311,7 +315,7 @@ public class FileManager
     */
    private String getEntireSQLScriptWithPlatformEolChar() {
 
-      String result  = _sqlPanelAPI.getEntireSQLScript();
+      String result  = _fileEditorAPI.getEntireSQLScript();
 
       return convertLineFeedToPlatformEOL(result);
    }
@@ -361,7 +365,9 @@ public class FileManager
    private void setFile(File file)
    {
       _toSaveTo = file;
-      SQLPanelSelectionHandler.setSqlFile(_sqlPanelAPI, file);
+      //SQLPanelSelectionHandler.displayFileInTabComponent(_fileEditorAPI, file);
+
+      _titleFilePathHandler.setSqlFile(file);
    }
 
    public File getFile()
@@ -374,5 +380,21 @@ public class FileManager
    {
       _toSaveTo = null;
    }
-   
+
+   public void clearSqlFile()
+   {
+      //SQLPanelSelectionHandler.displayFileInTabComponent(_fileEditorAPI, null);
+      _titleFilePathHandler.setSqlFile(null);
+   }
+
+   public void displayUnsavedEditsInTabComponent(boolean unsavedEdits)
+   {
+      //SQLPanelSelectionHandler.displayUnsavedEditsInTabComponent(_fileEditorAPI, b);
+      _titleFilePathHandler.setUnsavedEdits(unsavedEdits);
+   }
+
+   public void replaceSqlFileExtensionFilterBy(FileExtensionFilter fileExtensionFilter, String fileEndingWithDot)
+   {
+      _fileChooserManager.replaceSqlFileExtensionFilterBy(fileExtensionFilter, fileEndingWithDot);
+   }
 }

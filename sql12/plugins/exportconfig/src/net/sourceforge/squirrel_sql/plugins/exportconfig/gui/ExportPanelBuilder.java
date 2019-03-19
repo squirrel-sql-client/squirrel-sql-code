@@ -341,8 +341,7 @@ public class ExportPanelBuilder
 		public void actionPerformed(ActionEvent evt)
 		{
 			final JFileChooser chooser = new JFileChooser();
-			chooser.addChoosableFileFilter(new FileExtensionFilter("XML files",
-													new String[] { ".xml" }));
+			chooser.addChoosableFileFilter(new FileExtensionFilter("XML files", new String[] { ".xml" }));
 			chooser.setSelectedFile(new File(_tf.getText()));
 //			chooser.setDialogTitle("Select???");
 

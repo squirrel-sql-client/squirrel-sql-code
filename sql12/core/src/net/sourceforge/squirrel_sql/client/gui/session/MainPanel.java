@@ -20,16 +20,16 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
@@ -84,7 +84,7 @@ public class MainPanel extends JPanel
 
 	private ArrayList<MainPanelTabSelectionListener> _mainPanelTabSelectionListeners = new ArrayList<>();
 
-	MainPanel(ISession session)
+	MainPanel(ISession session, TitleFilePathHandler titleFileHandler)
 	{
 		super(new BorderLayout());
 
@@ -95,8 +95,8 @@ public class MainPanel extends JPanel
 
 		_session = session;
 
-		addMainPanelTab(new ObjectTreeTab(), Integer.valueOf('O'));
-		addMainPanelTab(new SQLTab(_session), Integer.valueOf('Q'));
+		addMainPanelTab(new ObjectTreeTab(), (int) 'O');
+		addMainPanelTab(new SQLTab(_session, titleFileHandler), (int) 'Q');
 
 		add(_tabbedPane, BorderLayout.CENTER);
 
@@ -121,23 +121,12 @@ public class MainPanel extends JPanel
 
 		if (_propsListener == null)
 		{
-			_propsListener = new PropertyChangeListener()
-			{
-				public void propertyChange(PropertyChangeEvent evt)
-				{
-					propertiesHaveChanged(evt.getPropertyName());
-				}
-			};
+			_propsListener = evt -> propertiesHaveChanged(evt.getPropertyName());
 			_session.getProperties().addPropertyChangeListener(_propsListener);
 		}
 
-		_tabPnlListener = new ChangeListener()
-		{
-			public void stateChanged(ChangeEvent evt)
-			{
-				performStateChanged();
-			}
-		};
+		_tabPnlListener = evt -> performStateChanged();
+
 		_tabbedPane.addChangeListener(_tabPnlListener);
 	}
 
@@ -212,7 +201,7 @@ public class MainPanel extends JPanel
 
       if(null != mnemonic)
       {
-         _tabbedPane.setMnemonicAt(idx, mnemonic.intValue());
+         _tabbedPane.setMnemonicAt(idx, mnemonic);
 
       }
 
@@ -384,7 +373,7 @@ public class MainPanel extends JPanel
 		}
 	}
 
-	private void performStateChanged()
+	void performStateChanged()
 	{
 		// Needed to guarantee other components a focus lost
 		// and to allow to enter the tabs components via tab

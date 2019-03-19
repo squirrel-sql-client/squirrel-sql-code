@@ -110,7 +110,7 @@ public class SessionStartupMainSQLTabContentLoader
 
    private static void openFileInMainSqlTab(File file, SessionInternalFrame sessionInternalFrame)
    {
-      sessionInternalFrame.getMainSQLPanelAPI().fileOpen(file);
+      sessionInternalFrame.getMainSQLPanelAPI().getFileHandler().fileOpen(file);
       sessionInternalFrame.setMainSqlFile(file);
    }
 

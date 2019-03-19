@@ -228,8 +228,7 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 			super.loadPreferencesPanel();
 			final String themePackDir = _ctrl._prefs.getThemePackDirectory();
 			// i18n[laf.jarZip=JAR/Zip files]
-			final FileExtensionFilter filter =
-				new FileExtensionFilter(s_stringMgr.getString("laf.jarZip"), new String[] { ".jar", ".zip" });
+			final FileExtensionFilter filter = new FileExtensionFilter(s_stringMgr.getString("laf.jarZip"), new String[] { ".jar", ".zip" });
 			_themePackCmb.load(new File(themePackDir), filter);
 			_themePackCmb.setSelectedItem(_ctrl._prefs.getThemePackName());
 			if (_themePackCmb.getSelectedIndex() == -1 && _themePackCmb.getModel().getSize() > 0)

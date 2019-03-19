@@ -1,4 +1,5 @@
-package net.sourceforge.squirrel_sql.client.session.action;
+package net.sourceforge.squirrel_sql.client.session.action.file;
+
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -18,30 +19,33 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.action.IFileEditAction;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
 
 import java.awt.event.ActionEvent;
 
 
-public class FileAppendAction extends SquirrelAction  implements ISQLPanelAction
+public class FilePrintAction extends SquirrelAction  implements IFileEditAction
 {
-   private ISQLPanelAPI _panel;
+   private FileHandler _fileHandler;
 
-   public FileAppendAction(IApplication app)
+   public FilePrintAction(IApplication app)
    {
       super(app);
+      setEnabled(false);
    }
 
    public void actionPerformed(ActionEvent e)
    {
-      _panel.fileAppend();
+      _fileHandler.filePrint();
    }
 
-   public void setSQLPanel(ISQLPanelAPI panel)
+   @Override
+   public void setFileHandler(FileHandler fileHandler)
    {
-      _panel = panel;
-      setEnabled(null != _panel);
+      _fileHandler = fileHandler;
+      setEnabled(null != _fileHandler);
    }
 }

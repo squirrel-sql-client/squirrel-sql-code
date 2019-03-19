@@ -29,6 +29,16 @@ import javax.swing.JMenuItem;
 
 import net.sourceforge.squirrel_sql.client.action.ChanneledAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileDetachAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileNewAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenRecentAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FilePrintAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileReloadAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;

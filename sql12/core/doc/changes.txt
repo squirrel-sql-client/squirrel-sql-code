@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Hibernate Plugin: Usual file functions (open, save, ...) are now available for the HQL editor.
+
 The Hibernate Plugin was reanimated. It requires Hibernates versions greater or equal to 5.2 and supports JPA only.
 
 Tooltips for result tab menu items "Toggle sticky" and "Toggle anchored"

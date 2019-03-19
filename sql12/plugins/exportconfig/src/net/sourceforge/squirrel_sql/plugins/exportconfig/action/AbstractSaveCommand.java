@@ -85,8 +85,7 @@ abstract class AbstractSaveCommand implements ICommand
 	public void execute() throws BaseException
 	{
 		final JFileChooser chooser = new JFileChooser();
-		chooser.addChoosableFileFilter(new FileExtensionFilter("XML files",
-												new String[] { ".xml" }));
+		chooser.addChoosableFileFilter(new FileExtensionFilter("XML files", new String[] { ".xml" }));
 		File file = null;
 		if (s_lastDir != null)
 		{

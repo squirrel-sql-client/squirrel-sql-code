@@ -4,7 +4,6 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
@@ -18,57 +17,13 @@ import java.io.File;
  */
 public class SQLPanelSelectionHandler
 {
-   public static void setSqlFile(ISQLPanelAPI sqlPanelAPI, File file)
-   {
-      if (getActiveSessionTabWidget(sqlPanelAPI) instanceof SessionInternalFrame)
-      {
-         if(SessionUtils.getOwningIMainPanelTab(sqlPanelAPI) instanceof SQLTab)
-         {
-            getActiveSessionTabWidget(sqlPanelAPI).setMainSqlFile(file);
-         }
-         else if(SessionUtils.getOwningIMainPanelTab(sqlPanelAPI) instanceof AdditionalSQLTab)
-         {
-            ((AdditionalSQLTab)SessionUtils.getOwningIMainPanelTab(sqlPanelAPI)).setSqlFile(file);
-         }
-         else
-         {
-            throw new IllegalStateException("Don't know where to display the file");
-         }
-      }
-      else
-      {
-         getActiveSessionTabWidget(sqlPanelAPI).setMainSqlFile(file);
-      }
-   }
-
-   public static void setUnsavedEdits(SQLPanelAPI sqlPanelAPI, boolean hasUnsavedEdits)
-   {
-      if (getActiveSessionTabWidget(sqlPanelAPI) instanceof SessionInternalFrame)
-      {
-         if(SessionUtils.getOwningIMainPanelTab(sqlPanelAPI) instanceof SQLTab)
-         {
-            getActiveSessionTabWidget(sqlPanelAPI).setUnsavedEdits(hasUnsavedEdits);
-         }
-         else if(SessionUtils.getOwningIMainPanelTab(sqlPanelAPI) instanceof AdditionalSQLTab)
-         {
-            ((AdditionalSQLTab)SessionUtils.getOwningIMainPanelTab(sqlPanelAPI)).setUnsavedEdits(hasUnsavedEdits);
-         }
-         else
-         {
-            throw new IllegalStateException("Don't know where to display the file");
-         }
-      }
-      else
-      {
-         getActiveSessionTabWidget(sqlPanelAPI).setUnsavedEdits(hasUnsavedEdits);
-      }
-
-   }
-
-
+   /**
+    * Selects the tab to which the sqlPanelAPI belongs
+    * @param sqlPanelAPI
+    */
    public static void selectSqlPanel(ISQLPanelAPI sqlPanelAPI)
    {
-      if (getActiveSessionTabWidget(sqlPanelAPI) instanceof SessionInternalFrame)
+      if (getActiveSessionTabWidget(sqlPanelAPI.getSession()) instanceof SessionInternalFrame)
       {
          IMainPanelTab mainPanelTab = SessionUtils.getOwningIMainPanelTab(sqlPanelAPI);
 
@@ -83,9 +38,9 @@ public class SQLPanelSelectionHandler
       }
    }
 
-   private static SessionTabWidget getActiveSessionTabWidget(ISQLPanelAPI sqlPanelAPI)
+   private static SessionTabWidget getActiveSessionTabWidget(ISession session)
    {
-      return (SessionTabWidget) sqlPanelAPI.getSession().getActiveSessionWindow();
+      return (SessionTabWidget) session.getActiveSessionWindow();
    }
 
 }

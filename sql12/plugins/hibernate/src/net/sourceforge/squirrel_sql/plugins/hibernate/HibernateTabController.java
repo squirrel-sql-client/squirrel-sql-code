@@ -1,7 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
+import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandlerUtil;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -33,7 +36,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    private static ILogger s_log = LoggerController.createLogger(HibernateTabController.class);
 
 
-   private HibernateTabPanel _panel;
+   private HibernateTabPanel _hibernateTabPanel;
    private ISession _session;
    private HibernatePlugin _plugin;
    private static final String PREF_KEY_LAST_SELECTED_CONFIG = "SQuirreL.hibernateplugin.lastSelectedConfig";
@@ -44,6 +47,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    private ArrayList<ConnectionListener> _listeners = new ArrayList<ConnectionListener>();
    private HqlResultPanelManager _hqlResultPanelManager;
    private MappedObjectPanelManager _mappedObjectsPanelManager;
+   private final TitleFilePathHandler _titleFileHandler;
 
    public HibernateTabController(ISession session, HibernatePlugin plugin, HibernatePluginResources resource)
    {
@@ -53,12 +57,14 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
          _session = session;
          _plugin = plugin;
 
-         _hqlPanelController = new HQLPanelController(this, _session, resource);
+         _titleFileHandler = new TitleFilePathHandler(() -> setSqlTabComponentTitle());
+
+         _hqlPanelController = new HQLPanelController(this, _session, resource, _titleFileHandler);
          _hqlResultPanelManager = new HqlResultPanelManager(_session, resource);
          _mappedObjectsPanelManager = new MappedObjectPanelManager(this, _session, resource);
 
-         _panel = new HibernateTabPanel(_mappedObjectsPanelManager.getComponent(), _hqlPanelController.getComponent(), _hqlResultPanelManager.getComponent(), _resource);
-         _panel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
+         _hibernateTabPanel = new HibernateTabPanel(_mappedObjectsPanelManager.getComponent(), _hqlPanelController.getComponent(), _hqlResultPanelManager.getComponent(), _resource);
+         _hibernateTabPanel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
 
 
          HibnerateConnectorListener hibnerateConnectorListener = new HibnerateConnectorListener()
@@ -78,7 +84,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
 
 
-         _panel.btnConnected.addActionListener(new ActionListener()
+         _hibernateTabPanel.btnConnected.addActionListener(new ActionListener()
          {
             public void actionPerformed(ActionEvent e)
             {
@@ -87,7 +93,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
          });
 
 
-         _panel.btnOpenConfigs.addActionListener(new ActionListener()
+         _hibernateTabPanel.btnOpenConfigs.addActionListener(new ActionListener()
          {
             public void actionPerformed(ActionEvent e)
             {
@@ -96,15 +102,29 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
          });
 
 
+         _hibernateTabPanel.tabHibernateTabbedPane.addChangeListener(e -> onTabChanged());
+
          loadConfigsFromXml();
 
          _hqlPanelController.initActions();
+
+
 
       }
       catch (Exception e)
       {
          throw new RuntimeException(e);
       }
+   }
+
+   private void setSqlTabComponentTitle()
+   {
+      TitleFilePathHandlerUtil.setTitle(_hibernateTabPanel.getHqlTabTitle(), _titleFileHandler, _hibernateTabPanel.tabComponentOfHqlTab);
+   }
+
+   private void onTabChanged()
+   {
+      _session.getSessionInternalFrame().getSessionPanel().performStateChanged();
    }
 
    private void onOpenConfigs()
@@ -126,12 +146,12 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
    private HibernateConfiguration onGetPreselectedCfg()
    {
-      return (HibernateConfiguration) _panel.cboConfigurations.getSelectedItem();
+      return (HibernateConfiguration) _hibernateTabPanel.cboConfigurations.getSelectedItem();
    }
 
    private void onConfigurationChanged(ArrayList<HibernateConfiguration> changedCfgs)
    {
-      HibernateConfiguration selCfg = (HibernateConfiguration) _panel.cboConfigurations.getSelectedItem();
+      HibernateConfiguration selCfg = (HibernateConfiguration) _hibernateTabPanel.cboConfigurations.getSelectedItem();
 
       if(null != selCfg)
       {
@@ -158,7 +178,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
    private void loadConfigs(Iterable reader, String cfgNameToSelect)
    {
-      _panel.cboConfigurations.removeAllItems();
+      _hibernateTabPanel.cboConfigurations.removeAllItems();
 
       HashMap<String, HibernateConfiguration> cfgByName = new HashMap<String, HibernateConfiguration>();
       for (Object o : reader)
@@ -166,12 +186,12 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
          HibernateConfiguration cfg = (HibernateConfiguration) o;
 
          cfgByName.put(cfg.getName(), cfg);
-         _panel.cboConfigurations.addItem(cfg);
+         _hibernateTabPanel.cboConfigurations.addItem(cfg);
       }
 
       if(null != cfgNameToSelect)
       {
-         _panel.cboConfigurations.setSelectedItem(cfgByName.get(cfgNameToSelect));
+         _hibernateTabPanel.cboConfigurations.setSelectedItem(cfgByName.get(cfgNameToSelect));
       }
    }
 
@@ -180,16 +200,16 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    {
       if(null == _con)
       {
-         if(null != _panel.cboConfigurations.getSelectedItem())
+         if(null != _hibernateTabPanel.cboConfigurations.getSelectedItem())
          {
-            _panel.btnConnected.setEnabled(false);
-            _panel.btnConnected.setDisabledSelectedIcon(_resource.getIcon(HibernatePluginResources.IKeys.CONNECTING_IMAGE));
-            _panel.btnConnected.repaint();
-            _hibnerateConnector.connect((HibernateConfiguration)_panel.cboConfigurations.getSelectedItem(), _session);
+            _hibernateTabPanel.btnConnected.setEnabled(false);
+            _hibernateTabPanel.btnConnected.setDisabledSelectedIcon(_resource.getIcon(HibernatePluginResources.IKeys.CONNECTING_IMAGE));
+            _hibernateTabPanel.btnConnected.repaint();
+            _hibnerateConnector.connect((HibernateConfiguration) _hibernateTabPanel.cboConfigurations.getSelectedItem(), _session);
          }
          else
          {
-            _panel.btnConnected.setSelected(false);
+            _hibernateTabPanel.btnConnected.setSelected(false);
 
             // i18n[HibernateTabController.noConfigSelected=Please select a Hibernate configuration to connect to.\nHibernate configurations can be defined in the global preferences window.\nWould you like to open the window now?]
             int opt = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("HQLTabController.noConfigSelected"));
@@ -204,7 +224,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
       }
       else
       {
-         _panel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
+         _hibernateTabPanel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
          try
          {
             closeConnection();
@@ -224,9 +244,9 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    private void onConnected(HibernateConnection con, HibernateConfiguration cfg)
    {
       _con = con;
-      _panel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.CONNECTED_IMAGE));
-      _panel.btnConnected.setEnabled(true);
-      _panel.cboConfigurations.setEnabled(false);
+      _hibernateTabPanel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.CONNECTED_IMAGE));
+      _hibernateTabPanel.btnConnected.setEnabled(true);
+      _hibernateTabPanel.cboConfigurations.setEnabled(false);
       _hqlPanelController.setConnection(con);
 
       for (ConnectionListener listener : _listeners)
@@ -238,9 +258,9 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
    private void onConnectFailed(Throwable t)
    {
-      _panel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
-      _panel.btnConnected.setEnabled(true);
-      _panel.btnConnected.setSelected(false);
+      _hibernateTabPanel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
+      _hibernateTabPanel.btnConnected.setEnabled(true);
+      _hibernateTabPanel.btnConnected.setSelected(false);
       _session.showErrorMessage(t);
       s_log.error(t);
       _con = null;
@@ -276,20 +296,20 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
    public Component getComponent()
    {
-      return _panel;
+      return _hibernateTabPanel;
    }
 
 
    public void sessionClosing(ISession session)
    {
-      HibernateConfiguration cfg = (HibernateConfiguration) _panel.cboConfigurations.getSelectedItem();
+      HibernateConfiguration cfg = (HibernateConfiguration) _hibernateTabPanel.cboConfigurations.getSelectedItem();
 
       if(null != cfg)
       {
          Props.putString(PREF_KEY_LAST_SELECTED_CONFIG, cfg.getName());
       }
 
-      _panel.closing();
+      _hibernateTabPanel.closing();
 
       _mappedObjectsPanelManager.closing();
 
@@ -309,11 +329,11 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    {
       JButton btn = new JButton(action);
       Dimension size = btn.getPreferredSize();
-      size.height = _panel.btnConnected.getPreferredSize().height;
+      size.height = _hibernateTabPanel.btnConnected.getPreferredSize().height;
       btn.setPreferredSize(size);
 
       
-      _panel.addToToolbar(btn);
+      _hibernateTabPanel.addToToolbar(btn);
    }
 
 
@@ -340,7 +360,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    private void closeConnection()
    {
       _con.close();
-      _panel.cboConfigurations.setEnabled(true);
+      _hibernateTabPanel.cboConfigurations.setEnabled(true);
 
       for (ConnectionListener listener : _listeners)
       {
@@ -363,5 +383,21 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    public void mouseWheelClickedOnTab()
    {
 
+   }
+
+   @Override
+   public IFileEditorAPI getActiveFileEditorAPIOrNull()
+   {
+      if(isHqlEditorTabActive())
+      {
+         return _hqlPanelController.getFileEditorAPIOrNull();
+      }
+
+      return null;
+   }
+
+   private boolean isHqlEditorTabActive()
+   {
+      return _hibernateTabPanel.tabHibernateTabbedPane.getSelectedComponent() == _hibernateTabPanel.splitHqlSql;
    }
 }

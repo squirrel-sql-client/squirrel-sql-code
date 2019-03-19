@@ -30,7 +30,6 @@ import java.util.Map;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -234,63 +233,42 @@ public class ActionCollection
 	 */
 	public synchronized void activationChanged(IWidget frame)
 	{
-		final boolean isSQLFrame = (frame instanceof SQLInternalFrame);
-		final boolean isTreeFrame = (frame instanceof ObjectTreeInternalFrame);
-		final boolean isSessionInternalFrame = (frame instanceof SessionInternalFrame);
-
-		ISession session = null;
-		if (frame instanceof ISessionWidget)
-		{
-			session = ((ISessionWidget)frame).getSession();
-		}
+		ActionUpdateHelper actionUpdateHelper = new ActionUpdateHelper(frame);
 
 		for (Iterator<Action> it = actions(); it.hasNext();)
 		{
 			final Action act = it.next();
+
 			if (act instanceof ISessionAction)
 			{
-				((ISessionAction)act).setSession(session);
+				((ISessionAction)act).setSession(actionUpdateHelper.getSession());
 			}
-			if (isSQLFrame && (act instanceof ISQLPanelAction))
-			{
-				((ISQLPanelAction)act).setSQLPanel(((SQLInternalFrame)frame).getSQLPanel().getSQLPanelAPI());
-			}
-			if (isTreeFrame && (act instanceof IObjectTreeAction))
-			{
-				((IObjectTreeAction)act).setObjectTree(((ObjectTreeInternalFrame)frame).getObjectTreePanel());
-			}
-         
-         if(isSessionInternalFrame && act instanceof IMainPanelTabAction)
-         {
-            ((IMainPanelTabAction)act).setSelectedMainPanelTab(session.getSelectedMainTab());
-         }
-         
 
-			if ((isSessionInternalFrame) && (act instanceof ISQLPanelAction))
+
+			//////////////////////////////////////////////////////////////////////////////////////
+			// Don't interchange these two
+			if (act instanceof IFileEditAction)
 			{
-            SessionInternalFrame sif = (SessionInternalFrame) frame;
-            if(sif.getSessionPanel().isAnSQLTabSelected())
-            {
-   				((ISQLPanelAction)act).setSQLPanel(sif.getSessionPanel().getSelectedSQLPanel().getSQLPanelAPI());
-            }
-            else
-            {
-               ((ISQLPanelAction)act).setSQLPanel(null);
-            }
+				((IFileEditAction)act).setFileHandler(actionUpdateHelper.getFileHandler());
 			}
-			if ((isSessionInternalFrame) && (act instanceof IObjectTreeAction))
+
+			if (act instanceof ISQLPanelAction)
 			{
-            SessionInternalFrame sif = (SessionInternalFrame) frame;
-            if(sif.getSessionPanel().isObjectTreeTabSelected())
-            {
-               ((IObjectTreeAction)act).setObjectTree(((SessionInternalFrame)frame).getSessionPanel().getObjectTreePanel());
-            }
-            else
-            {
-               ((IObjectTreeAction)act).setObjectTree(null);
-            }
+				((ISQLPanelAction)act).setSQLPanel(actionUpdateHelper.getSQLPanelAPI());
+			}
+			//
+			//////////////////////////////////////////////////////////////////////////////////////
+
+			if (act instanceof IObjectTreeAction)
+			{
+				((IObjectTreeAction)act).setObjectTree(actionUpdateHelper.getObjectTreePanel());
+			}
+			if(act instanceof IMainPanelTabAction)
+			{
+				((IMainPanelTabAction)act).setSelectedMainPanelTab(actionUpdateHelper.getSelectedMainTab());
 			}
 		}
+
 	}
 
 	/**

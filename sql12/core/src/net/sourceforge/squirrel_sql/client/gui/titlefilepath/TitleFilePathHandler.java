@@ -129,6 +129,8 @@ public class TitleFilePathHandler
       {
          _smallTabButton.setToolTipText(_sqlFile.getAbsolutePath());
       }
+
+      _titleFilePathHandlerListener.refreshFileDisplay();
    }
 
    public boolean hasFile()
