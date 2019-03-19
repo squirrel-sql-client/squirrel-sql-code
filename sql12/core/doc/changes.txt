@@ -28,6 +28,15 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+#1383 Create data script from SQL fails with column alias
+  The problem occurred for SQLs like
+  "SELECT substring(number, 3, 9), id FROM contracts"
+  Up to now only the first result column was checked for a column name.
+  Now checking is continued for all result columns.
+  If still no table name can be found the string "PressCtrlH" is placed where the table name is supposed to be.
+  "PressCtrlH" is meant to remind that the editors replace function may be used to fix the script.
+
+
 Small UI fix concerning caret color configuration.
 
 3.9.1 (02/24/2018)

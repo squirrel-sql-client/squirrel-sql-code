@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.swing.*;
@@ -63,85 +64,102 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
     */
    public void execute()
    {
-      _session.getApplication().getThreadPool().addTask(new Runnable()
+      _session.getApplication().getThreadPool().addTask(() -> doCreateDataScript());
+      showAbortFrame();
+   }
+
+   private void doCreateDataScript()
+   {
+      final StringBuffer sbRows = new StringBuffer(1000);
+
+      try
       {
-         public void run()
+          ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
+
+          String scripts = api.getSQLScriptToBeExecuted();
+
+         IQueryTokenizer qt = _session.getQueryTokenizer();
+         qt.setScriptToTokenize(scripts);
+
+         if(false == qt.hasQuery())
          {
+            // i18n[CreateDataScriptOfCurrentSQLCommand.noQuery=No query found to create the script from.]
+            _session.showErrorMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.noQuery"));
+            return;
+         }
 
-            final StringBuffer sbRows = new StringBuffer(1000);
+         ISQLConnection conn = _session.getSQLConnection();
 
+         while (qt.hasQuery())
+         {
+            final Statement stmt = conn.createStatement();
             try
             {
-                ISQLPanelAPI api =
-                    FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
+               String sql = qt.nextQuery().getQuery();
 
-                String scripts = api.getSQLScriptToBeExecuted();
+               ResultSet srcResult = stmt.executeQuery(sql);
+               String tableName = getFirstTableNameFromResultSetMetaData(srcResult);
 
-               IQueryTokenizer qt = _session.getQueryTokenizer();
-               qt.setScriptToTokenize(scripts);
-
-               if(false == qt.hasQuery())
+               if (StringUtilities.isEmpty(tableName, true))
                {
-                  // i18n[CreateDataScriptOfCurrentSQLCommand.noQuery=No query found to create the script from.]
-                  _session.showErrorMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.noQuery"));
-                  return;
+                  tableName = new EditableSqlCheck(sql).getTableNameFromSQL();
                }
-
-               ISQLConnection conn = _session.getSQLConnection();
-
-               while (qt.hasQuery())
-               {
-                  final Statement stmt = conn.createStatement();
-                  try
-                  {
-                     String sql = qt.nextQuery().getQuery();
-   
-                     ResultSet srcResult = stmt.executeQuery(sql);
-                     ResultSetMetaData metaData = srcResult.getMetaData();
-                     //String tableName = metaData.getTableName(1);
-   
-                     ITableInfo tInfo = new TableInfo(metaData.getCatalogName(1), metaData.getSchemaName(1),
-                          metaData.getTableName(1), "TABLE", "", _session.getMetaData());
-   
-                     String tableName = ScriptUtil.getTableName(tInfo);
-   
-                     if (StringUtilities.isEmpty(tableName, true))
-                     {
-                        tableName = new EditableSqlCheck(sql).getTableNameFromSQL();
-                     }
-                     genInserts(srcResult, tableName, sbRows, false);
-                  }
-                  finally
-                  {
-                  	SQLUtilities.closeStatement(stmt);
-                  }
-               }  // end while
-            }
-            catch (Exception e)
-            {
-               _session.showErrorMessage(e);
+               genInserts(srcResult, tableName, sbRows, false);
             }
             finally
             {
-               SwingUtilities.invokeLater(new Runnable()
-               {
-                  public void run()
-                  {
-                     if (sbRows.length() > 0)
-                     {
-                        FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbRows.toString(), true);
-
-                        if (false == _session.getSelectedMainTab() instanceof BaseSQLTab)
-                        {
-                           _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-                        }
-                     }
-                     hideAbortFrame();
-                  }
-               });
+               SQLUtilities.closeStatement(stmt);
             }
+         }  // end while
+      }
+      catch (Exception e)
+      {
+         _session.showErrorMessage(e);
+      }
+      finally
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               if (sbRows.length() > 0)
+               {
+                  FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbRows.toString(), true);
+
+                  if (false == _session.getSelectedMainTab() instanceof BaseSQLTab)
+                  {
+                     _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+                  }
+               }
+               hideAbortFrame();
+            }
+         });
+      }
+   }
+
+   private String getFirstTableNameFromResultSetMetaData(ResultSet srcResult) throws SQLException
+   {
+      ResultSetMetaData metaData = srcResult.getMetaData();
+      //String tableName = metaData.getTableName(1);
+
+      for (int i = 1; i <= metaData.getColumnCount(); i++)
+      {
+         ITableInfo tInfo = new TableInfo(
+               metaData.getCatalogName(i),
+               metaData.getSchemaName(i),
+               metaData.getTableName(i),
+               "TABLE", "",
+               _session.getMetaData());
+
+         String tableName = ScriptUtil.getTableName(tInfo);
+
+         if(false == StringUtilities.isEmpty(tableName, true))
+         {
+            return tableName;
          }
-      });
-      showAbortFrame();
+
+      }
+
+      return "PressCtrlH";
    }
 }
