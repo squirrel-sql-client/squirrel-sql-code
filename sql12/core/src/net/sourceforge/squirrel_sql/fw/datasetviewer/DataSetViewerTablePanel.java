@@ -32,6 +32,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.print.PageFormat;
@@ -266,21 +267,6 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 		_table.getTableHeader().repaint();
 	}
 
-
-	public java.util.List<ExtTableColumn> getTableColumns()
-	{
-		ArrayList<ExtTableColumn> ret = new ArrayList<ExtTableColumn>();
-
-		for (int i = 0; i < _table.getColumnModel().getColumnCount(); i++)
-		{
-			final ExtTableColumn column = (ExtTableColumn) _table.getColumnModel().getColumn(i);
-
-			ret.add(column);
-		}
-
-		return ret;
-
-	}
 
 	public void scrollColumnToVisible(ExtTableColumn columnDisplayDefinition)
 	{

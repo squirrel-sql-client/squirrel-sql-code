@@ -81,15 +81,15 @@ public final class DataSetViewerTableModel extends AbstractTableModel
 		return _dataSetViewAccess.isColumnEditable(col, getValueAt(row, col));
 	}
 
-	public Object getValueAt(int row, int col)
+	public Object getValueAt(int row, int columnModelIndex)
 	{
-		if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX == col)
+		if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX == columnModelIndex)
 		{
 			return Integer.valueOf(row + 1);
 		}
 		else
 		{
-			return _data.get(row)[col];
+			return _data.get(row)[columnModelIndex];
 		}
 	}
 

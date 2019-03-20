@@ -2,10 +2,15 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
+import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 
+import javax.swing.table.TableColumn;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,9 +47,9 @@ public class MarkDuplicatesHandler
          Comparator treeMapKeyComparator = Comparator.nullsFirst(Comparator.naturalOrder());
 
 
-         for (int i = 0; i < dataSetViewerTableModel.getColumnCount(); ++i)
+         for (ExtTableColumn tableColumn : DataSetViewerTablePanelUtil.getTableColumns(_dataSetViewerTable))
          {
-            int columnModelIndex = _dataSetViewerTable.getColumnModel().getColumn(i).getModelIndex();
+            int columnModelIndex = tableColumn.getModelIndex();
 
             TreeMap<Object, Color> colorByDuplicateValue = new TreeMap<>(treeMapKeyComparator);
 
@@ -54,7 +59,7 @@ public class MarkDuplicatesHandler
 
             for (int j = 0; j < dataSetViewerTableModel.getRowCount(); ++j)
             {
-               Object val = dataSetViewerTableModel.getValueAt(j, i);
+               Object val = dataSetViewerTableModel.getValueAt(j, columnModelIndex);
 
 
                if(buf.contains(val))

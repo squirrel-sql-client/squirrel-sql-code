@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.findcolumn;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.CloseByEscapeListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -169,7 +170,7 @@ public class FindColumnCtrl
    {
       HashSet<String> uniqueTableNamesOrNull = new HashSet<>();
 
-      for (ExtTableColumn extTableColumn : dataSetViewerTablePanel.getTableColumns())
+      for (ExtTableColumn extTableColumn : DataSetViewerTablePanelUtil.getTableColumns(dataSetViewerTablePanel.getTable()))
       {
          uniqueTableNamesOrNull.add(TableNameAccess.getTableName(extTableColumn));
       }
@@ -296,7 +297,7 @@ public class FindColumnCtrl
 
       Object[] formerSelectedValues = _findColumnDlg.lstLeft.getSelectedValues();
 
-      for (ExtTableColumn extTableColumn : _dataSetViewerTablePanel.getTableColumns())
+      for (ExtTableColumn extTableColumn : DataSetViewerTablePanelUtil.getTableColumns(_dataSetViewerTablePanel.getTable()))
       {
          FindColumnColWrapper colWrapper = new FindColumnColWrapper(extTableColumn, _dataSetContainsdifferentTables);
 
