@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Introduced Java 12 compatibility.
+
 Hibernate Plugin: Usual file functions (open, save, ...) are now available for the HQL editor.
 
 The Hibernate Plugin was reanimated. It requires Hibernates versions greater or equal to 5.2 and supports JPA only.
@@ -27,6 +29,8 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 
 Bug fixes:
+
+Installer dialog: On first page of installer wizard the Data Import plugin was not mentioned to be a standard Plugin.
 
 SQL Result: When row number where displayed, the functions "Mark duplicates values" and "Find column" raised exceptions.
 
