@@ -200,7 +200,14 @@ public abstract class Resources implements IResources
 	private int getMaxVisibleMenuRowsCount()
 	{
 		JMenuItem menuItem = new JMenuItem("Test");
-		//double maxVisibleRowsCount = ((double)Toolkit.getDefaultToolkit().getScreenSize().height) / ((double)menuItem.getPreferredSize().height) - 3;
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+		// To fix bug #1384 (NullPointer in TinyL&F) we add the menuItem to a menu so that it has a parent.
+		JMenu menu = new JMenu();
+		menu.add(menuItem);
+		//
+		//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 		double maxVisibleRowsCount = ((double)GUIUtils.getMinHeightOfAllScreens()) / ((double)menuItem.getPreferredSize().height) - 3;
 
 		return (int) maxVisibleRowsCount;
