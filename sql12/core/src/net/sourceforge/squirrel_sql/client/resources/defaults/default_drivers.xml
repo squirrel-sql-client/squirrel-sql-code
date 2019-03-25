@@ -3,6 +3,55 @@
 <Beans>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>Actian Avalanche Driver</name>
+		<driverClassName>com.ingres.jdbc.IngresDriver</driverClassName>
+		<url>jdbc:ingres://&lt;server_name&gt;:II7/&lt;database_name&gt;;select_loop=on</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-76</string>
+		</identifier>
+		<websiteUrl>https://esd.actian.com/product/drivers/JDBC/java/JDBC</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>Actian Ingres Driver</name>
+		<driverClassName>com.ingres.jdbc.IngresDriver</driverClassName>
+		<url>jdbc:ingres://&lt;server_name&gt;:II7/&lt;database_name&gt;;select_loop=on</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-75</string>
+		</identifier>
+		<websiteUrl>https://esd.actian.com/product/drivers/JDBC/java/JDBC</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>Actian Vector Driver</name>
+		<driverClassName>com.ingres.jdbc.IngresDriver</driverClassName>
+		<url>jdbc:ingres://&lt;server_name&gt;:II7/&lt;database_name&gt;;select_loop=on</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-74</string>
+		</identifier>
+		<websiteUrl>https://esd.actian.com/product/drivers/JDBC/java/JDBC</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>Actian X Driver</name>
+		<driverClassName>com.ingres.jdbc.IngresDriver</driverClassName>
+		<url>jdbc:ingres://&lt;server_name&gt;:II7/&lt;database_name&gt;;select_loop=on</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-73</string>
+		</identifier>
+		<websiteUrl>https://esd.actian.com/product/drivers/JDBC/java/JDBC</websiteUrl>
+	</Bean>
+
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<driverClassName>com.hxtt.sql.word.WordDriver</driverClassName>
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-72</string>
@@ -858,54 +907,6 @@
 			<string>-1</string>
 		</identifier>
 		<websiteUrl>http://java.sun.com/j2se/1.3/docs/guide/jdbc/getstart/bridge.doc.html</websiteUrl>
-	</Bean>
-
-	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-		<name>Actian Avalanche Driver</name>
-		<driverClassName>com.ingres.jdbc.IngresDriver</driverClassName>
-		<url>jdbc:ingres://&lt;server_name&gt;:II7/&lt;database_name&gt;;select_loop=on</url>
-		<usesClassPath>true</usesClassPath>
-		<jarFileNames Indexed="true"/>
-		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-			<string>-73</string>
-		</identifier>
-		<websiteUrl>https://esd.actian.com/product/drivers/JDBC/java/JDBC</websiteUrl>
-	</Bean>
-
-	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-		<name>Actian Ingres Driver</name>
-		<driverClassName>com.ingres.jdbc.IngresDriver</driverClassName>
-		<url>jdbc:ingres://&lt;server_name&gt;:II7/&lt;database_name&gt;;select_loop=on</url>
-		<usesClassPath>true</usesClassPath>
-		<jarFileNames Indexed="true"/>
-		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-			<string>-74</string>
-		</identifier>
-		<websiteUrl>https://esd.actian.com/product/drivers/JDBC/java/JDBC</websiteUrl>
-	</Bean>
-
-	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-		<name>Actian Vector Driver</name>
-		<driverClassName>com.ingres.jdbc.IngresDriver</driverClassName>
-		<url>jdbc:ingres://&lt;server_name&gt;:II7/&lt;database_name&gt;;select_loop=on</url>
-		<usesClassPath>true</usesClassPath>
-		<jarFileNames Indexed="true"/>
-		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-			<string>-75</string>
-		</identifier>
-		<websiteUrl>https://esd.actian.com/product/drivers/JDBC/java/JDBC</websiteUrl>
-	</Bean>
-
-	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-		<name>Actian X Driver</name>
-		<driverClassName>com.ingres.jdbc.IngresDriver</driverClassName>
-		<url>jdbc:ingres://&lt;server_name&gt;:II7/&lt;database_name&gt;;select_loop=on</url>
-		<usesClassPath>true</usesClassPath>
-		<jarFileNames Indexed="true"/>
-		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-			<string>-76</string>
-		</identifier>
-		<websiteUrl>https://esd.actian.com/product/drivers/JDBC/java/JDBC</websiteUrl>
 	</Bean>
 
 </Beans>

@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Added Actian/Ingres default driver definitions.
+  Thanks to Chris Clark for the merge request.
+
+
 #578 Data Import Plugin: Import file no longer offers "one to one mapping"
   The "one to one mapping"-function maps the first column in CSV file or Excel sheet to the first column of the import table, the second to the second ...
 
