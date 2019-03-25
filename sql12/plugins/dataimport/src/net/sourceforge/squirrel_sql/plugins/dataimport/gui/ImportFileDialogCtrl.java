@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.dataimport.EDTMessageBoxUtil;
 import net.sourceforge.squirrel_sql.plugins.dataimport.ImportDataIntoTableExecutor;
 
@@ -43,6 +44,7 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -61,7 +63,7 @@ public class ImportFileDialogCtrl
    private final ImportFileDialog _importFileDialog;
 
    private String[][] previewData = null;
-   private List<String> _importerColumns = new Vector<String>();
+   private List<String> _importerColumns = new ArrayList<>();
 
    private ISession _session;
    private File _importFile;
@@ -121,6 +123,8 @@ public class ImportFileDialogCtrl
       onHeadersIncluded();
 
       _importFileDialog.btnSuggestColumns.addActionListener(e -> suggestColumns());
+      _importFileDialog.btnOneToOneMapping.addActionListener(e -> mapOneToOne());
+
 
       _importFileDialog.txtCommitAfterInserts.setText("" + ImportFileDialogProps.getCommitAfterInsertsCount());
       _importFileDialog.chkSingleTransaction.setSelected(ImportFileDialogProps.isSingleTransaction());
@@ -137,6 +141,7 @@ public class ImportFileDialogCtrl
 
       GUIUtils.enableCloseByEscape(_importFileDialog);
    }
+
 
    private void onEmptyTableBeforeImport()
    {
@@ -271,6 +276,10 @@ public class ImportFileDialogCtrl
       {
          suggestColumns();
       }
+      else if (_importFileDialog.btnOneToOneMapping.isSelected())
+      {
+         mapOneToOne();
+      }
    }
 
    private void onColumnMappingSelected(ActionEvent e)
@@ -303,9 +312,48 @@ public class ImportFileDialogCtrl
       _importFileDialog.tblMapping.clearSelection();
    }
 
+   private void mapOneToOne()
+   {
+      if (_importFileDialog.btnSuggestColumns.isSelected())
+      {
+         _importFileDialog.btnSuggestColumns.setSelected(false);
+      }
+
+      final ColumnMappingTableModel columnMappingTableModel = ((ColumnMappingTableModel) _importFileDialog.tblMapping.getModel());
+
+
+      if (_importFileDialog.btnOneToOneMapping.isSelected())
+      {
+         columnMappingTableModel.resetMappings();
+
+         for (int i = 0; i < Math.min(_importerColumns.size(), _columns.length); i++)
+         {
+            String importerColumn = _importerColumns.get(i);
+            if (false == StringUtilities.isEmpty(importerColumn, true))
+            {
+               columnMappingTableModel.setValueAt(importerColumn, i, ColumnMappingConstants.INDEX_IMPORTFILE_COLUMN);
+            }
+         }
+      }
+      else
+      {
+         columnMappingTableModel.resetMappings();
+      }
+
+   }
+
+
    public void suggestColumns()
    {
+      if(_importFileDialog.btnOneToOneMapping.isSelected())
+      {
+         _importFileDialog.btnOneToOneMapping.setSelected(false);
+      }
+
+
+
       final ColumnMappingTableModel columnMappingTableModel = ((ColumnMappingTableModel) _importFileDialog.tblMapping.getModel());
+
       if (_importFileDialog.btnSuggestColumns.isSelected())
       {
          for (String importerColumn : _importerColumns)

@@ -21,6 +21,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.io.File;
 import java.text.NumberFormat;
@@ -29,17 +30,18 @@ public class ImportFileDialog extends DialogWidget
 {
    private static final StringManager stringMgr = StringManagerFactory.getStringManager(ImportFileDialog.class);
 
-   JTable tblPreview = null;
-   JTable tblMapping = null;
-   JCheckBox chkHeadersIncluded = null;
-   JToggleButton btnSuggestColumns = null;
+   JTable tblPreview;
+   JTable tblMapping;
+   JCheckBox chkHeadersIncluded;
+   JToggleButton btnSuggestColumns;
+   JToggleButton btnOneToOneMapping;
 
    JCheckBox chkEmptyTableBeforeImport;
    JLabel lblEmptyTableWarning;
 
-   JCheckBox chkTrimValues = null;
+   JCheckBox chkTrimValues;
 
-   JCheckBox chkSafeMode = null;
+   JCheckBox chkSafeMode;
    OkClosePanel btnsPnl = new OkClosePanel();
 
 
@@ -81,12 +83,6 @@ public class ImportFileDialog extends DialogWidget
       chkHeadersIncluded.setToolTipText(stringMgr.getString("ImportFileDialog.headersIncluded.tooltip"));
       chkHeadersIncluded.setSelected(true);
 
-      // i18n[ImportFileDialogCtrl.btnSuggestColumns=Suggest columns (find matching columns)]
-      btnSuggestColumns = new JToggleButton(stringMgr.getString("ImportFileDialog.suggestColumns"));
-      btnSuggestColumns.setToolTipText(stringMgr.getString("ImportFileDialog.suggestColumns.tooltip"));
-      btnSuggestColumns.setSelected(false);
-
-
       chkTrimValues = new JCheckBox(stringMgr.getString("ImportFileDialog.trim.values"));
       chkTrimValues.setToolTipText(stringMgr.getString("ImportFileDialog.trim.values.tooltip"));
       chkTrimValues.setSelected(true);
@@ -109,7 +105,7 @@ public class ImportFileDialog extends DialogWidget
       ret.add(scrollPane, gbc);
 
       gbc = new GridBagConstraints(0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 10, 10), 0, 0);
-      ret.add(btnSuggestColumns, gbc);
+      ret.add(createToggleButtonsPanel(), gbc);
 
       gbc = new GridBagConstraints(0, 4, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 0, 0);
       ret.add(createEmptyTablePanel(), gbc);
@@ -129,6 +125,26 @@ public class ImportFileDialog extends DialogWidget
 
       gbc = new GridBagConstraints(0, 9, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 10, 10), 0, 0);
       ret.add(btnsPnl, gbc);
+
+      return ret;
+   }
+
+   private JPanel createToggleButtonsPanel()
+   {
+      JPanel ret = new JPanel(new GridLayout(1,2, 10, 10));
+
+
+      // i18n[ImportFileDialogCtrl.btnSuggestColumns=Suggest columns (find matching columns)]
+      btnSuggestColumns = new JToggleButton(stringMgr.getString("ImportFileDialog.suggestColumns"));
+      btnSuggestColumns.setToolTipText(stringMgr.getString("ImportFileDialog.suggestColumns.tooltip"));
+      btnSuggestColumns.setSelected(false);
+      ret.add(btnSuggestColumns);
+
+
+      btnOneToOneMapping = new JToggleButton(stringMgr.getString("ImportFileDialog.oneToOneMapping"));
+      btnOneToOneMapping.setToolTipText(stringMgr.getString("ImportFileDialog.oneToOneMapping.tooltip"));
+      btnOneToOneMapping.setSelected(false);
+      ret.add(btnOneToOneMapping);
 
       return ret;
    }

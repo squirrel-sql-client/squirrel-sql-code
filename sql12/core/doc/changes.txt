@@ -30,6 +30,10 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+
+#578 Data Import Plugin: Import file no longer offers "one to one mapping"
+  The "one to one mapping"-function maps the first column in CSV file or Excel sheet to the first column of the import table, the second to the second ...
+
 #1384 Look and feel Plugin: Tiny L&F causes NullPointerException in version 3.9.1 at application start.
 
 Installer dialog: On first page of installer wizard the Data Import plugin was not mentioned to be a standard Plugin.
