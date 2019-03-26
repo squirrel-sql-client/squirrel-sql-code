@@ -356,6 +356,8 @@ public class ImportFileDialogCtrl
 
       if (_importFileDialog.btnSuggestColumns.isSelected())
       {
+         columnMappingTableModel.resetMappings();
+
          for (String importerColumn : _importerColumns)
          {
             if (null != importerColumn && !importerColumn.isEmpty())
