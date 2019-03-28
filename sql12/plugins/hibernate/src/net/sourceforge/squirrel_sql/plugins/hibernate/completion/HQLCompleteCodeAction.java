@@ -10,9 +10,9 @@ import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HQLEntryPanelManager;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateChannel;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HqlSyntaxHighlightTokenMatcherProxy;
-import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -21,7 +21,7 @@ import java.awt.event.KeyEvent;
 public class HQLCompleteCodeAction extends SquirrelAction
 {
 	private ISQLEntryPanel _hqlEntryPanel;
-   private IHibernateConnectionProvider _hibernateConnectionProvider;
+   private HibernateChannel _hibernateChannel;
    private Completor _cc;
    private HQLCodeCompletorModel _model;
 
@@ -29,15 +29,15 @@ public class HQLCompleteCodeAction extends SquirrelAction
    public HQLCompleteCodeAction(IApplication app,
                                 HibernatePluginResources resources,
                                 HQLEntryPanelManager hqlEntryPanelManager,
-                                IHibernateConnectionProvider hibernateConnectionProvider,
+                                HibernateChannel hibernateChannel,
                                 HqlSyntaxHighlightTokenMatcherProxy hqlSyntaxHighlightTokenMatcherProxy,
                                 ISession session)
 	{
 		super(app, resources);
 		_hqlEntryPanel = hqlEntryPanelManager.getEntryPanel();
-      _hibernateConnectionProvider = hibernateConnectionProvider;
+      _hibernateChannel = hibernateChannel;
 
-      _model = new HQLCodeCompletorModel(hibernateConnectionProvider, new HQLAliasFinder(_hqlEntryPanel), hqlSyntaxHighlightTokenMatcherProxy);
+      _model = new HQLCodeCompletorModel(hibernateChannel, new HQLAliasFinder(_hqlEntryPanel), hqlSyntaxHighlightTokenMatcherProxy);
 
 
       CompletorListener completorListener = new CompletorListener()
@@ -64,7 +64,7 @@ public class HQLCompleteCodeAction extends SquirrelAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-      if(null != _hibernateConnectionProvider.getHibernateConnection())
+      if(null != _hibernateChannel.getHibernateConnection())
       {
          _cc.show();
       }

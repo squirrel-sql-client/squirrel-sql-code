@@ -15,7 +15,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigPanel;
-import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedObjectPanelManager;
+import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedObjectController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
 
@@ -27,13 +27,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class HibernateTabController implements IMainPanelTab, IHibernateTabController, IHibernateConnectionProvider
+public class HibernateTabController implements IMainPanelTab
 {
 
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(HibernateTabController.class);
 
    private static ILogger s_log = LoggerController.createLogger(HibernateTabController.class);
+   private final HibernateChannel _hibernateChannel;
 
 
    private HibernateTabPanel _hibernateTabPanel;
@@ -46,7 +47,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    private HQLPanelController _hqlPanelController;
    private ArrayList<ConnectionListener> _listeners = new ArrayList<ConnectionListener>();
    private HqlResultPanelManager _hqlResultPanelManager;
-   private MappedObjectPanelManager _mappedObjectsPanelManager;
+   private MappedObjectController _mappedObjectsController;
    private final TitleFilePathHandler _titleFileHandler;
 
    public HibernateTabController(ISession session, HibernatePlugin plugin, HibernatePluginResources resource)
@@ -59,11 +60,13 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
          _titleFileHandler = new TitleFilePathHandler(() -> setSqlTabComponentTitle());
 
-         _hqlPanelController = new HQLPanelController(this, _session, resource, _titleFileHandler);
-         _hqlResultPanelManager = new HqlResultPanelManager(_session, resource);
-         _mappedObjectsPanelManager = new MappedObjectPanelManager(this, _session, resource);
+         _hibernateChannel = new HibernateChannel(this);
 
-         _hibernateTabPanel = new HibernateTabPanel(_mappedObjectsPanelManager.getComponent(), _hqlPanelController.getComponent(), _hqlResultPanelManager.getComponent(), _resource);
+         _hqlPanelController = new HQLPanelController(_hibernateChannel, _session, resource, _titleFileHandler);
+         _hqlResultPanelManager = new HqlResultPanelManager(_session, resource);
+         _mappedObjectsController = new MappedObjectController(_hibernateChannel, _session, resource);
+
+         _hibernateTabPanel = new HibernateTabPanel(_mappedObjectsController.getComponent(), _hqlPanelController.getComponent(), _hqlResultPanelManager.getComponent(), _resource);
          _hibernateTabPanel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
 
 
@@ -311,7 +314,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
       _hibernateTabPanel.closing();
 
-      _mappedObjectsPanelManager.closing();
+      _mappedObjectsController.closing();
 
    }
 
@@ -337,17 +340,11 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    }
 
 
-   @Override
    public void displayObjects(HibernateConnection con, String hqlQuery)
    {
       _hqlResultPanelManager.displayObjects(con, hqlQuery);
    }
 
-
-   public IHibernateConnectionProvider getHibernateConnectionProvider()
-   {
-      return this;
-   }
 
    public void sessionEnding()
    {
@@ -399,5 +396,13 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    private boolean isHqlEditorTabActive()
    {
       return _hibernateTabPanel.tabHibernateTabbedPane.getSelectedComponent() == _hibernateTabPanel.splitHqlSql;
+   }
+
+   public void viewInMappedObjects(String wordAtCursor)
+   {
+      if(_mappedObjectsController.viewInMappedObjects(wordAtCursor))
+      {
+         _hibernateTabPanel.tabHibernateTabbedPane.setSelectedIndex(0);
+      }
    }
 }

@@ -1,11 +1,16 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.hibernate.ConnectionListener;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HQLPanelController;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateChannel;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
-import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 
 import javax.swing.*;
@@ -15,29 +20,33 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Collections;
 
-public class MappedObjectPanelManager
+public class MappedObjectController
 {
+
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MappedObjectController.class);
+
 
    private static final String PERF_KEY_OBJ_TAB_CHKSHOWQUALIFIED = "Squirrel.hibernateplugin.chkShowQualified";
 
 
    private MappedObjectPanel _panel;
-   private IHibernateConnectionProvider _connectionProvider;
+   private HibernateChannel _hibernateChannel;
    private ISession _session;
    private DefaultMutableTreeNode _root;
    private HashMap<String, MappedClassInfo> _mappedClassInfoByClassName;
    private DetailPanelController _detailPanelController;
    private ArrayList<MappedClassInfoTreeWrapper> _mappedClassInfoTreeWrappers;
 
-   public MappedObjectPanelManager(IHibernateConnectionProvider connectionProvider, ISession session, HibernatePluginResources resource)
+   public MappedObjectController(HibernateChannel hibernateChannel, ISession session, HibernatePluginResources resource)
    {
-      _connectionProvider = connectionProvider;
+      _hibernateChannel = hibernateChannel;
       _session = session;
 
 
@@ -63,15 +72,9 @@ public class MappedObjectPanelManager
       });
 
 
-      _panel.objectTree.addTreeSelectionListener(new TreeSelectionListener()
-      {
-         public void valueChanged(TreeSelectionEvent e)
-         {
-            onTreeSelectionChanged(e);
-         }
-      });
+      _panel.objectTree.addTreeSelectionListener(e -> onTreeSelectionChanged(e));
 
-      _connectionProvider.addConnectionListener(new ConnectionListener()
+      _hibernateChannel.addConnectionListener(new ConnectionListener()
       {
          public void connectionOpened(HibernateConnection con, HibernateConfiguration cfg)
          {
@@ -85,13 +88,7 @@ public class MappedObjectPanelManager
          }
       });
 
-      _panel.chkShowQualified.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onChkQualified();
-         }
-      });
+      _panel.chkShowQualified.addActionListener(e -> onChkQualified());
 
       _panel.chkShowQualified.setSelected(Props.getBoolean(PERF_KEY_OBJ_TAB_CHKSHOWQUALIFIED, false));
 
@@ -107,7 +104,7 @@ public class MappedObjectPanelManager
 
    private void onChkQualified()
    {
-      HibernateConnection con = _connectionProvider.getHibernateConnection();
+      HibernateConnection con = _hibernateChannel.getHibernateConnection();
 
       if(null == con)
       {
@@ -217,14 +214,14 @@ public class MappedObjectPanelManager
    {
       ArrayList<MappedClassInfoTreeWrapper> ret = new ArrayList<MappedClassInfoTreeWrapper>();
 
-      _mappedClassInfoByClassName = new HashMap<String, MappedClassInfo>();
+      _mappedClassInfoByClassName = new HashMap<>();
       for (MappedClassInfo mappedClassInfo : mappedClassInfos)
       {
          _mappedClassInfoByClassName.put(mappedClassInfo.getClassName(), mappedClassInfo);
          ret.add(createMappedClassInfoTreeWrapper(mappedClassInfo));
       }
 
-      _mappedClassInfoTreeWrappers = new ArrayList<MappedClassInfoTreeWrapper>();
+      _mappedClassInfoTreeWrappers = new ArrayList<>();
 
       Collections.sort(ret);
 
@@ -240,5 +237,29 @@ public class MappedObjectPanelManager
    {
       _panel.closing();
       Props.putBoolean(PERF_KEY_OBJ_TAB_CHKSHOWQUALIFIED, _panel.chkShowQualified.isSelected());
+   }
+
+   public boolean viewInMappedObjects(String wordAtCursor)
+   {
+      for (int i = 0; i < _root.getChildCount(); i++)
+      {
+         DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) _root.getChildAt(i);
+
+         MappedClassInfoTreeWrapper mappedClassInfoTreeWrapper = (MappedClassInfoTreeWrapper) childNode.getUserObject();
+
+         if(mappedClassInfoTreeWrapper.getMappedClassInfo().getClassName().endsWith(wordAtCursor))
+         {
+            _panel.objectTree.setSelectionPath(new TreePath(childNode.getPath()));
+
+            return true;
+         }
+      }
+
+      if (false == StringUtilities.isEmpty(wordAtCursor, true))
+      {
+         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("MappedObjectController.failed.to.locate", wordAtCursor));
+      }
+
+      return false;
    }
 }

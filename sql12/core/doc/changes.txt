@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Hibernate Plugin: New right HQL editor function: "View in mapped objects" (Ctrl+B) shows Entity at cursor in mapped objects tree.
+
+
 Added Actian/Ingres default driver definitions.
   Thanks to Chris Clark for the merge request.
 

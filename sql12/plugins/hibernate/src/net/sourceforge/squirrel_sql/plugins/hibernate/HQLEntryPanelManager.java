@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.session.EntryPanelManager;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
-import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
+import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -16,7 +16,12 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompleteCode
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateSQLUtil;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HqlQueryErrorUtil;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.text.JTextComponent;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -30,14 +35,14 @@ public class HQLEntryPanelManager extends EntryPanelManager implements IFileEdit
 
    private HqlSyntaxHighlightTokenMatcherProxy _hqlSyntaxHighlightTokenMatcherProxy = new HqlSyntaxHighlightTokenMatcherProxy();
    private HibernatePluginResources _resources;
-   private IHibernateConnectionProvider _connectionProvider;
+   private HibernateChannel _hibernateChannel;
    private ToolsPopupController _toolsPopupController;
 
 
-   public HQLEntryPanelManager(final ISession session, HibernatePluginResources resources, IHibernateConnectionProvider connectionProvider, TitleFilePathHandler titleFileHandler)
+   public HQLEntryPanelManager(final ISession session, HibernatePluginResources resources, HibernateChannel hibernateChannel, TitleFilePathHandler titleFileHandler)
    {
       super(session);
-      _connectionProvider = connectionProvider;
+      _hibernateChannel = hibernateChannel;
 
       ToolsPopupAccessorProxy tpap = new ToolsPopupAccessorProxy();
 
@@ -55,9 +60,11 @@ public class HQLEntryPanelManager extends EntryPanelManager implements IFileEdit
       _fileHandler.replaceSqlFileExtensionFilterBy(new FileExtensionFilter("HQL files", new String[]{".hql"}), ".hql");
 
       getEntryPanel().addUndoableEditListener(_fileHandler.createEditListener());
+      initActions(session);
+   }
 
-
-
+   private void initActions(ISession session)
+   {
       // i18n[HQLEntryPanelManager.quoteHQL=Quote HQL]
       String strQuote = s_stringMgr.getString("HQLEntryPanelManager.quoteHQL");
       AbstractAction quoteHql = new AbstractAction(strQuote)
@@ -116,13 +123,23 @@ public class HQLEntryPanelManager extends EntryPanelManager implements IFileEdit
       };
       copySqlToClip.putValue(Action.SHORT_DESCRIPTION, strCopySqlToClip);
       addToSQLEntryAreaMenu(copySqlToClip, "sqltoclip");
+
+      ViewInMappedObjectsAction viewInMappedObjectsAction = new ViewInMappedObjectsAction(_resources, getEntryPanel(), _hibernateChannel);
+      JMenuItem mnuViewInMappedObjects = addToSQLEntryAreaMenu(viewInMappedObjectsAction, "viewinmappedobjects");
+      _resources.configureMenuItem(viewInMappedObjectsAction, mnuViewInMappedObjects);
+      registerKeyboardAction(viewInMappedObjectsAction, _resources.getKeyStroke(viewInMappedObjectsAction));
+   }
+
+   private void onViewInObjectTree(ISession session)
+   {
+      System.out.println("HQLEntryPanelManager.onViewInObjectTree");
    }
 
    private void onCopySqlToClip(ISession session)
    {
       try
       {
-         HibernateSQLUtil.copySqlToClipboard(_connectionProvider.getHibernateConnection(), getEntryPanel().getSQLToBeExecuted(), session);
+         HibernateSQLUtil.copySqlToClipboard(_hibernateChannel.getHibernateConnection(), getEntryPanel().getSQLToBeExecuted(), session);
          session.showMessage(s_stringMgr.getString("HQLEntryPanelManager.copySqlToClipSucceeded"));
       }
       catch (Throwable t)
@@ -162,7 +179,7 @@ public class HQLEntryPanelManager extends EntryPanelManager implements IFileEdit
 
    private void initCodeCompletion()
    {
-      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getSession().getApplication(), _resources, this, _connectionProvider, _hqlSyntaxHighlightTokenMatcherProxy, getSession());
+      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getSession().getApplication(), _resources, this, _hibernateChannel, _hqlSyntaxHighlightTokenMatcherProxy, getSession());
       JMenuItem item = addToSQLEntryAreaMenu(hcca, "complete");
       _resources.configureMenuItem(hcca, item);
       registerKeyboardAction(hcca, _resources.getKeyStroke(hcca));

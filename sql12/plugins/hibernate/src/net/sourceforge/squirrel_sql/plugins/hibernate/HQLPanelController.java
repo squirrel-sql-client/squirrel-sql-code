@@ -17,20 +17,20 @@ public class HQLPanelController
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(HQLPanelController.class);
 
-   private IHibernateTabController _hibernateTabController;
+   private HibernateChannel _hibernateChannel;
    private ISession _sess;
    private HibernatePluginResources _resource;
    private HibernateConnection _con;
    private AbstractAction _runHQL;
    private HQLEntryPanelManager _hqlEntryPanelManager;
 
-   public HQLPanelController(IHibernateTabController hibernateTabController, ISession sess, HibernatePluginResources resource, TitleFilePathHandler titleFileHandler)
+   public HQLPanelController(HibernateChannel hibernateChannel, ISession sess, HibernatePluginResources resource, TitleFilePathHandler titleFileHandler)
    {
-      _hibernateTabController = hibernateTabController;
+      _hibernateChannel = hibernateChannel;
       _sess = sess;
       _resource = resource;
 
-      _hqlEntryPanelManager = new HQLEntryPanelManager(_sess, resource, hibernateTabController.getHibernateConnectionProvider(), titleFileHandler);
+      _hqlEntryPanelManager = new HQLEntryPanelManager(_sess, resource, hibernateChannel, titleFileHandler);
 
    }
 
@@ -56,7 +56,7 @@ public class HQLPanelController
 
       _runHQL.setEnabled(false);
 
-      _hibernateTabController.addToToolbar(_runHQL);
+      _hibernateChannel.addToToolbar(_runHQL);
 
       KeyStroke ctrlEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, Event.CTRL_MASK);
       _hqlEntryPanelManager.registerKeyboardAction(_runHQL, ctrlEnter);
@@ -87,7 +87,7 @@ public class HQLPanelController
       while (qt.hasQuery())
       {
          String hqlQuery = qt.nextQuery().getQuery();
-         _hibernateTabController.displayObjects(_con, hqlQuery);
+         _hibernateChannel.displayObjects(_con, hqlQuery);
       }
    }
 
