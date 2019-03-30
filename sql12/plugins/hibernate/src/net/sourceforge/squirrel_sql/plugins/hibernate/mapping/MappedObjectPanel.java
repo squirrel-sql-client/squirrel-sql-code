@@ -12,7 +12,7 @@ public class MappedObjectPanel extends JPanel
       StringManagerFactory.getStringManager(MappedObjectPanel.class);
 
 
-   JTree objectTree;
+   JTree treMappedObjects;
    JCheckBox chkShowQualified;
 
    private JSplitPane _split;
@@ -25,11 +25,11 @@ public class MappedObjectPanel extends JPanel
       add(createTopPanel(), BorderLayout.NORTH);
 
 
-      objectTree = new JTree();
+      treMappedObjects = new JTree();
 
       _split = new JSplitPane();
 
-      _split.setLeftComponent(new JScrollPane(objectTree));
+      _split.setLeftComponent(new JScrollPane(treMappedObjects));
       _split.setRightComponent(detailComp);
 
       add(_split, BorderLayout.CENTER);

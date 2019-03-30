@@ -18,6 +18,10 @@ public class PropertyInfoTreeWrapper
       return _mappedClassInfo;
    }
 
+   public PropertyInfo getPropertyInfo()
+   {
+      return _propertyInfo;
+   }
 
    public String toString()
    {

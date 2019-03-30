@@ -7,7 +7,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.hibernate.ConnectionListener;
-import net.sourceforge.squirrel_sql.plugins.hibernate.HQLPanelController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateChannel;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
@@ -17,12 +16,11 @@ import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Collections;
@@ -55,13 +53,13 @@ public class MappedObjectController
 
 
       _root = new DefaultMutableTreeNode(new MappingRoot());
-      _panel.objectTree.setModel(new DefaultTreeModel(_root));
+      _panel.treMappedObjects.setModel(new DefaultTreeModel(_root));
 
-      _panel.objectTree.setCellRenderer(new MappingTreeCellRenderer(resource));
+      _panel.treMappedObjects.setCellRenderer(new MappingTreeCellRenderer(resource));
 
       nodeStructurChanged(_root);
 
-      _panel.objectTree.addTreeExpansionListener(new TreeExpansionListener()
+      _panel.treMappedObjects.addTreeExpansionListener(new TreeExpansionListener()
       {
          public void treeExpanded(TreeExpansionEvent event)
          {
@@ -72,7 +70,23 @@ public class MappedObjectController
       });
 
 
-      _panel.objectTree.addTreeSelectionListener(e -> onTreeSelectionChanged(e));
+      _panel.treMappedObjects.addTreeSelectionListener(e -> onTreeSelectionChanged(e));
+
+
+      _panel.treMappedObjects.addMouseListener(new MouseAdapter() {
+         @Override
+         public void mousePressed(MouseEvent e)
+         {
+            MappedObjectTreeRightMouseHandler.maybeShowTreePopup(e, MappedObjectController.this._panel.treMappedObjects);
+         }
+
+         @Override
+         public void mouseReleased(MouseEvent e)
+         {
+            MappedObjectTreeRightMouseHandler.maybeShowTreePopup(e, MappedObjectController.this._panel.treMappedObjects);
+         }
+      });
+
 
       _hibernateChannel.addConnectionListener(new ConnectionListener()
       {
@@ -185,7 +199,7 @@ public class MappedObjectController
 
    private void nodeStructurChanged(DefaultMutableTreeNode node)
    {
-      ((DefaultTreeModel)_panel.objectTree.getModel()).nodeStructureChanged(node);
+      ((DefaultTreeModel)_panel.treMappedObjects.getModel()).nodeStructureChanged(node);
    }
 
    private void addMappedClassInfoNode(MappedClassInfoTreeWrapper mappedClassInfoTreeWrapper, DefaultMutableTreeNode parent)
@@ -250,8 +264,8 @@ public class MappedObjectController
          if(mappedClassInfoTreeWrapper.getMappedClassInfo().getClassName().endsWith(wordAtCursor))
          {
             TreePath selectionPath = new TreePath(childNode.getPath());
-            _panel.objectTree.setSelectionPath(selectionPath);
-            _panel.objectTree.scrollPathToVisible(selectionPath);
+            _panel.treMappedObjects.setSelectionPath(selectionPath);
+            _panel.treMappedObjects.scrollPathToVisible(selectionPath);
 
             return true;
          }
