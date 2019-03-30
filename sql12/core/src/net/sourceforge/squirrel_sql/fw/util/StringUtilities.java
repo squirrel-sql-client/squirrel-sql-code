@@ -387,4 +387,21 @@ public class StringUtilities
          return incompleteIndikator +  in.substring(in.length() - maxLen);
       }
    }
+
+   public static boolean equalsRespectNullModuloEmptyAndWhiteSpace(String s1, String s2)
+   {
+      if(isEmpty(s1, true) && isEmpty(s2, true))
+      {
+         return true;
+      }
+      else if(isEmpty(s1, true) || isEmpty(s2, true))
+      {
+         return false;
+      }
+      else
+      {
+         return s1.trim().equals(s2.trim());
+      }
+
+   }
 }

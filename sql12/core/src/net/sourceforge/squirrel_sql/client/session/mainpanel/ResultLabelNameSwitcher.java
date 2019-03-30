@@ -7,7 +7,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -121,7 +121,7 @@ public class ResultLabelNameSwitcher
    {
       for (ColumnDisplayDefinition columnDisplayDefinition : rsds.getDataSetDefinition().getColumnDefinitions())
       {
-         if(false == Utilities.equalsRespectNull(columnDisplayDefinition.getColumnName(), columnDisplayDefinition.getLabel()))
+         if(false == StringUtilities.equalsRespectNullModuloEmptyAndWhiteSpace(columnDisplayDefinition.getColumnName(), columnDisplayDefinition.getLabel()))
          {
             return true;
          }

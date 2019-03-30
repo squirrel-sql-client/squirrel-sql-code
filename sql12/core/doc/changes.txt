@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+If name and label of a SQL result column differed by leading or trailing white spaces only,
+  a hint was displayed that column name and label were different.
+  Now this happens only when there's a "real" difference.
+  For example on MSSQL: For unaliased aggregate functions the column name is an empty string while the column label is one blank character.
+
 Hibernate Plugin: New right HQL editor function: "View in mapped objects" (Ctrl+B) shows Entity at cursor in mapped objects tree.
 
 

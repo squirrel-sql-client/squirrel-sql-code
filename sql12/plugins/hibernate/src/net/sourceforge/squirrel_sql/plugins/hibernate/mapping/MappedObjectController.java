@@ -249,7 +249,9 @@ public class MappedObjectController
 
          if(mappedClassInfoTreeWrapper.getMappedClassInfo().getClassName().endsWith(wordAtCursor))
          {
-            _panel.objectTree.setSelectionPath(new TreePath(childNode.getPath()));
+            TreePath selectionPath = new TreePath(childNode.getPath());
+            _panel.objectTree.setSelectionPath(selectionPath);
+            _panel.objectTree.scrollPathToVisible(selectionPath);
 
             return true;
          }
