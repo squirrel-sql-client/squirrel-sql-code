@@ -14,6 +14,7 @@ import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MarkCurrentSqlHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
@@ -26,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search.SquirrelRSyntaxSearchEngine;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
@@ -108,18 +110,24 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
     * Because we have no access to the syntax preferences at the moment, the UI is created, we have to modify them after the creation. 
     * @param prefs Preferences to use.
     */
-   private void modifiyKeystrokesFromPreferences(SyntaxPreferences prefs) {
-	   InputMap shared = getInputMap();
-	   if(prefs.isUseCopyAsRtf()){
-		   // Replace the default copy behavior for all key bindings
-		   KeyStroke[] allKeys = shared.allKeys();
-		   for (KeyStroke keyStroke : allKeys) {
-			   Object object = shared.get(keyStroke);
-			   if(DefaultEditorKit.copyAction.equals(object)){
-				   shared.put(keyStroke, RSyntaxTextAreaEditorKit.rstaCopyAsRtfAction);
-			   }
-		   }
-	   }
+   private void modifiyKeystrokesFromPreferences(SyntaxPreferences prefs)
+   {
+      InputMap shared = getInputMap();
+      if (false == prefs.isUseCopyAsRtf())
+      {
+         return;
+      }
+
+      // Replace the default copy behavior for all key bindings
+      KeyStroke[] allKeys = shared.allKeys();
+      for (KeyStroke keyStroke : allKeys)
+      {
+         Object object = shared.get(keyStroke);
+         if (DefaultEditorKit.copyAction.equals(object))
+         {
+            shared.put(keyStroke, Main.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));
+         }
+      }
    }
 
    protected RTextAreaUI createRTextAreaUI()

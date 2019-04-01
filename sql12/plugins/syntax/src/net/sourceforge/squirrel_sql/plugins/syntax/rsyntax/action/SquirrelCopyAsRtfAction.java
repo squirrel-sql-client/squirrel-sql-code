@@ -20,39 +20,58 @@ package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action;
 
 import java.awt.event.ActionEvent;
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit.CopyAsRtfAction;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 
 /**
  * A Wrapper for {@link CopyAsRtfAction}.
  * This wrapper is the simplest way to customize the action properties like name and tooltip.
- * @author Stefan Willinger
  *
+ * @author Stefan Willinger
  */
-public class SquirrelCopyAsRtfAction extends SquirrelAction {
+public class SquirrelCopyAsRtfAction extends SquirrelAction implements ISQLPanelAction
+{
+   private ISQLPanelAPI _panel;
 
-	private CopyAsRtfAction delegate;
-	
-	
-	/**
-	 * Construct a wrapper for {@link CopyAsRtfAction}
-	 * @param app The application
-	 * @param rsrc The plugin resources.
-	 */
-	public SquirrelCopyAsRtfAction(IApplication app, IResources rsrc) {
-		super(app, rsrc);
-		delegate = new CopyAsRtfAction();
-	}
 
-	/**
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		delegate.actionPerformed(e);
-	}
+   /**
+    * Construct a wrapper for {@link CopyAsRtfAction}
+    *
+    * @param rsrc The plugin resources.
+    */
+   public SquirrelCopyAsRtfAction(IResources rsrc)
+   {
+      super(Main.getApplication(), rsrc);
+   }
 
+   /**
+    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+    */
+   @Override
+   public void actionPerformed(ActionEvent e)
+   {
+      if(null == _panel)
+      {
+         return;
+      }
+
+      if(_panel.getSQLEntryPanel().getTextComponent() instanceof SquirrelRSyntaxTextArea)
+      {
+         SquirrelRSyntaxTextArea squirrelRSyntaxTextArea = (SquirrelRSyntaxTextArea) _panel.getSQLEntryPanel().getTextComponent();
+         squirrelRSyntaxTextArea.copyAsStyledText();
+      }
+   }
+
+
+   @Override
+   public void setSQLPanel(ISQLPanelAPI panel)
+   {
+
+      _panel = panel;
+   }
 }

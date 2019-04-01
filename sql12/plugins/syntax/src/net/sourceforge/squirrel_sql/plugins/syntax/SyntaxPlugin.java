@@ -271,7 +271,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		IApplication app = getApplication();
 		ActionCollection coll = app.getActionCollection();
 
-		coll.add(new SquirrelCopyAsRtfAction(getApplication(), _resources));
+		coll.add(new SquirrelCopyAsRtfAction(_resources));
 
 	}
 
@@ -539,7 +539,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		return new ISessionPropertiesPanel[] { new SyntaxPreferencesPanel(sessionPrefs, _resources) };
 	}
 
-	SyntaxPluginResources getResources()
+	public SyntaxPluginResources getResources()
 	{
 		return _resources;
 	}

@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 
 import org.fife.ui.rtextarea.RTextScrollPane;

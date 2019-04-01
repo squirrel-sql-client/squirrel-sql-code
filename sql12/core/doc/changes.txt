@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Upgraded to latest RSyntax version 3.0.0.
+
 Hibernate Plugin: New right mouse menu items in mapped objects tree: "Copy name" and "Copy qualified name".
 
 If name and label of a SQL result column differed by leading or trailing white spaces only,

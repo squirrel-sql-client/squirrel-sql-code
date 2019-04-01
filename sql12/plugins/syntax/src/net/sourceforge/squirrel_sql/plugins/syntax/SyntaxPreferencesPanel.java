@@ -348,6 +348,8 @@ public class SyntaxPreferencesPanel
     	  _chkHighlightCurrentLine.setEnabled(useRSyntaxControl);
     	  _chkLineNumbersEnabled.setEnabled(useRSyntaxControl);
     	  _useCopyAsRtf.setEnabled(useRSyntaxControl);
+
+    	  _adjustCaretColorCtrl.setEnabled(useRSyntaxControl);
       }
 
 		private void createUserInterface(SyntaxPreferences prefs, SyntaxPluginResources rsrc)

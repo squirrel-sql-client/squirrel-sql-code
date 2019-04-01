@@ -89,6 +89,11 @@ public class AdjustCaretColorCtrl
       }
    }
 
+   public void setEnabled(boolean useRSyntaxControl)
+   {
+      _chkAdjustCaretColor.setEnabled(useRSyntaxControl);
+   }
+
 
    JPanel createCaretColorPanel()
    {

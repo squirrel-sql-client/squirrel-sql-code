@@ -22,7 +22,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 
 public final class SyntaxPluginResources extends PluginResources
 {
-	SyntaxPluginResources(IPlugin plugin)
+	public SyntaxPluginResources(IPlugin plugin)
 	{
 		super(SyntaxPluginResources.class.getName(), plugin);
 	}

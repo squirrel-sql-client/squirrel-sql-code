@@ -28,7 +28,7 @@ public class RSyntaxSQLEntryAreaFactory
 
       if(null == sqlEntryPanels)
       {
-         sqlEntryPanels = new ArrayList<RSyntaxSQLEntryPanel>();
+         sqlEntryPanels = new ArrayList<>();
          _rSyntaxSQLEntryPanelsBySessionID.put(session.getIdentifier(), sqlEntryPanels);
       }
 
