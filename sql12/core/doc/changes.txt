@@ -49,6 +49,9 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+#1387 Error message and empty Metadata tab when connecting to H2 v1.4.197
+  Added type flexibility when calling java.sql.DatabaseMetaData.getClientInfoProperties()
+
 #1384 Look and feel Plugin: Tiny L&F causes NullPointerException in version 3.9.1 at application start.
 
 Installer dialog: On first page of installer wizard the Data Import plugin was not mentioned to be a standard Plugin.

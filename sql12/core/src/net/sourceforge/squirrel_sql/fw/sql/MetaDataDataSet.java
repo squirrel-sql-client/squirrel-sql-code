@@ -21,6 +21,8 @@ import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLType;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -220,23 +222,42 @@ public class MetaDataDataSet implements IDataSet
 		else if (line[0].equals("getClientInfoProperties")) 
 		{
 			Object obj = executeGetter(md, getter);
-			if (obj instanceof ResultSet) {
-				ResultSet rs = (ResultSet)obj;
-				try {
+			if (obj instanceof ResultSet)
+			{
+				ResultSet rs = (ResultSet) obj;
+				try
+				{
 					StringBuilder tmp = new StringBuilder();
-					while (rs.next()) {
+					while (rs.next())
+					{
 						tmp.append(rs.getString(1)).append("\t");
-						tmp.append(rs.getInt(2)).append("\t");
+
+						if (rs.getMetaData().getColumnType(2) == Types.INTEGER)
+						{
+							tmp.append(rs.getInt(2)).append("\t");
+						}
+						else
+						{
+							// To cope with the issue discussed in bug #1387
+							tmp.append(rs.getString(2)).append("\t");
+						}
+
 						tmp.append(rs.getString(3)).append("\t");
 						tmp.append(rs.getString(4)).append("\n");
 					}
 					line[1] = tmp.toString();
-				} catch (SQLException ex) {
+				}
+				catch (SQLException ex)
+				{
 					_msgHandler.showMessage(ex, null);
-				} finally {
+				}
+				finally
+				{
 					SQLUtilities.closeResultSet(rs);
 				}
-			} else {
+			}
+			else
+			{
 				line[1] = obj;
 			}
 		} 
