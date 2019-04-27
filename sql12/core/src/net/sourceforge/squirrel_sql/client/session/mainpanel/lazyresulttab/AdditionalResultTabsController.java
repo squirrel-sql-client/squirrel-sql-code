@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewCt
 import net.sourceforge.squirrel_sql.client.session.mainpanel.rotatedtable.RotatedTableCtrl;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.textresult.TextResultCtrl;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +14,7 @@ public class AdditionalResultTabsController
 {
    private final ISession _session;
    private final JTabbedPane _tabResultTabs;
+   private final int _additionalResultTabsStartTabIndex;
    private boolean _isOutputAsTable;
 
 
@@ -26,7 +28,9 @@ public class AdditionalResultTabsController
       _tabResultTabs = tabResultTabs;
       _isOutputAsTable = isOutputAsTable;
 
-      _overviewInitializer = new LazyResultTabInitializer<OverviewCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<OverviewCtrl>()
+      _additionalResultTabsStartTabIndex = tabResultTabs.getTabCount();
+
+      _overviewInitializer = new LazyResultTabInitializer<>(_tabResultTabs, new LazyResultTabControllerFactory<OverviewCtrl>()
       {
          @Override
          public OverviewCtrl create()
@@ -44,7 +48,7 @@ public class AdditionalResultTabsController
 
 
 
-      _rotatedTableInitializer = new LazyResultTabInitializer<RotatedTableCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<RotatedTableCtrl>()
+      _rotatedTableInitializer = new LazyResultTabInitializer<>(_tabResultTabs, new LazyResultTabControllerFactory<RotatedTableCtrl>()
       {
          @Override
          public RotatedTableCtrl create()
@@ -62,7 +66,7 @@ public class AdditionalResultTabsController
 
       if (_isOutputAsTable)
       {
-         _textResultController = new LazyResultTabInitializer<TextResultCtrl>(_session, _tabResultTabs, new LazyResultTabControllerFactory<TextResultCtrl>()
+         _textResultController = new LazyResultTabInitializer<>(_tabResultTabs, new LazyResultTabControllerFactory<TextResultCtrl>()
          {
             @Override
             public TextResultCtrl create()
@@ -102,5 +106,18 @@ public class AdditionalResultTabsController
       {
          _textResultController.moreResultsHaveBeenRead();
       }
+   }
+
+   public DataSetViewerFindHandler getDataSetViewerFindHandlerOfSelectedTabOrNull()
+   {
+      // _additionalResultTabsStartTabIndex --> Overview
+
+      // _additionalResultTabsStartTabIndex + 1 --> Rotated table
+      if(_additionalResultTabsStartTabIndex + 1 == _tabResultTabs.getSelectedIndex())
+      {
+         return _rotatedTableInitializer.getController().getDataSetViewerFindHandler();
+      }
+
+      return null;
    }
 }

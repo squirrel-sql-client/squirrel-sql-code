@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 
 import javax.swing.*;
@@ -9,7 +8,6 @@ import javax.swing.event.ChangeListener;
 
 public class LazyResultTabInitializer <T extends LazyTabControllerCtrl>
 {
-   private final ISession _session;
    private final JTabbedPane _tabResultTabs;
    private Integer tabIndex = null;
    private ResultSetDataSet _rsds;
@@ -20,20 +18,12 @@ public class LazyResultTabInitializer <T extends LazyTabControllerCtrl>
    private LazyResultTabControllerFactory _lazyResultTabControllerFactory;
 
 
-   public LazyResultTabInitializer(ISession session, JTabbedPane tabResultTabs, LazyResultTabControllerFactory<T> lazyResultTabControllerFactory)
+   public LazyResultTabInitializer(JTabbedPane tabResultTabs, LazyResultTabControllerFactory<T> lazyResultTabControllerFactory)
    {
-      _session = session;
       _tabResultTabs = tabResultTabs;
       _lazyResultTabControllerFactory = lazyResultTabControllerFactory;
 
-      _tabResultTabs.addChangeListener(new ChangeListener()
-      {
-         @Override
-         public void stateChanged(ChangeEvent e)
-         {
-            onStateChanged();
-         }
-      });
+      _tabResultTabs.addChangeListener(e -> onStateChanged());
 
    }
 
@@ -77,5 +67,10 @@ public class LazyResultTabInitializer <T extends LazyTabControllerCtrl>
    {
       initTab();
       setCurrentResult(_rsds);
+   }
+
+   public T getController()
+   {
+      return _lazyTabController;
    }
 }

@@ -9,15 +9,8 @@ import java.awt.*;
 
 public class RotatedTablePanel extends JPanel
 {
-   DataSetViewerTablePanel table;
-
-   public RotatedTablePanel(ISession session)
+   public RotatedTablePanel()
    {
       setLayout(new GridLayout(1, 1));
-
-      table = new DataSetViewerTablePanel();
-      table.init(null, new DataModelImplementationDetails(session), session);
-      add(new JScrollPane(table.getComponent()));
-
    }
 }

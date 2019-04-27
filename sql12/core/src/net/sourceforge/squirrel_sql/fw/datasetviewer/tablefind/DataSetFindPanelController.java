@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
@@ -33,16 +34,14 @@ public class DataSetFindPanelController
    private Color _traceColor = SquirrelConstants.FIND_COLOR_CURRENT;
    private FindTrace _trace = new FindTrace();
    private String _currentSearchString = null;
-   private IMessageHandler _messageHandler;
 
    private static enum FindMode
    {
       FORWARD, BACKWARD, HIGHLIGHT
    }
 
-   public DataSetFindPanelController(IMessageHandler messageHandler, final DataSetFindPanelListener dataSetFindPanelListener, final ISession session)
+   public DataSetFindPanelController(final DataSetFindPanelListener dataSetFindPanelListener, final ISession session)
    {
-      _messageHandler = messageHandler;
       _dataSetFindPanel = new DataSetFindPanel();
 
       _dataSetFindPanel.btnDown.addActionListener(e -> onFind(FindMode.FORWARD));
@@ -247,7 +246,7 @@ public class DataSetFindPanelController
 
       if (false == matchFound)
       {
-         _messageHandler.showMessage(s_stringMgr.getString("DataSetFindPanelController.noOccurenceFoundOf", _currentSearchString));
+         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("DataSetFindPanelController.noOccurenceFoundOf", _currentSearchString));
       }
 
    }

@@ -37,7 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.MarkDuplicatesHandler;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindDecorator;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -55,7 +55,12 @@ import java.beans.PropertyChangeListener;
 
 public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 {
-    /** Uniquely identifies this ResultTab. */
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultTab.class);
+
+   private static ILogger s_log = LoggerController.createLogger(ResultTab.class);
+
+
+   /** Uniquely identifies this ResultTab. */
 	private IIdentifier _id;
 
 	/** Current session. */
@@ -65,17 +70,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    private SQLExecutionInfo _exInfo;
 
 	/** Panel displaying the SQL results. */
-	private DataSetViewerFindDecorator _dataSetViewerFindDecorator;
+	private DataSetViewerFindHandler _resultDataSetViewerFindHandler;
 
-	/** Panel displaying the SQL results meta data. */
-	private IDataSetViewer _metaDataOutput;
-
-	/** Scroll pane for <TT>_dataSetViewerFindDecorator</TT>. */
-   //  SCROLL
-	// private JScrollPane _resultSetSp = new JScrollPane();
-
-	/** Scroll pane for <TT>_metaDataOutput</TT>. */
-	private JScrollPane _metaDataSp = new JScrollPane();
+	private DataSetViewerFindHandler _metaDataDataSetViewerFindHandler;
 
 	/** Tabbed pane containing the SQL results and the results meta data. */
 	private JTabbedPane _tabResultTabs;
@@ -101,11 +98,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private ResultSetDataSet _rsds;
    
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultTab.class);
-
-   private static ILogger s_log = LoggerController.createLogger(ResultTab.class);
-
-
 
    private ResultTabListener _resultTabListener;
    private ReadMoreResultsHandler _readMoreResultsHandler;
@@ -179,12 +171,12 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 		final SessionProperties props = _session.getProperties();
 
+      IDataSetViewer resultDataSetViewer;
 		if (_allowEditing)
 		{
-         IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
+         resultDataSetViewer = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
 
-         _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer, _session.getApplication().getMessageHandler(), _session);
-         _selectRowColLabelController.setDataSetViewer(dataSetViewer);
+         _selectRowColLabelController.setDataSetViewer(resultDataSetViewer);
 
 		}
 		else
@@ -194,26 +186,23 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 			// and it becomes difficult to know which table (or tables!) an
 			// edited column belongs to.  Therefore limit the output
 			// to be read-only
-         IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(
+         resultDataSetViewer = BaseDataSetViewerDestination.getInstance(
                props.getReadOnlySQLResultsOutputClassName(), null, new DataModelImplementationDetails(_session, _exInfo), _session);
 
-
-         //dataSetViewer.setSession(_session);
-
-         _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer, _session.getApplication().getMessageHandler(), _session);
-         _selectRowColLabelController.setDataSetViewer(dataSetViewer);
+         _selectRowColLabelController.setDataSetViewer(resultDataSetViewer);
 		}
 
 
+      _resultDataSetViewerFindHandler = new DataSetViewerFindHandler(resultDataSetViewer, _session);
+
       //  SCROLL
-		// _resultSetSp.setViewportView(_dataSetViewerFindDecorator.getComponent());
+		// _resultSetSp.setViewportView(_resultDataSetViewerFindHandler.getComponent());
       // _resultSetSp.setRowHeader(null);
 
       if (_session.getProperties().getShowResultsMetaData())
       {
-         _metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName(), null, new DataModelImplementationDetails(_session, _exInfo), _session);
-         _metaDataSp.setViewportView(_metaDataOutput.getComponent());
-         _metaDataSp.setRowHeader(null);
+         IDataSetViewer metaDataSetViewer = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName(), null, new DataModelImplementationDetails(_session, _exInfo), _session);
+         _metaDataDataSetViewerFindHandler = new DataSetViewerFindHandler(metaDataSetViewer, _session);
       }
 	}
 
@@ -261,8 +250,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _rsds = rsds;
 
 		// Display the result set.
-		_dataSetViewerFindDecorator.getDataSetViewer().show(_rsds, null);
-      initContinueReadChannel(_dataSetViewerFindDecorator);
+      _resultDataSetViewerFindHandler.getDataSetViewer().show(_rsds, null);
+      initContinueReadChannel();
 
 
 		final int rowCount = _rsds.currentRowCount();
@@ -272,30 +261,23 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       _additionalResultTabsController.setCurrentResult(_rsds);
 
-      _resultLabelNameSwitcher.setCurrentResult(_rsds, _dataSetViewerFindDecorator.getDataSetViewer());
+      _resultLabelNameSwitcher.setCurrentResult(_rsds, _resultDataSetViewerFindHandler.getDataSetViewer());
 
 		// Display the result set metadata.
-		if (mdds != null && _metaDataOutput != null)
+		if (mdds != null && _metaDataDataSetViewerFindHandler.getDataSetViewer() != null)
 		{
-			_metaDataOutput.show(mdds, null); // Why null??
+         _metaDataDataSetViewerFindHandler.getDataSetViewer().show(mdds, null); // Why null??
 		}
 
 		_queryInfoPanel.load(rowCount, _exInfo);				
 	}
 
 
-   private void initContinueReadChannel(DataSetViewerFindDecorator resultSetOutput)
+   private void initContinueReadChannel()
    {
-      final ReadMoreResultsHandlerListener readMoreResultsHandlerListener = new ReadMoreResultsHandlerListener()
-      {
-         @Override
-         public void moreResultsHaveBeenRead()
-         {
-            onMoreResultsHaveBeenRead();
-         }
-      };
+      final ReadMoreResultsHandlerListener readMoreResultsHandlerListener = () -> onMoreResultsHaveBeenRead();
 
-      resultSetOutput.getDataSetViewer().setContinueReadChannel(new ContinueReadChannel()
+      _resultDataSetViewerFindHandler.getDataSetViewer().setContinueReadChannel(new ContinueReadChannel()
       {
          @Override
          public void readMoreResults()
@@ -331,10 +313,10 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       try
       {
 
-         TableState resultSortableTableState = getTableState(_dataSetViewerFindDecorator.getDataSetViewer());
-         _dataSetViewerFindDecorator.getDataSetViewer().show(_rsds, null);
-         restoreTableState(resultSortableTableState, _dataSetViewerFindDecorator.getDataSetViewer());
-         _dataSetViewerFindDecorator.resetFind();
+         TableState resultSortableTableState = getTableState(_resultDataSetViewerFindHandler.getDataSetViewer());
+         _resultDataSetViewerFindHandler.getDataSetViewer().show(_rsds, null);
+         restoreTableState(resultSortableTableState, _resultDataSetViewerFindHandler.getDataSetViewer());
+         _resultDataSetViewerFindHandler.resetFind();
 
          _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
          _queryInfoPanel.displayRowCount(_rsds.currentRowCount());
@@ -381,13 +363,13 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    public void disposeTab()
    {
-      if (_metaDataOutput != null)
+      if (_metaDataDataSetViewerFindHandler != null)
       {
-         _metaDataOutput.clear();
+         _metaDataDataSetViewerFindHandler.getDataSetViewer().clear();
       }
-      if (_dataSetViewerFindDecorator != null)
+      if (_resultDataSetViewerFindHandler != null)
       {
-         _dataSetViewerFindDecorator.getDataSetViewer().clear();
+         _resultDataSetViewerFindHandler.getDataSetViewer().clear();
       }
       _exInfo = null;
       _currentSqlLblCtrl.clear();
@@ -443,18 +425,18 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          {
             if (_allowEditing)
             {
-               TableState resultSortableTableState = getTableState(_dataSetViewerFindDecorator.getDataSetViewer());
+               TableState resultSortableTableState = getTableState(_resultDataSetViewerFindHandler.getDataSetViewer());
 
                IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
-               // _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer);
-               _dataSetViewerFindDecorator.replaceDataSetViewer(dataSetViewer);
+               // _resultDataSetViewerFindHandler = new DataSetViewerFindHandler(dataSetViewer);
+               _resultDataSetViewerFindHandler.replaceDataSetViewer(dataSetViewer);
 
                _rsds.resetCursor();
-               _dataSetViewerFindDecorator.getDataSetViewer().show(_rsds, null);
-               initContinueReadChannel(_dataSetViewerFindDecorator);
+               _resultDataSetViewerFindHandler.getDataSetViewer().show(_rsds, null);
+               initContinueReadChannel();
 
 
-               restoreTableState(resultSortableTableState, _dataSetViewerFindDecorator.getDataSetViewer());
+               restoreTableState(resultSortableTableState, _resultDataSetViewerFindHandler.getDataSetViewer());
             }
             else
             {
@@ -469,17 +451,17 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
             String readOnlyOutput = props.getReadOnlySQLResultsOutputClassName();
 
-            TableState resultSortableTableState = getTableState(_dataSetViewerFindDecorator.getDataSetViewer());
+            TableState resultSortableTableState = getTableState(_resultDataSetViewerFindHandler.getDataSetViewer());
 
             IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(readOnlyOutput, _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
-            _dataSetViewerFindDecorator.replaceDataSetViewer(dataSetViewer);
+            _resultDataSetViewerFindHandler.replaceDataSetViewer(dataSetViewer);
 
 
             _rsds.resetCursor();
-            _dataSetViewerFindDecorator.getDataSetViewer().show(_rsds, null);
-            initContinueReadChannel(_dataSetViewerFindDecorator);
+            _resultDataSetViewerFindHandler.getDataSetViewer().show(_rsds, null);
+            initContinueReadChannel();
 
-            restoreTableState(resultSortableTableState, _dataSetViewerFindDecorator.getDataSetViewer());
+            restoreTableState(resultSortableTableState, _resultDataSetViewerFindHandler.getDataSetViewer());
          }
       }
       catch (DataSetException e)
@@ -524,30 +506,26 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
        //  SCROLL _resultSetSp.setBorder(BorderFactory.createEmptyBorder());
       
       // i18n[ResultTab.resultsTabTitle=Results]
-      _tabResultTabs.addTab(null, _dataSetViewerFindDecorator.getComponent()); //  SCROLL
+      _tabResultTabs.addTab(null, _resultDataSetViewerFindHandler.getComponent()); //  SCROLL
       _resultLabelNameSwitcher = new ResultLabelNameSwitcher(s_stringMgr.getString("ResultTab.resultsTabTitle"), 0, _session, _tabResultTabs);
 
 
       if (_session.getProperties().getShowResultsMetaData())
       {
-         _metaDataSp.setBorder(BorderFactory.createEmptyBorder());
-         
          // i18n[ResultTab.metadataTabTitle=MetaData]
-         String metadataTabTitle = 
-             s_stringMgr.getString("ResultTab.metadataTabTitle");
-         _tabResultTabs.addTab(metadataTabTitle, _metaDataSp);
+         String metadataTabTitle =  s_stringMgr.getString("ResultTab.metadataTabTitle");
+         _tabResultTabs.addTab(metadataTabTitle, _metaDataDataSetViewerFindHandler.getComponent());
       }
 
 		final JScrollPane sp = new JScrollPane(_queryInfoPanel);
 		sp.setBorder(BorderFactory.createEmptyBorder());
         
         // i18n[ResultTab.infoTabTitle=Info]
-        String infoTabTitle = 
-            s_stringMgr.getString("ResultTab.infoTabTitle");
+        String infoTabTitle = s_stringMgr.getString("ResultTab.infoTabTitle");
 		_tabResultTabs.addTab(infoTabTitle, sp);
 
 
-      _additionalResultTabsController = new AdditionalResultTabsController(_session, _tabResultTabs, _dataSetViewerFindDecorator.getDataSetViewer() instanceof DataSetViewerTablePanel);
+      _additionalResultTabsController = new AdditionalResultTabsController(_session, _tabResultTabs, _resultDataSetViewerFindHandler.getDataSetViewer() instanceof DataSetViewerTablePanel);
 
    }
 
@@ -593,8 +571,15 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    @Override
    public void toggleShowFindPanel()
    {
-      _tabResultTabs.setSelectedIndex(0);
-      if(false == _dataSetViewerFindDecorator.toggleShowFindPanel())
+      DataSetViewerFindHandler dataSetViewerFindHandlerOfSelectedTab = getDataSetViewerFindHandlerOfSelectedTabOrNull();
+
+      if(null == dataSetViewerFindHandlerOfSelectedTab)
+      {
+         _tabResultTabs.setSelectedIndex(0);
+         dataSetViewerFindHandlerOfSelectedTab = _resultDataSetViewerFindHandler;
+      }
+
+      if(false == dataSetViewerFindHandlerOfSelectedTab.toggleShowFindPanel())
       {
          _session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("ResultTab.tableSearchNotSupported"));
          s_log.warn(s_stringMgr.getString("ResultTab.tableSearchNotSupported"));
@@ -604,14 +589,14 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    @Override
    public void findColumn()
    {
-      if(false == _dataSetViewerFindDecorator.getDataSetViewer() instanceof DataSetViewerTablePanel)
+      if(false == _resultDataSetViewerFindHandler.getDataSetViewer() instanceof DataSetViewerTablePanel)
       {
          _session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("ResultTab.ColumnSearchNotSupported"));
          s_log.warn(s_stringMgr.getString("ResultTab.ColumnSearchNotSupported"));
          return;
       }
 
-      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _dataSetViewerFindDecorator.getDataSetViewer();
+      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
 
       _tabResultTabs.setSelectedIndex(0);
       FindColumnCtrl findColumnCtrl = new FindColumnCtrl(GUIUtils.getOwningFrame(_tabResultTabs), dataSetViewerTablePanel);
@@ -638,7 +623,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       }
 
 
-      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _dataSetViewerFindDecorator.getDataSetViewer();
+      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
 
       MarkDuplicatesHandler markDuplicatesHandler = dataSetViewerTablePanel.getTable().getColoringService().getMarkDuplicatesHandler();
 
@@ -650,7 +635,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    @Override
    public boolean isMarkDuplicates()
    {
-      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _dataSetViewerFindDecorator.getDataSetViewer();
+      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
 
       MarkDuplicatesHandler markDuplicatesHandler = dataSetViewerTablePanel.getTable().getColoringService().getMarkDuplicatesHandler();
 
@@ -660,7 +645,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    public void wasReturnedToTabbedPane()
    {
-      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _dataSetViewerFindDecorator.getDataSetViewer();
+      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
 
       MarkDuplicatesHandler markDuplicatesHandler = dataSetViewerTablePanel.getTable().getColoringService().getMarkDuplicatesHandler();
 
@@ -680,12 +665,12 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    @Override
    public TableState getResultSortableTableState()
    {
-      return _dataSetViewerFindDecorator.getDataSetViewer().getResultSortableTableState();
+      return _resultDataSetViewerFindHandler.getDataSetViewer().getResultSortableTableState();
    }
 
    public void applyResultSortableTableState(TableState sortableTableState)
    {
-      _dataSetViewerFindDecorator.getDataSetViewer().applyResultSortableTableState(sortableTableState);
+      _resultDataSetViewerFindHandler.getDataSetViewer().applyResultSortableTableState(sortableTableState);
    }
 
 
@@ -693,4 +678,22 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    {
       return _sqlResultExecuterPanelFacade;
    }
+
+
+   private DataSetViewerFindHandler getDataSetViewerFindHandlerOfSelectedTabOrNull()
+   {
+      if(0 == _tabResultTabs.getSelectedIndex())
+      {
+         return _resultDataSetViewerFindHandler;
+      }
+      else if(1 == _tabResultTabs.getSelectedIndex() && null != _metaDataDataSetViewerFindHandler)
+      {
+         return _metaDataDataSetViewerFindHandler;
+      }
+      else
+      {
+         return _additionalResultTabsController.getDataSetViewerFindHandlerOfSelectedTabOrNull();
+      }
+   }
+
 }

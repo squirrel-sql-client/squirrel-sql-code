@@ -11,10 +11,9 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-public class DataSetViewerFindDecorator
+public class DataSetViewerFindHandler
 {
    private IDataSetViewer _dataSetViewer;
-   private boolean _putTableInScrollpane;
    private ISession _session;
    private final JSplitPane _split;
    private boolean _findPanelOpen;
@@ -23,15 +22,9 @@ public class DataSetViewerFindDecorator
    private DataSetFindPanelController _dataSetFindPanelController;
 
 
-   public DataSetViewerFindDecorator(IDataSetViewer dataSetViewer, IMessageHandler messageHandler, ISession session)
-   {
-      this(dataSetViewer, true, messageHandler, session);
-   }
-
-   public DataSetViewerFindDecorator(IDataSetViewer dataSetViewer, boolean putTableInScrollpane, IMessageHandler messageHandler, ISession session)
+   public DataSetViewerFindHandler(IDataSetViewer dataSetViewer, ISession session)
    {
       _dataSetViewer = dataSetViewer;
-      _putTableInScrollpane = putTableInScrollpane;
       _session = session;
 
       _split = new JSplitPane();
@@ -39,15 +32,7 @@ public class DataSetViewerFindDecorator
       _split.setOrientation(JSplitPane.VERTICAL_SPLIT);
       _split.setDividerLocation(0);
 
-      DataSetFindPanelListener dataSetFindPanelListener = new DataSetFindPanelListener()
-      {
-         @Override
-         public void hideFindPanel()
-         {
-            toggleShowFindPanel();
-         }
-      };
-      _dataSetFindPanelController = new DataSetFindPanelController(messageHandler, dataSetFindPanelListener, session);
+      _dataSetFindPanelController = new DataSetFindPanelController(() -> toggleShowFindPanel(), session);
 
       if (_dataSetViewer instanceof DataSetViewerTablePanel)
       {
@@ -69,24 +54,11 @@ public class DataSetViewerFindDecorator
       });
 
 
-      if (putTableInScrollpane)
-      {
-         _scrollPane = new JScrollPane();
-         _scrollPane.setBorder(BorderFactory.createEmptyBorder());
-         _scrollPane.setViewportView(_dataSetViewer.getComponent());
-         _split.setRightComponent(_scrollPane);
+      _scrollPane = new JScrollPane();
+      _scrollPane.setBorder(BorderFactory.createEmptyBorder());
+      _scrollPane.setViewportView(_dataSetViewer.getComponent());
+      _split.setRightComponent(_scrollPane);
 
-      }
-      else
-      {
-         _split.setRightComponent(_dataSetViewer.getComponent());
-      }
-   }
-
-
-   public IDataSetViewer getDataSetViewer()
-   {
-      return _dataSetViewer;
    }
 
    public Component getComponent()
@@ -128,22 +100,15 @@ public class DataSetViewerFindDecorator
 
    public void replaceDataSetViewer(IDataSetViewer dataSetViewer)
    {
-      if(null !=_dataSetViewer)
+      if(null != _dataSetViewer)
       {
          _dataSetViewer.disableContinueRead();
 
       }
 
       _dataSetViewer = dataSetViewer;
-      if (_putTableInScrollpane)
-      {
-         _scrollPane.setViewportView(dataSetViewer.getComponent());
-         _scrollPane.setRowHeader(null);
-      }
-      else
-      {
-         _split.setRightComponent(dataSetViewer.getComponent());
-      }
+      _scrollPane.setViewportView(dataSetViewer.getComponent());
+      _scrollPane.setRowHeader(null);
 
       if (_dataSetViewer instanceof DataSetViewerTablePanel)
       {
@@ -158,6 +123,11 @@ public class DataSetViewerFindDecorator
    public void resetFind()
    {
       _dataSetFindPanelController.reset();
+   }
+
+   public IDataSetViewer getDataSetViewer()
+   {
+      return _dataSetViewer;
    }
 
    private static class NullPanel extends JPanel

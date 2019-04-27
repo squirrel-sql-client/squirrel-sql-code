@@ -1,8 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.rotatedtable;
 
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.LazyTabControllerCtrl;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -13,14 +15,16 @@ public class RotatedTableCtrl implements LazyTabControllerCtrl
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RotatedTableCtrl.class);
 
-
    private ISession _session;
-   private RotatedTablePanel _rotatedTablePanel;
+
+   private RotatedTablePanel _rotatedTablePanel = new RotatedTablePanel();
+
+   private DataSetViewerFindHandler _dataSetViewerFindHandler;
+
 
    public RotatedTableCtrl(ISession session)
    {
       _session = session;
-      _rotatedTablePanel = new RotatedTablePanel(session);
    }
 
    public static boolean isRotatedTablePanel(Component comp)
@@ -70,7 +74,7 @@ public class RotatedTableCtrl implements LazyTabControllerCtrl
 
                if (row[i] instanceof Byte[] || row[i] instanceof byte[])
                {
-                  Byte[] cellObjBytes = null;
+                  Byte[] cellObjBytes;
                   if (row[i] instanceof Byte[])
                   {
                      cellObjBytes = (Byte[]) row[i];
@@ -110,13 +114,23 @@ public class RotatedTableCtrl implements LazyTabControllerCtrl
 
          SimpleDataSet simpleDataSet = new SimpleDataSet(rotatedRows, rotatedColDefs);
 
-         _rotatedTablePanel.table.show(simpleDataSet);
+         DataSetViewerTablePanel table = new DataSetViewerTablePanel();
+         table.init(null, new DataModelImplementationDetails(_session), _session);
+         table.show(simpleDataSet);
+
+         _dataSetViewerFindHandler = new DataSetViewerFindHandler(table, _session);
+
+         _rotatedTablePanel.add(_dataSetViewerFindHandler.getComponent());
+
       }
       catch (DataSetException e)
       {
          throw new RuntimeException(e);
       }
+   }
 
-
+   public DataSetViewerFindHandler getDataSetViewerFindHandler()
+   {
+      return _dataSetViewerFindHandler;
    }
 }
