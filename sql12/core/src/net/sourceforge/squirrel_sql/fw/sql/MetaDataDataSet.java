@@ -227,23 +227,37 @@ public class MetaDataDataSet implements IDataSet
 				ResultSet rs = (ResultSet) obj;
 				try
 				{
+					int clientInfoColumnCount = rs.getMetaData().getColumnCount();
+
 					StringBuilder tmp = new StringBuilder();
 					while (rs.next())
 					{
-						tmp.append(rs.getString(1)).append("\t");
+						tmp.append(rs.getString(1));
 
-						if (rs.getMetaData().getColumnType(2) == Types.INTEGER)
+						if (clientInfoColumnCount > 1)
 						{
-							tmp.append(rs.getInt(2)).append("\t");
-						}
-						else
-						{
-							// To cope with the issue discussed in bug #1387
-							tmp.append(rs.getString(2)).append("\t");
+							if (rs.getMetaData().getColumnType(2) == Types.INTEGER)
+							{
+								tmp.append("\t").append(rs.getInt(2));
+							}
+							else
+							{
+								// To cope with the issue discussed in bug #1387
+								tmp.append("\t").append(rs.getString(2));
+							}
 						}
 
-						tmp.append(rs.getString(3)).append("\t");
-						tmp.append(rs.getString(4)).append("\n");
+						if (clientInfoColumnCount > 2)
+						{
+							tmp.append("\t").append(rs.getString(3));
+						}
+
+						if (clientInfoColumnCount > 3)
+						{
+							tmp.append("\t").append(rs.getString(4));
+						}
+
+						tmp.append("\n");
 					}
 					line[1] = tmp.toString();
 				}
