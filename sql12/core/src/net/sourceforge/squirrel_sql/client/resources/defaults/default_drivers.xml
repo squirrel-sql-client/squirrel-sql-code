@@ -3,6 +3,18 @@
 <Beans>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>Elasticsearch</name>
+		<driverClassName>org.elasticsearch.xpack.sql.jdbc.EsDriver</driverClassName>
+		<url>jdbc:es://&lt;server_name&gt;:9200/?timezone=UTC</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-77</string>
+		</identifier>
+		<websiteUrl>https://www.elastic.co/downloads/jdbc-client</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<name>Actian Avalanche Driver</name>
 		<driverClassName>com.ingres.jdbc.IngresDriver</driverClassName>
 		<url>jdbc:ingres://&lt;server_name&gt;:II7/&lt;database_name&gt;;select_loop=on</url>

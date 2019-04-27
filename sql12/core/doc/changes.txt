@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge Request #41: Added Elasticsearch driver definition
+  Thanks to Costin Leau for the merge request.
+
 "Find in table" function now works for result-"Meta data" and -"Rotated table", too.
 
 Upgraded to latest RSyntax version 3.0.0.
