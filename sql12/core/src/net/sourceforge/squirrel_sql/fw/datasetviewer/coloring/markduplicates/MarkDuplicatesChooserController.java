@@ -99,7 +99,7 @@ public class MarkDuplicatesChooserController
          newSelectedButton.setSelected(formerSelectedButton.isSelected());
 
          // Needed because of the way GUIUtils.styleAsToolbarButton() works.
-         newSelectedButton.setContentAreaFilled(formerSelectedButton.isSelected());
+         newSelectedButton.setContentAreaFilled(newSelectedButton.isSelected());
       }
       finally
       {
@@ -176,6 +176,10 @@ public class MarkDuplicatesChooserController
                break;
             }
          }
+
+         // Needed because of the way GUIUtils.styleAsToolbarButton() works.
+         _toggleBtnChooser.getSelectedButton().setContentAreaFilled(_toggleBtnChooser.getSelectedButton().isSelected());
+
       }
       finally
       {
