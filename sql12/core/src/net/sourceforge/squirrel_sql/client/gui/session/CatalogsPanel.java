@@ -76,7 +76,7 @@ public class CatalogsPanel extends JPanel
 		}
 		catch (SQLException e)
 		{
-            s_log.error("Error processing Property ChangeEvent", e);
+			s_log.error("Error processing Property ChangeEvent", e);
 		}
 	}
 

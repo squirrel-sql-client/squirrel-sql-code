@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#522 New checkbox "Load connection's current catalog only" in New Session properties.
+  See menu File -->  New Session properties --> Tab Object tree --> Second checkbox from the top.
+
 SQL Result: The "Mark duplicates ..." function now has four modes:
   1. Mark duplicate values in columns.
   2. Mark duplicate values in columns if they appear in consecutive rows.

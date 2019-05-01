@@ -24,6 +24,7 @@ import java.io.Serializable;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
@@ -71,6 +72,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String LARGE_RESULT_SET_OBJECT_INFO = "largeResultSetObjectInfo";
       String LIMIT_SQL_ENTRY_HISTORY_SIZE = "limitSqlEntryHistorySize";
       String LOAD_SCHEMAS_CATALOGS = "loadCatalogsSchemas";
+      String LOAD_CONNECTIONS_CURRENT_CATALOG_ONLY = "loadConnectionsCurrentCatalogOnly";
       String MAIN_TAB_PLACEMENT = "mainTabPlacement";
       String SQL_PANEL_ORIENTATION = "sqlPanelOrientation";
       String META_DATA_OUTPUT_CLASS_NAME = "metaDataOutputClassName";
@@ -128,6 +130,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
     */
    private boolean _loadSchemasCatalogs = true;
 
+   private boolean _loadConnectionsCurrentCatalogOnly;
 
 
    /** Limit schema objects to those in this comma-delimited list.	*/
@@ -247,7 +250,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
 
 
    /**
-    * @see net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo.loadColumns()
+    * @see SchemaInfo.loadColumns()
     */
    private boolean _loadColumnsInBackground;
 
@@ -1142,9 +1145,23 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    {
       final boolean oldValue = _loadSchemasCatalogs;
       _loadSchemasCatalogs = data;
-      getPropertyChangeReporter().firePropertyChange(
-         IPropertyNames.LOAD_SCHEMAS_CATALOGS, oldValue, _loadSchemasCatalogs);
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.LOAD_SCHEMAS_CATALOGS, oldValue, _loadSchemasCatalogs);
    }
+
+
+   public boolean getLoadConnectionsCurrentCatalogOnly()
+   {
+      return _loadConnectionsCurrentCatalogOnly;
+   }
+
+   public void setLoadConnectionsCurrentCatalogOnly(boolean data)
+   {
+      final boolean oldValue = _loadConnectionsCurrentCatalogOnly;
+      _loadConnectionsCurrentCatalogOnly = data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.LOAD_CONNECTIONS_CURRENT_CATALOG_ONLY, oldValue, _loadConnectionsCurrentCatalogOnly);
+
+   }
+
 
    /**
     * Set <CODE>true</CODE> if sql results meta data should be loaded.

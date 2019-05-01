@@ -184,6 +184,7 @@ public class SessionObjectTreePropertiesPanel
 		private JTextField _objectFilterExclude = new JTextField();
 		// i18n[sessionPropertiesPanel.loadSchemasCatalogs=Load Schemas/Catalogs into object tree]
 		private JCheckBox _loadSchemasCatalogsChk = new JCheckBox(s_stringMgr.getString("sessionPropertiesPanel.loadSchemasCatalogs"));
+		private JCheckBox _loadConnectionsCurrentCatalogOnlyChk = new JCheckBox(s_stringMgr.getString("sessionPropertiesPanel.ConnectionsCurrentCatalogOnly"));
 
 		/**
 		 * This object will update the status of the GUI controls as the user
@@ -203,6 +204,7 @@ public class SessionObjectTreePropertiesPanel
 			_contentsLimitRowsChk.setSelected(props.getContentsLimitRows());
 			_showRowCountChk.setSelected(props.getShowRowCount());
 			_loadSchemasCatalogsChk.setSelected(props.getLoadSchemasCatalogs());
+			_loadConnectionsCurrentCatalogOnlyChk.setSelected(props.getLoadConnectionsCurrentCatalogOnly());
          _catalogFilterInclude.setText(props.getCatalogFilterInclude());
          _schemaFilterInclude.setText(props.getSchemaFilterInclude());
          _tableTypeFilterInclude.setText(props.getTableTypeFilterInclude());
@@ -229,6 +231,8 @@ public class SessionObjectTreePropertiesPanel
          final boolean oldLoadSchemasCatalogs = props.getLoadSchemasCatalogs();
          final boolean newLoadSchemasCatalogs = _loadSchemasCatalogsChk.isSelected();
          props.setLoadSchemasCatalogs(newLoadSchemasCatalogs);
+
+         props.setLoadConnectionsCurrentCatalogOnly(_loadConnectionsCurrentCatalogOnlyChk.isSelected());
 
          final String oldSchemaFilterInclude = props.getSchemaFilterInclude();
          final String oldCatalogFilterInclude = props.getCatalogFilterInclude();
@@ -315,6 +319,10 @@ public class SessionObjectTreePropertiesPanel
 			gbc.gridx = 0;
 			gbc.gridy = 0;
 			pnl.add(_loadSchemasCatalogsChk, gbc);
+
+			++gbc.gridy; // new line
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			pnl.add(_loadConnectionsCurrentCatalogOnlyChk, gbc);
 
 			++gbc.gridy; // new line
 			gbc.gridx = 0;

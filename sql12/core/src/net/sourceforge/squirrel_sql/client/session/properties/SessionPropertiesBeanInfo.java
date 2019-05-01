@@ -115,6 +115,8 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 							"getLimitSQLResultTabs", "setLimitSQLResultTabs"),
 						new PropertyDescriptor(IPropNames.LOAD_SCHEMAS_CATALOGS, SessionProperties.class,
 							"getLoadSchemasCatalogs", "setLoadSchemasCatalogs"),
+						new PropertyDescriptor(IPropNames.LOAD_CONNECTIONS_CURRENT_CATALOG_ONLY, SessionProperties.class,
+							"getLoadConnectionsCurrentCatalogOnly", "setLoadConnectionsCurrentCatalogOnly"),
 						new PropertyDescriptor(IPropNames.SHOW_RESULTS_META_DATA, SessionProperties.class,
 							"getShowResultsMetaData", "setShowResultsMetaData"),
 

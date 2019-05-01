@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -192,9 +193,29 @@ public class DatabaseExpander implements INodeExpander
 		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 		if (session.getProperties().getLoadSchemasCatalogs())
 		{
-			final String[] catalogs = md.getCatalogs();
+			final String[] catalogs;
 
-         CatalogFilterMatcher filterMatcher = new CatalogFilterMatcher(session.getProperties());
+			String connectionsCurrentCatalog = null;
+
+			try
+			{
+				connectionsCurrentCatalog = session.getSQLConnection().getCatalog();
+			}
+			catch (Exception e)
+			{
+				s_log.error("Failed to get connections current catalog", e);
+			}
+
+			if (session.getProperties().getLoadConnectionsCurrentCatalogOnly() && false == StringUtilities.isEmpty(connectionsCurrentCatalog, true))
+			{
+				catalogs = new String[]{connectionsCurrentCatalog};
+			}
+			else
+			{
+				catalogs = md.getCatalogs();
+			}
+
+			CatalogFilterMatcher filterMatcher = new CatalogFilterMatcher(session.getProperties());
 
 			for (int i = 0; i < catalogs.length; ++i)
 			{
