@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionDialogWidget;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -31,6 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -38,7 +40,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 /**
@@ -55,13 +56,13 @@ public class ResultFrame extends SessionDialogWidget
 
    private ISession _session;
    /** SQL Results. */
-	private IResultTab _tab;
+	private IResultTab _resultTab;
    private ResultTabFactory _resultTabFactory;
    private ResultFrameListener _resultFrameListener;
    private JButton _btnReturnToTab;
    private TabButton _btnToggleFind;
    private TabButton _btnFindColumn;
-   private TabToggleButton _btnMarkDuplicates;
+   private MarkDuplicatesChooserController _markDuplicatesChooserController;
    private JCheckBox _chkOnTop;
    private TabButton _btnReRun;
    private JPanel _centerPanel;
@@ -74,7 +75,7 @@ public class ResultFrame extends SessionDialogWidget
     *
     *
     * @param	session		Current session.
-    * @param	tab			SQL results tab.
+    * @param	resultTab			SQL results tab.
     *
     * @param resultTabFactory
     * @param resultFrameListener
@@ -82,11 +83,11 @@ public class ResultFrame extends SessionDialogWidget
     * 			If a <TT>null</TT> <TT>ISession</TT> or
     *			<TT>ResultTab</TT> passed.
     */
-   public ResultFrame(final ISession session, IResultTab tab, ResultTabFactory resultTabFactory, ResultFrameListener resultFrameListener, boolean checkStayOnTop, boolean isOnRerun)
+   public ResultFrame(final ISession session, IResultTab resultTab, ResultTabFactory resultTabFactory, ResultFrameListener resultFrameListener, boolean checkStayOnTop, boolean isOnRerun)
    {
-      super(getFrameTitle(session, tab), true, true, true, true, session);
+      super(getFrameTitle(session, resultTab), true, true, true, true, session);
       _session = session;
-      _tab = tab;
+      _resultTab = resultTab;
       _resultTabFactory = resultTabFactory;
       _resultFrameListener = resultFrameListener;
 
@@ -99,14 +100,11 @@ public class ResultFrame extends SessionDialogWidget
       getContentPane().add(createButtonPanel(session, app, checkStayOnTop), BorderLayout.NORTH);
       _centerPanel = new JPanel(new GridLayout(1,1));
       getContentPane().add(_centerPanel, BorderLayout.CENTER);
-      _centerPanel.add(_tab.getOutputComponent());
+      _centerPanel.add(_resultTab.getTabbedPaneOfResultTabs());
 
       _chkOnTop.addActionListener(e -> onStayOnTopChanged());
 
       _btnReRun.addActionListener(e -> onRerun());
-
-      _btnMarkDuplicates.setSelected(_tab.isMarkDuplicates());
-      _btnMarkDuplicates.addActionListener(e -> onMarkDuplicates(e));
 
       _btnToggleFind.addActionListener(e -> onFind());
 
@@ -120,17 +118,12 @@ public class ResultFrame extends SessionDialogWidget
 
    private void onFind()
    {
-      _tab.toggleShowFindPanel();
+      _resultTab.toggleShowFindPanel();
    }
 
    private void onFindColumn()
    {
-      _tab.findColumn();
-   }
-
-   private void onMarkDuplicates(ActionEvent e)
-   {
-      _tab.markDuplicates(e);
+      _resultTab.findColumn();
    }
 
    private void onRerun()
@@ -138,7 +131,7 @@ public class ResultFrame extends SessionDialogWidget
       _btnReturnToTab.setEnabled(false);
       _btnReRun.setEnabled(false);
       _centerPanel.removeAll();
-      new SQLExecutionHandler(_tab, _session, _tab.getSqlString(), createSQLExecutionHandlerListener(), new ISQLExecutionListener[0]);
+      new SQLExecutionHandler(_resultTab, _session, _resultTab.getSqlString(), createSQLExecutionHandlerListener(), new ISQLExecutionListener[0]);
    }
 
    private ISQLExecutionHandlerListener createSQLExecutionHandlerListener()
@@ -275,29 +268,41 @@ public class ResultFrame extends SessionDialogWidget
       gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5), 0,0);
       pnlButtons.add(new JPanel(), gbc);
 
-      ImageIcon iconReRun = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.RERUN);
-      _btnReRun = new TabButton(iconReRun);
-      _btnReRun.setToolTipText(s_stringMgr.getString("ResultFrame.rerun"));
       gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      pnlButtons.add(_btnReRun, gbc);
-
-
-      ImageIcon iconMarkDuplicates = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.MARK_DUPLICATES);
-      _btnMarkDuplicates = new TabToggleButton(iconMarkDuplicates);
-      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      pnlButtons.add(_btnMarkDuplicates, gbc);
-
-      ImageIcon iconFindColumn = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND_COLUMN);
-      _btnFindColumn = new TabButton(iconFindColumn);
-      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      pnlButtons.add(_btnFindColumn, gbc);
-
-      ImageIcon iconFind = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND);
-      _btnToggleFind = new TabButton(iconFind);
-      gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
-      pnlButtons.add(_btnToggleFind, gbc);
+      pnlButtons.add(createRightButtonsPanel(), gbc);
 
       return pnlButtons;
+   }
+
+   private JPanel createRightButtonsPanel()
+   {
+      JPanel ret = new JPanel(new GridLayout(1,4));
+
+      //GridBagConstraints gbc;
+
+      ImageIcon iconReRun = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.RERUN);
+      _btnReRun = new TabButton(iconReRun);
+      _btnReRun.setToolTipText(s_stringMgr.getString("ResultFrame.rerun"));
+      //gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(_btnReRun);
+
+
+      _markDuplicatesChooserController = new MarkDuplicatesChooserController(_resultTab);
+      _markDuplicatesChooserController.copyStateFrom(_resultTab.getMarkDuplicatesChooserController());
+      //gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(_markDuplicatesChooserController.getComponent());
+
+      ImageIcon iconFindColumn = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND_COLUMN);
+      _btnFindColumn = new TabButton(iconFindColumn);
+      //gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(_btnFindColumn);
+
+      ImageIcon iconFind = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND);
+      _btnToggleFind = new TabButton(iconFind);
+      //gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
+      ret.add(_btnToggleFind);
+
+      return ret;
    }
 
    private void onStayOnTopChanged()
@@ -323,10 +328,10 @@ public class ResultFrame extends SessionDialogWidget
 	 */
 	public void dispose()
 	{
-		if (_tab != null)
+		if (_resultTab != null)
 		{
-			_tab.disposeTab();
-			_tab = null;
+			_resultTab.disposeTab();
+			_resultTab = null;
 		}
 		super.dispose();
 	}
@@ -334,9 +339,9 @@ public class ResultFrame extends SessionDialogWidget
 	public void returnToTabbedPane()
 	{
 		s_log.debug("ResultFrame.returnToTabbedPane()");
-		getContentPane().remove(_tab.getOutputComponent());
-		_tab.returnToTabbedPane();
-		_tab = null;
+		getContentPane().remove(_resultTab.getTabbedPaneOfResultTabs());
+		_resultTab.returnToTabbedPane();
+		_resultTab = null;
 		dispose();
 	}
 
@@ -355,8 +360,13 @@ public class ResultFrame extends SessionDialogWidget
 		return session.getTitle() + " - " + tab.getViewableSqlString();
 	}
 
-   public IResultTab getTab()
+   public IResultTab getResultTab()
    {
-      return _tab;
+      return _resultTab;
+   }
+
+   public MarkDuplicatesChooserController getMarkDuplicatesChooserController()
+   {
+      return _markDuplicatesChooserController;
    }
 }

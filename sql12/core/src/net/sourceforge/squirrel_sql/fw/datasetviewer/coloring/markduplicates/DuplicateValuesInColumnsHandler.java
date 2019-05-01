@@ -1,27 +1,24 @@
-package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring;
+package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
-import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 
-import javax.swing.table.TableColumn;
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeMap;
 
-public class MarkDuplicatesHandler
+public class DuplicateValuesInColumnsHandler implements DuplicateHandler
 {
    private DataSetViewerTable _dataSetViewerTable;
    private HashMap<Integer, TreeMap<Object, Color>> _duplicateValuesByColumnModelIndex;
 
-   public MarkDuplicatesHandler(DataSetViewerTable dataSetViewerTable)
+   public DuplicateValuesInColumnsHandler(DataSetViewerTable dataSetViewerTable)
    {
       _dataSetViewerTable = dataSetViewerTable;
    }
@@ -94,6 +91,12 @@ public class MarkDuplicatesHandler
       }
    }
 
+   @Override
+   public MarkDuplicatesMode getMode()
+   {
+      return MarkDuplicatesMode.DUPLICATE_VALUES_IN_COLUMNS;
+   }
+
    public Color getBackgroundForCell(int row, int column, Object value)
    {
       if(null == _duplicateValuesByColumnModelIndex)
@@ -111,11 +114,5 @@ public class MarkDuplicatesHandler
 
 
       return _duplicateValuesByColumnModelIndex.get(columnModelIndex).get(value);
-   }
-
-
-   public boolean isMarkDuplicates()
-   {
-      return null != _duplicateValuesByColumnModelIndex;
    }
 }

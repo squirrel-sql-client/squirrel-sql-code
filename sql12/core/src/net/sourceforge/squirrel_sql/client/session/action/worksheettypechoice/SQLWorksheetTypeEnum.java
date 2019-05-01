@@ -10,7 +10,7 @@ public enum SQLWorksheetTypeEnum
    private static final String PREF_KEY_SQLWORKSHEET_TYPE = "Squirrel.SQLWorksheetTypeEnum.type";
 
 
-   public static SQLWorksheetTypeEnum getSelecteType()
+   public static SQLWorksheetTypeEnum getSelectedType()
    {
       return valueOf(Props.getString(PREF_KEY_SQLWORKSHEET_TYPE, SQL_WORKSHEET.name()));
    }

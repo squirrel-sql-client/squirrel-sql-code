@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResult
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -103,9 +104,9 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
       return new SQLResultExecuterPanelFacade()
       {
          @Override
-         public void closeResultTab(ResultTab resultTab)
+         public void closeResultTab(IResultTab resultTab)
          {
-            _resultTabClosing.closeTab(resultTab);
+            _resultTabClosing.closeTab(resultTab.getCompleteResultTab());
          }
 
          @Override
@@ -115,7 +116,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
          }
 
          @Override
-         public void createSQLResultFrame(ResultTab resultTab)
+         public void createSQLResultFrame(IResultTab resultTab)
          {
             SQLResultExecuterPanel.this.createSQLResultFrame(resultTab);
          }
@@ -578,14 +579,14 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ResultTab</TT> passed.
 	 */
-	private void createSQLResultFrame(ResultTab tab)
+	private void createSQLResultFrame(IResultTab tab)
 	{
 		if (tab == null)
 		{
 			throw new IllegalArgumentException("Null ResultTab passed");
 		}
 
-		_tabbedExecutionsPanel.remove(tab);
+		_tabbedExecutionsPanel.remove(tab.getCompleteResultTab());
 
 
       ResultFrameListener resultFrameListener = new ResultFrameListener()
@@ -623,13 +624,12 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 			throw new IllegalArgumentException("Null ResultTab passed");
 		}
 
-		s_log.debug("SQLPanel.returnToTabbedPane("
-				+ tab.getIdentifier().toString() + ")");
-
+      MarkDuplicatesChooserController resultFramesMarkDuplicatesChooserController = null;
       for (ResultFrame sqlResultFrame : _sqlResultFrames)
       {
-         if(tab == sqlResultFrame.getTab())
+         if(tab == sqlResultFrame.getResultTab())
          {
+            resultFramesMarkDuplicatesChooserController = sqlResultFrame.getMarkDuplicatesChooserController();
             _sqlResultFrames.remove(sqlResultFrame);
             break;
          }
@@ -638,7 +638,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 
       addResultsTab(tab, null);
 
-      tab.wasReturnedToTabbedPane();
+      tab.wasReturnedToTabbedPane(resultFramesMarkDuplicatesChooserController);
 
       _tabbedExecutionsPanel.setSelectedComponent(tab);
 

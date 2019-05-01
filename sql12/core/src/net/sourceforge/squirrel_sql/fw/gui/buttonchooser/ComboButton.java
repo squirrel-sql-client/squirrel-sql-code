@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice;
+package net.sourceforge.squirrel_sql.fw.gui.buttonchooser;
 
 import javax.swing.JButton;
 import java.awt.Color;

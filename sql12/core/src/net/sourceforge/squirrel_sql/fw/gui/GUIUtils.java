@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.fw.gui;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDialogDelegate;
 import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -34,6 +33,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -701,15 +701,22 @@ public class GUIUtils
 
 	}
 
-   public static void styleAsToolbarButton(AbstractButton btn)
+	/**
+	 * @return Just for convenience returns the btn parameter
+	 */
+   public static <T extends AbstractButton> T styleAsToolbarButton(T btn)
    {
-   	styleAsToolbarButton(btn, false);
+   	return styleAsToolbarButton(btn, false);
 	}
 
-   public static void styleAsToolbarButton(AbstractButton btn, boolean focusable)
+	/**
+	 * @return Just for convenience returns the btn parameter
+	 */
+   public static <T extends AbstractButton> T styleAsToolbarButton(T btn, boolean focusable)
    {
-      btn.setContentAreaFilled(false);
-      btn.setBorder(BorderFactory.createEtchedBorder());
+		setButtonContentAreaFilledRespectSelectedToggle(btn, false);
+
+		btn.setBorder(BorderFactory.createEtchedBorder());
 
 		btn.setFocusable(focusable);
 
@@ -717,16 +724,30 @@ public class GUIUtils
          @Override
          public void mouseEntered(MouseEvent e)
          {
-            btn.setContentAreaFilled(true);
+				setButtonContentAreaFilledRespectSelectedToggle(btn, true);
          }
 
          @Override
          public void mouseExited(MouseEvent e)
          {
-            btn.setContentAreaFilled(false);
+				setButtonContentAreaFilledRespectSelectedToggle(btn, false);
          }
       });
+
+      return btn;
    }
+
+	private static void setButtonContentAreaFilledRespectSelectedToggle(AbstractButton btn, boolean b)
+	{
+		if (btn instanceof JToggleButton && ((JToggleButton)btn).isSelected())
+		{
+			btn.setContentAreaFilled(true);
+			return;
+		}
+
+
+		btn.setContentAreaFilled(b);
+	}
 
 	public static void listenToMouseWheelClickOnTab(JTabbedPane tabbedPane, MouseWheelClickOnTabListener mouseWheelClickOnTabListener)
 	{

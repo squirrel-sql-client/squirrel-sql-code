@@ -22,61 +22,56 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesHandler;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
-public interface IResultTab {
+import javax.swing.JComponent;
 
-    /**
-     * Show the results from the passed <TT>IDataSet</TT>.
-     *
-     * @param	rsds	<TT>ResultSetDataSet</TT> to show results for.
-     * @param	mdds	<TT>ResultSetMetaDataDataSet</TT> for rsds.
-     *
-     * @throws	IllegalArgumentException
-     * 			Thrown if <tt>null</tt> <tt>SQLExecutionInfo</tt> passed.
-     *
-     * @throws	DataSetException
-     * 			Thrown if error occurred processing dataset.
-     */
-    void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds) throws DataSetException;
+public interface IResultTab
+{
+   /**
+    * Return the current SQL script.
+    *
+    * @return Current SQL script.
+    */
+   String getSqlString();
 
    /**
-     * Return the current SQL script.
-     *
-     * @return	Current SQL script.
-     */
-    String getSqlString();
-
-    /**
-     * Return the current SQL script with control characters removed.
-     *
-     * @return	Current SQL script.
-     */
-    String getViewableSqlString();
-
-    /**
-     * Return the title for this tab.
-     */
-    String getTitle();
+    * Return the current SQL script with control characters removed.
+    *
+    * @return Current SQL script.
+    */
+   String getViewableSqlString();
 
    void disposeTab();
 
-    void returnToTabbedPane();
+   void returnToTabbedPane();
 
-    Component getOutputComponent();
+   /**
+    * The tabbed pane of a single SQL result.
+    * The tabs are "Results", "Meta data", "Info", ...
+    * {@link #getCompleteResultTab()}
+    */
+   JComponent getTabbedPaneOfResultTabs();
 
-    void reRunSQL();
+   /**
+    * The complete Result tab with top buttons and everything.
+    * This is the component that is contained in the tabbed pane of all results.
+    * See also {@link #getTabbedPaneOfResultTabs()}
+    */
+   JComponent getCompleteResultTab();
 
-    /**
-     * @see IHasIdentifier#getIdentifier()
-     */
-    IIdentifier getIdentifier();
 
-    TableState getResultSortableTableState();
+   void reRunSQL();
+
+   TableState getResultSortableTableState();
 
    void toggleShowFindPanel();
 
@@ -84,6 +79,9 @@ public interface IResultTab {
 
    void markDuplicates(ActionEvent e);
 
-   boolean isMarkDuplicates();
+   MarkDuplicatesChooserController getMarkDuplicatesChooserController();
 
+   SQLResultExecuterPanelFacade getSQLResultExecuterPanelFacade();
+
+   IDataSetViewer getSQLResultDataSetViewer();
 }

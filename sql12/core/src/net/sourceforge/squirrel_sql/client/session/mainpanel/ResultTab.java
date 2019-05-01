@@ -32,11 +32,10 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Cl
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.MarkDuplicatesHandler;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
@@ -106,7 +105,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private ResultLabelNameSwitcher _resultLabelNameSwitcher;
    private AdditionalResultTabsController _additionalResultTabsController;
-   private TabToggleButton _btnToggleMarkDuplicates;
+   private MarkDuplicatesChooserController _markDuplicatesChooserController;
 
    /**
     * Ctor.
@@ -387,12 +386,20 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		_sqlResultExecuterPanelFacade.returnToTabbedPane(this);
 	}
 
-	public Component getOutputComponent()
+   @Override
+	public JComponent getTabbedPaneOfResultTabs()
 	{
 		return _tabResultTabs;
 	}
 
-    /**
+   @Override
+   public JComponent getCompleteResultTab()
+   {
+      return this;
+   }
+
+
+   /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#reRunSQL()
      */
     public void reRunSQL()
@@ -548,8 +555,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       ret.add(_readMoreResultsHandler.getLoadingLabel());
       ret.add(new TabButton(getRerunCurrentSQLResultTabAction()));
 
-      _btnToggleMarkDuplicates = new TabToggleButton(new MarkDuplicatesToggleAction(this));
-      ret.add(_btnToggleMarkDuplicates);
+      _markDuplicatesChooserController = new MarkDuplicatesChooserController(this);
+      ret.add(_markDuplicatesChooserController.getComponent());
 
       ret.add(new TabButton(new FindColumnAction(this)));
       ret.add(new TabButton(new FindInResultAction(this)));
@@ -615,43 +622,23 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    @Override
    public void markDuplicates(ActionEvent e)
    {
-      if(e.getSource() != _btnToggleMarkDuplicates)
+      if(_markDuplicatesChooserController.actionWasFired(e))
       {
-         // Happens through shortcut or menu.
-         _btnToggleMarkDuplicates.doClick();
-         return;
+         _tabResultTabs.setSelectedIndex(0);
       }
-
-
-      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
-
-      MarkDuplicatesHandler markDuplicatesHandler = dataSetViewerTablePanel.getTable().getColoringService().getMarkDuplicatesHandler();
-
-      _tabResultTabs.setSelectedIndex(0);
-
-      markDuplicatesHandler.markDuplicates(_btnToggleMarkDuplicates.isSelected());
    }
 
    @Override
-   public boolean isMarkDuplicates()
+   public MarkDuplicatesChooserController getMarkDuplicatesChooserController()
    {
-      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
-
-      MarkDuplicatesHandler markDuplicatesHandler = dataSetViewerTablePanel.getTable().getColoringService().getMarkDuplicatesHandler();
-
-      return markDuplicatesHandler.isMarkDuplicates();
+      return _markDuplicatesChooserController;
 
    }
 
-   public void wasReturnedToTabbedPane()
+   public void wasReturnedToTabbedPane(MarkDuplicatesChooserController resultFramesMarkDuplicatesChooserController)
    {
-      DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
-
-      MarkDuplicatesHandler markDuplicatesHandler = dataSetViewerTablePanel.getTable().getColoringService().getMarkDuplicatesHandler();
-
-      _btnToggleMarkDuplicates.setSelected(markDuplicatesHandler.isMarkDuplicates());
+      _markDuplicatesChooserController.copyStateFrom(resultFramesMarkDuplicatesChooserController);
    }
-
 
 
    /**
@@ -679,6 +666,11 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       return _sqlResultExecuterPanelFacade;
    }
 
+   @Override
+   public IDataSetViewer getSQLResultDataSetViewer()
+   {
+      return _resultDataSetViewerFindHandler.getDataSetViewer();
+   }
 
    private DataSetViewerFindHandler getDataSetViewerFindHandlerOfSelectedTabOrNull()
    {

@@ -352,7 +352,7 @@ public class SortableTableModel extends AbstractTableModel
 	{
       private int _iColumn;
       private int _iAscending;
-      private final Collator _collator = Collator.getInstance();
+      private final SquirrelTableCellValueCollator _collator = new SquirrelTableCellValueCollator();
       private boolean _allDataIsString = true;
 
       public TableModelComparator(int iColumn, ColumnOrder compColumnOrder)
@@ -366,8 +366,6 @@ public class SortableTableModel extends AbstractTableModel
 			{
 				_iAscending = -1;
 			}
-			 _collator.setStrength(Collator.PRIMARY);
-			 _collator.setStrength(Collator.TERTIARY);
 
 			 for (int i = 0, limit = _actualModel.getRowCount(); i < limit; ++i)
 			 {
@@ -387,37 +385,8 @@ public class SortableTableModel extends AbstractTableModel
 		{
 			final Object data1 = _actualModel.getValueAt(i1.intValue(), _iColumn);
 			final Object data2 = _actualModel.getValueAt(i2.intValue(), _iColumn);
-			try
-			{
-				if (data1 == null && data2 == null)
-				{
-					return 0;
-				}
-				if (data1 == null)
-				{
-					return 1 * _iAscending;
-				}
-				if (data2 == null)
-				{
-					return -1 * _iAscending;
-				}
-//				Comparable c1 = (Comparable)data1;
-//				return c1.compareTo(data2) * _iAscending;
-
-				 if (!_allDataIsString)
-				 {
-					 final Comparable c1 = (Comparable)data1;
-					 return c1.compareTo(data2) * _iAscending;
-				 }
- //				return _collator.compare(data1.toString(), data2.toString()) * _iAscending;
-				 return _collator.compare((String)data1, (String)data2) * _iAscending;
-			}
-			catch (ClassCastException ex)
-			{
-				return data1.toString().compareTo(data2.toString()) * _iAscending;
-			}
+			return _collator.compareTableCellValues(data1, data2, _iAscending, _allDataIsString);
 		}
-
 	}
 
 	protected class MyTableModelListener implements TableModelListener

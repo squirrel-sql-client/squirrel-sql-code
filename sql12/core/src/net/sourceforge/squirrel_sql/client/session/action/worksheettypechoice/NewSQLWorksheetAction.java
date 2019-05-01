@@ -54,7 +54,7 @@ public class NewSQLWorksheetAction extends SquirrelAction implements ISessionAct
 
    public void actionPerformed(ActionEvent evt)
    {
-      switch (SQLWorksheetTypeEnum.getSelecteType())
+      switch (SQLWorksheetTypeEnum.getSelectedType())
       {
          case SQL_WORKSHEET:
             getApplication().getWindowManager().createSQLInternalFrame(_session);
@@ -67,7 +67,7 @@ public class NewSQLWorksheetAction extends SquirrelAction implements ISessionAct
             _session.getSessionInternalFrame().moveToFront();
             break;
          default:
-            throw new IllegalStateException("Unknown selected SQLWorksheetTypeEnum " + SQLWorksheetTypeEnum.getSelecteType());
+            throw new IllegalStateException("Unknown selected SQLWorksheetTypeEnum " + SQLWorksheetTypeEnum.getSelectedType());
 
       }
    }

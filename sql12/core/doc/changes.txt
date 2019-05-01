@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+SQL Result: The "Mark duplicates ..." function now has four modes:
+  1. Mark duplicate values in columns.
+  2. Mark duplicate values in columns if they appear in consecutive rows.
+  3. Mark duplicate rows.
+  4. Mark consecutive duplicate rows.
+
 Merge Request #41: Added Elasticsearch driver definition
   Thanks to Costin Leau for the merge request.
 

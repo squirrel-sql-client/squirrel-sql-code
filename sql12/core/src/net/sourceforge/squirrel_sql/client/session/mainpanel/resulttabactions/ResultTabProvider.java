@@ -8,9 +8,9 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
 public class ResultTabProvider
 {
    private ISQLPanelAPI _panel;
-   private ResultTab _resultTab;
+   private IResultTab _resultTab;
 
-   public ResultTabProvider(ResultTab resultTab)
+   public ResultTabProvider(IResultTab resultTab)
    {
       _resultTab = resultTab;
    }
@@ -21,7 +21,7 @@ public class ResultTabProvider
       return null != _panel;
    }
 
-   public ResultTab getResultTab()
+   public IResultTab getResultTab()
    {
       if (null != _resultTab)
       {
@@ -36,7 +36,7 @@ public class ResultTabProvider
             IResultTab selectedResultTab = sqlResultExecuter.getSelectedResultTab();
             if (selectedResultTab != null)
             {
-               return (ResultTab) selectedResultTab;
+               return selectedResultTab;
             }
          }
       }

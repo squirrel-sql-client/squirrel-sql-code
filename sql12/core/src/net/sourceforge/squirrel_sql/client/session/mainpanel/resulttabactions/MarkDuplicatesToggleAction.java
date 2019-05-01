@@ -4,8 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.TabToggleButton;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 
 import java.awt.event.ActionEvent;
 
@@ -13,7 +12,7 @@ public class MarkDuplicatesToggleAction extends SquirrelAction implements ISQLPa
 {
    private ResultTabProvider _resultTabProvider;
 
-   public MarkDuplicatesToggleAction(ResultTab resultTab)
+   public MarkDuplicatesToggleAction(IResultTab resultTab)
    {
       super(Main.getApplication(), Main.getApplication().getResources());
       _resultTabProvider = new ResultTabProvider(resultTab);

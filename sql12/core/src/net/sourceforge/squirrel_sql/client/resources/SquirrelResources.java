@@ -73,7 +73,13 @@ public class SquirrelResources extends Resources
 
       String FIND = "find";
       String FIND_COLUMN = "findColumn";
-      String MARK_DUPLICATES = "duplicate";
+
+      String DUPLICATE = "duplicate";
+      String DUPLICATE_VALUES_IN_COLUMNS = "duplicateValuesInColumns";
+      String DUPLICATE_VALUES_IN_COLUMNS_IF_CONSECUTIVE = "duplicateValuesInColumnsIfConsecutive";
+      String DUPLICATE_ROWS = "duplicateRows";
+      String DUPLICATE_ROWS_IF_CONSECUTIVE = "duplicateRowsIfConsecutive";
+
       String FILTER = "filter";
 
       String AUTOHIDE_ON = "autohideOn";
@@ -122,7 +128,9 @@ public class SquirrelResources extends Resources
       String PLUS = "plus";
       String MINUS = "minus";
 		String FILE_ARROW = "file_arrow";
-	}
+
+		String UNDEFINED = "undefined";
+   }
 
 	public SquirrelResources(String rsrcBundleBaseName)
 		throws IllegalArgumentException
