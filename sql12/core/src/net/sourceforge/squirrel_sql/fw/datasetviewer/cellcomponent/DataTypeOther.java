@@ -338,21 +338,18 @@ public class DataTypeOther extends BaseDataTypeComponent
 			// the class (at least under PostgreSQL).
 			//row[i] = _rs.getObject(index);
 			data = rs.getString(index);
+
+			if (rs.wasNull())
+			{
+				data = null;
+			}
 		}
 		else
 		{
 			data = s_stringMgr.getString("DataTypeOther.other");
 		}
-		
-		if (rs.wasNull())
-			return null;
-		else return data;
 
-		
-//		String data = rs.getString(index);
-//		if (rs.wasNull())
-//			return null;
-//		else return data;
+		return data;
 	}
 
 	/**
