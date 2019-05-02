@@ -97,7 +97,7 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 		//log.info("Removed comments: " + sql);
 
 		// Removes /*  */ comments
-		sql = sql.replaceAll("/\\*(.|\\s)*\\*/", "");
+		sql = sql.replaceAll("\\/\\*(.|\\s)*?\\*\\/", "");
 
 		StringBuffer buffer = new StringBuffer(sql);
 		Map<String, String> cache = plugin.getCache();
