@@ -63,6 +63,8 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+Session menu: Replaced menu name "NewSQLWorksheetActionDummyName" by "New SQL worksheet / New SQL tab"
+
 Error in SQL Parametrisation Plugin:
   SQLs with comments like
   "SELECT * FROM myTable where /*com1*/ id = :myId /*com2*/ ORDER BY id"
