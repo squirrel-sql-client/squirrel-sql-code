@@ -63,6 +63,10 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+#1392 Code completion on a field shows a wrong sorted list -->
+  The behavior is now configurable, see menu File --> New Session properties --> Tab Code completion --> Check box at bottom.
+  By default the list is sorted in alphabetical order.
+
 Session menu: Replaced menu name "NewSQLWorksheetActionDummyName" by "New SQL worksheet / New SQL tab"
 
 Error in SQL Parametrisation Plugin:

@@ -17,6 +17,7 @@ public class CodeCompletionPreferences implements Serializable
    private boolean _showRemarksInColumnCompletion;
    private boolean _matchCamelCase;
    private boolean _includeUDTs = true;
+   private boolean _sortColumnsAlphabetically = true;
 
    public int getGeneralCompletionConfig()
 	{
@@ -76,5 +77,15 @@ public class CodeCompletionPreferences implements Serializable
    public void setIncludeUDTs(boolean includeUDTs)
    {
       _includeUDTs = includeUDTs;
+   }
+
+   public boolean isSortColumnsAlphabetically()
+   {
+      return _sortColumnsAlphabetically;
+   }
+
+   public void setSortColumnsAlphabetically(boolean sortColumnsAlphabetically)
+   {
+      _sortColumnsAlphabetically = sortColumnsAlphabetically;
    }
 }

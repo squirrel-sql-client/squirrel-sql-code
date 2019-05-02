@@ -177,7 +177,10 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
             }
          }
 
-         ret.sort(Comparator.comparing(codeCompletionColumnInfo -> codeCompletionColumnInfo.getCompareString().toUpperCase()));
+         if (_prefs.isSortColumnsAlphabetically())
+         {
+            ret.sort(Comparator.comparing(codeCompletionColumnInfo -> codeCompletionColumnInfo.getCompareString().toUpperCase()));
+         }
 
          return ret;
       }

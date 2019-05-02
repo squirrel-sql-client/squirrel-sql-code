@@ -27,6 +27,7 @@ public class CodeCompletionPreferencesPanel extends JPanel
    JCheckBox chkShowRemarksInColumnCompletion;
    JCheckBox chkMatchCamelCase;
    JCheckBox chkIncludeUDTs;
+   JCheckBox chkSortColumnsAlphabetically;
 
 
    public CodeCompletionPreferencesPanel()
@@ -97,9 +98,13 @@ public class CodeCompletionPreferencesPanel extends JPanel
       chkMatchCamelCase = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.matchCamelCase"));
       add(chkMatchCamelCase,gbc);
 
-      gbc = new GridBagConstraints(0,12,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
+      gbc = new GridBagConstraints(0,12,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0 );
       chkIncludeUDTs = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.includeUDTs"));
       add(chkIncludeUDTs, gbc);
+
+      gbc = new GridBagConstraints(0,13,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0 );
+      chkSortColumnsAlphabetically = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.SortColumnsAlphabetically"));
+      add(chkSortColumnsAlphabetically, gbc);
    }
 
 
