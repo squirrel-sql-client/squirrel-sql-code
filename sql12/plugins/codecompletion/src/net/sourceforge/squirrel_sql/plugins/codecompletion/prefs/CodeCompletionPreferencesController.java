@@ -68,6 +68,11 @@ public class CodeCompletionPreferencesController
 
 
       _panel.txtMaxLastSelectedCompletionNames.setText("" + _prefs.getMaxLastSelectedCompletionNames());
+		_panel.chkShowTableNameOfColumnsInCompletion.setSelected(_prefs.isShowTableNameOfColumnsInCompletion());
+		_panel.chkCompleteColumnsQualified.setSelected(_prefs.isCompleteColumnsQualified());
+
+		_panel.chkShowTableNameOfColumnsInCompletion.addActionListener(e -> onShowTableNameOfColumnsInCompletion());
+		onShowTableNameOfColumnsInCompletion();
 
       _panel.chkShowRemarksInColumnCompletion.setSelected(_prefs.isShowRemarksInColumnCompletion());
 
@@ -93,6 +98,19 @@ public class CodeCompletionPreferencesController
 				onDeleteRows();
 			}
 		});
+	}
+
+	private void onShowTableNameOfColumnsInCompletion()
+	{
+		if(_panel.chkShowTableNameOfColumnsInCompletion.isSelected())
+		{
+			_panel.chkCompleteColumnsQualified.setEnabled(true);
+		}
+		else
+		{
+			_panel.chkCompleteColumnsQualified.setSelected(false);
+			_panel.chkCompleteColumnsQualified.setEnabled(false);
+		}
 	}
 
 	private void onDeleteRows()
@@ -172,8 +190,9 @@ public class CodeCompletionPreferencesController
       }
       catch (NumberFormatException e)
       {
-
       }
+		_prefs.setShowTableNameOfColumnsInCompletion(_panel.chkShowTableNameOfColumnsInCompletion.isSelected());
+		_prefs.setCompleteColumnsQualified(_panel.chkCompleteColumnsQualified.isSelected());
 
       _prefs.setShowRemarksInColumnCompletion(_panel.chkShowRemarksInColumnCompletion.isSelected());
 

@@ -18,14 +18,18 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 
+import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
+
 public class CodeCompletionColumnInfo extends CodeCompletionInfo
 {
+   private String _tableName;
    private String _columnName;
    private String _columnType;
    private int _columnSize;
    private boolean _nullable;
-   private boolean _useCompletionPrefs;
-   private boolean _showRemarksInColumnCompletion;
+   private CodeCompletionPreferences _prefs;
 
    private String _toString;
    private int _decimalDigits;
@@ -33,28 +37,63 @@ public class CodeCompletionColumnInfo extends CodeCompletionInfo
    private String _remarks;
 
 
-   public CodeCompletionColumnInfo(String columnName, String remarks, String columnType, int columnSize, int decimalDigits, boolean nullable, boolean useCompletionPrefs, boolean showRemarksInColumnCompletion)
+   public CodeCompletionColumnInfo(String tableName, String columnName, String remarks, String columnType, int columnSize, int decimalDigits, boolean nullable, CodeCompletionPreferences prefs)
    {
+      _tableName = tableName;
       _columnName = columnName;
       _columnType = columnType;
       _columnSize = columnSize;
       _decimalDigits = decimalDigits;
       _nullable = nullable;
-      _useCompletionPrefs = useCompletionPrefs;
-      _showRemarksInColumnCompletion = showRemarksInColumnCompletion;
+      _prefs = prefs;
       String decimalDigitsString = 0 == _decimalDigits ? "" : "," + _decimalDigits;
       _remarks = remarks;
-      _toString = _columnName + getRemarksString() + _columnType + "(" + _columnSize + decimalDigitsString + ") " + (_nullable? "NULL": "NOT NULL");
+      //_toString = getTableName() + _columnName + getRemarksString() + _columnType + "(" + _columnSize + decimalDigitsString + ") " + (_nullable? "NULL": "NOT NULL");
+      _toString = _columnName + getTableName() + getRemarksString() + _columnType + "(" + _columnSize + decimalDigitsString + ") " + (_nullable? "NULL": "NOT NULL");
+   }
+
+   private String getTableName()
+   {
+      if(false == _prefs.isShowTableNameOfColumnsInCompletion() || StringUtilities.isEmpty(_tableName, true))
+      {
+         return "";
+      }
+
+      return " (" + _tableName + ")";
+   }
+
+   private String getTableQualifier()
+   {
+      if(StringUtilities.isEmpty(_tableName, true))
+      {
+         return "";
+      }
+
+      //return _tableName.trim() + ".";
+      return _tableName + ".";
    }
 
    private String getRemarksString()
    {
       String ret = " ";
-      if (_showRemarksInColumnCompletion && null != _remarks && 0 < _remarks.trim().length())
+      if (_prefs.isShowRemarksInColumnCompletion() && null != _remarks && 0 < _remarks.trim().length())
       {
          ret = " (" + _remarks + ")  ";
       }
       return ret;
+   }
+
+   @Override
+   public String getCompletionString(CompletionParser completionParser)
+   {
+      if ( false == completionParser.isQualified() && _prefs.isCompleteColumnsQualified())
+      {
+         return getTableQualifier() + getCompareString();
+      }
+      else
+      {
+         return super.getCompletionString();
+      }
    }
 
    public String getCompareString()

@@ -7,7 +7,7 @@ public class CompletionParser
 {
    private static final String DEREF_CHAR = ".";
 
-   private ArrayList<String> _tokens = new ArrayList<String>();
+   private ArrayList<String> _tokens;
    private String _stringToParse;
    private int _stringToParsePosition;
    private String _stringToReplace;
@@ -27,7 +27,7 @@ public class CompletionParser
       _stringToParsePosition = CompletionUtils.getStringToParsePosition ( textTillCarret );
 
       StringTokenizer st = new StringTokenizer(_stringToParse, DEREF_CHAR);
-      _tokens = new ArrayList<String>();
+      _tokens = new ArrayList<>();
       while(st.hasMoreTokens())
       {
          _tokens.add(st.nextToken());
@@ -51,7 +51,7 @@ public class CompletionParser
 
 
    /**
-    * True when _stringToParse contains a DEREF_CHAR.
+    * True when _stringToParse contains a {@link DEREF_CHAR}.
     */
    public boolean isQualified()
    {

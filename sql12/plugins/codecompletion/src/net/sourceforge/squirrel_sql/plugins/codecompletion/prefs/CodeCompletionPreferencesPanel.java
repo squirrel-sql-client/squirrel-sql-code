@@ -23,7 +23,11 @@ public class CodeCompletionPreferencesPanel extends JPanel
 
 	JButton btnNewRow;
 	JButton btnDeleteRows;
-   JTextField txtMaxLastSelectedCompletionNames;
+
+	JTextField txtMaxLastSelectedCompletionNames;
+   JCheckBox chkShowTableNameOfColumnsInCompletion;
+   JCheckBox chkCompleteColumnsQualified;
+
    JCheckBox chkShowRemarksInColumnCompletion;
    JCheckBox chkMatchCamelCase;
    JCheckBox chkIncludeUDTs;
@@ -119,7 +123,6 @@ public class CodeCompletionPreferencesPanel extends JPanel
       // i18n[CodeCompletionPreferencesPanel.maxLastSelectedCompletionNames=If you call code completion without being in the scope of a table,
       //for which number of tables the parser last found would you like to see colums on top of the completion list?]
       MultipleLineLabel lbl = new MultipleLineLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.maxLastSelectedCompletionNames"));
-      //JLabel lbl = new JLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.maxLastSelectedCompletionNames"));
       gbc = new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0);
       ret.add(lbl, gbc);
 
@@ -133,6 +136,19 @@ public class CodeCompletionPreferencesPanel extends JPanel
       // i18n[CodeCompletionPreferencesPanel.numberOfTables=number of tables]
       gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 5, 5), 0, 0);
       ret.add(new JLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.numberOfTables")), gbc);
+
+      MultipleLineLabel lblNote = new MultipleLineLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.note.duplicate.column.names"));
+      gbc = new GridBagConstraints(0, 2, 2, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0);
+      ret.add(lblNote, gbc);
+
+      chkShowTableNameOfColumnsInCompletion = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.show.tableNames.of.columns.in.completion.popup"));
+      gbc = new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 3, 5), 0, 0);
+      ret.add(chkShowTableNameOfColumnsInCompletion, gbc);
+
+      chkCompleteColumnsQualified = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.complete.columns.qualified.by.tableName"));
+      gbc = new GridBagConstraints(0, 4, 2, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 25, 5, 5), 0, 0);
+      ret.add(chkCompleteColumnsQualified, gbc);
+
 
       ret.setBorder(BorderFactory.createEtchedBorder());
 

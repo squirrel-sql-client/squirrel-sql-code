@@ -249,7 +249,7 @@ public class Completor
 
    private void reInitListLater()
    {
-      _currCandidates = _model.getCompletionCandidates(getTextTillCarret());
+      _currCandidates = _model.getCompletionCandidates(getTextTillCaret());
 
       if(0 == _currCandidates.getCandidates().length && _txtComp.editorEqualsFilter())
       {
@@ -266,7 +266,7 @@ public class Completor
     * @return If there is an extra filter text field the complete text in this text field is returned
     * @throws BadLocationException
     */
-   public String getTextTillCarret()
+   public String getTextTillCaret()
    {
       try
       {
@@ -346,7 +346,7 @@ public class Completor
 	{
 		try
 		{
-			_currCandidates = _model.getCompletionCandidates(getTextTillCarret());
+			_currCandidates = _model.getCompletionCandidates(getTextTillCaret());
 
 			if(0 == _currCandidates.getCandidates().length)
 			{

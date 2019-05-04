@@ -18,6 +18,7 @@
 package net.sourceforge.squirrel_sql.fw.completion;
 
 
+import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 
 public abstract class CompletionInfo implements Comparable<CompletionInfo>
 {
@@ -25,6 +26,15 @@ public abstract class CompletionInfo implements Comparable<CompletionInfo>
    private String _completionString;
 
    public abstract String getCompareString();
+
+
+   /**
+    * @param completionParser Provides information about the text position where the completion is executed. E.g. can be asked if the completion takes place for a qualified column.
+    */
+   public String getCompletionString(CompletionParser completionParser)
+   {
+      return getCompletionString();
+   }
 
    public String getCompletionString()
    {

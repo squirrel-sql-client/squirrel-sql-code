@@ -24,6 +24,7 @@ import java.util.HashSet;
 
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -87,7 +88,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
       return _tableName;
    }
 
-   public ArrayList<? extends CodeCompletionInfo> getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern)
+   public ArrayList<? extends CodeCompletionInfo> getColumns(SchemaInfo schemaInfo, String colNamePattern)
    {
       try
       {
@@ -111,7 +112,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
                   boolean nullable = schemColInfos[i].isNullable();
 
                   CodeCompletionColumnInfo buf =
-                     new CodeCompletionColumnInfo(columnName, remarks, columnType, columnSize, decimalDigits, nullable, _useCompletionPrefs, _prefs.isShowRemarksInColumnCompletion());
+                     new CodeCompletionColumnInfo(_tableName, columnName, remarks, columnType, columnSize, decimalDigits, nullable, _prefs);
 
                   String bufStr = buf.toString();
                   if (!uniqCols.contains(bufStr))
@@ -134,14 +135,14 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
                {
                   CodeCompletionColumnInfo buf =
                         new CodeCompletionColumnInfo(
+                              _tableName,
                               ti[x].getColumnName(),
                               ti[x].getRemarks(),
                               ti[x].getTypeName(),
                               ti[x].getColumnSize(),
                               ti[x].getDecimalDigits(),
                               (ti[x].isNullable().equals("NO")) ? false : true,
-                              _useCompletionPrefs,
-                              _prefs.isShowRemarksInColumnCompletion()
+                              _prefs
                         );
 
                   String bufStr = buf.toString();

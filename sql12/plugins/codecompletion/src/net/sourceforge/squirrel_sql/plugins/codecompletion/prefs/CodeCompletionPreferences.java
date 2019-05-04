@@ -18,6 +18,8 @@ public class CodeCompletionPreferences implements Serializable
    private boolean _matchCamelCase;
    private boolean _includeUDTs = true;
    private boolean _sortColumnsAlphabetically = true;
+   private boolean _showTableNameOfColumnsInCompletion;
+   private boolean _completeColumnsQualified;
 
    public int getGeneralCompletionConfig()
 	{
@@ -87,5 +89,25 @@ public class CodeCompletionPreferences implements Serializable
    public void setSortColumnsAlphabetically(boolean sortColumnsAlphabetically)
    {
       _sortColumnsAlphabetically = sortColumnsAlphabetically;
+   }
+
+   public boolean isShowTableNameOfColumnsInCompletion()
+   {
+      return _showTableNameOfColumnsInCompletion;
+   }
+
+   public void setShowTableNameOfColumnsInCompletion(boolean showTableNameOfColumnsInCompletion)
+   {
+      _showTableNameOfColumnsInCompletion = showTableNameOfColumnsInCompletion;
+   }
+
+   public boolean isCompleteColumnsQualified()
+   {
+      return _completeColumnsQualified;
+   }
+
+   public void setCompleteColumnsQualified(boolean completeColumnsQualified)
+   {
+      _completeColumnsQualified = completeColumnsQualified;
    }
 }

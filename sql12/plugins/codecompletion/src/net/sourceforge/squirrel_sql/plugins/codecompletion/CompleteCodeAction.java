@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
+import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -92,12 +93,14 @@ public class CompleteCodeAction extends SquirrelAction
 	private void performCompletionSelected(CodeCompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
 	{
 
+      String textTillCaret = _cc.getTextTillCaret();
+
       if(KeyEvent.VK_SPACE == keyCode && modifiers == KeyEvent.CTRL_MASK)
       {
          // Code Completion has been done within Code Completion.
          // and relaunch completion popup.  
 
-         CompletionCandidates completionCandidates = _model.getCompletionCandidates(_cc.getTextTillCarret());
+         CompletionCandidates completionCandidates = _model.getCompletionCandidates(textTillCaret);
 
          _sqlEntryPanel.setSelectionStart(replaceBegin);
          _sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
@@ -109,7 +112,7 @@ public class CompleteCodeAction extends SquirrelAction
 		{
 			_sqlEntryPanel.setSelectionStart(replaceBegin);
 			_sqlEntryPanel.setSelectionEnd(getNextStopCharPos(_sqlEntryPanel.getCaretPosition()));
-			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
+			_sqlEntryPanel.replaceSelection(completion.getCompletionString(new CompletionParser(textTillCaret)));
          adjustCaret(completion);
          _sqlEntryPanel.triggerParser();
 		}
@@ -117,7 +120,7 @@ public class CompleteCodeAction extends SquirrelAction
 		{
 			_sqlEntryPanel.setSelectionStart(replaceBegin);
 			_sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
-			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
+			_sqlEntryPanel.replaceSelection(completion.getCompletionString(new CompletionParser(textTillCaret)));
          adjustCaret(completion);
          _sqlEntryPanel.triggerParser();
 

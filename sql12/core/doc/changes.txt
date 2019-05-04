@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Code completion has two new options (check boxes), see menu File --> New Session Properties -->  tab Code Completion:
+  1. The completion popup can now be configured for columns to show their tables/views.
+  2. If 1. is checked the completion itself can be chosen to qualify columns automatically.
+
 #522 New checkbox "Load connection's current catalog only" in New Session properties.
   See menu File -->  New Session properties --> Tab Object tree --> Second checkbox from the top.
 

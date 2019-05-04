@@ -78,7 +78,7 @@ public class HQLCompleteCodeAction extends SquirrelAction
       {
          // Code Completion has been done within Code Completion. Now just replace what all candidates have in common.
 
-         CompletionCandidates completionCandidates = _model.getCompletionCandidates(_cc.getTextTillCarret());
+         CompletionCandidates completionCandidates = _model.getCompletionCandidates(_cc.getTextTillCaret());
 
          _hqlEntryPanel.setSelectionStart(replaceBegin);
          _hqlEntryPanel.setSelectionEnd(_hqlEntryPanel.getCaretPosition());

@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 
