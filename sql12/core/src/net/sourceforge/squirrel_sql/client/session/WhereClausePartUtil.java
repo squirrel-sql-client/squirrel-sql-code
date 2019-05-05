@@ -8,37 +8,41 @@ import java.util.List;
 
 /**
  * Provides some utility methods for handling parts of an where-clause.
- * @author Stefan Willinger
  *
+ * @author Stefan Willinger
  */
 public class WhereClausePartUtil implements IWhereClausePartUtil
 {
-	/**
-	 * @see IWhereClausePartUtil#createWhereClause(java.util.List)
-	 */
-	@Override
-	public String createWhereClause(
-			List<IWhereClausePart> whereClauseParts) {
-		StringBuilder sb = new StringBuilder("");
-		for (IWhereClausePart whereClausePart : whereClauseParts) {
-			if(whereClausePart.shouldBeUsed()){
-				whereClausePart.appendToClause(sb);
-			}
-		}
+   /**
+    * @see IWhereClausePartUtil#createWhereClause(java.util.List)
+    */
+   @Override
+   public String createWhereClause(List<IWhereClausePart> whereClauseParts)
+   {
+      StringBuilder sb = new StringBuilder("");
+      for (IWhereClausePart whereClausePart : whereClauseParts)
+      {
+         if (whereClausePart.shouldBeUsed())
+         {
+            whereClausePart.appendToClause(sb);
+         }
+      }
 
-		if(sb.length() > 0){
-			return sb.toString();
-		}else{
-			return null;
-		}
-	}
+      if (sb.length() > 0)
+      {
+         return sb.toString();
+      }
+      else
+      {
+         return null;
+      }
+   }
 
-	/**
-	 * @see IWhereClausePartUtil#setParameters(java.sql.PreparedStatement, java.util.List
-	 */
-	@Override
-   public int setParameters(PreparedStatement pstmt,
-                            List<IWhereClausePart> whereClauseParts, int firstPosition, CountResult countResult)
+   /**
+    * @see IWhereClausePartUtil#setParameters(java.sql.PreparedStatement, java.util.List
+    */
+   @Override
+   public int setParameters(PreparedStatement pstmt, List<IWhereClausePart> whereClauseParts, int firstPosition, CountResult countResult)
          throws SQLException
    {
 
@@ -64,18 +68,22 @@ public class WhereClausePartUtil implements IWhereClausePartUtil
    }
 
    /**
-	 * @see IWhereClausePartUtil#hasUsableWhereClause(java.util.List)
-	 */
-	@Override
-	public boolean hasUsableWhereClause(List<IWhereClausePart> whereClauseParts){
-		if(whereClauseParts == null || whereClauseParts.isEmpty()){
-			return false;
-		}
-		for (IWhereClausePart whereClausePart : whereClauseParts) {
-			if(whereClausePart.shouldBeUsed()){
-				return true;
-			}
-		}
-		return false;
-	}
+    * @see IWhereClausePartUtil#hasUsableWhereClause(java.util.List)
+    */
+   @Override
+   public boolean hasUsableWhereClause(List<IWhereClausePart> whereClauseParts)
+   {
+      if (whereClauseParts == null || whereClauseParts.isEmpty())
+      {
+         return false;
+      }
+      for (IWhereClausePart whereClausePart : whereClauseParts)
+      {
+         if (whereClausePart.shouldBeUsed())
+         {
+            return true;
+         }
+      }
+      return false;
+   }
 }

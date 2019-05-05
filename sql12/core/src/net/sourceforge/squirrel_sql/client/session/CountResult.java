@@ -8,6 +8,7 @@ public class CountResult
 {
    private int _count;
    private String _sql;
+   private Exception _err;
    private ArrayList<String> _whereClauseParts = new ArrayList<String>();
    private ArrayList _paramValues = new ArrayList();
 
@@ -24,6 +25,16 @@ public class CountResult
    public void setSql(String sql)
    {
       _sql = sql;
+   }
+
+   public String getSql()
+   {
+      return _sql;
+   }
+
+   public Exception getErr()
+   {
+      return _err;
    }
 
    public void addWhereClausePart(String whereClausePart, Object paramValue)
@@ -66,5 +77,10 @@ public class CountResult
       }
 
       return ret;
+   }
+
+   public void setError(Exception err)
+   {
+      _err = err;
    }
 }

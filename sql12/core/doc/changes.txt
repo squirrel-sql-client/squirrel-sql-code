@@ -67,6 +67,8 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+#1393 Modifying records in a database via the GUI not working correctly with NULL
+
 In the context of bug #1389: When reading data type OTHER ResultSet.wasNull() may be called when no data was read before.
    This resulted in display of "<Error>" in SQL results.
 

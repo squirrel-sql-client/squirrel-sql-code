@@ -34,15 +34,21 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableModel
 {
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(DataSetUpdateableTableModelImpl.class);       
-    
-   /** string to be passed to user when table name is not found or is ambiguous */
+   /**
+    * Internationalized strings for this class.
+    */
+   private static final StringManager s_stringMgr =
+         StringManagerFactory.getStringManager(DataSetUpdateableTableModelImpl.class);
+
+   /**
+    * string to be passed to user when table name is not found or is ambiguous
+    */
    // i18n[DataSetUpdateableTableModelImpl.error.tablenotfound=Cannot edit table because table cannot be found\nor table name is not unique in DB.]
    private final String TI_ERROR_MESSAGE = s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.tablenotfound");
 
-   /** Logger for this class. */
+   /**
+    * Logger for this class.
+    */
    private static final ILogger s_log = LoggerController.createLogger(DataSetUpdateableTableModelImpl.class);
 
 
@@ -69,8 +75,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     */
    String sqlOutputClassNameAtTimeOfForcedEdit = "";
 
-   private Vector<DataSetUpdateableTableModelListener> _dataSetUpdateableTableModelListener = 
-       new Vector<DataSetUpdateableTableModelListener>();
+   private Vector<DataSetUpdateableTableModelListener> _dataSetUpdateableTableModelListener =
+         new Vector<DataSetUpdateableTableModelListener>();
 
    /**
     * Remember which column contains the rowID; if no rowID, this is -1
@@ -80,7 +86,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     * ResultSet, and thus we never have any legal column index here.
     */
    int _rowIDcol = -1;
-   
+
    /**
     * A util for handling parts of an where clause.
     */
@@ -107,22 +113,27 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     *
     * @return the name of the table that is unique for this DB access
     */
-   public static String getUnambiguousTableName(ISession session, String name) {
-      return session.getAlias().getUrl()+":"+name;
+   public static String getUnambiguousTableName(ISession session, String name)
+   {
+      return session.getAlias().getUrl() + ":" + name;
    }
 
    /**
     * Get the full name of this table, creating that name the first time we are called
     */
-   public String getFullTableName() {
-      if (fullTableName == null) {
-         try {
+   public String getFullTableName()
+   {
+      if (fullTableName == null)
+      {
+         try
+         {
             final String name = ti.getQualifiedName();
             fullTableName = getUnambiguousTableName(_session, name);
          }
-         catch (Exception e) {
+         catch (Exception e)
+         {
             s_log.error(
-                "getFullTableName: Unexpected exception - "+e.getMessage(), e);
+                  "getFullTableName: Unexpected exception - " + e.getMessage(), e);
          }
       }
       return fullTableName;
@@ -135,10 +146,10 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    {
       editModeForced = mode;
       sqlOutputClassNameAtTimeOfForcedEdit =
-         _session.getProperties().getTableContentsOutputClassName();
+            _session.getProperties().getTableContentsOutputClassName();
 
       DataSetUpdateableTableModelListener[] listeners =
-         _dataSetUpdateableTableModelListener.toArray(new DataSetUpdateableTableModelListener[0]);
+            _dataSetUpdateableTableModelListener.toArray(new DataSetUpdateableTableModelListener[0]);
 
       for (int i = 0; i < listeners.length; i++)
       {
@@ -166,7 +177,6 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    }
 
 
-
    /**
     * If the user has forced us into editing mode, use the EDITABLE_TABLE form, but
     * otherwise use whatever form the user specified in the Session Preferences.
@@ -176,7 +186,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       if (editModeForced)
       {
          if (_session.getProperties().getTableContentsOutputClassName().equals(
-            sqlOutputClassNameAtTimeOfForcedEdit))
+               sqlOutputClassNameAtTimeOfForcedEdit))
          {
             return _session.getProperties().getEditableTableOutputClassName();
          }
@@ -194,10 +204,10 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     * in the current data that the user needs to be aware of before updating.
     */
    public String getWarningOnCurrentData(
-      Object[] values,
-      ColumnDisplayDefinition[] colDefs,
-      int col,
-      Object oldValue)
+         Object[] values,
+         ColumnDisplayDefinition[] colDefs,
+         int col,
+         Object oldValue)
    {
 
       // if we could not identify which table to edit, tell user
@@ -206,12 +216,13 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       List<IWhereClausePart> whereClauseParts = getWhereClause(values, colDefs, col, oldValue);
 
-      
+
       // It is possible for a table to contain only columns of types that
       // we cannot process or do selects on, so check for that.
       // Since this check is on the structure of the table rather than the contents,
       // we only need to do it once (ie: it is not needed in getWarningOnProjectedUpdate)
-      if (whereClausePartUtil.hasUsableWhereClause(whereClauseParts) == false){
+      if (whereClausePartUtil.hasUsableWhereClause(whereClauseParts) == false)
+      {
          // i18n[DataSetUpdateableTableModelImpl.confirmupdateallrows=The table has no columns that can be SELECTed on.\nAll rows will be updated.\nDo you wish to proceed?]
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.confirmupdateallrows");
       }
@@ -219,103 +230,104 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       final ISession session = _session;
       final ISQLConnection conn = session.getSQLConnection();
 
-      int count = -1;	// start with illegal number of rows matching query
+      int count = -1;   // start with illegal number of rows matching query
 
       CountResult countResult = null;
-      try
+      countResult = count(whereClauseParts, conn);
+      count = countResult.getCount();
+
+      if(null != countResult.getErr())
       {
-         countResult = count(whereClauseParts, conn);
-         count = countResult.getCount();
-      }
-      catch (SQLException ex)
-      {
-          //i18n[DataSetUpdateableTableModelImpl.error.exceptionduringcheck=Exception 
-          //seen during check on DB.  Exception was:\n{0}\nUpdate is probably not 
-          //safe to do.\nDo you wish to proceed?]
-          String msg = 
-              s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.exceptionduringcheck", ex.getMessage());
-          s_log.error(msg, ex);
-          return msg;
+         s_log.error("Error when executing count-SQL\n" + (countResult.getSql()), countResult.getErr());
+         return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.exceptionduringcheck", countResult.getErr());
       }
 
-      if (count == -1) {
-          // i18n[DataSetUpdateableTableModelImpl.error.unknownerror=Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?]
+      if (count == -1)
+      {
+         // i18n[DataSetUpdateableTableModelImpl.error.unknownerror=Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?]
          reportUpdateFail(countResult);
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownerror");
       }
-      if (count == 0) {
-          // i18n[DataSetUpdateableTableModelImpl.error.staleupdaterow=This row in the Database has been changed since you refreshed the data.\nNo rows will be updated by this operation.\nDo you wish to proceed?]
+      if (count == 0)
+      {
+         // i18n[DataSetUpdateableTableModelImpl.error.staleupdaterow=This row in the Database has been changed since you refreshed the data.\nNo rows will be updated by this operation.\nDo you wish to proceed?]
          reportUpdateFail(countResult);
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.staleupdaterow");
       }
-      if (count > 1) {
-          // i18n[DataSetUpdateableTableModelImpl.info.updateidenticalrows=This operation will update {0} identical rows.\nDo you wish to proceed?]
+      if (count > 1)
+      {
+         // i18n[DataSetUpdateableTableModelImpl.info.updateidenticalrows=This operation will update {0} identical rows.\nDo you wish to proceed?]
          reportUpdateFail(countResult);
-          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.updateidenticalrows",
-                                       Long.valueOf(count));
+         return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.updateidenticalrows",
+               Long.valueOf(count));
       }
       // no problems found, so do not return a warning message.
-      return null;	// nothing for user to worry about
+      return null;   // nothing for user to worry about
    }
 
    private void reportUpdateFail(CountResult countResult)
    {
-      if(null == countResult)
+      if (null == countResult)
       {
          return;
       }
 
       String msg = "Editing led to a warning message because the number of rows that would be updated was found to be " + countResult.getCount() + " instead of 1.\n" +
-                   "Here's some information about the query that was used to predict the number of rows that would be affected:\n" + countResult.getCheckSQLDetails();
+            "Here's some information about the query that was used to predict the number of rows that would be affected:\n" + countResult.getCheckSQLDetails();
       _session.getApplication().getMessageHandler().showWarningMessage(msg);
    }
 
    /**
     * Counts the number of affected rows, using this where clause.
+    *
     * @param whereClauseParts where clause to use
-    * @param conn connection to use
+    * @param conn             connection to use
     * @return number of rows in the database, which will be selected by the given whereClauseParts
-    * @throws SQLException if an SQLExcetpion occurs.
     */
-   private CountResult count(List<IWhereClausePart> whereClauseParts,
-		   final ISQLConnection conn) throws SQLException {
+   private CountResult count(List<IWhereClausePart> whereClauseParts, final ISQLConnection conn)
+   {
       CountResult countResult = new CountResult();
-	   PreparedStatement pstmt = null;
-	   ResultSet rs = null;
-	   try
-	   {
-		   String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
-		   String countSql = "select count(*) from " + ti.getQualifiedName() + whereClause;
+      PreparedStatement pstmt = null;
+      ResultSet rs = null;
+      String countSql = null;
+      try
+      {
+         String whereClause;
+         whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
+         countSql = "select count(*) from " + ti.getQualifiedName() + whereClause;
          countResult.setSql(countSql);
-		   pstmt = conn.prepareStatement(countSql);
-		   whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1, countResult);
+         pstmt = conn.prepareStatement(countSql);
+         whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1, countResult);
 
-		   rs = pstmt.executeQuery();
-		   rs.next();
-		   countResult.setCount(rs.getInt(1));
-	   }
-	   finally
-	   {
-		   // We don't care if these throw an SQLException.  Just squelch them
-		   // and report to the user what the outcome of the previous statements
-		   // were.
-		   SQLUtilities.closeResultSet(rs);
-		   SQLUtilities.closeStatement(pstmt);
-	   }
-	   return countResult;
+         rs = pstmt.executeQuery();
+         rs.next();
+         countResult.setCount(rs.getInt(1));
+      }
+      catch (Exception e)
+      {
+         countResult.setError(e);
+      }
+      finally
+      {
+         // We don't care if these throw an SQLException.  Just squelch them
+         // and report to the user what the outcome of the previous statements
+         // were.
+         SQLUtilities.closeResultSet(rs);
+         SQLUtilities.closeStatement(pstmt);
+      }
+      return countResult;
    }
 
 
-
-/**
+   /**
     * Link from fw to check on whether there are any unusual conditions
     * that will occur after the update has been done.
     */
    public String getWarningOnProjectedUpdate(
-      Object[] values,
-      ColumnDisplayDefinition[] colDefs,
-      int col,
-      Object newValue)
+         Object[] values,
+         ColumnDisplayDefinition[] colDefs,
+         int col,
+         Object newValue)
    {
       try
       {
@@ -324,25 +336,22 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
             return TI_ERROR_MESSAGE;
 
          List<IWhereClausePart> whereClauseParts = getWhereClause(values, colDefs, col, newValue);
-         
+
          final ISession session = _session;
          final ISQLConnection conn = session.getSQLConnection();
 
-         int count = -1;	// start with illegal number of rows matching query
+         CountResult countResult = count(whereClauseParts, conn);
 
-         try
+         if(null != countResult.getErr())
          {
-        	count = count(whereClauseParts, conn).getCount();
-        	
-         }
-         catch (SQLException ex)
-         {
-             // i18n[DataSetUpdateableTableModelImpl.error.exceptionduringcheck=Exception seen during check on DB.  Exception was:\n{0}\nUpdate is probably not safe to do.\nDo you wish to proceed?]
-             s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.exceptionduringcheck", ex.getMessage());
+            s_log.error("Error when executing count-SQL\n" + (countResult.getSql()), countResult.getErr());
+            return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.exceptionduringcheck", countResult.getErr());
          }
 
-         if (count == -1) {
-             // i18n[DataSetUpdateableTableModelImpl.error.unknownerror=Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?]
+
+         if (countResult.getCount() == -1)
+         {
+            // i18n[DataSetUpdateableTableModelImpl.error.unknownerror=Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?]
             return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownerror");
          }
          // There are some fields that cannot be used in a WHERE clause, either
@@ -362,21 +371,22 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // WHERE clause.  Any field that can be used there will return something
          // of the form "<fieldName> = <value>", and a field that cannot be
          // used will return a null or zero-length string.
-         
-         if (count > 1) {
-             // i18n[DataSetUpdateableTableModelImpl.info.identicalrows=This 
-             //operation will result in {0} identical rows.\nDo you wish 
-             //to proceed?]
-             return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.identicalrows",
-                                          Long.valueOf(count));
+
+         if (countResult.getCount() > 1)
+         {
+            // i18n[DataSetUpdateableTableModelImpl.info.identicalrows=This
+            //operation will result in {0} identical rows.\nDo you wish
+            //to proceed?]
+            return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.identicalrows",
+                  Long.valueOf(countResult.getCount()));
          }
-         
+
          // no problems found, so do not return a warning message.
-         return null;	// nothing for user to worry about
+         return null;   // nothing for user to worry about
       }
       catch (Exception e)
       {
-         throw new  RuntimeException(e);
+         throw new RuntimeException(e);
       }
 
    }
@@ -384,16 +394,16 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    /**
     * Re-read the value for a single cell in the table, if possible.
     * If there is a problem, the message has a non-zero length when this returns.
-    *
-    *
+    * <p>
+    * <p>
     * NOTE: THIS METHOD IS UNSTABLE. For details  see {@link LimitReadLengthFeatureUnstable}
-    *
     */
    public Object reReadDatum(
-      Object[] values,
-      ColumnDisplayDefinition[] colDefs,
-      int col,
-      StringBuffer message) {
+         Object[] values,
+         ColumnDisplayDefinition[] colDefs,
+         int col,
+         StringBuffer message)
+   {
 
       // if we could not identify which table to edit, tell user
       if (ti == null)
@@ -411,10 +421,10 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       // In some cases it may be possible for the DataType to use the
       // partial data, such as "matches <data>*", but that may not be
       // standard accross all Databases and thus may be risky.
-      
-      
+
+
       List<IWhereClausePart> whereClauseParts = getWhereClause(values, colDefs, -1, null);
-      String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts); 
+      String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
       final ISession session = _session;
       final ISQLConnection conn = session.getSQLConnection();
 
@@ -422,21 +432,22 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       try
       {
-    	  final String queryString =
-              "SELECT " + colDefs[col].getColumnName() +" FROM "+ti.getQualifiedName() +
-              whereClause;
-    	  
+         final String queryString =
+               "SELECT " + colDefs[col].getColumnName() + " FROM " + ti.getQualifiedName() +
+                     whereClause;
+
          final PreparedStatement pstmt = conn.prepareStatement(queryString);
          whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1, null);
-         
+
 
          try
          {
-        	//did anyone used that code here? It had no possibility to run (at least under postgres). 
+            //did anyone used that code here? It had no possibility to run (at least under postgres).
             ResultSet rs = pstmt.executeQuery();
 
             // There should be one row in the data, so try to move to it
-            if (rs.next() == false) {
+            if (rs.next() == false)
+            {
                // no first row, so we cannot retrieve the data
                // i18n[DataSetUpdateableTableModelImpl.error.nomatchingrow=Could not find any row in DB matching current row in table]
                throw new SQLException(s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.nomatchingrow"));
@@ -449,7 +460,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
             //  There should not be more than one row in the DB that matches
             // the table, and if there is we cannot determine which one to read,
             // so check that there are no more
-            if (rs.next() == true) {
+            if (rs.next() == true)
+            {
                // multiple rows - not good
                wholeDatum = null;
                // i18n[DataSetUpdateableTableModelImpl.error.multimatchingrows=Muliple rows in DB match current row in table - cannot re-read data.]
@@ -463,41 +475,44 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
       catch (Exception ex)
       {
-          message.append(
-              s_stringMgr.getString(
-                          "DataSetUpdateableTableModelImpl.error.rereadingdb", 
-                          ex.getMessage()));
+         message.append(
+               s_stringMgr.getString(
+                     "DataSetUpdateableTableModelImpl.error.rereadingdb",
+                     ex.getMessage()));
 
 
-          LimitReadLengthFeatureUnstable.someErrorReReading(ex);
+         LimitReadLengthFeatureUnstable.someErrorReReading(ex);
       }
 
 
       // return the whole contents of this column in the DB
       return wholeDatum;
-   };
+   }
+
+   ;
 
    /**
     * link from fw to this for updating data
     */
    public String updateTableComponent(
-      Object[] values,
-      ColumnDisplayDefinition[] colDefs,
-      int col,
-      Object oldValue,
-      Object newValue)
+         Object[] values,
+         ColumnDisplayDefinition[] colDefs,
+         int col,
+         Object oldValue,
+         Object newValue)
    {
       // if we could not identify which table to edit, tell user
       if (ti == null)
          return TI_ERROR_MESSAGE;
 
       // get WHERE clause using original value
-       List<IWhereClausePart> whereClauseParts = getWhereClause(values, colDefs, col, oldValue);
-       String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
-      if (s_log.isDebugEnabled()) {
-          s_log.debug("updateTableComponent: whereClause = "+whereClause);
+      List<IWhereClausePart> whereClauseParts = getWhereClause(values, colDefs, col, oldValue);
+      String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
+      if (s_log.isDebugEnabled())
+      {
+         s_log.debug("updateTableComponent: whereClause = " + whereClause);
       }
-      
+
       final ISession session = _session;
       final ISQLConnection conn = session.getSQLConnection();
 
@@ -505,80 +520,85 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       final String sql = constructUpdateSql(
             ti.getQualifiedName(), DialectUtils2.checkColumnDoubleQuotes(colDefs[col].getDialectType(), colDefs[col].getColumnName()), whereClause);
-      
-      if (s_log.isDebugEnabled()) {
-          s_log.debug("updateTableComponent: executing SQL - "+sql);
+
+      if (s_log.isDebugEnabled())
+      {
+         s_log.debug("updateTableComponent: executing SQL - " + sql);
       }
       PreparedStatement pstmt = null;
       try
       {
          pstmt = conn.prepareStatement(sql);
 
-         /* 
+         /*
           * have the DataType object fill in the appropriate kind of value of the changed data
           * into the first variable position in the prepared stmt
           */
          CellComponentFactory.setPreparedStatementValue(
-                colDefs[col], pstmt, newValue, 1);
-         
+               colDefs[col], pstmt, newValue, 1);
+
          // Fill the parameters of the where clause - start at position 2 because the data which is updated is at position 1
          whereClausePartUtil.setParameters(pstmt, whereClauseParts, 2, null);
          count = pstmt.executeUpdate();
       }
       catch (SQLException ex)
       {
-          //i18n[DataSetUpdateableTableModelImpl.error.updateproblem=There 
-          //was a problem reported during the update.  
-          //The DB message was:\n{0}\nThis may or may not be serious depending 
-          //on the above message.\nThe data was probably not changed in the 
-          //database.\nYou may need to refresh the table to get an accurate 
-          //view of the current data.]
-          String errMsg = s_stringMgr.getString(
-                "DataSetUpdateableTableModelImpl.error.updateproblem",
-                ex.getMessage());
-          s_log.error("updateTableComponent: unexpected exception - "+
-                      ex.getMessage()+" while executing SQL: "+sql, ex);
-          
-          
-         return errMsg;           
-      } finally {
-          SQLUtilities.closeStatement(pstmt);
+         //i18n[DataSetUpdateableTableModelImpl.error.updateproblem=There
+         //was a problem reported during the update.
+         //The DB message was:\n{0}\nThis may or may not be serious depending
+         //on the above message.\nThe data was probably not changed in the
+         //database.\nYou may need to refresh the table to get an accurate
+         //view of the current data.]
+         String errMsg = s_stringMgr.getString(
+               "DataSetUpdateableTableModelImpl.error.updateproblem",
+               ex.getMessage());
+         s_log.error("updateTableComponent: unexpected exception - " +
+               ex.getMessage() + " while executing SQL: " + sql, ex);
+
+
+         return errMsg;
+      }
+      finally
+      {
+         SQLUtilities.closeStatement(pstmt);
       }
 
-      if (count == -1) {
-          // i18n[DataSetUpdateableTableModelImpl.error.unknownupdateerror=Unknown problem during update.\nNo count of updated rows was returned.\nDatabase may be corrupted!]
+      if (count == -1)
+      {
+         // i18n[DataSetUpdateableTableModelImpl.error.unknownupdateerror=Unknown problem during update.\nNo count of updated rows was returned.\nDatabase may be corrupted!]
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownupdateerror");
       }
-      if (count == 0) {
-          // i18n[DataSetUpdateableTableModelImpl.info.norowsupdated=No rows updated.]
+      if (count == 0)
+      {
+         // i18n[DataSetUpdateableTableModelImpl.info.norowsupdated=No rows updated.]
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.norowsupdated");
       }
       // everything seems to have worked ok
       return null;
    }
 
-   
+
    /**
     * Build the update SQL from the specified components.
-    *  
-    * @param table the fully qualified name of the table
-    * @param column the name of the column to update
+    *
+    * @param table       the fully qualified name of the table
+    * @param column      the name of the column to update
     * @param whereClause the where clause that restricts the update to one row.
-    * 
     * @return the SQL to execute
     */
    private String constructUpdateSql(String table, String column,
-           String whereClause) {
-       StringBuilder result = new StringBuilder();
-       result.append("UPDATE ");
-       result.append(table);
-       result.append(" SET ");
-       result.append(column);
-       result.append(" = ? ");
-       result.append(whereClause);
-       return result.toString();
+                                     String whereClause)
+   {
+      StringBuilder result = new StringBuilder();
+      result.append("UPDATE ");
+      result.append(table);
+      result.append(" SET ");
+      result.append(column);
+      result.append(" = ? ");
+      result.append(whereClause);
+      return result.toString();
    }
-   
+
    /**
     * Let fw get the rowIDcol
     */
@@ -594,10 +614,10 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     * and the WHERE clause is constructed using only the values[].
     */
    private List<IWhereClausePart> getWhereClause(
-      Object[] values,
-      ColumnDisplayDefinition[] colDefs,
-      int col,
-      Object colValue)
+         Object[] values,
+         ColumnDisplayDefinition[] colDefs,
+         int col,
+         Object colValue)
    {
       try
       {
@@ -606,20 +626,21 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // to use in the where clause, so see if there is a table of col names
          HashMap<String, String> colNames = (EditWhereCols.get(getFullTableName()));
 
-         
+
          ColumnDisplayDefinition editedCol = null;
-			if(-1 != col)
-			{
-				editedCol = colDefs[col];
-			}
+         if (-1 != col)
+         {
+            editedCol = colDefs[col];
+         }
 
-			List<IWhereClausePart> clauseParts = new ArrayList<IWhereClausePart>();
-			
-			for (int i=0; i< colDefs.length; i++) {
+         List<IWhereClausePart> clauseParts = new ArrayList<IWhereClausePart>();
 
-            if(i != col &&
-					null != editedCol &&
-					colDefs[i].getFullTableColumnName().equalsIgnoreCase(editedCol.getFullTableColumnName()))
+         for (int i = 0; i < colDefs.length; i++)
+         {
+
+            if (i != col &&
+                  null != editedCol &&
+                  colDefs[i].getFullTableColumnName().equalsIgnoreCase(editedCol.getFullTableColumnName()))
             {
                // The edited column is in the resultset twice (example: SELECT MyName,* FROM MyTable).
                // We won't add the this col to the where clause.
@@ -627,12 +648,13 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
             }
 
             // if the user has said to not use this column, then skip it
-            if (colNames != null) {
+            if (colNames != null)
+            {
                // the user has restricted the set of columns to use.
                // If this name is NOT in the list, then skip it; otherwise we fall through
                // and use the column in the WHERE clause
                if (colNames.get(colDefs[i].getColumnName()) == null)
-                  continue;	// go on to the next item
+                  continue;   // go on to the next item
             }
 
             // for the column that is being changed, use the value
@@ -650,13 +672,13 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
             ISQLDatabaseMetaData md = _session.getMetaData();
             IWhereClausePart clausePart = CellComponentFactory.getWhereClauseValue(colDefs[i], value, md);
 
-            
+
             if (clausePart.shouldBeUsed())
-            	// Now we know that the part should not we ignoredshould
-            	clauseParts.add(clausePart);
+               // Now we know that the part should not we ignoredshould
+               clauseParts.add(clausePart);
          }
-			
-			return clauseParts;
+
+         return clauseParts;
 
       }
       catch (Exception e)
@@ -672,7 +694,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     * The deletes are done within a transaction
     * so they are either all done or all not done.
     */
-   public String deleteRows(Object[][] rowData, ColumnDisplayDefinition[] colDefs) {
+   public String deleteRows(Object[][] rowData, ColumnDisplayDefinition[] colDefs)
+   {
 
       // if we could not identify which table to edit, tell user
       if (ti == null)
@@ -688,99 +711,120 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       // for each row in table, count how many rows match where clause
       // if not exactly one, generate message describing situation
-      for (int i = 0; i < rowData.length; i++) {
+      for (int i = 0; i < rowData.length; i++)
+      {
          // get WHERE clause for the selected row
          // the -1 says to just use the contents of the values without
          // any substitutions
          List<IWhereClausePart> whereClauseParts = getWhereClause(rowData[i], colDefs, -1, null);
-         
+
          // count how many rows this WHERE matches
-         try {
-        	 
-        	 int count = count(whereClauseParts, conn).getCount();
-               if (count != 1) {
-                  if (count == 0) {
-                      // i18n[DataSetUpdateableTableModelImpl.error.rownotmatch=\n   Row {0}  did not match any row in DB]
-                     rowCountErrorMessage += 
-                         s_stringMgr.getString(
-                                 "DataSetUpdateableTableModelImpl.error.rownotmatch",
-                                 Integer.valueOf(i+1));
-                  } else {
-                      //i18n[DataSetUpdateableTableModelImpl.error.rowmatched=\n   Row {0} matched {1} rows in DB]
-                      rowCountErrorMessage += 
-                          s_stringMgr.getString(
-                                  "DataSetUpdateableTableModelImpl.error.rowmatched", 
-                                  new Object[] { Integer.valueOf(i+1), Integer.valueOf(count) });
-                  }
+         try
+         {
+
+            CountResult countResult = count(whereClauseParts, conn);
+
+            if(null != countResult.getErr())
+            {
+               s_log.error("Error when executing count-SQL\n" + (countResult.getSql()), countResult.getErr());
+               return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.exceptionduringcheck", countResult.getErr());
+            }
+
+
+            if (countResult.getCount() != 1)
+            {
+               if (countResult.getCount() == 0)
+               {
+                  // i18n[DataSetUpdateableTableModelImpl.error.rownotmatch=\n   Row {0}  did not match any row in DB]
+                  rowCountErrorMessage +=
+                        s_stringMgr.getString(
+                              "DataSetUpdateableTableModelImpl.error.rownotmatch",
+                              Integer.valueOf(i + 1));
                }
+               else
+               {
+                  //i18n[DataSetUpdateableTableModelImpl.error.rowmatched=\n   Row {0} matched {1} rows in DB]
+                  rowCountErrorMessage +=
+                        s_stringMgr.getString(
+                              "DataSetUpdateableTableModelImpl.error.rowmatched",
+                              new Object[]{Integer.valueOf(i + 1), Integer.valueOf(countResult.getCount())});
+               }
+            }
          }
-         catch (Exception e) {
+         catch (Exception e)
+         {
             // some kind of problem - tell user
-             // i18n[DataSetUpdateableTableModelImpl.error.preparingdelete=While preparing for delete, saw exception:\n{0}]
-             return 
-                 s_stringMgr.getString(
-                         "DataSetUpdateableTableModelImpl.error.preparingdelete",
-                         e);
+            // i18n[DataSetUpdateableTableModelImpl.error.preparingdelete=While preparing for delete, saw exception:\n{0}]
+            return
+                  s_stringMgr.getString(
+                        "DataSetUpdateableTableModelImpl.error.preparingdelete",
+                        e);
          }
       }
 
       // if the rows do not match 1-for-1 to DB, ask user if they
       // really want to do delete
-      if (rowCountErrorMessage.length() > 0) {
-          // i18n[DataSetUpdateableTableModelImpl.error.tabledbmismatch=There may be a mismatch between the table and the DB:\n{0}\nDo you wish to proceed with the deletes anyway?]
-          String msg = 
-              s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.tabledbmismatch",
-                                    rowCountErrorMessage);
-         
-         int option = 
-             JOptionPane.showConfirmDialog(null, msg, "Warning", 
-                                           JOptionPane.YES_NO_OPTION, 
-                                           JOptionPane.WARNING_MESSAGE);
-         
-         if ( option != JOptionPane.YES_OPTION) {
-             // i18n[DataSetUpdateableTableModelImpl.info.deletecancelled=Delete canceled at user request.]
+      if (rowCountErrorMessage.length() > 0)
+      {
+         // i18n[DataSetUpdateableTableModelImpl.error.tabledbmismatch=There may be a mismatch between the table and the DB:\n{0}\nDo you wish to proceed with the deletes anyway?]
+         String msg =
+               s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.tabledbmismatch",
+                     rowCountErrorMessage);
+
+         int option =
+               JOptionPane.showConfirmDialog(null, msg, "Warning",
+                     JOptionPane.YES_NO_OPTION,
+                     JOptionPane.WARNING_MESSAGE);
+
+         if (option != JOptionPane.YES_OPTION)
+         {
+            // i18n[DataSetUpdateableTableModelImpl.info.deletecancelled=Delete canceled at user request.]
             return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.deletecancelled");
          }
       }
 
       // for each row in table, do delete and add to number of rows deleted from DB
-      for (int i = 0; i < rowData.length; i++) {
+      for (int i = 0; i < rowData.length; i++)
+      {
          // get WHERE clause for the selected row
          // the -1 says to just use the contents of the values without
          // any substitutions
-          List<IWhereClausePart> whereClauseParts = getWhereClause(rowData[i], colDefs, -1, null);
-          String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
+         List<IWhereClausePart> whereClauseParts = getWhereClause(rowData[i], colDefs, -1, null);
+         String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
          // try to delete
-         try {
+         try
+         {
             // do the delete and add the number of rows deleted to the count
-        	 String sql = "DELETE FROM " +
-		      ti.getQualifiedName() + whereClause;
-        	 final PreparedStatement pstmt = conn.prepareStatement(sql);
-        	 whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1, null);
+            String sql = "DELETE FROM " +
+                  ti.getQualifiedName() + whereClause;
+            final PreparedStatement pstmt = conn.prepareStatement(sql);
+            whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1, null);
             try
             {
-            	pstmt.executeUpdate();
+               pstmt.executeUpdate();
             }
             finally
             {
                pstmt.close();
             }
          }
-         catch (Exception e) {
+         catch (Exception e)
+         {
             // some kind of problem - tell user
-             // i18n[DataSetUpdateableTableModelImpl.error.deleteFailed=One of the delete operations failed with exception:\n{0}\nDatabase is in an unknown state and may be corrupted.]
-             return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.deleteFailed", e);
+            // i18n[DataSetUpdateableTableModelImpl.error.deleteFailed=One of the delete operations failed with exception:\n{0}\nDatabase is in an unknown state and may be corrupted.]
+            return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.deleteFailed", e);
          }
       }
 
-      return null;	// hear no evil, see no evil
+      return null;   // hear no evil, see no evil
    }
 
    /**
     * Let fw get the list of default values for the columns
     * to be used when creating a new row
     */
-   public String[] getDefaultValues(ColumnDisplayDefinition[] colDefs) {
+   public String[] getDefaultValues(ColumnDisplayDefinition[] colDefs)
+   {
 
       // we return something valid even if there is a DB error
       final String[] defaultValues = new String[colDefs.length];
@@ -798,49 +842,55 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       {
          SQLDatabaseMetaData md = conn.getSQLMetaData();
          TableColumnInfo[] infos = md.getColumnInfo(ti);
-         
+
          // read the DB MetaData info and fill in the value, if any
          // Note that the ResultSet info and the colDefs should be
          // in the same order, but we cannot guarantee that.
          int expectedColDefIndex = 0;
-         
-         for (int idx = 0; idx < infos.length; idx++) {
-             String colName = infos[idx].getColumnName();
-             String defValue = infos[idx].getDefaultValue();
-             
-             // if value was null, we do not need to do
-             // anything else with this column.
-             // Also assume that a value of "" is equivilent to null
-             if (defValue != null &&  defValue.length() > 0) {
-                // find the entry in colDefs matching this column
-                if (colDefs[expectedColDefIndex].getColumnName().equals(colName)) {
-                   // DB cols are in same order as colDefs
-                   defaultValues[expectedColDefIndex] = defValue;
-                }
-                else {
-                   // colDefs not in same order as DB, so search for
-                   // matching colDef entry
-                   // Note: linear search here will NORMALLY be not too bad
-                   // because most tables do not have huge numbers of columns.
-                   for (int i=0; i<colDefs.length; i++) {
-                      if (colDefs[i].getColumnName().equals(colName)) {
-                         defaultValues[i] = defValue;
-                         break;
-                      }
-                   }
-                }
-             }
 
-             // assuming that the columns in table match colDefs,
-             // bump the index to point to the next colDef entry
-             expectedColDefIndex++;
-             
+         for (int idx = 0; idx < infos.length; idx++)
+         {
+            String colName = infos[idx].getColumnName();
+            String defValue = infos[idx].getDefaultValue();
+
+            // if value was null, we do not need to do
+            // anything else with this column.
+            // Also assume that a value of "" is equivilent to null
+            if (defValue != null && defValue.length() > 0)
+            {
+               // find the entry in colDefs matching this column
+               if (colDefs[expectedColDefIndex].getColumnName().equals(colName))
+               {
+                  // DB cols are in same order as colDefs
+                  defaultValues[expectedColDefIndex] = defValue;
+               }
+               else
+               {
+                  // colDefs not in same order as DB, so search for
+                  // matching colDef entry
+                  // Note: linear search here will NORMALLY be not too bad
+                  // because most tables do not have huge numbers of columns.
+                  for (int i = 0; i < colDefs.length; i++)
+                  {
+                     if (colDefs[i].getColumnName().equals(colName))
+                     {
+                        defaultValues[i] = defValue;
+                        break;
+                     }
+                  }
+               }
+            }
+
+            // assuming that the columns in table match colDefs,
+            // bump the index to point to the next colDef entry
+            expectedColDefIndex++;
+
          }
       }
       catch (Exception ex)
       {
-          // i18n[DataSetUpdateableTableModelImpl.error.retrievingdefaultvalues=Error retrieving default column values]
-          s_log.error(s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.retrievingdefaultvalues"), ex);
+         // i18n[DataSetUpdateableTableModelImpl.error.retrievingdefaultvalues=Error retrieving default column values]
+         s_log.error(s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.retrievingdefaultvalues"), ex);
       }
 
       return defaultValues;
@@ -851,18 +901,20 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     * Insert a row into the DB.
     * If the insert succeeds this returns a null string.
     */
-   public String insertRow(Object[] values, ColumnDisplayDefinition[] colDefs) {
+   public String insertRow(Object[] values, ColumnDisplayDefinition[] colDefs)
+   {
 
       // if we could not identify which table to edit, tell user
-      if (ti == null) {
+      if (ti == null)
+      {
          return TI_ERROR_MESSAGE;
       }
-      
+
       final ISession session = _session;
       final ISQLConnection conn = session.getSQLConnection();
-      
+
       int count = -1;
-      
+
       try
       {
          // start the string for use in the prepared statment
@@ -872,36 +924,42 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // Add the list of column names we will be inserting into - be sure
          // to skip the rowId column and any auto increment columns.
          buf.append(" ( ");
-         for (int i=0; i<colDefs.length; i++) {
-             if (i == _rowIDcol) {
-                 continue;
-             }
-             if (colDefs[i].isAutoIncrement()) {
-                 if (s_log.isInfoEnabled()) {
-                     s_log.info("insertRow: skipping auto-increment column "+
-                                colDefs[i].getColumnName());
-                 }
-                 continue;
-             } 
-             buf.append(DialectUtils2.checkColumnDoubleQuotes(colDefs[i].getDialectType(), colDefs[i].getColumnName()));
-             buf.append(",");
+         for (int i = 0; i < colDefs.length; i++)
+         {
+            if (i == _rowIDcol)
+            {
+               continue;
+            }
+            if (colDefs[i].isAutoIncrement())
+            {
+               if (s_log.isInfoEnabled())
+               {
+                  s_log.info("insertRow: skipping auto-increment column " +
+                        colDefs[i].getColumnName());
+               }
+               continue;
+            }
+            buf.append(DialectUtils2.checkColumnDoubleQuotes(colDefs[i].getDialectType(), colDefs[i].getColumnName()));
+            buf.append(",");
          }
-         buf.setCharAt(buf.length()-1, ')');
+         buf.setCharAt(buf.length() - 1, ')');
          buf.append(" VALUES (");
-         
+
          // add a variable position for each of the columns
-         for (int i=0; i<colDefs.length; i++) {
-            if (i != _rowIDcol && !colDefs[i].isAutoIncrement() )
-                
+         for (int i = 0; i < colDefs.length; i++)
+         {
+            if (i != _rowIDcol && !colDefs[i].isAutoIncrement())
+
                buf.append(" ?,");
          }
 
          // replace the last "," with ")"
-         buf.setCharAt(buf.length()-1, ')');
+         buf.setCharAt(buf.length() - 1, ')');
 
          String pstmtSQL = buf.toString();
-         if (s_log.isInfoEnabled()) {
-             s_log.info("insertRow: pstmt sql = "+pstmtSQL);
+         if (s_log.isInfoEnabled())
+         {
+            s_log.info("insertRow: pstmt sql = " + pstmtSQL);
          }
          final PreparedStatement pstmt = conn.prepareStatement(pstmtSQL);
 
@@ -911,14 +969,16 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
             // the number of column defs may not be the number of bind vars
             // (For example: auto-increment columns are excluded)
             int bindVarIdx = 1;
-             
+
             // have the DataType object fill in the appropriate kind of value
             // into the appropriate variable position in the prepared stmt
-            for (int i=0; i<colDefs.length; i++) {
-               if (i != _rowIDcol && !colDefs[i].isAutoIncrement()) {
-                   CellComponentFactory.setPreparedStatementValue(
-                           colDefs[i], pstmt, values[i], bindVarIdx);
-                   bindVarIdx++;
+            for (int i = 0; i < colDefs.length; i++)
+            {
+               if (i != _rowIDcol && !colDefs[i].isAutoIncrement())
+               {
+                  CellComponentFactory.setPreparedStatementValue(
+                        colDefs[i], pstmt, values[i], bindVarIdx);
+                  bindVarIdx++;
                }
             }
             count = pstmt.executeUpdate();
@@ -931,22 +991,25 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       catch (SQLException ex)
       {
          s_log.error(ex);
-          // i18n[DataSetUpdateableTableModelImpl.error.duringInsert=Exception seen during check on DB.  Exception was:\n{0}\nInsert was probably not completed correctly.  DB may be corrupted!]
-          return s_stringMgr.getString(
-                  "DataSetUpdateableTableModelImpl.error.duringInsert", 
-                  ex.getMessage());
+         // i18n[DataSetUpdateableTableModelImpl.error.duringInsert=Exception seen during check on DB.  Exception was:\n{0}\nInsert was probably not completed correctly.  DB may be corrupted!]
+         return s_stringMgr.getString(
+               "DataSetUpdateableTableModelImpl.error.duringInsert",
+               ex.getMessage());
       }
 
       if (count != 1)
-          // i18n[DataSetUpdateableTableModelImpl.error.unknownerrorupdate=Unknown problem during update.\nNo count of inserted rows was returned.\nDatabase may be corrupted!]
+         // i18n[DataSetUpdateableTableModelImpl.error.unknownerrorupdate=Unknown problem during update.\nNo count of inserted rows was returned.\nDatabase may be corrupted!]
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownerrorupdate");
 
       // insert succeeded
-      try {
-          IObjectTreeAPI api = _session.getObjectTreeAPIOfActiveSessionWindow();
-          api.refreshSelectedTab();
-      } catch (Exception e) {
-          e.printStackTrace();
+      try
+      {
+         IObjectTreeAPI api = _session.getObjectTreeAPIOfActiveSessionWindow();
+         api.refreshSelectedTab();
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
       }
 
       return null;
@@ -973,8 +1036,9 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       _rowIDcol = rowIDCol;
    }
 
-   public void setWhereClausePartUtil(IWhereClausePartUtil whereClausePartUtil) {
-	   this.whereClausePartUtil = whereClausePartUtil;
+   public void setWhereClausePartUtil(IWhereClausePartUtil whereClausePartUtil)
+   {
+      this.whereClausePartUtil = whereClausePartUtil;
    }
 
    @Override
