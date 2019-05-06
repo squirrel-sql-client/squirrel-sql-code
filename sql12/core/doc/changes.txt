@@ -8,6 +8,8 @@ Enhancements:
 
 The following pieces of information now always appear on top of the Database meta data list
   (select top node of Object tree --> first tab on the right named "Metadata"):
+    "JDBC Driver CLASSNAME"
+    "JDBC Driver CLASSPATH"
     "getURL"
     "getDriverName"
     "getDatabaseProductName"
