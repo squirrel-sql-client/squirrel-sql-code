@@ -24,6 +24,9 @@ import java.sql.SQLException;
 import java.sql.SQLType;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,15 +39,15 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import org.apache.commons.lang.ArrayUtils;
 
 public class MetaDataDataSet implements IDataSet
 {
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(MetaDataDataSet.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MetaDataDataSet.class);
 
-	private final static Map<String, Object> s_ignoreMethods = 
-        new HashMap<String, Object>();
+	private final static Map<String, Object> s_ignoreMethods = new HashMap<>();
+
 	static
 	{
 		s_ignoreMethods.put("getCatalogs", null);
@@ -82,7 +85,7 @@ public class MetaDataDataSet implements IDataSet
 	 * Data. Each element represents a row of the table and is made up of
 	 * an array of strings. Each string is an element in the row.
 	 */
-	private List<Object[]> _data = new ArrayList<Object[]>();
+	private List<Object[]> _data = new ArrayList<>();
 
 	public MetaDataDataSet(DatabaseMetaData md)
 	{
@@ -141,6 +144,19 @@ public class MetaDataDataSet implements IDataSet
 	private void load(DatabaseMetaData md)
 	{
 		Method[] methods = DatabaseMetaData.class.getMethods();
+
+		// To make sure these items are on top of the Metadata list.
+		Object[][] onTopLines = new Object[][]
+				{
+						new Object[]{"getURL", null},
+						new Object[]{"getDriverName", null},
+						new Object[]{"getDatabaseProductName", null},
+						new Object[]{"getDatabaseProductVersion", null},
+						new Object[]{"getDriverVersion", null},
+						new Object[]{"getUserName", null},
+						new Object[]{"getDefaultTransactionIsolation", null}
+				};
+
 		for (int i = 0; i < methods.length; ++i)
 		{
 			final Method method = methods[i];
@@ -148,14 +164,40 @@ public class MetaDataDataSet implements IDataSet
 				&& method.getReturnType() != Void.TYPE
 				&& !s_ignoreMethods.containsKey(method.getName()))
 			{
-				_data.add(generateLine(md, method));
+				Object[] generatedLine = generateLine(md, method);
+
+				Object[] onTopLine = getMatchingOnTopLine(onTopLines, method.getName());
+				if (null != onTopLine)
+				{
+					onTopLine[1] = generatedLine[1];
+				}
+				else
+				{
+					_data.add(generatedLine);
+				}
 			}
 		}
 
-		// Sort the rows by the property name.
-//		Collections.sort(_data, new DataSorter());
+		ArrayUtils.reverse(onTopLines);
+		for (Object[] onTopLine : onTopLines)
+		{
+			_data.add(0, onTopLine);
+		}
 
 		_rowsIter = _data.iterator();
+	}
+
+	private Object[] getMatchingOnTopLine(Object[][] onTopLines, String methodName)
+	{
+		for (Object[] onTopLine : onTopLines)
+		{
+			if(onTopLine[0].equals(methodName))
+			{
+				return onTopLine;
+			}
+		}
+
+		return null;
 	}
 
 	/**

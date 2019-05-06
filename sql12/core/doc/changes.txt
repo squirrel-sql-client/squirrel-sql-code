@@ -6,6 +6,16 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+The following pieces of information now always appear on top of the Database meta data list
+  (select top node of Object tree --> first tab on the right named "Metadata"):
+    "getURL"
+    "getDriverName"
+    "getDatabaseProductName"
+    "getDatabaseProductVersion"
+    "getDriverVersion"
+    "getUserName"
+    "getDefaultTransactionIsolation"
+
 Code completion has two new options (check boxes), see menu File --> New Session Properties -->  tab Code Completion:
   1. The completion popup can now be configured for columns to show their tables/views.
   2. If 1. is checked the completion itself can be chosen to qualify columns automatically.
