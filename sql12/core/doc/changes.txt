@@ -118,7 +118,7 @@ Small UI fix concerning caret color configuration.
 
 
 
-3.9.1 (02/24/2018)
+3.9.1 (02/24/2019)
 ==================
 
 Enhancements:
