@@ -79,6 +79,9 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+Merge-Request #44: Workaround for DB2/AIX64 driver Metadata: COLUMN_SIZE is only half of CHAR_OCTET_LENGTH in double-bytes datatype GRAPHIC/VARGRAPHIC columns
+  Thanks to Stefan Mueller for the merge request.
+
 Merge-Request #44: Bug fix for DB2 when reading database client properties,
   because java.sql.DataBaseMetaData.getClientInfoProperties().getMetadata() returns null.
   Thanks to Stefan Mueller for the merge request.

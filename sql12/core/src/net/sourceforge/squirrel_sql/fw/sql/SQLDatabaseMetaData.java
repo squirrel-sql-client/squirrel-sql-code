@@ -1774,7 +1774,13 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			rs = getColumns(ti);
 			ResultSetDataSet rsds = new ResultSetDataSet();
 			rsds.setResultSet(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
+
+			// Workaround for DB2/AIX64 driver: COLUMN_SIZE is not CHAR_OCTET_LENGTH for double-bytes datatypes GRAPHIC/VARGRAPHIC
 			result = rsds;
+			if (ResultSetDataSetDB2AIX64MetadataWrapper.DATABASE_PRODUCT_NAME_DB_2_AIX_64.equals(getDatabaseProductName()))
+			{
+				result = new ResultSetDataSetDB2AIX64MetadataWrapper(rsds);
+			}
 		}
 		catch (SQLException e)
 		{
@@ -1850,13 +1856,26 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 					isNullAllowed = rdr.getLong(11).intValue();
 				}
 
+				// Workaround for DB2/AIX64 driver: COLUMN_SIZE is not CHAR_OCTET_LENGTH for double-bytes datatypes GRAPHIC/VARGRAPHIC
+				int columnSize = rdr.getLong(7).intValue();
+				if ("DB2/AIX64".equals(md.getDatabaseProductName())) {
+					if (
+							(rdr.getLong(5).intValue() == 1 && rdr.getString(6).equals("GRAPHIC")
+							|| rdr.getLong(5).intValue() == 12 && rdr.getString(6).equals("VARGRAPHIC")) &&
+							rdr.getLong(7).intValue() == rdr.getLong(16).intValue() &&
+							rdr.getLong(7).intValue()%2 == 0
+					) {
+						columnSize = columnSize / 2;
+					}
+				}
+
 				final TableColumnInfo tci = new TableColumnInfo(rdr.getString(1), // TABLE_CAT
 					rdr.getString(2), // TABLE_SCHEM
 					rdr.getString(3), // TABLE_NAME
 					rdr.getString(4), // COLUMN_NAME
 					rdr.getLong(5).intValue(), // DATA_TYPE
 					rdr.getString(6), // TYPE_NAME
-					rdr.getLong(7).intValue(), // COLUMN_SIZE
+					columnSize, // COLUMN_SIZE
 					rdr.getLong(9).intValue(), // DECIMAL_DIGITS
 					rdr.getLong(10).intValue(), // NUM_PREC_RADIX
 					isNullAllowed, // NULLABLE
