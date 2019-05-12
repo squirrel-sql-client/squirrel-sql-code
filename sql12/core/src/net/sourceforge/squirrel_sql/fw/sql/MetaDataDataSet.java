@@ -21,12 +21,8 @@ import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -263,13 +259,30 @@ public class MetaDataDataSet implements IDataSet
 		}
 		else if (line[0].equals("getClientInfoProperties")) 
 		{
+			_readClientInfoPropertiesFailSave(md, getter, line);
+		} 
+		else
+		{
+			Object obj = executeGetter(md, getter);
+			line[1] = obj;
+		}
+		return line;
+	}
+
+	private void _readClientInfoPropertiesFailSave(DatabaseMetaData md, Method getter, Object[] line)
+	{
+		try
+		{
 			Object obj = executeGetter(md, getter);
 			if (obj instanceof ResultSet)
 			{
-				ResultSet rs = (ResultSet) obj;
-				try
+				try(ResultSet rs = (ResultSet) obj)
 				{
-					int clientInfoColumnCount = rs.getMetaData().getColumnCount();
+					int clientInfoColumnCount = 4;
+					if (rs.getMetaData() != null)
+					{
+						clientInfoColumnCount = rs.getMetaData().getColumnCount();
+					}
 
 					StringBuilder tmp = new StringBuilder();
 					while (rs.next())
@@ -278,7 +291,7 @@ public class MetaDataDataSet implements IDataSet
 
 						if (clientInfoColumnCount > 1)
 						{
-							if (rs.getMetaData().getColumnType(2) == Types.INTEGER)
+							if (rs.getMetaData()==null || rs.getMetaData().getColumnType(2) == Types.INTEGER)
 							{
 								tmp.append("\t").append(rs.getInt(2));
 							}
@@ -303,26 +316,17 @@ public class MetaDataDataSet implements IDataSet
 					}
 					line[1] = tmp.toString();
 				}
-				catch (SQLException ex)
-				{
-					_msgHandler.showMessage(ex, null);
-				}
-				finally
-				{
-					SQLUtilities.closeResultSet(rs);
-				}
 			}
 			else
 			{
 				line[1] = obj;
 			}
-		} 
-		else
-		{
-			Object obj = executeGetter(md, getter);
-			line[1] = obj;
 		}
-		return line;
+		catch (Throwable ex)
+		{
+			_msgHandler.showMessage(ex, null);
+			line[1] = ex.toString();
+		}
 	}
 
 	protected Object executeGetter(Object bean, Method getter)
