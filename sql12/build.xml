@@ -161,6 +161,11 @@
                 <include name="**/*" />
             </fileset>
         </copy>
+        <copy todir="output/dist/doc/">
+            <fileset dir="core/doc">
+                <include name="**/*" />
+            </fileset>
+        </copy>
     </target>
 
 

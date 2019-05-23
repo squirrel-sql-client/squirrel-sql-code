@@ -79,6 +79,8 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+Plain zip releases were missing the doc/ folder.
+
 Merge-Request #44: Workaround for DB2/AIX64 driver Metadata: COLUMN_SIZE is only half of CHAR_OCTET_LENGTH in double-bytes datatype GRAPHIC/VARGRAPHIC columns
   Thanks to Stefan Mueller for the merge request.
 
