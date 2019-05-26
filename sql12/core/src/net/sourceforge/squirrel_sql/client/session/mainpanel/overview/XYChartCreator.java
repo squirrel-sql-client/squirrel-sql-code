@@ -159,29 +159,25 @@ class XYChartCreator
 
       double formerYValue = pairsSortedByXValues.get(0).getY();
 
-      for (int i = 0; i < pairsSortedByXValues.size(); i++)
+      for (int i = 1; i < pairsSortedByXValues.size(); i++)
       {
-         if( i < pairsSortedByXValues.size() - 1)
+         double buf = pairsSortedByXValues.get(i).getY();
+
+         double diff = buf - formerYValue;
+
+         if (null != timeScale)
          {
-            double buf = pairsSortedByXValues.get(i).getY();
-
-            double diff = pairsSortedByXValues.get(i + 1).getY() - formerYValue;
-
-            if(null != timeScale)
-            {
-               diff = timeScale.scale(diff);
-            }
-
-            pairsSortedByXValues.get(i).setY(diff);
-
-            formerYValue = buf;
+            diff = timeScale.scale(diff);
          }
-         else
-         {
-            // There is no difference for the last row. So we take the former one as a sort of continuation.
-            pairsSortedByXValues.get(i).setY(pairsSortedByXValues.get(i-1).getY());
-         }
+
+         pairsSortedByXValues.get(i - 1).setY(diff);
+
+         formerYValue = buf;
       }
+
+      int lastIx = pairsSortedByXValues.size() - 1;
+      pairsSortedByXValues.get(lastIx).setY(pairsSortedByXValues.get(lastIx-1).getY());
+
    }
 
 
