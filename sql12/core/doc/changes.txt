@@ -79,6 +79,9 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+#1343 SQuirreL refuses to start on macOS  --> Johnny Hujol's fix to the  macOS launch script's.
+     Thanks to Johnny Hujol for the fix.
+
 Difference chart plotted differences between second next neighbours instead of next neighbours. (See SQL result --> tab Overview --> button Charts --> tab Differences)
 
 Plain zip releases were missing the doc/ folder.

@@ -87,12 +87,14 @@ cd "$UNIX_STYLE_HOME"
 # should be able to be run by that version or higher. The arguments to JavaVersionChecker below specify the 
 # minimum acceptable version (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should 
 # be all that is necessary for the version form. 
-"$JAVACMD" -cp "$UNIX_STYLE_HOME/lib/versioncheck.jar" JavaVersionChecker 1.8 9 10 11 12
+#"$JAVACMD" -cp "$UNIX_STYLE_HOME/lib/versioncheck.jar" JavaVersionChecker 1.8 9 10 11 12
+"$JAVACMD" -cp "$UNIX_STYLE_HOME/../Resources/Java/lib/versioncheck.jar" JavaVersionChecker 1.8 9 10 11
 if [ "$?" != "0" ]; then
   exit
 fi
 
-CP="$UNIX_STYLE_HOME"/squirrel-sql.jar:"$UNIX_STYLE_HOME"/lib/*
+#CP="$UNIX_STYLE_HOME"/squirrel-sql.jar:"$UNIX_STYLE_HOME"/lib/*
+CP="$UNIX_STYLE_HOME"/../Resources/Java/squirrel-sql.jar:"$UNIX_STYLE_HOME"/../Resources/Java/lib/*
 
 # Define mac-specific system properties if running on Mac OS X
 MACOSX_SQUIRREL_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=SQuirreLSQL -Dapple.awt.application.name=SQuirreLSQL"
