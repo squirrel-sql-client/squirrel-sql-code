@@ -79,6 +79,9 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+Plain zip Windows start script squirrel-sql.bat: javaw.exe could not be found in certain cases.
+  In the developers mailing list Sigiswald Madou pointed to differences between the plain zip and the installer scripts that caused the problem.
+
 #1343 SQuirreL refuses to start on macOS  --> Johnny Hujol's fix to the  macOS launch script's.
      Thanks to Johnny Hujol for the fix.
 
