@@ -79,6 +79,9 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+#1394 Line breaks are lost on copy/paste when copy as Rich Text was activated, see menu File --> New Session Properties --> tab Syntax.
+   With this came another upgrade of RSyntax version 3.0.1. The bug was actually in RSyntax, see https://github.com/bobbylight/RText/issues/39.
+
 Plain zip Windows start script squirrel-sql.bat: javaw.exe could not be found in certain cases.
   In the developers mailing list Sigiswald Madou pointed to differences between the plain zip and the installer scripts that caused the problem.
 
