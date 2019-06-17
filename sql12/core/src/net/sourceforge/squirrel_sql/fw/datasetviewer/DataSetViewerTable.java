@@ -258,7 +258,6 @@ public final class DataSetViewerTable extends JTable
 
    private TableColumnModel createColumnModel(ColumnDisplayDefinition[] colDefs)
    {
-      //_colDefs = hdgs;
       TableColumnModel cm = new DefaultTableColumnModel();
 
       _rowNumberTableColumn = new RowNumberTableColumn();

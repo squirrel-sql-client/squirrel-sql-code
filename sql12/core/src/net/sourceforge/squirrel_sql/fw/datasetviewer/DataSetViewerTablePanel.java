@@ -29,8 +29,11 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -130,6 +133,17 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 	{
 		super.setColumnDefinitions(colDefs);
 		_table.setColumnDefinitions(colDefs);
+
+		// A new column model is set in the call of _table.setColumnDefinitions(colDefs)
+		// That is why this listener is added here.
+		_table.getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e)
+			{
+				onSelectionChanged();
+			}
+		});
+
 	}
 
 	public void moveToTop()
