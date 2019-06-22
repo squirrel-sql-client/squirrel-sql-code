@@ -79,6 +79,8 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+SQL editor: Errors sometimes didn't get highlighted, especially in additional SQL tabs and windows.
+
 SQL result: Count of selected rows and columns were updated when row selection changed only. Now it's updated on column selection change, too.
 
 #1394 Line breaks are lost on copy/paste when copy as Rich Text was activated, see menu File --> New Session Properties --> tab Syntax.

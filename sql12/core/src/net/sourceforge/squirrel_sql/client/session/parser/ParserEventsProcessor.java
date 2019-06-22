@@ -51,7 +51,14 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 
       _parserTimer = new Timer(500, al);
-      _parserTimer.setRepeats(false);
+
+		// Repeats is set to true to make sure the parser gets correctly initialized.
+		// once all loading is done.
+		// After that it is set back to false and keyboard events only will trigger the parser.
+		// For details see method onTimerStart().
+      _parserTimer.setRepeats(true);
+
+      _parserTimer.start();
    }
 
 
@@ -64,6 +71,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 	{
 		if (_listeners != null && l != null)
 		{
+			_listeners.remove(l);
 			_listeners.add(l);
 		}
 	}
@@ -72,7 +80,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 	{
 		if (_listeners != null && l != null)
 		{
-			_listeners.add(l);
+			_listeners.remove(l);
 		}
 	}
 
@@ -141,13 +149,18 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 			return;
 		}
 
+		// Now that initialization is done, it is enough to trigger the parser by key events.
+		// That is why we set Repeats back to false.
+		// See also comment in constructor.
+		_parserTimer.setRepeats(false);
+
 		initParserThread();
 		_parserThread.notifyParser(_sqlPanelApi.getSQLEntryPanel().getText());
 	}
 
 	private void initParserThread()
 	{
-		if(null != _parserThread)
+ 		if(null != _parserThread)
 		{
 			return;
 		}
