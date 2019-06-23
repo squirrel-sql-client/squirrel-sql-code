@@ -22,18 +22,13 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
 
    private CaseInsensitiveString _caseInsensitiveStringBuffer = new CaseInsensitiveString();
 
-   private Hashtable<CaseInsensitiveString, String> _knownTables =
-       new Hashtable<CaseInsensitiveString, String>();
+   private Hashtable<CaseInsensitiveString, String> _knownTables =  new Hashtable<>();
 
 
    private Vector<SQLTokenListener> _sqlTokenListeners = new Vector<SQLTokenListener>();
 
-   private Vector<ErrorInfo> _currentErrorInfos = new Vector<ErrorInfo>();
+   private Vector<ErrorInfo> _currentErrorInfos = new Vector<>();
 
-
-   public RSyntaxHighlightTokenMatcher(ISession sess, SquirrelRSyntaxTextArea squirrelRSyntaxTextArea, IParserEventsProcessor parserEventsProcessor)
-   {
-   }
 
    public RSyntaxHighlightTokenMatcher(ISession sess, SquirrelRSyntaxTextArea squirrelRSyntaxTextArea, final IIdentifier sqlEntryPanelIdentifier, final RSyntaxPropertiesWrapper rSyntaxPropertiesWrapper)
    {
@@ -74,7 +69,7 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
       {
          for (int i = 0; i < errorInfos.length; i++)
          {
-            if(false == errorInfos[i].equals(_currentErrorInfos.get(i)))
+            if(false == errorInfos[i].matches(_currentErrorInfos.get(i)))
             {
                errorsChanged = true;
                break;
@@ -88,9 +83,43 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
 
       if(errorsChanged)
       {
+         Vector<ErrorInfo> oldErrorInfos = new Vector<>(_currentErrorInfos);
+
          _currentErrorInfos.clear();
          _currentErrorInfos.addAll(Arrays.asList(errorInfos));
-         _squirrelRSyntaxTextArea.repaint();
+
+         forceHighlightUpdateOnErrorPositions(oldErrorInfos);
+      }
+   }
+
+   /**
+    * Couldn't find another way of triggering highlighting update on the positions
+    * of current and former errors.
+    *
+    * Time will tell how stable this is.
+    */
+   private void forceHighlightUpdateOnErrorPositions(Vector<ErrorInfo> oldErrorInfos)
+   {
+      for (ErrorInfo formerErrorInfo : _currentErrorInfos)
+      {
+         if(_squirrelRSyntaxTextArea.getText().length() < formerErrorInfo.endPos)
+         {
+            continue;
+         }
+
+         _squirrelRSyntaxTextArea.insert(" ", formerErrorInfo.endPos);
+         _squirrelRSyntaxTextArea.replaceRange("", formerErrorInfo.endPos, formerErrorInfo.endPos+1);
+      }
+
+      for (ErrorInfo oldErrorInfo : oldErrorInfos)
+      {
+         if(_squirrelRSyntaxTextArea.getText().length() < oldErrorInfo.endPos)
+         {
+            continue;
+         }
+
+         _squirrelRSyntaxTextArea.insert(" ", oldErrorInfo.endPos);
+         _squirrelRSyntaxTextArea.replaceRange("", oldErrorInfo.endPos, oldErrorInfo.endPos+1);
       }
    }
 

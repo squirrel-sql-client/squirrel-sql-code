@@ -25,7 +25,7 @@ public class ErrorInfo
 	public int beginPos;
 	public int endPos;
 
-	private String key;
+	public String key;
 
 	public ErrorInfo(String message, int beginPos, int endPos)
 	{
@@ -36,35 +36,9 @@ public class ErrorInfo
 		key = message + "_" + beginPos + "_" + endPos;
 	}
 
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((key == null) ? 0 : key.hashCode());
-		return result;
-	}
 
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj)
+	public boolean matches(ErrorInfo other)
 	{
-		if (this == obj) { return true; }
-		if (obj == null) { return false; }
-		if (getClass() != obj.getClass()) { return false; }
-		ErrorInfo other = (ErrorInfo) obj;
-		if (key == null)
-		{
-			if (other.key != null) { return false; }
-		}
-		else if (!key.equals(other.key)) { return false; }
-		return true;
+		return key.equals(other.key);
 	}
-	
-	
 }
