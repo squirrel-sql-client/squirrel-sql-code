@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.CaseInsensitiveString;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 
 import javax.swing.*;
 import java.util.Hashtable;
@@ -100,27 +101,8 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
     */
    private void forceHighlightUpdateOnErrorPositions(Vector<ErrorInfo> oldErrorInfos)
    {
-      for (ErrorInfo formerErrorInfo : _currentErrorInfos)
-      {
-         if(_squirrelRSyntaxTextArea.getText().length() < formerErrorInfo.endPos)
-         {
-            continue;
-         }
-
-         _squirrelRSyntaxTextArea.insert(" ", formerErrorInfo.endPos);
-         _squirrelRSyntaxTextArea.replaceRange("", formerErrorInfo.endPos, formerErrorInfo.endPos+1);
-      }
-
-      for (ErrorInfo oldErrorInfo : oldErrorInfos)
-      {
-         if(_squirrelRSyntaxTextArea.getText().length() < oldErrorInfo.endPos)
-         {
-            continue;
-         }
-
-         _squirrelRSyntaxTextArea.insert(" ", oldErrorInfo.endPos);
-         _squirrelRSyntaxTextArea.replaceRange("", oldErrorInfo.endPos, oldErrorInfo.endPos+1);
-      }
+      RSyntaxDocument doc = (RSyntaxDocument) _squirrelRSyntaxTextArea.getDocument();
+      doc.setSyntaxStyle(doc.getSyntaxStyle());
    }
 
    @Override
