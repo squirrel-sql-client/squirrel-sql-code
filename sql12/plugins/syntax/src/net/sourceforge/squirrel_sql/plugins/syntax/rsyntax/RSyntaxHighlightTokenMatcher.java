@@ -113,7 +113,14 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
       {
          ErrorInfo errInf = _currentErrorInfos.elementAt(i);
 
-         if(offset <= errInf.beginPos && errInf.endPos <= offset + len)
+         ////////////////////////////////////////////////////////////////////////////
+         // Parser positions are shifted by one with respect to editor positions
+         int editorBeginPos = errInf.beginPos - 1;
+         int editorEndPos = errInf.endPos - 1;
+         //
+         ///////////////////////////////////////////////////////////////////////////
+
+         if(offset <= editorBeginPos && editorEndPos <= offset + len)
          {
             return true;
          }

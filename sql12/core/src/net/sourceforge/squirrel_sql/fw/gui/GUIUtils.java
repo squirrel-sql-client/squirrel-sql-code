@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -378,11 +378,11 @@ public class GUIUtils
 			}
 			catch (InvocationTargetException ex)
 			{
-				throw new BaseRuntimeException(ex);
+				throw Utilities.wrapRuntime(ex);
 			}
 			catch (InterruptedException ex)
 			{
-				throw new BaseRuntimeException(ex);
+				throw Utilities.wrapRuntime(ex);
 			}
 		}
 		else

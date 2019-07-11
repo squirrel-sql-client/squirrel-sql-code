@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Triggered by bug #1395 a new SQL parser 'JSqlParser' was integrated, see https://github.com/JSQLParser/JSqlParser
+
 The following pieces of information now always appear on top of the Database meta data list
   (select top node of Object tree --> first tab on the right named "Metadata"):
     "JDBC Driver CLASSNAME"

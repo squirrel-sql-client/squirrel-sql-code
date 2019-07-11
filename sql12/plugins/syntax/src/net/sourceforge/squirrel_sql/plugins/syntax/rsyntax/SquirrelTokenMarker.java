@@ -33,15 +33,20 @@ public class SquirrelTokenMarker extends SquirrelTokenMakerBase
    {
       int len = end + 1 - start;
 
+      out(array, "Bev", start, end, startOffset);
+
       if(_syntaxHighlightTokenMatcher.isError(startOffset, len))
       {
+         //out(array, "Err", start, end, startOffset);
+
          // Errors must be first.
          super.addToken(array, start, end, Token.ERROR_IDENTIFIER, startOffset, hyperlink);
       }
       else if(Token.IDENTIFIER == tokenType)
       {
-//         String s = new String(array).substring(start, end+1);
-//         System.out.println("Squirrel: -->" + s + "<--");
+
+         //out(array, "NoErr", start, end, startOffset);
+
          if(_syntaxHighlightTokenMatcher.isKeyword(array, start, len))
          {
             super.addToken(array, start, end, Token.RESERVED_WORD, startOffset, hyperlink);
@@ -75,5 +80,15 @@ public class SquirrelTokenMarker extends SquirrelTokenMakerBase
       {
          super.addToken(array, start, end, tokenType, startOffset, hyperlink);
       }
+   }
+
+   private void out(char[] array, final String type, int start, int end, int startOffset)
+   {
+//      String s = new String(array).substring(start, end+1);
+//
+//      if("articlesd".equals(s))
+//      {
+//         System.out.println(type + ": -->" + s + "<-- startOffset=" + startOffset + " start=" + start + " end=" + end);
+//      }
    }
 }

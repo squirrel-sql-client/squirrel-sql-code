@@ -1,27 +1,24 @@
 package net.sourceforge.squirrel_sql.client.session.parser;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.Vector;
-
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserThread;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParsingFinishedListener;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
-import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class ParserEventsProcessor implements IParserEventsProcessor
 {
 	private Timer _parserTimer;
 	private ParserThread _parserThread;
-	private Vector<ParserEventsListener> _listeners = new Vector<>();
+	private ArrayList<ParserEventsListener> _listeners = new ArrayList<>();
 	private ISession _session;
    private ISQLPanelAPI _sqlPanelApi;
 	private KeyAdapter _triggerParserKeyListener;
@@ -32,16 +29,8 @@ public class ParserEventsProcessor implements IParserEventsProcessor
       _session = session;
       _sqlPanelApi = sqlPanelApi;
 
-      ActionListener al = new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onTimerStart();
-         }
-      };
 
-
-      _triggerParserKeyListener = new KeyAdapter()
+		_triggerParserKeyListener = new KeyAdapter()
       {
          public void keyTyped(KeyEvent e)
          {
@@ -50,7 +39,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
       };
 
 
-      _parserTimer = new Timer(500, al);
+      _parserTimer = new Timer(500, e -> onTimerStart());
 
 		// Repeats is set to true to make sure the parser gets correctly initialized.
 		// once all loading is done.
@@ -64,7 +53,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
    private void onParserExitedOnException(final Throwable e)
 	{
-		SwingUtilities.invokeLater(() -> {throw new BaseRuntimeException(e);});
+		SwingUtilities.invokeLater(() -> {throw Utilities.wrapRuntime(e);});
 	}
 
 	public void addParserEventsListener(ParserEventsListener l)
@@ -155,7 +144,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 		_parserTimer.setRepeats(false);
 
 		initParserThread();
-		_parserThread.notifyParser(_sqlPanelApi.getSQLEntryPanel().getText());
+		_parserThread.parseInBackground(_sqlPanelApi.getSQLEntryPanel().getText());
 	}
 
 	private void initParserThread()
@@ -165,7 +154,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 			return;
 		}
 
-		_parserThread = new ParserThread(new SQLSchemaImpl(_session));
+		_parserThread = new ParserThread(_session);
 
 		_sqlPanelApi.getSQLEntryPanel().getTextComponent().addKeyListener(_triggerParserKeyListener);
 
