@@ -40,6 +40,7 @@ import javax.swing.Timer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Frame;
@@ -199,6 +200,21 @@ public class GUIUtils
 		}
 		return getOwningFrame(SwingUtilities.windowForComponent(comp));
 	}
+
+	public static Dialog getOwningDialog(Component comp)
+	{
+		if (comp == null)
+		{
+			throw new IllegalArgumentException("null Component passed");
+		}
+
+		if (comp instanceof Dialog)
+		{
+			return (Dialog) comp;
+		}
+		return getOwningDialog(SwingUtilities.windowForComponent(comp));
+	}
+
 
 	/**
 	 * Return <TT>true</TT> if <TT>frame</TT> is a tool window. I.E. is the

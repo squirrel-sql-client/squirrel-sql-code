@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+The combo box in the font chooser dialog of the Session Properties dialog (see bottom of tab SQL)
+  now shows if a font is monospaced.
+
+
 Triggered by bug #1395 a new SQL parser 'JSqlParser' was integrated, see https://github.com/JSQLParser/JSqlParser
    For information: SQuirreL uses its SQL parser to mark errors in SQLs and to support SQL code completion for table aliases.
 
@@ -81,6 +85,13 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 
 Bug fixes:
+
+The font chooser dialog of the Session Properties dialog (see bottom of tab SQL)
+  used to show up centered over the main application frame instead of over its parent dialog.
+
+The maximum length of strings stored in Paste history (ctrl+shift+v or ctrl+shift+insert) is now 30000.
+
+Fixed "No resource found for key SQLPanelAPI.nofileToRelaod" error message.
 
 SQL Editor / Parser: 
  - Brackets in literals or comments

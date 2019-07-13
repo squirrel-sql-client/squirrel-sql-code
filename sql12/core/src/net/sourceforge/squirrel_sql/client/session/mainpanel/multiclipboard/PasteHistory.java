@@ -8,6 +8,13 @@ public class PasteHistory
 
    public void addToPasteHistory(String clipContent)
    {
+      if(30000 < clipContent.length())
+      {
+         return;
+      }
+
+
+
       _history.remove(clipContent);
       _history.add(0, clipContent);
 

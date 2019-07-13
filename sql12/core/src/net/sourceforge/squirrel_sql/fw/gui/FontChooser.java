@@ -22,7 +22,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -87,9 +86,7 @@ public class FontChooser extends JDialog
 	 */
 	public FontChooser(Frame owner)
 	{
-		super(owner, s_stringMgr.getString("FontChooser.title"), true);
-		_selectStyles = true;
-		createUserInterface();
+		this(owner, true);
 	}
 
 	/**
@@ -112,9 +109,7 @@ public class FontChooser extends JDialog
 	 */
 	public FontChooser(Dialog owner)
 	{
-		super(owner, s_stringMgr.getString("FontChooser.title"), true);
-		_selectStyles = true;
-		createUserInterface();
+		this(owner, true);
 	}
 
 	/**
@@ -176,7 +171,7 @@ public class FontChooser extends JDialog
 	{
 		if (font != null)
 		{
-			_fontNamesCmb.setSelectedItem(font.getName());
+			_fontNamesCmb.setSelectedItem(FontFamilyWrapper.wrap(this, font.getName()));
 			_fontSizesCmb.setSelectedItem("" + font.getSize());
 			_boldChk.setSelected(_selectStyles && font.isBold());
 			_italicChk.setSelected(_selectStyles && font.isItalic());
@@ -210,7 +205,7 @@ public class FontChooser extends JDialog
 			// Ignore.
 		}
 		FontInfo fi = new FontInfo();
-		fi.setFamily((String)_fontNamesCmb.getSelectedItem());
+		fi.setFamily(((FontFamilyWrapper)_fontNamesCmb.getSelectedItem()).getFontFamilyName());
 		fi.setSize(size);
 		fi.setIsBold(_boldChk.isSelected());
 		fi.setIsItalic(_italicChk.isSelected());
@@ -243,7 +238,7 @@ public class FontChooser extends JDialog
 
 		++gbc.gridy;
 		gbc.gridx = 0;
-		_fontNamesCmb = new JComboBox(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+		_fontNamesCmb = new JComboBox(FontFamilyWrapper.createWrappers(this));
 		content.add(_fontNamesCmb, gbc);
 
 		++gbc.gridx;

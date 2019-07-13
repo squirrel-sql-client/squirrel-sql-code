@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
@@ -23,6 +24,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -385,7 +387,7 @@ class SQLPropertiesPanel extends JPanel
       gbc.fill = GridBagConstraints.HORIZONTAL;
       gbc.insets = new Insets(4, 4, 4, 4);
 
-      _fontBtn.addActionListener(new FontButtonListener());
+      _fontBtn.addActionListener(e -> onFontButtonClicked());
 
       gbc.gridx = 0;
       gbc.gridy = 0;
@@ -467,26 +469,19 @@ class SQLPropertiesPanel extends JPanel
       }
    }
 
-   private static final class FontButtonListener implements ActionListener
+   private void onFontButtonClicked()
    {
-      public void actionPerformed(ActionEvent evt)
+      FontInfo fi = _fontBtn.getFontInfo();
+      Font font = null;
+      if (fi != null)
       {
-         if (evt.getSource() instanceof FontButton)
-         {
-            FontButton btn = (FontButton) evt.getSource();
-            FontInfo fi = btn.getFontInfo();
-            Font font = null;
-            if (fi != null)
-            {
-               font = fi.createFont();
-            }
-            font = new FontChooser().showDialog(font);
-            if (font != null)
-            {
-               btn.setSelectedFont(font);
-               btn._lbl.setText(new FontInfo(font).toString());
-            }
-         }
+         font = fi.createFont();
+      }
+      font = new FontChooser(GUIUtils.getOwningDialog(this)).showDialog(font);
+      if (font != null)
+      {
+         _fontBtn.setSelectedFont(font);
+         _fontBtn._lbl.setText(new FontInfo(font).toString());
       }
    }
 
@@ -494,8 +489,7 @@ class SQLPropertiesPanel extends JPanel
     * This class will update the status of the GUI controls as the user
     * makes changes.
     */
-   private final class ControlMediator implements ChangeListener,
-         ActionListener
+   private final class ControlMediator implements ChangeListener, ActionListener
    {
       public void stateChanged(ChangeEvent evt)
       {
