@@ -29,7 +29,6 @@ import java.util.*;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.metal.OceanTheme;
 
 import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
 import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
@@ -243,16 +242,16 @@ public class Application implements IApplication
 
 		s_log.info("Application.shutdown: BEGIN: " + Calendar.getInstance().getTime());
 
-//		updateCheckTimer.stop();
-//      s_log.info("Application.shutdown: updateCheckTimer.stop() ELAPSED: " + (System.currentTimeMillis() - begin));
-
-		_saveApplicationState(begin);
+		_saveApplicationState_beforeWidgetClosing(begin);
       s_log.info("Application.shutdown: saveApplicationState() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       if (!closeAllSessions())
       {
          return false;
       }
+
+      // E.g. the SQL panel divider location didn't get saved on closing.
+		_saveApplicationState_afterWidgetClosing(begin);
 
       _pluginManager.unloadPlugins();
       s_log.info("Application.shutdown: _pluginManager.unloadPlugins() ELAPSED: " + (System.currentTimeMillis() - begin));
@@ -277,15 +276,13 @@ public class Application implements IApplication
 	 */
 	public void saveApplicationState()
 	{
-      _saveApplicationState(null);
+		long begin = System.currentTimeMillis();
+      _saveApplicationState_beforeWidgetClosing(begin);
+      _saveApplicationState_afterWidgetClosing(begin);
 	}
 
-   private void _saveApplicationState(Long begin)
+	private void _saveApplicationState_beforeWidgetClosing(long begin)
    {
-      if(null == begin)
-      {
-         begin = System.currentTimeMillis();
-      }
 
       _prefs.setFirstRun(false);
       s_log.info("saveApplicationState: _prefs.setFirstRun(false) ELAPSED: " + (System.currentTimeMillis() - begin));
@@ -325,13 +322,17 @@ public class Application implements IApplication
       saveUserSpecificWikiConfigurations();
       s_log.info("saveApplicationState: saveUserSpecificWikiConfigurations() ELAPSED: " + (System.currentTimeMillis() - begin));
 
-      _propsImpl.saveProperties();
-		s_log.info("saveApplicationState: _propsImpl.saveProperties() ELAPSED: " + (System.currentTimeMillis() - begin));
-
       _prefs.save();
    }
 
-   /**
+	private void _saveApplicationState_afterWidgetClosing(long begin)
+	{
+		_propsImpl.saveProperties();
+		s_log.info("saveApplicationState: _propsImpl.saveProperties() ELAPSED: " + (System.currentTimeMillis() - begin));
+	}
+
+
+	/**
 	 * Builds a Locale from the user's preferred locale preference.
 	 * 
 	 * @param prefs

@@ -86,6 +86,8 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+SQL panel's divider location didn't get stored on application close.
+
 The font chooser dialog of the Session Properties dialog (see bottom of tab SQL)
   used to show up centered over the main application frame instead of over its parent dialog.
 

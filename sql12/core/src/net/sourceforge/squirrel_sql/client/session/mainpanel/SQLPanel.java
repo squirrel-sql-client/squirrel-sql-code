@@ -483,13 +483,17 @@ public class SQLPanel extends JPanel
     * @see #PREFS_KEY_SPLIT_DIVIDER_LOC
     * @see #PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL
     */
-   private void saveOrientationDependingDividerLocation() {
-	   int dividerLoc = _splitPane.getDividerLocation();
-	   if(_splitPane.getOrientation() == JSplitPane.VERTICAL_SPLIT){
-		   Props.putInt(PREFS_KEY_SPLIT_DIVIDER_LOC, dividerLoc);
-	   }else{
-		   Props.putInt(PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL, dividerLoc);
-	   }
+   private void saveOrientationDependingDividerLocation()
+   {
+      int dividerLoc = _splitPane.getDividerLocation();
+      if (_splitPane.getOrientation() == JSplitPane.VERTICAL_SPLIT)
+      {
+         Props.putInt(PREFS_KEY_SPLIT_DIVIDER_LOC, dividerLoc);
+      }
+      else
+      {
+         Props.putInt(PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL, dividerLoc);
+      }
    }
 
 	private void installSQLEntryPanel(ISQLEntryPanel pnl)
@@ -954,27 +958,37 @@ public class SQLPanel extends JPanel
     * @see #PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL
     * @return the divider's location depending on the orientation
     */
-   private int calculateDividerLocation(int orientation, boolean useDefault) {
-	   int dividerLoc;	
-	   
-	   final Dimension parentDim = _splitPane.getSize();
-	   
-	   if(orientation == JSplitPane.VERTICAL_SPLIT){
-		   int def = parentDim.height-200;
-		   if(useDefault == false){
-			   dividerLoc = Props.getInt(PREFS_KEY_SPLIT_DIVIDER_LOC, def);
-		   }else{
-			   dividerLoc = def;
-		   }
-	   }else{
-		   int def = parentDim.width/2;
-		   if(useDefault == false){
-			   dividerLoc = Props.getInt(PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL, def);
-		   }else{
-			   dividerLoc = def;
-		   }
-	   }
-	  return dividerLoc;
+   private int calculateDividerLocation(int orientation, boolean useDefault)
+   {
+      int dividerLoc;
+
+      final Dimension parentDim = _splitPane.getSize();
+
+      if (orientation == JSplitPane.VERTICAL_SPLIT)
+      {
+         int def = parentDim.height - 200;
+         if (useDefault == false)
+         {
+            dividerLoc = Props.getInt(PREFS_KEY_SPLIT_DIVIDER_LOC, def);
+         }
+         else
+         {
+            dividerLoc = def;
+         }
+      }
+      else
+      {
+         int def = parentDim.width / 2;
+         if (useDefault == false)
+         {
+            dividerLoc = Props.getInt(PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL, def);
+         }
+         else
+         {
+            dividerLoc = def;
+         }
+      }
+      return dividerLoc;
 
    }
 
