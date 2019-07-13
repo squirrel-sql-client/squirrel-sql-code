@@ -7,6 +7,7 @@ Not yet released, available in our GIT repository and in snapshots and future re
 Enhancements:
 
 Triggered by bug #1395 a new SQL parser 'JSqlParser' was integrated, see https://github.com/JSQLParser/JSqlParser
+   For information: SQuirreL uses its SQL parser to mark errors in SQLs and to support SQL code completion for table aliases.
 
 The following pieces of information now always appear on top of the Database meta data list
   (select top node of Object tree --> first tab on the right named "Metadata"):
@@ -80,6 +81,12 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 
 Bug fixes:
+
+SQL Editor / Parser: 
+ - Brackets in literals or comments
+ - "'"  in comments ("--" or "/* ... */")
+ - comments in literals
+ could break SQuirreL's SQL parser.
 
 SQL editor: Errors sometimes didn't get highlighted, especially in additional SQL tabs and windows.
 

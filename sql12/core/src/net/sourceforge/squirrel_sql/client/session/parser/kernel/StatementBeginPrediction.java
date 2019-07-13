@@ -16,25 +16,33 @@ public class StatementBeginPrediction
 
       while( sqlEditorText.length() > ret)
       {
-         if('(' == sqlEditorText.charAt(ret))
+         if ('\'' == sqlEditorText.charAt(ret))
          {
-            ++openBracketsCount;
+            if (false == isInComment(ret, commentIntervals))
+            {
+               ++literalDelimsCount;
+            }
          }
-         else if(')' == sqlEditorText.charAt(ret))
+
+         if (false == isInComment(ret, commentIntervals) && false == isInLiteral(literalDelimsCount))
          {
-            --openBracketsCount;
-         }
-         else if('\'' == sqlEditorText.charAt(ret))
-         {
-            ++literalDelimsCount;
+            if ('(' == sqlEditorText.charAt(ret))
+            {
+               ++openBracketsCount;
+            }
+            else if (')' == sqlEditorText.charAt(ret))
+            {
+                  --openBracketsCount;
+            }
          }
 
 
-         if(   false == isInBrackets(openBracketsCount)
-            && false == isInLiteral(literalDelimsCount)
+         if(
+               false == isInLiteral(literalDelimsCount)
             && false == isInComment(ret, commentIntervals)
+            && false == isInBrackets(openBracketsCount)
             && startsWithBeginKeyWord(sqlEditorText, ret)
-             )
+           )
          {
             break;
          }
@@ -71,9 +79,26 @@ public class StatementBeginPrediction
 
       int[] curComment = null;
 
+      int literalDelimsCount = 0;
+
+
       for(int i=0; i < sqlEditorText.length(); ++i)
       {
          check.check();
+
+
+         if (false == inLineComment && false == inMultiLineComment)
+         {
+            if ('\'' == sqlEditorText.charAt(i))
+            {
+               ++literalDelimsCount;
+            }
+
+            if(isInLiteral(literalDelimsCount))
+            {
+               continue;
+            }
+         }
 
          if('*' == sqlEditorText.charAt(i) && isaSlash && false == inMultiLineComment && false == inLineComment)
          {

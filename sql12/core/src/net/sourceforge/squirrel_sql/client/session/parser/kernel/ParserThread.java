@@ -25,7 +25,7 @@ public class ParserThread
    private ErrorInfo[] _errorInfos = new ErrorInfo[0];
    private TableAliasInfo[] _tableAliasInfos = new TableAliasInfo[0];
 
-   private ParseTerminateRequestCheck _parseTerminateRequestCheck = () -> onCheckShutdownRequested();
+   private ParseTerminateRequestCheck _parseTerminateRequestCheck = () -> onCheckExitThreadRequested();
    private volatile boolean _exitThreadRequested = false;
 
 
@@ -35,7 +35,7 @@ public class ParserThread
       _executorService = Executors.newSingleThreadExecutor();
    }
 
-   private void onCheckShutdownRequested()
+   private void onCheckExitThreadRequested()
    {
       if (_exitThreadRequested)
       {
