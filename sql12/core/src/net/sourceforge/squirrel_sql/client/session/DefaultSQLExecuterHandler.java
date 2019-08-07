@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * This default implementation of the sql executer handler simply notifies the
@@ -66,10 +67,9 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
       if(th instanceof SQLException)
       {
          SQLException sqlEx = (SQLException) th;
-         sqlEx.getSQLState();
-         sqlEx.getErrorCode();
+			String msg1 = Utilities.getSqlExecutionErrorMessage(sqlEx);
 
-         msg += sqlEx + ", SQL State: " + sqlEx.getSQLState() + ", Error Code: " + sqlEx.getErrorCode();
+			msg += msg1;
       }
       else
       {

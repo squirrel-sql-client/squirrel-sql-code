@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
@@ -70,17 +71,27 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
    @Override
    public String sqlExecutionException(Throwable th, String postErrorString)
    {
+      String retMessage = postErrorString;
+
       if (null != postErrorString)
       {
-         System.out.println(postErrorString);
+         CliMessageUtil.showMessage(CliMessageType.ERROR, postErrorString);
       }
 
       if(null != th)
       {
-         throw Utilities.wrapRuntime(th);
+         if (th instanceof SQLException)
+         {
+            retMessage = Utilities.getSqlExecutionErrorMessage((SQLException) th);
+            CliMessageUtil.showMessage(CliMessageType.ERROR, retMessage);
+         }
+         else
+         {
+            throw CliMessageUtil.wrapRuntime(th);
+         }
       }
 
-      return postErrorString;
+      return retMessage;
    }
 
    @Override
@@ -151,11 +162,10 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
    {
       closeOutputFile();
 
-
-      if (0 < sqlExecErrorMsgs.size())
-      {
-         System.out.println(sqlExecErrorMsgs.get(0));
-      }
+//      if (0 < sqlExecErrorMsgs.size())
+//      {
+//         System.out.println(sqlExecErrorMsgs.get(0));
+//      }
    }
 
    private void closeOutputFile()

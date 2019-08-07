@@ -26,6 +26,7 @@ import java.io.ObjectStreamClass;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -512,5 +513,12 @@ public class Utilities
       }
 
       return new RuntimeException(e);
+   }
+
+   public static String getSqlExecutionErrorMessage(SQLException sqlEx)
+   {
+      sqlEx.getSQLState();
+      sqlEx.getErrorCode();
+      return sqlEx + ", SQL State: " + sqlEx.getSQLState() + ", Error Code: " + sqlEx.getErrorCode();
    }
 }

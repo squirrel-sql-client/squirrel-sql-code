@@ -14,8 +14,8 @@ public class BatchTest
    private static void testNewAlias() throws ParseException
    {
       SquirrelBatch.main(new String[]{
-            "/home/gerd/work/java/squirrel/squirrel-sql-git/sql12/output/dist/",
-            "/home/gerd/work/java/squirrel/userdir",
+            //"/home/gerd/work/java/squirrel/squirrel-sql-git/sql12/output/dist/",
+            "-userdir", "/home/gerd/work/java/squirrel/userdir",
             "-url", "jdbc:postgresql://localhost/pos_central",
             "-user", "gerd",
             "-password", "blabber",
@@ -27,8 +27,8 @@ public class BatchTest
    private static void testExistingAlias() throws ParseException
    {
       SquirrelBatch.main(new String[]{
-            "/home/gerd/work/java/squirrel/squirrel-sql-git/sql12/output/dist/",
-            "/home/gerd/work/java/squirrel/userdir",
+            //"/home/gerd/work/java/squirrel/squirrel-sql-git/sql12/output/dist/",
+            "-userdir", "/home/gerd/work/java/squirrel/userdir",
             "-alias", "PostgreSQL p_c",
             "-sql", "select * from articles"});
    }

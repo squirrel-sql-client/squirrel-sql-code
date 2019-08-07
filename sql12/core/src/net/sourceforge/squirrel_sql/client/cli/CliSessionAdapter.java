@@ -286,37 +286,37 @@ public class CliSessionAdapter implements ISession
    @Override
    public void showMessage(Throwable th)
    {
-      throw new UnsupportedOperationException("Must be implemented in derived class");
+      CliMessageUtil.showMessage(CliMessageType.MESSAGE, th);
    }
 
    @Override
    public void showMessage(String msg)
    {
-      throw new UnsupportedOperationException("Must be implemented in derived class");
+      CliMessageUtil.showMessage(CliMessageType.MESSAGE, msg);
    }
 
    @Override
    public void showErrorMessage(Throwable th)
    {
-      throw new UnsupportedOperationException("Must be implemented in derived class");
+      CliMessageUtil.showMessage(CliMessageType.ERROR, th);
    }
 
    @Override
    public void showErrorMessage(String msg)
    {
-      throw new UnsupportedOperationException("Must be implemented in derived class");
+      CliMessageUtil.showMessage(CliMessageType.ERROR, msg);
    }
 
    @Override
    public void showWarningMessage(String msg)
    {
-      throw new UnsupportedOperationException("Must be implemented in derived class");
+      CliMessageUtil.showMessage(CliMessageType.WARNING, msg);
    }
 
    @Override
    public void showWarningMessage(Throwable th)
    {
-      throw new UnsupportedOperationException("Must be implemented in derived class");
+      CliMessageUtil.showMessage(CliMessageType.WARNING, th);
    }
 
    @Override
