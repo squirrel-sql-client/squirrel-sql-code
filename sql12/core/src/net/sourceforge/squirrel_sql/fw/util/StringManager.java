@@ -18,12 +18,11 @@ package net.sourceforge.squirrel_sql.fw.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.text.MessageFormat;
-import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.net.URLClassLoader;
 import java.net.URL;
 
+import net.sourceforge.squirrel_sql.fw.resources.LazyResourceBundle;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -38,7 +37,7 @@ public class StringManager
 	private static ILogger s_log = LoggerController.createLogger(StringManager.class);
 
 	/** Contains the localised strings. */
-	private ResourceBundle _rsrcBundle;
+	private LazyResourceBundle _lazyResourceBundle;
 	private String _bundleBaseName;
 	private URL[] _bundleLoaderUrLs = new URL[0];
 	
@@ -54,16 +53,13 @@ public class StringManager
 	 */
 	StringManager(String packageName, ClassLoader loader)
 	{
-		super();
 		_bundleBaseName = packageName + ".I18NStrings";
-		_rsrcBundle = ResourceBundle.getBundle(_bundleBaseName, Locale.getDefault(), loader);
+		_lazyResourceBundle = new LazyResourceBundle(_bundleBaseName, loader);
 
 		if(loader instanceof URLClassLoader)
 		{
 			_bundleLoaderUrLs = ((URLClassLoader) loader).getURLs();
 		}
-
-
 	}
 
 	/**
@@ -86,7 +82,7 @@ public class StringManager
 
 		try
 		{
-			return _rsrcBundle.getString(key);
+			return _lazyResourceBundle.getString(key);
 		}
 		catch (MissingResourceException ex)
 		{

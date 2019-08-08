@@ -30,15 +30,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class Version
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(Version.class);
 
-	private static final String APP_NAME = s_stringMgr.getString("Version.appname");
-
-	private static final String COPYRIGHT = s_stringMgr.getString("Version.copyright");
-
-	private static final String WEB_SITE = s_stringMgr.getString("Version.website");
+	/**
+	 * No I18n/StringManager here. This class is used to early. The right Locale may not have been set yet.
+	 */
+	private static final String APP_NAME = "SQuirreL SQL Client";
+	private static final String COPYRIGHT = "Copyright (c) 2001-2019\nColin Bell, Gerd Wagner, Rob Manning and others";
+	private static final String WEB_SITE = "http://www.squirrelsql.org";
 	
 	private static String shortVersion = null;
 	
@@ -146,7 +144,7 @@ public class Version
             System.getProperty("java.home")
          };
 
-      return s_stringMgr.getString("Application.error.unsupportedJDKVersion", params);
+      return StringManagerFactory.getStringManager(Version.class).getString("Application.error.unsupportedJDKVersion", params);
    }
 
    public static boolean isJDK14()

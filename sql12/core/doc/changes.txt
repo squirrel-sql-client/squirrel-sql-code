@@ -86,6 +86,13 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+#944 Switching menu language inside Squirrel does not work
+  The Locale combo box in Global Preferences --> tab General now works as follows:
+  1. Any language other than en_US requires its translations package to be installed.
+  2. The default value of the Locale combo box is "Don't change". This leaves the locale as provided by the JAVA-VM as is.
+     If for example the launch script sets the JAVA-VM parameter -Duser.language=... this will be used, provided its translations package is installed.
+  3. If the Locale combo box is set to a specific language this will be used, provided translations package is installed.
+
 #1397 SQuirreL's command line interface (CLI) issued an UnsupportedOperationException instead of showing the right INFO/WARNING/ERROR message.
 
 SQuirreL's command line interface (CLI) issued a stack trace when an SQL execution error occurred. Now the same error message as in SQuirreL's UI is issued.

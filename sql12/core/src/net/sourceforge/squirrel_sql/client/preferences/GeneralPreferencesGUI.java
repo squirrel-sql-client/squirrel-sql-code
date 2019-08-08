@@ -3,18 +3,14 @@ package net.sourceforge.squirrel_sql.client.preferences;
 import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.fw.util.LocaleUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 final class GeneralPreferencesGUI extends JPanel
 {
@@ -58,9 +54,7 @@ final class GeneralPreferencesGUI extends JPanel
    private JCheckBox _showPleaseWaitDialog = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showPleaseWaitDialog"));
    private JLabel _localeChooserLabel = new JLabel(s_stringMgr.getString("GeneralPreferencesPanel.localeChooserLabel"));
 
-   ArrayList<String> localeDisplayStrings = new ArrayList<String>();
-
-   private JComboBox _localeChooser = new JComboBox(getAvailableLocaleStringsIncludingDontChange());
+   private JComboBox _localeChooser = new JComboBox(LocaleWrapper.getAvailableLocaleWrappers());
    private MaxColumnAdjustLengthCtrl _maxColumnAdjustLengthCtrl = new MaxColumnAdjustLengthCtrl();
 
 
@@ -68,17 +62,6 @@ final class GeneralPreferencesGUI extends JPanel
    {
       super(new GridBagLayout());
       createUserInterface();
-   }
-
-   public static String[] getAvailableLocaleStringsIncludingDontChange()
-   {
-      String[] availableLocaleStrings = LocaleUtils.getAvailableLocaleStrings();
-
-      ArrayList<String> ret = new ArrayList<String>();
-      ret.add(SquirrelPreferences.getDontChangeLocaleConstant());
-      ret.addAll(Arrays.asList(availableLocaleStrings));
-
-      return ret.toArray(new String[ret.size()]);
    }
 
    void loadData(SquirrelPreferences prefs)
@@ -114,8 +97,7 @@ final class GeneralPreferencesGUI extends JPanel
       _showPleaseWaitDialog.setSelected(prefs.getShowPleaseWaitDialog());
       _maxColumnAdjustLengthCtrl.init(prefs.getMaxColumnAdjustLengthDefined(), prefs.getMaxColumnAdjustLength());
 
-      String preferredLocalString = prefs.getPreferredLocale();
-      _localeChooser.setSelectedItem(preferredLocalString);
+      LocaleWrapper.setSelectedLocalePrefsString(_localeChooser, prefs.getPreferredLocale());
 
       _tabbedStyle.addActionListener(new ActionListener()
       {
@@ -170,7 +152,7 @@ final class GeneralPreferencesGUI extends JPanel
       prefs.setSavePreferencesImmediately(_savePreferencesImmediately.isSelected());
       prefs.setSelectOnRightMouseClick(_selectOnRightMouseClick.isSelected());
       prefs.setShowPleaseWaitDialog(_showPleaseWaitDialog.isSelected());
-      prefs.setPreferredLocale(_localeChooser.getSelectedItem().toString());
+      prefs.setPreferredLocale(LocaleWrapper.getSelectedLocalePrefsString(_localeChooser));
       prefs.setMaxColumnAdjustLengthDefined(_maxColumnAdjustLengthCtrl.isMaxColumnAdjustLengthDefined());
       prefs.setMaxColumnAdjustLength(_maxColumnAdjustLengthCtrl.getMaxColumnAdjustLength());
    }

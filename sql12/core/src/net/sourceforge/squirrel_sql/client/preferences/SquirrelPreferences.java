@@ -45,7 +45,6 @@ import java.util.Iterator;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-@SuppressWarnings("serial")
 public class SquirrelPreferences implements Serializable
 {
 	public interface IPropertyNames
@@ -246,7 +245,7 @@ public class SquirrelPreferences implements Serializable
 
 	private boolean _showPleaseWaitDialog;
 
-	private String _preferredLocale = getDontChangeLocaleConstant();
+	private String _preferredLocale = LocaleWrapperType.DONT_CHANGE.name();
 
    private boolean _maxColumnAdjustLengthDefined = false;
 
@@ -273,13 +272,6 @@ public class SquirrelPreferences implements Serializable
 		super();
 		loadDefaults();
 	}
-
-	public static String getDontChangeLocaleConstant()
-	{
-		return s_stringMgr.getString("preferences.dont.change.locale");
-	}
-
-
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
@@ -901,12 +893,10 @@ public class SquirrelPreferences implements Serializable
 		{
 			XMLBeanReader doc = new XMLBeanReader();
 			doc.load(prefsFile);
-			@SuppressWarnings("rawtypes")
 			Iterator it = doc.iterator();
 			if (it.hasNext())
 			{
 				return (SquirrelPreferences)it.next();
-
 			}
 		}
 		catch (FileNotFoundException ignore)
@@ -1173,11 +1163,6 @@ public class SquirrelPreferences implements Serializable
 	 */
 	public String getPreferredLocale()
 	{
-		if(StringUtilities.isEmpty(_preferredLocale, true))
-		{
-			return getDontChangeLocaleConstant();
-		}
-
 		return _preferredLocale;
 	}
 

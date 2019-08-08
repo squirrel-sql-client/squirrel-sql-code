@@ -8,13 +8,13 @@ import java.util.ResourceBundle;
 
 public class ResourceBundleHandler
 {
-   private ResourceBundle _bundle;
+   private LazyResourceBundle _bundle;
 
    private final String _imagePath;
 
    public ResourceBundleHandler(String rsrcBundleBaseName, ClassLoader cl)
    {
-      _bundle = ResourceBundle.getBundle(rsrcBundleBaseName, Locale.getDefault(), cl);
+      _bundle = new LazyResourceBundle(rsrcBundleBaseName, cl);
 
       _imagePath = _bundle.getString("path.images");
    }

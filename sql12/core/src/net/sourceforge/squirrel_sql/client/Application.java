@@ -33,11 +33,12 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
 import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
+import net.sourceforge.squirrel_sql.client.preferences.LocaleWrapper;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
-import org.apache.commons.lang.StringUtils;
+import net.sourceforge.squirrel_sql.fw.resources.LazyResourceBundle;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
@@ -173,12 +174,8 @@ public class Application implements IApplication
 
 	private PropsImpl _propsImpl;
 
-	/**
-	 * Default ctor.
-	 */
 	public Application()
 	{
-		super();
 	}
 
 	/**
@@ -187,22 +184,14 @@ public class Application implements IApplication
    @Override
 	public void startup()
 	{
+		initResourcesAndPrefs();
 
 		final ApplicationArguments args = ApplicationArguments.getInstance();
 
 		// Setup the applications Look and Feel.
 		setupLookAndFeel(args);
 
-		editWhereCols.setApplication(this);
-
-		initResourcesAndPrefs();
       _desktopStyle = new DesktopStyle(_prefs);
-
-		Locale locale = constructPreferredLocale(_prefs);
-		if (null != locale)
-		{
-			Locale.setDefault(locale);
-		}
 
 		preferencesHaveChanged(null);
 		_prefs.addPropertyChangeListener(new PropertyChangeListener()
@@ -229,8 +218,16 @@ public class Application implements IApplication
 
 	public void initResourcesAndPrefs()
 	{
-		_resources = new SquirrelResources(SquirrelResources.BUNDLE_BASE_NAME);
 		_prefs = SquirrelPreferences.load();
+
+		Locale locale = LocaleWrapper.constructPreferredLocale(_prefs);
+		if (null != locale)
+		{
+			Locale.setDefault(locale);
+		}
+		LazyResourceBundle.setLocaleInitialized();
+
+		_resources = new SquirrelResources(SquirrelResources.BUNDLE_BASE_NAME);
 	}
 
 	/**
@@ -331,34 +328,6 @@ public class Application implements IApplication
 		s_log.info("saveApplicationState: _propsImpl.saveProperties() ELAPSED: " + (System.currentTimeMillis() - begin));
 	}
 
-
-	/**
-	 * Builds a Locale from the user's preferred locale preference.
-	 * 
-	 * @param prefs
-	 *           the user's preferences
-	 * @return a local object. If no preference is found then US English is the default.
-	 */
-	private Locale constructPreferredLocale(SquirrelPreferences prefs)
-	{
-		String langCountryPair = prefs.getPreferredLocale();
-
-		if (SquirrelPreferences.getDontChangeLocaleConstant().equals(langCountryPair))
-		{
-			return null;
-		}
-		else
-		{
-			if (StringUtils.isEmpty(langCountryPair))
-         {
-            langCountryPair = "en_US";
-         }
-			String[] parts = langCountryPair.split("_");
-			if (parts.length == 2) { return new Locale(parts[0], parts[1]); }
-			return new Locale(parts[0]);
-		}
-
-	}
 
 	/**
      * 
@@ -1139,7 +1108,6 @@ public class Application implements IApplication
 			if (it.hasNext())
 			{
 				editWhereCols = (EditWhereCols) it.next();
-				editWhereCols.setApplication(this);
 			}
 		}
 		catch (FileNotFoundException ignore)
