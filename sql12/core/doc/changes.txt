@@ -89,6 +89,8 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+SQL result tables and Object tree tables: Make editable function now preserves row selection.
+
 #944 Switching menu language inside Squirrel does not work
   The Locale combo box in Global Preferences --> tab General now works as follows:
   1. Any language other than en_US requires its translations package to be installed.

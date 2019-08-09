@@ -19,7 +19,7 @@ public class TableState
    private Rectangle _visibleRect;
    private HashMap<Integer, Integer> _columnWidthsByModelIndex = new HashMap<Integer, Integer>();
    private HashMap<Integer, Integer> _columnIndexByModelIndex = new HashMap<Integer, Integer>();
-   private int _selectedRow;
+   private int[] _selectedRows = new int[0];
    private RowColorHandlerState _rowColorHandlerState;
 
    private boolean _isShowingRowNumbers;
@@ -35,7 +35,7 @@ public class TableState
       }
 
 
-      _selectedRow = table.getSelectedRow();
+      _selectedRows = table.getSelectedRows();
 
       int decrementForRowNumberColumn = 0;
       for (int i = 0; i < table.getColumnModel().getColumnCount(); i++)
@@ -97,10 +97,10 @@ public class TableState
             ((SortableTableModel)table.getModel()).sortByColumn(_sortedColumn, _columnOrder);
          }
       }
-      
-      if(-1 != _selectedRow)
+
+      for (int selectedRow : _selectedRows)
       {
-         table.getSelectionModel().setSelectionInterval(_selectedRow, _selectedRow);
+         table.getSelectionModel().addSelectionInterval(selectedRow, selectedRow);
       }
 
       if(table instanceof DataSetViewerTable)
