@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Upgraded JSqlParser to 2.2 snapshot version which contains fixes
+ that up to now existed in a fork of JSqlParser for SQuirreL only, see https://github.com/JSQLParser/JSqlParser/pull/825
+
 The combo box in the font chooser dialog of the Session Properties dialog (see bottom of tab SQL)
   now shows if a font is monospaced.
 
