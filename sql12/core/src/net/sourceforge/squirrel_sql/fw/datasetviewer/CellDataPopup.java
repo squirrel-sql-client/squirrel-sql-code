@@ -17,15 +17,16 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.awt.*;
 import java.awt.event.*;
+
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.*;
 
 //import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -36,29 +37,26 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class CellDataPopup
 {
-	public static final String PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH = "Squirrel.popupEditableIOPanelWidth";
-	public static final String PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT = "Squirrel.popupEditableIOPanelHeight";
+   public static final String PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH = "Squirrel.popupEditableIOPanelWidth";
+   public static final String PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT = "Squirrel.popupEditableIOPanelHeight";
 
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CellDataPopup.class);
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(CellDataPopup.class);
+   /**
+    * function to create the popup display when called from JTable
+    */
+   public static void showDialog(JTable table,
+                                 ColumnDisplayDefinition colDef,
+                                 MouseEvent evt,
+                                 boolean isModelEditable)
+   {
+      CellDataPopup popup = new CellDataPopup();
+      popup.createAndShowDialog(table, evt, colDef, isModelEditable);
+   }
 
-
-	/**
-	 * function to create the popup display when called from JTable
-	 */
-	public static void showDialog(JTable table,
-		ColumnDisplayDefinition colDef,
-		MouseEvent evt,
-		boolean isModelEditable)
-	{
-		CellDataPopup popup = new CellDataPopup();
-		popup.createAndShowDialog(table, evt, colDef, isModelEditable);
-	}
-
-	private void createAndShowDialog(JTable table, MouseEvent evt,
-		ColumnDisplayDefinition colDef, boolean isModelEditable)
-	{
+   private void createAndShowDialog(JTable table, MouseEvent evt,
+                                    ColumnDisplayDefinition colDef, boolean isModelEditable)
+   {
       Point pt = evt.getPoint();
       int row = table.rowAtPoint(pt);
       int col = table.columnAtPoint(pt);
@@ -69,45 +67,45 @@ public class CellDataPopup
       // using the in-cell editor, if any
       CellEditor editor = table.getCellEditor(row, col);
       if (editor != null)
-         editor.cancelCellEditing();
+		{
+			editor.cancelCellEditing();
+		}
 
       Component parent = SwingUtilities.windowForComponent(table);
 
-      final TextAreaDialog dialog =
-         new TextAreaDialog(table, table.getColumnName(col), colDef, obj,
-            row, col, isModelEditable, table);
+      final CellDataTextAreaDialog dialog = new CellDataTextAreaDialog(table, table.getColumnName(col), colDef, obj,row, col, isModelEditable, table);
 
       dialog.pack();
 
-		Dimension dim;
-		if (Main.getApplication().getSquirrelPreferences().isRememberValueOfPopup())
-		{
-			int width = Props.getInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, 600);
-			int height = Props.getInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, 300);
-			dim = new Dimension(width, height);
-		}
-		else
-		{
-			dim = dialog.getSize();
-			if (dim.width < 300)
-			{
-				dim.width = 300;
-			}
-			if (dim.height < 300)
-			{
-				dim.height = 300;
-			}
-			if (dim.width > 600)
-			{
-				dim.width = 600;
-			}
-			if (dim.height > 500)
-			{
-				dim.height = 500;
-			}
-		}
+      Dimension dim;
+      if (Main.getApplication().getSquirrelPreferences().isRememberValueOfPopup())
+      {
+         int width = Props.getInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, 600);
+         int height = Props.getInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, 300);
+         dim = new Dimension(width, height);
+      }
+      else
+      {
+         dim = dialog.getSize();
+         if (dim.width < 300)
+         {
+            dim.width = 300;
+         }
+         if (dim.height < 300)
+         {
+            dim.height = 300;
+         }
+         if (dim.width > 600)
+         {
+            dim.width = 600;
+         }
+         if (dim.height > 500)
+         {
+            dim.height = 500;
+         }
+      }
 
-		Point dialogPos = parent.getLocation();
+      Point dialogPos = parent.getLocation();
 
       dialogPos.x += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).x;
       dialogPos.y += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).y;
@@ -125,166 +123,24 @@ public class CellDataPopup
 //		}
 
 
-		Rectangle dialogRect = GUIUtils.ensureBoundsOnOneScreen(new Rectangle(dialogPos.x, dialogPos.y, dim.width, dim.height));
+      Rectangle dialogRect = GUIUtils.ensureBoundsOnOneScreen(new Rectangle(dialogPos.x, dialogPos.y, dim.width, dim.height));
 
 
-		dialog.setBounds(dialogRect);
+      dialog.setBounds(dialogRect);
       //dialog.setSize(dim);
 
       dialog.addWindowListener(new WindowAdapter()
-		{
-			@Override
-			public void windowClosing(WindowEvent e)
-			{
-				Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, dialog.getSize().width);
-				Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, dialog.getSize().height);
-			}
-		});
+      {
+         @Override
+         public void windowClosing(WindowEvent e)
+         {
+            Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_WIDTH, dialog.getSize().width);
+            Props.putInt(PREF_KEY_POPUPEDITABLEIOPANEL_HEIGHT, dialog.getSize().height);
+         }
+      });
 
-		dialog.setVisible(true);
-	}
-
-
-	//
-	// inner class for the data display pane
-	//
-	private static class ColumnDataPopupPanel extends JPanel {
-
-      private final PopupEditableIOPanel ioPanel;
-		private JDialog _parentFrame = null;
-		private int _row;
-		private int _col;
-		private JTable _table;
-
-		ColumnDataPopupPanel(Object cellContents,
-			ColumnDisplayDefinition colDef,
-			boolean tableIsEditable)
-		{
-			super(new BorderLayout());
-
-			if (tableIsEditable &&
-				CellComponentFactory.isEditableInPopup(colDef, cellContents)) {
-
-				// data is editable in popup
-				ioPanel = new PopupEditableIOPanel(colDef, cellContents, true);
-
-				// Since data is editable, we need to add control panel
-				// to manage user requests for DB update, file IO, etc.
-				JPanel editingControls = createPopupEditingControls();
-				add(editingControls, BorderLayout.SOUTH);
-			}
-			else {
-				// data is not editable in popup
-				ioPanel = new PopupEditableIOPanel(colDef, cellContents, false);
-			}
-
-			add(ioPanel, BorderLayout.CENTER);
-
-		}
-
-		/**
-		 * Set up user controls to stop editing and update DB.
-		 */
-		private JPanel createPopupEditingControls() {
-
-			JPanel panel = new JPanel(new BorderLayout());
-
-			// create update/cancel controls using default layout
-			JPanel updateControls = new JPanel();
-
-			// set up Update button
-			// i18n[cellDataPopUp.updateData=Update Data]
-			JButton updateButton = new JButton(s_stringMgr.getString("cellDataPopUp.updateData"));
-			updateButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent event) {
-
-					// try to convert the text in the popup into a valid
-					// instance of type of data object being held in the table cell
-					StringBuffer messageBuffer = new StringBuffer();
-					Object newValue = ColumnDataPopupPanel.this.ioPanel.getObject(messageBuffer);
-					if (messageBuffer.length() > 0) {
-						// handle an error in conversion of text to object
-
-						// i18n[cellDataPopUp.cannnotBGeConverted=The given text cannot be converted into the internal object.\n
-						//Please change the data or cancel editing.\n
-						//The conversion error was:\n{0}]
-						String msg = s_stringMgr.getString("cellDataPopUp.cannnotBGeConverted", messageBuffer);
-
-						JOptionPane.showMessageDialog(
-							ColumnDataPopupPanel.this,
-							msg,
-							// i18n[cellDataPopUp.conversionError=Conversion Error]
-							s_stringMgr.getString("cellDataPopUp.conversionError"),
-							JOptionPane.ERROR_MESSAGE);
-
-						ColumnDataPopupPanel.this.ioPanel.requestFocus();
-
-					}
-					else
-					{
-						_table.setValueAt(newValue, _row, _col);
-						ColumnDataPopupPanel.this._parentFrame.setVisible(false);
-						ColumnDataPopupPanel.this._parentFrame.dispose();
-					}
-				}
-			});
-
-			// set up Cancel button
-			// i18n[cellDataPopup.cancel=Cancel]
-			JButton cancelButton = new JButton(s_stringMgr.getString("cellDataPopup.cancel"));
-			cancelButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent event) {
-					ColumnDataPopupPanel.this._parentFrame.setVisible(false);
-					ColumnDataPopupPanel.this._parentFrame.dispose();
-				}
-			});
-
-			// add buttons to button panel
-			updateControls.add(updateButton);
-			updateControls.add(cancelButton);
-
-			// add button panel to main panel
-			panel.add(updateControls, BorderLayout.SOUTH);
-
-			return panel;
-		}
-
-		/*
-		 * Save various information which is needed to do Update & Cancel.
-		 */
-		 public void setUserActionInfo(JDialog parent, int row, int col,
-		 	JTable table) {
-		 	_parentFrame = parent;
-		 	_row = row;
-		 	_col = col;
-		 	_table = table;
-		 }
-
-
-	}
-
-
-
-	// The following is only useable for a root type of InternalFrame. If the
-	// root type is Dialog or Frame, then other code must be used.
-	class TextAreaDialog extends JDialog
-	{
-
-        public TextAreaDialog(Component comp, String columnName, ColumnDisplayDefinition colDef,
-										Object value, int row, int col,
-										boolean isModelEditable, JTable table)
-		{
-
-         // i18n[cellDataPopup.valueofColumn=Value of column {0}]
-			super(SwingUtilities.windowForComponent(comp), s_stringMgr.getString("cellDataPopup.valueofColumn", columnName));
-			ColumnDataPopupPanel popup =
-				new ColumnDataPopupPanel(value, colDef, isModelEditable);
-			popup.setUserActionInfo(this, row, col, table);
-			setContentPane(popup);
-
-         GUIUtils.enableCloseByEscape(this);
-		}
-
+      dialog.setVisible(true);
    }
+
 
 }
