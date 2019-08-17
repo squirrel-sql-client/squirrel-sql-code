@@ -7,8 +7,7 @@ import java.util.Arrays;
 @SuppressWarnings("serial")
 public class SQLAliasSchemaProperties implements Serializable
 {
-   SQLAliasSchemaDetailProperties[] _schemaDetails = 
-       new SQLAliasSchemaDetailProperties[0];
+   SQLAliasSchemaDetailProperties[] _schemaDetails = new SQLAliasSchemaDetailProperties[0];
 
    public static final int GLOBAL_STATE_LOAD_ALL_CACHE_NONE = 0;
    public static final int GLOBAL_STATE_LOAD_AND_CACHE_ALL = 1;

@@ -1,17 +1,22 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class SchemaPropertiesPanel extends JPanel
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SchemaPropertiesPanel.class);
 
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SchemaPropertiesPanel.class);
+   private static final String PREF_KEY_SHOW_SCHEMA_FILTER = "SchemaPropertiesPanel.show.schema.filter";
 
 
    JRadioButton radLoadAllAndCacheNone;
@@ -23,6 +28,9 @@ public class SchemaPropertiesPanel extends JPanel
    JTable tblSchemas;
 
    JComboBox cboSchemaTableUpdateWhat;
+   private JPanel schemaFilterPanel;
+   SmallTabButton btnShowSchemaFilter;
+   JTextField txtSchemaFilter = new JTextField();
    JComboBox cboSchemaTableUpdateTo;
    JButton btnSchemaTableUpdateApply;
 
@@ -86,7 +94,7 @@ public class SchemaPropertiesPanel extends JPanel
       gbc = new GridBagConstraints(0,6,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5), 0,0);
       add(new JScrollPane(tblSchemas), gbc);
 
-      gbc = new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5), 0,0);
       add(createSchemaTableUpdatePanel(), gbc);
 
 
@@ -134,29 +142,116 @@ public class SchemaPropertiesPanel extends JPanel
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
       // i18n[SchemaPropertiesPanel.schemaTableUpdateLable1=Set]
       ret.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateLable1")), gbc);
 
       cboSchemaTableUpdateWhat = new JComboBox();
-      gbc = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
       ret.add(cboSchemaTableUpdateWhat, gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,0), 0,0);
       // i18n[SchemaPropertiesPanel.schemaTableUpdateLable2=in all Schemas to]
-      ret.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateLable2")), gbc);
+      schemaFilterPanel = createSchemaFilterPanel();
+      ret.add(schemaFilterPanel, gbc);
+
+      btnShowSchemaFilter = createSchemaFilterButton();
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      btnShowSchemaFilter.addActionListener(a -> onBtnSmallPlusMinus());
+      ret.add(btnShowSchemaFilter, gbc);
 
       cboSchemaTableUpdateTo = new JComboBox();
-      gbc = new GridBagConstraints(3,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
       ret.add(cboSchemaTableUpdateTo, gbc);
 
       // i18n[SchemaPropertiesPanel.schemaTableUpdateApply=Apply]
       btnSchemaTableUpdateApply = new JButton(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateApply"));
-      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(5,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
       ret.add(btnSchemaTableUpdateApply, gbc);
+
 
       return ret;
    }
 
+   private JPanel createSchemaFilterPanel()
+   {
+      JPanel ret = new JPanel();
+      updateSchemaFilterPanel(ret);
+      return ret;
+   }
 
+   private void updateSchemaFilterPanel(JPanel ret)
+   {
+      ret.removeAll();
+      if (isShowSchemaFilter())
+      {
+         ret.setLayout(new GridBagLayout());
+
+         GridBagConstraints gbc;
+
+         gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
+         JLabel lblBegin = new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateLable2._begin.SchemaFilter"));
+         lblBegin.setToolTipText(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateLable2._begin.SchemaFilter.tooltip"));
+         ret.add(lblBegin, gbc);
+
+         gbc = new GridBagConstraints(1,0,1,1,1,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5),0,0);
+         txtSchemaFilter.setPreferredSize(new Dimension(100, txtSchemaFilter.getPreferredSize().height));
+         ret.add(txtSchemaFilter, gbc);
+
+         gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
+         ret.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateLable2._end.SchemaFilter")), gbc);
+
+         //ret.setBorder(BorderFactory.createLineBorder(Color.RED));
+      }
+      else
+      {
+         ret.setLayout(new GridLayout(1,1));
+         ret.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateLable2")));
+      }
+   }
+
+   private void onBtnSmallPlusMinus()
+   {
+      Main.getApplication().getPropsImpl().put(PREF_KEY_SHOW_SCHEMA_FILTER, !isShowSchemaFilter());
+      btnShowSchemaFilter.setIcon(getSmallPlusMinusIcon());
+      updateSchemaFilterPanel(schemaFilterPanel);
+      validate();
+   }
+
+   private SmallTabButton createSchemaFilterButton()
+   {
+      SmallTabButton ret = new SmallTabButton(s_stringMgr.getString("SchemaPropertiesPanel.clickToToggle.SchemaFilter"), getSmallPlusMinusIcon());
+      Dimension size = new Dimension(16, 16);
+      ret.setPreferredSize(size);
+      ret.setMinimumSize(size);
+      ret.setMaximumSize(size);
+      return ret;
+   }
+
+   private ImageIcon getSmallPlusMinusIcon()
+   {
+      if (isShowSchemaFilter())
+      {
+         return Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_MINUS);
+      }
+      else
+      {
+         return Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_PLUS);
+      }
+   }
+
+   private boolean isShowSchemaFilter()
+   {
+      return Main.getApplication().getPropsImpl().getBoolean(PREF_KEY_SHOW_SCHEMA_FILTER, true);
+   }
+
+   public String getSchemaFilter()
+   {
+      if (isShowSchemaFilter() && false == StringUtilities.isEmpty(txtSchemaFilter.getText(), false))
+      {
+         return txtSchemaFilter.getText();
+      }
+
+      return null;
+   }
 }

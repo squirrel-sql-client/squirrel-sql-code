@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#580 Alias properties allows SQL LIKE syntax to configure schema loading:
+  Menu Windows --> View Aliases --> select an Alias --> menu Aliases --> Alias properties --> tab Schemas
+  --> section "Set ... in all Schemas ..." now has a small button next to the word "to" that opens a filter text field.
+  The filter allows to use % and _ as wildcards much like the SQL LIKE syntax.
+
 Upgraded JSqlParser to 2.2 snapshot version which contains fixes
  that up to now existed in a fork of JSqlParser for SQuirreL only, see https://github.com/JSQLParser/JSqlParser/pull/825
 

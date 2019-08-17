@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaDetailProperties;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
@@ -143,10 +144,17 @@ public class SchemaTableModel extends DefaultTableModel
       fireTableDataChanged();
    }
 
-   public void setColumnTo(int modelIndex, SchemaTableCboItem toItem)
+   public void setColumnTo(int modelIndex, SchemaTableCboItem toItem, String likeFilter)
    {
+      FilterMatcher filterMatcher = new FilterMatcher(likeFilter, null);
+
       for (int i = 0; i < _schemaDetails.length; i++)
       {
+         if(false == filterMatcher.matches(_schemaDetails[i].getSchemaName()))
+         {
+            continue;
+         }
+
          if(IX_TABLE == modelIndex)
          {
             _schemaDetails[i].setTable(toItem.getID());

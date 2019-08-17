@@ -18,8 +18,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 public class AliasPropertiesController
 {
-   private static HashMap<IIdentifier, AliasPropertiesController> _currentlyOpenInstancesByAliasID = 
-       new HashMap<IIdentifier, AliasPropertiesController>();
+   private static HashMap<IIdentifier, AliasPropertiesController> _currentlyOpenInstancesByAliasID = new HashMap<>();
 
    private AliasPropertiesInternalFrame _frame;
    private ArrayList<IAliasPropertiesPanelController> _iAliasPropertiesPanelControllers = new ArrayList<IAliasPropertiesPanelController>();
@@ -73,9 +72,7 @@ public class AliasPropertiesController
 
       AbstractAction closeAction = new AbstractAction()
       {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent actionEvent)
+         public void actionPerformed(ActionEvent actionEvent)
          {
             performClose();
          }

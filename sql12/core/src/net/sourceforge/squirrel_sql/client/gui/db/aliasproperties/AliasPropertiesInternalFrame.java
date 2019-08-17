@@ -59,8 +59,8 @@ public class AliasPropertiesInternalFrame extends DialogWidget
    private Dimension getDimension()
    {
       return new Dimension(
-         Props.getInt(PREF_KEY_ALIAS_PROPS_SHEET_WIDTH, 600),
-         Props.getInt(PREF_KEY_ALIAS_PROPS_SHEET_HEIGHT, 600)
+         Props.getInt(PREF_KEY_ALIAS_PROPS_SHEET_WIDTH, 700),
+         Props.getInt(PREF_KEY_ALIAS_PROPS_SHEET_HEIGHT, 700)
       );
    }
 

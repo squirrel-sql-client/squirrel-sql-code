@@ -98,6 +98,9 @@ public class SquirrelResources extends Resources
 
 		String SMALL_CHOOSE_SCHEMA = "smallChooseSchema";
 
+		String SMALL_PLUS = "smallPlus";
+		String SMALL_MINUS = "smallMinus";
+
 		String LABELED = "labeled";
       String NAMED = "named";
 

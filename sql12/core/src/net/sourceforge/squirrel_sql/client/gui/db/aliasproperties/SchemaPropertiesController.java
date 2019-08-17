@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
@@ -24,12 +25,11 @@ import java.io.File;
 
 public class SchemaPropertiesController implements IAliasPropertiesPanelController
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SchemaPropertiesController.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SchemaPropertiesController.class);
 
-   private static final ILogger s_log =
-      LoggerController.createLogger(SchemaPropertiesController.class);
+   private static final ILogger s_log = LoggerController.createLogger(SchemaPropertiesController.class);
 
+   private static final String PREF_KEY_LAST_SCHEMA_FILTER = "SchemaPropertiesController.last.schema.filter";
 
 
    private SchemaPropertiesPanel _pnl;
@@ -93,6 +93,8 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
       _pnl.chkCacheSchemaIndepndentMetaData.setSelected(alias.getSchemaProperties().isCacheSchemaIndependentMetaData());
 
+      _pnl.txtSchemaFilter.setText(_app.getPropsImpl().getString(PREF_KEY_LAST_SCHEMA_FILTER, null));
+
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.ALL);
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.TABLES);
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.VIEWS);
@@ -105,61 +107,19 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       }
 
 
-      _pnl.btnSchemaTableUpdateApply.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onSchemaTableUpdateApply();
-         }
-      });
+      _pnl.btnSchemaTableUpdateApply.addActionListener(e -> onSchemaTableUpdateApply());
 
       updateEnabled();
 
-      _pnl.radLoadAllAndCacheNone.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            updateEnabled();
-         }
-      });
-      _pnl.radLoadAndCacheAll.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            updateEnabled();
-         }
-      });
-      _pnl.radSpecifySchemas.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            updateEnabled();
-         }
-      });
+      _pnl.radLoadAllAndCacheNone.addActionListener(e -> updateEnabled());
+      _pnl.radLoadAndCacheAll.addActionListener(e -> updateEnabled());
+      _pnl.radSpecifySchemas.addActionListener(e -> updateEnabled());
 
-      _pnl.btnUpdateSchemas.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onRefreshSchemaTable();
-         }
-      });
+      _pnl.btnUpdateSchemas.addActionListener(e -> onRefreshSchemaTable());
 
-      _pnl.btnPrintCacheFileLocation.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onPrintCacheFileLocation();
-         }
-      });
+      _pnl.btnPrintCacheFileLocation.addActionListener(e -> onPrintCacheFileLocation());
 
-      _pnl.btnDeleteCache.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onDeleteCache();
-         }
-      });
+      _pnl.btnDeleteCache.addActionListener(e -> onDeleteCache());
 
    }
 
@@ -216,26 +176,26 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
       if(SchemaTableUpdateWhatItem.TABLES == selWhatItem)
       {
-         _schemaTableModel.setColumnTo(SchemaTableModel.IX_TABLE, selToItem);
+         _schemaTableModel.setColumnTo(SchemaTableModel.IX_TABLE, selToItem, _pnl.getSchemaFilter());
       }
       else if(SchemaTableUpdateWhatItem.VIEWS == selWhatItem)
       {
-         _schemaTableModel.setColumnTo(SchemaTableModel.IX_VIEW, selToItem);
+         _schemaTableModel.setColumnTo(SchemaTableModel.IX_VIEW, selToItem, _pnl.getSchemaFilter());
       }
       else if(SchemaTableUpdateWhatItem.PROCEDURES == selWhatItem)
       {
-         _schemaTableModel.setColumnTo(SchemaTableModel.IX_PROCEDURE, selToItem);
+         _schemaTableModel.setColumnTo(SchemaTableModel.IX_PROCEDURE, selToItem, _pnl.getSchemaFilter());
       }
       else if(SchemaTableUpdateWhatItem.UDTS == selWhatItem)
       {
-         _schemaTableModel.setColumnTo(SchemaTableModel.IX_UDT, selToItem);
+         _schemaTableModel.setColumnTo(SchemaTableModel.IX_UDT, selToItem, _pnl.getSchemaFilter());
       }
       else
       {
-          _schemaTableModel.setColumnTo(SchemaTableModel.IX_TABLE, selToItem);
-          _schemaTableModel.setColumnTo(SchemaTableModel.IX_VIEW, selToItem);
-          _schemaTableModel.setColumnTo(SchemaTableModel.IX_PROCEDURE, selToItem);
-          _schemaTableModel.setColumnTo(SchemaTableModel.IX_UDT, selToItem);
+          _schemaTableModel.setColumnTo(SchemaTableModel.IX_TABLE, selToItem, _pnl.getSchemaFilter());
+          _schemaTableModel.setColumnTo(SchemaTableModel.IX_VIEW, selToItem, _pnl.getSchemaFilter());
+          _schemaTableModel.setColumnTo(SchemaTableModel.IX_PROCEDURE, selToItem, _pnl.getSchemaFilter());
+          _schemaTableModel.setColumnTo(SchemaTableModel.IX_UDT, selToItem, _pnl.getSchemaFilter());
       }
    }
 
@@ -275,6 +235,8 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       _pnl.tblSchemas.setEnabled(_pnl.radSpecifySchemas.isSelected());
 
       _pnl.cboSchemaTableUpdateWhat.setEnabled(_pnl.radSpecifySchemas.isSelected());
+      //_pnl.btnShowSchemaFilter.setEnabled(_pnl.radSpecifySchemas.isSelected());
+      _pnl.txtSchemaFilter.setEnabled(_pnl.radSpecifySchemas.isSelected());
       _pnl.cboSchemaTableUpdateTo.setEnabled(_pnl.radSpecifySchemas.isSelected());
       _pnl.btnSchemaTableUpdateApply.setEnabled(_pnl.radSpecifySchemas.isSelected());
 
@@ -331,6 +293,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
       _alias.getSchemaProperties().setCacheSchemaIndependentMetaData(_pnl.chkCacheSchemaIndepndentMetaData.isSelected());
 
+      _app.getPropsImpl().put(PREF_KEY_LAST_SCHEMA_FILTER, _pnl.txtSchemaFilter.getText());
    }
 
    public String getTitle()
