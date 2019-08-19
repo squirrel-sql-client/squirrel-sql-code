@@ -242,7 +242,7 @@ public class SchemaPropertiesPanel extends JPanel
 
    private boolean isShowSchemaFilter()
    {
-      return Main.getApplication().getPropsImpl().getBoolean(PREF_KEY_SHOW_SCHEMA_FILTER, true);
+      return Main.getApplication().getPropsImpl().getBoolean(PREF_KEY_SHOW_SCHEMA_FILTER, false);
    }
 
    public String getSchemaFilter()
