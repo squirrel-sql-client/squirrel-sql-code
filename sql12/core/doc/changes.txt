@@ -94,6 +94,8 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+Restoring table selection sometimes failed when "Rerun" or "Make Editable" functions were executed.
+
 SQL result tables and Object tree tables: Make editable function now preserves row selection.
 
 #944 Switching menu language inside Squirrel does not work

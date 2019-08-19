@@ -98,6 +98,7 @@ public class TableState
          }
       }
 
+      table.getSelectionModel().clearSelection();
       for (int selectedRow : _selectedRows)
       {
          table.getSelectionModel().addSelectionInterval(selectedRow, selectedRow);
