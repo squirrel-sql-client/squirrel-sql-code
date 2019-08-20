@@ -705,7 +705,7 @@ public class SchemaInfo
       try
       {
 
-         _session.getApplication().getSessionManager().clearAllowedSchemaCache(_session);
+         _session.getApplication().getSessionManager().clearSchemaCache(_session);
 
          SchemaNameLoadInfo schemaNameLoadInfo = _schemaInfoCache.getSchemaNameLoadInfo();
 

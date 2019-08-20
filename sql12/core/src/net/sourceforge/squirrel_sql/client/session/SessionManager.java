@@ -50,12 +50,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class SessionManager
 {
    /** Logger for this class. */
-   private static final ILogger s_log =
-      LoggerController.createLogger(SessionManager.class);
+   private static final ILogger s_log = LoggerController.createLogger(SessionManager.class);
 
    /** Internationalized strings for this class. */
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SessionManager.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionManager.class);
 
    /** Application API. */
    private final IApplication _app;
@@ -72,9 +70,10 @@ public class SessionManager
 
    /** Factory used to generate session IDs. */
    private final IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory(1);
-   private ArrayList<IAllowedSchemaChecker> _allowedSchemaCheckers = new ArrayList<IAllowedSchemaChecker>();
-   private Hashtable<IIdentifier, String[]> _allowedSchemasBySessionID = new Hashtable<IIdentifier, String[]>();
-   private HashSet<IIdentifier> _inCloseSession = new HashSet<IIdentifier>();
+   private ArrayList<IAllowedSchemaChecker> _allowedSchemaCheckers = new ArrayList<>();
+   private Hashtable<IIdentifier, String[]> _allowedSchemasBySessionID = new Hashtable<>();
+   private Hashtable<IIdentifier, String[]> _allSchemasBySessionID = new Hashtable<>();
+   private HashSet<IIdentifier> _inCloseSession = new HashSet<>();
 
    /**
     * Ctor.
@@ -331,6 +330,7 @@ public class SessionManager
             }
 
             _allowedSchemasBySessionID.remove(session.getIdentifier());
+            _allSchemasBySessionID.remove(session.getIdentifier());
 
             return true;
          }
@@ -639,7 +639,7 @@ public class SessionManager
       try
       {
          String[] allowedSchemas = getAllowedSchemas(session);
-         String[] schemas = session.getSQLConnection().getSQLMetaData().getSchemas();
+         String[] schemas = getAllSchemas(session.getSQLConnection(), session.getIdentifier());
 
          return allowedSchemas.length == schemas.length;
       }
@@ -655,7 +655,7 @@ public class SessionManager
       String[] allowedSchemas = _allowedSchemasBySessionID.get(session.getIdentifier());
       if(null == allowedSchemas)
       {
-         allowedSchemas = getAllowedSchemas(session.getSQLConnection(), session.getAlias());
+         allowedSchemas = getAllowedSchemas(session.getSQLConnection(), session.getAlias(), session.getIdentifier());
          _allowedSchemasBySessionID.put(session.getIdentifier(), allowedSchemas);
       }
 
@@ -666,9 +666,9 @@ public class SessionManager
 
    /**
     * Note: This Method does not cache allowed Schemas.
-    * It is preferable to use getAllowedSchemas(ISession) if a Session is avaialable.
+    * It is preferable to use getAllowedSchemas(ISession) if a Session is available.
     */
-   public String[] getAllowedSchemas(ISQLConnection con, ISQLAliasExt alias)
+   public String[] getAllowedSchemas(ISQLConnection con, ISQLAliasExt alias, IIdentifier sessionIdentifierOrNull)
    {
       try
       {
@@ -703,7 +703,7 @@ public class SessionManager
 
          if(null == uniqueAllowedSchemas)
          {
-            return con.getSQLMetaData().getSchemas();
+            return getAllSchemas(con, sessionIdentifierOrNull);
          }
          else
          {
@@ -719,8 +719,31 @@ public class SessionManager
       }
    }
 
-   public void clearAllowedSchemaCache(ISession session)
+   public String[] getAllSchemas(ISession session) throws SQLException
+   {
+      return getAllSchemas(session.getSQLConnection(), session.getIdentifier());
+   }
+
+   private String[] getAllSchemas(ISQLConnection con, IIdentifier sessionIdentifierOrNull) throws SQLException
+   {
+      if(null == sessionIdentifierOrNull)
+      {
+         return con.getSQLMetaData().getSchemas();
+      }
+
+
+      String[] ret = _allSchemasBySessionID.get(sessionIdentifierOrNull);
+      if(null == ret)
+      {
+         ret = con.getSQLMetaData().getSchemas();
+         _allSchemasBySessionID.put(sessionIdentifierOrNull, ret);
+      }
+      return ret;
+   }
+
+   public void clearSchemaCache(ISession session)
    {
       _allowedSchemasBySessionID.remove(session.getIdentifier());
+      _allSchemasBySessionID.remove(session.getIdentifier());
    }
 }

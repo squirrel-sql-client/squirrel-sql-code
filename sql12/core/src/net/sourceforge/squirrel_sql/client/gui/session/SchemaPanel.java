@@ -135,7 +135,7 @@ public class SchemaPanel extends JPanel
 
          int menuCount = 0;
          int menuHeight = new JMenuItem("Test").getPreferredSize().height;
-         for (String schema : _session.getSQLConnection().getSQLMetaData().getSchemas())
+         for (String schema : Main.getApplication().getSessionManager().getAllSchemas(_session))
          {
             if(StringUtilities.isEmpty(schema, true))
             {

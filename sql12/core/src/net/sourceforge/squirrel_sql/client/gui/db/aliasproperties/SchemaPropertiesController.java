@@ -209,7 +209,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    {
       try
       {
-         String[] schemas = _app.getSessionManager().getAllowedSchemas(conn, _alias);
+         String[] schemas = _app.getSessionManager().getAllowedSchemas(conn, _alias, null);
 
          _schemaTableModel.updateSchemas(schemas);
 

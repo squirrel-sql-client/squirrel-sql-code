@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaNameLoadInfo;
@@ -29,31 +30,24 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * installing a newer version of SQuirreL more often than necessary, but it seemed to us to be better than the 
  * alternative.
  */
-@SuppressWarnings("serial")
 public class SchemaInfoCache implements Serializable
 {
-   private static final ILogger s_log =
-       LoggerController.createLogger(SchemaInfoCache.class);
+   private static final ILogger s_log = LoggerController.createLogger(SchemaInfoCache.class);
 
    private List<String> _catalogs = new ArrayList<String>();
    private List<String> _schemas = new ArrayList<String>();
 
-   private TreeMap<CaseInsensitiveString, String> _keywords = 
-       new TreeMap<CaseInsensitiveString, String>();
-   private TreeMap<CaseInsensitiveString, String> _dataTypes = 
-       new TreeMap<CaseInsensitiveString, String>();
-   private Map<CaseInsensitiveString, String> _functions = 
-       Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, String>());
+   private TreeMap<CaseInsensitiveString, String> _keywords = new TreeMap<>();
+   private TreeMap<CaseInsensitiveString, String> _dataTypes = new TreeMap<>();
+   private Map<CaseInsensitiveString, String> _functions =  Collections.synchronizedMap(new TreeMap<>());
 
    /////////////////////////////////////////////////////////////////////////////
    // Schema dependent data.
    // Are changed only in this class
    //
-   private TreeMap<CaseInsensitiveString, String> _internalTableNameTreeMap =
-       new TreeMap<CaseInsensitiveString, String>();
+   private TreeMap<CaseInsensitiveString, String> _internalTableNameTreeMap = new TreeMap<>();
    
-   private Map<CaseInsensitiveString, String> _tableNames = 
-       Collections.synchronizedMap(_internalTableNameTreeMap);
+   private Map<CaseInsensitiveString, String> _tableNames = Collections.synchronizedMap(_internalTableNameTreeMap);
    
 
    /** 
@@ -63,35 +57,27 @@ public class SchemaInfoCache implements Serializable
     * result (Bug #1752089)
     * 
     * One other thing: it must maintain the order in which items were inserted
-    * so that traversal yeilds insertion order (Bug 1805954).
+    * so that traversal yields insertion order (Bug 1805954).
     */
-   private CopyOnWriteArrayList<ITableInfo> _iTableInfos =
-       new CopyOnWriteArrayList<ITableInfo>();
+   private CopyOnWriteArrayList<ITableInfo> _iTableInfos = new CopyOnWriteArrayList<>();
    
-   private Hashtable<CaseInsensitiveString, List<ITableInfo>> _tableInfosBySimpleName = 
-       new Hashtable<CaseInsensitiveString, List<ITableInfo>>();
+   private Hashtable<CaseInsensitiveString, List<ITableInfo>> _tableInfosBySimpleName =  new Hashtable<>();
 
    private SchemaInfoColumnCache _schemaInfoColumnCache = new SchemaInfoColumnCache();
 
 
-   private Map<CaseInsensitiveString, String> _procedureNames = 
-       Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, String>());
+   private Map<CaseInsensitiveString, String> _procedureNames = Collections.synchronizedMap(new TreeMap<>());
    
-   private Map<IProcedureInfo, IProcedureInfo> _iProcedureInfos = 
-       Collections.synchronizedMap(new TreeMap<IProcedureInfo, IProcedureInfo>());
+   private Map<IProcedureInfo, IProcedureInfo> _iProcedureInfos =  Collections.synchronizedMap(new TreeMap<>());
 
-   private Hashtable<CaseInsensitiveString, List<IProcedureInfo>> _procedureInfosBySimpleName =
-         new Hashtable<CaseInsensitiveString, List<IProcedureInfo>>();
+   private Hashtable<CaseInsensitiveString, List<IProcedureInfo>> _procedureInfosBySimpleName = new Hashtable<>();
 
 
-   private Map<CaseInsensitiveString, String> _udtNames =
-         Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, String>());
+   private Map<CaseInsensitiveString, String> _udtNames = Collections.synchronizedMap(new TreeMap<>());
 
-   private Map<IUDTInfo, IUDTInfo> _iUdtInfos =
-       Collections.synchronizedMap(new TreeMap<IUDTInfo, IUDTInfo>());
+   private Map<IUDTInfo, IUDTInfo> _iUdtInfos = Collections.synchronizedMap(new TreeMap<>());
 
-   private Hashtable<CaseInsensitiveString, List<IUDTInfo>> _udtInfosBySimpleName =
-         new Hashtable<CaseInsensitiveString, List<IUDTInfo>>();
+   private Hashtable<CaseInsensitiveString, List<IUDTInfo>> _udtInfosBySimpleName = new Hashtable<>();
 
    //
    ///////////////////////////////////////////////////////////////////////////
@@ -119,20 +105,15 @@ public class SchemaInfoCache implements Serializable
 
    private SchemaLoadInfo[] getAllSchemaLoadInfos()
    {
-      SQLAliasSchemaProperties schemaProps =  
-          _session.getAlias().getSchemaProperties();
-      SchemaLoadInfo[] schemaLoadInfos = 
-          schemaProps.fetchSchemaLoadInfos(_schemaPropsCacheIsBasedOn, 
-                                         _tabelTableTypesCacheable, 
-                                         _viewTableTypesCacheable);
+      SQLAliasSchemaProperties schemaProps = _session.getAlias().getSchemaProperties();
+      SchemaLoadInfo[] schemaLoadInfos = schemaProps.fetchSchemaLoadInfos(_schemaPropsCacheIsBasedOn, _tabelTableTypesCacheable, _viewTableTypesCacheable);
       SessionManager sessionMgr = _session.getApplication().getSessionManager();
+
       boolean allSchemasAllowed = sessionMgr.areAllSchemasAllowed(_session);
-      
-      if(   1 == schemaLoadInfos.length
-         && null == schemaLoadInfos[0].schemaName
-         && false == allSchemasAllowed)
+
+      if (1 == schemaLoadInfos.length && null == schemaLoadInfos[0].schemaName && false == allSchemasAllowed)
       {
-         if(false == allSchemasAllowed)
+         if (false == allSchemasAllowed)
          {
             String[] allowedSchemas = sessionMgr.getAllowedSchemas(_session);
 
@@ -142,7 +123,7 @@ public class SchemaInfoCache implements Serializable
             {
                SchemaLoadInfo buf = Utilities.cloneObject(schemaLoadInfos[0], getClass().getClassLoader());
                buf.schemaName = allowedSchemas[i];
-               
+
                ret.add(buf);
             }
             schemaLoadInfos = ret.toArray(new SchemaLoadInfo[ret.size()]);
@@ -428,7 +409,8 @@ public class SchemaInfoCache implements Serializable
 
       _internalTableNameTreeMap.clear();
 
-      synchronized(_iTableInfos) {
+      synchronized(_iTableInfos)
+      {
           _iTableInfos.clear();
       }
       _tableInfosBySimpleName.clear();
@@ -453,7 +435,8 @@ public class SchemaInfoCache implements Serializable
       _functions.clear();
    }
 
-   void clearAllTableData() {
+   void clearAllTableData()
+   {
    	_iTableInfos = new CopyOnWriteArrayList<ITableInfo>();
    	_tableInfosBySimpleName = new Hashtable<CaseInsensitiveString, List<ITableInfo>>();
    	_tableNames = Collections.synchronizedMap(_internalTableNameTreeMap);

@@ -266,7 +266,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 */
 	public synchronized String[] getSchemas() throws SQLException
 	{
-
 		boolean hasGuest = false;
 		boolean hasSysFun = false;
 
