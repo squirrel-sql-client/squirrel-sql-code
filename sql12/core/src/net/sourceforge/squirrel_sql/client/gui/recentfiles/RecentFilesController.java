@@ -3,7 +3,6 @@ package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.dnd.DropedFileExtractor;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
@@ -29,13 +28,17 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.Desktop;
 import java.awt.Frame;
+import java.awt.Rectangle;
 import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,6 +53,8 @@ public class RecentFilesController
    private static final String PREF_KEY_FAVOURITE_FILES_EXPANDED = "Squirrel.favouriteFiles.expanded";
    private static final String PREF_KEY_RECENT_ALIAS_FILES_EXPANDED = "Squirrel.recentAliasFiles.expanded";
    private static final String PREF_KEY_FAVOURITE_ALIAS_FILES_EXPANDED = "Squirrel.favouriteAliasFiles.expanded";
+   private static final String PREF_KEY_SHOW_PREVIEW = "Squirrel.recentFiles.showPreview";
+   private static final String PREF_KEY_SPLIT_DIVIDER_LOCATION = "Squirrel.recentFiles.split.divider.location";
 
    private RecentFilesDialog _dialog;
    private IApplication _app;
@@ -60,6 +65,8 @@ public class RecentFilesController
    private DefaultMutableTreeNode _recentFilesForAliasNode;
    private DefaultMutableTreeNode _favouriteFilesForAliasNode;
    private RecentFileWrapper _fileToOpen;
+
+   private int standardSplitDividerSize;
 
    public RecentFilesController(IApplication app, ISQLAlias selectedAlias)
    {
@@ -84,6 +91,19 @@ public class RecentFilesController
       _dialog.btnClose.addActionListener(e -> onCloseButton());
 
       initAndLoadTree();
+
+      standardSplitDividerSize = _dialog.splitTreePreview.getDividerSize();
+      _dialog.chkShowPreview.setSelected(Props.getBoolean(PREF_KEY_SHOW_PREVIEW, false));
+      _dialog.chkShowPreview.addActionListener(e -> onShowPreview());
+      onShowPreview();
+
+      _dialog.splitTreePreview.addComponentListener(new ComponentAdapter() {
+         @Override
+         public void componentResized(ComponentEvent e)
+         {
+            onSplitPaneResized();
+         }
+      });
 
       _dialog.txtNumberRecentFiles.setInt(_app.getRecentFilesManager().getMaxRecentFiles());
       _dialog.txtNumberRecentFiles.getDocument().addDocumentListener(new DocumentListener()
@@ -136,6 +156,14 @@ public class RecentFilesController
 
    }
 
+   private void onSplitPaneResized()
+   {
+      if(false == _dialog.chkShowPreview.isSelected())
+      {
+         hideRightSplit();
+      }
+   }
+
    private void onCloseButton()
    {
       writeUiTreeToModel();
@@ -163,6 +191,15 @@ public class RecentFilesController
       Props.putBoolean(PREF_KEY_FAVOURITE_FILES_EXPANDED, tre.isExpanded(new TreePath(_favouriteFilesNode.getPath())));
       Props.putBoolean(PREF_KEY_RECENT_ALIAS_FILES_EXPANDED, tre.isExpanded(new TreePath(_recentFilesForAliasNode.getPath())));
       Props.putBoolean(PREF_KEY_FAVOURITE_ALIAS_FILES_EXPANDED, tre.isExpanded(new TreePath(_favouriteFilesForAliasNode.getPath())));
+
+      Props.putBoolean(PREF_KEY_SHOW_PREVIEW, _dialog.chkShowPreview.isSelected());
+
+      saveSpiltDividerLocation();
+   }
+
+   private void saveSpiltDividerLocation()
+   {
+      Props.putInt(PREF_KEY_SPLIT_DIVIDER_LOCATION, _dialog.splitTreePreview.getDividerLocation());
    }
 
    private void onRemoveSelected()
@@ -348,12 +385,108 @@ public class RecentFilesController
          }
       });
 
+      _dialog.treFiles.addTreeSelectionListener(e -> onTreeSelectionChanged());
+
 
       _dialog.treFiles.setModel(new DefaultTreeModel(root));
       _dialog.treFiles.setRootVisible(false);
 
       initDnD();
 
+   }
+
+   private void onShowPreview()
+   {
+      if(_dialog.chkShowPreview.isSelected())
+      {
+         _dialog.splitTreePreview.setDividerSize(standardSplitDividerSize);
+
+         int preferredDividerLocation = _app.getPropsImpl().getInt(PREF_KEY_SPLIT_DIVIDER_LOCATION, _dialog.getWidthPreference() / 2);
+
+         int dividerLocation = preferredDividerLocation;
+         if (0 < _dialog.splitTreePreview.getWidth())
+         {
+            dividerLocation = Math.min(_dialog.splitTreePreview.getMaximumDividerLocation(), preferredDividerLocation);
+         }
+
+         _dialog.splitTreePreview.setDividerLocation(dividerLocation);
+      }
+      else
+      {
+         saveSpiltDividerLocation();
+         hideRightSplit();
+      }
+
+      onTreeSelectionChanged();
+   }
+
+   private void hideRightSplit()
+   {
+      _dialog.splitTreePreview.setDividerLocation(Integer.MAX_VALUE);
+      _dialog.splitTreePreview.setDividerSize(0);
+   }
+
+   private void onTreeSelectionChanged()
+   {
+      _dialog.txtPreview.setText("");
+
+      if(false == _dialog.chkShowPreview.isSelected())
+      {
+         return;
+      }
+
+      TreePath selectionPath = _dialog.treFiles.getSelectionPath();
+      if(null == selectionPath)
+      {
+         return;
+      }
+
+      Object userObject = ((DefaultMutableTreeNode) selectionPath.getLastPathComponent()).getUserObject();
+
+      if(false == userObject instanceof  RecentFileWrapper)
+      {
+         return;
+      }
+
+      RecentFileWrapper fileWrapper = (RecentFileWrapper) userObject;
+
+      if(null == fileWrapper.getFile())
+      {
+         return;
+      }
+
+      String text;
+
+      if(false == fileWrapper.getFile().exists())
+      {
+         text = s_stringMgr.getString("RecentFilesController.preview.doesNotExist", fileWrapper.getFile().getAbsolutePath());
+      }
+      else if(fileWrapper.getFile().isDirectory())
+      {
+         text = s_stringMgr.getString("RecentFilesController.preview.isADirectory", fileWrapper.getFile().getAbsolutePath());
+      }
+      else if(false == fileWrapper.getFile().canRead())
+      {
+         text = s_stringMgr.getString("RecentFilesController.preview.canNotRead", fileWrapper.getFile().getAbsolutePath());
+      }
+      else
+      {
+         try
+         {
+            text = String.join("\n", Files.readAllLines(fileWrapper.getFile().toPath()));
+         }
+         catch (Exception e)
+         {
+            String errMsg = s_stringMgr.getString("RecentFilesController.preview.errorReadingFile", fileWrapper.getFile().getAbsolutePath(), e.toString());
+            Main.getApplication().getMessageHandler().showErrorMessage(errMsg);
+            text = errMsg;
+            s_log.error(errMsg, e);
+         }
+      }
+
+      _dialog.txtPreview.setText(text);
+
+      SwingUtilities.invokeLater(() -> _dialog.txtPreview.scrollRectToVisible(new Rectangle(0,0)));
    }
 
    private void initDnD()

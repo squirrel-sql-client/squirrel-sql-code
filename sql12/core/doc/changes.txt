@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Recent files dialog has a new checkbox: "Show file preview".
+  See menu Session --> File --> "Open recent or favourite file ..."
+
 #580 Alias properties allows SQL LIKE syntax to configure schema loading:
   Menu Windows --> View Aliases --> select an Alias --> menu Aliases --> Alias properties --> tab Schemas
   --> section "Set ... in all Schemas ..." now has a small button next to the word "to" that opens a filter text field.

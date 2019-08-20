@@ -20,7 +20,11 @@ public class RecentFilesDialog extends JDialog
    public static final String PREF_KEY_RECENT_FILES_DIALOG_HEIGHT = "Squirrel.RecentFilesDialogHeight";
 
 
+   JSplitPane splitTreePreview;
    JTree treFiles;
+   JTextArea txtPreview;
+   JCheckBox chkShowPreview;
+
    IntegerField txtNumberRecentFiles;
    JButton btnFavourites;
    JButton btnAliasFavourites;
@@ -47,15 +51,24 @@ public class RecentFilesDialog extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10,5,0,5), 0,0);
+      splitTreePreview = new JSplitPane();
       treFiles = new JTree();
-      getContentPane().add(new JScrollPane(treFiles), gbc);
+      txtPreview = new JTextArea();
+      txtPreview.setEditable(false);
+      splitTreePreview.setLeftComponent(new JScrollPane(treFiles));
+      splitTreePreview.setRightComponent(new JScrollPane(txtPreview));
+      getContentPane().add(splitTreePreview, gbc);
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(3,5,5,5), 0,0);
+      chkShowPreview = new JCheckBox(s_stringMgr.getString("recentfiles.RecentFilesDialog.showPreview"));
+      getContentPane().add(chkShowPreview, gbc);
 
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10,5,5,5), 0,0);
       getContentPane().add(createConfigPanel(), gbc);
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5), 0,0);
+      gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5), 0,0);
       getContentPane().add(createButtonsPanel(isCalledFromAliasView, alias), gbc);
 
       setSize(getDim());
@@ -89,9 +102,14 @@ public class RecentFilesDialog extends JDialog
    private Dimension getDim()
    {
       return new Dimension(
-            Props.getInt(PREF_KEY_RECENT_FILES_DIALOG_WIDTH, 500),
+            getWidthPreference(),
             Props.getInt(PREF_KEY_RECENT_FILES_DIALOG_HEIGHT, 550)
       );
+   }
+
+   int getWidthPreference()
+   {
+      return Props.getInt(PREF_KEY_RECENT_FILES_DIALOG_WIDTH, 500);
    }
 
    private JPanel createButtonsPanel(boolean isCalledFromAliasView, ISQLAlias alias)
