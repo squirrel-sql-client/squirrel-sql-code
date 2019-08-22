@@ -542,7 +542,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       ret.add(createButtonsPanel(), BorderLayout.EAST);
 
-      ret.add(_selectRowColLabelController.getLabel(), BorderLayout.CENTER);
+      ret.add(_selectRowColLabelController.getPanel(), BorderLayout.CENTER);
 
       return ret;
    }

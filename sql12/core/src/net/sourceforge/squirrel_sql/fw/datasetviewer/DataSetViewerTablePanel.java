@@ -29,13 +29,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.print.PageFormat;
@@ -102,7 +98,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
    {
       if(null != _rowColSelectedCountListener)
       {
-         _rowColSelectedCountListener.rowColSelectedCountChanged(_table.getSelectedRowCount(), _table.getSelectedColumnCount());
+         _rowColSelectedCountListener.rowColSelectedCountOrPosChanged(_table.getSelectedRowCount(), _table.getSelectedColumnCount(), _table.getSelectedRow(), _table.getSelectedColumn());
       }
    }
 

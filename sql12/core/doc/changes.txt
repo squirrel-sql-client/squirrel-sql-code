@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+SQL result: Position of the active cell is displayed on the upper right of the result tab.
+
 Improved Session startup and reload performance by reducing calls to Connection.getMetaData().getSchemas().
 
 Recent files dialog has a new checkbox: "Show file preview".
