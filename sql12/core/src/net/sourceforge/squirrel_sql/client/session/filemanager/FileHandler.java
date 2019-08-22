@@ -134,7 +134,11 @@ public class FileHandler
          showConfirmSaveDialog();
       }
 
-      _fileManagementCore.open(f, append);
+      if(false == _fileManagementCore.open(f, append))
+      {
+         return;
+      }
+
       _fileOpened = true;
       _fileSaved = false;
       _unsavedEdits = false;

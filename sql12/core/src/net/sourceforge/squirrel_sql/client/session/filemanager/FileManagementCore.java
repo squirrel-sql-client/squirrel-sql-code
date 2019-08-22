@@ -11,8 +11,11 @@ import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import java.awt.Frame;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -23,13 +26,15 @@ import java.io.IOException;
 
 public class FileManagementCore
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FileManagementCore.class);
+   private static ILogger s_log = LoggerController.createLogger(FileManagementCore.class);
+
+
    private IFileEditorAPI _fileEditorAPI;
    private TitleFilePathHandler _titleFilePathHandler;
 
    private File _toSaveTo = null;
 
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FileManagementCore.class);
-   
    private FileChooserManager _fileChooserManager = new FileChooserManager();
 
    private IOUtilities ioUtil = new IOUtilitiesImpl();
@@ -56,16 +61,11 @@ public class FileManagementCore
       return saveIntern(true);
    }
 
-   public void open(File f, boolean appendToExisting)
+   public boolean open(File f, boolean appendToExisting)
    {
       _fileEditorAPI.selectWidgetOrTab();
 
-      if (false == appendToExisting)
-      {
-         _fileEditorAPI.setEntireSQLScript("");
-      }
-
-      loadScript(f);
+      return loadScript(f, appendToExisting);
    }
 
 
@@ -102,23 +102,48 @@ public class FileManagementCore
 
       if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
       {
-         result = true;
          File selectedFile = chooser.getSelectedFile();
-
-         if (!appendToExisting)
-         {
-            _fileEditorAPI.setEntireSQLScript("");
-         }
-
-         loadScript(selectedFile);
+         result = loadScript(selectedFile, appendToExisting);
       }
 
       return result;
    }
 
-   private void loadScript(File file)
+   private String checkFileOk(File selectedFile)
    {
-       SquirrelPreferences prefs = Main.getApplication().getSquirrelPreferences();
+      String errorMessage = null;
+      if(null == selectedFile)
+      {
+         errorMessage = s_stringMgr.getString("FileManager.error.chosen.no.file.selected");
+      }
+      else if(false == selectedFile.exists())
+      {
+         errorMessage = s_stringMgr.getString("FileManager.error.chosen.File.does.not.exist", selectedFile.getAbsolutePath());
+      }
+      else if(false == selectedFile.isFile())
+      {
+         errorMessage = s_stringMgr.getString("FileManager.error.chosen.File.is.not.a.file", selectedFile.getAbsolutePath());
+      }
+      else if(false == selectedFile.canRead())
+      {
+         errorMessage = s_stringMgr.getString("FileManager.error.chosen.File.can.not.be.read", selectedFile.getAbsolutePath());
+      }
+      return errorMessage;
+   }
+
+   private boolean loadScript(File file, boolean appendToExisting)
+   {
+      String errorMessage = checkFileOk(file);
+
+      if(null != errorMessage)
+      {
+         String titel = s_stringMgr.getString("FileManager.error.file.open.failed.title");
+         JOptionPane.showMessageDialog(_fileEditorAPI.getOwningFrame(), errorMessage, titel, JOptionPane.ERROR_MESSAGE);
+         Main.getApplication().getMessageHandler().showErrorMessage(errorMessage);
+         return false;
+      }
+
+      SquirrelPreferences prefs = Main.getApplication().getSquirrelPreferences();
       FileInputStream fis = null;
       BufferedInputStream bis = null;
       try
@@ -133,18 +158,28 @@ public class FileManagementCore
             sb.append(new String(bytes, 0, iRead));
             iRead = bis.read(bytes);
          }
+
+         if (false == appendToExisting)
+         {
+            _fileEditorAPI.setEntireSQLScript("");
+         }
+
          _fileEditorAPI.appendSQLScript(convertPlatformEOLToLineFeed(sb.toString()), true);
          setFile(file);
          memorizeFile(file, prefs);
+
+         return true;
       }
-      catch (java.io.IOException io)
+      catch (Exception e)
       {
-         Main.getApplication().getMessageHandler().showErrorMessage(io);
+         Main.getApplication().getMessageHandler().showErrorMessage(e);
+         s_log.error(e);
+         return false;
       }
       finally
       {
-      	ioUtil.closeInputStream(bis);
-      	ioUtil.closeInputStream(fis);
+         ioUtil.closeInputStream(bis);
+         ioUtil.closeInputStream(fis);
       }
    }
 

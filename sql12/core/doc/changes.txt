@@ -99,6 +99,11 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+#1403 Erasing editor file
+  SQuirreL doesn't support creating a new file using the "Open file" function.
+  The problem described in bug #1403 occurred, when a non existent file was entered into the file open dialog.
+  Now the user is told about the problem and the SQuirreL behaves consistently.
+
 Restoring table selection sometimes failed when "Rerun" or "Make Editable" functions were executed.
 
 SQL result tables and Object tree tables: Make editable function now preserves row selection.
