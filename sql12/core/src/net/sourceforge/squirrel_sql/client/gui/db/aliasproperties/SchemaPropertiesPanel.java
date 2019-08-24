@@ -188,14 +188,16 @@ public class SchemaPropertiesPanel extends JPanel
          ret.setLayout(new GridBagLayout());
 
          GridBagConstraints gbc;
+         String toolTip = s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateLable2._begin.SchemaFilter.tooltip");
 
          gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
          JLabel lblBegin = new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateLable2._begin.SchemaFilter"));
-         lblBegin.setToolTipText(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateLable2._begin.SchemaFilter.tooltip"));
+         lblBegin.setToolTipText(toolTip);
          ret.add(lblBegin, gbc);
 
          gbc = new GridBagConstraints(1,0,1,1,1,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5),0,0);
          txtSchemaFilter.setPreferredSize(new Dimension(100, txtSchemaFilter.getPreferredSize().height));
+         txtSchemaFilter.setToolTipText(toolTip);
          ret.add(txtSchemaFilter, gbc);
 
          gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
