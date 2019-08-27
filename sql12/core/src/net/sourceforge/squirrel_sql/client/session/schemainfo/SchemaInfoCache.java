@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaNameLoadInfo;
@@ -111,7 +110,7 @@ public class SchemaInfoCache implements Serializable
 
       boolean allSchemasAllowed = sessionMgr.areAllSchemasAllowed(_session);
 
-      if (1 == schemaLoadInfos.length && null == schemaLoadInfos[0].schemaName && false == allSchemasAllowed)
+      if (1 == schemaLoadInfos.length && null == schemaLoadInfos[0].getSchemaName() && false == allSchemasAllowed)
       {
          if (false == allSchemasAllowed)
          {
@@ -122,7 +121,7 @@ public class SchemaInfoCache implements Serializable
             for (int i = 0; i < allowedSchemas.length; i++)
             {
                SchemaLoadInfo buf = Utilities.cloneObject(schemaLoadInfos[0], getClass().getClassLoader());
-               buf.schemaName = allowedSchemas[i];
+               buf.setSchemaName(allowedSchemas[i]);
 
                ret.add(buf);
             }
@@ -147,16 +146,16 @@ public class SchemaInfoCache implements Serializable
       SchemaLoadInfo[] schemaLoadInfos = getAllSchemaLoadInfos();
       for (int i = 0; i < schemaLoadInfos.length; i++)
       {
-         if(null == schemaLoadInfos[i].schemaName || schemaLoadInfos[i].schemaName.equals(schemaName))
+         if(null == schemaLoadInfos[i].getSchemaName() || schemaLoadInfos[i].getSchemaName().equals(schemaName))
          {
             
             // null == schemaLoadInfos[0].schemaName is the case when there are no _schemas specified
             // schemaLoadInfos.length will then be 1.
-            schemaLoadInfos[i].schemaName = schemaName;
+            schemaLoadInfos[i].setSchemaName(schemaName);
             if(null != tableTypes)
             {
                SchemaLoadInfo buf = Utilities.cloneObject(schemaLoadInfos[i], getClass().getClassLoader());
-               buf.tableTypes = tableTypes;
+               buf.setTableTypes(tableTypes);
                return new SchemaLoadInfo[]{buf};
             }
 
@@ -372,7 +371,8 @@ public class SchemaInfoCache implements Serializable
          clearSchemaIndependentData();
       }
 
-      if(SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_ALL_CACHE_NONE == _schemaPropsCacheIsBasedOn.getGlobalState())
+      if(   SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_ALL_CACHE_NONE == _schemaPropsCacheIsBasedOn.getGlobalState()
+         || SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS_BY_LIKE_STRING == _schemaPropsCacheIsBasedOn.getGlobalState() )
       {
          clearAllSchemaDependentData();
       }

@@ -101,6 +101,8 @@ public class SquirrelResources extends Resources
 		String SMALL_PLUS = "smallPlus";
 		String SMALL_MINUS = "smallMinus";
 
+		String SMALL_INFO = "small_info";
+
 		String LABELED = "labeled";
       String NAMED = "named";
 

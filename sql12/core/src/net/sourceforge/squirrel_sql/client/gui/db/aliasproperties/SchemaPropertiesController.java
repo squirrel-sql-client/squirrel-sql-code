@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
@@ -19,8 +18,6 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.DefaultTableColumnModel;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.io.File;
 
 public class SchemaPropertiesController implements IAliasPropertiesPanelController
@@ -89,6 +86,11 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
       _pnl.radLoadAllAndCacheNone.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_ALL_CACHE_NONE);
       _pnl.radLoadAndCacheAll.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_AND_CACHE_ALL);
+
+      _pnl.radSpecifySchemasByLikeString.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS_BY_LIKE_STRING);
+      _pnl.txtSchemasByLikeStringInclude.setText(alias.getSchemaProperties().getByLikeStringInclude());
+      _pnl.txtSchemasByLikeStringExclude.setText(alias.getSchemaProperties().getByLikeStringExclude());
+
       _pnl.radSpecifySchemas.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS);
 
       _pnl.chkCacheSchemaIndepndentMetaData.setSelected(alias.getSchemaProperties().isCacheSchemaIndependentMetaData());
@@ -113,9 +115,11 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
       _pnl.radLoadAllAndCacheNone.addActionListener(e -> updateEnabled());
       _pnl.radLoadAndCacheAll.addActionListener(e -> updateEnabled());
+      _pnl.radSpecifySchemasByLikeString.addActionListener(e -> updateEnabled());
       _pnl.radSpecifySchemas.addActionListener(e -> updateEnabled());
 
-      _pnl.btnUpdateSchemas.addActionListener(e -> onRefreshSchemaTable());
+      _pnl.btnUpdateSchemasTable.addActionListener(e -> onRefreshSchemaTable());
+      _pnl.btnClearSchemasTable.addActionListener(e -> onClearSchemaTable());
 
       _pnl.btnPrintCacheFileLocation.addActionListener(e -> onPrintCacheFileLocation());
 
@@ -221,6 +225,10 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       }
    }
 
+   private void onClearSchemaTable()
+   {
+      _schemaTableModel.clear();
+   }
 
    private void updateEnabled()
    {
@@ -230,7 +238,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       }
 
 
-      _pnl.btnUpdateSchemas.setEnabled(_pnl.radSpecifySchemas.isSelected());
+      _pnl.btnUpdateSchemasTable.setEnabled(_pnl.radSpecifySchemas.isSelected());
 
       _pnl.tblSchemas.setEnabled(_pnl.radSpecifySchemas.isSelected());
 
@@ -239,6 +247,9 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       _pnl.txtSchemaFilter.setEnabled(_pnl.radSpecifySchemas.isSelected());
       _pnl.cboSchemaTableUpdateTo.setEnabled(_pnl.radSpecifySchemas.isSelected());
       _pnl.btnSchemaTableUpdateApply.setEnabled(_pnl.radSpecifySchemas.isSelected());
+
+      _pnl.txtSchemasByLikeStringInclude.setEnabled(_pnl.radSpecifySchemasByLikeString.isSelected());
+      _pnl.txtSchemasByLikeStringExclude.setEnabled(_pnl.radSpecifySchemasByLikeString.isSelected());
 
       if(_pnl.radSpecifySchemas.isSelected())
       {
@@ -284,10 +295,17 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       {
          _alias.getSchemaProperties().setGlobalState(SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_AND_CACHE_ALL);
       }
+      else if(_pnl.radSpecifySchemasByLikeString.isSelected())
+      {
+         _alias.getSchemaProperties().setGlobalState(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS_BY_LIKE_STRING);
+      }
       else if(_pnl.radSpecifySchemas.isSelected())
       {
          _alias.getSchemaProperties().setGlobalState(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS);
       }
+
+      _alias.getSchemaProperties().setByLikeStringInclude(_pnl.txtSchemasByLikeStringInclude.getText());
+      _alias.getSchemaProperties().setByLikeStringExclude(_pnl.txtSchemasByLikeStringExclude.getText());
 
       _alias.getSchemaProperties().setSchemaDetails(_schemaTableModel.getData());
 

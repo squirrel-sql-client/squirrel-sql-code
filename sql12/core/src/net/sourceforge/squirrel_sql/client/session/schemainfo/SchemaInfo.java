@@ -629,9 +629,9 @@ public class SchemaInfo
 
          for (int i = 0; i < schemaLoadInfos.length; i++)
          {
-            if(schemaLoadInfos[i].loadProcedures)
+            if(schemaLoadInfos[i].isLoadProcedures())
             {
-               IProcedureInfo[] procedures = _dmd.getProcedures(catalog, schemaLoadInfos[i].schemaName, procNamePattern, pcb);
+               IProcedureInfo[] procedures = _dmd.getProcedures(catalog, schemaLoadInfos[i].getSchemaName(), procNamePattern, pcb);
 
                for (int j = 0; j < procedures.length; j++)
                {
@@ -665,9 +665,9 @@ public class SchemaInfo
 
          for (int i = 0; i < schemaLoadInfos.length; i++)
          {
-            if(schemaLoadInfos[i].loadUDTs)
+            if(schemaLoadInfos[i].isLoadUDTs())
             {
-               IUDTInfo[] udts = _dmd.getUDTs(catalog, schemaLoadInfos[i].schemaName, udtNamePattern, null, pcb);
+               IUDTInfo[] udts = _dmd.getUDTs(catalog, schemaLoadInfos[i].getSchemaName(), udtNamePattern, null, pcb);
 
                for (int j = 0; j < udts.length; j++)
                {
@@ -1322,11 +1322,11 @@ public class SchemaInfo
          {
             ITableInfo[] infos = new ITableInfo[0];
 
-            if (null == schemaLoadInfos[i].tableTypes || 0 < schemaLoadInfos[i].tableTypes.length)
+            if (null == schemaLoadInfos[i].getTableTypes() || 0 < schemaLoadInfos[i].getTableTypes().length)
             {
                // With Oracle this takes quite a lot of time if schemaLoadInfos[i].tableTypes has length 0
                // that's why this if is here
-               infos = _dmd.getTables(catalog,schemaLoadInfos[i].schemaName, tableNamePattern,schemaLoadInfos[i].tableTypes, pcb);
+               infos = _dmd.getTables(catalog, schemaLoadInfos[i].getSchemaName(), tableNamePattern, schemaLoadInfos[i].getTableTypes(), pcb);
             }
 
             _schemaInfoCache.writeToTableCache(infos);

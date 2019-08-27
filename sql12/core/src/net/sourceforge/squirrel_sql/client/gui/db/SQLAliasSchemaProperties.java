@@ -4,17 +4,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-@SuppressWarnings("serial")
 public class SQLAliasSchemaProperties implements Serializable
 {
    SQLAliasSchemaDetailProperties[] _schemaDetails = new SQLAliasSchemaDetailProperties[0];
 
    public static final int GLOBAL_STATE_LOAD_ALL_CACHE_NONE = 0;
    public static final int GLOBAL_STATE_LOAD_AND_CACHE_ALL = 1;
+   public static final int GLOBAL_STATE_SPECIFY_SCHEMAS_BY_LIKE_STRING = 3;
    public static final int GLOBAL_STATE_SPECIFY_SCHEMAS = 2;
 
    private int _globalState = GLOBAL_STATE_LOAD_ALL_CACHE_NONE;
    private boolean _cacheSchemaIndependentMetaData;
+   private String _byLikeStringInclude;
+   private String _byLikeStringExclude;
 
    public SQLAliasSchemaDetailProperties[] getSchemaDetails()
    {
@@ -90,7 +92,7 @@ public class SQLAliasSchemaProperties implements Serializable
                fetchMatchingDetail(_schemaDetails[i].getSchemaName(), schemaPropsCacheIsBasedOn._schemaDetails);
 
             SchemaLoadInfo buf = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
-            buf.schemaName = _schemaDetails[i].getSchemaName();
+            buf.setSchemaName(_schemaDetails[i].getSchemaName());
 
             ArrayList<String> tableTypesToLoad = new ArrayList<String>();
 
@@ -105,22 +107,20 @@ public class SQLAliasSchemaProperties implements Serializable
             }
 
 
-            buf.loadProcedures =
-               needsLoading(_schemaDetails[i].getProcedure(), null == cachedDetailProp ? null : cachedDetailProp.getProcedure());
+            buf.setLoadProcedures(needsLoading(_schemaDetails[i].getProcedure(), null == cachedDetailProp ? null : cachedDetailProp.getProcedure()));
 
-            if(0 < tableTypesToLoad.size() || buf.loadProcedures)
+            if(0 < tableTypesToLoad.size() || buf.isLoadProcedures())
             {
-               buf.tableTypes = tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]);
+               buf.setTableTypes(tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]));
                ret.add(buf);
             }
 
 
-            buf.loadUDTs =
-               needsLoading(_schemaDetails[i].getUDT(), null == cachedDetailProp ? null : cachedDetailProp.getUDT());
+            buf.setLoadUDTs(needsLoading(_schemaDetails[i].getUDT(), null == cachedDetailProp ? null : cachedDetailProp.getUDT()));
 
-            if(0 < tableTypesToLoad.size() || buf.loadUDTs)
+            if(0 < tableTypesToLoad.size() || buf.isLoadUDTs())
             {
-               buf.tableTypes = tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]);
+               buf.setTableTypes(tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]));
                ret.add(buf);
             }
 
@@ -146,8 +146,7 @@ public class SQLAliasSchemaProperties implements Serializable
       }
       else if(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS == _globalState)
       {
-         ArrayList<SchemaLoadInfo> schemaLoadInfos = 
-             new ArrayList<SchemaLoadInfo>();
+         ArrayList<SchemaLoadInfo> schemaLoadInfos = new ArrayList<SchemaLoadInfo>();
 
          for (int i = 0; i < _schemaDetails.length; i++)
          {
@@ -160,35 +159,35 @@ public class SQLAliasSchemaProperties implements Serializable
             }
 
             SchemaLoadInfo schemaLoadInfo = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
-            schemaLoadInfo.schemaName = _schemaDetails[i].getSchemaName();
-            schemaLoadInfo.tableTypes = new String[0];
+            schemaLoadInfo.setSchemaName(_schemaDetails[i].getSchemaName());
+            schemaLoadInfo.setTableTypes(new String[0]);
 
             if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getTable())
             {
-               schemaLoadInfo.tableTypes = addStringArrays(schemaLoadInfo.tableTypes, tableTypes);
+               schemaLoadInfo.setTableTypes(addStringArrays(schemaLoadInfo.getTableTypes(), tableTypes));
             }
 
             if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getView())
             {
-               schemaLoadInfo.tableTypes = addStringArrays(schemaLoadInfo.tableTypes, viewTypes);
+               schemaLoadInfo.setTableTypes(addStringArrays(schemaLoadInfo.getTableTypes(), viewTypes));
             }
 
             if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getProcedure())
             {
-               schemaLoadInfo.loadProcedures = true;
+               schemaLoadInfo.setLoadProcedures(true);
             }
             else
             {
-               schemaLoadInfo.loadProcedures = false;
+               schemaLoadInfo.setLoadProcedures(false);
             }
 
             if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getUDT())
             {
-               schemaLoadInfo.loadUDTs = true;
+               schemaLoadInfo.setLoadUDTs(true);
             }
             else
             {
-               schemaLoadInfo.loadUDTs = false;
+               schemaLoadInfo.setLoadUDTs(false);
             }
 
             schemaLoadInfos.add(schemaLoadInfo);
@@ -376,5 +375,25 @@ public class SQLAliasSchemaProperties implements Serializable
       }
 
       return ret;
+   }
+
+   public String getByLikeStringInclude()
+   {
+      return _byLikeStringInclude;
+   }
+
+   public void setByLikeStringInclude(String byLikeStringInclude)
+   {
+      _byLikeStringInclude = byLikeStringInclude;
+   }
+
+   public String getByLikeStringExclude()
+   {
+      return _byLikeStringExclude;
+   }
+
+   public void setByLikeStringExclude(String byLikeStringExclude)
+   {
+      _byLikeStringExclude = byLikeStringExclude;
    }
 }

@@ -4,10 +4,10 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,10 +21,14 @@ public class SchemaPropertiesPanel extends JPanel
 
    JRadioButton radLoadAllAndCacheNone;
    JRadioButton radLoadAndCacheAll;
+
+   JRadioButton radSpecifySchemasByLikeString;
+   JTextField txtSchemasByLikeStringInclude;
+   JTextField txtSchemasByLikeStringExclude;
+
    JRadioButton radSpecifySchemas;
-
-   JButton btnUpdateSchemas;
-
+   JButton btnUpdateSchemasTable;
+   JButton btnClearSchemasTable;
    JTable tblSchemas;
 
    JComboBox cboSchemaTableUpdateWhat;
@@ -67,47 +71,102 @@ public class SchemaPropertiesPanel extends JPanel
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
       add(radLoadAndCacheAll, gbc);
 
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,2,5), 0,0);
+      add(createSpecifySchemasByLikeStringPanel(), gbc);
+
       // i18n[SchemaPropertiesPanel.specifySchemas=Specify Schema loading and caching]
       radSpecifySchemas= new JRadioButton(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemas"));
-      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
       add(radSpecifySchemas, gbc);
 
       ButtonGroup bg = new ButtonGroup();
       bg.add(radLoadAllAndCacheNone);
       bg.add(radLoadAndCacheAll);
+      bg.add(radSpecifySchemasByLikeString);
       bg.add(radSpecifySchemas);
 
 
-      // i18n[SchemaPropertiesPanel.refreshSchemas=Connect database to refresh Schema table]
-      btnUpdateSchemas = new JButton(s_stringMgr.getString("SchemaPropertiesPanel.refreshSchemas"));
-      gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      add(btnUpdateSchemas, gbc);
+      gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      add(createSchemaTableUpdateButtonPanel(), gbc);
 
 
       // i18n[SchemaPropertiesPanel.schemaTableTitle=Schema table]
       JLabel lblSchemaTableTitle = new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableTitle"));
-      gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+      gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
       add(lblSchemaTableTitle, gbc);
 
       tblSchemas = new JTable();
       tblSchemas.setAutoCreateRowSorter(true);
-      gbc = new GridBagConstraints(0,6,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,7,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5), 0,0);
       add(new JScrollPane(tblSchemas), gbc);
 
-      gbc = new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5), 0,0);
       add(createSchemaTableUpdatePanel(), gbc);
 
 
       // i18n[SchemaPropertiesPanel.CacheSchemaIndependentMetaData=Cache Schema independent meta data (Catalogs, Keywords, Data types, Global functions)]
       chkCacheSchemaIndepndentMetaData = new JCheckBox(s_stringMgr.getString("SchemaPropertiesPanel.CacheSchemaIndependentMetaData"));
-      gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,9,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,5,5), 0,0);
       add(chkCacheSchemaIndepndentMetaData, gbc);
 
 
-      gbc = new GridBagConstraints(0,9,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,10,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,5,5), 0,0);
       add(createCacheFilePanel(), gbc);
 
    }
+
+   private JPanel createSchemaTableUpdateButtonPanel()
+   {
+      JPanel ret = new JPanel(new GridLayout(1,2,5,5));
+
+      btnUpdateSchemasTable = new JButton(s_stringMgr.getString("SchemaPropertiesPanel.refreshSchemas"));
+      ret.add(btnUpdateSchemasTable);
+
+      btnClearSchemasTable = new JButton(s_stringMgr.getString("SchemaPropertiesPanel.clearSchemas"));
+      ret.add(btnClearSchemasTable);
+
+      return ret;
+   }
+
+   private JPanel createSpecifySchemasByLikeStringPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+      String toolTip = s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.tooltip");
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,0), 0,0);
+      radSpecifySchemasByLikeString = new JRadioButton(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString"));
+      radSpecifySchemasByLikeString.setToolTipText(toolTip);
+      ret.add(radSpecifySchemasByLikeString, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
+      ret.add(new SmallToolTipInfoButton(toolTip).getButton(), gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.include")), gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
+      txtSchemasByLikeStringInclude = new JTextField();
+      txtSchemasByLikeStringInclude.setPreferredSize(new Dimension(100, txtSchemasByLikeStringInclude.getPreferredSize().height));
+      ret.add(txtSchemasByLikeStringInclude, gbc);
+
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.exclude")), gbc);
+
+      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
+      txtSchemasByLikeStringExclude = new JTextField();
+      txtSchemasByLikeStringExclude.setPreferredSize(new Dimension(100, txtSchemasByLikeStringExclude.getPreferredSize().height));
+      ret.add(txtSchemasByLikeStringExclude, gbc);
+
+      // dist
+      gbc = new GridBagConstraints(6,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0);
+      ret.add(new JPanel(), gbc);
+
+
+      return ret;
+   }
+
 
    private JPanel createCacheFilePanel()
    {

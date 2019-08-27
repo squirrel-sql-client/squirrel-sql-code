@@ -7,24 +7,65 @@ import java.io.Serializable;
  */
 public class SchemaLoadInfo implements Serializable
 {
+   private String _schemaName;
+
+   private String[] _tableTypes;
+
+   private boolean _loadProcedures = true;
+
+   private boolean _loadUDTs = true;
+
+
    public SchemaLoadInfo(String[] tableTypes)
    {
-      this.tableTypes = tableTypes;
+      this._tableTypes = tableTypes;
    }
 
    /**
     * null means load all Schemas
     */
-   public String schemaName;
+   public String getSchemaName()
+   {
+      return _schemaName;
+   }
+
+   public void setSchemaName(String schemaName)
+   {
+      this._schemaName = schemaName;
+   }
 
    /**
     * null means load all types.
     * Should not be set to null because of the enormous
-    * amount of Synonyms Oracle provides. 
+    * amount of Synonyms Oracle provides.
     */
-   public String[] tableTypes;
+   public String[] getTableTypes()
+   {
+      return _tableTypes;
+   }
 
-   public boolean loadProcedures = true;
+   public void setTableTypes(String[] tableTypes)
+   {
+      this._tableTypes = tableTypes;
+   }
 
-   public boolean loadUDTs = true;
+   public boolean isLoadProcedures()
+   {
+      return _loadProcedures;
+   }
+
+   public void setLoadProcedures(boolean loadProcedures)
+   {
+      this._loadProcedures = loadProcedures;
+   }
+
+   public boolean isLoadUDTs()
+   {
+      return _loadUDTs;
+   }
+
+   public void setLoadUDTs(boolean loadUDTs)
+   {
+      this._loadUDTs = loadUDTs;
+   }
 }

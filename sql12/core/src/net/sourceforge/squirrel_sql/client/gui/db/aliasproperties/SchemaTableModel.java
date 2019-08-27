@@ -175,4 +175,10 @@ public class SchemaTableModel extends DefaultTableModel
 
       fireTableDataChanged();
    }
+
+   public void clear()
+   {
+      _schemaDetails = new SQLAliasSchemaDetailProperties[0];
+      fireTableDataChanged();
+   }
 }
