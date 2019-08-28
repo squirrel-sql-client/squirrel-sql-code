@@ -50,7 +50,6 @@ public class SchemaExpander implements INodeExpander
 	 */
 	public SchemaExpander(INodeExpanderFactory inodeExpFactory, DatabaseObjectType dbObjType)
 	{
-		super();
 		this._inodeFactory = inodeExpFactory;
 		this._dbObjType = dbObjType;
 	}
@@ -73,9 +72,7 @@ public class SchemaExpander implements INodeExpander
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSimpleName();
 
-		IDatabaseObjectInfo seqInfo =
-			new DatabaseObjectInfo(catalogName, schemaName, _inodeFactory.getParentLabelForType(_dbObjType),
-				_dbObjType, md);
+		IDatabaseObjectInfo seqInfo = new DatabaseObjectInfo(catalogName, schemaName, _inodeFactory.getParentLabelForType(_dbObjType), _dbObjType, md);
 		ObjectTreeNode node = new ObjectTreeNode(session, seqInfo);
 		node.addExpander(_inodeFactory.createExpander(_dbObjType));
 		childNodes.add(node);

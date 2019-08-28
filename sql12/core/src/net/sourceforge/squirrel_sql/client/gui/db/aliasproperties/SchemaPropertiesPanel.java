@@ -133,15 +133,14 @@ public class SchemaPropertiesPanel extends JPanel
       JPanel ret = new JPanel(new GridBagLayout());
 
       GridBagConstraints gbc;
-      String toolTip = s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.tooltip");
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,0), 0,0);
       radSpecifySchemasByLikeString = new JRadioButton(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString"));
-      radSpecifySchemasByLikeString.setToolTipText(toolTip);
+      radSpecifySchemasByLikeString.setToolTipText(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.tooltip"));
       ret.add(radSpecifySchemasByLikeString, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
-      ret.add(new SmallToolTipInfoButton(toolTip).getButton(), gbc);
+      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.tooltip.long.html")).getButton(), gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
       ret.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.include")), gbc);

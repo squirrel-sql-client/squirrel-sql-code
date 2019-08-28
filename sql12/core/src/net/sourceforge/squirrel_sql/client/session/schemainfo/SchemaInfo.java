@@ -214,11 +214,7 @@ public class SchemaInfo
     */
    public void reloadAllTables()
    {
-   	GUIUtils.processOnSwingEventThread(new Runnable() {
-   		public void run() {
-   			_session.getSessionPanel().setStatusBarProgress(i18n.LOADING_TABLES_MSG, 0, MAX_PROGRESS, 50);
-   		}
-   	});
+   	GUIUtils.processOnSwingEventThread(() -> _session.getSessionPanel().setStatusBarProgress(i18n.LOADING_TABLES_MSG, 0, MAX_PROGRESS, 50));
    	
    	breathing();
    	
@@ -226,14 +222,15 @@ public class SchemaInfo
    	loadTables(null, null, null, null, 0);
       notifyTablesLoaded();   	
 
-   	GUIUtils.processOnSwingEventThread(new Runnable() {
-   		public void run() {
-   			fireSchemaInfoUpdate();
-   			_session.getSessionPanel().setStatusBarProgressFinished();
-   		}
-   	});
+   	GUIUtils.processOnSwingEventThread(() -> reloadAllTablesFinished());
    }
-      
+
+   private void reloadAllTablesFinished()
+   {
+      fireSchemaInfoUpdate();
+      _session.getSessionPanel().setStatusBarProgressFinished();
+   }
+
    private void privateLoadAll()
    {
       synchronized (this)
@@ -253,11 +250,6 @@ public class SchemaInfo
 
       breathing();
 
-
-       
-      long mstart = System.currentTimeMillis();
-      long mfinish = 0;
-      
       try
       {
          ISQLConnection conn = _session.getSQLConnection();
@@ -275,22 +267,11 @@ public class SchemaInfo
 
          notifySchemasAndCatalogsLoad();
 
-         long start = 0, finish = 0;
          try
          {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug(i18n.LOADING_KEYWORDS_MSG);
-                start = System.currentTimeMillis();
-            }            
-
             int beginProgress = getLoadMethodProgress(progress++);
             setProgress(i18n.LOADING_KEYWORDS_MSG, beginProgress);
             loadKeywords(i18n.LOADING_KEYWORDS_MSG, beginProgress);
-
-            if (s_log.isDebugEnabled()) {
-                finish = System.currentTimeMillis();
-                s_log.debug("Keywords loaded in " + (finish - start) + " ms");
-            }
          }
          catch (Exception ex)
          {
@@ -299,18 +280,9 @@ public class SchemaInfo
 
          try
          {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug(i18n.LOADING_DATATYPES_MSG);
-                start = System.currentTimeMillis();
-            }
             int beginProgress = getLoadMethodProgress(progress++);
             setProgress(i18n.LOADING_DATATYPES_MSG, beginProgress);
             loadDataTypes(i18n.LOADING_DATATYPES_MSG, beginProgress);
-
-            if (s_log.isDebugEnabled()) {
-                finish = System.currentTimeMillis();
-                s_log.debug("Data types loaded in " + (finish - start) + " ms");
-            }
          }
          catch (Exception ex)
          {
@@ -319,19 +291,9 @@ public class SchemaInfo
 
          try
          {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug(i18n.LOADING_FUNCTIONS_MSG);
-                start = System.currentTimeMillis();
-            }
-            
             int beginProgress = getLoadMethodProgress(progress++);
             setProgress(i18n.LOADING_FUNCTIONS_MSG, beginProgress);
             loadGlobalFunctions(i18n.LOADING_FUNCTIONS_MSG, beginProgress);
-
-            if (s_log.isDebugEnabled()) {
-                finish = System.currentTimeMillis();
-                s_log.debug("Functions loaded in " + (finish - start) + " ms");
-            }
          }
          catch (Exception ex)
          {
@@ -358,10 +320,6 @@ public class SchemaInfo
 
          _loading = false;
          _loaded = true;
-      }
-      if (s_log.isDebugEnabled()) {
-          mfinish = System.currentTimeMillis();
-          s_log.debug("SchemaInfo.load took " + (mfinish - mstart) + " ms");
       }
    }
 
@@ -404,15 +362,8 @@ public class SchemaInfo
 
    private int loadStoredProcedures(String catalog, String schema, String procNamePattern, int progress)
    {
-      
-      long start = 0, finish = 0;
       try
       {
-         if (s_log.isDebugEnabled()) {
-             s_log.debug(i18n.LOADING_PROCS_MSG);
-             start = System.currentTimeMillis();
-         }
-
          int beginProgress = getLoadMethodProgress(progress++);
          setProgress(i18n.LOADING_PROCS_MSG, beginProgress);
          privateLoadStoredProcedures(catalog, 
@@ -420,11 +371,6 @@ public class SchemaInfo
                                      procNamePattern, 
                                      i18n.LOADING_PROCS_MSG, 
                                      beginProgress);
-
-         if (s_log.isDebugEnabled()) {
-             finish = System.currentTimeMillis();
-             s_log.debug("stored procedures loaded in " + (finish - start) + " ms");
-         }
       }
       catch (Exception ex)
       {
@@ -435,15 +381,8 @@ public class SchemaInfo
 
    private int loadUDTs(String catalog, String schema, String udtNamePattern, int progress)
    {
-
-      long start = 0, finish = 0;
       try
       {
-         if (s_log.isDebugEnabled()) {
-             s_log.debug(i18n.LOADING_UDTS_MSG);
-             start = System.currentTimeMillis();
-         }
-
          int beginProgress = getLoadMethodProgress(progress++);
          setProgress(i18n.LOADING_UDTS_MSG, beginProgress);
          privateLoadUDTs(catalog,
@@ -452,10 +391,6 @@ public class SchemaInfo
                          i18n.LOADING_UDTS_MSG,
                          beginProgress);
 
-         if (s_log.isDebugEnabled()) {
-             finish = System.currentTimeMillis();
-             s_log.debug("UDTs loaded in " + (finish - start) + " ms");
-         }
       }
       catch (Exception ex)
       {
@@ -470,14 +405,8 @@ public class SchemaInfo
                           String[] types, 
                           int progress)
    {
-      long start = 0, finish = 0;
       try
       {
-         
-         if (s_log.isDebugEnabled()) {
-             s_log.debug(i18n.LOADING_TABLES_MSG);
-             start = System.currentTimeMillis();
-         }
          int beginProgress = getLoadMethodProgress(progress++);
          setProgress(i18n.LOADING_TABLES_MSG, beginProgress);
          privateLoadTables(catalog, 
@@ -486,10 +415,6 @@ public class SchemaInfo
                            types, 
                            i18n.LOADING_TABLES_MSG, 
                            beginProgress);
-         if (s_log.isDebugEnabled()) {
-             finish = System.currentTimeMillis();
-             s_log.debug("Tables loaded in " + (finish - start) + " ms");
-         }
       }
       catch (Exception ex)
       {
@@ -500,22 +425,11 @@ public class SchemaInfo
 
    private int loadSchemas(int progress)
    {
-      long start = 0, finish = 0;
       try
       {
-         if (s_log.isDebugEnabled()) {
-             s_log.debug(i18n.LOADING_SCHEMAS_MSG);
-             start = System.currentTimeMillis();
-         }
-
          int beginProgress = getLoadMethodProgress(progress++);
          setProgress(i18n.LOADING_SCHEMAS_MSG, beginProgress);
          privateLoadSchemas();
-
-         if (s_log.isDebugEnabled()) {
-             finish = System.currentTimeMillis();
-             s_log.debug("Schemas loaded in " + (finish - start) + " ms");
-         }
       }
       catch (Exception ex)
       {
@@ -526,22 +440,11 @@ public class SchemaInfo
 
    private int loadCatalogs(int progress)
    {
-      long start = 0, finish = 0;
       try
       {
-         if (s_log.isDebugEnabled()) {
-             s_log.debug(i18n.LOADING_CATALOGS_MSG);
-             start = System.currentTimeMillis();
-         }
-
          int beginProgress = getLoadMethodProgress(progress++);
          setProgress(i18n.LOADING_CATALOGS_MSG, beginProgress);
          privateLoadCatalogs();
-
-         if (s_log.isDebugEnabled()) {
-             finish = System.currentTimeMillis();
-             s_log.debug("Catalogs loaded in " + (finish - start) + " ms");
-         }
       }
       catch (Exception ex)
       {
@@ -566,22 +469,21 @@ public class SchemaInfo
 
      _session.getSessionPanel().setStatusBarProgress(note, 0, MAX_PROGRESS, value);
      
-      if(_inInitialLoad
+      if(shouldShowLongSessionStartupTimeDialog())
+      {
+         _sessionStartupTimeHintShown = true;
+         SwingUtilities.invokeLater(() -> new SessionStartupTimeHintController(_session));
+      }
+   }
+
+   private boolean shouldShowLongSessionStartupTimeDialog()
+   {
+      return _inInitialLoad
          && false == _sessionStartupTimeHintShown
          && false == _session.getAlias().getSchemaProperties().isCacheSchemaIndependentMetaData()
          && SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_ALL_CACHE_NONE == _session.getAlias().getSchemaProperties().getGlobalState()
          && _session.getApplication().getSquirrelPreferences().getShowSessionStartupTimeHint()
-         && System.currentTimeMillis() - _initalLoadBeginTime > 3000)
-      {
-         _sessionStartupTimeHintShown = true;
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               new SessionStartupTimeHintController(_session);
-            }
-         });
-      }
+         && System.currentTimeMillis() - _initalLoadBeginTime > 3000;
    }
 
    /**
@@ -591,22 +493,19 @@ public class SchemaInfo
    private void breathing()
    {
    	// In case this is called by the AWT thread, log a message - this is most likey a bug
-   	if (SwingUtilities.isEventDispatchThread()) {
-   		if (s_log.isDebugEnabled()) {
-   			s_log.debug("breathing: ignoring request to sleep the event dispatch thread");
-   		}
-   		return;
-   	}
-   	synchronized(this) {
+      if (SwingUtilities.isEventDispatchThread())
+      {
+         return;
+      }
+
+   	synchronized(this)
+      {
 	      try
 	      {
 	         wait(50);
 	      }
 	      catch (InterruptedException e)
 	      {
-	      	if (s_log.isInfoEnabled()) {
-	      		s_log.info("breathing: Interrupted", e);
-	      	}
 	      }
    	}
    }
@@ -910,8 +809,7 @@ public class SchemaInfo
 
          setProgress(msg + " (default keywords)", beginProgress);
 
-         Hashtable<CaseInsensitiveString, String> keywordsBuf = 
-             new Hashtable<CaseInsensitiveString, String>();
+         Hashtable<CaseInsensitiveString, String> keywordsBuf = new Hashtable<>();
 
          for (int i = 0; i < DefaultKeywords.KEY_WORDS.length; i++)
          {
@@ -934,18 +832,21 @@ public class SchemaInfo
             }
 
             String catalogTerm = _dmd.getCatalogTerm();
-            if (catalogTerm != null) {
-            	keywordsBuf.put(new CaseInsensitiveString(catalogTerm), catalogTerm);
+            if (catalogTerm != null)
+            {
+               keywordsBuf.put(new CaseInsensitiveString(catalogTerm), catalogTerm);
             }
 
             String schemaTerm = _dmd.getSchemaTerm();
-            if (schemaTerm != null) {
-            	keywordsBuf.put(new CaseInsensitiveString(schemaTerm), schemaTerm);
+            if (schemaTerm != null)
+            {
+               keywordsBuf.put(new CaseInsensitiveString(schemaTerm), schemaTerm);
             }
 
             String procedureTerm = _dmd.getProcedureTerm();
-            if (procedureTerm != null) {
-            	keywordsBuf.put(new CaseInsensitiveString(procedureTerm), procedureTerm);
+            if (procedureTerm != null)
+            {
+               keywordsBuf.put(new CaseInsensitiveString(procedureTerm), procedureTerm);
             }
          }
 
@@ -966,8 +867,7 @@ public class SchemaInfo
             return;
          }
 
-         Hashtable<CaseInsensitiveString, String> dataTypesBuf = 
-             new Hashtable<CaseInsensitiveString, String>();
+         Hashtable<CaseInsensitiveString, String> dataTypesBuf = new Hashtable<>();
 
          String[] names = _dmd.getDataTypesSimpleNames();
          for (int i = 0; i < names.length; i++)
@@ -1073,7 +973,7 @@ public class SchemaInfo
 
    public String[] getSchemas()
    {
-      return _schemaInfoCache.getSchemasForReadOnly().toArray(new String[_schemaInfoCache.getSchemasForReadOnly().size()]);
+      return _schemaInfoCache.getSchemasForReadOnly().toArray(new String[0]);
    }
 
    public ITableInfo[] getITableInfos()
@@ -1102,9 +1002,9 @@ public class SchemaInfo
          ret.addAll(Arrays.asList(tableInfosForUncachedTypes));
       }
 
-      List<ITableInfo> tis = 
-          _schemaInfoCache.getITableInfosForReadOnly();
-      for(ITableInfo iTableInfo : tis) 
+      List<ITableInfo> tis = _schemaInfoCache.getITableInfosForReadOnly();
+
+      for(ITableInfo iTableInfo : tis)
       {
          if(null != catalog &&
             false == catalog.equalsIgnoreCase(iTableInfo.getCatalogName()) &&
@@ -1128,26 +1028,9 @@ public class SchemaInfo
          {
             ret.add(iTableInfo);
          }
-
-
-//         if(null != tableNamePattern && false == tableNamePattern.endsWith("%") && false == iTableInfo.getSimpleName().equals(tableNamePattern))
-//         {
-//            continue;
-//         }
-//
-//         if(null != tableNamePattern && tableNamePattern.endsWith("%"))
-//         {
-//            String tableNameBegin = tableNamePattern.substring(0, tableNamePattern.length() - 1);
-//            if(false == iTableInfo.getSimpleName().startsWith(tableNameBegin))
-//            {
-//               continue;
-//            }
-//         }
-//
-//         ret.add(iTableInfo);
       }
 
-      return ret.toArray(new ITableInfo[ret.size()]);
+      return ret.toArray(new ITableInfo[0]);
    }
 
    private boolean fulfillsPlatformDependendMatches(ITableInfo iTableInfo, String catalog)
@@ -1221,10 +1104,9 @@ public class SchemaInfo
 
    public IProcedureInfo[] getStoredProceduresInfos(String catalog, String schema, ObjFilterMatcher filterMatcher)
    {
-      ArrayList<IProcedureInfo> ret = new ArrayList<IProcedureInfo>();
+      ArrayList<IProcedureInfo> ret = new ArrayList<>();
 
-      for (Iterator<IProcedureInfo> i = 
-          _schemaInfoCache.getIProcedureInfosForReadOnly().keySet().iterator(); i.hasNext();)
+      for (Iterator<IProcedureInfo> i = _schemaInfoCache.getIProcedureInfosForReadOnly().keySet().iterator(); i.hasNext();)
       {
 
          IProcedureInfo iProcInfo = i.next();
@@ -1263,8 +1145,7 @@ public class SchemaInfo
    {
       ArrayList<IUDTInfo> ret = new ArrayList<IUDTInfo>();
 
-      for (Iterator<IUDTInfo> i =
-           _schemaInfoCache.getIUDTInfosForReadOnly().keySet().iterator(); i.hasNext();)
+      for (Iterator<IUDTInfo> i = _schemaInfoCache.getIUDTInfosForReadOnly().keySet().iterator(); i.hasNext();)
       {
 
          IUDTInfo iProcInfo = i.next();
@@ -1310,12 +1191,14 @@ public class SchemaInfo
       try
       {
          ProgressCallBack pcb = new ProgressCallBackAdaptor()
-         {  @Override
+         {
+            @Override
             public void currentlyLoading(String simpleName)
             {
                setProgress(msg + " (" + simpleName + ")", beginProgress);
             }
          };
+
          SchemaLoadInfo[] schemaLoadInfos = _schemaInfoCache.getMatchingSchemaLoadInfos(schema, types);
          
          for (int i = 0; i < schemaLoadInfos.length; i++)
@@ -1364,6 +1247,7 @@ public class SchemaInfo
             // within Syntax coloring which uses a mutable string.
             final CaseInsensitiveString imutableString = new CaseInsensitiveString(tableName.toString());
             _tablesLoadingColsInBackground.put(imutableString, imutableString);
+
             _session.getApplication().getThreadPool().addTask(new Runnable()
             {
                public void run()
@@ -1398,7 +1282,6 @@ public class SchemaInfo
    }
 
    private void accessDbToLoadColumns(CaseInsensitiveString tableName)
-      throws SQLException
    {
       if (null == _dmd)
       {
@@ -1633,8 +1516,7 @@ public class SchemaInfo
       {
          public void run()
          {
-            SchemaInfoUpdateListener[] listeners = 
-                _listeners.toArray(new SchemaInfoUpdateListener[0]);
+            SchemaInfoUpdateListener[] listeners = _listeners.toArray(new SchemaInfoUpdateListener[0]);
 
             for (int i = 0; i < listeners.length; i++)
             {
@@ -1658,15 +1540,15 @@ public class SchemaInfo
    }
 
 
-   public void refershCacheForSimpleTableName(String simpleTableName)
+   public void refreshCacheForSimpleTableName(String simpleTableName)
    {
-      refershCacheForSimpleTableName(simpleTableName, true);
+      refreshCacheForSimpleTableName(simpleTableName, true);
    }
 
    /**
     * @param fireSchemaInfoUpdate Should only be false when the caller makes sure fireSchemaInfoUpdate() is called later.
     */
-   void refershCacheForSimpleTableName(String simpleTableName, boolean fireSchemaInfoUpdate)
+   void refreshCacheForSimpleTableName(String simpleTableName, boolean fireSchemaInfoUpdate)
    {
       HashMap<String, String> caseSensitiveTableNames = new HashMap<String, String>();
 
@@ -1685,12 +1567,6 @@ public class SchemaInfo
       }
       //
       ////////////////////////////////////////////////////////////////////////
-
-// is done in reload
-//      if(fireSchemaInfoUpdate)
-//      {
-//         fireSchemaInfoUpdate();
-//      }
    }
 
    public void refreshCacheForSimpleProcedureName(String simpleProcName)
@@ -1721,11 +1597,6 @@ public class SchemaInfo
       //
       ////////////////////////////////////////////////////////////////////////
 
-// is done in reload       
-//      if(fireSchemaInfoUpdate)
-//      {
-//         fireSchemaInfoUpdate();
-//      }
    }
 
    public void waitTillSchemasAndCatalogsLoaded()

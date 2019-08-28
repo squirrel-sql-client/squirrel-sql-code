@@ -232,12 +232,11 @@ public class DatabaseExpander implements INodeExpander
 		return childNodes;
 	}
 
-	protected List<ObjectTreeNode> createSchemaNodes(ISession session, 
-                                     SQLDatabaseMetaData md,
-								     String catalogName)
+	protected List<ObjectTreeNode> createSchemaNodes(ISession session, SQLDatabaseMetaData md, String catalogName)
 		throws SQLException
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		final List<ObjectTreeNode> childNodes = new ArrayList<>();
+
 		if (session.getProperties().getLoadSchemasCatalogs())
 		{
          session.getSchemaInfo().waitTillSchemasAndCatalogsLoaded();
@@ -247,9 +246,8 @@ public class DatabaseExpander implements INodeExpander
 
 			for (int i = 0; i < schemas.length; ++i)
 			{
-            IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
-                                    schemas[i],
-                                    DatabaseObjectType.SCHEMA, md);
+            IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null, schemas[i], DatabaseObjectType.SCHEMA, md);
+
             if(filterMatcher.matches(dbo.getSimpleName()))
             {
                childNodes.add(new ObjectTreeNode(session, dbo));

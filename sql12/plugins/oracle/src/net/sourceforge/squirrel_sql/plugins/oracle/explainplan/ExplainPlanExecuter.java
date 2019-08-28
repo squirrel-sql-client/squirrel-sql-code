@@ -432,7 +432,7 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
           stmt = con.createStatement();
           stmt.execute(createPlanTableSQL);
           SchemaInfo schemaInfo = session.getSchemaInfo();
-          schemaInfo.refershCacheForSimpleTableName("PLAN_TABLE");
+          schemaInfo.refreshCacheForSimpleTableName("PLAN_TABLE");
       } catch (SQLException ex) {
           result = false;
           getSession().showErrorMessage(ex);

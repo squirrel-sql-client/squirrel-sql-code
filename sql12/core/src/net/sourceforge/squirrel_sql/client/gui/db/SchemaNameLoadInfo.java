@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import java.io.StringReader;
-
 public class SchemaNameLoadInfo
 {
    public static final int STATE_DONT_REFERESH_SCHEMA_NAMES = 0;

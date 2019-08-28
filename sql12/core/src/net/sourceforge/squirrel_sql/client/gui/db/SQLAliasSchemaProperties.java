@@ -1,8 +1,11 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SQLAliasSchemaProperties implements Serializable
 {
@@ -64,14 +67,13 @@ public class SQLAliasSchemaProperties implements Serializable
 
    /**
     * @param schemaPropsCacheIsBasedOn null means that cache is not considered
+    * @param allSchemasForReadOnly
     */
-   public SchemaLoadInfo[] fetchSchemaLoadInfos(SQLAliasSchemaProperties schemaPropsCacheIsBasedOn,
-                                              String[] tableTypes,
-                                              String[] viewTypes)
+   public SchemaLoadInfo[] fetchSchemaLoadInfos(SQLAliasSchemaProperties schemaPropsCacheIsBasedOn, String[] tableTypes, String[] viewTypes, String[] allSchemas)
    {
       if(null == schemaPropsCacheIsBasedOn)
       {
-         return fetchSchemasToLoadDefault(tableTypes, viewTypes);
+         return fetchSchemasToLoadDefault(tableTypes, viewTypes, allSchemas);
       }
 
       if(GLOBAL_STATE_LOAD_AND_CACHE_ALL == _globalState &&
@@ -84,116 +86,30 @@ public class SQLAliasSchemaProperties implements Serializable
       if(GLOBAL_STATE_SPECIFY_SCHEMAS == _globalState &&
          GLOBAL_STATE_SPECIFY_SCHEMAS == schemaPropsCacheIsBasedOn._globalState)
       {
-         ArrayList<SchemaLoadInfo> ret = new ArrayList<SchemaLoadInfo>();
-
-         for (int i = 0; i < _schemaDetails.length; i++)
-         {
-            SQLAliasSchemaDetailProperties cachedDetailProp =
-               fetchMatchingDetail(_schemaDetails[i].getSchemaName(), schemaPropsCacheIsBasedOn._schemaDetails);
-
-            SchemaLoadInfo buf = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
-            buf.setSchemaName(_schemaDetails[i].getSchemaName());
-
-            ArrayList<String> tableTypesToLoad = new ArrayList<String>();
-
-            if(needsLoading(_schemaDetails[i].getTable(), null == cachedDetailProp ? null : cachedDetailProp.getTable()))
-            {
-               tableTypesToLoad.addAll(Arrays.asList(tableTypes));
-            }
-
-            if(needsLoading(_schemaDetails[i].getView(), null == cachedDetailProp ? null : cachedDetailProp.getView()))
-            {
-               tableTypesToLoad.addAll(Arrays.asList(viewTypes));
-            }
-
-
-            buf.setLoadProcedures(needsLoading(_schemaDetails[i].getProcedure(), null == cachedDetailProp ? null : cachedDetailProp.getProcedure()));
-
-            if(0 < tableTypesToLoad.size() || buf.isLoadProcedures())
-            {
-               buf.setTableTypes(tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]));
-               ret.add(buf);
-            }
-
-
-            buf.setLoadUDTs(needsLoading(_schemaDetails[i].getUDT(), null == cachedDetailProp ? null : cachedDetailProp.getUDT()));
-
-            if(0 < tableTypesToLoad.size() || buf.isLoadUDTs())
-            {
-               buf.setTableTypes(tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]));
-               ret.add(buf);
-            }
-
-         }
-
-         return ret.toArray(new SchemaLoadInfo[ret.size()]);
+         return fetchSpecifiedSchemasRespectingCache(schemaPropsCacheIsBasedOn, tableTypes, viewTypes);
       }
 
-      return fetchSchemasToLoadDefault(tableTypes, viewTypes);
+      return fetchSchemasToLoadDefault(tableTypes, viewTypes, allSchemas);
    }
+
 
    /**
     * Returns SchemaLoadInfos as if there was no cache.
     */
-   private SchemaLoadInfo[] fetchSchemasToLoadDefault(String[] tableTypes, String[] viewTypes)
+   private SchemaLoadInfo[] fetchSchemasToLoadDefault(String[] tableTypes, String[] viewTypes, String[] allSchemas)
    {
-      if(GLOBAL_STATE_LOAD_ALL_CACHE_NONE == _globalState ||
-         GLOBAL_STATE_LOAD_AND_CACHE_ALL== _globalState)
+      if(GLOBAL_STATE_LOAD_ALL_CACHE_NONE == _globalState || GLOBAL_STATE_LOAD_AND_CACHE_ALL== _globalState)
       {
          // Means load all Schemas from database.
          return new SchemaLoadInfo[]{new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes))};
-
+      }
+      else if(GLOBAL_STATE_SPECIFY_SCHEMAS_BY_LIKE_STRING == _globalState)
+      {
+         return fetchSpecifiedByLikeString(tableTypes, viewTypes, allSchemas);
       }
       else if(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS == _globalState)
       {
-         ArrayList<SchemaLoadInfo> schemaLoadInfos = new ArrayList<SchemaLoadInfo>();
-
-         for (int i = 0; i < _schemaDetails.length; i++)
-         {
-            if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getTable() &&
-               SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getView() &&
-               SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getProcedure() &&
-               SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getUDT())
-            {
-               continue;
-            }
-
-            SchemaLoadInfo schemaLoadInfo = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
-            schemaLoadInfo.setSchemaName(_schemaDetails[i].getSchemaName());
-            schemaLoadInfo.setTableTypes(new String[0]);
-
-            if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getTable())
-            {
-               schemaLoadInfo.setTableTypes(addStringArrays(schemaLoadInfo.getTableTypes(), tableTypes));
-            }
-
-            if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getView())
-            {
-               schemaLoadInfo.setTableTypes(addStringArrays(schemaLoadInfo.getTableTypes(), viewTypes));
-            }
-
-            if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getProcedure())
-            {
-               schemaLoadInfo.setLoadProcedures(true);
-            }
-            else
-            {
-               schemaLoadInfo.setLoadProcedures(false);
-            }
-
-            if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getUDT())
-            {
-               schemaLoadInfo.setLoadUDTs(true);
-            }
-            else
-            {
-               schemaLoadInfo.setLoadUDTs(false);
-            }
-
-            schemaLoadInfos.add(schemaLoadInfo);
-         }
-
-         return schemaLoadInfos.toArray(new SchemaLoadInfo[schemaLoadInfos.size()]);
+         return fetchSpecifiedSchemasForEmptyCache(tableTypes, viewTypes);
       }
       else
       {
@@ -201,10 +117,126 @@ public class SQLAliasSchemaProperties implements Serializable
       }
    }
 
+   private SchemaLoadInfo[] fetchSpecifiedSchemasRespectingCache(SQLAliasSchemaProperties schemaPropsCacheIsBasedOn, String[] tableTypes, String[] viewTypes)
+   {
+      ArrayList<SchemaLoadInfo> ret = new ArrayList<>();
+
+      for (int i = 0; i < _schemaDetails.length; i++)
+      {
+         SQLAliasSchemaDetailProperties cachedDetailProp = fetchMatchingDetail(_schemaDetails[i].getSchemaName(), schemaPropsCacheIsBasedOn._schemaDetails);
+
+         SchemaLoadInfo buf = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
+         buf.setSchemaName(_schemaDetails[i].getSchemaName());
+
+         ArrayList<String> tableTypesToLoad = new ArrayList<String>();
+
+         if(needsLoading(_schemaDetails[i].getTable(), null == cachedDetailProp ? null : cachedDetailProp.getTable()))
+         {
+            tableTypesToLoad.addAll(Arrays.asList(tableTypes));
+         }
+
+         if(needsLoading(_schemaDetails[i].getView(), null == cachedDetailProp ? null : cachedDetailProp.getView()))
+         {
+            tableTypesToLoad.addAll(Arrays.asList(viewTypes));
+         }
+
+
+         buf.setLoadProcedures(needsLoading(_schemaDetails[i].getProcedure(), null == cachedDetailProp ? null : cachedDetailProp.getProcedure()));
+
+         if(0 < tableTypesToLoad.size() || buf.isLoadProcedures())
+         {
+            buf.setTableTypes(tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]));
+            ret.add(buf);
+         }
+
+
+         buf.setLoadUDTs(needsLoading(_schemaDetails[i].getUDT(), null == cachedDetailProp ? null : cachedDetailProp.getUDT()));
+
+         if(0 < tableTypesToLoad.size() || buf.isLoadUDTs())
+         {
+            buf.setTableTypes(tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]));
+            ret.add(buf);
+         }
+
+      }
+
+      return ret.toArray(new SchemaLoadInfo[0]);
+   }
+
+   /**
+    * Initial fetch with no cache available.
+    * See also {@link #fetchSpecifiedSchemasRespectingCache(SQLAliasSchemaProperties, String[], String[])}
+    */
+   private SchemaLoadInfo[] fetchSpecifiedSchemasForEmptyCache(String[] tableTypes, String[] viewTypes)
+   {
+      ArrayList<SchemaLoadInfo> schemaLoadInfos = new ArrayList<>();
+
+      for (int i = 0; i < _schemaDetails.length; i++)
+      {
+         if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getTable() &&
+            SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getView() &&
+            SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getProcedure() &&
+            SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD ==_schemaDetails[i].getUDT())
+         {
+            continue;
+         }
+
+         SchemaLoadInfo schemaLoadInfo = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
+         schemaLoadInfo.setSchemaName(_schemaDetails[i].getSchemaName());
+         schemaLoadInfo.setTableTypes(new String[0]);
+
+         if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getTable())
+         {
+            schemaLoadInfo.setTableTypes(addStringArrays(schemaLoadInfo.getTableTypes(), tableTypes));
+         }
+
+         if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getView())
+         {
+            schemaLoadInfo.setTableTypes(addStringArrays(schemaLoadInfo.getTableTypes(), viewTypes));
+         }
+
+         if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getProcedure())
+         {
+            schemaLoadInfo.setLoadProcedures(true);
+         }
+         else
+         {
+            schemaLoadInfo.setLoadProcedures(false);
+         }
+
+         if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getUDT())
+         {
+            schemaLoadInfo.setLoadUDTs(true);
+         }
+         else
+         {
+            schemaLoadInfo.setLoadUDTs(false);
+         }
+
+         schemaLoadInfos.add(schemaLoadInfo);
+      }
+
+      return schemaLoadInfos.toArray(new SchemaLoadInfo[0]);
+   }
+
+   private SchemaLoadInfo[] fetchSpecifiedByLikeString(String[] tableTypes, String[] viewTypes, String[] allSchemas)
+   {
+      ArrayList<SchemaLoadInfo> ret = new ArrayList<>();
+
+      for (String schemaName : getSchemaNamesMatchingLikeStrings(allSchemas))
+      {
+         SchemaLoadInfo schemaLoadInfo = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
+         schemaLoadInfo.setSchemaName(schemaName);
+         ret.add(schemaLoadInfo);
+      }
+
+      return ret.toArray(new SchemaLoadInfo[0]);
+   }
+
 
    private String[] addStringArrays(String[] tableTypes, String[] viewTypes)
    {
-      ArrayList<String> ret = new ArrayList<String>();
+      ArrayList<String> ret = new ArrayList<>();
       ret.addAll(Arrays.asList(tableTypes));
       ret.addAll(Arrays.asList(viewTypes));
 
@@ -339,15 +371,21 @@ public class SQLAliasSchemaProperties implements Serializable
    }
 
 
-   public SchemaNameLoadInfo fetchSchemaNameLoadInfo(SQLAliasSchemaProperties schemaPropsCacheIsBasedOn)
+   public SchemaNameLoadInfo fetchSchemaNameLoadInfo(SQLAliasSchemaProperties schemaPropsCacheIsBasedOn, String[] allSchemas)
    {
       SchemaNameLoadInfo ret = new SchemaNameLoadInfo();
 
-      if(GLOBAL_STATE_LOAD_AND_CACHE_ALL == _globalState &&
-         null != schemaPropsCacheIsBasedOn &&
-         GLOBAL_STATE_LOAD_AND_CACHE_ALL == schemaPropsCacheIsBasedOn._globalState)
+      if(GLOBAL_STATE_LOAD_AND_CACHE_ALL == _globalState && null != schemaPropsCacheIsBasedOn && GLOBAL_STATE_LOAD_AND_CACHE_ALL == schemaPropsCacheIsBasedOn._globalState)
       {
          ret.state = SchemaNameLoadInfo.STATE_DONT_REFERESH_SCHEMA_NAMES;
+      }
+      else if(GLOBAL_STATE_SPECIFY_SCHEMAS_BY_LIKE_STRING == _globalState)
+      {
+         ret.state = SchemaNameLoadInfo.STATE_USES_PROVIDED_SCHEMA_NAMES;
+
+         ArrayList<String> schemaNames = getSchemaNamesMatchingLikeStrings(allSchemas);
+
+         ret.schemaNames = schemaNames.toArray(new String[0]);
       }
       else if(GLOBAL_STATE_SPECIFY_SCHEMAS == _globalState)
       {
@@ -367,7 +405,7 @@ public class SQLAliasSchemaProperties implements Serializable
             schemaNames.add(_schemaDetails[i].getSchemaName());
          }
 
-         ret.schemaNames = schemaNames.toArray(new String[schemaNames.size()]);
+         ret.schemaNames = schemaNames.toArray(new String[0]);
       }
       else
       {
@@ -375,6 +413,20 @@ public class SQLAliasSchemaProperties implements Serializable
       }
 
       return ret;
+   }
+
+   private ArrayList<String> getSchemaNamesMatchingLikeStrings(String[] allSchemas)
+   {
+      ArrayList<String> schemaNames = new ArrayList<>();
+      FilterMatcher filterMatcher = new FilterMatcher(_byLikeStringInclude, _byLikeStringExclude);
+      for (String schemaName : allSchemas)
+      {
+         if (filterMatcher.matches(schemaName))
+         {
+            schemaNames.add(schemaName);
+         }
+      }
+      return schemaNames;
    }
 
    public String getByLikeStringInclude()

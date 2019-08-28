@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New option in "Alias Schema properties": Filter schemas by name.
+ See right mouse on Alias --> Alias properties --> tab Schemas third radio button.
+  This feature was introduced especially for databases with very many Schemas.
+  It may help to shorten SQuirreL's startup and shutdown time.
+  If this feature is used the Schema table (on the same panel) should be cleared, too.
+
 SQL result: Position of the active cell is displayed on the upper right of the result tab.
 
 Improved Session startup and reload performance by reducing calls to Connection.getMetaData().getSchemas().

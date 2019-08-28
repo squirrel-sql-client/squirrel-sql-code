@@ -165,7 +165,7 @@ public class SchemaInfoUpdateCheck
           }
 
          for (String simpleTableName : _dropTableSimpleNames) {
-             _session.getSchemaInfo().refershCacheForSimpleTableName(simpleTableName, false);
+             _session.getSchemaInfo().refreshCacheForSimpleTableName(simpleTableName, false);
          }
          
          for (String simpleProcName : _dropProcedureSimpleNames) {

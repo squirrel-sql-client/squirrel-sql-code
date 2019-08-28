@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaNameLoadInfo;
@@ -33,8 +34,8 @@ public class SchemaInfoCache implements Serializable
 {
    private static final ILogger s_log = LoggerController.createLogger(SchemaInfoCache.class);
 
-   private List<String> _catalogs = new ArrayList<String>();
-   private List<String> _schemas = new ArrayList<String>();
+   private List<String> _catalogs = new ArrayList<>();
+   private List<String> _schemas = new ArrayList<>();
 
    private TreeMap<CaseInsensitiveString, String> _keywords = new TreeMap<>();
    private TreeMap<CaseInsensitiveString, String> _dataTypes = new TreeMap<>();
@@ -105,7 +106,7 @@ public class SchemaInfoCache implements Serializable
    private SchemaLoadInfo[] getAllSchemaLoadInfos()
    {
       SQLAliasSchemaProperties schemaProps = _session.getAlias().getSchemaProperties();
-      SchemaLoadInfo[] schemaLoadInfos = schemaProps.fetchSchemaLoadInfos(_schemaPropsCacheIsBasedOn, _tabelTableTypesCacheable, _viewTableTypesCacheable);
+      SchemaLoadInfo[] schemaLoadInfos = schemaProps.fetchSchemaLoadInfos(_schemaPropsCacheIsBasedOn, _tabelTableTypesCacheable, _viewTableTypesCacheable, Main.getApplication().getSessionManager().getAllowedSchemas(_session));
       SessionManager sessionMgr = _session.getApplication().getSessionManager();
 
       boolean allSchemasAllowed = sessionMgr.areAllSchemasAllowed(_session);
@@ -559,7 +560,7 @@ public class SchemaInfoCache implements Serializable
 
    SchemaNameLoadInfo getSchemaNameLoadInfo()
    {
-      return _session.getAlias().getSchemaProperties().fetchSchemaNameLoadInfo(_schemaPropsCacheIsBasedOn);
+      return _session.getAlias().getSchemaProperties().fetchSchemaNameLoadInfo(_schemaPropsCacheIsBasedOn, Main.getApplication().getSessionManager().getAllowedSchemas(_session));
    }
 
    void writeCatalogs(String[] catalogs)
