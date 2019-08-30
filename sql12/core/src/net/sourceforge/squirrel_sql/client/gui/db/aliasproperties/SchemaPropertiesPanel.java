@@ -142,26 +142,28 @@ public class SchemaPropertiesPanel extends JPanel
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
       ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.tooltip.long.html")).getButton(), gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
-      ret.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.include")), gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
+      JPanel pnlRight = new JPanel(new GridLayout(1,2,5,5));
+
+      JPanel pnlInclude = new JPanel(new BorderLayout(5,5));
+      pnlInclude.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.include")), BorderLayout.WEST);
+
       txtSchemasByLikeStringInclude = new JTextField();
-      txtSchemasByLikeStringInclude.setPreferredSize(new Dimension(100, txtSchemasByLikeStringInclude.getPreferredSize().height));
-      ret.add(txtSchemasByLikeStringInclude, gbc);
+      pnlInclude.add(txtSchemasByLikeStringInclude, BorderLayout.CENTER);
 
-      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
-      ret.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.exclude")), gbc);
+      pnlRight.add(pnlInclude);
 
-      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
+
+      JPanel pnlExclude = new JPanel(new BorderLayout(5,5));
+      pnlExclude.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemasByLikeString.exclude")), BorderLayout.WEST);
+
       txtSchemasByLikeStringExclude = new JTextField();
-      txtSchemasByLikeStringExclude.setPreferredSize(new Dimension(100, txtSchemasByLikeStringExclude.getPreferredSize().height));
-      ret.add(txtSchemasByLikeStringExclude, gbc);
+      pnlExclude.add(txtSchemasByLikeStringExclude, BorderLayout.CENTER);
 
-      // dist
-      gbc = new GridBagConstraints(6,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0);
-      ret.add(new JPanel(), gbc);
+      pnlRight.add(pnlExclude);
 
+      gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0);
+      ret.add(pnlRight, gbc);
 
       return ret;
    }

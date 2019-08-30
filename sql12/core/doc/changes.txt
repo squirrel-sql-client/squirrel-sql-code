@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+"Alias Schema properties", Filter schemas by name --> Improved layout and tooltip.
+
 New option in "Alias Schema properties": Filter schemas by name.
  See right mouse on Alias --> Alias properties --> tab Schemas --> third radio button.
   This feature was introduced especially for databases with very many Schemas.
