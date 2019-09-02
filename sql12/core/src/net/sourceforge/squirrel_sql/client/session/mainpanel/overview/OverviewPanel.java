@@ -96,6 +96,7 @@ public class OverviewPanel extends JPanel
 
       gbc = new GridBagConstraints(7,0,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,15,0,0),0,0);
       btnCreateBarChart = new JToggleButton(s_stringMgr.getString("OverwiewPanel.charts"));
+      btnCreateBarChart.setToolTipText(s_stringMgr.getString("OverwiewPanel.charts.tooltip"));
       ret.add(btnCreateBarChart, gbc);
 
       return ret;
