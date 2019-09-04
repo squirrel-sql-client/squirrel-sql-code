@@ -20,8 +20,6 @@ import net.sourceforge.squirrel_sql.fw.gui.ToggleComponentHolder;
  */
 public class ToggleAutoCommitAction extends SquirrelAction implements ISessionAction, IToggleAction
 {
-   static final long serialVersionUID = 4894924988552643833L;
-      
    private ISession _session;
    private PropertyChangeListener _propertyListener;
    private boolean _inActionPerformed;

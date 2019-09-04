@@ -31,8 +31,6 @@ import java.util.TreeMap;
  */
 public class SQLDriverPropertyCollection implements Serializable
 {
-    private static final long serialVersionUID = 1L;
-
     /**
 	 * JavaBean property names for this class.
 	 */

@@ -593,17 +593,16 @@ class Session implements ISession
    public void reconnect(ReconnectInfo reconnectInfo)
    {
       final SQLConnectionState connState = new SQLConnectionState();
-      if (_conn != null)
+
+      try
       {
-         try
-         {
-            connState.saveState(_conn, getProperties(), _msgHandler, _sessionSheet.getSelectedCatalogFromCatalogsComboBox());
-         }
-         catch (SQLException ex)
-         {
-            s_log.error("Unexpected SQLException", ex);
-         }
+         connState.saveState(_conn, getProperties(), _msgHandler, _sessionSheet.getSelectedCatalogFromCatalogsComboBox());
       }
+      catch (SQLException ex)
+      {
+         s_log.error("Unexpected SQLException", ex);
+      }
+
       final OpenConnectionCommand cmd = new OpenConnectionCommand(_alias, _user, _password, connState.getConnectionProperties(), reconnectInfo);
       try
       {

@@ -109,6 +109,8 @@ Driver drop-down of the Add Alias dialog: Driver definitions with loaded (checke
 
 Bug fixes:
 
+When reconnect (ctrl+t) failed the next successful reconnect would toggle the "auto commit" tool bar button to off.
+
 #1403 Erasing editor file
   SQuirreL doesn't support creating a new file using the "Open file" function.
   The problem described in bug #1403 occurred, when a non existent file was entered into the file open dialog.

@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -51,17 +52,13 @@ public class SQLConnectionState
 		super();
 	}
 
-   public void saveState(ISQLConnection conn, ISessionProperties sessionProperties, IMessageHandler msgHandler, String selectedCatalogFromCatalogsComboBox)
+   public void saveState(ISQLConnection con, ISessionProperties sessionProperties, IMessageHandler msgHandler, String selectedCatalogFromCatalogsComboBox)
 		throws SQLException
 	{
-		if (conn == null)
-		{
-			throw new IllegalArgumentException("SQLConnection == null");
-		}
 
 		try
 		{
-			_transIsolation = Integer.valueOf(conn.getTransactionIsolation());
+			_transIsolation = null == con ? null : con.getTransactionIsolation();
 		}
 		catch (SQLException ex)
 		{
@@ -74,17 +71,13 @@ public class SQLConnectionState
 			String msg = s_stringMgr.getString("SQLConnectionState.errorSavingIsolationState");
 
 			s_log.error(msg, ex);
-			if (msgHandler == null)
-			{
-				throw ex;
-			}
 			msgHandler.showErrorMessage(msg);
 		}
 
 		try
 		{
 			_catalog = selectedCatalogFromCatalogsComboBox;
-			_catalog = conn.getCatalog();
+			_catalog = null == con ? _catalog: con.getCatalog();
 		}
 		catch (SQLException ex)
 		{
@@ -110,7 +103,7 @@ public class SQLConnectionState
          // this is the best default we have.
          _autoCommit = sessionProperties.getAutoCommit();
 
-         _autoCommit = conn.getAutoCommit();
+         _autoCommit = null == con ? _autoCommit : con.getAutoCommit();
 		}
 		catch (SQLException ex)
 		{
@@ -130,13 +123,7 @@ public class SQLConnectionState
 			msgHandler.showErrorMessage(msg);
 		}
 
-		_connProps = conn.getConnectionProperties();
-	}
-
-	public void restoreState(ISQLConnection conn)
-		throws SQLException
-	{
-		restoreState(conn, null);
+		_connProps = null == con ? null : con.getConnectionProperties();
 	}
 
 	public void restoreState(ISQLConnection conn, IMessageHandler msgHandler)
