@@ -42,7 +42,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
-import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -79,7 +78,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 
 
 	/** Listeners */
-	private EventListenerList _listeners = new EventListenerList();
+	private ArrayList<ISQLExecutionListener> _sqlExecutionListeners = new ArrayList<>();
 
    private ResultTabFactory _resultTabFactory;
 
@@ -180,13 +179,13 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLExecutionListener</TT> passed.
 	 */
-	public synchronized void addSQLExecutionListener(ISQLExecutionListener lis)
+	public void addSQLExecutionListener(ISQLExecutionListener lis)
 	{
 		if (lis == null)
 		{
 			throw new IllegalArgumentException("ISQLExecutionListener == null");
 		}
-		_listeners.add(ISQLExecutionListener.class, lis);
+		_sqlExecutionListeners.add(lis);
 	}
 
 	/**
@@ -203,7 +202,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 		{
 			throw new IllegalArgumentException("ISQLExecutionListener == null");
 		}
-		_listeners.remove(ISQLExecutionListener.class, lis);
+		_sqlExecutionListeners.remove(lis);
 	}
 
 
@@ -279,9 +278,9 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
             return;
          }
 
-         ISQLExecutionListener[] executionListeners = _listeners.getListeners(ISQLExecutionListener.class);
+         ISQLExecutionListener[] executionListeners = _sqlExecutionListeners.toArray(new ISQLExecutionListener[0]);
 
-         new SQLExecutionHandler((IResultTab) null, _session, sql, createSQLExecutionHandlerListener(), executionListeners, tableToBeEdited);
+         new SQLExecutionHandler(null, _session, sql, createSQLExecutionHandlerListener(), executionListeners, tableToBeEdited);
       }
    }
 
@@ -293,13 +292,13 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
             @Override
             public void addResultsTab(SQLExecutionInfo info, ResultSetDataSet rsds, ResultSetMetaDataDataSet rsmdds, IDataSetUpdateableTableModel model, IResultTab resultTabToReplace)
             {
-               onAddResultsTab(info, rsds, rsmdds, model, resultTabToReplace);
+               SwingUtilities.invokeLater(() -> onAddResultsTab(info, rsds, rsmdds, model, resultTabToReplace));
             }
 
             @Override
             public void removeCancelPanel(CancelPanelCtrl cancelPanelCtrl, IResultTab resultTabToReplace)
             {
-               onRemoveCancelPanel(cancelPanelCtrl, resultTabToReplace);
+               SwingUtilities.invokeLater(() -> onRemoveCancelPanel(cancelPanelCtrl, resultTabToReplace));
             }
 
             @Override
@@ -551,21 +550,19 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
    protected String fireSQLToBeExecutedEvent(String sql)
 	{
 		// Guaranteed to be non-null.
-		Object[] listeners = _listeners.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event.
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == ISQLExecutionListener.class)
-			{
-				sql = ((ISQLExecutionListener)listeners[i + 1]).statementExecuting(sql);
-				if (sql == null)
-				{
-					break;
-				}
-			}
-		}
-		return sql;
+      ISQLExecutionListener[] listeners = _sqlExecutionListeners.toArray(new ISQLExecutionListener[0]);
+
+      // Process the listeners last to first, notifying
+      // those that are interested in this event.
+      for (int i = listeners.length - 1; i >= 0; i -= 1)
+      {
+         sql = listeners[i].statementExecuting(sql);
+         if (sql == null)
+         {
+            break;
+         }
+      }
+      return sql;
 	}
 
 	/**
@@ -653,57 +650,40 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
         return (IResultTab)_tabbedExecutionsPanel.getSelectedComponent();
     }
 
-    private void onAddResultsTab(final SQLExecutionInfo exInfo,
-    		final ResultSetDataSet rsds,
-    		final ResultSetMetaDataDataSet mdds,
-    		final IDataSetUpdateableTableModel creator,
-    		final IResultTab resultTabToReplace)
+    private void onAddResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, IDataSetUpdateableTableModel creator, IResultTab resultTabToReplace)
     {
-    		SwingUtilities.invokeLater(new Runnable()
-    		{
-             public void run()
-             {
-                try
-                {
-                   ResultTab tab = _resultTabFactory.createResultTab(exInfo, creator, rsds, mdds);
-                   addResultsTab(tab, resultTabToReplace);
-                   _tabbedExecutionsPanel.setSelectedComponent(tab);
-                }
-                catch (Throwable t)
-                {
-                   _session.showErrorMessage(t);
-                }
-             }
-          });
+       try
+       {
+          ResultTab tab = _resultTabFactory.createResultTab(exInfo, creator, rsds, mdds);
+          addResultsTab(tab, resultTabToReplace);
+          _tabbedExecutionsPanel.setSelectedComponent(tab);
+       }
+       catch (Throwable t)
+       {
+          _session.showErrorMessage(t);
+       }
     }
 
    private void onRemoveCancelPanel(final CancelPanelCtrl cancelPanelCtrl, final IResultTab resultTabToReplace)
    {
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
+         _tabbedExecutionsPanel.remove(cancelPanelCtrl.getPanel());
+
+         int indexToSelect = -1;
+         if (null == resultTabToReplace)
          {
-            _tabbedExecutionsPanel.remove(cancelPanelCtrl.getPanel());
-
-            int indexToSelect = -1;
-            if (null == resultTabToReplace)
-            {
-               indexToSelect = TabbedExcutionPanelUtil.getIndexOfTab(_stickyTab, SQLResultExecuterPanel.this._tabbedExecutionsPanel);
-            }
-            else
-            {
-               indexToSelect = TabbedExcutionPanelUtil.getIndexOfTab(resultTabToReplace, SQLResultExecuterPanel.this._tabbedExecutionsPanel);
-            }
-
-            if (-1 != indexToSelect)
-            {
-               _tabbedExecutionsPanel.setSelectedIndex(indexToSelect);
-            }
-
-            cancelPanelCtrl.wasRemoved();
-
+            indexToSelect = TabbedExcutionPanelUtil.getIndexOfTab(_stickyTab, SQLResultExecuterPanel.this._tabbedExecutionsPanel);
          }
-      });
+         else
+         {
+            indexToSelect = TabbedExcutionPanelUtil.getIndexOfTab(resultTabToReplace, SQLResultExecuterPanel.this._tabbedExecutionsPanel);
+         }
+
+         if (-1 != indexToSelect)
+         {
+            _tabbedExecutionsPanel.setSelectedIndex(indexToSelect);
+         }
+
+         cancelPanelCtrl.wasRemoved();
    }
 
    private void onSetCancelPanel(final CancelPanelCtrl cancelPanelCtrl)

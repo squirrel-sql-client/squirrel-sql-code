@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.FinishedNotificationSoundHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 
 import javax.swing.*;
@@ -12,6 +13,8 @@ import java.awt.event.ActionListener;
  */
 public class TimerHolder
 {
+   private final JCheckBox _chkPlaySoundWhenFinished;
+   private final FinishedNotificationSoundHandler _finishedNotificationSoundHandler;
    private Timer _timer;
    private JTextField _txtExecTimeCounter;
 
@@ -20,8 +23,10 @@ public class TimerHolder
    private JTextField _txtNumberOfRowsRead;
 
 
-   public TimerHolder(JTextField txtExecTimeCounter, JTextField txtNumberOfRowsRead)
+   public TimerHolder(JTextField txtExecTimeCounter, JTextField txtNumberOfRowsRead, JCheckBox chkPlaySoundWhenFinished, FinishedNotificationSoundHandler finishedNotificationSoundHandler)
    {
+      _chkPlaySoundWhenFinished = chkPlaySoundWhenFinished;
+      _finishedNotificationSoundHandler = finishedNotificationSoundHandler;
       _beginMillis = System.currentTimeMillis();
 
       _txtExecTimeCounter = txtExecTimeCounter;
@@ -42,10 +47,10 @@ public class TimerHolder
 
    private void onUpdateExecutionTime()
    {
-      if (null != _txtExecTimeCounter)
-      {
-         _txtExecTimeCounter.setText("" + (System.currentTimeMillis() - _beginMillis));
-      }
+      long elapsedMillis = System.currentTimeMillis() - _beginMillis;
+      _txtExecTimeCounter.setText("" + elapsedMillis);
+
+      _chkPlaySoundWhenFinished.setSelected(_finishedNotificationSoundHandler.isToPlayNotificationSound(elapsedMillis));
 
       if(null != _rsds)
       {

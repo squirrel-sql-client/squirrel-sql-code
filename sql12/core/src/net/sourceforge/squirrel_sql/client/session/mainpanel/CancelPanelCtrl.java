@@ -1,15 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.FinishedNotificationSoundHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
-import java.awt.event.*;
 
 class CancelPanelCtrl
 {
@@ -30,7 +26,7 @@ class CancelPanelCtrl
    private CancelPanelListener _listener;
    private final TimerHolder _timer;
 
-   CancelPanelCtrl(CancelPanelListener listener, ISession session)
+   CancelPanelCtrl(CancelPanelListener listener, ISession session, FinishedNotificationSoundHandler finishedNotificationSoundHandler)
    {
       _listener = listener;
       _panel = new CancelPanel(session);
@@ -39,7 +35,11 @@ class CancelPanelCtrl
 
       _panel.closeBtn.addActionListener(e -> onClose());
 
-      _timer = new TimerHolder(_panel.txtExecTimeCounter, _panel.txtNumberOfRowsRead);
+      _panel.chkPlaySoundWhenFinished.addActionListener(e -> finishedNotificationSoundHandler.onPlayFinishedSoundChecked(_panel.chkPlaySoundWhenFinished.isSelected()));
+
+      _panel.btnConfigureFinishedSound.addActionListener(e -> finishedNotificationSoundHandler.onConfigureFinishedSound(_panel));
+
+      _timer = new TimerHolder(_panel.txtExecTimeCounter, _panel.txtNumberOfRowsRead, _panel.chkPlaySoundWhenFinished, finishedNotificationSoundHandler);
    }
    void incCurrentQueryIndex()
    {
@@ -48,36 +48,20 @@ class CancelPanelCtrl
 
    void setSQL(final String sql)
    {
-      Runnable runnable = new Runnable()
-      {
-         public void run()
-         {
-            // i18n[SQLResultExecuterPanel.currentSQLLabel={0} of {1} - {2}]
-            String label =
-                  s_stringMgr.getString("SQLResultExecuterPanel.currentSQLLabel",
-                        new Object[]{String.valueOf(_currentQueryIndex),
-                              String.valueOf(_queryCount),
-                              sql});
+      GUIUtils.processOnSwingEventThread(() -> onSetSql(sql));
+   }
 
-            _panel.sqlLbl.setText(label);
-         }
-      };
+   private void onSetSql(String sql)
+   {
+      // i18n[SQLResultExecuterPanel.currentSQLLabel={0} of {1} - {2}]
+      String label = s_stringMgr.getString("SQLResultExecuterPanel.currentSQLLabel", String.valueOf(_currentQueryIndex),String.valueOf(_queryCount),sql);
 
-      GUIUtils.processOnSwingEventThread(runnable);
-
+      _panel.sqlLbl.setText(label);
    }
 
    void setStatusLabel(final String text)
    {
-      Runnable runnable = new Runnable()
-      {
-         public void run()
-         {
-            _panel.currentStatusLbl.setText(text);
-         }
-      };
-
-      GUIUtils.processOnSwingEventThread(runnable);
+      GUIUtils.processOnSwingEventThread(() -> _panel.currentStatusLbl.setText(text));
    }
 
    void setQueryCount(int value)

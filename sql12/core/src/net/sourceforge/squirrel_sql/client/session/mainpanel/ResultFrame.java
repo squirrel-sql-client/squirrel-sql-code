@@ -147,7 +147,7 @@ public class ResultFrame extends SessionDialogWidget
          @Override
          public void removeCancelPanel(CancelPanelCtrl cancelPanelCtrl, IResultTab resultTabToReplace)
          {
-            onRemoveCancelPanel(cancelPanelCtrl, resultTabToReplace);
+            SwingUtilities.invokeLater(() -> onRemoveCancelPanel(cancelPanelCtrl, resultTabToReplace));
          }
 
          @Override
@@ -193,14 +193,8 @@ public class ResultFrame extends SessionDialogWidget
 
    private void onRemoveCancelPanel(final CancelPanelCtrl cancelPanelCtrl, IResultTab resultTabToReplace)
    {
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            _centerPanel.removeAll();
-            cancelPanelCtrl.wasRemoved();
-         }
-      });
+      _centerPanel.removeAll();
+      cancelPanelCtrl.wasRemoved();
    }
 
    private void onAddResultsTab(final SQLExecutionInfo info, final ResultSetDataSet rsds, final ResultSetMetaDataDataSet rsmdds, final IDataSetUpdateableTableModel creator, IResultTab resultTabToReplace)

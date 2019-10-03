@@ -22,23 +22,36 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.action.OpenSqlHistoryAction;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
+import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
+import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteFromHistoryAttach;
+import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndReadOnPanelSmallPanel;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.Action;
 import javax.swing.Box;
@@ -56,31 +69,20 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.plaf.SplitPaneUI;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.*;
-import net.sourceforge.squirrel_sql.client.session.action.OpenSqlHistoryAction;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
-import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
-import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteFromHistoryAttach;
-import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndReadOnPanelSmallPanel;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
-import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 /**
  * This is the panel where SQL scripts can be entered and executed.
  *
@@ -102,6 +104,8 @@ public class SQLPanel extends JPanel
 	 * system.
 	 */
 	private static boolean s_loadedSQLHistory;
+
+	private final SQLExecutionAdapter _sqlExecutorHistoryAdapter;
 
 	/** Current session. */
 	transient private ISession _session;
@@ -152,11 +156,7 @@ public class SQLPanel extends JPanel
 	/** Listeners */
 	private EventListenerList _listeners = new EventListenerList();
 
-   /** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
-//	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
-
-	private final List<ISQLResultExecuter> _executors = 
-        new ArrayList<ISQLResultExecuter>();
+	private final List<ISQLResultExecuter> _executors = new ArrayList<>();
 
 	private SQLResultExecuterPanel _sqlExecPanel;
 
@@ -166,7 +166,6 @@ public class SQLPanel extends JPanel
    private static final String PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL = "squirrelSql_sqlPanel_divider_loc_horizontal";
 
 
-	private SQLPanel.SQLExecutorHistoryListener _sqlExecutorHistoryListener = new SQLExecutorHistoryListener();
    private ArrayList<SqlPanelListener> _sqlPanelListeners = new ArrayList<SqlPanelListener>();
    private IUndoHandler _undoHandler;
    private ResultLimitAndReadOnPanelSmallPanel _resultLimitAndReadOnPanelSmallPanel = new ResultLimitAndReadOnPanelSmallPanel();
@@ -190,7 +189,19 @@ public class SQLPanel extends JPanel
 		createGUI();
 		propertiesHaveChanged(null);
 		_sqlExecPanel = new SQLResultExecuterPanel(session);
-		_sqlExecPanel.addSQLExecutionListener(_sqlExecutorHistoryListener);
+
+		_sqlExecutorHistoryAdapter = new SQLExecutionAdapter()
+		{
+			@Override
+			public void statementExecuted(QueryHolder sql)
+			{
+				onStatementExecuted(sql);
+			}
+		};
+
+		_sqlExecPanel.addSQLExecutionListener(_sqlExecutorHistoryAdapter);
+
+
 		addExecutor(_sqlExecPanel);
 		_panelAPI = new SQLPanelAPI(this, titleFileHandler);
       _resultLimitAndReadOnPanelSmallPanel.loadData(session.getProperties());
@@ -203,6 +214,11 @@ public class SQLPanel extends JPanel
 			SessionStartupMainSQLTabContentLoader.handleLoadFileAtSessionStart(session, _panelAPI);
 		}
 
+	}
+
+	private void onStatementExecuted(QueryHolder sql)
+	{
+		_panelAPI.addSQLToHistory(sql.getOriginalQuery());
 	}
 
 	/**
@@ -462,7 +478,7 @@ public class SQLPanel extends JPanel
 
 		_sqlCombo.removeActionListener(_sqlComboListener);
 		_sqlCombo.dispose();
-		_sqlExecPanel.removeSQLExecutionListener(_sqlExecutorHistoryListener);
+		_sqlExecPanel.removeSQLExecutionListener(_sqlExecutorHistoryAdapter);
 		
 
 
@@ -1065,42 +1081,24 @@ public class SQLPanel extends JPanel
 		{
 			if (_listening)
 			{
-				// Because the datamodel for the combobox may be shared
-				// between sessions we only want to update the sql entry area
-				// if this is actually the combox box that a new item has been
-				// selected in.
-//				SessionWindowManager winMgr = _session.getApplication().getSessionWindowManager();
-//				if (winMgr.getInternalFrame(_session).isSelected())
-//				{
-					copySelectedItemToEntryArea();
-				}
+				copySelectedItemToEntryArea();
 			}
-//		}
+		}
 
-//		private void copySelectedItemToEntryArea()
-//		{
-//			SQLHistoryItem item = (SQLHistoryItem)_sqlCombo.getSelectedItem();
-//			if (item != null)
-//			{
-//				appendSQL(item.getSQL());
-//			}
-//		}
 	}
 
 
    private class CopyLastButton extends JButton
 	{
-        private static final long serialVersionUID = 1L;
-
-        CopyLastButton(IApplication app)
+		CopyLastButton(IApplication app)
 		{
 			super();
 			final SquirrelResources rsrc = app.getResources();
 			final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.COPY_SELECTED);
 			setIcon(icon);
-            // i18n[SQLPanel.copylastbutton.hint=Copy current SQL history to entry area]
+			// i18n[SQLPanel.copylastbutton.hint=Copy current SQL history to entry area]
 			String hint = s_stringMgr.getString("SQLPanel.copylastbutton.hint");
-            setToolTipText(hint);
+			setToolTipText(hint);
 			Dimension dm = getPreferredSize();
 			dm.setSize(dm.height, dm.height);
 			setPreferredSize(dm);
@@ -1116,32 +1114,19 @@ public class SQLPanel extends JPanel
 
 	private class ShowHistoryButton extends JButton
 	{
-        private static final long serialVersionUID = 1L;
-
-        ShowHistoryButton(IApplication app)
+		ShowHistoryButton(IApplication app)
 		{
-         final SquirrelResources rsrc = app.getResources();
-         final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.SQL_HISTORY);
-         setIcon(icon);
-         // i18n[SQLPanel.openSqlHistory.hint=Open SQL History]
-         String hint = s_stringMgr.getString("SQLPanel.openSqlHistory.hint");
-         setToolTipText(hint);
-         Dimension dm = getPreferredSize();
-         dm.setSize(dm.height, dm.height);
+			final SquirrelResources rsrc = app.getResources();
+			final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.SQL_HISTORY);
+			setIcon(icon);
+			// i18n[SQLPanel.openSqlHistory.hint=Open SQL History]
+			String hint = s_stringMgr.getString("SQLPanel.openSqlHistory.hint");
+			setToolTipText(hint);
+			Dimension dm = getPreferredSize();
+			dm.setSize(dm.height, dm.height);
 			setPreferredSize(dm);
-         addActionListener(_session.getApplication().getActionCollection().get(OpenSqlHistoryAction.class));
+			addActionListener(_session.getApplication().getActionCollection().get(OpenSqlHistoryAction.class));
 		}
 	}
 
-	/**
-	 * This class is responsible for listening for sql that executes
-	 * for a SQLExecuterPanel and adding it to the SQL history.
-	 */
-	private class SQLExecutorHistoryListener extends SQLExecutionAdapter
-	{
-      public void statementExecuted(QueryHolder sql)
-      {
-         _panelAPI.addSQLToHistory(sql.getOriginalQuery());
-      }
-	}
 }

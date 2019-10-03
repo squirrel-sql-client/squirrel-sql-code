@@ -32,12 +32,14 @@ import javax.swing.text.PlainDocument;
  */
 public class IntegerField extends JTextField
 {
+	private final Integer _minValue;
+
 	/**
 	 * Default ctor.
 	 */
 	public IntegerField()
 	{
-		super(10);
+		this(10);
 	}
 
 	/**
@@ -47,7 +49,13 @@ public class IntegerField extends JTextField
 	 */
 	public IntegerField(int cols)
 	{
+		this(cols, null);
+	}
+
+	public IntegerField(int cols, Integer minValue)
+	{
 		super(cols);
+		_minValue = minValue;
 	}
 
 	/**
@@ -83,7 +91,7 @@ public class IntegerField extends JTextField
 	 */
 	protected Document createDefaultModel()
 	{
-		return new IntegerDocument(getColumns());
+		return new IntegerDocument(getColumns(), _minValue);
 	}
 
 	/**
@@ -92,10 +100,12 @@ public class IntegerField extends JTextField
 	private static class IntegerDocument extends PlainDocument
 	{
 		private int _columns;
+		private Integer _minValue;
 
-		public IntegerDocument(int columns)
+		public IntegerDocument(int columns, Integer minValue)
 		{
 			_columns = columns;
+			_minValue = minValue;
 		}
 
 		public void insertString(int offs, String str, AttributeSet set)
@@ -105,10 +115,14 @@ public class IntegerField extends JTextField
 			{
 				try
 				{
-					Integer.decode(str);
-					if ((getLength() + str.length()) <= _columns)
+					Integer decode = Integer.decode(str);
+
+					if (null == _minValue || _minValue <= decode)
 					{
-						super.insertString(offs, str, set);
+						if ((getLength() + str.length()) <= _columns)
+						{
+							super.insertString(offs, str, set);
+						}
 					}
 				}
 				catch (NumberFormatException ex)

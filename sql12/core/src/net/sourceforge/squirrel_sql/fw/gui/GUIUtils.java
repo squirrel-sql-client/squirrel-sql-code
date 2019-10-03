@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -57,6 +58,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
@@ -788,6 +791,27 @@ public class GUIUtils
 				mouseWheelClickOnTabListener.mouseWheeleClickedOnTabComponent(tabIndex, tabbedPane.getTabComponentAt(tabIndex));
 			}
 		}
+
+	}
+
+	public static void initLocation(Window window, int defaultWidth, int defaultHeight)
+	{
+		String widthPropKey = window.getClass().getName() + ".WIDTH";
+		String heightPropKey = window.getClass().getName() + ".HEIGHT";
+
+		window.setSize(new Dimension(Props.getInt(widthPropKey, defaultWidth), Props.getInt(heightPropKey,defaultHeight)));
+
+		GUIUtils.centerWithinParent(window);
+
+		window.addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				Props.putInt(widthPropKey, window.getWidth());
+				Props.putInt(heightPropKey, window.getHeight());
+			}
+		});
 
 	}
 }

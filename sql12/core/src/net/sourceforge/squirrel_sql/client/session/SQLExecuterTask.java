@@ -47,6 +47,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class can be used to execute SQL.
@@ -56,14 +58,9 @@ import java.util.ArrayList;
  */
 public class SQLExecuterTask implements Runnable
 {
-
-
-   /** Logger for this class. */
    private static final ILogger s_log = LoggerController.createLogger(SQLExecuterTask.class);
 
-   private static final StringManager s_stringMgr =
-       StringManagerFactory.getStringManager(SQLExecuterTask.class);
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLExecuterTask.class);
 
    /** The call back object*/
    private ISQLExecuterHandler _handler;
@@ -73,10 +70,10 @@ public class SQLExecuterTask implements Runnable
 
    /** SQL passed in to be executed. */
    private String _sql;
-   private boolean _stopExecution = false;
+   private boolean _cancelExecution = false;
 
    private int _currentQueryIndex = 0;
-   private ISQLExecutionListener[] _executionListeners;
+   private List<ISQLExecutionListener> _executionListeners = new ArrayList<>();
    private SchemaInfoUpdateCheck _schemaInfoUpdateCheck;
    private IQueryTokenizer _tokenizer = null;
    /** Whether or not to check if the schema should be updated */
@@ -92,10 +89,10 @@ public class SQLExecuterTask implements Runnable
 
    public SQLExecuterTask(ISession session, String sql, ISQLExecuterHandler handler, ISQLExecutionListener[] executionListeners)
    {
-      this(session, sql, handler, executionListeners, null);
+      this(session, sql, handler, Arrays.asList(executionListeners), null);
    }
 
-   public SQLExecuterTask(ISession session, String sql, ISQLExecuterHandler handler, ISQLExecutionListener[] executionListeners, String tableToBeEdited)
+   public SQLExecuterTask(ISession session, String sql, ISQLExecuterHandler handler, List<ISQLExecutionListener> executionListeners, String tableToBeEdited)
    {
       _tableToBeEdited = tableToBeEdited;
       _session = session;
@@ -111,8 +108,9 @@ public class SQLExecuterTask implements Runnable
       _executionListeners = executionListeners;
    }
 
-   public void setExecutionListeners(ISQLExecutionListener[] executionListeners) {
-       _executionListeners = executionListeners;
+   public void clearExecutionListeners()
+   {
+       _executionListeners.clear();
    }
 
    public void setExecuteEditableCheck(boolean executeEditableCheck)
@@ -164,7 +162,7 @@ public class SQLExecuterTask implements Runnable
 
          _handler.sqlStatementCount(statementCount);
 
-         while (_tokenizer.hasQuery() && !_stopExecution)
+         while (_tokenizer.hasQuery() && !_cancelExecution)
          {
             QueryHolder querySql = _tokenizer.nextQuery();
             if (querySql == null)
@@ -219,7 +217,7 @@ public class SQLExecuterTask implements Runnable
                // ResultSet, which is to be expected when the Statement is
                // closed.  So, let's not bug the user with obvious error
                // messages that we can do nothing about.
-               if (_stopExecution)
+               if (_cancelExecution)
                {
                   break;
                }
@@ -268,7 +266,7 @@ public class SQLExecuterTask implements Runnable
       }
       finally
       {
-         if (_stopExecution)
+         if (_cancelExecution)
          {
             if (_handler != null)
             {
@@ -291,7 +289,7 @@ public class SQLExecuterTask implements Runnable
              }
          }
 
-         fireExecutionListenersFinshed();
+         SwingUtilities.invokeLater(() -> fireExecutionListenersFinshed());
       }
    }
 
@@ -329,7 +327,7 @@ public class SQLExecuterTask implements Runnable
 
    public void cancel()
    {
-      if(_stopExecution)
+      if(_cancelExecution)
       {
          return;
       }
@@ -338,7 +336,7 @@ public class SQLExecuterTask implements Runnable
       String msg = s_stringMgr.getString("SQLResultExecuterPanel.canceleRequested");
       _session.getApplication().getMessageHandler().showMessage(msg);
 
-      _stopExecution = true;
+      _cancelExecution = true;
 
       if (null != _currentStatementWrapper)
       {
@@ -369,7 +367,7 @@ public class SQLExecuterTask implements Runnable
       while (true)
       {
          // User has cancelled the query execution.
-         if (_stopExecution)
+         if (_cancelExecution)
          {
             return false;
          }
@@ -405,7 +403,7 @@ public class SQLExecuterTask implements Runnable
                   return false;
                }
 
-               if (_stopExecution)
+               if (_cancelExecution)
                {
                   return false;
                }
@@ -464,7 +462,7 @@ public class SQLExecuterTask implements Runnable
          inFirstLoop = false;
       }
 
-      fireExecutionListeners(sql);
+      SwingUtilities.invokeLater(() -> fireExecutionListeners(sql));
 
       if (_handler != null)
       {
@@ -494,41 +492,25 @@ public class SQLExecuterTask implements Runnable
 
    private void fireExecutionListeners(final QueryHolder sql)
    {
-      // This method is called from a thread.
-      // In case listeners update Swing controls we invoke later here.
-      SwingUtilities.invokeLater(new Runnable()
+      for (ISQLExecutionListener executionListener : _executionListeners.toArray(new ISQLExecutionListener[0]))
       {
-         public void run()
-         {
-            for (int i = 0; i < _executionListeners.length; i++)
-            {
-               _executionListeners[i].statementExecuted(sql);
-            }
-         }
-      });
+         executionListener.statementExecuted(sql);
+      }
    }
 
    private void fireExecutionListenersFinshed()
    {
-      // This method is called from a thread.
-      // In case listeners update Swing controls we invoke later here.
-      SwingUtilities.invokeLater(new Runnable()
+      for (ISQLExecutionListener executionListener : _executionListeners.toArray(new ISQLExecutionListener[0]))
       {
-         public void run()
-         {
-            for (int i = 0; i < _executionListeners.length; i++)
-            {
-               _executionListeners[i].executionFinished();
-            }
-         }
-      });
+         executionListener.executionFinished();
+      }
    }
 
 
 
    private boolean processResultSet(final ResultSetWrapper rs, final SQLExecutionInfo exInfo, DataSetUpdateableTableModelImpl dataSetUpdateableTableModel)
    {
-      if (_stopExecution)
+      if (_cancelExecution)
       {
          return false;
       }
@@ -541,7 +523,7 @@ public class SQLExecuterTask implements Runnable
          }
          catch (DataSetException ex)
          {
-            if (_stopExecution)
+            if (_cancelExecution)
             {
                return false;
             }

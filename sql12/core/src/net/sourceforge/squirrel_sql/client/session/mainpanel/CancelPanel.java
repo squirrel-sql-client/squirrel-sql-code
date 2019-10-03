@@ -19,6 +19,8 @@ public class CancelPanel extends JPanel
    JButton closeBtn;
    JTextField txtExecTimeCounter;
    JTextField txtNumberOfRowsRead;
+   JCheckBox chkPlaySoundWhenFinished;
+   JButton btnConfigureFinishedSound;
 
 
    public CancelPanel(ISession session)
@@ -91,6 +93,30 @@ public class CancelPanel extends JPanel
       gbc.insets = new Insets(30, gbc.insets.left, gbc.insets.bottom, gbc.insets.right);
       gbc.gridwidth = 2;
       ret.add(createExecutionTimePanel(), gbc);
+
+      gbc.gridx = 0;
+      ++gbc.gridy;
+      gbc.fill = GridBagConstraints.NONE;
+      gbc.insets = new Insets(30, gbc.insets.left, gbc.insets.bottom, gbc.insets.right);
+      gbc.gridwidth = 3;
+      ret.add(createNotificationPanel(), gbc);
+      return ret;
+   }
+
+   private JPanel createNotificationPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      chkPlaySoundWhenFinished = new JCheckBox(s_stringMgr.getString("SQLResultExecuterPanel.playWhenFinishedNotificationSound"));
+      ret.add(chkPlaySoundWhenFinished, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,10,0,0), 0,0);
+      btnConfigureFinishedSound = new JButton(s_stringMgr.getString("SQLResultExecuterPanel.configureWhenFinishedNotificationSound"));
+      ret.add(btnConfigureFinishedSound, gbc);
+
       return ret;
    }
 

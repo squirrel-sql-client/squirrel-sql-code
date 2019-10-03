@@ -1,6 +1,16 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in our GIT repository and in snapshots and future releases.
+===============================================================================================
+
+Enhancements:
+
+#394 Completion notification sound for long running SQLs
+  The panel indicating a running query now has a checkbox to play a completion notification sound.
+  Next to the check box there's a button to configure sound notifications.
+
+
 4.0.0 (09/09/2019)
 ==================
 

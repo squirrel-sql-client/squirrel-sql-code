@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.FinishedNotificationSoundHandler;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -17,17 +18,16 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import java.sql.SQLWarning;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class is the handler for the execution of sql against the SQLExecuterPanel
  */
 class SQLExecutionHandler implements ISQLExecuterHandler
 {
-   private static final ILogger s_log =
-        LoggerController.createLogger(SQLExecutionHandler.class);
+   private static final ILogger s_log = LoggerController.createLogger(SQLExecutionHandler.class);
 
-   private static final StringManager s_stringMgr =
-       StringManagerFactory.getStringManager(SQLExecutionHandler.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLExecutionHandler.class);
 
 
    private CancelPanelCtrl _cancelPanelCtrl;
@@ -60,40 +60,28 @@ class SQLExecutionHandler implements ISQLExecuterHandler
    private int _scriptRowsUpdated = 0;
    private int _scriptRowsDeleted = 0;
 
-   public SQLExecutionHandler(IResultTab resultTabToReplace,
-                              ISession session,
-                              String sql,
-                              ISQLExecutionHandlerListener executionHandlerListener,
-                              ISQLExecutionListener[] executionListeners)
+   public SQLExecutionHandler(IResultTab resultTabToReplace, ISession session, String sql,ISQLExecutionHandlerListener executionHandlerListener,ISQLExecutionListener[] executionListeners)
    {
-      this(resultTabToReplace,
-            session,
-            sql,
-            executionHandlerListener,
-            executionListeners, null);
+      this(resultTabToReplace, session, sql, executionHandlerListener, executionListeners, null);
    }
-   public SQLExecutionHandler(IResultTab resultTabToReplace,
-                              ISession session,
-                              String sql,
-                              ISQLExecutionHandlerListener executionHandlerListener,
-                              ISQLExecutionListener[] executionListeners,
-                              String tableToBeEdited)
+   public SQLExecutionHandler(IResultTab resultTabToReplace, ISession session, String sql, ISQLExecutionHandlerListener executionHandlerListener, ISQLExecutionListener[] executionListeners, String tableToBeEdited)
    {
       _session = session;
       _executionHandlerListener = executionHandlerListener;
 
+      FinishedNotificationSoundHandler finishedNotificationSoundHandler = new FinishedNotificationSoundHandler();
 
-      _executer = new SQLExecuterTask(_session, sql, this, executionListeners, tableToBeEdited);
+      ArrayList<ISQLExecutionListener> buf = new ArrayList<>(Arrays.asList(executionListeners));
+      buf.add(finishedNotificationSoundHandler.getExecutionFinishedListener());
+
+      _executer = new SQLExecuterTask(_session, sql, this, buf, tableToBeEdited);
       SquirrelPreferences prefs = _session.getApplication().getSquirrelPreferences();
 
-      if (prefs.getLargeScriptStmtCount() > 0
-            && _executer.getQueryCount() > prefs.getLargeScriptStmtCount())
+      if (prefs.getLargeScriptStmtCount() > 0  && _executer.getQueryCount() > prefs.getLargeScriptStmtCount())
       {
-         _executer.setExecutionListeners(new ISQLExecutionListener[0]);
+         _executer.clearExecutionListeners();
          setLargeScript(true);
       }
-
-
 
       _resultTabToReplace = resultTabToReplace;
       CancelPanelListener listener = new CancelPanelListener()
@@ -111,11 +99,8 @@ class SQLExecutionHandler implements ISQLExecuterHandler
          }
       };
 
-      _cancelPanelCtrl = new CancelPanelCtrl(listener, session);
+      _cancelPanelCtrl = new CancelPanelCtrl(listener, session, finishedNotificationSoundHandler);
       _executionHandlerListener.setCancelPanel(_cancelPanelCtrl);
-
-
-
 
       _session.getApplication().getThreadPool().addTask(_executer);
    }

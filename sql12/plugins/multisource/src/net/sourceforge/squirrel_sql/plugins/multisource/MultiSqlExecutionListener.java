@@ -9,24 +9,32 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
  */
 public class MultiSqlExecutionListener extends SQLExecutionAdapter
 {
-	/** This is what gives the ability to print a message to the message panel */
-	private final IMessageHandler _messageHandler;
-	
-	public MultiSqlExecutionListener(IMessageHandler messageHandler) {
-		_messageHandler = messageHandler;
-	}
+   /**
+    * This is what gives the ability to print a message to the message panel
+    */
+   private final IMessageHandler _messageHandler;
 
-	@Override
-	public void statementExecuted(QueryHolder sql) {
-	}
+   public MultiSqlExecutionListener(IMessageHandler messageHandler)
+   {
+      _messageHandler = messageHandler;
+   }
 
-	@Override
-	public String statementExecuting(String sql) {
-		return sql;
-	}
+   @Override
+   public void statementExecuted(QueryHolder sql)
+   {
+   }
 
-   public void executionFinished() {
-	   if (MultiSourcePlugin.isTrial())	   
-		   _messageHandler.showMessage("UnityJDBC Virtualization Driver is running in trial mode.  Results are limited to 100.  More info at: www.unityjdbc.com.");
+   @Override
+   public String statementExecuting(String sql)
+   {
+      return sql;
+   }
+
+   public void executionFinished()
+   {
+      if (MultiSourcePlugin.isTrial())
+		{
+			_messageHandler.showMessage("UnityJDBC Virtualization Driver is running in trial mode.  Results are limited to 100.  More info at: www.unityjdbc.com.");
+		}
    }
 }
