@@ -73,6 +73,7 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoActio
 import net.sourceforge.squirrel_sql.client.session.action.RemoveNewLinesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RemoveQuotesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RenameSessionAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.QuitSoundAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
@@ -263,6 +264,9 @@ public class ActionRegistry
       actionCollection.add(new RemoveNewLinesAction(app));
       actionCollection.add(new PasteFromHistoryAction(app));
       actionCollection.add(new PasteFromHistoryAltAcceleratorAction(app));
+
+      actionCollection.add(new QuitSoundAction());
+
    }
 
    public ActionCollection getActionCollection()

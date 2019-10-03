@@ -12,6 +12,7 @@ class CancelPanelCtrl
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CancelPanelCtrl.class);
 
    private CancelPanel _panel;
+   private FinishedNotificationSoundHandler _finishedNotificationSoundHandler;
 
 
    /**
@@ -30,16 +31,17 @@ class CancelPanelCtrl
    {
       _listener = listener;
       _panel = new CancelPanel(session);
+      _finishedNotificationSoundHandler = finishedNotificationSoundHandler;
 
       _panel.cancelBtn.addActionListener(e -> onCancel());
 
       _panel.closeBtn.addActionListener(e -> onClose());
 
-      _panel.chkPlaySoundWhenFinished.addActionListener(e -> finishedNotificationSoundHandler.onPlayFinishedSoundChecked(_panel.chkPlaySoundWhenFinished.isSelected()));
+      _panel.chkPlaySoundWhenFinished.addActionListener(e -> _finishedNotificationSoundHandler.onPlayFinishedSoundChecked(_panel.chkPlaySoundWhenFinished.isSelected()));
 
-      _panel.btnConfigureFinishedSound.addActionListener(e -> finishedNotificationSoundHandler.onConfigureFinishedSound(_panel));
+      _panel.btnConfigureFinishedSound.addActionListener(e -> _finishedNotificationSoundHandler.onConfigureFinishedSound(_panel));
 
-      _timer = new TimerHolder(_panel.txtExecTimeCounter, _panel.txtNumberOfRowsRead, _panel.chkPlaySoundWhenFinished, finishedNotificationSoundHandler);
+      _timer = new TimerHolder(_panel.txtExecTimeCounter, _panel.txtNumberOfRowsRead, _panel.chkPlaySoundWhenFinished, _finishedNotificationSoundHandler);
    }
    void incCurrentQueryIndex()
    {
@@ -83,6 +85,7 @@ class CancelPanelCtrl
 
    private void onCancel()
    {
+      _finishedNotificationSoundHandler.onPlayFinishedSoundChecked(false);
       _listener.cancelRequested();
    }
 

@@ -18,10 +18,12 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
+import java.awt.Component;
 
 /**
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
@@ -47,6 +49,29 @@ public class ToolBar extends JToolBar
       initialiseButton(action, btn);
       return btn;
    }
+
+   public void remove(Action action)
+   {
+      for (Component component : super.getComponents())
+      {
+         if(false == component instanceof AbstractButton)
+         {
+            continue;
+         }
+
+         AbstractButton btn = (AbstractButton) component;
+
+         if(action.equals(btn.getAction()))
+         {
+            remove(btn);
+            invalidate();
+            doLayout();
+            repaint();
+            return;
+         }
+      }
+   }
+
 
    public JToggleButton addToggleAction(IToggleAction action)
    {

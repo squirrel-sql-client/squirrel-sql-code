@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameToolBar;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.sound.sampled.AudioFormat;
@@ -31,6 +34,8 @@ public enum  SoundPlayer
    {
       try
       {
+         GUIUtils.processOnSwingEventThread(() -> addQuitSoundToolbarButton());
+
          if(null == soundFile)
          {
             beep();
@@ -43,7 +48,20 @@ public enum  SoundPlayer
       finally
       {
          _sdl = null;
+         GUIUtils.processOnSwingEventThread(() -> removeQuitSoundToolbarButton());
       }
+   }
+
+   private void removeQuitSoundToolbarButton()
+   {
+      MainFrameToolBar mainFrameToolBar = Main.getApplication().getMainFrame().getMainFrameToolBar();
+      mainFrameToolBar.remove(Main.getApplication().getActionCollection().get(QuitSoundAction.class));
+   }
+
+   private void addQuitSoundToolbarButton()
+   {
+      MainFrameToolBar mainFrameToolBar = Main.getApplication().getMainFrame().getMainFrameToolBar();
+      mainFrameToolBar.add(Main.getApplication().getActionCollection().get(QuitSoundAction.class));
    }
 
    private void playFile(File soundFile)
@@ -136,6 +154,8 @@ public enum  SoundPlayer
     */
    public boolean quit()
    {
+      GUIUtils.processOnSwingEventThread(() -> removeQuitSoundToolbarButton());
+
       // _sdl could become null in between
       SourceDataLine sdlBuf = _sdl;
 

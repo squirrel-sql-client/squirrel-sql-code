@@ -24,10 +24,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 
+import javax.swing.Action;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
@@ -63,50 +65,36 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class MainFrameToolBar extends ToolBar
+public class MainFrameToolBar extends ToolBar
 {
-    private static final long serialVersionUID = 1L;
-
     /** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(MainFrameToolBar.class);
-
-	/** Application API. */
-	transient private IApplication _app;
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MainFrameToolBar.class);
 
 	private boolean _dontReactToSessionDropDownAction = false;
    
    /**
     * ctor.
     *
-    * @param	app		Application API
-    *
     * @throws	IllegalArgumentException
     *			<TT>null</TT> <TT>IApplication</TT> or <TT>MainFrame</TT>
     *			passed.
     */
-   MainFrameToolBar(IApplication app)
+   MainFrameToolBar()
    {
-      super();
-      if (app == null)
-      {
-         throw new IllegalArgumentException("IApplication == null");
-      }
-      _app = app;
       setUseRolloverButtons(true);
       setFloatable(true);
 
-      ActionCollection actions = _app.getActionCollection();
+      ActionCollection actions = Main.getApplication().getActionCollection();
       JLabel lbl = new JLabel(s_stringMgr.getString("MainFrameToolBar.connectTo"));
       lbl.setAlignmentY(0.5f);
       add(lbl);
-      AliasesDropDown drop = new AliasesDropDown(app);
+      AliasesDropDown drop = new AliasesDropDown(Main.getApplication());
       drop.setAlignmentY(0.5f);
       add(drop);
       addSeparator();
       add(actions.get(GlobalPreferencesAction.class));
       add(actions.get(NewSessionPropertiesAction.class));
-      if (_app.getDesktopStyle().isInternalFrameStyle())
+      if (Main.getApplication().getDesktopStyle().isInternalFrameStyle())
       {
          addSeparator();
          add(actions.get(TileAction.class));
@@ -119,7 +107,7 @@ class MainFrameToolBar extends ToolBar
       JLabel lbl2 = new JLabel(" " + s_stringMgr.getString("MainFrameToolBar.activeSession") + " ");
       lbl.setAlignmentY(0.5f);
       add(lbl2);
-      SessionDropDown sessionDropDown = new SessionDropDown(app);
+      SessionDropDown sessionDropDown = new SessionDropDown();
       sessionDropDown.setAlignmentY(0.5f);
       add(sessionDropDown);
 
@@ -137,16 +125,13 @@ class MainFrameToolBar extends ToolBar
    }
 
 
-   /**
+	/**
 	 * Dropdown holding all the current <TT>ISQLAlias</TT> objects. When one is
 	 * selected the user will be prompted to connect to it.
 	 */
-	private static class AliasesDropDown extends JComboBox
-											implements ActionListener
+	private static class AliasesDropDown extends JComboBox implements ActionListener
 	{
-	    private static final long serialVersionUID = 1L;
-        
-        transient final private IApplication _myApp;
+    	final private IApplication _myApp;
 
 		AliasesDropDown(IApplication app)
 		{
@@ -328,18 +313,13 @@ class MainFrameToolBar extends ToolBar
 	/**
 	 * Dropdown holding all the current active <TT>ISession</TT> objects.
 	 */
-	private class SessionDropDown extends JComboBox
-										implements ActionListener
+	private class SessionDropDown extends JComboBox implements ActionListener
 	{
-        private static final long serialVersionUID = 1L;
-        private final IApplication _app;
 		private boolean _closing = false;
 
-		SessionDropDown(IApplication app)
+		SessionDropDown()
 		{
-			super();
-			_app = app;
-			final SessionManager sessionManager = _app.getSessionManager();
+			final SessionManager sessionManager = Main.getApplication().getSessionManager();
 			final SessionDropDownModel model = new SessionDropDownModel(
 															sessionManager);
 			setModel(model);
@@ -378,7 +358,7 @@ class MainFrameToolBar extends ToolBar
 				final Object obj = getSelectedItem();
 				if (obj instanceof ISession)
 				{
-					_app.getSessionManager().setActiveSession((ISession)obj, false);
+					Main.getApplication().getSessionManager().setActiveSession((ISession)obj, false);
 				}
 			}
 		}
@@ -389,8 +369,7 @@ class MainFrameToolBar extends ToolBar
 	 */
 	private static class SessionDropDownModel extends SortedComboBoxModel
 	{
-        private static final long serialVersionUID = 1L;
-        transient private SessionManager _sessionManager;
+		private SessionManager _sessionManager;
 
 		/**
 		 * Default ctor. Listen to the <TT>ISessioManager</TT> object for additions

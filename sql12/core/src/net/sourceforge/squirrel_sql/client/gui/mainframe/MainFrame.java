@@ -32,7 +32,6 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.D
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.MessagePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IMainFrame;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -40,18 +39,30 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Event;
+import java.awt.Font;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-@SuppressWarnings("serial")
-public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
+public class MainFrame extends JFrame
 {
-   public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs
+	public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs
 	{
 		// Empty body.
 	}
@@ -60,14 +71,10 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 	private final ILogger s_log = LoggerController.createLogger(MainFrame.class);
 
     /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(MainFrame.class);    
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MainFrame.class);
     
 	/** Application API. */
 	private final IApplication _app;
-
-//	private AliasesListInternalFrame _aliasesListWindow;
-//	private DriversListInternalFrame _driversListWindow;
 
 	/** Toolbar at top of window. */
 	private MainFrameToolBar _toolBar;
@@ -290,7 +297,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 			}
 			else if (show && _toolBar == null)
 			{
-				_toolBar = new MainFrameToolBar(_app);
+				_toolBar = new MainFrameToolBar();
 				getContentPane().add(_toolBar, BorderLayout.NORTH);
 			}
 		}
@@ -430,11 +437,9 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
       mainFrameMenuBar.setEnabledDriversMenu(b);
    }
 
+	public MainFrameToolBar getMainFrameToolBar()
+	{
+		return _toolBar;
+	}
 
-
-
-   public void addToToolBar(Action act)
-   {
-      _toolBar.add(act);
-   }
 }

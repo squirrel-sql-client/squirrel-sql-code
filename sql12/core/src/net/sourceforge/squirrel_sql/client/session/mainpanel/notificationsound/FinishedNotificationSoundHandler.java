@@ -65,6 +65,7 @@ public class FinishedNotificationSoundHandler
    {
       try
       {
+         SoundPlayer.PLAYER.quit();
          SoundPlayer.PLAYER.play(SoundConfigDAO.getSoundFile());
       }
       catch (Throwable e)

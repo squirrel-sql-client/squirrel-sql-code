@@ -395,11 +395,7 @@ public class GUIUtils
 			{
 				SwingUtilities.invokeAndWait(todo);
 			}
-			catch (InvocationTargetException ex)
-			{
-				throw Utilities.wrapRuntime(ex);
-			}
-			catch (InterruptedException ex)
+			catch (InvocationTargetException | InterruptedException ex)
 			{
 				throw Utilities.wrapRuntime(ex);
 			}
