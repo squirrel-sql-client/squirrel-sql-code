@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
@@ -41,7 +42,7 @@ public class CliSession extends CliSessionAdapter
          }
 
 
-         _sqlConnection = sqlDriverManager.getConnection(sqlDriver, aliasToConnectTo, aliasToConnectTo.getUserName(), aliasToConnectTo.getPassword(), props);
+         _sqlConnection = sqlDriverManager.getConnection(sqlDriver, aliasToConnectTo, aliasToConnectTo.getUserName(), AliasPasswordHandler.getPassword(aliasToConnectTo), props);
 
 
          _sessionProperties = Main.getApplication().getSquirrelPreferences().getSessionProperties();

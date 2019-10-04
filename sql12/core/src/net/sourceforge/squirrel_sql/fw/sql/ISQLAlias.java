@@ -43,6 +43,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 		String ID = "identifier";
 		String NAME = "name";
 		String PASSWORD = "password";
+		String PASSWORD_ENCRYPTED = "passwordEncrypted";
 		String URL = "url";
 		String USE_DRIVER_PROPERTIES = "useDriverProperties";
 		String USER_NAME = "userName";
@@ -129,5 +130,9 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 
 	void addPropertyChangeListener(PropertyChangeListener listener);
 	void removePropertyChangeListener(PropertyChangeListener listener);
+
+	boolean isPasswordEncrypted();
+	void setPasswordEncrypted(boolean b);
+
 }
 

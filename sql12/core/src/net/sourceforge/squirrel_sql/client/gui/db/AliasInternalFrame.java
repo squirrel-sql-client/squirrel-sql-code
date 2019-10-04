@@ -40,6 +40,7 @@ import java.util.Map;
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
@@ -70,7 +71,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 @SuppressWarnings("serial")
 public class AliasInternalFrame extends DialogWidget
 {
-   /**
+	/**
 	 * Maintenance types.
 	 */
 	public interface IMaintenanceType
@@ -84,9 +85,9 @@ public class AliasInternalFrame extends DialogWidget
 		/** A new alias is being created as a copy of an existing one. */
 		int COPY = 3;
 	}
+
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AliasInternalFrame.class);
+	private static final StringManager s_stringMgr =  StringManagerFactory.getStringManager(AliasInternalFrame.class);
 
 	/** Number of characters to show in text fields. */
 	private static final int COLUMN_COUNT = 25;
@@ -111,34 +112,33 @@ public class AliasInternalFrame extends DialogWidget
 	private final int _maintType;
 
 	/** Listener to the drivers cache. */
-	transient private DriversCacheListener _driversCacheLis;
+	private DriversCacheListener _driversCacheLis;
 
 	/** Alias name text field.. */
-	private final JTextField _aliasName = new JTextField();
+	private final JTextField _txtAliasName = new JTextField();
 
 	/** Dropdown of all the drivers in the system. */
 	private DriversCombo _drivers;
 
 	/** URL to the data source text field. */
-	private final JTextField _url = new JTextField();
+	private final JTextField _txtUrl = new JTextField();
 
 	/** User name text field */
-	private final JTextField _userName = new JTextField();
+	private final JTextField _txtUserName = new JTextField();
 
 	/** Password */
-	private final JPasswordField _password = new JPasswordField();
+	private final JPasswordField _txtPassword = new JPasswordField();
 
 	/** Autologon checkbox. */
-	private final JCheckBox _autoLogonChk = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.autologon"));
+	private final JCheckBox _chkAutoLogon = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.autologon"));
 
 	/** Connect at startup checkbox. */
-	private final JCheckBox _connectAtStartupChk = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.connectatstartup"));
+	private final JCheckBox _chkConnectAtStartup = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.connectatstartup"));
 
-//	/** If checked use the extended driver properties. */
-//	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.userdriverprops"));
+	private JCheckBox _chkSavePasswordEncrypted = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.password.encrypted"));
 
 	/** Button that brings up the driver properties dialog. */
-	private final JButton _aliasPropsBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.props"));
+	private final JButton _btnAliasProps = new JButton(s_stringMgr.getString("AliasInternalFrame.props"));
 
 	/** Collection of the driver properties. */
 //	private SQLDriverPropertyCollection _sqlDriverProps;
@@ -166,13 +166,10 @@ public class AliasInternalFrame extends DialogWidget
 		{
 			throw new IllegalArgumentException("ISQLAlias == null");
 		}
-		if (maintType < IMaintenanceType.NEW
-			|| maintType > IMaintenanceType.COPY)
+		if (maintType < IMaintenanceType.NEW || maintType > IMaintenanceType.COPY)
 		{
             // i18n[AliasInternalFrame.illegalValue=Illegal value of {0} passed for Maintenance type]
-			final String msg =
-                s_stringMgr.getString("AliasInternalFrame.illegalValue",
-                                      Integer.valueOf(maintType));
+			final String msg = s_stringMgr.getString("AliasInternalFrame.illegalValue", Integer.valueOf(maintType));
 			throw new IllegalArgumentException(msg);
 		}
 
@@ -224,26 +221,27 @@ public class AliasInternalFrame extends DialogWidget
 	 */
 	private void loadData()
 	{
-		_aliasName.setText(_sqlAlias.getName());
-		_userName.setText(_sqlAlias.getUserName());
+		_txtAliasName.setText(_sqlAlias.getName());
+		_txtUserName.setText(_sqlAlias.getUserName());
 
-		_password.setText(_sqlAlias.getPassword());
+		_txtPassword.setText(AliasPasswordHandler.getPassword(_sqlAlias));
 
-		_autoLogonChk.setSelected(_sqlAlias.isAutoLogon());
-		_connectAtStartupChk.setSelected(_sqlAlias.isConnectAtStartup());
+		_chkAutoLogon.setSelected(_sqlAlias.isAutoLogon());
+		_chkConnectAtStartup.setSelected(_sqlAlias.isConnectAtStartup());
+		_chkSavePasswordEncrypted.setSelected(_sqlAlias.isPasswordEncrypted());
 		//_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
 
 		if (_maintType != IMaintenanceType.NEW)
 		{
 			_drivers.setSelectedItem(_sqlAlias.getDriverIdentifier());
-			_url.setText(_sqlAlias.getUrl());
+			_txtUrl.setText(_sqlAlias.getUrl());
 		}
 		else
 		{
 			final ISQLDriver driver = _drivers.getSelectedDriver();
 			if (driver != null)
 			{
-				_url.setText(driver.getUrl());
+				_txtUrl.setText(driver.getUrl());
 			}
 		}
 	}
@@ -287,19 +285,21 @@ public class AliasInternalFrame extends DialogWidget
 		{
 			throw new ValidationException(s_stringMgr.getString("AliasInternalFrame.error.nodriver"));
 		}
-		alias.setName(_aliasName.getText().trim());
+		alias.setName(_txtAliasName.getText().trim());
 		alias.setDriverIdentifier(_drivers.getSelectedDriver().getIdentifier());
-		alias.setUrl(_url.getText().trim());
-		alias.setUserName(_userName.getText().trim());
+		alias.setUrl(_txtUrl.getText().trim());
+		alias.setUserName(_txtUserName.getText().trim());
 
 		StringBuffer buf = new StringBuffer();
-		buf.append(_password.getPassword());
-		alias.setPassword(buf.toString());
+		buf.append(_txtPassword.getPassword());
 
-		alias.setAutoLogon(_autoLogonChk.isSelected());
-		alias.setConnectAtStartup(_connectAtStartupChk.isSelected());
-//		alias.setUseDriverProperties(_useDriverPropsChk.isSelected());
-//		alias.setDriverProperties(_sqlDriverProps);
+		alias.setPasswordEncrypted(_chkSavePasswordEncrypted.isSelected());
+
+		String unencryptedPassword = buf.toString();
+		AliasPasswordHandler.setPassword(alias, unencryptedPassword);
+
+		alias.setAutoLogon(_chkAutoLogon.isSelected());
+		alias.setConnectAtStartup(_chkConnectAtStartup.isSelected());
 	}
 
 	private void showNewDriverDialog()
@@ -343,10 +343,10 @@ public class AliasInternalFrame extends DialogWidget
 		}
 		setTitle(winTitle);
 
-		_aliasName.setColumns(COLUMN_COUNT);
-		_url.setColumns(COLUMN_COUNT);
-		_userName.setColumns(COLUMN_COUNT);
-		_password.setColumns(COLUMN_COUNT);
+		_txtAliasName.setColumns(COLUMN_COUNT);
+		_txtUrl.setColumns(COLUMN_COUNT);
+		_txtUserName.setColumns(COLUMN_COUNT);
+		_txtPassword.setColumns(COLUMN_COUNT);
 
 		// This seems to be necessary to get background colours
 		// correct. Without it labels added to the content pane
@@ -413,7 +413,7 @@ public class AliasInternalFrame extends DialogWidget
 
 	private JPanel createDataEntryPanel()
 	{
-		_aliasPropsBtn.addActionListener(new ActionListener()
+		_btnAliasProps.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
 			{
@@ -439,7 +439,7 @@ public class AliasInternalFrame extends DialogWidget
       pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.name"), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-		pnl.add(_aliasName, gbc);
+		pnl.add(_txtAliasName, gbc);
 
 
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
@@ -469,33 +469,33 @@ public class AliasInternalFrame extends DialogWidget
 		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.url"), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-		pnl.add(_url, gbc);
+		pnl.add(_txtUrl, gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
 		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.username"), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-		pnl.add(_userName, gbc);
+		pnl.add(_txtUserName, gbc);
 
       gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
 		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.password"), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-		pnl.add(_password, gbc);
+		pnl.add(_txtPassword, gbc);
 
       gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		pnl.add(_autoLogonChk, gbc);
+		pnl.add(_chkAutoLogon, gbc);
 
       gbc = new GridBagConstraints(1,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		pnl.add(_connectAtStartupChk, gbc);
+		pnl.add(_chkConnectAtStartup, gbc);
 
 
       gbc = new GridBagConstraints(1,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      _aliasPropsBtn.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
-      pnl.add(_aliasPropsBtn, gbc);
+      _btnAliasProps.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
+      pnl.add(_btnAliasProps, gbc);
 
       gbc = new GridBagConstraints(0,7,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.cleartext")), gbc);
+		pnl.add(_chkSavePasswordEncrypted, gbc);
 
 
       // make it grow when added
@@ -566,7 +566,7 @@ public class AliasInternalFrame extends DialogWidget
 			ISQLDriver driver = (ISQLDriver) evt.getItem();
 			if (driver != null)
 			{
-				_url.setText(driver.getUrl());
+				_txtUrl.setText(driver.getUrl());
 			}
 		}
 	}
@@ -637,8 +637,7 @@ public class AliasInternalFrame extends DialogWidget
 		}
 	}
 
-	private final class ConnectionCallBack
-		extends ConnectToAliasCallBack
+	private final class ConnectionCallBack extends ConnectToAliasCallBack
 	{
 		private ConnectionCallBack(IApplication app, SQLAlias alias)
 		{
@@ -668,8 +667,8 @@ public class AliasInternalFrame extends DialogWidget
             // If Auto Logon is true in ConnectToAliasCommand user name/password
             // of the Alias definiton may have changed.
             // Here we transfere this information back into the controls.
-            _userName.setText(getAlias().getUserName());
-            _password.setText(getAlias().getPassword());
+            _txtUserName.setText(getAlias().getUserName());
+            _txtPassword.setText(AliasPasswordHandler.getPassword(getAlias()));
          }
       }
 

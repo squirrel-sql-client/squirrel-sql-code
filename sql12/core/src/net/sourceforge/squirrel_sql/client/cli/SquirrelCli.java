@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.cli;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
@@ -41,7 +42,7 @@ public class SquirrelCli
             {
                try
                {
-                  _cliConnectionData.getAlias().setPassword(password);
+                  AliasPasswordHandler.setPassword(_cliConnectionData.getAlias(), password);
                }
                catch (ValidationException e)
                {
@@ -82,7 +83,7 @@ public class SquirrelCli
 
          if (null != password)
          {
-            alias.setPassword(password);
+            AliasPasswordHandler.setPassword(alias, password);
          }
 
          alias.setDriverIdentifier(sqlDriver.getIdentifier());

@@ -44,6 +44,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -652,7 +653,7 @@ class Session implements ISession
          if (false == StringUtilities.isEmpty(reconnectInfo.getPassword()))
          {
             _password = reconnectInfo.getPassword();
-            _alias.setPassword(_password);
+            AliasPasswordHandler.setPassword(_alias, _password);
          }
 
 

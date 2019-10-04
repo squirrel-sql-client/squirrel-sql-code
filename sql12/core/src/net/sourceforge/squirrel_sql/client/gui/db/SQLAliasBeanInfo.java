@@ -62,6 +62,7 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 						new PropertyDescriptor(IPropNames.DRIVER_PROPERTIES, SQLAlias.class,
 							"getDriverPropertiesClone", "setDriverProperties"),
 						new PropertyDescriptor(IPropNames.PASSWORD, SQLAlias.class, "getPassword", "setPassword"),
+						new PropertyDescriptor(IPropNames.PASSWORD_ENCRYPTED, SQLAlias.class, "isPasswordEncrypted", "setPasswordEncrypted"),
 						new PropertyDescriptor(IPropNames.AUTO_LOGON, SQLAlias.class, "isAutoLogon", "setAutoLogon"),
 						new PropertyDescriptor(IPropNames.CONNECT_AT_STARTUP, SQLAlias.class, "isConnectAtStartup",
 							"setConnectAtStartup"),

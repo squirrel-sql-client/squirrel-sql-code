@@ -22,6 +22,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
@@ -278,7 +279,7 @@ public class ConnectionInternalFrame extends DialogWidget
    private void _loadData()
    {
       String userName = _alias.getUserName();
-      String password = _alias.getPassword();
+      String password = AliasPasswordHandler.getPassword(_alias);
       _aliasName.setText(_alias.getName());
       _driverName.setText(_sqlDriver.getName());
       _url.setText(_alias.getUrl());

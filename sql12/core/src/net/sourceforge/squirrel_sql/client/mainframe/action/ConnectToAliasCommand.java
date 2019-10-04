@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -309,7 +310,7 @@ public class ConnectToAliasCommand implements ICommand
                // Here for convenience we transfer these data back into the Alias.
                // Note: Don't do this when Auto Logon is false.
                _alias.setUserName(_user);
-               _alias.setPassword(_password);
+					AliasPasswordHandler.setPassword(_alias, _password);
             }
 
 

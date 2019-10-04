@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -28,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
@@ -40,9 +42,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 @SuppressWarnings("serial")
 public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparable<Object>
 {
-    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLAlias.class);
-
 
    private interface IStrings
    {
@@ -53,7 +53,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
 
    private interface IPropNames extends ISQLAlias.IPropertyNames
    {
-      // Empty block.
    }
 
    /** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
@@ -77,6 +76,8 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    /** Password of user for connection. */
    private String _password;
 
+   private boolean _passwordEncrypted = true;
+
    /** <TT>true</TT> if this alias should be logged on automatically. */
    private boolean _autoLogon;
 
@@ -98,9 +99,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    
    private SQLAliasConnectionProperties _connectionProperties = new SQLAliasConnectionProperties();
    
-   /**
-    * Default ctor.
-    */
    public SQLAlias()
    {
    }
@@ -123,37 +121,36 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    /**
     * Assign data from the passed <CODE>ISQLAlias</CODE> to this one.
     *
-    * This Alias becomes a clone of rhs.
+    * This Alias becomes a clone of sqlAlias.
     *
-    * @param	rhs	 <CODE>ISQLAlias</CODE> to copy data from.
+    * @param	sqlAlias	 <CODE>ISQLAlias</CODE> to copy data from.
     *
-    * @param b
     * @exception	ValidationException
     *				Thrown if an error occurs assigning data from
-    *				<CODE>rhs</CODE>.
+    *				<CODE>sqlAlias</CODE>.
     */
-   public synchronized void assignFrom(SQLAlias rhs, boolean withIdentifier)
-      throws ValidationException
+   public synchronized void assignFrom(SQLAlias sqlAlias, boolean withIdentifier) throws ValidationException
    {
       if(withIdentifier)
       {
-         setIdentifier(rhs.getIdentifier());
+         setIdentifier(sqlAlias.getIdentifier());
       }
       
-      setName(rhs.getName());
-      setDriverIdentifier(rhs.getDriverIdentifier());
-      setUrl(rhs.getUrl());
-      setUserName(rhs.getUserName());
-      setPassword(rhs.getPassword());
-      setAutoLogon(rhs.isAutoLogon());
-      setUseDriverProperties(rhs.getUseDriverProperties());
-      setDriverProperties(rhs.getDriverPropertiesClone());
-      _schemaProperties = Utilities.cloneObject(rhs._schemaProperties,
+      setName(sqlAlias.getName());
+      setDriverIdentifier(sqlAlias.getDriverIdentifier());
+      setUrl(sqlAlias.getUrl());
+      setUserName(sqlAlias.getUserName());
+      setPasswordEncrypted(sqlAlias.isPasswordEncrypted());
+      setPassword(sqlAlias.getPassword()); // Copying of SQL Alias, no need for AliasPasswordHandler.setPassword(...) here.
+      setAutoLogon(sqlAlias.isAutoLogon());
+      setUseDriverProperties(sqlAlias.getUseDriverProperties());
+      setDriverProperties(sqlAlias.getDriverPropertiesClone());
+      _schemaProperties = Utilities.cloneObject(sqlAlias._schemaProperties,
                                                              getClass().getClassLoader());
-      _colorProperties = Utilities.cloneObject(rhs._colorProperties, getClass().getClassLoader());
+      _colorProperties = Utilities.cloneObject(sqlAlias._colorProperties, getClass().getClassLoader());
       
       _connectionProperties = new SQLAliasConnectionProperties();
-      SQLAliasConnectionProperties rhsConnProps = rhs.getConnectionProperties();
+      SQLAliasConnectionProperties rhsConnProps = sqlAlias.getConnectionProperties();
 		_connectionProperties.setEnableConnectionKeepAlive(rhsConnProps.isEnableConnectionKeepAlive());
 		_connectionProperties.setKeepAliveSleepTimeSeconds(rhsConnProps.getKeepAliveSleepTimeSeconds());
 		_connectionProperties.setKeepAliveSqlStatement(rhsConnProps.getKeepAliveSqlStatement());
@@ -250,32 +247,35 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       return _userName;
    }
 
-   /**
-    * Retrieve the saved password.
-    *
-    * @return		The saved password.
-    */
    public String getPassword()
    {
       return _password;
    }
 
-   /**
-    * Set the password for this alias.
-    *
-    * @param	password	The new password.
-    */
    public void setPassword(String password)
    {
       String data = getString(password);
-      if (_password != data)
+      if ( false == Utilities.equalsRespectNull(_password, data))
       {
          final String oldValue = _password;
          _password = data;
-         getPropertyChangeReporter().firePropertyChange(IPropNames.PASSWORD,
-                                    oldValue, _password);
+         getPropertyChangeReporter().firePropertyChange(IPropNames.PASSWORD,oldValue, _password);
       }
    }
+
+   @Override
+   public boolean isPasswordEncrypted()
+   {
+      return _passwordEncrypted;
+   }
+
+   @Override
+   public void setPasswordEncrypted(boolean b)
+   {
+      _passwordEncrypted = b;
+   }
+
+
 
    /**
     * Should this alias be logged on automatically.
@@ -503,5 +503,4 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
 	{
 		_connectionProperties = connectionProperties;
 	}
-
 }

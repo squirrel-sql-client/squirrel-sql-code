@@ -17,6 +17,7 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
@@ -196,7 +197,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 							Method parseSourcesMethod = schema.getClass().getMethod("parseSourcesFile", new Class[]{java.io.BufferedReader.class, java.lang.String.class, java.util.Properties.class});
 							
 							// Get password from SQuirreL connection information as password (if present) is used to encrypt source and schema files
-							String password = session.getAlias().getPassword();
+							String password = AliasPasswordHandler.getPassword(session.getAlias());
 							Properties info = new Properties();
 							
 							BufferedReader reader = null;
@@ -438,7 +439,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 		try {
 			// Each source schema file is prefixed with sources file name (no extension) plus source name.
 			// Export schema files of each source first as each file location is needed in the sources file listing all sources.			
-			String password = session.getAlias().getPassword();
+			String password = AliasPasswordHandler.getPassword(session.getAlias());
 			if (password != null && password.length() < 1) {
 				// No encryption of files if a password is not specified (including empty-string password)
 				password = null;

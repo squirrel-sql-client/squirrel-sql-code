@@ -23,6 +23,7 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -544,7 +545,7 @@ public class MultiAliasChooser extends JDialog
 			String driverName = driver.getDriverClassName();
 			String url = alias.getUrl();
 			String userName =  alias.getUserName();
-			this.password = alias.getPassword();
+			this.password = AliasPasswordHandler.getPassword(alias);
 			String dbName = MultiAliasChooser.this._nameTxt.getText();
 	        String schemaName = MultiAliasChooser.this._schemaTxt.getText();
 	        String tableInc = MultiAliasChooser.this._tablesIncTxt.getText();
