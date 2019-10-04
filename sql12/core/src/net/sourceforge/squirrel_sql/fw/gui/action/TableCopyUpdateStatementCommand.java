@@ -51,7 +51,6 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
     */
    public TableCopyUpdateStatementCommand(JTable table, DataModelImplementationDetails dataModelImplementationDetails)
    {
-      super();
       _dataModelImplementationDetails = dataModelImplementationDetails;
       if (table == null)
       {
@@ -70,49 +69,57 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
       int nbrSelCols = _table.getSelectedColumnCount();
       int[] selRows = _table.getSelectedRows();
       int[] selCols = _table.getSelectedColumns();
-      if (selRows.length != 0 && selCols.length != 0)
+
+
+      if (selRows.length == 0 || selCols.length == 0)
       {
-         StringBuffer buf = new StringBuffer();
-         for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
+         return;
+      }
+
+      TableNameProvider tableNameProvider = new TableNameProvider(_dataModelImplementationDetails);
+
+      StringBuffer buf = new StringBuffer();
+      for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
+      {
+         StringBuffer setListBuf = new StringBuffer();
+
+         boolean firstCol = true;
+         for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
          {
 
+            TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);
 
-            boolean firstCol = true;
-            for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
+            ColumnDisplayDefinition colDef;
+            if(col instanceof ExtTableColumn)
             {
-
-               TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);
-
-               ColumnDisplayDefinition colDef = null;
-               if(col instanceof ExtTableColumn)
-               {
-                  colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
-               }
-               else
-               {
-                  continue;
-               }
-
-
-
-               if (firstCol)
-               {
-            	  buf.append("UPDATE "+ _dataModelImplementationDetails.getTableName(colDef)+" SET ");
-                  firstCol = false;
-               }
-               else
-               {
-                  buf.append(",");
-               }
-
-               final Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-               buf.append(colDef.getColumnName()).append(getData(colDef, cellObj, StatType.UPDATE));
+               colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
+            }
+            else
+            {
+               continue;
             }
 
-            buf.append(" WHERE\n");
+            tableNameProvider.addColDef(colDef);
+
+
+            if (firstCol)
+            {
+               firstCol = false;
+            }
+            else
+            {
+               setListBuf.append(",");
+            }
+
+            final Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+            setListBuf.append(colDef.getColumnName()).append(getData(colDef, cellObj, StatType.UPDATE));
          }
 
-         TableCopyToClipboardUtil.copyToClip(buf);
+         tableNameProvider.colDefsFinished();
+
+         buf.append("UPDATE "+ tableNameProvider.getTableName() +" SET ").append(setListBuf).append(" WHERE\n");
       }
+
+      TableCopyToClipboardUtil.copyToClip(buf);
    }
 }

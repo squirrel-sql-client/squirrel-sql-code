@@ -128,7 +128,6 @@ public class ColumnDisplayDefinition
     */
 	public ColumnDisplayDefinition(int displayWidth, String label)
 	{
-		super();
       init(displayWidth,
            null,
            label,
@@ -171,9 +170,9 @@ public class ColumnDisplayDefinition
 				boolean isNullable, int columnSize, int precision, int scale,
 				boolean isSigned, boolean isCurrency, boolean isAutoIncrement,
 				DialectType dialectType,
-            ResultMetaDataTable resultMetaDataTable) {
-		super();
-		init(displayWidth, fullTableColumnName, columnName, label, sqlType, 
+            ResultMetaDataTable resultMetaDataTable)
+	{
+		init(displayWidth, fullTableColumnName, columnName, label, sqlType,
              sqlTypeName, isNullable, columnSize, precision, scale,
              isSigned, isCurrency, isAutoIncrement, dialectType);
 
@@ -193,7 +192,8 @@ public class ColumnDisplayDefinition
     * 
     * @throws SQLException
     */
-	public ColumnDisplayDefinition(ResultSet rs, int idx, DialectType dialectType) throws SQLException {
+	public ColumnDisplayDefinition(ResultSet rs, int idx, DialectType dialectType) throws SQLException
+	{
 	   this(rs, idx, dialectType, false);
 	}
 	
@@ -224,8 +224,8 @@ public class ColumnDisplayDefinition
 	    * 
 	    * @throws SQLException
 	    */
-		public ColumnDisplayDefinition(ResultSet rs, int idx, DialectType dialectType, boolean streaming) throws SQLException {
-		    super();
+		public ColumnDisplayDefinition(ResultSet rs, int idx, DialectType dialectType, boolean streaming) throws SQLException
+		{
 		    ResultSetMetaData md = rs.getMetaData();
 		    
 		    String columnLabel = md.getColumnLabel(idx);
@@ -244,14 +244,14 @@ public class ColumnDisplayDefinition
 		    
 		    int sqlType = md.getColumnType(idx);
 		    String sqlTypeName = md.getColumnTypeName(idx);
-		    boolean isNullable = 
-		        md.isNullable(idx) == ResultSetMetaData.columnNullable;
+		    boolean isNullable =  md.isNullable(idx) == ResultSetMetaData.columnNullable;
 		    
 		    int columnSize = 0;
 		    int precision = 0;
 		    
 		    // only use columnSize and prescision for the MYSQL driver, if streaming is false
-		    if(DialectType.MYSQL5 == dialectType && streaming == false){
+		    if(DialectType.MYSQL5 == dialectType && streaming == false)
+		    {
 		    	columnSize = md.getColumnDisplaySize(idx);
 		    	precision= md.getPrecision(idx);
 		    }
@@ -413,55 +413,60 @@ public class ColumnDisplayDefinition
     * @param sqlType
     *           Type of data (from java.sql.Types).
     */
-   private void init(int displayWidth, String fullTableColumnName,
-         String columnName, String label, int sqlType, String sqlTypeName,
-         boolean isNullable, int columnSize, int precision, int scale,
-         boolean isSigned, boolean isCurrency, boolean isAutoIncrement,
-         DialectType dialectType) {
-      if (label == null) {
-         label = " "; // Some drivers will give null.
-      }
-      _displayWidth = displayWidth;
-      if (_displayWidth < label.length()) {
-         _displayWidth = label.length();
-      }
-      _fullTableColumnName = fullTableColumnName;
-      _columnName = columnName;
-      // If all columns in a table have empty strings as the headings then the
-      // row height of the label row is zero. We dont want this.
-      _label = label.length() > 0 ? label : " ";
+	private void init(int displayWidth, String fullTableColumnName,
+							String columnName, String label, int sqlType, String sqlTypeName,
+							boolean isNullable, int columnSize, int precision, int scale,
+							boolean isSigned, boolean isCurrency, boolean isAutoIncrement,
+							DialectType dialectType)
+	{
+		if (label == null)
+		{
+			label = " "; // Some drivers will give null.
+		}
+		_displayWidth = displayWidth;
+		if (_displayWidth < label.length())
+		{
+			_displayWidth = label.length();
+		}
+		_fullTableColumnName = fullTableColumnName;
+		_columnName = columnName;
+		// If all columns in a table have empty strings as the headings then the
+		// row height of the label row is zero. We dont want this.
+		_label = label.length() > 0 ? label : " ";
 
-      _sqlType = sqlType;
-      _sqlTypeName = sqlTypeName;
-      if (sqlType == Types.DATE && DataTypeDate.getReadDateAsTimestamp()) {
-         _sqlType = Types.TIMESTAMP;
-         _sqlTypeName = "TIMESTAMP";
-      }
-      _isNullable = isNullable;
-      _columnSize = columnSize;
-      _precision = precision;
-      _scale = scale;
-      _isSigned = isSigned;
-      _isCurrency = isCurrency;
-      _isAutoIncrement = isAutoIncrement;
-      _dialectType = dialectType;
+		_sqlType = sqlType;
+		_sqlTypeName = sqlTypeName;
+		if (sqlType == Types.DATE && DataTypeDate.getReadDateAsTimestamp())
+		{
+			_sqlType = Types.TIMESTAMP;
+			_sqlTypeName = "TIMESTAMP";
+		}
+		_isNullable = isNullable;
+		_columnSize = columnSize;
+		_precision = precision;
+		_scale = scale;
+		_isSigned = isSigned;
+		_isCurrency = isCurrency;
+		_isAutoIncrement = isAutoIncrement;
+		_dialectType = dialectType;
 
-   }
-    
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        result.append("[ columnName=");
-        result.append(_columnName);
-        result.append(", sqlType=");
-        result.append(_sqlType);
-        result.append(", sqlTypeName=");
-        result.append(_sqlTypeName);
-        result.append(", dialectType=");        
-        result.append(_dialectType == null ? "null" : _dialectType.name());
-        result.append(" ]");
-        
-        return result.toString();
-    }
+	}
+
+	public String toString()
+	{
+		StringBuilder result = new StringBuilder();
+		result.append("[ columnName=");
+		result.append(_columnName);
+		result.append(", sqlType=");
+		result.append(_sqlType);
+		result.append(", sqlTypeName=");
+		result.append(_sqlTypeName);
+		result.append(", dialectType=");
+		result.append(_dialectType == null ? "null" : _dialectType.name());
+		result.append(" ]");
+
+		return result.toString();
+	}
 
     public void setIsAutoIncrement(boolean autoIncrement) {
         _isAutoIncrement = autoIncrement;
@@ -509,14 +514,17 @@ public class ColumnDisplayDefinition
     * @see #getLabel()
     * @see DataTypeGeneral#isUseColumnLabelInsteadColumnName()
     */
-   public String getColumnHeading(){
-	   if (DataTypeGeneral.isUseColumnLabelInsteadColumnName()){
-		   return getLabel();
-	   }
-	   else {
-		   return getColumnName();
-	   }
-   }
+	public String getColumnHeading()
+	{
+		if (DataTypeGeneral.isUseColumnLabelInsteadColumnName())
+		{
+			return getLabel();
+		}
+		else
+		{
+			return getColumnName();
+		}
+	}
 
 
    public void setUserProperty(String userProperty)

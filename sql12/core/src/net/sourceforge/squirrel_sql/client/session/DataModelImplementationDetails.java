@@ -44,6 +44,12 @@ public class DataModelImplementationDetails
          return colDef.getTableName();
       }
 
+      if (    null != colDef.getResultMetaDataTable()
+           && false == StringUtilities.isEmpty(colDef.getResultMetaDataTable().getTableName(), true))
+      {
+         return colDef.getResultMetaDataTable().getTableName();
+      }
+
       if (false == StringUtilities.isEmpty(colDef.getFullTableColumnName(), true))
       {
          Matcher matcher = FILL_COLUMN_NAME_PATTERN.matcher(colDef.getFullTableColumnName());
@@ -54,7 +60,7 @@ public class DataModelImplementationDetails
          }
       }
 
-      return "PressCtrlH";
+      return null;
    }
 
 

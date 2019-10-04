@@ -52,7 +52,7 @@ public class TimerHolder
 
       _chkPlaySoundWhenFinished.setSelected(_finishedNotificationSoundHandler.isToPlayNotificationSound(elapsedMillis));
 
-      if(null != _rsds)
+      if(null != _rsds && null != _rsds.getAllDataForReadOnly())
       {
          _txtNumberOfRowsRead.setText("" + _rsds.getAllDataForReadOnly().size());
       }

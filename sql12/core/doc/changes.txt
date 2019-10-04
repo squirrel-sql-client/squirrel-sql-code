@@ -15,6 +15,10 @@ Enhancements:
   When a new Alias is added this check box is switched on by default.
   Encryption and decryption is done using javax.crypto.
 
+Bug fixes:
+
+#1383 Table name not properly generated in result table right mouse menu functions "Copy as SQL INSERT-VALUES/UPDATE-SET statement"
+  The former fix in version 4.0.0 for bug #1383 worked for the editor function "Create Data Script from SQL" only.
 
 4.0.0 (09/09/2019)
 ==================

@@ -52,7 +52,6 @@ public class TableCopyInsertStatementCommand extends TableCopySqlPartCommandBase
     */
    public TableCopyInsertStatementCommand(JTable table, DataModelImplementationDetails dataModelImplementationDetails)
    {
-      super();
       _dataModelImplementationDetails = dataModelImplementationDetails;
       if (table == null)
       {
@@ -71,72 +70,78 @@ public class TableCopyInsertStatementCommand extends TableCopySqlPartCommandBase
       int nbrSelCols = _table.getSelectedColumnCount();
       int[] selRows = _table.getSelectedRows();
       int[] selCols = _table.getSelectedColumns();
-      if (selRows.length != 0 && selCols.length != 0)
+
+      if (selRows.length == 0 || selCols.length == 0)
       {
-         StringBuffer buf = new StringBuffer();
+         return;
+      }
 
-         StringBuffer colNames = new StringBuffer();
-         StringBuffer vals = new StringBuffer();
+      StringBuffer buf = new StringBuffer();
 
-         for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
+      StringBuffer colNames = new StringBuffer();
+      StringBuffer vals = new StringBuffer();
+
+      TableNameProvider tableNameProvider = new TableNameProvider(_dataModelImplementationDetails);
+
+      for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
+      {
+
+         boolean firstCol = true;
+         for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
          {
 
-            boolean firstCol = true;
-            for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
+            TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);
+
+            ColumnDisplayDefinition colDef;
+            if(col instanceof ExtTableColumn)
             {
-
-               TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);
-
-               ColumnDisplayDefinition colDef = null;
-               if(col instanceof ExtTableColumn)
-               {
-                  colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
-               }
-               else
-               {
-                  continue;
-               }
-
-               if (firstCol)
-               {
-            	  colNames.append("INSERT INTO "+ _dataModelImplementationDetails.getTableName(colDef)+" (");
-                  firstCol = false;
-                  vals.append("(");
-               }
-               else
-               {
-                  colNames.append(",");
-                  vals.append(",");
-               }
-
-               Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-
-               colNames.append(colDef.getColumnName());
-               vals.append(getData(colDef, cellObj, StatType.IN));
-            }
-
-            colNames.append(")");
-            vals.append(")");
-
-            buf.append(colNames).append(" VALUES ").append(vals);
-
-            if(1 < _dataModelImplementationDetails.getStatementSeparator().length())
-            {
-               buf.append(" ").append(_dataModelImplementationDetails.getStatementSeparator()).append("\n");
+               colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
             }
             else
             {
-               buf.append(_dataModelImplementationDetails.getStatementSeparator()).append("\n");
+               continue;
             }
 
-            colNames.setLength(0);
-            vals.setLength(0);
+            tableNameProvider.addColDef(colDef);
 
+            if (firstCol)
+            {
+               firstCol = false;
+               vals.append("(");
+            }
+            else
+            {
+               colNames.append(",");
+               vals.append(",");
+            }
+
+            Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+
+            colNames.append(colDef.getColumnName());
+            vals.append(getData(colDef, cellObj, StatType.IN));
          }
 
-         TableCopyToClipboardUtil.copyToClip(buf);
+         tableNameProvider.colDefsFinished();
+
+         colNames.append(")");
+         vals.append(")");
+
+         buf.append("INSERT INTO " + tableNameProvider.getTableName()  + " (").append(colNames).append(" VALUES ").append(vals);
+
+         if(1 < _dataModelImplementationDetails.getStatementSeparator().length())
+         {
+            buf.append(" ").append(_dataModelImplementationDetails.getStatementSeparator()).append("\n");
+         }
+         else
+         {
+            buf.append(_dataModelImplementationDetails.getStatementSeparator()).append("\n");
+         }
+
+         colNames.setLength(0);
+         vals.setLength(0);
+
       }
+
+      TableCopyToClipboardUtil.copyToClip(buf);
    }
-
-
 }
