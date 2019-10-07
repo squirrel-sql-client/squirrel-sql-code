@@ -42,8 +42,7 @@ public class CreateTableOfCurrentSQLAction extends SquirrelAction implements ISQ
     */
    private final SQLScriptPlugin _plugin;
 
-   public CreateTableOfCurrentSQLAction(IApplication app, IResources resources,
-                                        SQLScriptPlugin plugin)
+   public CreateTableOfCurrentSQLAction(IApplication app, IResources resources, SQLScriptPlugin plugin)
    {
       super(app, resources);
       _plugin = plugin;

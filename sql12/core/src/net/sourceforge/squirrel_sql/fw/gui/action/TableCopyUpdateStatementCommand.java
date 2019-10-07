@@ -22,7 +22,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
-import net.sourceforge.squirrel_sql.fw.gui.TableCopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import javax.swing.JTable;
@@ -120,6 +120,6 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
          buf.append("UPDATE "+ tableNameProvider.getTableName() +" SET ").append(setListBuf).append(" WHERE\n");
       }
 
-      TableCopyToClipboardUtil.copyToClip(buf);
+      CopyToClipboardUtil.copyToClip(buf);
    }
 }

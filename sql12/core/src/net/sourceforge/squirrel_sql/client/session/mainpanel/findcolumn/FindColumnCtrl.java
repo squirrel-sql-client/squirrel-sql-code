@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.CloseByEscapeListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.*;
@@ -28,12 +30,11 @@ public class FindColumnCtrl
    public static final String PREF_KEY_FIND_COLUMN_SHEET_WIDTH = "Squirrel.findColumnSheet.width";
    public static final String PREF_KEY_FIND_COLUMN_SHEET_HEIGHT = "Squirrel.findColumnSheet.height";
 
-
-
    private final DataSetViewerTablePanel _dataSetViewerTablePanel;
    private final FindColumnDlg _findColumnDlg;
-   private final DefaultListModel _leftListModel;
-   private final DefaultListModel _rightListModel = new DefaultListModel();
+
+   private final DefaultListModel<FindColumnColWrapper> _leftListModel = new DefaultListModel<>();
+   private final DefaultListModel<FindColumnColWrapper> _rightListModel = new DefaultListModel<>();
 
    private ColumnSortingEnum _columnSorting = ColumnSortingEnum.NONE;
 
@@ -50,7 +51,6 @@ public class FindColumnCtrl
       _dataSetViewerTablePanel = dataSetViewerTablePanel;
       _findColumnDlg = new FindColumnDlg(owningFrame);
 
-      _leftListModel = new DefaultListModel();
       _findColumnDlg.lstLeft.setModel(_leftListModel);
       _findColumnDlg.lstLeft.addMouseListener(new MouseAdapter() {
          @Override
@@ -61,6 +61,12 @@ public class FindColumnCtrl
       });
 
       _findColumnDlg.lstRight.setModel(_rightListModel);
+
+
+
+      _findColumnDlg.lstLeft.addMouseListener(ColumnCopyHandler.getListPopupListener(_findColumnDlg.lstLeft));
+      _findColumnDlg.lstRight.addMouseListener(ColumnCopyHandler.getListPopupListener(_findColumnDlg.lstRight));
+
 
       _findColumnDlg.btnSortAsc.addActionListener(new ActionListener() {
          @Override
@@ -213,7 +219,7 @@ public class FindColumnCtrl
       int[] newSelIx = new int[selIx.length];
       for (int i = 0; i < selIx.length; ++i)
       {
-         Object item = _rightListModel.remove(selIx[i]);
+         FindColumnColWrapper item = _rightListModel.remove(selIx[i]);
          newSelIx[i] = selIx[i] - 1;
          _rightListModel.insertElementAt(item, newSelIx[i]);
       }
@@ -245,7 +251,7 @@ public class FindColumnCtrl
       int[] newSelIx = new int[selIx.length];
       for (int i = selIx.length - 1; i >= 0; --i)
       {
-         Object item = _rightListModel.remove(selIx[i]);
+         FindColumnColWrapper item = _rightListModel.remove(selIx[i]);
          newSelIx[i] = selIx[i] + 1;
          _rightListModel.insertElementAt(item, newSelIx[i]);
       }

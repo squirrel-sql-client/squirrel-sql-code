@@ -11,19 +11,18 @@ import java.awt.*;
 
 public class FindColumnDlg extends JDialog
 {
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(FindColumnDlg.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FindColumnDlg.class);
 
 
    JTextField txtFilter = new JTextField();
    TabButton btnSortAsc = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.SORT_ASC));
    TabButton btnSortDesc = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.SORT_DESC));
-   JList lstLeft = new JList(new String[]{"id", "name"});
+   JList<FindColumnColWrapper> lstLeft = new JList<>();
 
    TabButton btnRight = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.RIGHT_ARROW));
    TabButton btnLeft = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.LEFT_ARROW));
 
-   JList lstRight = new JList(new String[]{"id", "name"});
+   JList<FindColumnColWrapper> lstRight = new JList<>();
    JButton btnToTableBegin = new JButton(s_stringMgr.getString("FindColumnDlg.moveto.table.begin"));
 
    TabButton btnUp = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.TABLE_ASCENDING));

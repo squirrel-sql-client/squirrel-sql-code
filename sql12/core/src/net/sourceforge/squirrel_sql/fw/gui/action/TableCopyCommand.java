@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  */
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
-import net.sourceforge.squirrel_sql.fw.gui.TableCopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
@@ -95,7 +95,7 @@ public class TableCopyCommand implements ICommand
 				}
 			}
 
-			TableCopyToClipboardUtil.copyToClip(buf);
+			CopyToClipboardUtil.copyToClip(buf);
 		}
 	}
 }

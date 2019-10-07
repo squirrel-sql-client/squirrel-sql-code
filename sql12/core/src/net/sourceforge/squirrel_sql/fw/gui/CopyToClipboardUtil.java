@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
-public class TableCopyToClipboardUtil
+public class CopyToClipboardUtil
 {
    public  static void copyToClip(StringBuffer buf)
    {
