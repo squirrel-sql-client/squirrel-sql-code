@@ -9,7 +9,6 @@ import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.CaseInsensitiveString;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 
 import javax.swing.*;
 import java.util.Hashtable;
@@ -93,16 +92,9 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
       }
    }
 
-   /**
-    * Couldn't find another way of triggering highlighting update on the positions
-    * of current and former errors.
-    *
-    * Time will tell how stable this is.
-    */
    private void forceHighlightUpdateOnErrorPositions(Vector<ErrorInfo> oldErrorInfos)
    {
-      RSyntaxDocument doc = (RSyntaxDocument) _squirrelRSyntaxTextArea.getDocument();
-      doc.setSyntaxStyle(doc.getSyntaxStyle());
+      RSyntaxUtil.forceHighlightUpdate(_squirrelRSyntaxTextArea);
    }
 
    @Override

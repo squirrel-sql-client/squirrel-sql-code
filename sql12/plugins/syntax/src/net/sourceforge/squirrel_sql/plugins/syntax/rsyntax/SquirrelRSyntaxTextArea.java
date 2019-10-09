@@ -37,10 +37,7 @@ import java.awt.event.MouseEvent;
 
 public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SquirrelRSyntaxTextArea.class);
-
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SquirrelRSyntaxTextArea.class);
 
    private ISession _session;
    private SyntaxPreferences _prefs;
@@ -66,7 +63,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
       _rSyntaxHighlightTokenMatcherProxy.setDelegate(_propertiesWrapper.getSyntaxHighlightTokenMatcher(session, this, sqlEntryPanelIdentifier));
 
 
-      modifiyKeystrokesFromPreferences(prefs);
+      modifyKeystrokesFromPreferences(prefs);
 
 
       updateFromPreferences();
@@ -109,7 +106,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
     * Because we have no access to the syntax preferences at the moment, the UI is created, we have to modify them after the creation. 
     * @param prefs Preferences to use.
     */
-   private void modifiyKeystrokesFromPreferences(SyntaxPreferences prefs)
+   private void modifyKeystrokesFromPreferences(SyntaxPreferences prefs)
    {
       InputMap shared = getInputMap();
       if (false == prefs.isUseCopyAsRtf())

@@ -18,6 +18,7 @@ public class SquirrelTokenMarker extends SquirrelTokenMakerBase
 
 
    private ISyntaxHighlightTokenMatcher _syntaxHighlightTokenMatcher;
+   private final CtrlDownHyperlinkHandler _ctrlDownHyperlinkHandler;
 
    public static int getNumTokenTypes()
    {
@@ -27,6 +28,8 @@ public class SquirrelTokenMarker extends SquirrelTokenMakerBase
    public SquirrelTokenMarker(final SquirrelRSyntaxTextArea squirrelRSyntaxTextArea, ISyntaxHighlightTokenMatcher syntaxHighlightTokenMatcher)
    {
       _syntaxHighlightTokenMatcher = syntaxHighlightTokenMatcher;
+      _ctrlDownHyperlinkHandler = new CtrlDownHyperlinkHandler(squirrelRSyntaxTextArea);
+
    }
 
    public void addToken(char[] array, int start, int end, int tokenType, int startOffset, boolean hyperlink)
@@ -53,7 +56,7 @@ public class SquirrelTokenMarker extends SquirrelTokenMakerBase
          }
          else if(_syntaxHighlightTokenMatcher.isTable(array, start, len))
          {
-            super.addToken(array, start, end, TOKEN_IDENTIFIER_TABLE, startOffset, hyperlink);
+            super.addToken(array, start, end, TOKEN_IDENTIFIER_TABLE, startOffset, _ctrlDownHyperlinkHandler.isShowTablesAsHyperlink());
          }
          else if(_syntaxHighlightTokenMatcher.isDataType(array, start, len))
          {

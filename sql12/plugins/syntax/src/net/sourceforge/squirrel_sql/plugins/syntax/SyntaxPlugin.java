@@ -557,8 +557,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		try
 		{
 			final XMLBeanReader doc = new XMLBeanReader();
-			final FileWrapper file =
-				fileWrapperFactory.create(_userSettingsFolder, IConstants.USER_PREFS_FILE_NAME);
+			final FileWrapper file = fileWrapperFactory.create(_userSettingsFolder, IConstants.USER_PREFS_FILE_NAME);
 			doc.load(file, getClass().getClassLoader());
 
 			Iterator<?> it = doc.iterator();

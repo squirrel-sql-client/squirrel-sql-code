@@ -6,16 +6,22 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
-#394 Completion notification sound for long running SQLs.
-  The panel indicating a running query now has a checkbox to play a completion notification sound.
-  Next to the check box there's a button to configure sound notifications.
+SQL editor: When control key is down tables are marked as hyper links.
+  Note: With control key down mouse click on a table opens the table in the Object tree.
+  Also note: This feature can be switched of in menu File --> New Session Properties --> tab SQL --> section "Jump to object tree".
+
+SQL results: The column lists of the "Find column" dialog of now over right mouse menus to copy column names to clipboard.
 
 #25 Passwords can be saved encrypted.
   The Alias dialog has a new check box "Save password encrypted".
   When a new Alias is added this check box is switched on by default.
   Encryption and decryption is done using javax.crypto.
 
-SQL results: The column lists of the "Find column" dialog of now over right mouse menus to copy column names to clipboard.
+
+#394 Completion notification sound for long running SQLs.
+  The panel indicating a running query now has a checkbox to play a completion notification sound.
+  Next to the check box there's a button to configure sound notifications.
+
 
 Bug fixes:
 

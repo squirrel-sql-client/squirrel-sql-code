@@ -114,8 +114,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
          return;
       }
 
-      ParserEventsListener[] clone = 
-          _listeners.toArray(new ParserEventsListener[_listeners.size()]);
+      ParserEventsListener[] clone = _listeners.toArray(new ParserEventsListener[_listeners.size()]);
 
 		TableAliasInfo[] aliasInfos = _parserThread.getTableAliasInfos();
 		ErrorInfo[] errorInfos = _parserThread.getErrorInfos();
