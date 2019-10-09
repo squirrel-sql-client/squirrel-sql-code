@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Introduced Java 13 compatibility.
+
 SQL editor: When control key is down tables are marked as hyper links.
   Note: With control key down mouse click on a table opens the table in the Object tree.
   Also note: This feature can be switched of in menu File --> New Session Properties --> tab SQL --> section "Jump to object tree".
