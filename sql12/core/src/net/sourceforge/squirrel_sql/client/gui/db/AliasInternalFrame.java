@@ -228,7 +228,7 @@ public class AliasInternalFrame extends DialogWidget
 
 		_chkAutoLogon.setSelected(_sqlAlias.isAutoLogon());
 		_chkConnectAtStartup.setSelected(_sqlAlias.isConnectAtStartup());
-		_chkSavePasswordEncrypted.setSelected(_sqlAlias.isPasswordEncrypted());
+		_chkSavePasswordEncrypted.setSelected(_sqlAlias.isEncryptPassword());
 		//_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
 
 		if (_maintType != IMaintenanceType.NEW)
@@ -293,7 +293,7 @@ public class AliasInternalFrame extends DialogWidget
 		StringBuffer buf = new StringBuffer();
 		buf.append(_txtPassword.getPassword());
 
-		alias.setPasswordEncrypted(_chkSavePasswordEncrypted.isSelected());
+		alias.setEncryptPassword(_chkSavePasswordEncrypted.isSelected());
 
 		String unencryptedPassword = buf.toString();
 		AliasPasswordHandler.setPassword(alias, unencryptedPassword);

@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
-import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -29,7 +28,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
@@ -76,7 +74,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    /** Password of user for connection. */
    private String _password;
 
-   private boolean _passwordEncrypted = true;
+   private boolean _encryptPassword; // Renamed from PasswordEncrypted because of bug #1409
 
    /** <TT>true</TT> if this alias should be logged on automatically. */
    private boolean _autoLogon;
@@ -140,7 +138,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       setDriverIdentifier(sqlAlias.getDriverIdentifier());
       setUrl(sqlAlias.getUrl());
       setUserName(sqlAlias.getUserName());
-      setPasswordEncrypted(sqlAlias.isPasswordEncrypted());
+      setEncryptPassword(sqlAlias.isEncryptPassword());
       setPassword(sqlAlias.getPassword()); // Copying of SQL Alias, no need for AliasPasswordHandler.setPassword(...) here.
       setAutoLogon(sqlAlias.isAutoLogon());
       setUseDriverProperties(sqlAlias.getUseDriverProperties());
@@ -264,15 +262,15 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    }
 
    @Override
-   public boolean isPasswordEncrypted()
+   public boolean isEncryptPassword()
    {
-      return _passwordEncrypted;
+      return _encryptPassword;
    }
 
    @Override
-   public void setPasswordEncrypted(boolean b)
+   public void setEncryptPassword(boolean b)
    {
-      _passwordEncrypted = b;
+      _encryptPassword = b;
    }
 
 

@@ -16,7 +16,7 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 #25 Passwords can be saved encrypted.
   The Alias dialog has a new check box "Save password encrypted".
-  When a new Alias is added this check box is switched on by default.
+  When a new Alias is added this check box is switched off by default.
   Encryption and decryption is done using javax.crypto.
 
 
@@ -26,6 +26,10 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 
 Bug fixes:
+
+#1409 Error connecting database because of "javax.crypto.IllegalBlockSizeException: Input length must be multiple of 8 when decrypting with padded cipher"
+  The bug was introduced with feature #25 (Password encryption) and was contained in the last two or three snapshots before this fix.
+  Users who already used feature #25 will have to reenter the passwords they chose to encrypt.
 
 #1383 Table name not properly generated in result table right mouse menu functions "Copy as SQL INSERT-VALUES/UPDATE-SET statement"
   The former fix in version 4.0.0 for bug #1383 worked for the editor function "Create Data Script from SQL" only.

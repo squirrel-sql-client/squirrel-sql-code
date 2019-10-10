@@ -7,7 +7,7 @@ public class AliasPasswordHandler
 {
    public static String getPassword(ISQLAlias sqlAlias)
    {
-      if (sqlAlias.isPasswordEncrypted())
+      if (sqlAlias.isEncryptPassword())
       {
          return PasswordEncryption.decrypt(sqlAlias.getPassword());
       }
@@ -19,7 +19,7 @@ public class AliasPasswordHandler
 
    public static void setPassword(ISQLAlias alias, String unencryptedPassword) throws ValidationException
    {
-      if (alias.isPasswordEncrypted())
+      if (alias.isEncryptPassword())
       {
          alias.setPassword(PasswordEncryption.encrypt(unencryptedPassword));
       }
