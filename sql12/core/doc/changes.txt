@@ -27,6 +27,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+Object tree: The "Refresh item" right mouse menu function sometimes failed to restore the tree selection correctly.
+
 After Session start the Object tree once and again was empty.
 
 #1409 Error connecting database because of "javax.crypto.IllegalBlockSizeException: Input length must be multiple of 8 when decrypting with padded cipher"

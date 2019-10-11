@@ -117,23 +117,11 @@ public class OpenConnectionCommand
             future.get();
          }
 
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               openConnectionCommandListener.openConnectionFinished(null);
-            }
-         });
+         SwingUtilities.invokeLater(() -> openConnectionCommandListener.openConnectionFinished(null));
       }
       catch (final Throwable t)
       {
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               openConnectionCommandListener.openConnectionFinished(t);
-            }
-         });
+         SwingUtilities.invokeLater(() -> openConnectionCommandListener.openConnectionFinished(t));
       }
    }
 

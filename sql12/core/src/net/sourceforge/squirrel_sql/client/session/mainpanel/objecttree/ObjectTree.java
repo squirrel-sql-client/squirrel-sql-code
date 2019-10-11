@@ -23,8 +23,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +42,6 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -55,7 +54,6 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -94,14 +92,12 @@ class ObjectTree extends JTree
 	 * expanded. The key is <TT>Treepath.toString()</TT> and the value
 	 * is <TT>null</TT>.
 	 */
-	private Map<String, Object> _expandedPathNames = new HashMap<String, Object>();
+	private Set<String> _expandedPathNames = new HashSet<>();
 
 	/**
 	 * Collection of listeners to this object tree.
 	 */
 	private EventListenerList _listenerList = new EventListenerList();
-
-   private boolean _startExpandInThread = true;
 
    /**
     * ctor specifying session.
@@ -323,20 +319,12 @@ class ObjectTree extends JTree
 
    private void refreshTree()
    {
-      final TreePath[] selectedPaths = getSelectionPaths();
-      final Map<String, Object> selectedPathNames =  new HashMap<>();
+      final TreePath[] previouslySelectedTreePaths = getSelectionPaths();
 
-      if (selectedPaths != null)
-      {
-         for (int i = 0; i < selectedPaths.length; ++i)
-         {
-            selectedPathNames.put(selectedPaths[i].toString(), null);
-         }
-      }
       ObjectTreeNode root = _model.getRootObjectTreeNode();
       root.removeAllChildren();
       fireObjectTreeCleared();
-      expandTree(root, false, selectedPathNames, false);
+      expandTree(root, previouslySelectedTreePaths, false);
       fireObjectTreeRefreshed();
    }
 
@@ -347,29 +335,21 @@ class ObjectTree extends JTree
    {
 
       final TreePath[] selectedPaths = getSelectionPaths();
-      ObjectTreeNode[] nodes = getSelectedNodes();
-      final Map<String, Object> selectedPathNames = new HashMap<>();
-      if (selectedPaths != null)
-      {
-         for (int i = 0; i < selectedPaths.length; ++i)
-         {
-            selectedPathNames.put(selectedPaths[i].toString(), null);
-         }
-      }
+      ObjectTreeNode[] nodesToRefresh = getSelectedNodes();
       clearSelection();
 
 
-      DefaultMutableTreeNode parent = (DefaultMutableTreeNode) nodes[0].getParent();
+      DefaultMutableTreeNode parent = (DefaultMutableTreeNode) nodesToRefresh[0].getParent();
 
       if (parent != null)
       {
          parent.removeAllChildren();
-         expandTree((ObjectTreeNode) parent, false, selectedPathNames, true);
+         expandTree((ObjectTreeNode) parent, selectedPaths, true);
       }
       else
       {
-         nodes[0].removeAllChildren();
-         expandTree(nodes[0], false, selectedPathNames, true);
+         nodesToRefresh[0].removeAllChildren();
+         expandTree(nodesToRefresh[0], selectedPaths, true);
       }
    }
 
@@ -395,116 +375,7 @@ class ObjectTree extends JTree
 		_listenerList.remove(IObjectTreeListener.class, lis);
 	}
 
-	/**
-	 * Restore the expansion state of the tree starting at the passed node.
-	 * The passed node is always expanded.
-	 *
-	 * @param	node	Node to restore expansion state from.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if null ObjectTreeNode passed.
-	 */
-	private void restoreExpansionState(ObjectTreeNode node,
-	                                   Map<String, Object> previouslySelectedTreePathNames, 
-                                       List<TreePath> selectedTreePaths)
-	{
-		if (node == null)
-		{
-			throw new IllegalArgumentException("ObjectTreeNode == null");
-		}
-
-		final TreePath nodePath = new TreePath(node.getPath());
-      if (matchKeyPrefix(previouslySelectedTreePathNames, node, nodePath.toString()))
-		{
-			selectedTreePaths.add(nodePath);
-		}
-
-
-      try
-      {
-         _startExpandInThread = false;
-         expandPath(nodePath);
-      }
-      finally
-      {
-         _startExpandInThread = true;
-      }
-
-
-
-      // Go through each child of the parent and see if it was previously
-		// expanded. If it was recursively call this method in order to expand
-		// the child.
-      @SuppressWarnings("unchecked")
-      Enumeration<TreeNode> childEnumeration = node.children();
-		Iterator<TreeNode> it = new EnumerationIterator<>(childEnumeration);
-
-		while (it.hasNext())
-		{
-			final ObjectTreeNode child = (ObjectTreeNode) it.next();
-			final TreePath childPath = new TreePath(child.getPath());
-			final String childPathName = childPath.toString();
-
-         if (matchKeyPrefix(previouslySelectedTreePathNames, child, childPathName))
-			{
-				selectedTreePaths.add(childPath);
-			}
-
-			if (_expandedPathNames.containsKey(childPathName))
-			{
-				restoreExpansionState(child, previouslySelectedTreePathNames, selectedTreePaths);
-         }
-		}
-	}
-
-    /**
-     * This is to handle the case where the user has enabled showRowCounts and 
-     * the table/view name as it appeared before is different only because the 
-     * number of rows has changed. For example, suppose a user deletes records
-     * in a table "foo" with 100 rows then refreshes the tree.  The tree node
-     * before the delete looks like foo(100) and after looks like foo(0).  We 
-     * want to strip off the (...) and test to see if the selected path "foo"
-     * is the same before the delete as after.  This way, when the user refreshes
-     * "foo(...)", then it is still selected after the refresh.
-     * 
-     * @param map
-     * @param pattern
-     * @return
-     */
-    protected boolean matchKeyPrefix(Map<String, Object> map, ObjectTreeNode node, String path) {
-        // We only show row counts for tables and views.  Other objects won't 
-        // be affected by changing row counts.
-        if (node.getDatabaseObjectType() != DatabaseObjectType.TABLE
-                && node.getDatabaseObjectType() != DatabaseObjectType.VIEW) 
-        {
-            return map.containsKey(path);
-        }
-        Set<String> s = map.keySet();
-        Iterator<String> i = s.iterator();
-        String pathPrefix = path;
-        if (path.indexOf("(") != -1) {
-            pathPrefix = path.substring(0, path.lastIndexOf("("));
-        }
-        boolean result = false;
-        while (i.hasNext()) {
-            String key = i.next();
-            String keyPrefix = key;
-            if (key.indexOf("(") != -1) {
-                keyPrefix = key.substring(0, key.lastIndexOf("("));
-            }
-            if (keyPrefix.equals(pathPrefix)) {
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }
-        
-	private void expandTree(ObjectTreeNode node,
-                           boolean selectNode,
-                           Map<String, Object> selectedPathNames,
-                           boolean refreshSchemaInfo
-   )
+   private void expandTree(ObjectTreeNode startNode, TreePath[] previouslySelectedTreePaths, boolean refreshSchemaInfo)
 	{
       CursorChanger cursorChg = new CursorChanger(this);
       cursorChg.show();
@@ -512,15 +383,13 @@ class ObjectTree extends JTree
       {
          if (refreshSchemaInfo)
          {
-            _session.getSchemaInfo().reload(node.getDatabaseObjectInfo());
+            _session.getSchemaInfo().reload(startNode.getDatabaseObjectInfo());
          }
 
-         expandNode(node, selectNode);
-         if (selectedPathNames != null)
+         expandNode(startNode);
+         if (previouslySelectedTreePaths != null)
          {
-            final List<TreePath> newlySelectedTreepaths = new ArrayList<>();
-
-            restoreExpansionState(node, selectedPathNames, newlySelectedTreepaths);
+            List<TreePath> newlySelectedTreepaths = ExpansionStateRestorer.restoreExpansionState(this, startNode, previouslySelectedTreePaths, _expandedPathNames);
             setSelectionPaths(newlySelectedTreepaths.toArray(new TreePath[0]));
          }
       }
@@ -530,7 +399,7 @@ class ObjectTree extends JTree
       }
    }
 
-	private void expandNode(ObjectTreeNode node, boolean selectNode)
+	private void expandNode(ObjectTreeNode node)
 	{
 		if (node == null)
 		{
@@ -562,7 +431,7 @@ class ObjectTree extends JTree
 					System.arraycopy(extraExpanders, 0, expanders, stdExpanders.length,
 										extraExpanders.length);
 				}
-				new TreeLoader(this._session, this, this._model, node, expanders, selectNode).execute();
+				new TreeLoader(this._session, this, this._model, node, expanders).execute();
 			}
 		}
 	}
@@ -871,8 +740,8 @@ class ObjectTree extends JTree
 			final Object parentObj = path.getLastPathComponent();
 			if (parentObj instanceof ObjectTreeNode)
 			{
-				expandTree((ObjectTreeNode)parentObj, false, null, false);
-				_expandedPathNames.put(path.toString(), null);
+				expandTree((ObjectTreeNode)parentObj, null, false);
+				_expandedPathNames.add(path.toString());
 			}
 		}
 

@@ -40,18 +40,16 @@ public class TreeLoader
 	private ObjectTree _objectTree;
 	private ObjectTreeNode _parentNode;
 	private INodeExpander[] _expanders;
-	private boolean _selectParentNode;
 	private ObjectTreeModel _model;
 	private ISession _session;
 
-	TreeLoader(ISession session, ObjectTree objectTree, ObjectTreeModel model, ObjectTreeNode parentNode, INodeExpander[] expanders, boolean selectParentNode)
+	TreeLoader(ISession session, ObjectTree objectTree, ObjectTreeModel model, ObjectTreeNode parentNode, INodeExpander[] expanders)
 	{
 		this._session = session;
 		this._objectTree = objectTree;
 		this._model = model;
 		_parentNode = parentNode;
 		_expanders = expanders;
-		_selectParentNode= selectParentNode;
 	}
 
 	void execute()
@@ -64,11 +62,11 @@ public class TreeLoader
 			}
 			finally
 			{
-				if (_selectParentNode)
-				{
-					this._objectTree.clearSelection();
-					this._objectTree.setSelectionPath(new TreePath(_parentNode.getPath()));
-				}
+//				if (_selectParentNode)
+//				{
+//					this._objectTree.clearSelection();
+//					this._objectTree.setSelectionPath(new TreePath(_parentNode.getPath()));
+//				}
 				_model.nodeStructureChanged(_parentNode);
 			}
 		}
