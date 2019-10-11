@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write toS the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
@@ -47,7 +46,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionColoringUtil;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
@@ -67,11 +65,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 class ObjectTree extends JTree
 {
-    private static final long serialVersionUID = 1L;
-
     /** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(ObjectTree.class);
+	private static final ILogger s_log = LoggerController.createLogger(ObjectTree.class);
 
 	/** Model for this tree. */
 	private final ObjectTreeModel _model;
@@ -83,8 +78,7 @@ class ObjectTree extends JTree
 	 * Collection of popup menus (<TT>JPopupMenu</TT> instances) for the
 	 * object tree. Keyed by node type.
 	 */
-	private final Map<IIdentifier, JPopupMenu> _popups = 
-        new HashMap<IIdentifier, JPopupMenu>();
+	private final Map<IIdentifier, JPopupMenu> _popups = new HashMap<>();
 
 	/**
 	 * Global popup menu. This contains items that are to be displayed
@@ -92,13 +86,8 @@ class ObjectTree extends JTree
 	 */
 	private final JPopupMenu _globalPopup = new JPopupMenu();
 
-	private final List<Action> _globalActions = new ArrayList<Action>();
+	private final List<Action> _globalActions = new ArrayList<>();
 
-	/**
-	 * Object to synchronize on so that only one node can be expanded at any
-	 * one time.
-	 */
-	private Object _syncObject = new Object();
 
 	/**
 	 * String representation of the <TT>TreePath</TT> objects that have been
@@ -317,13 +306,7 @@ class ObjectTree extends JTree
             }
 
 
-            GUIUtils.processOnSwingEventThread(new Runnable()
-            {
-               public void run()
-               {
-                  refreshTree();
-               }
-            });
+            GUIUtils.processOnSwingEventThread(() -> refreshTree());
          }
       };
 
@@ -341,8 +324,8 @@ class ObjectTree extends JTree
    private void refreshTree()
    {
       final TreePath[] selectedPaths = getSelectionPaths();
-      final Map<String, Object> selectedPathNames = 
-          new HashMap<String, Object>();
+      final Map<String, Object> selectedPathNames =  new HashMap<>();
+
       if (selectedPaths != null)
       {
          for (int i = 0; i < selectedPaths.length; ++i)
@@ -353,7 +336,7 @@ class ObjectTree extends JTree
       ObjectTreeNode root = _model.getRootObjectTreeNode();
       root.removeAllChildren();
       fireObjectTreeCleared();
-      startExpandingTree(root, false, selectedPathNames, false);
+      expandTree(root, false, selectedPathNames, false);
       fireObjectTreeRefreshed();
    }
 
@@ -365,8 +348,7 @@ class ObjectTree extends JTree
 
       final TreePath[] selectedPaths = getSelectionPaths();
       ObjectTreeNode[] nodes = getSelectedNodes();
-      final Map<String, Object> selectedPathNames = 
-          new HashMap<String, Object>();
+      final Map<String, Object> selectedPathNames = new HashMap<>();
       if (selectedPaths != null)
       {
          for (int i = 0; i < selectedPaths.length; ++i)
@@ -382,12 +364,12 @@ class ObjectTree extends JTree
       if (parent != null)
       {
          parent.removeAllChildren();
-         startExpandingTree((ObjectTreeNode) parent, false, selectedPathNames, true);
+         expandTree((ObjectTreeNode) parent, false, selectedPathNames, true);
       }
       else
       {
          nodes[0].removeAllChildren();
-         startExpandingTree(nodes[0], false, selectedPathNames, true);
+         expandTree(nodes[0], false, selectedPathNames, true);
       }
    }
 
@@ -432,7 +414,7 @@ class ObjectTree extends JTree
 		}
 
 		final TreePath nodePath = new TreePath(node.getPath());
-        if (matchKeyPrefix(previouslySelectedTreePathNames, node, nodePath.toString()))
+      if (matchKeyPrefix(previouslySelectedTreePathNames, node, nodePath.toString()))
 		{
 			selectedTreePaths.add(nodePath);
 		}
@@ -455,7 +437,7 @@ class ObjectTree extends JTree
 		// the child.
       @SuppressWarnings("unchecked")
       Enumeration<TreeNode> childEnumeration = node.children();
-		Iterator<TreeNode> it = new EnumerationIterator<TreeNode>(childEnumeration);
+		Iterator<TreeNode> it = new EnumerationIterator<>(childEnumeration);
 
 		while (it.hasNext())
 		{
@@ -518,15 +500,35 @@ class ObjectTree extends JTree
         return result;
     }
         
-	private void startExpandingTree(ObjectTreeNode node,
-                                   boolean selectNode,
-                                   Map<String, Object> selectedPathNames,
-                                   boolean refreshSchemaInfo
+	private void expandTree(ObjectTreeNode node,
+                           boolean selectNode,
+                           Map<String, Object> selectedPathNames,
+                           boolean refreshSchemaInfo
    )
 	{
-		ExpansionController exp = new ExpansionController(node, selectNode, selectedPathNames, refreshSchemaInfo);
-      exp.run();
-	}
+      CursorChanger cursorChg = new CursorChanger(this);
+      cursorChg.show();
+      try
+      {
+         if (refreshSchemaInfo)
+         {
+            _session.getSchemaInfo().reload(node.getDatabaseObjectInfo());
+         }
+
+         expandNode(node, selectNode);
+         if (selectedPathNames != null)
+         {
+            final List<TreePath> newlySelectedTreepaths = new ArrayList<>();
+
+            restoreExpansionState(node, selectedPathNames, newlySelectedTreepaths);
+            setSelectionPaths(newlySelectedTreepaths.toArray(new TreePath[0]));
+         }
+      }
+      finally
+      {
+         cursorChg.restore();
+      }
+   }
 
 	private void expandNode(ObjectTreeNode node, boolean selectNode)
 	{
@@ -869,7 +871,7 @@ class ObjectTree extends JTree
 			final Object parentObj = path.getLastPathComponent();
 			if (parentObj instanceof ObjectTreeNode)
 			{
-				startExpandingTree((ObjectTreeNode)parentObj, false, null, false);
+				expandTree((ObjectTreeNode)parentObj, false, null, false);
 				_expandedPathNames.put(path.toString(), null);
 			}
 		}
@@ -883,69 +885,12 @@ class ObjectTree extends JTree
 	/**
 	 * This class is used to sort the nodes by their title.
 	 */
-	private static class NodeComparator implements Comparator<ObjectTreeNode>,
-                                                   Serializable
+	private static class NodeComparator implements Comparator<ObjectTreeNode>, Serializable
 	{
-        private static final long serialVersionUID = 1L;
-
-        public int compare(ObjectTreeNode obj1, ObjectTreeNode obj2)
+      public int compare(ObjectTreeNode obj1, ObjectTreeNode obj2)
 		{
 			return obj1.toString().compareToIgnoreCase(obj2.toString());
 		}
 	}
 
-	private class ExpansionController implements Runnable
-	{
-		private final ObjectTreeNode _node;
-		private final boolean _selectNode;
-		private final Map<String, Object> _selectedPathNames;
-      private boolean _refreshSchemaInfo;
-
-      ExpansionController(ObjectTreeNode node, 
-                          boolean selectNode, 
-                          Map<String, Object> selectedPathNames, 
-                          boolean refreshSchemaInfo)
-      {
-         super();
-         _node = node;
-         _selectNode = selectNode;
-         _selectedPathNames = selectedPathNames;
-         _refreshSchemaInfo = refreshSchemaInfo;
-      }
-
-		public void run()
-		{
-			synchronized (ObjectTree.this._syncObject)
-			{
-				CursorChanger cursorChg = new CursorChanger(ObjectTree.this);
-				cursorChg.show();
-				try
-				{
-               if(_refreshSchemaInfo)
-               {
-                  _session.getSchemaInfo().reload(_node.getDatabaseObjectInfo());
-               }
-
-               expandNode(_node, _selectNode);
-					if (_selectedPathNames != null)
-					{
-						final List<TreePath> newlySelectedTreepaths = new ArrayList<TreePath>();
-						
-						GUIUtils.processOnSwingEventThread(new Runnable()
-						{
-							public void run()
-							{
-                        restoreExpansionState(_node, _selectedPathNames, newlySelectedTreepaths);
-                        setSelectionPaths(newlySelectedTreepaths.toArray(new TreePath[newlySelectedTreepaths.size()]));
-                     }
-						});
-					}
-				}
-				finally
-				{
-					cursorChg.restore();
-				}
-			}
-		}
-	}
 }

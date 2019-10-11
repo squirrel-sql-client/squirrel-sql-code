@@ -32,8 +32,6 @@ public class CursorChanger
 
 	public CursorChanger(Component comp, Cursor newCursor)
 	{
-		super();
-
 		if (newCursor == null)
 		{
 			throw new IllegalArgumentException("null Cursor passed");

@@ -25,10 +25,7 @@ import java.util.List;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -38,25 +35,20 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class TreeLoader
 {
-	
-	 /** Logger for this class. */
-		private static final ILogger s_log =
-			LoggerController.createLogger(TreeLoader.class);
+	private static final ILogger s_log = LoggerController.createLogger(TreeLoader.class);
 		
-	private ObjectTree objectTree;
+	private ObjectTree _objectTree;
 	private ObjectTreeNode _parentNode;
 	private INodeExpander[] _expanders;
 	private boolean _selectParentNode;
-	private ObjectTreeModel model;
-	private ISession session;
+	private ObjectTreeModel _model;
+	private ISession _session;
 
-	TreeLoader(ISession session, ObjectTree objectTree, ObjectTreeModel model, ObjectTreeNode parentNode, INodeExpander[] expanders,
-				boolean selectParentNode)
+	TreeLoader(ISession session, ObjectTree objectTree, ObjectTreeModel model, ObjectTreeNode parentNode, INodeExpander[] expanders, boolean selectParentNode)
 	{
-		super();
-		this.session = session;
-		this.objectTree = objectTree;
-		this.model = model;
+		this._session = session;
+		this._objectTree = objectTree;
+		this._model = model;
 		_parentNode = parentNode;
 		_expanders = expanders;
 		_selectParentNode= selectParentNode;
@@ -68,49 +60,24 @@ public class TreeLoader
 		{
 			try
 			{
-				ObjectTreeNode loadingNode = showLoadingNode();
-				try
-				{
-					loadChildren();
-				}
-				finally
-				{
-                    if (_parentNode.isNodeChild(loadingNode)){
-                        _parentNode.remove(loadingNode);
-                    }
-				}
+				loadChildren();
 			}
 			finally
 			{
-				fireStructureChanged(_parentNode);
 				if (_selectParentNode)
 				{
-					this.objectTree.clearSelection();
-					this.objectTree.setSelectionPath(new TreePath(_parentNode.getPath()));
+					this._objectTree.clearSelection();
+					this._objectTree.setSelectionPath(new TreePath(_parentNode.getPath()));
 				}
+				_model.nodeStructureChanged(_parentNode);
 			}
 		}
 		catch (Throwable ex)
 		{
 			final String msg = "Error: " + _parentNode.toString();
 			s_log.error(msg, ex);
-			this.session.showErrorMessage(msg + ": " + ex.toString());
+			this._session.showErrorMessage(msg + ": " + ex.toString());
 		}
-	}
-
-	/**
-	 * This adds a node to the tree that says "Loading..." in order to give
-	 * feedback to the user.
-	 */
-	private ObjectTreeNode showLoadingNode()
-	{
-		IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, null,
-							"Loading...", DatabaseObjectType.OTHER,
-							this.session.getSQLConnection().getSQLMetaData());
-		ObjectTreeNode loadingNode = new ObjectTreeNode(this.session, doi);
-		_parentNode.add(loadingNode);
-		fireStructureChanged(_parentNode);
-		return loadingNode;
 	}
 
 	/**
@@ -123,7 +90,7 @@ public class TreeLoader
 		{
 			boolean nodeTypeAllowsChildren = false;
 			DatabaseObjectType lastDboType = null;
-			List<ObjectTreeNode> list = _expanders[i].createChildren(this.session, _parentNode);
+			List<ObjectTreeNode> list = _expanders[i].createChildren(this._session, _parentNode);
 			
 			if(list.isEmpty() == false){
 				noChildrenFound = false;
@@ -145,9 +112,9 @@ public class TreeLoader
 						DatabaseObjectType childNodeDboType = childNode.getDatabaseObjectType();
 						if (childNodeDboType != lastDboType)
 						{
-							this.objectTree.getTypedModel().addKnownDatabaseObjectType(childNodeDboType);
+							this._objectTree.getTypedModel().addKnownDatabaseObjectType(childNodeDboType);
 							lastDboType = childNodeDboType;
-							if (this.model.getExpanders(childNodeDboType).length > 0)
+							if (this._model.getExpanders(childNodeDboType).length > 0)
 							{
 								nodeTypeAllowsChildren = true;
 							}
@@ -167,17 +134,4 @@ public class TreeLoader
 		_parentNode.setNoChildrenFoundWithExpander(noChildrenFound);
 	}
 
-	/**
-	 * Let the object tree model know that its structure has changed.
-	 */
-	private void fireStructureChanged(final ObjectTreeNode node)
-	{
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				model.nodeStructureChanged(node);
-			}
-		});
-	}
 }

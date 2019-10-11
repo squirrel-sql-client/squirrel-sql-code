@@ -27,6 +27,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+After Session start the Object tree once and again was empty.
+
 #1409 Error connecting database because of "javax.crypto.IllegalBlockSizeException: Input length must be multiple of 8 when decrypting with padded cipher"
   The bug was introduced with feature #25 (Password encryption) and was contained in the last two or three snapshots before this fix.
   Users who already used feature #25 will have to reenter the passwords they chose to encrypt.

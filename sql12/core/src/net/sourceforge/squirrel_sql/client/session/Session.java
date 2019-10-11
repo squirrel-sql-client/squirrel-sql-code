@@ -77,20 +77,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 class Session implements ISession
 {
-   /**
-    * Logger for this class.
-    */
    private static final ILogger s_log = LoggerController.createLogger(Session.class);
 
-   /**
-    * Internationalized strings for this class.
-    */
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(Session.class);
 
-   /**
-    * Factory used to generate unique IDs for sessions.
-    * /** Descriptive title for session.
-    */
    private String _title = "";
 
    private SessionPanel _sessionSheet;
@@ -133,8 +123,7 @@ class Session implements ISession
     * keyed by <TT>IPlugin.getInternalName()</TT>. Each <TT>Map</TT>
     * contains the objects saved for the plugin.
     */
-   private final Map<String, Map<String, Object>> _pluginObjects =
-         new HashMap<String, Map<String, Object>>();
+   private final Map<String, Map<String, Object>> _pluginObjects = new HashMap<>();
 
    private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
 
@@ -148,8 +137,7 @@ class Session implements ISession
     */
    private boolean _closed;
 
-   private List<JComponent> _statusBarToBeAdded =
-         new ArrayList<JComponent>();
+   private List<JComponent> _statusBarToBeAdded = new ArrayList<>();
 
    private SQLConnectionListener _connLis = null;
 
@@ -161,12 +149,12 @@ class Session implements ISession
    /**
     * flag to track whether or not the table data has been loaded in the object tree
     */
-   private boolean _finishedLoading = false;
+   private volatile boolean _finishedLoading = false;
 
    /**
     * flag to track whether or not the plugins have finished loading for this new session
     */
-   private boolean _pluginsFinishedLoading = false;
+   private volatile boolean _pluginsFinishedLoading = false;
 
    /**
     * This is set to true when a plugin sets a custom IQueryTokenizer
@@ -791,11 +779,6 @@ class Session implements ISession
       }
    }
 
-//	public SQLFilterClauses getSQLFilterClauses()
-//	{
-//		return _sqlFilterClauses;
-//	}
-
    /**
     * Retrieve the descriptive title of this session.
     *
@@ -863,7 +846,7 @@ class Session implements ISession
 
 
    /**
-    * The code in any SQLEditor is parsed in the background. You may attach a listener to the ParserEventsProcessor
+    * The code in any SQLEditor is parsed in background. You may attach a listener to the ParserEventsProcessor
     * to get to know about the results of parsing. The events are passed synchron with the event queue
     * (via SwingUtils.invokeLater()). At the moment events are produced for errors in the SQLScript
     * which are highlighted in the syntax plugin and for aliases of table names which are used in the
@@ -974,21 +957,7 @@ class Session implements ISession
       {
          return;
       }
-      String javaVersion = System.getProperty("java.vm.version");
-      boolean javaVersionIsAtLeast14 = true;
-      if (javaVersion != null)
-      {
-         if (javaVersion.startsWith("1.1")
-               || javaVersion.startsWith("1.2")
-               || javaVersion.startsWith("1.3"))
-         {
-            javaVersionIsAtLeast14 = false;
-         }
-      }
-      if (!javaVersionIsAtLeast14)
-      {
-         return;
-      }
+
       // At this point we know that we have a 1.4 or higher java runtime
       boolean driverIs21Compliant = true;
 
@@ -1009,11 +978,9 @@ class Session implements ISession
       if (!driverIs21Compliant)
       {
          // i18n[Session.driverCompliance=The driver being used for alias ''{0}'' is not JDBC 2.1 compliant.\nYou should consider getting a more recent version of this driver]
-         String msg =
-               s_stringMgr.getString("Session.driverCompliance", _alias.getName());
+         String msg = s_stringMgr.getString("Session.driverCompliance", _alias.getName());
          // i18n[Session.driverComplianceTitle=JRE/JDBC Version Mismatch]
-         String title =
-               s_stringMgr.getString("Session.driverComplianceTitle");
+         String title = s_stringMgr.getString("Session.driverComplianceTitle");
          showMessageDialog(msg, title, JOptionPane.WARNING_MESSAGE);
          s_log.info(msg);
          return;
@@ -1070,7 +1037,7 @@ class Session implements ISession
       public void propertyChange(PropertyChangeEvent evt)
       {
          final String propName = evt.getPropertyName();
-         if (propName == null || propName == ISQLConnection.IPropertyNames.CATALOG)
+         if (propName == null || ISQLConnection.IPropertyNames.CATALOG.equalsIgnoreCase(propName) )
          {
             setupTitle();
          }
@@ -1078,7 +1045,7 @@ class Session implements ISession
    }
 
 
-   protected void finalize() throws Throwable
+   protected void finalize()
    {
 //		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 //		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
