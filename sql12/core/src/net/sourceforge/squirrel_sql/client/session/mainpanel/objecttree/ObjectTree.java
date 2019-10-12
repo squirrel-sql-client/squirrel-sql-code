@@ -428,10 +428,9 @@ class ObjectTree extends JTree
 				{
 					expanders = new INodeExpander[stdExpanders.length + extraExpanders.length];
 					System.arraycopy(stdExpanders, 0, expanders, 0, stdExpanders.length);
-					System.arraycopy(extraExpanders, 0, expanders, stdExpanders.length,
-										extraExpanders.length);
+					System.arraycopy(extraExpanders, 0, expanders, stdExpanders.length, extraExpanders.length);
 				}
-				new TreeLoader(this._session, this, this._model, node, expanders).execute();
+				new TreeLoader(_session, this, _model, node, expanders).execute();
 			}
 		}
 	}

@@ -22,10 +22,12 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -56,25 +58,17 @@ public class TreeLoader
 	{
 		try
 		{
-			try
-			{
-				loadChildren();
-			}
-			finally
-			{
-//				if (_selectParentNode)
-//				{
-//					this._objectTree.clearSelection();
-//					this._objectTree.setSelectionPath(new TreePath(_parentNode.getPath()));
-//				}
-				_model.nodeStructureChanged(_parentNode);
-			}
+			loadChildren();
 		}
 		catch (Throwable ex)
 		{
 			final String msg = "Error: " + _parentNode.toString();
 			s_log.error(msg, ex);
 			this._session.showErrorMessage(msg + ": " + ex.toString());
+		}
+		finally
+		{
+			_model.nodeStructureChanged(_parentNode);
 		}
 	}
 
