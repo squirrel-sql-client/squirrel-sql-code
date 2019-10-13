@@ -63,6 +63,7 @@ public class CSVFileImporter implements IFileImporter
 
       this.settings.setSeperator(ImportFileDialogProps.getCSVSeparator());
       this.settings.setDateFormat(ImportFileDialogProps.getCSVDateFormat());
+      this.settings.setImportCharset(ImportFileDialogProps.getImportCharset());
    }
 
    /*

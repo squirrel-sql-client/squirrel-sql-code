@@ -30,6 +30,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+#1408 File import dialog didn't remember encoding.
+
 Object tree: The "Refresh item" right mouse menu function sometimes failed to restore the tree selection correctly.
 
 After Session start the Object tree once and again was empty.

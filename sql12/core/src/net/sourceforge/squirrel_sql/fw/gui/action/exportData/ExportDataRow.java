@@ -23,58 +23,59 @@ import java.util.List;
 
 /**
  * @author Stefan Willinger
- *
  */
-public class ExportDataRow implements IExportDataRow {
+public class ExportDataRow implements IExportDataRow
+{
+   private List<IExportDataCell> cells;
 
-	private List<IExportDataCell> cells;
-	
-	private int rowIndex;
-	
-	
-	/**
-	 * 
-	 */
-	public ExportDataRow(List<IExportDataCell> cells, int rowIndex) {
-		super();
-		setCells(cells);
-		setRowIndex(rowIndex);
-	}
+   private int rowIndex;
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataRow#getCells()
-	 */
-	@Override
-	public Iterator<IExportDataCell> getCells() {
-		return cells.iterator();
-	}
+   public ExportDataRow(List<IExportDataCell> cells, int rowIndex)
+   {
+      setCells(cells);
+      setRowIndex(rowIndex);
+   }
 
-	/**
-	 * @param cells the cells to set
-	 */
-	public void setCells(List<IExportDataCell> cells) {
-		if(cells == null){
-			throw new IllegalArgumentException("cells = null");
-		}
-		this.cells = cells;
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataRow#getCells()
+    */
+   @Override
+   public Iterator<IExportDataCell> getCells()
+   {
+      return cells.iterator();
+   }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataRow#getRowIndex()
-	 */
-	public int getRowIndex() {
-		return rowIndex;
-	}
+   /**
+    * @param cells the cells to set
+    */
+   public void setCells(List<IExportDataCell> cells)
+   {
+      if (cells == null)
+      {
+         throw new IllegalArgumentException("cells = null");
+      }
+      this.cells = cells;
+   }
 
-	/**
-	 * @param rowIndex the rowIndex to set
-	 */
-	public void setRowIndex(int rowIndex) {
-		if(rowIndex < 0){
-			throw new IllegalArgumentException("rowIndex < 0");
-		}
-		this.rowIndex = rowIndex;
-	}
-	
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataRow#getRowIndex()
+    */
+   public int getRowIndex()
+   {
+      return rowIndex;
+   }
+
+   /**
+    * @param rowIndex the rowIndex to set
+    */
+   public void setRowIndex(int rowIndex)
+   {
+      if (rowIndex < 0)
+      {
+         throw new IllegalArgumentException("rowIndex < 0");
+      }
+      this.rowIndex = rowIndex;
+   }
+
 
 }

@@ -194,8 +194,8 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
    private Statement createStatementForStreamingResults(Connection connection) throws SQLException
    {
       Statement stmt;
-      DialectType dialectType =
-            DialectFactory.getDialectType(getSession().getMetaData());
+      DialectType dialectType = DialectFactory.getDialectType(getSession().getMetaData());
+
       if (DialectType.MYSQL5 == dialectType)
       {
          /*

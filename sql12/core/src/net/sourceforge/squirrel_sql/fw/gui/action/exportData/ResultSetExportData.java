@@ -43,24 +43,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class ResultSetExportData implements IExportData
 {
+   private final static ILogger log = LoggerController.createLogger(ResultSetExportData.class);
 
-   /**
-    * Logger for this class.
-    */
-   private final static ILogger log =
-         LoggerController.createLogger(ResultSetExportData.class);
-
-   /**
-    * Internationalized strings for this class
-    */
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(ResultSetExportData.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultSetExportData.class);
 
    static interface i18n
    {
       // i18n[ResultSetExportData.defaultLoadingPrefix="Error while reading the result set."]
       String ERROR_READING_RESULTSET = s_stringMgr.getString("ResultSetExportData.errorReadingResultSet");
-
    }
 
 

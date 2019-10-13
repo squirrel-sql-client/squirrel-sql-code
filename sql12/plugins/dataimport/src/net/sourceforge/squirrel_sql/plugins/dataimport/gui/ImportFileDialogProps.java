@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.gui;
 
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
+import java.nio.charset.Charset;
+
 public class ImportFileDialogProps
 {
    private static final String PREF_KEY_IMPORT_DIALOG_WIDTH = "Squirrel.dataimport.dialog.width";
@@ -15,6 +17,7 @@ public class ImportFileDialogProps
 
    private static final String PREF_KEY_CSV_DATE_FORMAT = "Squirrel.dataimport.CSV.date.format";
    private static final String PREF_KEY_CSV_SEPARATOR = "Squirrel.dataimport.CSV.separator";
+   private static final String PREF_KEY_CSV_IMPORT_CHARSET = "Squirrel.dataimport.CSV.import.charset";
 
 
    public static void setDialogWidth(int width)
@@ -118,5 +121,15 @@ public class ImportFileDialogProps
    public static String getCSVDateFormat()
    {
       return Props.getString(PREF_KEY_CSV_DATE_FORMAT,"yyyy-MM-dd HH:mm:ss");
+   }
+
+   public static String getImportCharset()
+   {
+      return Props.getString(PREF_KEY_CSV_IMPORT_CHARSET, Charset.defaultCharset().name());
+   }
+
+   public static void setImportCharset(String importCharset)
+   {
+      Props.putString(PREF_KEY_CSV_IMPORT_CHARSET, importCharset);
    }
 }

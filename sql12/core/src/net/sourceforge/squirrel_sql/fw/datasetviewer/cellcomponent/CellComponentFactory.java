@@ -138,13 +138,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class CellComponentFactory
 {
+   private static  ILogger s_log = LoggerController.createLogger(CellComponentFactory.class);
 
    /* map of existing DataType objects for each column.
     * The key is the ColumnDisplayDefinition object, and the value
     * is the DataTypeObject for that column's data type.
     */
-   static HashMap<ColumnDisplayDefinition, IDataTypeComponent> _colDataTypeObjects =
-         new HashMap<ColumnDisplayDefinition, IDataTypeComponent>();
+   private static HashMap<ColumnDisplayDefinition, IDataTypeComponent> _colDataTypeObjects = new HashMap<>(); // TODO Remove static
 
    /* list of DBMS-specific registered data handlers.
     * The key is a string of the form:
@@ -152,18 +152,15 @@ public class CellComponentFactory
     * and the value is a factory that can create instances of DBMS-specific
     * DataTypeComponets.
     */
-   static List<IDataTypeComponentFactory> _pluginDataTypeFactories =
-         new ArrayList<IDataTypeComponentFactory>();
+   private static List<IDataTypeComponentFactory> _pluginDataTypeFactories = new ArrayList<>(); // TODO Remove static
 
    /* The current JTable that we are working with.
     * This is used only to see when the user moves
     * to a different JTable so we know when to clear
     * the HashMap of DataTypeObjects.
     */
-   static JTable _table = null;
+   private static JTable _table = null; // TODO Remove static
 
-   /* logging mechanism for errors */
-   static private ILogger s_log = LoggerController.createLogger(CellComponentFactory.class);
 
    /**
     * Return the name of the Java class that is used to represent
@@ -793,12 +790,6 @@ public class CellComponentFactory
     */
    public static IDataTypeComponent getDataTypeObject(JTable table, ColumnDisplayDefinition colDef)
    {
-
-      if (s_log.isDebugEnabled())
-      {
-         s_log.debug("getDataTypeObject: colDef=" + colDef);
-      }
-
       IDataTypeComponent dataTypeComponent = null;
 
       // keep a hash table of the column objects
@@ -832,16 +823,6 @@ public class CellComponentFactory
          _colDataTypeObjects.put(colDef, dataTypeComponent);
       }
 
-      if (s_log.isDebugEnabled() && dataTypeComponent != null)
-      {
-         s_log.debug("getDataTypeObject: returning type: "
-               + dataTypeComponent.getClass().getName());
-      }
-      else
-      {
-         s_log.debug("getDataTypeObject: returning null type");
-      }
-
       // If we get here, then no data type object was found for this column.
       // (should not get here because switch default returns null.)
       return dataTypeComponent;
@@ -861,8 +842,7 @@ public class CellComponentFactory
    private static IDataTypeComponent getCustomDataType(JTable table, ColumnDisplayDefinition colDef)
    {
       IDataTypeComponent dataTypeComponent = null;
-      if (dataTypeComponent == null && !_pluginDataTypeFactories.isEmpty()
-            && colDef.getDialectType() != null)
+      if (dataTypeComponent == null && !_pluginDataTypeFactories.isEmpty() && colDef.getDialectType() != null)
       {
 
          IDataTypeComponentFactory factory = findMatchingFactory(colDef.getDialectType(),

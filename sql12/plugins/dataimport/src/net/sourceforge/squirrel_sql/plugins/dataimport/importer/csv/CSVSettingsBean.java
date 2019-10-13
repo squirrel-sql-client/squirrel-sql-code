@@ -30,14 +30,14 @@ public class CSVSettingsBean implements Cloneable, Serializable
 
    private char seperator = ';';
 
-   private transient Charset importCharset = Charset.defaultCharset();
+   private  String importCharset = Charset.defaultCharset().name();
 
    private String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
    /**
     * @return the importCharset
     */
-   public Charset getImportCharset()
+   public String getImportCharset()
    {
       return importCharset;
    }
@@ -45,7 +45,7 @@ public class CSVSettingsBean implements Cloneable, Serializable
    /**
     * @param importCharset the importCharset to set
     */
-   public void setImportCharset(Charset importCharset)
+   public void setImportCharset(String importCharset)
    {
       this.importCharset = importCharset;
    }

@@ -22,83 +22,89 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 /**
  * @author Stefan Willinger
- *
  */
-public class ExportDataColumn implements IExportDataCell {
-	private ColumnDisplayDefinition columnDisplayDefinition;
-	private Object object;
-	private int rowIndex;
-	private int columnIndex;
-	
-	/**
-	 * 
-	 */
-	public ExportDataColumn() {
-		super();
-	}
+public class ExportDataColumn implements IExportDataCell
+{
+   private ColumnDisplayDefinition columnDisplayDefinition;
+   private Object object;
+   private int rowIndex;
+   private int columnIndex;
 
-	public ExportDataColumn(ColumnDisplayDefinition columnDisplayDefinition, Object object, int rowIndex, int columnIndex) {
-		super();
-		setColumnDisplayDefinition(columnDisplayDefinition);
-		setObject(object);
-		setRowIndex(rowIndex);
-		setColumnIndex(columnIndex);
-	}
-	/**
-	 * @return the columnDisplayDefinition
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getColumnDisplayDefinition()
-	 */
-	public ColumnDisplayDefinition getColumnDisplayDefinition() {
-		return columnDisplayDefinition;
-	}
-	/**
-	 * @param columnDisplayDefinition the columnDisplayDefinition to set
-	 */
-	public void setColumnDisplayDefinition(ColumnDisplayDefinition columnDisplayDefinition) {
-		this.columnDisplayDefinition = columnDisplayDefinition;
-	}
+   public ExportDataColumn(ColumnDisplayDefinition columnDisplayDefinition, Object object, int rowIndex, int columnIndex)
+   {
+      setColumnDisplayDefinition(columnDisplayDefinition);
+      setObject(object);
+      setRowIndex(rowIndex);
+      setColumnIndex(columnIndex);
+   }
 
-	/**
-	 * @return the object
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getObject()
-	 */
-	public Object getObject() {
-		return object;
-	}
-	/**
-	 * @param object the object to set
-	 */
-	public void setObject(Object object) {
-		this.object = object;
-	}
-	/**
-	 * @return the rowIndex
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getRowIndex()
-	 */
-	public int getRowIndex() {
-		return rowIndex;
-	}
-	/**
-	 * @param rowIndex the rowIndex to set
-	 */
-	public void setRowIndex(int rowIndex) {
-		this.rowIndex = rowIndex;
-	}
-	/**
-	 * @return the columnIndex
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getColumnIndex()
-	 */
-	public int getColumnIndex() {
-		return columnIndex;
-	}
-	/**
-	 * @param columnIndex the columnIndex to set
-	 */
-	public void setColumnIndex(int columnIndex) {
-		this.columnIndex = columnIndex;
-	}
+   /**
+    * @return the columnDisplayDefinition
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getColumnDisplayDefinition()
+    */
+   public ColumnDisplayDefinition getColumnDisplayDefinition()
+   {
+      return columnDisplayDefinition;
+   }
 
-	
+   /**
+    * @param columnDisplayDefinition the columnDisplayDefinition to set
+    */
+   public void setColumnDisplayDefinition(ColumnDisplayDefinition columnDisplayDefinition)
+   {
+      this.columnDisplayDefinition = columnDisplayDefinition;
+   }
 
-	
+   /**
+    * @return the object
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getObject()
+    */
+   public Object getObject()
+   {
+      return object;
+   }
+
+   /**
+    * @param object the object to set
+    */
+   public void setObject(Object object)
+   {
+      this.object = object;
+   }
+
+   /**
+    * @return the rowIndex
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getRowIndex()
+    */
+   public int getRowIndex()
+   {
+      return rowIndex;
+   }
+
+   /**
+    * @param rowIndex the rowIndex to set
+    */
+   public void setRowIndex(int rowIndex)
+   {
+      this.rowIndex = rowIndex;
+   }
+
+   /**
+    * @return the columnIndex
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getColumnIndex()
+    */
+   public int getColumnIndex()
+   {
+      return columnIndex;
+   }
+
+   /**
+    * @param columnIndex the columnIndex to set
+    */
+   public void setColumnIndex(int columnIndex)
+   {
+      this.columnIndex = columnIndex;
+   }
+
+
 }

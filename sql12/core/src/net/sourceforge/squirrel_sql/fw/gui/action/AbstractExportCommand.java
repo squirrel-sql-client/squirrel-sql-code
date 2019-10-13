@@ -70,9 +70,7 @@ public abstract class AbstractExportCommand
 	 static interface i18n {
 	       //i18n[TableExportCsvCommand.missingClobDataMsg=Found Clob placeholder 
 	       //({0}) amongst data to be exported. Continue exporting cell data?]
-	       String missingClobDataMsg = 
-	           s_stringMgr.getString("TableExportCsvCommand.missingClobDataMsg",
-	                                 ClobDescriptor.i18n.CLOB_LABEL);
+	       String missingClobDataMsg =  s_stringMgr.getString("TableExportCsvCommand.missingClobDataMsg", ClobDescriptor.i18n.CLOB_LABEL);
 	       
 	       String FAILED = s_stringMgr.getString("AbstractExportCommand.failed");
 	       
