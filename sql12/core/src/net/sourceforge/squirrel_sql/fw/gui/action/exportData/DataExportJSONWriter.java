@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 
@@ -132,6 +133,10 @@ public class DataExportJSONWriter extends AbstractDataExportFileWriter
    protected void afterWorking() throws Exception
    {
       String jsonString = _mapper.writerWithDefaultPrettyPrinter().writeValueAsString(_root);
-      Files.write(getFile().toPath(), jsonString.getBytes());
+
+      try(PrintWriter pw = new PrintWriter(getFile(), getCharset().name()))
+      {
+         pw.print(jsonString.toCharArray());
+      }
    }
 }

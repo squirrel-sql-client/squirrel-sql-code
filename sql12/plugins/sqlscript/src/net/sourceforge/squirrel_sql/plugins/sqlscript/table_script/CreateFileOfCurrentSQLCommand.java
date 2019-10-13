@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.action.ResultSetExportCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvDlg;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportDlg;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -44,7 +44,7 @@ import org.apache.commons.lang.time.StopWatch;
 
 /**
  * Command to export the result of the current SQL into a File.
- * With this command is the user able to export the result of the current SQL into a file using the {@link TableExportCsvDlg}.
+ * With this command is the user able to export the result of the current SQL into a file using the {@link TableExportDlg}.
  * The command will run on a separate thread and a separate connection to the database. It is monitored with a {@link ProgressAbortDialog} and can be canceled.
  *
  * @author Stefan Willinger

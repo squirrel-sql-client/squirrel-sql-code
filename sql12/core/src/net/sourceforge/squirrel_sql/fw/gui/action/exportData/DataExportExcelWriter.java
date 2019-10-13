@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportController;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -217,7 +218,7 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
 
    /**
     * @throws java.lang.Exception
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addCell(net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController,
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addCell(TableExportController,
     * int, int,
     * net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell)
     */

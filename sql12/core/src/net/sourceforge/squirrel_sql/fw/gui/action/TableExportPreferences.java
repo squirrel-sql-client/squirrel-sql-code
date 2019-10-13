@@ -6,10 +6,10 @@ public class TableExportPreferences
 {
 
    // PREF_KEY_CSV_FILE
-   private String _csvFile = null;
+   private String _file = null;
 
    // PREF_KEY_CSV_ENCODING
-   private String _csvEncoding = Charset.defaultCharset().name();
+   private String _encoding = Charset.defaultCharset().name();
 
    // PREF_KEY_WITH_HEADERS
    private boolean _withHeaders = true;
@@ -67,24 +67,24 @@ public class TableExportPreferences
       _formatXLS = formatXLS;
    }
 
-   public String getCsvFile()
+   public String getFile()
    {
-      return _csvFile;
+      return _file;
    }
 
-   public void setCsvFile(String csvFile)
+   public void setFile(String file)
    {
-      _csvFile = csvFile;
+      _file = file;
    }
 
-   public String getCsvEncoding()
+   public String getEncoding()
    {
-      return _csvEncoding;
+      return _encoding;
    }
 
-   public void setCsvEncoding(String csvEncoding)
+   public void setEncoding(String csvEncoding)
    {
-      _csvEncoding = csvEncoding;
+      _encoding = csvEncoding;
    }
 
    public boolean isWithHeaders()

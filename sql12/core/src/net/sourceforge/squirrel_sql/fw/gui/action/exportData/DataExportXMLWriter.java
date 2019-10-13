@@ -19,7 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
 
 import java.io.File;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,7 +30,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 
@@ -44,143 +43,150 @@ import org.w3c.dom.Element;
  * Uses DOM for output
  * </p>
  * <b>Note:</b> This class is the result of a refactoring task. The code was taken from TableExportCsvCommand.
- * @author Stefan Willinger
  *
+ * @author Stefan Willinger
  */
 public class DataExportXMLWriter extends AbstractDataExportFileWriter
 {
-	
-	private DocumentBuilderFactory factory;
-	private DocumentBuilder builder;
-	private Document testDoc;
-	private Element columns;
-	private Element root;
-	private Element rows;
-	private Element row;
 
-	/**
-	 * @param file
-	 * @param prefs
-	 * @param includeHeaders
-	 * @param progressController 
-	 */
-	public DataExportXMLWriter(File file, TableExportPreferences prefs, ProgressAbortCallback progressController)
-	{
-		super(file, prefs, progressController);
-	}
+   private DocumentBuilderFactory factory;
+   private DocumentBuilder builder;
+   private Document document;
+   private Element columns;
+   private Element root;
+   private Element rows;
+   private Element row;
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterWorking()
-	 */
-	@Override
-	protected void afterWorking() throws Exception {
-		
-		// The XML document we created above is still in memory
-		// so we have to output it to a real file.
-		// In order to do it we first have to create
-		// an instance of DOMSource
-		DOMSource source = new DOMSource(testDoc);
+   /**
+    * @param file
+    * @param prefs
+    * @param includeHeaders
+    * @param progressController
+    */
+   public DataExportXMLWriter(File file, TableExportPreferences prefs, ProgressAbortCallback progressController)
+   {
+      super(file, prefs, progressController);
+   }
 
-		// PrintStream will be responsible for writing
-		// the text data to the file
-		PrintStream ps = new PrintStream(getFile());
-		StreamResult result = new StreamResult(ps);
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterWorking()
+    */
+   @Override
+   protected void afterWorking() throws Exception
+   {
 
-		// Once again we are using a factory of some sort,
-		// this time for getting a Transformer instance,
-		// which we use to output the XML
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
+      // The XML document we created above is still in memory
+      // so we have to output it to a real file.
+      // In order to do it we first have to create
+      // an instance of DOMSource
+      DOMSource source = new DOMSource(document);
 
-		// Indenting the XML
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      // PrintStream will be responsible for writing
+      // the text data to the file
+      PrintWriter pw = new PrintWriter(getFile(), getCharset().name());
+      StreamResult result = new StreamResult(pw);
 
-		// The actual output to a file goes here
-		transformer.transform(source, result);
-	}
+      // Once again we are using a factory of some sort,
+      // this time for getting a Transformer instance,
+      // which we use to output the XML
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      Transformer transformer = transformerFactory.newTransformer();
+      transformer.setOutputProperty(OutputKeys.ENCODING, getCharset().name());
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addCell(int, int, net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell)
-	 */
-	@Override
-	protected void addCell(IExportDataCell cell) throws Exception {
-		String strCellValue = "";
-		if(cell.getObject() != null)
-		{
-			if (getPrefs().isUseGlobalPrefsFormating() && cell.getColumnDisplayDefinition() != null)
-			{
-				strCellValue = CellComponentFactory.renderObject(cell.getObject(), cell.getColumnDisplayDefinition());
-			}
-			else
-				{
-				strCellValue = cell.getObject().toString();
-			}
-		}
-		
-		Element value = testDoc.createElement("value");
-		value.setAttribute("columnNumber", String.valueOf(cell.getColumnIndex()));
-		value.setTextContent(strCellValue);
-		row.appendChild(value);		
-	}
+      // Indenting the XML
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addHeaderCell(int, int, java.lang.String)
-	 */
-	@Override
-	protected void addHeaderCell(int colIdx, String columnName) throws Exception {
-		Element columnEl = testDoc.createElement("column");
-		columnEl.setAttribute("number", String.valueOf(colIdx));
-		columns.appendChild(columnEl);
+      // The actual output to a file goes here
+      transformer.transform(source, result);
+   }
 
-		Element columnNameEl = testDoc.createElement("name");
-		columnNameEl.setTextContent(columnName);
-		columnEl.appendChild(columnNameEl);
-		
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addCell(int, int, net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell)
+    */
+   @Override
+   protected void addCell(IExportDataCell cell) throws Exception
+   {
+      String strCellValue = "";
+      if (cell.getObject() != null)
+      {
+         if (getPrefs().isUseGlobalPrefsFormating() && cell.getColumnDisplayDefinition() != null)
+         {
+            strCellValue = CellComponentFactory.renderObject(cell.getObject(), cell.getColumnDisplayDefinition());
+         }
+         else
+         {
+            strCellValue = cell.getObject().toString();
+         }
+      }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeWorking(java.io.File)
-	 */
-	@Override
-	protected void beforeWorking(File file) throws Exception {
-		// Using a factory to get DocumentBuilder for creating XML's
-		factory = DocumentBuilderFactory.newInstance();
-		builder = factory.newDocumentBuilder();
+      Element value = document.createElement("value");
+      value.setAttribute("columnNumber", String.valueOf(cell.getColumnIndex()));
+      value.setTextContent(strCellValue);
+      row.appendChild(value);
+   }
 
-		// Here instead of parsing an existing document we want to
-		// create a new one.
-		testDoc = builder.newDocument();
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addHeaderCell(int, int, java.lang.String)
+    */
+   @Override
+   protected void addHeaderCell(int colIdx, String columnName) throws Exception
+   {
+      Element columnEl = document.createElement("column");
+      columnEl.setAttribute("number", String.valueOf(colIdx));
+      columns.appendChild(columnEl);
 
-		// 'table' is the main tag in the XML.
-		root = testDoc.createElement("table");
-		testDoc.appendChild(root);
+      Element columnNameEl = document.createElement("name");
+      columnNameEl.setTextContent(columnName);
+      columnEl.appendChild(columnNameEl);
 
-		// 'columns' tag will contain informations about columns
-		columns = testDoc.createElement("columns");
-		root.appendChild(columns);
-	}
+   }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeRow()
-	 */
-	@Override
-	public void beforeRow(int rowIdx) throws Exception {
-		super.beforeRow(rowIdx);
-		row = testDoc.createElement("row");
-		row.setAttribute("rowNumber", String.valueOf(rowIdx));
-		rows.appendChild(row);
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeWorking(java.io.File)
+    */
+   @Override
+   protected void beforeWorking(File file) throws Exception
+   {
+      // Using a factory to get DocumentBuilder for creating XML's
+      factory = DocumentBuilderFactory.newInstance();
+      builder = factory.newDocumentBuilder();
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeRows()
-	 */
-	@Override
-	public void beforeRows() {
-		super.beforeRows();
-		// 'rows' tag contains the data extracted from the table
-		rows = testDoc.createElement("rows");
-		root.appendChild(rows);
-	}
-	
-	
+      // Here instead of parsing an existing document we want to
+      // create a new one.
+      document = builder.newDocument();
+
+      // 'table' is the main tag in the XML.
+      root = document.createElement("table");
+      document.appendChild(root);
+
+      // 'columns' tag will contain informations about columns
+      columns = document.createElement("columns");
+      root.appendChild(columns);
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeRow()
+    */
+   @Override
+   public void beforeRow(int rowIdx) throws Exception
+   {
+      super.beforeRow(rowIdx);
+      row = document.createElement("row");
+      row.setAttribute("rowNumber", String.valueOf(rowIdx));
+      rows.appendChild(row);
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeRows()
+    */
+   @Override
+   public void beforeRows()
+   {
+      super.beforeRows();
+      // 'rows' tag contains the data extracted from the table
+      rows = document.createElement("rows");
+      root.appendChild(rows);
+   }
+
+
 }

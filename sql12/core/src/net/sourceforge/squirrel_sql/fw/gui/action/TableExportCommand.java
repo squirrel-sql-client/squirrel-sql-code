@@ -9,8 +9,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescripto
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportCSVWriter;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.JTableExportData;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -22,16 +20,12 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author Stefan Willinger
  * @see net.sourceforge.squirrel_sql.fw.gui.action.export
  */
-public class TableExportCsvCommand extends AbstractExportCommand
+public class TableExportCommand extends AbstractExportCommand
 {
+   private JTable _table;
 
-   static ILogger s_log = LoggerController.createLogger(TableExportCsvCommand.class);
-
-   JTable _table;
-
-   public TableExportCsvCommand(JTable table)
+   public TableExportCommand(JTable table)
    {
-      super();
       _table = table;
    }
 
@@ -80,7 +74,7 @@ public class TableExportCsvCommand extends AbstractExportCommand
     * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createExportData()
     */
    @Override
-   protected IExportData createExportData(TableExportCsvController ctrl)
+   protected IExportData createExportData(TableExportController ctrl)
    {
       return new JTableExportData(_table, ctrl.exportComplete());
    }

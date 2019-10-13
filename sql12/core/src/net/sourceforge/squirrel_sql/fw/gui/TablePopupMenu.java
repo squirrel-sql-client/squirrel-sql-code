@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.gui;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
@@ -37,7 +36,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInStatementCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInsertStatementCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyUpdateStatementCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyWhereStatementCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectEntireRowsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
@@ -59,7 +58,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.JWindow;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import java.awt.Component;
@@ -97,7 +95,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private GotoColorMenuController _gotoColorMenuController = new GotoColorMenuController();
 	private CopyColoredRowsToNewWindowAction _copyColoredRowsToNewWindow = new CopyColoredRowsToNewWindowAction();
 
-	private ExportCsvAction _exportCvs = new ExportCsvAction();
+	private ExportAction _export = new ExportAction();
    private AdjustAllColWidthsAction _adjustAllColWidthsAction = new AdjustAllColWidthsAction();
 	private AlwaysAdjustAllColWidthsAction _alwaysAdjustAllColWidthsAction = new AlwaysAdjustAllColWidthsAction();
    private ShowRowNumbersAction _showRowNumbersAction = new ShowRowNumbersAction();
@@ -180,7 +178,7 @@ public class TablePopupMenu extends BasePopupMenu
 		add(_copyColoredRowsToNewWindow);
 		addSeparator();
 
-		addAction(_exportCvs);
+		addAction(_export);
       addSeparator();
       addAction(_adjustAllColWidthsAction);
 
@@ -457,9 +455,9 @@ public class TablePopupMenu extends BasePopupMenu
 
    }
 
-   private class ExportCsvAction extends BaseAction
+   private class ExportAction extends BaseAction
    {
-		ExportCsvAction()
+		ExportAction()
       {
          // i18n[TablePopupMenu.export=Export CSV / MS Excel / XML ...]
          super(s_stringMgr.getString("TablePopupMenu.export"));
@@ -469,7 +467,7 @@ public class TablePopupMenu extends BasePopupMenu
       {
 			try
 			{
-				new TableExportCsvCommand(_dataSetViewerTablePanel.getTable()).execute(SwingUtilities.windowForComponent(_dataSetViewerTablePanel.getTable()));
+				new TableExportCommand(_dataSetViewerTablePanel.getTable()).execute(SwingUtilities.windowForComponent(_dataSetViewerTablePanel.getTable()));
 			}
 			catch (ExportDataException e)
 			{

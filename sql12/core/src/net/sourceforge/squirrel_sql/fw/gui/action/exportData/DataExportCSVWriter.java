@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -129,19 +127,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
    @Override
    protected void beforeWorking(File file) throws Exception
    {
-      bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), getCSVCharset()));
-   }
-
-   public Charset getCSVCharset()
-   {
-      try
-      {
-         return Charset.forName(getPrefs().getCsvEncoding());
-      }
-      catch (IllegalCharsetNameException icne)
-      {
-         return Charset.defaultCharset();
-      }
+      bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), getCharset()));
    }
 
 

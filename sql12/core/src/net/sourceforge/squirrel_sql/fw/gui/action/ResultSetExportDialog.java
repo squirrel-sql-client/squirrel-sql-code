@@ -31,12 +31,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
- * A customized {@link TableExportCsvDlg}.
+ * A customized {@link TableExportDlg}.
  * This customized dialog offer the option to export the whole or only the frist n rows of the result-set.
  * @author Stefan Willinger
  *
  */
-public class ResultSetExportDialog extends TableExportCsvDlg {
+public class ResultSetExportDialog extends TableExportDlg
+{
 	
 	static final StringManager s_stringMgr = StringManagerFactory
 			.getStringManager(ResultSetExportCommand.class);
@@ -54,7 +55,7 @@ public class ResultSetExportDialog extends TableExportCsvDlg {
    }
 
    /**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvDlg#getSelelectionPanel()
+	 * @see TableExportDlg#getSelelectionPanel()
 	 */
 	@Override
 	protected Component getSelelectionPanel() {

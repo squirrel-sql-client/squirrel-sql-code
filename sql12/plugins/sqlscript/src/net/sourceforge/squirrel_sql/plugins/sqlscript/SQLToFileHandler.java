@@ -117,7 +117,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
 
          TableExportPreferences prefs = TableExportPreferencesDAO.loadPreferences();
 
-         prefs.setCsvFile(fileName);
+         prefs.setFile(fileName);
 
          if(fileName.toUpperCase().endsWith("CSV"))
          {

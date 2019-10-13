@@ -6,8 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
 
 import javax.swing.*;
 
@@ -15,17 +13,17 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-public class TableExportCsvController
+public class TableExportController
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportCsvController.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportController.class);
 
-   private TableExportCsvDlg _dlg;
+   private TableExportDlg _dlg;
    private boolean _ok = false;
 
    private Window _owner;
 
 
-   TableExportCsvController(Window owner)
+   TableExportController(Window owner)
    {
       _owner = owner;
       _dlg = createDialog(owner);
@@ -53,9 +51,9 @@ public class TableExportCsvController
 
    }
 
-   protected TableExportCsvDlg createDialog(Window owner)
+   protected TableExportDlg createDialog(Window owner)
    {
-      return new TableExportCsvDlg(owner);
+      return new TableExportDlg(owner);
    }
 
    private void onSeparatorCharChanged(KeyEvent e)
@@ -178,9 +176,9 @@ public class TableExportCsvController
          _dlg.chkSeparatorTab.setEnabled(true);
          _dlg.txtSeparatorChar.setEnabled(true);
          _dlg.lblCharset.setEnabled(true);
-         _dlg.charsets.setEnabled(true);
+         _dlg.cboCharsets.setEnabled(true);
          _dlg.lblLineSeparator.setEnabled(true);
-         _dlg._lineSeparators.setEnabled(true);
+         _dlg.cboLineSeparators.setEnabled(true);
 
          if(_dlg.chkSeparatorTab.isSelected())
          {
@@ -203,11 +201,11 @@ public class TableExportCsvController
       {
          _dlg.lblSeparator.setEnabled(false);
          _dlg.lblCharset.setEnabled(false);
+         _dlg.cboCharsets.setEnabled(false);
          _dlg.chkSeparatorTab.setEnabled(false);
          _dlg.txtSeparatorChar.setEnabled(false);
-         _dlg.charsets.setEnabled(false);
          _dlg.lblLineSeparator.setEnabled(false);
-         _dlg._lineSeparators.setEnabled(false);
+         _dlg.cboLineSeparators.setEnabled(false);
          if(replaceEnding)
          {
             replaceFileEnding();
@@ -216,12 +214,12 @@ public class TableExportCsvController
       else if (_dlg.radFormatXML.isSelected() || _dlg.radFormatJSON.isSelected())
       {
          _dlg.lblSeparator.setEnabled(false);
-         _dlg.lblCharset.setEnabled(false);
+         _dlg.lblCharset.setEnabled(true);
+         _dlg.cboCharsets.setEnabled(true);
          _dlg.chkSeparatorTab.setEnabled(false);
          _dlg.txtSeparatorChar.setEnabled(false);
-         _dlg.charsets.setEnabled(false);
          _dlg.lblLineSeparator.setEnabled(false);
-         _dlg._lineSeparators.setEnabled(false);
+         _dlg.cboLineSeparators.setEnabled(false);
          if(replaceEnding)
          {
             replaceFileEnding();
@@ -447,10 +445,10 @@ public class TableExportCsvController
    {
 
       // Preferences.put(PREF_KEY_CSV_FILE, );
-      prefs.setCsvFile(_dlg.txtFile.getText());
+      prefs.setFile(_dlg.txtFile.getText());
 
       //Preferences.put(PREF_KEY_CSV_ENCODING, _dlg.charsets.getSelectedItem().toString());
-      prefs.setCsvEncoding(_dlg.charsets.getSelectedItem().toString());
+      prefs.setEncoding(_dlg.cboCharsets.getSelectedItem().toString());
 
       //Preferences.putBoolean(PREF_KEY_WITH_HEADERS, _dlg.chkWithHeaders.isSelected());
       prefs.setWithHeaders(_dlg.chkWithHeaders.isSelected());
@@ -477,7 +475,7 @@ public class TableExportCsvController
       prefs.setSeperatorChar(_dlg.txtSeparatorChar.getText());
 
       //Preferences.put(PREF_KEY_LINE_SEPERATOR, ((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
-      prefs.setLineSeperator(((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
+      prefs.setLineSeperator(((LineSeparator)_dlg.cboLineSeparators.getSelectedItem()).name());
 
       //Preferences.putBoolean(PREF_KEY_EXPORT_COMPLETE, _dlg.radComplete.isSelected());
       prefs.setExportComplete(_dlg.radComplete.isSelected());
@@ -499,14 +497,14 @@ public class TableExportCsvController
 
       if (formatIsNewXlsx(prefs))
       {
-         _dlg.txtFile.setText(replaceXlsByXlsx(prefs.getCsvFile()));
+         _dlg.txtFile.setText(replaceXlsByXlsx(prefs.getFile()));
       }
       else
       {
-         _dlg.txtFile.setText(prefs.getCsvFile());
+         _dlg.txtFile.setText(prefs.getFile());
       }
 
-      _dlg.charsets.setSelectedItem(prefs.getCsvEncoding());
+      _dlg.cboCharsets.setSelectedItem(prefs.getEncoding());
       _dlg.chkWithHeaders.setSelected(prefs.isWithHeaders());
 
 
@@ -564,7 +562,7 @@ public class TableExportCsvController
 
       LineSeparator preferredLineSeparator = LineSeparator.valueOf(prefs.getLineSeperator());
 
-      _dlg._lineSeparators.setSelectedItem(preferredLineSeparator);
+      _dlg.cboLineSeparators.setSelectedItem(preferredLineSeparator);
    }
 
    private boolean formatIsNewXlsx(TableExportPreferences preferences)
@@ -678,7 +676,7 @@ public class TableExportCsvController
       }
    }
 
-   protected TableExportCsvDlg getDialog() {
+   protected TableExportDlg getDialog() {
 	   return this._dlg;
    }
 

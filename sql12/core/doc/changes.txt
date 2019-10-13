@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#581 JSON and XML export allow to select the charset/encoding
+  Info: The export function is available for tables (table's right mouse menu) and SQL queries (editor's right mouse menu / tools popup ctrl+t / toolbar)
+
 Introduced Java 13 compatibility.
 
 SQL editor: When control key is down tables are marked as hyper links.

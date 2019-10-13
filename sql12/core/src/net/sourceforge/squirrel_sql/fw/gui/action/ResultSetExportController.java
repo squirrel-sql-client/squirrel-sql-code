@@ -18,14 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Window;
 
 
 /**
- * A specialization of {@link TableExportCsvController}, that honors that the source is a SQL-Statement.
+ * A specialization of {@link TableExportController}, that honors that the source is a SQL-Statement.
  * The following behavior is changed:
  * <ul>
  * 	<li>Tell the user, that exporting to Excel is dangerous, if the SQL returns a huge data set.</li>
@@ -35,16 +34,17 @@ import java.awt.Window;
  * @author Stefan Willinger
  *
  */
-public class ResultSetExportCsvController extends TableExportCsvController {
+public class ResultSetExportController extends TableExportController
+{
 
 
-   public ResultSetExportCsvController(Window owner)
+   public ResultSetExportController(Window owner)
    {
       super(owner);
    }
 
    /**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController#shouldWarnIfExcel()
+	 * @see TableExportController#shouldWarnIfExcel()
 	 */
 	@Override
 	protected boolean shouldWarnIfExcel() {
@@ -52,7 +52,7 @@ public class ResultSetExportCsvController extends TableExportCsvController {
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController#createDialog()
+	 * @see TableExportController#createDialog()
     * @param owner
 	 */
 	@Override
@@ -79,7 +79,7 @@ public class ResultSetExportCsvController extends TableExportCsvController {
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController#writePrefs()
+	 * @see TableExportController#writePrefs()
 	 */
 	@Override
 	protected void writeControlsToPrefs(TableExportPreferences prefs)
@@ -93,7 +93,7 @@ public class ResultSetExportCsvController extends TableExportCsvController {
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController#initSelectionPanel(java.util.prefs.Preferences)
+	 * @see TableExportController#initSelectionPanel(java.util.prefs.Preferences)
 	 */
 	@Override
 	protected void initSelectionPanel(TableExportPreferences prefs)
@@ -109,12 +109,11 @@ public class ResultSetExportCsvController extends TableExportCsvController {
 			dlg.txtLimitRows.setEnabled(false);
 		}
 	}
-	
-	public int getMaxRows(){
+
+	public int getMaxRows()
+	{
 		ResultSetExportDialog dlg = (ResultSetExportDialog) super.getDialog();
 		return dlg.txtLimitRows.getInt();
 	}
-	
-	
-	
+
 }

@@ -19,11 +19,13 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportController;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -33,7 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * Exports a data structure into a file.
  * This abstract implementation does not know the format of the target file, e.g. XML or CSV.
  * It rather knows the structure of {@link IExportData} and provide some callback methods for exporting data.
- * A further scope of this abstract class is the interaction with  {@link TableExportCsvController} and {@link ProgressAbortCallback}.
+ * A further scope of this abstract class is the interaction with  {@link TableExportController} and {@link ProgressAbortCallback}.
  * A concrete implementation is responsible for formating and writing the data into the target.
  *
  * @author Stefan Willinger
@@ -361,4 +363,17 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
          return progressController.isStop();
       }
    }
+
+   public Charset getCharset()
+   {
+      try
+      {
+         return Charset.forName(getPrefs().getEncoding());
+      }
+      catch (IllegalCharsetNameException icne)
+      {
+         return Charset.defaultCharset();
+      }
+   }
+
 }

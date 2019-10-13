@@ -42,7 +42,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * Abstract command for exporting Data.
- * This command exports the specified {@link IExportData}. The main configuration of the export could be managed with the {@link TableExportCsvController}.
+ * This command exports the specified {@link IExportData}. The main configuration of the export could be managed with the {@link TableExportController}.
  * A {@link ProgressAbortCallback} can monitor the progress, but there must not be a such monitor.
  * There are several target formats supported:
  * <li>CSV</li>
@@ -104,7 +104,7 @@ public abstract class AbstractExportCommand
 	 * @param data The data to export
 	 * @return the number of written data rows or a negative value, if not the whole data are exported.
 	 */
-   protected long writeFile(final TableExportCsvController ctrl, IExportData data)
+   protected long writeFile(final TableExportController ctrl, IExportData data)
    {
       return ExportFileWriter.writeFile(TableExportPreferencesDAO.loadPreferences(), data, progressController, ctrl.getOwningWindow());
    }
@@ -142,7 +142,7 @@ public abstract class AbstractExportCommand
 
          boolean fileIsInUse = false;
 
-         TableExportCsvController ctrl;
+         TableExportController ctrl;
          do
          {
             ctrl = createTableExportController(owner);
@@ -249,7 +249,7 @@ public abstract class AbstractExportCommand
             {
                // i18n[TableExportCsvCommand.writeFileSuccess=Export to file
                // "{0}" is complete.]
-               TableExportCsvController finalCtrl = ctrl;
+               TableExportController finalCtrl = ctrl;
                GUIUtils.processOnSwingEventThread(() -> showExportSuccessMessage(owner, writtenRows, finalCtrl.getFile()), true);
 
             }
@@ -329,17 +329,17 @@ public abstract class AbstractExportCommand
 	 * @return
     * @param owner
 	 */
-	protected TableExportCsvController createTableExportController(final Window owner) {
+	protected TableExportController createTableExportController(final Window owner) {
 
       try
       {
-         final TableExportCsvController[] buf = new TableExportCsvController[1];
+         final TableExportController[] buf = new TableExportController[1];
 
          Runnable runnable = new Runnable()
          {
             public void run()
             {
-               buf[0] = new TableExportCsvController(owner);
+               buf[0] = new TableExportController(owner);
             }
          };
          GUIUtils.processOnSwingEventThread(runnable, true);
@@ -364,7 +364,7 @@ public abstract class AbstractExportCommand
 	 * @return the data for the export.
 	 * @throws ExportDataException if any problem occurs while creating the data.
 	 */
-	protected abstract IExportData createExportData(TableExportCsvController ctrl) throws ExportDataException;
+	protected abstract IExportData createExportData(TableExportController ctrl) throws ExportDataException;
 
    /**
 	 * @param string

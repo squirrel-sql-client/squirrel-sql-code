@@ -35,8 +35,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-
 /**
  * Command for exporting a result set to a file.
  *
@@ -91,12 +89,12 @@ public class ResultSetExportCommand extends AbstractExportCommand
     * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createExportData()
     */
    @Override
-   protected IExportData createExportData(TableExportCsvController ctrl) throws ExportDataException
+   protected IExportData createExportData(TableExportController ctrl) throws ExportDataException
    {
       try
       {
          super.progress(i18n.EXECUTING_QUERY);
-         ResultSetExportCsvController controller = (ResultSetExportCsvController) ctrl;
+         ResultSetExportController controller = (ResultSetExportController) ctrl;
          if (controller.exportComplete() == false)
          {
             stmt.setMaxRows(controller.getMaxRows());
@@ -116,17 +114,17 @@ public class ResultSetExportCommand extends AbstractExportCommand
     * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createTableExportController()
     */
    @Override
-   protected TableExportCsvController createTableExportController(final Window owner)
+   protected TableExportController createTableExportController(final Window owner)
    {
       try
       {
-         final ResultSetExportCsvController[] buf = new ResultSetExportCsvController[1];
+         final ResultSetExportController[] buf = new ResultSetExportController[1];
 
          Runnable runnable = new Runnable()
          {
             public void run()
             {
-               buf[0] = new ResultSetExportCsvController(owner);
+               buf[0] = new ResultSetExportController(owner);
             }
          };
 

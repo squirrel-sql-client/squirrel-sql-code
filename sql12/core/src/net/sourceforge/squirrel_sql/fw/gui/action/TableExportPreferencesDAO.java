@@ -4,8 +4,8 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class TableExportPreferencesDAO
 {
-   private static final String PREF_KEY_CSV_FILE = "SquirrelSQL.csvexport.csvfile";
-   private static final String PREF_KEY_CSV_ENCODING = "SquirrelSQL.csvexport.csvencoding";
+   private static final String PREF_KEY_FILE = "SquirrelSQL.csvexport.csvfile";
+   private static final String PREF_KEY_ENCODING = "SquirrelSQL.csvexport.csvencoding";
    private static final String PREF_KEY_WITH_HEADERS = "SquirrelSQL.csvexport.withColumnHeaders";
    private static final String PREF_KEY_SEPERATOR_TAB = "SquirrelSQL.csvexport.sepearatorTab";
    private static final String PREF_KEY_SEPERATOR_CHAR = "SquirrelSQL.csvexport.sepearatorChar";
@@ -27,8 +27,8 @@ public class TableExportPreferencesDAO
    {
       TableExportPreferences ret = new TableExportPreferences();
 
-      ret.setCsvFile(Props.getString(PREF_KEY_CSV_FILE, ret.getCsvFile()));
-      ret.setCsvEncoding(Props.getString(PREF_KEY_CSV_ENCODING, ret.getCsvEncoding()));
+      ret.setFile(Props.getString(PREF_KEY_FILE, ret.getFile()));
+      ret.setEncoding(Props.getString(PREF_KEY_ENCODING, ret.getEncoding()));
       ret.setWithHeaders(Props.getBoolean(PREF_KEY_WITH_HEADERS, ret.isWithHeaders()));
       ret.setSeperatorTab(Props.getBoolean(PREF_KEY_SEPERATOR_TAB, ret.isSeperatorTab()));
       ret.setSeperatorChar(Props.getString(PREF_KEY_SEPERATOR_CHAR, ret.getSeperatorChar()));
@@ -50,8 +50,8 @@ public class TableExportPreferencesDAO
 
    public static void savePreferences(TableExportPreferences prefs)
    {
-      Props.putString(PREF_KEY_CSV_FILE, prefs.getCsvFile());
-      Props.putString(PREF_KEY_CSV_ENCODING, prefs.getCsvEncoding());
+      Props.putString(PREF_KEY_FILE, prefs.getFile());
+      Props.putString(PREF_KEY_ENCODING, prefs.getEncoding());
       Props.putBoolean(PREF_KEY_WITH_HEADERS, prefs.isWithHeaders());
       Props.putBoolean(PREF_KEY_SEPERATOR_TAB, prefs.isSeperatorTab());
       Props.putString(PREF_KEY_SEPERATOR_CHAR, prefs.getSeperatorChar());

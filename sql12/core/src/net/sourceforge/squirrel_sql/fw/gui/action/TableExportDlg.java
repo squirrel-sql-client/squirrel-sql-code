@@ -10,9 +10,9 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-public class TableExportCsvDlg extends JDialog
+public class TableExportDlg extends JDialog
 {
-	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportCsvDlg.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportDlg.class);
 
    JTextField txtFile;
    JButton btnFile;
@@ -38,12 +38,12 @@ public class TableExportCsvDlg extends JDialog
    JButton btnCommandFile;
    JButton btnOk;
    JButton btnCancel;
-   JComboBox charsets;
-	JComboBox _lineSeparators;
+   JComboBox cboCharsets;
+	JComboBox cboLineSeparators;
 
 
 	
-   public TableExportCsvDlg(Window owner)
+   public TableExportDlg(Window owner)
    {
       super(owner);
       setModal(true);
@@ -286,15 +286,15 @@ public class TableExportCsvDlg extends JDialog
       lblLineSeparator = new JLabel(s_stringMgr.getString("TableExportCsvDlg.lineSeparatorLabel"));
       ret.add(lblLineSeparator, gbc);
 
-      _lineSeparators = new JComboBox(new Object[] {LineSeparator.DEFAULT, LineSeparator.LF, LineSeparator.CRLF});
+      cboLineSeparators = new JComboBox(new Object[] {LineSeparator.DEFAULT, LineSeparator.LF, LineSeparator.CRLF});
 		gbc = new GridBagConstraints(1, 1, 2, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, fieldInsets, padx, pady);
-      ret.add(_lineSeparators, gbc);
+      ret.add(cboLineSeparators, gbc);
             
       // Row 3
       
-      charsets = new JComboBox();
+      cboCharsets = new JComboBox();
       for (String s : Charset.availableCharsets().keySet()) {
-    	  charsets.addItem(s);
+    	  cboCharsets.addItem(s);
       }
       
       gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, labelInsets, padx, pady);
@@ -303,7 +303,7 @@ public class TableExportCsvDlg extends JDialog
       ret.add(lblCharset, gbc);          
       
       gbc = new GridBagConstraints(1, 2, 2, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, fieldInsets, padx, pady);
-      ret.add(charsets, gbc);
+      ret.add(cboCharsets, gbc);
 
       return ret;
    }
