@@ -20,11 +20,10 @@ public class PasteTableUtil
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PasteTableUtil.class);
 
 
-   public static void excePasteTable(SessionInfoProvider sessionInfoProv, IApplication app1)
+   public static void execPasteTable(SessionInfoProvider sessionInfoProv, IApplication app1)
    {
       ISession destSession = sessionInfoProv.getDestSession();
-      IObjectTreeAPI api =
-            destSession.getObjectTreeAPIOfActiveSessionWindow();
+      IObjectTreeAPI api = sessionInfoProv.getDestObjectTreeAPI();
       if (api == null)
       {
          return;
@@ -35,8 +34,7 @@ public class PasteTableUtil
          sessionInfoProv.setDestDatabaseObject(null);
          //i18n[PasteTableAction.error.multischemapaste=The paste
          //operation may only be applied to one schema at a time]
-         String msg =
-               s_stringMgr.getString("PasteTableAction.error.multischemapaste");
+         String msg = s_stringMgr.getString("PasteTableAction.error.multischemapaste");
          app1.showErrorDialog(msg);
 
          return;

@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -535,6 +536,8 @@ public class SessionPanel extends JPanel
          add(actions.get(NextSqlAction.class));
          add(actions.get(SelectSqlAction.class));
          add(actions.get(GoToLastEditLocationAction.class));
+			addSeparator();
+         addToggleAction((IToggleAction) actions.get(ToggleObjectTreeBesidesEditorAction.class));
       }
    }
 

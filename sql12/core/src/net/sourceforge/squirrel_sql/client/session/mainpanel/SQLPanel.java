@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteFromHistoryAttach;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndReadOnPanelSmallPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
@@ -90,11 +91,9 @@ import java.util.List;
  */
 public class SQLPanel extends JPanel
 {
-    /** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SQLPanel.class);
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLPanel.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLPanel.class);
     
 	/** Used to separate lines in the SQL entry area. */
 	private final static String LINE_SEPARATOR = "\n";
@@ -106,6 +105,7 @@ public class SQLPanel extends JPanel
 	private static boolean s_loadedSQLHistory;
 
 	private final SQLExecutionAdapter _sqlExecutorHistoryAdapter;
+	private final SQLPanelSplitter _sqlPanelSplitter;
 
 	/** Current session. */
 	transient private ISession _session;
@@ -116,28 +116,6 @@ public class SQLPanel extends JPanel
 
 	private SqlComboListener _sqlComboListener = new SqlComboListener();
    private MyPropertiesListener _propsListener;
-
-	/** Each tab is a <TT>ResultTab</TT> showing the results of a query. */
-//	private JTabbedPane _tabbedResultsPanel;
-
-	/**
-	 * Collection of <TT>ResultTabInfo</TT> objects for all
-	 * <TT>ResultTab</TT> objects that have been created. Keyed
-	 * by <TT>ResultTab.getIdentifier()</TT>.
-	 */
-//	private Map _allTabs = new HashMap();
-
-	/**
-	 * Pool of <TT>ResultTabInfo</TT> objects available for use.
-	 */
-//	private List _availableTabs = new ArrayList();
-
-	/**
-	 * Pool of <TT>ResultTabInfo</TT> objects currently being used.
-	 */
-//	private ArrayList _usedTabs = new ArrayList();
-
-	/** Each tab is a <TT>ExecuterTab</TT> showing an installed executer. */
 
    /**
     * Is the bottom component of the split.
@@ -153,7 +131,6 @@ public class SQLPanel extends JPanel
 	private JSplitPane _splitPane;
 
 
-	/** Listeners */
 	private EventListenerList _listeners = new EventListenerList();
 
 	private final List<ISQLResultExecuter> _executors = new ArrayList<>();
@@ -173,15 +150,6 @@ public class SQLPanel extends JPanel
 	private SQLPanelPosition _sqlPanelPosition;
 
 
-	/**
-	 * Ctor.
-	 *
-	 * @param   session    Current session.
-	 *
-	 * @param titleFileHandler
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
-	 */
 	public SQLPanel(ISession session, SQLPanelPosition sqlPanelPosition, TitleFilePathHandler titleFileHandler)
 	{
 		_sqlPanelPosition = sqlPanelPosition;
@@ -214,6 +182,12 @@ public class SQLPanel extends JPanel
 			SessionStartupMainSQLTabContentLoader.handleLoadFileAtSessionStart(session, _panelAPI);
 		}
 
+		_sqlPanelSplitter = new SQLPanelSplitter(this);
+	}
+
+	public SQLPanelSplitter getSqlPanelSplitter()
+	{
+		return _sqlPanelSplitter;
 	}
 
 	private void onStatementExecuted(QueryHolder sql)
@@ -471,10 +445,12 @@ public class SQLPanel extends JPanel
 
       fireSQLEntryAreaClosed();
 
+		_sqlPanelSplitter.sessionWindowClosing();
+
       if (_hasBeenVisible)
       {
          saveOrientationDependingDividerLocation();
-      }
+		}
 
 		_sqlCombo.removeActionListener(_sqlComboListener);
 		_sqlCombo.dispose();
@@ -886,7 +862,7 @@ public class SQLPanel extends JPanel
 
 		installSQLEntryPanel(
 		        app.getSQLEntryPanelFactory().createSQLEntryPanel(
-		                _session, 
+		                _session,
 		                new HashMap<String, Object>()));
 
       _executerPanleHolder = new JPanel(new GridLayout(1,1));

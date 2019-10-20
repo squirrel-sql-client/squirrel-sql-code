@@ -20,42 +20,45 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy;
 
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 
 /**
- * This is implemented in order to pass needed info along to copy executor. 
- *
+ * This is implemented in order to pass needed info along to copy executor.
  */
-public interface SessionInfoProvider {
-    
-    void initCopy(ISession session);
-    
-    ISession getSourceSession();
-    
-    void setSourceDatabaseObjects(List<IDatabaseObjectInfo> dbObjList);
-    
-    List<IDatabaseObjectInfo> getSourceDatabaseObjects();
-    
+public interface SessionInfoProvider
+{
+
+   void initCopy(ISession session);
+
+   ISession getSourceSession();
+
+   void setSourceDatabaseObjects(List<IDatabaseObjectInfo> dbObjList);
+
+   List<IDatabaseObjectInfo> getSourceDatabaseObjects();
+
+    IObjectTreeAPI getDestObjectTreeAPI();
+
     IDatabaseObjectInfo getDestDatabaseObject();
-    
-    void setDestDatabaseObject(IDatabaseObjectInfo info);
-    
-    void setDestSession(ISession session);
-    
-    ISession getDestSession();
 
-    void setPasteToTableName(String pasteToTableName);
+   void setDestDatabaseObject(IDatabaseObjectInfo info);
 
-    String getPasteToTableName();
+   void setDestObjectTree(IObjectTreeAPI objectTreeAPI);
 
-    TableInfo getPasteToTableInfo(ISQLConnection destConn, String destSchema, String destCatalog);
+   ISession getDestSession();
 
-    boolean isCopiedFormDestinationSession();
+   void setPasteToTableName(String pasteToTableName);
 
-    void setWhereClause(String whereClause);
+   String getPasteToTableName();
 
-    String getWhereClause();
+   TableInfo getPasteToTableInfo(ISQLConnection destConn, String destSchema, String destCatalog);
+
+   boolean isCopiedFormDestinationSession();
+
+   void setWhereClause(String whereClause);
+
+   String getWhereClause();
 }

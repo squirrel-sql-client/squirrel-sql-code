@@ -17,57 +17,62 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.actions;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
 
 
-public class PasteTableAction extends SquirrelAction
-                                     implements ISessionAction {
-
-	private static final long serialVersionUID = 1L;
-
-	/** Current plugin. */
-	private final SessionInfoProvider sessionInfoProv;
-
-    /** The IApplication that we can use to display error dialogs */
-    private IApplication app = null;
-    
-    /**
-     * Creates a new SQuirreL action that gets fired whenever the user chooses
-     * the paste operation.
-     * 
-     * @param app
-     * @param rsrc
-     * @param plugin
-     */
-    public PasteTableAction(IApplication app, Resources rsrc,
-    									DBCopyPlugin plugin) {
-        super(app, rsrc);
-        this.app = app;
-        sessionInfoProv = plugin.getSessionInfoProvider();
-    }
-
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent evt) {
-       PasteTableUtil.excePasteTable(sessionInfoProv, app);
-    }
+public class PasteTableAction extends SquirrelAction implements IObjectTreeAction
+{
+   /**
+    * Current plugin.
+    */
+   private final SessionInfoProvider sessionInfoProv;
 
    /**
-	 * Set the current session.
-	 * 
-	 * @param	session		The current session.
-	 */
-    public void setSession(ISession session) {
-        sessionInfoProv.setDestSession(session);        
-    }
+    * The IApplication that we can use to display error dialogs
+    */
+   private IApplication app = null;
+   private IObjectTreeAPI _objectTreeAPI;
 
+   /**
+    * Creates a new SQuirreL action that gets fired whenever the user chooses
+    * the paste operation.
+    *
+    * @param app
+    * @param rsrc
+    * @param plugin
+    */
+   public PasteTableAction(IApplication app, Resources rsrc, DBCopyPlugin plugin)
+   {
+      super(app, rsrc);
+      this.app = app;
+      sessionInfoProv = plugin.getSessionInfoProvider();
+   }
+
+   /* (non-Javadoc)
+    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+    */
+   public void actionPerformed(ActionEvent evt)
+   {
+      PasteTableUtil.execPasteTable(sessionInfoProv, app);
+   }
+
+
+   @Override
+   public void setObjectTree(IObjectTreeAPI objectTreeAPI)
+   {
+      _objectTreeAPI = objectTreeAPI;
+
+      sessionInfoProv.setDestObjectTree(_objectTreeAPI);
+
+      setEnabled(null != _objectTreeAPI);
+   }
 }

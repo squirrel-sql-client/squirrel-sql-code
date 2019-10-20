@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -153,8 +154,10 @@ public class SmarttoolsPlugin extends DefaultSessionPlugin {
 	 * @return An implementation of PluginSessionCallback or null to indicate
 	 *         the plugin does not work with this session
 	 */
-	public PluginSessionCallback sessionStarted(final ISession session) {
-			try {
+	public PluginSessionCallback sessionStarted(final ISession session)
+	{
+		try
+		{
 			// Add context menu items to the object tree's session node.
 			// as popup menu
 			IObjectTreeAPI objectTreeApi = session.getSessionInternalFrame()
@@ -162,24 +165,29 @@ public class SmarttoolsPlugin extends DefaultSessionPlugin {
 			objectTreeApi.addToPopup(DatabaseObjectType.SESSION,
 					getSmarttoolsMenu(getApplication(), session, true));
 
-			return new PluginSessionCallback() {
-				public void sqlInternalFrameOpened(
-						SQLInternalFrame sqlInternalFrame, ISession sess) {
-					// plugin supports Session main window only
+			return new PluginSessionCallback()
+			{
+				public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+				{
 				}
 
-				public void objectTreeInternalFrameOpened(
-						ObjectTreeInternalFrame objectTreeInternalFrame,
-						ISession sess) {
-					// plugin supports Session main window only
+				public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,ISession sess)
+				{
 				}
 
-            @Override
-            public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
-            {
-            }
-         };
-		} catch (Exception e) {
+				@Override
+				public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+				{
+				}
+
+				@Override
+				public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+				{
+				}
+			};
+		}
+		catch (Exception e)
+		{
 			throw new RuntimeException(e);
 		}
 	}

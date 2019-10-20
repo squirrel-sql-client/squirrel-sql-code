@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -66,223 +67,224 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.tab.SupportedRefactoring
 /**
  * The Refactoring plugin class.
  */
-public class RefactoringPlugin extends DefaultSessionPlugin {
-    public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.refactoring.refactoring";
+public class RefactoringPlugin extends DefaultSessionPlugin
+{
+   public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.refactoring.refactoring";
 
-    private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(RefactoringPlugin.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RefactoringPlugin.class);
 
-	private static interface IMenuResourceKeys {
-        String REFACTORING = "refactoring";
-        String TABLE = s_stringMgr.getString("RefactoringPlugin.tableMenuItemLabel");
-        String COLUMN = s_stringMgr.getString("RefactoringPlugin.columnMenuItemLabel");
-        String INDEX = s_stringMgr.getString("RefactoringPlugin.indexMenuItemLabel");
-        String DATA_QUALITY = s_stringMgr.getString("RefactoringPlugin.dataQualityMenuItemLabel");
-        String REFERENTIAL_INTEGRITY = s_stringMgr.getString("RefactoringPlugin.referentialIntegrityMenuItemLabel");
-    }
-                      
-    private PluginResources _resources;
+   private static interface IMenuResourceKeys
+   {
+      String REFACTORING = "refactoring";
+      String TABLE = s_stringMgr.getString("RefactoringPlugin.tableMenuItemLabel");
+      String COLUMN = s_stringMgr.getString("RefactoringPlugin.columnMenuItemLabel");
+      String INDEX = s_stringMgr.getString("RefactoringPlugin.indexMenuItemLabel");
+      String DATA_QUALITY = s_stringMgr.getString("RefactoringPlugin.dataQualityMenuItemLabel");
+      String REFERENTIAL_INTEGRITY = s_stringMgr.getString("RefactoringPlugin.referentialIntegrityMenuItemLabel");
+   }
 
-    private JMenu _tableNodeMenu;
-    private JMenu _tableObjectMenu;
-    private JMenu _indexObjectMenu;
-    private JMenu _viewNodeMenu;
-    private JMenu _viewObjectMenu;
-    private JMenu _sequenceNodeMenu;
-    private JMenu _sessionNodeMenu;
-    private JMenu _sequenceObjectMenu;
+   private PluginResources _resources;
 
-
-    /**
-     * Return the internal name of this plugin.
-     *
-     * @return the internal name of this plugin.
-     */
-    public String getInternalName() {
-        return "refactoring";
-    }
+   /**
+    * Return the internal name of this plugin.
+    *
+    * @return the internal name of this plugin.
+    */
+   public String getInternalName()
+   {
+      return "refactoring";
+   }
 
 
-    /**
-     * Return the descriptive name of this plugin.
-     *
-     * @return the descriptive name of this plugin.
-     */
-    public String getDescriptiveName() {
-        return "Refactoring Plugin";
-    }
+   /**
+    * Return the descriptive name of this plugin.
+    *
+    * @return the descriptive name of this plugin.
+    */
+   public String getDescriptiveName()
+   {
+      return "Refactoring Plugin";
+   }
 
 
-    /**
-     * Returns the current version of this plugin.
-     *
-     * @return the current version of this plugin.
-     */
-    public String getVersion() {
-        return "1.0";
-    }
+   /**
+    * Returns the current version of this plugin.
+    *
+    * @return the current version of this plugin.
+    */
+   public String getVersion()
+   {
+      return "1.0";
+   }
 
 
-    /**
-     * Returns the authors name.
-     *
-     * @return the authors name.
-     */
-    public String getAuthor() {
-        return "Rob Manning";
-    }
+   /**
+    * Returns the authors name.
+    *
+    * @return the authors name.
+    */
+   public String getAuthor()
+   {
+      return "Rob Manning";
+   }
 
 
-    /**
-     * Returns the name of the change log for the plugin. This should
-     * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-     * directory.
-     *
-     * @return the changelog file name or <TT>null</TT> if plugin doesn't have
-     *         a change log.
-     */
-    public String getChangeLogFileName() {
-        return "changes.txt";
-    }
+   /**
+    * Returns the name of the change log for the plugin. This should
+    * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+    * directory.
+    *
+    * @return the changelog file name or <TT>null</TT> if plugin doesn't have
+    * a change log.
+    */
+   public String getChangeLogFileName()
+   {
+      return "changes.txt";
+   }
 
 
-    /**
-     * Returns the name of the Help file for the plugin. This should
-     * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-     * directory.
-     *
-     * @return the Help file name or <TT>null</TT> if plugin doesn't have
-     *         a help file.
-     */
-    public String getHelpFileName() {
-        return "doc/readme.html";
-    }
+   /**
+    * Returns the name of the Help file for the plugin. This should
+    * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+    * directory.
+    *
+    * @return the Help file name or <TT>null</TT> if plugin doesn't have
+    * a help file.
+    */
+   public String getHelpFileName()
+   {
+      return "doc/readme.html";
+   }
 
 
-    /**
-     * Returns the name of the Licence file for the plugin. This should
-     * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-     * directory.
-     *
-     * @return the Licence file name or <TT>null</TT> if plugin doesn't have
-     *         a licence file.
-     */
-    public String getLicenceFileName() {
-        return "licence.txt";
-    }
+   /**
+    * Returns the name of the Licence file for the plugin. This should
+    * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+    * directory.
+    *
+    * @return the Licence file name or <TT>null</TT> if plugin doesn't have
+    * a licence file.
+    */
+   public String getLicenceFileName()
+   {
+      return "licence.txt";
+   }
 
 
-    /**
-     * @return Comma separated list of contributors.
-     */
-    public String getContributors() {
-        return "Daniel Regli, Yannick Winiger";
-    }
+   /**
+    * @return Comma separated list of contributors.
+    */
+   public String getContributors()
+   {
+      return "Daniel Regli, Yannick Winiger";
+   }
 
-    /**
-     * Create preferences panel for the Global Preferences dialog.
-     *
-     * @return Preferences panel.
-     */
-    public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-        RefactoringPreferencesTab tab = new RefactoringPreferencesTab();
-        return new IGlobalPreferencesPanel[] {tab};
-    }
-
-
-    /**
-     * Initialize this plugin.
-     */
-    public synchronized void initialize() throws PluginException {
-        super.initialize();
-        IApplication app = getApplication();
-
-        _resources = new SQLPluginResources(BUNDLE_BASE_NAME, this);
-
-        ActionCollection coll = app.getActionCollection();
-        coll.add(new AddAutoIncrementAction(app, _resources));
-        coll.add(new AddColumnAction(app, _resources));
-        coll.add(new AddForeignKeyAction(app, _resources));
-        coll.add(new AddIndexAction(app, _resources));
-        coll.add(new AddLookupTableAction(app, _resources));
-        coll.add(new AddPrimaryKeyAction(app, _resources));
-        coll.add(new AddSequenceAction(app, _resources));
-        coll.add(new AddUniqueConstraintAction(app, _resources));
-        coll.add(new AddViewAction(app, _resources));
-        coll.add(new DropForeignKeyAction(app, _resources));
-        coll.add(new DropIndexTableAction(app, _resources));
-        coll.add(new DropPrimaryKeyAction(app, _resources));
-        coll.add(new DropSelectedTablesAction(app, _resources));
-        coll.add(new DropSequenceAction(app, _resources));
-        coll.add(new DropUniqueConstraintAction(app, _resources));
-        coll.add(new DropViewAction(app, _resources));
-        coll.add(new MergeColumnAction(app, _resources));
-        coll.add(new MergeTableAction(app, _resources));
-        coll.add(new ModifyColumnAction(app, _resources));
-        coll.add(new ModifySequenceAction(app, _resources));
-        coll.add(new DropColumnAction(app, _resources));
-        coll.add(new RenameTableAction(app, _resources));
-        coll.add(new RenameViewAction(app, _resources));
-        
-        RefactoringPreferencesManager.initialize(this);
-    }
+   /**
+    * Create preferences panel for the Global Preferences dialog.
+    *
+    * @return Preferences panel.
+    */
+   public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
+   {
+      RefactoringPreferencesTab tab = new RefactoringPreferencesTab();
+      return new IGlobalPreferencesPanel[]{tab};
+   }
 
 
-    public boolean allowsSessionStartedInBackground() {
-        return true;
-    }
+   /**
+    * Initialize this plugin.
+    */
+   public synchronized void initialize() throws PluginException
+   {
+      super.initialize();
+      IApplication app = getApplication();
+
+      _resources = new SQLPluginResources(BUNDLE_BASE_NAME, this);
+
+      ActionCollection coll = app.getActionCollection();
+      coll.add(new AddAutoIncrementAction(app, _resources));
+      coll.add(new AddColumnAction(app, _resources));
+      coll.add(new AddForeignKeyAction(app, _resources));
+      coll.add(new AddIndexAction(app, _resources));
+      coll.add(new AddLookupTableAction(app, _resources));
+      coll.add(new AddPrimaryKeyAction(app, _resources));
+      coll.add(new AddSequenceAction(app, _resources));
+      coll.add(new AddUniqueConstraintAction(app, _resources));
+      coll.add(new AddViewAction(app, _resources));
+      coll.add(new DropForeignKeyAction(app, _resources));
+      coll.add(new DropIndexTableAction(app, _resources));
+      coll.add(new DropPrimaryKeyAction(app, _resources));
+      coll.add(new DropSelectedTablesAction(app, _resources));
+      coll.add(new DropSequenceAction(app, _resources));
+      coll.add(new DropUniqueConstraintAction(app, _resources));
+      coll.add(new DropViewAction(app, _resources));
+      coll.add(new MergeColumnAction(app, _resources));
+      coll.add(new MergeTableAction(app, _resources));
+      coll.add(new ModifyColumnAction(app, _resources));
+      coll.add(new ModifySequenceAction(app, _resources));
+      coll.add(new DropColumnAction(app, _resources));
+      coll.add(new RenameTableAction(app, _resources));
+      coll.add(new RenameViewAction(app, _resources));
+
+      RefactoringPreferencesManager.initialize(this);
+   }
 
 
-    /**
-     * Called when a session started. Add commands to popup menu
-     * in object tree.
-     *
-     * @param session The session that is starting.
-     * @return <TT>true</TT> to indicate that this plugin is
-     *         applicable to passed session.
-     */
-    public PluginSessionCallback sessionStarted(final ISession session) {
-        GUIUtils.processOnSwingEventThread(new Runnable() {
-            public void run() {
-                addActionsToPopup(session);
-            }
-        });
-
-        return new PluginSessionCallback()
-        {
-            public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-            {
-            }
-
-            public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-            {
-                addMenusToObjectTree(objectTreeInternalFrame.getObjectTreeAPI());
-            }
-
-            @Override
-            public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
-            {
-            }
-        };
-    }
+   public boolean allowsSessionStartedInBackground()
+   {
+      return true;
+   }
 
 
-    private void addActionsToPopup(ISession session)  {
+   /**
+    * Called when a session started. Add commands to popup menu
+    * in object tree.
+    *
+    * @param session The session that is starting.
+    * @return <TT>true</TT> to indicate that this plugin is
+    * applicable to passed session.
+    */
+   public PluginSessionCallback sessionStarted(final ISession session)
+   {
+      GUIUtils.processOnSwingEventThread(() -> initObjectTree(session.getSessionInternalFrame().getObjectTreeAPI()));
+
+      return new PluginSessionCallback()
+      {
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+         }
+
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+             initObjectTree(objectTreeInternalFrame.getObjectTreeAPI());
+         }
+
+         @Override
+         public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+         {
+             initObjectTree(objectTreePanel);
+         }
+
+         @Override
+         public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+         {
+         }
+      };
+   }
+
+
+    private void initObjectTree(IObjectTreeAPI treeAPI)
+    {
         ActionCollection col = getApplication().getActionCollection();
-        
-        try {
-	        IObjectTreeAPI _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-	        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new SupportedRefactoringsTab(session));
-        } catch (Exception e) {
-      	  e.printStackTrace();
-        }
-        
+
+        treeAPI.addDetailTab(DatabaseObjectType.SESSION, new SupportedRefactoringsTab(treeAPI.getSession()));
+
         // TABLE TYPE DBO
-        _tableNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
-        _resources.addToMenu(col.get(AddViewAction.class), _tableNodeMenu);
+        JMenu tableNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
+        _resources.addToMenu(col.get(AddViewAction.class), tableNodeMenu);
 
         // TABLE
-        _tableObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
+        JMenu tableObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
         JMenu tableMenu = new JMenu(IMenuResourceKeys.TABLE);
         _resources.addToMenu(col.get(RenameTableAction.class), tableMenu);
         _resources.addToMenu(col.get(MergeTableAction.class), tableMenu);
@@ -292,8 +294,8 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         _resources.addToMenu(col.get(AddColumnAction.class), columnMenu);
         _resources.addToMenu(col.get(ModifyColumnAction.class), columnMenu);
         _resources.addToMenu(col.get(MergeColumnAction.class), columnMenu);
-        _resources.addToMenu(col.get(DropColumnAction.class), columnMenu);        
-        
+        _resources.addToMenu(col.get(DropColumnAction.class), columnMenu);
+
         JMenu dataQualityMenu = new JMenu(IMenuResourceKeys.DATA_QUALITY);
         _resources.addToMenu(col.get(AddLookupTableAction.class), dataQualityMenu);
         _resources.addToMenu(col.get(AddAutoIncrementAction.class), dataQualityMenu);
@@ -310,61 +312,57 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         _resources.addToMenu(col.get(AddIndexAction.class), tableIndexMenu);
         _resources.addToMenu(col.get(DropIndexTableAction.class), tableIndexMenu);
 
-        _tableObjectMenu.add(tableMenu);
-        _tableObjectMenu.add(columnMenu);
-        _tableObjectMenu.add(tableIndexMenu);
-        _tableObjectMenu.add(dataQualityMenu);
-        _tableObjectMenu.add(referentialMenu);
+        tableObjectMenu.add(tableMenu);
+        tableObjectMenu.add(columnMenu);
+        tableObjectMenu.add(tableIndexMenu);
+        tableObjectMenu.add(dataQualityMenu);
+        tableObjectMenu.add(referentialMenu);
 
         // INDEX
-        _indexObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
-        _resources.addToMenu(col.get(DropIndexTableAction.class), _indexObjectMenu);
-        
+        JMenu indexObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
+        _resources.addToMenu(col.get(DropIndexTableAction.class), indexObjectMenu);
+
         // VIEW TYPE DBO (doesn't exist yet)
-        _viewNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
-        _resources.addToMenu(col.get(AddViewAction.class), _viewNodeMenu);
+        JMenu viewNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
+        _resources.addToMenu(col.get(AddViewAction.class), viewNodeMenu);
 
         // VIEW
-        _viewObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
-        _resources.addToMenu(col.get(DropViewAction.class), _viewObjectMenu);
-        _resources.addToMenu(col.get(RenameViewAction.class), _viewObjectMenu);
+        JMenu viewObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
+        _resources.addToMenu(col.get(DropViewAction.class), viewObjectMenu);
+        _resources.addToMenu(col.get(RenameViewAction.class), viewObjectMenu);
 
         // SEQUENCE TYPE DBO
-        _sequenceNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
-        _resources.addToMenu(col.get(AddSequenceAction.class), _sequenceNodeMenu);
+        JMenu sequenceNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
+        _resources.addToMenu(col.get(AddSequenceAction.class), sequenceNodeMenu);
 
         // SEQUENCE
-        _sequenceObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
-        _resources.addToMenu(col.get(DropSequenceAction.class), _sequenceObjectMenu);
-        _resources.addToMenu(col.get(ModifySequenceAction.class), _sequenceObjectMenu);
-        
+        JMenu sequenceObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
+        _resources.addToMenu(col.get(DropSequenceAction.class), sequenceObjectMenu);
+        _resources.addToMenu(col.get(ModifySequenceAction.class), sequenceObjectMenu);
+
         // Ingres supports sequences, but there is no Ingres plugin yet to produce sequence nodes.
         // Also, since we don't have a good way to modify /delete sequences when they don't appear in the tree
         // this rules out their use in Ingres, for now.
         // TODO: Write the Ingres plugin, then rip this out.
-        // 
+        //
         // Update: Since there are a number of other databases that support sequences without plugins, we will
-        //         for now, just always put the add sequence in the session node's popup menu.  
+        //         for now, just always put the add sequence in the session node's popup menu.
         //
         //if (DialectFactory.isIngres(session.getMetaData())) {
-      	  _sessionNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
-      	  _resources.addToMenu(col.get(AddSequenceAction.class), _sessionNodeMenu);
+        JMenu sessionNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
+        _resources.addToMenu(col.get(AddSequenceAction.class), sessionNodeMenu);
         //}
-        
-        addMenusToObjectTree(session.getObjectTreeAPIOfActiveSessionWindow());
-    }
 
-
-    private void addMenusToObjectTree(IObjectTreeAPI api) {
-        api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, _tableNodeMenu);
-        api.addToPopup(DatabaseObjectType.TABLE, _tableObjectMenu);
-        api.addToPopup(DatabaseObjectType.INDEX, _indexObjectMenu);
-        api.addToPopup(DatabaseObjectType.VIEW, _viewObjectMenu);
-        api.addToPopup(DatabaseObjectType.SEQUENCE_TYPE_DBO, _sequenceNodeMenu);
-        api.addToPopup(DatabaseObjectType.SEQUENCE, _sequenceObjectMenu);
-        if (_sessionNodeMenu != null) {
-      	  api.addToPopup(DatabaseObjectType.SESSION, _sessionNodeMenu);
+        treeAPI.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, tableNodeMenu);
+        treeAPI.addToPopup(DatabaseObjectType.TABLE, tableObjectMenu);
+        treeAPI.addToPopup(DatabaseObjectType.INDEX, indexObjectMenu);
+        treeAPI.addToPopup(DatabaseObjectType.VIEW, viewObjectMenu);
+        treeAPI.addToPopup(DatabaseObjectType.SEQUENCE_TYPE_DBO, sequenceNodeMenu);
+        treeAPI.addToPopup(DatabaseObjectType.SEQUENCE, sequenceObjectMenu);
+        if (sessionNodeMenu != null)
+        {
+            treeAPI.addToPopup(DatabaseObjectType.SESSION, sessionNodeMenu);
         }
     }
-    
+
 }

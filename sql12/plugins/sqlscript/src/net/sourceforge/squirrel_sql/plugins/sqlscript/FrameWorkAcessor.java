@@ -4,29 +4,19 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ObjectTreePosition;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 
-/**
- * This class was introduced to make the plugin compilable for the time it takes
- * to completely introduce the multible session windows framework.
- * It may be removed after that.
- */
 public class FrameWorkAcessor
 {
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FrameWorkAcessor.class);
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(FrameWorkAcessor.class);
-
-	public static ISQLPanelAPI getSQLPanelAPI(ISession session, SQLScriptPlugin plugin)
+	public static ISQLPanelAPI getSQLPanelAPI(ISession session)
 	{
-		// old version before multible sesssion windows
-		//return session.getMainSQLPanelAPI(plugin);
-
 		if(session.getActiveSessionWindow() instanceof ObjectTreeInternalFrame)
 		{
-			// i18n[sqlscript.scriptWritten=Script was written to the SQL editor of the main session window.]
 			session.showMessage(s_stringMgr.getString("sqlscript.scriptWritten"));
 			return session.getSessionPanel().getMainSQLPaneAPI();
 		}
@@ -36,11 +26,19 @@ public class FrameWorkAcessor
 		}
 	}
 
-	public static IObjectTreeAPI getObjectTreeAPI(ISession session, SQLScriptPlugin sqlScriptPlugin)
+	public static IObjectTreeAPI getObjectTreeAPI(ISession session)
 	{
-		// old version
-		//return session.getObjectTreeAPI(sqlScriptPlugin);
-
 		return session.getObjectTreeAPIOfActiveSessionWindow();
+	}
+
+	public static void appendScriptToEditor(String script, IObjectTreeAPI objectTreeAPI)
+	{
+		ISQLPanelAPI api = getSQLPanelAPI(objectTreeAPI.getSession());
+		api.appendSQLScript(script, true);
+
+		if(ObjectTreePosition.MAIN_SESSION_OBJECT_TREE == objectTreeAPI.getObjectTreePosition())
+		{
+			objectTreeAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+		}
 	}
 }

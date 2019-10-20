@@ -10,14 +10,10 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 
 
-public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
-   implements ISQLPanelAction
+public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction  implements ISQLPanelAction
 {
    public static final String VIEW_OBJECT_AT_CURSOR_INOBJECT_TREE_ACTION_BY_CTRL_MOUSECLICK =  "ViewObjectAtCursorInObjectTreeAction";
 
-   /**
-    * Current panel.
-    */
    private ISQLPanelAPI _panel;
 
    /**
@@ -55,7 +51,14 @@ public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
 
       String stringAtCursor = _panel.getSQLEntryPanel().getWordAtCursor();
 
-      new ObjectTreeSearch().viewObjectInObjectTree(stringAtCursor, _panel.getSession());
+      if (_panel.getSQLPanelSplitter().isSplit())
+      {
+         new ObjectTreeSearch().viewObjectInObjectTree(stringAtCursor, _panel.getSQLPanelSplitter().getObjectTreePanel());
+      }
+      else
+      {
+         new ObjectTreeSearch().viewObjectInObjectTree(stringAtCursor, _panel.getSession());
+      }
    }
 
    private boolean shouldExecute(ActionEvent evt)

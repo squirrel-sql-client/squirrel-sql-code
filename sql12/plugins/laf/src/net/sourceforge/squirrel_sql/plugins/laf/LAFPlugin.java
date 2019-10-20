@@ -198,8 +198,7 @@ public class LAFPlugin extends DefaultPlugin
 		}
 
 		// Folder to contain extra LAFs supplied by the user.
-		_userExtraLAFFolder =
-			fileWrapperFactory.create(_userSettingsFolder, ILAFConstants.USER_EXTRA_LAFS_FOLDER);
+		_userExtraLAFFolder = fileWrapperFactory.create(_userSettingsFolder, ILAFConstants.USER_EXTRA_LAFS_FOLDER);
 
 		// Create empty required files in user settings directory.
 		createEmptyRequiredUserFiles();
@@ -430,15 +429,10 @@ public class LAFPlugin extends DefaultPlugin
 	{
 		_userExtraLAFFolder.mkdirs();
 
-		FileWrapper file =
-			fileWrapperFactory.create(_userExtraLAFFolder, ILAFConstants.USER_EXTRA_LAFS_PROPS_FILE);
+		FileWrapper file = fileWrapperFactory.create(_userExtraLAFFolder, ILAFConstants.USER_EXTRA_LAFS_PROPS_FILE);
 		try
 		{
 			boolean result = file.createNewFile();
-			if (!result)
-			{
-				s_log.warn("Failed to create empty required user files");
-			}
 		}
 		catch (IOException ex)
 		{

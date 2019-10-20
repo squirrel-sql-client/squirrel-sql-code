@@ -14,9 +14,9 @@ public class BookmarksAccessor
       StringManagerFactory.getStringManager(BookmarksAccessor.class);
 
 
-   private static BoomarksExternalService getService(IApplication application)
+   private static BookmarksExternalService getService(IApplication application)
    {
-      BoomarksExternalService si = (BoomarksExternalService) application.getPluginManager().bindExternalPluginService("sqlbookmark", BoomarksExternalService.class);
+      BookmarksExternalService si = (BookmarksExternalService) application.getPluginManager().bindExternalPluginService("sqlbookmark", BookmarksExternalService.class);
       if (null == si)
       {
          // i18n[BookmarksAccessor.bookmarksPluginNeeded=Running bookmarks is only available with the Bookmarks Plugin.\nGet the plugin from www.squirrelsql.org. It's free.]

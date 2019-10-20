@@ -20,8 +20,10 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.actions;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
+import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
@@ -36,32 +38,18 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 
-public class PasteTableAsOrFilteredAction extends SquirrelAction implements ISessionAction
+public class PasteTableAsOrFilteredAction extends SquirrelAction implements IObjectTreeAction
 {
-
-	/** Current plugin. */
 	private final SessionInfoProvider _sessionInfoProv;
 
-
-   /** Internationalized strings for this class */
     private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PasteTableAsOrFilteredAction.class);
 
-    /**
-     * Creates a new SQuirreL action that gets fired whenever the user chooses
-     * the paste operation.
-     *
-     * @param rsrc
-     * @param plugin
-     */
     public PasteTableAsOrFilteredAction(Resources rsrc, DBCopyPlugin plugin)
     {
        super(Main.getApplication(), rsrc);
        _sessionInfoProv = plugin.getSessionInfoProvider();
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
     public void actionPerformed(ActionEvent evt) {
 
        if(null == _sessionInfoProv.getSourceDatabaseObjects())
@@ -78,7 +66,7 @@ public class PasteTableAsOrFilteredAction extends SquirrelAction implements ISes
           return;
        }
 
-       List<ITableInfo> selectedTables = _sessionInfoProv.getDestSession().getObjectTreeAPIOfActiveSessionWindow().getSelectedTables();
+       List<ITableInfo> selectedTables = _sessionInfoProv.getDestObjectTreeAPI().getSelectedTables();
 
        String destTableName = _sessionInfoProv.getSourceDatabaseObjects().get(0).getSimpleName();
 
@@ -97,15 +85,15 @@ public class PasteTableAsOrFilteredAction extends SquirrelAction implements ISes
        _sessionInfoProv.setWhereClause(ctrl.getWhereClause());
        _sessionInfoProv.setPasteToTableName(ctrl.getTableName());
 
-       PasteTableUtil.excePasteTable(_sessionInfoProv, Main.getApplication());
+       PasteTableUtil.execPasteTable(_sessionInfoProv, Main.getApplication());
     }
 
-   /**
-	 * Set the current session.
-	 * 
-	 * @param	session		The current session.
-	 */
-    public void setSession(ISession session) {
-        _sessionInfoProv.setDestSession(session);
-    }
+
+   @Override
+   public void setObjectTree(IObjectTreeAPI objectTreeAPI)
+   {
+      _sessionInfoProv.setDestObjectTree(objectTreeAPI);
+
+      setEnabled(null != objectTreeAPI);
+   }
 }

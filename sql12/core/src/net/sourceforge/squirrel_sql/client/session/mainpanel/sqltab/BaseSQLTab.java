@@ -58,7 +58,7 @@ public abstract class BaseSQLTab extends BaseMainPanelTab
       {
          _sqlPanel = createSqlPanel();
       }
-      return _sqlPanel;
+      return _sqlPanel.getSqlPanelSplitter();
    }
 
    protected abstract SQLPanel createSqlPanel();

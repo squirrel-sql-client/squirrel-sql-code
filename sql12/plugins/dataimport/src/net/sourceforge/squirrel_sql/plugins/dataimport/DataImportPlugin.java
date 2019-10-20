@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.dataimport;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
@@ -28,6 +30,8 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.plugins.dataimport.action.ImportTableDataAction;
@@ -173,19 +177,43 @@ public class DataImportPlugin extends DefaultSessionPlugin
     */
    public PluginSessionCallback sessionStarted(final ISession session)
    {
-      updateTreeApi(session);
-      return new PluginSessionCallbackAdaptor();
+      updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI());
+
+      return new PluginSessionCallback()
+      {
+         @Override
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+            updateTreeApi(objectTreeInternalFrame.getObjectTreeAPI());
+         }
+
+         @Override
+         public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+         {
+            updateTreeApi(objectTreePanel);
+         }
+
+         @Override
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+
+         }
+
+         @Override
+         public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+         {
+
+         }
+      };
    }
 
    /**
-    * @param session
+    * @param objectTreeAPI
     */
-   private void updateTreeApi(ISession session)
+   private void updateTreeApi(IObjectTreeAPI objectTreeAPI)
    {
-      IObjectTreeAPI treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
       final ActionCollection coll = getApplication().getActionCollection();
-
-      treeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(ImportTableDataAction.class));
+      objectTreeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(ImportTableDataAction.class));
    }
 
    /**

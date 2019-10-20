@@ -19,14 +19,18 @@ package net.sourceforge.squirrel_sql.plugins.h2;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.SchemaExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -55,8 +59,6 @@ public class H2Plugin extends DefaultSessionPlugin
 	@SuppressWarnings("unused")
 	private final static ILogger s_log = LoggerController.createLogger(H2Plugin.class);
 
-	/** API for the Obejct Tree. */
-	private IObjectTreeAPI _treeAPI;
 
 	static interface i18n
 	{
@@ -158,16 +160,37 @@ public class H2Plugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
-		if (!isPluginSession(session)) { return null; }
-
-		GUIUtils.processOnSwingEventThread(new Runnable()
+		if (!isPluginSession(session))
 		{
-			public void run()
+			return null;
+		}
+
+		GUIUtils.processOnSwingEventThread(() -> updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI()));
+
+		return new PluginSessionCallback()
+		{
+			@Override
+			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
 			{
-				updateTreeApi(session);
 			}
-		});
-		return new PluginSessionCallbackAdaptor();
+
+			@Override
+			public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+			{
+			}
+
+			@Override
+			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+			{
+				updateTreeApi(objectTreeInternalFrame.getObjectTreeAPI());
+			}
+
+			@Override
+			public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+			{
+				updateTreeApi(objectTreePanel);
+			}
+		};
 	}
 
 	@Override
@@ -176,44 +199,42 @@ public class H2Plugin extends DefaultSessionPlugin
 		return DialectFactory.isH2(session.getMetaData());
 	}
 
-	private void updateTreeApi(ISession session)
+	private void updateTreeApi(IObjectTreeAPI objectTreeAPI)
 	{
-		IQueryTokenizer qt = session.getQueryTokenizer();
+		IQueryTokenizer qt = objectTreeAPI.getSession().getQueryTokenizer();
 		String stmtSep = qt.getSQLStatementSeparator();
 
-		_treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
 		// Expanders - trigger and index expanders are added inside the table
 		// expander
-		_treeAPI.addExpander(DatabaseObjectType.SCHEMA, 
-			new SchemaExpander(new H2SequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE));
+		objectTreeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(new H2SequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE));
 
 		TableWithChildNodesExpander tableExp = new TableWithChildNodesExpander();
 		tableExp.setTableIndexExtractor(new H2TableIndexExtractorImpl());
 		tableExp.setTableTriggerExtractor(new H2TableTriggerExtractorImpl());
-		_treeAPI.addExpander(DatabaseObjectType.TABLE, tableExp);
+		objectTreeAPI.addExpander(DatabaseObjectType.TABLE, tableExp);
 
 		// View Tab
-		_treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep));
 
 		// Index tab
-		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexSourceTab(i18n.SHOW_INDEX_SOURCE, stmtSep));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexSourceTab(i18n.SHOW_INDEX_SOURCE, stmtSep));
 
 		// Trigger tabs
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
 
 		// H2 uses Java classes that implement the "Trigger" interface to operate
 		// on database tables rows when an action triggers them. Therefore, there
 		// is currently no way to access the source for a trigger. Hopefully this
 		// will change at some point in the future.
-		// _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
+		// treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
 
 		// Sequence tabs
-		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
 
 	}
 

@@ -4,11 +4,11 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
 import java.awt.event.ActionEvent;
 
-public class BoomarksExternalServiceImpl implements BoomarksExternalService
+public class BookmarksExternalServiceImpl implements BookmarksExternalService
 {
    private SQLBookmarkPlugin _plugin;
 
-   public BoomarksExternalServiceImpl(SQLBookmarkPlugin plugin)
+   public BookmarksExternalServiceImpl(SQLBookmarkPlugin plugin)
    {
       _plugin = plugin;
    }

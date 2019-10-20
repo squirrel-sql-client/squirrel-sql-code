@@ -446,7 +446,7 @@ public class WindowManager
 			public void run()
 			{
 				oif.setVisible(true);
-                oif.getObjectTreeAPI().selectRoot();
+            oif.getObjectTreeAPI().selectRoot();
 			}
 		});
 

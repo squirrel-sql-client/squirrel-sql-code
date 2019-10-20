@@ -23,7 +23,6 @@ import java.awt.event.WindowAdapter;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
@@ -84,7 +83,7 @@ public abstract class AbstractDataScriptCommand extends WindowAdapter
     */
    protected String getSelectedSelectStatement()
    {
-      ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(getSession(), getPlugin());
+      ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(getSession());
 
       String script = api.getSQLScriptToBeExecuted();
 

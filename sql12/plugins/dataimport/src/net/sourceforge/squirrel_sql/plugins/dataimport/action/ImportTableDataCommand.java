@@ -50,7 +50,7 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
  *
  * @author Thorsten Mürell
  */
-public class ImportTableDataCommand implements ICommand
+public class ImportTableDataCommand
 {
    private static final StringManager stringMgr = StringManagerFactory.getStringManager(ImportTableDataCommand.class);
 

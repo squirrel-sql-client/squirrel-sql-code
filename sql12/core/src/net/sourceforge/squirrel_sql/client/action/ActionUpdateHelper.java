@@ -71,7 +71,11 @@ public class ActionUpdateHelper
          }
 
          _fileEditorAPI = sif.getActiveIFileEditorAPIOrNull();
+      }
 
+      if(null != _sqlPanelAPI && _sqlPanelAPI.getSQLPanelSplitter().isSplit())
+      {
+         _objectTreePanel = _sqlPanelAPI.getSQLPanelSplitter().getObjectTreePanel();
       }
    }
 

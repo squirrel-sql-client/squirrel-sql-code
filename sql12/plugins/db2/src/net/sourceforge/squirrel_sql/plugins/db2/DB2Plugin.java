@@ -22,16 +22,20 @@ package net.sourceforge.squirrel_sql.plugins.db2;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -72,9 +76,6 @@ public class DB2Plugin extends DefaultSessionPlugin
 
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(DB2Plugin.class);
-
-	/** API for the Object Tree. */
-	private IObjectTreeAPI _treeAPI;
 
 	static interface i18n
 	{
@@ -211,14 +212,12 @@ public class DB2Plugin extends DefaultSessionPlugin
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 
-		if (!isPluginSession(session)) { return null; }
-		GUIUtils.processOnSwingEventThread(new Runnable()
+		if (!isPluginSession(session))
 		{
-			public void run()
-			{
-				updateTreeApi(session);
-			}
-		});
+			return null;
+		}
+
+		GUIUtils.processOnSwingEventThread(() -> updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI()));
 
 		// Install DB2JCCExceptionFormatter iff we're using the JCC driver
 		try
@@ -239,7 +238,31 @@ public class DB2Plugin extends DefaultSessionPlugin
 			s_log.error("Problem installing exception formatter: " + e.getMessage());
 		}
 
-		return new PluginSessionCallbackAdaptor();
+		return new PluginSessionCallback()
+		{
+			@Override
+			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+			{
+			}
+
+			@Override
+			public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+			{
+			}
+
+
+			@Override
+			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+			{
+				updateTreeApi(objectTreeInternalFrame.getObjectTreeAPI());
+			}
+			@Override
+			public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+			{
+				updateTreeApi(objectTreePanel);
+			}
+
+		};
 	}
 
 	@Override
@@ -248,37 +271,34 @@ public class DB2Plugin extends DefaultSessionPlugin
 		return DialectFactory.isDB2(session.getMetaData());
 	}
 
-	private void updateTreeApi(ISession session)
+	private void updateTreeApi(IObjectTreeAPI objectTreeAPI)
 	{
-		String databaseProductName = getDatabaseProductName(session);
-		final DB2Sql db2Sql = new DB2SqlImpl(databaseProductName);
-		String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
-		
+		String databaseProductName = getDatabaseProductName(objectTreeAPI.getSession());
+		DB2Sql db2Sql = new DB2SqlImpl(databaseProductName);
+		String stmtSep = objectTreeAPI.getSession().getQueryTokenizer().getSQLStatementSeparator();
 
-		_treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-		_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE,
-			stmtSep, db2Sql));
-		_treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep,
-			db2Sql));
 
-		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab(db2Sql));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, stmtSep, db2Sql));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep, db2Sql));
 
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab(db2Sql));
 
-		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab(db2Sql));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
 
-		_treeAPI.addDetailTab(DatabaseObjectType.UDF, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFSourceTab(i18n.SHOW_UDF_SOURCE, stmtSep, db2Sql));
-		_treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFDetailsTab(db2Sql));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab(db2Sql));
 
-		_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new TableSourceTab("Show MQT Source", stmtSep, db2Sql));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.UDF, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFSourceTab(i18n.SHOW_UDF_SOURCE, stmtSep, db2Sql));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFDetailsTab(db2Sql));
+
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TABLE, new TableSourceTab("Show MQT Source", stmtSep, db2Sql));
 
 		// Expanders - trigger and index expanders are added inside the table
 		// expander
-		_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(db2Sql));
+		objectTreeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(db2Sql));
 
 		// Expanders - trigger and index expanders are added inside the table
 		// expander
@@ -291,11 +311,10 @@ public class DB2Plugin extends DefaultSessionPlugin
 		ITableTriggerExtractor triggerExtractor = new DB2TableTriggerExtractorImpl(db2Sql);
 		tableExpander.setTableTriggerExtractor(triggerExtractor);
 
-		_treeAPI.addExpander(DatabaseObjectType.TABLE, tableExpander);
+		objectTreeAPI.addExpander(DatabaseObjectType.TABLE, tableExpander);
 
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab(db2Sql));
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab(i18n.SHOW_TRIGGER_SOURCE,
-			stmtSep, db2Sql));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab(db2Sql));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab(i18n.SHOW_TRIGGER_SOURCE, stmtSep, db2Sql));
 
 	}
 

@@ -283,4 +283,6 @@ public interface IObjectTreeAPI extends IHasIdentifier
    FindInObjectTreeController getFindController();
 
    Component getDetailTabComp();
+
+	ObjectTreePosition getObjectTreePosition();
 }

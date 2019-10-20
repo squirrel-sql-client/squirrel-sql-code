@@ -32,8 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class RefreshObjectTreeItemAction extends SquirrelAction
-											implements IObjectTreeAction
+public class RefreshObjectTreeItemAction extends SquirrelAction implements IObjectTreeAction
 {
 	/** Current Object Tree. */
 	private IObjectTreeAPI _tree;

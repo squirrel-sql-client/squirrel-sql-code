@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 import java.awt.Component;
 
+import net.sourceforge.squirrel_sql.client.session.ObjectTreePosition;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -30,20 +31,14 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class ObjectTreeTab extends BaseMainPanelTab
 {
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ObjectTreeTab.class);   
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ObjectTreeTab.class);
     
-	/**
-	 * Default ctor.
-	 */
-	public ObjectTreeTab()
-	{
-		super();
-	}
-
 	/** Component to be displayed. */
 	private ObjectTreePanel _comp;
+
+	public ObjectTreeTab()
+	{
+	}
 
 	/**
 	 * @see IMainPanelTab#getTitle()
@@ -72,7 +67,7 @@ public class ObjectTreeTab extends BaseMainPanelTab
 	{
 		if (_comp == null)
 		{
-			_comp = new ObjectTreePanel(getSession());
+			_comp = new ObjectTreePanel(getSession(), ObjectTreePosition.MAIN_SESSION_OBJECT_TREE);
 		}
 		return _comp;
 	}

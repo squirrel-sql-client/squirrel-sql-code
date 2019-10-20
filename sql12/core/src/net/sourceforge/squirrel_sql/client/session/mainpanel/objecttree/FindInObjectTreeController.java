@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
@@ -16,14 +18,14 @@ public class FindInObjectTreeController
 
    private FindInObjectTreePanel _findInObjectTreePanel;
    private DefaultSQLEntryPanel _filterEditSQLEntryPanel;
-   private ISession _session;
+   private IObjectTreeAPI _objectTreeAPI;
 
-   public FindInObjectTreeController(ISession session)
+   public FindInObjectTreeController(IObjectTreeAPI objectTreeAPI)
    {
-      _session = session;
-      _filterEditSQLEntryPanel = new DefaultSQLEntryPanel(session);
+      _objectTreeAPI = objectTreeAPI;
+      _filterEditSQLEntryPanel = new DefaultSQLEntryPanel(objectTreeAPI.getSession());
       _filterEditSQLEntryPanel.setMarkCurrentSQLActive(false);
-      _findInObjectTreePanel = new FindInObjectTreePanel(_filterEditSQLEntryPanel.getTextComponent(), session.getApplication().getResources());
+      _findInObjectTreePanel = new FindInObjectTreePanel(_filterEditSQLEntryPanel.getTextComponent(), Main.getApplication().getResources());
 
 
       Action findAction = new AbstractAction("ObjectTree.Find")
@@ -72,19 +74,19 @@ public class FindInObjectTreeController
    {
       if(unfilterTreeFirst)
       {
-         _session.getProperties().setObjectFilterInclude(null);
-         _session.getObjectTreeAPIOfActiveSessionWindow().refreshSelectedNodes();
+         _objectTreeAPI.getSession().getProperties().setObjectFilterInclude(null);
+         _objectTreeAPI.refreshSelectedNodes();
       }
 
       if(_findInObjectTreePanel._btnApplyAsFilter.isSelected())
       {
-         _session.getProperties().setObjectFilterInclude(_filterEditSQLEntryPanel.getText());
-         _session.getObjectTreeAPIOfActiveSessionWindow().refreshSelectedNodes();
-          new ObjectTreeSearch().viewObjectInObjectTree(_session.getProperties().getObjectFilterInclude(), _session);
+         _objectTreeAPI.getSession().getProperties().setObjectFilterInclude(_filterEditSQLEntryPanel.getText());
+         _objectTreeAPI.refreshSelectedNodes();
+          new ObjectTreeSearch().viewObjectInObjectTree(_objectTreeAPI.getSession().getProperties().getObjectFilterInclude(), _objectTreeAPI);
       }
       else
       {
-         new ObjectTreeSearch().viewObjectInObjectTree(_filterEditSQLEntryPanel.getText(), _session);
+         new ObjectTreeSearch().viewObjectInObjectTree(_filterEditSQLEntryPanel.getText(), _objectTreeAPI);
       }
    }
 

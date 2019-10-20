@@ -12,6 +12,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQ
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import java.awt.*;
 
@@ -65,9 +66,12 @@ public class SessionUtils
             {
                return sqlPanelAPI;
             }
+            else if(Utilities.equalsRespectNull(sqlPanelAPI.getSQLPanelSplitter().getFindEntryPanelIdentifier(), entryPanelIdentifier))
+            {
+               return null;
+            }
 
             IObjectTreeAPI objectTreeApi = ((SessionInternalFrame)frames[i]).getObjectTreeAPI();
-            IIdentifier findEditorID = objectTreeApi.getFindController().getFindEntryPanel().getIdentifier();
 
             SessionPanel sessionPanel = ((SessionInternalFrame) frames[i]).getSessionPanel();
 
@@ -83,10 +87,14 @@ public class SessionUtils
                   {
                      return sqlPanelAPI;
                   }
-
+                  else if(Utilities.equalsRespectNull(sqlPanelAPI.getSQLPanelSplitter().getFindEntryPanelIdentifier(), entryPanelIdentifier))
+                  {
+                     return null;
+                  }
                }
             }
 
+            IIdentifier findEditorID = objectTreeApi.getFindController().getFindEntryPanel().getIdentifier();
             if(findEditorID.equals(entryPanelIdentifier))
             {
                return null;

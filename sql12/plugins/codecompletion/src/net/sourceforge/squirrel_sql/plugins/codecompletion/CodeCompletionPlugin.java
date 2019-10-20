@@ -21,6 +21,7 @@ import java.util.Iterator;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -37,8 +38,6 @@ import net.sourceforge.squirrel_sql.client.session.properties.ISessionProperties
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
@@ -51,12 +50,6 @@ import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionP
  */
 public class CodeCompletionPlugin extends DefaultSessionPlugin
 {
-	/** Logger for this class. */
-    @SuppressWarnings("unused")
-	private final static ILogger
-			s_log = LoggerController.createLogger(CodeCompletionPlugin.class);
-
-
 	/** Resources for this plugin. */
 	private Resources _resources;
 	private static final String PREFS_FILE_NAME = "codecompletionprefs.xml";
@@ -262,7 +255,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 		ISQLPanelAPI sqlPaneAPI = session.getSessionPanel().getMainSQLPaneAPI();
       initCodeCompletionSqlEditor(sqlPaneAPI, session);
 
-      initCodeCompletionObjectTreeFind(session, session.getSessionPanel().getObjectTreePanel());
+      initCodeCompletionObjectTreeFind(session.getSessionPanel().getObjectTreePanel());
 
       PluginSessionCallback ret = new PluginSessionCallback()
 		{
@@ -273,7 +266,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
 			{
-            initCodeCompletionObjectTreeFind(sess, objectTreeInternalFrame.getObjectTreePanel());
+            initCodeCompletionObjectTreeFind(objectTreeInternalFrame.getObjectTreePanel());
 			}
 
          @Override
@@ -281,7 +274,13 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
          {
 				initCodeCompletionSqlEditor(additionalSQLTab.getSQLPanelAPI(), additionalSQLTab.getSession());
          }
-      };
+
+			@Override
+			public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+			{
+				initCodeCompletionObjectTreeFind(objectTreePanel);
+			}
+		};
 
 		return ret;
 	}
@@ -292,9 +291,9 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
    }
 
 
-	private void initCodeCompletionObjectTreeFind(final ISession session, final ObjectTreePanel objectTreePanel)
+	void initCodeCompletionObjectTreeFind(final ObjectTreePanel objectTreePanel)
 	{
-      GUIUtils.processOnSwingEventThread(() -> _initCodeCompletionObjectTreeFind(objectTreePanel, session));
+      GUIUtils.processOnSwingEventThread(() -> _initCodeCompletionObjectTreeFind(objectTreePanel));
    }
 
 	private void _initCodeCompletionSqlEditor(ISession session, ISQLPanelAPI sqlPaneAPI)
@@ -315,14 +314,13 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	}
 
 
-	private void _initCodeCompletionObjectTreeFind(ObjectTreePanel objectTreePanel, ISession session)
+	private void _initCodeCompletionObjectTreeFind(ObjectTreePanel objectTreePanel)
 	{
 		ISQLEntryPanel findEntryPanel = objectTreePanel.getFindController().getFindEntryPanel();
 
-		CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this, false);
+		CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(objectTreePanel.getSession(), this, false);
 
-		CompleteCodeAction cca =
-				new CompleteCodeAction(session.getApplication(),CodeCompletionPlugin.this, findEntryPanel, session, c,objectTreePanel);
+		CompleteCodeAction cca = new CompleteCodeAction(Main.getApplication(),this, findEntryPanel, objectTreePanel.getSession(), c,objectTreePanel);
 
 		JComponent comp = findEntryPanel.getTextComponent();
 		comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -337,5 +335,4 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	{
 		return _resources;
 	}
-
 }

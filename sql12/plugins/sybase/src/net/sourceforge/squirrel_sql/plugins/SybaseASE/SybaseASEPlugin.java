@@ -12,6 +12,7 @@ import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPrefer
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
@@ -261,7 +262,12 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	        {
 	        }
 
-          @Override
+			 @Override
+			 public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+			 {
+			 }
+
+			 @Override
           public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
           {
           }

@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.plugins.vertica;
 
 import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
@@ -27,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.SchemaExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -139,21 +142,37 @@ public class VerticaPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
-
 		if (!isPluginSession(session))
 		{
 			return null;
 		}
-		GUIUtils.processOnSwingEventThread(new Runnable()
+		GUIUtils.processOnSwingEventThread(() -> updateObjectTree(session.getObjectTreeAPIOfActiveSessionWindow()));
+
+
+		return new PluginSessionCallback()
 		{
-			public void run()
+			@Override
+			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
 			{
-				updateObjectTree(session.getObjectTreeAPIOfActiveSessionWindow());
 			}
-		});
 
+			@Override
+			public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+			{
+			}
 
-		return new PluginSessionCallbackAdaptor();
+			@Override
+			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+			{
+				updateObjectTree(sess.getObjectTreeAPIOfActiveSessionWindow());
+			}
+
+			@Override
+			public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+			{
+				updateObjectTree(objectTreePanel);
+			}
+		};
 	}
 
 	@Override

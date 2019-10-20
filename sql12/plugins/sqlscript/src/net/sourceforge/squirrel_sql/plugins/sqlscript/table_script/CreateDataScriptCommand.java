@@ -24,15 +24,14 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.sql.*;
@@ -40,55 +39,38 @@ import java.util.Calendar;
 
 public class CreateDataScriptCommand extends WindowAdapter implements ICommand
 {
-   /** Logger for this class. */
-   private static final ILogger s_log = 
-       LoggerController.createLogger(CreateDataScriptCommand.class);
+   private static final ILogger s_log =  LoggerController.createLogger(CreateDataScriptCommand.class);
 
    /** flag that gets set when the first timestamp column is encountered */
    private Boolean dialectSupportsSubSecondTimestamps = null; 
    
-	protected IAbortController _abortController;
+	private IAbortController _abortController;
 
-   /**
-    * Current session.
-    */
    protected ISession _session;
 
-   /**
-    * Current plugin.
-    */
-   private final SQLScriptPlugin _plugin;
    private boolean _templateScriptOnly;
 
-   /**
-    * Ctor specifying the current session.
-    */
-   public CreateDataScriptCommand(ISession session, SQLScriptPlugin plugin, boolean templateScriptOnly)
+   private final IObjectTreeAPI _objectTreeAPI;
+
+   public CreateDataScriptCommand(ISession session, boolean templateScriptOnly)
    {
-      super();
-      _session = session;
-      _plugin = plugin;
+      this(FrameWorkAcessor.getObjectTreeAPI(session), templateScriptOnly);
+   }
+
+   public CreateDataScriptCommand(IObjectTreeAPI objectTreeAPI, boolean templateScriptOnly)
+   {
+      _objectTreeAPI = objectTreeAPI;
       _templateScriptOnly = templateScriptOnly;
 
-      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin));
+      _session = _objectTreeAPI.getSession();
 
+      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session));
       _abortController = new AbortController(owningFrame);
    }
 
-   /**
-    * Ctor specifying the current session and IAbortController.
-    */   
-	public CreateDataScriptCommand(ISession session, IAbortController abortController, SQLScriptPlugin plugin,
-		boolean templateScriptOnly)
-	{
-		super();
-		_session = session;
-		_plugin = plugin;
-		_templateScriptOnly = templateScriptOnly;
-		_abortController = abortController;
-	}
-	
-   protected void showAbortFrame()
+
+
+      protected void showAbortFrame()
    {
       if (false == _abortController.isVisble())
       {
@@ -102,63 +84,50 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
     */
    public void execute()
    {
-      final StringBuffer sbRows = new StringBuffer(1000);
+      final StringBuilder sbRows = new StringBuilder();
+
       _session.getApplication().getThreadPool().addTask(new Runnable()
       {
          public void run()
          {
             ISQLConnection conn = _session.getSQLConnection();
-            try
+            try (Statement stmt = conn.createStatement())
             {
-               final Statement stmt = conn.createStatement();
-               try
+               IDatabaseObjectInfo[] dbObjs = _objectTreeAPI.getSelectedDatabaseObjects();
+
+               for (int k = 0; k < dbObjs.length; k++)
                {
-                  //IObjectTreeAPI api = _session.getObjectTreeAPI(_plugin);
-                  IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(_session, _plugin);
-
-
-                  IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
-
-
-                  for (int k = 0; k < dbObjs.length; k++)
+                  if (dbObjs[k] instanceof ITableInfo)
                   {
-                     if (dbObjs[k] instanceof ITableInfo)
-                     {
-                        if (isAborted()) break;
-                        ITableInfo ti = (ITableInfo) dbObjs[k];
-                        String sTable = ScriptUtil.getTableName(ti);
+                     if (isAborted()) break;
+                     ITableInfo ti = (ITableInfo) dbObjs[k];
+                     String sTable = ScriptUtil.getTableName(ti);
 
-                        ResultSet srcResult = executeDataSelectSQL(stmt, ti);
-                        genInserts(srcResult, sTable, sbRows, false);
-                     }
+                     ResultSet srcResult = executeDataSelectSQL(stmt, ti);
+                     genInserts(srcResult, sTable, sbRows, false);
                   }
                }
-               finally
+
+               GUIUtils.processOnSwingEventThread(new Runnable()
                {
-               	SQLUtilities.closeStatement(stmt);
-               }
+                  public void run()
+                  {
+                     if (sbRows.length() > 0)
+                     {
+                        FrameWorkAcessor.appendScriptToEditor(sbRows.toString(), _objectTreeAPI);
+                     }
+                     hideAbortFrame();
+                  }
+               });
             }
             catch (Exception e)
             {
                _session.showErrorMessage(e);
+               s_log.error(e);
             }
-            SwingUtilities.invokeLater(new Runnable()
-            {
-               public void run()
-               {
-                  if (sbRows.length() > 0)
-                  {
-
-                     //_session.getMainSQLPanelAPI(_plugin).appendSQLScript(sbRows.toString(), true);
-                     FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbRows.toString(), true);
-
-                     _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-                  }
-                  hideAbortFrame();
-               }
-            });
          }
       });
+
       showAbortFrame();
    }
 
@@ -237,7 +206,7 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
    }
    
    
-   protected void genInserts(ResultSet srcResult, String sTable, StringBuffer sbRows, boolean headerOnly)
+   protected void genInserts(ResultSet srcResult, String sTable, StringBuilder sbRows, boolean headerOnly)
       throws SQLException
    {
       ResultSetMetaData metaData = srcResult.getMetaData();

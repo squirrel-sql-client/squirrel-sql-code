@@ -13,15 +13,8 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 public class CreateSelectScriptAction extends SquirrelAction  implements IObjectTreeAction
 {
 
-   /**
-    * Current session.
-    */
-   private ISession _session;
-
-   /**
-    * Current plugin.
-    */
    private final SQLScriptPlugin _plugin;
+   private IObjectTreeAPI _objectTreeAPI;
 
    public CreateSelectScriptAction(IApplication app, IResources resources, SQLScriptPlugin plugin)
    {
@@ -31,32 +24,15 @@ public class CreateSelectScriptAction extends SquirrelAction  implements IObject
 
    public void actionPerformed(ActionEvent evt)
    {
-      if (_session != null)
+      if (_objectTreeAPI != null)
       {
-         new CreateSelectScriptCommand(_session, _plugin).execute();
+         new CreateSelectScriptCommand(_objectTreeAPI, _plugin).execute();
       }
    }
 
-   /**
-    * Set the current session.
-    *
-    * @param   session      The current session.
-    */
-   public void setSession(ISession session)
+   public void setObjectTree(IObjectTreeAPI objectTreeAPI)
    {
-      _session = session;
-   }
-
-   public void setObjectTree(IObjectTreeAPI tree)
-   {
-      if (null != tree)
-      {
-         _session = tree.getSession();
-      }
-      else
-      {
-         _session = null;
-      }
-      setEnabled(null != _session);
+      _objectTreeAPI = objectTreeAPI;
+      setEnabled(null != _objectTreeAPI);
    }
 }

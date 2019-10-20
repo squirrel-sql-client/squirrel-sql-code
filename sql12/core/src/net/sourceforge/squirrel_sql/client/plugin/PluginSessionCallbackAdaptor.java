@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.plugin;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -32,16 +33,17 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public final class PluginSessionCallbackAdaptor implements PluginSessionCallback
 {
-
-	public PluginSessionCallbackAdaptor()
-	{
-	}
-
 	public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
 	{
 	}
 
-   @Override
+	@Override
+	public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+	{
+
+	}
+
+	@Override
    public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
    {
    }

@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -27,47 +28,36 @@ import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
-public class CreateTableScriptAction 
-    extends SquirrelAction
-    implements IObjectTreeAction{
+public class CreateTableScriptAction extends SquirrelAction implements IObjectTreeAction
+{
+   private IObjectTreeAPI _objectTreeAPI;
 
-	/** Current session. */
-    private ISession _session;
+   private final SQLScriptPlugin _plugin;
 
-	/** Current plugin. */
-	private final SQLScriptPlugin _plugin;
-
-    public CreateTableScriptAction(IApplication app, IResources resources,
-    									SQLScriptPlugin plugin) {
-        super(app, resources);
-        _plugin = plugin;
-    }
-
-    public void actionPerformed(ActionEvent evt) {
-        if (_session != null) {
-            new CreateTableScriptCommand(_session, _plugin).execute();
-        }
-    }
-
-	/**
-	 * Set the current session.
-	 * 
-	 * @param	session		The current session.
-	 */
-    public void setSession(ISession session) {
-        _session = session;
-    }
-
-   public void setObjectTree(IObjectTreeAPI tree)
+   public CreateTableScriptAction(IApplication app, IResources resources, SQLScriptPlugin plugin)
    {
-      if(null != tree)
+      super(app, resources);
+      _plugin = plugin;
+   }
+
+   public void actionPerformed(ActionEvent evt)
+   {
+      if (_objectTreeAPI != null)
       {
-         _session = tree.getSession();
+         new CreateTableScriptCommand(_objectTreeAPI, _plugin).execute();
+      }
+   }
+
+   public void setObjectTree(IObjectTreeAPI objectTreeAPI)
+   {
+      if (null != objectTreeAPI)
+      {
+         _objectTreeAPI = objectTreeAPI;
       }
       else
       {
-         _session = null;
+         _objectTreeAPI = null;
       }
-      setEnabled(null != _session);
+      setEnabled(null != _objectTreeAPI);
    }
 }

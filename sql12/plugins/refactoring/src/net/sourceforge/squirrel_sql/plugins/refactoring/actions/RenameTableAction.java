@@ -29,7 +29,6 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.RenameTableComm
 
 public class RenameTableAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = 8970571253545997433L;
 
 	/**
 	 * Internationalized strings for this class.
@@ -43,8 +42,7 @@ public class RenameTableAction extends AbstractRefactoringAction
 
 		String OBJECT_PART = s_stringMgr.getString("Shared.tableObject");
 
-		String SINGLE_OBJECT_MESSAGE =
-			s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
+		String SINGLE_OBJECT_MESSAGE = s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
 	}
 
 	public RenameTableAction(IApplication app, Resources rsrc)

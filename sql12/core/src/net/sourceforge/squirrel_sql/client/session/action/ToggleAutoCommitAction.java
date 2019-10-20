@@ -54,18 +54,23 @@ public class ToggleAutoCommitAction extends SquirrelAction implements ISessionAc
       }
       _session = session;
 
-      GUIUtils.processOnSwingEventThread(new Runnable() {
-          public void run() {
-              if (session == null || session.getProperties() == null) {
-                  setEnabled(false);
-                 _toogleComponentHolder.setSelected(false);
-              } else {
-                 SessionProperties props = session.getProperties();
-                 setEnabled(true);
-                 props.addPropertyChangeListener(_propertyListener);
-                 _toogleComponentHolder.setSelected(props.getAutoCommit());
-              }
-          }
+      GUIUtils.processOnSwingEventThread(new Runnable()
+      {
+         public void run()
+         {
+            if (session == null || session.getProperties() == null)
+            {
+               setEnabled(false);
+               _toogleComponentHolder.setSelected(false);
+            }
+            else
+            {
+               SessionProperties props = session.getProperties();
+               setEnabled(true);
+               props.addPropertyChangeListener(_propertyListener);
+               _toogleComponentHolder.setSelected(props.getAutoCommit());
+            }
+         }
       });
 
    }

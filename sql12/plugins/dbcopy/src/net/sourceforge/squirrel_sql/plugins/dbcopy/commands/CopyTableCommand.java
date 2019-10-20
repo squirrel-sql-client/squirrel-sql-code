@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.commands;
 import java.sql.SQLException;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
@@ -40,13 +41,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
 
-public class CopyTableCommand implements ICommand
+public class CopyTableCommand
 {
-	/**
-	 * Current session.
-	 */
-	private ISession _session;
-
+	private IObjectTreeAPI _objectTreeAPI;
 	/**
 	 * Current plugin.
 	 */
@@ -75,10 +72,9 @@ public class CopyTableCommand implements ICommand
 	/**
 	 * Ctor specifying the current session.
 	 */
-	public CopyTableCommand(ISession session, DBCopyPlugin plugin)
+	public CopyTableCommand(IObjectTreeAPI objectTreeAPI, DBCopyPlugin plugin)
 	{
-		super();
-		_session = session;
+		_objectTreeAPI = objectTreeAPI;
 		_plugin = plugin;
 	}
 
@@ -92,10 +88,9 @@ public class CopyTableCommand implements ICommand
     */
 	public void execute()
 	{
-		IObjectTreeAPI api = _session.getObjectTreeAPIOfActiveSessionWindow();
-		if (api != null)
+		if (_objectTreeAPI != null)
 		{
-			IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
+			IDatabaseObjectInfo[] dbObjs = _objectTreeAPI.getSelectedDatabaseObjects();
 			if (DatabaseObjectType.TABLE_TYPE_DBO.equals(dbObjs[0].getDatabaseObjectType()))
 			{
 				String catalog = dbObjs[0].getCatalogName();
@@ -105,7 +100,7 @@ public class CopyTableCommand implements ICommand
 					log.debug("CopyTableCommand.execute: catalog=" + catalog);
 					log.debug("CopyTableCommand.execute: schema=" + schema);
 				}
-				dbObjs = DBUtil.getTables(_session, catalog, schema, null);
+				dbObjs = DBUtil.getTables(_objectTreeAPI.getSession(), catalog, schema, null);
 				for (int i = 0; i < dbObjs.length; i++)
 				{
 					ITableInfo info = (ITableInfo) dbObjs[i];
@@ -116,10 +111,11 @@ public class CopyTableCommand implements ICommand
 				}
 			}
 
-			_plugin.getSessionInfoProvider().initCopy(_session);
+			_plugin.getSessionInfoProvider().initCopy(_objectTreeAPI.getSession());
 			final IDatabaseObjectInfo[] fdbObjs = dbObjs;
-			final SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
-			_session.getApplication().getThreadPool().addTask(new Runnable()
+			final SQLDatabaseMetaData md = _objectTreeAPI.getSession().getSQLConnection().getSQLMetaData();
+
+			Main.getApplication().getThreadPool().addTask(new Runnable()
 			{
 				public void run()
 				{
@@ -128,8 +124,9 @@ public class CopyTableCommand implements ICommand
 						getInsertionOrder(fdbObjs, md);
 						_plugin.setPasteMenuEnabled(true);
 					}
-					catch (SQLException e)
+					catch (Throwable e)
 					{
+						Main.getApplication().getMessageHandler().showErrorMessage(e);
 						log.error("Unexected exception: ", e);
 					}
 				}
@@ -145,9 +142,7 @@ public class CopyTableCommand implements ICommand
 		// Only concerned about order when more than one table.
 		if (selectedTables.size() > 1)
 		{
-			ProgressCallBack cb =
-				progressCallBackFactory.create(_session.getApplication().getMainFrame(),
-					i18n.PROGRESS_DIALOG_TITLE, dbObjs.length);
+			ProgressCallBack cb =  progressCallBackFactory.create(Main.getApplication().getMainFrame(),i18n.PROGRESS_DIALOG_TITLE, dbObjs.length);
 
 			cb.setLoadingPrefix(i18n.LOADING_PREFIX);
 			selectedTables = SQLUtilities.getInsertionOrder(selectedTables, md, cb);

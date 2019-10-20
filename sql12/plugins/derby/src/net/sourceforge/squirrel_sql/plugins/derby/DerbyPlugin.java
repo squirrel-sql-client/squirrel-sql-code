@@ -25,6 +25,8 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
@@ -37,8 +39,10 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -221,28 +225,48 @@ public class DerbyPlugin extends DefaultSessionPlugin {
     * @return  <TT>true</TT> if session is Oracle in which case this plugin
     *                          is interested in it.
     */
-   public PluginSessionCallback sessionStarted(final ISession session) {
-      if (!isPluginSession(session)) {
+   public PluginSessionCallback sessionStarted(final ISession session)
+   {
+      if (!isPluginSession(session))
+      {
          return null;
       }
-      if (s_log.isInfoEnabled()) {
-         s_log.info("Installing Derby query tokenizer");
-      }
-      DerbyPreferenceBean prefBean = (DerbyPreferenceBean) _prefsManager.getPreferences();
-      if (prefBean.isInstallCustomQueryTokenizer()) {
-         DerbyQueryTokenizer tokenizer = new DerbyQueryTokenizer(prefBean.getStatementSeparator(),
-                                                                 prefBean.getLineComment(),
-                                                                 prefBean.isRemoveMultiLineComments());
-         session.setQueryTokenizer(tokenizer);
-      }
-      
-      GUIUtils.processOnSwingEventThread(new Runnable() {
-         public void run() {
-            updateTreeApi(session);
-         }
-      });
 
-      return new PluginSessionCallbackAdaptor();
+      DerbyPreferenceBean prefBean = (DerbyPreferenceBean) _prefsManager.getPreferences();
+
+      if (prefBean.isInstallCustomQueryTokenizer())
+      {
+         DerbyQueryTokenizer tokenizer =
+               new DerbyQueryTokenizer(prefBean.getStatementSeparator(), prefBean.getLineComment(), prefBean.isRemoveMultiLineComments());session.setQueryTokenizer(tokenizer);
+      }
+
+      GUIUtils.processOnSwingEventThread(() -> updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI()));
+
+      return new PluginSessionCallback()
+      {
+         @Override
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+         }
+
+         @Override
+         public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+         {
+         }
+
+         @Override
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+            updateTreeApi(objectTreeInternalFrame.getObjectTreeAPI());
+         }
+
+         @Override
+         public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+         {
+            ObjectTreeInternalFrame objectTreeInternalFrame = null;
+            updateTreeApi(objectTreeInternalFrame.getObjectTreeAPI());
+         }
+      };
    }
 
    /**
@@ -254,38 +278,27 @@ public class DerbyPlugin extends DefaultSessionPlugin {
    }
 
    /**
-    * @param session
+    * @param objectTreeAPI
     */
-   private void updateTreeApi(ISession session) {
+   private void updateTreeApi(IObjectTreeAPI objectTreeAPI)
+   {
    	DerbyPreferenceBean prefBean = (DerbyPreferenceBean) _prefsManager.getPreferences();
    	
-      _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+      _treeAPI = objectTreeAPI;
 
-      _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
-              new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, prefBean.getStatementSeparator()));
+      _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, prefBean.getStatementSeparator()));
 
-      _treeAPI.addDetailTab(DatabaseObjectType.VIEW,
-                            new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
+      _treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
 
-      //_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-      //_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
-      _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER,
-                            new DatabaseObjectInfoTab());
-      _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO,
-                            new DatabaseObjectInfoTab());
-      //_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-      //_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());        
+      _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+      _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
 
-      // Expanders - trigger and index expanders are added inside the table
-      // expander
-      //_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());
       TableWithChildNodesExpander trigExp = new TableWithChildNodesExpander();
       trigExp.setTableTriggerExtractor(new DerbyTableTriggerExtractorImpl());
       _treeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);
 
       _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-      _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER,
-                            new TriggerSourceTab("The source of the trigger"));
+      _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
 
    }
 

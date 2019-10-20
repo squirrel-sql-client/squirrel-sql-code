@@ -45,6 +45,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
@@ -235,7 +236,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
 
    public Object getExternalService()
    {
-      return new BoomarksExternalServiceImpl(this);
+      return new BookmarksExternalServiceImpl(this);
    }
 
    /**
@@ -302,6 +303,12 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
 
          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
          {
+         }
+
+         @Override
+         public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+         {
+
          }
 
          @Override

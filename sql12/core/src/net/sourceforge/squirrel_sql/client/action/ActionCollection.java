@@ -231,7 +231,7 @@ public class ActionCollection
 	 *
 	 * @param	frame	The <TT>JInternalFrame</TT> activated.
 	 */
-	public synchronized void activationChanged(IWidget frame)
+	public void activationChanged(IWidget frame)
 	{
 		ActionUpdateHelper actionUpdateHelper = new ActionUpdateHelper(frame);
 

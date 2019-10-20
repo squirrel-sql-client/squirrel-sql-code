@@ -39,8 +39,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(CreateTableOfCurrentSQLCommand.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateTableOfCurrentSQLCommand.class);
 
 
    /**
@@ -53,7 +52,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
     */
    public CreateTableOfCurrentSQLCommand(ISession session, SQLScriptPlugin plugin)
    {
-      super(session, plugin, true);
+      super(session, true);
       _plugin = plugin;
    }
 
@@ -62,7 +61,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
     */
    public void execute()
    {
-      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin));
+      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session));
 
       CreateTableOfCurrentSQLCtrl ctrl = new CreateTableOfCurrentSQLCtrl(owningFrame);
 
@@ -108,9 +107,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
       final StringBuffer sbScript = new StringBuffer();
       try
       {
-//    	  Thread.sleep(100);
-          ISQLPanelAPI api = 
-              FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
+          ISQLPanelAPI api =  FrameWorkAcessor.getSQLPanelAPI(_session);
           
           String script = api.getSQLScriptToBeExecuted();
           
@@ -128,12 +125,10 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
          Statement stmt = null;
          try
          {
-            StringBuffer sbCreate = new StringBuffer();
-            StringBuffer sbInsert = new StringBuffer();
-            StringBuffer sbDrop = new StringBuffer();
+            StringBuilder sbCreate = new StringBuilder();
+            StringBuilder sbInsert = new StringBuilder();
+            StringBuilder sbDrop = new StringBuilder();
             String statSep = ScriptUtil.getStatementSeparator(_session);
-
-
 
             stmt = conn.createStatement();
             stmt.setMaxRows(1);
@@ -203,7 +198,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
                hideAbortFrame();
                if (scriptOnly && 0 < sbScript.toString().trim().length())
                {
-                  FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbScript.toString(), true);
+                  FrameWorkAcessor.getSQLPanelAPI(_session).appendSQLScript(sbScript.toString(), true);
 
                   if (false == _session.getSelectedMainTab() instanceof BaseSQLTab)
                   {
@@ -215,7 +210,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
       }
    }
 
-   private void genCreate(ResultSet srcResult, String sTable, StringBuffer sbCreate)
+   private void genCreate(ResultSet srcResult, String sTable, StringBuilder sbCreate)
    {
       try
       {

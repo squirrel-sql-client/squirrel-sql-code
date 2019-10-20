@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 
 public class DBCopyPluginSessionCallback implements PluginSessionCallback
@@ -41,6 +42,12 @@ public class DBCopyPluginSessionCallback implements PluginSessionCallback
    public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,ISession session)
    {
       _plugin.addMenuItemsToContextMenu(objectTreeInternalFrame.getObjectTreeAPI());
+   }
+
+   @Override
+   public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+   {
+      _plugin.addMenuItemsToContextMenu(objectTreePanel);
    }
 
    @Override

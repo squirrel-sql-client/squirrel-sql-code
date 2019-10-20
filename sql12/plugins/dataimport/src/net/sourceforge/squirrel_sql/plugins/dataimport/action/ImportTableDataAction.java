@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -33,9 +34,9 @@ import net.sourceforge.squirrel_sql.fw.resources.IResources;
  *
  * @author Thorsten Mürell
  */
-public class ImportTableDataAction extends SquirrelAction implements ISessionAction
+public class ImportTableDataAction extends SquirrelAction implements IObjectTreeAction
 {
-   private ISession session;
+   private IObjectTreeAPI _objectTreeAPI;
 
    public ImportTableDataAction(IApplication app, IResources resources)
    {
@@ -43,24 +44,24 @@ public class ImportTableDataAction extends SquirrelAction implements ISessionAct
    }
 
    @Override
-   public void setSession(ISession session)
+   public void setObjectTree(IObjectTreeAPI objectTreeAPI)
    {
-      this.session = session;
+      _objectTreeAPI = objectTreeAPI;
+      setEnabled(null != _objectTreeAPI);
    }
 
    @Override
    public void actionPerformed(ActionEvent ev)
    {
-      if (session != null)
+      if (_objectTreeAPI != null)
       {
-         IObjectTreeAPI treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-         IDatabaseObjectInfo[] tables = treeAPI.getSelectedDatabaseObjects();
+         IDatabaseObjectInfo[] tables = _objectTreeAPI.getSelectedDatabaseObjects();
          if (tables.length != 1 || false == tables[0] instanceof ITableInfo)
          {
 
          }
 
-         new ImportTableDataCommand(session, (ITableInfo) tables[0]).execute();
+         new ImportTableDataCommand(_objectTreeAPI.getSession(), (ITableInfo) tables[0]).execute();
       }
    }
 

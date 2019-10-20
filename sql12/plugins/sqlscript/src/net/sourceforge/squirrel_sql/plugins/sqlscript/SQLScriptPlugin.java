@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
@@ -215,23 +216,18 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 
 			}
 
-			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,
-			      ISession sess)
+			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
 			{
-				ActionCollection coll = sess.getApplication().getActionCollection();
-				objectTreeInternalFrame.getObjectTreeAPI().addToPopup(
-				   DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
-				objectTreeInternalFrame.getObjectTreeAPI().addToPopup(
-				   DatabaseObjectType.TABLE, coll.get(CreateSelectScriptAction.class));
-				objectTreeInternalFrame.getObjectTreeAPI().addToPopup(
-				   DatabaseObjectType.TABLE, coll.get(DropTableScriptAction.class));
-				objectTreeInternalFrame.getObjectTreeAPI().addToPopup(
-				   DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
-				objectTreeInternalFrame.getObjectTreeAPI().addToPopup(
-				   DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
+				initObjectTree(objectTreeInternalFrame.getObjectTreeAPI());
 			}
 
-         @Override
+			@Override
+			public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+			{
+				initObjectTree(objectTreePanel);
+			}
+
+			@Override
          public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
          {
 				initSqlPanelApi(additionalSQLTab.getSQLPanelAPI());
@@ -245,10 +241,9 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 	private void addActionsToPopup(ISession session)
 	{
 		ActionCollection coll = getApplication().getActionCollection();
-		IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session, this);
+		IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session);
 
-		api.addToPopup(DatabaseObjectType.TABLE, getTableMenu(true));
-		api.addToPopup(DatabaseObjectType.VIEW, getTableMenu(false));
+		initObjectTree(api);
 
 		session.addSeparatorToToolbar();
 		session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
@@ -257,6 +252,24 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 
 		initSqlPanelApi(session.getSessionInternalFrame().getMainSQLPanelAPI());
 	}
+
+	private void initObjectTree(IObjectTreeAPI api)
+	{
+		api.addToPopup(DatabaseObjectType.TABLE, getDBTableMenu(true));
+		api.addToPopup(DatabaseObjectType.VIEW, getDBTableMenu(false));
+	}
+
+//	private void initObjectTree(IObjectTreeAPI objectTreeAPI)
+//	{
+//		ISession sess = objectTreeAPI.getSession();
+//		ActionCollection coll = sess.getApplication().getActionCollection();
+//		objectTreeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
+//		objectTreeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateSelectScriptAction.class));
+//		objectTreeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(DropTableScriptAction.class));
+//		objectTreeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
+//		objectTreeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
+//	}
+
 
 	private void initSqlPanelApi(ISQLPanelAPI sqlPanelAPI)
 	{
@@ -304,7 +317,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 		return menu;
 	}
 
-	private JMenu getTableMenu(boolean includeDrop)
+	private JMenu getDBTableMenu(boolean includeDrop)
 	{
 		IApplication app = getApplication();
 		ActionCollection coll = app.getActionCollection();

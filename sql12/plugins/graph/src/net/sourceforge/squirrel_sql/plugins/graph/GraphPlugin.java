@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
@@ -28,6 +30,8 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -226,7 +230,8 @@ public class GraphPlugin extends DefaultSessionPlugin
       IObjectTreeAPI objectTreeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
 
       ActionCollection coll = getApplication().getActionCollection();
-      objectTreeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(AddToGraphAction.class));
+
+      initObjectTree(objectTreeAPI);
 
       session.addSeparatorToToolbar();
       session.addToToolbar(coll.get(NewQueryBuilderWindowAction.class));
@@ -238,7 +243,36 @@ public class GraphPlugin extends DefaultSessionPlugin
       sqlPanelAPI.addToToolsPopUp("addtograph", coll.get(AddTableAtQursorToGraph.class));
       sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(AddTableAtQursorToGraph.class));
 
-      return new PluginSessionCallbackAdaptor();
+      return new PluginSessionCallback()
+      {
+         @Override
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+         }
+
+         @Override
+         public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+         {
+         }
+
+         @Override
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+            initObjectTree(objectTreeInternalFrame.getObjectTreeAPI());
+         }
+
+         @Override
+         public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+         {
+            initObjectTree(objectTreePanel);
+         }
+      };
+   }
+
+   private void initObjectTree(IObjectTreeAPI objectTreeAPI)
+   {
+      ActionCollection coll = getApplication().getActionCollection();
+      objectTreeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(AddToGraphAction.class));
    }
 
 

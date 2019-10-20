@@ -29,9 +29,6 @@ import java.sql.SQLException;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
@@ -41,8 +38,8 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ObjectTreePosition;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
@@ -53,15 +50,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /* Object Tree frame class*/
-public class ObjectTreeInternalFrame extends SessionTabWidget
-										implements IObjectTreeInternalFrame
+public class ObjectTreeInternalFrame extends SessionTabWidget implements IObjectTreeInternalFrame
 {
-	/** Application API. */
-	private final IApplication _app;
-
 	private ObjectTreePanel _objTreePanel;
 
-	/** Toolbar for window. */
 	private ObjectTreeToolBar _toolBar;
 
 	private StatusBar _statusBar = new StatusBar();
@@ -69,14 +61,11 @@ public class ObjectTreeInternalFrame extends SessionTabWidget
 
 	private boolean _hasBeenVisible = false;
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ObjectTreeInternalFrame.class);            
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ObjectTreeInternalFrame.class);
     
 	public ObjectTreeInternalFrame(ISession session)
 	{
 		super(session.getTitle(), true, true, true, true, session);
-		_app = session.getApplication();
 		setVisible(false);
 		createGUI(session);
 	}
@@ -136,8 +125,7 @@ public class ObjectTreeInternalFrame extends SessionTabWidget
 			}
 		});
 
-		_objTreePanel = new ObjectTreePanel(getSession());
-		_objTreePanel.addTreeSelectionListener(new ObjectTreeSelectionListener());
+		_objTreePanel = new ObjectTreePanel(getSession(), ObjectTreePosition.OBJECT_TREE_INTERNAL_FRAME);
 		_toolBar = new ObjectTreeToolBar(getSession(), _objTreePanel);
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		contentPanel.add(_toolBar, BorderLayout.NORTH);
@@ -155,22 +143,18 @@ public class ObjectTreeInternalFrame extends SessionTabWidget
 		validate();
 	}
 
-   public boolean hasSQLPanelAPI()
+	public boolean hasSQLPanelAPI()
    {
       return false; 
    }
 
    /** The class representing the toolbar at the top of a sql internal frame*/
-	private class ObjectTreeToolBar extends ToolBar
+	private static class ObjectTreeToolBar extends ToolBar
 	{
-		/** Internationalized strings for this class. */
-		private final StringManager s_stringMgr = StringManagerFactory.getStringManager(ObjectTreeToolBar.class);
-		private ILogger s_log = LoggerController.createLogger(ObjectTreeToolBar.class);
       private CatalogsPanel _catalogsPanel;
 
       ObjectTreeToolBar(ISession session, ObjectTreePanel panel)
       {
-         super();
          createGUI(session, panel);
 			SessionColoringUtil.colorToolbar(session, this);
 		}
@@ -178,7 +162,7 @@ public class ObjectTreeInternalFrame extends SessionTabWidget
 		private void createGUI(ISession session, ObjectTreePanel panel)
 		{
          _catalogsPanel = new CatalogsPanel(session, this);
-         _catalogsPanel.addActionListener(new CatalogsComboListener());
+         _catalogsPanel.addActionListener(new CatalogsComboListener(session));
          add(_catalogsPanel);
 
          ActionCollection actions = session.getApplication()
@@ -189,8 +173,15 @@ public class ObjectTreeInternalFrame extends SessionTabWidget
 		}
 	}
 
-	private final class CatalogsComboListener implements ActionListener
+	private static final class CatalogsComboListener implements ActionListener
 	{
+		private ISession _session;
+
+		public CatalogsComboListener(ISession session)
+		{
+			_session = session;
+		}
+
 		public void actionPerformed(ActionEvent evt)
 		{
 			Object src = evt.getSource();
@@ -202,41 +193,15 @@ public class ObjectTreeInternalFrame extends SessionTabWidget
 				{
 					try
 					{
-						getSession().getSQLConnection().setCatalog(catalog);
+						_session.getSQLConnection().setCatalog(catalog);
 					}
 					catch (SQLException ex)
 					{
-						getSession().showErrorMessage(ex);
+						_session.showErrorMessage(ex);
 					}
 				}
 			}
 		}
 	}
 
-   /** JASON: this could be added to the objecttreepanel if the status bar was attached
-    *  to the application
-    */
-   private final class ObjectTreeSelectionListener
-         implements
-            TreeSelectionListener
-   {
-      public void valueChanged(TreeSelectionEvent evt)
-      {
-         final TreePath selPath = evt.getNewLeadSelectionPath();
-         if (selPath != null)
-         {
-            StringBuffer buf = new StringBuffer();
-            Object[] fullPath = selPath.getPath();
-            for (int i = 0; i < fullPath.length; ++i)
-            {
-               if (fullPath[i] instanceof ObjectTreeNode)
-               {
-                  ObjectTreeNode node = (ObjectTreeNode)fullPath[i];
-                  buf.append('/').append(node.toString());
-               }
-            }
-            //JASON: have a main application status bar setStatusBarMessage(buf.toString());
-         }
-      }
-   }
 }

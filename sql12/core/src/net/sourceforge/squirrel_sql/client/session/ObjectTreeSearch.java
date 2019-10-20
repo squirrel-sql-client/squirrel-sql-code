@@ -15,8 +15,7 @@ import java.util.ArrayList;
  */
 public class ObjectTreeSearch
 {
-   private static final StringManager s_stringMgr =
-       StringManagerFactory.getStringManager(ObjectTreeSearch.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ObjectTreeSearch.class);
 
 
 
@@ -25,14 +24,9 @@ public class ObjectTreeSearch
     *
     * @param	evt		Event being executed.
     */
-   public synchronized void viewObjectInObjectTree(String objectName, ISession session)
+   public void viewObjectInObjectTree(String objectName, ISession session)
    {
 
-      ObjectCandidates candidates = getObjectCandidates(objectName);
-      if (candidates.size() == 0)
-      {
-          return;
-      }
 
       if(false == session.getActiveSessionWindow() instanceof SessionInternalFrame &&
          false == session.getActiveSessionWindow() instanceof ObjectTreeInternalFrame)
@@ -41,19 +35,48 @@ public class ObjectTreeSearch
       }
 
 
+      IObjectTreeAPI objectTreeAPI = session.getObjectTreeAPIOfActiveSessionWindow();
 
-      IObjectTreeAPI objectTree = session.getObjectTreeAPIOfActiveSessionWindow();
+      viewInObjectTree(objectName, objectTreeAPI);
 
+   }
+
+   public void viewInObjectTree(String objectName, IObjectTreeAPI objectTreeAPI)
+   {
+      ObjectCandidates candidates = getObjectCandidates(objectName);
+      if (candidates.size() == 0)
+      {
+         return;
+      }
+
+      _viewInObjectTree(candidates, objectTreeAPI, true);
+   }
+
+   public void viewObjectInObjectTree(String objectName, IObjectTreeAPI objectTreeAPI)
+   {
+      ObjectCandidates candidates = getObjectCandidates(objectName);
+      if (candidates.size() == 0)
+      {
+         return;
+      }
+
+      _viewInObjectTree(candidates, objectTreeAPI, false);
+
+   }
+
+   private void _viewInObjectTree(ObjectCandidates candidates, IObjectTreeAPI objectTreeAPI, boolean selectMainObjectTreeIfFound)
+   {
       boolean success = false;
       while (candidates.hasNext())
       {
 
          ArrayList<String> catSchemObj = candidates.next();
 
-         success = objectTree.selectInObjectTree(catSchemObj.get(0), catSchemObj.get(1), new FilterMatcher(catSchemObj.get(2), null));
-         if (success)
+         success = objectTreeAPI.selectInObjectTree(catSchemObj.get(0), catSchemObj.get(1), new FilterMatcher(catSchemObj.get(2), null));
+
+         if (success && selectMainObjectTreeIfFound)
          {
-            session.selectMainTab(ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB);
+            objectTreeAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB);
             break;
          }
 
@@ -63,9 +86,8 @@ public class ObjectTreeSearch
       {
          // i18n[ObjectTreeSearch.error.objectnotfound=Could not locate the database object ''{0}'' in Object tree]
          String msg = s_stringMgr.getString("ObjectTreeSearch.error.objectnotfound",candidates.getSearchString());
-         JOptionPane.showMessageDialog(SessionUtils.getOwningFrame(session), msg);
+         JOptionPane.showMessageDialog(SessionUtils.getOwningFrame(objectTreeAPI.getSession()), msg);
       }
-
    }
 
    private ObjectCandidates getObjectCandidates(String objectName)

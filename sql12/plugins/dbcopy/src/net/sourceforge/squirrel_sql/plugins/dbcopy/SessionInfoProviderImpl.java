@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.dbcopy;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class SessionInfoProviderImpl implements SessionInfoProvider
 {
-   private ISession _copyDestSession = null;
+   private IObjectTreeAPI _copyDestobjectTreeAPI = null;
 
    private List<IDatabaseObjectInfo> _selectedDatabaseObjects = null;
 
@@ -91,8 +92,10 @@ public class SessionInfoProviderImpl implements SessionInfoProvider
     */
    public ISession getDestSession()
    {
-      return _copyDestSession;
+      return _copyDestobjectTreeAPI.getSession();
    }
+
+
 
    @Override
    public void setPasteToTableName(String pasteToTableName)
@@ -139,15 +142,18 @@ public class SessionInfoProviderImpl implements SessionInfoProvider
    @Override
    public boolean isCopiedFormDestinationSession()
    {
-      return _copyDestSession.equals(_copySourceSession);
+      return _copyDestobjectTreeAPI.equals(_copySourceSession);
    }
 
-   /**
-    * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#setDestSession(net.sourceforge.squirrel_sql.client.session.ISession)
-    */
-   public void setDestSession(ISession session)
+   public void setDestObjectTree(IObjectTreeAPI objectTreeAPI)
    {
-      _copyDestSession = session;
+      _copyDestobjectTreeAPI = objectTreeAPI;
+   }
+
+   @Override
+   public IObjectTreeAPI getDestObjectTreeAPI()
+   {
+      return _copyDestobjectTreeAPI;
    }
 
    /**

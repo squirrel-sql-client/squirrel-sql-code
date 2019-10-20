@@ -29,7 +29,6 @@ import javax.swing.*;
 import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -41,21 +40,13 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
 {
 
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(CreateDataScriptOfCurrentSQLCommand.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateDataScriptOfCurrentSQLCommand.class);
 
-
-   /**
-    * Current plugin.
-    */
    private final SQLScriptPlugin _plugin;
 
-   /**
-    * Ctor specifying the current session.
-    */
    public CreateDataScriptOfCurrentSQLCommand(ISession session, SQLScriptPlugin plugin)
    {
-      super(session, plugin, false);
+      super(session, false);
       _plugin = plugin;
    }
 
@@ -70,11 +61,11 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
 
    private void doCreateDataScript()
    {
-      final StringBuffer sbRows = new StringBuffer(1000);
+      final StringBuilder sbRows = new StringBuilder();
 
       try
       {
-          ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
+          ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(_session);
 
           String scripts = api.getSQLScriptToBeExecuted();
 
@@ -130,7 +121,7 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
             {
                if (sbRows.length() > 0)
                {
-                  FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbRows.toString(), true);
+                  FrameWorkAcessor.getSQLPanelAPI(_session).appendSQLScript(sbRows.toString(), true);
 
                   if (false == _session.getSelectedMainTab() instanceof BaseSQLTab)
                   {

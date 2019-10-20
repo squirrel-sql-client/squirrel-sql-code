@@ -47,6 +47,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -643,11 +644,23 @@ public class PluginManager implements IPluginManager
 		{
 			pluginSessionCallback.additionalSQLTabOpened(additionalSQLTab);
 		}
-
-
 	}
 
+	@Override
+	public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+	{
+		List<PluginSessionCallback> list = _pluginSessionCallbacksBySessionID.get(objectTreePanel.getSession().getIdentifier());
 
+		if(null == list)
+		{
+			return;
+		}
+
+		for (PluginSessionCallback pluginSessionCallback : list)
+		{
+			pluginSessionCallback.objectTreeInSQLTabOpened(objectTreePanel);
+		}
+	}
 
 	/**
 	 * Retrieve information about plugin load times

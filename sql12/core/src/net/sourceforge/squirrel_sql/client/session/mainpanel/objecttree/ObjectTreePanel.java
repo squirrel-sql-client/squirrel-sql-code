@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ObjectTreePosition;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
@@ -64,17 +65,12 @@ import java.util.Map;
  */
 public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 {
-   /** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(ObjectTreePanel.class);
+	private static final ILogger s_log = LoggerController.createLogger(ObjectTreePanel.class);
 
-	/** The <TT>IIdentifier</TT> that uniquely identifies this object. */
 	private IIdentifier _id = IdentifierFactory.getInstance().createIdentifier();
 
-	/** Current session. */
 	private transient ISession _session;
 
-	/** Tree of objects within the database. */
 	private ObjectTree _tree;
 
 	/** Split pane between the object tree and the data panel. */
@@ -90,8 +86,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 * Contains instances of <TT>ObjectTreeTabbedPane</TT> objects keyed by
 	 * the node type. I.E. the tabbed folders for each node type are kept here.
 	 */
-	private final Map<IIdentifier, ObjectTreeTabbedPane> _tabbedPanes = 
-        new HashMap<IIdentifier, ObjectTreeTabbedPane>();
+	private final Map<IIdentifier, ObjectTreeTabbedPane> _tabbedPanes = new HashMap<>();
 
 	/** Listens to changes in session properties. */
 	private SessionPropertiesListener _propsListener;
@@ -108,15 +103,18 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
    private FindInObjectTreeController _findInObjectTreeController;
 
-   /**
+	private ObjectTreePosition _objectTreePosition;
+
+	/**
 	 * ctor specifying the current session.
 	 *
-	 * @param	session	Current session.
+	 * @param   session   Current session.
 	 *
+	 * @param objectTreeInternalFrame
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public ObjectTreePanel(ISession session)
+	public ObjectTreePanel(ISession session, ObjectTreePosition objectTreeInternalFrame)
 	{
 		if (session == null)
 		{
@@ -126,7 +124,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 		_emptyTabPane = new ObjectTreeTabbedPane(_session);
 
-      _findInObjectTreeController = new FindInObjectTreeController(_session);
+      _findInObjectTreeController = new FindInObjectTreeController(this);
 
       createGUI();
 
@@ -988,9 +986,14 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
       return _splitPane.getRightComponent();
    }
 
-   private final class LeftPanel extends JPanel
+	@Override
+	public ObjectTreePosition getObjectTreePosition()
 	{
-		private static final long serialVersionUID = 1L;
+		return _objectTreePosition;
+	}
+
+	private final class LeftPanel extends JPanel
+	{
 
 		LeftPanel()
 		{
@@ -1008,8 +1011,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 * This class listens for changes in the node selected in the tree
 	 * and displays the appropriate detail panel for the node.
 	 */
-	private final class ObjectTreeSelectionListener
-		implements TreeSelectionListener
+	private final class ObjectTreeSelectionListener implements TreeSelectionListener
 	{
 		public void valueChanged(TreeSelectionEvent evt)
 		{

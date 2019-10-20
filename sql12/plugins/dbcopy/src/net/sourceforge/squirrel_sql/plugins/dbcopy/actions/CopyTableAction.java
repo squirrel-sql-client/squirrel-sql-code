@@ -17,47 +17,42 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.actions;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.commands.CopyTableCommand;
 
-public class CopyTableAction extends SquirrelAction
-                                     implements ISessionAction {
+public class CopyTableAction extends SquirrelAction implements IObjectTreeAction
+{
+   private final DBCopyPlugin _plugin;
+   private IObjectTreeAPI _objectTreeAPI;
 
-	private static final long serialVersionUID = 1L;
+   public CopyTableAction(IApplication app,  Resources rsrc,DBCopyPlugin plugin)
+   {
+      super(app, rsrc);
+      _plugin = plugin;
+   }
 
-	/** Current session. */
-    private ISession _session;
+   public void actionPerformed(ActionEvent evt)
+   {
+      if (_objectTreeAPI != null)
+      {
+         new CopyTableCommand(_objectTreeAPI, _plugin).execute();
+      }
+   }
 
-	/** Current plugin. */
-	private final DBCopyPlugin _plugin;
-
-    public CopyTableAction(IApplication app, 
-                           Resources rsrc,
-                           DBCopyPlugin plugin) 
-    {
-        super(app, rsrc);
-        _plugin = plugin;
-    }
-
-    public void actionPerformed(ActionEvent evt) {
-        if (_session != null) {
-            new CopyTableCommand(_session, _plugin).execute();
-        }
-    }
-
-	/**
-	 * Set the current session.
-	 * 
-	 * @param	session		The current session.
-	 */
-    public void setSession(ISession session) {
-        _session = session;
-    }
+   @Override
+   public void setObjectTree(IObjectTreeAPI objectTreeAPI)
+   {
+      _objectTreeAPI = objectTreeAPI;
+      setEnabled(null != _objectTreeAPI);
+   }
 }

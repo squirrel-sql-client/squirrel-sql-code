@@ -22,20 +22,23 @@ import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -120,9 +123,6 @@ public class MysqlPlugin extends DefaultSessionPlugin
       String USERS_IMAGE = "users";
    }
 
-
-	/** API for the Obejct Tree. */
-	private IObjectTreeAPI _treeAPI;
 
 	/** MySQL menu. */
 	private JMenu _mySQLMenu;
@@ -319,19 +319,41 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
-		if (!isPluginSession(session)) { return null; }
-
-		GUIUtils.processOnSwingEventThread(new Runnable()
+		if (!isPluginSession(session))
 		{
-			public void run()
-			{
-				updateTreeApi(session);
-			}
-		});
+			return null;
+		}
+
+		GUIUtils.processOnSwingEventThread(() -> updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI()));
 
 		installMysqlQueryTokenizer(session);
 
-		return new PluginSessionCallbackAdaptor();
+		return new PluginSessionCallback()
+		{
+			@Override
+			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+			{
+
+			}
+
+			@Override
+			public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+			{
+
+			}
+
+			@Override
+			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+			{
+				updateTreeApi(objectTreeInternalFrame.getObjectTreeAPI());
+			}
+
+			@Override
+			public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+			{
+				updateTreeApi(objectTreePanel);
+			}
+		};
 	}
 
 	/**
@@ -365,71 +387,74 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 	}
 
-	private void updateTreeApi(ISession session)
+	private void updateTreeApi(IObjectTreeAPI objectTreeAPI)
 	{
-		_treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
 		final ActionCollection coll = getApplication().getActionCollection();
 
 		// Show users in the object tee.
-		_treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander(_objectTypes));
-		_treeAPI.addExpander(_objectTypes.getUserParent(), new UserParentExpander(this));
+		objectTreeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander(_objectTypes));
+		objectTreeAPI.addExpander(_objectTypes.getUserParent(), new UserParentExpander(this));
 
 		// Tabs to add to the database node.
-		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowVariablesTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowLogsTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterStatusTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterLogsTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowSlaveStatusTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowVariablesTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowLogsTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterStatusTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterLogsTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowSlaveStatusTab());
 
 		// Tabs to add to the catalog nodes.
-		_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new TableStatusTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.CATALOG, new TableStatusTab());
 
 		// Tabs to add to the table nodes.
-		_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
 
 		// Tabs to add to the user nodes.
-		_treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
 
 		// Options in popup menu.
-		_treeAPI.addToPopup(coll.get(CreateDatabaseAction.class));
+		objectTreeAPI.addToPopup(coll.get(CreateDatabaseAction.class));
 
 		// _treeAPI.addToPopup(DatabaseObjectType.SESSION, coll.get(CreateTableAction.class));
 		// _treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(CreateTableAction.class));
-		_treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(DropDatabaseAction.class));
+		objectTreeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(DropDatabaseAction.class));
 
-		_treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());
+		objectTreeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());
 
-		updateTreeApiForMysql5(session);
+		updateTreeApiForMysql5(objectTreeAPI);
 
-      _treeAPI.refreshTree();
+      objectTreeAPI.refreshTree();
 	}
 
-	private void updateTreeApiForMysql5(ISession session)
+	private void updateTreeApiForMysql5(IObjectTreeAPI objectTreeAPI)
 	{
-		if (!DialectFactory.isMySQL5(session.getMetaData())) { return; }
-		String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
+		if (!DialectFactory.isMySQL5(objectTreeAPI.getSession().getMetaData()))
+		{
+			return;
+		}
+
+		String stmtSep = objectTreeAPI.getSession().getQueryTokenizer().getSQLStatementSeparator();
 
 		MysqlProcedureSourceTab procSourceTab = new MysqlProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE);
-		_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, procSourceTab);
+		objectTreeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, procSourceTab);
 
 		// Tab to add to view nodes.
 		MysqlViewSourceTab viewSourceTab = new MysqlViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep);
-		_treeAPI.addDetailTab(DatabaseObjectType.VIEW, viewSourceTab);
+		objectTreeAPI.addDetailTab(DatabaseObjectType.VIEW, viewSourceTab);
 
 		// Show triggers for tables
 		TableWithChildNodesExpander trigExp = new TableWithChildNodesExpander();
 		trigExp.setTableTriggerExtractor(new MysqlTableTriggerExtractorImpl());
-		_treeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);
+		objectTreeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);
 
 		// tabs for triggers
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new MysqlTriggerDetailsTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new MysqlTriggerDetailsTab());
 		MysqlTriggerSourceTab trigSourceTab = new MysqlTriggerSourceTab(i18n.SHOW_TRIGGER_SOURCE, stmtSep);
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, trigSourceTab);
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER, trigSourceTab);
 
 	}
 

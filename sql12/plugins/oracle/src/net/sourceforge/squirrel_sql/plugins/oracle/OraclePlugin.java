@@ -54,6 +54,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
@@ -492,10 +493,16 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 			@Override
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,ISession sess)
 			{
-				onObjectTreeInternalFrameOpened(objectTreeInternalFrame);
+				updateObjectTree(objectTreeInternalFrame.getObjectTreeAPI());
 			}
 
-         @Override
+			@Override
+			public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+			{
+				updateObjectTree(objectTreePanel);
+			}
+
+			@Override
          public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
          {
             onAdditionalSQLTabOpened(additionalSQLTab);
@@ -625,12 +632,6 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 		sqlPanelAPI.addExecutor(new ExplainPlanExecuter(session, sqlPanelAPI));
 	}
 
-
-	private void onObjectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame)
-	{
-		final IObjectTreeAPI objTree = objectTreeInternalFrame.getObjectTreeAPI();
-		updateObjectTree(objTree);
-	}
 
 	/**
 	 * Return a node expander for the object tree for a particular default node type. <p/> A plugin could

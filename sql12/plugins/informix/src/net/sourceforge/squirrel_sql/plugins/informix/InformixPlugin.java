@@ -19,14 +19,18 @@ package net.sourceforge.squirrel_sql.plugins.informix;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.SchemaExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -59,9 +63,6 @@ public class InformixPlugin extends DefaultSessionPlugin
 	/** Logger for this class. */
 	@SuppressWarnings("unused")
 	private final static ILogger s_log = LoggerController.createLogger(InformixPlugin.class);
-
-	/** API for the Obejct Tree. */
-	private IObjectTreeAPI _treeAPI;
 
 	static interface i18n
 	{
@@ -168,17 +169,39 @@ public class InformixPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
-		if (!isPluginSession(session)) { return null; }
-		GUIUtils.processOnSwingEventThread(new Runnable()
+		if (!isPluginSession(session))
 		{
-			public void run()
-			{
-				updateTreeApi(session);
-			}
-		});
+			return null;
+		}
+
+		GUIUtils.processOnSwingEventThread(() -> updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI()));
+
 		InformixExceptionFormatter formatter = new InformixExceptionFormatter(session);
 		session.setExceptionFormatter(formatter);
-		return new PluginSessionCallbackAdaptor();
+		return new PluginSessionCallback()
+		{
+			@Override
+			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+			{
+			}
+
+			@Override
+			public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+			{
+			}
+
+			@Override
+			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+			{
+				updateTreeApi(objectTreeInternalFrame.getObjectTreeAPI());
+			}
+
+			@Override
+			public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+			{
+				updateTreeApi(objectTreePanel);
+			}
+		};
 	}
 
 	/**
@@ -192,35 +215,32 @@ public class InformixPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Add Informix-specific tabs when an informix session is started.
-	 * @param session
+	 * @param objectTreeAPI
 	 */
-	private void updateTreeApi(ISession session)
+	private void updateTreeApi(IObjectTreeAPI objectTreeAPI)
 	{
-		_treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+		objectTreeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
 
-		_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
 
-		_treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
-
-		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
 
 		// Expanders - trigger and index expanders are added inside the table
 		// expander
-		_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(
-			new InformixSequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE));
+		objectTreeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(new InformixSequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE));
 
 		TableWithChildNodesExpander tableExp = new TableWithChildNodesExpander();
 		tableExp.setTableIndexExtractor(new InformixTableIndexExtractorImpl());
 		tableExp.setTableTriggerExtractor(new InformixTableTriggerExtractorImpl());
-		_treeAPI.addExpander(DatabaseObjectType.TABLE, tableExp);
+		objectTreeAPI.addExpander(DatabaseObjectType.TABLE, tableExp);
 
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
 
 	}
 

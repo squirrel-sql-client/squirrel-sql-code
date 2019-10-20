@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.EscapeDateAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleObjectTreeBesidesEditorAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileDetachAction;
@@ -266,6 +267,8 @@ public class ActionRegistry
       actionCollection.add(new PasteFromHistoryAltAcceleratorAction(app));
 
       actionCollection.add(new QuitSoundAction());
+
+      actionCollection.add(new ToggleObjectTreeBesidesEditorAction());
 
    }
 

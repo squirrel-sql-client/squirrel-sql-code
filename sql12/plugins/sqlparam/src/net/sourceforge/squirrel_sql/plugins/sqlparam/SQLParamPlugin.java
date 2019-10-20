@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -232,7 +233,12 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 			{
 			}
 
-         @Override
+			@Override
+			public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+			{
+			}
+
+			@Override
          public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
          {
             initSQLParam(additionalSQLTab.getSQLPanelAPI(), additionalSQLTab.getSQLPanelAPI().getSession());

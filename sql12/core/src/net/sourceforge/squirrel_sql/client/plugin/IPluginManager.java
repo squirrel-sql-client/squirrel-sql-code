@@ -25,6 +25,7 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
 
@@ -145,4 +146,6 @@ public interface IPluginManager
 	void loadPluginsFromList(List<String> pluginList);
 
    void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab);
+
+   void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel);
 }

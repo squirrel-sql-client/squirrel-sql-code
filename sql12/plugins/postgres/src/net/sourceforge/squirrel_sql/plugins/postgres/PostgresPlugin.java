@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.*;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.SchemaExpander;
@@ -217,26 +218,16 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
      * @return <TT>true</TT> if session is Oracle in which case this plugin is interested in it.
      */
     @Override
-    public PluginSessionCallback sessionStarted(final ISession session) {
-        if (!isPluginSession(session)) {
+    public PluginSessionCallback sessionStarted(final ISession session)
+    {
+        if (!isPluginSession(session))
+        {
             return null;
         }
 
-        GUIUtils.processOnSwingEventThread(new Runnable() {
+        GUIUtils.processOnSwingEventThread(() -> updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI()));
 
-            @Override
-            public void run() {
-                updateTreeApi(session);
-            }
-        });
-
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                session.getSQLPanelAPIOfActiveSessionWindow().addExecutor(new ExplainExecuterPanel(session));
-            }
-        });
+        SwingUtilities.invokeLater(() -> session.getSQLPanelAPIOfActiveSessionWindow().addExecutor(new ExplainExecuterPanel(session)));
 
         return new PluginSessionCallback()
         {
@@ -250,7 +241,13 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
             @Override
             public void objectTreeInternalFrameOpened(final ObjectTreeInternalFrame objectTreeInternalFrame, final ISession sess)
             {
-                // Plugin supports only the main session window
+                updateTreeApi(objectTreeInternalFrame.getObjectTreeAPI());
+            }
+
+            @Override
+            public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+            {
+                updateTreeApi(objectTreePanel);
             }
 
             @Override
@@ -269,18 +266,14 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
         return DialectFactory.isPostgreSQL(session.getMetaData());
     }
 
-    /**
-     * @param session the current session whose tree API should be updated
-     */
-    private void updateTreeApi(final ISession session) {
-        final IObjectTreeAPI _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-        final String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
+    private void updateTreeApi(IObjectTreeAPI treeAPI)
+    {
+        final String stmtSep = treeAPI.getSession().getQueryTokenizer().getSQLStatementSeparator();
         final ActionCollection col = getApplication().getActionCollection();
 
         // ////// Object Tree Expanders ////////
         // Schema Expanders - sequence
-        _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(new PostgresSequenceInodeExpanderFactory(),
-            DatabaseObjectType.SEQUENCE));
+        treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(new PostgresSequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE));
 
         // Table Expanders - trigger and index
         // expander
@@ -293,42 +286,42 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
         tableExpander.setTableTriggerExtractor(triggerExtractor);
         tableExpander.setTableIndexExtractor(indexExtractor);
 
-        _treeAPI.addExpander(DatabaseObjectType.TABLE, tableExpander);
+        treeAPI.addExpander(DatabaseObjectType.TABLE, tableExpander);
 
         // ////// Detail Tabs ////////
         // Procedure tab
-        _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
+        treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
 
         // View Tab
-        _treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep));
+        treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep));
 
         // Index tab
-        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexSourceTab(i18n.SHOW_INDEX_SOURCE, stmtSep));
+        treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+        treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
+        treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexSourceTab(i18n.SHOW_INDEX_SOURCE, stmtSep));
 
         // Trigger tabs
-        _treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
+        treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+        treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+        treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+        treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
 
         // Sequence tabs
-        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE_TYPE_DBO, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE_TYPE_DBO, new SequenceDetailsTab());
+        treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE_TYPE_DBO, new DatabaseObjectInfoTab());
+        treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE_TYPE_DBO, new SequenceDetailsTab());
 
         // Lock tab
-        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new LockTab());
-        
+        treeAPI.addDetailTab(DatabaseObjectType.SESSION, new LockTab());
+
         // Active connections
-        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ActiveConnections());
+        treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ActiveConnections());
 
         // ////// Popup Menus ////////
         final JMenu tableMenu = _resources.createMenu(IMenuResourceKeys.POSTGRES);
         _resources.addToMenu(col.get(VacuumTableAction.class), tableMenu);
-        _treeAPI.addToPopup(DatabaseObjectType.TABLE, tableMenu);
+        treeAPI.addToPopup(DatabaseObjectType.TABLE, tableMenu);
 
-        _treeAPI.addToPopup(DatabaseObjectType.SESSION, createSessionMenu(col));
+        treeAPI.addToPopup(DatabaseObjectType.SESSION, createSessionMenu(col));
     }
 
     /**
@@ -337,7 +330,8 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
      * @param col the ActionCollection to pull postgres actions from
      * @return the JMenu to add to the session menu
      */
-    private JMenu createSessionMenu(final ActionCollection col) {
+    private JMenu createSessionMenu(final ActionCollection col)
+    {
         final JMenu sessionMenu = _resources.createMenu(IMenuResourceKeys.POSTGRES);
         _resources.addToMenu(col.get(VacuumDatabaseAction.class), sessionMenu);
         return sessionMenu;

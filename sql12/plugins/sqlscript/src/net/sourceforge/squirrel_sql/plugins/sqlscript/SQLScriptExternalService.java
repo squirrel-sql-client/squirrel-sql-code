@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableSc
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 
-public class SQLScriptExternalService extends Object
+public class SQLScriptExternalService
 {
    private SQLScriptPlugin _sqlScriptPlugin;
 
@@ -16,7 +16,7 @@ public class SQLScriptExternalService extends Object
 
    public void scriptTablesToSQLEntryArea(ISession sess, ITableInfo[] tis)
    {
-      new CreateTableScriptCommand(sess, _sqlScriptPlugin).scriptTablesToSQLEntryArea(tis);
+      new CreateTableScriptCommand(sess.getObjectTreeAPIOfActiveSessionWindow(), _sqlScriptPlugin).scriptTablesToSQLEntryArea(tis);
    }
 
 }
