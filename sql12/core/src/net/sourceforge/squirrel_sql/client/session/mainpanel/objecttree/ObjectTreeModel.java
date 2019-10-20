@@ -90,73 +90,68 @@ public class ObjectTreeModel extends DefaultTreeModel
 			throw new IllegalArgumentException("ISession == null");
 		}
 
-		// Standard expanders.
-        session.getApplication().getThreadPool().addTask(new Runnable() {
-            public void run() {
-                // must *not* be done in the GUI thread
-                final INodeExpander expander = new DatabaseExpander(session);
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        // *must* be done in the GUI thread
-                        
-                        addExpander(DatabaseObjectType.CATALOG, expander);
-                        addExpander(DatabaseObjectType.SCHEMA, expander);
+		final INodeExpander expander = new DatabaseExpander(session);
 
-                        boolean foundTableExp = false;
-                        boolean foundProcExp = false;
-                        boolean foundUDTExp = false;
-                        boolean foundDatabaseExp = false;
-                        final IPluginManager pmgr = session.getApplication().getPluginManager();
-                        for (Iterator<SessionPluginInfo> pluginItr = pmgr.getSessionPluginIterator(); pluginItr.hasNext();)
-                        {
-                            ISessionPlugin p = (pluginItr.next()).getSessionPlugin();
-                            INodeExpander tableExp = p.getDefaultNodeExpander(session, DatabaseObjectType.TABLE_TYPE_DBO);
-                            if (tableExp != null)
-                            {
-                                foundTableExp = true;
-                                addExpander(DatabaseObjectType.TABLE_TYPE_DBO, tableExp);
-                            }
-                            INodeExpander procExp = p.getDefaultNodeExpander(session, DatabaseObjectType.PROC_TYPE_DBO);
-                            if (procExp != null)
-                            {
-                                foundProcExp = true;
-                                addExpander(DatabaseObjectType.PROC_TYPE_DBO, procExp);
-                            }
-                            INodeExpander udtExp = p.getDefaultNodeExpander(session, DatabaseObjectType.UDT_TYPE_DBO);
-                            if (udtExp != null)
-                            {
-                                foundUDTExp = true;
-                                addExpander(DatabaseObjectType.UDT_TYPE_DBO, udtExp);
-                            }
-                            INodeExpander databaseExp = p.getDefaultNodeExpander(session, DatabaseObjectType.DATABASE_TYPE_DBO);
-                            if (databaseExp != null) {
-                                foundDatabaseExp = true;
-                                addExpander(DatabaseObjectType.SESSION, databaseExp);
-                            }
-                        }
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				addExpander(DatabaseObjectType.CATALOG, expander);
+				addExpander(DatabaseObjectType.SCHEMA, expander);
 
-                        if (!foundTableExp) 
-                        {
-                            addExpander(DatabaseObjectType.TABLE_TYPE_DBO, new TableTypeExpander());
-                        }
-                        if (!foundProcExp)
-                        {
-                            addExpander(DatabaseObjectType.PROC_TYPE_DBO, new ProcedureTypeExpander());
-                        }
-                        if (!foundUDTExp)
-                        {
-                            addExpander(DatabaseObjectType.UDT_TYPE_DBO, new UDTTypeExpander());
-                        }
-                        if (!foundDatabaseExp) 
-                        {
-                            addExpander(DatabaseObjectType.SESSION, expander);
-                        }
-                        reload();
-                    }
-                });
-            }
-        });
-		
+				boolean foundTableExp = false;
+				boolean foundProcExp = false;
+				boolean foundUDTExp = false;
+				boolean foundDatabaseExp = false;
+				final IPluginManager pmgr = session.getApplication().getPluginManager();
+				for (Iterator<SessionPluginInfo> pluginItr = pmgr.getSessionPluginIterator(); pluginItr.hasNext(); )
+				{
+					ISessionPlugin p = (pluginItr.next()).getSessionPlugin();
+					INodeExpander tableExp = p.getDefaultNodeExpander(session, DatabaseObjectType.TABLE_TYPE_DBO);
+					if (tableExp != null)
+					{
+						foundTableExp = true;
+						addExpander(DatabaseObjectType.TABLE_TYPE_DBO, tableExp);
+					}
+					INodeExpander procExp = p.getDefaultNodeExpander(session, DatabaseObjectType.PROC_TYPE_DBO);
+					if (procExp != null)
+					{
+						foundProcExp = true;
+						addExpander(DatabaseObjectType.PROC_TYPE_DBO, procExp);
+					}
+					INodeExpander udtExp = p.getDefaultNodeExpander(session, DatabaseObjectType.UDT_TYPE_DBO);
+					if (udtExp != null)
+					{
+						foundUDTExp = true;
+						addExpander(DatabaseObjectType.UDT_TYPE_DBO, udtExp);
+					}
+					INodeExpander databaseExp = p.getDefaultNodeExpander(session, DatabaseObjectType.DATABASE_TYPE_DBO);
+					if (databaseExp != null)
+					{
+						foundDatabaseExp = true;
+						addExpander(DatabaseObjectType.SESSION, databaseExp);
+					}
+				}
+
+				if (!foundTableExp)
+				{
+					addExpander(DatabaseObjectType.TABLE_TYPE_DBO, new TableTypeExpander());
+				}
+				if (!foundProcExp)
+				{
+					addExpander(DatabaseObjectType.PROC_TYPE_DBO, new ProcedureTypeExpander());
+				}
+				if (!foundUDTExp)
+				{
+					addExpander(DatabaseObjectType.UDT_TYPE_DBO, new UDTTypeExpander());
+				}
+				if (!foundDatabaseExp)
+				{
+					addExpander(DatabaseObjectType.SESSION, expander);
+				}
+				reload();
+			}
+		});
 	}
 
 	/**

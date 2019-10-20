@@ -152,43 +152,35 @@ class ObjectTree extends JTree
       addToPopup(DatabaseObjectType.SESSION, actions.get(FilterObjectsAction.class));
 
 
-      session.getApplication().getThreadPool().addTask(new Runnable() {
-          public void run() {
-            try
-            {
-                // Option to select default catalog only applies to sessions
-                // that support catalogs.
-                if (_session.getSQLConnection().getSQLMetaData().supportsCatalogs())
-                {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            addToPopup(DatabaseObjectType.CATALOG,
-                                       actions.get(SetDefaultCatalogAction.class));
-                        }
+		try
+		{
+			// Option to select default catalog only applies to sessions
+			// that support catalogs.
+			if (_session.getSQLConnection().getSQLMetaData().supportsCatalogs())
+			{
+				SwingUtilities.invokeLater(() -> addToPopup(DatabaseObjectType.CATALOG,actions.get(SetDefaultCatalogAction.class)));
+			}
+		}
+		catch (Throwable th)
+		{
+			// Assume DBMS doesn't support catalogs.
+			s_log.warn("Error calling Connection.getSQLMetaData().supportsCatalogs()", th);
+		}
 
-                    });
-                }
-            }
-            catch (Throwable th)
-            {
-                // Assume DBMS doesn't support catalogs.
-                s_log.debug(th);
-            }
-
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    addToPopup(actions.get(CopySimpleObjectNameAction.class));
-                    addToPopup(actions.get(CopyQualifiedObjectNameAction.class));
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				addToPopup(actions.get(CopySimpleObjectNameAction.class));
+				addToPopup(actions.get(CopyQualifiedObjectNameAction.class));
 
 
-                  addMouseListener(new ObjectTreeMouseListener());
-                  setCellRenderer(new ObjectTreeCellRenderer(_model, _session));
-                  ObjectTree.this.refresh(false);
-                  ObjectTree.this.setSelectionPath(ObjectTree.this.getPathForRow(0));
-                }
-            });
-          }
-      });
+				addMouseListener(new ObjectTreeMouseListener());
+				setCellRenderer(new ObjectTreeCellRenderer(_model, _session));
+				ObjectTree.this.refresh(false);
+				ObjectTree.this.setSelectionPath(ObjectTree.this.getPathForRow(0));
+			}
+		});
 
       SessionColoringUtil.colorTree(session, this);
    }

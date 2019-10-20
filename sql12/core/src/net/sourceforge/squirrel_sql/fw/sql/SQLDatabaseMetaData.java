@@ -559,9 +559,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 */
 	public boolean supportsCatalogs() throws SQLException
 	{
-
-		return supportsCatalogsInTableDefinitions() || supportsCatalogsInDataManipulation()
-			|| supportsCatalogsInProcedureCalls();
+		return supportsCatalogsInTableDefinitions() || supportsCatalogsInDataManipulation() || supportsCatalogsInProcedureCalls();
 	}
 
 	/**

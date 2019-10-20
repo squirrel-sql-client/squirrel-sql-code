@@ -33,12 +33,22 @@ public class SQLPanelSplitter extends JPanel
       setLayout(new GridLayout(1,1));
 
       _splitPane = new JSplitPane();
-      add(_splitPane);
 
       _standardDividerSize = _splitPane.getDividerSize();
 
       _sqlPanel.setMinimumSize(new Dimension(0,0));
       _splitPane.setRightComponent(_sqlPanel);
+
+
+      ////////////////////////////////////////////////////////////////////////////////
+      // Without this Sessions that take longer to start look funny during startup.
+      JPanel empty = new JPanel();
+      empty.setMaximumSize(new Dimension(0,0));
+      _splitPane.setLeftComponent(empty);
+      //
+      ///////////////////////////////////////////////////////////////////////////////
+
+      add(_splitPane);
 
       _showObjectTree(false, false);
 
