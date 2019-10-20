@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -75,10 +76,18 @@ public class ToolBar extends JToolBar
 
    public JToggleButton addToggleAction(IToggleAction action)
    {
+      return addToggleAction(action, null);
+   }
+
+   /**
+    * @param session needed to prevent memory leaks.
+    */
+   public JToggleButton addToggleAction(IToggleAction action, ISession session)
+   {
       JToggleButton tglBtn = new JToggleButton();
       tglBtn.setAction(action);
       super.add(tglBtn);
-      action.getToggleComponentHolder().addToggleableComponent(tglBtn);
+      action.getToggleComponentHolder().addToggleableComponent(tglBtn, session);
       initialiseButton(action, tglBtn);
       return tglBtn;
    }

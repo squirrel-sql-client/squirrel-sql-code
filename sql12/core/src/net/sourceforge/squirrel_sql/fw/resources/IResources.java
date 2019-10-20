@@ -88,11 +88,12 @@ public interface IResources
 	 * 
 	 * @param action
 	 *        Action being setup.
-	 * 
+	 *
 	 * @throws IllegalArgumentException
 	 *         thrown if <TT>null</TT> <TT>action</TT> passed.
+    * @return
 	 */
-	void setupAction(Action action, boolean showColoricons);
+	Action setupAction(Action action);
 
 	ImageIcon getIcon(String keyName);
 

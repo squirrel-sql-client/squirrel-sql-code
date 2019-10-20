@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#582 View Objects window alongside SQL
+   New toolbar button "Show Object tree besides editor" shows an additional Object tree besides the current SQL editor.
+
 #581 JSON and XML export allow to select the charset/encoding
   Info: The export function is available for tables (table's right mouse menu) and SQL queries (editor's right mouse menu / tools popup ctrl+t / toolbar)
 

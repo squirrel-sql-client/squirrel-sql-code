@@ -47,7 +47,7 @@ public abstract class SquirrelAction extends BaseAction
 		}
 
 		_app = app;
-		rsrc.setupAction(this, _app.getSquirrelPreferences().getShowColoriconsInToolbar());
+		rsrc.setupAction(this);
 	}
 
 	protected IApplication getApplication()

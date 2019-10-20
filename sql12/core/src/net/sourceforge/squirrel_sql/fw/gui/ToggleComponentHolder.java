@@ -1,9 +1,15 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.beans.PropertyChangeListener;
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
 
 public class ToggleComponentHolder
 {
@@ -18,7 +24,7 @@ public class ToggleComponentHolder
    public void setSelected(boolean b)
    {
       _selected = b;
-      
+
       for (int i = 0; i < _toggleables.size(); i++)
       {
          final AbstractButton abstractButton = _toggleables.get(i);
@@ -27,6 +33,11 @@ public class ToggleComponentHolder
    }
 
    public void addToggleableComponent(AbstractButton toggleable)
+   {
+      addToggleableComponent(toggleable, null);
+   }
+
+   public void addToggleableComponent(AbstractButton toggleable, ISession session)
    {
       Action origAction = toggleable.getAction();
 
@@ -38,6 +49,12 @@ public class ToggleComponentHolder
       toggleable.setAction(new ActionProxy(origAction));
 
       _toggleables.add(toggleable);
+
+      if(null != session)
+      {
+         // needed to prevent memory leaks.
+         session.addSimpleSessionListener(() -> _toggleables.remove(toggleable));
+      }
    }
 
    private void selectionChanged()

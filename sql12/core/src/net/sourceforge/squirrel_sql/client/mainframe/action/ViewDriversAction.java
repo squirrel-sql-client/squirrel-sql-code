@@ -53,7 +53,7 @@ public class ViewDriversAction extends SelectWidgetAction
 		}
 
       m_window = window;
-      app.getResources().setupAction(this, app.getSquirrelPreferences().getShowColoriconsInToolbar());
+      app.getResources().setupAction(this);
 	}
 
    public void actionPerformed(ActionEvent evt)

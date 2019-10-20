@@ -42,9 +42,7 @@ public class TileVerticalAction extends TileInternalFramesAction
 	{
 		super(app);
 		_app = app;
-		app.getResources().setupAction(
-			this,
-			_app.getSquirrelPreferences().getShowColoriconsInToolbar());
+		app.getResources().setupAction(this);
 	}
 
 	public void actionPerformed(ActionEvent evt)

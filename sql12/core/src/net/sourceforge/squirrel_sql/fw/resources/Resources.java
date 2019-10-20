@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.resources;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortCutReader;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.JScrollMenu;
@@ -226,14 +227,17 @@ public abstract class Resources implements IResources
 
 
 	/**
-	 * @see IResources#setupAction(javax.swing.Action, boolean)
+	 * @see #setupAction(Action)
+	 * @return
 	 */
-	public void setupAction(Action action, boolean showColoricons)
+	public Action setupAction(Action action)
 	{
 		if (action == null)
 		{
 			throw new IllegalArgumentException("Action == null");
 		}
+
+		boolean showColorIcons = Main.getApplication().getSquirrelPreferences().getShowColoriconsInToolbar();
 
 		final String key = getActionKey(action.getClass());
 		String actionName = getActionName(action.getClass());
@@ -260,7 +264,7 @@ public abstract class Resources implements IResources
 		Icon icon = null;
 		try
 		{
-			if (showColoricons == true)
+			if (showColorIcons == true)
 			{
 				icon = getIcon(key, ActionProperties.ROLLOVER_IMAGE);
 				action.putValue(Action.SMALL_ICON, icon);
@@ -298,6 +302,8 @@ public abstract class Resources implements IResources
 		{
 			// Ignore
 		}
+
+		return action;
 	}
 
 	public String getActionName(Class<? extends Action> actionClass)

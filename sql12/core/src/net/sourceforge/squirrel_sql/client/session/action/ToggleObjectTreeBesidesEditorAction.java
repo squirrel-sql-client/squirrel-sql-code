@@ -9,12 +9,6 @@ import net.sourceforge.squirrel_sql.fw.gui.ToggleComponentHolder;
 
 import java.awt.event.ActionEvent;
 
-/**
- * This <CODE>Action</CODE> allows the user to commit the current SQL
- * transaction.
- *
- * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
- */
 public class ToggleObjectTreeBesidesEditorAction extends SquirrelAction implements ISQLPanelAction, IToggleAction
 {
    private ToggleComponentHolder _toggleComponentHolder;

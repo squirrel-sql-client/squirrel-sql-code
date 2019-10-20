@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.rowcolumnlabel.RowColumnLabel;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
@@ -537,7 +538,7 @@ public class SessionPanel extends JPanel
          add(actions.get(SelectSqlAction.class));
          add(actions.get(GoToLastEditLocationAction.class));
 			addSeparator();
-         addToggleAction((IToggleAction) actions.get(ToggleObjectTreeBesidesEditorAction.class));
+         addToggleAction((IToggleAction) actions.get(ToggleObjectTreeBesidesEditorAction.class), session);
       }
    }
 

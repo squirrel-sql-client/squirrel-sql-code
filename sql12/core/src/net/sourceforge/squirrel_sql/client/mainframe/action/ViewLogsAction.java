@@ -37,7 +37,7 @@ public class ViewLogsAction extends SquirrelAction
 	public ViewLogsAction(IApplication app)
 	{
 		super(app);
-		app.getResources().setupAction(this, true);
+		app.getResources().setupAction(this);
 	}
 
 	/**

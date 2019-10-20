@@ -42,8 +42,7 @@ public class MaximizeAction extends MaximizeInternalFramesAction
 	{
 		super(app);
 		_app = app;
-		app.getResources().setupAction(this,
-					_app.getSquirrelPreferences().getShowColoriconsInToolbar());
+		app.getResources().setupAction(this);
 	}
 
 	public void actionPerformed(ActionEvent evt)

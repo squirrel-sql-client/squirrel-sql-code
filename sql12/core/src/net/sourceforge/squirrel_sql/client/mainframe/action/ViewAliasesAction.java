@@ -48,7 +48,7 @@ public class ViewAliasesAction extends SelectWidgetAction
 		}
       m_window = window;
 
-      app.getResources().setupAction(this, app.getSquirrelPreferences().getShowColoriconsInToolbar());
+      app.getResources().setupAction(this);
 	}
 
 
