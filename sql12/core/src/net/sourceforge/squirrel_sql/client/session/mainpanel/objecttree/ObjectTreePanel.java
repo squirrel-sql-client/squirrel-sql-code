@@ -40,7 +40,6 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -819,7 +818,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		{
 			_splitPane.remove(existing);
 		}
-		_splitPane.add(comp, JSplitPane.RIGHT);
+		_splitPane.setRightComponent(comp);
 		_splitPane.setDividerLocation(divLoc);
 
 		if (pane != null)
@@ -906,9 +905,8 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		_splitPane.setOneTouchExpandable(true);
 		_splitPane.setContinuousLayout(true);
 
-      LeftPanel leftPanel = new LeftPanel();
-      leftPanel.setMinimumSize(new Dimension(50,50));
-      _splitPane.add(leftPanel, JSplitPane.LEFT);
+      LeftPanel leftPanel = new LeftPanel(_findInObjectTreeController, _tree);
+      _splitPane.setLeftComponent(leftPanel);
 		add(_splitPane, BorderLayout.CENTER);
 		_splitPane.setDividerLocation(200);
 
@@ -992,17 +990,17 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		return _objectTreePosition;
 	}
 
-	private final class LeftPanel extends JPanel
+	private static final class LeftPanel extends JPanel
 	{
-
-		LeftPanel()
+		LeftPanel(FindInObjectTreeController findInObjectTreeController, ObjectTree tree)
 		{
 			super(new BorderLayout());
-         add(_findInObjectTreeController.getFindInObjectTreePanel(), BorderLayout.NORTH);
+         add(findInObjectTreeController.getFindInObjectTreePanel(), BorderLayout.NORTH);
          JScrollPane sp = new JScrollPane();
 			sp.setBorder(BorderFactory.createEmptyBorder());
-			sp.setViewportView(_tree);
+			sp.setViewportView(tree);
 			sp.setPreferredSize(new Dimension(200, 200));
+			sp.setMinimumSize(new Dimension(0,0));
 			add(sp, BorderLayout.CENTER);
 		}
 	}

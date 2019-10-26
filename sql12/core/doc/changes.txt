@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Object tree: Improved split pane sizing behavior.
+
 #582 View Objects window alongside SQL
    New toolbar button "Show Object tree besides editor" shows an additional Object tree besides the current SQL editor.
 

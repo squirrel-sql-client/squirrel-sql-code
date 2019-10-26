@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,10 +40,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 class ObjectTreeTabbedPane
 {
-    
-    /** Logger for this class. */
-    private final static ILogger log = 
-                      LoggerController.createLogger(ObjectTreeTabbedPane.class);
+    private final static ILogger log =  LoggerController.createLogger(ObjectTreeTabbedPane.class);
     
 	/** Keys to client properties stored in the component. */
 	interface IClientPropertiesKeys
@@ -53,7 +51,6 @@ class ObjectTreeTabbedPane
 	/** The tabbed pane. */
 	private final JTabbedPane _tabPnl = UIFactory.getInstance().createTabbedPane();
 
-	/** Application API. */
 	private final IApplication _app;
 
 	/** ID of the session for this window. */
@@ -78,6 +75,7 @@ class ObjectTreeTabbedPane
 		_app = session.getApplication();
 
 		_tabPnl.putClientProperty(IClientPropertiesKeys.TABBED_PANE_OBJ, this);
+		_tabPnl.setMinimumSize(new Dimension(0,0));
 	}
 
 	/**
