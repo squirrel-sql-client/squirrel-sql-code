@@ -15,8 +15,10 @@ public class FindColumnDlg extends JDialog
 
 
    JTextField txtFilter = new JTextField();
+   JCheckBox chkFindInTableNames;
    TabButton btnSortAsc = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.SORT_ASC));
    TabButton btnSortDesc = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.SORT_DESC));
+
    JList<FindColumnColWrapper> lstLeft = new JList<>();
 
    TabButton btnRight = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.RIGHT_ARROW));
@@ -27,6 +29,7 @@ public class FindColumnDlg extends JDialog
 
    TabButton btnUp = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.TABLE_ASCENDING));
    TabButton btnDown = new TabButton(new LibraryResources().getIcon(LibraryResources.IImageNames.TABLE_DESCENDING));
+
 
 
    public FindColumnDlg(Frame owner)
@@ -78,7 +81,7 @@ public class FindColumnDlg extends JDialog
       ret.add(txtFilter, gbc);
 
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5,0,0,2), 0,0 );
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0 );
       ret.add(createSortPanel(), gbc);
 
 
@@ -101,10 +104,18 @@ public class FindColumnDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0 );
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0 );
+      chkFindInTableNames = new JCheckBox(s_stringMgr.getString("FindColumnDlg.ckeckbox.find.in.table.names"));
+      chkFindInTableNames.setToolTipText(s_stringMgr.getString("FindColumnDlg.ckeckbox.find.in.table.names.tooltip"));
+      ret.add(chkFindInTableNames, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0 );
+      ret.add(new JPanel(), gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10,0,0,0), 0,0 );
       ret.add(btnSortAsc, gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,3,0,0), 0,0 );
+      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10,3,0,0), 0,0 );
       ret.add(btnSortDesc, gbc);
 
       return ret;

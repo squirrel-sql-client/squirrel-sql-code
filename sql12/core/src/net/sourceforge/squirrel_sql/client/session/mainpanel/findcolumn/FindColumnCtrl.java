@@ -23,12 +23,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class FindColumnCtrl
 {
    public static final String PREF_KEY_FIND_COLUMN_SHEET_WIDTH = "Squirrel.findColumnSheet.width";
    public static final String PREF_KEY_FIND_COLUMN_SHEET_HEIGHT = "Squirrel.findColumnSheet.height";
+
+   public static final String PREF_KEY_FIND_IN_TABLE_NAME = "Squirrel.findColumnSheet.find.in.table.name";
 
    private final DataSetViewerTablePanel _dataSetViewerTablePanel;
    private final FindColumnDlg _findColumnDlg;
@@ -50,6 +54,11 @@ public class FindColumnCtrl
 
       _dataSetViewerTablePanel = dataSetViewerTablePanel;
       _findColumnDlg = new FindColumnDlg(owningFrame);
+
+      _findColumnDlg.chkFindInTableNames.setSelected(Props.getBoolean(PREF_KEY_FIND_IN_TABLE_NAME, false));
+      _findColumnDlg.chkFindInTableNames.setEnabled(_dataSetContainsdifferentTables);
+      _findColumnDlg.chkFindInTableNames.addActionListener(e -> onFindInTableNames());
+
 
       _findColumnDlg.lstLeft.setModel(_leftListModel);
       _findColumnDlg.lstLeft.addMouseListener(new MouseAdapter() {
@@ -109,55 +118,19 @@ public class FindColumnCtrl
       });
 
 
-      _findColumnDlg.btnRight.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onMoveRight();
-         }
-      });
+      _findColumnDlg.btnRight.addActionListener(e -> onMoveRight());
 
-      _findColumnDlg.btnLeft.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onMoveLeft();
-         }
-      });
+      _findColumnDlg.btnLeft.addActionListener(e -> onMoveLeft());
 
-      _findColumnDlg.btnUp.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onMoveUp();
-         }
-      });
+      _findColumnDlg.btnUp.addActionListener(e -> onMoveUp());
 
-      _findColumnDlg.btnDown.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onMoveDown();
-         }
-      });
+      _findColumnDlg.btnDown.addActionListener(e -> onMoveDown());
 
-      _findColumnDlg.btnToTableBegin.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onMoveToTableBegin();
-         }
-      });
+      _findColumnDlg.btnToTableBegin.addActionListener(e -> onMoveToTableBegin());
 
       onFilterChanged();
 
-      GUIUtils.enableCloseByEscape(_findColumnDlg, new CloseByEscapeListener() {
-         @Override
-         public void willCloseByEcape(JDialog dialog)
-         {
-            onClosing();
-         }
-      });
+      GUIUtils.enableCloseByEscape(_findColumnDlg, dialog -> onClosing());
 
       _findColumnDlg.addWindowListener(new WindowAdapter() {
          @Override
@@ -170,6 +143,12 @@ public class FindColumnCtrl
       _findColumnDlg.setSize(getDimension());
 
       _findColumnDlg.showDialog();
+   }
+
+   private void onFindInTableNames()
+   {
+      Props.putBoolean(PREF_KEY_FIND_IN_TABLE_NAME,_findColumnDlg.chkFindInTableNames.isSelected());
+      onFilterChanged();
    }
 
    private boolean dataSetContainsdifferentTables(DataSetViewerTablePanel dataSetViewerTablePanel)
@@ -301,7 +280,7 @@ public class FindColumnCtrl
    {
       ArrayList<FindColumnColWrapper> newListContent = new ArrayList<FindColumnColWrapper>();
 
-      Object[] formerSelectedValues = _findColumnDlg.lstLeft.getSelectedValues();
+      List<FindColumnColWrapper> formerSelectedValues = _findColumnDlg.lstLeft.getSelectedValuesList();
 
       for (ExtTableColumn extTableColumn : DataSetViewerTablePanelUtil.getTableColumns(_dataSetViewerTablePanel.getTable()))
       {
@@ -309,7 +288,7 @@ public class FindColumnCtrl
 
          String filterText = _findColumnDlg.txtFilter.getText();
 
-         if(StringUtilities.isEmpty(filterText, true) || -1 < colWrapper.toString().toLowerCase().indexOf(filterText.toLowerCase()))
+         if(StringUtilities.isEmpty(filterText, true) || -1 < colWrapper.getMatchString(_findColumnDlg.chkFindInTableNames.isSelected()).toLowerCase().indexOf(filterText.toLowerCase()))
          {
             if(false == _rightListModel.contains(colWrapper))
             {
@@ -353,7 +332,7 @@ public class FindColumnCtrl
       _findColumnDlg.lstLeft.clearSelection();
 
       ArrayList<Integer> indicesToSelect = new ArrayList<Integer>();
-      for (Object formerSelectedValue : formerSelectedValues)
+      for (FindColumnColWrapper formerSelectedValue : formerSelectedValues)
       {
          indicesToSelect.add(_leftListModel.indexOf(formerSelectedValue));
       }

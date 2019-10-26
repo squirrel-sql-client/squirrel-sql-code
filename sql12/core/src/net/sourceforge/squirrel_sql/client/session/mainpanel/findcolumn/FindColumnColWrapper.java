@@ -49,4 +49,16 @@ public class FindColumnColWrapper
    {
       return _extTableColumn != null ? _extTableColumn.hashCode() : 0;
    }
+
+   public String getMatchString(boolean findInTableNames)
+   {
+      if (findInTableNames)
+      {
+         return toString();
+      }
+      else
+      {
+         return _extTableColumn.getColumnDisplayDefinition().getColumnName();
+      }
+   }
 }

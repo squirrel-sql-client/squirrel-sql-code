@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+"Find column" function of SQL results: The "Find column" dialog has a new checkbox "Find in column name".
+   --> When different tables are found in a result the table names are shown in brackets.
+       The new checkbox allows to configure if the search should include matches in table names.
+
 Object tree: Improved split pane sizing behavior.
 
 #582 View Objects window alongside SQL
