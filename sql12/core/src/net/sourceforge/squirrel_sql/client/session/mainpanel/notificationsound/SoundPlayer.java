@@ -34,8 +34,6 @@ public enum  SoundPlayer
    {
       try
       {
-         GUIUtils.processOnSwingEventThread(() -> addQuitSoundToolbarButton());
-
          if(null == soundFile)
          {
             beep();
@@ -76,7 +74,10 @@ public enum  SoundPlayer
          _sdl = (SourceDataLine) AudioSystem.getLine(info);
 
          _sdl.open(outFormat);
+
+         GUIUtils.processOnSwingEventThread(() -> addQuitSoundToolbarButton());
          _sdl.start();
+
          stream(getAudioInputStream(outFormat, in), _sdl);
       }
       catch (UnsupportedAudioFileException | LineUnavailableException | IOException e)
@@ -127,6 +128,8 @@ public enum  SoundPlayer
 
          _sdl = AudioSystem.getSourceDataLine(af);
          _sdl.open(af);
+
+         GUIUtils.processOnSwingEventThread(() -> addQuitSoundToolbarButton());
          _sdl.start();
 
          int msecs = 1201;
