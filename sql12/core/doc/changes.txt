@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#583/#218 SUM function in SQL results
+   The upper right of an SQL result tab has a new drop down button which allows to display a sum panel.
+
 "Find column" function of SQL results: The "Find column" dialog has a new checkbox "Find in column name".
    --> When different tables are found in a result the table names are shown in brackets.
        The new checkbox allows to configure if the search should include matches in table names.
