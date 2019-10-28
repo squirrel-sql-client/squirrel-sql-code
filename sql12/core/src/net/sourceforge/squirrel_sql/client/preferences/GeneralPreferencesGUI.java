@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
 import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -340,16 +341,12 @@ final class GeneralPreferencesGUI extends JPanel
       gbc.gridx = 0;
       gbc.gridy = 0;
       JTextField execLogFileField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.execlogfileNew", execLogFile));
-      execLogFileField.setEditable(false);
-      execLogFileField.setBackground(pnl.getBackground());
-      execLogFileField.setBorder(null);
+      GUIUtils.textFieldToCopyableLabel(execLogFileField);
       pnl.add(execLogFileField, gbc);
 
       ++gbc.gridy;
       JTextField configFileField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.configfileNew", configFile));
-      configFileField.setEditable(false);
-      configFileField.setBackground(pnl.getBackground());
-      configFileField.setBorder(null);
+      GUIUtils.textFieldToCopyableLabel(configFileField);
       pnl.add(configFileField, gbc);
 
       gbc.weightx = 1.0;
@@ -385,17 +382,13 @@ final class GeneralPreferencesGUI extends JPanel
       gbc.gridy = 0;
       // i18n[GeneralPreferencesPanel.squirrelHomePath=Home directory: -home {0}]
       JTextField homePathField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.squirrelHomePath", homeDir));
-      homePathField.setEditable(false);
-      homePathField.setBackground(pnl.getBackground());
-      homePathField.setBorder(null);
+      GUIUtils.textFieldToCopyableLabel(homePathField);
       pnl.add(homePathField, gbc);
 
       ++gbc.gridy;
       // i18n[GeneralPreferencesPanel.squirrelUserPath=User directory: -userdir {0}]
       JTextField userPathField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.squirrelUserPath", userDir));
-      userPathField.setEditable(false);
-      userPathField.setBackground(pnl.getBackground());
-      userPathField.setBorder(null);
+      GUIUtils.textFieldToCopyableLabel(userPathField);
       pnl.add(userPathField, gbc);
 
       gbc.weightx = 1.0;

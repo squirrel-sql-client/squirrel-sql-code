@@ -43,8 +43,7 @@ import java.util.ArrayList;
 public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 {
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DataSetViewerEditableTablePanel.class);
+	private static final StringManager s_stringMgr =StringManagerFactory.getStringManager(DataSetViewerEditableTablePanel.class);
 
 
 	/* Menu for right-mouse-click when in cell editors */

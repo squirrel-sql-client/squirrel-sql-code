@@ -32,6 +32,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Cl
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColLabelController;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
@@ -100,7 +102,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private ResultTabListener _resultTabListener;
    private ReadMoreResultsHandler _readMoreResultsHandler;
-   private SelectRowColLabelController _selectRowColLabelController = new SelectRowColLabelController();
+   private RowColAndSumController _rowColAndSumController = new RowColAndSumController();
 
 
    private ResultLabelNameSwitcher _resultLabelNameSwitcher;
@@ -175,7 +177,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		{
          resultDataSetViewer = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
 
-         _selectRowColLabelController.setDataSetViewer(resultDataSetViewer);
+         _rowColAndSumController.setDataSetViewer(resultDataSetViewer);
 
 		}
 		else
@@ -188,7 +190,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          resultDataSetViewer = BaseDataSetViewerDestination.getInstance(
                props.getReadOnlySQLResultsOutputClassName(), null, new DataModelImplementationDetails(_session, _exInfo), _session);
 
-         _selectRowColLabelController.setDataSetViewer(resultDataSetViewer);
+         _rowColAndSumController.setDataSetViewer(resultDataSetViewer);
 		}
 
 
@@ -542,7 +544,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       ret.add(createButtonsPanel(), BorderLayout.EAST);
 
-      ret.add(_selectRowColLabelController.getPanel(), BorderLayout.CENTER);
+      ret.add(_rowColAndSumController.getPanel(), BorderLayout.CENTER);
 
       return ret;
    }

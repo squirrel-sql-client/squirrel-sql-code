@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -810,4 +811,12 @@ public class GUIUtils
 		});
 
 	}
+
+   public static JTextField textFieldToCopyableLabel(JTextField textField)
+   {
+      textField.setEditable(false);
+      textField.setBackground(new JPanel().getBackground());
+      textField.setBorder(null);
+      return  textField;
+   }
 }
