@@ -21,12 +21,12 @@ import java.util.stream.Collectors;
 public class FunctionController
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FunctionController.class);
-   private JDialog _dlg;
+   private FunctionDialog _dlg;
    private final DataSetViewerTablePanel _functionValuesTablePanel;
 
    public FunctionController(JPanel parent)
    {
-      _dlg = new JDialog(GUIUtils.getOwningFrame(parent), s_stringMgr.getString("FunctionController.title"));
+      _dlg = new FunctionDialog(GUIUtils.getOwningFrame(parent), s_stringMgr.getString("FunctionController.title"));
 
       _dlg.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -40,7 +40,7 @@ public class FunctionController
 
       GUIUtils.enableCloseByEscape(_dlg);
 
-      GUIUtils.initLocation(_dlg, 200, 50);
+      GUIUtils.initLocation(_dlg, 250, 150);
 
       _dlg.setVisible(true);
 

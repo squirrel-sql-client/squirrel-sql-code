@@ -134,25 +134,28 @@ public class SumFunctionController
    {
       _currentTable = table;
 
-      ArrayList<SumAndColumn> sums;
+      SumAndColumn sumAndColumn = null;
       if(null != getFunctionController())
       {
-         sums = getFunctionController().update(table);
+         ArrayList<SumAndColumn> sumAndColumns = getFunctionController().update(table);
+
+         if(0 < sumAndColumns.size())
+         {
+            sumAndColumn = sumAndColumns.get(0);
+         }
       }
       else
       {
-         sums = Calculator.calculateSums(table);
+         sumAndColumn = Calculator.calculateFirstSum(table);
       }
 
 
-      if(0 == sums.size())
+      if(null == sumAndColumn)
       {
          _txtSum.setText(s_stringMgr.getString("SumFunctionController.no.sumable.row"));
       }
       else
       {
-         SumAndColumn sumAndColumn = sums.get(0);
-
          String colName = sumAndColumn.getColumnDisplayDefinition().getColumnName();
          _currentRenderedSum = CellComponentFactory.getDataTypeObject(table, sumAndColumn.getColumnDisplayDefinition()).renderObject(sumAndColumn.getSum());
 

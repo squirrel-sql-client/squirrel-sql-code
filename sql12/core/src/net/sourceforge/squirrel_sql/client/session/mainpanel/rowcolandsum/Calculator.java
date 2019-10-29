@@ -21,40 +21,70 @@ public class Calculator
 
       for (int selectedColumn : selectedColumns)
       {
-         ExtTableColumn column = (ExtTableColumn) table.getColumnModel().getColumn(selectedColumn);
+         SumAndColumn sumAndCol = createSumAndColumn(table, selectedRows, selectedColumn);
 
-         ColumnDisplayDefinition columnDisplayDefinition = column.getColumnDisplayDefinition();
-
-         if(isIntegral(columnDisplayDefinition))
+         if (null != sumAndCol)
          {
-            long sum = 0;
-            for (int selectedRow : selectedRows)
-            {
-               Number number = (Number) table.getValueAt(selectedRow, selectedColumn);
-               if (null != number)
-               {
-                  sum += number.longValue();
-               }
-            }
-
-            sums.add(new SumAndColumn(columnDisplayDefinition, sum));
+            sums.add(sumAndCol);
          }
-         else if(isReal(columnDisplayDefinition))
-         {
-            double sum = 0;
-            for (int selectedRow : selectedRows)
-            {
-               Number number = (Number) table.getValueAt(selectedRow, selectedColumn);
-               if (null != number)
-               {
-                  sum += number.doubleValue();
-               }
-            }
 
-            sums.add(new SumAndColumn(columnDisplayDefinition, sum));
-         }
       }
       return sums;
+   }
+
+   public static SumAndColumn calculateFirstSum(DataSetViewerTable table)
+   {
+      int selectedColumn = table.getSelectedColumn();
+
+      if(-1 == selectedColumn)
+      {
+         return null;
+      }
+
+      int[] selectedRows = table.getSelectedRows();
+
+      return createSumAndColumn(table, selectedRows, selectedColumn);
+   }
+
+
+
+   private static SumAndColumn createSumAndColumn(DataSetViewerTable table, int[] selectedRows, int selectedColumn)
+   {
+      ExtTableColumn column = (ExtTableColumn) table.getColumnModel().getColumn(selectedColumn);
+
+      ColumnDisplayDefinition columnDisplayDefinition = column.getColumnDisplayDefinition();
+
+      SumAndColumn sumAndCol = null;
+
+      if(isIntegral(columnDisplayDefinition))
+      {
+         long sum = 0;
+         for (int selectedRow : selectedRows)
+         {
+            Number number = (Number) table.getValueAt(selectedRow, selectedColumn);
+            if (null != number)
+            {
+               sum += number.longValue();
+            }
+         }
+
+         sumAndCol = new SumAndColumn(columnDisplayDefinition, sum);
+      }
+      else if(isReal(columnDisplayDefinition))
+      {
+         double sum = 0;
+         for (int selectedRow : selectedRows)
+         {
+            Number number = (Number) table.getValueAt(selectedRow, selectedColumn);
+            if (null != number)
+            {
+               sum += number.doubleValue();
+            }
+         }
+
+         sumAndCol = new SumAndColumn(columnDisplayDefinition, sum);
+      }
+      return sumAndCol;
    }
 
    /**
