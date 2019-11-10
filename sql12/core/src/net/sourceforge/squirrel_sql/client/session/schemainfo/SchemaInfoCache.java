@@ -255,19 +255,21 @@ public class SchemaInfoCache implements Serializable
     *  
     * @param infos the array of ITableInfos to add.
     */
-   public void writeToTableCache(ITableInfo[] infos) {
-      for (ITableInfo info : infos) {
+   public void writeToTableCache(ITableInfo[] infos)
+   {
+      for (ITableInfo info : infos)
+      {
          String tableName = info.getSimpleName();
          CaseInsensitiveString ciTableName = new CaseInsensitiveString(tableName);
          _tableNames.put(ciTableName, tableName);
-         
+
          List<ITableInfo> aITabInfos = _tableInfosBySimpleName.get(ciTableName);
-         if(null == aITabInfos)
+         if (null == aITabInfos)
          {
             aITabInfos = new ArrayList<ITableInfo>();
             _tableInfosBySimpleName.put(ciTableName, aITabInfos);
          }
-         aITabInfos.add(info);         
+         aITabInfos.add(info);
       }
       // CopyOnWriteArrayList is unfortunately not sort-able as a List.  So this
       // will throw an UnsupportedOperationException:
@@ -281,19 +283,20 @@ public class SchemaInfoCache implements Serializable
       // Here we copy the existing internal array into a new array that
       // is large enough to hold the original and new elements.  Then sort it.  
       // And finally, create a new CopyOnWriteArrayList with the sorted array.
-      
+
       /* Now, create an array large enough to hold the original and the new */
       int currSize = _iTableInfos.size();
-      ITableInfo[] tableArr = 
-         _iTableInfos.toArray(new ITableInfo[currSize+infos.length]);
-      /* 
-       * Append the new tables to the new array, starting at the end of the 
-       * original 
+      ITableInfo[] tableArr =
+            _iTableInfos.toArray(new ITableInfo[currSize + infos.length]);
+      /*
+       * Append the new tables to the new array, starting at the end of the
+       * original
        */
-      for (int i = 0; i < infos.length; i++) {
+      for (int i = 0; i < infos.length; i++)
+      {
          tableArr[currSize + i] = infos[i];
       }
-      
+
       /* Sort it and store in a new CopyOnWriteArrayList */
       Arrays.sort(tableArr, new TableInfoSimpleNameComparator());
       _iTableInfos = new CopyOnWriteArrayList<ITableInfo>(tableArr);
@@ -438,9 +441,10 @@ public class SchemaInfoCache implements Serializable
 
    void clearAllTableData()
    {
-   	_iTableInfos = new CopyOnWriteArrayList<ITableInfo>();
-   	_tableInfosBySimpleName = new Hashtable<CaseInsensitiveString, List<ITableInfo>>();
+   	_iTableInfos = new CopyOnWriteArrayList<>();
+   	_tableInfosBySimpleName = new Hashtable<>();
    	_tableNames = Collections.synchronizedMap(_internalTableNameTreeMap);
+   	_schemaInfoColumnCache.clearColumns();
    }
    
    void clearTables(String catalogName, String schemaName, String simpleName, String[] types)
@@ -699,9 +703,10 @@ public class SchemaInfoCache implements Serializable
     * All other data (such as schema) is ignored, since it isn't likely that we 
     * will need to compare tables in multiple schemas/catalogs in the same list.
     */
-   private class TableInfoSimpleNameComparator implements
-         Comparator<ITableInfo> {
-      public int compare(ITableInfo o1, ITableInfo o2) {
+   private class TableInfoSimpleNameComparator implements Comparator<ITableInfo>
+   {
+      public int compare(ITableInfo o1, ITableInfo o2)
+      {
          return o1.getSimpleName().compareTo(o2.getSimpleName());
       }
    }

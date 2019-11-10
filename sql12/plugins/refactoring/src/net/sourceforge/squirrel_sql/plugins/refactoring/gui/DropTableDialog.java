@@ -27,118 +27,117 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
-public class DropTableDialog extends AbstractRefactoringDialog {
+public class DropTableDialog extends AbstractRefactoringDialog
+{
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DropTableDialog.class);
 
+   interface i18n
+   {
+      //i18n[DropTableDialog.cascadeLabel=Cascade Constraints:]
+      String CASCADE_LABEL =
+            s_stringMgr.getString("DropTableDialog.cascadeLabel");
 
-    private static final long serialVersionUID = 1L;
+      //i18n[DropTableDialog.catalogLabel=Catalog:]
+      String CATALOG_LABEL =
+            s_stringMgr.getString("DropTableDialog.catalogLabel");
 
-    /**
-     * Internationalized strings for this class
-     */
-    private static final StringManager s_stringMgr =
-            StringManagerFactory.getStringManager(DropTableDialog.class);
+      //i18n[DropTableDialog.schemaLabel=Schema:]
+      String SCHEMA_LABEL =
+            s_stringMgr.getString("DropTableDialog.schemaLabel");
 
-    static interface i18n {
-        //i18n[DropTableDialog.cascadeLabel=Cascade Constraints:]
-        String CASCADE_LABEL =
-                s_stringMgr.getString("DropTableDialog.cascadeLabel");
+      //i18n[DropTableDialog.tableLabel=Table(s):]
+      String TABLE_LABEL =
+            s_stringMgr.getString("DropTableDialog.tableLabel");
 
-        //i18n[DropTableDialog.catalogLabel=Catalog:]
-        String CATALOG_LABEL =
-                s_stringMgr.getString("DropTableDialog.catalogLabel");
+      //i18n[DropTableDialog.title=Drop Table(s)]
+      String TITLE = s_stringMgr.getString("DropTableDialog.title");
+   }
 
-        //i18n[DropTableDialog.schemaLabel=Schema:]
-        String SCHEMA_LABEL =
-                s_stringMgr.getString("DropTableDialog.schemaLabel");
+   private JCheckBox cascadeCB = null;
 
-        //i18n[DropTableDialog.tableLabel=Table(s):]
-        String TABLE_LABEL =
-                s_stringMgr.getString("DropTableDialog.tableLabel");
+   private ITableInfo[] tableInfos = null;
 
-        //i18n[DropTableDialog.title=Drop Table(s)]
-        String TITLE = s_stringMgr.getString("DropTableDialog.title");
+   public DropTableDialog(ITableInfo[] tables, Frame owningFrame)
+   {
+      super(owningFrame);
+      setTitle(i18n.TITLE);
+      tableInfos = tables;
+      init();
+   }
 
+   public ITableInfo[] getTableInfos()
+   {
+      return tableInfos;
+   }
 
-    }
+   public List<ITableInfo> getTableInfoList()
+   {
+      return Arrays.asList(tableInfos);
+   }
 
-    private JCheckBox cascadeCB = null;
+   public boolean getCascadeConstraints()
+   {
+      return cascadeCB.isSelected();
+   }
 
-    private ITableInfo[] tableInfos = null;
+   protected void init()
+   {
 
-    public DropTableDialog(ITableInfo[] tables, Frame owningFrame) {
-       super(owningFrame);
-       setTitle(i18n.TITLE);
-        tableInfos = tables;
-        init();
-    }
+      // Catalog
+      JLabel catalogLabel = getBorderedLabel(i18n.CATALOG_LABEL + " ", emptyBorder);
+      pane.add(catalogLabel, getLabelConstraints(c));
 
-    public ITableInfo[] getTableInfos() {
-        return tableInfos;
-    }
+      JTextField catalogTF = new JTextField();
+      catalogTF.setPreferredSize(mediumField);
+      catalogTF.setEditable(false);
+      catalogTF.setText(tableInfos[0].getCatalogName());
+      pane.add(catalogTF, getFieldConstraints(c));
 
-    public List<ITableInfo> getTableInfoList() {
-        return Arrays.asList(tableInfos);
-    }
+      // Schema
+      JLabel schemaLabel = getBorderedLabel(i18n.SCHEMA_LABEL + " ", emptyBorder);
+      pane.add(schemaLabel, getLabelConstraints(c));
 
-    public boolean getCascadeConstraints() {
-        return cascadeCB.isSelected();
-    }
+      JTextField schemaTF = new JTextField();
+      schemaTF.setPreferredSize(mediumField);
+      schemaTF.setEditable(false);
+      schemaTF.setText(tableInfos[0].getSchemaName());
+      pane.add(schemaTF, getFieldConstraints(c));
 
-    protected void init() {
+      // table list
+      JLabel tableListLabel = getBorderedLabel(i18n.TABLE_LABEL + " ", emptyBorder);
+      tableListLabel.setVerticalAlignment(JLabel.NORTH);
+      pane.add(tableListLabel, getLabelConstraints(c));
 
-        // Catalog 
-        JLabel catalogLabel = getBorderedLabel(i18n.CATALOG_LABEL + " ", emptyBorder);
-        pane.add(catalogLabel, getLabelConstraints(c));
+      JList tableList = new JList(getSimpleNames(tableInfos));
+      tableList.setEnabled(false);
 
-        JTextField catalogTF = new JTextField();
-        catalogTF.setPreferredSize(mediumField);
-        catalogTF.setEditable(false);
-        catalogTF.setText(tableInfos[0].getCatalogName());
-        pane.add(catalogTF, getFieldConstraints(c));
+      JScrollPane sp = new JScrollPane(tableList);
+      c = getFieldConstraints(c);
+      c.weightx = 1;
+      c.weighty = 1;
+      c.fill = GridBagConstraints.BOTH;
+      pane.add(sp, c);
 
-        // Schema
-        JLabel schemaLabel = getBorderedLabel(i18n.SCHEMA_LABEL + " ", emptyBorder);
-        pane.add(schemaLabel, getLabelConstraints(c));
+      // Cascade Constraints Checkbox
+      JLabel cascadeConstraintsLabel = new JLabel(i18n.CASCADE_LABEL + " ");
+      cascadeConstraintsLabel.setBorder(emptyBorder);
+      pane.add(cascadeConstraintsLabel, getLabelConstraints(c));
 
-        JTextField schemaTF = new JTextField();
-        schemaTF.setPreferredSize(mediumField);
-        schemaTF.setEditable(false);
-        schemaTF.setText(tableInfos[0].getSchemaName());
-        pane.add(schemaTF, getFieldConstraints(c));
+      cascadeCB = new JCheckBox();
+      cascadeCB.setPreferredSize(mediumField);
+      pane.add(cascadeCB, getFieldConstraints(c));
+      super.executeButton.setRequestFocusEnabled(true);
+   }
 
-        // table list        
-        JLabel tableListLabel = getBorderedLabel(i18n.TABLE_LABEL + " ", emptyBorder);
-        tableListLabel.setVerticalAlignment(JLabel.NORTH);
-        pane.add(tableListLabel, getLabelConstraints(c));
-
-        JList tableList = new JList(getSimpleNames(tableInfos));
-        tableList.setEnabled(false);
-
-        JScrollPane sp = new JScrollPane(tableList);
-        c = getFieldConstraints(c);
-        c.weightx = 1;
-        c.weighty = 1;
-        c.fill = GridBagConstraints.BOTH;
-        pane.add(sp, c);
-
-        // Cascade Constraints Checkbox
-        JLabel cascadeConstraintsLabel = new JLabel(i18n.CASCADE_LABEL + " ");
-        cascadeConstraintsLabel.setBorder(emptyBorder);
-        pane.add(cascadeConstraintsLabel, getLabelConstraints(c));
-
-        cascadeCB = new JCheckBox();
-        cascadeCB.setPreferredSize(mediumField);
-        pane.add(cascadeCB, getFieldConstraints(c));
-        super.executeButton.setRequestFocusEnabled(true);
-    }
-
-    private String[] getSimpleNames(ITableInfo[] tableInfos) {
-        String[] result = new String[tableInfos.length];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = tableInfos[i].getSimpleName();
-        }
-        return result;
-    }
+   private String[] getSimpleNames(ITableInfo[] tableInfos)
+   {
+      String[] result = new String[tableInfos.length];
+      for (int i = 0; i < result.length; i++)
+      {
+         result[i] = tableInfos[i].getSimpleName();
+      }
+      return result;
+   }
 
 
 }

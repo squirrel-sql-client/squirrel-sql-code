@@ -25,7 +25,6 @@ import java.sql.Types;
 
 public class ExtendedColumnInfo implements Serializable
 {
-   private static final long serialVersionUID = 1L;
    private String _columnName;
    private String _columnType;
    private int _columnSize;
@@ -38,6 +37,8 @@ public class ExtendedColumnInfo implements Serializable
    private String _remarks;
    private int _columnTypeID;
 
+   private TableColumnInfo _info;
+
    public ExtendedColumnInfo(TableColumnInfo info, String simpleTableName)
    {
       _columnName = info.getColumnName();
@@ -46,6 +47,8 @@ public class ExtendedColumnInfo implements Serializable
       _columnSize = info.getColumnSize();
       _decimalDigits = info.getDecimalDigits();
       _remarks = info.getRemarks();
+      _info = info;
+
       if ("YES".equals(info.isNullable()))
       {
          _nullable = true;
@@ -118,6 +121,12 @@ public class ExtendedColumnInfo implements Serializable
             || Types.CHAR  == _columnTypeID
             || Types.NVARCHAR  == _columnTypeID;
    }
+
+   public TableColumnInfo getTableColumnInfo()
+   {
+      return _info;
+   }
+
 
 
    /**

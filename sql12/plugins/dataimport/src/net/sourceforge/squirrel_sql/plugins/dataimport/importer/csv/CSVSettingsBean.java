@@ -28,7 +28,7 @@ import java.nio.charset.Charset;
 public class CSVSettingsBean implements Cloneable, Serializable
 {
 
-   private char seperator = ';';
+   private Character seperator = ';';
 
    private  String importCharset = Charset.defaultCharset().name();
 
@@ -53,7 +53,7 @@ public class CSVSettingsBean implements Cloneable, Serializable
    /**
     * @return the seperator
     */
-   public char getSeperator()
+   public Character getSeperator()
    {
       return seperator;
    }
@@ -61,7 +61,7 @@ public class CSVSettingsBean implements Cloneable, Serializable
    /**
     * @param seperator the seperator to set
     */
-   public void setSeperator(char seperator)
+   public void setSeperator(Character seperator)
    {
       this.seperator = seperator;
    }

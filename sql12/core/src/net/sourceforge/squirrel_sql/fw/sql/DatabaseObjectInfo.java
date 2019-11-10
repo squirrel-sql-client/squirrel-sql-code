@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 
 import org.apache.commons.lang.StringUtils;
 
-public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
+public class DatabaseObjectInfo implements IDatabaseObjectInfo
 {
    /** Property names for this bean. */
    public interface IPropertyNames

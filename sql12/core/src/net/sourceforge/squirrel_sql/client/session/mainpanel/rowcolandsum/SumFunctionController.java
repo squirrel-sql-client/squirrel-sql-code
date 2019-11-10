@@ -24,7 +24,7 @@ public class SumFunctionController
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SumFunctionController.class);
 
-   private JTextField _txtSum = GUIUtils.textFieldToCopyableLabel(new JTextField());
+   private JTextField _txtSum = GUIUtils.styleTextFieldToCopyableLabel(new JTextField());
    private final JPanel _panel;
    private String _currentRenderedSum;
    private FunctionController _functionController;

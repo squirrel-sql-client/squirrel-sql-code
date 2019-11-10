@@ -17,13 +17,13 @@ package net.sourceforge.squirrel_sql.plugins.dataimport;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -41,7 +41,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 /**
  * This class does the main work for importing the file into the database.
@@ -50,13 +49,13 @@ import java.util.concurrent.Executors;
  */
 public class ImportDataIntoTableExecutor
 {
-   private final static ILogger log = LoggerController.createLogger(ImportDataIntoTableExecutor.class);
+   private final static ILogger s_log = LoggerController.createLogger(ImportDataIntoTableExecutor.class);
 
-   private static final StringManager stringMgr = StringManagerFactory.getStringManager(ImportDataIntoTableExecutor.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ImportDataIntoTableExecutor.class);
 
    private ISession _session;
    private ITableInfo _table;
-   private TableColumnInfo[] _columns;
+   private ExtendedColumnInfo[] _columns;
    private ColumnMappingTableModel _columnMappingModel;
    private IFileImporter _importer;
    private List<String> _importerColumns;
@@ -82,7 +81,7 @@ public class ImportDataIntoTableExecutor
     */
    public ImportDataIntoTableExecutor(ISession session,
                                       ITableInfo table,
-                                      TableColumnInfo[] columns,
+                                      ExtendedColumnInfo[] columns,
                                       List<String> importerColumns,
                                       ColumnMappingTableModel mapping,
                                       IFileImporter importer,
@@ -183,7 +182,7 @@ public class ImportDataIntoTableExecutor
 
             stmt.clearParameters();
             int i = 1;
-            for (TableColumnInfo column : _columns)
+            for (ExtendedColumnInfo column : _columns)
             {
                String mapping = _columnMappingModel.getMapping(column);
                if (SpecialColumnMapping.SKIP.getVisibleString().equals(mapping))
@@ -200,7 +199,7 @@ public class ImportDataIntoTableExecutor
                }
                else if (SpecialColumnMapping.NULL.getVisibleString().equals(mapping))
                {
-                  stmt.setNull(i++, column.getDataType());
+                  stmt.setNull(i++, column.getTableColumnInfo().getDataType());
                }
                else
                {
@@ -232,6 +231,10 @@ public class ImportDataIntoTableExecutor
       {
          importProgressCtrl.failedWithIoException(ioe);
       }
+      catch (Throwable t)
+      {
+         s_log.error(t);
+      }
       finally
       {
          try
@@ -243,7 +246,7 @@ public class ImportDataIntoTableExecutor
             }
             catch (IOException ioe)
             {
-               log.error("Error while closing file", ioe);
+               s_log.error("Error while closing file", ioe);
             }
          }
          finally
@@ -296,7 +299,7 @@ public class ImportDataIntoTableExecutor
          }
          catch (SQLException e1)
          {
-            log.error("Finally failed to rollback connection");
+            s_log.error("Finally failed to rollback connection");
          }
          throw new RuntimeException(e);
       }
@@ -311,8 +314,8 @@ public class ImportDataIntoTableExecutor
       catch (SQLException e)
       {
          EDTMessageBoxUtil.showMessageDialogOnEDT(
-               stringMgr.getString("ImportDataIntoTableExecutor.reestablish.autocommit.failed"),
-               stringMgr.getString("ImportDataIntoTableExecutor.reestablish.autocommit.failed.title"),
+               s_stringMgr.getString("ImportDataIntoTableExecutor.reestablish.autocommit.failed"),
+               s_stringMgr.getString("ImportDataIntoTableExecutor.reestablish.autocommit.failed.title"),
                JOptionPane.ERROR_MESSAGE);
 
          throw new RuntimeException(e);
@@ -332,7 +335,7 @@ public class ImportDataIntoTableExecutor
    }
 
 
-   private void bindAutoincrementColumn(PreparedStatement stmt, int index, TableColumnInfo column, int counter) throws SQLException, UnsupportedFormatException
+   private void bindAutoincrementColumn(PreparedStatement stmt, int index, ExtendedColumnInfo column, int counter) throws SQLException, UnsupportedFormatException
    {
       long value = 0;
       String fixedValue = _columnMappingModel.getFixedValue(column);
@@ -345,7 +348,7 @@ public class ImportDataIntoTableExecutor
       {
          throw new UnsupportedFormatException("Could not interpret value for column " + column.getColumnName() + " as value of type long. The value is: " + fixedValue, nfe);
       }
-      switch (column.getDataType())
+      switch (column.getTableColumnInfo().getDataType())
       {
          case Types.BIGINT:
             stmt.setLong(index, value);
@@ -359,11 +362,11 @@ public class ImportDataIntoTableExecutor
       }
    }
 
-   private void bindFixedColumn(PreparedStatement stmt, int index, TableColumnInfo column) throws SQLException, IOException, UnsupportedFormatException
+   private void bindFixedColumn(PreparedStatement stmt, int index, ExtendedColumnInfo column) throws SQLException, IOException, UnsupportedFormatException
    {
       String value = _columnMappingModel.getFixedValue(column);
       Date d = null;
-      switch (column.getDataType())
+      switch (column.getTableColumnInfo().getDataType())
       {
          case Types.BIGINT:
             try
@@ -444,10 +447,10 @@ public class ImportDataIntoTableExecutor
       }
    }
 
-   private void bindColumn(PreparedStatement stmt, int index, TableColumnInfo column) throws SQLException, IOException
+   private void bindColumn(PreparedStatement stmt, int index, ExtendedColumnInfo column) throws SQLException, IOException
    {
       int mappedColumn = getMappedColumn(column);
-      switch (column.getDataType())
+      switch (column.getTableColumnInfo().getDataType())
       {
          case Types.BIGINT:
             setLong(stmt, index, mappedColumn);
@@ -540,11 +543,11 @@ public class ImportDataIntoTableExecutor
     * a Java integer which is always signed. However, if we are working with an
     * unsigned integer type, Java doesn't have this so use a long instead.
     */
-   private void setIntOrUnsignedInt(PreparedStatement stmt, int index, TableColumnInfo column)
+   private void setIntOrUnsignedInt(PreparedStatement stmt, int index, ExtendedColumnInfo column)
          throws SQLException, IOException
    {
       int mappedColumn = getMappedColumn(column);
-      String columnTypeName = column.getTypeName();
+      String columnTypeName = column.getTableColumnInfo().getTypeName();
       if (columnTypeName != null && (columnTypeName.toUpperCase().endsWith("UNSIGNED")))
       {
          setLong(stmt, index, mappedColumn);
@@ -553,13 +556,13 @@ public class ImportDataIntoTableExecutor
       setInt(stmt, index, mappedColumn);
    }
 
-   private void setDouble(PreparedStatement stmt, int index, TableColumnInfo column)
+   private void setDouble(PreparedStatement stmt, int index, ExtendedColumnInfo column)
          throws SQLException, IOException
    {
       Double d = _importer.getDouble(getMappedColumn(column));
       if (null == d)
       {
-         stmt.setNull(index, column.getDataType());
+         stmt.setNull(index, column.getTableColumnInfo().getDataType());
       }
       else
       {
@@ -595,7 +598,7 @@ public class ImportDataIntoTableExecutor
       }
    }
 
-   private int getMappedColumn(TableColumnInfo column)
+   private int getMappedColumn(ExtendedColumnInfo column)
    {
       return _importerColumns.indexOf(_columnMappingModel.getMapping(column));
    }
@@ -603,7 +606,7 @@ public class ImportDataIntoTableExecutor
    private String createColumnList()
    {
       StringBuffer columnsList = new StringBuffer();
-      for (TableColumnInfo column : _columns)
+      for (ExtendedColumnInfo column : _columns)
       {
          String mapping = _columnMappingModel.getMapping(column);
 

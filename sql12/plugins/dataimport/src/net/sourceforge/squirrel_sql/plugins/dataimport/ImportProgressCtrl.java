@@ -61,6 +61,12 @@ public class ImportProgressCtrl
 
    public void failedWithSQLException(SQLException sqle, PreparedStatement stmt)
    {
+      String query = stmt == null ? "null" : stmt.toString();
+      log.error("Failing query: " + query);
+      log.error("Failing line in CVS file: " + _currentRow);
+      log.error("Database error", sqle);
+
+
       GUIUtils.processOnSwingEventThread(() -> close());
 
       EDTMessageBoxUtil.showMessageDialogOnEDT(
@@ -68,34 +74,32 @@ public class ImportProgressCtrl
             stringMgr.getString("ImportDataIntoTableExecutor.error"));
 
 
-      String query = stmt == null ? "null" : stmt.toString();
-      log.error("Failing query: " + query);
-      log.error("Failing line in CVS file: " + _currentRow);
-      log.error("Database error", sqle);
    }
 
 
    public void failedWithIoException(IOException ioe)
    {
+      log.error("Error while reading file", ioe);
+
       GUIUtils.processOnSwingEventThread(() -> close());
 
       EDTMessageBoxUtil.showMessageDialogOnEDT(
             stringMgr.getString("ImportDataIntoTableExecutor.ioException", ioe.getMessage(), _currentRow),
             stringMgr.getString("ImportDataIntoTableExecutor.error"));
 
-      log.error("Error while reading file", ioe);
 
    }
 
    public void failedWithUnsupportedFormatException(UnsupportedFormatException ufe)
    {
+      log.error("Unsupported format.", ufe);
+
       GUIUtils.processOnSwingEventThread(() -> close());
 
       EDTMessageBoxUtil.showMessageDialogOnEDT(
             stringMgr.getString("ImportDataIntoTableExecutor.UnsupportedFormatException", ufe.getMessage(), _currentRow),
             stringMgr.getString("ImportDataIntoTableExecutor.error"));
 
-      log.error("Unsupported format.", ufe);
    }
 
    public boolean isCanceled()

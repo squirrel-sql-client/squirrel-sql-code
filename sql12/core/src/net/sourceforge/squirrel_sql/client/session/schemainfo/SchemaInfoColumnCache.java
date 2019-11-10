@@ -13,15 +13,11 @@ public class SchemaInfoColumnCache implements Serializable
 {
    private static final ILogger s_log = LoggerController.createLogger(SchemaInfoColumnCache.class);
 
+   private Map<CaseInsensitiveString, List<ExtendedColumnInfo>> _extendedColumnInfosByTableName = Collections.synchronizedMap(new TreeMap<>());
 
+   private Map<CaseInsensitiveString, List<ExtendedColumnInfo>> _extColumnInfosByColumnName = Collections.synchronizedMap(new TreeMap<>());
 
-   private Map<CaseInsensitiveString, List<ExtendedColumnInfo>> _extendedColumnInfosByTableName =
-       Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, List<ExtendedColumnInfo>>());
-
-   private Map<CaseInsensitiveString, List<ExtendedColumnInfo>> _extColumnInfosByColumnName = 
-           Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, List<ExtendedColumnInfo>>());
-
-   private Set<CaseInsensitiveString> _tablesWithInaccessibleColumns = Collections.synchronizedSet(new HashSet<CaseInsensitiveString>());
+   private Set<CaseInsensitiveString> _tablesWithInaccessibleColumns = Collections.synchronizedSet(new HashSet<>());
 
    void writeColumsToCache(TableColumnInfo[] infos, CaseInsensitiveString simpleTableName)
    {
@@ -35,7 +31,7 @@ public class SchemaInfoColumnCache implements Serializable
          List<ExtendedColumnInfo> ecisInColName = _extColumnInfosByColumnName.get(ciColName);
          if(null == ecisInColName)
          {
-            ecisInColName = new ArrayList<ExtendedColumnInfo>();
+            ecisInColName = new ArrayList<>();
             _extColumnInfosByColumnName.put(ciColName, ecisInColName);
          }
          ecisInColName.add(eci);

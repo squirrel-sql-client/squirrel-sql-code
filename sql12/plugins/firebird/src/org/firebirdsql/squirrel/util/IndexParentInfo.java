@@ -29,10 +29,7 @@ import org.firebirdsql.squirrel.IObjectTypes;
  */
 public class IndexParentInfo extends RelatedObjectInfo
 {
-   private static final long serialVersionUID = 1L;
-
-	public IndexParentInfo(IDatabaseObjectInfo relatedObjInfo,
-                                SQLDatabaseMetaData md)
+	public IndexParentInfo(IDatabaseObjectInfo relatedObjInfo, SQLDatabaseMetaData md)
     {
         super(relatedObjInfo, "INDEX", IObjectTypes.INDEX_PARENT, md);
     }

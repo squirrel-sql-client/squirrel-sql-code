@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.*;
 import java.sql.DatabaseMetaData;
@@ -49,10 +50,7 @@ public class SchemaInfoUpdateCheck
    private static final Pattern PATTERN_DROP_FUNCTION = Pattern.compile("DROP\\s+FUNCTION\\s+([A-Z0-9_\\.\"]+)");
 
 
-   private Set<IDatabaseObjectInfo> _updateDatabaseObjectInfos = 
-       new HashSet<IDatabaseObjectInfo>();
-   private Set<String> _dropTableSimpleNames = new HashSet<String>();
-   private Set<String> _dropProcedureSimpleNames = new HashSet<String>();
+   private DatabaseUpdateInfos _databaseUpdateInfos = new DatabaseUpdateInfos();
 
    private ISession _session;
    private SQLDatabaseMetaData _dmd;
@@ -73,26 +71,26 @@ public class SchemaInfoUpdateCheck
       TableInfo[] tis = getTableInfos(exInfo.getSQL());
       for (int i = 0; i < tis.length; i++)
       {
-         _updateDatabaseObjectInfos.add(tis[i]);
+         _databaseUpdateInfos.getUpdateDatabaseObjectInfos().add(tis[i]);
       }
 
 
       ProcedureInfo[] pi = getProcedureInfos(exInfo.getSQL());
       for (int i = 0; i < pi.length; i++)
       {
-         _updateDatabaseObjectInfos.add(pi[i]);
+         _databaseUpdateInfos.getUpdateDatabaseObjectInfos().add(pi[i]);
       }
 
       String dtsn = getDropTableSimpleName(exInfo.getSQL());
       if(null != dtsn)
       {
-         _dropTableSimpleNames.add(dtsn);
+         _databaseUpdateInfos.getDropTableSimpleNames().add(dtsn);
       }
 
       String dpsn = getDropProcedureSimpleName(exInfo.getSQL());
       if(null != dpsn)
       {
-         _dropProcedureSimpleNames.add(dpsn);
+         _databaseUpdateInfos.getDropProcedureSimpleNames().add(dpsn);
       }
    }
 
@@ -147,9 +145,9 @@ public class SchemaInfoUpdateCheck
 
    }
 
-   public void flush()
+   public void flush(DatabaseUpdateInfosListener databaseUpdateInfosListener)
    {
-      if(60 < _updateDatabaseObjectInfos.size() + _dropTableSimpleNames.size() + _dropProcedureSimpleNames.size())
+      if(60 < _databaseUpdateInfos.getUpdateDatabaseObjectInfos().size() + _databaseUpdateInfos.getDropTableSimpleNames().size() + _databaseUpdateInfos.getDropProcedureSimpleNames().size())
       {
          // reload complete SchemaInfo
          SQLDatabaseMetaData dmd = _session.getSQLConnection().getSQLMetaData();
@@ -160,35 +158,33 @@ public class SchemaInfoUpdateCheck
       }
       else
       {
-          for (IDatabaseObjectInfo doi : _updateDatabaseObjectInfos) {
-              _session.getSchemaInfo().reload(doi);
-          }
-
-         for (String simpleTableName : _dropTableSimpleNames) {
-             _session.getSchemaInfo().refreshCacheForSimpleTableName(simpleTableName, false);
-         }
-         
-         for (String simpleProcName : _dropProcedureSimpleNames) {
-             _session.getSchemaInfo().refreshCacheForSimpleProcedureName(simpleProcName, false);
-         }
-      }
-
-      if(0 < _updateDatabaseObjectInfos.size()  + _dropTableSimpleNames.size() + _dropProcedureSimpleNames.size())
-      {
-
-         _session.getSchemaInfo().fireSchemaInfoUpdate();
-         SwingUtilities.invokeLater(new Runnable()
+         for (IDatabaseObjectInfo doi : _databaseUpdateInfos.getUpdateDatabaseObjectInfos())
          {
-            public void run()
-            {
-               repaintSqlEditor();
-            }
-         });
+            _session.getSchemaInfo().reload(doi);
+         }
+
+         for (String simpleTableName : _databaseUpdateInfos.getDropTableSimpleNames())
+         {
+            _session.getSchemaInfo().refreshCacheForSimpleTableName(simpleTableName, false);
+         }
+
+         for (String simpleProcName : _databaseUpdateInfos.getDropProcedureSimpleNames())
+         {
+            _session.getSchemaInfo().refreshCacheForSimpleProcedureName(simpleProcName, false);
+         }
       }
 
-      _updateDatabaseObjectInfos.clear();
-      _dropTableSimpleNames.clear();
-      _dropProcedureSimpleNames.clear();
+      if(0 < _databaseUpdateInfos.getUpdateDatabaseObjectInfos().size()  + _databaseUpdateInfos.getDropTableSimpleNames().size() + _databaseUpdateInfos.getDropProcedureSimpleNames().size())
+      {
+         _session.getSchemaInfo().fireSchemaInfoUpdate();
+         SwingUtilities.invokeLater(() -> repaintSqlEditor());
+      }
+
+      if(null != databaseUpdateInfosListener)
+      {
+         databaseUpdateInfosListener.databaseUpdated(Utilities.cloneObject(_databaseUpdateInfos));
+      }
+      _databaseUpdateInfos.clear();
 
    }
 

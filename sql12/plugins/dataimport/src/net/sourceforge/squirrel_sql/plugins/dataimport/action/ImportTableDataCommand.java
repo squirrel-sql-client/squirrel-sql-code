@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.*;
@@ -29,18 +30,17 @@ import javax.swing.*;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dataimport.EDTMessageBoxUtil;
 import net.sourceforge.squirrel_sql.plugins.dataimport.ImportFileType;
+import net.sourceforge.squirrel_sql.plugins.dataimport.ImportFileUtils;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportFileDialogCtrl;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FileImporterFactory;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
@@ -65,6 +65,11 @@ public class ImportTableDataCommand
    private ISession session;
    private ITableInfo table;
 
+
+   public ImportTableDataCommand(ISession session)
+   {
+      this(session, null);
+   }
 
    /**
     * @param session The session to work in
@@ -101,9 +106,8 @@ public class ImportTableDataCommand
 
          try
          {
-            TableColumnInfo[] columns = session.getMetaData().getColumnInfo(table);
 
-            ImportFileType type = determineType(importFile);
+            ImportFileType type = ImportFileUtils.determineType(importFile);
 
 
             IFileImporter importer = FileImporterFactory.createImporter(type, importFile);
@@ -111,12 +115,12 @@ public class ImportTableDataCommand
             if (importer.getConfigurationPanel() != null)
             {
                //i18n[ImportTableDataCommand.settingsDialogTitle=Import file settings]
-               final JDialog dialog = new JDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.settingsDialogTitle"), true);
+               final JDialog dialog = new JDialog(Main.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.settingsDialogTitle"), true);
                StateListener dialogState = new StateListener(dialog);
                dialog.setLayout(new BorderLayout());
                dialog.add(importer.getConfigurationPanel(), BorderLayout.CENTER);
                OkClosePanel buttons = new OkClosePanel();
-               //i18n[ImportTableDataCommand.cancel=Cancel]
+
                buttons.getCloseButton().setText(stringMgr.getString("ImportTableDataCommand.cancel"));
                buttons.addListener(dialogState);
                dialog.add(buttons, BorderLayout.SOUTH);
@@ -130,37 +134,21 @@ public class ImportTableDataCommand
             }
 
 
-            final ImportFileDialogCtrl importFileDialogCtrl = new ImportFileDialogCtrl(session, importFile, importer, table, columns);
+            ImportFileDialogCtrl importFileDialogCtrl;
+
+            importFileDialogCtrl = new ImportFileDialogCtrl(session, importFile, importer, table);
 
             importFileDialogCtrl.setPreviewData(importer.getPreview(10));
 
             importFileDialogCtrl.show();
 
          }
-         catch (SQLException e)
-         {
-            s_log.error("execute: unexpected exception - " + e.getMessage(), e);
-            //i18n[ImportTableDataCommand.sqlErrorOccured=An error occurred while reading database data.]
-            //i18n[ImportTableDataCommand.error=Error]
-            EDTMessageBoxUtil.showMessageDialogOnEDT(stringMgr.getString("ImportTableDataCommand.sqlErrorOccured"), stringMgr.getString("ImportTableDataCommand.error"));
-         }
          catch (IOException e)
          {
             s_log.error("execute: unexpected exception - " + e.getMessage(), e);
-            //i18n[ImportTableDataCommand.ioErrorOccured=An error occurred while reading import file data.]
             EDTMessageBoxUtil.showMessageDialogOnEDT(stringMgr.getString("ImportTableDataCommand.ioErrorOccured"), stringMgr.getString("ImportTableDataCommand.error"));
          }
       }
-   }
-
-   private ImportFileType determineType(File f)
-   {
-      if (f.getName().toLowerCase().endsWith("xls") || f.getName().toLowerCase().endsWith("xlsx"))
-      {
-         return ImportFileType.XLS;
-      }
-
-      return ImportFileType.CSV;
    }
 
    private class StateListener implements IOkClosePanelListener

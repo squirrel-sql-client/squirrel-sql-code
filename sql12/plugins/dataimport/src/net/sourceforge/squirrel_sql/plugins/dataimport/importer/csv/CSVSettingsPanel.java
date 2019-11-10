@@ -17,8 +17,9 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -34,10 +35,7 @@ import javax.swing.JTextField;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportFileDialogProps;
+import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportPropsDAO;
 
 /**
  * This class contains the panel for the CSV settings.
@@ -46,15 +44,18 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportFileDialogProps
  */
 public class CSVSettingsPanel extends JPanel
 {
-   private static final StringManager stringMgr = StringManagerFactory.getStringManager(CSVSettingsPanel.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CSVSettingsPanel.class);
 
-   private CSVSettingsBean settings = null;
+   private JRadioButton radUseChar = new JRadioButton(s_stringMgr.getString("CSVSettingsPanel.useChar"));
+   private JTextField txtSeperatorChar = new JTextField(2);
 
-   private JTextField txtSeperatorChar = null;
-   private JTextField txtDateFormat = null;
-   private JRadioButton radUseChar = null;
-   private JRadioButton radUseTab = null;
-   private JComboBox cboEncoding = null;
+   private JRadioButton radUseTab = new JRadioButton(s_stringMgr.getString("CSVSettingsPanel.useTab"));
+   private JRadioButton radUseNoSeparator = new JRadioButton(s_stringMgr.getString("CSVSettingsPanel.no.separator"));
+
+   private JComboBox cboEncoding = new JComboBox();
+   private JTextField txtDateFormat = new JTextField(20);
+
+   private CSVSettingsBean settings;
 
    /**
     * Standard constructor
@@ -64,85 +65,84 @@ public class CSVSettingsPanel extends JPanel
    public CSVSettingsPanel(CSVSettingsBean settings)
    {
       this.settings = settings;
-      init();
+      createUI();
+      initListeners();
       loadSettings();
    }
 
-   private void init()
+   private void createUI()
    {
-      // TODO: Tooltips
-      ActionListener stateChangedListener = new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            CSVSettingsPanel.this.stateChanged();
-         }
-      };
+      setLayout(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      add(radUseChar, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      add(txtSeperatorChar, gbc);
+
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,5), 0,0);
+      add(radUseTab, gbc);
+
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,5), 0,0);
+      add(radUseNoSeparator, gbc);
+
+
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15,5,0,5), 0,0);
+      add(new JLabel(s_stringMgr.getString("CSVSettingsPanel.inputFileEncoding")), gbc);
+
+      gbc = new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15,5,0,5), 0,0);
+      add(cboEncoding, gbc);
+
+
+      gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+      add(new JLabel(s_stringMgr.getString("CSVSettingsPanel.dateFormat")), gbc);
+
+      gbc = new GridBagConstraints(1,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,10,5), 0,0);
+      add(txtDateFormat, gbc);
+
+   }
+
+   private void initListeners()
+   {
       KeyListener keyStateChangedListener = new KeyAdapter()
       {
          @Override
          public void keyReleased(KeyEvent e)
          {
-            CSVSettingsPanel.this.stateChanged();
+            onStateChanged();
          }
       };
-      txtSeperatorChar = new JTextField(2);
-      txtSeperatorChar.addActionListener(stateChangedListener);
-      txtSeperatorChar.addKeyListener(keyStateChangedListener);
-      //i18n[CSVSettingsPanel.seperatorCharToolTip=Specify the character that is used to seperate the columns in this file (e.g. ',' or ';')]
-      txtSeperatorChar.setToolTipText(stringMgr.getString("CSVSettingsPanel.seperatorCharToolTip"));
-      txtDateFormat = new JTextField(20);
-      txtDateFormat.addActionListener(stateChangedListener);
-      txtDateFormat.addKeyListener(keyStateChangedListener);
-      //i18n[CSVSettingsPanel.useTab=Tab seperated]
-      radUseTab = new JRadioButton(stringMgr.getString("CSVSettingsPanel.useTab"));
-      //i18n[CSVSettingsPanel.useChar=Seperated by character:]
-      radUseChar = new JRadioButton(stringMgr.getString("CSVSettingsPanel.useChar"));
+
       radUseChar.setSelected(true);
-      radUseTab.addActionListener(stateChangedListener);
-      radUseChar.addActionListener(stateChangedListener);
-      cboEncoding = new JComboBox();
+      radUseChar.addActionListener(e1 -> onStateChanged());
+
+      txtSeperatorChar.addActionListener(e -> onStateChanged());
+      txtSeperatorChar.addKeyListener(keyStateChangedListener);
+      txtSeperatorChar.setToolTipText(s_stringMgr.getString("CSVSettingsPanel.seperatorCharToolTip"));
+
+      radUseTab.addActionListener(e -> onStateChanged());
+
+      radUseNoSeparator.setToolTipText(s_stringMgr.getString("CSVSettingsPanel.no.separator.tooltip"));
+      radUseNoSeparator.addActionListener(e -> onStateChanged());
+
+      txtDateFormat.addActionListener(e -> onStateChanged());
+      txtDateFormat.addKeyListener(keyStateChangedListener);
+
+
       for (String c : Charset.availableCharsets().keySet())
       {
          cboEncoding.addItem(c);
       }
-      cboEncoding.addActionListener(stateChangedListener);
+      cboEncoding.addActionListener(e -> onStateChanged());
 
       ButtonGroup bg = new ButtonGroup();
       bg.add(radUseTab);
       bg.add(radUseChar);
-
-
-      final FormLayout layout = new FormLayout(
-            // Columns
-            "pref, 6dlu, pref, 12dlu, pref:grow",
-            // Rows
-            "pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu");
-
-      PanelBuilder builder = new PanelBuilder(layout);
-      CellConstraints cc = new CellConstraints();
-      builder.setDefaultDialogBorder();
-
-      int y = 1;
-      //i18n[CSVSettingsPanel.csvSettings=CSV settings]
-      builder.addSeparator(stringMgr.getString("CSVSettingsPanel.csvSettings"), cc.xywh(1, y, 5, 1));
-
-      y += 2;
-      builder.add(radUseChar, cc.xy(1, y));
-      builder.add(txtSeperatorChar, cc.xy(3, y));
-      builder.add(radUseTab, cc.xy(5, y));
-
-      y += 2;
-      //i18n[CSVSettingsPanel.inputFileEncoding=Input file encoding]
-      builder.add(new JLabel(stringMgr.getString("CSVSettingsPanel.inputFileEncoding")), cc.xywh(1, y, 3, 1));
-      builder.add(cboEncoding, cc.xy(5, y));
-
-      y += 2;
-      //i18n[CSVSettingsPanel.dateFormat=Date format]
-      builder.add(new JLabel(stringMgr.getString("CSVSettingsPanel.dateFormat")), cc.xywh(1, y, 3, 1));
-      builder.add(txtDateFormat, cc.xy(5, y));
-
-      add(builder.getPanel());
+      bg.add(radUseNoSeparator);
    }
 
    private void applySettings()
@@ -150,6 +150,10 @@ public class CSVSettingsPanel extends JPanel
       if (radUseTab.isSelected())
       {
          settings.setSeperator('\t');
+      }
+      else if (radUseNoSeparator.isSelected())
+      {
+         settings.setSeperator(null);
       }
       else
       {
@@ -165,14 +169,18 @@ public class CSVSettingsPanel extends JPanel
       settings.setImportCharset(cboEncoding.getSelectedItem().toString());
       settings.setDateFormat(txtDateFormat.getText());
 
-      ImportFileDialogProps.setCSVSeparator(settings.getSeperator());
-      ImportFileDialogProps.setCSVDateFormat(settings.getDateFormat());
-      ImportFileDialogProps.setImportCharset(settings.getImportCharset());
+      ImportPropsDAO.setCSVSeparator(settings.getSeperator());
+      ImportPropsDAO.setCSVDateFormat(settings.getDateFormat());
+      ImportPropsDAO.setImportCharset(settings.getImportCharset());
    }
 
    private void loadSettings()
    {
-      if (settings.getSeperator() == '\t')
+      if (settings.getSeperator() == null)
+      {
+         radUseNoSeparator.setSelected(true);
+      }
+      else if (settings.getSeperator() == '\t')
       {
          radUseTab.setSelected(true);
       }
@@ -181,29 +189,20 @@ public class CSVSettingsPanel extends JPanel
          radUseChar.setSelected(true);
          txtSeperatorChar.setText(Character.toString(settings.getSeperator()));
       }
+
       txtDateFormat.setText(settings.getDateFormat());
       cboEncoding.setSelectedItem(settings.getImportCharset());
    }
 
-   private void stateChanged()
+   private void onStateChanged()
    {
       if (txtSeperatorChar.getText().length() > 1)
       {
-         try
-         {
-            txtSeperatorChar.setText(txtSeperatorChar.getText(0, 1));
-         }
-         catch (Exception e)
-         { /* Ignore that */ }
+          txtSeperatorChar.setText(txtSeperatorChar.getText().substring(0,1));
       }
-      if (radUseTab.isSelected())
-      {
-         txtSeperatorChar.setEnabled(false);
-      }
-      else
-      {
-         txtSeperatorChar.setEnabled(true);
-      }
+
+      txtSeperatorChar.setEnabled(radUseChar.isSelected());
+
       applySettings();
    }
 }

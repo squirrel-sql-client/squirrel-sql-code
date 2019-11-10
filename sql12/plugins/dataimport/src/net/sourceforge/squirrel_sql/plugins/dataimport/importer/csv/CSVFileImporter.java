@@ -29,7 +29,7 @@ import javax.swing.JComponent;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportFileDialogProps;
+import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportPropsDAO;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FailedToInterpretHandler;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 
@@ -61,9 +61,9 @@ public class CSVFileImporter implements IFileImporter
       this.importFile = importFile;
       this.settings = new CSVSettingsBean();
 
-      this.settings.setSeperator(ImportFileDialogProps.getCSVSeparator());
-      this.settings.setDateFormat(ImportFileDialogProps.getCSVDateFormat());
-      this.settings.setImportCharset(ImportFileDialogProps.getImportCharset());
+      this.settings.setSeperator(ImportPropsDAO.getCSVSeparator());
+      this.settings.setDateFormat(ImportPropsDAO.getCSVDateFormat());
+      this.settings.setImportCharset(ImportPropsDAO.getImportCharset());
    }
 
    /*

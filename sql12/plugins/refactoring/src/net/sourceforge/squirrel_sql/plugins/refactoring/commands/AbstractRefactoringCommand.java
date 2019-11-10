@@ -350,29 +350,6 @@ public abstract class AbstractRefactoringCommand implements ICommand
 		}
 	}
 
-	protected class CommandExecHandler extends DefaultSQLExecuterHandler
-	{
-		protected boolean exceptionEncountered = false;
-
-		public CommandExecHandler(ISession session)
-		{
-			super(session);
-		}
-
-		public String sqlExecutionException(Throwable th, String postErrorString)
-		{
-			super.sqlExecutionException(th, postErrorString);
-			exceptionEncountered = true;
-
-         return postErrorString;
-		}
-
-		public boolean exceptionEncountered()
-		{
-			return exceptionEncountered;
-		}
-	}
-
 	/**
 	 * Builds a script as a single string from the specified statements. EOL chars and statement separators are
 	 * inserted.

@@ -36,8 +36,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class RefreshSchemaInfoAction extends SquirrelAction
-                              implements ISessionAction
+public class RefreshSchemaInfoAction extends SquirrelAction implements ISessionAction
 {
    /** Current Object Tree. */
    private ISession _session;

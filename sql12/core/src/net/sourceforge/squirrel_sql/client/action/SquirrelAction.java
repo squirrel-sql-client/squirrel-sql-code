@@ -35,7 +35,6 @@ public abstract class SquirrelAction extends BaseAction
 
 	protected SquirrelAction(IApplication app, IResources rsrc)
 	{
-		super();
       _rsrc = rsrc;
       if (app == null)
 		{

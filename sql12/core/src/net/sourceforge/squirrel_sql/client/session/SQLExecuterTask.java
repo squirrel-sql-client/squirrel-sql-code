@@ -29,6 +29,7 @@ package net.sourceforge.squirrel_sql.client.session;
 
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.DatabaseUpdateInfosListener;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateCheck;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
@@ -77,7 +78,7 @@ public class SQLExecuterTask implements Runnable
    private SchemaInfoUpdateCheck _schemaInfoUpdateCheck;
    private IQueryTokenizer _tokenizer = null;
    /** Whether or not to check if the schema should be updated */
-   private boolean schemaCheck = true;
+   private boolean _schemaCheck = true;
    private StatementWrapper _currentStatementWrapper;
    private String _tableToBeEdited;
    private boolean _executeEditableCheck = true;
@@ -126,11 +127,17 @@ public class SQLExecuterTask implements Runnable
        return _tokenizer.getQueryCount();
    }
 
-   public void setSchemaCheck(boolean aBoolean) {
-       schemaCheck = aBoolean;
+   public void setSchemaCheck(boolean schemaCheck)
+   {
+      _schemaCheck = schemaCheck;
    }
 
    public void run()
+   {
+      runDirect(null);
+   }
+
+   public void runDirect(DatabaseUpdateInfosListener databaseUpdateInfosListener)
    {
       if (_sql == null)
       {
@@ -278,10 +285,11 @@ public class SQLExecuterTask implements Runnable
             _handler.sqlCloseExecutionHandler(sqlExecErrorMsgs, lastExecutedStatement);
          }
 
-         if (schemaCheck) {
+         if (_schemaCheck)
+         {
              try
              {
-                _schemaInfoUpdateCheck.flush();
+                _schemaInfoUpdateCheck.flush(databaseUpdateInfosListener);
              }
              catch (Throwable t)
              {
@@ -481,7 +489,7 @@ public class SQLExecuterTask implements Runnable
          dataSetUpdateableTableModel.setTableInfo(null);
       }
 
-      if (schemaCheck)
+      if (_schemaCheck)
       {
           _schemaInfoUpdateCheck.addExecutionInfo(exInfo);
       }

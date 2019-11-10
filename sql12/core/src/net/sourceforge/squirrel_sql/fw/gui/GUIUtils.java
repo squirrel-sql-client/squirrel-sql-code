@@ -219,6 +219,21 @@ public class GUIUtils
 		return getOwningDialog(SwingUtilities.windowForComponent(comp));
 	}
 
+	public static Window getOwningWindow(Component comp)
+	{
+		Dialog owningDialog = getOwningDialog(comp);
+
+		if(null != owningDialog)
+		{
+			return owningDialog;
+		}
+		else
+		{
+			return getOwningFrame(comp);
+		}
+	}
+
+
 
 	/**
 	 * Return <TT>true</TT> if <TT>frame</TT> is a tool window. I.E. is the
@@ -803,7 +818,7 @@ public class GUIUtils
 		window.addWindowListener(new WindowAdapter()
 		{
 			@Override
-			public void windowClosing(WindowEvent e)
+			public void windowClosed(WindowEvent e)
 			{
 				Props.putInt(widthPropKey, window.getWidth());
 				Props.putInt(heightPropKey, window.getHeight());
@@ -812,7 +827,7 @@ public class GUIUtils
 
 	}
 
-   public static JTextField textFieldToCopyableLabel(JTextField textField)
+   public static JTextField styleTextFieldToCopyableLabel(JTextField textField)
    {
       textField.setEditable(false);
       textField.setBackground(new JPanel().getBackground());

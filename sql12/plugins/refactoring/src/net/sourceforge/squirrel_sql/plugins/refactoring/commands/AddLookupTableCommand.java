@@ -508,40 +508,4 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 		return result.toString();
 	}
 
-	/**
-	 * An SQLExecutionHandler that disables auto commit (if enabled) on the current SQLConnection and handles
-	 * commits and rollbacks of the transaction by itself.
-	 */
-	protected class NoAutoCommitCommandExecHandler extends CommandExecHandler
-	{
-		protected boolean _origAutoCommit;
-
-		public NoAutoCommitCommandExecHandler(ISession session) throws SQLException
-		{
-			super(session);
-
-			_origAutoCommit = _session.getSQLConnection().getAutoCommit();
-			_session.getSQLConnection().setAutoCommit(false);
-		}
-
-		public void sqlCloseExecutionHandler(ArrayList<String> errMsgs, String lastExecutedStatement)
-		{
-			super.sqlCloseExecutionHandler(errMsgs, lastExecutedStatement);
-			if (_origAutoCommit)
-			{
-				if (exceptionEncountered())
-					_session.rollback();
-				else
-					_session.commit();
-				try
-				{
-					_session.getSQLConnection().setAutoCommit(true);
-				} catch (SQLException e)
-				{
-					_session.showErrorMessage(e);
-				}
-			}
-		}
-	}
-
 }

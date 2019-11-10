@@ -29,12 +29,18 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.plugins.dataimport.action.ImportTableDataAction;
+import net.sourceforge.squirrel_sql.plugins.graph.AddToGraphAction;
+import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
+import net.sourceforge.squirrel_sql.plugins.syntax.FindAction;
+
+import javax.swing.JMenu;
 
 /**
  * Plugin to import data into a table
@@ -152,11 +158,17 @@ public class DataImportPlugin extends DefaultSessionPlugin
    {
       super.initialize();
 
-
       IApplication app = getApplication();
       ActionCollection coll = app.getActionCollection();
 
       coll.add(new ImportTableDataAction(app, _resources));
+
+      // Looks for menu.dataimport.title in DataImportPlugin.properties
+      JMenu menu = _resources.createMenu(getInternalName());
+
+      app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+      _resources.addToMenu(coll.get(ImportTableDataAction.class), menu);
+
    }
 
    /**
@@ -179,6 +191,15 @@ public class DataImportPlugin extends DefaultSessionPlugin
    {
       updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI());
 
+      ActionCollection coll = getApplication().getActionCollection();
+      session.addSeparatorToToolbar();
+      session.addToToolbar(coll.get(ImportTableDataAction.class));
+
+
+
+      ISQLPanelAPI sqlPanelAPI = session.getSessionInternalFrame().getMainSQLPanelAPI();
+      initSQLPanelApi(sqlPanelAPI);
+
       return new PluginSessionCallback()
       {
          @Override
@@ -196,15 +217,21 @@ public class DataImportPlugin extends DefaultSessionPlugin
          @Override
          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
          {
-
+            initSQLPanelApi(sqlInternalFrame.getMainSQLPanelAPI());
          }
 
          @Override
          public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
          {
-
+            initSQLPanelApi(additionalSQLTab.getSQLPanelAPI());
          }
       };
+   }
+
+   private void initSQLPanelApi(ISQLPanelAPI sqlPanelAPI)
+   {
+      ActionCollection coll = getApplication().getActionCollection();
+      sqlPanelAPI.addToToolsPopUp("import", coll.get(ImportTableDataAction.class));
    }
 
    /**
@@ -214,6 +241,10 @@ public class DataImportPlugin extends DefaultSessionPlugin
    {
       final ActionCollection coll = getApplication().getActionCollection();
       objectTreeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(ImportTableDataAction.class));
+      objectTreeAPI.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, coll.get(ImportTableDataAction.class));
+      objectTreeAPI.addToPopup(DatabaseObjectType.SESSION, coll.get(ImportTableDataAction.class));
+      objectTreeAPI.addToPopup(DatabaseObjectType.SCHEMA, coll.get(ImportTableDataAction.class));
+      objectTreeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(ImportTableDataAction.class));
    }
 
    /**

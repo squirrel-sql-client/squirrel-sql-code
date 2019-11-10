@@ -4,7 +4,7 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import java.nio.charset.Charset;
 
-public class ImportFileDialogProps
+public class ImportPropsDAO
 {
    private static final String PREF_KEY_IMPORT_DIALOG_WIDTH = "Squirrel.dataimport.dialog.width";
    private static final String PREF_KEY_IMPORT_DIALOG_HEIGHT = "Squirrel.dataimport.dialog.width";
@@ -18,6 +18,13 @@ public class ImportFileDialogProps
    private static final String PREF_KEY_CSV_DATE_FORMAT = "Squirrel.dataimport.CSV.date.format";
    private static final String PREF_KEY_CSV_SEPARATOR = "Squirrel.dataimport.CSV.separator";
    private static final String PREF_KEY_CSV_IMPORT_CHARSET = "Squirrel.dataimport.CSV.import.charset";
+
+
+   public static final String PREF_TABLE_NAME_PATTERN = "dataimport.gui.TableSuggestion.TABLE_NAME_PATTERN";
+   public static final String PREF_SUGGEST_TYPES = "dataimport.gui.TableSuggestion.SUGGEST_TYPES";
+   public static final String PREF_VARCHAR_LENGTH = "dataimport.gui.TableSuggestion.VARCHAR_LENGTH";
+   private static final String PREF_KEY_NUMERIC_PRECISION = "dataimport.gui.TableSuggestion.NUMERIC_PRECISION";
+   private static final String PREF_KEY_NUMERIC_SCALE = "dataimport.gui.TableSuggestion.NUMERIC_SCALE";
 
 
    public static void setDialogWidth(int width)
@@ -103,14 +110,21 @@ public class ImportFileDialogProps
 
 
 
-   public static void setCSVSeparator(char sep)
+   public static void setCSVSeparator(Character sep)
    {
       Props.putString(PREF_KEY_CSV_SEPARATOR,"" + sep);
    }
 
-   public static char getCSVSeparator()
+   public static Character getCSVSeparator()
    {
-      return Props.getString(PREF_KEY_CSV_SEPARATOR,";", true).charAt(0);
+      String sep = Props.getString(PREF_KEY_CSV_SEPARATOR, ";", true);
+
+      if(("" + null).equals(sep))
+      {
+         return null;
+      }
+
+      return sep.charAt(0);
    }
 
    public static void setCSVDateFormat(String format)
@@ -131,5 +145,55 @@ public class ImportFileDialogProps
    public static void setImportCharset(String importCharset)
    {
       Props.putString(PREF_KEY_CSV_IMPORT_CHARSET, importCharset);
+   }
+
+   public static String getTableNamePattern()
+   {
+      return Props.getString(PREF_TABLE_NAME_PATTERN, "@file");
+   }
+
+   public static void setSuggestTypes(boolean suggestColumnTypes)
+   {
+      Props.putBoolean(PREF_SUGGEST_TYPES, suggestColumnTypes);
+   }
+
+   public static void setTableNamePattern(String tableNamePattern)
+   {
+      Props.putString(PREF_TABLE_NAME_PATTERN, tableNamePattern);
+   }
+
+   public static boolean isSuggestColumnTypes()
+   {
+      return Props.getBoolean(PREF_SUGGEST_TYPES, false);
+   }
+
+   public static int getVarCharLength()
+   {
+      return Props.getInt(PREF_VARCHAR_LENGTH, 200);
+   }
+
+   public static void setVarCharLength(int varcharLength)
+   {
+      Props.putInt(PREF_VARCHAR_LENGTH, varcharLength);
+   }
+
+   public static int getNumericPrecision()
+   {
+      return Props.getInt(PREF_KEY_NUMERIC_PRECISION, 18);
+   }
+
+   public static void setNumericPrecision(int numericPrecision)
+   {
+      Props.putInt(PREF_KEY_NUMERIC_PRECISION, numericPrecision);
+   }
+
+   public static int getNumericScale()
+   {
+      return Props.getInt(PREF_KEY_NUMERIC_SCALE, 5);
+   }
+
+   public static void setNumericScale(int numericScale)
+   {
+      Props.putInt(PREF_KEY_NUMERIC_SCALE, numericScale);
    }
 }

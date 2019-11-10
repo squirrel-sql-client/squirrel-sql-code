@@ -33,15 +33,10 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CopyQualifiedObjectNameAction
-	extends SquirrelAction
-	implements IObjectTreeAction, CopyObjectNameCommand.ICopyTypes
+public class CopyQualifiedObjectNameAction extends SquirrelAction implements IObjectTreeAction, CopyObjectNameCommand.ICopyTypes
 {
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(CopyQualifiedObjectNameAction.class);
+	private final static ILogger s_log = LoggerController.createLogger(CopyQualifiedObjectNameAction.class);
 
-	/** API for the current tree. */
 	private IObjectTreeAPI _tree;
 
 	/**

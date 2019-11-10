@@ -51,8 +51,7 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
 	{
 	}
 
-	public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info,
-			IDataSetUpdateableTableModel model)
+	public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
 	{
 	}
 

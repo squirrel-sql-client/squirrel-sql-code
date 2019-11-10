@@ -341,12 +341,12 @@ final class GeneralPreferencesGUI extends JPanel
       gbc.gridx = 0;
       gbc.gridy = 0;
       JTextField execLogFileField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.execlogfileNew", execLogFile));
-      GUIUtils.textFieldToCopyableLabel(execLogFileField);
+      GUIUtils.styleTextFieldToCopyableLabel(execLogFileField);
       pnl.add(execLogFileField, gbc);
 
       ++gbc.gridy;
       JTextField configFileField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.configfileNew", configFile));
-      GUIUtils.textFieldToCopyableLabel(configFileField);
+      GUIUtils.styleTextFieldToCopyableLabel(configFileField);
       pnl.add(configFileField, gbc);
 
       gbc.weightx = 1.0;
@@ -382,13 +382,13 @@ final class GeneralPreferencesGUI extends JPanel
       gbc.gridy = 0;
       // i18n[GeneralPreferencesPanel.squirrelHomePath=Home directory: -home {0}]
       JTextField homePathField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.squirrelHomePath", homeDir));
-      GUIUtils.textFieldToCopyableLabel(homePathField);
+      GUIUtils.styleTextFieldToCopyableLabel(homePathField);
       pnl.add(homePathField, gbc);
 
       ++gbc.gridy;
       // i18n[GeneralPreferencesPanel.squirrelUserPath=User directory: -userdir {0}]
       JTextField userPathField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.squirrelUserPath", userDir));
-      GUIUtils.textFieldToCopyableLabel(userPathField);
+      GUIUtils.styleTextFieldToCopyableLabel(userPathField);
       pnl.add(userPathField, gbc);
 
       gbc.weightx = 1.0;

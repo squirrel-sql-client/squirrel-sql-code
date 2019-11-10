@@ -331,14 +331,19 @@ class ObjectTree extends JTree
       clearSelection();
 
 
-      DefaultMutableTreeNode parent = (DefaultMutableTreeNode) nodesToRefresh[0].getParent();
+      DefaultMutableTreeNode parent = null;
 
-      if (parent != null)
+		if (0 < nodesToRefresh.length)
+		{
+			parent = (DefaultMutableTreeNode) nodesToRefresh[0].getParent();
+		}
+
+		if (parent != null)
       {
          parent.removeAllChildren();
          expandTree((ObjectTreeNode) parent, selectedPaths, true);
       }
-      else
+      else if (0 < nodesToRefresh.length)
       {
          nodesToRefresh[0].removeAllChildren();
          expandTree(nodesToRefresh[0], selectedPaths, true);

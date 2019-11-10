@@ -23,10 +23,10 @@ import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -46,7 +46,6 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * This dialog has some options to specify how the file is imported into
@@ -56,36 +55,50 @@ import java.util.Vector;
  */
 public class ImportFileDialogCtrl
 {
-
-   private static final StringManager stringMgr = StringManagerFactory.getStringManager(ImportFileDialogCtrl.class);
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ImportFileDialogCtrl.class);
 
    private final ImportFileDialog _importFileDialog;
 
-   private String[][] previewData = null;
+   private String[][] _previewData = null;
    private List<String> _importerColumns = new ArrayList<>();
 
    private ISession _session;
    private File _importFile;
    private IFileImporter _importer;
+
    private ITableInfo _table;
-   private TableColumnInfo[] _columns;
+
+
+   private TableSuggestion _tableSuggestion;
+
+   public ImportFileDialogCtrl(ISession session, File importFile, IFileImporter importer)
+   {
+      this(session, importFile, importer, null);
+   }
 
    /**
     * @param importer   The file importer
     * @param table      The table to import into
     * @param columns    The columns of the import table
     */
-   public ImportFileDialogCtrl(ISession session, File importFile, IFileImporter importer, ITableInfo table, TableColumnInfo[] columns)
+   public ImportFileDialogCtrl(ISession session, File importFile, IFileImporter importer, ITableInfo table)
    {
       _session = session;
       _importFile = importFile;
       _importer = importer;
+
       _table = table;
-      _columns = columns;
 
+      _tableSuggestion = new TableSuggestion(_session, createdTableInfo -> onTableCreated(createdTableInfo));
 
-      _importFileDialog = new ImportFileDialog(_importFile, importer.getImportFileTypeDescription(), _table);
+      String tableName = s_stringMgr.getString("ImportFileDialogCtrl.no.table");
+
+      if (null != _table)
+      {
+         tableName = _table.getSimpleName();
+      }
+
+      _importFileDialog = new ImportFileDialog(_importFile, _importer.getImportFileTypeDescription(), tableName);
 
       _importFileDialog.setSize(getDimension());
 
@@ -116,9 +129,7 @@ public class ImportFileDialogCtrl
          }
       });
 
-      _importFileDialog.tblMapping.setModel(new ColumnMappingTableModel(columns));
-
-      _importFileDialog.chkHeadersIncluded.setSelected(ImportFileDialogProps.isHeadersIncluded());
+      _importFileDialog.chkHeadersIncluded.setSelected(ImportPropsDAO.isHeadersIncluded());
       _importFileDialog.chkHeadersIncluded.addActionListener(e -> onHeadersIncluded());
       onHeadersIncluded();
 
@@ -126,20 +137,87 @@ public class ImportFileDialogCtrl
       _importFileDialog.btnOneToOneMapping.addActionListener(e -> mapOneToOne());
 
 
-      _importFileDialog.txtCommitAfterInserts.setText("" + ImportFileDialogProps.getCommitAfterInsertsCount());
-      _importFileDialog.chkSingleTransaction.setSelected(ImportFileDialogProps.isSingleTransaction());
+      _importFileDialog.txtCommitAfterInserts.setText("" + ImportPropsDAO.getCommitAfterInsertsCount());
+      _importFileDialog.chkSingleTransaction.setSelected(ImportPropsDAO.isSingleTransaction());
       _importFileDialog.chkSingleTransaction.addActionListener(e -> updateTransactionPanel());
       updateTransactionPanel();
 
-      _importFileDialog.chkEmptyTableBeforeImport.setSelected(ImportFileDialogProps.isEmptyTableOnImport());
+      _importFileDialog.chkEmptyTableBeforeImport.setSelected(ImportPropsDAO.isEmptyTableOnImport());
       _importFileDialog.chkEmptyTableBeforeImport.addActionListener(e -> onEmptyTableBeforeImport());
       onEmptyTableBeforeImport();
 
-      _importFileDialog.chkTrimValues.setSelected(ImportFileDialogProps.isTrimValues());
+      _importFileDialog.chkTrimValues.setSelected(ImportPropsDAO.isTrimValues());
 
-      _importFileDialog.chkSafeMode.setSelected(ImportFileDialogProps.isSaveMode());
+      _importFileDialog.chkSafeMode.setSelected(ImportPropsDAO.isSaveMode());
+
+      _importFileDialog.btnSuggestNewTable.addActionListener(e -> onSuggestNewTable());
+      onSuggestNewTable();
+
+      _importFileDialog.btnShowTableDetails.addActionListener(e -> onShowTableDetails());
+
+      _importFileDialog.btnCreateTable.addActionListener(e -> onCreateTable());
 
       GUIUtils.enableCloseByEscape(_importFileDialog);
+   }
+
+   private void onCreateTable()
+   {
+      if (false == checkTableName())
+      {
+         return;
+      }
+
+      _tableSuggestion.execCreateTableInDatabase(_importFileDialog.txtTableName.getText());
+   }
+
+   private void onShowTableDetails()
+   {
+      if (false == checkTableName())
+      {
+         return;
+      }
+
+
+      Window owningWindow = GUIUtils.getOwningWindow(_importFileDialog.getContentPane());
+      _tableSuggestion.showTableDialog(owningWindow, _importFileDialog.txtTableName.getText());
+   }
+
+   private boolean checkTableName()
+   {
+      if(StringUtilities.isEmpty(_importFileDialog.txtTableName.getText(), true))
+      {
+         JOptionPane.showMessageDialog(_importFileDialog.getContentPane(), s_stringMgr.getString("ImportFileDialogCtrl.please.enter.table.name"));
+         return false;
+      }
+      return true;
+   }
+
+   private void onTableCreated(ITableInfo createdTableInfo)
+   {
+      _table = createdTableInfo;
+
+      _importFileDialog.setImportDialogTitle(_importer.getImportFileTypeDescription(), _table.getSimpleName());
+
+      updatePreviewAndMapping();
+   }
+
+   private void onSuggestNewTable()
+   {
+      if(_importFileDialog.btnSuggestNewTable.isSelected())
+      {
+         _importFileDialog.txtTableName.setEnabled(true);
+         _importFileDialog.txtTableName.setText(TableCreateUtils.suggestTableName(_importFile));
+         _importFileDialog.btnShowTableDetails.setEnabled(true);
+         _importFileDialog.btnCreateTable.setEnabled(true);
+      }
+      else
+      {
+         _importFileDialog.txtTableName.setEnabled(false);
+         _importFileDialog.txtTableName.setText(null);
+         _importFileDialog.btnShowTableDetails.setEnabled(false);
+         _importFileDialog.btnCreateTable.setEnabled(false);
+         _tableSuggestion.clear();
+      }
    }
 
 
@@ -147,7 +225,7 @@ public class ImportFileDialogCtrl
    {
       if(_importFileDialog.chkEmptyTableBeforeImport.isSelected())
       {
-         _importFileDialog.lblEmptyTableWarning.setText(stringMgr.getString("ImportFileDialogCtrl.all.data.will.be.lost.warning"));
+         _importFileDialog.lblEmptyTableWarning.setText(s_stringMgr.getString("ImportFileDialogCtrl.all.data.will.be.lost.warning"));
       }
       else
       {
@@ -158,27 +236,27 @@ public class ImportFileDialogCtrl
    private void onHeadersIncluded()
    {
       _importFileDialog.btnSuggestColumns.setSelected(false);
-      updatePreviewData();
+      updatePreviewAndMapping();
    }
 
    private Dimension getDimension()
    {
-      return new Dimension(ImportFileDialogProps.getDialogWidth(),ImportFileDialogProps.getDialogHeight());
+      return new Dimension(ImportPropsDAO.getDialogWidth(), ImportPropsDAO.getDialogHeight());
    }
 
    public void onClosing()
    {
       Dimension size = _importFileDialog.getSize();
 
-      ImportFileDialogProps.setDialogWidth(size.width);
-      ImportFileDialogProps.setDialogHeight(size.height);
+      ImportPropsDAO.setDialogWidth(size.width);
+      ImportPropsDAO.setDialogHeight(size.height);
 
-      ImportFileDialogProps.setCommitAfterInsertsCount(getCommitAfterEveryInsertsCount());
-      ImportFileDialogProps.setEmptyTableOnImport(_importFileDialog.chkEmptyTableBeforeImport.isSelected());
-      ImportFileDialogProps.setHeadersIncluded(_importFileDialog.chkHeadersIncluded.isSelected());
-      ImportFileDialogProps.setSingleTransaction(_importFileDialog.chkSingleTransaction.isSelected());
-      ImportFileDialogProps.setTrimValues(_importFileDialog.chkTrimValues.isSelected());
-      ImportFileDialogProps.setSaveMode(_importFileDialog.chkSafeMode.isSelected());
+      ImportPropsDAO.setCommitAfterInsertsCount(getCommitAfterEveryInsertsCount());
+      ImportPropsDAO.setEmptyTableOnImport(_importFileDialog.chkEmptyTableBeforeImport.isSelected());
+      ImportPropsDAO.setHeadersIncluded(_importFileDialog.chkHeadersIncluded.isSelected());
+      ImportPropsDAO.setSingleTransaction(_importFileDialog.chkSingleTransaction.isSelected());
+      ImportPropsDAO.setTrimValues(_importFileDialog.chkTrimValues.isSelected());
+      ImportPropsDAO.setSaveMode(_importFileDialog.chkSafeMode.isSelected());
    }
 
 
@@ -200,11 +278,11 @@ public class ImportFileDialogCtrl
     */
    public void setPreviewData(String[][] data)
    {
-      previewData = data;
-      updatePreviewData();
+      _previewData = data;
+      updatePreviewAndMapping();
    }
 
-   private void updatePreviewData()
+   private void updatePreviewAndMapping()
    {
       JComboBox cboColumnMapping = new JComboBox();
       cboColumnMapping.addItem(SKIP.getVisibleString());
@@ -214,10 +292,10 @@ public class ImportFileDialogCtrl
 
       cboColumnMapping.addActionListener(e -> onColumnMappingSelected(e));
 
-      if (previewData != null && previewData.length > 0)
+      if (_previewData != null && _previewData.length > 0)
       {
-         String[] headers = new String[previewData[0].length];
-         String[][] data = previewData;
+         String[] headers = new String[_previewData[0].length];
+         String[][] data = _previewData;
 
          if (_importFileDialog.chkHeadersIncluded.isSelected())
          {
@@ -225,10 +303,10 @@ public class ImportFileDialogCtrl
             {
                headers[i] = data[0][i];
             }
-            data = new String[previewData.length - 1][];
-            for (int i = 1; i < previewData.length; i++)
+            data = new String[_previewData.length - 1][];
+            for (int i = 1; i < _previewData.length; i++)
             {
-               data[i - 1] = previewData[i];
+               data[i - 1] = _previewData[i];
             }
          }
          else
@@ -236,7 +314,7 @@ public class ImportFileDialogCtrl
             for (int i = 0; i < headers.length; i++)
             {
                //i18n[ImportFileDialogCtrl.column=Column]
-               headers[i] = stringMgr.getString("ImportFileDialog.column") + i;
+               headers[i] = s_stringMgr.getString("ImportFileDialog.column") + i;
             }
          }
 
@@ -263,6 +341,23 @@ public class ImportFileDialogCtrl
          _importFileDialog.tblPreview.setModel(dataModel);
 
       }
+
+      _tableSuggestion.updatePreviewData(_previewData, _importFileDialog.chkHeadersIncluded.isSelected());
+
+      updateMapping(cboColumnMapping);
+
+   }
+
+   private void updateMapping(JComboBox cboColumnMapping)
+   {
+      if(null == _table)
+      {
+         return;
+      }
+
+      ExtendedColumnInfo[] createdTableColumns = getExtendedColumnInfos();
+
+      _importFileDialog.tblMapping.setModel(new ColumnMappingTableModel(createdTableColumns));
 
       if (null != _importFileDialog.tblMapping.getColumnModel().getColumn(1).getCellEditor())
       {
@@ -326,7 +421,9 @@ public class ImportFileDialogCtrl
       {
          columnMappingTableModel.resetMappings();
 
-         for (int i = 0; i < Math.min(_importerColumns.size(), _columns.length); i++)
+         ExtendedColumnInfo[] columns = getExtendedColumnInfos();
+
+         for (int i = 0; i < Math.min(_importerColumns.size(), columns.length); i++)
          {
             String importerColumn = _importerColumns.get(i);
             if (false == StringUtilities.isEmpty(importerColumn, true))
@@ -362,7 +459,7 @@ public class ImportFileDialogCtrl
          {
             if (null != importerColumn && !importerColumn.isEmpty())
             {
-               final TableColumnInfo suggestedColumn = suggestColumn(importerColumn);
+               final ExtendedColumnInfo suggestedColumn = suggestColumn(importerColumn);
                if (suggestedColumn != null)
                {
                   final String suggestedColumnName = suggestedColumn.getColumnName();
@@ -378,11 +475,13 @@ public class ImportFileDialogCtrl
       }
    }
 
-   private TableColumnInfo suggestColumn(final String importerColumn)
+   private ExtendedColumnInfo suggestColumn(final String importerColumn)
    {
-      for (TableColumnInfo colInfo : _columns)
+      ExtendedColumnInfo[] columns = getExtendedColumnInfos();
+
+      for (ExtendedColumnInfo colInfo : columns)
       {
-         if (colInfo.getColumnName().equalsIgnoreCase(importerColumn))
+         if (colInfo.getColumnName().equalsIgnoreCase(importerColumn) || colInfo.getColumnName().equalsIgnoreCase(StringUtilities.javaNormalize(importerColumn)))
          {
             return colInfo;
          }
@@ -392,13 +491,23 @@ public class ImportFileDialogCtrl
 
    public void onOk()
    {
+      if(null == _table)
+      {
+         String msg = s_stringMgr.getString("ImportFileDialogCtrl.no.table.msg");
+         String title = s_stringMgr.getString("ImportFileDialogCtrl.no.table.title");
+         EDTMessageBoxUtil.showMessageDialogOnEDT(msg, title);
+         return;
+      }
+
+
       ColumnMappingTableModel columnMappingModel = (ColumnMappingTableModel) _importFileDialog.tblMapping.getModel();
 
+      ExtendedColumnInfo[] columns = getExtendedColumnInfos();
 
-      if(0 == columnMappingModel.getColumnCountExcludingSkipped(_columns))
+      if(0 == columnMappingModel.getColumnCountExcludingSkipped(columns))
       {
-         String msg = stringMgr.getString("ImportFileDialogCtrl.all.columns.skipped.msg");
-         String title = stringMgr.getString("ImportFileDialogCtrl.all.columns.skipped.title");
+         String msg = s_stringMgr.getString("ImportFileDialogCtrl.all.columns.skipped.msg");
+         String title = s_stringMgr.getString("ImportFileDialogCtrl.all.columns.skipped.title");
          EDTMessageBoxUtil.showMessageDialogOnEDT(msg, title);
          return;
       }
@@ -422,7 +531,7 @@ public class ImportFileDialogCtrl
             new ImportDataIntoTableExecutor(
                   _session,
                   _table,
-                  _columns,
+                  getExtendedColumnInfos(),
                   _importerColumns,
                   columnMappingModel,
                   _importer,
@@ -434,9 +543,14 @@ public class ImportFileDialogCtrl
       executor.execute();
    }
 
+   private ExtendedColumnInfo[] getExtendedColumnInfos()
+   {
+      return _session.getSchemaInfo().getExtendedColumnInfos(_table.getCatalogName(), _table.getSchemaName(), _table.getSimpleName());
+   }
+
    private int getCommitAfterEveryInsertsCount()
    {
-      int commitAfterEveryInsertsCount = ImportFileDialogProps.getCommitAfterInsertsCount();
+      int commitAfterEveryInsertsCount = ImportPropsDAO.getCommitAfterInsertsCount();
       if (null != _importFileDialog.txtCommitAfterInserts.getText())
       {
          try

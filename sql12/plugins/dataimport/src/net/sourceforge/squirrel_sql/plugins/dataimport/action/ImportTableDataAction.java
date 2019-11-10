@@ -34,9 +34,10 @@ import net.sourceforge.squirrel_sql.fw.resources.IResources;
  *
  * @author Thorsten Mürell
  */
-public class ImportTableDataAction extends SquirrelAction implements IObjectTreeAction
+public class ImportTableDataAction extends SquirrelAction implements ISessionAction, IObjectTreeAction
 {
    private IObjectTreeAPI _objectTreeAPI;
+   private ISession _session;
 
    public ImportTableDataAction(IApplication app, IResources resources)
    {
@@ -47,21 +48,33 @@ public class ImportTableDataAction extends SquirrelAction implements IObjectTree
    public void setObjectTree(IObjectTreeAPI objectTreeAPI)
    {
       _objectTreeAPI = objectTreeAPI;
-      setEnabled(null != _objectTreeAPI);
+   }
+
+   @Override
+   public void setSession(ISession session)
+   {
+      _session = session;
+      setEnabled(null != _session);
    }
 
    @Override
    public void actionPerformed(ActionEvent ev)
    {
-      if (_objectTreeAPI != null)
+      if (_objectTreeAPI == null)
+      {
+         new ImportTableDataCommand(_session).execute();
+      }
+      else
       {
          IDatabaseObjectInfo[] tables = _objectTreeAPI.getSelectedDatabaseObjects();
-         if (tables.length != 1 || false == tables[0] instanceof ITableInfo)
+         if (0 < tables.length && tables[0] instanceof ITableInfo)
          {
-
+            new ImportTableDataCommand(_objectTreeAPI.getSession(), (ITableInfo) tables[0]).execute();
          }
-
-         new ImportTableDataCommand(_objectTreeAPI.getSession(), (ITableInfo) tables[0]).execute();
+         else
+         {
+            new ImportTableDataCommand(_session).execute();
+         }
       }
    }
 

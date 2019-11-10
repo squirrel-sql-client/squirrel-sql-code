@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -33,24 +34,24 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class ColumnMappingTableModel extends AbstractTableModel
 {
-   private static final StringManager stringMgr = StringManagerFactory.getStringManager(ColumnMappingTableModel.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ColumnMappingTableModel.class);
 
-   private TableColumnInfo[] columns;
-   private Vector<String> mapping = new Vector<String>();
-   private Vector<String> defaults = new Vector<String>();
+   private ExtendedColumnInfo[] _columns;
+   private Vector<String> _mapping = new Vector<String>();
+   private Vector<String> _defaults = new Vector<String>();
 
    /**
     * The default constructor.
     *
     * @param columns These are the columns of the destination table
     */
-   public ColumnMappingTableModel(TableColumnInfo[] columns)
+   public ColumnMappingTableModel(ExtendedColumnInfo[] columns)
    {
-      this.columns = columns;
+      this._columns = columns;
       for (int i = 0; i < columns.length; i++)
       {
-         mapping.add(SpecialColumnMapping.SKIP.getVisibleString());
-         defaults.add("");
+         _mapping.add(SpecialColumnMapping.SKIP.getVisibleString());
+         _defaults.add("");
       }
    }
 
@@ -68,7 +69,7 @@ public class ColumnMappingTableModel extends AbstractTableModel
     */
    public int getRowCount()
    {
-      return columns.length;
+      return _columns.length;
    }
 
    /* (non-Javadoc)
@@ -78,15 +79,15 @@ public class ColumnMappingTableModel extends AbstractTableModel
    {
       if (columnIndex == ColumnMappingConstants.INDEX_TABLE_COLUMN)
       {
-         return columns[rowIndex].getColumnName();
+         return _columns[rowIndex].getColumnName();
       }
       else if (columnIndex == ColumnMappingConstants.INDEX_IMPORTFILE_COLUMN)
       {
-         return mapping.get(rowIndex);
+         return _mapping.get(rowIndex);
       }
       else if (columnIndex == ColumnMappingConstants.INDEX_FIXEDVALUE_COLUMN)
       {
-         return defaults.get(rowIndex);
+         return _defaults.get(rowIndex);
       }
       return null;
    }
@@ -113,11 +114,11 @@ public class ColumnMappingTableModel extends AbstractTableModel
    {
       if (col == ColumnMappingConstants.INDEX_IMPORTFILE_COLUMN)
       {
-         mapping.set(row, value.toString());
+         _mapping.set(row, value.toString());
       }
       else if (col == ColumnMappingConstants.INDEX_FIXEDVALUE_COLUMN)
       {
-         defaults.set(row, value.toString());
+         _defaults.set(row, value.toString());
       }
       fireTableCellUpdated(row, col);
    }
@@ -131,17 +132,17 @@ public class ColumnMappingTableModel extends AbstractTableModel
       if (column == ColumnMappingConstants.INDEX_TABLE_COLUMN)
       {
          // i18n[ImportFileDialogCtrl.tableColumn=Table column]
-         return stringMgr.getString("ImportFileDialog.tableColumn");
+         return s_stringMgr.getString("ImportFileDialog.tableColumn");
       }
       else if (column == ColumnMappingConstants.INDEX_IMPORTFILE_COLUMN)
       {
          // i18n[ImportFileDialogCtrl.importFileColumn=Import file column]
-         return stringMgr.getString("ImportFileDialog.importFileColumn");
+         return s_stringMgr.getString("ImportFileDialog.importFileColumn");
       }
       else if (column == ColumnMappingConstants.INDEX_FIXEDVALUE_COLUMN)
       {
          // i18n[ImportFileDialogCtrl.fixedValue=Fixed value]
-         return stringMgr.getString("ImportFileDialog.fixedValue");
+         return s_stringMgr.getString("ImportFileDialog.fixedValue");
       }
       return null;
    }
@@ -155,9 +156,9 @@ public class ColumnMappingTableModel extends AbstractTableModel
    public int findTableColumn(String columnName)
    {
       int i = 0;
-      for (i = 0; i < columns.length; i++)
+      for (i = 0; i < _columns.length; i++)
       {
-         if (columnName.equals(columns[i].getColumnName()))
+         if (columnName.equals(_columns[i].getColumnName()))
          {
             return i;
          }
@@ -170,34 +171,34 @@ public class ColumnMappingTableModel extends AbstractTableModel
     */
    public void resetMappings()
    {
-      mapping.clear();
-      defaults.clear();
-      for (int i = 0; i < columns.length; i++)
+      _mapping.clear();
+      _defaults.clear();
+      for (int i = 0; i < _columns.length; i++)
       {
-         mapping.add(SpecialColumnMapping.SKIP.getVisibleString());
-         defaults.add("");
+         _mapping.add(SpecialColumnMapping.SKIP.getVisibleString());
+         _defaults.add("");
       }
       fireTableDataChanged();
    }
 
 
 
-   public String getMapping(TableColumnInfo column)
+   public String getMapping(ExtendedColumnInfo column)
    {
       int pos = findTableColumn(column.getColumnName());
       return getValueAt(pos, 1).toString();
    }
 
-   public String getFixedValue(TableColumnInfo column)
+   public String getFixedValue(ExtendedColumnInfo column)
    {
       int pos = findTableColumn(column.getColumnName());
       return getValueAt(pos, 2).toString();
    }
 
-   public int getColumnCountExcludingSkipped(TableColumnInfo[] columns)
+   public int getColumnCountExcludingSkipped(ExtendedColumnInfo[] columns)
    {
       int count = 0;
-      for (TableColumnInfo column : columns)
+      for (ExtendedColumnInfo column : columns)
       {
          int pos = findTableColumn(column.getColumnName());
          String mapping = getValueAt(pos, 1).toString();

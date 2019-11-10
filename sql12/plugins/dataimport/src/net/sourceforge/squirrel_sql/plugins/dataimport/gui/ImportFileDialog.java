@@ -3,16 +3,18 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.gui;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
@@ -21,18 +23,24 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.io.File;
 import java.text.NumberFormat;
 
 public class ImportFileDialog extends DialogWidget
 {
-   private static final StringManager stringMgr = StringManagerFactory.getStringManager(ImportFileDialog.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ImportFileDialog.class);
 
    JTable tblPreview;
    JTable tblMapping;
    JCheckBox chkHeadersIncluded;
+
+   JToggleButton btnSuggestNewTable;
+   JTextField txtTableName;
+   JButton btnShowTableDetails;
+   JButton btnCreateTable;
+
+
    JToggleButton btnSuggestColumns;
    JToggleButton btnOneToOneMapping;
 
@@ -51,9 +59,11 @@ public class ImportFileDialog extends DialogWidget
    JLabel lblCommitAfterInsertEnd;
 
 
-   public ImportFileDialog(File importFile, String importFileTypeDescription, ITableInfo table)
+   public ImportFileDialog(File importFile, String importFileTypeDescription, String tableName)
    {
-      super(stringMgr.getString("ImportFileDialog.title", importFileTypeDescription, table.getSimpleName()), true, Main.getApplication());
+      super("", true, Main.getApplication());
+
+      setTitle(createTitle(importFileTypeDescription, tableName));
 
       setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
       makeToolWindow(true);
@@ -67,27 +77,34 @@ public class ImportFileDialog extends DialogWidget
 
    }
 
+   private String createTitle(String importFileTypeDescription, String tableName)
+   {
+      return s_stringMgr.getString("ImportFileDialog.title", importFileTypeDescription, tableName);
+   }
+
+   public void setImportDialogTitle(String importFileTypeDescription, String tableName)
+   {
+      super.setTitle(createTitle(importFileTypeDescription, tableName));
+   }
+
 
    private Component createMainPanel(File importFile)
    {
       tblPreview = new JTable();
       tblPreview.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-      JScrollPane scrollPane = new JScrollPane(tblPreview);
-
       tblMapping = new JTable();
-      JScrollPane scrollPane2 = new JScrollPane(tblMapping);
 
       //i18n[ImportFileDialogCtrl.chkHeadersIncluded=Headers in first line]
-      chkHeadersIncluded = new JCheckBox(stringMgr.getString("ImportFileDialog.headersIncluded"));
-      chkHeadersIncluded.setToolTipText(stringMgr.getString("ImportFileDialog.headersIncluded.tooltip"));
+      chkHeadersIncluded = new JCheckBox(s_stringMgr.getString("ImportFileDialog.headersIncluded"));
+      chkHeadersIncluded.setToolTipText(s_stringMgr.getString("ImportFileDialog.headersIncluded.tooltip"));
       chkHeadersIncluded.setSelected(true);
 
-      chkTrimValues = new JCheckBox(stringMgr.getString("ImportFileDialog.trim.values"));
-      chkTrimValues.setToolTipText(stringMgr.getString("ImportFileDialog.trim.values.tooltip"));
+      chkTrimValues = new JCheckBox(s_stringMgr.getString("ImportFileDialog.trim.values"));
+      chkTrimValues.setToolTipText(s_stringMgr.getString("ImportFileDialog.trim.values.tooltip"));
       chkTrimValues.setSelected(true);
 
-      chkSafeMode = new JCheckBox(stringMgr.getString("ImportFileDialog.safetySwitch"));
+      chkSafeMode = new JCheckBox(s_stringMgr.getString("ImportFileDialog.safetySwitch"));
       chkSafeMode.setSelected(true);
 
       JPanel ret = new JPanel(new GridBagLayout());
@@ -96,15 +113,15 @@ public class ImportFileDialog extends DialogWidget
 
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0);
       //i18n[ImportFileDialogCtrl.dataPreview=Data preview]
-      ret.add(new JLabel(stringMgr.getString("ImportFileDialog.dataPreview", importFile.getAbsolutePath())), gbc);
+      ret.add(new JLabel(s_stringMgr.getString("ImportFileDialog.dataPreview", importFile.getAbsolutePath())), gbc);
 
       gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 10, 10), 0, 0);
       ret.add(chkHeadersIncluded, gbc);
 
       gbc = new GridBagConstraints(0, 2, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 10, 10, 10), 0, 0);
-      ret.add(scrollPane, gbc);
+      ret.add(new JScrollPane(tblPreview), gbc);
 
-      gbc = new GridBagConstraints(0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 10, 10), 0, 0);
+      gbc = new GridBagConstraints(0, 3, 1, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 0, 0);
       ret.add(createToggleButtonsPanel(), gbc);
 
       gbc = new GridBagConstraints(0, 4, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 0, 0);
@@ -121,7 +138,7 @@ public class ImportFileDialog extends DialogWidget
 
 
       gbc = new GridBagConstraints(0, 8, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 10, 10, 10), 0, 0);
-      ret.add(scrollPane2, gbc);
+      ret.add(new JScrollPane(tblMapping), gbc);
 
       gbc = new GridBagConstraints(0, 9, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 10, 10), 0, 0);
       ret.add(btnsPnl, gbc);
@@ -131,20 +148,69 @@ public class ImportFileDialog extends DialogWidget
 
    private JPanel createToggleButtonsPanel()
    {
-      JPanel ret = new JPanel(new GridLayout(1,2, 10, 10));
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+      ret.add(createSuggestTablePanel(), gbc);
 
 
-      // i18n[ImportFileDialogCtrl.btnSuggestColumns=Suggest columns (find matching columns)]
-      btnSuggestColumns = new JToggleButton(stringMgr.getString("ImportFileDialog.suggestColumns"));
-      btnSuggestColumns.setToolTipText(stringMgr.getString("ImportFileDialog.suggestColumns.tooltip"));
+      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15, 0, 0, 0), 0, 0);
+      ret.add(createColumnButtonsPanel(), gbc);
+
+      return ret;
+   }
+
+   private JPanel createSuggestTablePanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0);
+      btnSuggestNewTable = new JToggleButton(s_stringMgr.getString("ImportFileDialog.suggestNewTable"));
+      btnSuggestNewTable.setSelected(false);
+      ret.add(btnSuggestNewTable, gbc);
+
+      gbc = new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 0), 0, 0);
+      txtTableName = new JTextField("Bla Bla");
+      txtTableName.setBorder(BorderFactory.createEtchedBorder());
+      ret.add(txtTableName, gbc);
+
+      gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0);
+      btnShowTableDetails = new JButton("...");
+      btnShowTableDetails.setToolTipText(s_stringMgr.getString("ImportFileDialog.show.table.details.tooltip"));
+      ret.add(btnShowTableDetails, gbc);
+
+      gbc = new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 10, 5, 5), 0, 0);
+      btnCreateTable = new JButton(s_stringMgr.getString("ImportFileDialog.create.table"));
+      btnCreateTable.setToolTipText(s_stringMgr.getString("ImportFileDialog.create.table.tooltip"));
+      ret.add(btnCreateTable, gbc);
+
+      ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("ImportFileDialog.panel.title.import.table.creation")));
+
+      return ret;
+   }
+
+   private JPanel createColumnButtonsPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+
+      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      btnSuggestColumns = new JToggleButton(s_stringMgr.getString("ImportFileDialog.suggestColumns"));
+      btnSuggestColumns.setToolTipText(s_stringMgr.getString("ImportFileDialog.suggestColumns.tooltip"));
       btnSuggestColumns.setSelected(false);
-      ret.add(btnSuggestColumns);
+      ret.add(btnSuggestColumns, gbc);
 
-
-      btnOneToOneMapping = new JToggleButton(stringMgr.getString("ImportFileDialog.oneToOneMapping"));
-      btnOneToOneMapping.setToolTipText(stringMgr.getString("ImportFileDialog.oneToOneMapping.tooltip"));
+      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0);
+      btnOneToOneMapping = new JToggleButton(s_stringMgr.getString("ImportFileDialog.oneToOneMapping"));
+      btnOneToOneMapping.setToolTipText(s_stringMgr.getString("ImportFileDialog.oneToOneMapping.tooltip"));
       btnOneToOneMapping.setSelected(false);
-      ret.add(btnOneToOneMapping);
+      ret.add(btnOneToOneMapping, gbc);
 
       return ret;
    }
@@ -155,7 +221,7 @@ public class ImportFileDialog extends DialogWidget
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
-      chkEmptyTableBeforeImport = new JCheckBox(stringMgr.getString("ImportFileDialog.empty.table"));
+      chkEmptyTableBeforeImport = new JCheckBox(s_stringMgr.getString("ImportFileDialog.empty.table"));
       ret.add(chkEmptyTableBeforeImport, gbc);
 
       gbc = new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 0), 0, 0);
@@ -174,11 +240,11 @@ public class ImportFileDialog extends DialogWidget
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
-      chkSingleTransaction = new JCheckBox(stringMgr.getString("ImportFileDialog.singleTransaction"));
+      chkSingleTransaction = new JCheckBox(s_stringMgr.getString("ImportFileDialog.singleTransaction"));
       ret.add(chkSingleTransaction, gbc);
 
       gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0);
-      lblCommitAfterInsertBegin = new JLabel(stringMgr.getString("ImportFileDialog.commitAfterInsert.begin"));
+      lblCommitAfterInsertBegin = new JLabel(s_stringMgr.getString("ImportFileDialog.commitAfterInsert.begin"));
       ret.add(lblCommitAfterInsertBegin, gbc);
 
       gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0);
@@ -187,7 +253,7 @@ public class ImportFileDialog extends DialogWidget
       ret.add(txtCommitAfterInserts, gbc);
 
       gbc = new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0);
-      lblCommitAfterInsertEnd = new JLabel(stringMgr.getString("ImportFileDialog.commitAfterInsert.end"));
+      lblCommitAfterInsertEnd = new JLabel(s_stringMgr.getString("ImportFileDialog.commitAfterInsert.end"));
       ret.add(lblCommitAfterInsertEnd, gbc);
 
       gbc = new GridBagConstraints(4, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
