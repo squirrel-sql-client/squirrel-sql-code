@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#1410 Import CSV/Excel files without existing table
+  Import of CVS and MS-Excel files is now available not only on tables in Object tree but also in Session menu and tool bar as well as in tools popup (ctrl+t).
+  The import dialog has a new section "Create new import table in database".
+
 #583/#218 SUM function in SQL results
    The upper right of an SQL result tab has a new drop down button which allows to display a sum panel.
 

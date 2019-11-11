@@ -99,11 +99,20 @@ public class TableCreateUtils
             {
                if(headerIncluded)
                {
-                  columnGuesses.add(new ColumnGuess(StringUtilities.javaNormalize(previewData[i][j]), varCharLength, numericPrecision, numericScale, suggestColumnTypes, duplicateColumnNameCheck));
+                  String columnName = "Column" + j;
+
+                  if (false == StringUtilities.isEmpty(previewData[i][j], true))
+                  {
+                     columnName = StringUtilities.javaNormalize(previewData[i][j]);
+                  }
+
+                  columnGuesses.add(new ColumnGuess(columnName, varCharLength, numericPrecision, numericScale, suggestColumnTypes, duplicateColumnNameCheck));
                }
                else
                {
-                  columnGuesses.add(new ColumnGuess("Column" + j, varCharLength, numericPrecision, numericScale, suggestColumnTypes, duplicateColumnNameCheck));
+                  ColumnGuess buf = new ColumnGuess("Column" + j, varCharLength, numericPrecision, numericScale, suggestColumnTypes, duplicateColumnNameCheck);
+                  buf.exampleValue(previewData[i][j]);
+                  columnGuesses.add(buf);
                }
             }
             else
