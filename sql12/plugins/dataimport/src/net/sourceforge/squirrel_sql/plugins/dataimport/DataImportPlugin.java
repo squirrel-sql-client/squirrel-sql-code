@@ -26,7 +26,6 @@ import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -36,9 +35,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQ
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.plugins.dataimport.action.ImportTableDataAction;
-import net.sourceforge.squirrel_sql.plugins.graph.AddToGraphAction;
-import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
-import net.sourceforge.squirrel_sql.plugins.syntax.FindAction;
 
 import javax.swing.JMenu;
 
