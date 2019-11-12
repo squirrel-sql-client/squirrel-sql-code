@@ -30,6 +30,7 @@ import javax.swing.JComponent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportPropsDAO;
+import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FailedToInterpretHandler;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 
@@ -64,6 +65,7 @@ public class CSVFileImporter implements IFileImporter
       this.settings.setSeperator(ImportPropsDAO.getCSVSeparator());
       this.settings.setDateFormat(ImportPropsDAO.getCSVDateFormat());
       this.settings.setImportCharset(ImportPropsDAO.getImportCharset());
+      this.settings.setUseDoubleQuotesAsTextQualifier(ImportPropsDAO.isUseDoubleQuotesAsTextQualifier());
    }
 
    /*
@@ -94,7 +96,7 @@ public class CSVFileImporter implements IFileImporter
     */
    public String[][] getPreview(int noOfLines) throws IOException
    {
-      CsvReader csvReader = new CsvReader(new InputStreamReader(new FileInputStream(importFile), settings.getImportCharset()), settings.getSeperator(), _trimValues);
+      CsvReader csvReader = new CsvReader(new InputStreamReader(new FileInputStream(importFile), settings.getImportCharset()), settings.getSeperator(), _trimValues, settings.isUseDoubleQuotesAsTextQualifier());
       String[][] data = new String[noOfLines][];
 
       int row = 0;
@@ -141,7 +143,7 @@ public class CSVFileImporter implements IFileImporter
       {
          reader.close();
       }
-      reader = new CsvReader(new InputStreamReader(new FileInputStream(importFile), settings.getImportCharset()), settings.getSeperator(), _trimValues);
+      reader = new CsvReader(new InputStreamReader(new FileInputStream(importFile), settings.getImportCharset()), settings.getSeperator(), _trimValues, false);
       reader.setSafetySwitch(safetySwitch);
       return true;
    }
@@ -236,7 +238,7 @@ public class CSVFileImporter implements IFileImporter
     * (non-Javadoc)
     * @see net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter#getConfigurationPanel()
     */
-   public JComponent getConfigurationPanel()
+   public ConfigurationPanel createConfigurationPanel()
    {
       return new CSVSettingsPanel(settings);
    }

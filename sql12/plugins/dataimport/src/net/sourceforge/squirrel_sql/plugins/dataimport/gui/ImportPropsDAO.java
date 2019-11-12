@@ -18,6 +18,7 @@ public class ImportPropsDAO
    private static final String PREF_KEY_CSV_DATE_FORMAT = "Squirrel.dataimport.CSV.date.format";
    private static final String PREF_KEY_CSV_SEPARATOR = "Squirrel.dataimport.CSV.separator";
    private static final String PREF_KEY_CSV_IMPORT_CHARSET = "Squirrel.dataimport.CSV.import.charset";
+   private static final String PREF_KEY_CSV_USE_DOUBLE_QUOTES_AS_TEXT_QUALIFIER = "Squirrel.dataimport.CSV.import.useDoubleQuotesAsTextQualifier";
 
 
    public static final String PREF_TABLE_NAME_PATTERN = "dataimport.gui.TableSuggestion.TABLE_NAME_PATTERN";
@@ -117,7 +118,7 @@ public class ImportPropsDAO
 
    public static Character getCSVSeparator()
    {
-      String sep = Props.getString(PREF_KEY_CSV_SEPARATOR, ";", true);
+      String sep = Props.getString(PREF_KEY_CSV_SEPARATOR, getDefaultCsvSeparator(), true);
 
       if(("" + null).equals(sep))
       {
@@ -125,6 +126,11 @@ public class ImportPropsDAO
       }
 
       return sep.charAt(0);
+   }
+
+   public static String getDefaultCsvSeparator()
+   {
+      return ";";
    }
 
    public static void setCSVDateFormat(String format)
@@ -195,5 +201,15 @@ public class ImportPropsDAO
    public static void setNumericScale(int numericScale)
    {
       Props.putInt(PREF_KEY_NUMERIC_SCALE, numericScale);
+   }
+
+   public static void setUseDoubleQuotesAsTextQualifier(boolean useDoubleQuotesAsTextQualifier)
+   {
+      Props.putBoolean(PREF_KEY_CSV_USE_DOUBLE_QUOTES_AS_TEXT_QUALIFIER, useDoubleQuotesAsTextQualifier);
+   }
+
+   public static boolean isUseDoubleQuotesAsTextQualifier()
+   {
+      return Props.getBoolean(PREF_KEY_CSV_USE_DOUBLE_QUOTES_AS_TEXT_QUALIFIER, true);
    }
 }

@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FailedToInterpretHandler;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.UnsupportedFormatException;
@@ -310,7 +311,7 @@ public class ExcelFileImporter implements IFileImporter
     * (non-Javadoc)
     * @see net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter#getConfigurationPanel()
     */
-   public JComponent getConfigurationPanel()
+   public ConfigurationPanel createConfigurationPanel()
    {
       return new ExcelSettingsPanel(settings, importFile);
    }

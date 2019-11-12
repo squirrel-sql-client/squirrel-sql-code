@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.action;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -33,7 +32,6 @@ import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -42,6 +40,7 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.EDTMessageBoxUtil;
 import net.sourceforge.squirrel_sql.plugins.dataimport.ImportFileType;
 import net.sourceforge.squirrel_sql.plugins.dataimport.ImportFileUtils;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportFileDialogCtrl;
+import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FileImporterFactory;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 
@@ -112,13 +111,15 @@ public class ImportTableDataCommand
 
             IFileImporter importer = FileImporterFactory.createImporter(type, importFile);
 
-            if (importer.getConfigurationPanel() != null)
+            ConfigurationPanel configurationPanel = importer.createConfigurationPanel();
+
+            if (configurationPanel != null)
             {
                //i18n[ImportTableDataCommand.settingsDialogTitle=Import file settings]
                final JDialog dialog = new JDialog(Main.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.settingsDialogTitle"), true);
                StateListener dialogState = new StateListener(dialog);
                dialog.setLayout(new BorderLayout());
-               dialog.add(importer.getConfigurationPanel(), BorderLayout.CENTER);
+               dialog.add(configurationPanel, BorderLayout.CENTER);
                OkClosePanel buttons = new OkClosePanel();
 
                buttons.getCloseButton().setText(stringMgr.getString("ImportTableDataCommand.cancel"));
@@ -127,7 +128,11 @@ public class ImportTableDataCommand
                dialog.pack();
                GUIUtils.centerWithinParent(dialog);
                dialog.setVisible(true);
-               if (!dialogState.isOkPressed())
+               if (dialogState.isOkPressed())
+               {
+                  configurationPanel.apply();
+               }
+               else
                {
                   return;
                }

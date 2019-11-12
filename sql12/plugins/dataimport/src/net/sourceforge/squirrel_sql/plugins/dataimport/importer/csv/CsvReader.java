@@ -25,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.HashMap;
@@ -102,10 +101,11 @@ public class CsvReader
     * Constructs a {@link CsvReader CsvReader} object using a
     * {@link java.io.Reader Reader} object as the data source.
     *
+    * @param useTextQualifier
     * @param inputStream The stream to use as the data source.
     * @param delimiter   The character to use as the column delimiter.
     */
-   public CsvReader(Reader inputStream, char delimiter, boolean trimValues)
+   public CsvReader(Reader inputStream, Character delimiter, boolean trimValues, boolean useTextQualifier)
    {
       if (inputStream == null)
       {
@@ -116,21 +116,12 @@ public class CsvReader
       this.inputStream = inputStream;
       userSettings.delimiter = delimiter;
       userSettings.trimWhitespace = trimValues;
+      userSettings.useTextQualifier = useTextQualifier;
       initialized = true;
 
-      isQualified = new boolean[values.length];
-   }
 
-   /**
-    * Constructs a {@link CsvReader CsvReader} object using a
-    * {@link java.io.Reader Reader} object as the data source.&nbsp;Uses a
-    * comma as the column delimiter.
-    *
-    * @param inputStream The stream to use as the data source.
-    */
-   public CsvReader(Reader inputStream)
-   {
-      this(inputStream, Letters.COMMA, true);
+
+      isQualified = new boolean[values.length];
    }
 
    public boolean getCaptureRawRecord()
@@ -178,7 +169,7 @@ public class CsvReader
     *
     * @return The character being used as the column delimiter.
     */
-   public char getDelimiter()
+   public Character getDelimiter()
    {
       return userSettings.delimiter;
    }
@@ -188,7 +179,7 @@ public class CsvReader
     *
     * @param delimiter The character to use as the column delimiter.
     */
-   public void setDelimiter(char delimiter)
+   public void setDelimiter(Character delimiter)
    {
       userSettings.delimiter = delimiter;
    }
@@ -490,26 +481,6 @@ public class CsvReader
    }
 
    /**
-    * Creates a {@link CsvReader CsvReader} object using a string
-    * of data as the source.&nbsp;Uses ISO-8859-1 as the
-    * {@link java.nio.charset.Charset Charset}.
-    *
-    * @param data The String of data to use as the source.
-    * @return A {@link CsvReader CsvReader} object using the
-    * String of data as the source.
-    */
-   public static CsvReader parse(String data)
-   {
-      if (data == null)
-      {
-         throw new IllegalArgumentException(
-               "Parameter data can not be null.");
-      }
-
-      return new CsvReader(new StringReader(data));
-   }
-
-   /**
     * Reads another record.
     *
     * @return Whether another record was successfully read or not.
@@ -596,7 +567,7 @@ public class CsvReader
                         {
                            dataBuffer.columnStart = dataBuffer.position + 1;
 
-                           if (currentLetter == userSettings.delimiter)
+                           if (null != userSettings.delimiter && currentLetter == userSettings.delimiter)
                            {
                               endColumn();
                            }
@@ -778,7 +749,7 @@ public class CsvReader
                         {
                            if (lastLetterWasQualifier)
                            {
-                              if (currentLetter == userSettings.delimiter)
+                              if (null != userSettings.delimiter && currentLetter == userSettings.delimiter)
                               {
                                  endColumn();
                               }
@@ -839,7 +810,7 @@ public class CsvReader
 
                   } while (hasMoreData && startedColumn);
                }
-               else if (currentLetter == userSettings.delimiter)
+               else if (null != userSettings.delimiter && currentLetter == userSettings.delimiter)
                {
                   // we encountered a column with no data, so
                   // just send the end column
@@ -1090,7 +1061,7 @@ public class CsvReader
                         }
                         else
                         {
-                           if (currentLetter == userSettings.delimiter)
+                           if (null != userSettings.delimiter && currentLetter == userSettings.delimiter)
                            {
                               endColumn();
                            }
@@ -1150,7 +1121,7 @@ public class CsvReader
          // check to see if we hit the end of the file
          // without processing the current record
 
-         if (startedColumn || lastLetter == userSettings.delimiter)
+         if (startedColumn || (null != userSettings.delimiter && lastLetter == userSettings.delimiter))
          {
             endColumn();
 
@@ -1823,7 +1794,7 @@ public class CsvReader
 
       public boolean useTextQualifier;
 
-      public char delimiter;
+      public Character delimiter;
 
       public char recordDelimiter;
 

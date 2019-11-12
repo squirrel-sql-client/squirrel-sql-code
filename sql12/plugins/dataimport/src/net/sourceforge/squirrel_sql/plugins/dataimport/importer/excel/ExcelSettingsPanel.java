@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
@@ -39,7 +40,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  *
  * @author Thorsten Mürell
  */
-public class ExcelSettingsPanel extends JPanel
+public class ExcelSettingsPanel extends ConfigurationPanel
 {
 
 
@@ -140,4 +141,9 @@ public class ExcelSettingsPanel extends JPanel
       applySettings();
    }
 
+   @Override
+   public void apply()
+   {
+
+   }
 }

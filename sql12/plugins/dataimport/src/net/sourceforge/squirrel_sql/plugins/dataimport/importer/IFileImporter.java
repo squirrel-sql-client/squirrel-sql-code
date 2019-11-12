@@ -130,7 +130,7 @@ public interface IFileImporter
     * @return The panel to include in the question dialog. Return <code>null</code> to
     * signal, that no configuration is possible and no dialog should be shown.
     */
-   JComponent getConfigurationPanel();
+   ConfigurationPanel createConfigurationPanel();
 
    void setTrimValues(boolean trimValues);
 

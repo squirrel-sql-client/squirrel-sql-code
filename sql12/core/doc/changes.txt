@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Import CSV/Excel files: New check box "Use double quotes as text qualifier" in CSV import file settings
+
 #1410 Import CSV/Excel files without existing table
   Import of CVS and MS-Excel files is now available not only on tables in Object tree but also in Session menu and tool bar as well as in tools popup (ctrl+t).
   The import dialog has a new section "Create new import table in database".
@@ -45,6 +47,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 
 Bug fixes:
+
+Import CSV/Excel files: Fixed NullPointerException when "No separator" option was used.
 
 #1408 File import dialog didn't remember encoding.
 

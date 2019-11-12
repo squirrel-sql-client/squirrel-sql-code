@@ -32,7 +32,14 @@ public class CSVSettingsBean implements Cloneable, Serializable
 
    private  String importCharset = Charset.defaultCharset().name();
 
+   private boolean useDoubleQuotesAsTextQualifier;
+
+
    private String dateFormat = "yyyy-MM-dd HH:mm:ss";
+
+   public CSVSettingsBean()
+   {
+   }
 
    /**
     * @return the importCharset
@@ -82,4 +89,13 @@ public class CSVSettingsBean implements Cloneable, Serializable
       this.dateFormat = dateFormat;
    }
 
+   public boolean isUseDoubleQuotesAsTextQualifier()
+   {
+      return useDoubleQuotesAsTextQualifier;
+   }
+
+   public void setUseDoubleQuotesAsTextQualifier(boolean useDoubleQuotesAsTextQualifier)
+   {
+      this.useDoubleQuotesAsTextQualifier = useDoubleQuotesAsTextQualifier;
+   }
 }

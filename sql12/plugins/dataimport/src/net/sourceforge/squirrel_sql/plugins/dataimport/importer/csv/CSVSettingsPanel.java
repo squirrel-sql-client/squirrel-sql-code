@@ -26,6 +26,7 @@ import java.awt.event.KeyListener;
 import java.nio.charset.Charset;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,14 +36,16 @@ import javax.swing.JTextField;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportPropsDAO;
+import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 
 /**
  * This class contains the panel for the CSV settings.
  *
  * @author Thorsten Mürell
  */
-public class CSVSettingsPanel extends JPanel
+public class CSVSettingsPanel extends ConfigurationPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CSVSettingsPanel.class);
 
@@ -55,6 +58,8 @@ public class CSVSettingsPanel extends JPanel
    private JComboBox cboEncoding = new JComboBox();
    private JTextField txtDateFormat = new JTextField(20);
 
+   private JCheckBox chkUseDoubleQuotesAsTextQualifier = new JCheckBox(s_stringMgr.getString("CSVSettingsPanel.use.double.quotes.as.text.qualifier"));
+
    private CSVSettingsBean settings;
 
    /**
@@ -66,8 +71,8 @@ public class CSVSettingsPanel extends JPanel
    {
       this.settings = settings;
       createUI();
-      initListeners();
       loadSettings();
+      initListeners();
    }
 
    private void createUI()
@@ -101,8 +106,12 @@ public class CSVSettingsPanel extends JPanel
       gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
       add(new JLabel(s_stringMgr.getString("CSVSettingsPanel.dateFormat")), gbc);
 
-      gbc = new GridBagConstraints(1,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,10,5), 0,0);
+      gbc = new GridBagConstraints(1,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
       add(txtDateFormat, gbc);
+
+
+      gbc = new GridBagConstraints(0,5,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,10,5), 0,0);
+      add(chkUseDoubleQuotesAsTextQualifier, gbc);
 
    }
 
@@ -117,7 +126,6 @@ public class CSVSettingsPanel extends JPanel
          }
       };
 
-      radUseChar.setSelected(true);
       radUseChar.addActionListener(e1 -> onStateChanged());
 
       txtSeperatorChar.addActionListener(e -> onStateChanged());
@@ -132,17 +140,18 @@ public class CSVSettingsPanel extends JPanel
       txtDateFormat.addActionListener(e -> onStateChanged());
       txtDateFormat.addKeyListener(keyStateChangedListener);
 
-
-      for (String c : Charset.availableCharsets().keySet())
-      {
-         cboEncoding.addItem(c);
-      }
       cboEncoding.addActionListener(e -> onStateChanged());
 
       ButtonGroup bg = new ButtonGroup();
       bg.add(radUseTab);
       bg.add(radUseChar);
       bg.add(radUseNoSeparator);
+   }
+
+   @Override
+   public void apply()
+   {
+      applySettings();
    }
 
    private void applySettings()
@@ -168,10 +177,13 @@ public class CSVSettingsPanel extends JPanel
       }
       settings.setImportCharset(cboEncoding.getSelectedItem().toString());
       settings.setDateFormat(txtDateFormat.getText());
+      settings.setUseDoubleQuotesAsTextQualifier(chkUseDoubleQuotesAsTextQualifier.isSelected());
 
       ImportPropsDAO.setCSVSeparator(settings.getSeperator());
       ImportPropsDAO.setCSVDateFormat(settings.getDateFormat());
       ImportPropsDAO.setImportCharset(settings.getImportCharset());
+      ImportPropsDAO.setUseDoubleQuotesAsTextQualifier(settings.isUseDoubleQuotesAsTextQualifier());
+
    }
 
    private void loadSettings()
@@ -191,7 +203,15 @@ public class CSVSettingsPanel extends JPanel
       }
 
       txtDateFormat.setText(settings.getDateFormat());
+
+      for (String c : Charset.availableCharsets().keySet())
+      {
+         cboEncoding.addItem(c);
+      }
+
       cboEncoding.setSelectedItem(settings.getImportCharset());
+
+      chkUseDoubleQuotesAsTextQualifier.setSelected(settings.isUseDoubleQuotesAsTextQualifier());
    }
 
    private void onStateChanged()
@@ -202,7 +222,5 @@ public class CSVSettingsPanel extends JPanel
       }
 
       txtSeperatorChar.setEnabled(radUseChar.isSelected());
-
-      applySettings();
    }
 }
