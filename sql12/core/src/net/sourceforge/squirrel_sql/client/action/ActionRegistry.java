@@ -124,6 +124,7 @@ public class ActionRegistry
       toolsPopupController.addAction("runallsqls", ac.get(ExecuteAllSqlsAction.class));
       toolsPopupController.addAction("filenew", ac.get(FileNewAction.class));
       toolsPopupController.addAction("filedetach", ac.get(FileDetachAction.class));
+      toolsPopupController.addAction("fileopen", ac.get(FileOpenAction.class));
       toolsPopupController.addAction("fileopenrecent", ac.get(FileOpenRecentAction.class));
       toolsPopupController.addAction("filesave", ac.get(FileSaveAction.class));
       toolsPopupController.addAction("filesaveas", ac.get(FileSaveAsAction.class));
@@ -166,6 +167,8 @@ public class ActionRegistry
       toolsPopupController.addAction("sqlcopy", ac.get(CopySqlAction.class));
       toolsPopupController.addAction("remnewlines", ac.get(RemoveNewLinesAction.class));
       toolsPopupController.addAction("pastehist", ac.get(PasteFromHistoryAction.class));
+
+      toolsPopupController.addAction("objbesidessql", ac.get(ToggleObjectTreeBesidesEditorAction.class));
    }
 
    public void preloadActions(ActionCollection actionCollection)

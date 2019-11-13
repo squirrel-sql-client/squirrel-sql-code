@@ -113,7 +113,7 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
 		_toolBar = new SQLInternalFrameToolBar(getSession(), _sqlPanel.getSQLPanelAPI());
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		contentPanel.add(_toolBar, BorderLayout.NORTH);
-		contentPanel.add(_sqlPanel, BorderLayout.CENTER);
+		contentPanel.add(_sqlPanel.getSqlPanelSplitter(), BorderLayout.CENTER);
 
 		Font fn = app.getFontInfoStore().getStatusBarFontInfo().createFont();
 		_statusBar.setFont(fn);

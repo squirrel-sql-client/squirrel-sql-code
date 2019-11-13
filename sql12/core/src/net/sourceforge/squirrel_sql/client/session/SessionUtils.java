@@ -52,6 +52,10 @@ public class SessionUtils
             {
                return sqlPanelAPI;
             }
+            else if(Utilities.equalsRespectNull(sqlPanelAPI.getSQLPanelSplitter().getFindEntryPanelIdentifier(), entryPanelIdentifier))
+            {
+               return null;
+            }
          }
 
          if(frames[i] instanceof SessionInternalFrame)

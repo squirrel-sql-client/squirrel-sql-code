@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleObjectTreeBesidesEditorAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileDetachAction;
@@ -19,6 +20,7 @@ import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAc
 import net.sourceforge.squirrel_sql.client.session.action.NextSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.PreviousSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
+import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 
 /** The class representing the toolbar at the top of a sql internal frame*/
@@ -55,5 +57,7 @@ class SQLInternalFrameToolBar extends ToolBar
       add(actions.get(NextSqlAction.class));
       add(actions.get(SelectSqlAction.class));
       add(actions.get(GoToLastEditLocationAction.class));
+      addSeparator();
+      addToggleAction((IToggleAction) actions.get(ToggleObjectTreeBesidesEditorAction.class), session);
    }
 }

@@ -46,7 +46,20 @@ public class ToggleComponentHolder
          throw new RuntimeException("No Action attached to button");
       }
 
+      // Replacing the action removes the accelerator.
+      // We buffer it and set it back afterwards.
+      KeyStroke accelerator = null;
+      if(toggleable instanceof JMenuItem)
+      {
+         accelerator = ((JMenuItem) toggleable).getAccelerator();
+      }
+
       toggleable.setAction(new ActionProxy(origAction));
+
+      if (null != accelerator)
+      {
+         ((JMenuItem) toggleable).setAccelerator(accelerator);
+      }
 
       _toggleables.add(toggleable);
 

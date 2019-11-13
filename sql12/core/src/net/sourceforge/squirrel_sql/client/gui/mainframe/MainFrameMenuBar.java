@@ -360,6 +360,7 @@ final class MainFrameMenuBar extends JMenuBar
 		menu.addSeparator();
 		addToMenu(rsrc, ToggleMinimizeResultsAction.class, menu);
 		menu.addSeparator();
+		addToMenuAsCheckBoxMenuItem(rsrc, ToggleObjectTreeBesidesEditorAction.class, menu);
 
 		menu.setEnabled(false);
 		return menu;
@@ -554,21 +555,19 @@ final class MainFrameMenuBar extends JMenuBar
 		return act;
 	}
 
-    @SuppressWarnings("unchecked")
 	private JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Resources rsrc, Class actionClass, JMenu menu)
 	{
 		Action act = _actions.get(actionClass);
 		if (act != null)
 		{
-         JCheckBoxMenuItem mnu = rsrc.addToMenuAsCheckBoxMenuItem(act, menu);
+			JCheckBoxMenuItem mnu = rsrc.addToMenuAsCheckBoxMenuItem(act, menu);
          if(act instanceof IToggleAction)
          {
             ((IToggleAction)act).getToggleComponentHolder().addToggleableComponent(mnu);
          }
          return mnu;
 		}
-		s_log.error("Could not retrieve instance of " + actionClass.getName()
-							+ ") in MainFrameMenuBar.addToMenu");
+		s_log.error("Could not retrieve instance of " + actionClass.getName() + ") in MainFrameMenuBar.addToMenu");
       return null;
 	}
 

@@ -2,6 +2,9 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+
+import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
+import net.sourceforge.squirrel_sql.fw.gui.ToggleComponentHolder;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.Action;
@@ -70,7 +73,17 @@ public class ToolsPopupController
    private void onToolsPopupActionSelected(CompletionInfo completion)
    {
       final ToolsPopupCompletionInfo toExecute = (ToolsPopupCompletionInfo) completion;
-      toExecute.getAction().actionPerformed(new ActionEvent(_sqlEntryPanel.getTextComponent(), _session.getIdentifier().hashCode(), TOOLS_POPUP_SELECTED_ACTION_COMMAND));
+
+      if (toExecute.getAction() instanceof IToggleAction)
+      {
+         ToggleComponentHolder toggleComponentHolder = ((IToggleAction) toExecute.getAction()).getToggleComponentHolder();
+         toggleComponentHolder.setSelected( !toggleComponentHolder.isSelected() );
+         toExecute.getAction().actionPerformed(new ActionEvent(_sqlEntryPanel.getTextComponent(), _session.getIdentifier().hashCode(), TOOLS_POPUP_SELECTED_ACTION_COMMAND));
+      }
+      else
+      {
+         toExecute.getAction().actionPerformed(new ActionEvent(_sqlEntryPanel.getTextComponent(), _session.getIdentifier().hashCode(), TOOLS_POPUP_SELECTED_ACTION_COMMAND));
+      }
    }
 
 
