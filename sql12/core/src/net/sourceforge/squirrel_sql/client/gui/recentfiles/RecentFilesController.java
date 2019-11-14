@@ -29,6 +29,8 @@ import javax.swing.tree.TreePath;
 import java.awt.Desktop;
 import java.awt.Frame;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -636,6 +638,18 @@ public class RecentFilesController
 
       popUp.add(createOpenInFileManagerItem(fileWrapper.getFile()));
 
+      if (fileWrapper.getFile().isFile())
+      {
+         JMenuItem mnuCopyFileName = new JMenuItem(s_stringMgr.getString("RecentFilesController.copy.filename"));
+         mnuCopyFileName.addActionListener(e -> onCopyFileName(fileWrapper));
+         popUp.add(mnuCopyFileName);
+      }
+
+      JMenuItem mnuCopyPath = new JMenuItem(s_stringMgr.getString("RecentFilesController.copy.path"));
+      mnuCopyPath.addActionListener(e -> onCopyPath(fileWrapper));
+      popUp.add(mnuCopyPath);
+
+
       DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
 
       if(fileWrapper.getFile().isFile() && parent == _favouriteFilesForAliasNode)
@@ -644,6 +658,18 @@ public class RecentFilesController
       }
 
       popUp.show(evt.getComponent(), evt.getX(), evt.getY());
+   }
+
+   private void onCopyPath(RecentFileWrapper fileWrapper)
+   {
+      StringSelection ss = new StringSelection(fileWrapper.getFile().getPath());
+      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+   }
+
+   private void onCopyFileName(RecentFileWrapper fileWrapper)
+   {
+      StringSelection ss = new StringSelection(fileWrapper.getFile().getName());
+      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
    }
 
    private JMenuItem createOpenAtSessionStartupItem(DefaultMutableTreeNode node)

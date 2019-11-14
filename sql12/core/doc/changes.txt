@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Recent files dialog: New right mouse menu items in file list: "Copy path" and "Copy file name"
+
 "View Objects window alongside SQL" function is now also accessible through Session menu, tools popup (ctrl+t) and can be assigned a keyboard short cut.
 
 Import CSV/Excel files: New check box "Use double quotes as text qualifier" in CSV import file settings
