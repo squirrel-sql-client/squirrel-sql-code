@@ -341,7 +341,7 @@ final class MainFrameMenuBar extends JMenuBar
 
 		addToMenu(rsrc, InQuotesAction.class, menu);
 		addToMenu(rsrc, RemoveQuotesAction.class, menu);
-		addToMenu(rsrc, ConvertToStringBufferAction.class, menu);
+		addToMenu(rsrc, ConvertToStringBuilderAction.class, menu);
 		addToMenu(rsrc, EscapeDateAction.class, menu);
 		addToMenu(rsrc, CutSqlAction.class, menu);
 		addToMenu(rsrc, CopySqlAction.class, menu);
@@ -361,6 +361,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ToggleMinimizeResultsAction.class, menu);
 		menu.addSeparator();
 		addToMenuAsCheckBoxMenuItem(rsrc, ToggleObjectTreeBesidesEditorAction.class, menu);
+		menu.addSeparator();
 
 		menu.setEnabled(false);
 		return menu;

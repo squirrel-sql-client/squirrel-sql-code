@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultT
 import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseSessionWindowAction;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
-import net.sourceforge.squirrel_sql.client.session.action.ConvertToStringBufferAction;
+import net.sourceforge.squirrel_sql.client.session.action.ConvertToStringBuilderAction;
 import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.CopySqlAction;
@@ -161,7 +161,7 @@ public class ActionRegistry
 
       toolsPopupController.addAction("quote", ac.get(InQuotesAction.class));
       toolsPopupController.addAction("unquote", ac.get(RemoveQuotesAction.class));
-      toolsPopupController.addAction("quotesb", ac.get(ConvertToStringBufferAction.class));
+      toolsPopupController.addAction("quotesb", ac.get(ConvertToStringBuilderAction.class));
       toolsPopupController.addAction("date", ac.get(EscapeDateAction.class));
       toolsPopupController.addAction("sqlcut", ac.get(CutSqlAction.class));
       toolsPopupController.addAction("sqlcopy", ac.get(CopySqlAction.class));
@@ -261,7 +261,7 @@ public class ActionRegistry
 
       actionCollection.add(new InQuotesAction(app));
       actionCollection.add(new RemoveQuotesAction(app));
-      actionCollection.add(new ConvertToStringBufferAction(app));
+      actionCollection.add(new ConvertToStringBuilderAction(app));
       actionCollection.add(new EscapeDateAction(app));
       actionCollection.add(new CutSqlAction(app));
       actionCollection.add(new CopySqlAction(app));

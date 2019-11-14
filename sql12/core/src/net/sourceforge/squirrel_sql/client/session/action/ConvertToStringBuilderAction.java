@@ -33,22 +33,15 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
  *
  * @author  Gerd Wagner
  */
-public class ConvertToStringBufferAction extends SquirrelAction
-					implements ISQLPanelAction
+public class ConvertToStringBuilderAction extends SquirrelAction implements ISQLPanelAction
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ConvertToStringBufferAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ConvertToStringBuilderAction.class);
 
+	private static final ILogger s_log = LoggerController.createLogger(ConvertToStringBuilderAction.class);
 
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(ConvertToStringBufferAction.class);
-
-	/** Current session. */
 	private ISession _session;
 
-
-	public ConvertToStringBufferAction(IApplication app)
+	public ConvertToStringBuilderAction(IApplication app)
 	{
 		super(app, app.getResources());
 	}
