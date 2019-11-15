@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Hibernate Plugin: The Hibernate process details dialog now has an option "Restore default to run in console".
+   This generates the SQuirreL's Hibernate server launch command such that the process runs in a console window.
+
 Recent files dialog: New right mouse menu items in file list: "Copy path" and "Copy file name"
 
 "View Objects window alongside SQL" function is now also accessible through Session menu, tools popup (ctrl+t) and can be assigned a keyboard short cut.

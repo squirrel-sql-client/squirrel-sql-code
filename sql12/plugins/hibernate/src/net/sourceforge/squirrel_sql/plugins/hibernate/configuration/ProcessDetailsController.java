@@ -40,32 +40,13 @@ public class ProcessDetailsController
          }
       });
 
-      _dialog.btnCancel.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onCancel();
-         }
-      });
+      _dialog.btnCancel.addActionListener(e -> onCancel());
 
-      _dialog.btnRestoreDefault.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onRestoreDefault();
-         }
-      });
+      _dialog.btnRestoreDefault.addActionListener(e -> onRestoreDefault(false));
 
-      _dialog.btnCopyCmndToClip.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onCopyCmndToClip();
-         }
-      });
+      _dialog.btnRestoreDefaultRunInConsole.addActionListener(e -> onRestoreDefault(true));
+
+      _dialog.btnCopyCmndToClip.addActionListener(e -> onCopyCmndToClip());
 
 
       GUIUtils.centerWithinParent(_dialog);
@@ -86,9 +67,9 @@ public class ProcessDetailsController
 
 
 
-   private void onRestoreDefault()
+   private void onRestoreDefault(boolean runInConsole)
    {
-      _dialog.txtCommand.setText(_processDetails.restoreDefault());
+      _dialog.txtCommand.setText(_processDetails.restoreDefault(runInConsole));
    }
 
    private void onCancel()

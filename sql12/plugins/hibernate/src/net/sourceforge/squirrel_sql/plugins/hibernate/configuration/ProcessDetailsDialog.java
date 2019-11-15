@@ -16,9 +16,11 @@ public class ProcessDetailsDialog extends JDialog
    JButton btnOk;
    JButton btnCancel;
    JEditorPane txtCommand;
-   JCheckBox chkEndProcessOnDisconnect;
    JButton btnRestoreDefault;
+   JButton btnRestoreDefaultRunInConsole;
    JButton btnCopyCmndToClip;
+
+   JCheckBox chkEndProcessOnDisconnect;
 
    public ProcessDetailsDialog(JFrame mainFrame)
    {
@@ -83,7 +85,11 @@ public class ProcessDetailsDialog extends JDialog
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
       ret.add(btnRestoreDefault, gbc);
 
+      btnRestoreDefaultRunInConsole = new JButton(s_stringMgr.getString("ProcessDetailsDialog.restoreDefault.run.in.console"));
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      ret.add(btnRestoreDefaultRunInConsole, gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,15,5,5), 0,0);
       btnCopyCmndToClip = new JButton(s_stringMgr.getString("ProcessDetailsDialog.RefreshRealCmndCopyToClip"));
       ret.add(btnCopyCmndToClip, gbc);
 

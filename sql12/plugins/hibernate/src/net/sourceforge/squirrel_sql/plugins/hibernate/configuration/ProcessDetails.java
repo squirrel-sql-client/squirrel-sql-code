@@ -18,40 +18,56 @@ public class ProcessDetails
    public ProcessDetails(HibernatePlugin plugin)
    {
       _plugin = plugin;
-      initCommandDefault();
+      initCommandDefault(false);
    }
 
-   private void initCommandDefault()
+   private void initCommandDefault(boolean runInConsole)
    {
       String osName = System.getProperty("os.name");
 
       if (osName.startsWith("Mac OS"))
       {
-         _command = createLinuxCommand(_plugin);
+         _command = createLinuxCommand(_plugin, runInConsole);
       }
       else if (osName.startsWith("Windows"))
       {
-         _command = createWindowsCommand(_plugin);
+         _command = createWindowsCommand(_plugin, runInConsole);
       }
       else // assume Linux Unix
       {
-         _command = createLinuxCommand(_plugin);
+         _command = createLinuxCommand(_plugin, runInConsole);
       }
    }
 
-   private String createWindowsCommand(HibernatePlugin plugin)
+   private String createWindowsCommand(HibernatePlugin plugin, boolean runInConsole)
    {
+      String consolePrefix = "";
+      if(runInConsole)
+      {
+         consolePrefix = "cmd.exe /c start ";
+      }
+
       String java = "\"" + System.getProperty("java.home") + File.separator + "bin" + File.separator + "java\"";
-      String command = java + " -cp " + getPluginJarFilePath(plugin) + " " + ServerMainImpl.class.getName() + " " + ServerMain.PORT_PARAM_PREFIX + _port;
+
+      String command = consolePrefix + java + " -cp " + getPluginJarFilePath(plugin) + " " + ServerMainImpl.class.getName() + " " + ServerMain.PORT_PARAM_PREFIX + _port;
 
       return command;
    }
 
 
-   private String createLinuxCommand(HibernatePlugin plugin)
+   private String createLinuxCommand(HibernatePlugin plugin, boolean runInConsole)
    {
+      String prefix = "";
+      if(runInConsole)
+      {
+         prefix = "xterm -hold -e ";
+      }
+
+
       String java = "\"" + System.getProperty("java.home") + File.separator + "bin" + File.separator + "java\"";
-      String command = "" + java + " -cp " + getPluginJarFilePath(plugin) + " " + ServerMainImpl.class.getName() + " " + ServerMain.PORT_PARAM_PREFIX + _port;
+
+      String command = prefix + java + " -cp " + getPluginJarFilePath(plugin) + " " + ServerMainImpl.class.getName() + " " + ServerMain.PORT_PARAM_PREFIX + _port;
+
       return command;
    }
 
@@ -93,9 +109,9 @@ public class ProcessDetails
       _port = port;
    }
 
-   public String restoreDefault()
+   public String restoreDefault(boolean runInConsole)
    {
-      initCommandDefault();
+      initCommandDefault(runInConsole);
       return _command;
    }
 }
