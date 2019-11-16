@@ -319,7 +319,25 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 			}
 			tmp.add(new QueryHolder(next));
 		}
-		_queries = tmp;
+
+
+		// The above code seems rather buggy. Example:
+		//
+		//		 CREATE PROCEDURE PROC_GERDTEST
+		//		 (
+		//		 )
+		//		 AS
+		//	    BEGIN
+		//	       SELECT * FROM GERDTEST;
+		//		 END;
+		//
+		// leaves tmp empty. This happens when all OraclePreferenceBean properties are set to its defaults.
+		//
+		// This if at least cures this problem.
+		if (0 < tmp.size())
+		{
+			_queries = tmp;
+		}
 	}
 
 

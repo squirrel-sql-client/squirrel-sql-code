@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
@@ -155,14 +156,19 @@ public class OracleExceptionFormatter extends SessionAdapter implements ISession
 				result.append(i18n.POSITION_LABEL);
 				result.append(position);
 
-				int[] bounds = sqlEntryPanel.getBoundsOfSQLToBeExecuted();
-				int start = bounds[0];
-				int newPosition = start + position;
-				sqlEntryPanel.setCaretPosition(newPosition);
+				GUIUtils.processOnSwingEventThread(() -> positionCaret(position));
 
 			}
 		}
 		return result.toString();
+	}
+
+	private void positionCaret(int position)
+	{
+		int[] bounds = sqlEntryPanel.getBoundsOfSQLToBeExecuted();
+		int start = bounds[0];
+		int newPosition = start + position;
+		sqlEntryPanel.setCaretPosition(newPosition);
 	}
 
 	/**
