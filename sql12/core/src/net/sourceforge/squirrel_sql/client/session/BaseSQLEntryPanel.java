@@ -252,14 +252,6 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
    }
 
    @Override
-   public JScrollPane createScrollPane(JTextComponent textComponent)
-   {
-      JScrollPane sqlEntryScroller = new JScrollPane(textComponent);
-      sqlEntryScroller.setBorder(BorderFactory.createEmptyBorder());
-      return sqlEntryScroller;
-   }
-
-   @Override
 	public void triggerParser()
 	{
 	}

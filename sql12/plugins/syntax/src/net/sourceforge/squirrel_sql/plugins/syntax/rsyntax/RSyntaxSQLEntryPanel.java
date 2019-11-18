@@ -494,7 +494,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	}
 
    @Override
-   public JScrollPane createScrollPane(JTextComponent textComponent)
+   public JScrollPane getTextAreaEmbeddedInScrollPane()
    {
       return _textScrollPane;
    }

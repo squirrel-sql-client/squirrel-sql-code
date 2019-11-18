@@ -182,7 +182,7 @@ public interface ISQLEntryPanel extends IHasIdentifier
 
    String getWordAtCursor();
 
-   JScrollPane createScrollPane(JTextComponent textComponent);
+   JScrollPane getTextAreaEmbeddedInScrollPane();
 
 	void triggerParser();
 

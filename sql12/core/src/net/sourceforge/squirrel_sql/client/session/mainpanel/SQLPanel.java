@@ -499,7 +499,7 @@ public class SQLPanel extends JPanel
 
 		final int pos = _splitPane.getDividerLocation();
 
-      JScrollPane  scrollPane = _sqlEntry.createScrollPane(_sqlEntry.getTextComponent());
+      JScrollPane  scrollPane = _sqlEntry.getTextAreaEmbeddedInScrollPane();
       _splitPane.add(scrollPane, JSplitPane.LEFT);
 
 
