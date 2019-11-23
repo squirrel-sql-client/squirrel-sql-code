@@ -124,6 +124,8 @@ public interface ISQLEntryPanel extends IHasIdentifier
 
 	int getCaretLinePosition();
 
+	int getLineOfPosition(int pos);
+
 	boolean hasFocus();
 	void requestFocus();
 
@@ -187,4 +189,6 @@ public interface ISQLEntryPanel extends IHasIdentifier
 	void triggerParser();
 
 	void goToLastEditLocation();
+
+	void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener);
 }

@@ -1,0 +1,58 @@
+package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
+
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Graphics;
+
+public class ChangeTrackPanel extends JPanel
+{
+   JPanel trackingGutterRight;
+   JPanel trackingGutterLeft;
+
+   public ChangeTrackPanel(JScrollPane scrollPane, GutterPaintListener leftGutterPaintListener, GutterPaintListener rightGutterPaintListener)
+   {
+      setLayout(new BorderLayout());
+
+      trackingGutterLeft = createTrackingGutter(10, leftGutterPaintListener);
+      add(trackingGutterLeft, BorderLayout.WEST);
+
+      add(scrollPane, BorderLayout.CENTER);
+
+
+      trackingGutterRight = createTrackingGutter(11, rightGutterPaintListener);
+      trackingGutterRight.setBorder(BorderFactory.createMatteBorder(0,1,0,1, Color.gray));
+      add(trackingGutterRight, BorderLayout.EAST);
+   }
+
+   private JPanel createTrackingGutter(int width, GutterPaintListener gutterPaintListener)
+   {
+      JPanel trackingGutter = new JPanel(){
+         @Override
+         public void paint(Graphics g)
+         {
+            super.paint(g);
+            gutterPaintListener.paint(g);
+         }
+      };
+
+
+
+      GUIUtils.setPreferredWidth(trackingGutter, width);
+      Color gutterColor = new Color(255, 255, 204);
+      trackingGutter.setBackground(gutterColor);
+
+      return trackingGutter;
+   }
+
+   public void requestGutterRepaint()
+   {
+      trackingGutterLeft.repaint();
+      trackingGutterRight.repaint();
+   }
+}

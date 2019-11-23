@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabLi
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteFromHistoryAttach;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndReadOnPanelSmallPanel;
@@ -499,8 +500,7 @@ public class SQLPanel extends JPanel
 
 		final int pos = _splitPane.getDividerLocation();
 
-      JScrollPane  scrollPane = _sqlEntry.getTextAreaEmbeddedInScrollPane();
-      _splitPane.add(scrollPane, JSplitPane.LEFT);
+      _splitPane.add(new ChangeTracker(_sqlEntry).embedInTracking(), JSplitPane.LEFT); // /home/gerd/tmp/testdiff.patch
 
 
 		_splitPane.setDividerLocation(pos);

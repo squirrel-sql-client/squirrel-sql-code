@@ -83,6 +83,12 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		return _defaultTextScrollPane;
 	}
 
+	@Override
+	public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+	{
+		_defaultTextArea.setTextAreaPaintListener(textAreaPaintListener);
+	}
+
 
 	/**
 	 * If the component returned by <TT>getTextComponent</TT> contains
@@ -253,9 +259,16 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public int getCaretLineNumber()
 	{
+		int caretPosition = _defaultTextArea.getCaretPosition();
+
+		return getLineOfPosition(caretPosition);
+	}
+
+	public int getLineOfPosition(int pos)
+	{
 		try
 		{
-			return _defaultTextArea.getLineOfOffset(_defaultTextArea.getCaretPosition());
+			return _defaultTextArea.getLineOfOffset(pos);
 		}
 		catch (BadLocationException ex)
 		{

@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MarkCurrentSqlHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
+import net.sourceforge.squirrel_sql.client.session.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
@@ -51,6 +52,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    private boolean _parsingInitialized;
    private SquirrelRSyntaxSearchEngine _squirrelRSyntaxSearchEngine;
    private MarkCurrentSqlHandler _markCurrentSqlHandler;
+   private TextAreaPaintListener _textAreaPaintListener;
 
 
    public SquirrelRSyntaxTextArea(ISession session, SyntaxPreferences prefs, RSyntaxPropertiesWrapper propertiesWrapper, IIdentifier sqlEntryPanelIdentifier)
@@ -285,6 +287,11 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    {
       super.paint(g);
       _markCurrentSqlHandler.paintMark(g);
+
+      if(null != _textAreaPaintListener)
+      {
+         _textAreaPaintListener.paint();
+      }
    }
 
 
@@ -293,4 +300,8 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
       RtfFix.copyAsStyledText(this);
    }
 
+   public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+   {
+      _textAreaPaintListener = textAreaPaintListener;
+   }
 }

@@ -10,6 +10,7 @@ class SquirrelDefaultTextArea extends JTextArea
 {
 
    private MarkCurrentSqlHandler _markCurrentSqlHandler;
+   private TextAreaPaintListener _textAreaPaintListener;
 
    SquirrelDefaultTextArea(ISession session)
    {
@@ -35,10 +36,21 @@ class SquirrelDefaultTextArea extends JTextArea
    {
       super.paint(g);
       _markCurrentSqlHandler.paintMark(g);
+
+      if(null != _textAreaPaintListener)
+      {
+         _textAreaPaintListener.paint();
+      }
+
    }
 
    public void setMarkCurrentSQLActive(boolean b)
    {
       _markCurrentSqlHandler.setActive(b);
+   }
+
+   public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+   {
+      _textAreaPaintListener = textAreaPaintListener;
    }
 }

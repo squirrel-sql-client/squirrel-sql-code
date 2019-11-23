@@ -603,18 +603,17 @@ public class GUIUtils
 		propertyCheck.checkAndSetProperty();
 	}
 
-	public static void forceWidth(JTextField txt, int width)
+	public static void forceWidth(JComponent comp, int width)
 	{
-		forceProperty(() -> checkAndForceSize(txt, width));
+		forceProperty(() -> checkAndForceSize(comp, width));
 	}
 
-	private static boolean checkAndForceSize(JTextField txt, int width)
+	private static boolean checkAndForceSize(JComponent comp, int width)
 	{
-		txt.setPreferredSize(new Dimension(width, txt.getPreferredSize().height));
-		txt.setMinimumSize(new Dimension(width, txt.getMinimumSize().height));
-		//txt.setSize(txt.getPreferredSize());
+		setPreferredWidth(comp, width);
+		setMinimumWidth(comp, width);
 
-		return txt.getSize().width == width;
+		return comp.getSize().width == width;
 	}
 
 
@@ -834,4 +833,34 @@ public class GUIUtils
       textField.setBorder(null);
       return  textField;
    }
+
+	public static void setPreferredWidth(JComponent comp, int width)
+	{
+		comp.setPreferredSize(new Dimension(width, comp.getPreferredSize().height));
+	}
+
+	public static void setPreferredHeight(JComponent comp, int height)
+	{
+		comp.setPreferredSize(new Dimension(comp.getPreferredSize().width, height));
+	}
+
+	public static void setMaximumWidth(JComponent comp, int width)
+	{
+		comp.setMaximumSize(new Dimension(width, comp.getMaximumSize().height));
+	}
+
+	public static void setMaximumHeight(JComponent comp, int height)
+	{
+		comp.setMaximumSize(new Dimension(comp.getMaximumSize().width, height));
+	}
+
+	public static void setMinimumWidth(JComponent comp, int width)
+	{
+		comp.setMinimumSize(new Dimension(width, comp.getMaximumSize().height));
+	}
+
+	public static void setMinimumHeight(JComponent comp, int height)
+	{
+		comp.setMinimumSize(new Dimension(comp.getMinimumSize().width, height));
+	}
 }

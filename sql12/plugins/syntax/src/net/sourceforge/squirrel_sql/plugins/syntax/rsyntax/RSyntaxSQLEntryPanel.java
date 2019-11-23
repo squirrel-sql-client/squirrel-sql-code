@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
+import net.sourceforge.squirrel_sql.client.session.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -100,6 +101,11 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
    public int getCaretLineNumber()
 	{
 		final int pos = getCaretPosition();
+		return getLineOfPosition(pos);
+	}
+
+	public int getLineOfPosition(int pos)
+	{
 		final Document doc = _textArea.getDocument();
 		final Element docElem = doc.getDefaultRootElement();
 		return docElem.getElementIndex(pos);
@@ -333,6 +339,12 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 		{
 			parserEventsProcessor.triggerParser();
 		}
+	}
+
+	@Override
+	public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
+	{
+		_textArea.setTextAreaPaintListener(textAreaPaintListener);
 	}
 
 	/**
