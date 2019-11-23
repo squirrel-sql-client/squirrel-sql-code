@@ -12,6 +12,9 @@ import java.awt.Graphics;
 
 public class ChangeTrackPanel extends JPanel
 {
+   public static final int LEFT_GUTTER_WIDTH = 10;
+   public static final int RIGHT_GUTTER_WIDTH = 11;
+
    JPanel trackingGutterRight;
    JPanel trackingGutterLeft;
 
@@ -19,13 +22,13 @@ public class ChangeTrackPanel extends JPanel
    {
       setLayout(new BorderLayout());
 
-      trackingGutterLeft = createTrackingGutter(10, leftGutterPaintListener);
+      trackingGutterLeft = createTrackingGutter(LEFT_GUTTER_WIDTH, leftGutterPaintListener);
       add(trackingGutterLeft, BorderLayout.WEST);
 
       add(scrollPane, BorderLayout.CENTER);
 
 
-      trackingGutterRight = createTrackingGutter(11, rightGutterPaintListener);
+      trackingGutterRight = createTrackingGutter(RIGHT_GUTTER_WIDTH, rightGutterPaintListener);
       trackingGutterRight.setBorder(BorderFactory.createMatteBorder(0,1,0,1, Color.gray));
       add(trackingGutterRight, BorderLayout.EAST);
    }
