@@ -2,11 +2,13 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
+import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 
 public class DeletedLinesLeftGutterItem implements LeftGutterItem
 {
@@ -31,16 +33,16 @@ public class DeletedLinesLeftGutterItem implements LeftGutterItem
          return;
       }
 
-      //System.out.println("rectBefore = " + rectBefore);
-
-//      Color buf = g.getColor();
-//      g.setColor(new Color(150, 150, 230));
-//      g.fillRect(rectBefore.x, rectBefore.y, rectBefore.width, rectBefore.height);
-//      g.setColor(buf);
-
       paintArrow(g, rectBefore.x, rectBefore.y + rectBefore.height, rectBefore.x + rectBefore.width, rectBefore.y + rectBefore.height);
    }
 
+   @Override
+   public void showPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
+   {
+
+
+
+   }
 
    private void paintArrow(Graphics g, int x1, int y1, int x2, int y2)
    {

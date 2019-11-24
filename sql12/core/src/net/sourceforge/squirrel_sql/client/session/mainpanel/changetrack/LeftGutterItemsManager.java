@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
+import javax.swing.JPanel;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,5 +26,13 @@ public class LeftGutterItemsManager
    public List<LeftGutterItem> getLeftGutterItems()
    {
       return _currentLeftGutterItems;
+   }
+
+   public void leftGutterMousePressed(MouseEvent e, JPanel trackingGutterLeft)
+   {
+      for (LeftGutterItem currentLeftGutterItem : _currentLeftGutterItems)
+      {
+         currentLeftGutterItem.showPopupIfHit(e, trackingGutterLeft);
+      }
    }
 }

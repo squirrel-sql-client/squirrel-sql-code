@@ -135,6 +135,10 @@ public class SquirrelResources extends Resources
 		String FILE_ARROW = "file_arrow";
 
 		String UNDEFINED = "undefined";
+
+		String REVERT = "revert";
+
+		String COPY = "copy";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

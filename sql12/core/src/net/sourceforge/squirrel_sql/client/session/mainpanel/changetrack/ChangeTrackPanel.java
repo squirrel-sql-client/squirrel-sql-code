@@ -14,6 +14,7 @@ public class ChangeTrackPanel extends JPanel
 {
    public static final int LEFT_GUTTER_WIDTH = 10;
    public static final int RIGHT_GUTTER_WIDTH = 11;
+   public static final Color GUTTER_COLOR = new Color(255, 255, 204);
 
    JPanel trackingGutterRight;
    JPanel trackingGutterLeft;
@@ -47,8 +48,7 @@ public class ChangeTrackPanel extends JPanel
 
 
       GUIUtils.setPreferredWidth(trackingGutter, width);
-      Color gutterColor = new Color(255, 255, 204);
-      trackingGutter.setBackground(gutterColor);
+      trackingGutter.setBackground(GUTTER_COLOR);
 
       return trackingGutter;
    }

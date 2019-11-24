@@ -4,6 +4,8 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
 import javax.swing.JScrollPane;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class ChangeTracker
@@ -21,7 +23,20 @@ public class ChangeTracker
       JScrollPane scrollPane = _sqlEntry.getTextAreaEmbeddedInScrollPane();
       _changeTrackPanel = new ChangeTrackPanel(scrollPane, g -> onPaintLeftGutter(g), g -> onPaintRightGutter(g));
 
+      _changeTrackPanel.trackingGutterLeft.addMouseListener(new MouseAdapter() {
+         @Override
+         public void mousePressed(MouseEvent e)
+         {
+            onLeftGutterMousePressed(e);
+         }
+      });
+
       _sqlEntry.setTextAreaPaintListener(() -> _changeTrackPanel.requestGutterRepaint());
+   }
+
+   private void onLeftGutterMousePressed(MouseEvent e)
+   {
+      _leftGutterItemsManager.leftGutterMousePressed(e, _changeTrackPanel.trackingGutterLeft);
    }
 
    private void onPaintRightGutter(Graphics g)

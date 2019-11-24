@@ -29,7 +29,6 @@ public class MultipleLineLabel extends JTextArea
 
 	public MultipleLineLabel(String title)
 	{
-		super();
 		setEditable(false);
 		setLineWrap(true);
 		setWrapStyleWord(true);

@@ -744,9 +744,23 @@ public class GUIUtils
 	 */
    public static <T extends AbstractButton> T styleAsToolbarButton(T btn, boolean focusable)
    {
+   	return styleAsToolbarButton(btn, focusable, true);
+	}
+	/**
+	 * @return Just for convenience returns the btn parameter
+	 */
+   public static <T extends AbstractButton> T styleAsToolbarButton(T btn, boolean focusable, boolean bordered)
+   {
 		setButtonContentAreaFilledRespectSelectedToggle(btn, false);
 
-		btn.setBorder(BorderFactory.createEtchedBorder());
+		if (bordered)
+		{
+			btn.setBorder(BorderFactory.createEtchedBorder());
+		}
+		else
+		{
+			btn.setBorder(BorderFactory.createEmptyBorder());
+		}
 
 		btn.setFocusable(focusable);
 
@@ -769,7 +783,7 @@ public class GUIUtils
 
 	private static void setButtonContentAreaFilledRespectSelectedToggle(AbstractButton btn, boolean b)
 	{
-		if (btn instanceof JToggleButton && ((JToggleButton)btn).isSelected())
+		if (btn instanceof JToggleButton && btn.isSelected())
 		{
 			btn.setContentAreaFilled(true);
 			return;
