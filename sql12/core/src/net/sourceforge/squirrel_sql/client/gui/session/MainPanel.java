@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
@@ -199,13 +200,15 @@ public class MainPanel extends JPanel
          _tabbedPane.setSelectedIndex(prefIx);
       }
 
+
       if(null != mnemonic)
       {
          _tabbedPane.setMnemonicAt(idx, mnemonic);
-
       }
 
-      return idx;
+		performStateChanged();
+
+		return idx;
 	}
 
 	/**
@@ -296,6 +299,11 @@ public class MainPanel extends JPanel
 			IMainPanelTab selectedMainPanelTab = _tabs.get(idx);
 
 			selectedMainPanelTab.select();
+
+			if(null != selectedMainPanelTab.getSqlPanelOrNull())
+			{
+				selectedMainPanelTab.getSqlPanelOrNull().storeSplitPanePositionOnSessionClose(true);
+			}
 
 			for (MainPanelTabSelectionListener mainPanelTabSelectionListener : _mainPanelTabSelectionListeners.toArray(new MainPanelTabSelectionListener[0]))
 			{

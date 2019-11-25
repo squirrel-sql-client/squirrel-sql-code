@@ -99,6 +99,12 @@ public abstract class BaseSQLTab extends BaseMainPanelTab
       return getSQLPanelAPI();
    }
 
+   @Override
+   public SQLPanel getSqlPanelOrNull()
+   {
+      return _sqlPanel;
+   }
+
    public SQLPanel getSQLPanel()
    {
       return _sqlPanel;

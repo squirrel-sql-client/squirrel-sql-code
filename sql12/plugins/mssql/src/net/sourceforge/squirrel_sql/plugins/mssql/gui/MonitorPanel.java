@@ -37,6 +37,7 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -48,198 +49,233 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.mainpanel.BaseMainPanelTab {
+public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.mainpanel.BaseMainPanelTab
+{
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(MonitorPanel.class);
+   private static final StringManager s_stringMgr =
+         StringManagerFactory.getStringManager(MonitorPanel.class);
 
-    /** Logger for this class. */
-    private final static ILogger s_log = 
-        LoggerController.createLogger(MonitorPanel.class);
-    
-	 private Connection _conn = null;
+   /**
+    * Logger for this class.
+    */
+   private final static ILogger s_log =
+         LoggerController.createLogger(MonitorPanel.class);
 
-	 private Date _refreshDate;
-	 private JPanel _mainPanel;
+   private Connection _conn = null;
 
-	 private JSlider _frequency = null;
+   private Date _refreshDate;
+   private JPanel _mainPanel;
 
-	 private IDataSetViewer _whoViewer;
-	 private CallableStatement _whoStmt = null;
-	 private ResultSetDataSet _whoDataSet = null;
+   private JSlider _frequency = null;
 
-	 private IDataSetViewer _perfViewer;
-	 private PreparedStatement _perfStmt = null;
-	 private ResultSetDataSet _perfDataSet = null;
+   private IDataSetViewer _whoViewer;
+   private CallableStatement _whoStmt = null;
+   private ResultSetDataSet _whoDataSet = null;
 
-	 private CallableStatement _monitorStmt = null;
+   private IDataSetViewer _perfViewer;
+   private PreparedStatement _perfStmt = null;
+   private ResultSetDataSet _perfDataSet = null;
 
-	 private Timer _refreshTimer = null;
+   private CallableStatement _monitorStmt = null;
 
-	 private boolean _haveSession = false;
+   private Timer _refreshTimer = null;
 
-	 private boolean _inRefresh = false;
+   private boolean _haveSession = false;
 
-	 /** Creates a new instance of MonitorPanel */
-	 public MonitorPanel() {
-		  super();
-	 }
+   private boolean _inRefresh = false;
 
-	 public java.awt.Component getComponent() {
-		  if (_mainPanel == null) {
-				_mainPanel = buildMainPanel();
+   /**
+    * Creates a new instance of MonitorPanel
+    */
+   public MonitorPanel()
+   {
+      super();
+   }
 
-				// create the timer, but DO NOT start it.
-				_refreshTimer = new Timer(_frequency.getValue(),new ActionListener() {
-					 public void actionPerformed(ActionEvent e) {
-						  if (!_haveSession)
-								return;
-						  if (_inRefresh)
-								return;
-						  _inRefresh = true;
-						  refreshData();
-						  _inRefresh = false;
-					 }
-				});
-		  }
-		  return _mainPanel;
-	 }
+   public java.awt.Component getComponent()
+   {
+      if (_mainPanel == null)
+      {
+         _mainPanel = buildMainPanel();
 
-	 public String getHint() {
-		 // i18n[mssql.activity=Displays the current activity on the SQL Server.]
-		  return s_stringMgr.getString("mssql.activity");
-	 }
+         // create the timer, but DO NOT start it.
+         _refreshTimer = new Timer(_frequency.getValue(), new ActionListener()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+               if (!_haveSession)
+                  return;
+               if (_inRefresh)
+                  return;
+               _inRefresh = true;
+               refreshData();
+               _inRefresh = false;
+            }
+         });
+      }
+      return _mainPanel;
+   }
 
-	 public String getTitle() {
-		  if (_refreshDate == null)
-				// i18n[mssql.monitor=Monitor]
-				return s_stringMgr.getString("mssql.monitor");
-		  else {
-				// i18n[mssql.monitorAsOf=Monitor (as of {0,date,full})]
-				return s_stringMgr.getString("mssql.monitorAsOf", _refreshDate);
-		  }
-	 }
+   public String getHint()
+   {
+      // i18n[mssql.activity=Displays the current activity on the SQL Server.]
+      return s_stringMgr.getString("mssql.activity");
+   }
 
-	 protected void refreshComponent() {
-		  if (!_haveSession) {
-				try {
-					 _conn = this.getSession().getSQLConnection().getConnection();
+   public String getTitle()
+   {
+      if (_refreshDate == null)
+         // i18n[mssql.monitor=Monitor]
+         return s_stringMgr.getString("mssql.monitor");
+      else
+      {
+         // i18n[mssql.monitorAsOf=Monitor (as of {0,date,full})]
+         return s_stringMgr.getString("mssql.monitorAsOf", _refreshDate);
+      }
+   }
 
-					 _whoStmt = _conn.prepareCall("{ call sp_who }");
-					 _whoDataSet = new ResultSetDataSet();
+   protected void refreshComponent()
+   {
+      if (!_haveSession)
+      {
+         try
+         {
+            _conn = this.getSession().getSQLConnection().getConnection();
 
-					 _perfStmt = _conn.prepareStatement("SELECT * FROM master.dbo.sysperfinfo");
-					 _perfDataSet = new ResultSetDataSet();
+            _whoStmt = _conn.prepareCall("{ call sp_who }");
+            _whoDataSet = new ResultSetDataSet();
 
-					 _monitorStmt = _conn.prepareCall("{ call sp_monitor }");
+            _perfStmt = _conn.prepareStatement("SELECT * FROM master.dbo.sysperfinfo");
+            _perfDataSet = new ResultSetDataSet();
 
-					 _haveSession = true;
-				}
-				catch (java.sql.SQLException ex) {
-					 s_log.error("Unexpected exception: "+ex.getMessage(), ex);
-				}
-		  }
-		  refreshData();
-	 }
+            _monitorStmt = _conn.prepareCall("{ call sp_monitor }");
 
-	 private void refreshData() {
-		  ResultSet rs;
+            _haveSession = true;
+         }
+         catch (java.sql.SQLException ex)
+         {
+            s_log.error("Unexpected exception: " + ex.getMessage(), ex);
+         }
+      }
+      refreshData();
+   }
 
-		  try {
-				_refreshDate = new Date();
-				rs = _whoStmt.executeQuery();
-				_whoDataSet.setResultSet(rs, DialectType.MSSQL);
-				_whoViewer.show(_whoDataSet);
+   private void refreshData()
+   {
+      ResultSet rs;
 
-				rs = _perfStmt.executeQuery();
-				_perfDataSet.setResultSet(rs, DialectType.MSSQL);
-				_perfViewer.show(_perfDataSet);
-		  }
-		  catch (java.sql.SQLException ex) {
-              s_log.error("Unexpected exception: "+ex.getMessage(), ex);
-          }
-		  catch (DataSetException dse) {
-              s_log.error("Unexpected exception: "+dse.getMessage(), dse);
-          }
-	 }
+      try
+      {
+         _refreshDate = new Date();
+         rs = _whoStmt.executeQuery();
+         _whoDataSet.setResultSet(rs, DialectType.MSSQL);
+         _whoViewer.show(_whoDataSet);
 
-	 private JPanel buildMainPanel() {
-		  SessionProperties props = this.getSession().getProperties();
+         rs = _perfStmt.executeQuery();
+         _perfDataSet.setResultSet(rs, DialectType.MSSQL);
+         _perfViewer.show(_perfDataSet);
+      }
+      catch (java.sql.SQLException ex)
+      {
+         s_log.error("Unexpected exception: " + ex.getMessage(), ex);
+      }
+      catch (DataSetException dse)
+      {
+         s_log.error("Unexpected exception: " + dse.getMessage(), dse);
+      }
+   }
 
-		  JPanel panel = new JPanel();
-		  GridBagLayout gridBag = new GridBagLayout();
-		  panel.setLayout(gridBag);
+   private JPanel buildMainPanel()
+   {
+      SessionProperties props = this.getSession().getProperties();
 
-		  _frequency = new JSlider();
-		  _frequency.setMinimum(0);
-		  _frequency.setMaximum(20);
-		  _frequency.setValue(0);         // by default, it is not running.
-		  _frequency.setMajorTickSpacing(2);
-		  _frequency.setMinorTickSpacing(1);
-		  _frequency.setPaintLabels(true);
-		  _frequency.setPaintTicks(true);
-		  _frequency.setSnapToTicks(true);
-		  _frequency.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					 JSlider slider = (JSlider) e.getSource();
-					 if (slider.getValue() == 0) {
-						  // don't bother changing the delay, but stop it if it's running.
-						  if (_refreshTimer.isRunning())
-								_refreshTimer.stop();
-					 }
-					 else {
-						  // change the delay, and start it if it was stopped.
-						  _refreshTimer.setDelay(slider.getValue() * 1000);
-						  if (!_refreshTimer.isRunning())
-								_refreshTimer.start();
-					 }
-					 // i18n[mssql.delay={0}s delay]
-					 slider.setToolTipText(s_stringMgr.getString("mssql.delay", Integer.valueOf(slider.getValue())));
-				}
-		  });
-		  addComponentToGridBag(0,0,1,1,0.0,0.0,GridBagConstraints.BOTH,gridBag,_frequency,panel);
+      JPanel panel = new JPanel();
+      GridBagLayout gridBag = new GridBagLayout();
+      panel.setLayout(gridBag);
+
+      _frequency = new JSlider();
+      _frequency.setMinimum(0);
+      _frequency.setMaximum(20);
+      _frequency.setValue(0);         // by default, it is not running.
+      _frequency.setMajorTickSpacing(2);
+      _frequency.setMinorTickSpacing(1);
+      _frequency.setPaintLabels(true);
+      _frequency.setPaintTicks(true);
+      _frequency.setSnapToTicks(true);
+      _frequency.addChangeListener(new ChangeListener()
+      {
+         public void stateChanged(ChangeEvent e)
+         {
+            JSlider slider = (JSlider) e.getSource();
+            if (slider.getValue() == 0)
+            {
+               // don't bother changing the delay, but stop it if it's running.
+               if (_refreshTimer.isRunning())
+                  _refreshTimer.stop();
+            }
+            else
+            {
+               // change the delay, and start it if it was stopped.
+               _refreshTimer.setDelay(slider.getValue() * 1000);
+               if (!_refreshTimer.isRunning())
+                  _refreshTimer.start();
+            }
+            // i18n[mssql.delay={0}s delay]
+            slider.setToolTipText(s_stringMgr.getString("mssql.delay", Integer.valueOf(slider.getValue())));
+         }
+      });
+      addComponentToGridBag(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.BOTH, gridBag, _frequency, panel);
 
 
-		  // i18n[mssql.refreshNow=Refresh Now]
-		  JButton refreshButton = new JButton(s_stringMgr.getString("mssql.refreshNow"));
-		  refreshButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					 if (!_haveSession)
-						  return;
-					 if (_inRefresh)
-						  return;
-					 _inRefresh = true;
-					 refreshData();
-					 _inRefresh = false;
-				}
-		  });
-		  addComponentToGridBag(GridBagConstraints.RELATIVE,0,1,1,0.0,0.0,GridBagConstraints.NONE,gridBag,refreshButton,panel);
+      // i18n[mssql.refreshNow=Refresh Now]
+      JButton refreshButton = new JButton(s_stringMgr.getString("mssql.refreshNow"));
+      refreshButton.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            if (!_haveSession)
+               return;
+            if (_inRefresh)
+               return;
+            _inRefresh = true;
+            refreshData();
+            _inRefresh = false;
+         }
+      });
+      addComponentToGridBag(GridBagConstraints.RELATIVE, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NONE, gridBag, refreshButton, panel);
 
-		  _whoViewer = BaseDataSetViewerDestination.getInstance(props.getReadOnlySQLResultsOutputClassName(), null, null);
-		  JScrollPane whoScroll = new JScrollPane(_whoViewer.getComponent());
-		  // i18n[mssql.currentActivity=Current Activity]
-		  whoScroll.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("mssql.currentActivity")));
-		  addComponentToGridBag(0,1,1,1,1.0,1.0,GridBagConstraints.BOTH,gridBag,whoScroll,panel);
+      _whoViewer = BaseDataSetViewerDestination.getInstance(props.getReadOnlySQLResultsOutputClassName(), null, null);
+      JScrollPane whoScroll = new JScrollPane(_whoViewer.getComponent());
+      // i18n[mssql.currentActivity=Current Activity]
+      whoScroll.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("mssql.currentActivity")));
+      addComponentToGridBag(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, gridBag, whoScroll, panel);
 
-		  _perfViewer = BaseDataSetViewerDestination.getInstance(props.getReadOnlySQLResultsOutputClassName(), null, null);
-		  JScrollPane perfScroll = new JScrollPane(_perfViewer.getComponent());
-		  // i18n[mssql.performace=Performance Counters]
-		  perfScroll.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("mssql.performace")));
-		  addComponentToGridBag(GridBagConstraints.RELATIVE,1,1,1,1.0,1.0,GridBagConstraints.BOTH,gridBag,perfScroll,panel);
+      _perfViewer = BaseDataSetViewerDestination.getInstance(props.getReadOnlySQLResultsOutputClassName(), null, null);
+      JScrollPane perfScroll = new JScrollPane(_perfViewer.getComponent());
+      // i18n[mssql.performace=Performance Counters]
+      perfScroll.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("mssql.performace")));
+      addComponentToGridBag(GridBagConstraints.RELATIVE, 1, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, gridBag, perfScroll, panel);
 
-		  return panel;
-	 }
+      return panel;
+   }
 
-	 private void addComponentToGridBag(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int fill, GridBagLayout gridBag, java.awt.Component component, java.awt.Container container) {
-		  GridBagConstraints c = new GridBagConstraints();
-		  c.gridx = gridx;
-		  c.gridy = gridy;
-		  c.gridwidth = gridwidth;
-		  c.gridheight = gridheight;
-		  c.fill = fill;
-		  c.weightx = weightx;
-		  c.weighty = weighty;
-		  gridBag.setConstraints(component,c);
-		  container.add(component);
-	 }
+   private void addComponentToGridBag(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int fill, GridBagLayout gridBag, java.awt.Component component, java.awt.Container container)
+   {
+      GridBagConstraints c = new GridBagConstraints();
+      c.gridx = gridx;
+      c.gridy = gridy;
+      c.gridwidth = gridwidth;
+      c.gridheight = gridheight;
+      c.fill = fill;
+      c.weightx = weightx;
+      c.weighty = weighty;
+      gridBag.setConstraints(component, c);
+      container.add(component);
+   }
+
+	@Override
+	public SQLPanel getSqlPanelOrNull()
+	{
+		return null;
+	}
 }

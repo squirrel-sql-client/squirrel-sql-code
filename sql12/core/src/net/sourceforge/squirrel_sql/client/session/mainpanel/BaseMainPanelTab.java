@@ -32,108 +32,109 @@ import java.awt.Component;
  */
 public abstract class BaseMainPanelTab implements IMainPanelTab
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(BaseMainPanelTab.class);
+   private static ILogger s_log =LoggerController.createLogger(BaseMainPanelTab.class);
 
-	/** Current session. */
-	private ISession _session;
+   private ISession _session;
 
-	/** Set to <TT>true</TT> once this tab has been displayed. */
-	private boolean _hasBeenDisplayed;
+   /**
+    * Set to <TT>true</TT> once this tab has been displayed.
+    */
+   private boolean _hasBeenDisplayed;
 
-	/**
-	 * Set the current session.
-	 *
-	 * @param	session	Current session.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> ISession</TT> passed.
-	 */
-	public void setSession(ISession session)
-	{
-		if (session == null)
-		{
-			throw new IllegalArgumentException("Null ISession passed");
-		}
-		_session = session;
-	}
+   /**
+    * Set the current session.
+    *
+    * @param   session   Current session.
+    * @throws IllegalArgumentException Thrown if a <TT>null</TT> ISession</TT> passed.
+    */
+   public void setSession(ISession session)
+   {
+      if (session == null)
+      {
+         throw new IllegalArgumentException("Null ISession passed");
+      }
+      _session = session;
+   }
 
-	/**
-	 * The current session is closing.
-	 *
-	 * @param	session		Current session.
-	 */
-	public void sessionClosing(ISession session)
-	{
-		// Empty method.
-	}
+   /**
+    * The current session is closing.
+    *
+    * @param   session      Current session.
+    */
+   public void sessionClosing(ISession session)
+   {
+      // Empty method.
+   }
 
-	/**
-	 * Retrieve the current session.
-	 *
-	 * @return	Current session.
-	 */
-	public final ISession getSession()
-	{
-		return _session;
-	}
+   /**
+    * Retrieve the current session.
+    *
+    * @return Current session.
+    */
+   public final ISession getSession()
+   {
+      return _session;
+   }
 
-	/**
-	 * This tab has been selected. This will call <TT>refreshComponent()</TT>
-	 * only if it hasn't been called.
-	 */
-	public synchronized void select()
-	{
-		if (!_hasBeenDisplayed)
-		{
-			s_log.debug("Refreshing " + getTitle() + " main tab.");
-			refreshComponent();
-			_hasBeenDisplayed = true;
-		}
-	}
+   /**
+    * This tab has been selected. This will call <TT>refreshComponent()</TT>
+    * only if it hasn't been called.
+    */
+   public synchronized void select()
+   {
+      if (!_hasBeenDisplayed)
+      {
+         s_log.debug("Refreshing " + getTitle() + " main tab.");
+         refreshComponent();
+         _hasBeenDisplayed = true;
+      }
+   }
 
    @Override
    public void mouseWheelClickedOnTab()
    {
    }
 
-	@Override
-	public IFileEditorAPI getActiveFileEditorAPIOrNull()
-	{
-		return null;
-	}
+   @Override
+   public IFileEditorAPI getActiveFileEditorAPIOrNull()
+   {
+      return null;
+   }
 
-	@Override
+   @Override
    public Component getTabComponent()
    {
       return null;
    }
 
-	@Override
-	public String getTitle()
-	{
-		return "";
-	}
+   @Override
+   public String getTitle()
+   {
+      return "";
+   }
 
-	/**
-	 * @see IMainPanelTab#select()
-	 */
-	protected void refreshComponent()
-	{
-	}
-    
-    /**
-     * When a session is ending, if it happens to be the one this class is using,
-     * then set our reference to null to allow it to be GC'd.
-     * 
-     * @param session the session that is ending.
-     */
-    public void sessionEnding(ISession session) {
-        if (_session == session) {
-            _session = null;
-        }
-    }
+   /**
+    * @see IMainPanelTab#select()
+    */
+   protected void refreshComponent()
+   {
+   }
+
+   /**
+    * When a session is ending, if it happens to be the one this class is using,
+    * then set our reference to null to allow it to be GC'd.
+    *
+    * @param session the session that is ending.
+    */
+   public void sessionEnding(ISession session)
+   {
+      if (_session == session)
+      {
+         _session = null;
+      }
+   }
+
+
 
 
 }
