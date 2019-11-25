@@ -55,6 +55,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+Position of SQL panel divider wasn't remembered anymore.
+
 Oracle Plugin: Fixed "java.lang.IllegalArgumentException: No SQL selected for execution" when stored procedure is created.
 
 Import CSV/Excel files: Fixed NullPointerException when "No separator" option was used.

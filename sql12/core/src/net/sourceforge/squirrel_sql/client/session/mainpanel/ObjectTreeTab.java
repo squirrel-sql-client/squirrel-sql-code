@@ -72,4 +72,9 @@ public class ObjectTreeTab extends BaseMainPanelTab
 		return _comp;
 	}
 
+	@Override
+	public SQLPanel getSqlPanelOrNull()
+	{
+		return null;
+	}
 }

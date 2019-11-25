@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import java.awt.Component;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 
 /**
@@ -79,5 +80,7 @@ public interface IMainPanelTab
 	void mouseWheelClickedOnTab();
 
 	IFileEditorAPI getActiveFileEditorAPIOrNull();
+
+	SQLPanel getSqlPanelOrNull();
 }
 

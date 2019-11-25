@@ -107,8 +107,7 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
          }
 		});
 
-		// Needed to make the panel set the divider location from preferences
-      _sqlPanel.setVisible(true);
+      _sqlPanel.storeSplitPanePositionOnSessionClose(true);
 
 		_toolBar = new SQLInternalFrameToolBar(getSession(), _sqlPanel.getSQLPanelAPI());
 		JPanel contentPanel = new JPanel(new BorderLayout());

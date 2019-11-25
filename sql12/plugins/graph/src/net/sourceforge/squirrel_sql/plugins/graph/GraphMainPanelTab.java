@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.BaseMainPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -101,5 +102,11 @@ public class GraphMainPanelTab extends BaseMainPanelTab
    public void changedFromLinkToLocalCopy()
    {
       _lblTitle.setIcon(null);
+   }
+
+   @Override
+   public SQLPanel getSqlPanelOrNull()
+   {
+      return null;
    }
 }

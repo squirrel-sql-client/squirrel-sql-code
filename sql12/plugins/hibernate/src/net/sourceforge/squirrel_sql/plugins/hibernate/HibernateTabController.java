@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -404,5 +405,12 @@ public class HibernateTabController implements IMainPanelTab
       {
          _hibernateTabPanel.tabHibernateTabbedPane.setSelectedIndex(0);
       }
+   }
+
+
+   @Override
+   public SQLPanel getSqlPanelOrNull()
+   {
+      return null;
    }
 }

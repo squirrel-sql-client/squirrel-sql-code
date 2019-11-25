@@ -110,25 +110,8 @@ public class SessionInternalFrame extends SessionTabWidget implements ISQLIntern
 		{
 			public boolean widgetClosing(WidgetEvent evt)
 			{
-            if (!session.isfinishedLoading())
-            {
-               return false;
-            }
-            final ISession mySession = getSession();
-            if (mySession != null)
-				{
-               boolean success = _app.getSessionManager().closeSession(mySession, true);
-
-               if (success)
-               {
-                  _sessionPanel.sessionWindowClosing();
-               }
-
-               return success;
-				}
-
-				return true;
-			}
+            return onWindowClosing(session);
+         }
 		});
 
 		_sessionPanel = new SessionPanel(session, getTitleFileHandler());
@@ -136,6 +119,28 @@ public class SessionInternalFrame extends SessionTabWidget implements ISQLIntern
 		setContentPane(_sessionPanel);
 		validate();
 	}
+
+   private boolean onWindowClosing(ISession session)
+   {
+      if (!session.isfinishedLoading())
+      {
+         return false;
+      }
+      final ISession mySession = getSession();
+      if (mySession != null)
+      {
+         boolean success = _app.getSessionManager().closeSession(mySession, true);
+
+         if (success)
+         {
+            _sessionPanel.sessionWindowClosing();
+         }
+
+         return success;
+      }
+
+      return true;
+   }
 
    public void requestFocus()
    {
