@@ -51,7 +51,6 @@ public class AddedLinesLeftGutterItem implements LeftGutterItem
          JPopupMenu popupMenu = new JPopupMenu();
          popupMenu.add(new AddedLinesPopupPanel());
          popupMenu.show(trackingGutterLeft, ChangeTrackPanel.LEFT_GUTTER_WIDTH, e.getY());
-
       }
    }
 

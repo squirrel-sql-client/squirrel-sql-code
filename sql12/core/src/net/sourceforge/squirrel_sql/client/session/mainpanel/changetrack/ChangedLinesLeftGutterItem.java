@@ -49,7 +49,7 @@ public class ChangedLinesLeftGutterItem implements LeftGutterItem
       if(rect.intersects(new Rectangle(e.getPoint(), new Dimension(1,1))))
       {
          JPopupMenu popupMenu = new JPopupMenu();
-         popupMenu.add(new ChangedLinesPopupPanel(_formerText, _sqlEntry.getTextComponent().getFont()));
+         popupMenu.add(new RevertablePopupPanel(_formerText, _sqlEntry.getTextComponent().getFont()));
          popupMenu.show(trackingGutterLeft, ChangeTrackPanel.LEFT_GUTTER_WIDTH, e.getY());
 
       }

@@ -3,7 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
 import javax.swing.JPanel;
-import java.awt.Color;
+import javax.swing.JPopupMenu;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -39,14 +40,31 @@ public class DeletedLinesLeftGutterItem implements LeftGutterItem
    @Override
    public void showPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
    {
+      Rectangle rectBefore = LeftGutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _lineBefore, 1);
 
+      if(null == rectBefore)
+      {
+         return;
+      }
 
+      Polygon triangle = getTriangle(rectBefore.x, rectBefore.y + rectBefore.height, rectBefore.x + rectBefore.width, rectBefore.y + rectBefore.height);
 
+      if(triangle.getBounds().intersects(new Rectangle(e.getPoint(), new Dimension(1,1))))
+      {
+         JPopupMenu popupMenu = new JPopupMenu();
+         popupMenu.add(new RevertablePopupPanel(_deletedText, _sqlEntry.getTextComponent().getFont()));
+         popupMenu.show(trackingGutterLeft, ChangeTrackPanel.LEFT_GUTTER_WIDTH, e.getY());
+      }
    }
 
    private void paintArrow(Graphics g, int x1, int y1, int x2, int y2)
    {
+      Polygon pg = getTriangle(x1, y1, x2, y2);
+      g.fillPolygon(pg);
+   }
 
+   private Polygon getTriangle(int x1, int y1, int x2, int y2)
+   {
       // defines the opening angle of the arrow (not rad or so but something fancy)
       double sAng = 0.5;
 
@@ -65,7 +83,7 @@ public class DeletedLinesLeftGutterItem implements LeftGutterItem
       pg.addPoint(arrPa.x, arrPa.y);
       pg.addPoint(arrPb.x, arrPb.y);
       pg.addPoint(c.x, c.y);
-      g.fillPolygon(pg);
+      return pg;
    }
 
 }
