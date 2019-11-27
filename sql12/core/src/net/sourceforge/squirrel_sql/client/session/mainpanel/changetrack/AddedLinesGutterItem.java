@@ -10,41 +10,55 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
-public class AddedLinesLeftGutterItem implements LeftGutterItem
+public class AddedLinesGutterItem implements GutterItem
 {
+   private ChangeTrackPanel _changeTrackPanel;
    private final ISQLEntryPanel _sqlEntry;
    private final int _beginLine;
    private final int _newLinesCount;
 
-   public AddedLinesLeftGutterItem(ISQLEntryPanel sqlEntry, int beginLine, int newLinesCount)
+   public AddedLinesGutterItem(ChangeTrackPanel changeTrackPanel, ISQLEntryPanel sqlEntry, int beginLine, int newLinesCount)
    {
+      _changeTrackPanel = changeTrackPanel;
       _sqlEntry = sqlEntry;
       _beginLine = beginLine;
       _newLinesCount = newLinesCount;
    }
 
-   public void paint(Graphics g)
+   public void leftPaint(Graphics g)
    {
-      Rectangle rect = LeftGutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _newLinesCount);
+      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _newLinesCount);
 
       if(null == rect)
       {
          return;
       }
 
-      //System.out.println("rect = " + rect);
-
       Color buf = g.getColor();
-      g.setColor(new Color(150, 180, 150));
+      g.setColor(getColor());
       g.fillRect(rect.x, rect.y, rect.width, rect.height);
       g.setColor(buf);
 
    }
 
-   @Override
-   public void showPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
+   private Color getColor()
    {
-      Rectangle rect = LeftGutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _newLinesCount);
+      return new Color(150, 180, 150);
+   }
+
+   @Override
+   public void rightPaint(Graphics g)
+   {
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry,_beginLine, _newLinesCount);
+
+      GutterItemUtil.paintRightGutterMark(g, mark, getColor());
+   }
+
+
+   @Override
+   public void leftShowPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
+   {
+      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _newLinesCount);
 
       if(rect.intersects(new Rectangle(e.getPoint(), new Dimension(1,1))))
       {

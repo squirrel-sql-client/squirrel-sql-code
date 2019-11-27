@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -11,23 +12,25 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
-public class DeletedLinesLeftGutterItem implements LeftGutterItem
+public class DeletedLinesGutterItem implements GutterItem
 {
+   private ChangeTrackPanel _changeTrackPanel;
    private final ISQLEntryPanel _sqlEntry;
    private final int _lineBefore;
    private final String _deletedText;
 
-   public DeletedLinesLeftGutterItem(ISQLEntryPanel sqlEntry, int lineBefore, String deletedText)
+   public DeletedLinesGutterItem(ChangeTrackPanel changeTrackPanel, ISQLEntryPanel sqlEntry, int lineBefore, String deletedText)
    {
+      _changeTrackPanel = changeTrackPanel;
       _sqlEntry = sqlEntry;
       _lineBefore = lineBefore;
       _deletedText = deletedText;
    }
 
    @Override
-   public void paint(Graphics g)
+   public void leftPaint(Graphics g)
    {
-      Rectangle rectBefore = LeftGutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _lineBefore, 1);
+      Rectangle rectBefore = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _lineBefore, 1);
 
       if(null == rectBefore)
       {
@@ -38,9 +41,9 @@ public class DeletedLinesLeftGutterItem implements LeftGutterItem
    }
 
    @Override
-   public void showPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
+   public void leftShowPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
    {
-      Rectangle rectBefore = LeftGutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _lineBefore, 1);
+      Rectangle rectBefore = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _lineBefore, 1);
 
       if(null == rectBefore)
       {
@@ -57,10 +60,28 @@ public class DeletedLinesLeftGutterItem implements LeftGutterItem
       }
    }
 
+   @Override
+   public void rightPaint(Graphics g)
+   {
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _lineBefore, 1);
+
+      GutterItemUtil.paintRightGutterMark(g, mark, getColor());
+   }
+
+   private Color getColor()
+   {
+      return Color.black;
+   }
+
    private void paintArrow(Graphics g, int x1, int y1, int x2, int y2)
    {
+      Color buf = g.getColor();
+      g.setColor(getColor());
+
       Polygon pg = getTriangle(x1, y1, x2, y2);
       g.fillPolygon(pg);
+
+      g.setColor(buf);
    }
 
    private Polygon getTriangle(int x1, int y1, int x2, int y2)

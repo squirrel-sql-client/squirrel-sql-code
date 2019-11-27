@@ -10,24 +10,26 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
-public class ChangedLinesLeftGutterItem implements LeftGutterItem
+public class ChangedLinesGutterItem implements GutterItem
 {
+   private ChangeTrackPanel _changeTrackPanel;
    private final ISQLEntryPanel _sqlEntry;
    private final int _beginLine;
    private final int _changedLinesCount;
    private final String _formerText;
 
-   public ChangedLinesLeftGutterItem(ISQLEntryPanel sqlEntry, int beginLine, int changedLinesCount, String formerText)
+   public ChangedLinesGutterItem(ChangeTrackPanel changeTrackPanel, ISQLEntryPanel sqlEntry, int beginLine, int changedLinesCount, String formerText)
    {
+      _changeTrackPanel = changeTrackPanel;
       _sqlEntry = sqlEntry;
       _beginLine = beginLine;
       _changedLinesCount = changedLinesCount;
       _formerText = formerText;
    }
 
-   public void paint(Graphics g)
+   public void leftPaint(Graphics g)
    {
-      Rectangle rect = LeftGutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _changedLinesCount);
+      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _changedLinesCount);
 
       if(null == rect)
       {
@@ -35,16 +37,30 @@ public class ChangedLinesLeftGutterItem implements LeftGutterItem
       }
 
       Color buf = g.getColor();
-      g.setColor(new Color(200, 180, 230));
+      g.setColor(getColor());
       g.fillRect(rect.x, rect.y, rect.width, rect.height);
       g.setColor(buf);
 
    }
 
-   @Override
-   public void showPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
+   private Color getColor()
    {
-      Rectangle rect = LeftGutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _changedLinesCount);
+      return new Color(200, 180, 230);
+   }
+
+   @Override
+   public void rightPaint(Graphics g)
+   {
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _beginLine, _changedLinesCount);
+
+      GutterItemUtil.paintRightGutterMark(g, mark, getColor());
+   }
+
+
+   @Override
+   public void leftShowPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
+   {
+      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _changedLinesCount);
 
       if(rect.intersects(new Rectangle(e.getPoint(), new Dimension(1,1))))
       {

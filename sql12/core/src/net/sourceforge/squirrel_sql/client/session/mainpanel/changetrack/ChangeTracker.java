@@ -10,18 +10,19 @@ import java.util.List;
 
 public class ChangeTracker
 {
-   private final LeftGutterItemsManager _leftGutterItemsManager;
    private ISQLEntryPanel _sqlEntry;
    private ChangeTrackPanel _changeTrackPanel;
+   private GutterItemsManager _gutterItemsManager;
 
    public ChangeTracker(ISQLEntryPanel sqlEntry)
    {
       _sqlEntry = sqlEntry;
 
-      _leftGutterItemsManager = new LeftGutterItemsManager(_sqlEntry);
 
       JScrollPane scrollPane = _sqlEntry.getTextAreaEmbeddedInScrollPane();
       _changeTrackPanel = new ChangeTrackPanel(scrollPane, g -> onPaintLeftGutter(g), g -> onPaintRightGutter(g));
+
+      _gutterItemsManager = new GutterItemsManager(_sqlEntry, _changeTrackPanel);
 
       _changeTrackPanel.trackingGutterLeft.addMouseListener(new MouseAdapter() {
          @Override
@@ -31,26 +32,32 @@ public class ChangeTracker
          }
       });
 
+
       _sqlEntry.setTextAreaPaintListener(() -> _changeTrackPanel.requestGutterRepaint());
    }
 
    private void onLeftGutterMousePressed(MouseEvent e)
    {
-      _leftGutterItemsManager.leftGutterMousePressed(e, _changeTrackPanel.trackingGutterLeft);
+      _gutterItemsManager.leftGutterMousePressed(e, _changeTrackPanel.trackingGutterLeft);
    }
 
    private void onPaintRightGutter(Graphics g)
    {
+      List<GutterItem> gutterItems = _gutterItemsManager.getLeftGutterItems();
 
+      for (GutterItem gutterItem : gutterItems)
+      {
+         gutterItem.rightPaint(g);
+      }
    }
 
    private void onPaintLeftGutter(Graphics g)
    {
-      List<LeftGutterItem> leftGutterItems = _leftGutterItemsManager.getLeftGutterItems();
+      List<GutterItem> gutterItems = _gutterItemsManager.getLeftGutterItems();
 
-      for (LeftGutterItem leftGutterItem : leftGutterItems)
+      for (GutterItem gutterItem : gutterItems)
       {
-         leftGutterItem.paint(g);
+         gutterItem.leftPaint(g);
       }
    }
 

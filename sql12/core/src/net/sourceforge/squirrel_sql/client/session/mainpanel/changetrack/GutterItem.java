@@ -4,9 +4,11 @@ import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
-public interface LeftGutterItem
+public interface GutterItem
 {
-   void paint(Graphics g);
+   void leftPaint(Graphics g);
 
-   void showPopupIfHit(MouseEvent e, JPanel trackingGutterLeft);
+   void leftShowPopupIfHit(MouseEvent e, JPanel trackingGutterLeft);
+
+   void rightPaint(Graphics g);
 }
