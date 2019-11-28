@@ -6,6 +6,7 @@ import javax.swing.JScrollPane;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.List;
 
 public class ChangeTracker
@@ -31,14 +32,51 @@ public class ChangeTracker
             onLeftGutterMousePressed(e);
          }
       });
+      _changeTrackPanel.trackingGutterLeft.addMouseMotionListener(new MouseMotionAdapter() {
+         @Override
+         public void mouseMoved(MouseEvent e)
+         {
+            onLeftGutterMouseMoved(e);
+         }
+      });
 
+      _changeTrackPanel.trackingGutterRight.addMouseListener(new MouseAdapter() {
+         @Override
+         public void mousePressed(MouseEvent e)
+         {
+            onRightGutterMousePressed(e);
+         }
+      });
+      _changeTrackPanel.trackingGutterRight.addMouseMotionListener(new MouseMotionAdapter() {
+         @Override
+         public void mouseMoved(MouseEvent e)
+         {
+            onRightGutterMouseMoved(e);
+         }
+      });
 
       _sqlEntry.setTextAreaPaintListener(() -> _changeTrackPanel.requestGutterRepaint());
+   }
+
+   private void onLeftGutterMouseMoved(MouseEvent e)
+   {
+      _gutterItemsManager.leftGutterMouseMoved(e, _changeTrackPanel.trackingGutterLeft);
    }
 
    private void onLeftGutterMousePressed(MouseEvent e)
    {
       _gutterItemsManager.leftGutterMousePressed(e, _changeTrackPanel.trackingGutterLeft);
+   }
+
+
+   private void onRightGutterMouseMoved(MouseEvent e)
+   {
+      _gutterItemsManager.rightGutterMouseMoved(e, _changeTrackPanel.trackingGutterRight);
+   }
+
+   private void onRightGutterMousePressed(MouseEvent e)
+   {
+      _gutterItemsManager.rightGutterMousePressed(e);
    }
 
    private void onPaintRightGutter(Graphics g)

@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
 import javax.swing.JPanel;
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 public class GutterItemsManager
 {
    private final ArrayList<GutterItem> _currentGutterItems;
+   private CursorHandler _cursorHandler = new CursorHandler();
 
    public GutterItemsManager(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel)
    {
@@ -28,9 +30,41 @@ public class GutterItemsManager
 
    public void leftGutterMousePressed(MouseEvent e, JPanel trackingGutterLeft)
    {
-      for (GutterItem currentGutterItem : _currentGutterItems)
+      _currentGutterItems.forEach(gi -> gi.leftShowPopupIfHit(e, trackingGutterLeft));
+   }
+
+   public void leftGutterMouseMoved(MouseEvent e, JPanel trackingGutterLeft)
+   {
+      _cursorHandler.reset();
+      _currentGutterItems.forEach(gi -> gi.leftGutterMouseMoved(e, _cursorHandler));
+
+      if(_cursorHandler.isClickable())
       {
-         currentGutterItem.leftShowPopupIfHit(e, trackingGutterLeft);
+         trackingGutterLeft.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      }
+      else
+      {
+         trackingGutterLeft.setCursor(Cursor.getDefaultCursor());
+      }
+   }
+
+   public void rightGutterMousePressed(MouseEvent e)
+   {
+      _currentGutterItems.forEach(gi -> gi.rightMoveCursorWhenHit(e));
+   }
+
+   public void rightGutterMouseMoved(MouseEvent e, JPanel trackingGutterRight)
+   {
+      _cursorHandler.reset();
+      _currentGutterItems.forEach(gi -> gi.rightGutterMouseMoved(e, _cursorHandler));
+
+      if(_cursorHandler.isClickable())
+      {
+         trackingGutterRight.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      }
+      else
+      {
+         trackingGutterRight.setCursor(Cursor.getDefaultCursor());
       }
    }
 }

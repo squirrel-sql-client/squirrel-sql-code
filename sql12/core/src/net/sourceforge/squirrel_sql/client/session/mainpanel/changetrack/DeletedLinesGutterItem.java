@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.text.BadLocationException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -43,21 +44,26 @@ public class DeletedLinesGutterItem implements GutterItem
    @Override
    public void leftShowPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
    {
-      Rectangle rectBefore = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _lineBefore, 1);
-
-      if(null == rectBefore)
-      {
-         return;
-      }
-
-      Polygon triangle = getTriangle(rectBefore.x, rectBefore.y + rectBefore.height, rectBefore.x + rectBefore.width, rectBefore.y + rectBefore.height);
-
-      if(triangle.getBounds().intersects(new Rectangle(e.getPoint(), new Dimension(1,1))))
+      if(intersects(e))
       {
          JPopupMenu popupMenu = new JPopupMenu();
          popupMenu.add(new RevertablePopupPanel(_deletedText, _sqlEntry.getTextComponent().getFont()));
          popupMenu.show(trackingGutterLeft, ChangeTrackPanel.LEFT_GUTTER_WIDTH, e.getY());
       }
+   }
+
+   private boolean intersects(MouseEvent e)
+   {
+      Rectangle rectBefore = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _lineBefore, 1);
+
+      if(null == rectBefore)
+      {
+         return false;
+      }
+
+      Polygon triangle = getTriangle(rectBefore.x, rectBefore.y + rectBefore.height, rectBefore.x + rectBefore.width, rectBefore.y + rectBefore.height);
+
+      return triangle.getBounds().intersects(new Rectangle(e.getPoint(), new Dimension(1, 1)));
    }
 
    @Override
@@ -66,6 +72,48 @@ public class DeletedLinesGutterItem implements GutterItem
       Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _lineBefore, 1);
 
       GutterItemUtil.paintRightGutterMark(g, mark, getColor());
+   }
+
+   @Override
+   public void leftGutterMouseMoved(MouseEvent e, CursorHandler cursorHandler)
+   {
+      cursorHandler.setClickable(intersects(e));
+   }
+
+   @Override
+   public void rightMoveCursorWhenHit(MouseEvent e)
+   {
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _lineBefore, 1);
+
+      if(null == mark)
+      {
+         return;
+      }
+
+      if(mark.intersects(new Rectangle(e.getPoint(), new Dimension(1,1))))
+      {
+         try
+         {
+            int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(_lineBefore);
+            _sqlEntry.setCaretPosition(lineStartPosition);
+         }
+         catch (BadLocationException ex)
+         {
+         }
+      }
+   }
+
+   @Override
+   public void rightGutterMouseMoved(MouseEvent e, CursorHandler cursorHandler)
+   {
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _lineBefore, 1);
+
+      if(null == mark)
+      {
+         return;
+      }
+
+      cursorHandler.setClickable(mark.intersects(new Rectangle(e.getPoint(), new Dimension(1,1))));
    }
 
    private Color getColor()

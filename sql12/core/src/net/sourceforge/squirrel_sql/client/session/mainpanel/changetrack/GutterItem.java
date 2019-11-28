@@ -11,4 +11,10 @@ public interface GutterItem
    void leftShowPopupIfHit(MouseEvent e, JPanel trackingGutterLeft);
 
    void rightPaint(Graphics g);
+
+   void leftGutterMouseMoved(MouseEvent e, CursorHandler cursorHandler);
+
+   void rightMoveCursorWhenHit(MouseEvent e);
+
+   void rightGutterMouseMoved(MouseEvent e, CursorHandler cursorHandler);
 }
