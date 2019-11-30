@@ -94,7 +94,7 @@ public class DeletedLinesGutterItem implements GutterItem
       {
          try
          {
-            int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(_lineBefore);
+            int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(Math.max(_lineBefore -1, 0));
             _sqlEntry.setCaretPosition(lineStartPosition);
          }
          catch (BadLocationException ex)

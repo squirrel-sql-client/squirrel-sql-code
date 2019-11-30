@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
 import javax.swing.JPanel;
@@ -11,17 +10,21 @@ import java.util.List;
 
 public class GutterItemsManager
 {
-   private final ArrayList<GutterItem> _currentGutterItems;
+   private List<GutterItem> _currentGutterItems;
    private CursorHandler _cursorHandler = new CursorHandler();
+   private ChangeTrackPanel _changeTrackPanel;
 
    public GutterItemsManager(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel)
    {
+      _changeTrackPanel = changeTrackPanel;
 
-      _currentGutterItems = new ArrayList<>();
+      new GutterItemsProvider(sqlEntry, changeTrackPanel,  gi -> onNewGutterItems(gi));
+   }
 
-      _currentGutterItems.add(new DeletedLinesGutterItem(changeTrackPanel, sqlEntry,12, "Hier Stand früher mal Gerd\nund wurde gelöscht"));
-      _currentGutterItems.add(new ChangedLinesGutterItem(changeTrackPanel, sqlEntry,25, 3, "Hier Stand früher mal Gerd\nund wurde geändert"));
-      _currentGutterItems.add(new AddedLinesGutterItem(changeTrackPanel, sqlEntry,35, 2));
+   private void onNewGutterItems(List<GutterItem> gi)
+   {
+      _currentGutterItems = gi;
+      _changeTrackPanel.requestGutterRepaint();
    }
 
    public List<GutterItem> getLeftGutterItems()
