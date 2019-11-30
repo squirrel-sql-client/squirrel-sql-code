@@ -10,7 +10,7 @@ import java.util.List;
 
 public class GutterItemsManager
 {
-   private List<GutterItem> _currentGutterItems;
+   private List<GutterItem> _currentGutterItems = new ArrayList<>();
    private CursorHandler _cursorHandler = new CursorHandler();
    private ChangeTrackPanel _changeTrackPanel;
 

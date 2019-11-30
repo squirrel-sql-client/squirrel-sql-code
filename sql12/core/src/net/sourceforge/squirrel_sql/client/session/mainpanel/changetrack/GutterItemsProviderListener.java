@@ -5,5 +5,5 @@ import java.util.List;
 @FunctionalInterface
 public interface GutterItemsProviderListener
 {
-   void updaeGutterItems(List<GutterItem> gutterItems);
+   void updateGutterItems(List<GutterItem> gutterItems);
 }
