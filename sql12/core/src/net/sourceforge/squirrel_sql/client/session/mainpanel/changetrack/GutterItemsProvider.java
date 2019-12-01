@@ -1,13 +1,13 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,7 +22,9 @@ public class GutterItemsProvider
    private final ChangeTrackPanel _changeTrackPanel;
    private GutterItemsProviderListener _gutterItemsProviderListener;
 
-   public GutterItemsProvider(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, GutterItemsProviderListener gutterItemsProviderListener)
+   private List<String> _changeTrackAgainstLines;
+
+   public GutterItemsProvider(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, IFileEditorAPI fileEditorAPI, GutterItemsProviderListener gutterItemsProviderListener)
    {
       _sqlEntry = sqlEntry;
       _changeTrackPanel = changeTrackPanel;
@@ -30,17 +32,25 @@ public class GutterItemsProvider
       _changeTrackingTrigger = new Timer(1000, e -> onTriggerChangeTracking());
       _changeTrackingTrigger.setRepeats(false);
 
+      fileEditorAPI.getFileHandler().setChangeTrackAgainstListener(changeTrackAgainstText -> onChangeTrackAgainstChanged(changeTrackAgainstText));
+
       sqlEntry.getTextComponent().addKeyListener(new KeyAdapter()
       {
          public void keyTyped(KeyEvent e)
          {
-            onTriggerChangeTracking(e);
+            triggerChangeTracking();
          }
       });
    }
 
+   private void onChangeTrackAgainstChanged(List<String>  changeTrackAgainstLines)
+   {
+      _changeTrackAgainstLines = changeTrackAgainstLines;
+      triggerChangeTracking();
+   }
 
-   private void onTriggerChangeTracking(KeyEvent e)
+
+   private void triggerChangeTracking()
    {
       _changeTrackingTrigger.restart();
    }
@@ -62,7 +72,7 @@ public class GutterItemsProvider
    {
       try
       {
-         List<GutterItem> gutterItems = ChangeTrackTask.getGutterItems(_sqlEntry, _changeTrackPanel);
+         List<GutterItem> gutterItems = GutterItemsCreater.createGutterItems(_sqlEntry, _changeTrackPanel, _changeTrackAgainstLines);
 
          SwingUtilities.invokeLater(() -> _gutterItemsProviderListener.updateGutterItems(gutterItems));
       }

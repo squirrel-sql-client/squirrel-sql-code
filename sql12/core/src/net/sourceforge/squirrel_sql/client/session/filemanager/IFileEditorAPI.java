@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.filemanager;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackAgainstListener;
 
 import javax.swing.JTextArea;
 import java.awt.Frame;

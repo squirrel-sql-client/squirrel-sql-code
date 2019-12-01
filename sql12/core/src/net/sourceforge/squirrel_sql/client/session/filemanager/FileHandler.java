@@ -6,16 +6,21 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackAgainstListener;
 import net.sourceforge.squirrel_sql.client.util.PrintUtilities;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 public class FileHandler
 {
@@ -28,6 +33,7 @@ public class FileHandler
    private boolean _fileOpened = false;
    private boolean _fileSaved = false;
    private boolean _unsavedEdits = false;
+   private ChangeTrackAgainstListener _changeTrackAgainstListener;
 
 
    public FileHandler(IFileEditorAPI fileEditorAPI, TitleFilePathHandler titleFileHandler)
@@ -50,6 +56,7 @@ public class FileHandler
          displayUnsavedEditsInTabComponent(false);
          ActionCollection actions = Main.getApplication().getActionCollection();
          actions.enableAction(FileSaveAction.class, false);
+         fireChangeTrackListener();
          return true;
       }
       else
@@ -68,12 +75,14 @@ public class FileHandler
          displayUnsavedEditsInTabComponent(_unsavedEdits);
          ActionCollection actions = Main.getApplication().getActionCollection();
          actions.enableAction(FileSaveAction.class, true);
+         fireChangeTrackListener();
       }
    }
 
    public void fileClose()
    {
       _closeFile(true);
+      fireChangeTrackListener();
    }
 
    public void fileReload()
@@ -96,7 +105,7 @@ public class FileHandler
       fileOpen(file);
 
       _fileEditorAPI.setCaretPosition(Math.min(_fileEditorAPI.getText().length(), caretPosition));
-
+      fireChangeTrackListener();
    }
 
    public void fileOpen()
@@ -120,6 +129,7 @@ public class FileHandler
       }
 
       _fileEditorAPI.setCaretPosition(0);
+      fireChangeTrackListener();
    }
 
    public void fileOpen(File f)
@@ -147,6 +157,8 @@ public class FileHandler
       actions.enableAction(FileSaveAction.class, false);
 
       _fileEditorAPI.setCaretPosition(0);
+      fireChangeTrackListener();
+
    }
 
    public void fileNew()
@@ -168,6 +180,7 @@ public class FileHandler
          displayUnsavedEditsInTabComponent(false);
          ActionCollection actions = Main.getApplication().getActionCollection();
          actions.enableAction(FileSaveAction.class, false);
+         fireChangeTrackListener();
       }
    }
 
@@ -214,6 +227,7 @@ public class FileHandler
       ActionCollection actions = Main.getApplication().getActionCollection();
       actions.enableAction(FileSaveAction.class, true);
       _fileManagementCore.clearCurrentFile();
+      fireChangeTrackListener();
 
       return true;
    }
@@ -291,5 +305,36 @@ public class FileHandler
    public void replaceSqlFileExtensionFilterBy(FileExtensionFilter fileExtensionFilter, String fileEndingWithDot)
    {
       _fileManagementCore.replaceSqlFileExtensionFilterBy(fileExtensionFilter, fileEndingWithDot);
+   }
+
+   public void setChangeTrackAgainstListener(ChangeTrackAgainstListener changeTrackAgainstListener)
+   {
+      _changeTrackAgainstListener = changeTrackAgainstListener;
+
+      fireChangeTrackListener();
+   }
+
+   private void fireChangeTrackListener()
+   {
+      try
+      {
+         if(null == _changeTrackAgainstListener)
+         {
+            return;
+         }
+
+         if(null != _fileManagementCore.getFile())
+         {
+            _changeTrackAgainstListener.changeTrackAgainstChanged(Files.readAllLines(_fileManagementCore.getFile().toPath()));
+         }
+         else
+         {
+            _changeTrackAgainstListener.changeTrackAgainstChanged(null);
+         }
+      }
+      catch (IOException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
    }
 }

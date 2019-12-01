@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 
 import javax.swing.JPanel;
 import java.awt.Cursor;
@@ -14,11 +15,11 @@ public class GutterItemsManager
    private CursorHandler _cursorHandler = new CursorHandler();
    private ChangeTrackPanel _changeTrackPanel;
 
-   public GutterItemsManager(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel)
+   public GutterItemsManager(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, IFileEditorAPI fileEditorAPI)
    {
       _changeTrackPanel = changeTrackPanel;
 
-      new GutterItemsProvider(sqlEntry, changeTrackPanel,  gi -> onNewGutterItems(gi));
+      new GutterItemsProvider(sqlEntry, changeTrackPanel, fileEditorAPI,  gi -> onNewGutterItems(gi));
    }
 
    private void onNewGutterItems(List<GutterItem> gi)

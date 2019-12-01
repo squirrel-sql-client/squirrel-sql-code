@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabLi
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
+import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteFromHistoryAttach;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
@@ -140,6 +141,7 @@ public class SQLPanel extends JPanel
    private ResultLimitAndReadOnPanelSmallPanel _resultLimitAndReadOnPanelSmallPanel = new ResultLimitAndReadOnPanelSmallPanel();
 	private ToggleResultMinimizeHandler _toggleResultMinimizeHandler;
 	private SQLPanelPosition _sqlPanelPosition;
+	private ChangeTracker _changeTracker;
 
 
 	public SQLPanel(ISession session, SQLPanelPosition sqlPanelPosition, TitleFilePathHandler titleFileHandler)
@@ -164,6 +166,8 @@ public class SQLPanel extends JPanel
 
 		addExecutor(_sqlExecPanel);
 		_panelAPI = new SQLPanelAPI(this, titleFileHandler);
+		_changeTracker.initChangeTracking(_panelAPI);
+
       _resultLimitAndReadOnPanelSmallPanel.loadData(session.getProperties());
 
       _toggleResultMinimizeHandler = new ToggleResultMinimizeHandler(_splitPane);
@@ -473,7 +477,9 @@ public class SQLPanel extends JPanel
 
 		final int pos = _splitPane.getDividerLocation();
 
-      _splitPane.add(new ChangeTracker(_sqlEntry).embedInTracking(), JSplitPane.LEFT); // /home/gerd/tmp/testdiff.patch
+		_changeTracker = new ChangeTracker(_sqlEntry);
+
+		_splitPane.add(_changeTracker.embedInTracking(), JSplitPane.LEFT); // /home/gerd/tmp/testdiff.patch
 
 
 		_splitPane.setDividerLocation(pos);
