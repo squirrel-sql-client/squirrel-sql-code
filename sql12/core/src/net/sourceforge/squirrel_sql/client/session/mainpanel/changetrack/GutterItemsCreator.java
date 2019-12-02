@@ -28,7 +28,7 @@ public class GutterItemsCreator
          }
 
 
-         List<String> currentLines = Arrays.asList(sqlEntry.getText().split("\n"));
+         List<String> currentLines = Arrays.asList(sqlEntry.getText().split("\n", -1));
 
          Patch<String> diff = DiffUtils.diff(originalLines, currentLines);
 
