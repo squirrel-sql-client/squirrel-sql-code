@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -122,8 +123,31 @@ public class AddedLinesGutterItem implements GutterItem
       if(rect.intersects(new Rectangle(e.getPoint(), new Dimension(1,1))))
       {
          JPopupMenu popupMenu = new JPopupMenu();
-         popupMenu.add(new AddedLinesPopupPanel());
+         AddedLinesPopupPanel addedLinesPopupPanel = new AddedLinesPopupPanel();
+
+         addedLinesPopupPanel.btnRevert.addActionListener(ae -> onRevert(popupMenu));
+
+         popupMenu.add(addedLinesPopupPanel);
          popupMenu.show(trackingGutterLeft, ChangeTrackPanel.LEFT_GUTTER_WIDTH, e.getY());
+      }
+   }
+
+   private void onRevert(JPopupMenu popupMenu)
+   {
+      try
+      {
+         int beginPos = _sqlEntry.getTextComponent().getLineStartOffset(_beginLine -1);
+         int endPos = _sqlEntry.getTextComponent().getLineEndOffset(_beginLine + _newLinesCount -2);
+         _sqlEntry.setSelectionStart(beginPos);
+         _sqlEntry.setSelectionEnd(endPos);
+
+         _sqlEntry.replaceSelection("");
+
+         popupMenu.setVisible(false);
+      }
+      catch (BadLocationException e)
+      {
+         throw Utilities.wrapRuntime(e);
       }
    }
 

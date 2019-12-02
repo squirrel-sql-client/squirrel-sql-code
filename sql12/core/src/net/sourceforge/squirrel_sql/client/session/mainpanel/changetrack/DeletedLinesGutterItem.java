@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -42,13 +44,38 @@ public class DeletedLinesGutterItem implements GutterItem
    }
 
    @Override
-   public void leftShowPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
+   public void leftShowPopupIfHit(MouseEvent me, JPanel trackingGutterLeft)
    {
-      if(intersects(e))
+      if(intersects(me))
       {
          JPopupMenu popupMenu = new JPopupMenu();
-         popupMenu.add(new RevertablePopupPanel(_deletedText, _sqlEntry.getTextComponent().getFont()));
-         popupMenu.show(trackingGutterLeft, ChangeTrackPanel.LEFT_GUTTER_WIDTH, e.getY());
+         RevertablePopupPanel revertablePopupPanel = new RevertablePopupPanel(_deletedText, _sqlEntry.getTextComponent().getFont());
+
+         revertablePopupPanel.btnCopy.addActionListener(ae -> CopyToClipboardUtil.copyToClip(_deletedText));
+
+         revertablePopupPanel.btnRevert.addActionListener(ae -> onRevert(popupMenu));
+
+         popupMenu.add(revertablePopupPanel);
+         popupMenu.show(trackingGutterLeft, ChangeTrackPanel.LEFT_GUTTER_WIDTH, me.getY());
+      }
+   }
+
+   private void onRevert(JPopupMenu popupMenu)
+   {
+      try
+      {
+         int beginPos = _sqlEntry.getTextComponent().getLineStartOffset(_lineBefore);
+         //int endPos = _sqlEntry.getTextComponent().getLineEndOffset(_lineBefore);
+         _sqlEntry.setCaretPosition(beginPos);
+         //_sqlEntry.setSelectionEnd(beginPos-1);
+
+         _sqlEntry.replaceSelection(_deletedText + "\n");
+
+         popupMenu.setVisible(false);
+      }
+      catch (BadLocationException e)
+      {
+         throw Utilities.wrapRuntime(e);
       }
    }
 

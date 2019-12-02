@@ -13,19 +13,14 @@ import java.awt.GridLayout;
 public class AddedLinesPopupPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AddedLinesPopupPanel.class);
+   JButton btnRevert;
 
    public AddedLinesPopupPanel()
    {
       super(new GridLayout());
-      JButton btn = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.REVERT));
-      btn.setToolTipText(s_stringMgr.getString("RevertablePopupPanel.revert"));
-      add(GUIUtils.styleAsToolbarButton(btn, false, false));
+      btnRevert = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.REVERT));
+      btnRevert.setToolTipText(s_stringMgr.getString("RevertablePopupPanel.revert"));
+      add(GUIUtils.styleAsToolbarButton(btnRevert, false, false));
 
-      btn.addActionListener(e -> onRevertAdded());
-   }
-
-   private void onRevertAdded()
-   {
-      System.out.println("AddedLinesPopupPanel.onRevertAdded");
    }
 }

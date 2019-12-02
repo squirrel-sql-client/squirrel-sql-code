@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class GutterItemsCreater
+public class GutterItemsCreator
 {
 
    public static List<GutterItem> createGutterItems(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, List<String> originalLines)

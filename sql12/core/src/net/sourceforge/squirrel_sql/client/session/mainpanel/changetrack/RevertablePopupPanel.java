@@ -18,6 +18,9 @@ public class RevertablePopupPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RevertablePopupPanel.class);
 
+   JButton btnRevert;
+   JButton btnCopy;
+
 
    public RevertablePopupPanel(String formerText, Font sqlEntryAreaFont)
    {
@@ -27,12 +30,12 @@ public class RevertablePopupPanel extends JPanel
 
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      JButton btnRevert = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.REVERT));
+      btnRevert = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.REVERT));
       btnRevert.setToolTipText(s_stringMgr.getString("RevertablePopupPanel.revert"));
       add(GUIUtils.styleAsToolbarButton(btnRevert, false, false), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,2,0,0), 0,0);
-      JButton btnCopy = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.COPY));
+      btnCopy = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.COPY));
       btnCopy.setToolTipText(s_stringMgr.getString("RevertablePopupPanel.copy"));
       add(GUIUtils.styleAsToolbarButton(btnCopy, false, false), gbc);
 
@@ -45,20 +48,5 @@ public class RevertablePopupPanel extends JPanel
       add(lblFormerText, gbc);
 
       //setBorder(BorderFactory.createLineBorder(Color.lightGray));
-
-
-      btnRevert.addActionListener(e -> onRevertChanged());
-      btnCopy.addActionListener(e -> onCopyFormer());
-
-   }
-
-   private void onCopyFormer()
-   {
-      System.out.println("RevertablePopupPanel.onCopyFormer");
-   }
-
-   private void onRevertChanged()
-   {
-      System.out.println("RevertablePopupPanel.onRevertChanged");
    }
 }

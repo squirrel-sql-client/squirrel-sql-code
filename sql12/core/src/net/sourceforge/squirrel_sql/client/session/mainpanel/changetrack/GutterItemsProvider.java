@@ -6,6 +6,8 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -29,14 +31,34 @@ public class GutterItemsProvider
       _sqlEntry = sqlEntry;
       _changeTrackPanel = changeTrackPanel;
       _gutterItemsProviderListener = gutterItemsProviderListener;
-      _changeTrackingTrigger = new Timer(1000, e -> onTriggerChangeTracking());
+      _changeTrackingTrigger = new Timer(300, e -> onTriggerChangeTracking());
       _changeTrackingTrigger.setRepeats(false);
 
       fileEditorAPI.getFileHandler().setChangeTrackAgainstListener(changeTrackAgainstText -> onChangeTrackAgainstChanged(changeTrackAgainstText));
 
-      sqlEntry.getTextComponent().addKeyListener(new KeyAdapter()
-      {
-         public void keyTyped(KeyEvent e)
+//      sqlEntry.getTextComponent().addKeyListener(new KeyAdapter()
+//      {
+//         public void keyTyped(KeyEvent e)
+//         {
+//            triggerChangeTracking();
+//         }
+//      });
+
+      sqlEntry.getTextComponent().getDocument().addDocumentListener(new DocumentListener() {
+         @Override
+         public void insertUpdate(DocumentEvent e)
+         {
+            triggerChangeTracking();
+         }
+
+         @Override
+         public void removeUpdate(DocumentEvent e)
+         {
+            triggerChangeTracking();
+         }
+
+         @Override
+         public void changedUpdate(DocumentEvent e)
          {
             triggerChangeTracking();
          }
@@ -72,7 +94,7 @@ public class GutterItemsProvider
    {
       try
       {
-         List<GutterItem> gutterItems = GutterItemsCreater.createGutterItems(_sqlEntry, _changeTrackPanel, _changeTrackAgainstLines);
+         List<GutterItem> gutterItems = GutterItemsCreator.createGutterItems(_sqlEntry, _changeTrackPanel, _changeTrackAgainstLines);
 
          SwingUtilities.invokeLater(() -> _gutterItemsProviderListener.updateGutterItems(gutterItems));
       }

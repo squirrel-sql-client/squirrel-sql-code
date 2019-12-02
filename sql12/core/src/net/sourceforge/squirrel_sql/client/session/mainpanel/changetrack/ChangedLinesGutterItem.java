@@ -1,12 +1,13 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.text.BadLocationException;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -111,7 +112,7 @@ public class ChangedLinesGutterItem implements GutterItem
 
 
    @Override
-   public void leftShowPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
+   public void leftShowPopupIfHit(MouseEvent me, JPanel trackingGutterLeft)
    {
       Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _changedLinesCount);
 
@@ -120,13 +121,38 @@ public class ChangedLinesGutterItem implements GutterItem
          return;
       }
 
-      if(rect.intersects(new Rectangle(e.getPoint(), new Dimension(1,1))))
+      if(rect.intersects(new Rectangle(me.getPoint(), new Dimension(1,1))))
       {
          JPopupMenu popupMenu = new JPopupMenu();
-         popupMenu.add(new RevertablePopupPanel(_formerText, _sqlEntry.getTextComponent().getFont()));
-         popupMenu.show(trackingGutterLeft, ChangeTrackPanel.LEFT_GUTTER_WIDTH, e.getY());
+         RevertablePopupPanel revertablePopupPanel = new RevertablePopupPanel(_formerText, _sqlEntry.getTextComponent().getFont());
+         revertablePopupPanel.btnCopy.addActionListener(ae -> CopyToClipboardUtil.copyToClip(_formerText));
+
+         revertablePopupPanel.btnRevert.addActionListener(ae -> onRevert(popupMenu));
+
+         popupMenu.add(revertablePopupPanel);
+         popupMenu.show(trackingGutterLeft, ChangeTrackPanel.LEFT_GUTTER_WIDTH, me.getY());
 
       }
 
    }
+
+   private void onRevert(JPopupMenu popupMenu)
+   {
+      try
+      {
+         int beginPos = _sqlEntry.getTextComponent().getLineStartOffset(_beginLine - 1);
+         int endPos = _sqlEntry.getTextComponent().getLineEndOffset(_beginLine + _changedLinesCount - 2);
+         _sqlEntry.setSelectionStart(beginPos);
+         _sqlEntry.setSelectionEnd(endPos - 1);
+
+         _sqlEntry.replaceSelection(_formerText);
+
+         popupMenu.setVisible(false);
+      }
+      catch (BadLocationException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
 }
