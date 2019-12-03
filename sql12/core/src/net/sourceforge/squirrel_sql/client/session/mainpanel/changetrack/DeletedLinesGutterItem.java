@@ -19,13 +19,15 @@ public class DeletedLinesGutterItem implements GutterItem
 {
    private ChangeTrackPanel _changeTrackPanel;
    private final ISQLEntryPanel _sqlEntry;
+   private int _lineCount;
    private final int _lineBefore;
    private final String _deletedText;
 
-   public DeletedLinesGutterItem(ChangeTrackPanel changeTrackPanel, ISQLEntryPanel sqlEntry, int lineBefore, String deletedText)
+   public DeletedLinesGutterItem(ChangeTrackPanel changeTrackPanel, ISQLEntryPanel sqlEntry, int lineCount, int lineBefore, String deletedText)
    {
       _changeTrackPanel = changeTrackPanel;
       _sqlEntry = sqlEntry;
+      _lineCount = lineCount;
       _lineBefore = lineBefore;
       _deletedText = deletedText;
    }
@@ -40,7 +42,23 @@ public class DeletedLinesGutterItem implements GutterItem
          return;
       }
 
-      paintArrow(g, rectBefore.x, rectBefore.y + rectBefore.height, rectBefore.x + rectBefore.width, rectBefore.y + rectBefore.height);
+      int y = calculateY(rectBefore);
+
+      paintArrow(g, rectBefore.x, y, rectBefore.x + rectBefore.width, y);
+   }
+
+   private int calculateY(Rectangle rectBefore)
+   {
+      int y;
+      if (rectBefore.y < 2)
+      {
+         y = 2;
+      }
+      else
+      {
+         y = rectBefore.y + rectBefore.height;
+      }
+      return y;
    }
 
    @Override
@@ -64,12 +82,21 @@ public class DeletedLinesGutterItem implements GutterItem
    {
       try
       {
-         int beginPos = _sqlEntry.getTextComponent().getLineStartOffset(_lineBefore);
-         //int endPos = _sqlEntry.getTextComponent().getLineEndOffset(_lineBefore);
-         _sqlEntry.setCaretPosition(beginPos);
-         //_sqlEntry.setSelectionEnd(beginPos-1);
+         int insertPos;
 
-         _sqlEntry.replaceSelection(_deletedText + "\n");
+         if( _lineCount <= _lineBefore)
+         {
+            insertPos = _sqlEntry.getTextComponent().getLineEndOffset(_lineCount - 1);
+         }
+         else
+         {
+            insertPos = _sqlEntry.getTextComponent().getLineStartOffset(_lineBefore);
+         }
+
+
+         _sqlEntry.setCaretPosition(insertPos);
+
+         _sqlEntry.replaceSelection(_deletedText);
 
          popupMenu.setVisible(false);
       }
@@ -88,7 +115,9 @@ public class DeletedLinesGutterItem implements GutterItem
          return false;
       }
 
-      Polygon triangle = getTriangle(rectBefore.x, rectBefore.y + rectBefore.height, rectBefore.x + rectBefore.width, rectBefore.y + rectBefore.height);
+      int y = calculateY(rectBefore);
+
+      Polygon triangle = getTriangle(rectBefore.x, y, rectBefore.x + rectBefore.width, y);
 
       return triangle.getBounds().intersects(new Rectangle(e.getPoint(), new Dimension(1, 1)));
    }

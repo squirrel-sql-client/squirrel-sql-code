@@ -17,9 +17,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import java.awt.Frame;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -144,20 +142,11 @@ public class FileManagementCore
       }
 
       SquirrelPreferences prefs = Main.getApplication().getSquirrelPreferences();
-      FileInputStream fis = null;
-      BufferedInputStream bis = null;
+
+
       try
       {
-         StringBuffer sb = new StringBuffer();
-         fis = new FileInputStream(file);
-         bis = new BufferedInputStream(fis);
-         byte[] bytes = new byte[2048];
-         int iRead = bis.read(bytes);
-         while (iRead != -1)
-         {
-            sb.append(new String(bytes, 0, iRead));
-            iRead = bis.read(bytes);
-         }
+         StringBuffer sb = FileManagementUtil.readFile(file);
 
          if (false == appendToExisting)
          {
@@ -176,11 +165,7 @@ public class FileManagementCore
          s_log.error(e);
          return false;
       }
-      finally
-      {
-         ioUtil.closeInputStream(bis);
-         ioUtil.closeInputStream(fis);
-      }
+
    }
 
    private void memorizeFile(File file, SquirrelPreferences prefs)

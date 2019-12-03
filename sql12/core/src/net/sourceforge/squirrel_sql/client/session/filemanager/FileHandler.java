@@ -6,20 +6,17 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackAgainstListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackBaseListener;
 import net.sourceforge.squirrel_sql.client.util.PrintUtilities;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
 public class FileHandler
 {
@@ -32,7 +29,7 @@ public class FileHandler
    private boolean _fileOpened = false;
    private boolean _fileSaved = false;
    private boolean _unsavedEdits = false;
-   private ChangeTrackAgainstListener _changeTrackAgainstListener;
+   private ChangeTrackBaseListener _changeTrackBaseListener;
 
 
    public FileHandler(IFileEditorAPI fileEditorAPI, TitleFilePathHandler titleFileHandler)
@@ -306,34 +303,27 @@ public class FileHandler
       _fileManagementCore.replaceSqlFileExtensionFilterBy(fileExtensionFilter, fileEndingWithDot);
    }
 
-   public void setChangeTrackAgainstListener(ChangeTrackAgainstListener changeTrackAgainstListener)
+   public void setChangeTrackBaseListener(ChangeTrackBaseListener changeTrackBaseListener)
    {
-      _changeTrackAgainstListener = changeTrackAgainstListener;
+      _changeTrackBaseListener = changeTrackBaseListener;
 
       fireChangeTrackListener();
    }
 
    private void fireChangeTrackListener()
    {
-      try
+      if(null == _changeTrackBaseListener)
       {
-         if(null == _changeTrackAgainstListener)
-         {
-            return;
-         }
-
-         if(null != _fileManagementCore.getFile())
-         {
-            _changeTrackAgainstListener.changeTrackAgainstChanged(Files.readAllLines(_fileManagementCore.getFile().toPath()));
-         }
-         else
-         {
-            _changeTrackAgainstListener.changeTrackAgainstChanged(null);
-         }
+         return;
       }
-      catch (IOException e)
+
+      if(null != _fileManagementCore.getFile())
       {
-         throw Utilities.wrapRuntime(e);
+         _changeTrackBaseListener.changeTrackBaseChanged(_fileEditorAPI.getEntireSQLScript());
+      }
+      else
+      {
+         _changeTrackBaseListener.changeTrackBaseChanged(null);
       }
    }
 }

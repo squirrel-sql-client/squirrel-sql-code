@@ -18,19 +18,26 @@ import java.util.List;
 public class GutterItemsCreator
 {
 
-   public static List<GutterItem> createGutterItems(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, List<String> originalLines)
+   public static List<GutterItem> createGutterItems(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, String changeTrackBase)
    {
       try
       {
-         if(null == originalLines)
+         if(null == changeTrackBase)
          {
             return Collections.EMPTY_LIST;
          }
 
 
+         List<String> changeTrackBaseLines = Arrays.asList(changeTrackBase.split("\n", -1));
+
          List<String> currentLines = Arrays.asList(sqlEntry.getText().split("\n", -1));
 
-         Patch<String> diff = DiffUtils.diff(originalLines, currentLines);
+//         if(0 < currentLines.size() && "".equals(currentLines.get(currentLines.size() - 1)))
+//         {
+//            currentLines.remove(currentLines.size() - 1);
+//         }
+
+         Patch<String> diff = DiffUtils.diff(changeTrackBaseLines, currentLines);
 
 
          List<GutterItem> gutterItems = new ArrayList<>();
@@ -46,11 +53,7 @@ public class GutterItemsCreator
                   gutterItems.add(createChangedLinesGutterItem(sqlEntry, changeTrackPanel, (ChangeDelta<String>) delta));
                   break;
                case DELETE:
-                  GutterItem deletedLinesGutterItem = createDeletedLinesGutterItem(sqlEntry, changeTrackPanel, (DeleteDelta<String>) delta, currentLines.size());
-                  if (null != deletedLinesGutterItem)
-                  {
-                     gutterItems.add(deletedLinesGutterItem);
-                  }
+                  gutterItems.add(createDeletedLinesGutterItem(sqlEntry, changeTrackPanel, (DeleteDelta<String>) delta, currentLines.size()));
                   break;
             }
          }
@@ -71,14 +74,8 @@ public class GutterItemsCreator
 
    private static GutterItem createDeletedLinesGutterItem(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, DeleteDelta<String> delta, int currentLineCount)
    {
-      String deletedText = String.join("\n", delta.getSource().getLines());
-      if(delta.getTarget().getPosition() == currentLineCount && StringUtilities.isEmpty(deletedText, true))
-      {
-         return null;
-      }
-
-
-      return new DeletedLinesGutterItem(changeTrackPanel, sqlEntry, delta.getTarget().getPosition(), deletedText);
+      String deletedText = String.join("\n", delta.getSource().getLines()) + "\n";
+      return new DeletedLinesGutterItem(changeTrackPanel, sqlEntry, currentLineCount, delta.getTarget().getPosition(), deletedText);
       //return new DeletedLinesGutterItem(changeTrackPanel, sqlEntry,12, "Hier Stand früher mal Gerd\nund wurde gelöscht");
    }
 

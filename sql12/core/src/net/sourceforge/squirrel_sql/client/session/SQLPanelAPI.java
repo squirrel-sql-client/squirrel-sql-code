@@ -50,7 +50,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SqlPanelListener;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackAgainstListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;

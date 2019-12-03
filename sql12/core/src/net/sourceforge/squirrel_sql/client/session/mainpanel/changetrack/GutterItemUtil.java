@@ -13,7 +13,7 @@ public class GutterItemUtil
    {
       try
       {
-         int beginLineTransformed = beginLine - 1;
+         int beginLineTransformed = Math.max(beginLine - 1, 0);
          int numberOfLinesTransformed = numberOfLines - 1;
 
          int lastLine = Math.min(beginLineTransformed + numberOfLinesTransformed, sqlEntry.getTextComponent().getLineCount() -1);
