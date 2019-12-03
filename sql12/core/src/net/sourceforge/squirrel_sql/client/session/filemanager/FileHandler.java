@@ -15,7 +15,6 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import java.io.File;

@@ -693,7 +693,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	@Override
 	public void setCaretPosition(int caretPos)
 	{
-		_panel.getSQLEntryPanel().getCaretPosition();
+		_panel.getSQLEntryPanel().setCaretPosition(caretPos);
 	}
 
 	@Override
