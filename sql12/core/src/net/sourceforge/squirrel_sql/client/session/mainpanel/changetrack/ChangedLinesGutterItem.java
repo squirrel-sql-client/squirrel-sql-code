@@ -143,14 +143,25 @@ public class ChangedLinesGutterItem implements GutterItem
       try
       {
          int beginPos = _sqlEntry.getTextComponent().getLineStartOffset(getBeginLine() - 1);
-         int endPos = _sqlEntry.getTextComponent().getLineEndOffset(getBeginLine() + getChangedLinesCount()- 2);
+         int endPos = _sqlEntry.getTextComponent().getLineEndOffset(getBeginLine() -1 + getChangedLinesCount() - 1);
 
          _sqlEntry.setSelectionStart(beginPos);
          _sqlEntry.setSelectionEnd(endPos);
 
-         String revertText = String.join("\n", _delta.getSource().getLines())  + "\n";
+         String revertText;
+
+         if (endPos == _sqlEntry.getText().length())
+         {
+            revertText = String.join("\n", _delta.getSource().getLines());
+         }
+         else
+         {
+            revertText = String.join("\n", _delta.getSource().getLines())  + "\n";
+         }
 
          _sqlEntry.replaceSelection(revertText);
+
+         _sqlEntry.setCaretPosition(beginPos);
 
          popupMenu.setVisible(false);
       }
