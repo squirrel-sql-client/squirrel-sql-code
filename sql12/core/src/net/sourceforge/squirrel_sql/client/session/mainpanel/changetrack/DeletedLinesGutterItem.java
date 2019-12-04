@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
+import com.github.difflib.patch.DeleteDelta;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -19,23 +20,21 @@ public class DeletedLinesGutterItem implements GutterItem
 {
    private ChangeTrackPanel _changeTrackPanel;
    private final ISQLEntryPanel _sqlEntry;
-   private int _lineCount;
-   private final int _lineBefore;
-   private final String _deletedText;
+   private int _scriptLineCount;
+   private DeleteDelta<String> _delta;
 
-   public DeletedLinesGutterItem(ChangeTrackPanel changeTrackPanel, ISQLEntryPanel sqlEntry, int lineCount, int lineBefore, String deletedText)
+   public DeletedLinesGutterItem(ChangeTrackPanel changeTrackPanel, ISQLEntryPanel sqlEntry, int scriptLineCount, DeleteDelta<String> delta)
    {
       _changeTrackPanel = changeTrackPanel;
       _sqlEntry = sqlEntry;
-      _lineCount = lineCount;
-      _lineBefore = lineBefore;
-      _deletedText = deletedText;
+      _scriptLineCount = scriptLineCount;
+      _delta = delta;
    }
 
    @Override
    public void leftPaint(Graphics g)
    {
-      Rectangle rectBefore = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _lineBefore, 1);
+      Rectangle rectBefore = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, getDeletePosition(), 1);
 
       if(null == rectBefore)
       {
@@ -66,10 +65,13 @@ public class DeletedLinesGutterItem implements GutterItem
    {
       if(intersects(me))
       {
-         JPopupMenu popupMenu = new JPopupMenu();
-         RevertablePopupPanel revertablePopupPanel = new RevertablePopupPanel(_deletedText, _sqlEntry.getTextComponent().getFont());
+         String displayText = String.join("\n", _delta.getSource().getLines());
 
-         revertablePopupPanel.btnCopy.addActionListener(ae -> CopyToClipboardUtil.copyToClip(_deletedText));
+
+         JPopupMenu popupMenu = new JPopupMenu();
+         RevertablePopupPanel revertablePopupPanel = new RevertablePopupPanel(displayText, _sqlEntry.getTextComponent().getFont());
+
+         revertablePopupPanel.btnCopy.addActionListener(ae -> CopyToClipboardUtil.copyToClip(displayText));
 
          revertablePopupPanel.btnRevert.addActionListener(ae -> onRevert(popupMenu));
 
@@ -84,19 +86,20 @@ public class DeletedLinesGutterItem implements GutterItem
       {
          int insertPos;
 
-         if( _lineCount <= _lineBefore)
+         if( _scriptLineCount <= getDeletePosition())
          {
-            insertPos = _sqlEntry.getTextComponent().getLineEndOffset(_lineCount - 1);
+            insertPos = _sqlEntry.getTextComponent().getLineEndOffset(_scriptLineCount - 1);
          }
          else
          {
-            insertPos = _sqlEntry.getTextComponent().getLineStartOffset(_lineBefore);
+            insertPos = _sqlEntry.getTextComponent().getLineStartOffset(getDeletePosition());
          }
 
 
          _sqlEntry.setCaretPosition(insertPos);
 
-         _sqlEntry.replaceSelection(_deletedText);
+         String revertText = String.join("\n", _delta.getSource().getLines()) + "\n";
+         _sqlEntry.replaceSelection(revertText);
 
          popupMenu.setVisible(false);
       }
@@ -106,9 +109,14 @@ public class DeletedLinesGutterItem implements GutterItem
       }
    }
 
+   private int getDeletePosition()
+   {
+      return _delta.getTarget().getPosition();
+   }
+
    private boolean intersects(MouseEvent e)
    {
-      Rectangle rectBefore = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _lineBefore, 1);
+      Rectangle rectBefore = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, getDeletePosition(), 1);
 
       if(null == rectBefore)
       {
@@ -125,7 +133,7 @@ public class DeletedLinesGutterItem implements GutterItem
    @Override
    public void rightPaint(Graphics g)
    {
-      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _lineBefore, 1);
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, getDeletePosition(), 1);
 
       GutterItemUtil.paintRightGutterMark(g, mark, getColor());
    }
@@ -139,7 +147,7 @@ public class DeletedLinesGutterItem implements GutterItem
    @Override
    public void rightMoveCursorWhenHit(MouseEvent e)
    {
-      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _lineBefore, 1);
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, getDeletePosition(), 1);
 
       if(null == mark)
       {
@@ -150,7 +158,7 @@ public class DeletedLinesGutterItem implements GutterItem
       {
          try
          {
-            int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(Math.max(_lineBefore -1, 0));
+            int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(Math.max(getDeletePosition() -1, 0));
             _sqlEntry.setCaretPosition(lineStartPosition);
          }
          catch (BadLocationException ex)
@@ -162,7 +170,7 @@ public class DeletedLinesGutterItem implements GutterItem
    @Override
    public void rightGutterMouseMoved(MouseEvent e, CursorHandler cursorHandler)
    {
-      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _lineBefore, 1);
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, getDeletePosition(), 1);
 
       if(null == mark)
       {

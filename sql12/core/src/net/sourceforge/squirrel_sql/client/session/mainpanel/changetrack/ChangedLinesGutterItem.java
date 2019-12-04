@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
+import com.github.difflib.patch.ChangeDelta;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -17,22 +18,21 @@ public class ChangedLinesGutterItem implements GutterItem
 {
    private ChangeTrackPanel _changeTrackPanel;
    private final ISQLEntryPanel _sqlEntry;
-   private final int _beginLine;
-   private final int _changedLinesCount;
-   private final String _formerText;
+   private ChangeDelta<String> _delta;
 
-   public ChangedLinesGutterItem(ChangeTrackPanel changeTrackPanel, ISQLEntryPanel sqlEntry, int beginLine, int changedLinesCount, String formerText)
+   public ChangedLinesGutterItem(ChangeTrackPanel changeTrackPanel, ISQLEntryPanel sqlEntry, ChangeDelta<String> delta)
    {
       _changeTrackPanel = changeTrackPanel;
       _sqlEntry = sqlEntry;
-      _beginLine = beginLine;
-      _changedLinesCount = changedLinesCount;
-      _formerText = formerText;
+      _delta = delta;
    }
 
    public void leftPaint(Graphics g)
    {
-      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _changedLinesCount);
+      int beginLine = getBeginLine();
+      int changedLinesCount = getChangedLinesCount();
+
+      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, beginLine, changedLinesCount);
 
       if(null == rect)
       {
@@ -54,7 +54,7 @@ public class ChangedLinesGutterItem implements GutterItem
    @Override
    public void rightPaint(Graphics g)
    {
-      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _beginLine, _changedLinesCount);
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, getBeginLine(), getChangedLinesCount());
 
       GutterItemUtil.paintRightGutterMark(g, mark, getColor());
    }
@@ -62,7 +62,7 @@ public class ChangedLinesGutterItem implements GutterItem
    @Override
    public void leftGutterMouseMoved(MouseEvent e, CursorHandler cursorHandler)
    {
-      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _changedLinesCount);
+      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, getBeginLine(), getChangedLinesCount());
 
       if(null == rect)
       {
@@ -75,7 +75,7 @@ public class ChangedLinesGutterItem implements GutterItem
    @Override
    public void rightMoveCursorWhenHit(MouseEvent e)
    {
-      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _beginLine, _changedLinesCount);
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, getBeginLine(), getChangedLinesCount());
 
       if(null == mark)
       {
@@ -87,7 +87,7 @@ public class ChangedLinesGutterItem implements GutterItem
       {
          try
          {
-            int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(_beginLine - 1);
+            int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(getBeginLine() - 1);
             _sqlEntry.setCaretPosition(lineStartPosition);
          }
          catch (BadLocationException ex)
@@ -99,7 +99,7 @@ public class ChangedLinesGutterItem implements GutterItem
    @Override
    public void rightGutterMouseMoved(MouseEvent e, CursorHandler cursorHandler)
    {
-      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _beginLine, _changedLinesCount);
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, getBeginLine(), getChangedLinesCount());
 
       if(null == mark)
       {
@@ -114,7 +114,7 @@ public class ChangedLinesGutterItem implements GutterItem
    @Override
    public void leftShowPopupIfHit(MouseEvent me, JPanel trackingGutterLeft)
    {
-      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _changedLinesCount);
+      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, getBeginLine(), getChangedLinesCount());
 
       if(null == rect)
       {
@@ -123,9 +123,11 @@ public class ChangedLinesGutterItem implements GutterItem
 
       if(rect.intersects(new Rectangle(me.getPoint(), new Dimension(1,1))))
       {
+         String displayText = String.join("\n", _delta.getSource().getLines());
+
          JPopupMenu popupMenu = new JPopupMenu();
-         RevertablePopupPanel revertablePopupPanel = new RevertablePopupPanel(_formerText, _sqlEntry.getTextComponent().getFont());
-         revertablePopupPanel.btnCopy.addActionListener(ae -> CopyToClipboardUtil.copyToClip(_formerText));
+         RevertablePopupPanel revertablePopupPanel = new RevertablePopupPanel(displayText, _sqlEntry.getTextComponent().getFont());
+         revertablePopupPanel.btnCopy.addActionListener(ae -> CopyToClipboardUtil.copyToClip(displayText));
 
          revertablePopupPanel.btnRevert.addActionListener(ae -> onRevert(popupMenu));
 
@@ -140,12 +142,15 @@ public class ChangedLinesGutterItem implements GutterItem
    {
       try
       {
-         int beginPos = _sqlEntry.getTextComponent().getLineStartOffset(_beginLine - 1);
-         int endPos = _sqlEntry.getTextComponent().getLineEndOffset(_beginLine + _changedLinesCount - 2);
-         _sqlEntry.setSelectionStart(beginPos);
-         _sqlEntry.setSelectionEnd(endPos - 1);
+         int beginPos = _sqlEntry.getTextComponent().getLineStartOffset(getBeginLine() - 1);
+         int endPos = _sqlEntry.getTextComponent().getLineEndOffset(getBeginLine() + getChangedLinesCount()- 2);
 
-         _sqlEntry.replaceSelection(_formerText);
+         _sqlEntry.setSelectionStart(beginPos);
+         _sqlEntry.setSelectionEnd(endPos);
+
+         String revertText = String.join("\n", _delta.getSource().getLines())  + "\n";
+
+         _sqlEntry.replaceSelection(revertText);
 
          popupMenu.setVisible(false);
       }
@@ -153,6 +158,17 @@ public class ChangedLinesGutterItem implements GutterItem
       {
          throw Utilities.wrapRuntime(e);
       }
+   }
+
+
+   private int getChangedLinesCount()
+   {
+      return _delta.getTarget().getLines().size();
+   }
+
+   private int getBeginLine()
+   {
+      return _delta.getTarget().getPosition() + 1;
    }
 
 }

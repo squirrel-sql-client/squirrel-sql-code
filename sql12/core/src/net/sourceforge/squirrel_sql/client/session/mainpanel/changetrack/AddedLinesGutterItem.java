@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
+import com.github.difflib.patch.InsertDelta;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
@@ -16,20 +17,21 @@ public class AddedLinesGutterItem implements GutterItem
 {
    private ChangeTrackPanel _changeTrackPanel;
    private final ISQLEntryPanel _sqlEntry;
-   private final int _beginLine;
-   private final int _newLinesCount;
+   private InsertDelta<String> _delta;
 
-   public AddedLinesGutterItem(ChangeTrackPanel changeTrackPanel, ISQLEntryPanel sqlEntry, int beginLine, int newLinesCount)
+   public AddedLinesGutterItem(ChangeTrackPanel changeTrackPanel, ISQLEntryPanel sqlEntry,  InsertDelta<String> delta)
    {
       _changeTrackPanel = changeTrackPanel;
       _sqlEntry = sqlEntry;
-      _beginLine = beginLine;
-      _newLinesCount = newLinesCount;
+      _delta = delta;
    }
 
    public void leftPaint(Graphics g)
    {
-      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _newLinesCount);
+      int beginLine = getBeginLine();
+      int newLinesCount = getNewLinesCount();
+
+      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, beginLine, newLinesCount);
 
       if(null == rect)
       {
@@ -51,7 +53,7 @@ public class AddedLinesGutterItem implements GutterItem
    @Override
    public void rightPaint(Graphics g)
    {
-      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry,_beginLine, _newLinesCount);
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, getBeginLine(), getNewLinesCount());
 
       GutterItemUtil.paintRightGutterMark(g, mark, getColor());
    }
@@ -59,7 +61,7 @@ public class AddedLinesGutterItem implements GutterItem
    @Override
    public void leftGutterMouseMoved(MouseEvent e, CursorHandler cursorHandler)
    {
-      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _newLinesCount);
+      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, getBeginLine(), getNewLinesCount());
 
       if(null == rect)
       {
@@ -73,7 +75,7 @@ public class AddedLinesGutterItem implements GutterItem
    @Override
    public void rightMoveCursorWhenHit(MouseEvent e)
    {
-      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _beginLine, _newLinesCount);
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, getBeginLine(), getNewLinesCount());
 
       if(null == mark)
       {
@@ -85,7 +87,7 @@ public class AddedLinesGutterItem implements GutterItem
       {
          try
          {
-            int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(_beginLine - 1);
+            int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(getBeginLine() - 1);
             _sqlEntry.setCaretPosition(lineStartPosition);
          }
          catch (BadLocationException ex)
@@ -97,7 +99,7 @@ public class AddedLinesGutterItem implements GutterItem
    @Override
    public void rightGutterMouseMoved(MouseEvent e, CursorHandler cursorHandler)
    {
-      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, _beginLine, _newLinesCount);
+      Rectangle mark =  GutterItemUtil.getRightGutterMarkBoundsForLines(_changeTrackPanel, _sqlEntry, getBeginLine(), getNewLinesCount());
 
       if(null == mark)
       {
@@ -112,7 +114,7 @@ public class AddedLinesGutterItem implements GutterItem
    @Override
    public void leftShowPopupIfHit(MouseEvent e, JPanel trackingGutterLeft)
    {
-      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, _beginLine, _newLinesCount);
+      Rectangle rect = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, getBeginLine(), getNewLinesCount());
 
       if(null == rect)
       {
@@ -136,11 +138,17 @@ public class AddedLinesGutterItem implements GutterItem
    {
       try
       {
-         int beginPos = _sqlEntry.getTextComponent().getLineStartOffset(_beginLine -1);
-         int endPos = _sqlEntry.getTextComponent().getLineEndOffset(_beginLine + _newLinesCount -2);
+         int beginPos = _sqlEntry.getTextComponent().getLineStartOffset(getBeginLine() - 1);
+         int endPos = _sqlEntry.getTextComponent().getLineEndOffset(getBeginLine() - 1 + getNewLinesCount() - 1);
+
+
+         if (endPos == _sqlEntry.getText().length())
+         {
+            --beginPos;
+         }
+
          _sqlEntry.setSelectionStart(beginPos);
          _sqlEntry.setSelectionEnd(endPos);
-
          _sqlEntry.replaceSelection("");
 
          popupMenu.setVisible(false);
@@ -149,6 +157,16 @@ public class AddedLinesGutterItem implements GutterItem
       {
          throw Utilities.wrapRuntime(e);
       }
+   }
+
+   private int getNewLinesCount()
+   {
+      return _delta.getTarget().getLines().size();
+   }
+
+   private int getBeginLine()
+   {
+      return _delta.getTarget().getPosition() + 1;
    }
 
 }

@@ -74,20 +74,18 @@ public class GutterItemsCreator
 
    private static GutterItem createDeletedLinesGutterItem(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, DeleteDelta<String> delta, int currentLineCount)
    {
-      String deletedText = String.join("\n", delta.getSource().getLines()) + "\n";
-      return new DeletedLinesGutterItem(changeTrackPanel, sqlEntry, currentLineCount, delta.getTarget().getPosition(), deletedText);
-      //return new DeletedLinesGutterItem(changeTrackPanel, sqlEntry,12, "Hier Stand früher mal Gerd\nund wurde gelöscht");
+      return new DeletedLinesGutterItem(changeTrackPanel, sqlEntry, currentLineCount, delta);
    }
 
    private static GutterItem createChangedLinesGutterItem(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, ChangeDelta<String> delta)
    {
-      //return new ChangedLinesGutterItem(changeTrackPanel, sqlEntry,25, 3, "Hier Stand früher mal Gerd\nund wurde geändert");
-      return new ChangedLinesGutterItem(changeTrackPanel, sqlEntry, delta.getTarget().getPosition() + 1, delta.getTarget().getLines().size(), String.join("\n", delta.getSource().getLines()));
+//      String formerText = String.join("\n", delta.getSource().getLines())  + "\n";
+//      return new ChangedLinesGutterItem(changeTrackPanel, sqlEntry, delta.getTarget().getPosition() + 1, delta.getTarget().getLines().size(), formerText);
+      return new ChangedLinesGutterItem(changeTrackPanel, sqlEntry, delta);
    }
 
    private static GutterItem createAddedLinesGutterItem(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, InsertDelta<String> delta)
    {
-//      return new AddedLinesGutterItem(changeTrackPanel, sqlEntry,35, 2);
-      return new AddedLinesGutterItem(changeTrackPanel, sqlEntry,delta.getTarget().getPosition() + 1 , delta.getTarget().getLines().size());
+      return new AddedLinesGutterItem(changeTrackPanel, sqlEntry,delta);
    }
 }
