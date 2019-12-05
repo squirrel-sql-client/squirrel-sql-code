@@ -8,7 +8,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -20,6 +23,7 @@ public class RevertablePopupPanel extends JPanel
 
    JButton btnRevert;
    JButton btnCopy;
+   JTextPane txtFormerText;
 
 
    public RevertablePopupPanel(String formerText, Font sqlEntryAreaFont)
@@ -40,13 +44,12 @@ public class RevertablePopupPanel extends JPanel
       add(GUIUtils.styleAsToolbarButton(btnCopy, false, false), gbc);
 
       gbc = new GridBagConstraints(0,1,2,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2,0,0,0), 0,0);
-      MultipleLineLabel lblFormerText = new MultipleLineLabel(formerText);
-      lblFormerText.setBackground(ChangeTrackPanel.GUTTER_COLOR);
-      lblFormerText.setFont(sqlEntryAreaFont);
-      lblFormerText.setLineWrap(false);
-      //lblFormerText.setWrapStyleWord(false);
-      add(lblFormerText, gbc);
 
-      //setBorder(BorderFactory.createLineBorder(Color.lightGray));
+      txtFormerText = new JTextPane();
+      txtFormerText.setEditable(false);
+      txtFormerText.setBackground(ChangeTrackPanel.GUTTER_COLOR);
+      txtFormerText.setFont(sqlEntryAreaFont);
+      txtFormerText.setText(formerText);
+      add(txtFormerText, gbc);
    }
 }

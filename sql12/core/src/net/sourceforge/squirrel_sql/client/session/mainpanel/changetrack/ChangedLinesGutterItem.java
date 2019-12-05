@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import com.github.difflib.patch.ChangeDelta;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.matchpatch.ChangeRenderer;
 import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
@@ -123,13 +124,18 @@ public class ChangedLinesGutterItem implements GutterItem
 
       if(rect.intersects(new Rectangle(me.getPoint(), new Dimension(1,1))))
       {
-         String displayText = String.join("\n", _delta.getSource().getLines());
+         String sourceText = String.join("\n", _delta.getSource().getLines());
+         String targetText = String.join("\n", _delta.getTarget().getLines());
 
          JPopupMenu popupMenu = new JPopupMenu();
-         RevertablePopupPanel revertablePopupPanel = new RevertablePopupPanel(displayText, _sqlEntry.getTextComponent().getFont());
-         revertablePopupPanel.btnCopy.addActionListener(ae -> CopyToClipboardUtil.copyToClip(displayText));
-
+         RevertablePopupPanel revertablePopupPanel = new RevertablePopupPanel(sourceText, _sqlEntry.getTextComponent().getFont());
+         revertablePopupPanel.btnCopy.addActionListener(ae -> CopyToClipboardUtil.copyToClip(sourceText));
          revertablePopupPanel.btnRevert.addActionListener(ae -> onRevert(popupMenu));
+
+         revertablePopupPanel.txtFormerText.setText("");
+         ChangeRenderer.renderChangeInTextPane(revertablePopupPanel.txtFormerText, sourceText, targetText);
+
+
 
          popupMenu.add(revertablePopupPanel);
          popupMenu.show(trackingGutterLeft, ChangeTrackPanel.LEFT_GUTTER_WIDTH, me.getY());
