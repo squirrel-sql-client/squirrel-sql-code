@@ -12,8 +12,8 @@ import java.util.LinkedList;
 public class ChangeRenderer
 {
 
-   public static final Color BEFORE_INSERT_COLOR = new Color(204, 204, 255);
-   public static final Color AFTER_INSERT_COLOR = new Color(204, 255, 255);
+   public static final Color BEFORE_INSERT_COLOR = new Color(148, 255, 81);
+   public static final Color AFTER_INSERT_COLOR = new Color(255, 170, 109);
 
    public static void renderChangeInTextPane(JTextPane txtFormerText, String sourceText, String targetText)
    {
@@ -91,6 +91,7 @@ public class ChangeRenderer
          }
          else
          {
+            StyleConstants.setBackground(attributes, BEFORE_INSERT_COLOR);
             insert(txtFormerText, str, attributes);
          }
       }
@@ -114,7 +115,7 @@ public class ChangeRenderer
          if (str.length() > 1)
          {
             StyleConstants.setBackground(attributes, defaultBg);
-            insert(txtFormerText, str.substring(1, str.length() - 1), attributes);
+            insert(txtFormerText, str.substring(1), attributes);
          }
       }
       else
