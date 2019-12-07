@@ -29,13 +29,12 @@ public class ChangeRenderer
          switch (diff.operation)
          {
             case EQUAL:
-               print(txtFormerText, diff.text, txtFormerText.getForeground(), txtFormerText.getBackground(), false, previousIsInsert(diffs, i), nextIsInsert(diffs, i));
+               print(txtFormerText, diff.text,false, previousIsInsert(diffs, i), nextIsInsert(diffs, i));
                break;
 //            case INSERT:
-//               print(txtFormerText, diff.text, txtFormerText.getForeground(), txtFormerText.getBackground(), true);
 //               break;
             case DELETE:
-               print(txtFormerText, diff.text, txtFormerText.getForeground().darker().darker(), txtFormerText.getBackground(), true, previousIsInsert(diffs, i), nextIsInsert(diffs, i));
+               print(txtFormerText, diff.text,true, previousIsInsert(diffs, i), nextIsInsert(diffs, i));
                break;
          }
       }
@@ -63,15 +62,15 @@ public class ChangeRenderer
       return false;
    }
 
-   private static void print(JTextPane txtFormerText, String str, Color foreground, Color background, boolean bold, boolean previousIsInsert, boolean nextIsInsert)
+   private static void print(JTextPane txtFormerText, String str, boolean bold, boolean previousIsInsert, boolean nextIsInsert)
    {
+      Color defaultBg = txtFormerText.getBackground();
 
       SimpleAttributeSet attributes = new SimpleAttributeSet(txtFormerText.getInputAttributes());
-      StyleConstants.setForeground(attributes, foreground);
-      StyleConstants.setBackground(attributes, background);
+      StyleConstants.setForeground(attributes, txtFormerText.getForeground());
+      StyleConstants.setBackground(attributes, defaultBg);
       StyleConstants.setBold(attributes, bold);
 
-      Color defaultBg = txtFormerText.getBackground();
 
       if(previousIsInsert && nextIsInsert)
       {
