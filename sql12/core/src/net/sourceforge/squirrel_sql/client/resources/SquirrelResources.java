@@ -139,6 +139,10 @@ public class SquirrelResources extends Resources
 		String REVERT = "revert";
 
 		String COPY = "copy";
+
+		String CHANGE_TRACK_MANUAL = "changeTrackManual";
+		String CHANGE_TRACK_FILE = "changeTrackFile";
+		String CHANGE_TRACK_GIT = "changeTrackGit";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

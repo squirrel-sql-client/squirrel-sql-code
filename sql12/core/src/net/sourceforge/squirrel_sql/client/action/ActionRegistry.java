@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
+import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsToLeftAction;
@@ -214,6 +215,8 @@ public class ActionRegistry
       actionCollection.add(new FileCloseAction(app));
       actionCollection.add(new FilePrintAction(app));
       actionCollection.add(new FileReloadAction(app));
+      actionCollection.add(new ChangeTrackAction(app));
+
       actionCollection.add(new GlobalPreferencesAction(app));
       actionCollection.add(new GotoNextResultsTabAction(app));
       actionCollection.add(new GotoPreviousResultsTabAction(app));

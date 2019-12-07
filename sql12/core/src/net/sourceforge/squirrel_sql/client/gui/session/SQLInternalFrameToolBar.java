@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleObjectTreeBesidesEditorAction;
@@ -20,6 +21,7 @@ import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAc
 import net.sourceforge.squirrel_sql.client.session.action.NextSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.PreviousSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeChooser;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 
@@ -52,6 +54,9 @@ class SQLInternalFrameToolBar extends ToolBar
       add(actions.get(FileCloseAction.class));
       add(actions.get(FilePrintAction.class));
       add(actions.get(FileReloadAction.class));
+
+      add(new ChangeTrackTypeChooser((ChangeTrackAction) actions.get(ChangeTrackAction.class)).getComponent());
+
       addSeparator();
       add(actions.get(PreviousSqlAction.class));
       add(actions.get(NextSqlAction.class));

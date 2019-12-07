@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.action.toolbarbuttonchooser.ToolbarButtonChooserUtil;
 import net.sourceforge.squirrel_sql.fw.gui.buttonchooser.ButtonChooser;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -45,8 +46,8 @@ public class SQLWorksheetTypeChooser
       ImageIcon iconAddSqlTab = rsrc.getIcon(SquirrelResources.IImageNames.ADD_TAB);
       ImageIcon iconNewSqlWorkSheet = rsrc.getIcon(SquirrelResources.IImageNames.NEW_SQL_WORKSHEET);
 
-      String textNewSqlWorkSheet = s_stringMgr.getString("SQLWorksheetTypeChooser.newSqlWorkSheet") + " (" + rsrc.getAcceleratorString(_action) + ")";
-      String textAddSqlTab = s_stringMgr.getString("SQLWorksheetTypeChooser.newSqlTab") + " (" + rsrc.getAcceleratorString(_action) + ")";
+      String textNewSqlWorkSheet = s_stringMgr.getString("SQLWorksheetTypeChooser.newSqlWorkSheet") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
+      String textAddSqlTab = s_stringMgr.getString("SQLWorksheetTypeChooser.newSqlTab") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
 
 
       JButton btnNewSqlWorkSheet = new JButton(textNewSqlWorkSheet, iconNewSqlWorkSheet);

@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelActionChannel;
 import net.sourceforge.squirrel_sql.client.action.ChanneledAction;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.toolbarbuttonchooser.EnabledListener;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;

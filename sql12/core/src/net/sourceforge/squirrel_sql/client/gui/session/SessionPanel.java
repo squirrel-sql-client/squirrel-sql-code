@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.rowcolumnlabel.RowColumnLabel;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
@@ -43,6 +42,7 @@ import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeChooser;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
@@ -80,7 +80,7 @@ public class SessionPanel extends JPanel
 	private MainPanel _mainPanel;
 
 	/** Toolbar for window. */
-	private MyToolBar _toolBar;
+	private SessionPanelToolBar _toolBar;
 
 	private Vector<ToolbarItem> _externallyAddedToolbarActionsAndSeparators = new Vector<ToolbarItem>();
 
@@ -249,7 +249,7 @@ public class SessionPanel extends JPanel
 					{
 						if (_toolBar == null)
 						{
-							_toolBar = new MyToolBar(session);
+							_toolBar = new SessionPanelToolBar(session);
 							for (int i = 0; i < _externallyAddedToolbarActionsAndSeparators.size(); i++)
 							{
 								ToolbarItem toolbarItem = _externallyAddedToolbarActionsAndSeparators.get(i);
@@ -469,12 +469,12 @@ public class SessionPanel extends JPanel
 		_mainPanel.performStateChanged();
 	}
 
-	private class MyToolBar extends ToolBar
+	private class SessionPanelToolBar extends ToolBar
    {
       private IObjectTreeListener _lis;
       private CatalogsPanel _catalogsPanel;
 
-      MyToolBar(final ISession session)
+      SessionPanelToolBar(final ISession session)
       {
          super();
          createGUI(session);
@@ -532,6 +532,9 @@ public class SessionPanel extends JPanel
          add(actions.get(FileCloseAction.class));
          add(actions.get(FilePrintAction.class));
          add(actions.get(FileReloadAction.class));
+
+			add(new ChangeTrackTypeChooser((ChangeTrackAction) actions.get(ChangeTrackAction.class)).getComponent());
+
          addSeparator();
          add(actions.get(PreviousSqlAction.class));
          add(actions.get(NextSqlAction.class));
