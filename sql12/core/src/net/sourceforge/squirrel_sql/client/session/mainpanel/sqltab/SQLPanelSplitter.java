@@ -10,6 +10,7 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ComponentAdapter;
@@ -52,14 +53,19 @@ public class SQLPanelSplitter extends JPanel
 
       _showObjectTree(false, false);
 
-      addComponentListener(new ComponentAdapter()
+      ComponentAdapter componentAdapter = new ComponentAdapter()
       {
          @Override
          public void componentResized(ComponentEvent e)
          {
             onComponentResized();
          }
-      });
+      };
+
+
+      addComponentListener(componentAdapter);
+
+      empty.addComponentListener(componentAdapter);
    }
 
    private void onComponentResized()
@@ -86,6 +92,7 @@ public class SQLPanelSplitter extends JPanel
 
          _splitPane.setDividerLocation(Props.getInt(PREF_OBJECT_TREE_SPLIT_DIVIDER_LOC, _sqlPanel.getWidth() / 2));
          _splitPane.setDividerSize(_standardDividerSize);
+         _splitPane.setOneTouchExpandable(true);
       }
       else
       {
@@ -95,6 +102,7 @@ public class SQLPanelSplitter extends JPanel
          }
          _splitPane.setDividerSize(0);
          _splitPane.setDividerLocation(0);
+         _splitPane.setOneTouchExpandable(false);
       }
    }
 
