@@ -55,7 +55,7 @@ class SQLInternalFrameToolBar extends ToolBar
       add(actions.get(FilePrintAction.class));
       add(actions.get(FileReloadAction.class));
 
-      add(new ChangeTrackTypeChooser((ChangeTrackAction) actions.get(ChangeTrackAction.class)).getComponent());
+      add(new ChangeTrackTypeChooser((ChangeTrackAction) actions.get(ChangeTrackAction.class), session).getComponent());
 
       addSeparator();
       add(actions.get(PreviousSqlAction.class));

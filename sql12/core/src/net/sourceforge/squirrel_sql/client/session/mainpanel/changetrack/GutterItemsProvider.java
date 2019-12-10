@@ -32,7 +32,8 @@ public class GutterItemsProvider
       _changeTrackingTrigger = new Timer(300, e -> onTriggerChangeTracking());
       _changeTrackingTrigger.setRepeats(false);
 
-      fileEditorAPI.getFileHandler().setChangeTrackBaseListener(changeTrackBase -> onChangeTrackBaseChanged(changeTrackBase));
+      fileEditorAPI.getFileHandler().setChangeTrackBaseListener(newChangeTrackBase -> onChangeTrackBaseChanged(newChangeTrackBase));
+
 
 //      sqlEntry.getTextComponent().addKeyListener(new KeyAdapter()
 //      {

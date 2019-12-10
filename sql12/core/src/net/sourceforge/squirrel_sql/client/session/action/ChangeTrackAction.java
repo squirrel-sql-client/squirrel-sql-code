@@ -3,15 +3,17 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.toolbarbuttonchooser.EnabledListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeEnum;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.SQLPanelApiChangedListener;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 public class ChangeTrackAction extends SquirrelAction  implements ISQLPanelAction
 {
 	private ISQLPanelAPI _panel;
-	private EnabledListener _enabledListener;
+	private ArrayList<SQLPanelApiChangedListener> _sqlPanelApiChangedListeners = new ArrayList<>();
+
 
 	public ChangeTrackAction(IApplication app)
 	{
@@ -20,7 +22,7 @@ public class ChangeTrackAction extends SquirrelAction  implements ISQLPanelActio
 
 	public void actionPerformed(ActionEvent e)
 	{
-		System.out.println("ChangeTrackAction.actionPerformed: " + ChangeTrackTypeEnum.getSelectedType().name());
+		_panel.getChangeTracker().rebaseChangeTrackingOnToolbarOrMenu();
 	}
 
 	public void setSQLPanel(ISQLPanelAPI panel)
@@ -28,14 +30,32 @@ public class ChangeTrackAction extends SquirrelAction  implements ISQLPanelActio
 		_panel = panel;
 		setEnabled(null != _panel);
 
-		if (null != _enabledListener)
+		for (SQLPanelApiChangedListener l : _sqlPanelApiChangedListeners.toArray(new SQLPanelApiChangedListener[0]))
 		{
-			_enabledListener.enabledChanged(isEnabled());
+			if (null != _panel)
+			{
+				l.activeSqlPanelApiChanged(_panel.getChangeTracker().getChangeTrackType());
+			}
+			else
+			{
+				l.activeSqlPanelApiChanged(null);
+			}
 		}
 	}
 
-	public void setEnabledListener(EnabledListener enabledListener)
+	public void changeTrackTypeChangedForCurrentSqlPanel(ChangeTrackTypeEnum selectedType)
 	{
-		_enabledListener = enabledListener;
+		_panel.getChangeTracker().changeTrackTypeChanged(selectedType);
+	}
+
+	public void addSQLPanelApiChangedListener(SQLPanelApiChangedListener sqlPanelApiChangedListener)
+	{
+		_sqlPanelApiChangedListeners.remove(sqlPanelApiChangedListener);
+		_sqlPanelApiChangedListeners.add(sqlPanelApiChangedListener);
+	}
+
+	public void removeSQLPanelApiChangedListener(SQLPanelApiChangedListener sqlPanelApiChangedListener)
+	{
+		_sqlPanelApiChangedListeners.remove(sqlPanelApiChangedListener);
 	}
 }

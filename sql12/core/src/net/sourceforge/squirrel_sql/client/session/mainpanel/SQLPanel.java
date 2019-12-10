@@ -267,6 +267,11 @@ public class SQLPanel extends JPanel
 		return _sqlExecPanel;
 	}
 
+	public ChangeTracker getChangeTracker()
+	{
+		return _changeTracker;
+	}
+
 	/**
 	 * Add a listener listening for SQL Execution.
 	 *

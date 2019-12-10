@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.fw.gui.buttonchooser;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import javax.swing.AbstractButton;
@@ -17,6 +18,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,8 @@ public class ButtonChooser extends JPanel
 
    private List<ButtonHolder> _buttons= new ArrayList<>();
    private ButtonSelectedListener _buttonSelectedListener;
+
+   private HashSet<JButton> _unclickableButtons = new HashSet<>();
 
    public ButtonChooser()
    {
@@ -98,6 +102,18 @@ public class ButtonChooser extends JPanel
       }
    }
 
+   /**
+    * Unclickable buttons serve as labels.
+    */
+   public void addUnclickableButton(JButton btn)
+   {
+      btn.setEnabled(false);
+      btn.setDisabledIcon(btn.getIcon());
+      _unclickableButtons.add(btn);
+
+      addButton(btn);
+   }
+
    public void setSelectedButton(AbstractButton btn)
    {
       if(false == _buttons.stream().filter(bh -> bh.getBtn() == btn).findFirst().isPresent())
@@ -142,7 +158,22 @@ public class ButtonChooser extends JPanel
    public void setChooserEnabled(boolean b)
    {
       _btnCombo.setEnabled(b);
-      _btnCurrent.setEnabled(b);
+
+
+      if(b)
+      {
+         _unclickableButtons.forEach(btn -> btn.setDisabledIcon(btn.getIcon()));
+      }
+      else
+      {
+         _unclickableButtons.forEach(btn -> btn.setDisabledIcon(null));
+      }
+
+
+      if (false == _unclickableButtons.contains(_btnCurrent))
+      {
+         _btnCurrent.setEnabled(b);
+      }
 
    }
 

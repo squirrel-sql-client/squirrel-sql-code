@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SqlPanelListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -663,6 +664,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	public SQLPanelSplitter getSQLPanelSplitter()
 	{
 		return _panel.getSqlPanelSplitter();
+	}
+
+	@Override
+	public ChangeTracker getChangeTracker()
+	{
+		return _panel.getChangeTracker();
 	}
 
 	@Override

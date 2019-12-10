@@ -107,13 +107,8 @@ public class SessionPanel extends JPanel
       createGUI(session);
 		propertiesHaveChanged(null);
 
-		_propsListener = new PropertyChangeListener()
-		{
-			public void propertyChange(PropertyChangeEvent evt)
-			{
-				propertiesHaveChanged(evt.getPropertyName());
-			}
-		};
+		_propsListener = evt -> propertiesHaveChanged(evt.getPropertyName());
+
 		session.getProperties().addPropertyChangeListener(_propsListener);   	
    }
    
@@ -533,7 +528,7 @@ public class SessionPanel extends JPanel
          add(actions.get(FilePrintAction.class));
          add(actions.get(FileReloadAction.class));
 
-			add(new ChangeTrackTypeChooser((ChangeTrackAction) actions.get(ChangeTrackAction.class)).getComponent());
+			add(new ChangeTrackTypeChooser((ChangeTrackAction) actions.get(ChangeTrackAction.class), session).getComponent());
 
          addSeparator();
          add(actions.get(PreviousSqlAction.class));

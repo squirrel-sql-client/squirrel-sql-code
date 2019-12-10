@@ -11,12 +11,12 @@ public enum ChangeTrackTypeEnum
    private static final String PREF_KEY_CHANGE_TRACK_TYPE = "Squirrel.ChangeTrackTypeEnum.type";
 
 
-   public static ChangeTrackTypeEnum getSelectedType()
+   public static ChangeTrackTypeEnum getPreference()
    {
       return valueOf(Props.getString(PREF_KEY_CHANGE_TRACK_TYPE, FILE.name()));
    }
 
-   public void saveSelected()
+   public void savePreference()
    {
       Props.putString(PREF_KEY_CHANGE_TRACK_TYPE, name());
    }

@@ -15,6 +15,7 @@ public class ChangeTracker
    private final ISQLEntryPanel _sqlEntry;
    private ChangeTrackPanel _changeTrackPanel;
    private GutterItemsManager _gutterItemsManager;
+   private ChangeTrackTypeEnum _currentChangeTrackType = ChangeTrackTypeEnum.getPreference();
 
    public ChangeTracker(ISQLEntryPanel sqlEntry)
    {
@@ -105,5 +106,33 @@ public class ChangeTracker
    public ChangeTrackPanel embedInTracking()
    {
       return _changeTrackPanel;
+   }
+
+
+   public ChangeTrackTypeEnum getChangeTrackType()
+   {
+      return _currentChangeTrackType;
+   }
+
+   public void changeTrackTypeChanged(ChangeTrackTypeEnum selectedType)
+   {
+      _currentChangeTrackType = selectedType;
+
+      // TODO
+      System.out.println("ChangeTracker.changeTrackTypeChanged: " + _currentChangeTrackType);
+   }
+
+
+   public void rebaseChangeTrackingOnToolbarOrMenu()
+   {
+      if(_currentChangeTrackType == ChangeTrackTypeEnum.FILE)
+      {
+         // When _currentChangeTrackType is FILE rebase is triggered by File changes only, see GutterItemsProvider and ChangeTrackBaseListener.
+         // We cannot get here by the tool bar button but only by the Session menu
+         return;
+      }
+
+      // TODO
+      System.out.println("ChangeTracker.rebaseChangeTracking --> _currentChangeTrackType = " + _currentChangeTrackType);
    }
 }

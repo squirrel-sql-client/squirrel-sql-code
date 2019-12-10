@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
 import net.sourceforge.squirrel_sql.client.session.action.toolbarbuttonchooser.ToolbarButtonChooserUtil;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.SQLWorksheetTypeEnum;
@@ -17,24 +19,60 @@ import javax.swing.JComponent;
 public class ChangeTrackTypeChooser
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChangeTrackTypeChooser.class);
+   private final SQLPanelApiChangedListener _sqlPanelApiChangedListener;
 
    private ChangeTrackAction _action;
    private final ButtonChooser _buttonChooser = new ButtonChooser();
+   private JButton _btnTrackManual;
+   private JButton _btnTrackFile;
+   private JButton _btnTrackGit;
+   private boolean _dontReactToButtonSelect = false;
 
-   public ChangeTrackTypeChooser(ChangeTrackAction action)
+   /**
+    * For a session window there is one instance of this class, which may server several SQLPanelAPIs when several SQL tabs are open.
+    *
+    * @param action This is the only instance ChangeTrackAction.
+    *               It could also be accessed via {@link IApplication#getActionCollection()}  }
+    */
+   public ChangeTrackTypeChooser(ChangeTrackAction action, ISession session)
    {
       _action = action;
 
       initActionAndListeners();
 
-      setEnabled(_action.isEnabled());
+      _buttonChooser.setChooserEnabled(_action.isEnabled());
 
-      _action.setEnabledListener(b -> setEnabled(b));
+      _sqlPanelApiChangedListener = newSqlPanelAPIsChangeTrackType -> onSqlPanelApiChanged(newSqlPanelAPIsChangeTrackType);
+
+      _action.addSQLPanelApiChangedListener(_sqlPanelApiChangedListener);
+
+      session.addSimpleSessionListener(() -> _action.removeSQLPanelApiChangedListener(_sqlPanelApiChangedListener));
    }
 
-   private void setEnabled(boolean enabled)
+   /**
+    * @param sqlPanelAPI This is the just activated SQLPanelAPI.
+    *                    The method must not change the SQLPanelAPI's state only just because it became active.
+    *                    I may only adjust this ChangeTrackTypeChooser's state to the SQLPanelAPI's state
+    */
+   private void onSqlPanelApiChanged(ChangeTrackTypeEnum newSqlPanelAPIsChangeTrackType)
    {
-      _buttonChooser.setChooserEnabled(enabled);
+      if(null == newSqlPanelAPIsChangeTrackType)
+      {
+         _buttonChooser.setChooserEnabled(false);
+         return;
+      }
+
+      _buttonChooser.setChooserEnabled(true);
+
+      try
+      {
+         _dontReactToButtonSelect = true;
+         adjustChooserToType(newSqlPanelAPIsChangeTrackType);
+      }
+      finally
+      {
+         _dontReactToButtonSelect = false;
+      }
    }
 
    public JComponent getComponent()
@@ -54,52 +92,70 @@ public class ChangeTrackTypeChooser
       String textTrackGit = s_stringMgr.getString("ChangeTrackTypeChooser.git") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
 
 
-      JButton btnTrackManual = new JButton(textTrackManual, iconTrackManual);
-      btnTrackManual.addActionListener(e -> _action.actionPerformed(e));
-      _buttonChooser.addButton(btnTrackManual);
+      _btnTrackManual = new JButton(textTrackManual, iconTrackManual);
+      _btnTrackManual.addActionListener(e -> _action.actionPerformed(e));
+      _buttonChooser.addButton(_btnTrackManual);
 
-      JButton btnTrackFile = new JButton(textTrackFile, iconTrackFile);
-
+      _btnTrackFile = new JButton(textTrackFile, iconTrackFile);
       // TODO: Not clickable
       //btnTrackFile.addActionListener(e -> _action.actionPerformed(e));
-      _buttonChooser.addButton(btnTrackFile);
+      _buttonChooser.addUnclickableButton(_btnTrackFile);
 
-      JButton btnTrackGit = new JButton(textTrackGit, iconTrackGit);
-      btnTrackGit.addActionListener(e -> _action.actionPerformed(e));
-      _buttonChooser.addButton(btnTrackGit);
+      _btnTrackGit = new JButton(textTrackGit, iconTrackGit);
+      _btnTrackGit.addActionListener(e -> _action.actionPerformed(e));
+      _buttonChooser.addButton(_btnTrackGit);
 
 
-      switch (ChangeTrackTypeEnum.getSelectedType())
+      adjustChooserToType(ChangeTrackTypeEnum.getPreference());
+
+      _buttonChooser.setButtonSelectedListener((button, formerSelectedButton) -> onButtonSelected(button, _btnTrackManual, _btnTrackFile, _btnTrackGit));
+   }
+
+   private void adjustChooserToType(ChangeTrackTypeEnum type)
+   {
+      switch (type)
       {
          case MANUAL:
-            _buttonChooser.setSelectedButton(btnTrackManual);
+            _buttonChooser.setSelectedButton(_btnTrackManual);
             break;
          case FILE:
-            _buttonChooser.setSelectedButton(btnTrackFile);
+            _buttonChooser.setSelectedButton(_btnTrackFile);
             break;
          case GIT:
-            _buttonChooser.setSelectedButton(btnTrackGit);
+            _buttonChooser.setSelectedButton(_btnTrackGit);
             break;
          default:
             throw new IllegalStateException("Unknown Type " + SQLWorksheetTypeEnum.getSelectedType());
       }
-
-      _buttonChooser.setButtonSelectedListener((button, formerSelectedButton) -> onButtonSelected(button, btnTrackManual, btnTrackFile, btnTrackGit));
    }
 
    private void onButtonSelected(AbstractButton button, JButton btnTrackManual, JButton btnTrackFile, JButton btnTrackGit)
    {
+      if(_dontReactToButtonSelect)
+      {
+         return;
+      }
+
+      ChangeTrackTypeEnum selectedType;
       if(button == btnTrackManual)
       {
-         ChangeTrackTypeEnum.MANUAL.saveSelected();
+         selectedType = ChangeTrackTypeEnum.MANUAL;
       }
       else if(button == btnTrackFile)
       {
-         ChangeTrackTypeEnum.FILE.saveSelected();
+         selectedType = ChangeTrackTypeEnum.FILE;
       }
       else if(button == btnTrackGit)
       {
-         ChangeTrackTypeEnum.GIT.saveSelected();
+         selectedType = ChangeTrackTypeEnum.GIT;
       }
+      else
+      {
+         throw new IllegalStateException("How could we get here?");
+      }
+
+      selectedType.savePreference();
+
+      _action.changeTrackTypeChangedForCurrentSqlPanel(selectedType);
    }
 }
