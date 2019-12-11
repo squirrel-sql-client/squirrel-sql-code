@@ -312,7 +312,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 *
 	 * @return	the entire contents of the SQL entry area.
 	 */
-	public synchronized String getEntireSQLScript()
+	public String getEntireSQLScript()
 	{
 		return _panel.getSQLEntryPanel().getText();
 	}
@@ -688,12 +688,6 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	public int getCaretPosition()
 	{
 		return _panel.getSQLEntryPanel().getCaretPosition();
-	}
-
-	@Override
-	public String getText()
-	{
-		return _panel.getSQLEntryPanel().getText();
 	}
 
 	@Override

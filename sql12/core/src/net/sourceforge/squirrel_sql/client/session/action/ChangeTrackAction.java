@@ -22,7 +22,7 @@ public class ChangeTrackAction extends SquirrelAction  implements ISQLPanelActio
 
 	public void actionPerformed(ActionEvent e)
 	{
-		_panel.getChangeTracker().rebaseChangeTrackingOnToolbarOrMenu();
+		_panel.getChangeTracker().rebaseChangeTrackingOnToolbarButtonOrMenu();
 	}
 
 	public void setSQLPanel(ISQLPanelAPI panel)

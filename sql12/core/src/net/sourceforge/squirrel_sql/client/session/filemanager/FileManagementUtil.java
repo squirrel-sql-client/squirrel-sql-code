@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.filemanager;
 
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,5 +25,17 @@ public class FileManagementUtil
          }
       }
       return sb;
+   }
+
+   public static String readFileAsString(File file)
+   {
+      try
+      {
+         return readFile(file).toString();
+      }
+      catch (IOException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
    }
 }

@@ -14,34 +14,28 @@ import java.util.concurrent.Executors;
 
 public class GutterItemsProvider
 {
+   private ChangeTrackTypeEnum _currentChangeTrackType = ChangeTrackTypeEnum.getPreference();
+
    private Timer _changeTrackingTrigger;
    private ExecutorService _changeTrackingExecutorService = Executors.newSingleThreadExecutor();
 
    private volatile boolean _changeTrackingIsBeingExecuted;
    private final ISQLEntryPanel _sqlEntry;
    private final ChangeTrackPanel _changeTrackPanel;
+   private IFileEditorAPI _fileEditorAPI;
    private GutterItemsProviderListener _gutterItemsProviderListener;
 
    private String _changeTrackBase;
+   private ChangeTrackBaseListener _fileChangeListener;
 
    public GutterItemsProvider(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, IFileEditorAPI fileEditorAPI, GutterItemsProviderListener gutterItemsProviderListener)
    {
       _sqlEntry = sqlEntry;
       _changeTrackPanel = changeTrackPanel;
+      _fileEditorAPI = fileEditorAPI;
       _gutterItemsProviderListener = gutterItemsProviderListener;
       _changeTrackingTrigger = new Timer(300, e -> onTriggerChangeTracking());
       _changeTrackingTrigger.setRepeats(false);
-
-      fileEditorAPI.getFileHandler().setChangeTrackBaseListener(newChangeTrackBase -> onChangeTrackBaseChanged(newChangeTrackBase));
-
-
-//      sqlEntry.getTextComponent().addKeyListener(new KeyAdapter()
-//      {
-//         public void keyTyped(KeyEvent e)
-//         {
-//            triggerChangeTracking();
-//         }
-//      });
 
       sqlEntry.getTextComponent().getDocument().addDocumentListener(new DocumentListener() {
          @Override
@@ -62,11 +56,42 @@ public class GutterItemsProvider
             triggerChangeTracking();
          }
       });
+
+      _fileChangeListener = newChangeTrackBase -> updateChangeTrackBase(newChangeTrackBase);
+      rebaseGutterItems(true);
    }
 
-   private void onChangeTrackBaseChanged(String changeTrackBase)
+   public void rebaseGutterItems(boolean typeChanged)
    {
-      _changeTrackBase = changeTrackBase;
+      switch(_currentChangeTrackType)
+      {
+         case MANUAL:
+            _fileEditorAPI.getFileHandler().setChangeTrackBaseListener(null);
+
+            if (false == typeChanged) // Manually rebase only takes place, when the button is clicked.
+            {
+               updateChangeTrackBase(_fileEditorAPI.getText());
+            }
+            break;
+         case FILE:
+            _fileEditorAPI.getFileHandler().setChangeTrackBaseListener(_fileChangeListener);
+            break;
+         case GIT:
+            _fileEditorAPI.getFileHandler().setChangeTrackBaseListener(null);
+            String gitChangeTrackBase = GitHandler.getChangeTrackBaseFromGit(_fileEditorAPI, false == typeChanged);
+            if(null != gitChangeTrackBase)
+            {
+               updateChangeTrackBase(gitChangeTrackBase);
+            }
+            break;
+         default:
+            throw new IllegalStateException("Unknown ChangeTrackType: " + _changeTrackBase);
+      }
+   }
+
+   private void updateChangeTrackBase(String newChangeTrackBase)
+   {
+      _changeTrackBase = newChangeTrackBase;
       triggerChangeTracking();
    }
 
@@ -107,4 +132,19 @@ public class GutterItemsProvider
       }
    }
 
+   public ChangeTrackTypeEnum getChangeTrackType()
+   {
+      return _currentChangeTrackType;
+   }
+
+   public void rebaseChangeTrackingOnToolbarButtonOrMenu()
+   {
+      rebaseGutterItems(false);
+   }
+
+   public void changeTrackTypeChanged(ChangeTrackTypeEnum selectedType)
+   {
+      _currentChangeTrackType = selectedType;
+      rebaseGutterItems(true);
+   }
 }

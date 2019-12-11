@@ -11,6 +11,7 @@ import java.util.List;
 
 public class GutterItemsManager
 {
+   private final GutterItemsProvider _gutterItemsProvider;
    private List<GutterItem> _currentGutterItems = new ArrayList<>();
    private CursorHandler _cursorHandler = new CursorHandler();
    private ChangeTrackPanel _changeTrackPanel;
@@ -19,7 +20,7 @@ public class GutterItemsManager
    {
       _changeTrackPanel = changeTrackPanel;
 
-      new GutterItemsProvider(sqlEntry, changeTrackPanel, fileEditorAPI,  gi -> onNewGutterItems(gi));
+      _gutterItemsProvider = new GutterItemsProvider(sqlEntry, changeTrackPanel, fileEditorAPI, gi -> onNewGutterItems(gi));
    }
 
    private void onNewGutterItems(List<GutterItem> gi)
@@ -71,5 +72,10 @@ public class GutterItemsManager
       {
          trackingGutterRight.setCursor(Cursor.getDefaultCursor());
       }
+   }
+
+   public GutterItemsProvider getGutterItemsProvider()
+   {
+      return _gutterItemsProvider;
    }
 }

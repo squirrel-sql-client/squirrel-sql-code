@@ -303,14 +303,22 @@ public class FileHandler
       _fileManagementCore.replaceSqlFileExtensionFilterBy(fileExtensionFilter, fileEndingWithDot);
    }
 
+   /**
+    * This setter immediately fires the listener when a file is open.
+    */
    public void setChangeTrackBaseListener(ChangeTrackBaseListener changeTrackBaseListener)
    {
       _changeTrackBaseListener = changeTrackBaseListener;
 
-      fireChangeTrackListener();
+      fireChangeTrackListener(true);
    }
 
    private void fireChangeTrackListener()
+   {
+      fireChangeTrackListener(false);
+   }
+
+   private void fireChangeTrackListener(boolean reReadFile)
    {
       if(null == _changeTrackBaseListener)
       {
@@ -319,11 +327,14 @@ public class FileHandler
 
       if(null != _fileManagementCore.getFile())
       {
-         _changeTrackBaseListener.changeTrackBaseChanged(_fileEditorAPI.getEntireSQLScript());
-      }
-      else
-      {
-         _changeTrackBaseListener.changeTrackBaseChanged(null);
+         if (reReadFile)
+         {
+            _changeTrackBaseListener.changeTrackBaseChanged(FileManagementUtil.readFileAsString(_fileManagementCore.getFile()));
+         }
+         else
+         {
+            _changeTrackBaseListener.changeTrackBaseChanged(_fileEditorAPI.getEntireSQLScript());
+         }
       }
    }
 }

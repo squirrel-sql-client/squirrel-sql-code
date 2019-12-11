@@ -274,11 +274,6 @@ public class HQLEntryPanelManager extends EntryPanelManager implements IFileEdit
       return getEntryPanel().getCaretPosition();
    }
 
-   @Override
-   public String getText()
-   {
-      return getEntireSQLScript();
-   }
 
    @Override
    public void setCaretPosition(int caretPos)

@@ -42,9 +42,16 @@ public interface IFileEditorAPI
     */
    String getEntireSQLScript();
 
+   /**
+    * Just a rename. Inline if you care.
+    */
+   default String getText()
+   {
+      return getEntireSQLScript();
+   }
+
    int getCaretPosition();
 
-   String getText();
 
    void setCaretPosition(int caretPos);
 
