@@ -22,6 +22,13 @@ public class ChangeTrackAction extends SquirrelAction  implements ISQLPanelActio
 
 	public void actionPerformed(ActionEvent e)
 	{
+		if(ChangeTrackTypeEnum.getPreference() == ChangeTrackTypeEnum.FILE)
+		{
+			// Although the toolbar button cannot be clicked when it is set to type FILE
+			// the action might still be triggered by he menu.
+			return;
+		}
+
 		_panel.getChangeTracker().rebaseChangeTrackingOnToolbarButtonOrMenu();
 	}
 

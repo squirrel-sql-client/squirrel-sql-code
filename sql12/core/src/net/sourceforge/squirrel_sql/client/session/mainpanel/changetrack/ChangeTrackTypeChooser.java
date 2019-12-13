@@ -15,6 +15,9 @@ import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.ToolTipManager;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ChangeTrackTypeChooser
 {
@@ -91,17 +94,27 @@ public class ChangeTrackTypeChooser
       String textTrackFile = s_stringMgr.getString("ChangeTrackTypeChooser.file") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
       String textTrackGit = s_stringMgr.getString("ChangeTrackTypeChooser.git") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
 
+      String toolTipTrackManual = s_stringMgr.getString("ChangeTrackTypeChooser.manual.tooltip") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
+      String toolTipTrackFile = s_stringMgr.getString("ChangeTrackTypeChooser.file.tooltip") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
+      String toolTipTrackGit = s_stringMgr.getString("ChangeTrackTypeChooser.git.tooltip") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
+
 
       _btnTrackManual = new JButton(textTrackManual, iconTrackManual);
+      _btnTrackManual.setToolTipText(toolTipTrackManual);
+      prolongTooltipDismissTime(_btnTrackManual);
       _btnTrackManual.addActionListener(e -> _action.actionPerformed(e));
       _buttonChooser.addButton(_btnTrackManual);
 
       _btnTrackFile = new JButton(textTrackFile, iconTrackFile);
+      _btnTrackFile.setToolTipText(toolTipTrackFile);
+      prolongTooltipDismissTime(_btnTrackFile);
       // TODO: Not clickable
       //btnTrackFile.addActionListener(e -> _action.actionPerformed(e));
       _buttonChooser.addUnclickableButton(_btnTrackFile);
 
       _btnTrackGit = new JButton(textTrackGit, iconTrackGit);
+      _btnTrackGit.setToolTipText(toolTipTrackGit);
+      prolongTooltipDismissTime(_btnTrackGit);
       _btnTrackGit.addActionListener(e -> _action.actionPerformed(e));
       _buttonChooser.addButton(_btnTrackGit);
 
@@ -109,6 +122,26 @@ public class ChangeTrackTypeChooser
       adjustChooserToType(ChangeTrackTypeEnum.getPreference());
 
       _buttonChooser.setButtonSelectedListener((button, formerSelectedButton) -> onButtonSelected(button, _btnTrackManual, _btnTrackFile, _btnTrackGit));
+   }
+
+   private void prolongTooltipDismissTime(JButton btn)
+   {
+      final int defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
+
+      btn.addMouseListener(new MouseAdapter()
+      {
+         @Override
+         public void mouseEntered(MouseEvent me)
+         {
+            ToolTipManager.sharedInstance().setDismissDelay(30000);
+         }
+
+         @Override
+         public void mouseExited(MouseEvent me)
+         {
+            ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
+         }
+      });
    }
 
    private void adjustChooserToType(ChangeTrackTypeEnum type)
