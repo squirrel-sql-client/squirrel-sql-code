@@ -337,4 +337,9 @@ public class FileHandler
          }
       }
    }
+
+   public File getFile()
+   {
+      return _fileManagementCore.getFile();
+   }
 }
