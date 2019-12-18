@@ -6,7 +6,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackBaseListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackFileListener;
 import net.sourceforge.squirrel_sql.client.util.PrintUtilities;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -29,7 +29,7 @@ public class FileHandler
    private boolean _fileOpened = false;
    private boolean _fileSaved = false;
    private boolean _unsavedEdits = false;
-   private ChangeTrackBaseListener _changeTrackBaseListener;
+   private ChangeTrackFileListener _changeTrackFileListener;
 
 
    public FileHandler(IFileEditorAPI fileEditorAPI, TitleFilePathHandler titleFileHandler)
@@ -306,9 +306,9 @@ public class FileHandler
    /**
     * This setter immediately fires the listener when a file is open.
     */
-   public void setChangeTrackBaseListener(ChangeTrackBaseListener changeTrackBaseListener)
+   public void setChangeTrackFileListener(ChangeTrackFileListener changeTrackFileListener)
    {
-      _changeTrackBaseListener = changeTrackBaseListener;
+      _changeTrackFileListener = changeTrackFileListener;
 
       fireChangeTrackListener(true);
    }
@@ -320,7 +320,7 @@ public class FileHandler
 
    private void fireChangeTrackListener(boolean reReadFile)
    {
-      if(null == _changeTrackBaseListener)
+      if(null == _changeTrackFileListener)
       {
          return;
       }
@@ -329,11 +329,11 @@ public class FileHandler
       {
          if (reReadFile)
          {
-            _changeTrackBaseListener.changeTrackBaseChanged(FileManagementUtil.readFileAsString(_fileManagementCore.getFile()));
+            _changeTrackFileListener.changeTrackBaseChanged(FileManagementUtil.readFileAsString(_fileManagementCore.getFile()));
          }
          else
          {
-            _changeTrackBaseListener.changeTrackBaseChanged(_fileEditorAPI.getEntireSQLScript());
+            _changeTrackFileListener.changeTrackBaseChanged(_fileEditorAPI.getEntireSQLScript());
          }
       }
    }

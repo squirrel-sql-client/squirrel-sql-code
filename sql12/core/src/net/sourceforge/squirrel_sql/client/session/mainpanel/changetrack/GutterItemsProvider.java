@@ -26,7 +26,8 @@ public class GutterItemsProvider
    private GutterItemsProviderListener _gutterItemsProviderListener;
 
    private String _changeTrackBase;
-   private ChangeTrackBaseListener _fileChangeListener;
+   private ChangeTrackFileListener _fileChangeListener;
+   private ChangeTrackFileListener _gitFileChangeListener;
 
    public GutterItemsProvider(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, IFileEditorAPI fileEditorAPI, GutterItemsProviderListener gutterItemsProviderListener)
    {
@@ -58,34 +59,42 @@ public class GutterItemsProvider
       });
 
       _fileChangeListener = newChangeTrackBase -> updateChangeTrackBase(newChangeTrackBase);
-      rebaseGutterItems(true);
+      _gitFileChangeListener = newChangeTrackBase -> updateGitChangeTracking(false);
+      rebaseGutterItems(RebaseGutterItemsCallInfo.BUTTON_SELECTED);
    }
 
-   public void rebaseGutterItems(boolean typeChanged)
+   public void rebaseGutterItems(RebaseGutterItemsCallInfo callInfo)
    {
       switch(_currentChangeTrackType)
       {
          case MANUAL:
-            _fileEditorAPI.getFileHandler().setChangeTrackBaseListener(null);
+            _fileEditorAPI.getFileHandler().setChangeTrackFileListener(null);
 
-            if (false == typeChanged) // Manually rebase only takes place, when the button is clicked.
+            if (callInfo == RebaseGutterItemsCallInfo.BUTTON_CLICKED ) // Manually rebase only takes place, when the button is clicked.
             {
                updateChangeTrackBase(_fileEditorAPI.getText());
             }
             break;
          case FILE:
-            _fileEditorAPI.getFileHandler().setChangeTrackBaseListener(_fileChangeListener);
+            _fileEditorAPI.getFileHandler().setChangeTrackFileListener(_fileChangeListener);
             break;
          case GIT:
-            _fileEditorAPI.getFileHandler().setChangeTrackBaseListener(null);
-            String gitChangeTrackBase = GitHandler.getChangeTrackBaseFromGit(_fileEditorAPI, false == typeChanged);
-            if(null != gitChangeTrackBase)
-            {
-               updateChangeTrackBase(gitChangeTrackBase);
-            }
+            _fileEditorAPI.getFileHandler().setChangeTrackFileListener(_gitFileChangeListener);
+
+            // If BUTTON_CLICKED. -> Commit
+            updateGitChangeTracking(callInfo == RebaseGutterItemsCallInfo.BUTTON_CLICKED);
             break;
          default:
             throw new IllegalStateException("Unknown ChangeTrackType: " + _changeTrackBase);
+      }
+   }
+
+   private void updateGitChangeTracking(boolean commitToGit)
+   {
+      String gitChangeTrackBase = GitHandler.getChangeTrackBaseFromGit(_fileEditorAPI, commitToGit);
+      if(null != gitChangeTrackBase)
+      {
+         updateChangeTrackBase(gitChangeTrackBase);
       }
    }
 
@@ -139,12 +148,12 @@ public class GutterItemsProvider
 
    public void rebaseChangeTrackingOnToolbarButtonOrMenu()
    {
-      rebaseGutterItems(false);
+      rebaseGutterItems(RebaseGutterItemsCallInfo.BUTTON_CLICKED);
    }
 
    public void changeTrackTypeChanged(ChangeTrackTypeEnum selectedType)
    {
       _currentChangeTrackType = selectedType;
-      rebaseGutterItems(true);
+      rebaseGutterItems(RebaseGutterItemsCallInfo.BUTTON_SELECTED);
    }
 }

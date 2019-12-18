@@ -5,12 +5,16 @@ import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -19,13 +23,13 @@ import java.io.IOException;
 
 /**
  * https://github.com/centic9/jgit-cookbook
- *
+ * <p>
  * https://git-scm.com/book/uz/v2/Appendix-B%3A-Embedding-Git-in-your-Applications-JGit
- *
+ * <p>
  * https://github.com/eclipse/jgit
- *
+ * <p>
  * http://download.eclipse.org/jgit/site/4.10.0.201712302008-r/apidocs/
- *
+ * <p>
  * https://github.com/centic9/jgit-cookbook/blob/master/src/main/java/org/dstadler/jgit/CreateNewRepository.java
  */
 public class GitHandler
@@ -44,83 +48,53 @@ public class GitHandler
 
    private static String getCurrentRepoVersion(File file)
    {
-//      if (null == file)
-//      {
-//         return null;
-//      }
-//
-//      Git git = Git.open(file.getParentFile());
-//
-//
-//      ArchiveCommand.registerFormat("plainString", new ArchiveCommand.Format<Closeable>() {
-//         @Override
-//         public Closeable createArchiveOutputStream(OutputStream outputStream) throws IOException
-//         {
-//            return new ByteArrayOutputStream();
-//         }
-//
-//         @Override
-//         public Closeable createArchiveOutputStream(OutputStream outputStream, Map<String, Object> map) throws IOException
-//         {
-//            return null;
-//         }
-//
-//         @Override
-//         public void putEntry(Closeable closeable, ObjectId objectId, String s, FileMode fileMode, ObjectLoader objectLoader) throws IOException
-//         {
-//
-//         }
-//
-//         @Override
-//         public Iterable<String> suffixes()
-//         {
-//            return null;
-//         }
-//      });
-//      try
-//      {
-//         git.archive().setTree(git.getRepository().resolve("HEAD"))
-//            .setFormat("zip")
-//            .setOutputStream(out)
-//            .call();
-//      }
-//      finally
-//      {
-//         ArchiveCommand.unregisterFormat("zip");
-//      }
-
-
-
-
-
       try
       {
-         if(null == file)
+         if (null == file)
          {
             return null;
          }
 
+         System.out.println("GitHandler.getCurrentRepoVersion READING FROM GIT");
+
          Git git = Git.open(file.getParentFile());
 
+
+
          Repository repository = git.getRepository();
-         String currentBranch = repository.getBranch();
 
-         Ref curRef = repository.exactRef(currentBranch);
+         String filePathRelativeToRepoRoot = repository.getWorkTree().toURI().relativize(file.toURI()).getPath();
 
-         // https://github.com/centic9/jgit-cookbook/blob/master/src/main/java/org/dstadler/jgit/CreateNewRepository.java
-         try (RevWalk walk = new RevWalk(repository))
+         ObjectId headId = repository.resolve(Constants.HEAD);
+
+         // a RevWalk allows to walk over commits based on some filtering that is defined
+         try (RevWalk revWalk = new RevWalk(repository))
          {
-            RevCommit commit = walk.parseCommit(curRef.getObjectId());
-            RevTree tree = walk.parseTree(commit.getTree().getId());
-            System.out.println("Found Tree: " + tree);
-            ObjectLoader loader = repository.open(tree.getId());
+            RevCommit commit = revWalk.parseCommit(headId);
+            RevTree tree = commit.getTree();
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            loader.copyTo(baos);
+            String ret = null;
 
-            String ret = new String(baos.toByteArray());
+            try (TreeWalk treeWalk = new TreeWalk(repository))
+            {
+               treeWalk.addTree(tree);
+               treeWalk.setRecursive(true);
+               treeWalk.setFilter(PathFilter.create(filePathRelativeToRepoRoot));
+               if (!treeWalk.next())
+               {
+                  throw new IllegalStateException("Did not find expected file '" + filePathRelativeToRepoRoot + "'");
+               }
 
-            walk.dispose();
+               ObjectId objectId = treeWalk.getObjectId(0);
+               ObjectLoader loader = repository.open(objectId);
+
+               ByteArrayOutputStream baos = new ByteArrayOutputStream();
+               loader.copyTo(baos);
+
+               ret = new String(baos.toByteArray());
+            }
+
+            revWalk.dispose();
 
             return ret;
          }
@@ -135,7 +109,7 @@ public class GitHandler
    {
       try
       {
-         if(false == fileEditorAPI.getFileHandler().fileSave())
+         if (false == fileEditorAPI.getFileHandler().fileSave())
          {
             return null;
          }
@@ -145,12 +119,12 @@ public class GitHandler
          Git git;
          File repoRootDir;
 
-         if(false == isInRepository(file.getParentFile()))
+         if (false == isInRepository(file.getParentFile()))
          {
 
             repoRootDir = new SelectGitRepoRootDirController().getDir(file.getParentFile());
 
-            if(null == repoRootDir)
+            if (null == repoRootDir)
             {
                return null;
             }
