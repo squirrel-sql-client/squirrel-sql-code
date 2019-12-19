@@ -4,6 +4,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -34,15 +35,15 @@ public class SelectGitRepoRootDirController
 
    private boolean _ok;
 
-   public File getDir(File startDir)
+   public File getDir(File fileToCommitToGit)
    {
-      createUI();
+      createUI(fileToCommitToGit);
 
       GUIUtils.initLocation(_dlg, 300, 300);
 
       GUIUtils.enableCloseByEscape(_dlg);
 
-      initTree(startDir);
+      initTree(fileToCommitToGit.getParentFile());
 
 
       // Stops here;
@@ -127,7 +128,7 @@ public class SelectGitRepoRootDirController
 
 
 
-   private void createUI()
+   private void createUI(File fileToCommitToGit)
    {
       _dlg = new JDialog(Main.getApplication().getMainFrame(), s_stringMgr.getString("SelectGitRepoRootDirController.title"), true);
 
@@ -135,11 +136,14 @@ public class SelectGitRepoRootDirController
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
+      _dlg.getContentPane().add(new MultipleLineLabel(s_stringMgr.getString("SelectGitRepoRootDirController.description", fileToCommitToGit.getAbsolutePath())), gbc);
+
+      gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
       _tree = new JTree();
       _dlg.getContentPane().add(new JScrollPane(_tree), gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
       _dlg.getContentPane().add(createButtonPanel(), gbc);
    }
 

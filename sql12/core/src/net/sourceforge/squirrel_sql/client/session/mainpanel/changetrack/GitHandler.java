@@ -1,8 +1,13 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -33,6 +38,9 @@ import java.io.IOException;
  */
 public class GitHandler
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GitHandler.class);
+   private static final ILogger s_log = LoggerController.createLogger(GitHandler.class);
+
    public static String getChangeTrackBaseFromGit(IFileEditorAPI fileEditorAPI, boolean commitToGit)
    {
       if (commitToGit)
@@ -126,7 +134,7 @@ public class GitHandler
          if (null == repository)
          {
 
-            File gitInitDir = new SelectGitRepoRootDirController().getDir(file.getParentFile());
+            File gitInitDir = new SelectGitRepoRootDirController().getDir(file);
 
             if (null == gitInitDir)
             {
@@ -147,11 +155,43 @@ public class GitHandler
          // Add seems to do no harm for already added files so we call it always.
          git.add().addFilepattern(filePathRelativeToRepoRoot).call();
 
-         git.commit().setOnly(filePathRelativeToRepoRoot).setMessage("SQuirrelGeneratedMessage").call();
+         RevCommit revCommit = git.commit().setOnly(filePathRelativeToRepoRoot).setMessage("SQuirrelGeneratedMessage").call();
+
+         logCommit(repository, filePathRelativeToRepoRoot, revCommit);
 
          return FileManagementUtil.readFileAsString(file);
       }
       catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   private static void logCommit(Repository repository, String filePathRelativeToRepoRoot, RevCommit revCommit)
+   {
+      try
+      {
+         String msg = s_stringMgr.getString("GitHandler.commitMsg",
+                        filePathRelativeToRepoRoot,
+                        repository.getBranch(),
+                        repository.getWorkTree().getPath(),
+                        revCommit.getCommitterIdent().getName()
+                        );
+
+         Main.getApplication().getMessageHandler().showMessage(msg);
+
+         String log = s_stringMgr.getString("GitHandler.commitLog",
+               filePathRelativeToRepoRoot,
+               repository.getBranch(),
+               repository.getWorkTree().getPath(),
+               revCommit.getCommitterIdent().getName(),
+               revCommit.getId()
+         );
+
+         s_log.info(log);
+
+      }
+      catch (IOException e)
       {
          throw Utilities.wrapRuntime(e);
       }

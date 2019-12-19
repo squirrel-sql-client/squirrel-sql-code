@@ -77,9 +77,7 @@ final class MainFrameMenuBar extends JMenuBar
 		int SESSION_MENU = 2;
 	}
 
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(MainFrameMenuBar.class);
+	private static final ILogger s_log = LoggerController.createLogger(MainFrameMenuBar.class);
 
 	private final IApplication _app;
 //	private final JMenu _editMenu;
