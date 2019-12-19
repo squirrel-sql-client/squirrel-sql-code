@@ -9,6 +9,9 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -155,13 +158,33 @@ public class GitHandler
          // Add seems to do no harm for already added files so we call it always.
          git.add().addFilepattern(filePathRelativeToRepoRoot).call();
 
-         RevCommit revCommit = git.commit().setOnly(filePathRelativeToRepoRoot).setMessage("SQuirrelGeneratedMessage").call();
+         if (isModifiedOrAdded(filePathRelativeToRepoRoot, git))
+         {
+            RevCommit revCommit = git.commit().setOnly(filePathRelativeToRepoRoot).setMessage("SQuirrelGeneratedMessage").call();
 
-         logCommit(repository, filePathRelativeToRepoRoot, revCommit);
+            logCommit(repository, filePathRelativeToRepoRoot, revCommit);
+         }
+         else
+         {
+            Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("GitHandler.unmodified", file.getPath()));
+         }
 
          return FileManagementUtil.readFileAsString(file);
       }
       catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   private static boolean isModifiedOrAdded(String filePathRelativeToRepoRoot, Git git)
+   {
+      try
+      {
+         Status status = git.status().addPath(filePathRelativeToRepoRoot).call();
+         return 0 < status.getChanged().size() + status.getAdded().size();
+      }
+      catch (GitAPIException e)
       {
          throw Utilities.wrapRuntime(e);
       }
