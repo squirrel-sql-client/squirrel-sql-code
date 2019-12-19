@@ -4,15 +4,14 @@ import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUti
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
-import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 
@@ -57,13 +56,14 @@ public class GitHandler
 
          System.out.println("GitHandler.getCurrentRepoVersion READING FROM GIT");
 
-         Git git = Git.open(file.getParentFile());
+         Repository repository = findRepository(file);
 
+         if(null == repository)
+         {
+            return null;
+         }
 
-
-         Repository repository = git.getRepository();
-
-         String filePathRelativeToRepoRoot = repository.getWorkTree().toURI().relativize(file.toURI()).getPath();
+         String filePathRelativeToRepoRoot = getPathRelativeToRepo(repository, file);
 
          ObjectId headId = repository.resolve(Constants.HEAD);
 
@@ -82,7 +82,10 @@ public class GitHandler
                treeWalk.setFilter(PathFilter.create(filePathRelativeToRepoRoot));
                if (!treeWalk.next())
                {
-                  throw new IllegalStateException("Did not find expected file '" + filePathRelativeToRepoRoot + "'");
+                  // We get here when the file saved but not yet added.
+                  revWalk.dispose();
+                  return null;
+                  //throw new IllegalStateException("Did not find expected file '" + filePathRelativeToRepoRoot + "'");
                }
 
                ObjectId objectId = treeWalk.getObjectId(0);
@@ -117,34 +120,32 @@ public class GitHandler
          File file = fileEditorAPI.getFileHandler().getFile();
 
          Git git;
-         File repoRootDir;
 
-         if (false == isInRepository(file.getParentFile()))
+         Repository repository = findRepository(file);
+
+         if (null == repository)
          {
 
-            repoRootDir = new SelectGitRepoRootDirController().getDir(file.getParentFile());
+            File gitInitDir = new SelectGitRepoRootDirController().getDir(file.getParentFile());
 
-            if (null == repoRootDir)
+            if (null == gitInitDir)
             {
                return null;
             }
 
-            git = Git.init().setDirectory(repoRootDir).call();
-
-            String filePathRelativeToRepoRoot = repoRootDir.toURI().relativize(file.toURI()).getPath();
-
-            //git.add().addFilepattern(file.getAbsolutePath());
-            git.add().addFilepattern(filePathRelativeToRepoRoot).call();
-
+            git = Git.init().setDirectory(gitInitDir).call();
+            repository = git.getRepository();
          }
          else
          {
-            git = Git.open(file.getParentFile());
-
-            repoRootDir = git.getRepository().getDirectory();
+            git = Git.open(repository.getDirectory());
+            repository = git.getRepository();
          }
 
-         String filePathRelativeToRepoRoot = repoRootDir.toURI().relativize(file.toURI()).getPath();
+         String filePathRelativeToRepoRoot = getPathRelativeToRepo(repository, file);
+
+         // Add seems to do no harm for already added files so we call it always.
+         git.add().addFilepattern(filePathRelativeToRepoRoot).call();
 
          git.commit().setOnly(filePathRelativeToRepoRoot).setMessage("SQuirrelGeneratedMessage").call();
 
@@ -156,15 +157,29 @@ public class GitHandler
       }
    }
 
-   private static boolean isInRepository(File parentDir)
+
+   private static Repository findRepository(File file)
    {
       try
       {
-         return new FileRepository(parentDir.getPath()).getObjectDatabase().exists();
+         FileRepositoryBuilder builder = new FileRepositoryBuilder().findGitDir(file);
+
+         if(null == builder.getGitDir())
+         {
+            return null;
+         }
+
+         return builder.build();
       }
       catch (IOException e)
       {
          throw Utilities.wrapRuntime(e);
       }
    }
+
+   private static String getPathRelativeToRepo(Repository repository, File file)
+   {
+      return repository.getWorkTree().toURI().relativize(file.toURI()).getPath();
+   }
+
 }
