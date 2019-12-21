@@ -39,8 +39,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 public class StyleMaintenancePanel extends JToolBar
 {
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(StyleMaintenancePanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(StyleMaintenancePanel.class);
 
 	private final StylesList _list;
 	private final JToggleButton _boldChk;

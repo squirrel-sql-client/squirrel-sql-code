@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 
 import com.jidesoft.swing.MultilineLabel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanelController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
@@ -303,12 +304,14 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			gbc.weightx = 1;
 			add(createGeneralPanel(), gbc);
 			++gbc.gridy;
-			add(createDebugPanel(), gbc);
+			add(createFilePanel(), gbc);
          ++gbc.gridy;
-         add(createFilePanel(), gbc);
+			add(new ChangeTrackPrefsPanelController().getPanel(), gbc);
+         ++gbc.gridy;
+			add(createDebugPanel(), gbc);
 		}
 
-      private JPanel createGeneralPanel()
+		private JPanel createGeneralPanel()
 		{
 			JPanel pnl = new JPanel(new GridBagLayout());
 			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SQLPreferencesPanel.general")));

@@ -143,6 +143,10 @@ public class SquirrelResources extends Resources
 		String CHANGE_TRACK_MANUAL = "changeTrackManual";
 		String CHANGE_TRACK_FILE = "changeTrackFile";
 		String CHANGE_TRACK_GIT = "changeTrackGit";
+
+		String BOLD = "bold";
+		String ITALIC = "italic";
+		String PEN = "pen";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)
