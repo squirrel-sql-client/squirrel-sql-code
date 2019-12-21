@@ -18,7 +18,7 @@ public class SystemOutToLog extends OutputStream
    }
 
    @Override
-   public void write(int b) throws IOException
+   public void write(int b)
    {
       if(_inWrite)
       {
@@ -34,7 +34,7 @@ public class SystemOutToLog extends OutputStream
          if('\n' == c)
          {
             _originalOut.println(_line);
-            s_log.info(_line);
+            s_log.info(_line.toString());
             _line.setLength(0);
          }
          else
