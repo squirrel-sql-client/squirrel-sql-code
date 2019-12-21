@@ -404,4 +404,21 @@ public class StringUtilities
       }
 
    }
+
+   /**
+    * RSyntax does not like CRs, even on Windows.
+    * If you insert ones you find that arrow keys do not work correctly:
+    * When steping over a CR it looks like the arrow key does nothing.
+    *
+    * E.G.: Code reformating comes with CRs in line ends on Windows
+    */
+   public static String removeCarriageReturn(String text)
+   {
+      if(null == text)
+      {
+         return null;
+      }
+
+      return text.replaceAll("\r","");
+   }
 }

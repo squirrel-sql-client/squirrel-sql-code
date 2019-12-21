@@ -29,7 +29,6 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
-import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 import javax.swing.undo.UndoManager;
 
@@ -41,9 +40,9 @@ import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -162,8 +161,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setText(String text)
 	{
-      text = removeCarriageReturn(text);
-		setText(text, true);
+		setText(StringUtilities.removeCarriageReturn(text), true);
 		triggerParser();
 	}
 
@@ -179,7 +177,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setText(String text, boolean select)
 	{
-      text = removeCarriageReturn(text);
+      text = StringUtilities.removeCarriageReturn(text);
 		_textArea.setText(text);
 		if (select)
 		{
@@ -198,7 +196,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void appendText(String sqlScript)
 	{
-      sqlScript = removeCarriageReturn(sqlScript);
+      sqlScript = StringUtilities.removeCarriageReturn(sqlScript);
 		appendText(sqlScript, false);
 	}
 
@@ -214,7 +212,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void appendText(String sqlScript, boolean select)
 	{
-      sqlScript = removeCarriageReturn(sqlScript);
+      sqlScript = StringUtilities.removeCarriageReturn(sqlScript);
 		Document doc = _textArea.getDocument();
 
 		try
@@ -304,7 +302,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void replaceSelection(String sqlScript)
 	{
-      sqlScript = removeCarriageReturn(sqlScript);
+      sqlScript = StringUtilities.removeCarriageReturn(sqlScript);
 		_textArea.replaceSelection(sqlScript);
 
 		triggerParser();
@@ -312,25 +310,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	}
 
 
-   /**
-    * RSyntax does not like CRs, even on Windows.
-    * If you insert ones you find that arrow keys do not work correctly:
-    * When steping over a CR it looks like the arrow key does nothing.
-    *
-    * E.G.: Code reformating comes with CRs in line ends on Windows
-    */
-   private String removeCarriageReturn(String text)
-   {
-      if(null == text)
-      {
-         return null;
-      }
-
-      return text.replaceAll("\r","");
-   }
-
-
-   @Override
+	@Override
 	public void triggerParser()
 	{
 		IParserEventsProcessor parserEventsProcessor = _propertiesWrapper.getParserEventsProcessor(getIdentifier(),	_session);

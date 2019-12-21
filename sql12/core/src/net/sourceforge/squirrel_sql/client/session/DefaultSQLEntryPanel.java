@@ -30,6 +30,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -145,7 +146,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setText(String sqlScript)
 	{
-		setText(sqlScript, true);
+		setText(StringUtilities.removeCarriageReturn(sqlScript), true);
 	}
 
 	/**

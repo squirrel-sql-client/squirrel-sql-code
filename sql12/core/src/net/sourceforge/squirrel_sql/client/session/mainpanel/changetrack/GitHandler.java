@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUti
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -84,7 +85,7 @@ public class GitHandler
             RevCommit commit = revWalk.parseCommit(headId);
             RevTree tree = commit.getTree();
 
-            String ret = null;
+            String ret;
 
             try (TreeWalk treeWalk = new TreeWalk(repository))
             {
@@ -105,7 +106,7 @@ public class GitHandler
                ByteArrayOutputStream baos = new ByteArrayOutputStream();
                loader.copyTo(baos);
 
-               ret = new String(baos.toByteArray());
+               ret = StringUtilities.removeCarriageReturn(new String(baos.toByteArray()));
             }
 
             revWalk.dispose();
