@@ -6,7 +6,6 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackFileListener;
 import net.sourceforge.squirrel_sql.client.util.PrintUtilities;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -29,7 +28,7 @@ public class FileHandler
    private boolean _fileOpened = false;
    private boolean _fileSaved = false;
    private boolean _unsavedEdits = false;
-   private ChangeTrackFileListener _changeTrackFileListener;
+   private FileHandlerListener _fileHandlerListener;
 
 
    public FileHandler(IFileEditorAPI fileEditorAPI, TitleFilePathHandler titleFileHandler)
@@ -160,6 +159,7 @@ public class FileHandler
    public void fileNew()
    {
       fileClose();
+      fireChangeTrackListener(false, FileChangeType.FILE_CLOSED);
    }
 
    public void fileDetach()
@@ -306,34 +306,42 @@ public class FileHandler
    /**
     * This setter immediately fires the listener when a file is open.
     */
-   public void setChangeTrackFileListener(ChangeTrackFileListener changeTrackFileListener)
+   public void setFileHandlerListener(FileHandlerListener fileHandlerListener)
    {
-      _changeTrackFileListener = changeTrackFileListener;
+      _fileHandlerListener = fileHandlerListener;
 
-      fireChangeTrackListener(true);
+      fireChangeTrackListener(true, FileChangeType.FILE_CHANGED);
    }
 
    private void fireChangeTrackListener()
    {
-      fireChangeTrackListener(false);
+      fireChangeTrackListener(false, FileChangeType.FILE_CHANGED);
    }
 
-   private void fireChangeTrackListener(boolean reReadFile)
+   private void fireChangeTrackListener(boolean reReadFile, FileChangeType fileChangeType)
    {
-      if(null == _changeTrackFileListener)
+      if(null == _fileHandlerListener)
       {
          return;
       }
 
-      if(null != _fileManagementCore.getFile())
+      if(fileChangeType == FileChangeType.FILE_CLOSED)
       {
-         if (reReadFile)
+         _fileHandlerListener.fileChanged(null);
+         return;
+      }
+      else if (fileChangeType == FileChangeType.FILE_CHANGED)
+      {
+         if(null != _fileManagementCore.getFile())
          {
-            _changeTrackFileListener.changeTrackBaseChanged(FileManagementUtil.readFileAsString(_fileManagementCore.getFile()));
-         }
-         else
-         {
-            _changeTrackFileListener.changeTrackBaseChanged(_fileEditorAPI.getEntireSQLScript());
+            if (reReadFile)
+            {
+               _fileHandlerListener.fileChanged(FileManagementUtil.readFileAsString(_fileManagementCore.getFile()));
+            }
+            else
+            {
+               _fileHandlerListener.fileChanged(_fileEditorAPI.getEntireSQLScript());
+            }
          }
       }
    }

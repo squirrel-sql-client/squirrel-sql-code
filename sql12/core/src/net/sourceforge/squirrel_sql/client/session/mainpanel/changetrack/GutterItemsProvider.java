@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandlerListener;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
@@ -26,8 +27,8 @@ public class GutterItemsProvider
    private GutterItemsProviderListener _gutterItemsProviderListener;
 
    private String _changeTrackBase;
-   private ChangeTrackFileListener _fileChangeListener;
-   private ChangeTrackFileListener _gitFileChangeListener;
+   private FileHandlerListener _fileChangeListener;
+   private FileHandlerListener _gitFileChangeListener;
 
    public GutterItemsProvider(ISQLEntryPanel sqlEntry, ChangeTrackPanel changeTrackPanel, IFileEditorAPI fileEditorAPI, GutterItemsProviderListener gutterItemsProviderListener)
    {
@@ -68,7 +69,7 @@ public class GutterItemsProvider
       switch(_currentChangeTrackType)
       {
          case MANUAL:
-            _fileEditorAPI.getFileHandler().setChangeTrackFileListener(null);
+            _fileEditorAPI.getFileHandler().setFileHandlerListener(null);
 
             if (callInfo == RebaseGutterItemsCallInfo.BUTTON_CLICKED ) // Manually rebase only takes place, when the button is clicked.
             {
@@ -76,10 +77,10 @@ public class GutterItemsProvider
             }
             break;
          case FILE:
-            _fileEditorAPI.getFileHandler().setChangeTrackFileListener(_fileChangeListener);
+            _fileEditorAPI.getFileHandler().setFileHandlerListener(_fileChangeListener);
             break;
          case GIT:
-            _fileEditorAPI.getFileHandler().setChangeTrackFileListener(_gitFileChangeListener);
+            _fileEditorAPI.getFileHandler().setFileHandlerListener(_gitFileChangeListener);
 
             // If BUTTON_CLICKED. -> Commit
             updateGitChangeTracking(callInfo == RebaseGutterItemsCallInfo.BUTTON_CLICKED);
@@ -92,10 +93,7 @@ public class GutterItemsProvider
    private void updateGitChangeTracking(boolean commitToGit)
    {
       String gitChangeTrackBase = GitHandler.getChangeTrackBaseFromGit(_fileEditorAPI, commitToGit);
-      if(null != gitChangeTrackBase)
-      {
-         updateChangeTrackBase(gitChangeTrackBase);
-      }
+      updateChangeTrackBase(gitChangeTrackBase);
    }
 
    private void updateChangeTrackBase(String newChangeTrackBase)
