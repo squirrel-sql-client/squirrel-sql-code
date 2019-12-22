@@ -147,7 +147,8 @@ public class SquirrelResources extends Resources
 		String BOLD = "bold";
 		String ITALIC = "italic";
 		String PEN = "pen";
-   }
+		String FILL = "fill";
+	}
 
 	public SquirrelResources(String rsrcBundleBaseName)
 		throws IllegalArgumentException

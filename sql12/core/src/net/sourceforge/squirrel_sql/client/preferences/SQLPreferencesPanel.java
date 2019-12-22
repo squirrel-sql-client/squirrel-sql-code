@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 
 import com.jidesoft.swing.MultilineLabel;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanelController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
@@ -41,15 +42,12 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 {
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SQLPreferencesPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLPreferencesPanel.class);
 
 	/** Panel to be displayed in preferences dialog. */
 	private SQLPrefsPanel _myPanel;
    private JScrollPane _myScrollPane;
 
-   /** Application API. */
-	private IApplication _app;
    private MainFrame _mainFrame;
    
    /**
@@ -77,10 +75,8 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 
-		_app = app;
-
 		getPanelComponent();
-		_myPanel.loadData(_app, _app.getSquirrelPreferences());
+		_myPanel.loadData(Main.getApplication(), Main.getApplication().getSquirrelPreferences());
 
       _myPanel._fileOpenInPreviousDir.addActionListener(new ActionListener()
       {
@@ -135,19 +131,21 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
       pnl._fileSpecifiedDir.setEnabled(pnl._fileOpenInSpecifiedDir.isSelected());
    }
 
-   public synchronized Component getPanelComponent()
+   public Component getPanelComponent()
 	{
 		if (_myPanel == null)
 		{
 			_myPanel = new SQLPrefsPanel();
 			_myScrollPane = new JScrollPane(_myPanel);
+
+			SwingUtilities.invokeLater(() -> _myPanel.scrollRectToVisible(new Rectangle(0,0,1,1)));
 		}
 		return _myScrollPane;
 	}
 
 	public void applyChanges()
 	{
-		_myPanel.applyChanges(_app.getSquirrelPreferences());
+		_myPanel.applyChanges(Main.getApplication().getSquirrelPreferences());
 	}
 
 	public String getTitle()
