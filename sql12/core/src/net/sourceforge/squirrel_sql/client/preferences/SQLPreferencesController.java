@@ -22,11 +22,13 @@ import java.awt.*;
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanelController;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 
 /**
  * This preferences panel allows maintenance of SQL preferences.
@@ -37,47 +39,127 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLPreferencesController.class);
 
 	/** Panel to be displayed in preferences dialog. */
-	private SQLPreferencesPanel _myPanel;
-   private JScrollPane _myScrollPane;
+	private SQLPreferencesPanel _panel;
+   private JScrollPane _scrollPane;
 
-   private MainFrame _mainFrame;
-   
-	public SQLPreferencesController(MainFrame mainFrame)
+	private ChangeTrackPrefsPanelController _changeTrackPrefsPanelController = new ChangeTrackPrefsPanelController();
+
+	public SQLPreferencesController()
 	{
-		super();
-      _mainFrame = mainFrame;
    }
 
-	/**
-	 * Initialize this panel. Called prior to it being displayed.
-	 *
-	 * @param	app	Application API.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			if <TT>null</TT> <TT>IApplication</TT> passed.
-	 */
 	public void initialize(IApplication app)
 	{
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-
 		getPanelComponent();
-		_myPanel.loadData(Main.getApplication().getSquirrelPreferences());
+		loadData();
 
-      _myPanel.fileOpenInPreviousDir.addActionListener(e -> updateFilePanel(_myPanel));
+      _panel.fileOpenInPreviousDir.addActionListener(e -> updateFilePanel(_panel));
 
-      _myPanel.fileOpenInSpecifiedDir.addActionListener(e -> updateFilePanel(_myPanel));
+      _panel.fileOpenInSpecifiedDir.addActionListener(e -> updateFilePanel(_panel));
 
-      updateFilePanel(_myPanel);
+      updateFilePanel(_panel);
 
 
-      _myPanel.fileChooseDir.addActionListener(e -> onChooseDir(_myPanel));
+      _panel.fileChooseDir.addActionListener(e -> onChooseDir(_panel));
 
 	}
 
-   public void uninitialize(IApplication app)
+	void loadData()
+	{
+		SquirrelPreferences prefs = Main.getApplication().getSquirrelPreferences();
+
+		_panel.loginTimeout.setInt(prefs.getLoginTimeout());
+		_panel.largeScriptStmtCount.setInt(prefs.getLargeScriptStmtCount());
+		_panel.chkCopyQuotedSqlsToClip.setSelected(prefs.getCopyQuotedSqlsToClip());
+		_panel.chkAllowRunAllSQLsInEditor.setSelected(prefs.getAllowRunAllSQLsInEditor());
+
+		_panel.chkMarkCurrentSql.setSelected(prefs.isMarkCurrentSql());
+		_panel.getCurrentSqlMarkColorIcon().setColor(new Color(prefs.getCurrentSqlMarkColorRGB()));
+
+		initCurrentMarkGui();
+
+		_panel.chkReloadSqlContentsSql.setSelected(prefs.isReloadSqlContents());
+		_panel.txtMaxTextOutputColumnWidth.setInt(prefs.getMaxTextOutputColumnWidth());
+
+
+		_panel.debugJdbcStream.setSelected(prefs.isJdbcDebugToStream());
+		_panel.debugJdbcWriter.setSelected(prefs.isJdbcDebugToWriter());
+		_panel.debugJdbcDont.setSelected(prefs.isJdbcDebugDontDebug());
+		_panel.jdbcDebugLogFileNameLbl.setText(new ApplicationFiles().getJDBCDebugLogFile().getPath());
+		_panel.fileOpenInPreviousDir.setSelected(prefs.isFileOpenInPreviousDir());
+		_panel.fileOpenInSpecifiedDir.setSelected(prefs.isFileOpenInSpecifiedDir());
+		_panel.fileSpecifiedDir.setText(prefs.getFileSpecifiedDir());
+
+		_changeTrackPrefsPanelController.loadData(prefs);
+	}
+
+	public void applyChanges()
+	{
+		SquirrelPreferences prefs = Main.getApplication().getSquirrelPreferences();
+
+		prefs.setLoginTimeout(_panel.loginTimeout.getInt());
+		prefs.setLargeScriptStmtCount(_panel.largeScriptStmtCount.getInt());
+
+		prefs.setCopyQuotedSqlsToClip(_panel.chkCopyQuotedSqlsToClip.isSelected());
+		prefs.setAllowRunAllSQLsInEditor(_panel.chkAllowRunAllSQLsInEditor.isSelected());
+
+		prefs.setMarkCurrentSql(_panel.chkMarkCurrentSql.isSelected());
+		prefs.setCurrentSqlMarkColorRGB((_panel.getCurrentSqlMarkColorIcon()).getColor().getRGB());
+
+		prefs.setReloadSqlContents(_panel.chkReloadSqlContentsSql.isSelected());
+
+
+		int maxTextOutputColumnWidth = _panel.txtMaxTextOutputColumnWidth.getInt();
+		if (IDataSetViewer.MIN_COLUMN_WIDTH <= maxTextOutputColumnWidth)
+		{
+			prefs.setMaxTextOutputColumnWidth(maxTextOutputColumnWidth);
+		}
+
+		if (_panel.debugJdbcStream.isSelected())
+		{
+			prefs.doJdbcDebugToStream();
+		}
+		else if (_panel.debugJdbcWriter.isSelected())
+		{
+			prefs.doJdbcDebugToWriter();
+		}
+		else
+		{
+			prefs.dontDoJdbcDebug();
+		}
+
+		prefs.setFileOpenInPreviousDir(_panel.fileOpenInPreviousDir.isSelected());
+		prefs.setFileOpenInSpecifiedDir(_panel.fileOpenInSpecifiedDir.isSelected());
+		String specDir = _panel.fileSpecifiedDir.getText();
+		prefs.setFileSpecifiedDir(null == specDir ? "" : specDir);
+
+		_changeTrackPrefsPanelController.applyChanges(prefs);
+	}
+
+
+	private void initCurrentMarkGui()
+	{
+		_panel.btnCurrentSqlMarkColorRGB.setEnabled(_panel.chkMarkCurrentSql.isSelected());
+
+		_panel.chkMarkCurrentSql.addActionListener(e -> _panel.btnCurrentSqlMarkColorRGB.setEnabled(_panel.chkMarkCurrentSql.isSelected()));
+
+		_panel.btnCurrentSqlMarkColorRGB.addActionListener(e -> onChooseCurrentMarkColor());
+	}
+
+	private void onChooseCurrentMarkColor()
+	{
+		String title = s_stringMgr.getString("SQLPreferencesPanel.current.sql.mark.color.choose");
+		Color color = JColorChooser.showDialog(_panel, title, _panel.getCurrentSqlMarkColorIcon().getColor());
+
+		if (null != color)
+		{
+			_panel.getCurrentSqlMarkColorIcon().setColor(color);
+		}
+	}
+
+
+
+	public void uninitialize(IApplication app)
    {
       
    }
@@ -87,7 +169,7 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
    {
       JFileChooser chooser = new JFileChooser(pnl.fileSpecifiedDir.getText());
       chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-      int returnVal = chooser.showOpenDialog(_mainFrame);
+      int returnVal = chooser.showOpenDialog(Main.getApplication().getMainFrame());
       if (returnVal == JFileChooser.APPROVE_OPTION)
       {
          pnl.fileSpecifiedDir.setText(chooser.getSelectedFile().getAbsolutePath());
@@ -103,19 +185,14 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 
    public Component getPanelComponent()
 	{
-		if (_myPanel == null)
+		if (_panel == null)
 		{
-			_myPanel = new SQLPreferencesPanel();
-			_myScrollPane = new JScrollPane(_myPanel);
+			_panel = new SQLPreferencesPanel(_changeTrackPrefsPanelController.getPanel());
+			_scrollPane = new JScrollPane(_panel);
 
-			SwingUtilities.invokeLater(() -> _myPanel.scrollRectToVisible(new Rectangle(0,0,1,1)));
+			SwingUtilities.invokeLater(() -> _panel.scrollRectToVisible(new Rectangle(0,0,1,1)));
 		}
-		return _myScrollPane;
-	}
-
-	public void applyChanges()
-	{
-		_myPanel.applyChanges(Main.getApplication().getSquirrelPreferences());
+		return _scrollPane;
 	}
 
 	public String getTitle()

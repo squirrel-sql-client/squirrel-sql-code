@@ -25,18 +25,18 @@ public class ChangeTrackPrefsPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChangeTrackPrefsPanelController.class);
 
-   private JCheckBox chkEnableChangeTracking;
-   private JCheckBox chkGitCommitMsgManually;
-   private JTextField txtGitCommitMsgDefault;
+   JCheckBox chkEnableChangeTracking;
+   JCheckBox chkGitCommitMsgManually;
+   JTextField txtGitCommitMsgDefault;
 
-   private JButton btnDeltedForeground;
-   private JToggleButton btnDeletedItalics;
-   private JToggleButton btnDeletedBold;
-   private JButton btnInsertBegin;
-   private JButton btnInsertEnd;
-   private JTextPane txtExampleChangeTrackBase;
-   private JTextPane txtExampleEditorText;
-   private JTextPane txtExamplePopup;
+   JButton btnDeltedForeground;
+   JToggleButton btnDeletedItalics;
+   JToggleButton btnDeletedBold;
+   JButton btnInsertBegin;
+   JButton btnInsertEnd;
+   JTextPane txtExampleChangeTrackBase;
+   JTextPane txtExampleEditorText;
+   JTextPane txtExamplePopup;
 
 
    public ChangeTrackPrefsPanel()

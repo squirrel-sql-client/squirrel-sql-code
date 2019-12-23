@@ -318,7 +318,7 @@ public class GlobalPreferencesSheet extends DialogWidget
 
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralPreferencesPanel());
-		_panels.add(new SQLPreferencesController(_app.getMainFrame()));
+		_panels.add(new SQLPreferencesController());
 		_panels.add(new ProxyPreferencesPanel());
 		_panels.add(new DataTypePreferencesPanel());
 		_panels.add(new WikiTablePreferencesTab());

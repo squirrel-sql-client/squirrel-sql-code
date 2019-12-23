@@ -1,8 +1,7 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 
 import com.jidesoft.swing.MultilineLabel;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanelController;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
@@ -13,14 +12,12 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -30,127 +27,40 @@ final class SQLPreferencesPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLPreferencesPanel.class);
 
-
    JRadioButton fileOpenInPreviousDir = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.fileOpenInPreviousDir"));
    JRadioButton fileOpenInSpecifiedDir = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.fileOpenInSpecifiedDir"));
 
    JTextField fileSpecifiedDir = new JTextField();
    JButton fileChooseDir = new JButton("...");
 
-   private IntegerField _loginTimeout = new IntegerField();
-   private IntegerField _largeScriptStmtCount = new IntegerField();
-   private JCheckBox _chkCopyQuotedSqlsToClip = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.copy.quoted.sql.to.clip"));
-   private JCheckBox _chkAllowRunAllSQLsInEditor = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.allow.run.all.sqls.in.editor"));
-   private JCheckBox _chkMarkCurrentSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.mark.current.sql"));
-   private JButton _btnCurrentSqlMarkColorRGB = new JButton();
+   IntegerField loginTimeout = new IntegerField();
+   IntegerField largeScriptStmtCount = new IntegerField();
+   JCheckBox chkCopyQuotedSqlsToClip = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.copy.quoted.sql.to.clip"));
+   JCheckBox chkAllowRunAllSQLsInEditor = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.allow.run.all.sqls.in.editor"));
+   JCheckBox chkMarkCurrentSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.mark.current.sql"));
+   JButton btnCurrentSqlMarkColorRGB = new JButton();
 
-   private JCheckBox _chkReloadSqlContentsSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.reload.sql.contents"));
-   private IntegerField _txtMaxTextOutputColumnWidth = new IntegerField();
+   JCheckBox chkReloadSqlContentsSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.reload.sql.contents"));
+   IntegerField txtMaxTextOutputColumnWidth = new IntegerField();
 
-   private JRadioButton _debugJdbcDont = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugdont"));
-   private JRadioButton _debugJdbcStream = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugstream"));
-   private JRadioButton _debugJdbcWriter = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugwriter"));
-   private JLabel _jdbcDebugLogFileNameLbl = new OutputLabel(" ");
+   JRadioButton debugJdbcDont = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugdont"));
+   JRadioButton debugJdbcStream = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugstream"));
+   JRadioButton debugJdbcWriter = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugwriter"));
+   JLabel jdbcDebugLogFileNameLbl = new OutputLabel(" ");
 
-   SQLPreferencesPanel()
+   SQLPreferencesPanel(ChangeTrackPrefsPanel changeTrackPrefsPanel)
    {
       super(new GridBagLayout());
-      createUserInterface();
+      createUserInterface(changeTrackPrefsPanel);
    }
 
-   void loadData(SquirrelPreferences prefs)
+
+   ColorIcon getCurrentSqlMarkColorIcon()
    {
-      final ApplicationFiles appFiles = new ApplicationFiles();
-      _loginTimeout.setInt(prefs.getLoginTimeout());
-      _largeScriptStmtCount.setInt(prefs.getLargeScriptStmtCount());
-      _chkCopyQuotedSqlsToClip.setSelected(prefs.getCopyQuotedSqlsToClip());
-      _chkAllowRunAllSQLsInEditor.setSelected(prefs.getAllowRunAllSQLsInEditor());
-
-      _chkMarkCurrentSql.setSelected(prefs.isMarkCurrentSql());
-      getCurrentSqlMarkColorIcon().setColor(new Color(prefs.getCurrentSqlMarkColorRGB()));
-
-      initCurrentMarkGui();
-
-      _chkReloadSqlContentsSql.setSelected(prefs.isReloadSqlContents());
-      _txtMaxTextOutputColumnWidth.setInt(prefs.getMaxTextOutputColumnWidth());
-
-
-      _debugJdbcStream.setSelected(prefs.isJdbcDebugToStream());
-      _debugJdbcWriter.setSelected(prefs.isJdbcDebugToWriter());
-      _debugJdbcDont.setSelected(prefs.isJdbcDebugDontDebug());
-      _jdbcDebugLogFileNameLbl.setText(appFiles.getJDBCDebugLogFile().getPath());
-      fileOpenInPreviousDir.setSelected(prefs.isFileOpenInPreviousDir());
-      fileOpenInSpecifiedDir.setSelected(prefs.isFileOpenInSpecifiedDir());
-      fileSpecifiedDir.setText(prefs.getFileSpecifiedDir());
+      return (ColorIcon) btnCurrentSqlMarkColorRGB.getIcon();
    }
 
-   private ColorIcon getCurrentSqlMarkColorIcon()
-   {
-      return (ColorIcon) _btnCurrentSqlMarkColorRGB.getIcon();
-   }
-
-   private void initCurrentMarkGui()
-   {
-      _btnCurrentSqlMarkColorRGB.setEnabled(_chkMarkCurrentSql.isSelected());
-
-      _chkMarkCurrentSql.addActionListener(e -> _btnCurrentSqlMarkColorRGB.setEnabled(_chkMarkCurrentSql.isSelected()));
-
-      _btnCurrentSqlMarkColorRGB.addActionListener(e -> onChooseCurrentMarkColor());
-   }
-
-   private void onChooseCurrentMarkColor()
-   {
-      String title = s_stringMgr.getString("SQLPreferencesPanel.current.sql.mark.color.choose");
-      Color color = JColorChooser.showDialog(this, title, getCurrentSqlMarkColorIcon().getColor());
-
-      if (null != color)
-      {
-         getCurrentSqlMarkColorIcon().setColor(color);
-      }
-   }
-
-   void applyChanges(SquirrelPreferences prefs)
-   {
-      prefs.setLoginTimeout(_loginTimeout.getInt());
-      prefs.setLargeScriptStmtCount(_largeScriptStmtCount.getInt());
-
-      prefs.setCopyQuotedSqlsToClip(_chkCopyQuotedSqlsToClip.isSelected());
-      prefs.setAllowRunAllSQLsInEditor(_chkAllowRunAllSQLsInEditor.isSelected());
-
-      prefs.setMarkCurrentSql(_chkMarkCurrentSql.isSelected());
-      prefs.setCurrentSqlMarkColorRGB((getCurrentSqlMarkColorIcon()).getColor().getRGB());
-
-      prefs.setReloadSqlContents(_chkReloadSqlContentsSql.isSelected());
-
-
-      int maxTextOutputColumnWidth = _txtMaxTextOutputColumnWidth.getInt();
-      if (IDataSetViewer.MIN_COLUMN_WIDTH <= maxTextOutputColumnWidth)
-      {
-         prefs.setMaxTextOutputColumnWidth(maxTextOutputColumnWidth);
-      }
-
-      if (_debugJdbcStream.isSelected())
-      {
-         prefs.doJdbcDebugToStream();
-      }
-      else if (_debugJdbcWriter.isSelected())
-      {
-         prefs.doJdbcDebugToWriter();
-      }
-      else
-      {
-         prefs.dontDoJdbcDebug();
-      }
-
-      prefs.setFileOpenInPreviousDir(fileOpenInPreviousDir.isSelected());
-      prefs.setFileOpenInSpecifiedDir(fileOpenInSpecifiedDir.isSelected());
-      String specDir = fileSpecifiedDir.getText();
-      prefs.setFileSpecifiedDir(null == specDir ? "" : specDir);
-
-
-   }
-
-   private void createUserInterface()
+   private void createUserInterface(ChangeTrackPrefsPanel panel)
    {
       final GridBagConstraints gbc = new GridBagConstraints();
       gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -162,7 +72,7 @@ final class SQLPreferencesPanel extends JPanel
       ++gbc.gridy;
       add(createFilePanel(), gbc);
       ++gbc.gridy;
-      add(new ChangeTrackPrefsPanelController().getPanel(), gbc);
+      add(panel, gbc);
       ++gbc.gridy;
       add(createDebugPanel(), gbc);
    }
@@ -172,7 +82,7 @@ final class SQLPreferencesPanel extends JPanel
       JPanel pnl = new JPanel(new GridBagLayout());
       pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SQLPreferencesPanel.general")));
 
-      _loginTimeout.setColumns(4);
+      loginTimeout.setColumns(4);
 
       GridBagConstraints gbc = new GridBagConstraints();
       gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -184,13 +94,13 @@ final class SQLPreferencesPanel extends JPanel
       pnl.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.logintimeout")), gbc);
 
       ++gbc.gridx;
-      pnl.add(_loginTimeout, gbc);
+      pnl.add(loginTimeout, gbc);
 
       ++gbc.gridx;
       gbc.weightx = 1;
       pnl.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.zerounlimited")), gbc);
 
-      _largeScriptStmtCount.setColumns(4);
+      largeScriptStmtCount.setColumns(4);
 
       gbc = new GridBagConstraints();
       gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -203,7 +113,7 @@ final class SQLPreferencesPanel extends JPanel
       pnl.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.largeScriptStmtCount")), gbc);
 
       ++gbc.gridx;
-      pnl.add(_largeScriptStmtCount, gbc);
+      pnl.add(largeScriptStmtCount, gbc);
 
       ++gbc.gridx;
       gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -213,12 +123,12 @@ final class SQLPreferencesPanel extends JPanel
       gbc.gridx = 0;
       gbc.gridy = 2;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
-      pnl.add(_chkCopyQuotedSqlsToClip, gbc);
+      pnl.add(chkCopyQuotedSqlsToClip, gbc);
 
       gbc.gridx = 0;
       gbc.gridy = 3;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
-      pnl.add(_chkAllowRunAllSQLsInEditor, gbc);
+      pnl.add(chkAllowRunAllSQLsInEditor, gbc);
 
       gbc.gridx = 0;
       gbc.gridy = 4;
@@ -230,7 +140,7 @@ final class SQLPreferencesPanel extends JPanel
       gbc.gridy = 5;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.NONE;
-      pnl.add(_chkReloadSqlContentsSql, gbc);
+      pnl.add(chkReloadSqlContentsSql, gbc);
 
       gbc.gridx = 0;
       gbc.gridy = 6;
@@ -247,7 +157,7 @@ final class SQLPreferencesPanel extends JPanel
       JPanel ret = new JPanel(new BorderLayout(5, 0));
 
       ret.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.MaxTextOutputColumnWidthPanel.label", IDataSetViewer.MIN_COLUMN_WIDTH)), BorderLayout.WEST);
-      ret.add(_txtMaxTextOutputColumnWidth, BorderLayout.CENTER);
+      ret.add(txtMaxTextOutputColumnWidth, BorderLayout.CENTER);
 
       return ret;
    }
@@ -256,12 +166,12 @@ final class SQLPreferencesPanel extends JPanel
    {
       JPanel ret = new JPanel(new BorderLayout(5, 0));
 
-      ret.add(_chkMarkCurrentSql, BorderLayout.WEST);
-      ret.add(_btnCurrentSqlMarkColorRGB, BorderLayout.CENTER);
+      ret.add(chkMarkCurrentSql, BorderLayout.WEST);
+      ret.add(btnCurrentSqlMarkColorRGB, BorderLayout.CENTER);
 
-      _btnCurrentSqlMarkColorRGB.setHorizontalTextPosition(JButton.LEFT);
-      _btnCurrentSqlMarkColorRGB.setIcon(new ColorIcon(16, 16));
-      _btnCurrentSqlMarkColorRGB.setText(s_stringMgr.getString("SQLPreferencesPanel.current.sql.mark.color"));
+      btnCurrentSqlMarkColorRGB.setHorizontalTextPosition(JButton.LEFT);
+      btnCurrentSqlMarkColorRGB.setIcon(new ColorIcon(16, 16));
+      btnCurrentSqlMarkColorRGB.setText(s_stringMgr.getString("SQLPreferencesPanel.current.sql.mark.color"));
 
       return ret;
    }
@@ -269,9 +179,9 @@ final class SQLPreferencesPanel extends JPanel
    private JPanel createDebugPanel()
    {
       final ButtonGroup btnGroup = new ButtonGroup();
-      btnGroup.add(_debugJdbcDont);
-      btnGroup.add(_debugJdbcStream);
-      btnGroup.add(_debugJdbcWriter);
+      btnGroup.add(debugJdbcDont);
+      btnGroup.add(debugJdbcStream);
+      btnGroup.add(debugJdbcWriter);
 
       JPanel pnl = new JPanel(new GridBagLayout());
       pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SQLPreferencesPanel.debug")));
@@ -286,13 +196,13 @@ final class SQLPreferencesPanel extends JPanel
       gbc.gridx = 0;
       ++gbc.gridy;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
-      pnl.add(_debugJdbcDont, gbc);
+      pnl.add(debugJdbcDont, gbc);
 
       ++gbc.gridy;
-      pnl.add(_debugJdbcStream, gbc);
+      pnl.add(debugJdbcStream, gbc);
 
       ++gbc.gridy;
-      pnl.add(_debugJdbcWriter, gbc);
+      pnl.add(debugJdbcWriter, gbc);
 
       gbc.gridx = 0;
       ++gbc.gridy;
@@ -302,7 +212,7 @@ final class SQLPreferencesPanel extends JPanel
       ++gbc.gridx;
       gbc.weightx = 1;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
-      pnl.add(_jdbcDebugLogFileNameLbl, gbc);
+      pnl.add(jdbcDebugLogFileNameLbl, gbc);
 
       return pnl;
    }
