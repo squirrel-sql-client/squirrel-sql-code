@@ -101,7 +101,17 @@ public class SquirrelPreferences implements Serializable
       String REMEMBER_VALUE_OF_POPUP = "rememberValueOfPopup";
       String RELOAD_SQL_CONTENTS = "ReloadSqlContents";
       String MAX_TEXTOUTPUT_COLUMN_WIDTH = "MaxTextOutputColumnWidth";
-   }
+
+		String ENABLE_CHANGE_TRACKING = "enableChangeTracking";
+		String GIT_COMMIT_MSG_MANUALLY = "gitCommitMsgManually";
+		String GIT_COMMIT_MSG_DEFAULT = "gitCommitMsgDefault";
+		String DELETED_BOLD = "deletedBold";
+		String DELETED_ITALICS = "deletedItalics";
+		String DELTED_FOREGROUND_RGB = "deltedForegroundRGB";
+		String INSERT_BEGIN_BACKGROUND_RGB = "insertBeginBackgroundRGB";
+		String INSERT_END_BACKGROUND_RGB = "insertEndBackgroundRGB";
+
+	}
 
    public interface IJdbcDebugTypes
 	{
@@ -110,13 +120,9 @@ public class SquirrelPreferences implements Serializable
 		int TO_WRITER = 2;
 	}
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SquirrelPreferences.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SquirrelPreferences.class);
 
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(SquirrelPreferences.class);
+	private final static ILogger s_log = LoggerController.createLogger(SquirrelPreferences.class);
 
 	/** Bounds of the main frame. */
 	private MainFrameWindowState _mainFrameState = new MainFrameWindowState();
@@ -262,6 +268,20 @@ public class SquirrelPreferences implements Serializable
 	private boolean _reloadSqlContents;
 
 	private int _maxTextOutputColumnWidth = IDataSetViewer.MAX_COLUMN_WIDTH;
+
+	/////////////////////////////////////////////////////////////////////////
+	// Change tracking properties
+	private boolean _enableChangeTracking = true;
+	private boolean _gitCommitMsgManually = false;
+	private String _gitCommitMsgDefault = "SQuirreL generated commit message";
+	private boolean _deletedBold = true;
+	private boolean _deletedItalics = false;
+	private int _deltedForegroundRGB = Color.gray.getRGB();
+	private int _insertBeginBackgroundRGB = new Color(148, 255, 81).getRGB();
+	private int _insertEndBackgroundRGB = new Color(255, 170, 109).getRGB();
+	// Change tracking properties
+	/////////////////////////////////////////////////////////////////////////
+
 
 
 	/**
@@ -1290,4 +1310,88 @@ public class SquirrelPreferences implements Serializable
 	{
 		_maxTextOutputColumnWidth = maxTextOutputColumnWidth;
 	}
+
+
+
+	public boolean isEnableChangeTracking()
+	{
+		return _enableChangeTracking;
+	}
+
+	public void setEnableChangeTracking(boolean enableChangeTracking)
+	{
+		_enableChangeTracking = enableChangeTracking;
+	}
+
+	public boolean isGitCommitMsgManually()
+	{
+		return _gitCommitMsgManually;
+	}
+
+	public void setGitCommitMsgManually(boolean gitCommitMsgManually)
+	{
+		_gitCommitMsgManually = gitCommitMsgManually;
+	}
+
+	public String getGitCommitMsgDefault()
+	{
+		return _gitCommitMsgDefault;
+	}
+
+	public void setGitCommitMsgDefault(String gitCommitMsgDefault)
+	{
+		_gitCommitMsgDefault = gitCommitMsgDefault;
+	}
+
+	public boolean isDeletedBold()
+	{
+		return _deletedBold;
+	}
+
+	public void setDeletedBold(boolean deletedBold)
+	{
+		_deletedBold = deletedBold;
+	}
+
+	public boolean isDeletedItalics()
+	{
+		return _deletedItalics;
+	}
+
+	public void setDeletedItalics(boolean deletedItalics)
+	{
+		_deletedItalics = deletedItalics;
+	}
+
+	public int getDeltedForegroundRGB()
+	{
+		return _deltedForegroundRGB;
+	}
+
+	public void setDeltedForegroundRGB(int deltedForegroundRGB)
+	{
+		_deltedForegroundRGB = deltedForegroundRGB;
+	}
+
+	public int getInsertBeginBackgroundRGB()
+	{
+		return _insertBeginBackgroundRGB;
+	}
+
+	public void setInsertBeginBackgroundRGB(int insertBeginBackgroundRGB)
+	{
+		_insertBeginBackgroundRGB = insertBeginBackgroundRGB;
+	}
+
+	public int getInsertEndBackgroundRGB()
+	{
+		return _insertEndBackgroundRGB;
+	}
+
+	public void setInsertEndBackgroundRGB(int insertEndBackgroundRGB)
+	{
+		_insertEndBackgroundRGB = insertEndBackgroundRGB;
+	}
+
+
 }

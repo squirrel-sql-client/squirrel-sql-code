@@ -31,9 +31,6 @@ import net.sourceforge.squirrel_sql.client.gui.WindowManager;
  */
 public class MainFrameWindowState extends WindowState implements Serializable
 {
-	private static final long serialVersionUID = -7443323389797901005L;
-
-	// JASON: Messages height should be stored with this.
 	public interface IPropertyNames
 	{
 		String ALIASES_WINDOW_STATE = "aliasesWindowState";

@@ -783,7 +783,7 @@ public class GUIUtils
 
 	private static void setButtonContentAreaFilledRespectSelectedToggle(AbstractButton btn, boolean b)
 	{
-		if (btn instanceof JToggleButton && btn.isSelected())
+		if (btn instanceof JToggleButton /* && btn.isSelected() commented out for change tracking toggle buttons "Bold" and "Italics" */)
 		{
 			btn.setContentAreaFilled(true);
 			return;

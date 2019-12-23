@@ -29,11 +29,11 @@ public class ChangeTrackPrefsPanel extends JPanel
    JCheckBox chkGitCommitMsgManually;
    JTextField txtGitCommitMsgDefault;
 
-   JButton btnDeltedForeground;
+   JButton btnDeletedForeground;
    JToggleButton btnDeletedItalics;
    JToggleButton btnDeletedBold;
-   JButton btnInsertBegin;
-   JButton btnInsertEnd;
+   JButton btnInsertBeginBackground;
+   JButton btnInsertEndBackground;
    JTextPane txtExampleChangeTrackBase;
    JTextPane txtExampleEditorText;
    JTextPane txtExamplePopup;
@@ -135,9 +135,9 @@ public class ChangeTrackPrefsPanel extends JPanel
       ret. add(GUIUtils.styleAsToolbarButton(btnDeletedItalics), gbc);
 
       gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      btnDeltedForeground = new JButton(rsrc.getIcon(SquirrelResources.IImageNames.PEN));
-      btnDeltedForeground.setToolTipText(s_stringMgr.getString("ChangeTrackPrefsPanel.delete.foreground.color.tooltip"));
-      ret. add(styleAsColorChooseButton(btnDeltedForeground), gbc);
+      btnDeletedForeground = new JButton(rsrc.getIcon(SquirrelResources.IImageNames.PEN));
+      btnDeletedForeground.setToolTipText(s_stringMgr.getString("ChangeTrackPrefsPanel.delete.foreground.color.tooltip"));
+      ret. add(styleAsColorChooseButton(btnDeletedForeground), gbc);
 
 
       // dist
@@ -159,15 +159,15 @@ public class ChangeTrackPrefsPanel extends JPanel
       ret. add(new JLabel(s_stringMgr.getString("ChangeTrackPrefsPanel.insert.begin.position.background")), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
-      btnInsertBegin = new JButton(rsrc.getIcon(SquirrelResources.IImageNames.FILL));
-      ret. add(styleAsColorChooseButton(btnInsertBegin), gbc);
+      btnInsertBeginBackground = new JButton(rsrc.getIcon(SquirrelResources.IImageNames.FILL));
+      ret. add(styleAsColorChooseButton(btnInsertBeginBackground), gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,10,0,0), 0,0);
       ret. add(new JLabel(s_stringMgr.getString("ChangeTrackPrefsPanel.insert.end.position.background")), gbc);
 
       gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
-      btnInsertEnd = new JButton(rsrc.getIcon(SquirrelResources.IImageNames.FILL));
-      ret. add(styleAsColorChooseButton(btnInsertEnd), gbc);
+      btnInsertEndBackground = new JButton(rsrc.getIcon(SquirrelResources.IImageNames.FILL));
+      ret. add(styleAsColorChooseButton(btnInsertEndBackground), gbc);
 
 
       // dist
@@ -183,7 +183,7 @@ public class ChangeTrackPrefsPanel extends JPanel
 //      btn.setBackground(Color.green);
 
 
-      btn.setBackground(Color.green);
+      //btn.setBackground(Color.green);
       btn.setBorder(BorderFactory.createEtchedBorder());
       return btn;
    }
@@ -243,4 +243,52 @@ public class ChangeTrackPrefsPanel extends JPanel
       return txtPane;
    }
 
+   /**
+    * @param rgb When null, current color isn't changed
+    */
+   public void setDeletedForeground(Integer rgb)
+   {
+      if(null != rgb)
+      {
+         btnDeletedForeground.setBackground(new Color(rgb));
+      }
+
+   }
+
+   /**
+    * @param rgb When null, current color isn't changed
+    */
+   public void setInsertBeginBackground(Integer rgb)
+   {
+      if (null != rgb)
+      {
+         btnInsertBeginBackground.setBackground(new Color(rgb));
+      }
+   }
+
+   /**
+    * @param rgb When null, current color isn't changed
+    */
+   public void setInsertEndBackground(Integer rgb)
+   {
+      if (null != rgb)
+      {
+         btnInsertEndBackground.setBackground(new Color(rgb));
+      }
+   }
+
+   public int getDeletedForeground()
+   {
+      return btnDeletedForeground.getBackground().getRGB();
+   }
+
+   public int getInsertBeginBackground()
+   {
+      return btnInsertBeginBackground.getBackground().getRGB();
+   }
+
+   public int getInsertEndBackground()
+   {
+      return btnInsertEndBackground.getBackground().getRGB();
+   }
 }
