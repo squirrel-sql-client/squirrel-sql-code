@@ -587,6 +587,10 @@ public class GUIUtils
 
 	public static void forceProperty(PropertyCheck propertyCheck)
 	{
+		forceProperty(propertyCheck, null);
+	}
+	public static void forceProperty(PropertyCheck propertyCheck, Runnable callOnSuccess)
+	{
 		final Timer[] timerRef = new Timer[1];
 
 		timerRef[0] = new Timer(100, new ActionListener()
@@ -599,6 +603,12 @@ public class GUIUtils
 				if (propertyCheck.checkAndSetProperty() || maxCount > 15)
 				{
 					timerRef[0].stop();
+
+					if(null != callOnSuccess)
+					{
+						callOnSuccess.run();
+					}
+
 					return;
 				}
 				++maxCount;

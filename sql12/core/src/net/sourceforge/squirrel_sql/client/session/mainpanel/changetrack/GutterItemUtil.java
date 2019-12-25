@@ -2,11 +2,13 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.PropertyCheck;
 
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 public class GutterItemUtil
@@ -15,7 +17,7 @@ public class GutterItemUtil
    {
       try
       {
-         int beginLineTransformed = beginLine;
+         int beginLineTransformed = Math.max(beginLine - 1, 0);
          int numberOfLinesTransformed = numberOfLines - 1;
 
          int lastLine = Math.min(beginLineTransformed + numberOfLinesTransformed, sqlEntry.getTextComponent().getLineCount() -1);
@@ -97,9 +99,37 @@ public class GutterItemUtil
 
    static void positionCaretAndScroll(int position, ISQLEntryPanel sqlEntry)
    {
-      GUIUtils.forceFocus(sqlEntry.getTextComponent(), () -> sqlEntry.setCaretPosition(position));
+      //GUIUtils.forceFocus(sqlEntry.getTextComponent(), () -> sqlEntry.setCaretPosition(position));
+
+      GUIUtils.forceProperty(() -> onCheckAndSetProperty(sqlEntry, position), () -> sqlEntry.setCaretPosition(position));
 
 //      sqlEntry.getTextComponent().requestFocus();
 //      SwingUtilities.invokeLater(() -> sqlEntry.setCaretPosition(position));
+   }
+
+   private static boolean onCheckAndSetProperty(ISQLEntryPanel sqlEntry, int position)
+   {
+      sqlEntry.requestFocus();
+      sqlEntry.getTextComponent().requestFocusInWindow();
+      sqlEntry.getTextComponent().requestFocus();
+
+      int formerCaretPos = sqlEntry.getCaretPosition();
+      sqlEntry.setCaretPosition(position);
+
+      if(position == formerCaretPos)
+      {
+         if(position > 0)
+         {
+            sqlEntry.setCaretPosition(position -1);
+            sqlEntry.setCaretPosition(position);
+         }
+         else if(position == 0 && 0 < sqlEntry.getText().length())
+         {
+            sqlEntry.setCaretPosition(1);
+            sqlEntry.setCaretPosition(0);
+         }
+      }
+
+      return sqlEntry.getTextComponent().hasFocus();
    }
 }

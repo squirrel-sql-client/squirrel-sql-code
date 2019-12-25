@@ -340,13 +340,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void requestFocus()
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				_textArea.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> _textArea.requestFocus());
 	}
 
 	/**
