@@ -2,13 +2,13 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.matchpatch.ChangeRenderer;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.matchpatch.ChangeRendererStyle;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.JColorChooser;
-import javax.swing.SwingUtilities;
 import java.awt.Color;
 
 public class ChangeTrackPrefsPanelController
@@ -38,17 +38,39 @@ public class ChangeTrackPrefsPanelController
       _panel.txtGitCommitMsgDefault.setText(prefs.getGitCommitMsgDefault());
 
       _panel.btnDeletedBold.setSelected(prefs.isDeletedBold());
+      _panel.btnDeletedBold.addActionListener(e -> adjustUi());
+
       _panel.btnDeletedItalics.setSelected(prefs.isDeletedItalics());
+      _panel.btnDeletedItalics.addActionListener(e -> adjustUi());
 
       _panel.setDeletedForeground(prefs.getDeltedForegroundRGB());
-      _panel.btnDeletedForeground.addActionListener(e -> _panel.setDeletedForeground(chooseColorRgb(_panel.getDeletedForeground())));
+      _panel.btnDeletedForeground.addActionListener(e -> onDeletedForeground());
 
       _panel.setInsertBeginBackground(prefs.getInsertBeginBackgroundRGB());
-      _panel.btnInsertBeginBackground.addActionListener(e -> _panel.setInsertBeginBackground(chooseColorRgb(_panel.getInsertBeginBackground())));
+      _panel.btnInsertBeginBackground.addActionListener(e -> onInsertBeginBackground());
 
       _panel.setInsertEndBackground(prefs.getInsertEndBackgroundRGB());
-      _panel.btnInsertEndBackground.addActionListener(e -> _panel.setInsertEndBackground(chooseColorRgb(_panel.getInsertEndBackground())));
+      _panel.btnInsertEndBackground.addActionListener(e -> onInsertEndBackground());
 
+
+      adjustUi();
+   }
+
+   private void onInsertEndBackground()
+   {
+      _panel.setInsertEndBackground(chooseColorRgb(_panel.getInsertEndBackground()));
+      adjustUi();
+   }
+
+   private void onInsertBeginBackground()
+   {
+      _panel.setInsertBeginBackground(chooseColorRgb(_panel.getInsertBeginBackground()));
+      adjustUi();
+   }
+
+   private void onDeletedForeground()
+   {
+      _panel.setDeletedForeground(chooseColorRgb(_panel.getDeletedForeground()));
       adjustUi();
    }
 
@@ -82,6 +104,18 @@ public class ChangeTrackPrefsPanelController
       _panel.txtExampleChangeTrackBase.setEnabled(ctEnabled);
       _panel.txtExampleEditorText.setEnabled(ctEnabled);
       _panel.txtExamplePopup.setEnabled(ctEnabled);
+
+
+      ChangeRendererStyle changeRendererStyle = new ChangeRendererStyle();
+      changeRendererStyle.setDeletedBold(_panel.btnDeletedBold.isSelected());
+      changeRendererStyle.setDeletedItalic(_panel.btnDeletedItalics.isSelected());
+      changeRendererStyle.setDeletedForgeGround(new Color(_panel.getDeletedForeground()));
+      changeRendererStyle.setAfterInsertColor(new Color(_panel.getInsertEndBackground()));
+      changeRendererStyle.setBeforeInsertColor(new Color(_panel.getInsertBeginBackground()));
+
+      _panel.txtExamplePopup.setText(null);
+      ChangeRenderer.renderChangeInTextPane(_panel.txtExamplePopup, ChangeTrackPrefsPanel.EXAMPLE_CHANGE_TRACK_BASE, ChangeTrackPrefsPanel.EXAMPLE_EDITOR_TEXT, changeRendererStyle);
+
    }
 
    public void applyChanges(SquirrelPreferences prefs)

@@ -637,9 +637,6 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 
 	private class DiffCellRenderer extends DefaultTableCellRenderer
 	{
-
-		private static final long serialVersionUID = -3678335726720196633L;
-
 		private final Color originalCellBGColor = Color.white;
 
 		@Override

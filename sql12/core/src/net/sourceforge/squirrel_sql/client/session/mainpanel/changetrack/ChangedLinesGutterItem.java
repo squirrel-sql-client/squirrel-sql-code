@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 import com.github.difflib.patch.ChangeDelta;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.matchpatch.ChangeRenderer;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.matchpatch.ChangeRendererStyle;
 import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
@@ -133,7 +134,7 @@ public class ChangedLinesGutterItem implements GutterItem
          revertablePopupPanel.btnRevert.addActionListener(ae -> onRevert(popupMenu));
 
          revertablePopupPanel.txtFormerText.setText("");
-         ChangeRenderer.renderChangeInTextPane(revertablePopupPanel.txtFormerText, sourceText, targetText);
+         ChangeRenderer.renderChangeInTextPane(revertablePopupPanel.txtFormerText, sourceText, targetText, ChangeRendererStyle.createFromPrefs());
 
 
 

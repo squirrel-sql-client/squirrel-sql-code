@@ -12,10 +12,7 @@ import java.util.LinkedList;
 public class ChangeRenderer
 {
 
-   public static final Color BEFORE_INSERT_COLOR = new Color(148, 255, 81);
-   public static final Color AFTER_INSERT_COLOR = new Color(255, 170, 109);
-
-   public static void renderChangeInTextPane(JTextPane txtFormerText, String sourceText, String targetText)
+   public static void renderChangeInTextPane(JTextPane txtRenderedPane, String sourceText, String targetText, ChangeRendererStyle changeRendererStyle)
    {
       diff_match_patch dmp = new diff_match_patch();
 
@@ -29,12 +26,12 @@ public class ChangeRenderer
          switch (diff.operation)
          {
             case EQUAL:
-               print(txtFormerText, diff.text,false, previousIsInsert(diffs, i), nextIsInsert(diffs, i));
+               print(txtRenderedPane, diff.text,false, previousIsInsert(diffs, i), nextIsInsert(diffs, i), changeRendererStyle);
                break;
 //            case INSERT:
 //               break;
             case DELETE:
-               print(txtFormerText, diff.text,true, previousIsInsert(diffs, i), nextIsInsert(diffs, i));
+               print(txtRenderedPane, diff.text,true, previousIsInsert(diffs, i), nextIsInsert(diffs, i), changeRendererStyle);
                break;
          }
       }
@@ -62,21 +59,28 @@ public class ChangeRenderer
       return false;
    }
 
-   private static void print(JTextPane txtFormerText, String str, boolean bold, boolean previousIsInsert, boolean nextIsInsert)
+   private static void print(JTextPane txtFormerText, String str, boolean isDeleted, boolean previousIsInsert, boolean nextIsInsert, ChangeRendererStyle style)
    {
       Color defaultBg = txtFormerText.getBackground();
+      Color defaultFg = txtFormerText.getForeground();
 
       SimpleAttributeSet attributes = new SimpleAttributeSet(txtFormerText.getInputAttributes());
       StyleConstants.setForeground(attributes, txtFormerText.getForeground());
       StyleConstants.setBackground(attributes, defaultBg);
-      StyleConstants.setBold(attributes, bold);
+      StyleConstants.setForeground(attributes, defaultFg);
 
+      StyleConstants.setBold(attributes, isDeleted && style.isDeletedBold());
+      StyleConstants.setItalic(attributes, isDeleted && style.isDeletedItalic());
+      if (isDeleted)
+      {
+         StyleConstants.setForeground(attributes, style.getDeletedForgeGround());
+      }
 
       if(previousIsInsert && nextIsInsert)
       {
          if (str.length() > 1)
          {
-            StyleConstants.setBackground(attributes, AFTER_INSERT_COLOR);
+            StyleConstants.setBackground(attributes, style.getAfterInsertColor());
             insert(txtFormerText, str.substring(0, 1), attributes);
 
             if (str.length() > 2)
@@ -85,12 +89,12 @@ public class ChangeRenderer
                insert(txtFormerText, str.substring(1, str.length() - 1), attributes);
             }
 
-            StyleConstants.setBackground(attributes, BEFORE_INSERT_COLOR);
+            StyleConstants.setBackground(attributes, style.getBeforeInsertColor());
             insert(txtFormerText, str.substring(str.length() - 1), attributes);
          }
          else
          {
-            StyleConstants.setBackground(attributes, BEFORE_INSERT_COLOR);
+            StyleConstants.setBackground(attributes, style.getBeforeInsertColor());
             insert(txtFormerText, str, attributes);
          }
       }
@@ -102,13 +106,13 @@ public class ChangeRenderer
             insert(txtFormerText, str.substring(0, str.length() - 1), attributes);
          }
 
-         StyleConstants.setBackground(attributes, BEFORE_INSERT_COLOR);
+         StyleConstants.setBackground(attributes, style.getBeforeInsertColor());
          insert(txtFormerText, str.substring(str.length() - 1), attributes);
 
       }
       else if(previousIsInsert && false == nextIsInsert)
       {
-         StyleConstants.setBackground(attributes, AFTER_INSERT_COLOR);
+         StyleConstants.setBackground(attributes, style.getAfterInsertColor());
          insert(txtFormerText, str.substring(0, 1), attributes);
 
          if (str.length() > 1)
@@ -121,7 +125,6 @@ public class ChangeRenderer
       {
          insert(txtFormerText, str, attributes);
       }
-
    }
 
    private static void insert(JTextPane txtFormerText, String msg, SimpleAttributeSet attributes)

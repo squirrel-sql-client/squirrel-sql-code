@@ -25,6 +25,9 @@ public class ChangeTrackPrefsPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChangeTrackPrefsPanelController.class);
 
+   static final String EXAMPLE_CHANGE_TRACK_BASE = "SELECT Street, City, Country FROM Address\nWHERE SurName = 'Dow'";
+   static final String EXAMPLE_EDITOR_TEXT = "SELECT Street, City FROM Address\nWHERE FirstName ='John' AND SurName = 'Dow'";
+
    JCheckBox chkEnableChangeTracking;
    JCheckBox chkGitCommitMsgManually;
    JTextField txtGitCommitMsgDefault;
@@ -204,6 +207,7 @@ public class ChangeTrackPrefsPanel extends JPanel
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5), 0,0);
       txtExampleChangeTrackBase = new JTextPane();
+      txtExampleChangeTrackBase.setText(EXAMPLE_CHANGE_TRACK_BASE);
       styleExampleTextPane(txtExampleChangeTrackBase);
       ret.add(txtExampleChangeTrackBase, gbc);
 
@@ -213,6 +217,7 @@ public class ChangeTrackPrefsPanel extends JPanel
 
       gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
       txtExampleEditorText = new JTextPane();
+      txtExampleEditorText.setText(EXAMPLE_EDITOR_TEXT);
       styleExampleTextPane(txtExampleEditorText);
       ret.add(txtExampleEditorText, gbc);
 
@@ -242,9 +247,6 @@ public class ChangeTrackPrefsPanel extends JPanel
       txtPane.setEditable(false);
       txtPane.setBorder(BorderFactory.createEtchedBorder());
       GUIUtils.setPreferredHeight(txtPane, 2 * txtPane.getFontMetrics(font).getHeight() + 5);
-
-      txtPane.setText("Bla\nBla");
-
       return txtPane;
    }
 

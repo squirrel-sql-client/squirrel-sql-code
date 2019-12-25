@@ -35,7 +35,7 @@ public class Version
 	 * No I18n/StringManager here. This class is used to early. The right Locale may not have been set yet.
 	 */
 	private static final String APP_NAME = "SQuirreL SQL Client";
-	private static final String COPYRIGHT = "Copyright (c) 2001-2019\nColin Bell, Gerd Wagner, Rob Manning and others";
+	private static final String COPYRIGHT = "Copyright (c) 2001-2020\nColin Bell, Gerd Wagner, Rob Manning and others";
 	private static final String WEB_SITE = "http://www.squirrelsql.org";
 	
 	private static String shortVersion = null;
