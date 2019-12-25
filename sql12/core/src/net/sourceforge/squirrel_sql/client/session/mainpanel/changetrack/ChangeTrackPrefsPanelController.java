@@ -68,7 +68,7 @@ public class ChangeTrackPrefsPanelController
       boolean ctEnabled = _panel.chkEnableChangeTracking.isSelected();
 
       _panel.chkGitCommitMsgManually.setEnabled(ctEnabled);
-      _panel.txtGitCommitMsgDefault.setEnabled(ctEnabled && _panel.chkGitCommitMsgManually.isSelected());
+      _panel.txtGitCommitMsgDefault.setEnabled(ctEnabled && false == _panel.chkGitCommitMsgManually.isSelected());
 
       _panel.btnDeletedBold.setEnabled(ctEnabled);
       _panel.btnDeletedItalics.setEnabled(ctEnabled);

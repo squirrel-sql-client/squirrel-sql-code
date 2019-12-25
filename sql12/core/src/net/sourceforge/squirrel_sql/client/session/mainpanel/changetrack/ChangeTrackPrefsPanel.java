@@ -77,8 +77,13 @@ public class ChangeTrackPrefsPanel extends JPanel
       txtGitCommitMsgDefault = new JTextField();
       ret.add(txtGitCommitMsgDefault, gbc);
 
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(3,3,0,5), 0,0);
+      JLabel lblGITCommitNote = new JLabel(s_stringMgr.getString("ChangeTrackPrefsPanel.note.file.name.replace"));
+      lblGITCommitNote.setToolTipText(s_stringMgr.getString("ChangeTrackPrefsPanel.note.file.name.replace.tooltip"));
+      ret.add(lblGITCommitNote, gbc);
+
       // dist
-      gbc = new GridBagConstraints(0,2,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+      gbc = new GridBagConstraints(0,3,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
       ret.add(new JPanel(), gbc);
 
       ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("ChangeTrackPrefsPanel.git")));

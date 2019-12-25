@@ -273,7 +273,7 @@ public class SquirrelPreferences implements Serializable
 	// Change tracking properties
 	private boolean _enableChangeTracking = true;
 	private boolean _gitCommitMsgManually = false;
-	private String _gitCommitMsgDefault = "SQuirreL generated commit message";
+	private String _gitCommitMsgDefault = "SQuirreL commit of @file";
 	private boolean _deletedBold = true;
 	private boolean _deletedItalics = false;
 	private int _deltedForegroundRGB = Color.gray.getRGB();
