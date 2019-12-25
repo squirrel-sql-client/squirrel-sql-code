@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
 import net.sourceforge.squirrel_sql.client.action.ActionKeys;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.GitHandler;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
@@ -47,6 +48,7 @@ import java.util.Iterator;
  */
 public class SquirrelPreferences implements Serializable
 {
+
 	public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
@@ -273,7 +275,7 @@ public class SquirrelPreferences implements Serializable
 	// Change tracking properties
 	private boolean _enableChangeTracking = true;
 	private boolean _gitCommitMsgManually = false;
-	private String _gitCommitMsgDefault = "SQuirreL commit of @file";
+	private String _gitCommitMsgDefault = "SQuirreL commit of " + GitHandler.GIT_MSG_FILE_NAME_PLACEHOLDER;
 	private boolean _deletedBold = true;
 	private boolean _deletedItalics = false;
 	private int _deltedForegroundRGB = Color.gray.getRGB();

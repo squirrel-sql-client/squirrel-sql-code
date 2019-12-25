@@ -42,6 +42,8 @@ import java.io.IOException;
  */
 public class GitHandler
 {
+   public static final String GIT_MSG_FILE_NAME_PLACEHOLDER = "@file";
+
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GitHandler.class);
    private static final ILogger s_log = LoggerController.createLogger(GitHandler.class);
 
@@ -59,17 +61,13 @@ public class GitHandler
 
    private static String getCurrentRepoVersion(File file)
    {
-      try
+      if (null == file)
       {
-         if (null == file)
-         {
-            return null;
-         }
+         return null;
+      }
 
-         System.out.println("GitHandler.getCurrentRepoVersion READING FROM GIT");
-
-         Repository repository = findRepository(file);
-
+      try(Repository repository = findRepository(file))
+      {
          if(null == repository)
          {
             return null;
@@ -77,7 +75,16 @@ public class GitHandler
 
          String filePathRelativeToRepoRoot = getPathRelativeToRepo(repository, file);
 
+
          ObjectId headId = repository.resolve(Constants.HEAD);
+
+         if(null == headId)
+         {
+            // headId is null when no file has yet been committed.
+            return null;
+         }
+
+         s_log.info("GIT: Reading " + Constants.HEAD + " revision of " + file.getPath());
 
          // a RevWalk allows to walk over commits based on some filtering that is defined
          try (RevWalk revWalk = new RevWalk(repository))
@@ -122,6 +129,9 @@ public class GitHandler
 
    private static String commit(IFileEditorAPI fileEditorAPI)
    {
+      Repository repository = null;
+      Git git = null;
+
       try
       {
          if (false == fileEditorAPI.getFileHandler().fileSave())
@@ -131,9 +141,9 @@ public class GitHandler
 
          File file = fileEditorAPI.getFileHandler().getFile();
 
-         Git git;
 
-         Repository repository = findRepository(file);
+
+         repository = findRepository(file);
 
          if (null == repository)
          {
@@ -161,7 +171,23 @@ public class GitHandler
 
          if (isModifiedOrAdded(filePathRelativeToRepoRoot, git))
          {
-            RevCommit revCommit = git.commit().setOnly(filePathRelativeToRepoRoot).setMessage("SQuirrelGeneratedMessage").call();
+            String msg;
+
+            if(Main.getApplication().getSquirrelPreferences().isGitCommitMsgManually())
+            {
+               msg = new GitCommitMessageController(fileEditorAPI.getOwningFrame(), file.getName(), filePathRelativeToRepoRoot, repository).getMessage();
+
+               if(null == msg)
+               {
+                  return getCurrentRepoVersion(file);
+               }
+            }
+            else
+            {
+               msg = Main.getApplication().getSquirrelPreferences().getGitCommitMsgDefault().replaceAll(GIT_MSG_FILE_NAME_PLACEHOLDER, filePathRelativeToRepoRoot);
+            }
+
+            RevCommit revCommit = git.commit().setOnly(filePathRelativeToRepoRoot).setMessage(msg).call();
 
             logCommit(repository, filePathRelativeToRepoRoot, revCommit);
          }
@@ -175,6 +201,32 @@ public class GitHandler
       catch (Exception e)
       {
          throw Utilities.wrapRuntime(e);
+      }
+      finally
+      {
+         if(null != repository)
+         {
+            try
+            {
+               repository.close();
+            }
+            catch (Exception e)
+            {
+               s_log.warn("Error closing org.eclipse.jgit.lib.Repository", e);
+            }
+         }
+
+         if(null != git)
+         {
+            try
+            {
+               git.close();
+            }
+            catch (Exception e)
+            {
+               s_log.warn("Error closing org.eclipse.jgit.api.Git", e);
+            }
+         }
       }
    }
 

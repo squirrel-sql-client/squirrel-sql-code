@@ -34,30 +34,55 @@ public class DeletedLinesGutterItem implements GutterItem
    @Override
    public void leftPaint(Graphics g)
    {
-      Rectangle rectBefore = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, getDeletePosition(), 1);
+      int y = getYOfLine(_sqlEntry, getDeletePosition());
 
-      if(null == rectBefore)
-      {
-         return;
-      }
-
-      int y = calculateY(rectBefore);
-
-      paintArrow(g, rectBefore.x, y, rectBefore.x + rectBefore.width, y);
+      paintArrow(g, 0, y, ChangeTrackPanel.LEFT_GUTTER_WIDTH, y);
    }
 
-   private int calculateY(Rectangle rectBefore)
+   private int getYOfLine(ISQLEntryPanel sqlEntry, int deletePosition)
    {
-      int y;
-      if (rectBefore.y < 2)
+      Rectangle rect;
+
+      Rectangle visibleRect = sqlEntry.getTextComponent().getVisibleRect();
+
+      try
       {
-         y = 2;
+         rect = sqlEntry.getTextComponent().modelToView(sqlEntry.getTextComponent().getLineStartOffset(deletePosition));
+         return correctYForEditorBegin(rect.y - visibleRect.y);
+      }
+      catch (BadLocationException e)
+      {
+         try
+         {
+            // We were below the end.
+            if (0 < sqlEntry.getTextComponent().getLineCount())
+            {
+               rect = sqlEntry.getTextComponent().modelToView(sqlEntry.getTextComponent().getLineStartOffset(sqlEntry.getTextComponent().getLineCount() - 1));
+
+               return correctYForEditorBegin(rect.y - visibleRect.y + rect.height);
+            }
+            else
+            {
+               return correctYForEditorBegin(0);
+            }
+         }
+         catch (BadLocationException ex)
+         {
+            throw Utilities.wrapRuntime(ex);
+         }
+      }
+   }
+
+   private int correctYForEditorBegin(int y)
+   {
+      if (0 <= y && y < 2)
+      {
+         return 2;
       }
       else
       {
-         y = rectBefore.y + rectBefore.height;
+         return y;
       }
-      return y;
    }
 
    @Override
@@ -116,16 +141,10 @@ public class DeletedLinesGutterItem implements GutterItem
 
    private boolean intersects(MouseEvent e)
    {
-      Rectangle rectBefore = GutterItemUtil.getLeftGutterBoundsForLines(_sqlEntry, getDeletePosition(), 1);
+      int y = getYOfLine(_sqlEntry, getDeletePosition());
 
-      if(null == rectBefore)
-      {
-         return false;
-      }
 
-      int y = calculateY(rectBefore);
-
-      Polygon triangle = getTriangle(rectBefore.x, y, rectBefore.x + rectBefore.width, y);
+      Polygon triangle = getTriangle(0, y, ChangeTrackPanel.LEFT_GUTTER_WIDTH, y);
 
       return triangle.getBounds().intersects(new Rectangle(e.getPoint(), new Dimension(1, 1)));
    }
@@ -159,7 +178,7 @@ public class DeletedLinesGutterItem implements GutterItem
          try
          {
             int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(Math.max(getDeletePosition() -1, 0));
-            _sqlEntry.setCaretPosition(lineStartPosition);
+            GutterItemUtil.positionCaretAndScroll(lineStartPosition, _sqlEntry);
          }
          catch (BadLocationException ex)
          {

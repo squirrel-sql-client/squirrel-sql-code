@@ -90,7 +90,7 @@ public class ChangedLinesGutterItem implements GutterItem
          try
          {
             int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(getBeginLine() - 1);
-            _sqlEntry.setCaretPosition(lineStartPosition);
+            GutterItemUtil.positionCaretAndScroll(lineStartPosition, _sqlEntry);
          }
          catch (BadLocationException ex)
          {
@@ -157,7 +157,7 @@ public class ChangedLinesGutterItem implements GutterItem
 
          String revertText;
 
-         if (endPos == _sqlEntry.getText().length())
+         if (endPos == _sqlEntry.getText().length() && false == endsWithNewLine(_sqlEntry.getText()))
          {
             revertText = String.join("\n", _delta.getSource().getLines());
          }
@@ -176,6 +176,16 @@ public class ChangedLinesGutterItem implements GutterItem
       {
          throw Utilities.wrapRuntime(e);
       }
+   }
+
+   private boolean endsWithNewLine(String text)
+   {
+      if(0 == text.length())
+      {
+         return false;
+      }
+
+      return '\n' == text.charAt(text.length() - 1);
    }
 
 

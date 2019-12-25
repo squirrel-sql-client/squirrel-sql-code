@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -13,7 +15,7 @@ public class GutterItemUtil
    {
       try
       {
-         int beginLineTransformed = Math.max(beginLine - 1, 0);
+         int beginLineTransformed = beginLine;
          int numberOfLinesTransformed = numberOfLines - 1;
 
          int lastLine = Math.min(beginLineTransformed + numberOfLinesTransformed, sqlEntry.getTextComponent().getLineCount() -1);
@@ -47,7 +49,7 @@ public class GutterItemUtil
    {
       try
       {
-         int beginLineTransformed = beginLine - 1;
+         int beginLineTransformed = Math.max(0,beginLine - 1);
          int numberOfLinesTransformed = numberOfLines - 1;
 
          int lastLine = Math.min(beginLineTransformed + numberOfLinesTransformed, sqlEntry.getTextComponent().getLineCount() -1);
@@ -91,5 +93,13 @@ public class GutterItemUtil
       g.fillRect(mark.x, mark.y, mark.width, mark.height);
 
       g.setColor(buf);
+   }
+
+   static void positionCaretAndScroll(int position, ISQLEntryPanel sqlEntry)
+   {
+      GUIUtils.forceFocus(sqlEntry.getTextComponent(), () -> sqlEntry.setCaretPosition(position));
+
+//      sqlEntry.getTextComponent().requestFocus();
+//      SwingUtilities.invokeLater(() -> sqlEntry.setCaretPosition(position));
    }
 }

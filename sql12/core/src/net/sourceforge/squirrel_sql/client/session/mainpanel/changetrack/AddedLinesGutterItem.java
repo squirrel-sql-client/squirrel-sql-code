@@ -88,7 +88,7 @@ public class AddedLinesGutterItem implements GutterItem
          try
          {
             int lineStartPosition = _sqlEntry.getTextComponent().getLineStartOffset(getBeginLine() - 1);
-            _sqlEntry.setCaretPosition(lineStartPosition);
+            GutterItemUtil.positionCaretAndScroll(lineStartPosition, _sqlEntry);
          }
          catch (BadLocationException ex)
          {

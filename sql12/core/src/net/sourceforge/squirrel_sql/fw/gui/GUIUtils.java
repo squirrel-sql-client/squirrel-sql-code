@@ -545,6 +545,11 @@ public class GUIUtils
 
 	public static void forceFocus(final JComponent comp)
 	{
+		forceFocus(comp, null);
+	}
+
+	public static void forceFocus(final JComponent comp, Runnable callWhenFocused)
+	{
 		final Timer[] timerRef = new Timer[1];
 
 		timerRef[0] = new Timer(100, new ActionListener()
@@ -557,6 +562,11 @@ public class GUIUtils
 				if (comp.hasFocus() || maxCount > 15)
 				{
 					timerRef[0].stop();
+
+					if(null != callWhenFocused)
+					{
+						callWhenFocused.run();
+					}
 					return;
 				}
 				comp.requestFocusInWindow();
