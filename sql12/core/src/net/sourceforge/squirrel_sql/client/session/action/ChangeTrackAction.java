@@ -35,11 +35,15 @@ public class ChangeTrackAction extends SquirrelAction  implements ISQLPanelActio
 	public void setSQLPanel(ISQLPanelAPI panel)
 	{
 		_panel = panel;
-		setEnabled(null != _panel);
+
+		boolean enabled = null != _panel && _panel.getChangeTracker().isEnabled();
+		setEnabled(enabled);
+
+
 
 		for (SQLPanelApiChangedListener l : _sqlPanelApiChangedListeners.toArray(new SQLPanelApiChangedListener[0]))
 		{
-			if (null != _panel)
+			if (null != _panel && _panel.getChangeTracker().isEnabled())
 			{
 				l.activeSqlPanelApiChanged(_panel.getChangeTracker().getChangeTrackType());
 			}

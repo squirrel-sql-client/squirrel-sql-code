@@ -168,7 +168,7 @@ public class SQLPanel extends JPanel
 		_panelAPI = new SQLPanelAPI(this, titleFileHandler);
 		_changeTracker.initChangeTracking(_panelAPI);
 
-      _resultLimitAndReadOnPanelSmallPanel.loadData(session.getProperties());
+		_resultLimitAndReadOnPanelSmallPanel.loadData(session.getProperties());
 
       _toggleResultMinimizeHandler = new ToggleResultMinimizeHandler(_splitPane);
 
@@ -844,10 +844,7 @@ public class SQLPanel extends JPanel
 	  
 		_splitPane.setOneTouchExpandable(true);
 
-		installSQLEntryPanel(
-		        app.getSQLEntryPanelFactory().createSQLEntryPanel(
-		                _session,
-		                new HashMap<String, Object>()));
+		installSQLEntryPanel(app.getSQLEntryPanelFactory().createSQLEntryPanel(_session,new HashMap<>()));
 
       _executerPanleHolder = new JPanel(new GridLayout(1,1));
       _executerPanleHolder.setMinimumSize(new Dimension(50,50));
@@ -861,14 +858,7 @@ public class SQLPanel extends JPanel
 
 		_sqlCombo.addActionListener(_sqlComboListener);
 
-		// Set focus to the SQL entry panel.
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				_sqlEntry.getTextComponent().requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> _sqlEntry.getTextComponent().requestFocus());
 	}
 
 

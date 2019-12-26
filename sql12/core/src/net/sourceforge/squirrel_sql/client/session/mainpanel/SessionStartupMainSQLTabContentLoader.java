@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.AliasFileOpenAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeEnum;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -58,17 +59,19 @@ public class SessionStartupMainSQLTabContentLoader
 
          if (null != sqlContents)
          {
-            Runnable runnable = new Runnable()
-            {
-               public void run()
-               {
-                  panelAPI.setEntireSQLScript(sqlContents);
-                  panelAPI.resetUnsavedEdits();
-               }
-            };
-
-            SwingUtilities.invokeLater(runnable);
+            SwingUtilities.invokeLater(() -> applyLastEditorContents(panelAPI, sqlContents));
          }
+      }
+   }
+
+   private static void applyLastEditorContents(ISQLPanelAPI panelAPI, String sqlContents)
+   {
+      panelAPI.setEntireSQLScript(sqlContents);
+      panelAPI.resetUnsavedEdits();
+
+      if (ChangeTrackTypeEnum.getPreference() == ChangeTrackTypeEnum.MANUAL)
+      {
+         panelAPI.getChangeTracker().rebaseChangeTrackingOnToolbarButtonOrMenu();
       }
    }
 

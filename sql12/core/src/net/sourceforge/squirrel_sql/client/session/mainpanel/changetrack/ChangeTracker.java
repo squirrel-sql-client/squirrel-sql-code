@@ -1,8 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
@@ -16,16 +19,36 @@ public class ChangeTracker
    private ChangeTrackPanel _changeTrackPanel;
    private GutterItemsManager _gutterItemsManager;
 
+   private boolean _enabled;
+
    public ChangeTracker(ISQLEntryPanel sqlEntry)
    {
       _sqlEntry = sqlEntry;
+
+      _enabled = Main.getApplication().getSquirrelPreferences().isEnableChangeTracking();
+
+      if (false == _enabled)
+      {
+         return;
+      }
+
       JScrollPane scrollPane = sqlEntry.getTextAreaEmbeddedInScrollPane();
       _changeTrackPanel = new ChangeTrackPanel(scrollPane, g -> onPaintLeftGutter(g), g -> onPaintRightGutter(g));
 
    }
 
+   public boolean isEnabled()
+   {
+      return _enabled;
+   }
+
    public void initChangeTracking(IFileEditorAPI fileEditorAPI)
    {
+      if(false == _enabled)
+      {
+         return;
+      }
+
       _gutterItemsManager = new GutterItemsManager(_sqlEntry, _changeTrackPanel, fileEditorAPI);
 
       _changeTrackPanel.trackingGutterLeft.addMouseListener(new MouseAdapter() {
@@ -102,9 +125,16 @@ public class ChangeTracker
       }
    }
 
-   public ChangeTrackPanel embedInTracking()
+   public JComponent embedInTracking()
    {
-      return _changeTrackPanel;
+      if (_enabled)
+      {
+         return _changeTrackPanel;
+      }
+      else
+      {
+         return _sqlEntry.getTextAreaEmbeddedInScrollPane();
+      }
    }
 
 
@@ -121,6 +151,11 @@ public class ChangeTracker
 
    public void rebaseChangeTrackingOnToolbarButtonOrMenu()
    {
+      if(false == _enabled)
+      {
+         return;
+      }
+
       _gutterItemsManager.getGutterItemsProvider().rebaseChangeTrackingOnToolbarButtonOrMenu();
    }
 }
