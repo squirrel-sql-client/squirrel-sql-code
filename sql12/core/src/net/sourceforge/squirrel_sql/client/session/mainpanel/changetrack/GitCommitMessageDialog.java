@@ -10,6 +10,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -38,7 +39,7 @@ public class GitCommitMessageDialog extends JDialog
 
       gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5), 0,0);
       txtMessage = new JTextArea();
-      getContentPane().add(txtMessage, gbc);
+      getContentPane().add(new JScrollPane(txtMessage), gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       getContentPane().add(createOkCancelPanel(), gbc);
@@ -50,7 +51,7 @@ public class GitCommitMessageDialog extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0);
       btnOk = new JButton(s_stringMgr.getString("GitCommitMessageDialog.ok"));
       getRootPane().setDefaultButton(btnOk);
       ret.add(btnOk, gbc);

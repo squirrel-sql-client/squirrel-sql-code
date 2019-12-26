@@ -1,22 +1,14 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.type.SimpleType;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class RecentFilesManager
@@ -81,58 +73,20 @@ public class RecentFilesManager
    public void saveJsonBean(File recentFilesBeanFile)
    {
 
-      try
-      {
-         FileOutputStream fos = new FileOutputStream(recentFilesBeanFile);
-
-         ObjectMapper mapper = new ObjectMapper();
-         ObjectWriter objectWriter = mapper.writerWithDefaultPrettyPrinter();
-
-         // This version of objectWriter.writeValue() ensures,
-         // that objects are written in JsonEncoding.UTF8
-         // and thus that there won't be encoding problems
-         // that makes the loadObjects methods crash.
-         objectWriter.writeValue(fos, _recentFilesJsonBean);
-
-         fos.close();
-
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
+      JsonMarshalUtil.writeObjectToFile(recentFilesBeanFile, _recentFilesJsonBean);
    }
 
    public void initJSonBean(File recentFilesJsonBeanFile)
    {
-      try
+      checkIfOlderVersionWarningIsNeeded();
+
+
+      if(false == recentFilesJsonBeanFile.exists())
       {
-         checkIfOlderVersionWarningIsNeeded();
-
-
-         if(false == recentFilesJsonBeanFile.exists())
-         {
-            return;
-         }
-
-
-         FileInputStream is = new FileInputStream(recentFilesJsonBeanFile);
-         InputStreamReader isr = new InputStreamReader(is, JsonEncoding.UTF8.getJavaName());
-
-
-         ObjectMapper mapper = new ObjectMapper();
-         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-         _recentFilesJsonBean = mapper.readValue(isr, SimpleType.construct(RecentFilesJsonBean.class));
-
-
-         isr.close();
-         is.close();
-
+         return;
       }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
-      }
+
+      _recentFilesJsonBean = JsonMarshalUtil.readObjectFromFile(recentFilesJsonBeanFile, RecentFilesJsonBean.class);
    }
 
    private void checkIfOlderVersionWarningIsNeeded()

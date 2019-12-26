@@ -455,4 +455,9 @@ public class ApplicationFiles
    {
       return new File(_userSettingsDir + File.separator + "props.properties");
    }
+
+   public File getGitCommitMessageJsonBeanFile()
+   {
+      return new File(_userSettingsDir + File.separator + "gitCommitMessageJsonBean.json");
+   }
 }
