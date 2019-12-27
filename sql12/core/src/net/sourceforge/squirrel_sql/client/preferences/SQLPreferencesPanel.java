@@ -23,7 +23,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-final class SQLPreferencesPanel extends JPanel
+public final class SQLPreferencesPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLPreferencesPanel.class);
 

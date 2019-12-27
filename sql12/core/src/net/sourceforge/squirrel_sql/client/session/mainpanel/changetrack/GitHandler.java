@@ -30,13 +30,15 @@ import java.io.IOException;
 
 
 /**
+ *
+ * https://github.com/eclipse/jgit
+ * <p>
+ * https://download.eclipse.org/jgit/site/5.6.0.201912101111-r/apidocs/
+ * <p>
+ * <p>
  * https://github.com/centic9/jgit-cookbook
  * <p>
  * https://git-scm.com/book/uz/v2/Appendix-B%3A-Embedding-Git-in-your-Applications-JGit
- * <p>
- * https://github.com/eclipse/jgit
- * <p>
- * http://download.eclipse.org/jgit/site/4.10.0.201712302008-r/apidocs/
  * <p>
  * https://github.com/centic9/jgit-cookbook/blob/master/src/main/java/org/dstadler/jgit/CreateNewRepository.java
  */

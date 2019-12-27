@@ -55,6 +55,6 @@ public class GlobalPreferencesCommand implements ICommand
     */
 	public void execute()
 	{
-		GlobalPreferencesSheet.showSheet(_app, null);
+		GlobalPreferencesSheet.showSheet(null);
 	}
 }

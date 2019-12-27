@@ -1,11 +1,16 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
+import net.sourceforge.squirrel_sql.client.preferences.SQLPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
@@ -15,6 +20,9 @@ import java.util.List;
 
 public class ChangeTracker
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChangeTracker.class);
+
+
    private final ISQLEntryPanel _sqlEntry;
    private ChangeTrackPanel _changeTrackPanel;
    private GutterItemsManager _gutterItemsManager;
@@ -55,7 +63,13 @@ public class ChangeTracker
          @Override
          public void mousePressed(MouseEvent e)
          {
-            onLeftGutterMousePressed(e);
+            onLeftGutterMousePressed(e, true);
+         }
+
+         @Override
+         public void mouseReleased(MouseEvent e)
+         {
+            onLeftGutterMousePressed(e, false);
          }
       });
       _changeTrackPanel.trackingGutterLeft.addMouseMotionListener(new MouseMotionAdapter() {
@@ -89,9 +103,27 @@ public class ChangeTracker
       _gutterItemsManager.leftGutterMouseMoved(e, _changeTrackPanel.trackingGutterLeft);
    }
 
-   private void onLeftGutterMousePressed(MouseEvent e)
+   private void onLeftGutterMousePressed(MouseEvent me, boolean mousePressed)
    {
-      _gutterItemsManager.leftGutterMousePressed(e, _changeTrackPanel.trackingGutterLeft);
+      if(me.isPopupTrigger())
+      {
+         JPopupMenu popupMenu = new JPopupMenu();
+         JMenuItem menuItem = new JMenuItem(s_stringMgr.getString("ChangeTracker.open.preferences"));
+
+         menuItem.addActionListener(e -> onOpenChangeTrackPreferences());
+         popupMenu.add(menuItem);
+
+         popupMenu.show(_changeTrackPanel.trackingGutterLeft, me.getX(), me.getY());
+      }
+      else if(mousePressed)
+      {
+         _gutterItemsManager.leftGutterMousePressed(me, _changeTrackPanel.trackingGutterLeft);
+      }
+   }
+
+   private void onOpenChangeTrackPreferences()
+   {
+      GlobalPreferencesSheet.showSheet(SQLPreferencesPanel.class);
    }
 
 

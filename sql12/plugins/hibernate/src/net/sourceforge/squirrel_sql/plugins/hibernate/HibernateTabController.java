@@ -145,7 +145,7 @@ public class HibernateTabController implements IMainPanelTab
             return onGetPreselectedCfg();
          }
       });
-      GlobalPreferencesSheet.showSheet(_plugin.getApplication(), HibernateConfigPanel.class);
+      GlobalPreferencesSheet.showSheet(HibernateConfigPanel.class);
    }
 
    private HibernateConfiguration onGetPreselectedCfg()
@@ -221,7 +221,7 @@ public class HibernateTabController implements IMainPanelTab
 
             if(JOptionPane.YES_OPTION == opt)
             {
-               GlobalPreferencesSheet.showSheet(_plugin.getApplication(), HibernateConfigPanel.class);
+               GlobalPreferencesSheet.showSheet(HibernateConfigPanel.class);
             }
          }
 

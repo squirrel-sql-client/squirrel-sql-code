@@ -11,15 +11,12 @@ import net.sourceforge.squirrel_sql.client.session.event.SQLPanelAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 
-public class EditBookmarksAction extends SquirrelAction
-   implements ISessionAction
+public class EditBookmarksAction extends SquirrelAction implements ISessionAction
 {
    private SQLBookmarkPlugin _plugin;
    private ISession _session;
 
-   public EditBookmarksAction(IApplication app, IResources resources,
-                              SQLBookmarkPlugin plugin)
-      throws IllegalArgumentException
+   public EditBookmarksAction(IApplication app, IResources resources, SQLBookmarkPlugin plugin)
    {
       super(app, resources);
       if (plugin == null)
@@ -42,7 +39,7 @@ public class EditBookmarksAction extends SquirrelAction
          }
       });
 
-      GlobalPreferencesSheet.showSheet(_plugin.getApplication(), SQLBookmarkPreferencesPanel.class);
+      GlobalPreferencesSheet.showSheet(SQLBookmarkPreferencesPanel.class);
    }
 
    public void setSession(ISession session)
