@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionWrapper;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -12,7 +13,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -27,6 +27,8 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -103,7 +105,7 @@ public class GitHandler
                treeWalk.setFilter(PathFilter.create(filePathRelativeToRepoRoot));
                if (!treeWalk.next())
                {
-                  // We get here when the file saved but not yet added.
+                  // We get here when the file was saved but not yet added.
                   revWalk.dispose();
                   return null;
                   //throw new IllegalStateException("Did not find expected file '" + filePathRelativeToRepoRoot + "'");
@@ -300,4 +302,63 @@ public class GitHandler
       return repository.getWorkTree().toURI().relativize(file.toURI()).getPath();
    }
 
+   public static boolean isInRepository(File file)
+   {
+      try
+      {
+         Repository repository = findRepository(file);
+
+         if(null == repository)
+         {
+            return false;
+         }
+
+         Git git = Git.open(repository.getDirectory());
+
+         String filePathRelativeToRepoRoot = getPathRelativeToRepo(repository, file);
+
+         Status status = git.status().addPath(filePathRelativeToRepoRoot).call();
+
+         return null != status && 0 == status.getUntracked().size();
+      }
+      catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   public static List<RevisionWrapper> getRevisions(File file)
+   {
+
+      List<RevisionWrapper> ret = new ArrayList<>();
+
+      try(Repository repository = findRepository(file);
+          Git git = Git.open(repository.getDirectory());)
+      {
+
+         String filePathRelativeToRepoRoot = getPathRelativeToRepo(repository, file);
+
+         Iterable<RevCommit> revCommits = git.log().addPath(filePathRelativeToRepoRoot).call();
+
+         for (RevCommit revCommit : revCommits)
+         {
+            ret.add(new RevisionWrapper(revCommit, git));
+
+//         String buf =
+//         "GitHandler.getRevisions " + revCommit.getAuthorIdent().getWhen() + "  "
+//               + "   Branches: " + String.join("; ", git.branchList().setContains(revCommit.getId().getName()).call().stream().map(b -> b.getName()).collect(Collectors.toList())) + "   "
+//               + revCommit.getAuthorIdent().getName() + "   "
+//               + revCommit.getAuthorIdent().getEmailAddress() + "   "
+//               + revCommit.getId().getName()  + "   "
+//               + revCommit.getFullMessage();
+
+         }
+
+         return ret;
+      }
+      catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
 }

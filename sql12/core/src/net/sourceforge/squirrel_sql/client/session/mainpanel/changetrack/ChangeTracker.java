@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.preferences.SQLPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -16,18 +17,19 @@ import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.File;
 import java.util.List;
 
 public class ChangeTracker
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChangeTracker.class);
 
-
    private final ISQLEntryPanel _sqlEntry;
    private ChangeTrackPanel _changeTrackPanel;
    private GutterItemsManager _gutterItemsManager;
 
    private boolean _enabled;
+   private IFileEditorAPI _fileEditorAPI;
 
    public ChangeTracker(ISQLEntryPanel sqlEntry)
    {
@@ -56,6 +58,8 @@ public class ChangeTracker
       {
          return;
       }
+
+      _fileEditorAPI = fileEditorAPI;
 
       _gutterItemsManager = new GutterItemsManager(_sqlEntry, _changeTrackPanel, fileEditorAPI);
 
@@ -108,10 +112,20 @@ public class ChangeTracker
       if(me.isPopupTrigger())
       {
          JPopupMenu popupMenu = new JPopupMenu();
-         JMenuItem menuItem = new JMenuItem(s_stringMgr.getString("ChangeTracker.open.preferences"));
 
+         JMenuItem menuItem;
+         menuItem = new JMenuItem(s_stringMgr.getString("ChangeTracker.open.preferences"));
          menuItem.addActionListener(e -> onOpenChangeTrackPreferences());
          popupMenu.add(menuItem);
+
+         if (     ChangeTrackTypeEnum.getPreference() == ChangeTrackTypeEnum.GIT
+               && null != _fileEditorAPI.getFileHandler().getFile()
+               && GitHandler.isInRepository(_fileEditorAPI.getFileHandler().getFile()))
+         {
+            menuItem = new JMenuItem(s_stringMgr.getString("ChangeTracker.open.git.revisions", _fileEditorAPI.getFileHandler().getFile().getName()));
+            menuItem.addActionListener(e -> onShowGitRevisions(_fileEditorAPI.getFileHandler().getFile()));
+            popupMenu.add(menuItem);
+         }
 
          popupMenu.show(_changeTrackPanel.trackingGutterLeft, me.getX(), me.getY());
       }
@@ -119,6 +133,11 @@ public class ChangeTracker
       {
          _gutterItemsManager.leftGutterMousePressed(me, _changeTrackPanel.trackingGutterLeft);
       }
+   }
+
+   private void onShowGitRevisions(File file)
+   {
+      new RevisionListController(file, _changeTrackPanel);
    }
 
    private void onOpenChangeTrackPreferences()
