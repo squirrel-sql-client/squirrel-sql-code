@@ -487,7 +487,7 @@ public class GUIUtils
          {
          	if(null != closeByEscapeListener)
 				{
-					closeByEscapeListener.willCloseByEcape(dialog);
+					closeByEscapeListener.willCloseByEscape(dialog);
 				}
 
             dialog.setVisible(false);
@@ -515,7 +515,7 @@ public class GUIUtils
 			{
 				if(null != closeByEscapeListener)
 				{
-					closeByEscapeListener.willCloseByEcape(dialogWidget);
+					closeByEscapeListener.willCloseByEscape(dialogWidget);
 				}
 
 				dialogWidget.setVisible(false);
@@ -853,8 +853,21 @@ public class GUIUtils
 			@Override
 			public void windowClosed(WindowEvent e)
 			{
-				Props.putInt(widthPropKey, window.getWidth());
-				Props.putInt(heightPropKey, window.getHeight());
+				if (0 < window.getWidth() && 0 < window.getHeight())
+				{
+					Props.putInt(widthPropKey, window.getWidth());
+					Props.putInt(heightPropKey, window.getHeight());
+				}
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				if (0 < window.getWidth() && 0 < window.getHeight())
+				{
+					Props.putInt(widthPropKey, window.getWidth());
+					Props.putInt(heightPropKey, window.getHeight());
+				}
 			}
 		});
 

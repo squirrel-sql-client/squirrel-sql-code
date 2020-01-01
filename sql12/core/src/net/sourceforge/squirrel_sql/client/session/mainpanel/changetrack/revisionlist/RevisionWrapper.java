@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisi
 
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.text.SimpleDateFormat;
@@ -12,24 +13,68 @@ public class RevisionWrapper
    private String _revisionDateString;
    private String _branchesListString;
    private String _committerName;
-   private String _revisionId;
-   private String _commitMsgBegin;
+   private String _revisionIdString;
+   private String _commitMsg;
+   private ObjectId _revCommitId;
 
-   public RevisionWrapper(RevCommit revCommit, Git git)
+   private boolean _headRevision;
+
+   public RevisionWrapper(RevCommit revCommit, Git git, ObjectId headCommitId)
    {
       try
       {
          _revisionDateString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(revCommit.getAuthorIdent().getWhen());
          _branchesListString = String.join("; ", git.branchList().setContains(revCommit.getId().getName()).call().stream().map(b -> b.getName()).collect(Collectors.toList()));
          _committerName = revCommit.getAuthorIdent().getName()  + "; Mail: " + revCommit.getAuthorIdent().getEmailAddress();
-         _revisionId = revCommit.getId().getName();
-         _commitMsgBegin = firstTwoLines(revCommit.getFullMessage());
+         _revisionIdString = revCommit.getId().getName();
+         _commitMsg = revCommit.getFullMessage();
+         _revCommitId = revCommit.toObjectId();
+         _headRevision = headCommitId.equals(_revCommitId);
       }
       catch (Exception e)
       {
          throw Utilities.wrapRuntime(e);
       }
+   }
 
+   boolean isHeadRevision()
+   {
+      return _headRevision;
+   }
+
+   public String getRevisionDateString()
+   {
+      return _revisionDateString;
+   }
+
+   public String getBranchesListString()
+   {
+      return _branchesListString;
+   }
+
+   public String getCommitterName()
+   {
+      return _committerName;
+   }
+
+   public String getRevisionIdString()
+   {
+      return _revisionIdString;
+   }
+
+   public String getCommitMsgBegin()
+   {
+      return firstTwoLines(_commitMsg);
+   }
+
+   public String getCommitMsg()
+   {
+      return _commitMsg;
+   }
+
+   public ObjectId getRevCommitId()
+   {
+      return _revCommitId;
    }
 
    private String firstTwoLines(String fullMessage)
@@ -57,31 +102,13 @@ public class RevisionWrapper
       return ret;
    }
 
-   public String getRevisionDateString()
+
+   public String getDisplayString()
    {
-      return _revisionDateString;
+      return _revisionDateString +
+            "\n  Branches: " + _branchesListString +
+            "\n  User: " + _committerName +
+            "\n  Revision-Id: " + _revisionIdString +
+            "\n  Msg: " + getCommitMsgBegin();
    }
-
-   public String getBranchesListString()
-   {
-      return _branchesListString;
-   }
-
-   public String getCommitterName()
-   {
-      return _committerName;
-   }
-
-   public String getRevisionId()
-   {
-      return _revisionId;
-   }
-
-   public String getCommitMsgBegin()
-   {
-      return _commitMsgBegin;
-   }
-
-
-
 }

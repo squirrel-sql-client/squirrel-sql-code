@@ -65,6 +65,15 @@ public class GitHandler
 
    private static String getCurrentRepoVersion(File file)
    {
+      return getVersionOfFile(file, null);
+   }
+
+   /**
+    * Returns the content of the file for the revision given by revCommitId.
+    * @param revCommitId If null this will be replaced by the HEAD revision.
+    */
+   public static String getVersionOfFile(File file, ObjectId revCommitId)
+   {
       if (null == file)
       {
          return null;
@@ -80,9 +89,12 @@ public class GitHandler
          String filePathRelativeToRepoRoot = getPathRelativeToRepo(repository, file);
 
 
-         ObjectId headId = repository.resolve(Constants.HEAD);
+         if (null == revCommitId)
+         {
+            revCommitId = repository.resolve(Constants.HEAD);
+         }
 
-         if(null == headId)
+         if(null == revCommitId)
          {
             // headId is null when no file has yet been committed.
             return null;
@@ -93,7 +105,7 @@ public class GitHandler
          // a RevWalk allows to walk over commits based on some filtering that is defined
          try (RevWalk revWalk = new RevWalk(repository))
          {
-            RevCommit commit = revWalk.parseCommit(headId);
+            RevCommit commit = revWalk.parseCommit(revCommitId);
             RevTree tree = commit.getTree();
 
             String ret;
@@ -338,11 +350,13 @@ public class GitHandler
 
          String filePathRelativeToRepoRoot = getPathRelativeToRepo(repository, file);
 
+         ObjectId headCommitId = repository.resolve(Constants.HEAD);
+
          Iterable<RevCommit> revCommits = git.log().addPath(filePathRelativeToRepoRoot).call();
 
          for (RevCommit revCommit : revCommits)
          {
-            ret.add(new RevisionWrapper(revCommit, git));
+            ret.add(new RevisionWrapper(revCommit, git, headCommitId));
 
 //         String buf =
 //         "GitHandler.getRevisions " + revCommit.getAuthorIdent().getWhen() + "  "

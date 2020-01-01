@@ -5,5 +5,5 @@ import javax.swing.*;
 @FunctionalInterface
 public interface CloseByEscapeListener
 {
-   void willCloseByEcape(JDialog dialog);
+   void willCloseByEscape(JDialog dialog);
 }

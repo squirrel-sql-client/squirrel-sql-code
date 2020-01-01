@@ -5,5 +5,5 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 @FunctionalInterface
 public interface CloseByEscapeForDialogWidgetListener
 {
-   void willCloseByEcape(DialogWidget dialogWidget);
+   void willCloseByEscape(DialogWidget dialogWidget);
 }

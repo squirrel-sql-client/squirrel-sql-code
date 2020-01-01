@@ -1,9 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.matchpatch;
 
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
 import javax.swing.JTextPane;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.Color;
@@ -81,21 +78,21 @@ public class ChangeRenderer
          if (str.length() > 1)
          {
             StyleConstants.setBackground(attributes, style.getAfterInsertColor());
-            insert(txtFormerText, str.substring(0, 1), attributes);
+            TextPaneUtil.insert(txtFormerText, str.substring(0, 1), attributes);
 
             if (str.length() > 2)
             {
                StyleConstants.setBackground(attributes, defaultBg);
-               insert(txtFormerText, str.substring(1, str.length() - 1), attributes);
+               TextPaneUtil.insert(txtFormerText, str.substring(1, str.length() - 1), attributes);
             }
 
             StyleConstants.setBackground(attributes, style.getBeforeInsertColor());
-            insert(txtFormerText, str.substring(str.length() - 1), attributes);
+            TextPaneUtil.insert(txtFormerText, str.substring(str.length() - 1), attributes);
          }
          else
          {
             StyleConstants.setBackground(attributes, style.getBeforeInsertColor());
-            insert(txtFormerText, str, attributes);
+            TextPaneUtil.insert(txtFormerText, str, attributes);
          }
       }
       else if(false == previousIsInsert && nextIsInsert)
@@ -103,39 +100,27 @@ public class ChangeRenderer
          if (str.length() > 1)
          {
             StyleConstants.setBackground(attributes, defaultBg);
-            insert(txtFormerText, str.substring(0, str.length() - 1), attributes);
+            TextPaneUtil.insert(txtFormerText, str.substring(0, str.length() - 1), attributes);
          }
 
          StyleConstants.setBackground(attributes, style.getBeforeInsertColor());
-         insert(txtFormerText, str.substring(str.length() - 1), attributes);
+         TextPaneUtil.insert(txtFormerText, str.substring(str.length() - 1), attributes);
 
       }
       else if(previousIsInsert && false == nextIsInsert)
       {
          StyleConstants.setBackground(attributes, style.getAfterInsertColor());
-         insert(txtFormerText, str.substring(0, 1), attributes);
+         TextPaneUtil.insert(txtFormerText, str.substring(0, 1), attributes);
 
          if (str.length() > 1)
          {
             StyleConstants.setBackground(attributes, defaultBg);
-            insert(txtFormerText, str.substring(1), attributes);
+            TextPaneUtil.insert(txtFormerText, str.substring(1), attributes);
          }
       }
       else
       {
-         insert(txtFormerText, str, attributes);
-      }
-   }
-
-   private static void insert(JTextPane txtFormerText, String msg, SimpleAttributeSet attributes)
-   {
-      try
-      {
-         txtFormerText.getStyledDocument().insertString(txtFormerText.getDocument().getLength(), msg, attributes);
-      }
-      catch (BadLocationException e)
-      {
-         throw Utilities.wrapRuntime(e);
+         TextPaneUtil.insert(txtFormerText, str, attributes);
       }
    }
 

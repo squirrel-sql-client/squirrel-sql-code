@@ -8,6 +8,8 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -16,7 +18,11 @@ public class RevisionListDialog extends JDialog
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RevisionListDialog.class);
 
-   final JList<Object> lstRevisions;
+   JList<RevisionWrapper> lstRevisions;
+   JTextArea txtPreview = new JTextArea();
+
+   JSplitPane splitTreePreview;
+
 
    public RevisionListDialog(JComponent parentComp, String fileName)
    {
@@ -26,8 +32,18 @@ public class RevisionListDialog extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
+      splitTreePreview = new JSplitPane();
+
       lstRevisions = new JList<>();
-      getContentPane().add(new JScrollPane(lstRevisions), gbc);
+      lstRevisions.setCellRenderer(new RevisionListCellRenderer());
+      splitTreePreview.setLeftComponent(new JScrollPane(lstRevisions));
+
+      txtPreview.setEditable(false);
+      splitTreePreview.setRightComponent(new JScrollPane(txtPreview));
+
+      gbc = new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
+      getContentPane().add(splitTreePreview, gbc);
+
+
    }
 }
