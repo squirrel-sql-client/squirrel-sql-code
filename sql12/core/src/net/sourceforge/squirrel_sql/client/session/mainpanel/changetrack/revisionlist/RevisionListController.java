@@ -63,13 +63,27 @@ public class RevisionListController
          @Override
          public void mousePressed(MouseEvent e)
          {
-            maybeShowPopup(e);
+            maybeShowRevisionListPopup(e);
          }
 
          @Override
          public void mouseReleased(MouseEvent e)
          {
-            maybeShowPopup(e);
+            maybeShowRevisionListPopup(e);
+         }
+      });
+
+      _dlg.txtPreview.addMouseListener(new MouseAdapter() {
+         @Override
+         public void mousePressed(MouseEvent e)
+         {
+            maybeShowPreviewPopup(e);
+         }
+
+         @Override
+         public void mouseReleased(MouseEvent e)
+         {
+            maybeShowPreviewPopup(e);
          }
       });
 
@@ -98,6 +112,27 @@ public class RevisionListController
       });
 
       _dlg.setVisible(true);
+
+   }
+
+   private void maybeShowPreviewPopup(MouseEvent me)
+   {
+      if(false == me.isPopupTrigger())
+      {
+         return;
+      }
+
+      JPopupMenu popupMenu = new JPopupMenu();
+
+      JMenuItem mnuPreviewCopy = new JMenuItem(s_stringMgr.getString("RevisionListController.preview.copy"));
+      mnuPreviewCopy.addActionListener(e -> CopyToClipboardUtil.copyToClip(_dlg.txtPreview.getSelectedText(), true));
+      popupMenu.add(mnuPreviewCopy);
+
+      JMenuItem mnuPreviewCopyAll = new JMenuItem(s_stringMgr.getString("RevisionListController.preview.copy.all"));
+      mnuPreviewCopyAll.addActionListener(e -> CopyToClipboardUtil.copyToClip(_dlg.txtPreview.getText(), true));
+      popupMenu.add(mnuPreviewCopyAll);
+
+      popupMenu.show(_dlg.txtPreview, me.getX(), me.getY());
 
    }
 
@@ -149,7 +184,7 @@ public class RevisionListController
       _dlg.splitTreePreview.setDividerLocation(dividerLocation);
    }
 
-   private void maybeShowPopup(MouseEvent me)
+   private void maybeShowRevisionListPopup(MouseEvent me)
    {
       if(false == me.isPopupTrigger())
       {
@@ -189,7 +224,6 @@ public class RevisionListController
       popupMenu.add(mnuAsEditorContent);
 
       popupMenu.show(_dlg.lstRevisions, me.getX(), me.getY());
-
    }
 
    private JMenuItem createCopyMenu(String title, String toCopy)
