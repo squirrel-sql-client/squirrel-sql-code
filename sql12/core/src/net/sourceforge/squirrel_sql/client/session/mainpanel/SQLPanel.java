@@ -379,7 +379,7 @@ public class SQLPanel extends JPanel
 
 	}
 
-   public void sessionWindowClosing()
+   public void sessionWorksheetOrTabClosing()
    {
 
 		_sqlPanelListenerManager.fireSQLEntryAreaClosed();
@@ -396,7 +396,7 @@ public class SQLPanel extends JPanel
 		_sqlExecPanel.removeSQLExecutionListener(_sqlExecutorHistoryAdapter);
 
 
-		_sqlPanelListenerManager.fireParentWindowClosing();
+		_sqlPanelListenerManager.fireSQLPanelParentClosing();
 
 		_sqlEntry.dispose();
    }

@@ -102,7 +102,7 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
 					}
 				}
 
-				_sqlPanel.sessionWindowClosing();
+				_sqlPanel.sessionWorksheetOrTabClosing();
             return true;
          }
 		});

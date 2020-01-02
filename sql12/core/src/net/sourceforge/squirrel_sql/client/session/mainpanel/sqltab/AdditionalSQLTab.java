@@ -6,18 +6,14 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.B
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandlerUtil;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
 
 public class AdditionalSQLTab extends BaseSQLTab
 {
@@ -33,6 +29,8 @@ public class AdditionalSQLTab extends BaseSQLTab
    public AdditionalSQLTab(ISession session)
    {
       super(session);
+
+      session.addSimpleSessionListener(() -> onClose(false));
 
       AdditionalSQLTabCounter additionalSQLTabCounter = (AdditionalSQLTabCounter) session.getSessionLocal(AdditionalSQLTabCounter.class);
 
@@ -52,7 +50,7 @@ public class AdditionalSQLTab extends BaseSQLTab
       //_tabComponent = new ButtonTabComponent(getSession().getSessionPanel().getTabbedPane(), _titleWithoutFile, icon);
       _tabComponent = new ButtonTabComponent(_titleWithoutFile, icon);
 
-      _tabComponent.getClosebutton().addActionListener(e -> onClose());
+      _tabComponent.getClosebutton().addActionListener(e -> onClose(true));
       _tabComponent.getToWindowButton().setVisible(false);
 
    }
@@ -82,23 +80,19 @@ public class AdditionalSQLTab extends BaseSQLTab
       return _tabComponent;
    }
 
-   private void onClose()
+   private void onClose(boolean callConfirmClose)
    {
-      if(getSQLPanel().getSQLPanelAPI().confirmClose())
+      if(callConfirmClose && getSQLPanel().getSQLPanelAPI().confirmClose())
       {
          getSession().getSessionPanel().removeMainTab(this);
       }
+
+      getSQLPanel().sessionWorksheetOrTabClosing();
    }
 
 
    public String getHint()
    {
       return s_stringMgr.getString("AdditionalSQLTab.tooltip", _tabNumber);
-   }
-
-
-   public void displayUnsavedEditsInTabComponent(boolean hasUnsavedEdits)
-   {
-      _titleFileHandler.setUnsavedEdits(hasUnsavedEdits);
    }
 }

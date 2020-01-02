@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlreplace;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,8 +49,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLReplacePlugin extends DefaultSessionPlugin
 {
-
-	Map<String, String> cache;
 
 	/**
 	 * Remember which sqlpanelapis we've registered listeners with so that we can unregister them when it's
@@ -326,9 +325,20 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 	@Override
 	public void sessionEnding(ISession session)
 	{
-		ISQLPanelAPI sqlPaneAPI = session.getSessionPanel().getMainSQLPaneAPI();
-		ISQLExecutionListener listener = panelListenerMap.remove(sqlPaneAPI);
-		sqlPaneAPI.removeSQLExecutionListener(listener);
+		ArrayList<ISQLPanelAPI> toRemove = new ArrayList<>();
+		for (ISQLPanelAPI sqlPanelAPI : panelListenerMap.keySet())
+		{
+			if(sqlPanelAPI.getSession().getIdentifier().equals(session.getIdentifier()))
+			{
+				toRemove.add(sqlPanelAPI);
+			}
+		}
+
+		for (ISQLPanelAPI sqlPanelAPI : toRemove)
+		{
+			ISQLExecutionListener listener = panelListenerMap.remove(sqlPanelAPI);
+			sqlPanelAPI.removeSQLExecutionListener(listener);
+		}
 	}
 
 }

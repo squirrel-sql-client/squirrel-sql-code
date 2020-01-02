@@ -81,11 +81,11 @@ public class SQLPanelListenerManager
       }
    }
 
-   public void fireParentWindowClosing()
+   public void fireSQLPanelParentClosing()
    {
       for (ISQLPanelListener isqlPanelListener : _sqlPanelListener)
       {
-         isqlPanelListener.panelParentWindowClosing();
+         isqlPanelListener.panelParentClosing();
       }
    }
 }

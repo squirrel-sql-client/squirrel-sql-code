@@ -54,7 +54,7 @@ public class SQLHistoryController
 
       _sqlPanelAPI.addSQLPanelListener(new ISQLPanelAdapter()
       {
-         public void panelParentWindowClosing()
+         public void panelParentClosing()
          {
             _dlg.close();
          }

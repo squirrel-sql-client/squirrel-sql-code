@@ -13,7 +13,7 @@ public class ISQLPanelAdapter implements ISQLPanelListener
    }
 
    @Override
-   public void panelParentWindowClosing()
+   public void panelParentClosing()
    {
    }
 }

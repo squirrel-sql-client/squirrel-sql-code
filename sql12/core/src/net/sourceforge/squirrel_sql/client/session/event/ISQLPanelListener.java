@@ -38,9 +38,9 @@ public interface ISQLPanelListener extends EventListener
    void sqlEntryAreaClosed(SQLPanelEvent evt);
 
 	/**
-	 * Fired only when a Session main tab {@link net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition#MAIN_TAB_IN_SESSION_WINDOW}
-	 * or a SQL Worksheet {@link net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition#IN_SQL_WORKSHEET} closes,
-	 * not when an SQL tab {@link net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition#ADDITIONAL_TAB_IN_SESSION_WINDOW} closes.
+	 * Fired when a Session main tab {@link net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition#MAIN_TAB_IN_SESSION_WINDOW}
+	 * or a SQL Worksheet {@link net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition#IN_SQL_WORKSHEET}
+	 * or a SQL tab {@link net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition#ADDITIONAL_TAB_IN_SESSION_WINDOW} closes.
 	 */
-	void panelParentWindowClosing();
+	void panelParentClosing();
 }

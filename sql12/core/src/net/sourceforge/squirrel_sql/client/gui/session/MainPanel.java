@@ -30,7 +30,6 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
@@ -353,7 +352,7 @@ public class MainPanel extends JPanel
    {
 		for (SQLPanel sqlPanel : getAllSQLPanels())
 		{
-			sqlPanel.sessionWindowClosing();
+			sqlPanel.sessionWorksheetOrTabClosing();
 		}
 
 		getObjectTreePanel().sessionWindowClosing();
