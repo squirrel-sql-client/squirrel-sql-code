@@ -33,15 +33,17 @@ public class RevisionListController
 
    private final RevisionListDialog _dlg;
    private ChangeTrackCloseDispatcher _changeTrackCloseDispatcher;
+   private RevisionListControllerListener _revisionListControllerListener;
    private final File _file;
    private final ChangeTrackCloseListener _changeTrackCloseListener;
 
-   public RevisionListController(File file, JComponent parentComp, ChangeTrackCloseDispatcher changeTrackCloseDispatcher)
+   public RevisionListController(File file, JComponent parentComp, ChangeTrackCloseDispatcher changeTrackCloseDispatcher, RevisionListControllerListener revisionListControllerListener)
    {
       _file = file;
       _dlg = new RevisionListDialog(parentComp, _file.getName());
 
       _changeTrackCloseDispatcher = changeTrackCloseDispatcher;
+      _revisionListControllerListener = revisionListControllerListener;
       _changeTrackCloseListener = () -> onChangeTrackClosed();
       _changeTrackCloseDispatcher.addChangeTrackCloseListener(_changeTrackCloseListener);
 
@@ -178,9 +180,13 @@ public class RevisionListController
       popupMenu.add(mnuCopy);
 
 
-      popupMenu.add(new JMenuItem(s_stringMgr.getString("RevisionListController.as.change.track.base")));
+      JMenuItem mnuAsChangeTrackBase = new JMenuItem(s_stringMgr.getString("RevisionListController.as.change.track.base"));
+      mnuAsChangeTrackBase.addActionListener(e -> _revisionListControllerListener.replaceChangeTrackBase(_dlg.txtPreview.getText()));
+      popupMenu.add(mnuAsChangeTrackBase);
 
-      popupMenu.add(new JMenuItem(s_stringMgr.getString("RevisionListController.as.editor.content")));
+      JMenuItem mnuAsEditorContent = new JMenuItem(s_stringMgr.getString("RevisionListController.as.editor.content"));
+      mnuAsEditorContent.addActionListener(e -> _revisionListControllerListener.replaceEditorContent(_dlg.txtPreview.getText()));
+      popupMenu.add(mnuAsEditorContent);
 
       popupMenu.show(_dlg.lstRevisions, me.getX(), me.getY());
 

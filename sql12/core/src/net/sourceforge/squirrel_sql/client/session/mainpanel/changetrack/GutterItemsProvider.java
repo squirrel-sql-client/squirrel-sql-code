@@ -90,6 +90,32 @@ public class GutterItemsProvider
       }
    }
 
+   public ChangeTrackTypeEnum getChangeTrackType()
+   {
+      return _currentChangeTrackType;
+   }
+
+   public void rebaseChangeTrackingOnToolbarButtonOrMenu()
+   {
+      rebaseGutterItems(RebaseGutterItemsCallInfo.BUTTON_CLICKED);
+   }
+
+   public void changeTrackTypeChanged(ChangeTrackTypeEnum selectedType)
+   {
+      _currentChangeTrackType = selectedType;
+      rebaseGutterItems(RebaseGutterItemsCallInfo.BUTTON_SELECTED);
+   }
+
+   public String getChangeTrackBase()
+   {
+      return _changeTrackBase;
+   }
+
+   public void rebaseChangeTrackingBy(String newChangeTrackBase)
+   {
+      updateChangeTrackBase(newChangeTrackBase);
+   }
+
    private void updateGitChangeTracking(boolean commitToGit)
    {
       String gitChangeTrackBase = GitHandler.getChangeTrackBaseFromGit(_fileEditorAPI, commitToGit);
@@ -139,24 +165,4 @@ public class GutterItemsProvider
       }
    }
 
-   public ChangeTrackTypeEnum getChangeTrackType()
-   {
-      return _currentChangeTrackType;
-   }
-
-   public void rebaseChangeTrackingOnToolbarButtonOrMenu()
-   {
-      rebaseGutterItems(RebaseGutterItemsCallInfo.BUTTON_CLICKED);
-   }
-
-   public void changeTrackTypeChanged(ChangeTrackTypeEnum selectedType)
-   {
-      _currentChangeTrackType = selectedType;
-      rebaseGutterItems(RebaseGutterItemsCallInfo.BUTTON_SELECTED);
-   }
-
-   public String getChangeTrackBase()
-   {
-      return _changeTrackBase;
-   }
 }

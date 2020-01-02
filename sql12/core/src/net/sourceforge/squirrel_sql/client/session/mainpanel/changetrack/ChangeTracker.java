@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SQLPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListController;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListControllerListener;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -147,7 +148,22 @@ public class ChangeTracker
 
    private void onShowGitRevisions(File file)
    {
-      new RevisionListController(file, _sqlEntry.getTextComponent(), _changeTrackCloseDispatcher);
+      RevisionListControllerListener revisionListControllerListener = new RevisionListControllerListener()
+      {
+         @Override
+         public void replaceEditorContent(String newEditorContent)
+         {
+            _sqlEntry.setText(newEditorContent);
+         }
+
+         @Override
+         public void replaceChangeTrackBase(String newChangeTrackBase)
+         {
+            _gutterItemsManager.getGutterItemsProvider().rebaseChangeTrackingBy(newChangeTrackBase);
+         }
+      };
+
+      new RevisionListController(file, _sqlEntry.getTextComponent(), _changeTrackCloseDispatcher, revisionListControllerListener);
    }
 
    private void onOpenChangeTrackPreferences()
