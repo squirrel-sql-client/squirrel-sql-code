@@ -154,4 +154,9 @@ public class GutterItemsProvider
       _currentChangeTrackType = selectedType;
       rebaseGutterItems(RebaseGutterItemsCallInfo.BUTTON_SELECTED);
    }
+
+   public String getChangeTrackBase()
+   {
+      return _changeTrackBase;
+   }
 }

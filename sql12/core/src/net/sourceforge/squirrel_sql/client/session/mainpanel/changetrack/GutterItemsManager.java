@@ -74,6 +74,12 @@ public class GutterItemsManager
       }
    }
 
+
+   public boolean hasChanges()
+   {
+      return 0 < _currentGutterItems.size();
+   }
+
    public GutterItemsProvider getGutterItemsProvider()
    {
       return _gutterItemsProvider;

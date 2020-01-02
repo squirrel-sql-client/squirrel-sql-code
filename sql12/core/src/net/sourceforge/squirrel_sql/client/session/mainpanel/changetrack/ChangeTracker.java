@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -125,6 +126,14 @@ public class ChangeTracker
          {
             menuItem = new JMenuItem(s_stringMgr.getString("ChangeTracker.open.git.revisions", _fileEditorAPI.getFileHandler().getFile().getName()));
             menuItem.addActionListener(e -> onShowGitRevisions(_fileEditorAPI.getFileHandler().getFile()));
+            popupMenu.add(menuItem);
+         }
+
+         String changeTrackBase = _gutterItemsManager.getGutterItemsProvider().getChangeTrackBase();
+         if(false == StringUtilities.isEmpty(changeTrackBase) && _gutterItemsManager.hasChanges())
+         {
+            menuItem = new JMenuItem(s_stringMgr.getString("ChangeTracker.revert.all"));
+            menuItem.addActionListener(e -> _sqlEntry.setText(changeTrackBase));
             popupMenu.add(menuItem);
          }
 
