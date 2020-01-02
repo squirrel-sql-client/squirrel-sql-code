@@ -249,7 +249,7 @@ public class SQLPanel extends JPanel
          _simpleExecuterPanel.add(exec.getComponent());
       }
 
-		this.fireExecuterTabAdded(exec);
+		_sqlPanelListenerManager.fireExecuterTabAdded(exec);
 	}
 
 	public void removeExecutor(ISQLResultExecuter exec)
@@ -267,14 +267,6 @@ public class SQLPanel extends JPanel
 		return _changeTracker;
 	}
 
-	/**
-	 * Add a listener listening for SQL Execution.
-	 *
-	 * @param	lis		Listener to add
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a null <TT>ISQLExecutionListener</TT> passed.
-	 */
 	public synchronized void addSQLExecutionListener(ISQLExecutionListener lis)
 	{
 		if (lis == null)
@@ -285,14 +277,6 @@ public class SQLPanel extends JPanel
       _sqlExecPanel.addSQLExecutionListener(lis);
    }
 
-	/**
-	 * Remove an SQL execution listener.
-	 *
-	 * @param	lis	Listener
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a null <TT>ISQLExecutionListener</TT> passed.
-	 */
 	public synchronized void removeSQLExecutionListener(ISQLExecutionListener lis)
 	{
 		if (lis == null)
@@ -303,42 +287,16 @@ public class SQLPanel extends JPanel
       _sqlExecPanel.removeSQLExecutionListener(lis);
 	}
 
-	/**
-	 * Add a listener to this panel.
-	 *
-	 * @param	lis	 Listener
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a null <TT>ISQLPanelListener</TT> passed.
-	 */
 	public void addSQLPanelListener(ISQLPanelListener lis)
 	{
 		_sqlPanelListenerManager.addSQLPanelListener(lis);
 	}
 
-
-	/**
-	 * Remove a listener.
-	 *
-	 * @param	lis	Listener
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a null <TT>ISQLPanelListener</TT> passed.
-	 */
 	public void removeSQLPanelListener(ISQLPanelListener lis)
 	{
 		_sqlPanelListenerManager.removeSQLPanelListener(lis);
 	}
 
-
-	/**
-	 * Add a listener for events in this sql panel executer tabs.
-	 *
-	 * @param	lis	Listener
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a null <TT>ISQLResultExecuterTabListener</TT> passed.
-	 */
 	public void addExecuterTabListener(ISQLResultExecuterTabListener lis)
 	{
 		_sqlPanelListenerManager.addExecuterTabListener(lis);
@@ -424,7 +382,7 @@ public class SQLPanel extends JPanel
    public void sessionWindowClosing()
    {
 
-      fireSQLEntryAreaClosed();
+		_sqlPanelListenerManager.fireSQLEntryAreaClosed();
 
 		_sqlPanelSplitter.sessionWindowClosing();
 
@@ -438,7 +396,7 @@ public class SQLPanel extends JPanel
 		_sqlExecPanel.removeSQLExecutionListener(_sqlExecutorHistoryAdapter);
 
 
-		fireParentWindowClosing();
+		_sqlPanelListenerManager.fireParentWindowClosing();
 
 		_sqlEntry.dispose();
    }
@@ -466,7 +424,7 @@ public class SQLPanel extends JPanel
 
       new PasteFromHistoryAttach(_sqlEntry);
 
-      fireSQLEntryAreaInstalled();
+		_sqlPanelListenerManager.fireSQLEntryAreaInstalled();
 	}
 
    public void storeSplitPanePositionOnSessionClose(boolean value)
@@ -548,31 +506,6 @@ public class SQLPanel extends JPanel
 	public void addSeparatorToSQLEntryAreaMenu()
 	{
 		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
-	}
-
-	private void fireSQLEntryAreaInstalled()
-	{
-		_sqlPanelListenerManager.fireSQLEntryAreaInstalled();
-	}
-
-   private void fireSQLEntryAreaClosed()
-   {
-		_sqlPanelListenerManager.fireSQLEntryAreaClosed();
-   }
-
-   private void fireExecuterTabAdded(ISQLResultExecuter exec)
-	{
-		_sqlPanelListenerManager.fireExecuterTabAdded(exec);
-	}
-
-	private void fireExecuterTabActivated(ISQLResultExecuter exec)
-	{
-		_sqlPanelListenerManager.fireExecuterTabActivated(exec);
-	}
-
-	private void fireParentWindowClosing()
-	{
-		_sqlPanelListenerManager.fireParentWindowClosing();
 	}
 
 
@@ -795,7 +728,7 @@ public class SQLPanel extends JPanel
 			int index = pane.getSelectedIndex();
 			if (index != -1)
 			{
-				fireExecuterTabActivated(_executors.get(index));
+				_sqlPanelListenerManager.fireExecuterTabActivated(_executors.get(index));
 			}
 		}
 	}
