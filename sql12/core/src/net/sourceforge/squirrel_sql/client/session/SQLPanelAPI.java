@@ -49,7 +49,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SqlPanelListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -638,12 +637,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		return true;
 	}
 
-   public void addSqlPanelListener(SqlPanelListener sqlPanelListener)
-   {
-      _panel.addSqlPanelListener(sqlPanelListener);
-   }
-
-   public ArrayList<SQLHistoryItem> getSQLHistoryItems()
+	public ArrayList<SQLHistoryItem> getSQLHistoryItems()
    {
       return _panel.getSQLHistoryItems();
    }

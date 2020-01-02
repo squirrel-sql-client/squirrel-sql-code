@@ -17,11 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.sqlval;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Iterator;
-
-import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
@@ -35,12 +30,9 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
-import net.sourceforge.squirrel_sql.client.session.event.SQLPanelAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -50,6 +42,11 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.sqlval.action.ConnectAction;
 import net.sourceforge.squirrel_sql.plugins.sqlval.action.DisconnectAction;
 import net.sourceforge.squirrel_sql.plugins.sqlval.action.ValidateSQLAction;
+
+import javax.swing.JMenu;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Iterator;
 /**
  * This plugin provides an interface to the SQL Validation web service provided
  * by Mimer SQL. See http://sqlvalidator.mimer.com/ for more information.
@@ -59,12 +56,10 @@ import net.sourceforge.squirrel_sql.plugins.sqlval.action.ValidateSQLAction;
 public class SQLValidatorPlugin extends DefaultSessionPlugin
 {
 	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(SQLValidatorPlugin.class);
+	private static final ILogger s_log = LoggerController.createLogger(SQLValidatorPlugin.class);
 
     /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(SQLValidatorPlugin.class);    
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLValidatorPlugin.class);
         
 	private interface IMenuResourceKeys
 	{
@@ -94,9 +89,6 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 		_resourcesFactory = resourcesFactory;
 	}
 
-
-	/** Listener to the SQL panel. */
-	private ISQLPanelListener _lis = new SQLPanelListener();
 
 	/**
 	 * Return the internal name of this plugin.
@@ -263,7 +255,6 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(ISession session)
 	{
-      session.getSessionInternalFrame().getMainSQLPanelAPI().addSQLPanelListener(_lis);
       setupSQLEntryArea(session);
 
       return new PluginSessionCallbackAdaptor();
@@ -276,7 +267,6 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	 */
 	public void sessionEnding(ISession session)
 	{
-		session.getSessionInternalFrame().getMainSQLPanelAPI().removeSQLPanelListener(_lis);
         WebServiceSessionProperties wssp = getWebServiceSessionProperties(session);
         if (wssp != null) {
             WebServiceSession wss = wssp.getWebServiceSession();
@@ -383,13 +373,5 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 		_resources.addToMenu(coll.get(ValidateSQLAction.class), menu);
 
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
-	}
-
-	private class SQLPanelListener extends SQLPanelAdapter
-	{
-		public void sqlEntryAreaReplaced(SQLPanelEvent evt)
-		{
-			setupSQLEntryArea(evt.getSession());
-		}
 	}
 }

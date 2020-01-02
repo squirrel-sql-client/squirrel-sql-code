@@ -18,21 +18,19 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SqlPanelListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
 
-import java.io.File;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import java.util.ArrayList;
 
 /**
@@ -275,8 +273,6 @@ public interface ISQLPanelAPI extends IFileEditorAPI
 	void showToolsPopup();
 
 	boolean confirmClose();
-
-	void addSqlPanelListener(SqlPanelListener sqlPanelListener);
 
 	ArrayList<SQLHistoryItem> getSQLHistoryItems();
 

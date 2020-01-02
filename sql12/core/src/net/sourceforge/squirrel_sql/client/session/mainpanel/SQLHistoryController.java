@@ -3,6 +3,9 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
+import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -49,7 +52,7 @@ public class SQLHistoryController
 
       _dlg.setVisible(true);
 
-      _sqlPanelAPI.addSqlPanelListener(new SqlPanelListener()
+      _sqlPanelAPI.addSQLPanelListener(new ISQLPanelAdapter()
       {
          public void panelParentWindowClosing()
          {
