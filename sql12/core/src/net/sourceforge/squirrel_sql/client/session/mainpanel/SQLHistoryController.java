@@ -82,8 +82,7 @@ public class SQLHistoryController
 
 
       SortableTableModel stm = (SortableTableModel) _dlg.tblHistoryItems.getModel();
-      ArrayList<SQLHistoryItemWrapper> copy = 
-          new ArrayList<SQLHistoryItemWrapper>(_sqlHistoryItemWrappers);
+      ArrayList<SQLHistoryItemWrapper> copy =  new ArrayList<>(_sqlHistoryItemWrappers);
       SqlHistoryTableModel dtm = new SqlHistoryTableModel(copy, stm);
       stm.setActualModel(dtm);
 

@@ -395,6 +395,7 @@ public class SQLPanel extends JPanel
 		_sqlCombo.dispose();
 		_sqlExecPanel.removeSQLExecutionListener(_sqlExecutorHistoryAdapter);
 
+		_changeTracker.close();
 
 		_sqlPanelListenerManager.fireSQLPanelParentClosing();
 

@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -26,7 +27,7 @@ public class RevisionListDialog extends JDialog
 
    public RevisionListDialog(JComponent parentComp, String fileName)
    {
-      super(Main.getApplication().getMainFrame(), s_stringMgr.getString("RevisionListDialog.title", fileName), DEFAULT_MODALITY_TYPE);
+      super(GUIUtils.getOwningFrame(parentComp), s_stringMgr.getString("RevisionListDialog.title", fileName), ModalityType.MODELESS);
 
       getContentPane().setLayout(new GridBagLayout());
 

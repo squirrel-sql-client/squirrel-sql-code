@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackCloseDispatcher;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackCloseListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.GitHandler;
 import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -30,12 +32,18 @@ public class RevisionListController
 
 
    private final RevisionListDialog _dlg;
+   private ChangeTrackCloseDispatcher _changeTrackCloseDispatcher;
    private final File _file;
+   private final ChangeTrackCloseListener _changeTrackCloseListener;
 
-   public RevisionListController(File file, JComponent parentComp)
+   public RevisionListController(File file, JComponent parentComp, ChangeTrackCloseDispatcher changeTrackCloseDispatcher)
    {
       _file = file;
       _dlg = new RevisionListDialog(parentComp, _file.getName());
+
+      _changeTrackCloseDispatcher = changeTrackCloseDispatcher;
+      _changeTrackCloseListener = () -> onChangeTrackClosed();
+      _changeTrackCloseDispatcher.addChangeTrackCloseListener(_changeTrackCloseListener);
 
 
       List<RevisionWrapper> revisions = GitHandler.getRevisions(file);
@@ -89,6 +97,13 @@ public class RevisionListController
 
       _dlg.setVisible(true);
 
+   }
+
+   private void onChangeTrackClosed()
+   {
+      _changeTrackCloseDispatcher.removeChangeTrackCloseListener(_changeTrackCloseListener);
+      _dlg.setVisible(false);
+      _dlg.dispose();
    }
 
    private void saveSplitLocation()

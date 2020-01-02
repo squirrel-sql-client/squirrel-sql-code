@@ -30,6 +30,7 @@ public class ChangeTracker
 
    private boolean _enabled;
    private IFileEditorAPI _fileEditorAPI;
+   private ChangeTrackCloseDispatcher _changeTrackCloseDispatcher = new ChangeTrackCloseDispatcher();
 
    public ChangeTracker(ISQLEntryPanel sqlEntry)
    {
@@ -137,7 +138,7 @@ public class ChangeTracker
 
    private void onShowGitRevisions(File file)
    {
-      new RevisionListController(file, _changeTrackPanel);
+      new RevisionListController(file, _sqlEntry.getTextComponent(), _changeTrackCloseDispatcher);
    }
 
    private void onOpenChangeTrackPreferences()
@@ -208,5 +209,10 @@ public class ChangeTracker
       }
 
       _gutterItemsManager.getGutterItemsProvider().rebaseChangeTrackingOnToolbarButtonOrMenu();
+   }
+
+   public void close()
+   {
+      _changeTrackCloseDispatcher.close();
    }
 }

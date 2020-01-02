@@ -51,7 +51,7 @@ public class FileHandler
          displayUnsavedEditsInTabComponent(false);
          ActionCollection actions = Main.getApplication().getActionCollection();
          actions.enableAction(FileSaveAction.class, false);
-         fireChangeTrackListener();
+         fireFileHandlerListener();
          return true;
       }
       else
@@ -70,14 +70,13 @@ public class FileHandler
          displayUnsavedEditsInTabComponent(_unsavedEdits);
          ActionCollection actions = Main.getApplication().getActionCollection();
          actions.enableAction(FileSaveAction.class, true);
-         fireChangeTrackListener();
+         fireFileHandlerListener();
       }
    }
 
    public void fileClose()
    {
       _closeFile(true);
-      fireChangeTrackListener();
    }
 
    public void fileReload()
@@ -100,7 +99,7 @@ public class FileHandler
       fileOpen(file);
 
       _fileEditorAPI.setCaretPosition(Math.min(_fileEditorAPI.getText().length(), caretPosition));
-      fireChangeTrackListener();
+      fireFileHandlerListener();
    }
 
    public void fileOpen()
@@ -124,7 +123,7 @@ public class FileHandler
       }
 
       _fileEditorAPI.setCaretPosition(0);
-      fireChangeTrackListener();
+      fireFileHandlerListener();
    }
 
    public void fileOpen(File f)
@@ -152,14 +151,13 @@ public class FileHandler
       actions.enableAction(FileSaveAction.class, false);
 
       _fileEditorAPI.setCaretPosition(0);
-      fireChangeTrackListener();
+      fireFileHandlerListener();
 
    }
 
    public void fileNew()
    {
       fileClose();
-      fireChangeTrackListener(false, FileChangeType.FILE_CLOSED);
    }
 
    public void fileDetach()
@@ -176,7 +174,7 @@ public class FileHandler
          displayUnsavedEditsInTabComponent(false);
          ActionCollection actions = Main.getApplication().getActionCollection();
          actions.enableAction(FileSaveAction.class, false);
-         fireChangeTrackListener();
+         fireFileHandlerListener();
       }
    }
 
@@ -223,7 +221,7 @@ public class FileHandler
       ActionCollection actions = Main.getApplication().getActionCollection();
       actions.enableAction(FileSaveAction.class, true);
       _fileManagementCore.clearCurrentFile();
-      fireChangeTrackListener();
+      fireFileHandlerListener(false, FileChangeType.FILE_CLOSED);
 
       return true;
    }
@@ -310,15 +308,15 @@ public class FileHandler
    {
       _fileHandlerListener = fileHandlerListener;
 
-      fireChangeTrackListener(true, FileChangeType.FILE_CHANGED);
+      fireFileHandlerListener(true, FileChangeType.FILE_CHANGED);
    }
 
-   private void fireChangeTrackListener()
+   private void fireFileHandlerListener()
    {
-      fireChangeTrackListener(false, FileChangeType.FILE_CHANGED);
+      fireFileHandlerListener(false, FileChangeType.FILE_CHANGED);
    }
 
-   private void fireChangeTrackListener(boolean reReadFile, FileChangeType fileChangeType)
+   private void fireFileHandlerListener(boolean reReadFile, FileChangeType fileChangeType)
    {
       if(null == _fileHandlerListener)
       {
