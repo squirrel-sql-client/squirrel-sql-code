@@ -139,8 +139,8 @@ public final class SQLPreferencesPanel extends JPanel
       gbc.gridx = 0;
       gbc.gridy = 5;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
-      gbc.fill = GridBagConstraints.NONE;
-      pnl.add(chkReloadSqlContentsSql, gbc);
+      gbc.fill = GridBagConstraints.HORIZONTAL;
+      pnl.add(createReloadSQLContentsPanel(), gbc);
 
       gbc.gridx = 0;
       gbc.gridy = 6;
@@ -149,6 +149,22 @@ public final class SQLPreferencesPanel extends JPanel
       pnl.add(createMaxTextOutputColumnWidthPanel(), gbc);
 
       return pnl;
+   }
+
+   private JPanel createReloadSQLContentsPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,3,3,3), 0,0);
+      ret.add(chkReloadSqlContentsSql, gbc);
+
+      gbc = new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,3,3,3), 0,0);
+      ret.add(new MultilineLabel(s_stringMgr.getString("SQLPreferencesPanel.reload.changetrack.hint")), gbc);
+
+      ret.setBorder(BorderFactory.createEtchedBorder());
+      return ret;
    }
 
    private JPanel createMaxTextOutputColumnWidthPanel()

@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Change tracking:
+  Changes can be tracked by light yellow bars (gutters) at both sides of the editor.
+  Change tracking has three modes: Manual, file based and GIT based (see https://git-scm.com).
+  The modes can be switched using the switchable change track toolbar button (the one with the paw icon).
+  For more information on change tracking please see toolbar buttons' tooltips.
+  Note: When the change tracking toolbar button is switched to "Manually rebase" the reloaded contents are automatically made the initial change track base.
+
 Hibernate Plugin: The Hibernate process details dialog now has an option "Restore default to run in console".
    This generates the SQuirreL's Hibernate server launch command such that the process runs in a console window.
 
