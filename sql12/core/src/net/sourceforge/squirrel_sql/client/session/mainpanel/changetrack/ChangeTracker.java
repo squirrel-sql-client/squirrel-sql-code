@@ -163,7 +163,7 @@ public class ChangeTracker
          }
       };
 
-      new RevisionListController(file, _sqlEntry.getTextComponent(), _changeTrackCloseDispatcher, revisionListControllerListener);
+      new RevisionListController(_sqlEntry.getTextComponent(), _changeTrackCloseDispatcher, revisionListControllerListener, file);
    }
 
    private void onOpenChangeTrackPreferences()

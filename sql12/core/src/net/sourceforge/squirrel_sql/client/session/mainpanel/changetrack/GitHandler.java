@@ -143,6 +143,35 @@ public class GitHandler
       }
    }
 
+   public static String getPathRelativeToRepo(File file)
+   {
+      try(Repository repository = findRepository(file))
+      {
+         if(null == repository)
+         {
+            throw new IllegalStateException("Couldn't find repository for file " + file.getAbsolutePath());
+         }
+
+         return getPathRelativeToRepo(repository, file);
+      }
+   }
+
+   public static String getFilesRepositoryWorkTreePath(File file)
+   {
+      try(Repository repository = findRepository(file))
+      {
+         if(null == repository)
+         {
+            throw new IllegalStateException("Couldn't find repository for file " + file.getAbsolutePath());
+         }
+
+         return getRepositoryWorkTreePath(repository);
+      }
+   }
+
+
+
+
    private static String commit(IFileEditorAPI fileEditorAPI)
    {
       Repository repository = null;
@@ -266,7 +295,7 @@ public class GitHandler
          String msg = s_stringMgr.getString("GitHandler.commitMsg",
                         filePathRelativeToRepoRoot,
                         repository.getBranch(),
-                        repository.getWorkTree().getPath(),
+                        getRepositoryWorkTreePath(repository),
                         revCommit.getCommitterIdent().getName()
                         );
 
@@ -275,7 +304,7 @@ public class GitHandler
          String log = s_stringMgr.getString("GitHandler.commitLog",
                filePathRelativeToRepoRoot,
                repository.getBranch(),
-               repository.getWorkTree().getPath(),
+               getRepositoryWorkTreePath(repository),
                revCommit.getCommitterIdent().getName(),
                revCommit.getId()
          );
@@ -287,6 +316,11 @@ public class GitHandler
       {
          throw Utilities.wrapRuntime(e);
       }
+   }
+
+   private static String getRepositoryWorkTreePath(Repository repository)
+   {
+      return repository.getWorkTree().getPath();
    }
 
 

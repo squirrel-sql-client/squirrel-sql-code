@@ -31,16 +31,19 @@ public class RevisionListController
    private static final String PREF_KEY_SPLIT_DIVIDER_LOCATION = "changetrack.RevisionListController.split.divider.location";
 
 
-   private final RevisionListDialog _dlg;
+   private RevisionListDialog _dlg;
    private ChangeTrackCloseDispatcher _changeTrackCloseDispatcher;
    private RevisionListControllerListener _revisionListControllerListener;
-   private final File _file;
-   private final ChangeTrackCloseListener _changeTrackCloseListener;
+   private File _file;
+   private ChangeTrackCloseListener _changeTrackCloseListener;
 
-   public RevisionListController(File file, JComponent parentComp, ChangeTrackCloseDispatcher changeTrackCloseDispatcher, RevisionListControllerListener revisionListControllerListener)
+   public RevisionListController(JComponent parentComp,
+                                 ChangeTrackCloseDispatcher changeTrackCloseDispatcher,
+                                 RevisionListControllerListener revisionListControllerListener,
+                                 File file)
    {
       _file = file;
-      _dlg = new RevisionListDialog(parentComp, _file.getName());
+      _dlg = new RevisionListDialog(parentComp, _file.getName(), GitHandler.getPathRelativeToRepo(file), GitHandler.getFilesRepositoryWorkTreePath(file));
 
       _changeTrackCloseDispatcher = changeTrackCloseDispatcher;
       _revisionListControllerListener = revisionListControllerListener;
