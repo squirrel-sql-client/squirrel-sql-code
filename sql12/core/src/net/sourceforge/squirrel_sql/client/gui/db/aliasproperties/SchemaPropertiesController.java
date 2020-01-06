@@ -153,7 +153,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
    private void onRefreshSchemaTable()
    {
-      ConnectToAliasCallBack cb = new ConnectToAliasCallBack(_app, _alias)
+      ConnectToAliasCallBack cb = new ConnectToAliasCallBack(_alias)
       {
          public void connected(ISQLConnection conn)
          {

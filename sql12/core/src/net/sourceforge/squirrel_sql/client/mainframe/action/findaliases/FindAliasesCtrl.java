@@ -189,7 +189,7 @@ public class FindAliasesCtrl
 
       if (_dlg.chkLeaveOpen.isSelected())
       {
-         completionCallback = new ConnectToAliasCallBack(Main.getApplication(), (SQLAlias) selectedAlias)
+         completionCallback = new ConnectToAliasCallBack((SQLAlias) selectedAlias)
          {
             @Override
             public void sessionCreated(ISession session)

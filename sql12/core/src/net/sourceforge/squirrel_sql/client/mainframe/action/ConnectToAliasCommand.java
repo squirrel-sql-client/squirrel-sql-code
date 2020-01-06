@@ -99,8 +99,7 @@ public class ConnectToAliasCommand implements ICommand
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or
 	 *			<TT>ISQLAlias</TT> passed.
 	 */
-	public ConnectToAliasCommand(IApplication app, SQLAlias sqlAlias,
-						boolean createSession, ICompletionCallback callback)
+	public ConnectToAliasCommand(IApplication app, SQLAlias sqlAlias, boolean createSession, ICompletionCallback callback)
 	{
 		super();
 		if (app == null)
@@ -114,7 +113,7 @@ public class ConnectToAliasCommand implements ICommand
 		_app = app;
 		_sqlAlias = sqlAlias;
 		_createSession = createSession;
-		_callback = callback != null ? callback : new ConnectToAliasCallBack(app, _sqlAlias);
+		_callback = callback != null ? callback : new ConnectToAliasCallBack(_sqlAlias);
 	}
 
 	/**

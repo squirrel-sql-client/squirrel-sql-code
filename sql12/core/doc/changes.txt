@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Connect button in Alias dialog.
+
 Change tracking:
   Changes can be tracked by light yellow bars (gutters) at both sides of the editor.
   Change tracking has three modes: Manual, file based and GIT based (see https://git-scm.com).

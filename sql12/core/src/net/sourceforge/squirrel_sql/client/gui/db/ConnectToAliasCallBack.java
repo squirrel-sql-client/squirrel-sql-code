@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -17,28 +18,20 @@ import java.sql.SQLException;
 
 public class ConnectToAliasCallBack implements ICompletionCallback
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(ConnectToAliasCallBack.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ConnectToAliasCallBack.class);
 
-   private static final ILogger s_log =
-      LoggerController.createLogger(ConnectToAliasCallBack.class);
+   private static final ILogger s_log = LoggerController.createLogger(ConnectToAliasCallBack.class);
 
 
-   private final IApplication _app;
    private final SQLAlias _sqlAlias;
 
-   public ConnectToAliasCallBack(IApplication app, SQLAlias alias)
+   public ConnectToAliasCallBack(SQLAlias alias)
    {
       super();
-      if (app == null)
-      {
-         throw new IllegalArgumentException("IApplication == null");
-      }
       if (alias == null)
       {
          throw new IllegalArgumentException("ISQLAlias == null");
       }
-      _app = app;
       _sqlAlias = alias;
    }
 
@@ -47,7 +40,6 @@ public class ConnectToAliasCallBack implements ICompletionCallback
     */
    public void connected(ISQLConnection conn)
    {
-      // Empty.
    }
 
    /**
@@ -55,7 +47,6 @@ public class ConnectToAliasCallBack implements ICompletionCallback
     */
    public void sessionCreated(ISession session)
    {
-      // Empty.
    }
 
    @Override
@@ -126,20 +117,9 @@ public class ConnectToAliasCallBack implements ICompletionCallback
       return msg + "\n" + th.getClass() + ": " + th.getMessage();
    }
 
-   protected IApplication getApplication()
+   private void showErrorDialog(final String msg, final Throwable th)
    {
-      return _app;
-   }
-
-   protected void showErrorDialog(final String msg, final Throwable th)
-   {
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            new ErrorDialog(_app.getMainFrame(), msg, th).setVisible(true);
-         }
-      });
+      SwingUtilities.invokeLater(() -> new ErrorDialog(Main.getApplication().getMainFrame(), msg, th).setVisible(true));
    }
 
 

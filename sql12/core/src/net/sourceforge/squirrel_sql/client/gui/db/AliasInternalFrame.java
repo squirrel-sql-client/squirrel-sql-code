@@ -40,6 +40,7 @@ import java.util.Map;
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
@@ -248,6 +249,7 @@ public class AliasInternalFrame extends DialogWidget
 
 	private void performClose()
 	{
+		setVisible(false);
 		dispose();
 	}
 
@@ -510,53 +512,59 @@ public class AliasInternalFrame extends DialogWidget
 		JPanel pnl = new JPanel();
 
 		JButton okBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.ok"));
-		okBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				performOk();
-			}
-		});
+		okBtn.addActionListener(evt -> performOk());
+
 		JButton closeBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.close"));
-		closeBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				performClose();
-			}
-		});
+		closeBtn.addActionListener(evt -> performClose());
 
 		JButton testBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.test"));
-		testBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				final DataCache cache = _app.getDataCache();
-				final IIdentifierFactory factory = IdentifierFactory.getInstance();
-				final SQLAlias testAlias = cache.createAlias(factory.createIdentifier());
-				try
-				{
-					applyFromDialog(testAlias);
-					ConnectionCallBack cb = new ConnectionCallBack(_app, testAlias);
-					ConnectToAliasCommand cmd = new ConnectToAliasCommand(_app,
-													testAlias, false, cb);
-					cmd.execute();
-				}
-				catch (ValidationException ex)
-				{
-					_app.showErrorDialog(ex);
-				}
-			}
-		});
+		testBtn.addActionListener(evt -> performConnect(false));
+
+		JButton connectBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.connect"));
+		connectBtn.addActionListener(evt -> performConnect(true));
 
 		pnl.add(okBtn);
 		pnl.add(closeBtn);
 		pnl.add(testBtn);
+		pnl.add(connectBtn);
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, closeBtn, testBtn });
+		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, closeBtn, testBtn, connectBtn });
 		getRootPane().setDefaultButton(okBtn);
 
 		return pnl;
+	}
+
+	private void performConnect(boolean createSession)
+	{
+		final DataCache cache = _app.getDataCache();
+		final IIdentifierFactory factory = IdentifierFactory.getInstance();
+		final SQLAlias alias = cache.createAlias(factory.createIdentifier());
+		try
+		{
+			applyFromDialog(alias);
+		}
+		catch (ValidationException e)
+		{
+			_app.showErrorDialog(e);
+			return;
+		}
+
+		if (createSession)
+		{
+			ConnectToAliasCallBack connectToAliasCallBack = new ConnectToAliasCallBack(alias){
+				@Override
+				public void sessionCreated(ISession session)
+				{
+					performOk();
+				}
+			};
+
+			new ConnectToAliasCommand(Main.getApplication(), alias, true, connectToAliasCallBack).execute();
+		}
+		else
+		{
+			new ConnectToAliasCommand(_app, alias, createSession, new ConnectionTestCallBack(_app, alias)).execute();
+		}
 	}
 
 	private final class DriversComboItemListener implements ItemListener
@@ -637,11 +645,11 @@ public class AliasInternalFrame extends DialogWidget
 		}
 	}
 
-	private final class ConnectionCallBack extends ConnectToAliasCallBack
+	private final class ConnectionTestCallBack extends ConnectToAliasCallBack
 	{
-		private ConnectionCallBack(IApplication app, SQLAlias alias)
+		private ConnectionTestCallBack(IApplication app, SQLAlias alias)
 		{
-			super(app, alias);
+			super(alias);
 		}
 
 		/**
