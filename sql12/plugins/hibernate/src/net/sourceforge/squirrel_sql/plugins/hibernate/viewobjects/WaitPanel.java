@@ -26,6 +26,8 @@ public class WaitPanel extends JPanel
       add(createCloseButtonPanel(resource), BorderLayout.NORTH);
 
       add(createLabelPanel(hqlQuery), BorderLayout.CENTER);
+
+      setMinimumSize(new Dimension(0,0));
    }
 
    private JPanel createLabelPanel(String hqlQuery)
