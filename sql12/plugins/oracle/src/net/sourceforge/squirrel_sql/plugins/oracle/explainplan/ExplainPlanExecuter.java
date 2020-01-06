@@ -68,29 +68,27 @@ import com.sun.treetable.TreeTableModel;
  */
 public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
 
-    private static final long serialVersionUID = 1L;
 
-    private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ExplainPlanExecuter.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExplainPlanExecuter.class);
 
 
-  /** Logger for this class. */
-  private static final ILogger s_log = LoggerController.createLogger(
-		ExplainPlanExecuter.class);
+	private static final ILogger s_log = LoggerController.createLogger(ExplainPlanExecuter.class);
 
-  transient private ISession _session;
-  private boolean checkedPlanTable = false;
-  /** Factory for generating unique IDs for the explain plan statement ids*/
-  private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
+	private ISession _session;
+	private boolean checkedPlanTable = false;
+	/**
+	 * Factory for generating unique IDs for the explain plan statement ids
+	 */
+	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
 
-  private String _planTableName = "PLAN_TABLE";
-  
-  private static String USER_PLAN_TABLE_SQL = 
-      "SELECT 1 from USER_TABLES WHERE UPPER(TABLE_NAME) = UPPER(?)";
+	private String _planTableName = "PLAN_TABLE";
 
-  private static String ALL_PLAN_TABLE_SQL = 
-      "SELECT OWNER, TABLE_NAME " +
-      "from ALL_TABLES WHERE UPPER(TABLE_NAME) = UPPER(?)";  
+	private static String USER_PLAN_TABLE_SQL =
+			"SELECT 1 from USER_TABLES WHERE UPPER(TABLE_NAME) = UPPER(?)";
+
+	private static String ALL_PLAN_TABLE_SQL =
+			"SELECT OWNER, TABLE_NAME " +
+					"from ALL_TABLES WHERE UPPER(TABLE_NAME) = UPPER(?)";
   /**
 	* Ctor.
 	*

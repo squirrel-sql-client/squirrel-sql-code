@@ -66,14 +66,9 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 {
 	static final String EXPLAIN_PREFIX = "EXPLAIN ANALYZE ";
 
-	private static final long serialVersionUID = 9155604319585792834L;
-
-	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(ExplainExecuterPanel.class);
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ExplainExecuterPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExplainExecuterPanel.class);
 
 	static interface i18n
 	{
@@ -143,9 +138,9 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		while (tokenizer.hasQuery())
 		{
 			String query = tokenizer.nextQuery().getQuery();
-				result.append("BEGIN").append(tokenizer.getSQLStatementSeparator());
-				result.append(EXPLAIN_PREFIX).append(query).append(tokenizer.getSQLStatementSeparator());
-				result.append("ROLLBACK").append(tokenizer.getSQLStatementSeparator());
+				result.append("BEGIN").append(";");
+				result.append(EXPLAIN_PREFIX).append(query).append(";");
+				result.append("ROLLBACK").append(";");
 		}
 		if (s_log.isDebugEnabled())
 		{
@@ -159,38 +154,17 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 	private void addExplainTab(ResultSetDataSet rsds, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
 	{
 		final ExplainTab tab = new ExplainTab(_session, this, rsds, info, model);
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				secureAddTab(tab);
-			}
-		});
+		SwingUtilities.invokeLater(() -> secureAddTab(tab));
 	}
 
 	public void closeTab(final ExplainTab tab)
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				_tabbedExecutionsPanel.removeTabAt(_tabbedExecutionsPanel.indexOfComponent(tab));
-			}
-		});
+		SwingUtilities.invokeLater(() -> _tabbedExecutionsPanel.removeTabAt(_tabbedExecutionsPanel.indexOfComponent(tab)));
 	}
 
 	public void closeTabAt(final int index)
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				_tabbedExecutionsPanel.removeTabAt(index);
-			}
-		});
+		SwingUtilities.invokeLater(() -> _tabbedExecutionsPanel.removeTabAt(index));
 	}
 
 	private void secureAddTab(ExplainTab tab)
