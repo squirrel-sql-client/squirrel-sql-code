@@ -62,6 +62,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+Corrected tool tip for table import tool bar button / menu item.
+
 When a file was opened the caret was placed on the last line and the editor contents were selected.
 
 Position of SQL panel divider wasn't remembered anymore.
