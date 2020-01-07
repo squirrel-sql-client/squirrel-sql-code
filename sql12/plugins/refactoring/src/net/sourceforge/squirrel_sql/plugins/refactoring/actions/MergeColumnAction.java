@@ -29,13 +29,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.MergeColumnComm
 
 public class MergeColumnAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = 3905313301735703489L;
-
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(MergeColumnAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MergeColumnAction.class);
 
 	private static interface i18n
 	{

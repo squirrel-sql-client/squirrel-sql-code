@@ -28,8 +28,6 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.AddSequenceComm
 
 public class AddSequenceAction extends AbstractRefactoringAction implements IObjectTreeAction
 {
-	private static final long serialVersionUID = -3250086775025295428L;
-
 	public AddSequenceAction(IApplication app, Resources rsrc)
 	{
 		super(app, rsrc);

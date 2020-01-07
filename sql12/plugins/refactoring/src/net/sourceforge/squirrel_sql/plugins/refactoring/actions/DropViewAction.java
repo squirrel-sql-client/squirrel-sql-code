@@ -25,9 +25,8 @@ import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropViewCommand;
 
 
-public class DropViewAction extends AbstractRefactoringAction {
-	private static final long serialVersionUID = 375335286385572772L;
-
+public class DropViewAction extends AbstractRefactoringAction
+{
 
 	public DropViewAction(IApplication app, Resources rsrc) {
         super(app, rsrc);

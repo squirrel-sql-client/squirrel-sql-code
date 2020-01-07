@@ -29,12 +29,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.RenameTableComm
 
 public class RenameTableAction extends AbstractRefactoringAction
 {
-
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(RenameTableAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RenameTableAction.class);
 
 	private static interface i18n
 	{

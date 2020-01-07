@@ -29,13 +29,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropColumnComma
 
 public class DropColumnAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = 481746871206634214L;
-
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DropColumnAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DropColumnAction.class);
 
 	private static interface i18n
 	{

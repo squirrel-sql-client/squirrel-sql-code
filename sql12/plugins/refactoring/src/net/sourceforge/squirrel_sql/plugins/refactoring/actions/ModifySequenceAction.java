@@ -29,13 +29,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.ModifySequenceC
 
 public class ModifySequenceAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = -8681699057991332311L;
-
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ModifySequenceAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ModifySequenceAction.class);
 
 	private static interface i18n
 	{

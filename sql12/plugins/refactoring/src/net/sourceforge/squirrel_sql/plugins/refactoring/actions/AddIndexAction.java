@@ -30,13 +30,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.AddIndexCommand
 
 public class AddIndexAction extends AbstractRefactoringAction implements IObjectTreeAction
 {
-	private static final long serialVersionUID = -8375159812709796072L;
-
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AddIndexAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AddIndexAction.class);
 
 	private static interface i18n
 	{

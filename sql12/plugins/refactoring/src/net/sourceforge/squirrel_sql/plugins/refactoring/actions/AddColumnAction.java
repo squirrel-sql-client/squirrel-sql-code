@@ -29,13 +29,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.AddColumnComman
 
 public class AddColumnAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = 7427154165349793762L;
-
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AddColumnAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AddColumnAction.class);
 
 	private static interface i18n
 	{

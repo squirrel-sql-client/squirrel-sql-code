@@ -29,13 +29,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropForeignKeyC
 
 public class DropForeignKeyAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = 3393741031225773340L;
-
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DropForeignKeyAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DropForeignKeyAction.class);
 
 	private static interface i18n
 	{

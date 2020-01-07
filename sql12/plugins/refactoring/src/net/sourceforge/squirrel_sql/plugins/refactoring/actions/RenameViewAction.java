@@ -29,13 +29,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.RenameViewComma
 
 public class RenameViewAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = -2969231566456501942L;
-
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(RenameTableAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RenameTableAction.class);
 
 	private static interface i18n
 	{

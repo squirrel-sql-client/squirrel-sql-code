@@ -27,8 +27,6 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.AddViewCommand;
 
 public class AddViewAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = 3882499919835487812L;
-
 	public AddViewAction(IApplication app, Resources rsrc)
 	{
 		super(app, rsrc);

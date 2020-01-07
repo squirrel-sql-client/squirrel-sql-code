@@ -27,7 +27,6 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropTablesComma
 
 public class DropSelectedTablesAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = -8517759137466833243L;
 
 	public DropSelectedTablesAction(IApplication app, Resources rsrc)
 	{

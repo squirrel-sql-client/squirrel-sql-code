@@ -31,13 +31,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.gui.MergeTableDialogFact
 
 public class MergeTableAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = -7536303163886512534L;
-
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(MergeTableAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MergeTableAction.class);
 
 	private static interface i18n
 	{

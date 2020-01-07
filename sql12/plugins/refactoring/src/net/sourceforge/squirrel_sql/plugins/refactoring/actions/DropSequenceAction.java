@@ -27,8 +27,6 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropSequenceCom
 
 public class DropSequenceAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = -2293313754254825620L;
-
 	public DropSequenceAction(IApplication app, Resources rsrc)
 	{
 		super(app, rsrc);

@@ -29,12 +29,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.AddPrimaryKeyCo
 
 public class AddPrimaryKeyAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = 488082040428357799L;
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AddPrimaryKeyAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AddPrimaryKeyAction.class);
 
 	private static interface i18n
 	{

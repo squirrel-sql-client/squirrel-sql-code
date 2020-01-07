@@ -173,8 +173,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 				final boolean isMaterializedView = isMaterializedView(info, _session);
 				// There are more dependancies then just FKs (like views, etc.),
 				// therefore cascadeConstraints is used as a parameter for the TableDropSQL.
-				final List<String> sqls =
-					_dialect.getTableDropSQL(info, cascadeConstraints, isMaterializedView, _qualifier, _sqlPrefs);
+				final List<String> sqls = _dialect.getTableDropSQL(info, cascadeConstraints, isMaterializedView, _qualifier, _sqlPrefs);
 				result.addAll(sqls);
 			}
 		}

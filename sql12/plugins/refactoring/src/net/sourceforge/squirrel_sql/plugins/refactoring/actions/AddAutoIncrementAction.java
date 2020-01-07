@@ -29,13 +29,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.AddAutoIncremen
 
 public class AddAutoIncrementAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = -5316665324698095673L;
-
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AddAutoIncrementAction.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AddAutoIncrementAction.class);
 
 	private static interface i18n
 	{
