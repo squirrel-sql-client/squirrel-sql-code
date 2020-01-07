@@ -64,6 +64,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+#1406 Column completion didn't work for aliases of schema/catalog qualified tables.
+
 Hibernate Plugin: HQL execution panel didn't resize correctly when a HQL error was displayed.
 
 Corrected tool tip for table import tool bar button / menu item.

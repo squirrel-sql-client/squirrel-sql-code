@@ -18,6 +18,7 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
 public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
@@ -29,14 +30,14 @@ public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
    public CodeCompletionTableAliasInfo(TableAliasInfo aliasInfo, boolean useCompletionPrefs, CodeCompletionPreferences prefs)
    {
       //SH add last parameter ISession. Used in the super class
-      super(aliasInfo.tableName, "TABLE", null, null, useCompletionPrefs, prefs, null);
+      super(aliasInfo.getTableQualifier().getTableName(), "TABLE", aliasInfo.getTableQualifier().getCatalog(), aliasInfo.getTableQualifier().getSchema(), useCompletionPrefs, prefs, null);
       _aliasInfo = aliasInfo;
-      _toString = _aliasInfo.aliasName + " (Alias for " + _aliasInfo.tableName + ")";
+      _toString = _aliasInfo.getAliasName() + " (Alias for " + _aliasInfo.getTableName() + ")";
 	}
 
 	public String getCompareString()
 	{
-		return _aliasInfo.aliasName;
+		return _aliasInfo.getAliasName();
 	}
 
 	public String toString()
@@ -46,6 +47,6 @@ public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
 
     public int getStatBegin()
     {
-        return _aliasInfo.statBegin;
+        return _aliasInfo.getStatBegin();
     }
 }

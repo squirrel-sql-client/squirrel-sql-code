@@ -18,7 +18,6 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateListener;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -32,19 +31,13 @@ import java.util.*;
 
 public class CodeCompletionInfoCollection
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(CodeCompletionInfoCollection.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CodeCompletionInfoCollection.class);
 
+   private Hashtable<String, Vector<CodeCompletionInfo>> _completionInfosByCataLogAndSchema = new Hashtable<>();
+   private Vector<CodeCompletionInfo> _aliasCompletionInfos = new Vector<>();
 
-   private Hashtable<String, Vector<CodeCompletionInfo>> _completionInfosByCataLogAndSchema =
-	    new Hashtable<String, Vector<CodeCompletionInfo>>();
-   private Vector<CodeCompletionInfo> _aliasCompletionInfos =
-       new Vector<CodeCompletionInfo>();
-
-   private Vector<CodeCompletionSchemaInfo> _schemas =
-       new Vector<CodeCompletionSchemaInfo>();
-   private Vector<CodeCompletionCatalogInfo> _catalogs =
-       new Vector<CodeCompletionCatalogInfo>();
+   private Vector<CodeCompletionSchemaInfo> _schemas = new Vector<>();
+   private Vector<CodeCompletionCatalogInfo> _catalogs = new Vector<>();
 
 	private ISession _session;
 	private CodeCompletionPlugin _plugin;
@@ -64,14 +57,7 @@ public class CodeCompletionInfoCollection
 
       _prefs = (CodeCompletionPreferences) _session.getPluginObject(_plugin, CodeCompletionPlugin.PLUGIN_OBJECT_PREFS_KEY);
 
-      _session.getSchemaInfo().addSchemaInfoUpdateListener(new SchemaInfoUpdateListener()
-      {
-         public void schemaInfoUpdated()
-         {
-            _completionInfosByCataLogAndSchema =
-                new Hashtable<String, Vector<CodeCompletionInfo>>();
-         }
-      });
+      _session.getSchemaInfo().addSchemaInfoUpdateListener(() -> _completionInfosByCataLogAndSchema = new Hashtable<>());
    }
 
 	private void load(String catalog, String schema, boolean showLoadingMessage)
@@ -244,7 +230,7 @@ public class CodeCompletionInfoCollection
 
       if("".equals(trimmedPrefix))
       {
-			Vector<CodeCompletionInfo> buf = new Vector<CodeCompletionInfo>();
+			Vector<CodeCompletionInfo> buf = new Vector<>();
 			buf.addAll(_aliasCompletionInfos);
 
          if(MAX_COMPLETION_INFOS < completionInfos.size())
@@ -261,7 +247,7 @@ public class CodeCompletionInfoCollection
          return buf.toArray(new CodeCompletionInfo[0]);
       }
 
-      Vector<CodeCompletionInfo> ret = new Vector<CodeCompletionInfo>();
+      Vector<CodeCompletionInfo> ret = new Vector<>();
 
 		for(int i=0; i < _aliasCompletionInfos.size(); ++i)
 		{
@@ -307,11 +293,11 @@ public class CodeCompletionInfoCollection
 
    public void replaceLastAliasInfos(TableAliasInfo[] aliasInfos)
 	{
-		_aliasCompletionInfos = new Vector<CodeCompletionInfo>(aliasInfos.length);
+		_aliasCompletionInfos = new Vector<>(aliasInfos.length);
 
 		for (int i = 0; i < aliasInfos.length; i++)
 		{
-         if(false == aliasInfos[i].aliasName.startsWith("#"))
+         if(false == aliasInfos[i].getAliasName().startsWith("#"))
          {
 			   _aliasCompletionInfos.add(new CodeCompletionTableAliasInfo(aliasInfos[i], _useCompletionPrefs, _prefs));
          }
