@@ -72,11 +72,9 @@ public abstract class AbstractDataScriptCommand extends WindowAdapter
 
    /**
     * Looks for the current selected SQL statement in the editor pane.
-    * This ensures, that the selected statement is realy a SELECT statement.
     * These errors can occurs,
     * <li>no query selected</li>
     * <li>more than one query selected</li>
-    * <li>not a SELECT statement selected</li>
     * In all these cases, the user will get a message and <code>null</code> will be returned.
     *
     * @return the selected SELECT statement or null, if not exactly one SELECT statement is selected.
@@ -106,12 +104,6 @@ public abstract class AbstractDataScriptCommand extends WindowAdapter
 
       String currentSQL = qt.nextQuery().getQuery();
 
-      if (StringUtils.startsWithIgnoreCase(currentSQL, "select") == false)
-      {
-         // i18n[CreateFileOfCurrentSQLCommand.notASelect=The selected SQL is not a SELECT statement.]
-         getSession().showErrorMessage(s_stringMgr.getString("AbstractDataScriptCommand.notASelect"));
-         return null;
-      }
       return currentSQL;
    }
 
