@@ -8,10 +8,9 @@ import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.plugins.dataimport.EDTMessageBoxUtil;
 import net.sourceforge.squirrel_sql.plugins.dataimport.ImportFileUtils;
+import net.sourceforge.squirrel_sql.plugins.dataimport.action.FileDisplayWrapper;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,10 +59,9 @@ public class TableCreateUtils
 
    }
 
-   public static String suggestTableName(File importFile)
+   public static String suggestTableName(FileDisplayWrapper importFile)
    {
-
-      String fileName = ImportFileUtils.getFileNameWithoutEnding(importFile);
+      String fileName = ImportFileUtils.getFileNameWithoutEnding(importFile.getDisplayName());
 
       String normalizedFileName = StringUtilities.javaNormalize(fileName);
 

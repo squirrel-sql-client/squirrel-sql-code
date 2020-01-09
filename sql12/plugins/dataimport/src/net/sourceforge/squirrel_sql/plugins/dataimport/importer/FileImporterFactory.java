@@ -26,32 +26,34 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.importer.excel.ExcelFileI
 
 /**
  * This factory creates a IFileImporter for the given type.
- * 
+ *
  * @author Thorsten Mürell
  */
-public class FileImporterFactory {
-	/**
-	 * This file is used to create a new file importer.
-	 * 
-	 * @param type The type for the file importer
-	 * @param importFile The import file
-	 * @return An implementation of <code>IFileImporter</code>.
-	 * @throws IOException An exception is thrown on I/O error
-	 */
-	public static IFileImporter createImporter(ImportFileType type, File importFile) throws IOException {
-		IFileImporter importer = null;
-		
-		switch (type) {
-		case CSV:
-			importer = new CSVFileImporter(importFile);
-			break;
-		case XLS:
-			importer = new ExcelFileImporter(importFile);
-			break;
-			default:
-				throw new IllegalArgumentException("No such type: " + type.toString());
-		}
-		return importer;
-	}
+public class FileImporterFactory
+{
+   /**
+    * This file is used to create a new file importer.
+    *
+    * @param type       The type for the file importer
+    * @param importFile The import file
+    * @return An implementation of <code>IFileImporter</code>.
+    */
+   public static IFileImporter createImporter(ImportFileType type, File importFile)
+   {
+      IFileImporter importer;
+
+      switch (type)
+      {
+         case CSV:
+            importer = new CSVFileImporter(importFile);
+            break;
+         case XLS:
+            importer = new ExcelFileImporter(importFile);
+            break;
+         default:
+            throw new IllegalArgumentException("No such type: " + type.toString());
+      }
+      return importer;
+   }
 
 }

@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+The former file import now allows to import from clipboard, too.
+
 Connect button in Alias dialog.
 
 Change tracking:

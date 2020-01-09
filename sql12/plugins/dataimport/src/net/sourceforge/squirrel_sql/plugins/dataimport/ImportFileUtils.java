@@ -14,24 +14,24 @@ public class ImportFileUtils
       return ImportFileType.CSV;
    }
 
-   public static String getFileNameWithoutEnding(File importFile)
+   public static String getFileNameWithoutEnding(String importFileName)
    {
 
-      if(importFile.getName().toLowerCase().endsWith(".xls"))
+      if(importFileName.toLowerCase().endsWith(".xls"))
       {
-         return importFile.getName().substring(0, importFile.getName().length() - 4);
+         return importFileName.substring(0, importFileName.length() - 4);
       }
-      else if(importFile.getName().toLowerCase().endsWith(".xlsx"))
+      else if(importFileName.toLowerCase().endsWith(".xlsx"))
       {
-         return importFile.getName().substring(0, importFile.getName().length() - 5);
+         return importFileName.substring(0, importFileName.length() - 5);
       }
-      else if(importFile.getName().toLowerCase().endsWith(".csv"))
+      else if(importFileName.toLowerCase().endsWith(".csv"))
       {
-         return importFile.getName().substring(0, importFile.getName().length() - 4);
+         return importFileName.substring(0, importFileName.length() - 4);
       }
       else
       {
-         return importFile.getName();
+         return importFileName;
       }
    }
 }

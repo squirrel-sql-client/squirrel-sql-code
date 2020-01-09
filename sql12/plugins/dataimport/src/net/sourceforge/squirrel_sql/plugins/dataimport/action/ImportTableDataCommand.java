@@ -18,8 +18,15 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.action;
  */
 
 import java.awt.BorderLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -31,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -51,33 +59,31 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
  */
 public class ImportTableDataCommand
 {
-   private static final StringManager stringMgr = StringManagerFactory.getStringManager(ImportTableDataCommand.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ImportTableDataCommand.class);
 
-   /**
-    * Logger for this class.
-    */
    private final static ILogger s_log = LoggerController.createLogger(ImportTableDataCommand.class);
 
-   private static final String PREFS_KEY_LAST_IMPORT_DIRECTORY = "squirrelsql_dataimport_last_import_directory";
 
 
-   private ISession session;
-   private ITableInfo table;
+   private ISession _session;
+   private IResources _resources;
+   private ITableInfo _table;
 
 
-   public ImportTableDataCommand(ISession session)
+   public ImportTableDataCommand(ISession session, IResources resources)
    {
-      this(session, null);
+      this(session, resources, null);
    }
 
    /**
     * @param session The session to work in
     * @param table   The table to import the data
     */
-   public ImportTableDataCommand(ISession session, ITableInfo table)
+   public ImportTableDataCommand(ISession session, IResources resources, ITableInfo table)
    {
-      this.session = session;
-      this.table = table;
+      _session = session;
+      _resources = resources;
+      _table = table;
    }
 
    /**
@@ -90,69 +96,93 @@ public class ImportTableDataCommand
     */
    public void execute()
    {
-      JFileChooser openFile = new JFileChooser(Props.getString(PREFS_KEY_LAST_IMPORT_DIRECTORY, System.getProperty("user.home")));
-
-      int res = openFile.showOpenDialog(session.getApplication().getMainFrame());
-
-      if (res == JFileChooser.APPROVE_OPTION)
+      try
       {
-         File importFile = openFile.getSelectedFile();
+         ImportFileChooserDialog importFileChooser = new ImportFileChooserDialog(_resources,_table);
 
-         if (null != importFile.getParent())
+         FileDisplayWrapper fileDisplayWrapper;
+
+         if(importFileChooser.isImportFromClipBoard())
          {
-            Props.putString(PREFS_KEY_LAST_IMPORT_DIRECTORY, importFile.getParent());
-         }
-
-         try
-         {
-
-            ImportFileType type = ImportFileUtils.determineType(importFile);
-
-
-            IFileImporter importer = FileImporterFactory.createImporter(type, importFile);
-
-            ConfigurationPanel configurationPanel = importer.createConfigurationPanel();
-
-            if (configurationPanel != null)
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable tran = clipboard.getContents(null);
+            if (tran != null && tran.isDataFlavorSupported(DataFlavor.stringFlavor))
             {
-               //i18n[ImportTableDataCommand.settingsDialogTitle=Import file settings]
-               final JDialog dialog = new JDialog(Main.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.settingsDialogTitle"), true);
-               StateListener dialogState = new StateListener(dialog);
-               dialog.setLayout(new BorderLayout());
-               dialog.add(configurationPanel, BorderLayout.CENTER);
-               OkClosePanel buttons = new OkClosePanel();
+               String clipContent = (String) tran.getTransferData(DataFlavor.stringFlavor);
 
-               buttons.getCloseButton().setText(stringMgr.getString("ImportTableDataCommand.cancel"));
-               buttons.addListener(dialogState);
-               dialog.add(buttons, BorderLayout.SOUTH);
-               dialog.pack();
-               GUIUtils.centerWithinParent(dialog);
-               dialog.setVisible(true);
-               if (dialogState.isOkPressed())
+               Path tempFile = Files.createTempFile("squirrel-clipboard-import", ".csv");
+               tempFile.toFile().deleteOnExit();
+
+               try (BufferedWriter writer = Files.newBufferedWriter(tempFile))
                {
-                  configurationPanel.apply();
+                  writer.write(clipContent);
                }
-               else
-               {
-                  return;
-               }
+
+               fileDisplayWrapper = new FileDisplayWrapper(tempFile.toFile(), true);
+            }
+            else
+            {
+               throw new IllegalStateException("Failed to interpret clipboard as String");
+            }
+         }
+         else
+         {
+            if (null ==  importFileChooser.getImportFile())
+            {
+               return;
             }
 
-
-            ImportFileDialogCtrl importFileDialogCtrl;
-
-            importFileDialogCtrl = new ImportFileDialogCtrl(session, importFile, importer, table);
-
-            importFileDialogCtrl.setPreviewData(importer.getPreview(10));
-
-            importFileDialogCtrl.show();
-
+            fileDisplayWrapper = new FileDisplayWrapper(importFileChooser.getImportFile(), false);
          }
-         catch (IOException e)
+
+
+         ImportFileType type = ImportFileUtils.determineType(fileDisplayWrapper.getFile());
+
+         IFileImporter importer = FileImporterFactory.createImporter(type, fileDisplayWrapper.getFile());
+
+         ConfigurationPanel configurationPanel = importer.createConfigurationPanel();
+
+         if (configurationPanel != null)
          {
-            s_log.error("execute: unexpected exception - " + e.getMessage(), e);
-            EDTMessageBoxUtil.showMessageDialogOnEDT(stringMgr.getString("ImportTableDataCommand.ioErrorOccured"), stringMgr.getString("ImportTableDataCommand.error"));
+            //i18n[ImportTableDataCommand.settingsDialogTitle=Import file settings]
+            final JDialog dialog = new JDialog(Main.getApplication().getMainFrame(), s_stringMgr.getString("ImportTableDataCommand.settingsDialogTitle"), true);
+            StateListener dialogState = new StateListener(dialog);
+            dialog.setLayout(new BorderLayout());
+            dialog.add(configurationPanel, BorderLayout.CENTER);
+            OkClosePanel buttons = new OkClosePanel();
+
+            buttons.getCloseButton().setText(s_stringMgr.getString("ImportTableDataCommand.cancel"));
+            buttons.addListener(dialogState);
+            dialog.add(buttons, BorderLayout.SOUTH);
+            dialog.pack();
+            GUIUtils.centerWithinParent(dialog);
+            dialog.setVisible(true);
+            if (dialogState.isOkPressed())
+            {
+               configurationPanel.apply();
+            }
+            else
+            {
+               return;
+            }
          }
+
+
+         ImportFileDialogCtrl importFileDialogCtrl;
+
+         importFileDialogCtrl = new ImportFileDialogCtrl(_session, fileDisplayWrapper, importer, _table);
+
+         importFileDialogCtrl.setPreviewData(importer.getPreview(10));
+
+         importFileDialogCtrl.show();
+
+
+
+      }
+      catch (Exception e)
+      {
+         s_log.error("execute: unexpected exception - " + e.getMessage(), e);
+         EDTMessageBoxUtil.showMessageDialogOnEDT(s_stringMgr.getString("ImportTableDataCommand.ioErrorOccured"), s_stringMgr.getString("ImportTableDataCommand.error"));
       }
    }
 

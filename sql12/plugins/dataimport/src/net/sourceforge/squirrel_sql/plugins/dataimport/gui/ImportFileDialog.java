@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.dataimport.action.FileDisplayWrapper;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -24,7 +25,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.io.File;
 import java.text.NumberFormat;
 
 public class ImportFileDialog extends DialogWidget
@@ -59,7 +59,7 @@ public class ImportFileDialog extends DialogWidget
    JLabel lblCommitAfterInsertEnd;
 
 
-   public ImportFileDialog(File importFile, String importFileTypeDescription, String tableName)
+   public ImportFileDialog(FileDisplayWrapper importFile, String importFileTypeDescription, String tableName)
    {
       super("", true, Main.getApplication());
 
@@ -88,7 +88,7 @@ public class ImportFileDialog extends DialogWidget
    }
 
 
-   private Component createMainPanel(File importFile)
+   private Component createMainPanel(FileDisplayWrapper importFile)
    {
       tblPreview = new JTable();
       tblPreview.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -113,7 +113,7 @@ public class ImportFileDialog extends DialogWidget
 
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0);
       //i18n[ImportFileDialogCtrl.dataPreview=Data preview]
-      ret.add(new JLabel(s_stringMgr.getString("ImportFileDialog.dataPreview", importFile.getAbsolutePath())), gbc);
+      ret.add(new JLabel(s_stringMgr.getString("ImportFileDialog.dataPreview", importFile.getDisplayPath())), gbc);
 
       gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 10, 10), 0, 0);
       ret.add(chkHeadersIncluded, gbc);

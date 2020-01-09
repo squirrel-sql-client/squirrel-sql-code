@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.ImportDataIntoTableExecut
 
 import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.*;
 
+import net.sourceforge.squirrel_sql.plugins.dataimport.action.FileDisplayWrapper;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv.CSVFileImporter;
 
@@ -63,7 +64,7 @@ public class ImportFileDialogCtrl
    private List<String> _importerColumns = new ArrayList<>();
 
    private ISession _session;
-   private File _importFile;
+   private FileDisplayWrapper _importFile;
    private IFileImporter _importer;
 
    private ITableInfo _table;
@@ -71,17 +72,13 @@ public class ImportFileDialogCtrl
 
    private TableSuggestion _tableSuggestion;
 
-   public ImportFileDialogCtrl(ISession session, File importFile, IFileImporter importer)
-   {
-      this(session, importFile, importer, null);
-   }
-
    /**
+    * @param columns    The columns of the import table
+    * @param importFile
     * @param importer   The file importer
     * @param table      The table to import into
-    * @param columns    The columns of the import table
     */
-   public ImportFileDialogCtrl(ISession session, File importFile, IFileImporter importer, ITableInfo table)
+   public ImportFileDialogCtrl(ISession session, FileDisplayWrapper importFile, IFileImporter importer, ITableInfo table)
    {
       _session = session;
       _importFile = importFile;

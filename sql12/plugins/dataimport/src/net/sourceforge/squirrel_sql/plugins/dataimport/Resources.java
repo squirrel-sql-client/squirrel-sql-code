@@ -22,17 +22,24 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 
 /**
  * Resources class
- * 
+ *
  * @author Thorsten Mürell
  */
-public class Resources extends PluginResources {
-	/**
-	 * Standard constructor
-	 * 
-	 * @param rsrcBundleBaseName
-	 * @param plugin
-	 */
-	public Resources(String rsrcBundleBaseName, IPlugin plugin) {
-		super(rsrcBundleBaseName, plugin);
+public class Resources extends PluginResources
+{
+	public interface IImageNames
+	{
+		String CLIPBOARD = "clipboard";
 	}
+
+		/**
+    * Standard constructor
+    *
+    * @param rsrcBundleBaseName
+    * @param plugin
+    */
+   public Resources(String rsrcBundleBaseName, IPlugin plugin)
+   {
+      super(rsrcBundleBaseName, plugin);
+   }
 }

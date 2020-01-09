@@ -38,10 +38,12 @@ public class ImportTableDataAction extends SquirrelAction implements ISessionAct
 {
    private IObjectTreeAPI _objectTreeAPI;
    private ISession _session;
+   private IResources _resources;
 
    public ImportTableDataAction(IApplication app, IResources resources)
    {
       super(app, resources);
+      _resources = resources;
    }
 
    @Override
@@ -62,18 +64,18 @@ public class ImportTableDataAction extends SquirrelAction implements ISessionAct
    {
       if (_objectTreeAPI == null)
       {
-         new ImportTableDataCommand(_session).execute();
+         new ImportTableDataCommand(_session, _resources).execute();
       }
       else
       {
          IDatabaseObjectInfo[] tables = _objectTreeAPI.getSelectedDatabaseObjects();
          if (0 < tables.length && tables[0] instanceof ITableInfo)
          {
-            new ImportTableDataCommand(_objectTreeAPI.getSession(), (ITableInfo) tables[0]).execute();
+            new ImportTableDataCommand(_objectTreeAPI.getSession(), _resources, (ITableInfo) tables[0]).execute();
          }
          else
          {
-            new ImportTableDataCommand(_session).execute();
+            new ImportTableDataCommand(_session, _resources).execute();
          }
       }
    }
