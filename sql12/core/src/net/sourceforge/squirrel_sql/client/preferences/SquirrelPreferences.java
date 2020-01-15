@@ -109,7 +109,7 @@ public class SquirrelPreferences implements Serializable
 		String GIT_COMMIT_MSG_DEFAULT = "gitCommitMsgDefault";
 		String DELETED_BOLD = "deletedBold";
 		String DELETED_ITALICS = "deletedItalics";
-		String DELTED_FOREGROUND_RGB = "deltedForegroundRGB";
+		String DELETED_FOREGROUND_RGB = "deletedForegroundRGB";
 		String INSERT_BEGIN_BACKGROUND_RGB = "insertBeginBackgroundRGB";
 		String INSERT_END_BACKGROUND_RGB = "insertEndBackgroundRGB";
 
@@ -221,8 +221,7 @@ public class SquirrelPreferences implements Serializable
     private boolean _warnJreJdbcMismatch = true;
     
 	/** Collection of <TT>PluginStatus</tt> objects. */
-	private final ArrayList<PluginStatus> _pluginStatusInfoColl = 
-        new ArrayList<PluginStatus>();
+	private final ArrayList<PluginStatus> _pluginStatusInfoColl = new ArrayList<>();
 
     /** Warning when closing session if a file was edited but not saved. */
     private boolean _warnForUnsavedFileEdits = true;
@@ -278,7 +277,7 @@ public class SquirrelPreferences implements Serializable
 	private String _gitCommitMsgDefault = "SQuirreL commit of " + GitHandler.GIT_MSG_FILE_NAME_PLACEHOLDER;
 	private boolean _deletedBold = true;
 	private boolean _deletedItalics = false;
-	private int _deltedForegroundRGB = Color.red.getRGB();
+	private int _deletedForegroundRGB = Color.red.getRGB();
 	private int _insertBeginBackgroundRGB = new Color(148, 255, 81).getRGB();
 	private int _insertEndBackgroundRGB = new Color(255, 170, 109).getRGB();
 	// Change tracking properties
@@ -1365,14 +1364,14 @@ public class SquirrelPreferences implements Serializable
 		_deletedItalics = deletedItalics;
 	}
 
-	public int getDeltedForegroundRGB()
+	public int getDeletedForegroundRGB()
 	{
-		return _deltedForegroundRGB;
+		return _deletedForegroundRGB;
 	}
 
-	public void setDeltedForegroundRGB(int deltedForegroundRGB)
+	public void setDeletedForegroundRGB(int deletedForegroundRGB)
 	{
-		_deltedForegroundRGB = deltedForegroundRGB;
+		_deletedForegroundRGB = deletedForegroundRGB;
 	}
 
 	public int getInsertBeginBackgroundRGB()

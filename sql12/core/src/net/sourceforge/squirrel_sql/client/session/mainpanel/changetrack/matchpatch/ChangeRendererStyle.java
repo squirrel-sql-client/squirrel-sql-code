@@ -70,7 +70,7 @@ public class ChangeRendererStyle
       ChangeRendererStyle ret = new ChangeRendererStyle();
       ret.setDeletedBold(prefs.isDeletedBold());
       ret.setDeletedItalic(prefs.isDeletedItalics());
-      ret.setDeletedForgeGround(new Color(prefs.getDeltedForegroundRGB()));
+      ret.setDeletedForgeGround(new Color(prefs.getDeletedForegroundRGB()));
       ret.setAfterInsertColor(new Color(prefs.getInsertEndBackgroundRGB()));
       ret.setBeforeInsertColor(new Color(prefs.getInsertBeginBackgroundRGB()));
 

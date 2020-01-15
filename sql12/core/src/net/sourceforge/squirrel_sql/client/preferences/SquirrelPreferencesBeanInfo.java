@@ -161,7 +161,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 						new PropertyDescriptor(GIT_COMMIT_MSG_DEFAULT, SquirrelPreferences.class, "getGitCommitMsgDefault", "setGitCommitMsgDefault"),
 						new PropertyDescriptor(DELETED_BOLD, SquirrelPreferences.class, "isDeletedBold", "setDeletedBold"),
 						new PropertyDescriptor(DELETED_ITALICS, SquirrelPreferences.class, "isDeletedItalics", "setDeletedItalics"),
-						new PropertyDescriptor(DELTED_FOREGROUND_RGB, SquirrelPreferences.class, "getDeltedForegroundRGB", "setDeltedForegroundRGB"),
+						new PropertyDescriptor(DELETED_FOREGROUND_RGB, SquirrelPreferences.class, "getDeletedForegroundRGB", "setDeletedForegroundRGB"),
 						new PropertyDescriptor(INSERT_BEGIN_BACKGROUND_RGB, SquirrelPreferences.class, "getInsertBeginBackgroundRGB", "setInsertBeginBackgroundRGB"),
 						new PropertyDescriptor(INSERT_END_BACKGROUND_RGB, SquirrelPreferences.class, "getInsertEndBackgroundRGB", "setInsertEndBackgroundRGB"),
 				};

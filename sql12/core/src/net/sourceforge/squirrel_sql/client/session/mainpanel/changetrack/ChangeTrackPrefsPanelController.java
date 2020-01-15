@@ -43,7 +43,7 @@ public class ChangeTrackPrefsPanelController
       _panel.btnDeletedItalics.setSelected(prefs.isDeletedItalics());
       _panel.btnDeletedItalics.addActionListener(e -> adjustUi());
 
-      _panel.setDeletedForeground(prefs.getDeltedForegroundRGB());
+      _panel.setDeletedForeground(prefs.getDeletedForegroundRGB());
       _panel.btnDeletedForeground.addActionListener(e -> onDeletedForeground());
 
       _panel.setInsertBeginBackground(prefs.getInsertBeginBackgroundRGB());
@@ -132,7 +132,7 @@ public class ChangeTrackPrefsPanelController
       prefs.setDeletedBold(_panel.btnDeletedBold.isSelected());
       prefs.setDeletedItalics(_panel.btnDeletedItalics.isSelected());
 
-      prefs.setDeltedForegroundRGB(_panel.getDeletedForeground());
+      prefs.setDeletedForegroundRGB(_panel.getDeletedForeground());
 
       prefs.setInsertBeginBackgroundRGB(_panel.getInsertBeginBackground());
       prefs.setInsertEndBackgroundRGB(_panel.getInsertEndBackground());
