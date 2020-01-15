@@ -278,7 +278,7 @@ public class SquirrelPreferences implements Serializable
 	private String _gitCommitMsgDefault = "SQuirreL commit of " + GitHandler.GIT_MSG_FILE_NAME_PLACEHOLDER;
 	private boolean _deletedBold = true;
 	private boolean _deletedItalics = false;
-	private int _deltedForegroundRGB = Color.gray.getRGB();
+	private int _deltedForegroundRGB = Color.red.getRGB();
 	private int _insertBeginBackgroundRGB = new Color(148, 255, 81).getRGB();
 	private int _insertEndBackgroundRGB = new Color(255, 170, 109).getRGB();
 	// Change tracking properties
