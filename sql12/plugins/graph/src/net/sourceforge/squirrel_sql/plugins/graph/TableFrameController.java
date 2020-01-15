@@ -361,7 +361,7 @@ public class TableFrameController
 
 
 
-   private String getDisplayName()
+   public String getDisplayName()
    {
       if(_desktopController.isShowQualifiedTableNames())
       {

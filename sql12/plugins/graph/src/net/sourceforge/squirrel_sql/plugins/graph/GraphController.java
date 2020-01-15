@@ -348,6 +348,7 @@ public class GraphController
       GraphControllerXmlBean xmlBean = new GraphControllerXmlBean();
       xmlBean.setTitle(_tabToWindowHandler.getTitle());
       xmlBean.setShowConstraintNames(_panelController.getDesktopController().isShowConstraintNames());
+      xmlBean.setShowQualifiedTableNames(_panelController.getDesktopController().isShowQualifiedTableNames());
       xmlBean.setZoomerXmlBean(_panelController.getDesktopController().getZoomer().getXmlBean());
       xmlBean.setPrintXmlBean(_panelController.getDesktopController().getZoomPrintController().getPrintXmlBean());
       xmlBean.setModeIndex(_panelController.getModeManager().getMode().getIndex());

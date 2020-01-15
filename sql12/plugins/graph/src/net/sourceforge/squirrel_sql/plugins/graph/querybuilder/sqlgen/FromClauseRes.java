@@ -8,13 +8,13 @@ import java.util.HashMap;
 public class FromClauseRes
 {
    private StringBuffer _from;
-   private ArrayList<TableFrameController> _tables = new ArrayList<TableFrameController>();
+   private ArrayList<TableFrameController> _tables = new ArrayList<>();
 
-   private HashMap<TableFrameController, Integer> _aliasNrByTfc = new HashMap<TableFrameController, Integer>();
+   private HashMap<TableFrameController, Integer> _aliasNrByTfc = new HashMap<>();
 
    public FromClauseRes(TableFrameController tfcStart)
    {
-      _from = new StringBuffer(" FROM " + tfcStart.getTableInfo().getSimpleName());
+      _from = new StringBuffer(" FROM " + tfcStart.getDisplayName());
       _tables.add(tfcStart);
    }
 

@@ -60,14 +60,9 @@ public class FromClauseGenerator
          return;
       }
 
-
       ConstraintView[] bauf;
 
-      String tableNameFrom = tfcFrom.getTableInfo().getSimpleName();
-      String tableNameTo = tfcTo.getTableInfo().getSimpleName();
-
-      ArrayList<ConstraintView> constraints = new ArrayList<ConstraintView>();
-
+      ArrayList<ConstraintView> constraints = new ArrayList<>();
 
       bauf = findConstraintViews(tfcFrom, tfcTo.getTableInfo().getSimpleName());
       constraints.addAll(Arrays.asList(bauf));
@@ -79,7 +74,7 @@ public class FromClauseGenerator
       String aliasTo = fromClauseRes.getAliasForNextJoinIfNeeded(tfcTo);
 
 
-      writeConstraints(fromClauseRes, constraints, tableNameFrom, tableNameTo, aliasFrom, aliasTo);
+      writeConstraints(fromClauseRes, constraints, tfcFrom, tfcTo, aliasFrom, aliasTo);
 
       fromClauseRes.addTable(tfcFrom);
       fromClauseRes.addTable(tfcTo);
@@ -96,7 +91,7 @@ public class FromClauseGenerator
 
    }
 
-   private void writeConstraints(FromClauseRes fromClauseRes, ArrayList<ConstraintView> constrains, String tableNameFrom, String tableNameTo, String aliasFrom, String aliasTo)
+   private void writeConstraints(FromClauseRes fromClauseRes, ArrayList<ConstraintView> constrains, TableFrameController tfcFrom, TableFrameController tfcTo, String aliasFrom, String aliasTo)
    {
 
       // see ConstraintViewsModel.checkMerges()
@@ -110,22 +105,22 @@ public class FromClauseGenerator
             continue;
          }
 
-         String tableNameTo_aliased = getNameOrAlias(tableNameTo, aliasTo);
+         String tableNameTo_aliased = getNameOrAlias(tfcTo.getDisplayName(), aliasTo);
 
          if( 0 < multipleJoinsBetweenTwoTablesAliasCount++)
          {
-            tableNameTo_aliased = getNameOrAlias(tableNameTo, aliasTo) + "_" + multipleJoinsBetweenTwoTablesAliasCount;
-            fromClauseRes.append(" " + getJoinType(data, tableNameFrom, tableNameTo) + " JOIN " + tableNameTo + " " + tableNameTo_aliased + " ON ");
+            tableNameTo_aliased = getNameOrAlias(tfcTo.getDisplayName(), aliasTo) + "_" + multipleJoinsBetweenTwoTablesAliasCount;
+            fromClauseRes.append(" " + getJoinType(data, tfcFrom, tfcTo) + " JOIN " + tfcTo.getDisplayName() + " " + tableNameTo_aliased + " ON ");
          }
          else
          {
             if (null == aliasTo)
             {
-               fromClauseRes.append(" " + getJoinType(data, tableNameFrom, tableNameTo) + " JOIN " + tableNameTo + " ON ");
+               fromClauseRes.append(" " + getJoinType(data, tfcFrom, tfcTo) + " JOIN " + tfcTo.getDisplayName() + " ON ");
             }
             else
             {
-               fromClauseRes.append(" " + getJoinType(data, tableNameFrom, tableNameTo) + " JOIN " + tableNameTo + " AS " + aliasTo +" ON ");
+               fromClauseRes.append(" " + getJoinType(data, tfcFrom, tfcTo) + " JOIN " + tfcTo.getDisplayName() + " AS " + aliasTo +" ON ");
             }
          }
 
@@ -143,7 +138,7 @@ public class FromClauseGenerator
 
             String fromCol;
             String toCol;
-            if(tableNameFrom.equalsIgnoreCase(data.getPkTableName()))
+            if(tfcFrom.getTableInfo().getSimpleName().equalsIgnoreCase(data.getPkTableName()))
             {
                fromCol = pkCol.getColumnName();
                toCol = fkCol.getColumnName();
@@ -154,7 +149,7 @@ public class FromClauseGenerator
                fromCol = fkCol.getColumnName();
             }
 
-            fromClauseRes.append(getNameOrAlias(tableNameFrom, aliasFrom) + "." + fromCol);
+            fromClauseRes.append(getNameOrAlias(tfcFrom.getDisplayName(), aliasFrom) + "." + fromCol);
             fromClauseRes.append(" = ");
             fromClauseRes.append(tableNameTo_aliased + "." + toCol);
 
@@ -167,13 +162,13 @@ public class FromClauseGenerator
       return null == alias ? tableName : alias;
    }
 
-   private String getJoinType(ConstraintData data, String tableNameFrom, String tableNameTo)
+   private String getJoinType(ConstraintData data, TableFrameController tfcFrom, TableFrameController tfcTo)
    {
-      if(data.getConstraintQueryData().isOuterJoinFor(tableNameTo))
+      if(data.getConstraintQueryData().isOuterJoinFor(tfcTo.getTableInfo().getSimpleName()))
       {
          return "RIGHT";
       }
-      else if(data.getConstraintQueryData().isOuterJoinFor(tableNameFrom))
+      else if(data.getConstraintQueryData().isOuterJoinFor(tfcFrom.getTableInfo().getSimpleName()))
       {
          return "LEFT";
       }
@@ -183,7 +178,7 @@ public class FromClauseGenerator
 
    private HashSet<TableFrameController> getRelatives(TableFramesModel tableFramesModel, TableFrameController tfc)
    {
-      HashSet<TableFrameController> ret = new HashSet<TableFrameController>();
+      HashSet<TableFrameController> ret = new HashSet<>();
 
       for (TableFrameController buf : tableFramesModel.getTblCtrls())
       {

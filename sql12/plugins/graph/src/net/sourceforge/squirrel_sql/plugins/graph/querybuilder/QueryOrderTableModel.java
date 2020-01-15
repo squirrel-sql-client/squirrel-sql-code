@@ -85,6 +85,8 @@ public class QueryOrderTableModel extends SortedColumnsTableModel<OrderCol>
    {
       toBeUpdated.setDescending(update.isDescending());
       toBeUpdated.setAggregated(update.isAggregated());
+
+      toBeUpdated.setQualifiedCol(update.getQualifiedCol());
    }
 
 

@@ -75,6 +75,8 @@ public class TableFramesModel
       {
          openTableFrameCtrl.refreshTableName();
       }
+
+      fireListeners(TableFramesModelChangeType.SHOW_QUALIFIIED_TABLE_NAME_CHANGED);
    }
 
    void allTablesDbOrder()

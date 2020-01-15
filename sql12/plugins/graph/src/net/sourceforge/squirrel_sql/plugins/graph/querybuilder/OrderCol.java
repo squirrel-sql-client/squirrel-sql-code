@@ -2,10 +2,14 @@ package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 
 import net.sourceforge.squirrel_sql.plugins.graph.AggregateFunctions;
 import net.sourceforge.squirrel_sql.plugins.graph.ColumnInfo;
+import net.sourceforge.squirrel_sql.plugins.graph.TableFrameController;
 
 public class OrderCol implements SortedColumn
 {
    private String _qualifiedCol;
+
+   private String _fullyQualifiedCol;
+
    private boolean _descending;
    private boolean _aggregated;
 
@@ -17,9 +21,11 @@ public class OrderCol implements SortedColumn
    {
    }
 
-   public OrderCol(String simpleTableName, ColumnInfo columnInfo)
+   public OrderCol(TableFrameController tfc, ColumnInfo columnInfo)
    {
-      _qualifiedCol = simpleTableName + "." + columnInfo.getColumnName();
+      _qualifiedCol = tfc.getDisplayName() + "." + columnInfo.getColumnName();
+      _fullyQualifiedCol = tfc.getTableInfo().getQualifiedName() + "." + columnInfo.getColumnName();
+
       _descending = false == columnInfo.getQueryData().isSortedAsc();
       _aggregated = (AggregateFunctions.NONE != columnInfo.getQueryData().getAggregateFunction());
 
@@ -31,13 +37,24 @@ public class OrderCol implements SortedColumn
    }
 
 
-   /**
-    * Needed for XML deserialization.
-    */
+   //////////////////////////////////////////////////
+   //Needed for XML deserialization.
    public void setQualifiedCol(String qualifiedCol)
    {
       _qualifiedCol = qualifiedCol;
    }
+
+   public String getFullyQualifiedCol()
+   {
+      return _fullyQualifiedCol;
+   }
+
+   public void setFullyQualifiedCol(String fullyQualifiedCol)
+   {
+      _fullyQualifiedCol = fullyQualifiedCol;
+   }
+   //
+   //////////////////////////////////////////////////
 
    public boolean isDescending()
    {
@@ -73,6 +90,16 @@ public class OrderCol implements SortedColumn
          return false;
       }
 
-      return _qualifiedCol.equals(((OrderCol)obj)._qualifiedCol);
+      //return _qualifiedCol.equals(((OrderCol)obj)._qualifiedCol);
+
+      if (null != _fullyQualifiedCol && null != ((OrderCol)obj)._fullyQualifiedCol)
+      {
+         return _fullyQualifiedCol.equals(((OrderCol)obj)._fullyQualifiedCol);
+      }
+      else
+      {
+         return _qualifiedCol.equals(((OrderCol)obj)._qualifiedCol);
+      }
+
    }
 }

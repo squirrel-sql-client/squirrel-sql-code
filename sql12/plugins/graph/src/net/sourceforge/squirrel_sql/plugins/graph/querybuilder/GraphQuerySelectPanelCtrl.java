@@ -36,7 +36,7 @@ public class GraphQuerySelectPanelCtrl
 
    private ArrayList<SortedColumn> getSelectCols(TableFramesModel tableFramesModel)
    {
-      ArrayList<SortedColumn> newOrderCols = new ArrayList<SortedColumn>();
+      ArrayList<SortedColumn> newOrderCols = new ArrayList<>();
 
       for (TableFrameController tfc : tableFramesModel.getTblCtrls())
       {
@@ -44,7 +44,7 @@ public class GraphQuerySelectPanelCtrl
          {
             if(columnInfo.getQueryData().isInSelectClause())
             {
-               newOrderCols.add(new SelectCol(tfc.getTableInfo().getSimpleName(), columnInfo));
+               newOrderCols.add(new SelectCol(tfc, columnInfo));
             }
          }
       }

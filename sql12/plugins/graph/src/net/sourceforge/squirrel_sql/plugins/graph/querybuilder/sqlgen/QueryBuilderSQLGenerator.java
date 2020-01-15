@@ -49,14 +49,6 @@ public class QueryBuilderSQLGenerator
 
    public static String format(String sqls, ISession session)
    {
-      CommentSpec[] commentSpecs =
-         new CommentSpec[]
-            {
-               new CommentSpec("/*", "*/"),
-               new CommentSpec("--", "\n")
-            };
-
-
       CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(session));
 
       sqls = cr.reformat(sqls) + "\n";

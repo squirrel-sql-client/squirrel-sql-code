@@ -10,6 +10,7 @@ public class WhereTreeNodeStructure
    private boolean _expanded;
    private WhereClauseOperator _whereOp;
    private String _whereCondDef;
+   private String _whereCondDisplay;
    private WhereTreeNodeStructure[] _kids;
 
    public WhereTreeNodeStructure(DefaultMutableTreeNode node, JTree tree)
@@ -23,6 +24,7 @@ public class WhereTreeNodeStructure
       else // if(node.getUserObject() instanceof WhereConditionColumnWrapper)
       {
          _whereCondDef = ((WhereConditionColumnWrapper)node.getUserObject()).getDefinition();
+         _whereCondDisplay = ((WhereConditionColumnWrapper)node.getUserObject()).getDisplay();
       }
 
       _kids = new WhereTreeNodeStructure[node.getChildCount()];
@@ -165,7 +167,7 @@ public class WhereTreeNodeStructure
    {
       if(null == _whereOp)
       {
-         return _whereCondDef;
+         return _whereCondDisplay;
       }
       else
       {

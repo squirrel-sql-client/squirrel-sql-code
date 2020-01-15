@@ -58,6 +58,7 @@ public class QuerySelectTableModel extends SortedColumnsTableModel<SelectCol>
 
    protected void updateCol(SelectCol toBeUpdated, SelectCol update)
    {
+      toBeUpdated.setQualifiedCol(update.getQualifiedCol());
    }
 
 

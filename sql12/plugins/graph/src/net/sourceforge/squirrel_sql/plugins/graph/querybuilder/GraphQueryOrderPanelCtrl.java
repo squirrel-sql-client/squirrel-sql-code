@@ -40,7 +40,7 @@ public class GraphQueryOrderPanelCtrl
          {
             if(columnInfo.getQueryData().isSorted())
             {
-               newOrderCols.add(new OrderCol(tfc.getTableInfo().getSimpleName(), columnInfo));
+               newOrderCols.add(new OrderCol(tfc, columnInfo));
             }
          }
       }

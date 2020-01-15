@@ -220,7 +220,7 @@ public class GraphQueryWherePanelCtrl
 
    WhereTreeNodeStructure syncWhereCols(TableFramesModel tfm)
    {
-      ArrayList<WhereConditionColumnWrapper> filteredCols = new ArrayList<WhereConditionColumnWrapper>();
+      ArrayList<WhereConditionColumnWrapper> filteredCols = new ArrayList<>();
 
       for (TableFrameController tfc : tfm.getTblCtrls())
       {
@@ -228,7 +228,7 @@ public class GraphQueryWherePanelCtrl
          {
             if (ci.getQueryData().isFiltered())
             {
-               filteredCols.add(new WhereConditionColumnWrapper(tfc.getTableInfo(), ci));
+               filteredCols.add(new WhereConditionColumnWrapper(tfc, ci));
             }
          }
       }

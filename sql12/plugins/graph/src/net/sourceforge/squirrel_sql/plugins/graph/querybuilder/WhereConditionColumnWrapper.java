@@ -2,36 +2,45 @@ package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.plugins.graph.ColumnInfo;
+import net.sourceforge.squirrel_sql.plugins.graph.TableFrameController;
 
 public class WhereConditionColumnWrapper
 {
-   private ITableInfo _tableInfo;
+   private TableFrameController _tfc;
    private ColumnInfo _ci;
    private String _definition;
+   private String _param;
 
-   public WhereConditionColumnWrapper(ITableInfo tableInfo, ColumnInfo ci)
+   public WhereConditionColumnWrapper(TableFrameController tfc, ColumnInfo ci)
    {
-      _tableInfo = tableInfo;
+      _tfc = tfc;
       _ci = ci;
 
-      String param = "";
+      _param = "";
 
       if (false == ci.getQueryData().getOperator().isNoArgOperator())
       {
-         param = " " + ci.getQueryData().getFilterValue();
+         _param = " " + ci.getQueryData().getFilterValue();
       }
 
-
       _definition =
-            _tableInfo.getSimpleName() + "." +
+            _tfc.getTableInfo().getQualifiedName() + "." +
                   ci.getColumnName() + " " +
-                  ci.getQueryData().getOperator().getSQL() + param;
+                  ci.getQueryData().getOperator().getSQL() + _param;
+
    }
 
    @Override
    public String toString()
    {
-      return _definition;
+      return getDisplay();
+   }
+
+   public String getDisplay()
+   {
+      return _tfc.getDisplayName() + "." +
+            _ci.getColumnName() + " " +
+            _ci.getQueryData().getOperator().getSQL() + _param;
    }
 
 

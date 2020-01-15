@@ -17,8 +17,8 @@ public class SelectClauseGenerator
       boolean hasAggFct = false;
       boolean groupByHasCols = false;
 
-      HashMap<String, String> selectFieldsByQualifiedCol = new HashMap<String, String>();
-      HashMap<String, String> groupByFieldsByQualifiedCol = new HashMap<String, String>();
+      HashMap<String, String> selectFieldsByQualifiedCol = new HashMap<>();
+      HashMap<String, String> groupByFieldsByQualifiedCol = new HashMap<>();
       for (TableFrameController tfc : fromClause.getTables())
       {
          for (ColumnInfo columnInfo : tfc.getColumnInfos())
@@ -27,7 +27,7 @@ public class SelectClauseGenerator
             {
                AggregateFunctions af = columnInfo.getQueryData().getAggregateFunction();
 
-               String qualifiedCol = tfc.getTableInfo().getSimpleName() + "." + columnInfo.getColumnName();
+               String qualifiedCol = tfc.getDisplayName() + "." + columnInfo.getColumnName();
 
                if (AggregateFunctions.NONE == af)
                {
@@ -50,7 +50,7 @@ public class SelectClauseGenerator
          return null;
       }
 
-      ArrayList<String> qualifiedColsOrderedAsTheyAppearInSelect = new ArrayList<String>();
+      ArrayList<String> qualifiedColsOrderedAsTheyAppearInSelect = new ArrayList<>();
 
       StringBuffer selectClause = new StringBuffer("SELECT ");
       StringBuffer groupByClause = new StringBuffer("GROUP BY ");
