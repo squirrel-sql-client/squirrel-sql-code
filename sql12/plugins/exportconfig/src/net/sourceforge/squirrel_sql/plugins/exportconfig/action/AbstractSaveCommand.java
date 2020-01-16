@@ -17,22 +17,23 @@ package net.sourceforge.squirrel_sql.plugins.exportconfig.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Frame;
-import java.io.File;
-import java.io.IOException;
 
-import javax.swing.JFileChooser;
-
-import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-
 import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
+
+import javax.swing.JFileChooser;
+import java.awt.Frame;
+import java.io.File;
+import java.io.IOException;
 /**
  * Base class for all the "save" commands.
  *
@@ -96,7 +97,6 @@ abstract class AbstractSaveCommand implements ICommand
 			file = new File((File)null, getDefaultFilename());
 		}
 		chooser.setSelectedFile(file);
-		chooser.setAccessory(new ChooserPreviewer());
 		chooser.setDialogTitle("Save " + getSaveDescription());
 
 		for (;;)

@@ -17,14 +17,14 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -33,10 +33,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 /**
  * This is a decorator class that can be used in a <TT>JFileChooser</TT>
  * to preview the contents of a text or image file. If the file name
@@ -47,12 +50,9 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
  */
 public class ChooserPreviewer extends JComponent
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ChooserPreviewer.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChooserPreviewer.class);
 
-	/** Default number of bytes to read from file for preview. */
-	private int DFT_BYTES_TO_READ = 2048;
+	private static final ILogger s_log = LoggerController.createLogger(ChooserPreviewer.class);
 
 	/**
 	 * Empty panel. Used when cannot display anything in the
@@ -75,18 +75,13 @@ public class ChooserPreviewer extends JComponent
 	/** <TT>JFileChooser</TT> that this accessory belongs to. */
 	private JFileChooser _chooser;
 
-	/**
-	 * Listener listening to <TT>JFileChooser</TT> for a change
-	 * in the selected file.
-	 */
-	private ChooserListener _propChangeListener;
+	private PropertyChangeListener _propChangeListener;
 
 	/**
 	 * Default ctor.
 	 */
 	public ChooserPreviewer()
 	{
-		super();
 		createUserInterface();
 	}
 
@@ -111,7 +106,7 @@ public class ChooserPreviewer extends JComponent
 
 		if (_chooser != null)
 		{
-			_propChangeListener = new ChooserListener();
+			_propChangeListener = e -> onPropertyChanged(e);
 			_chooser.addPropertyChangeListener(_propChangeListener);
 		}
 	}
@@ -129,7 +124,7 @@ public class ChooserPreviewer extends JComponent
 	/**
 	 * Remove listener from the chooser.
 	 */
-	protected void cleanup()
+	private void cleanup()
 	{
 		if (_chooser != null && _propChangeListener != null)
 		{
@@ -143,7 +138,7 @@ public class ChooserPreviewer extends JComponent
 	 * The file selected in the <TT>FileChooser</TT> has changed so display
 	 * its contents in this previewer.
 	 */
-	protected void fileChanged()
+	private void fileChanged()
 	{
 		Component componentToUse = _emptyPnl;
 
@@ -195,32 +190,22 @@ public class ChooserPreviewer extends JComponent
 	 */
 	protected Component readTextFile(File file)
 	{
-		StringBuffer buf = new StringBuffer(DFT_BYTES_TO_READ);
+		String text = "";
 		if (file != null && file.isFile() && file.canRead())
 		{
 			try
 			{
-				FileReader rdr = new FileReader(file);
-				try
-				{
-					char[] data = new char[DFT_BYTES_TO_READ];
-					int count = rdr.read(data, 0, data.length);
-					if (count != -1)
-					{
-						buf.append(data, 0, count);
-					}
-				}
-				finally
-				{
-					rdr.close();
-				}
+				text = FileManagementUtil.readFileAsString(file);
 			}
-			catch (IOException ex)
+			catch (Exception e)
 			{
-				buf = new StringBuffer(s_stringMgr.getString("ChooserPreviewer.error", ex.toString()));
+				String errMsg = s_stringMgr.getString("ChooserPreviewer.errorReadingFile", file.getAbsolutePath(), e.toString());
+				Main.getApplication().getMessageHandler().showErrorMessage(errMsg);
+				text = errMsg;
+				s_log.error(errMsg, e);
 			}
 		}
-		_textComponent.setText(buf.toString());
+		_textComponent.setText(text);
 		_textComponent.setCaretPosition(0);
 		return _textComponent;
 	}
@@ -234,21 +219,14 @@ public class ChooserPreviewer extends JComponent
 		setLayout(new BorderLayout());
 		_currentComponentSp = new JScrollPane(_textComponent);
 		add(_currentComponentSp, BorderLayout.CENTER);
-		setPreferredSize(new Dimension(250, 0));
+		setPreferredSize(new Dimension(400, 0));
 	}
 
-	/**
-	 * Listener to the FileChooser that will preview the seleted file
-	 * as it changes in the chooser.
-	 */
-	private class ChooserListener implements PropertyChangeListener
+	private void onPropertyChanged(PropertyChangeEvent evt)
 	{
-		public void propertyChange(PropertyChangeEvent evt)
+		if (evt.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
 		{
-			if (evt.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
-			{
-				ChooserPreviewer.this.fileChanged();
-			}
+			ChooserPreviewer.this.fileChanged();
 		}
 	}
 }

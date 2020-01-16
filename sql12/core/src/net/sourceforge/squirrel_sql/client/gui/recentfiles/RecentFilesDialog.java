@@ -193,14 +193,14 @@ public class RecentFilesDialog extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       ret.add(new JLabel(s_stringMgr.getString("recentfiles.RecentFilesDialog.addFilesTo")), gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(1,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnFavourites = new JButton(s_stringMgr.getString("recentfiles.RecentFilesDialog.favourites"));
       ret.add(btnFavourites, gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(2,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnAliasFavourites = new JButton(s_stringMgr.getString("recentfiles.RecentFilesDialog.aliasFavourites"));
       ret.add(btnAliasFavourites, gbc);
 

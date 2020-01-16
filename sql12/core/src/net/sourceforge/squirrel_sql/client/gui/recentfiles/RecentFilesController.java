@@ -4,6 +4,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.dnd.DropedFileExtractor;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
+import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
@@ -268,6 +270,9 @@ public class RecentFilesController
    private void onAddToFavourites(ISQLAlias alias)
    {
       JFileChooser fc = new JFileChooser(_app.getSquirrelPreferences().getFilePreviousDir());
+      fc.setAccessory(new ChooserPreviewer());
+      GUIUtils.setPreferredHeight(fc, 400);
+
       fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
       int returnVal = fc.showOpenDialog(_parent);
@@ -475,7 +480,7 @@ public class RecentFilesController
       {
          try
          {
-            text = String.join("\n", Files.readAllLines(fileWrapper.getFile().toPath()));
+            text = FileManagementUtil.readFileAsString(fileWrapper.getFile());
          }
          catch (Exception e)
          {
@@ -794,6 +799,9 @@ public class RecentFilesController
       if(fileWrapper.getFile().isDirectory())
       {
          JFileChooser fc = new JFileChooser(fileWrapper.getFile());
+         fc.setAccessory(new ChooserPreviewer());
+         GUIUtils.setPreferredHeight(fc, 400);
+
          fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
          int returnVal = fc.showOpenDialog(_parent);

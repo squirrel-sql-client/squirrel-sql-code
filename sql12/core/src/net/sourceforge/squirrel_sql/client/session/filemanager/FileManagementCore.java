@@ -3,7 +3,6 @@ package net.sourceforge.squirrel_sql.client.session.filemanager;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
@@ -70,8 +69,8 @@ public class FileManagementCore
    public boolean open(boolean appendToExisting)
    {
        boolean result = false;
-      JFileChooser chooser = _fileChooserManager.getFileChooser();
-      chooser.setAccessory(new ChooserPreviewer());
+
+      JFileChooser chooser = _fileChooserManager.initNewFileChooserWithPreviewer();
 
       SquirrelPreferences prefs = Main.getApplication().getSquirrelPreferences();
 
@@ -182,7 +181,7 @@ public class FileManagementCore
          _toSaveTo = null;
       }
 
-      JFileChooser chooser = _fileChooserManager.getFileChooser();
+      JFileChooser chooser = _fileChooserManager.initNewFileChooser();
 
       SquirrelPreferences prefs = _fileEditorAPI.getSession().getApplication().getSquirrelPreferences();
       Frame frame = _fileEditorAPI.getOwningFrame();
