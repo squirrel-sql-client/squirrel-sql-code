@@ -6,9 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+File open dialog's preview area can be resized.
+
 Graph Plugin: Query builder now supports schema/catalog qualified table names.
    Schema/catalog qualified can be switched on by clicking a Graph's "Kick off" button or by a Graph's right mose menu.
-
 
 The former file import now allows to import from clipboard, too.
 
@@ -69,6 +70,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 
 Bug fixes:
+
+File save dialog was falsely initialized when some file was opened before in the same editor.
 
 #1414 "SQL to file" function: Can't export to file if using a CTE (Common Table Expression)
   The SELECT-statement check was removed. If a statement does not return results an error is issued just then.

@@ -5,10 +5,10 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.dnd.DropedFileExtractor;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
-import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
+import net.sourceforge.squirrel_sql.fw.gui.filechooser.PreviewFileChooser;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -42,7 +42,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -270,12 +269,10 @@ public class RecentFilesController
    private void onAddToFavourites(ISQLAlias alias)
    {
       JFileChooser fc = new JFileChooser(_app.getSquirrelPreferences().getFilePreviousDir());
-      fc.setAccessory(new ChooserPreviewer());
-      GUIUtils.setPreferredHeight(fc, 400);
 
       fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-      int returnVal = fc.showOpenDialog(_parent);
+      int returnVal = PreviewFileChooser.showOpenDialog(_parent, fc);
       if (returnVal != JFileChooser.APPROVE_OPTION)
       {
          return;
@@ -799,12 +796,10 @@ public class RecentFilesController
       if(fileWrapper.getFile().isDirectory())
       {
          JFileChooser fc = new JFileChooser(fileWrapper.getFile());
-         fc.setAccessory(new ChooserPreviewer());
-         GUIUtils.setPreferredHeight(fc, 400);
 
          fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-         int returnVal = fc.showOpenDialog(_parent);
+         int returnVal = PreviewFileChooser.showOpenDialog(_parent, fc);
          if (returnVal != JFileChooser.APPROVE_OPTION)
          {
             return null;

@@ -1,12 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.filemanager;
 
-import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
 import java.util.HashMap;
-import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class FileChooserManager
 {
@@ -63,10 +61,7 @@ public class FileChooserManager
 
    public JFileChooser initNewFileChooserWithPreviewer()
    {
-      JFileChooser chooser = initNewFileChooser();
-      chooser.setAccessory(new ChooserPreviewer());
-      GUIUtils.setPreferredHeight(chooser, 600);
-      return chooser;
+      return initNewFileChooser();
    }
 
 

@@ -96,8 +96,7 @@ public class GUIUtils
       final Container parent = wind.getParent();
       if (parent != null && parent.isVisible())
       {
-         center(wind, new Rectangle(parent.getLocationOnScreen(),
-               parent.getSize()));
+         center(wind, new Rectangle(parent.getLocationOnScreen(), parent.getSize()));
       }
       else
       {
@@ -221,6 +220,11 @@ public class GUIUtils
 
 	public static Window getOwningWindow(Component comp)
 	{
+		if(comp instanceof Window)
+		{
+			return (Window) comp;
+		}
+
 		Dialog owningDialog = getOwningDialog(comp);
 
 		if(null != owningDialog)
@@ -839,12 +843,13 @@ public class GUIUtils
 
 	}
 
-	public static void initLocation(Window window, int defaultWidth, int defaultHeight)
+	public static Dimension initLocation(Window window, int defaultWidth, int defaultHeight)
 	{
 		String widthPropKey = window.getClass().getName() + ".WIDTH";
 		String heightPropKey = window.getClass().getName() + ".HEIGHT";
 
-		window.setSize(new Dimension(Props.getInt(widthPropKey, defaultWidth), Props.getInt(heightPropKey,defaultHeight)));
+		Dimension size = new Dimension(Props.getInt(widthPropKey, defaultWidth), Props.getInt(heightPropKey, defaultHeight));
+		window.setSize(size);
 
 		GUIUtils.centerWithinParent(window);
 
@@ -871,6 +876,7 @@ public class GUIUtils
 			}
 		});
 
+		return size;
 	}
 
    public static JTextField styleTextFieldToCopyableLabel(JTextField textField)

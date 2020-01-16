@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.gui.filechooser.PreviewFileChooser;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
@@ -97,7 +98,7 @@ public class FileManagementCore
       _fileEditorAPI.selectWidgetOrTab();
 
 
-      if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+      if (PreviewFileChooser.showOpenDialog(frame, chooser) == JFileChooser.APPROVE_OPTION)
       {
          File selectedFile = chooser.getSelectedFile();
          result = loadScript(selectedFile, appendToExisting);

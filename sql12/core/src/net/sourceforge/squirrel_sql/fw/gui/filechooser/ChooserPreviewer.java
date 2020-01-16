@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui;
+package net.sourceforge.squirrel_sql.fw.gui.filechooser;
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -35,7 +35,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -48,7 +47,7 @@ import java.io.File;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ChooserPreviewer extends JComponent
+class ChooserPreviewer extends JComponent
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChooserPreviewer.class);
 
@@ -73,65 +72,28 @@ public class ChooserPreviewer extends JComponent
 	private JScrollPane _currentComponentSp;
 
 	/** <TT>JFileChooser</TT> that this accessory belongs to. */
-	private JFileChooser _chooser;
+	private JFileChooser _fileChooser;
 
 	private PropertyChangeListener _propChangeListener;
 
 	/**
 	 * Default ctor.
+	 * @param fileChooser
 	 */
-	public ChooserPreviewer()
+	public ChooserPreviewer(JFileChooser fileChooser)
 	{
+		_fileChooser = fileChooser;
 		createUserInterface();
-	}
-
-	/**
-	 * This accessory is being added to a chooser. Add a listener
-	 * to the chooser for when the selected file changes.
-	 */
-	public void addNotify()
-	{
-		super.addNotify();
-		cleanup();
-		Component parent = getParent();
-		while (parent != null)
-		{
-			if (parent instanceof JFileChooser)
-			{
-				_chooser = (JFileChooser)parent;
-				break;
-			}
-			parent = parent.getParent();
-		}
-
-		if (_chooser != null)
-		{
-			_propChangeListener = e -> onPropertyChanged(e);
-			_chooser.addPropertyChangeListener(_propChangeListener);
-		}
-	}
-
-	/**
-	 * This accessory is being removed from a chooser. Remove
-	 * the listener from the chooser.
-	 */
-	public void removeNotify()
-	{
-		super.removeNotify();
-		cleanup();
+		_propChangeListener = e -> onPropertyChanged(e);
+		_fileChooser.addPropertyChangeListener(_propChangeListener);
 	}
 
 	/**
 	 * Remove listener from the chooser.
 	 */
-	private void cleanup()
+	void cleanup()
 	{
-		if (_chooser != null && _propChangeListener != null)
-		{
-			_chooser.removePropertyChangeListener(_propChangeListener);
-		}
-		_propChangeListener = null;
-		_chooser = null;
+		_fileChooser.removePropertyChangeListener(_propChangeListener);
 	}
 
 	/**
@@ -142,7 +104,7 @@ public class ChooserPreviewer extends JComponent
 	{
 		Component componentToUse = _emptyPnl;
 
-		File file = _chooser.getSelectedFile();
+		File file = _fileChooser.getSelectedFile();
 		if (file != null && file.isFile() && file.canRead())
 		{
 			String suffix = Utilities.getFileNameSuffix(file.getPath()).toLowerCase();
@@ -219,14 +181,14 @@ public class ChooserPreviewer extends JComponent
 		setLayout(new BorderLayout());
 		_currentComponentSp = new JScrollPane(_textComponent);
 		add(_currentComponentSp, BorderLayout.CENTER);
-		setPreferredSize(new Dimension(400, 0));
+		//setPreferredSize(new Dimension(400, 0));
 	}
 
 	private void onPropertyChanged(PropertyChangeEvent evt)
 	{
 		if (evt.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
 		{
-			ChooserPreviewer.this.fileChanged();
+			fileChanged();
 		}
 	}
 }
