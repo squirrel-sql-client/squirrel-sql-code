@@ -36,6 +36,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import javax.swing.text.JTextComponent;
+
 /**
  * This will provide source code formatting for object source to subclasses. The subclass only needs to call
  * setupFormatter if code reformatting is desired and whether or not to compressWhitespace, which is on by
@@ -135,97 +137,6 @@ public abstract class FormattedSourceTab extends BaseSourceTab
    }
 
    /**
-    * The panel that displays the formatted source code.
-    */
-   private final class FormattedSourcePanel extends BaseSourcePanel
-   {
-
-      FormattedSourcePanel(ISession session)
-      {
-         super(session);
-      }
-
-      @Override
-      public void load(ISession session, PreparedStatement stmt)
-      {
-         getTextArea().setText("");
-
-         ResultSet rs = null;
-         try
-         {
-            rs = stmt.executeQuery();
-            StringBuilder buf = new StringBuilder(4096);
-            while (rs.next())
-            {
-               String line = rs.getString(1);
-               if (line == null)
-               {
-                  s_log.debug("load: Null object source line; skipping...");
-                  continue;
-               }
-               if (compressWhitespace)
-               {
-                  buf.append(line.trim() + " ");
-               }
-               else
-               {
-                  buf.append(line);
-               }
-            }
-            if (appendSeparator && (statementSeparator != null))
-            {
-               buf.append("\n");
-               buf.append(statementSeparator);
-            }
-            String processedResult = processResult(buf);
-            if (formatter != null && buf.length() != 0)
-            {
-               if (s_log.isDebugEnabled())
-               {
-                  s_log.debug("Object source code before formatting: " + processedResult);
-               }
-               getTextArea().setText(format(processedResult));
-            }
-            else
-            {
-               if (buf.length() == 0)
-               {
-                  buf.append(i18n.NO_SOURCE_AVAILABLE);
-               }
-               getTextArea().setText(processedResult);
-            }
-            getTextArea().setCaretPosition(0);
-         }
-         catch (Exception ex)
-         {
-            if (s_log.isDebugEnabled())
-            {
-               s_log.debug("Unexpected exception while formatting " + "object source code", ex);
-            }
-            session.showErrorMessage(ex);
-         }
-         finally
-         {
-            SQLUtilities.closeResultSet(rs);
-         }
-      }
-
-   }
-
-   /**
-    * This method can be overridden by subclasses if further processing of the result from the query needs to
-    * happen prior to formatting.  By default, no processing is done - the StringBuilder is simply converted
-    * to a string by calling it's toString method.
-    *
-    * @param buf the StringBuilder that can be procesed.
-    * @return the processed String.
-    */
-   protected String processResult(final StringBuilder buf)
-   {
-      return buf.toString();
-   }
-
-   /**
     * We trap any IllegalStateException from the formatter here. If the SQL source code fails to format, log
     * it and show the original unformatted version.
     *
@@ -301,6 +212,74 @@ public abstract class FormattedSourceTab extends BaseSourceTab
    @Override
    protected BaseSourcePanel createSourcePanel()
    {
-      return new FormattedSourcePanel(getSession());
+      return new BaseSourcePanel(getSession())
+      {
+         @Override
+         public void load(ISession session, PreparedStatement stmt)
+         {
+            onLoad(session, getTextArea(), stmt);
+         }
+      };
    }
+
+   private void onLoad(ISession session, JTextComponent textArea, PreparedStatement stmt)
+   {
+
+      String buf = getSourceCode(session, stmt);
+
+      textArea.setText("");
+
+      if (appendSeparator && (statementSeparator != null))
+      {
+         buf += "\n";
+         buf += statementSeparator;
+      }
+      String processedResult = buf;
+      if (formatter != null && buf.length() != 0)
+      {
+         textArea.setText(format(processedResult));
+      }
+      else
+      {
+         if (buf.length() == 0)
+         {
+            buf += i18n.NO_SOURCE_AVAILABLE;
+         }
+         textArea.setText(buf);
+      }
+      textArea.setCaretPosition(0);
+
+   }
+
+   private String getSourceCode(ISession session, PreparedStatement stmt)
+   {
+      StringBuilder buf = new StringBuilder(4096);
+      try(ResultSet rs = stmt.executeQuery())
+      {
+         while (rs.next())
+         {
+            String line = rs.getString(1);
+            if (line == null)
+            {
+               continue;
+            }
+            if (compressWhitespace)
+            {
+               buf.append(line.trim() + " ");
+            }
+            else
+            {
+               buf.append(line);
+            }
+         }
+
+      }
+      catch (Exception ex)
+      {
+         s_log.error("Unexpected exception while formatting " + "object source code", ex);
+         session.showErrorMessage(ex);
+      }
+      return buf.toString();
+   }
+
 }
