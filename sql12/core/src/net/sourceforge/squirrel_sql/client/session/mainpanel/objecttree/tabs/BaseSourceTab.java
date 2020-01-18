@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -180,11 +181,14 @@ public abstract class BaseSourceTab extends BaseObjectTab
     */
    protected BaseSourcePanel createSourcePanel()
    {
-      /*
-       * This callback method replaces the previous use of setSourcePanel, because since we use syntax highlightning, we need a session.
-       * So we need a callback for "lazy" initialization of the source pane.
-       */
-      return new DefaultSourcePanel(getSession());
+      return new BaseSourcePanel(getSession())
+      {
+         @Override
+         public void load(ISession session, PreparedStatement stmt)
+         {
+            onLoad(getTextArea(), getSourceCode(session, stmt));
+         }
+      };
    }
 
    /**
@@ -196,40 +200,29 @@ public abstract class BaseSourceTab extends BaseObjectTab
     */
    protected abstract PreparedStatement createStatement() throws SQLException;
 
-   private final class DefaultSourcePanel extends BaseSourcePanel
+
+   private void onLoad(JTextComponent textArea, String sourceCode)
    {
+      textArea.setText(sourceCode);
+      textArea.setCaretPosition(0);
+      textArea.setText("");
 
-      DefaultSourcePanel(ISession session)
+   }
+
+   protected String getSourceCode(ISession session, PreparedStatement stmt)
+   {
+      StringBuilder buf = new StringBuilder(4096);
+      try(ResultSet rs = stmt.executeQuery())
       {
-         super(session);
+         while (rs.next())
+         {
+            buf.append(rs.getString(1));
+         }
       }
-
-
-      public void load(ISession session, PreparedStatement stmt)
+      catch (SQLException ex)
       {
-         getTextArea().setText("");
-         ResultSet rs = null;
-         try
-         {
-            rs = stmt.executeQuery();
-            StringBuffer buf = new StringBuffer(4096);
-            while (rs.next())
-            {
-               buf.append(rs.getString(1));
-            }
-            getTextArea().setText(buf.toString());
-            getTextArea().setCaretPosition(0);
-         }
-         catch (SQLException ex)
-         {
-            session.showErrorMessage(ex);
-         }
-         finally
-         {
-            SQLUtilities.closeResultSet(rs);
-         }
-
+         session.showErrorMessage(ex);
       }
-
+      return buf.toString();
    }
 }

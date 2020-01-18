@@ -30,7 +30,6 @@ import net.sourceforge.squirrel_sql.client.util.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.client.util.codereformat.ICodeReformator;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -217,41 +216,38 @@ public abstract class FormattedSourceTab extends BaseSourceTab
          @Override
          public void load(ISession session, PreparedStatement stmt)
          {
-            onLoad(session, getTextArea(), stmt);
+            onLoad(getTextArea(), getSourceCode(session, stmt));
          }
       };
    }
 
-   private void onLoad(ISession session, JTextComponent textArea, PreparedStatement stmt)
+   private void onLoad(JTextComponent textArea, String sourceCode)
    {
-
-      String buf = getSourceCode(session, stmt);
-
       textArea.setText("");
 
       if (appendSeparator && (statementSeparator != null))
       {
-         buf += "\n";
-         buf += statementSeparator;
+         sourceCode += "\n";
+         sourceCode += statementSeparator;
       }
-      String processedResult = buf;
-      if (formatter != null && buf.length() != 0)
+      String processedResult = sourceCode;
+      if (formatter != null && sourceCode.length() != 0)
       {
          textArea.setText(format(processedResult));
       }
       else
       {
-         if (buf.length() == 0)
+         if (sourceCode.length() == 0)
          {
-            buf += i18n.NO_SOURCE_AVAILABLE;
+            sourceCode += i18n.NO_SOURCE_AVAILABLE;
          }
-         textArea.setText(buf);
+         textArea.setText(sourceCode);
       }
       textArea.setCaretPosition(0);
 
    }
 
-   private String getSourceCode(ISession session, PreparedStatement stmt)
+   protected String getSourceCode(ISession session, PreparedStatement stmt)
    {
       StringBuilder buf = new StringBuilder(4096);
       try(ResultSet rs = stmt.executeQuery())
