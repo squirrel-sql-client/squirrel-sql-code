@@ -28,9 +28,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class PostgresTableTriggerExtractorImpl implements ITableTriggerExtractor {
 
-    /** Logger for this class */
-    private final static ILogger s_log = 
-        LoggerController.createLogger(PostgresTableTriggerExtractorImpl.class);
+    private final static ILogger s_log = LoggerController.createLogger(PostgresTableTriggerExtractorImpl.class);
                 
     /** the query that extracts the trigger names for a given table */
     private static final String triggerQuery = 
@@ -50,12 +48,6 @@ public class PostgresTableTriggerExtractorImpl implements ITableTriggerExtractor
     public void bindParamters(PreparedStatement pstmt, IDatabaseObjectInfo dbo)
         throws SQLException 
     {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Binding schema name "+dbo.getSchemaName()+
-                        " as first bind value");
-            s_log.debug("Binding table name "+dbo.getSimpleName()+
-                        " as second bind value");            
-        }                
         pstmt.setString(1, dbo.getSchemaName());
         pstmt.setString(2, dbo.getSimpleName());
     }
