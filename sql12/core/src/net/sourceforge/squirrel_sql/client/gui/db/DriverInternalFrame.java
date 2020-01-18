@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DRIVER_DEFINITIONS;
 import net.sourceforge.squirrel_sql.fw.gui.DefaultFileListBoxModel;
@@ -27,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.gui.FileListBox;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IFileListBoxModel;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
@@ -66,12 +68,12 @@ public class DriverInternalFrame extends DialogWidget
 		int COPY = 3;
 	}
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DriverInternalFrame.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriverInternalFrame.class);
 
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(DriverInternalFrame.class);
+
+	public static final String PREF_KEY_LAST_DRIVER_DIR = "DriverInternalFrame.PREF_KEY_LAST_DRIVER_DIR";
 
 	/** Number of characters to display in D/E fields. */
 	private static final int COLUMN_COUNT = 25;
@@ -123,7 +125,6 @@ public class DriverInternalFrame extends DialogWidget
 	/** Button to move entry down in Extra Class path list. */
 	private JButton _extraClasspathDownBtn;
 
-	private File lastExtraClassPathFileSelected = null;
 
 	/**
 	 * Ctor.
@@ -645,28 +646,39 @@ public class DriverInternalFrame extends DialogWidget
 			if (_chooser == null)
 			{
 				_chooser = new JFileChooser();
-				if (lastExtraClassPathFileSelected != null)
-				{
-					if (lastExtraClassPathFileSelected.isDirectory())
-					{
-						_chooser.setCurrentDirectory(lastExtraClassPathFileSelected);
-					}
-					else
-					{
-						_chooser.setCurrentDirectory(new File(lastExtraClassPathFileSelected.getParent()));
-					}
-				}
 				_chooser.setFileHidingEnabled(false);
 				_chooser.setMultiSelectionEnabled(true);
 				_chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				_chooser.addChoosableFileFilter(new FileExtensionFilter( s_stringMgr.getString("DriverInternalFrame.jarfiles"), new String[] { ".jar", ".zip" }));
 			}
+
+			String lastDirString = Props.getString(DriverInternalFrame.PREF_KEY_LAST_DRIVER_DIR, System.getProperty("user.home"));
+
+			File lastDir = new File(lastDirString);
+
+			_chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+			if (lastDir.exists() && lastDir.isDirectory())
+			{
+				_chooser.setCurrentDirectory(lastDir);
+			}
+			else if (lastDir.exists() && lastDir.isFile() && null != lastDir.getParentFile())
+			{
+				_chooser.setCurrentDirectory(lastDir.getParentFile());
+			}
+
+
 			int returnVal = _chooser.showOpenDialog(getParent());
+
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 			{
 				File[] selFiles = _chooser.getSelectedFiles();
 				if (selFiles != null)
 				{
+					if (0 < selFiles.length)
+					{
+						Props.putString(DriverInternalFrame.PREF_KEY_LAST_DRIVER_DIR, selFiles[0].getParentFile().getPath());
+					}
+
 					IFileListBoxModel myModel = _extraClassPathList.getTypedModel();
 					for (int i = 0; i < selFiles.length; ++i)
 					{
@@ -777,7 +789,6 @@ public class DriverInternalFrame extends DialogWidget
 		public void valueChanged(ListSelectionEvent evt)
 		{
 			final int selIdx = _extraClassPathList.getSelectedIndex();
-			lastExtraClassPathFileSelected = _extraClassPathList.getSelectedFile();
 			final ListModel model = _extraClassPathList.getModel();
 
 			_extraClasspathDeleteBtn.setEnabled(selIdx != -1);

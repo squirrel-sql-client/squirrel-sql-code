@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Driver dialog --> tab "Extra Class Path" --> button "Add": File chooser now remembers last directory.
+
 File open dialog's preview area can be resized.
 
 Graph Plugin: Query builder now supports schema/catalog qualified table names.
