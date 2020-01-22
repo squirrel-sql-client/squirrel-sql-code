@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Postgres Plugin: Updated Plugin libs
+   from postgis-jdbc-1.3.3.jar, postgersql-8.3-603.jdbc3.jar to postgis-jdbc-2.3.0.jar, postgersql-42.2.9.jar
+
 Driver dialog --> tab "Extra Class Path" --> button "Add": File chooser now remembers last directory.
 
 File open dialog's preview area can be resized.
