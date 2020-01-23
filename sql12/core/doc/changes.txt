@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+"Color selected rows" dialog now remembers the last used color. See right mouse menu of SQL result tables.
+
 Postgres Plugin: Updated Plugin libs
    from postgis-jdbc-1.3.3.jar, postgersql-8.3-603.jdbc3.jar to postgis-jdbc-2.3.0.jar, postgersql-42.2.9.jar
 
@@ -75,6 +77,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 
 Bug fixes:
+
+Corrected window title of "Color selected rows" dialog. See right mouse menu of SQL result tables.
 
 UI problem at "Executing SQL" tab (displayed prior to SQL Result tab):
   Display of "Elapased execution time" disappeared to early when size of result was reduced.

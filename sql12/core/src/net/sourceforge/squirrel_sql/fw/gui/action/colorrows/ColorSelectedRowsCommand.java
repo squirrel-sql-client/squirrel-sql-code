@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.colorrows;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.ColorPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -17,6 +18,9 @@ import java.awt.Point;
 public class ColorSelectedRowsCommand
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ColorSelectedRowsCommand.class);
+
+   private static final String PREF_KEY_PREVIOUS_COLOR_RGB = "ColorSelectedRowsCommand.previous.color.rgb";
+
 
 
    private DataSetViewerTable _table;
@@ -72,13 +76,24 @@ public class ColorSelectedRowsCommand
 
       if (false == remove)
       {
-         //newColor = JColorChooser.showDialog(_table, ColorPropertiesPanel.i18n.ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
-         newColor = JColorChooser.showDialog(GUIUtils.getOwningFrame(_table), ColorPropertiesPanel.i18n.ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+         if(null == startColor)
+         {
+            int rgb = Props.getInt(PREF_KEY_PREVIOUS_COLOR_RGB, -1);
+
+            if(rgb != -1)
+            {
+               startColor = new Color(rgb);
+            }
+         }
+
+         newColor = JColorChooser.showDialog(GUIUtils.getOwningFrame(_table), s_stringMgr.getString("ColorSelectedRowsCommand.color.selected.rows"), startColor);
 
          if (null == newColor)
          {
             return;
          }
+
+         Props.putInt(PREF_KEY_PREVIOUS_COLOR_RGB, newColor.getRGB());
       }
 
       _table.getColoringService().getRowColorHandler().setColorForSelectedRows(newColor);
