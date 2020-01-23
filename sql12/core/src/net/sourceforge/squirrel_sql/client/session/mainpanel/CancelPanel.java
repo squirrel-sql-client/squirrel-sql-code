@@ -75,8 +75,7 @@ public class CancelPanel extends JPanel
       gbc.gridx = 0;
       ++gbc.gridy;
       // i18n[SQLResultExecuterPanel.statusLabel=Status:]
-      label =
-            s_stringMgr.getString("SQLResultExecuterPanel.statusLabel");
+      label = s_stringMgr.getString("SQLResultExecuterPanel.statusLabel");
       ret.add(new JLabel(label), gbc);
 
       ++gbc.gridx;
@@ -98,7 +97,7 @@ public class CancelPanel extends JPanel
       ++gbc.gridy;
       gbc.fill = GridBagConstraints.NONE;
       gbc.insets = new Insets(30, gbc.insets.left, gbc.insets.bottom, gbc.insets.right);
-      gbc.gridwidth = 3;
+      gbc.gridwidth = 2;
       ret.add(createNotificationPanel(), gbc);
       return ret;
    }
@@ -150,6 +149,7 @@ public class CancelPanel extends JPanel
       GUIUtils.forceWidth(txtNumberOfRowsRead, 120);
       ret.add(txtNumberOfRowsRead, gbc);
 
+      GUIUtils.setMinimumHeight(ret, 50);
       return ret;
    }
 

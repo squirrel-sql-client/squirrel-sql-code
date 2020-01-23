@@ -76,6 +76,9 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+UI problem at "Executing SQL" tab (displayed prior to SQL Result tab):
+  Display of "Elapased execution time" disappeared to early when size of result was reduced.
+
 File save dialog was falsely initialized when some file was opened before in the same editor.
 
 #1414 "SQL to file" function: Can't export to file if using a CTE (Common Table Expression)
