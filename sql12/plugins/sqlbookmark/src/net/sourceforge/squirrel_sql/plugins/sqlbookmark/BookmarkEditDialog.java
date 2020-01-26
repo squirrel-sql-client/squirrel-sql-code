@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -82,7 +83,5 @@ public class BookmarkEditDialog extends JDialog
       contentPane.add(btnCancel, gbc);
 
       getRootPane().setDefaultButton(btnOk);
-
-      pack();
    }
 }

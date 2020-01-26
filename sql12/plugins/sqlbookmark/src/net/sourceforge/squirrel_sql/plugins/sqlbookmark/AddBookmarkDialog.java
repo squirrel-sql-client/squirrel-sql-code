@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -154,22 +156,7 @@ public class AddBookmarkDialog extends JDialog
 
       txtName.requestFocus();
 
-
-      AbstractAction closeAction = new AbstractAction()
-      {
-         private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent actionEvent)
-         {
-            closeDialog();
-         }
-      };
-      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-      getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-      getRootPane().getActionMap().put("CloseAction", closeAction);
-
+      GUIUtils.enableCloseByEscape(this);
 
       setSize(430, 150);
    }

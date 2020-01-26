@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -31,45 +32,15 @@ public class EditAliasFolderDlg extends JDialog
       createUI(text);
       _txtFolderName.setText(folderName);
 
-      _btnOK.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onOK();
-         }
-      });
+      _btnOK.addActionListener(e -> onOK());
 
       getRootPane().setDefaultButton(_btnOK);
 
-      _btnCancel.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onCancel();
-         }
-      });
+      _btnCancel.addActionListener(e -> onCancel());
 
-      AbstractAction closeAction = new AbstractAction()
-      {
-         public void actionPerformed(ActionEvent actionEvent)
-         {
-            close();
-         }
-      };
-      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-      getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-      getRootPane().getActionMap().put("CloseAction", closeAction);
+      GUIUtils.enableCloseByEscape(this);
 
-
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            _txtFolderName.requestFocus();
-         }
-      });
+      SwingUtilities.invokeLater(() -> _txtFolderName.requestFocus());
 
       setSize(400, 150);
 

@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -99,21 +100,8 @@ public class EscapeDateFrame extends JDialog
 
 		getRootPane().setDefaultButton(btnTimestamp);
 
-		AbstractAction closeAction = new AbstractAction()
-		{
-			public void actionPerformed(ActionEvent actionEvent)
-			{
-				setVisible(false);
-				dispose();
-			}
-		};
-		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-		getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-		getRootPane().getActionMap().put("CloseAction", closeAction);
 
-
+		GUIUtils.enableCloseByEscape(this);
 	}
 
    private JPanel createButtonsPanel()

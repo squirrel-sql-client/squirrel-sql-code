@@ -41,7 +41,7 @@ public class TableExportController
       });
 
       _dlg.getRootPane().setDefaultButton(_dlg.btnOk);
-      installEscapeClose();
+      GUIUtils.enableCloseByEscape(_dlg);
 
       _dlg.pack();
 
@@ -604,24 +604,6 @@ public class TableExportController
       _dlg.btnCommandFile.setEnabled(_dlg.chkExecCommand.isSelected());
    }
 
-
-   private void installEscapeClose()
-   {
-      AbstractAction closeAction = new AbstractAction()
-      {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent actionEvent)
-         {
-            closeDlg();
-         }
-      };
-      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-      _dlg.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
-      _dlg.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-      _dlg.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-      _dlg.getRootPane().getActionMap().put("CloseAction", closeAction);
-   }
 
    private void closeDlg()
    {

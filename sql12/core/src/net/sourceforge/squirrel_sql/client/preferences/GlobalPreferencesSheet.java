@@ -22,9 +22,6 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-
-import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DATATYPE_PREFERENCES;
-
 import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlConfigPrefsTab;
 import net.sourceforge.squirrel_sql.client.preferences.shortcut.ShortcutPrefsTab;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -35,14 +32,28 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DATATYPE_PREFERENCES;
 
 /**
  * This sheet allows the user to maintain global preferences.
@@ -222,8 +233,13 @@ public class GlobalPreferencesSheet extends DialogWidget
     */
    private void performClose()
    {
+      fireClose();
       dispose();
-      for (GlobalPreferencesActionListener listener : _listeners)
+   }
+
+   private void fireClose()
+   {
+      for (GlobalPreferencesActionListener listener : _listeners.toArray(new GlobalPreferencesActionListener[0]))
       {
          listener.onPerformClose();
       }
@@ -364,20 +380,7 @@ public class GlobalPreferencesSheet extends DialogWidget
       gbc.weighty = 0;
       contentPane.add(createButtonsPanel(), gbc);
 
-      AbstractAction closeAction = new AbstractAction()
-      {
-         public void actionPerformed(ActionEvent actionEvent)
-         {
-            performClose();
-         }
-      };
-      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-      getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-      getRootPane().getActionMap().put("CloseAction", closeAction);
-
-
+      GUIUtils.enableCloseByEscape(this, dw -> performClose());
    }
 
    /**

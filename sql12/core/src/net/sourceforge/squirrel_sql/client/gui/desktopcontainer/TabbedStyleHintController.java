@@ -35,19 +35,7 @@ public class TabbedStyleHintController
          }
       });
 
-      AbstractAction closeAction = new AbstractAction()
-      {
-         public void actionPerformed(ActionEvent actionEvent)
-         {
-            no();
-         }
-      };
-      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-      _dlg.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
-      _dlg.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-      _dlg.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-      _dlg.getRootPane().getActionMap().put("CloseAction", closeAction);
-
+      GUIUtils.enableCloseByEscape(_dlg);
 
 
       _dlg.setSize(350, 250);

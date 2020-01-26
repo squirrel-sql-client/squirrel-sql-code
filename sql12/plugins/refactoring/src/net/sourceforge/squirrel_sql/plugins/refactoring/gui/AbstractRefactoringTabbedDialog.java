@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
 */
 
 import net.sourceforge.squirrel_sql.client.gui.db.IDisposableDialog;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -158,17 +159,7 @@ public abstract class AbstractRefactoringTabbedDialog extends JDialog implements
         add(pane, BorderLayout.CENTER);
         add(getButtonPanel(), BorderLayout.SOUTH);
 
-        KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-        getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-        getRootPane().getActionMap().put("CloseAction", new AbstractAction() {
-			   private static final long serialVersionUID = -2305467371279192850L;
-				public void actionPerformed(ActionEvent actionEvent) {
-                setVisible(false);
-                dispose();
-            }
-        });
+        GUIUtils.enableCloseByEscape(this);
     }
 
 

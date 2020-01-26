@@ -35,11 +35,19 @@ public class EditBookmarksAction extends SquirrelAction implements ISessionActio
       {
          public void sqlEntryAreaClosed(SQLPanelEvent evt)
          {
-            _plugin.removeSQLPanelAPIListeningForBookmarks(_session.getSQLPanelAPIOfActiveSessionWindow());
+            onSQLEntryAreaClosed();
          }
       });
 
       GlobalPreferencesSheet.showSheet(SQLBookmarkPreferencesPanel.class);
+   }
+
+   private void onSQLEntryAreaClosed()
+   {
+      if (null != _session)
+      {
+         _plugin.removeSQLPanelAPIListeningForBookmarks(_session.getSQLPanelAPIOfActiveSessionWindow());
+      }
    }
 
    public void setSession(ISession session)

@@ -147,24 +147,7 @@ public class PluginSummaryDialog extends JDialog
 		btnsPnl.add(closeBtn);
 		contentPane.add(btnsPnl, BorderLayout.SOUTH);
 
-
-      AbstractAction closeAction = new AbstractAction()
-      {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent actionEvent)
-         {
-            setVisible(false);
-            dispose();
-         }
-      };
-      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-      getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-      getRootPane().getActionMap().put("CloseAction", closeAction);
-
-
+      GUIUtils.enableCloseByEscape(this);
 
       pack();
       setSize(655, 500);

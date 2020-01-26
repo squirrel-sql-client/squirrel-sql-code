@@ -8,10 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class BookmarEditController
+public class BookmarkEditController
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(BookmarEditController.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(BookmarkEditController.class);
 
 
    private boolean _canceled;
@@ -19,7 +18,7 @@ public class BookmarEditController
    private Bookmark _mark;
 
 
-   public BookmarEditController(Frame owner, Bookmark mark, boolean editable)
+   public BookmarkEditController(Frame owner, Bookmark mark, boolean editable)
    {
       _mark = mark;
       _dlg = new BookmarkEditDialog(owner, null == _mark);
@@ -33,34 +32,10 @@ public class BookmarEditController
          _dlg.txtSql.setText(_mark.getSql());
       }
 
-      _dlg.btnOk.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onOK();
-         }
-      });
-      _dlg.btnCancel.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onCancel();
-         }
-      });
+      _dlg.btnOk.addActionListener(e -> onOK());
+      _dlg.btnCancel.addActionListener(e -> onCancel());
 
-      AbstractAction closeAction = new AbstractAction()
-      {
-         public void actionPerformed(ActionEvent actionEvent)
-         {
-            onCancel();
-         }
-      };
-      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-      _dlg.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
-      _dlg.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-      _dlg.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-      _dlg.getRootPane().getActionMap().put("CloseAction", closeAction);
-
+      GUIUtils.enableCloseByEscape(_dlg, dialog -> _canceled = true);
 
       _dlg.addWindowListener(new WindowAdapter()
       {
@@ -71,8 +46,8 @@ public class BookmarEditController
          }
       });
 
+      GUIUtils.initLocation(_dlg, 570, 330);
 
-      GUIUtils.centerWithinParent(_dlg);
       _dlg.setVisible(true);
 
    }
@@ -116,6 +91,7 @@ public class BookmarEditController
       }
 
       _dlg.setVisible(false);
+      _dlg.dispose();
       _canceled = false;
    }
 
@@ -135,6 +111,7 @@ public class BookmarEditController
    private void onCancel()
    {
       _dlg.setVisible(false);
+      _dlg.dispose();
       _canceled = true;
    }
 

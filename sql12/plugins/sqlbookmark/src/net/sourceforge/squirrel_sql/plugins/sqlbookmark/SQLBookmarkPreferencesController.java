@@ -333,7 +333,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
    public void onAdd()
    {
-      BookmarEditController ctrlr = new BookmarEditController(_app.getMainFrame(), null, true);
+      BookmarkEditController ctrlr = new BookmarkEditController(_app.getMainFrame(), null, true);
 
       if (ctrlr.isCanceled())
       {
@@ -377,7 +377,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       boolean editable = selNode.getParent() == _nodeUserMarks;
 
-      BookmarEditController ctrlr = new BookmarEditController(_app.getMainFrame(), (Bookmark) selNode.getUserObject(), editable);
+      BookmarkEditController ctrlr = new BookmarkEditController(_app.getMainFrame(), (Bookmark) selNode.getUserObject(), editable);
 
       if(ctrlr.isCanceled())
       {

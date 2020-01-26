@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPluginResources;
@@ -71,20 +72,7 @@ public class QueryFilterDlg extends JDialog
       gbc = new GridBagConstraints(0,5,2,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
       getContentPane().add(new JPanel(), gbc);
 
-
-      AbstractAction closeAction = new AbstractAction()
-      {
-         public void actionPerformed(ActionEvent actionEvent)
-         {
-            setVisible(false);
-            dispose();
-         }
-      };
-      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-      getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-      getRootPane().getActionMap().put("CloseAction", closeAction);
+      GUIUtils.enableCloseByEscape(this);
 
       getRootPane().setDefaultButton(_btnOk);
 
