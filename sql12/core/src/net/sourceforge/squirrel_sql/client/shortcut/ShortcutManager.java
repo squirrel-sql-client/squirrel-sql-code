@@ -91,10 +91,10 @@ public class ShortcutManager
       registerAccelerator(actionClass, Main.getApplication().getResources());
    }
 
-   public String registerAccelerator(Class<? extends Action> actionClass, Resources pluginResources)
+   public String registerAccelerator(Class<? extends Action> actionClass, Resources resources)
    {
-      String actionName = pluginResources.getActionName(actionClass);
-      KeyStroke defaultKeyStroke = pluginResources.getShortCutReader().getDefaultShortcutAsKeyStroke(pluginResources.getFullMenuItemKey(actionClass), actionName);
+      String actionName = resources.getActionName(actionClass);
+      KeyStroke defaultKeyStroke = resources.getShortCutReader().getDefaultShortcutAsKeyStroke(resources.getFullMenuItemKey(actionClass), actionName);
 
       return _registerAccelerator(actionName, defaultKeyStroke).getValidKeyStroke();
    }
