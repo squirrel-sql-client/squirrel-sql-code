@@ -75,7 +75,7 @@ public class Main
 		}
 	}
 
-   private static void startApp() throws IOException
+   private static void startApp()
    {
       LoggerController.registerLoggerFactory(new SquirrelLoggerFactory(true));
       s_log = LoggerController.createLogger(Main.class);
@@ -86,9 +86,9 @@ public class Main
 
 
 
-      EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
+      EventQueue systemEventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
 
-      q.push(new EventQueue()
+      systemEventQueue.push(new EventQueue()
       {
          OutOfMemoryErrorHandler oumErrorHandler = new OutOfMemoryErrorHandler();
 
@@ -108,9 +108,7 @@ public class Main
       });
 
 
-      Runnable runnable = () -> doApplicationStartup();
-
-      SwingUtilities.invokeLater(runnable);
+      SwingUtilities.invokeLater(() -> doApplicationStartup());
    }
 
    private static void doApplicationStartup()

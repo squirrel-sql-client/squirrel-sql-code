@@ -127,22 +127,22 @@ public class MainFrame extends JFrame
 			}
 		});
 
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				IDesktopContainer comp = getDesktopContainer();
-				comp.setPreferredSize(comp.getRequiredSize());
-				comp.revalidate();
-
-            if(_app.getDesktopStyle().isDockTabStyle())
-            {
-               _app.getMultipleWindowsHandler().registerMainFrame((DockTabDesktopPane)_desktop);
-            }
-			}
-		});
+		SwingUtilities.invokeLater(() -> initializeDesktop());
 		
 	}
+
+	private void initializeDesktop()
+	{
+		IDesktopContainer comp = getDesktopContainer();
+		comp.setPreferredSize(comp.getRequiredSize());
+		comp.revalidate();
+
+		if(_app.getDesktopStyle().isDockTabStyle())
+		{
+			_app.getMultipleWindowsHandler().registerMainFrame((DockTabDesktopPane)_desktop);
+		}
+	}
+
 	// ...
 	public void dispose()
 	{
