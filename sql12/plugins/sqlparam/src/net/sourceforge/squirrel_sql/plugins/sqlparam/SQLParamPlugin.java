@@ -30,7 +30,6 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelAdapter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -285,13 +284,13 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	{
 		final SQLParamPlugin plugin = this;
 		
-		GUIUtils.processOnSwingEventThread(() -> addSqlParamExecutionListener(plugin, session, sqlPaneAPI));
+		GUIUtils.processOnSwingEventThread(() -> addSqlParamExecutionListener(plugin, sqlPaneAPI));
 	}
 
-	private void addSqlParamExecutionListener(SQLParamPlugin plugin, ISession session, ISQLPanelAPI sqlPaneAPI)
+	private void addSqlParamExecutionListener(SQLParamPlugin plugin, ISQLPanelAPI sqlPaneAPI)
 	{
 		log.info("Adding SQL execution listener.");
-		ISQLExecutionListener listener =  new SQLParamExecutionListener(plugin, session);
+		ISQLExecutionListener listener =  new SQLParamExecutionListener(plugin, sqlPaneAPI);
 		sqlPaneAPI.addSQLExecutionListener(listener);
 		panelListenerMap.put(sqlPaneAPI, listener);
 	}

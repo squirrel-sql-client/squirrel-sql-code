@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+SQLParam Plugin: The parameter dialog has a new check box "Always quote values"
+   that allows to permanently switch on the "Quote Values" check box.
+
 "Color selected rows" dialog now remembers the last used color. See right mouse menu of SQL result tables.
 
 Postgres Plugin: Updated Plugin libs
