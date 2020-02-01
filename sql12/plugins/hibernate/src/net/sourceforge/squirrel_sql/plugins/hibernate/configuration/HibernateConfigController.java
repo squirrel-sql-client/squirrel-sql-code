@@ -5,6 +5,8 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
 import javax.swing.DefaultComboBoxModel;
@@ -18,6 +20,7 @@ import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
@@ -29,8 +32,7 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
 
 public class HibernateConfigController
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(HibernateConfigController.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(HibernateConfigController.class);
 
 	private HibernatePlugin _plugin;
 
@@ -66,9 +68,15 @@ public class HibernateConfigController
 
 		_panel.btnRemoveConfig.addActionListener(e -> onRemoveConfig());
 
+		_panel.btnCopyConfig.addActionListener(e -> onCopyConfig());
+
+
+
 		_panel.btnClassPathAdd.addActionListener(e -> onAddClasspathEntry());
 
 		_panel.btnClassPathDirAdd.addActionListener(e -> onAddClassPathDir());
+
+		_panel.btnClassPathReplace.addActionListener(e -> onReplaceClasspathEntry());
 
 		_panel.btnClassPathRemove.addActionListener(e -> onRemoveSelectedClasspathEntries());
 
@@ -112,27 +120,47 @@ public class HibernateConfigController
 
 		if (null == selConfig)
 		{
-			// i18n[HibernateConfigController.NoConfigToRemove=No configuration selected to remove.]
-			JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(),
-				s_stringMgr.getString("HibernateController.NoConfigToRemove"));
+			JOptionPane.showMessageDialog(GUIUtils.getOwningFrame(_panel), s_stringMgr.getString("HibernateController.NoConfigToRemove"));
+			return;
 		}
-		else
+
+		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(GUIUtils.getOwningFrame(_panel), s_stringMgr.getString("HibernateController.ReallyRemoveConfig", selConfig)))
 		{
-			// i18n[HibernateConfigController.ReallyRemoveConfig=Are you sure you want to delete configuration
-			// "{0}".]
-			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(_plugin.getApplication().getMainFrame(),
-				s_stringMgr.getString("HibernateController.ReallyRemoveConfig", selConfig)))
-			{
-				((DefaultComboBoxModel) _panel.cboConfigs.getModel()).removeElement(selConfig);
-			}
+			((DefaultComboBoxModel) _panel.cboConfigs.getModel()).removeElement(selConfig);
 		}
+	}
+
+	private void onCopyConfig()
+	{
+		HibernateConfiguration selConfig = (HibernateConfiguration) _panel.cboConfigs.getSelectedItem();
+
+		if (null == selConfig)
+		{
+			JOptionPane.showMessageDialog(GUIUtils.getOwningFrame(_panel), s_stringMgr.getString("HibernateController.NoConfigToCopy"));
+			return;
+		}
+
+		CopyConfigCtrl copyConfigCtrl = new CopyConfigCtrl(GUIUtils.getOwningFrame(_panel), selConfig, _panel.cboConfigs);
+
+		String newName = copyConfigCtrl.getCopiedConfigName();
+
+		if(StringUtilities.isEmpty(newName))
+		{
+			return;
+		}
+
+		HibernateConfiguration newConfig = Utilities.cloneObject(selConfig);
+		newConfig.setName(newName);
+
+		_panel.cboConfigs.addItem(newConfig);
+		_panel.cboConfigs.setSelectedItem(newConfig);
 	}
 
 	private void onRemoveSelectedClasspathEntries()
 	{
 		int[] selIces = _panel.lstClassPath.getSelectedIndices();
 
-		List<ClassPathItem> toRemove = new ArrayList<ClassPathItem>();
+		List<ClassPathItem> toRemove = new ArrayList<>();
 		DefaultListModel listModel = (DefaultListModel) _panel.lstClassPath.getModel();
 		for (int i = 0; i < selIces.length; i++)
 		{
@@ -171,10 +199,7 @@ public class HibernateConfigController
 		{
 			if (false == silent)
 			{
-				// i18n[HibernateConfigController.noCfgNameMsg=Not a valid configuration name\nChanges cannot be
-				// applied.]
-				JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(),
-					s_stringMgr.getString("HibernateController.noProviderMsg"));
+				JOptionPane.showMessageDialog(GUIUtils.getOwningFrame(_panel),s_stringMgr.getString("HibernateController.noProviderMsg"));
 			}
 			return false;
 		}
@@ -218,54 +243,75 @@ public class HibernateConfigController
 
 	private void onAddClassPathDir()
    {
-      String dirPath = Props.getString(PERF_KEY_LAST_DIR, System.getProperty("user.home"));
-
-      JFileChooser fc = new JFileChooser(dirPath);
-
-      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-      fc.setMultiSelectionEnabled(true);
-
-      fc.setFileFilter(new FileFilter()
-      {
-         public boolean accept(File f)
-         {
-            if (f.isDirectory())
-            {
-               return true;
-            }
-            return false;
-         }
-
-         public String getDescription()
-         {
-            // i18n[HibernateConfigController.classpathEntryDesc=Jars, Zips or directories]
-            return s_stringMgr.getString("HibernateController.classpathDirEntryDesc");
-         }
-      });
-
-      if (JFileChooser.APPROVE_OPTION != fc.showOpenDialog(_plugin.getApplication().getMainFrame()))
-      {
-         return;
-      }
-
-      File[] files = fc.getSelectedFiles();
+      File[] files = chooseClassPathDirs();
 
       for (int i = 0; i < files.length; i++)
       {
          getClassPathListModel().addJarDir(files[i].getPath());
       }
-
-      if (0 < files.length)
-      {
-         Props.putString(PERF_KEY_LAST_DIR, files[0].getPath());
-      }
    }
 
-	private void onAddClasspathEntry()
+	private File[] chooseClassPathDirs()
 	{
 		String dirPath = Props.getString(PERF_KEY_LAST_DIR, System.getProperty("user.home"));
 
 		JFileChooser fc = new JFileChooser(dirPath);
+		fc.setDialogTitle(s_stringMgr.getString("HibernatePanel.classPathDirAdd.filechooser.title"));
+
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fc.setMultiSelectionEnabled(true);
+
+		fc.setFileFilter(new FileFilter()
+		{
+			public boolean accept(File f)
+			{
+				if (f.isDirectory())
+				{
+					return true;
+				}
+				return false;
+			}
+
+			public String getDescription()
+			{
+				// i18n[HibernateConfigController.classpathEntryDesc=Jars, Zips or directories]
+				return s_stringMgr.getString("HibernateController.classpathDirEntryDesc");
+			}
+		});
+
+		if (JFileChooser.APPROVE_OPTION != fc.showOpenDialog(_plugin.getApplication().getMainFrame()))
+		{
+			return new File[0];
+		}
+
+		File[] files = fc.getSelectedFiles();
+
+		if (0 < files.length)
+		{
+			Props.putString(PERF_KEY_LAST_DIR, files[0].getPath());
+		}
+
+		return files;
+	}
+
+
+	private void onAddClasspathEntry()
+	{
+		File[] files = chooseClasspathEntries();
+
+		for (int i = 0; i < files.length; i++)
+		{
+			getClassPathListModel().addJar(files[i].getPath());
+		}
+	}
+
+	private File[] chooseClasspathEntries()
+	{
+		String dirPath = Props.getString(PERF_KEY_LAST_DIR, System.getProperty("user.home"));
+
+		JFileChooser fc = new JFileChooser(dirPath);
+		fc.setDialogTitle(s_stringMgr.getString("HibernatePanel.classPathAdd.filechooser.title"));
+
 
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		fc.setMultiSelectionEnabled(true);
@@ -275,7 +321,7 @@ public class HibernateConfigController
 			public boolean accept(File f)
 			{
 				if (f.isDirectory() || f.getName().toUpperCase().endsWith(".ZIP")
-					|| f.getName().toUpperCase().endsWith(".JAR"))
+						|| f.getName().toUpperCase().endsWith(".JAR"))
 				{
 					return true;
 				}
@@ -291,15 +337,10 @@ public class HibernateConfigController
 
 		if (JFileChooser.APPROVE_OPTION != fc.showOpenDialog(_plugin.getApplication().getMainFrame()))
 		{
-			return;
+			return new File[0];
 		}
 
 		File[] files = fc.getSelectedFiles();
-
-		for (int i = 0; i < files.length; i++)
-		{
-			getClassPathListModel().addJar(files[i].getPath());
-		}
 
 		if (0 < files.length)
 		{
@@ -312,7 +353,53 @@ public class HibernateConfigController
 				Props.putString(PERF_KEY_LAST_DIR, files[0].getParent());
 			}
 		}
+
+		return files;
 	}
+
+
+	private void onReplaceClasspathEntry()
+	{
+		ClassPathItem firstSelectedItem = (ClassPathItem) _panel.lstClassPath.getSelectedValue();
+
+		if(null == firstSelectedItem)
+		{
+			JOptionPane.showMessageDialog(GUIUtils.getOwningFrame(_panel), s_stringMgr.getString("HibernatePanel.classPathReplace.no.selection"));
+			return;
+		}
+
+		List<ClassPathItem> selectedItems = _panel.lstClassPath.getSelectedValuesList();
+
+		int[] addedIndices;
+		if(firstSelectedItem.isJarDir())
+		{
+			File[] dirs = chooseClassPathDirs();
+
+			if(0 == dirs.length)
+			{
+				return;
+			}
+
+			addedIndices = getClassPathListModel().replaceByJarDirs(selectedItems, dirs);
+		}
+		else
+		{
+			File[] entries = chooseClasspathEntries();
+
+			if(0 == entries.length)
+			{
+				return;
+			}
+
+			addedIndices = getClassPathListModel().replaceByJars(selectedItems, entries);
+		}
+
+		_panel.lstClassPath.setSelectedIndices(addedIndices);
+
+		_panel.lstClassPath.ensureIndexIsVisible(addedIndices[0]);
+	}
+
+
 
 	private void onMoveUpClasspathEntries()
 	{

@@ -3,7 +3,11 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.configuration;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathItem;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathUtil;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClassPathItemListModel extends DefaultListModel
 {
@@ -42,10 +46,16 @@ public class ClassPathItemListModel extends DefaultListModel
 
    private void _addEntry(String path, boolean jarDir)
    {
+      ClassPathItem item = createClassPathItem(path, jarDir);
+      super.addElement(item);
+   }
+
+   private ClassPathItem createClassPathItem(String path, boolean jarDir)
+   {
       ClassPathItem item = new ClassPathItem();
       item.setPath(path);
       item.setJarDir(jarDir);
-      super.addElement(item);
+      return item;
    }
 
 
@@ -58,5 +68,38 @@ public class ClassPathItemListModel extends DefaultListModel
    public void addItem(ClassPathItem item)
    {
       super.addElement(item);
+   }
+
+   public int[] replaceByJarDirs(List<ClassPathItem> toReplaceItems, File[] dirs)
+   {
+      List<ClassPathItem> newItems = Arrays.stream(dirs).map(f -> createClassPathItem(f.getPath(), true)).collect(Collectors.toList());
+
+      return replaceItems(toReplaceItems, newItems);
+   }
+
+   public int[] replaceByJars(List<ClassPathItem> toReplaceItems, File[] entries)
+   {
+      List<ClassPathItem> newItems = Arrays.stream(entries).map(f -> createClassPathItem(f.getPath(), false)).collect(Collectors.toList());
+
+      return replaceItems(toReplaceItems, newItems);
+   }
+
+   private int[] replaceItems(List<ClassPathItem> toReplaceItems, List<ClassPathItem> newItems)
+   {
+      int insertIndex = indexOf(toReplaceItems.get(0));
+
+      toReplaceItems.forEach(i -> remove(indexOf(i)));
+
+      for (int i = newItems.size() - 1; i > -1; i--)
+      {
+         ClassPathItem classPathItem = newItems.get(i);
+         insertElementAt(classPathItem, insertIndex);
+      }
+      return indexesOf(newItems);
+   }
+
+   private int[] indexesOf(List<ClassPathItem> items)
+   {
+      return items.stream().mapToInt(i -> indexOf(i)).toArray();
    }
 }

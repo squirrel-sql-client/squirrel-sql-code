@@ -27,6 +27,7 @@ public class HibernateConfigPanel extends JPanel
    JComboBox cboConfigs;
    JButton btnNewConfig;
    JButton btnRemoveConfig;
+   JButton btnCopyConfig;
 
    JList lstClassPath;
    JButton btnClassPathAdd;
@@ -34,6 +35,8 @@ public class HibernateConfigPanel extends JPanel
    JButton btnClassPathRemove;
    JButton btnClassPathMoveUp;
    JButton btnClassPathMoveDown;
+   JButton btnClassPathReplace;
+
    JTextField txtConfigName;
    JButton btnApplyConfigChanges;
 
@@ -61,15 +64,22 @@ public class HibernateConfigPanel extends JPanel
 
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       // i18n[HibernateConfigPanel.newConfig=New]
-      btnNewConfig = new JButton(s_stringMgr.getString("HibernatePanel.newConfig"));
+      btnNewConfig = new JButton(resources.getIcon(HibernatePluginResources.IKeys.ADD_IMAGE));
+      btnNewConfig.setToolTipText(s_stringMgr.getString("HibernatePanel.newConfig.tooltip"));
       add(btnNewConfig, gbc);
 
       gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       // i18n[HibernateConfigPanel.removeConfig=Remove]
-      btnRemoveConfig = new JButton(s_stringMgr.getString("HibernatePanel.removeConfig"));
+      btnRemoveConfig = new JButton(resources.getIcon(HibernatePluginResources.IKeys.DELETE_IMAGE));
+      btnRemoveConfig.setToolTipText(s_stringMgr.getString("HibernatePanel.removeConfig.tooltip"));
       add(btnRemoveConfig, gbc);
 
-      gbc = new GridBagConstraints(0,1,4,1,1,1, GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH, new Insets(15,10,10,10),0,0);
+      gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      btnCopyConfig = new JButton(resources.getIcon(HibernatePluginResources.IKeys.COPY_IMAGE));
+      btnCopyConfig.setToolTipText(s_stringMgr.getString("HibernatePanel.copyConfig.tooltip"));
+      add(btnCopyConfig, gbc);
+
+      gbc = new GridBagConstraints(0,1,5,1,1,1, GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH, new Insets(15,10,10,10),0,0);
       add(createConfigDefPanel(resources), gbc);
    }
 
@@ -211,19 +221,25 @@ public class HibernateConfigPanel extends JPanel
 
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       // i18n[HibernateConfigPanel.classPathRemove=Remove selected entries]
-      btnClassPathRemove = new JButton(s_stringMgr.getString("HibernatePanel.classPathRemove"));
+      btnClassPathRemove = new JButton(resources.getIcon(HibernatePluginResources.IKeys.DELETE_IMAGE));
+      btnClassPathRemove.setToolTipText(s_stringMgr.getString("HibernatePanel.classPathRemove.tooltip"));
       ret.add(btnClassPathRemove, gbc);
 
       gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      btnClassPathMoveUp = new JButton(s_stringMgr.getString("HibernatePanel.moveUp"));
-      ret.add(btnClassPathMoveUp, gbc);
+      btnClassPathReplace = new JButton(resources.getIcon(HibernatePluginResources.IKeys.REPLACE_IMAGE));
+      btnClassPathReplace.setToolTipText(s_stringMgr.getString("HibernatePanel.classpath.replace.tooltip"));
+      ret.add(btnClassPathReplace, gbc);
 
       gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      btnClassPathMoveDown = new JButton(s_stringMgr.getString("HibernatePanel.moveDown"));
+      btnClassPathMoveUp = new JButton(resources.getIcon(HibernatePluginResources.IKeys.PREV_NAV_IMAGE));
+      btnClassPathMoveUp.setToolTipText(s_stringMgr.getString("HibernatePanel.moveUp.tooltip"));
+      ret.add(btnClassPathMoveUp, gbc);
+
+      gbc = new GridBagConstraints(5,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      btnClassPathMoveDown = new JButton(resources.getIcon(HibernatePluginResources.IKeys.NEXT_NAV_IMAGE));
+      btnClassPathMoveDown.setToolTipText(s_stringMgr.getString("HibernatePanel.moveDown.tooltip"));
       ret.add(btnClassPathMoveDown, gbc);
 
       return ret;
    }
-
-
 }

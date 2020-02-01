@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.fw.dialects.HADBDialectExt;
 
 public final class HibernatePluginResources extends PluginResources
 {
@@ -25,6 +26,14 @@ public final class HibernatePluginResources extends PluginResources
 		String JAR_IMAGE = "jar";
 		String JAR_DIRECTORY_IMAGE = "jardirectory";
       String SQL_COPY_IMAGE = "sqlcopy";
-   }
+
+		String ADD_IMAGE = "add";
+		String DELETE_IMAGE = "delete";
+		String COPY_IMAGE = "copy";
+
+		String NEXT_NAV_IMAGE = "next_nav";
+		String PREV_NAV_IMAGE = "prev_nav";
+		String REPLACE_IMAGE = "replace";
+	}
 
 }

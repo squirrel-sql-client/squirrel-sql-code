@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Hibernate Plugin:
+  - Hibernate configurations can be copied.
+  - Class path entries can be replaced
+  - Minor UI changes.
+
 SQLParam Plugin: The parameter dialog has a new check box "Always quote values"
    that allows to permanently switch on the "Quote Values" check box.
 
