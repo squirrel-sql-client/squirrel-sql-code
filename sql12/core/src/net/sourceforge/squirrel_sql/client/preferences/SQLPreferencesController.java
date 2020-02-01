@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanelController;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.PropertyCheck;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -190,7 +192,10 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 			_panel = new SQLPreferencesPanel(_changeTrackPrefsPanelController.getPanel());
 			_scrollPane = new JScrollPane(_panel);
 
-			SwingUtilities.invokeLater(() -> _panel.scrollRectToVisible(new Rectangle(0,0,1,1)));
+			GUIUtils.forceProperty(() -> {
+				_panel.scrollRectToVisible(new Rectangle(0,0,1,1));
+				return 0 == _panel.getVisibleRect().y;
+			});
 		}
 		return _scrollPane;
 	}
