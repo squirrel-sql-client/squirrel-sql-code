@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
@@ -473,18 +474,18 @@ public class AliasInternalFrame extends DialogWidget
 		pnl.add(_txtPassword, gbc);
 
       gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-		pnl.add(_chkAutoLogon, gbc);
+		pnl.add(createAutoLogonPanel(), gbc);
 
       gbc = new GridBagConstraints(1,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
 		pnl.add(_chkConnectAtStartup, gbc);
 
+		gbc = new GridBagConstraints(0,6,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+		pnl.add(_chkSavePasswordEncrypted, gbc);
 
-      gbc = new GridBagConstraints(1,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(1,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       _btnAliasProps.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
       pnl.add(_btnAliasProps, gbc);
 
-      gbc = new GridBagConstraints(0,7,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-		pnl.add(_chkSavePasswordEncrypted, gbc);
 
 
       // make it grow when added
@@ -492,6 +493,22 @@ public class AliasInternalFrame extends DialogWidget
 		pnl.add(new JPanel(), gbc);
 
 		return pnl;
+	}
+
+	private JPanel createAutoLogonPanel()
+	{
+		JPanel ret = new JPanel(new GridBagLayout());
+
+		GridBagConstraints gbc;
+
+		gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+		_chkAutoLogon.setToolTipText(s_stringMgr.getString("AliasInternalFrame.autologon.security.tooltip"));
+		ret.add(_chkAutoLogon, gbc);
+
+		gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,2), 0,0);
+		ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("AliasInternalFrame.autologon.security.tooltip.long.html"), 10000).getButton(), gbc);
+
+		return ret;
 	}
 
 	private JPanel createButtonsPanel()

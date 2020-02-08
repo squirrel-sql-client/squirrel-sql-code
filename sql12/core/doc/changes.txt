@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Alias dialog:
+  - On the occasion of discussions in feature requests #25 and #587: "Auto logon" checkbox has a tooltip and an information button on security.
+  - Minor UI changes.
+
 Hibernate Plugin:
   - Hibernate configurations can be copied.
   - Class path entries can be replaced

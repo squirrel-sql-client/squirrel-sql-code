@@ -23,9 +23,17 @@ public class SmallToolTipInfoButton
    private Popup _popup;
    private Timer _timer;
 
+   private int _displayTimeMillis;
+
    public SmallToolTipInfoButton(String infoText)
    {
+      this(infoText,5000);
+   }
+
+   public SmallToolTipInfoButton(String infoText, int displayTimeMillis)
+   {
       _infoText = infoText;
+      _displayTimeMillis = displayTimeMillis;
 
       _btnShowToolTip = new SmallTabButton(null, getSmallInfoIcon());
       Dimension size = new Dimension(16, 16);
@@ -62,14 +70,7 @@ public class SmallToolTipInfoButton
       _popup.show();
 
       // create a timer to hide the popup later
-      _timer = new Timer(5000, new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onTimer();
-         }
-      });
+      _timer = new Timer(_displayTimeMillis, e -> onTimer());
       _timer.setRepeats(false);
       _timer.start();
    }
