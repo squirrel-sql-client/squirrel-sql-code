@@ -145,6 +145,7 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 			{
 				addRow(ds, colCount);
 			}
+			close();
 			allRowsAdded();
 			moveToTop();
 		}
@@ -177,6 +178,10 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 
 	protected abstract void allRowsAdded() throws DataSetException;
 	protected abstract void addRow(Object[] row) throws DataSetException;
+
+	protected void close()
+	{
+	}
 
 
    public static IDataSetViewer getInstance(String sName, IDataSetUpdateableModel updateableModel, ISession session)

@@ -1,113 +1,137 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset;
 
-import net.sourceforge.squirrel_sql.client.Main;
+import java.sql.Types;
+
+import org.nocrala.tools.texttablefmt.BorderStyle;
+import org.nocrala.tools.texttablefmt.CellStyle;
+import org.nocrala.tools.texttablefmt.CellStyle.AbbreviationStyle;
+import org.nocrala.tools.texttablefmt.CellStyle.HorizontalAlign;
+import org.nocrala.tools.texttablefmt.CellStyle.NullStyle;
+import org.nocrala.tools.texttablefmt.ShownBorders;
+import org.nocrala.tools.texttablefmt.Table;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 
-import java.util.Arrays;
+//drop table t;
+//
+//create table t (
+//  a int,
+//  b decimal(10, 2),
+//  c varchar(10),
+//  d char(6),
+//  employment_date date,
+//  f timestamp,
+//  g time
+//);
+//
+//insert into t (a, b, c, d, employment_date, f, g) values (123, 456.10, 'Chicago', 'Four', curdate(), current_timestamp(), curtime());
+//
+//insert into t (a, b, c, d, employment_date, f, g) values (-108, 1234567.13, 'Detroit', 'Eleven', curdate(), current_timestamp(), curtime());
+//
+//select * from t;
 
 public class ResultAsText
 {
-   private final static int COLUMN_PADDING = 2;
 
    private ColumnDisplayDefinition[] _colDefs;
-
    private int _rowCount = 0;
-
-   private StringBuffer _text = new StringBuffer();
    private ResultAsTextLineCallback _resultAsTextLineCallback;
 
+   private static final int MAX_CELL_WIDTH = 100;
 
-   public ResultAsText(ColumnDisplayDefinition[] colDefs, boolean showHeadings, ResultAsTextLineCallback resultAsTextLineCallback)
+   private int columns;
+   private Table t;
+   private CellStyle[] cellStyles;
+   private String text;
+
+   public ResultAsText(final ColumnDisplayDefinition[] colDefs, final boolean showHeadings,
+                       final ResultAsTextLineCallback resultAsTextLineCallback)
    {
-      _resultAsTextLineCallback = resultAsTextLineCallback;
+
+      this._colDefs = colDefs;
+      this._rowCount = 0;
+      this._resultAsTextLineCallback = resultAsTextLineCallback;
+
+      this.columns = this._colDefs.length;
+      this.cellStyles = new CellStyle[this.columns];
+      for (int i = 0; i < this.columns; ++i)
+      {
+         this.cellStyles[i] = getCellStyle(colDefs[i]);
+      }
       if (showHeadings)
       {
-         _colDefs = colDefs;
-         StringBuffer buf = new StringBuffer();
-         for (int i = 0; i < colDefs.length; ++i)
+         this.t = new Table(this.columns, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.HEADER_AND_COLUMNS);
+         for (int i = 0; i < this.columns; ++i)
          {
-            String headerValue = colDefs[i].getColumnHeading();
-
-            buf.append(format(headerValue, colDefs[i].getDisplayWidth(), ' '));
+            this.t.addCell(colDefs[i].getColumnHeading(), this.cellStyles[i]);
          }
-
-         addLine(buf.toString());
-         buf = new StringBuffer();
-         for (int i = 0; i < colDefs.length; ++i)
-         {
-            buf.append(format("", colDefs[i].getDisplayWidth(), '-'));
-         }
-         addLine(buf.toString());
+      }
+      else
+      {
+         this.t = new Table(this.columns, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.NONE);
+      }
+      for (int i = 0; i < this.columns; ++i)
+      {
+         this.t.setColumnWidth(i, 1, MAX_CELL_WIDTH);
       }
    }
 
    public void addRow(Object[] row)
    {
-      _rowCount++;
-      StringBuffer buf = new StringBuffer();
-      for (int i = 0; i < row.length; ++i)
+      this._rowCount++;
+      for (int i = 0; i < this.columns; ++i)
       {
-         String cellValue = CellComponentFactory.renderObject(row[i], _colDefs[i]);
-         buf.append(format(cellValue, _colDefs[i].getDisplayWidth(), ' '));
+         String cellValue = CellComponentFactory.renderObject(row[i], this._colDefs[i]);
+         t.addCell(cellValue, this.cellStyles[i]);
       }
-      addLine(buf.toString());
-   }
-
-   private void addLine(String line)
-   {
-      _resultAsTextLineCallback.addLine(line + "\n");
-   }
-
-   private String format(String data, int displaySize, char fillChar)
-   {
-      data = data.replace('\n', ' ');
-      data = data.replace('\r', ' ');
-      //replace null string character (0x00) with SPACE char, as this character cannot be copied to clipboard
-      data = data.replace('\u0000', ' ');
-      //replace FF character (0x0C) with SPACE char
-      data = data.replace('\u000C', ' ');
-      StringBuffer output = new StringBuffer(data);
-
-      int maxTextOutputColumnWidth = Main.getApplication().getSquirrelPreferences().getMaxTextOutputColumnWidth();
-
-      if (displaySize > maxTextOutputColumnWidth)
-      {
-         displaySize = maxTextOutputColumnWidth;
-      }
-
-      if (output.length() > displaySize)
-      {
-         output.setLength(displaySize);
-      }
-
-      displaySize += COLUMN_PADDING;
-
-      int extraPadding = displaySize - output.length();
-      if (extraPadding > 0)
-      {
-         char[] padData = new char[extraPadding];
-         Arrays.fill(padData, fillChar);
-         output.append(padData);
-      }
-
-      return output.toString();
    }
 
    public void clear()
    {
-      _rowCount = 0;
-      _text.setLength(0);
+      this._rowCount = 0;
+      this.text = null;
    }
 
    public int getRowCount()
    {
-      return _rowCount;
+      return this._rowCount;
    }
 
    public String getText()
    {
-      return _text.toString();
+      close();
+      return "n/a";
+   }
+
+   public void close()
+   {
+      if (this.text == null)
+      {
+         this.text = this.t.render();
+      }
+      this._resultAsTextLineCallback.addLine(this.text);
+   }
+
+   private CellStyle LEFT_ALIGN = new CellStyle(HorizontalAlign.LEFT, AbbreviationStyle.CROP, NullStyle.NULL_TEXT);
+   private CellStyle CENTER_ALIGN = new CellStyle(HorizontalAlign.CENTER, AbbreviationStyle.CROP, NullStyle.NULL_TEXT);
+   private CellStyle RIGHT_ALIGN = new CellStyle(HorizontalAlign.RIGHT, AbbreviationStyle.CROP, NullStyle.NULL_TEXT);
+
+   private CellStyle getCellStyle(final ColumnDisplayDefinition def)
+   {
+      if (def.getSqlType() == Types.BIGINT || //
+            def.getSqlType() == Types.BIT || //
+            def.getSqlType() == Types.DECIMAL || //
+            def.getSqlType() == Types.DOUBLE || //
+            def.getSqlType() == Types.FLOAT || //
+            def.getSqlType() == Types.INTEGER || //
+            def.getSqlType() == Types.NUMERIC || //
+            def.getSqlType() == Types.REAL || //
+            def.getSqlType() == Types.SMALLINT || //
+            def.getSqlType() == Types.TINYINT)
+      {
+         return RIGHT_ALIGN;
+      }
+      return LEFT_ALIGN;
    }
 }

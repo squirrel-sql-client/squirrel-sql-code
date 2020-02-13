@@ -132,6 +132,7 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
       {
          resultAsText.addRow(row);
       }
+      resultAsText.close();
    }
 
    @Override

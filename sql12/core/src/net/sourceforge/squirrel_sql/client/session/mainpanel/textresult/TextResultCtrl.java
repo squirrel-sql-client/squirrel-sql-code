@@ -33,6 +33,7 @@ public class TextResultCtrl implements LazyTabControllerCtrl
       {
          _dataSetTextAreaController.addRow(row);
       }
+      _dataSetTextAreaController.close();
 
       _dataSetTextAreaController.moveToTop();
    }

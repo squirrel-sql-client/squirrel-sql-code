@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Improved text result layout:
+  - Numbers are aligned right, all other column types align left.
+  - Column widths are automatically computed, based on column name and row data.
+ Thanks to Alarcón Vladimir for the merge request.
+
 Alias dialog:
   - On the occasion of discussions in feature requests #25 and #587: "Auto logon" checkbox has a tooltip and an information button on security.
   - Minor UI changes.

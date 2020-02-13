@@ -50,6 +50,12 @@ public class DataSetTextAreaController
 		_resultAsText.addRow(row);
 	}
 
+	public void close()
+	{
+		_resultAsText.close();
+	}
+
+	
 	public void moveToTop()
 	{
 		_outText.select(0, 0);

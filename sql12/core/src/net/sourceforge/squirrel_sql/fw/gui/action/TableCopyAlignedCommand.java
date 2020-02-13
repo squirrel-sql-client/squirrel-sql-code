@@ -78,7 +78,8 @@ public class TableCopyAlignedCommand
 
          resultAsText.addRow(row);
       }
-
+      resultAsText.close();
+      
       CopyToClipboardUtil.copyToClip(text);
    }
 }

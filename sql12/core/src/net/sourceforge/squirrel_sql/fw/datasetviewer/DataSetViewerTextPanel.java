@@ -78,6 +78,11 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 		_dataSetTextAreaController.addRow(row);
 	}
 
+  protected void close()
+	{
+	  _dataSetTextAreaController.close();
+	}
+
 	public void moveToTop()
 	{
 		_dataSetTextAreaController.moveToTop();
