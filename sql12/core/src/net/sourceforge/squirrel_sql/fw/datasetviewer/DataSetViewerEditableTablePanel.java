@@ -375,7 +375,9 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// indexes to delete are given in the SortableTableModel row numbers,
 		// so we must work through that model model to actually do the delete.
 		DataSetViewerTable myJTable = (DataSetViewerTable) getComponent();
-		((SortableTableModel) myJTable.getModel()).deleteRows(rows);
+		SortableTableModel sortableTableModel = (SortableTableModel) myJTable.getModel();
+		sortableTableModel.deleteRows(rows);
+		sortableTableModel.fireTableDataChanged();
       myJTable.clearSelection();
 		myJTable.invalidate();
 		myJTable.repaint();

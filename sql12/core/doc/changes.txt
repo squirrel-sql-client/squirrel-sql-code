@@ -95,6 +95,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+Improved table repaint behaviour when rows are deleted.
+
 Corrected window title of "Color selected rows" dialog. See right mouse menu of SQL result tables.
 
 UI problem at "Executing SQL" tab (displayed prior to SQL Result tab):
