@@ -88,9 +88,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    /** Collection of <TT>SQLDriverProperty</TT> objects for this alias. */
    private SQLDriverPropertyCollection _driverProps = new SQLDriverPropertyCollection();
 
-   /** Object to handle property change events. */
-   private transient PropertyChangeReporter _propChgReporter;
-
    private SQLAliasSchemaProperties _schemaProperties = new SQLAliasSchemaProperties();
 
    private SQLAliasColorProperties _colorProperties = new SQLAliasColorProperties();
@@ -197,16 +194,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       return _name.compareTo(((ISQLAlias)rhs).getName());
    }
 
-   public void addPropertyChangeListener(PropertyChangeListener listener)
-   {
-      getPropertyChangeReporter().addPropertyChangeListener(listener);
-   }
-
-   public void removePropertyChangeListener(PropertyChangeListener listener)
-   {
-      getPropertyChangeReporter().removePropertyChangeListener(listener);
-   }
-
    /**
     * Returns <CODE>true</CODE> if this object is valid.<P>
     * Implementation for <CODE>IPersistable</CODE>.
@@ -253,12 +240,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    public void setPassword(String password)
    {
       String data = getString(password);
-      if ( false == Utilities.equalsRespectNull(_password, data))
-      {
-         final String oldValue = _password;
-         _password = data;
-         getPropertyChangeReporter().firePropertyChange(IPropNames.PASSWORD,oldValue, _password);
-      }
+      _password = data;
    }
 
    @Override
@@ -294,12 +276,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     */
    public void setAutoLogon(boolean value)
    {
-      if (_autoLogon != value)
-      {
-         _autoLogon = value;
-         getPropertyChangeReporter().firePropertyChange(IPropNames.AUTO_LOGON,
-                                    !_autoLogon, _autoLogon);
-      }
+      _autoLogon = value;
    }
 
    /**
@@ -321,12 +298,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     */
    public void setConnectAtStartup(boolean value)
    {
-      if (_connectAtStartup != value)
-      {
-         _connectAtStartup = value;
-         getPropertyChangeReporter().firePropertyChange(IPropNames.CONNECT_AT_STARTUP,
-                                    !_connectAtStartup, _connectAtStartup);
-      }
+      _connectAtStartup = value;
    }
 
    /**
@@ -349,13 +321,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       {
          throw new ValidationException(IStrings.ERR_BLANK_NAME);
       }
-      if (_name != data)
-      {
-         final String oldValue = _name;
-         _name = data;
-         getPropertyChangeReporter().firePropertyChange(IPropNames.NAME,
-                                    oldValue, _name);
-      }
+      _name = data;
    }
 
    public void setDriverIdentifier(IIdentifier data)
@@ -365,13 +331,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       {
          throw new ValidationException(IStrings.ERR_BLANK_DRIVER);
       }
-      if (_driverId != data)
-      {
-         final IIdentifier oldValue = _driverId;
-         _driverId = data;
-         getPropertyChangeReporter().firePropertyChange(IPropNames.DRIVER,
-                                    oldValue, _driverId);
-      }
+      _driverId = data;
    }
 
    public void setUrl(String url) throws ValidationException
@@ -381,36 +341,18 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       {
          throw new ValidationException(IStrings.ERR_BLANK_URL);
       }
-      if (_url != data)
-      {
-         final String oldValue = _url;
-         _url = data;
-         getPropertyChangeReporter().firePropertyChange(IPropNames.URL,
-                                       oldValue, _url);
-      }
+      _url = data;
    }
 
    public void setUserName(String userName)
    {
       String data = getString(userName);
-      if (_userName != data)
-      {
-         final String oldValue = _userName;
-         _userName = data;
-         getPropertyChangeReporter().firePropertyChange(IPropNames.USER_NAME,
-                                    oldValue, _userName);
-      }
+      _userName = data;
    }
 
    public void setUseDriverProperties(boolean value)
    {
-      if (_useDriverProperties != value)
-      {
-         final boolean oldValue = _useDriverProperties;
-         _useDriverProperties = value;
-         getPropertyChangeReporter().firePropertyChange(IPropNames.USE_DRIVER_PROPERTIES,
-                                    oldValue, _useDriverProperties);
-      }
+      _useDriverProperties = value;
    }
 
    /**
@@ -450,14 +392,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       }
    }
 
-   private synchronized PropertyChangeReporter getPropertyChangeReporter()
-   {
-      if (_propChgReporter == null)
-      {
-         _propChgReporter = new PropertyChangeReporter(this);
-      }
-      return _propChgReporter;
-   }
 
    private String getString(String data)
    {

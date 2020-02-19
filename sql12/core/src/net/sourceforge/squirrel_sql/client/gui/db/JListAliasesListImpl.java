@@ -1,16 +1,17 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.ListAliasColorSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 
 /*
@@ -40,19 +41,17 @@ import java.awt.event.MouseEvent;
 public class JListAliasesListImpl extends BaseList implements IAliasesList
 {
    private static final String PREF_KEY_SELECTED_ALIAS_INDEX = "Squirrel.selAliasIndex";
-   
-   /** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AliasesList.class);
 
-   private IApplication _app;
-   /** Model for this component. */
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasesList.class);
+
+   /**
+    * Model for this component.
+    */
 	private final AliasesListModel _model;
 
 	public JListAliasesListImpl(IApplication app, AliasesListModel aliasesListModel)
 	{
       super(aliasesListModel, app);
-      _app = app;
       _model = aliasesListModel;
 		getList().setLayout(new BorderLayout());
 
@@ -65,49 +64,58 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 			{
 				// Not required.
 			}
+
 			public void intervalAdded(ListDataEvent evt)
 			{
-				final int idx = evt.getIndex0();
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						getList().clearSelection();
-						getList().setSelectedIndex(idx);
-					}
-				});
+				onIntervalAdded(evt);
 			}
+
 			public void intervalRemoved(ListDataEvent evt)
 			{
-				final int idx = evt.getIndex0();
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						getList().clearSelection();
-						int modelSize = getList().getModel().getSize();
-						if (idx < modelSize)
-						{
-							getList().setSelectedIndex(idx);
-						}
-						else if (modelSize > 0)
-						{
-							getList().setSelectedIndex(modelSize - 1);
-						}
-					}
-				});
+				onIntervalRemoved(evt);
 			}
 		});
+	}
+
+	private void onIntervalRemoved(ListDataEvent evt)
+	{
+		final int idx = evt.getIndex0();
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				getList().clearSelection();
+				int modelSize = getList().getModel().getSize();
+				if (idx < modelSize)
+				{
+					getList().setSelectedIndex(idx);
+				}
+				else if (modelSize > 0)
+				{
+					getList().setSelectedIndex(modelSize - 1);
+				}
+			}
+		});
+	}
+
+	private void onIntervalAdded(ListDataEvent evt)
+	{
+
+		final int idx = evt.getIndex0();
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				getList().clearSelection();
+				getList().setSelectedIndex(idx);
+			}
+		});
+	}
 
 
-
-
-   }
-
-
-
-   /**
+	/**
 	 * Return the <TT>ISQLAlias</TT> that is currently selected.
+    *
     * @param evt
     */
 	public SQLAlias getSelectedAlias(MouseEvent evt)
@@ -146,11 +154,10 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 
       if (null != toDel)
       {
-         if (Dialogs.showYesNo(_app.getMainFrame(), s_stringMgr.getString("JListAliasesListImpl.confirmDelete", toDel.getName())))
+         if (Dialogs.showYesNo(Main.getApplication().getMainFrame(), s_stringMgr.getString("JListAliasesListImpl.confirmDelete", toDel.getName())))
          {
             _model.remove(getList().getSelectedIndex());
-            _app.getDataCache().removeAlias(toDel);
-
+            Main.getApplication().getDataCache().removeAlias(toDel);
          }
       }
    }
@@ -220,6 +227,5 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 	@Override
 	public void aliasChanged(ISQLAlias sqlAlias)
 	{
-
 	}
 }

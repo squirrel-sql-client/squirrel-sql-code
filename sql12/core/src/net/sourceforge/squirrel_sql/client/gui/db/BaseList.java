@@ -15,9 +15,8 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public abstract class BaseList implements IBaseList
 {
+   private ArrayList<ListDataListener> _listeners = new ArrayList<>();
 
-
-   private ArrayList<ListDataListener> _listeners = new ArrayList<ListDataListener>();
    private JList _list = new JList()
    {
       public String getToolTipText(MouseEvent event)

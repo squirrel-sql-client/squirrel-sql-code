@@ -128,9 +128,6 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	SQLDriverPropertyCollection getDriverPropertiesClone();
 	void setDriverProperties(SQLDriverPropertyCollection value);
 
-	void addPropertyChangeListener(PropertyChangeListener listener);
-	void removePropertyChangeListener(PropertyChangeListener listener);
-
 	boolean isEncryptPassword();
 	void setEncryptPassword(boolean b);
 

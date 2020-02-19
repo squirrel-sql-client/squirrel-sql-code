@@ -6,6 +6,15 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Aliases can be selectively be exported and imported into some other SQuirreL instance/installation:
+ - To export Aliases goto menu Aliases --> "Import/Export Aliases".
+   This opens the import/export window to which Aliases can be dragged and dropped.
+   These Aliases can be saved into an export file.
+ - To export Aliases goto menu Aliases --> "Import/Export Aliases".
+   In the import/export window choose the Import button and navigate to an previously exported file.
+   This will first open a dialog where drivers must be assigned.
+   Then the imported Aliases can be dragged and dropped into SQuirrel's Aliases tree.
+
 Improved text result layout:
   - Numbers are aligned right, all other column types align left.
   - Column widths are automatically computed, based on column name and row data.

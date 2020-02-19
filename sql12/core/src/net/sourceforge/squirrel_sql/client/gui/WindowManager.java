@@ -66,6 +66,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.PasteAliasFolderActi
 import net.sourceforge.squirrel_sql.client.mainframe.action.ShowDriverWebsiteAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.SortAliasesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ToggleTreeViewAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.TransferAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
@@ -885,6 +886,7 @@ public class WindowManager
 		actions.add(new PasteAliasFolderAction(_app, al));
 		actions.add(new CollapseAllAliasFolderAction(_app, al));
 		actions.add(new ExpandAllAliasFolderAction(_app, al));
+		actions.add(new TransferAliasAction(al));
 
       _aliasesListWindow = new AliasesListInternalFrame(_app, al);
 

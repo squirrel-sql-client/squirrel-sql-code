@@ -166,6 +166,11 @@ public class XMLBeanReader implements Iterable<Object>
 		return _beanColl.iterator();
 	}
 
+	public <T> List<T> getBeans()
+	{
+		return (List<T>) _beanColl;
+	}
+
 	private Object loadBean(IXMLElement beanElement) throws XMLException
 	{
 		String beanClassName = null;

@@ -1,52 +1,65 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.AliasTreeColorer;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorSelectionHandler;
+import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.AliasDndExport;
+import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.AliasDndImport;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
-import javax.swing.*;
-import javax.swing.tree.*;
-import javax.swing.event.ListDataListener;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
-import java.awt.*;
+import javax.swing.event.ListDataListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(JTreeAliasesListImpl.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(JTreeAliasesListImpl.class);
 
-	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(JTreeAliasesListImpl.class);
+
    private TreeDnDHandler _treeDnDHandler;
    private AliasSortState _aliasSortState;
-
 
    private JTree _tree = new JTree()
    {
 		public String getToolTipText(MouseEvent event)
       {
-         return JTreeAliasesListImpl.this.getToolTipText(event);    //To change body of overridden methods use File | Settings | File Templates.
+         return JTreeAliasesListImpl.this.getToolTipText(event);
       }
    };
 
@@ -65,6 +78,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    {
       _app = app;
       _aliasesListModel = aliasesListModel;
+
       _tree.setRootVisible(false);
       DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
       DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
@@ -147,13 +161,55 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          public void dndExecuted() {}
 
          @Override
-         public ArrayList<DefaultMutableTreeNode> createPasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath)
+         public ArrayList<DefaultMutableTreeNode> getPasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath)
          {
             return null;
+         }
+
+         @Override
+         public TreePath[] getPasteTreeNodesFromInternalTransfer(DropTargetDropEvent dtde, TreePath targetPath, TreePath[] selectionPaths)
+         {
+            return onGetPasteTreeNodesFromInternalTransfer(dtde, targetPath, selectionPaths);
          }
       };
 
       _treeDnDHandler = new TreeDnDHandler(_tree, treeDnDHandlerCallback);
+   }
+
+   private TreePath[] onGetPasteTreeNodesFromInternalTransfer(DropTargetDropEvent dtde, TreePath targetPath, TreePath[] selectionPaths)
+   {
+      try
+      {
+         Object transferData = dtde.getTransferable().getTransferData(dtde.getTransferable().getTransferDataFlavors()[0]);
+         if (transferData instanceof AliasDndExport)
+         {
+            // AliasDndExport was created here, see method createAliasDndExport() in this class.
+            // So its just the usual In-Tree DnD.
+            return _tree.getSelectionPaths();
+         }
+         else if (transferData instanceof AliasDndImport)
+         {
+            ArrayList<DefaultMutableTreeNode> nodesToImport = ((AliasDndImport) transferData).getNodesToImport();
+
+            ArrayList<TreePath> ret = new ArrayList<>();
+
+            for (DefaultMutableTreeNode defaultMutableTreeNode : nodesToImport)
+            {
+               DefaultMutableTreeNode copiedNode = createCopy(defaultMutableTreeNode);
+               ret.add(new TreePath(copiedNode));
+            }
+
+            return ret.toArray(new TreePath[0]);
+         }
+         else
+         {
+            return new TreePath[0];
+         }
+      }
+      catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
    }
 
    private boolean onNodeAcceptsKids(DefaultMutableTreeNode selNode)
@@ -226,7 +282,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          aliasFolderState.applyNodes(rootNode, _aliasesListModel);
       }
 
-      ArrayList<SQLAlias> unknownAliases = new ArrayList<SQLAlias>();
+      ArrayList<SQLAlias> unknownAliases = new ArrayList<>();
       for (int i = 0; i < _aliasesListModel.size(); i++)
       {
          SQLAlias sqlAlias = (SQLAlias) _aliasesListModel.get(i);
@@ -325,7 +381,10 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       for (DefaultMutableTreeNode delNode : delNodes)
       {
-         treeModel.removeNodeFromParent(delNode);
+         if (null != delNode.getParent())
+         {
+            treeModel.removeNodeFromParent(delNode);
+         }
       }
 
 
@@ -652,7 +711,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       }
       else if(selNode.getUserObject() instanceof AliasFolder)
       {
-         ArrayList<DefaultMutableTreeNode> buf = new ArrayList<DefaultMutableTreeNode>();
+         ArrayList<DefaultMutableTreeNode> buf = new ArrayList<>();
 
          for (int i = 0; i < selNode.getChildCount(); i++)
          {
@@ -805,7 +864,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
                execCopyToPaste(_aliasPasteState.getPathsToPaste(), _tree.getSelectionPath());
                break;
             case CUT:
-               _treeDnDHandler.execCut(_aliasPasteState.getPathsToPaste(), _tree.getSelectionPath(), false);
+               _treeDnDHandler.execCopyOrMove(_aliasPasteState.getPathsToPaste(), _tree.getSelectionPath(), false);
                break;
          }
       }
@@ -870,50 +929,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       _tree.setSelectionPaths(newSelPaths);
    }
 
-   private DefaultMutableTreeNode createCopy(DefaultMutableTreeNode nodeToCopy)
-   {
-      try
-      {
-         if(nodeToCopy.getUserObject() instanceof SQLAlias)
-         {
-            SQLAlias source = (SQLAlias) nodeToCopy.getUserObject();
-            final IIdentifierFactory factory = IdentifierFactory.getInstance();
-            SQLAlias newAlias = _app.getDataCache().createAlias(factory.createIdentifier());
-            newAlias.assignFrom(source, false);
-
-            try
-            {
-               _dontReactToAliasAdd = true;
-               _app.getDataCache().addAlias(newAlias);
-            }
-            finally
-            {
-               _dontReactToAliasAdd = false;
-            }
-            return new DefaultMutableTreeNode(newAlias);
-         }
-         else if(nodeToCopy.getUserObject() instanceof AliasFolder)
-         {
-            DefaultMutableTreeNode ret = GUIUtils.createFolderNode((AliasFolder) nodeToCopy.getUserObject());
-
-            for (int i = 0; i < nodeToCopy.getChildCount(); i++)
-            {
-               ret.add(createCopy((DefaultMutableTreeNode) nodeToCopy.getChildAt(i)));
-            }
-            return ret;
-         }
-         else
-         {
-            throw AliasTreeUtil.createUnkonownUserObjectException(nodeToCopy);
-         }
-
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-
    public void copyToPasteSelected()
    {
       _aliasPasteState.setPathsToPaste(_tree.getSelectionPaths());
@@ -946,4 +961,74 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          ((DefaultTreeModel)_tree.getModel()).nodeChanged(node);
       }
    }
+
+   public JTree getTree()
+   {
+      return _tree;
+   }
+
+   public AliasDndExport createAliasDndExport()
+   {
+      return new AliasDndExport(_tree.getSelectionPaths());
+   }
+
+
+   private DefaultMutableTreeNode createCopy(DefaultMutableTreeNode nodeToCopy)
+   {
+      try
+      {
+         if(nodeToCopy.getUserObject() instanceof SQLAlias)
+         {
+            SQLAlias source = (SQLAlias) nodeToCopy.getUserObject();
+            SQLAlias newAlias = copySqlAlias(source);
+            return new DefaultMutableTreeNode(newAlias);
+         }
+         else if(nodeToCopy.getUserObject() instanceof AliasFolder)
+         {
+            DefaultMutableTreeNode ret = GUIUtils.createFolderNode(nodeToCopy.getUserObject());
+
+            for (int i = 0; i < nodeToCopy.getChildCount(); i++)
+            {
+               ret.add(createCopy((DefaultMutableTreeNode) nodeToCopy.getChildAt(i)));
+            }
+            return ret;
+         }
+         else
+         {
+            throw AliasTreeUtil.createUnknownUserObjectException(nodeToCopy);
+         }
+
+      }
+      catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   private SQLAlias copySqlAlias(SQLAlias source)
+   {
+      try
+      {
+         IIdentifierFactory factory = IdentifierFactory.getInstance();
+         SQLAlias newAlias = Main.getApplication().getDataCache().createAlias(factory.createIdentifier());
+         newAlias.assignFrom(source, false);
+
+         try
+         {
+            _dontReactToAliasAdd = true;
+            Main.getApplication().getDataCache().addAlias(newAlias);
+         }
+         finally
+         {
+            _dontReactToAliasAdd = false;
+         }
+
+         return newAlias;
+      }
+      catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
 }

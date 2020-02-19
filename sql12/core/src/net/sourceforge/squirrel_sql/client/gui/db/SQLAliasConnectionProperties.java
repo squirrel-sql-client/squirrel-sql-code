@@ -25,8 +25,6 @@ import java.io.Serializable;
 
 public class SQLAliasConnectionProperties implements Serializable
 {
-   private static final long serialVersionUID = 1L;
-
    /** Whether or not to enable connection keep alives */
    private boolean enableConnectionKeepAlive = false;
    

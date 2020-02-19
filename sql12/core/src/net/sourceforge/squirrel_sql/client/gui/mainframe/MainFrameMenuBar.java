@@ -400,6 +400,8 @@ final class MainFrameMenuBar extends JMenuBar
       addToMenu(rsrc, PasteAliasFolderAction.class, menu);
       addToMenu(rsrc, CollapseAllAliasFolderAction.class, menu);
       addToMenu(rsrc, ExpandAllAliasFolderAction.class, menu);
+		menu.addSeparator();
+      addToMenu(rsrc, TransferAliasAction.class, menu);
 		return menu;
 	}
 

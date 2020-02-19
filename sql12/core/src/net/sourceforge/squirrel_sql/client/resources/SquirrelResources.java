@@ -148,6 +148,12 @@ public class SquirrelResources extends Resources
 		String ITALIC = "italic";
 		String PEN = "pen";
 		String FILL = "fill";
+
+		String SAVE = "save";
+		String OPEN = "open";
+
+		String LOCK = "lock";
+		String UNLOCK = "unlock";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

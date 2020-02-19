@@ -22,9 +22,9 @@ import java.io.Serializable;
  */
 public interface IIdentifier extends Serializable
 {
-	public boolean equals(Object rhs);
+	boolean equals(Object rhs);
 
-	public String toString();
+	String toString();
 
-	public int hashCode();
+	int hashCode();
 }

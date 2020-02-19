@@ -81,7 +81,10 @@ public class ToggleComponentHolder
       }
    }
 
-
+   public void doClick()
+   {
+      _toggleables.get(0).doClick();
+   }
 
 
    private class ActionProxy implements Action

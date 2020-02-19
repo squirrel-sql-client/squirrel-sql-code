@@ -1,9 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import java.util.List;
@@ -21,22 +17,22 @@ public class SimpleDataSet implements IDataSet
       _columnDisplayDefinitions = columnDisplayDefinitions;
    }
 
-   public int getColumnCount() throws DataSetException
+   public int getColumnCount()
    {
       return _columnDisplayDefinitions.length;
    }
 
-   public DataSetDefinition getDataSetDefinition() throws DataSetException
+   public DataSetDefinition getDataSetDefinition()
    {
       return new DataSetDefinition(_columnDisplayDefinitions);
    }
 
-   public boolean next(IMessageHandler msgHandler) throws DataSetException
+   public boolean next(IMessageHandler msgHandler)
    {
       return ++_curIx < _allRows.size();
    }
 
-   public Object get(int columnIndex) throws DataSetException
+   public Object get(int columnIndex)
    {
       return _allRows.get(_curIx)[columnIndex];
    }

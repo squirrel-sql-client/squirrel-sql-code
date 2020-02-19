@@ -8,12 +8,17 @@ import java.util.ArrayList;
 
 public interface TreeDnDHandlerCallback
 {
-   public boolean nodeAcceptsKids(DefaultMutableTreeNode selNode);
+   boolean nodeAcceptsKids(DefaultMutableTreeNode selNode);
 
    void dndExecuted();
 
    /**
     * Will only be called when external drop is allowed.
     */
-   ArrayList<DefaultMutableTreeNode> createPasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath);
+   ArrayList<DefaultMutableTreeNode> getPasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath);
+
+   default TreePath[] getPasteTreeNodesFromInternalTransfer(DropTargetDropEvent dtde, TreePath targetPath, TreePath[] selectionPaths)
+   {
+      return selectionPaths;
+   }
 }

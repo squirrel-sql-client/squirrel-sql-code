@@ -12,9 +12,6 @@ import net.sourceforge.squirrel_sql.fw.gui.ToggleComponentHolder;
 
 public class ToggleTreeViewAction extends SquirrelAction implements IToggleAction
 {
-
-	private static final long serialVersionUID = 2767325027149049773L;
-	
 	private ToggleComponentHolder _toogleComponentHolder;
    private IToogleableAliasesList _aliasesList;
 

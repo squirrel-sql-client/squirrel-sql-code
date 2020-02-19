@@ -510,7 +510,7 @@ public class RecentFilesController
          }
 
          @Override
-         public ArrayList<DefaultMutableTreeNode> createPasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath)
+         public ArrayList<DefaultMutableTreeNode> getPasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath)
          {
             return onCreatePasteTreeNodesFromExternalTransfer(dtde, targetPath);
          }

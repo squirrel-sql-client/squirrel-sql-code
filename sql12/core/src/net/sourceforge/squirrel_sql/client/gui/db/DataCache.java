@@ -51,9 +51,9 @@ import java.util.List;
  */
 public class DataCache
 {
-   /** Internationalized strings for this class. */
-   private final static StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(DataCache.class);
+   private final static StringManager s_stringMgr = StringManagerFactory.getStringManager(DataCache.class);
+
+   private final static ILogger s_log = LoggerController.createLogger(DataCache.class);
 
    /** Class for objects that define aliases to JDBC data sources. */
    private final static Class<SQLAlias> SQL_ALIAS_IMPL = SQLAlias.class;
@@ -61,9 +61,6 @@ public class DataCache
    /** Class for objects that define JDBC drivers. */
    private final static Class<SQLDriver> SQL_DRIVER_IMPL = SQLDriver.class;
 
-   /** Logger for this class. */
-   private final static ILogger s_log =
-               LoggerController.createLogger(DataCache.class);
 
    /** Driver manager. */
    private final SQLDriverManager _driverMgr;
@@ -281,6 +278,12 @@ public class DataCache
    {
       return _cache.getAllForClassAsList(SQL_ALIAS_IMPL);
    }
+
+   public List<SQLDriver> getDriverList()
+   {
+      return _cache.getAllForClassAsList(SQL_DRIVER_IMPL);
+   }
+
 
 
    public HashMap<String, ArrayList<ISQLAlias>> aliasesByUrl()

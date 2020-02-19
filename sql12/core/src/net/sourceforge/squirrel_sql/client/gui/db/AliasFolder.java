@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-public class AliasFolder
+import java.io.Serializable;
+
+public class AliasFolder implements Serializable
 {
    public static final int NO_COLOR_RGB = -1;
 

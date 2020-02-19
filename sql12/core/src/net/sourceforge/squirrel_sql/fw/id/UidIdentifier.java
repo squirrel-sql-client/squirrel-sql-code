@@ -22,8 +22,6 @@ import java.io.Serializable;
 
 public class UidIdentifier implements IIdentifier, Serializable
 {
-   private static final long serialVersionUID = -8010376070171401650L;
-
    public interface IPropertyNames
    {
       String STRING = "string";
@@ -42,7 +40,7 @@ public class UidIdentifier implements IIdentifier, Serializable
       boolean rc = false;
       if (rhs != null && rhs.getClass().equals(getClass()))
       {
-         rc = ((UidIdentifier)rhs).toString().equals(toString());
+         rc = rhs.toString().equals(toString());
       }
       return rc;
    }

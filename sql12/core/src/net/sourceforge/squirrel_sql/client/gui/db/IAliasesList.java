@@ -29,7 +29,7 @@ public interface IAliasesList extends IBaseList
 	 * Return the <TT>ISQLAlias</TT> that is currently selected.
     * @param evt
     */
-	public SQLAlias getSelectedAlias(MouseEvent evt);
+	SQLAlias getSelectedAlias(MouseEvent evt);
 
    void sortAliases();
 

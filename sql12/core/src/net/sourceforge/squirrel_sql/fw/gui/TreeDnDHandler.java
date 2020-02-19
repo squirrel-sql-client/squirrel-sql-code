@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
+import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.AliasDndExport;
+import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.AliasDndImport;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -10,16 +14,14 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.TooManyListenersException;
-import java.util.TreeSet;
 
 /**
- * If a tree is bssed upon DefaultTreeModel and DefaultMutableTreeNodes this class
+ * If a tree is based upon DefaultTreeModel and DefaultMutableTreeNodes this class
  * can handle default (Windows Explorer like) drag and drop.
  *
  * All one needs to do is to pass this class the tree itself and a callback that decides
- * whether droped nodes should be childeren or siblings of the node they where droped at.
+ * whether dropped nodes should be children or siblings of the node they where dropped at.
  *
  */
 public class TreeDnDHandler
@@ -68,38 +70,43 @@ public class TreeDnDHandler
 
    private void onDrop(DropTargetDropEvent dtde)
    {
-      TreePath[] toPaste;
-
-      TreePath targetPath = _tree.getClosestPathForLocation(dtde.getLocation().x, dtde.getLocation().y);
-
-      if(false == dtde.isLocalTransfer())
+      try
       {
-         if (false == _allowExternalDrop)
+         TreePath[] toPaste;
+
+         TreePath targetPath = _tree.getClosestPathForLocation(dtde.getLocation().x, dtde.getLocation().y);
+
+         if(false == dtde.isLocalTransfer())
          {
-            return;
+            if (false == _allowExternalDrop)
+            {
+               return;
+            }
+
+            ArrayList<DefaultMutableTreeNode> nodes = _treeDnDHandlerCallback.getPasteTreeNodesFromExternalTransfer(dtde, targetPath);
+
+            ArrayList<TreePath> buf = new ArrayList<>();
+            for (DefaultMutableTreeNode node : nodes)
+            {
+               buf.add(new TreePath(node));
+            }
+
+            toPaste = buf.toArray(new TreePath[0]);
+         }
+         else
+         {
+            toPaste = _treeDnDHandlerCallback.getPasteTreeNodesFromInternalTransfer(dtde, targetPath, _tree.getSelectionPaths());
          }
 
-         ArrayList<DefaultMutableTreeNode> nodes = _treeDnDHandlerCallback.createPasteTreeNodesFromExternalTransfer(dtde, targetPath);
-
-         ArrayList<TreePath> buf = new ArrayList<TreePath>();
-         for (DefaultMutableTreeNode node : nodes)
+         if(0 != (DnDConstants.ACTION_COPY_OR_MOVE & dtde.getDropAction()))
          {
-            buf.add(new TreePath(node));
+            execCopyOrMove(toPaste, targetPath, isPlaceAbove(dtde));
+            _treeDnDHandlerCallback.dndExecuted();
          }
-
-         toPaste = buf.toArray(new TreePath[buf.size()]);
       }
-      else
+      catch (Exception e)
       {
-         toPaste = _tree.getSelectionPaths();
-      }
-
-
-
-      if(0 != (DnDConstants.ACTION_COPY_OR_MOVE & dtde.getDropAction()))
-      {
-         execCut(toPaste, targetPath, isPlaceAbove(dtde));
-         _treeDnDHandlerCallback.dndExecuted();
+         throw Utilities.wrapRuntime(e);
       }
    }
 
@@ -125,11 +132,15 @@ public class TreeDnDHandler
    }
 
 
-   public void execCut(TreePath[] pathsToPaste, TreePath targetPath, boolean placeAbove)
+   /**
+    * - pathsToPaste will be appended to the target last path component of the targetPath or its previous sibling when placeAbove iss true.
+    * - The last path components of pathsToPaste will be removed from their previous parents only if those parents exist in the current tree.
+    */
+   public void execCopyOrMove(TreePath[] pathsToPaste, TreePath targetPath, boolean placeAbove)
    {
       DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
 
-      ArrayList<DefaultMutableTreeNode> cutNodes = new ArrayList<DefaultMutableTreeNode>();
+      ArrayList<DefaultMutableTreeNode> cutNodes = new ArrayList<>();
 
       if (null == targetPath)
       {
@@ -137,7 +148,7 @@ public class TreeDnDHandler
 
          if (_treeDnDHandlerCallback.nodeAcceptsKids(root))
          {
-            cutNodes = cutDragedNodes(pathsToPaste, targetPath, dtm);
+            cutNodes = cutDraggedNodes(pathsToPaste, targetPath, dtm);
 
             int[] childIndices = new int[cutNodes.size()];
             for (int i = 0; i < cutNodes.size(); i++)
@@ -154,7 +165,7 @@ public class TreeDnDHandler
 
          if (false == placeAbove && _treeDnDHandlerCallback.nodeAcceptsKids(selNode))
          {
-            cutNodes = cutDragedNodes(pathsToPaste, targetPath, dtm);
+            cutNodes = cutDraggedNodes(pathsToPaste, targetPath, dtm);
             for (int i = 0; i < cutNodes.size(); i++)
             {
                selNode.insert(cutNodes.get(i), 0);
@@ -166,7 +177,7 @@ public class TreeDnDHandler
             DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selNode.getParent();
             if (_treeDnDHandlerCallback.nodeAcceptsKids(parent))
             {
-               cutNodes = cutDragedNodes(pathsToPaste, targetPath, dtm);
+               cutNodes = cutDraggedNodes(pathsToPaste, targetPath, dtm);
                for (int i = 0; i < cutNodes.size(); i++)
                {
                   if (null == selNode.getPreviousSibling())
@@ -193,9 +204,9 @@ public class TreeDnDHandler
       _tree.setSelectionPaths(newSelPaths);
    }
 
-   private ArrayList<DefaultMutableTreeNode> cutDragedNodes(TreePath[] pathsToPaste, TreePath targetPath, DefaultTreeModel dtm)
+   private ArrayList<DefaultMutableTreeNode> cutDraggedNodes(TreePath[] pathsToPaste, TreePath targetPath, DefaultTreeModel dtm)
    {
-      ArrayList<DefaultMutableTreeNode> cutNodes = new ArrayList<DefaultMutableTreeNode>();
+      ArrayList<DefaultMutableTreeNode> cutNodes = new ArrayList<>();
 
       for (int i = 0; i < pathsToPaste.length; i++)
       {

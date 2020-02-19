@@ -96,19 +96,24 @@ public final class XMLBeanWriter
 
 	private void save(FileOutputStream fos) throws IOException
 	{
-		BufferedOutputStream os = new BufferedOutputStream(fos);
+		saveToOutputStream(fos);
+	}
+
+	public void saveToOutputStream(OutputStream os) throws IOException
+	{
+		BufferedOutputStream bos = new BufferedOutputStream(os);
 		try
 		{
-			XMLWriter wtr = new XMLWriter(os);
+			XMLWriter wtr = new XMLWriter(bos);
 			wtr.write(_rootElement, true);
 		}
 		finally
 		{
-			os.close();
+			bos.close();
 		}
 	}
 
-   public String getAsString() throws IOException
+	public String getAsString() throws IOException
    {
       StringWriter sw = new StringWriter();
       BufferedWriter bw = new BufferedWriter(sw);

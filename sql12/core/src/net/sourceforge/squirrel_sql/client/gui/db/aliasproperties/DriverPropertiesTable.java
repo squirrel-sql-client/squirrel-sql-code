@@ -37,14 +37,9 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-class DriverPropertiesTable extends JTable implements DriverPropertiesTableModel.IColumnIndexes,
-	MouseListener
+class DriverPropertiesTable extends JTable implements DriverPropertiesTableModel.IColumnIndexes, MouseListener
 {
-	private static final long serialVersionUID = 1834042774863321901L;
-
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DriverPropertiesTable.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriverPropertiesTable.class);
 
 	private DriverPropertiesPopupMenu popupMenu = null;
 

@@ -52,24 +52,15 @@ import java.beans.VetoableChangeListener;
  */
 public class AliasesListInternalFrame extends BaseListInternalFrame
 {
-
    private static final String PREF_KEY_VIEW_ALIASES_AS_TREE = "Squirrel.viewAliasesAsTree";
 
-	private static final long serialVersionUID = 1L;
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasesListInternalFrame.class);
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AliasesListInternalFrame.class);
-
-	/** Application API. */
 	private IApplication _app;
 
 	/** User Interface facory. */
 	private UserInterfaceFactory _uiFactory;
 
-   /**
-	 * ctor.
-	 */
 	public AliasesListInternalFrame(IApplication app, IAliasesList list)
 	{
 		super(new UserInterfaceFactory(app, list), app);
@@ -226,14 +217,10 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          _pm.add(actions.get(PasteAliasFolderAction.class));
          _pm.add(actions.get(CollapseAllAliasFolderAction.class));
          _pm.add(actions.get(ExpandAllAliasFolderAction.class));
+         _pm.addSeparator();
+         _pm.add(actions.get(TransferAliasAction.class));
 
-         app.addApplicationListener(new ApplicationListener()
-         {
-            public void saveApplicationState()
-            {
-               onSaveApplicationState();
-            }
-         });
+         app.addApplicationListener(() -> onSaveApplicationState());
 
          SwingUtilities.invokeLater(
             new Runnable()
@@ -353,6 +340,8 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          _tb.add(actions.get(PasteAliasFolderAction.class));
          _tb.add(actions.get(CollapseAllAliasFolderAction.class));
          _tb.add(actions.get(ExpandAllAliasFolderAction.class));
+         _tb.addSeparator();
+         _tb.add(actions.get(TransferAliasAction.class));
 		}
 
 		public SquirrelPreferences getPreferences()
