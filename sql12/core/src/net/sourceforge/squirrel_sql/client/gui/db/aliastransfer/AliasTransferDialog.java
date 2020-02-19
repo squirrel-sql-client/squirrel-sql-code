@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -57,6 +58,11 @@ public class AliasTransferDialog extends JDialog
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,0), 0,0);
       btnImport = new JButton(s_stringMgr.getString("AliasTransferDialog.import.button"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.OPEN));
       ret.add(btnImport, gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,0), 0,0);
+      SmallToolTipInfoButton info = new SmallToolTipInfoButton(s_stringMgr.getString("AliasTransferDialog.import.export.description"), 20000);
+      ret.add(info.getButton(), gbc);
+
       return ret;
    }
 }
