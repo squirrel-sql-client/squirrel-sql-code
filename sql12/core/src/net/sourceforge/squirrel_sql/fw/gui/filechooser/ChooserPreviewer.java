@@ -157,7 +157,7 @@ class ChooserPreviewer extends JComponent
 		{
 			try
 			{
-				text = FileManagementUtil.readFileAsString(file);
+				text = FileManagementUtil.readFileAsString(file, 15000);
 			}
 			catch (Exception e)
 			{

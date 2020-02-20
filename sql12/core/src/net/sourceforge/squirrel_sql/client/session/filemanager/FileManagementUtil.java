@@ -12,6 +12,11 @@ public class FileManagementUtil
 {
    public static StringBuffer readFile(File file) throws IOException
    {
+      return readFile(file, null);
+   }
+
+   public static StringBuffer readFile(File file, Integer maxLen) throws IOException
+   {
       StringBuffer sb = new StringBuffer();
 
       try(FileInputStream fis = new FileInputStream(file);
@@ -22,6 +27,12 @@ public class FileManagementUtil
          while (iRead != -1)
          {
             sb.append(new String(bytes, 0, iRead));
+
+            if(null != maxLen && sb.length() > maxLen)
+            {
+               break;
+            }
+
             iRead = bis.read(bytes);
          }
       }
@@ -30,9 +41,15 @@ public class FileManagementUtil
 
    public static String readFileAsString(File file)
    {
+      return readFileAsString(file, null);
+   }
+
+
+   public static String readFileAsString(File file, Integer maxLen)
+   {
       try
       {
-         return StringUtilities.removeCarriageReturn(readFile(file).toString());
+         return StringUtilities.removeCarriageReturn(readFile(file, maxLen).toString());
       }
       catch (IOException e)
       {

@@ -104,6 +104,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+Limited preview size in file choosers to 15000 characters.
+
 Improved table repaint behaviour when rows are deleted.
 
 Corrected window title of "Color selected rows" dialog. See right mouse menu of SQL result tables.

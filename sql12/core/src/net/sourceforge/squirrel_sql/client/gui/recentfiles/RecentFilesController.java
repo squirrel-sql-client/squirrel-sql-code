@@ -477,7 +477,7 @@ public class RecentFilesController
       {
          try
          {
-            text = FileManagementUtil.readFileAsString(fileWrapper.getFile());
+            text = FileManagementUtil.readFileAsString(fileWrapper.getFile(), 15000);
          }
          catch (Exception e)
          {
