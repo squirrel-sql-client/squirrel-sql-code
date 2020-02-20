@@ -19,12 +19,15 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * This class will display the source for an Oracle object.
@@ -33,10 +36,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
  */
 public class ObjectSourceTab extends BaseSourceTab
 {
-	/** SQL that retrieves the source of a stored procedure. */
-	private static String SQL =
-		"select text from sys.all_source where type = ?" + " and owner = ? and name = ? order by line";
-
 	private final String _columnData;
 
 	public ObjectSourceTab(String columnData, String hint)
@@ -51,16 +50,55 @@ public class ObjectSourceTab extends BaseSourceTab
 		_columnData = columnData;
 	}
 
+
+	@Override
 	protected PreparedStatement createStatement() throws SQLException
 	{
-		final ISession session = getSession();
-		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
+		return null;
+	}
 
-		ISQLConnection conn = session.getSQLConnection();
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
-		pstmt.setString(1, ObjectSourceTab.this._columnData);
-		pstmt.setString(2, doi.getSchemaName());
-		pstmt.setString(3, doi.getSimpleName());
-		return pstmt;
+	@Override
+	protected String getSourceCode(ISession session, PreparedStatement stmt)
+	{
+		try
+		{
+			ISQLConnection conn = session.getSQLConnection();
+			Statement stat = conn.createStatement();
+
+			IDatabaseObjectInfo doi = getDatabaseObjectInfo();
+
+			String sql1 = "select text from sys.dba_source " +
+					"where type = '" + _columnData + "' " +
+					"and owner = '" + doi.getSchemaName() + "' " +
+					"and name = '" + doi.getSimpleName() + "' " +
+					"order by line";
+
+			ResultSet res = stat.executeQuery(sql1);
+
+			if(false == res.next())
+			{
+				res.close();
+
+				String sql2 = "select text from sys.all_source " +
+						"where type = '" + _columnData + "' " +
+						"and owner = '" + doi.getSchemaName() + "' " +
+						"and name = '" + doi.getSimpleName() + "' " +
+						"order by line";
+
+				res = stat.executeQuery(sql2);
+
+				if(false == res.next())
+				{
+					return null;
+				}
+			}
+
+
+			return res.getString(1);
+		}
+		catch (SQLException e)
+		{
+			throw Utilities.wrapRuntime(e);
+		}
 	}
 }

@@ -74,8 +74,6 @@ public abstract class OracleSourceTab extends BaseSourceTab {
 
     private final class OracleSourcePanel extends BaseSourcePanel
     {
-        private static final long serialVersionUID = 7855991042669454322L;
-
         OracleSourcePanel(ISession session){
         	super(session);
         }

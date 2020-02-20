@@ -104,6 +104,10 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+Several source tabs didn't work.
+
+#172 Oracle Plugin: Can't view package bodies for other users.
+
 Limited preview size in file choosers to 15000 characters.
 
 Improved table repaint behaviour when rows are deleted.

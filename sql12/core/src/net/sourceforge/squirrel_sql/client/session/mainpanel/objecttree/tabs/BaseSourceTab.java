@@ -195,22 +195,39 @@ public abstract class BaseSourceTab extends BaseObjectTab
     * Sub-classes should override this method to return a PreparedStatement which will yield the source code
     * of the object returned by getDatabaseObjectInfo.
     *
+    * OR
+    *
+    * Sub-classes should simply override {@link #getSourceCode(ISession, PreparedStatement)} and ignore the PreparedStatement parameter.
+    *
     * @return a PreparedStatement already with bound variables, ready to be executed
     * @throws SQLException if any error occurs.
     */
-   protected abstract PreparedStatement createStatement() throws SQLException;
+   protected PreparedStatement createStatement() throws SQLException
+   {
+      return null;
+   }
 
 
    private void onLoad(JTextComponent textArea, String sourceCode)
    {
       textArea.setText(sourceCode);
       textArea.setCaretPosition(0);
-      textArea.setText("");
-
    }
 
+   /**
+    * Overriding this method and ignoring the PreparedStatement is the simplest way to provide source code.
+    */
    protected String getSourceCode(ISession session, PreparedStatement stmt)
    {
+      if(null == stmt)
+      {
+         String msg =
+               "BaseSourceTab.createStatement() must be overridden to return non null when this base method is supposed to be used. " +
+               "You may as well simply override this method and return the source code any way you want";
+         throw new IllegalStateException(msg);
+      }
+
+
       StringBuilder buf = new StringBuilder(4096);
       try(ResultSet rs = stmt.executeQuery())
       {
