@@ -44,7 +44,7 @@ File open dialog's preview area can be resized.
 Graph Plugin: Query builder now supports schema/catalog qualified table names.
    Schema/catalog qualified can be switched on by clicking a Graph's "Kick off" button or by a Graph's right mose menu.
 
-The former file import now allows to import from clipboard, too.
+The file import now allows to import from clipboard, too.
 
 Connect button in Alias dialog.
 
