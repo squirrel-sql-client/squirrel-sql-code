@@ -28,6 +28,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.text.NumberFormat;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -519,5 +527,30 @@ public class Utilities
       sqlEx.getSQLState();
       sqlEx.getErrorCode();
       return sqlEx + ", SQL State: " + sqlEx.getSQLState() + ", Error Code: " + sqlEx.getErrorCode();
+   }
+
+   public static <T> T callWithTimeOut(Callable<T> callable) throws TimeoutException
+   {
+      return callWithTimeOut(callable, 300);
+   }
+
+   public static <T> T callWithTimeOut(Callable<T> callable, int timeoutMilliSeconds) throws TimeoutException
+   {
+      try
+      {
+         ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+         Future<T> future = executorService.submit(callable);
+
+         return future.get(timeoutMilliSeconds, TimeUnit.MILLISECONDS);
+      }
+      catch (TimeoutException te)
+      {
+         throw te;
+      }
+      catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
    }
 }

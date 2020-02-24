@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.ISessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -49,7 +50,6 @@ public class SQLConnectionState
 
 	public SQLConnectionState()
 	{
-		super();
 	}
 
    public void saveState(ISQLConnection con, ISessionProperties sessionProperties, IMessageHandler msgHandler, String selectedCatalogFromCatalogsComboBox)
@@ -58,9 +58,16 @@ public class SQLConnectionState
 
 		try
 		{
-			_transIsolation = null == con ? null : con.getTransactionIsolation();
+			_transIsolation = null;
+
+			if (null != con)
+			{
+				// The user may be reconnecting because the current connection is dead or unstable.
+				// By callWithTimeOut() we make sure we don't get stuck in the calling getTransactionIsolation().
+				_transIsolation = Utilities.callWithTimeOut(() -> con.getTransactionIsolation());
+			}
 		}
-		catch (SQLException ex)
+		catch (Exception ex)
 		{
 			/*
 			 * i18n [SQLConnectionState.errorSavingIsolationState]
@@ -79,7 +86,7 @@ public class SQLConnectionState
 			_catalog = selectedCatalogFromCatalogsComboBox;
 			_catalog = null == con ? _catalog: con.getCatalog();
 		}
-		catch (SQLException ex)
+		catch (Exception ex)
 		{
 			/*
 			 * i18n [SQLConnectionState.errorSavingCatalog]
@@ -105,7 +112,7 @@ public class SQLConnectionState
 
          _autoCommit = null == con ? _autoCommit : con.getAutoCommit();
 		}
-		catch (SQLException ex)
+		catch (Exception ex)
 		{
 			/*
 			 * i18n [SQLConnectionState.errorSavingAutoCommit]

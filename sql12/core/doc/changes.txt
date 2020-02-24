@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Prevented possible freeze during reconnect (ctrl+T):
+  Call to Connection.getTransactionIsolation() on old connection will now timeout.
+
 Aliases can be selectively be exported and imported into some other SQuirreL instance/installation:
  - To export Aliases goto menu Aliases --> "Import/Export Aliases".
    This opens the import/export window to which Aliases can be dragged and dropped.

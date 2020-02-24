@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -108,22 +109,15 @@ public class SQLConnection implements ISQLConnection
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#close()
 	 */
-	public void close() throws SQLException
+	public void close()
 	{
-      ExecutorService executorService = Executors.newSingleThreadExecutor();
+		int timeoutSeconds = 2;
 
-      int timeoutSeconds = 2;
       try
       {
-         Runnable task = new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               _closeIntern();
-            }
-         };
-         Future<?> future = executorService.submit(task);
+			ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+			Future<?> future = executorService.submit(() -> _closeIntern());
 
          future.get(timeoutSeconds, TimeUnit.SECONDS);
 
