@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
+import javax.activation.DataHandler;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -29,6 +30,7 @@ import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -37,6 +39,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -97,6 +101,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       initDnD();
 
+      initAliasExportDnd();
 
       _aliasesListModel.addListDataListener(new ListDataListener()
       {
@@ -174,6 +179,24 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       };
 
       _treeDnDHandler = new TreeDnDHandler(_tree, treeDnDHandlerCallback);
+   }
+
+   private void initAliasExportDnd()
+   {
+      TransferHandler aliasExportDndTransferHandler = new TransferHandler(AliasDndExport.EXPORT_PROPERTY_NAME){
+         @Override
+         protected Transferable createTransferable(JComponent c)
+         {
+            return new DataHandler(new AliasDndExport(_tree.getSelectionPaths()), DataFlavor.javaJVMLocalObjectMimeType);
+         }
+
+         public int getSourceActions(JComponent c)
+         {
+            return TransferHandler.COPY;
+         }
+      };
+
+      _tree.setTransferHandler(aliasExportDndTransferHandler);
    }
 
    private TreePath[] onGetPasteTreeNodesFromInternalTransfer(DropTargetDropEvent dtde, TreePath targetPath, TreePath[] selectionPaths)
@@ -961,17 +984,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          ((DefaultTreeModel)_tree.getModel()).nodeChanged(node);
       }
    }
-
-   public JTree getTree()
-   {
-      return _tree;
-   }
-
-   public AliasDndExport createAliasDndExport()
-   {
-      return new AliasDndExport(_tree.getSelectionPaths());
-   }
-
 
    private DefaultMutableTreeNode createCopy(DefaultMutableTreeNode nodeToCopy)
    {

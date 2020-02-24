@@ -48,41 +48,7 @@ public class AliasesList implements IToogleableAliasesList
       AliasesListModel listModel = new AliasesListModel(app);
       _jListImpl= new JListAliasesListImpl(app, listModel);
       _jTreeImpl = new JTreeAliasesListImpl(app, listModel);
-
-      initAliasExport();
    }
-
-   private void initAliasExport()
-   {
-      TransferHandler aliasExportDndTransferHandler = new TransferHandler(AliasDndExport.EXPORT_PROPERTY_NAME){
-         @Override
-         protected Transferable createTransferable(JComponent c)
-         {
-            return onCreateTransferable();
-         }
-
-         public int getSourceActions(JComponent c)
-         {
-            return TransferHandler.COPY;
-         }
-      };
-
-      _jListImpl.getList().setDragEnabled(true);
-      _jListImpl.getList().setTransferHandler(aliasExportDndTransferHandler);
-
-      _jTreeImpl.getTree().setTransferHandler(aliasExportDndTransferHandler);
-   }
-
-   private DataHandler onCreateTransferable()
-   {
-      if (false == _viewAsTree)
-      {
-         return null;
-      }
-
-      return new DataHandler(_jTreeImpl.createAliasDndExport(), DataFlavor.javaJVMLocalObjectMimeType);
-   }
-
 
    private IAliasesList getCurrentImpl()
    {
