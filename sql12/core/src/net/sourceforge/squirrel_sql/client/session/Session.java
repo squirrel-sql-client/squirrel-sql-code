@@ -587,9 +587,9 @@ class Session implements ISession
       {
          connState.saveState(_conn, getProperties(), _msgHandler, _sessionSheet.getSelectedCatalogFromCatalogsComboBox());
       }
-      catch (SQLException ex)
+      catch (Exception e)
       {
-         s_log.error("Unexpected SQLException", ex);
+         s_log.error(e);
       }
 
       final OpenConnectionCommand cmd = new OpenConnectionCommand(_alias, _user, _password, connState.getConnectionProperties(), reconnectInfo);

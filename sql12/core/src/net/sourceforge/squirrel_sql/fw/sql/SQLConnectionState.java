@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.Connection;
-import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.ISessionProperties;
@@ -27,6 +25,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -37,11 +37,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLConnectionState
 {
-	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLConnectionState.class);
 	
-	private final static ILogger s_log =
-		LoggerController.createLogger(SQLConnectionState.class);
+	private final static ILogger s_log = LoggerController.createLogger(SQLConnectionState.class);
 
 	private Integer _transIsolation;
 	private String _catalog;
@@ -53,7 +51,6 @@ public class SQLConnectionState
 	}
 
    public void saveState(ISQLConnection con, ISessionProperties sessionProperties, IMessageHandler msgHandler, String selectedCatalogFromCatalogsComboBox)
-		throws SQLException
 	{
 
 		try
@@ -78,13 +75,17 @@ public class SQLConnectionState
 			String msg = s_stringMgr.getString("SQLConnectionState.errorSavingIsolationState");
 
 			s_log.error(msg, ex);
-			msgHandler.showErrorMessage(msg);
+			msgHandler.showErrorMessage(msg, ex);
 		}
 
 		try
 		{
 			_catalog = selectedCatalogFromCatalogsComboBox;
-			_catalog = null == con ? _catalog: con.getCatalog();
+
+			if(null != con)
+			{
+				_catalog = Utilities.callWithTimeOut(() -> con.getCatalog());
+			}
 		}
 		catch (Exception ex)
 		{
@@ -97,11 +98,7 @@ public class SQLConnectionState
 			String msg = s_stringMgr.getString("SQLConnectionState.errorSavingCatalog");
 
 			s_log.error(msg, ex);
-			if (msgHandler == null)
-			{
-				throw ex;
-			}
-			msgHandler.showErrorMessage(msg);
+			msgHandler.showErrorMessage(msg, ex);
 		}
 
 		try
@@ -110,31 +107,37 @@ public class SQLConnectionState
          // this is the best default we have.
          _autoCommit = sessionProperties.getAutoCommit();
 
-         _autoCommit = null == con ? _autoCommit : con.getAutoCommit();
+         if(null != con)
+			{
+				_autoCommit = Utilities.callWithTimeOut(() -> con.getAutoCommit());
+			}
 		}
 		catch (Exception ex)
 		{
-			/*
-			 * i18n [SQLConnectionState.errorSavingAutoCommit]
-				"Error saving autocommit state.\n" +
-				"This might happen when reconnecting a Session to restore a broken connection.\n" +
-				"The new connection will use the autocommit state.";
-			 */
 			String msg = s_stringMgr.getString("SQLConnectionState.errorSavingAutoCommit");
 
 			s_log.error(msg, ex);
-			if (msgHandler == null)
-			{
-				throw ex;
-			}
-			msgHandler.showErrorMessage(msg);
+			msgHandler.showErrorMessage(msg, ex);
 		}
 
-		_connProps = null == con ? null : con.getConnectionProperties();
+		try
+		{
+			_connProps = null;
+
+			if(null != con)
+			{
+				_connProps = Utilities.callWithTimeOut(() -> con.getConnectionProperties());
+			}
+		}
+		catch (Exception e)
+		{
+			s_log.error(e);
+			msgHandler.showErrorMessage(e);
+		}
+
 	}
 
 	public void restoreState(ISQLConnection conn, IMessageHandler msgHandler)
-		throws SQLException
 	{
 		if (conn == null)
 		{
@@ -147,13 +150,9 @@ public class SQLConnectionState
 			{
 				conn.setTransactionIsolation(_transIsolation.intValue());
 			}
-			catch (SQLException ex)
+			catch (Exception ex)
 			{
 				s_log.error("Error restoring transaction isolation", ex);
-				if (msgHandler == null)
-				{
-					throw ex;
-				}
 				msgHandler.showErrorMessage(ex, null);
 			}
 		}
@@ -164,13 +163,9 @@ public class SQLConnectionState
 			{
 				conn.setCatalog(_catalog);
 			}
-			catch (SQLException ex)
+			catch (Exception ex)
 			{
 				s_log.error("Error restoring current catalog", ex);
-				if (msgHandler == null)
-				{
-					throw ex;
-				}
 				msgHandler.showErrorMessage(ex, null);
 			}
 		}
@@ -179,13 +174,9 @@ public class SQLConnectionState
 		{
 			conn.setAutoCommit(_autoCommit);
 		}
-		catch (SQLException ex)
+		catch (Exception ex)
 		{
 			s_log.error("Error restoring autocommit", ex);
-			if (msgHandler == null)
-			{
-				throw ex;
-			}
 			msgHandler.showErrorMessage(ex, null);
 		}
 	}
