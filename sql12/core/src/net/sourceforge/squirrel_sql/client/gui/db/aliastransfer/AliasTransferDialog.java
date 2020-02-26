@@ -31,18 +31,18 @@ public class AliasTransferDialog extends JDialog
 
       treeExportedAliases = new JTree();
 
-      getRootPane().setLayout(new GridBagLayout());
+      getContentPane().setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,3,5), 0,0);
-      getRootPane().add(new MultipleLineLabel(s_stringMgr.getString("AliasTransferDialog.dnd.label")), gbc);
+      getContentPane().add(new MultipleLineLabel(s_stringMgr.getString("AliasTransferDialog.dnd.label")), gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5), 0,0);
-      getRootPane().add(new JScrollPane(treeExportedAliases), gbc);
+      getContentPane().add(new JScrollPane(treeExportedAliases), gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
-      getRootPane().add(createBottomPanel(), gbc);
+      getContentPane().add(createBottomPanel(), gbc);
    }
 
    private JPanel createBottomPanel()

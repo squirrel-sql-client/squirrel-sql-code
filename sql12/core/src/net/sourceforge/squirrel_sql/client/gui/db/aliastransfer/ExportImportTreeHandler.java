@@ -12,16 +12,22 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.activation.DataHandler;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TooManyListenersException;
@@ -44,6 +50,49 @@ public class ExportImportTreeHandler
 
       initAliasDrop();
       initAliasDrag();
+
+      _treeExportedAliases.addMouseListener(new MouseAdapter() {
+         @Override
+         public void mousePressed(MouseEvent e)
+         {
+            onTriggerPopup(e);
+         }
+
+         @Override
+         public void mouseReleased(MouseEvent e)
+         {
+            onTriggerPopup(e);
+         }
+      });
+   }
+
+   private void onTriggerPopup(MouseEvent me)
+   {
+      if(false == me.isPopupTrigger()
+            || null == _treeExportedAliases.getSelectionPaths()
+            || 0 == _treeExportedAliases.getSelectionPaths().length)
+      {
+         return;
+      }
+
+      JPopupMenu popupMenu = new JPopupMenu();
+
+      JMenuItem mnuRemoveSelectedNodes = new JMenuItem(s_stringMgr.getString("ExportImportTreeHandler.remove.selected.nodes"));
+      mnuRemoveSelectedNodes.addActionListener(e -> onRemoveSelectedNodes());
+      popupMenu.add(mnuRemoveSelectedNodes);
+
+      popupMenu.show(_treeExportedAliases, me.getX(), me.getY());
+   }
+
+   private void onRemoveSelectedNodes()
+   {
+      for (TreePath selectionPath : _treeExportedAliases.getSelectionPaths())
+      {
+         DefaultMutableTreeNode node = toDefaultNode(selectionPath.getLastPathComponent());
+         TreeNode parent = node.getParent();
+         getDefaultTreeModel().removeNodeFromParent(node);
+         getDefaultTreeModel().nodeStructureChanged(parent);
+      }
    }
 
    private void initAliasDrag()
