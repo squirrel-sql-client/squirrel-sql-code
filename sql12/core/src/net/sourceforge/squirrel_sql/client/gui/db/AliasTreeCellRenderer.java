@@ -22,16 +22,16 @@ public class AliasTreeCellRenderer extends DefaultTreeCellRenderer
 
    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus)
    {
-      return modifyRenderer(this, super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus), value);
+      return modifyRenderer(super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus), value);
    }
 
-   private Component modifyRenderer(DefaultTreeCellRenderer defaultTreeCellRenderer, Component component, Object node)
+   private Component modifyRenderer(Component component, Object node)
    {
       JLabel ret = (JLabel) component;
       ret.setEnabled(true);
 
       DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) node;
-      _aliasColorer.colorAliasRendererComponent(defaultTreeCellRenderer, dmtn, ret);
+      _aliasColorer.colorAliasRendererComponent(this, dmtn, ret);
 
       if (null != _aliasPasteState.getPathsToPaste() && AliasTreePasteMode.CUT.equals(_aliasPasteState.getPasteMode()))
       {
