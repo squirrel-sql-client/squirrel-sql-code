@@ -10,7 +10,7 @@ public interface TreeDnDHandlerCallback
 {
    boolean nodeAcceptsKids(DefaultMutableTreeNode selNode);
 
-   void dndExecuted();
+   default void dndExecuted() {}
 
    /**
     * Will only be called when external drop is allowed.
@@ -21,4 +21,6 @@ public interface TreeDnDHandlerCallback
    {
       return selectionPaths;
    }
+
+   default void updateDragPosition(TreeDndDropPositionData treeDndDropPositionData) {}
 }

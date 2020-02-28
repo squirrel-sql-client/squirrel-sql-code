@@ -12,6 +12,8 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
+import net.sourceforge.squirrel_sql.fw.gui.TreeDndDropPosition;
+import net.sourceforge.squirrel_sql.fw.gui.TreeDndDropPositionData;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -56,6 +58,8 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
 	private final static ILogger s_log = LoggerController.createLogger(JTreeAliasesListImpl.class);
 
+   private final AliasDragState _aliasDragState;
+
    private TreeDnDHandler _treeDnDHandler;
    private AliasSortState _aliasSortState;
 
@@ -77,7 +81,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private AliasTreeColorer _aliasColorer;
 
-
    public JTreeAliasesListImpl(IApplication app, AliasesListModel aliasesListModel)
    {
       _app = app;
@@ -95,7 +98,9 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       _aliasColorer = new AliasTreeColorer(_tree);
 
-      _tree.setCellRenderer(new AliasTreeCellRenderer(_aliasPasteState, _aliasColorer));
+      _aliasDragState = new AliasDragState(_tree);
+
+      _tree.setCellRenderer(new AliasTreeCellRenderer(_aliasPasteState, _aliasColorer, _aliasDragState));
 
       initCancelCutAction();
 
@@ -163,7 +168,10 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          }
 
          @Override
-         public void dndExecuted() {}
+         public void updateDragPosition(TreeDndDropPositionData treeDndDropPositionInfo)
+         {
+            _aliasDragState.updateDragPosition(treeDndDropPositionInfo);
+         }
 
          @Override
          public ArrayList<DefaultMutableTreeNode> getPasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath)
@@ -887,7 +895,19 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
                execCopyToPaste(_aliasPasteState.getPathsToPaste(), _tree.getSelectionPath());
                break;
             case CUT:
-               _treeDnDHandler.execCopyOrMove(_aliasPasteState.getPathsToPaste(), _tree.getSelectionPath(), false);
+               DefaultMutableTreeNode targetNode = (DefaultMutableTreeNode) _tree.getSelectionPath().getLastPathComponent();
+               TreeDndDropPositionData treeDndDropPositionData;
+
+               if (onNodeAcceptsKids(targetNode))
+               {
+                  treeDndDropPositionData = new TreeDndDropPositionData(targetNode, TreeDndDropPosition.INTO);
+               }
+               else
+               {
+                  treeDndDropPositionData = new TreeDndDropPositionData(targetNode, TreeDndDropPosition.BELOW);
+               }
+
+               _treeDnDHandler.execCopyOrMove(_aliasPasteState.getPathsToPaste(), treeDndDropPositionData);
                break;
          }
       }

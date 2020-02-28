@@ -1,19 +1,21 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
-import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.AliasDndExport;
-import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.AliasDndImport;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import javax.swing.*;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.TooManyListenersException;
 
 /**
@@ -33,7 +35,6 @@ public class TreeDnDHandler
    public TreeDnDHandler(JTree tree, TreeDnDHandlerCallback treeDnDHandlerCallback)
    {
       this(tree, treeDnDHandlerCallback, false);
-
    }
 
    public TreeDnDHandler(JTree tree, TreeDnDHandlerCallback treeDnDHandlerCallback, boolean allowExternalDrop)
@@ -54,9 +55,28 @@ public class TreeDnDHandler
 
          dt.addDropTargetListener(new DropTargetAdapter()
          {
+            @Override
             public void drop(DropTargetDropEvent dtde)
             {
+               _treeDnDHandlerCallback.updateDragPosition(TreeDndDropPositionData.empty());
                onDrop(dtde);
+            }
+
+            @Override
+            public void dragEnter(DropTargetDragEvent dtde)
+            {
+               _treeDnDHandlerCallback.updateDragPosition(getTreeDndDropPositionData(dtde.getLocation()));
+            }
+            @Override
+            public void dragOver(DropTargetDragEvent dtde)
+            {
+               _treeDnDHandlerCallback.updateDragPosition(getTreeDndDropPositionData(dtde.getLocation()));
+            }
+
+            @Override
+            public void dragExit(DropTargetEvent dte)
+            {
+               _treeDnDHandlerCallback.updateDragPosition(TreeDndDropPositionData.empty());
             }
          });
 
@@ -74,7 +94,9 @@ public class TreeDnDHandler
       {
          TreePath[] toPaste;
 
-         TreePath targetPath = _tree.getClosestPathForLocation(dtde.getLocation().x, dtde.getLocation().y);
+         TreeDndDropPositionData treeDndDropPositionData = getTreeDndDropPositionData(dtde.getLocation());
+
+         TreePath targetPath = treeDndDropPositionData.getTreePath();
 
          if(false == dtde.isLocalTransfer())
          {
@@ -100,7 +122,7 @@ public class TreeDnDHandler
 
          if(0 != (DnDConstants.ACTION_COPY_OR_MOVE & dtde.getDropAction()))
          {
-            execCopyOrMove(toPaste, targetPath, isPlaceAbove(dtde));
+            execCopyOrMove(toPaste, treeDndDropPositionData);
             _treeDnDHandlerCallback.dndExecuted();
          }
       }
@@ -112,7 +134,12 @@ public class TreeDnDHandler
 
    private boolean isPlaceAbove(DropTargetDropEvent dtde)
    {
-      int row = _tree.getRowForLocation(dtde.getLocation().x, dtde.getLocation().y);
+      return isPlaceAbove(dtde.getLocation());
+   }
+
+   private boolean isPlaceAbove(Point location)
+   {
+      int row = _tree.getRowForLocation(location.x, location.y);
 
       if(-1 == row)
       {
@@ -121,7 +148,7 @@ public class TreeDnDHandler
 
       Rectangle rowBounds = _tree.getRowBounds(row);
 
-      int distToTopOfRow = Math.abs(rowBounds.y - dtde.getLocation().y);
+      int distToTopOfRow = Math.abs(rowBounds.y - location.y);
 
       if(distToTopOfRow * 4 < rowBounds.height)
       {
@@ -132,23 +159,19 @@ public class TreeDnDHandler
    }
 
 
-   /**
-    * - pathsToPaste will be appended to the target last path component of the targetPath or its previous sibling when placeAbove iss true.
-    * - The last path components of pathsToPaste will be removed from their previous parents only if those parents exist in the current tree.
-    */
-   public void execCopyOrMove(TreePath[] pathsToPaste, TreePath targetPath, boolean placeAbove)
+   public void execCopyOrMove(TreePath[] pathsToPaste, TreeDndDropPositionData treeDndDropPositionData)
    {
       DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
 
       ArrayList<DefaultMutableTreeNode> cutNodes = new ArrayList<>();
 
-      if (null == targetPath)
+      if (null == treeDndDropPositionData.getTreePath())
       {
          DefaultMutableTreeNode root = (DefaultMutableTreeNode) dtm.getRoot();
 
          if (_treeDnDHandlerCallback.nodeAcceptsKids(root))
          {
-            cutNodes = cutDraggedNodes(pathsToPaste, targetPath, dtm);
+            cutNodes = cutDraggedNodes(pathsToPaste, null, dtm);
 
             int[] childIndices = new int[cutNodes.size()];
             for (int i = 0; i < cutNodes.size(); i++)
@@ -161,38 +184,51 @@ public class TreeDnDHandler
       }
       else
       {
-         DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) targetPath.getLastPathComponent();
+         cutNodes = cutDraggedNodes(pathsToPaste, treeDndDropPositionData.getTreePath(), dtm);
 
-         if (false == placeAbove && _treeDnDHandlerCallback.nodeAcceptsKids(selNode))
+         DefaultMutableTreeNode targetNode = treeDndDropPositionData.getNode();
+
+         switch (treeDndDropPositionData.getPos())
          {
-            cutNodes = cutDraggedNodes(pathsToPaste, targetPath, dtm);
-            for (int i = 0; i < cutNodes.size(); i++)
-            {
-               selNode.insert(cutNodes.get(i), 0);
-               dtm.nodesWereInserted(selNode, new int[]{0});
-            }
-         }
-         else
-         {
-            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selNode.getParent();
-            if (_treeDnDHandlerCallback.nodeAcceptsKids(parent))
-            {
-               cutNodes = cutDraggedNodes(pathsToPaste, targetPath, dtm);
+            case INTO_ROOT:
                for (int i = 0; i < cutNodes.size(); i++)
                {
-                  if (null == selNode.getPreviousSibling())
-                  {
-                     parent.insert(cutNodes.get(i), 0);
-                     dtm.nodesWereInserted(parent, new int[]{0});
-                  }
-                  else
-                  {
-                     int childIndex = parent.getIndex(selNode) + 1;
-                     parent.insert(cutNodes.get(i), childIndex);
-                     dtm.nodesWereInserted(parent, new int[]{childIndex});
-                  }
+                  targetNode.add(cutNodes.get(i));
+                  dtm.nodesWereInserted(targetNode, new int[]{targetNode.getChildCount() - 1});
                }
-            }
+               break;
+            case INTO:
+               for (int i = 0; i < cutNodes.size(); i++)
+               {
+                  targetNode.insert(cutNodes.get(i), 0);
+                  dtm.nodesWereInserted(targetNode, new int[]{0});
+               }
+               break;
+            case ABOVE:
+               DefaultMutableTreeNode parent1 = (DefaultMutableTreeNode) targetNode.getParent();
+               int index1 = parent1.getIndex(targetNode);
+
+               ArrayList<DefaultMutableTreeNode> reverted1 = new ArrayList<>(cutNodes);
+               Collections.reverse(reverted1);
+               for (int i = 0; i < reverted1.size(); i++)
+               {
+                  parent1.insert(cutNodes.get(i), index1);
+                  dtm.nodesWereInserted(parent1, new int[]{index1});
+               }
+               break;
+            case BELOW:
+               DefaultMutableTreeNode parent2 = (DefaultMutableTreeNode) targetNode.getParent();
+               int index2 = parent2.getIndex(targetNode) + 1;
+
+               ArrayList<DefaultMutableTreeNode> reverted2 = new ArrayList<>(cutNodes);
+               Collections.reverse(reverted2);
+               for (int i = 0; i < reverted2.size(); i++)
+               {
+                  parent2.insert(cutNodes.get(i), index2);
+                  dtm.nodesWereInserted(parent2, new int[]{index2});
+               }
+               break;
+
          }
       }
 
@@ -221,5 +257,59 @@ public class TreeDnDHandler
          }
       }
       return cutNodes;
+   }
+
+
+   public TreeDndDropPositionData getTreeDndDropPositionData(Point pos)
+   {
+      TreePath targetPath = _tree.getClosestPathForLocation(pos.x, pos.y);
+
+      if (null == targetPath || ((DefaultMutableTreeNode)targetPath.getLastPathComponent()).isRoot())
+      {
+         DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
+         DefaultMutableTreeNode root = (DefaultMutableTreeNode) dtm.getRoot();
+
+         if (_treeDnDHandlerCallback.nodeAcceptsKids(root))
+         {
+            return new TreeDndDropPositionData(root, TreeDndDropPosition.INTO_ROOT);
+         }
+         else
+         {
+            throw new IllegalStateException("Root does not allow kids.");
+         }
+      }
+
+      DefaultMutableTreeNode targetNode = (DefaultMutableTreeNode) targetPath.getLastPathComponent();
+
+      int row = _tree.getRowForPath(targetPath);
+
+      Rectangle rowBounds = _tree.getRowBounds(row);
+
+      int distToTopOfRow = Math.abs(rowBounds.y - pos.y);
+      int distToBottomOfRow = Math.abs(rowBounds.y + rowBounds.height - pos.y);
+
+      if (_treeDnDHandlerCallback.nodeAcceptsKids(targetNode))
+      {
+         TreeDndDropPosition treeDndDropPosition = TreeDndDropPosition.INTO;
+         if(distToTopOfRow * 4 < rowBounds.height)
+         {
+            treeDndDropPosition = TreeDndDropPosition.ABOVE;
+         }
+         else if(distToBottomOfRow * 4 < rowBounds.height)
+         {
+            treeDndDropPosition = TreeDndDropPosition.BELOW;
+         }
+
+         return new TreeDndDropPositionData(targetNode, treeDndDropPosition);
+      }
+      else
+      {
+         TreeDndDropPosition treeDndDropPosition = TreeDndDropPosition.ABOVE;
+         if(distToTopOfRow > distToBottomOfRow)
+         {
+            treeDndDropPosition = TreeDndDropPosition.BELOW;
+         }
+         return new TreeDndDropPositionData(targetNode, treeDndDropPosition);
+      }
    }
 }
