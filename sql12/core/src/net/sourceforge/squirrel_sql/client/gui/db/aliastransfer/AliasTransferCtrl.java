@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -243,7 +244,18 @@ public class AliasTransferCtrl
 
       DataCache dataCache = Main.getApplication().getDataCache();
 
-      sqlAliasesToExport.forEach( a -> ret.put(a.getDriverIdentifier().toString(), dataCache.getDriver(a.getDriverIdentifier()).getName()));
+      for (SQLAlias a : sqlAliasesToExport)
+      {
+         ISQLDriver driver = dataCache.getDriver(a.getDriverIdentifier());
+
+         String driverName = "<<undefined>>";
+         if (null != driver)
+         {
+            driverName = driver.getName();
+         }
+
+         ret.put(a.getDriverIdentifier().toString(), driverName);
+      }
 
       return ret;
    }
