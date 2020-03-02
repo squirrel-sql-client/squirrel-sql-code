@@ -111,6 +111,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+Hibernate Plugin: "Copy Hibernate configuration" button raised ClassNotFoundException.
+
 Several source tabs didn't work.
 
 #172 Oracle Plugin: Can't view package bodies for other users.

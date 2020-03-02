@@ -149,7 +149,7 @@ public class HibernateConfigController
 			return;
 		}
 
-		HibernateConfiguration newConfig = Utilities.cloneObject(selConfig);
+		HibernateConfiguration newConfig = Utilities.cloneObject(selConfig, selConfig.getClass().getClassLoader());
 		newConfig.setName(newName);
 
 		_panel.cboConfigs.addItem(newConfig);
