@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JToggleButton;
 import java.util.Arrays;
 import java.util.Optional;
@@ -49,16 +50,14 @@ public enum MarkDuplicatesMode
       _toolTip = toolTip;
    }
 
-   public static MarkDuplicatesMode getModeByIcon(Icon icon)
+   public void assignModeToButton(JToggleButton btn)
    {
-      Optional<MarkDuplicatesMode> ret = Arrays.stream(values()).filter(e -> e._icon == icon).findFirst();
+      btn.putClientProperty(MarkDuplicatesMode.class, this);
+   }
 
-      if(false == ret.isPresent())
-      {
-         throw new IllegalStateException("No mode for Icon " + icon);
-      }
-
-      return ret.get();
+   public static MarkDuplicatesMode getModeByButton(AbstractButton button)
+   {
+      return (MarkDuplicatesMode) button.getClientProperty(MarkDuplicatesMode.class);
    }
 
 
@@ -79,7 +78,7 @@ public enum MarkDuplicatesMode
 
    public JToggleButton findButton(ButtonChooser buttonChooser)
    {
-      Optional<AbstractButton> ret = buttonChooser.getAllButtons().stream().filter(b -> b.getIcon() == _icon).findFirst();
+      Optional<AbstractButton> ret = buttonChooser.getAllButtons().stream().filter(b -> b.getClientProperty(MarkDuplicatesMode.class) == this).findFirst();
 
       if(false == ret.isPresent())
       {

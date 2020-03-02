@@ -84,7 +84,9 @@ public class JTattooLafData
 		}
 		catch (ClassNotFoundException e)
 		{
-			s_log.error("Unable to load LAF class ("+className+"):"+e.getMessage(), e);
+			// Created too many logs with Java 8 or higher
+			// s_log.error("Unable to load LAF class ("+className+"): " + e.getMessage(), e);
+			s_log.error("Unable to load LAF class ("+className+"): " + e);
 		}
 		
 	}

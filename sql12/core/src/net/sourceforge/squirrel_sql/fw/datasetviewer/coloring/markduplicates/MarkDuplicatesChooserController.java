@@ -41,6 +41,7 @@ public class MarkDuplicatesChooserController
          btn.setIcon(mode.getIcon());
          btn.setText(mode.getText());
          btn.setToolTipText(mode.getToolTipText());
+         mode.assignModeToButton(btn);
          _toggleBtnChooser.addButton(btn);
       }
 
@@ -66,7 +67,7 @@ public class MarkDuplicatesChooserController
          return;
       }
 
-      MarkDuplicatesMode selectedMode = MarkDuplicatesMode.getModeByIcon(selButton.getIcon());
+      MarkDuplicatesMode selectedMode = MarkDuplicatesMode.getModeByButton(selButton);
       if( selectedMode == MarkDuplicatesMode.DUPLICATE_CONSECUTIVE_VALUES_IN_COLUMNS || selectedMode == MarkDuplicatesMode.DUPLICATE_CONSECUTIVE_ROWS)
       {
          try
@@ -91,7 +92,7 @@ public class MarkDuplicatesChooserController
          return;
       }
 
-      Props.putString(PREF_MARK_DUPLICATES_MODE_LAST_MODE, MarkDuplicatesMode.getModeByIcon(newSelectedButton.getIcon()).name());
+      Props.putString(PREF_MARK_DUPLICATES_MODE_LAST_MODE, MarkDuplicatesMode.getModeByButton(newSelectedButton).name());
 
       try
       {
@@ -155,7 +156,7 @@ public class MarkDuplicatesChooserController
 
       if(selected)
       {
-         mode = MarkDuplicatesMode.getModeByIcon(_toggleBtnChooser.getSelectedButton().getIcon());
+         mode = MarkDuplicatesMode.getModeByButton(_toggleBtnChooser.getSelectedButton());
       }
 
       ((DataSetViewerTablePanel)dataSetViewer).getTable().getColoringService().getMarkDuplicatesHandler().markDuplicates(mode);
