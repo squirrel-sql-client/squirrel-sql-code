@@ -111,6 +111,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+Hibernate Plugin: To prevent NullPointerException entities with non standard unique identifier are not loaded.
+
 Alias import/export: NullPointerException and broken export zip file occurred when Aliases were exported, which didn't refer to an existing driver.
 
 Look & Feel Plugin: Fixed bug in Napkin L&F and reduced logs.

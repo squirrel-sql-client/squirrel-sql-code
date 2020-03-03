@@ -20,10 +20,19 @@ public class MappedClassInfoLoader
       {
          if(null == entityType.callMethod("getJavaType").getCallee())
          {
+            System.out.println("Entity " + entityType.getCallee() + " has no Java type and won't be loaded.");
             continue;
          }
 
-         ReflectionCaller pkJavaType = entityType.callMethod("getIdType").callMethod("getJavaType");
+         ReflectionCaller getIdTypeCaller = entityType.callMethod("getIdType");
+
+         if(null == getIdTypeCaller.getCallee())
+         {
+            System.out.println("Entity type " + entityType.callMethod("getJavaType").callMethod("getName").getCallee() + " has no unique ID and won't be loaded.");
+            continue;
+         }
+
+         ReflectionCaller pkJavaType = getIdTypeCaller.callMethod("getJavaType");
          ReflectionCaller pkSingularAttribute = entityType.callMethod("getId", pkJavaType.getCallee()).setTreatClassCalleeAsType(false);
 
          String identifierPropertyName = (String) pkSingularAttribute.callMethod("getJavaMember").callMethod("getName").getCallee();
