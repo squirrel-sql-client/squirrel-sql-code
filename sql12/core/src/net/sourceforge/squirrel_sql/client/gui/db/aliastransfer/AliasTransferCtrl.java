@@ -65,41 +65,39 @@ public class AliasTransferCtrl
 
    private void onImport(ExportImportTreeHandler exportImportTreeHandler)
    {
-      try
+      JFileChooser importFC = createFileChooser();
+
+      importFC.setDialogTitle(s_stringMgr.getString("AliasTransferCtrl.import.file.dialog.title"));
+
+      if (importFC.showOpenDialog(_dlg) != JFileChooser.APPROVE_OPTION)
       {
-         JFileChooser importFC = createFileChooser();
+         return;
+      }
 
-         importFC.setDialogTitle(s_stringMgr.getString("AliasTransferCtrl.import.file.dialog.title"));
+      File importFile = importFC.getSelectedFile();
 
-         if (importFC.showOpenDialog(_dlg) != JFileChooser.APPROVE_OPTION)
-         {
-            return;
-         }
-
-         File importFile = importFC.getSelectedFile();
-
-         ZipFile zipIn = new ZipFile(importFile);
-
+      try (ZipFile zipIn = new ZipFile(importFile))
+      {
          Enumeration<? extends ZipEntry> entries = zipIn.entries();
 
          XMLBeanReader sqlAliasesReader = null;
          XMLBeanReader treeFolderStateReader = null;
          Properties driverIdentifierToName = null;
-         while(entries.hasMoreElements())
+         while (entries.hasMoreElements())
          {
             ZipEntry entry = entries.nextElement();
 
-            if(ZIP_ENTRY_SQL_ALIASES.equals(entry.getName()))
+            if (ZIP_ENTRY_SQL_ALIASES.equals(entry.getName()))
             {
                sqlAliasesReader = new XMLBeanReader();
                sqlAliasesReader.load(new InputStreamReader(zipIn.getInputStream(entry)));
             }
-            else if(ZIP_ENTRY_ALIAS_TREE.equals(entry.getName()))
+            else if (ZIP_ENTRY_ALIAS_TREE.equals(entry.getName()))
             {
                treeFolderStateReader = new XMLBeanReader();
                treeFolderStateReader.load(new InputStreamReader(zipIn.getInputStream(entry)));
             }
-            else if(ZIP_ENTRY_DRIVER_IDENTIFIER_TO_NAME.equals(entry.getName()))
+            else if (ZIP_ENTRY_DRIVER_IDENTIFIER_TO_NAME.equals(entry.getName()))
             {
                driverIdentifierToName = new Properties();
                driverIdentifierToName.load(new InputStreamReader(zipIn.getInputStream(entry)));
@@ -110,15 +108,15 @@ public class AliasTransferCtrl
             }
          }
 
-         if(null == sqlAliasesReader)
+         if (null == sqlAliasesReader)
          {
             throw new IllegalStateException("Zip did not contain: " + ZIP_ENTRY_SQL_ALIASES);
          }
-         if(null == treeFolderStateReader)
+         if (null == treeFolderStateReader)
          {
             throw new IllegalStateException("Zip did not contain: " + ZIP_ENTRY_ALIAS_TREE);
          }
-         if(null == driverIdentifierToName)
+         if (null == driverIdentifierToName)
          {
             throw new IllegalStateException("Zip did not contain: " + ZIP_ENTRY_DRIVER_IDENTIFIER_TO_NAME);
          }
@@ -127,7 +125,7 @@ public class AliasTransferCtrl
 
          AssignDriversCtrl assignDriversCtrl = new AssignDriversCtrl(driverIdentifierToName, sqlAliases, _dlg);
 
-         if(false == assignDriversCtrl.areAllDriversAssigned())
+         if (false == assignDriversCtrl.areAllDriversAssigned())
          {
             return;
          }
@@ -184,15 +182,17 @@ public class AliasTransferCtrl
          XMLBeanWriter treeFolderStateWriter = new XMLBeanWriter(state);
 
 
-         ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(exportFile));
+         try (FileOutputStream fileOutputStream = new FileOutputStream(exportFile);
+              ZipOutputStream zipOut = new ZipOutputStream(fileOutputStream))
+         {
+            writeXMLBeanZipEntry(zipOut, sqlAliasesWriter, ZIP_ENTRY_SQL_ALIASES);
+            writeXMLBeanZipEntry(zipOut, treeFolderStateWriter, ZIP_ENTRY_ALIAS_TREE);
 
-         writeXMLBeanZipEntry(zipOut, sqlAliasesWriter, ZIP_ENTRY_SQL_ALIASES);
-         writeXMLBeanZipEntry(zipOut, treeFolderStateWriter, ZIP_ENTRY_ALIAS_TREE);
+            writeDriverIdentifierToNamePropZipEntry(sqlAliasesToExport, zipOut);
 
-         writeDriverIdentifierToNamePropZipEntry(sqlAliasesToExport, zipOut);
-
-         zipOut.close();
-
+            zipOut.flush();
+            fileOutputStream.flush();
+         }
 
          Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("AliasTransferCtrl.file.export.success.msg", exportFile.getAbsolutePath()));
 
