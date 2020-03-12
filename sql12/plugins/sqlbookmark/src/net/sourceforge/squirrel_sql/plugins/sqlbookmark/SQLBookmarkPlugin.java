@@ -359,6 +359,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
 
       menu.removeAll();
       _resources.addToMenu(coll.get(AddBookmarkAction.class), menu);
+      _resources.addToMenu(coll.get(EditBookmarksAction.class), menu);
       menu.add(new JSeparator());
 
       for (Iterator<Bookmark> i = bookmarkManager.iterator(); i.hasNext();)

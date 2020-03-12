@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Bookmarks Plugin: Added two SQuirreL default bookmarks:
+   - "Completion function examples (JOIN generation)"
+   - "Generate file from SQL result examples"
+  See menu Session --> Bookmarks --> Edit Bookmarks --> Last two entries in folder "SQuirreL bookmarks"
+
 Alias tree drag and drop: Drop position is now indicated.
 
 Alias import/export dialog: Tree allows to remove Aliases from export by right mouse menu.

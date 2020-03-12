@@ -88,7 +88,22 @@ public class DefaultBookmarksFactory
          "DELETE FROM MyTable WHERE MyID1 = 1"},
 
       {"paramexample", "bookmark with parameters",
-         "SELECT * FROM MyTable WHERE MyID1 = ${Value of MyID1}"}
+         "SELECT * FROM MyTable WHERE MyID1 = ${Value of MyID1}"},
+
+      {"joingenerationexamples", "completion function examples (JOIN generation)",
+         "-- Generates SQL-JOIN syntax based on constraints from MyGrandTable via MyTable to MyChildTable.\n" +
+         "-- #j decides generation of INNER/OUTER joins on foreign keys being nullable.\n" +
+         "-- #i / #l / #r generates INNER/LEFT/RIGHT joins.\n" +
+         "SELECT * FROM MyGrandTable\n" +
+         "#j,MyGrandTable,MyTable,MyChildTable,<hit ctrl+space here>"},
+
+      {"generatefilefromresultexamples", "generate file from result examples",
+         "-- Executes a query and writes the result to a file.\n" +
+         "-- The file name ending decides what kind of file is generated:\n" +
+         "-- xls and xlsx generate a MS Excel file, xml generates a XML file, json generates a JSON file, all other endings generate a CSV file.\n" +
+         "-- The settings for the files will be taken from the 'Store result of SQL to file' dialog.\n" +
+         "-- Please note the single quotes around the file name.\n" +
+         "@file '/home/gerd/temp/MyTable.xlsx' SELECT * FROM MyTable"}
    };
 
    static Bookmark[] getDefaultBookmarks()
