@@ -13,6 +13,7 @@ public class SQLAliasSchemaDetailProperties implements Comparable<SQLAliasSchema
    private int _view;
    private int _procedure;
    private int _UDT;
+   private SQLAliasVersioner _versioner = new SQLAliasVersioner();
 
    public String getSchemaName()
    {
@@ -21,6 +22,7 @@ public class SQLAliasSchemaDetailProperties implements Comparable<SQLAliasSchema
 
    public void setSchemaName(String schemaName)
    {
+      _versioner.trigger(_schemaName, schemaName);
       _schemaName = schemaName;
    }
 
@@ -42,16 +44,22 @@ public class SQLAliasSchemaDetailProperties implements Comparable<SQLAliasSchema
 
    public void setTable(int id)
    {
+      // Not really exact because in Schema Properties UI changes aren't saved yet but should be good enough.
+      _versioner.trigger(_table, id);
       _table = id;
    }
 
    public void setView(int id)
    {
+      // Not really exact because in Schema Properties UI changes aren't saved yet but should be good enough.
+      _versioner.trigger(_view, id);
       _view = id;
    }
 
    public void setProcedure(int id)
    {
+      // Not really exact because in Schema Properties UI changes aren't saved yet but should be good enough.
+      _versioner.trigger(_procedure, id);
       _procedure = id;
    }
 
@@ -69,5 +77,10 @@ public class SQLAliasSchemaDetailProperties implements Comparable<SQLAliasSchema
    public int compareTo(SQLAliasSchemaDetailProperties other)
    {
       return _schemaName.compareTo(other._schemaName);
+   }
+
+   public void acceptAliasVersioner(SQLAliasVersioner versioner)
+   {
+      _versioner = versioner;
    }
 }

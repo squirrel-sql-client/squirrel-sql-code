@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Application;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopContainerFactory;
@@ -32,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.D
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.MessagePanel;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -107,7 +109,8 @@ public class MainFrame extends JFrame
 	 */
 	public MainFrame(IApplication app)
 	{
-		super(Version.getVersion());
+		//super(Version.getVersion() + " User dir:" + new ApplicationFiles().getUserSettingsDirectory());
+		super(s_stringMgr.getString("MainFrame.title.version.userdir", Version.getVersion(), new ApplicationFiles().getUserSettingsDirectory()));
 		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");

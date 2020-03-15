@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasFolderState;
 import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
 import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
+import net.sourceforge.squirrel_sql.client.gui.db.Java8CloseableFix;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -44,13 +45,13 @@ public class AliasTransferCtrl
    private static final String ZIP_ENTRY_ALIAS_TREE = "export_SQLAliases23_treeStructure.xml";
    private static final String ZIP_ENTRY_DRIVER_IDENTIFIER_TO_NAME = "export_driverIdentifierToName.props";
 
-   private final AliasTransferDialog _dlg;
+   private final AliasTransferDlg _dlg;
    private IToogleableAliasesList _aliasesList;
 
    public AliasTransferCtrl(IToogleableAliasesList aliasesList)
    {
       _aliasesList = aliasesList;
-      _dlg = new AliasTransferDialog(Main.getApplication().getMainFrame());
+      _dlg = new AliasTransferDlg(Main.getApplication().getMainFrame());
 
       locateDialogBesidesAliases();
 
@@ -58,9 +59,16 @@ public class AliasTransferCtrl
 
       _dlg.btnExport.addActionListener(e -> onExport(exportImportTreeHandler));
       _dlg.btnImport.addActionListener(e -> onImport(exportImportTreeHandler));
+      _dlg.btnUpdate.addActionListener(e -> onUpdate(exportImportTreeHandler));
+      _dlg.btnUpdate.setEnabled(false);
 
       GUIUtils.enableCloseByEscape(_dlg);
       _dlg.setVisible(true);
+   }
+
+   private void onUpdate(ExportImportTreeHandler exportImportTreeHandler)
+   {
+      new AliasImportUpdateCtrl(_dlg, exportImportTreeHandler, _aliasesList);
    }
 
    private void onImport(ExportImportTreeHandler exportImportTreeHandler)
@@ -75,8 +83,10 @@ public class AliasTransferCtrl
       }
 
       File importFile = importFC.getSelectedFile();
+      Props.putString(PREF_LAST_EXPORT_FILE_DIR, importFile.getParent());
 
-      try (ZipFile zipIn = new ZipFile(importFile))
+      try (ZipFile zipIn = new ZipFile(importFile);
+           Java8CloseableFix dum = Main.getApplication().getGlobalSQLAliasVersioner().switchOff())
       {
          Enumeration<? extends ZipEntry> entries = zipIn.entries();
 
@@ -136,6 +146,7 @@ public class AliasTransferCtrl
 
          exportImportTreeHandler.load(sqlAliases, aliasFolderState);
 
+         _dlg.btnUpdate.setEnabled(true);
       }
       catch (Exception e)
       {
@@ -173,7 +184,7 @@ public class AliasTransferCtrl
             exportFile = new File(exportFile.getAbsolutePath() + ".zip");
          }
 
-         List<SQLAlias> sqlAliasesToExport = exportImportTreeHandler.getSqlAliasesToExport();
+         List<SQLAlias> sqlAliasesToExport = exportImportTreeHandler.getSqlAliasList();
          XMLBeanWriter sqlAliasesWriter = new XMLBeanWriter();
          sqlAliasesWriter.addIteratorToRoot(sqlAliasesToExport.iterator());
 
@@ -295,7 +306,7 @@ public class AliasTransferCtrl
 
       int x = locOnScreen.x + _aliasesList.getComponent().getWidth() + new JSplitPane().getDividerSize();
 
-      Rectangle boundsOnScreen = new Rectangle(x, locOnScreen.y, Math.max(_aliasesList.getComponent().getWidth(), 250), _aliasesList.getComponent().getHeight());
+      Rectangle boundsOnScreen = new Rectangle(x, locOnScreen.y, Math.max(_aliasesList.getComponent().getWidth(), 400), _aliasesList.getComponent().getHeight());
 
       _dlg.setBounds(boundsOnScreen);
    }

@@ -1,16 +1,19 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.AliasDndExport;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.ExportImportTreeHandler;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.activation.DataHandler;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Copyright (C) 2001-2004 Colin Bell
@@ -38,6 +41,8 @@ import java.awt.event.MouseListener;
  */
 public class AliasesList implements IToogleableAliasesList
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasesList.class);
+
    private JPanel _pnlContainer = new JPanel(new GridLayout(1,1));
    private JListAliasesListImpl _jListImpl;
    private JTreeAliasesListImpl _jTreeImpl;
@@ -171,4 +176,36 @@ public class AliasesList implements IToogleableAliasesList
       _jListImpl.aliasChanged(sqlAlias);
       _jTreeImpl.aliasChanged(sqlAlias);
    }
+
+   @Override
+   public List<SQLAlias> updateAliasesByImport(List<SQLAlias> importSqlAliases, boolean respectAliasVersionTimeMills)
+   {
+      List<SQLAlias> ret = new ArrayList<>();
+
+      for (ISQLAlias isqlAlias : Main.getApplication().getDataCache().getAliasList())
+      {
+         for (SQLAlias importSqlAlias : importSqlAliases)
+         {
+            if(false == StringUtilities.equalsRespectNullModuloEmptyAndWhiteSpace(isqlAlias.getName(), importSqlAlias.getName()))
+            {
+               continue;
+            }
+
+            final SQLAlias sqlAlias = (SQLAlias) isqlAlias;
+            if(respectAliasVersionTimeMills  && importSqlAlias.getAliasVersionTimeMills() <= sqlAlias.getAliasVersionTimeMills())
+            {
+               continue;
+            }
+
+            sqlAlias.assignFrom(importSqlAlias, false);
+            aliasChanged(sqlAlias);
+
+            Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("AliasesList.alias.updated", sqlAlias.getName()));
+            ret.add(importSqlAlias);
+         }
+      }
+
+      return ret;
+   }
+
 }

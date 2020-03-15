@@ -25,28 +25,30 @@ import java.io.Serializable;
 
 public class SQLAliasColorProperties implements Serializable
 {
-   private boolean overrideToolbarBackgroundColor = false;
+   private boolean _overrideToolbarBackgroundColor = false;
    
-   private int toolbarBackgroundColorRgbValue = 0;
+   private int _toolbarBackgroundColorRgbValue = 0;
    
-   private boolean overrideObjectTreeBackgroundColor = false;
+   private boolean _overrideObjectTreeBackgroundColor = false;
    
-   private int objectTreeBackgroundColorRgbValue = 0;
+   private int _objectTreeBackgroundColorRgbValue = 0;
    
-   private boolean overrideStatusBarBackgroundColor = false;
+   private boolean _overrideStatusBarBackgroundColor = false;
 
-   private int statusBarBackgroundColorRgbValue = 0;
+   private int _statusBarBackgroundColorRgbValue = 0;
 
-   private boolean overrideAliasBackgroundColor = false;
+   private boolean _overrideAliasBackgroundColor = false;
 
-   private int aliasBackgroundColorRgbValue = 0;
+   private int _aliasBackgroundColorRgbValue = 0;
 
-   /**
+   private SQLAliasVersioner _versioner = new SQLAliasVersioner();
+
+	/**
 	 * @return the overrideToolbarBackgroundColor
 	 */
 	public boolean isOverrideToolbarBackgroundColor()
 	{
-		return overrideToolbarBackgroundColor;
+		return _overrideToolbarBackgroundColor;
 	}
 
 	/**
@@ -54,7 +56,8 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public void setOverrideToolbarBackgroundColor(boolean overrideToolbarBackgroundColor)
 	{
-		this.overrideToolbarBackgroundColor = overrideToolbarBackgroundColor;
+		_versioner.trigger(this._overrideToolbarBackgroundColor, overrideToolbarBackgroundColor);
+		this._overrideToolbarBackgroundColor = overrideToolbarBackgroundColor;
 	}
 
 	/**
@@ -62,7 +65,7 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public int getToolbarBackgroundColorRgbValue()
 	{
-		return toolbarBackgroundColorRgbValue;
+		return _toolbarBackgroundColorRgbValue;
 	}
 
 	/**
@@ -70,7 +73,8 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public void setToolbarBackgroundColorRgbValue(int toolbarBackgroundColorRgbValue)
 	{
-		this.toolbarBackgroundColorRgbValue = toolbarBackgroundColorRgbValue;
+		_versioner.trigger(_toolbarBackgroundColorRgbValue, toolbarBackgroundColorRgbValue);
+		this._toolbarBackgroundColorRgbValue = toolbarBackgroundColorRgbValue;
 	}
 
 	/**
@@ -78,7 +82,7 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public boolean isOverrideObjectTreeBackgroundColor()
 	{
-		return overrideObjectTreeBackgroundColor;
+		return _overrideObjectTreeBackgroundColor;
 	}
 
 	/**
@@ -86,7 +90,8 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public void setOverrideObjectTreeBackgroundColor(boolean overrideObjectTreeBackgroundColor)
 	{
-		this.overrideObjectTreeBackgroundColor = overrideObjectTreeBackgroundColor;
+		_versioner.trigger(_overrideObjectTreeBackgroundColor, overrideObjectTreeBackgroundColor);
+		this._overrideObjectTreeBackgroundColor = overrideObjectTreeBackgroundColor;
 	}
 
 	/**
@@ -94,7 +99,7 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public int getObjectTreeBackgroundColorRgbValue()
 	{
-		return objectTreeBackgroundColorRgbValue;
+		return _objectTreeBackgroundColorRgbValue;
 	}
 
 	/**
@@ -102,7 +107,8 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public void setObjectTreeBackgroundColorRgbValue(int objectTreeBackgroundColorRgbValue)
 	{
-		this.objectTreeBackgroundColorRgbValue = objectTreeBackgroundColorRgbValue;
+		_versioner.trigger(_objectTreeBackgroundColorRgbValue, objectTreeBackgroundColorRgbValue);
+		this._objectTreeBackgroundColorRgbValue = objectTreeBackgroundColorRgbValue;
 	}
 
 	/**
@@ -110,7 +116,7 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public boolean isOverrideStatusBarBackgroundColor()
 	{
-		return overrideStatusBarBackgroundColor;
+		return _overrideStatusBarBackgroundColor;
 	}
 
 	/**
@@ -118,7 +124,8 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public void setOverrideStatusBarBackgroundColor(boolean overrideStatusBarBackgroundColor)
 	{
-		this.overrideStatusBarBackgroundColor = overrideStatusBarBackgroundColor;
+		_versioner.trigger(_overrideStatusBarBackgroundColor, overrideStatusBarBackgroundColor);
+		this._overrideStatusBarBackgroundColor = overrideStatusBarBackgroundColor;
 	}
 
 	/**
@@ -126,7 +133,7 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public int getStatusBarBackgroundColorRgbValue()
 	{
-		return statusBarBackgroundColorRgbValue;
+		return _statusBarBackgroundColorRgbValue;
 	}
 
 	/**
@@ -134,24 +141,26 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public void setStatusBarBackgroundColorRgbValue(int statusBarBackgroundColorRgbValue)
 	{
-		this.statusBarBackgroundColorRgbValue = statusBarBackgroundColorRgbValue;
+		_versioner.trigger(_statusBarBackgroundColorRgbValue , statusBarBackgroundColorRgbValue);
+		this._statusBarBackgroundColorRgbValue = statusBarBackgroundColorRgbValue;
 	}
 
 
 
 	public boolean isOverrideAliasBackgroundColor()
 	{
-		return overrideAliasBackgroundColor;
+		return _overrideAliasBackgroundColor;
 	}
 
 	public void setOverrideAliasBackgroundColor(boolean overrideStatusBarBackgroundColor)
 	{
-		this.overrideAliasBackgroundColor = overrideStatusBarBackgroundColor;
+		_versioner.trigger(_overrideAliasBackgroundColor, overrideStatusBarBackgroundColor);
+		_overrideAliasBackgroundColor = overrideStatusBarBackgroundColor;
 	}
 
 	public int getAliasBackgroundColorRgbValue()
 	{
-		return aliasBackgroundColorRgbValue;
+		return _aliasBackgroundColorRgbValue;
 	}
 
 	/**
@@ -159,10 +168,13 @@ public class SQLAliasColorProperties implements Serializable
 	 */
 	public void setAliasBackgroundColorRgbValue(int statusBarBackgroundColorRgbValue)
 	{
-		this.aliasBackgroundColorRgbValue = statusBarBackgroundColorRgbValue;
+		_versioner.trigger(_aliasBackgroundColorRgbValue, statusBarBackgroundColorRgbValue);
+		this._aliasBackgroundColorRgbValue = statusBarBackgroundColorRgbValue;
 	}
 
-	
-   
-   
+
+	public void acceptAliasVersioner(SQLAliasVersioner versioner)
+	{
+		_versioner = versioner;
+	}
 }

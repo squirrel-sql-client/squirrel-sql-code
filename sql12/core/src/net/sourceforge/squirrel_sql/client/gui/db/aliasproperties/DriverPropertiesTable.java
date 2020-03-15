@@ -94,8 +94,6 @@ class DriverPropertiesTable extends JTable implements DriverPropertiesTableModel
 
 	private final class PropertiesTableColumnModel extends DefaultTableColumnModel
 	{
-		private static final long serialVersionUID = 7718475486013810595L;
-
 		PropertiesTableColumnModel()
 		{
 			super();
@@ -124,8 +122,6 @@ class DriverPropertiesTable extends JTable implements DriverPropertiesTableModel
 
 	private final class ValueCellEditor extends DefaultCellEditor
 	{
-		private static final long serialVersionUID = -7637425267855940899L;
-
 		private final JTextField _textEditor = new JTextField();
 
 		private final JComboBox _comboEditor = new JComboBox();

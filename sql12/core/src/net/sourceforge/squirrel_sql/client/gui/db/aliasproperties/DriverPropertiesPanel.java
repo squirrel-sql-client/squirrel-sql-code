@@ -38,9 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class DriverPropertiesPanel extends JPanel 
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DriverPropertiesPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriverPropertiesPanel.class);
 
    // i18n[DriverPropertiesPanel.useDriverProperties=Use driver properties]
    JCheckBox chkUseDriverProperties = new JCheckBox(s_stringMgr.getString("DriverPropertiesPanel.useDriverProperties"));
@@ -50,8 +48,7 @@ public class DriverPropertiesPanel extends JPanel
       String INSTRUCTIONS = s_stringMgr.getString("DriverPropertiesPanel.instructions");
    }
 
-	/** JTable containing the properties. */
-	DriverPropertiesTable tbl;
+	DriverPropertiesTable tblDriverProperties;
 
 	/**
 	 * Display the description for the currently selected property in this
@@ -77,17 +74,17 @@ public class DriverPropertiesPanel extends JPanel
 	 */
 	public SQLDriverPropertyCollection getSQLDriverProperties()
 	{
-      TableCellEditor cellEditor = tbl.getCellEditor();
+      TableCellEditor cellEditor = tblDriverProperties.getCellEditor();
       if(null != cellEditor)
       {
          cellEditor.stopCellEditing();
       }
-		return tbl.getTypedModel().getSQLDriverProperties();
+		return tblDriverProperties.getTypedModel().getSQLDriverProperties();
 	}
 
 	private void createUserInterface(SQLDriverPropertyCollection props)
 	{
-		tbl = new DriverPropertiesTable(props);
+		tblDriverProperties = new DriverPropertiesTable(props);
 
 		final GridBagConstraints gbc = new GridBagConstraints();
 
@@ -109,7 +106,7 @@ public class DriverPropertiesPanel extends JPanel
       gbc.weighty = 1.0;
       gbc.weightx = 1.0;
       ++gbc.gridy;
-		JScrollPane sp = new JScrollPane(tbl);
+		JScrollPane sp = new JScrollPane(tblDriverProperties);
 		add(sp, gbc);
 
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -117,17 +114,17 @@ public class DriverPropertiesPanel extends JPanel
 		++gbc.gridy;
 		add(createInfoPanel(), gbc);
 
-		tbl.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+		tblDriverProperties.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 		{
 			public void valueChanged(ListSelectionEvent evt)
 			{
-				updateDescription(tbl.getSelectedRow());
+				updateDescription(tblDriverProperties.getSelectedRow());
 			}
 		});
 
-		if (tbl.getRowCount() > 0)
+		if (tblDriverProperties.getRowCount() > 0)
 		{
-			tbl.setRowSelectionInterval(0, 0);
+			tblDriverProperties.setRowSelectionInterval(0, 0);
 		}
 	}
 
@@ -135,7 +132,7 @@ public class DriverPropertiesPanel extends JPanel
 	{
 		if (idx != -1)
 		{
-			String desc = (String)tbl.getValueAt(idx, DriverPropertiesTableModel.IColumnIndexes.IDX_DESCRIPTION);
+			String desc = (String) tblDriverProperties.getValueAt(idx, DriverPropertiesTableModel.IColumnIndexes.IDX_DESCRIPTION);
 			_descriptionLbl.setText(desc);
 		}
 		else

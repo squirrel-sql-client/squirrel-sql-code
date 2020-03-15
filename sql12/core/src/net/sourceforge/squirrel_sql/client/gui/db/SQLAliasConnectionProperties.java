@@ -26,20 +26,22 @@ import java.io.Serializable;
 public class SQLAliasConnectionProperties implements Serializable
 {
    /** Whether or not to enable connection keep alives */
-   private boolean enableConnectionKeepAlive = false;
+   private boolean _enableConnectionKeepAlive = false;
    
    /** time between executing the keep alive sql statement;  Default = 2 minutes */
-   private int keepAliveSleepTimeSeconds = 120;
+   private int _keepAliveSleepTimeSeconds = 120;
    
    /** the statement to execute to keep the connection alive */
-   private String keepAliveSqlStatement = "";
-      
-   /**
+   private String _keepAliveSqlStatement = "";
+
+	private SQLAliasVersioner _versioner = new SQLAliasVersioner();
+
+	/**
 	 * @return the isEnableConnectionKeepAlive
 	 */
 	public boolean isEnableConnectionKeepAlive()
 	{
-		return enableConnectionKeepAlive;
+		return _enableConnectionKeepAlive;
 	}
 
 	/**
@@ -47,7 +49,8 @@ public class SQLAliasConnectionProperties implements Serializable
 	 */
 	public void setEnableConnectionKeepAlive(boolean enableConnectionKeepAlive)
 	{
-		this.enableConnectionKeepAlive = enableConnectionKeepAlive;
+		_versioner.trigger(_enableConnectionKeepAlive, enableConnectionKeepAlive);
+		this._enableConnectionKeepAlive = enableConnectionKeepAlive;
 	}
 
 	/**
@@ -55,7 +58,7 @@ public class SQLAliasConnectionProperties implements Serializable
 	 */
 	public int getKeepAliveSleepTimeSeconds()
 	{
-		return keepAliveSleepTimeSeconds;
+		return _keepAliveSleepTimeSeconds;
 	}
 
 	/**
@@ -63,7 +66,8 @@ public class SQLAliasConnectionProperties implements Serializable
 	 */
 	public void setKeepAliveSleepTimeSeconds(int keepAliveSleepTimeSeconds)
 	{
-		this.keepAliveSleepTimeSeconds = keepAliveSleepTimeSeconds;
+		_versioner.trigger(_keepAliveSleepTimeSeconds, keepAliveSleepTimeSeconds);
+		this._keepAliveSleepTimeSeconds = keepAliveSleepTimeSeconds;
 	}
 
 	/**
@@ -71,7 +75,7 @@ public class SQLAliasConnectionProperties implements Serializable
 	 */
 	public String getKeepAliveSqlStatement()
 	{
-		return keepAliveSqlStatement;
+		return _keepAliveSqlStatement;
 	}
 
 	/**
@@ -79,7 +83,12 @@ public class SQLAliasConnectionProperties implements Serializable
 	 */
 	public void setKeepAliveSqlStatement(String keepAliveSqlStatement)
 	{
-		this.keepAliveSqlStatement = keepAliveSqlStatement;
-	}   
-   
+		_versioner.trigger(_keepAliveSqlStatement, keepAliveSqlStatement);
+		this._keepAliveSqlStatement = keepAliveSqlStatement;
+	}
+
+	public void acceptAliasVersioner(SQLAliasVersioner versioner)
+	{
+		_versioner = versioner;
+	}
 }

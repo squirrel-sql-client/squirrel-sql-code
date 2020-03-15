@@ -32,6 +32,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
 import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
+import net.sourceforge.squirrel_sql.client.gui.db.GlobalSQLAliasVersioner;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
 import net.sourceforge.squirrel_sql.client.preferences.LocaleWrapper;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
@@ -173,6 +174,8 @@ public class Application implements IApplication
 	private ShortcutManager _shortcutManager = new ShortcutManager();
 
 	private PropsImpl _propsImpl;
+
+	private GlobalSQLAliasVersioner _globalSQLAliasVersioner = new GlobalSQLAliasVersioner();
 
 	public Application()
 	{
@@ -1393,6 +1396,12 @@ public class Application implements IApplication
 		}
 
 		return _propsImpl;
+   }
+
+   @Override
+   public GlobalSQLAliasVersioner getGlobalSQLAliasVersioner()
+   {
+		return _globalSQLAliasVersioner;
    }
 
 }

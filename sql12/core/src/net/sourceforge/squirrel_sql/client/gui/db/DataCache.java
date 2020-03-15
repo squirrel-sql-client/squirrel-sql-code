@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -566,7 +567,7 @@ public class DataCache
 
    private void loadAliases(File aliasesFile, IMessageHandler msgHandler)
    {
-      try
+      try(Java8CloseableFix java8Dum = Main.getApplication().getGlobalSQLAliasVersioner().switchOff())
       {
          _cache.load(aliasesFile.getPath());
       }

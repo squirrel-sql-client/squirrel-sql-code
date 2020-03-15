@@ -134,25 +134,17 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 		final DataCache cache = Main.getApplication().getDataCache();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		SQLAlias newAlias = cache.createAlias(factory.createIdentifier());
-		try
+
+		newAlias.assignFrom(alias, false);
+
+		if(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS == newAlias.getSchemaProperties().getGlobalState())
 		{
-			newAlias.assignFrom(alias, false);
-
-         if(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS == newAlias.getSchemaProperties().getGlobalState())
-         {
-            // i18n[AliasWindowFactory.schemaPropsCopiedWarning=Warning: Your target Alias contains database specific Schema properties copied from the source Alias.\n
-            // Schema loading of the target Alias may be errorneous. Please check your target Alias's Schema properties.]
-				Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("AliasWindowFactory.schemaPropsCopiedWarning"));
-         }
-
-			Main.getApplication().getPluginManager().aliasCopied(alias, newAlias);
-
-      }
-		catch (ValidationException ex)
-		{
-            // i18n[AliasWindowFactory.error.copyAlias=Error occurred copying the alias]
-			s_log.error(s_stringMgr.getString("AliasWindowFactory.error.copyAlias"), ex);
+			// i18n[AliasWindowFactory.schemaPropsCopiedWarning=Warning: Your target Alias contains database specific Schema properties copied from the source Alias.\n
+			// Schema loading of the target Alias may be errorneous. Please check your target Alias's Schema properties.]
+			Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("AliasWindowFactory.schemaPropsCopiedWarning"));
 		}
+
+		Main.getApplication().getPluginManager().aliasCopied(alias, newAlias);
 		final AliasInternalFrame sheet = new AliasInternalFrame(Main.getApplication(), newAlias, COPY);
 		Main.getApplication().getMainFrame().addWidget(sheet);
 		DialogWidget.centerWithinDesktop(sheet);

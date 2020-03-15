@@ -151,6 +151,7 @@ public class SquirrelResources extends Resources
 
 		String SAVE = "save";
 		String OPEN = "open";
+		String MAGIC_WAND = "magic_wand";
 
 		String LOCK = "lock";
 		String UNLOCK = "unlock";

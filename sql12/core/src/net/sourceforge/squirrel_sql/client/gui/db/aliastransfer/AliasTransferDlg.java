@@ -17,15 +17,16 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-public class AliasTransferDialog extends JDialog
+public class AliasTransferDlg extends JDialog
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasTransferDialog.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasTransferDlg.class);
 
    JTree treeExportedAliases;
    JButton btnExport;
    JButton btnImport;
+   JButton btnUpdate;
 
-   public AliasTransferDialog(MainFrame mainFrame)
+   public AliasTransferDlg(MainFrame mainFrame)
    {
       super(mainFrame, s_stringMgr.getString("AliasTransferDialog.import.export.aliases"));
 
@@ -41,7 +42,7 @@ public class AliasTransferDialog extends JDialog
       gbc = new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5), 0,0);
       getContentPane().add(new JScrollPane(treeExportedAliases), gbc);
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5), 0,0);
       getContentPane().add(createBottomPanel(), gbc);
    }
 
@@ -51,17 +52,24 @@ public class AliasTransferDialog extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       btnExport = new JButton(s_stringMgr.getString("AliasTransferDialog.export.button"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SAVE));
       ret.add(btnExport, gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,0), 0,0);
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
       btnImport = new JButton(s_stringMgr.getString("AliasTransferDialog.import.button"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.OPEN));
       ret.add(btnImport, gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,0), 0,0);
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
       SmallToolTipInfoButton info = new SmallToolTipInfoButton(s_stringMgr.getString("AliasTransferDialog.import.export.description"), 20000);
       ret.add(info.getButton(), gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,1,0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,0), 0,0);
+      ret.add(new JPanel(), gbc);
+
+      gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
+      btnUpdate = new JButton(s_stringMgr.getString("AliasTransferDialog.update.button"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.MAGIC_WAND));
+      ret.add(btnUpdate, gbc);
 
       return ret;
    }

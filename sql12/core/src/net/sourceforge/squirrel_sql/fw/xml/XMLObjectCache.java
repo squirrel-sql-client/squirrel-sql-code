@@ -37,19 +37,13 @@ import java.util.List;
  */
 public class XMLObjectCache<E extends IHasIdentifier> implements IObjectCache<E>
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(XMLObjectCache.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(XMLObjectCache.class);
 
 	/** Cache of stored objects. */
 	private ObjectCache<E> _cache = new ObjectCache<E>();
 
-	/**
-	 * Default ctor.
-	 */
 	public XMLObjectCache()
 	{
-		super();
 	}
 
 	/**

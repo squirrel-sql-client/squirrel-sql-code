@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class SQLAliasSchemaProperties implements Serializable
 {
@@ -20,6 +19,7 @@ public class SQLAliasSchemaProperties implements Serializable
    private boolean _cacheSchemaIndependentMetaData;
    private String _byLikeStringInclude;
    private String _byLikeStringExclude;
+   private SQLAliasVersioner _versioner = new SQLAliasVersioner();
 
    public SQLAliasSchemaDetailProperties[] getSchemaDetails()
    {
@@ -29,6 +29,7 @@ public class SQLAliasSchemaProperties implements Serializable
    public void setSchemaDetails(SQLAliasSchemaDetailProperties[] schemaDetails)
    {
       _schemaDetails = schemaDetails;
+      Arrays.stream(_schemaDetails).forEach(sd -> sd.acceptAliasVersioner(_versioner));
    }
 
 
@@ -39,6 +40,7 @@ public class SQLAliasSchemaProperties implements Serializable
 
    public void setGlobalState(int globalState)
    {
+      _versioner.trigger(_globalState, globalState);
       this._globalState = globalState;
    }
 
@@ -50,6 +52,7 @@ public class SQLAliasSchemaProperties implements Serializable
 
    public void setCacheSchemaIndependentMetaData(boolean b)
    {
+      _versioner.trigger(_cacheSchemaIndependentMetaData, b);
       _cacheSchemaIndependentMetaData = b;
    }
 
@@ -436,6 +439,7 @@ public class SQLAliasSchemaProperties implements Serializable
 
    public void setByLikeStringInclude(String byLikeStringInclude)
    {
+      _versioner.trigger(_byLikeStringInclude, byLikeStringInclude);
       _byLikeStringInclude = byLikeStringInclude;
    }
 
@@ -446,6 +450,12 @@ public class SQLAliasSchemaProperties implements Serializable
 
    public void setByLikeStringExclude(String byLikeStringExclude)
    {
+      _versioner.trigger(_byLikeStringExclude, byLikeStringExclude);
       _byLikeStringExclude = byLikeStringExclude;
+   }
+
+   public void acceptAliasVersioner(SQLAliasVersioner versioner)
+   {
+      _versioner = versioner;
    }
 }

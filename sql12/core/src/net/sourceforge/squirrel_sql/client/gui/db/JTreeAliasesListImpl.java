@@ -182,7 +182,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          @Override
          public TreePath[] getPasteTreeNodesFromInternalTransfer(DropTargetDropEvent dtde, TreePath targetPath, TreePath[] selectionPaths)
          {
-            return onGetPasteTreeNodesFromInternalTransfer(dtde, targetPath, selectionPaths);
+            return onGetPasteTreeNodesFromInternalTransfer(dtde);
          }
       };
 
@@ -207,7 +207,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       _tree.setTransferHandler(aliasExportDndTransferHandler);
    }
 
-   private TreePath[] onGetPasteTreeNodesFromInternalTransfer(DropTargetDropEvent dtde, TreePath targetPath, TreePath[] selectionPaths)
+   private TreePath[] onGetPasteTreeNodesFromInternalTransfer(DropTargetDropEvent dtde)
    {
       try
       {

@@ -218,15 +218,7 @@ class Session implements ISession
 
       _alias = new SQLAlias();
 
-      try
-      {
-         _alias.assignFrom(alias, true);
-      }
-      catch (ValidationException e)
-      {
-         throw new RuntimeException(e);
-      }
-
+      _alias.assignFrom(alias, true);
 
       _conn = conn;
       _user = user;

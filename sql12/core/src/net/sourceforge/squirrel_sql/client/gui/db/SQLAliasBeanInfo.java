@@ -35,7 +35,6 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 
 	private interface IPropNames extends ISQLAlias.IPropertyNames
 	{
-		// Empty body.
 	}
 
 	/**
@@ -51,27 +50,22 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 		{
 			PropertyDescriptor[] result =
 				new PropertyDescriptor[] {
-						new PropertyDescriptor(IPropNames.ID, SQLAlias.class, "getIdentifier", "setIdentifier"),
-						new PropertyDescriptor(IPropNames.NAME, SQLAlias.class, "getName", "setName"),
-						new PropertyDescriptor(IPropNames.URL, SQLAlias.class, "getUrl", "setUrl"),
-						new PropertyDescriptor(IPropNames.USER_NAME, SQLAlias.class, "getUserName", "setUserName"),
-						new PropertyDescriptor(IPropNames.DRIVER, SQLAlias.class, "getDriverIdentifier",
-							"setDriverIdentifier"),
-						new PropertyDescriptor(IPropNames.USE_DRIVER_PROPERTIES, SQLAlias.class,
-							"getUseDriverProperties", "setUseDriverProperties"),
-						new PropertyDescriptor(IPropNames.DRIVER_PROPERTIES, SQLAlias.class,
-							"getDriverPropertiesClone", "setDriverProperties"),
-						new PropertyDescriptor(IPropNames.PASSWORD, SQLAlias.class, "getPassword", "setPassword"),
-						new PropertyDescriptor(IPropNames.ENCRYPT_PASSWORD, SQLAlias.class, "isEncryptPassword", "setEncryptPassword"), // Renamed from PasswordEncrypted because of bug #1409
-						new PropertyDescriptor(IPropNames.AUTO_LOGON, SQLAlias.class, "isAutoLogon", "setAutoLogon"),
-						new PropertyDescriptor(IPropNames.CONNECT_AT_STARTUP, SQLAlias.class, "isConnectAtStartup",
-							"setConnectAtStartup"),
-						new PropertyDescriptor(IPropNames.SCHEMA_PROPERTIES, SQLAlias.class, "getSchemaProperties",
-							"setSchemaProperties"),
-						new PropertyDescriptor(IPropNames.COLOR_PROPERTIES, SQLAlias.class, "getColorProperties",
-							"setColorProperties"),
-							new PropertyDescriptor(IPropNames.CONNECTION_PROPERTIES, SQLAlias.class, "getConnectionProperties",
-							"setConnectionProperties")};
+					new PropertyDescriptor(IPropNames.ID, SQLAlias.class, "getIdentifier", "setIdentifier"),
+					new PropertyDescriptor(IPropNames.NAME, SQLAlias.class, "getName", "setName"),
+					new PropertyDescriptor(IPropNames.URL, SQLAlias.class, "getUrl", "setUrl"),
+					new PropertyDescriptor(IPropNames.USER_NAME, SQLAlias.class, "getUserName", "setUserName"),
+					new PropertyDescriptor(IPropNames.DRIVER, SQLAlias.class, "getDriverIdentifier","setDriverIdentifier"),
+					new PropertyDescriptor(IPropNames.USE_DRIVER_PROPERTIES, SQLAlias.class,"getUseDriverProperties", "setUseDriverProperties"),
+					new PropertyDescriptor(IPropNames.DRIVER_PROPERTIES, SQLAlias.class,"getDriverPropertiesClone", "setDriverProperties"),
+					new PropertyDescriptor(IPropNames.PASSWORD, SQLAlias.class, "getPassword", "setPassword"),
+					new PropertyDescriptor(IPropNames.ENCRYPT_PASSWORD, SQLAlias.class, "isEncryptPassword", "setEncryptPassword"), // Renamed from PasswordEncrypted because of bug #1409
+					new PropertyDescriptor(IPropNames.AUTO_LOGON, SQLAlias.class, "isAutoLogon", "setAutoLogon"),
+					new PropertyDescriptor(IPropNames.CONNECT_AT_STARTUP, SQLAlias.class, "isConnectAtStartup", "setConnectAtStartup"),
+					new PropertyDescriptor(IPropNames.ALIAS_VERSION_TIME_MILLIS, SQLAlias.class, "getAliasVersionTimeMills", "setAliasVersionTimeMills"),
+					new PropertyDescriptor(IPropNames.SCHEMA_PROPERTIES, SQLAlias.class, "getSchemaProperties","setSchemaProperties"),
+					new PropertyDescriptor(IPropNames.COLOR_PROPERTIES, SQLAlias.class, "getColorProperties","setColorProperties"),
+					new PropertyDescriptor(IPropNames.CONNECTION_PROPERTIES, SQLAlias.class, "getConnectionProperties","setConnectionProperties")
+			};
 			return result;
 		}
 		catch (IntrospectionException e)

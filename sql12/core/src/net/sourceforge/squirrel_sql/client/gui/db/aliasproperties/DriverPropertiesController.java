@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.sql.Driver;
 import java.sql.DriverPropertyInfo;
-import java.sql.SQLException;
 import java.util.Properties;
 
 /**
@@ -25,18 +24,10 @@ import java.util.Properties;
  */
 public class DriverPropertiesController implements IAliasPropertiesPanelController
 {
-   /**
-    * Internationalized strings for this class.
-    */
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(DriverPropertiesController.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriverPropertiesController.class);
 
    private DriverPropertiesPanel _propsPnl;
 
-   /**
-    * The driver properties. This is only available once OK pressed.
-    */
-   private SQLDriverPropertyCollection _driverPropInfo;
    private ISQLAlias _alias;
    private IApplication _app;
    String _errMsg;
@@ -63,26 +54,28 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
          _errMsg = s_stringMgr.getString("DriverPropertiesController.loadingDriverFailed", app.getDataCache().getDriver(driverIdentifier).getName());
          _app.getMessageHandler().showErrorMessage(_errMsg);
          return;
-      } else {
-          try {
-              if (!jdbcDriver.acceptsURL( aliasUrl )) {
-                  String driverName = 
-                      app.getDataCache().getDriver(driverIdentifier).getName();
-                  //I18n[DriverPropertiesController.invalidUrl=According to 
-                  //the driver "{0}", the url "{1}" is invalid.]
-                  _errMsg = 
-                      s_stringMgr.getString(
-                              "DriverPropertiesController.invalidUrl", 
-                              new String[] {driverName, aliasUrl});
-                  _app.getMessageHandler().showErrorMessage(_errMsg);
-                  return;
-              }
-          } catch (Exception e) {
-              // I18n[DriverPropertiesController.loadingDriverFailed=Loading JDBC driver "{0}" failed.\nCan not load driver properties tab.]
-              _errMsg = s_stringMgr.getString("DriverPropertiesController.loadingDriverFailed", app.getDataCache().getDriver(driverIdentifier).getName());
-              _app.getMessageHandler().showErrorMessage(_errMsg);
-              return;
-          }
+      }
+      else
+      {
+         try
+         {
+            if (!jdbcDriver.acceptsURL(aliasUrl))
+            {
+               String driverName = app.getDataCache().getDriver(driverIdentifier).getName();
+               //I18n[DriverPropertiesController.invalidUrl=According to
+               //the driver "{0}", the url "{1}" is invalid.]
+               _errMsg = s_stringMgr.getString("DriverPropertiesController.invalidUrl",new String[]{driverName, aliasUrl});
+               _app.getMessageHandler().showErrorMessage(_errMsg);
+               return;
+            }
+         }
+         catch (Exception e)
+         {
+            // I18n[DriverPropertiesController.loadingDriverFailed=Loading JDBC driver "{0}" failed.\nCan not load driver properties tab.]
+            _errMsg = s_stringMgr.getString("DriverPropertiesController.loadingDriverFailed", app.getDataCache().getDriver(driverIdentifier).getName());
+            _app.getMessageHandler().showErrorMessage(_errMsg);
+            return;
+         }
       }
 
       DriverPropertyInfo[] infoAr = new DriverPropertyInfo[0];
@@ -98,8 +91,7 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
          //return;
       }
 
-      SQLDriverPropertyCollection driverPropertiesClone = alias.getDriverPropertiesClone();
-      driverPropertiesClone.applyDriverPropertynfo(infoAr);
+      SQLDriverPropertyCollection driverPropertiesClone = alias.getDriverPropertiesClone(true);
       _propsPnl = new DriverPropertiesPanel(driverPropertiesClone);
 
       _propsPnl.chkUseDriverProperties.setSelected(alias.getUseDriverProperties());
@@ -120,30 +112,19 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
    {
       if(null == _origTblColor)
       {
-         _origTblColor = _propsPnl.tbl.getForeground();
+         _origTblColor = _propsPnl.tblDriverProperties.getForeground();
       }
 
-      _propsPnl.tbl.setEnabled(_propsPnl.chkUseDriverProperties.isSelected());
+      _propsPnl.tblDriverProperties.setEnabled(_propsPnl.chkUseDriverProperties.isSelected());
 
       if(_propsPnl.chkUseDriverProperties.isSelected())
       {
-         _propsPnl.tbl.setForeground(_origTblColor);
+         _propsPnl.tblDriverProperties.setForeground(_origTblColor);
       }
       else
       {
-         _propsPnl.tbl.setForeground(Color.lightGray);
+         _propsPnl.tblDriverProperties.setForeground(Color.lightGray);
       }
-   }
-
-   /**
-    * Retrieve the database driver properties. This is only valid if the
-    * OK button was pressed.
-    *
-    * @return the database driver properties.
-    */
-   public SQLDriverPropertyCollection getSQLDriverPropertyCollection()
-   {
-      return _driverPropInfo;
    }
 
    public Component getPanelComponent()

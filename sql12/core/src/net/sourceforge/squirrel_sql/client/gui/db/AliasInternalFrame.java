@@ -263,8 +263,7 @@ public class AliasInternalFrame extends DialogWidget
 		try
 		{
 			applyFromDialog(_sqlAlias);
-			if (_maintType == IMaintenanceType.NEW
-				|| _maintType == IMaintenanceType.COPY)
+			if (_maintType == IMaintenanceType.NEW || _maintType == IMaintenanceType.COPY)
 			{
 				_app.getDataCache().addAlias(_sqlAlias);
 			}

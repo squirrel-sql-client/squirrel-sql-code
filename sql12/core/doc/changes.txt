@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Alias import/export: New button "Update...". This button becomes active when an import file was opened.
+  It allows to update existing Aliases. For details see the update dialogs description.
+
+User directory is shown in title bar.
+
 Bookmarks Plugin: Added two SQuirreL default bookmarks:
    - "Completion function examples (JOIN generation)"
    - "Generate file from SQL result examples"

@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
+import net.sourceforge.squirrel_sql.client.gui.db.GlobalSQLAliasVersioner;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
@@ -51,7 +52,7 @@ import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
  */
 public interface IApplication
 {
-   public interface IMenuIDs extends MainFrame.IMenuIDs
+   interface IMenuIDs extends MainFrame.IMenuIDs
 	{
 		// Empty body.
 	}
@@ -265,4 +266,6 @@ public interface IApplication
 	RowsWindowFrameRegistry getRowsWindowFrameRegistry();
 
 	PropsImpl getPropsImpl();
+
+	GlobalSQLAliasVersioner getGlobalSQLAliasVersioner();
 }

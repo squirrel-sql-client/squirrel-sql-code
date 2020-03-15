@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.sql.DriverPropertyInfo;
 
 import javax.swing.table.AbstractTableModel;
@@ -30,182 +31,185 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 class DriverPropertiesTableModel extends AbstractTableModel
 {
-    private static final long serialVersionUID = 1L;
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriverPropertiesTableModel.class);
 
-    /** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DriverPropertiesTableModel.class);
+   interface IColumnIndexes
+   {
+      int IDX_NAME = 0;
+      int IDX_SPECIFY = 1;
+      int IDX_VALUE = 2;
+      int IDX_REQUIRED = 3;
+      int IDX_DESCRIPTION = 4;
+   }
 
-	interface IColumnIndexes
-	{
-		int IDX_NAME = 0;
-		int IDX_SPECIFY = 1;
-		int IDX_VALUE = 2;
-		int IDX_REQUIRED = 3;
-		int IDX_DESCRIPTION = 4;
-	}
+   /**
+    * Number of columns in model.
+    */
+   private static final int COLUMN_COUNT = 5;
 
-	/** Number of columns in model. */
-	private static final int COLUMN_COUNT = 5;
+   private static final ILogger s_log = LoggerController.createLogger(DriverPropertiesTableModel.class);
 
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(DriverPropertiesTableModel.class);
+   transient private SQLDriverPropertyCollection _props = new SQLDriverPropertyCollection();
 
-	transient private SQLDriverPropertyCollection _props = new SQLDriverPropertyCollection();
+   DriverPropertiesTableModel(SQLDriverPropertyCollection props)
+   {
+      if (props == null)
+      {
+         throw new IllegalArgumentException("SQLDriverPropertyCollection[] == null");
+      }
 
-	DriverPropertiesTableModel(SQLDriverPropertyCollection props)
-	{
-		super();
-		if (props == null)
-		{
-			throw new IllegalArgumentException("SQLDriverPropertyCollection[] == null");
-		}
+      load(props);
+   }
 
-		load(props);
-	}
+   public Object getValueAt(int row, int col)
+   {
+      final SQLDriverProperty sdp = _props.getDriverProperty(row);
+      switch (col)
+      {
+         case IColumnIndexes.IDX_NAME:
+            return sdp.getName();
 
-	public Object getValueAt(int row, int col)
-	{
-		final SQLDriverProperty sdp = _props.getDriverProperty(row);
-		switch (col)
-		{
-			case IColumnIndexes.IDX_NAME:
-				return sdp.getName();
+         case IColumnIndexes.IDX_SPECIFY:
+            return Boolean.valueOf(sdp.isSpecified());
 
-			case IColumnIndexes.IDX_SPECIFY:
-				return Boolean.valueOf(sdp.isSpecified());
+         case IColumnIndexes.IDX_VALUE:
+            return sdp.getValue();
 
-			case IColumnIndexes.IDX_VALUE:
-				return sdp.getValue();
+         case IColumnIndexes.IDX_REQUIRED:
+         {
+            // Use valueof when min supported JDK is 1.4
+            //return Boolean.valueOf(_props[row].required);
+            DriverPropertyInfo dpi = sdp.getDriverPropertyInfo();
+            if (dpi != null)
+            {
+               return Boolean.valueOf(dpi.required);
+            }
+            return Boolean.FALSE;
+         }
 
-			case IColumnIndexes.IDX_REQUIRED:
-			{
-				// Use valueof when min supported JDK is 1.4
-				//return Boolean.valueOf(_props[row].required);
-				DriverPropertyInfo dpi = sdp.getDriverPropertyInfo();
-				if (dpi != null)
-				{
-					return Boolean.valueOf(dpi.required);
-				}
-				return Boolean.FALSE;
-			}
+         case IColumnIndexes.IDX_DESCRIPTION:
+         {
+            DriverPropertyInfo dpi = sdp.getDriverPropertyInfo();
+            if (dpi != null)
+            {
+               return dpi.description;
+            }
+            return s_stringMgr.getString("DriverPropertiesTableModel.unknown");
+         }
 
-			case IColumnIndexes.IDX_DESCRIPTION:
-			{
-				DriverPropertyInfo dpi = sdp.getDriverPropertyInfo();
-				if (dpi != null)
-				{
-					return dpi.description;
-				}
-				return s_stringMgr.getString("DriverPropertiesTableModel.unknown");
-			}
+         default:
+            s_log.error("Invalid column index: " + col);
+            return "???????";
+      }
+   }
 
-			default:
-				s_log.error("Invalid column index: " + col);
-				return "???????";
-		}
-	}
+   public int getRowCount()
+   {
+      return _props.size();
+   }
 
-	public int getRowCount()
-	{
-		return _props.size();
-	}
+   public int getColumnCount()
+   {
+      return COLUMN_COUNT;
+   }
 
-	public int getColumnCount()
-	{
-		return COLUMN_COUNT;
-	}
-
-	public Class<?> getColumnClass(int col)
-	{
-		switch (col)
-		{
-			case IColumnIndexes.IDX_NAME:
-				return String.class;
-			case IColumnIndexes.IDX_SPECIFY:
-				return Boolean.class;
-			case IColumnIndexes.IDX_VALUE:
-				return String.class;
-			case IColumnIndexes.IDX_REQUIRED:
+   public Class<?> getColumnClass(int col)
+   {
+      switch (col)
+      {
+         case IColumnIndexes.IDX_NAME:
+            return String.class;
+         case IColumnIndexes.IDX_SPECIFY:
+            return Boolean.class;
+         case IColumnIndexes.IDX_VALUE:
+            return String.class;
+         case IColumnIndexes.IDX_REQUIRED:
 //				return Boolean.class;	// Don't show checkbox for
-				return Object.class;	// output only field.
-			case IColumnIndexes.IDX_DESCRIPTION:
-				return String.class;
-			default:
-				s_log.error("Invalid column index: " + col);
-				return Object.class;
-		}
-	}
+            return Object.class;   // output only field.
+         case IColumnIndexes.IDX_DESCRIPTION:
+            return String.class;
+         default:
+            s_log.error("Invalid column index: " + col);
+            return Object.class;
+      }
+   }
 
-	public boolean isCellEditable(int row, int col)
-	{
-		return col == IColumnIndexes.IDX_SPECIFY || col == IColumnIndexes.IDX_VALUE;
-	}
+   public boolean isCellEditable(int row, int col)
+   {
+      return col == IColumnIndexes.IDX_SPECIFY || col == IColumnIndexes.IDX_VALUE;
+   }
 
-	public void setValueAt(Object value, int row, int col)
-	{
-		if (col == IColumnIndexes.IDX_VALUE)
-		{
-			final SQLDriverProperty sdp = _props.getDriverProperty(row);
-			sdp.setValue(value.toString());
-		}
-		else if (col == IColumnIndexes.IDX_SPECIFY)
-		{
-			final SQLDriverProperty sdp = _props.getDriverProperty(row);
-			Boolean bool = Boolean.valueOf(value.toString());
-			sdp.setIsSpecified(bool.booleanValue());
-		}
-		else
-		{
-			throw new IllegalStateException("Can only edit value/specify column. Trying to edit " + col);
-		}
-	}
+   public void setValueAt(Object value, int row, int col)
+   {
+      if (col == IColumnIndexes.IDX_VALUE)
+      {
+         final SQLDriverProperty sdp = _props.getDriverProperty(row);
+         sdp.setValue(value.toString());
 
-	/**
-	 * Adds a row to the driver properties table with the specified name, value and description.
-	 * 
-	 * @param name the name of the driver property.
-	 * @param value the value of the driver property.
-	 * @param description a description of the driver property.
-	 */
-	public void addRow(String name, String value, String description) {
-		DriverPropertyInfo propInfo = new DriverPropertyInfo(name, value);
-		propInfo.description = description;
-		SQLDriverProperty newProp = new SQLDriverProperty(propInfo); 
-		_props.addDriverProperty(newProp);
-		fireTableDataChanged();
-	}
-	
-	/**
-	 * Removes the row which contains the specified name value in it's property name column.
-	 * 
-	 * @param name the name of the driver property.
-	 */
-	public void removeRow(String name) {
-		_props.removeDriverProperty(name);
-		fireTableDataChanged();
-	}
-	
-	SQLDriverPropertyCollection getSQLDriverProperties()
-	{
-		return _props;
-	}
+         // Not really exact because changes aren't saved yet but should be good enough.
+         _props.getVersioner().updateVersion();
+      }
+      else if (col == IColumnIndexes.IDX_SPECIFY)
+      {
+         final SQLDriverProperty sdp = _props.getDriverProperty(row);
+         Boolean bool = Boolean.valueOf(value.toString());
+         sdp.setIsSpecified(bool.booleanValue());
 
-	private final void load(SQLDriverPropertyCollection props)
-	{
-		final int origSize = getRowCount();
-		if (origSize > 0)
-		{
-			fireTableRowsDeleted(0, origSize - 1);
-		}
+         // Not really exact because changes aren't saved yet but should be good enough.
+         _props.getVersioner().updateVersion();
+      }
+      else
+      {
+         throw new IllegalStateException("Can only edit value/specify column. Trying to edit " + col);
+      }
+   }
 
-		_props = props;
-		final int newSize = getRowCount();
-		if (newSize > 0)
-		{
-			fireTableRowsInserted(0, newSize - 1);
-		}
-	}
+   /**
+    * Adds a row to the driver properties table with the specified name, value and description.
+    *
+    * @param name        the name of the driver property.
+    * @param value       the value of the driver property.
+    * @param description a description of the driver property.
+    */
+   public void addRow(String name, String value, String description)
+   {
+      DriverPropertyInfo propInfo = new DriverPropertyInfo(name, value);
+      propInfo.description = description;
+      SQLDriverProperty newProp = new SQLDriverProperty(propInfo);
+      _props.addDriverProperty(newProp);
+      fireTableDataChanged();
+   }
+
+   /**
+    * Removes the row which contains the specified name value in it's property name column.
+    *
+    * @param name the name of the driver property.
+    */
+   public void removeRow(String name)
+   {
+      _props.removeDriverProperty(name);
+      fireTableDataChanged();
+   }
+
+   SQLDriverPropertyCollection getSQLDriverProperties()
+   {
+      return _props;
+   }
+
+   private final void load(SQLDriverPropertyCollection props)
+   {
+      final int origSize = getRowCount();
+      if (origSize > 0)
+      {
+         fireTableRowsDeleted(0, origSize - 1);
+      }
+
+      _props = props;
+      final int newSize = getRowCount();
+      if (newSize > 0)
+      {
+         fireTableRowsInserted(0, newSize - 1);
+      }
+   }
 }
 

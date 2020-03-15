@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -25,7 +24,6 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
-import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -47,10 +45,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       String ERR_BLANK_NAME = s_stringMgr.getString("SQLAlias.error.blankname");
       String ERR_BLANK_DRIVER = s_stringMgr.getString("SQLAlias.error.blankdriver");
       String ERR_BLANK_URL = s_stringMgr.getString("SQLAlias.error.blankurl");
-   }
-
-   private interface IPropNames extends ISQLAlias.IPropertyNames
-   {
    }
 
    /** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
@@ -93,9 +87,14 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    private SQLAliasColorProperties _colorProperties = new SQLAliasColorProperties();
    
    private SQLAliasConnectionProperties _connectionProperties = new SQLAliasConnectionProperties();
-   
+
+   private SQLAliasVersioner _versioner = new SQLAliasVersioner(this);
+
+   private long _aliasVersionTimeMills = 0;
+
    public SQLAlias()
    {
+      distributeVersioner();
    }
 
    /**
@@ -105,12 +104,22 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     */
    public SQLAlias(IIdentifier id)
    {
+      this();
       _id = id;
       _name = "";
       _driverId = null;
       _url = "";
       _userName = "";
       _password = "";
+   }
+
+   private void distributeVersioner()
+   {
+      // Left out for now. When needed should probably best be triggered by DriverPropertiesController
+      //_driverProps.acceptAliasVersioner(_versioner);
+      _schemaProperties.acceptAliasVersioner(_versioner);
+      _colorProperties.acceptAliasVersioner(_versioner);
+      _connectionProperties.acceptAliasVersioner(_versioner);
    }
 
    /**
@@ -124,31 +133,41 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     *				Thrown if an error occurs assigning data from
     *				<CODE>sqlAlias</CODE>.
     */
-   public synchronized void assignFrom(SQLAlias sqlAlias, boolean withIdentifier) throws ValidationException
+   public synchronized void assignFrom(SQLAlias sqlAlias, boolean withIdentifier)
    {
-      if(withIdentifier)
+      try(Java8CloseableFix java8Dum = _versioner.switchOff())
       {
-         setIdentifier(sqlAlias.getIdentifier());
+         if(withIdentifier)
+         {
+            setIdentifier(sqlAlias.getIdentifier());
+         }
+
+         setName(sqlAlias.getName());
+         setDriverIdentifier(sqlAlias.getDriverIdentifier());
+         setUrl(sqlAlias.getUrl());
+         setUserName(sqlAlias.getUserName());
+         setEncryptPassword(sqlAlias.isEncryptPassword());
+         setPassword(sqlAlias.getPassword()); // Copying of SQL Alias, no need for AliasPasswordHandler.setPassword(...) here.
+         setAutoLogon(sqlAlias.isAutoLogon());
+         setUseDriverProperties(sqlAlias.getUseDriverProperties());
+         setDriverProperties(sqlAlias.getDriverPropertiesClone());
+         setAliasVersionTimeMills(sqlAlias.getAliasVersionTimeMills());
+         _schemaProperties = Utilities.cloneObject(sqlAlias._schemaProperties, getClass().getClassLoader());
+         _schemaProperties.acceptAliasVersioner(_versioner);
+         _colorProperties = Utilities.cloneObject(sqlAlias._colorProperties, getClass().getClassLoader());
+         _colorProperties.acceptAliasVersioner(_versioner);
+
+         _connectionProperties = new SQLAliasConnectionProperties();
+         _colorProperties.acceptAliasVersioner(_versioner);
+         SQLAliasConnectionProperties rhsConnProps = sqlAlias.getConnectionProperties();
+         _connectionProperties.setEnableConnectionKeepAlive(rhsConnProps.isEnableConnectionKeepAlive());
+         _connectionProperties.setKeepAliveSleepTimeSeconds(rhsConnProps.getKeepAliveSleepTimeSeconds());
+         _connectionProperties.setKeepAliveSqlStatement(rhsConnProps.getKeepAliveSqlStatement());
       }
-      
-      setName(sqlAlias.getName());
-      setDriverIdentifier(sqlAlias.getDriverIdentifier());
-      setUrl(sqlAlias.getUrl());
-      setUserName(sqlAlias.getUserName());
-      setEncryptPassword(sqlAlias.isEncryptPassword());
-      setPassword(sqlAlias.getPassword()); // Copying of SQL Alias, no need for AliasPasswordHandler.setPassword(...) here.
-      setAutoLogon(sqlAlias.isAutoLogon());
-      setUseDriverProperties(sqlAlias.getUseDriverProperties());
-      setDriverProperties(sqlAlias.getDriverPropertiesClone());
-      _schemaProperties = Utilities.cloneObject(sqlAlias._schemaProperties,
-                                                             getClass().getClassLoader());
-      _colorProperties = Utilities.cloneObject(sqlAlias._colorProperties, getClass().getClassLoader());
-      
-      _connectionProperties = new SQLAliasConnectionProperties();
-      SQLAliasConnectionProperties rhsConnProps = sqlAlias.getConnectionProperties();
-		_connectionProperties.setEnableConnectionKeepAlive(rhsConnProps.isEnableConnectionKeepAlive());
-		_connectionProperties.setKeepAliveSleepTimeSeconds(rhsConnProps.getKeepAliveSleepTimeSeconds());
-		_connectionProperties.setKeepAliveSqlStatement(rhsConnProps.getKeepAliveSqlStatement());
+      catch (ValidationException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
    }
 
    /**
@@ -240,6 +259,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    public void setPassword(String password)
    {
       String data = getString(password);
+      _versioner.trigger(_password, data);
       _password = data;
    }
 
@@ -252,9 +272,23 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    @Override
    public void setEncryptPassword(boolean b)
    {
+      _versioner.trigger(_encryptPassword, b);
       _encryptPassword = b;
    }
 
+
+   public long getAliasVersionTimeMills()
+   {
+      return _aliasVersionTimeMills;
+   }
+
+   /**
+    * To be used by xml serialization and {@link SQLAliasVersioner} only.
+    */
+   public void setAliasVersionTimeMills(long aliasVersionTimeMills)
+   {
+      _aliasVersionTimeMills = aliasVersionTimeMills;
+   }
 
 
    /**
@@ -276,6 +310,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     */
    public void setAutoLogon(boolean value)
    {
+      _versioner.trigger(_autoLogon, value);
       _autoLogon = value;
    }
 
@@ -298,6 +333,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     */
    public void setConnectAtStartup(boolean value)
    {
+      _versioner.trigger(_connectAtStartup, value);
       _connectAtStartup = value;
    }
 
@@ -321,6 +357,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       {
          throw new ValidationException(IStrings.ERR_BLANK_NAME);
       }
+      _versioner.trigger(_name, data);
       _name = data;
    }
 
@@ -331,6 +368,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       {
          throw new ValidationException(IStrings.ERR_BLANK_DRIVER);
       }
+      _versioner.trigger(_driverId, data);
       _driverId = data;
    }
 
@@ -341,17 +379,20 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       {
          throw new ValidationException(IStrings.ERR_BLANK_URL);
       }
+      _versioner.trigger(_url, data);
       _url = data;
    }
 
    public void setUserName(String userName)
    {
       String data = getString(userName);
+      _versioner.trigger(_userName, data);
       _userName = data;
    }
 
    public void setUseDriverProperties(boolean value)
    {
+      _versioner.trigger(_useDriverProperties, value);
       _useDriverProperties = value;
    }
 
@@ -362,6 +403,11 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     */
    public synchronized SQLDriverPropertyCollection getDriverPropertiesClone()
    {
+      return getDriverPropertiesClone(false);
+   }
+
+   public synchronized SQLDriverPropertyCollection getDriverPropertiesClone(boolean includeVersioner)
+   {
       final int count = _driverProps.size();
       SQLDriverProperty[] newar = new SQLDriverProperty[count];
       for (int i = 0; i < count; ++i)
@@ -370,6 +416,11 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       }
       SQLDriverPropertyCollection coll = new SQLDriverPropertyCollection();
       coll.setDriverProperties(newar);
+
+      if(includeVersioner)
+      {
+         coll.acceptAliasVersioner(_versioner);
+      }
       return coll;
    }
 
@@ -410,6 +461,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
    public void setSchemaProperties(SQLAliasSchemaProperties schemaProperties)
    {
       _schemaProperties = schemaProperties;
+      _schemaProperties.acceptAliasVersioner(_versioner);
    }
 
 	@Override
@@ -422,6 +474,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
 	public void setColorProperties(SQLAliasColorProperties colorProperties)
 	{
 		_colorProperties = colorProperties;
+      _colorProperties.acceptAliasVersioner(_versioner);
 	}
 
 	@Override
@@ -434,5 +487,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
 	public void setConnectionProperties(SQLAliasConnectionProperties connectionProperties)
 	{
 		_connectionProperties = connectionProperties;
+      _connectionProperties.acceptAliasVersioner(_versioner);
 	}
 }

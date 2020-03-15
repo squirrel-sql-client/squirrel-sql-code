@@ -28,8 +28,6 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
  */
 public class SQLDriverProperty implements Cloneable, Serializable
 {
-    static final long serialVersionUID = -5150608132930417454L;
-    
 	/** Property names for this bean. */
 	public interface IPropertyNames
 	{
@@ -55,11 +53,10 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	private transient DriverPropertyInfo _driverPropInfo;
 
 	/**
-	 * Default ctor. Created with the name and value being <TT>null</TT>.
+	 * Needed for XML serialization and deserialization.
 	 */
 	public SQLDriverProperty()
 	{
-		super();
 	}
 
 	/**
@@ -67,7 +64,6 @@ public class SQLDriverProperty implements Cloneable, Serializable
 	 */
 	public SQLDriverProperty(DriverPropertyInfo parm)
 	{
-		super();
 		if (parm == null)
 		{
 			throw new IllegalArgumentException("DriverPropertyInfo == null");
@@ -76,19 +72,6 @@ public class SQLDriverProperty implements Cloneable, Serializable
 		setName(parm.name);
 		setValue(parm.value);
 		setDriverPropertyInfo(parm);	
-	}
-
-	/**
-	 * ctor specifying the name and value.
-	 *
-	 * @param	name	The name
-	 * @param	value	The value associated with the name.
-	 */
-	public SQLDriverProperty(String name, String value)
-	{
-		super();
-		_name = name;
-		_value = value;
 	}
 
 	/**

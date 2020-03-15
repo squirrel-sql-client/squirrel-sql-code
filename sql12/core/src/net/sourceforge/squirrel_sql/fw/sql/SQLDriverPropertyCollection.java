@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasVersioner;
+
 import java.io.Serializable;
 import java.sql.DriverPropertyInfo;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ import java.util.TreeMap;
  */
 public class SQLDriverPropertyCollection implements Serializable
 {
-    /**
+	/**
 	 * JavaBean property names for this class.
 	 */
 	public interface IPropertyNames
@@ -40,19 +42,15 @@ public class SQLDriverPropertyCollection implements Serializable
 	}
 
 	/** Collection of <TT></TT> objects keyed by the object name. */
-	private final Map<String, SQLDriverProperty> _objectsIndexMap = 
-        new TreeMap<String, SQLDriverProperty>();
+	private final Map<String, SQLDriverProperty> _objectsIndexMap = new TreeMap<>();
 
 	/** Array of <TT>SQLDriverProperty</TT> objects. */
-	private final List<SQLDriverProperty> _objectsList = 
-        new ArrayList<SQLDriverProperty>();
+	private final List<SQLDriverProperty> _objectsList = new ArrayList<>();
 
-	/**
-	 * Default ctor. Creates an empty collection.
-	 */
+	private SQLAliasVersioner _versioner = new SQLAliasVersioner();
+
 	public SQLDriverPropertyCollection()
 	{
-		super();
 	}
 
 	/**
@@ -158,5 +156,15 @@ public class SQLDriverPropertyCollection implements Serializable
 			}
 			sdp.setDriverPropertyInfo(infoAr[i]);
 		}
+	}
+
+	public void acceptAliasVersioner(SQLAliasVersioner versioner)
+	{
+		_versioner = versioner;
+	}
+
+	public SQLAliasVersioner getVersioner()
+	{
+		return _versioner;
 	}
 }

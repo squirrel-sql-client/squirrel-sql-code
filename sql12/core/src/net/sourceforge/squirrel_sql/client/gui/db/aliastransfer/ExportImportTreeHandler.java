@@ -32,6 +32,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TooManyListenersException;
+import java.util.stream.Collectors;
 
 public class ExportImportTreeHandler
 {
@@ -294,11 +295,16 @@ public class ExportImportTreeHandler
       return toDefaultNode(getDefaultTreeModel().getRoot());
    }
 
-   public List<SQLAlias> getSqlAliasesToExport()
+   public List<SQLAlias> getSqlAliasList()
    {
-      List<SQLAlias> ret = new ArrayList<>();
-      gatherAliases(getRootNode(), ret);
-      return ret;
+//      List<SQLAlias> ret = new ArrayList<>();
+//      gatherAliases(getRootNode(), ret);
+//      return ret;
+
+      final ArrayList<DefaultMutableTreeNode> aliasNodes = new ArrayList<>();
+      gatherAliasNodes(getRootNode(), aliasNodes);
+      return aliasNodes.stream().map(n -> (SQLAlias)n.getUserObject()).collect(Collectors.toList());
+
    }
 
    private void gatherAliases(DefaultMutableTreeNode node, List<SQLAlias> toFill)
@@ -312,6 +318,20 @@ public class ExportImportTreeHandler
          }
 
          gatherAliases(childNode, toFill);
+      }
+   }
+
+   private void gatherAliasNodes(DefaultMutableTreeNode node, List<DefaultMutableTreeNode> toFillAliasNodes)
+   {
+      for (int i = 0; i < node.getChildCount(); i++)
+      {
+         DefaultMutableTreeNode childNode = toDefaultNode(node.getChildAt(i));
+         if(childNode.getUserObject() instanceof SQLAlias)
+         {
+            toFillAliasNodes.add(childNode);
+         }
+
+         gatherAliasNodes(childNode, toFillAliasNodes);
       }
    }
 
@@ -350,6 +370,23 @@ public class ExportImportTreeHandler
          }
 
          node.add(newChild);
+      }
+   }
+
+   public void removeAliases(List<SQLAlias> updatedAliases)
+   {
+      final ArrayList<DefaultMutableTreeNode> aliasNodes = new ArrayList<>();
+      gatherAliasNodes(getRootNode(), aliasNodes);
+
+      for (DefaultMutableTreeNode aliasNode : aliasNodes)
+      {
+         for (SQLAlias updatedAlias : updatedAliases)
+         {
+            if(updatedAlias.equals(aliasNode.getUserObject()))
+            {
+               getDefaultTreeModel().removeNodeFromParent(aliasNode);
+            }
+         }
       }
    }
 }

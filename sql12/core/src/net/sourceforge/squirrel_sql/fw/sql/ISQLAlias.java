@@ -34,7 +34,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	/**
 	 * JavaBean property names for this class.
 	 */
-	public interface IPropertyNames
+	interface IPropertyNames
 	{
 		String AUTO_LOGON = "autoLogon";
 		String CONNECT_AT_STARTUP = "connectAtStartup";
@@ -46,6 +46,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 		String ENCRYPT_PASSWORD = "encryptPassword"; // Renamed from PasswordEncrypted because of bug #1409
 		String URL = "url";
 		String USE_DRIVER_PROPERTIES = "useDriverProperties";
+		String ALIAS_VERSION_TIME_MILLIS = "aliasVersionTimeMills";
 		String USER_NAME = "userName";
 		String SCHEMA_PROPERTIES = "schemaProperties";
 		String COLOR_PROPERTIES = "colorProperties";
