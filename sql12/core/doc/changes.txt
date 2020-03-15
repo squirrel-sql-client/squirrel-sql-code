@@ -121,6 +121,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+Connect button in Alias dialog didn't use schema properties.
+
 Alias import/export: Import locked file on Windows.
 
 Hibernate Plugin: To prevent NullPointerException entities with non standard unique identifier are not loaded.

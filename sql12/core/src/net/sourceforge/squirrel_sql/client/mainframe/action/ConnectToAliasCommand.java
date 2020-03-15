@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -101,7 +102,6 @@ public class ConnectToAliasCommand implements ICommand
 	 */
 	public ConnectToAliasCommand(IApplication app, SQLAlias sqlAlias, boolean createSession, ICompletionCallback callback)
 	{
-		super();
 		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
@@ -124,16 +124,8 @@ public class ConnectToAliasCommand implements ICommand
 		try
 		{
 			final SheetHandler hdl = new SheetHandler(_app, _sqlAlias, _createSession, _callback);
-			
-            if (SwingUtilities.isEventDispatchThread()) {
-                createConnectionInternalFrame(hdl);
-            } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        createConnectionInternalFrame(hdl);
-                    }
-                });
-            }
+
+			GUIUtils.processOnSwingEventThread(() -> createConnectionInternalFrame(hdl));
 		}
 		catch (Exception ex)
 		{
@@ -141,14 +133,13 @@ public class ConnectToAliasCommand implements ICommand
 		}
 	}
 
-    private void createConnectionInternalFrame(SheetHandler hdl) {
-        ConnectionInternalFrame sheet = 
-            new ConnectionInternalFrame(_app, _sqlAlias, hdl);                        
-        _app.getMainFrame().addWidget(sheet);
-        DialogWidget.centerWithinDesktop(sheet);
-        sheet.moveToFront();
-    }
-    
+	private void createConnectionInternalFrame(SheetHandler hdl)
+	{
+		ConnectionInternalFrame sheet = new ConnectionInternalFrame(_app, _sqlAlias, hdl);
+		_app.getMainFrame().addWidget(sheet);
+		DialogWidget.centerWithinDesktop(sheet);
+		sheet.moveToFront();
+	}
 
 	/**
 	 * Handler used for connection internal frame actions.
@@ -194,8 +185,7 @@ public class ConnectToAliasCommand implements ICommand
 		 * 			Thrown if <TT>null</TT>IApplication</TT>, <TT>ISQLAlias</TT>,
 		 * 			or <TT>ICompletionCallback</TT> passed.
 		 */
-		private SheetHandler(IApplication app, SQLAlias alias, boolean createSession,
-									ICompletionCallback callback)
+		private SheetHandler(IApplication app, SQLAlias alias, boolean createSession, ICompletionCallback callback)
 		{
 			super();
 			if (app == null)

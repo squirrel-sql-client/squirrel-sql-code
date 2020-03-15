@@ -539,22 +539,11 @@ public class AliasInternalFrame extends DialogWidget
 
 	private void performConnect(boolean createSession)
 	{
-		final DataCache cache = _app.getDataCache();
-		final IIdentifierFactory factory = IdentifierFactory.getInstance();
-		final SQLAlias alias = cache.createAlias(factory.createIdentifier());
-		try
-		{
-			applyFromDialog(alias);
-		}
-		catch (ValidationException e)
-		{
-			_app.showErrorDialog(e);
-			return;
-		}
-
 		if (createSession)
 		{
-			ConnectToAliasCallBack connectToAliasCallBack = new ConnectToAliasCallBack(alias){
+			// Here the Alias equipped with all Schema properties is uses to create a proper Session.
+			ConnectToAliasCallBack connectToAliasCallBack = new ConnectToAliasCallBack((SQLAlias) _sqlAlias)
+			{
 				@Override
 				public void sessionCreated(ISession session)
 				{
@@ -562,10 +551,24 @@ public class AliasInternalFrame extends DialogWidget
 				}
 			};
 
-			new ConnectToAliasCommand(Main.getApplication(), alias, true, connectToAliasCallBack).execute();
+			new ConnectToAliasCommand(Main.getApplication(), (SQLAlias) _sqlAlias, true, connectToAliasCallBack).execute();
 		}
 		else
 		{
+			// Here the Alias is used to load the schema table of the Alias schema properties dialog.
+			// So *ALL* schemas must be loaded.
+			final DataCache cache = _app.getDataCache();
+			final IIdentifierFactory factory = IdentifierFactory.getInstance();
+			final SQLAlias alias = cache.createAlias(factory.createIdentifier());
+			try
+			{
+				applyFromDialog(alias);
+			}
+			catch (ValidationException e)
+			{
+				_app.showErrorDialog(e);
+				return;
+			}
 			new ConnectToAliasCommand(_app, alias, createSession, new ConnectionTestCallBack(_app, alias)).execute();
 		}
 	}
