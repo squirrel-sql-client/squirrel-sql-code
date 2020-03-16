@@ -184,7 +184,7 @@ public class HibernateTabController implements IMainPanelTab
    {
       _hibernateTabPanel.cboConfigurations.removeAllItems();
 
-      HashMap<String, HibernateConfiguration> cfgByName = new HashMap<String, HibernateConfiguration>();
+      HashMap<String, HibernateConfiguration> cfgByName = new HashMap<>();
       for (Object o : reader)
       {
          HibernateConfiguration cfg = (HibernateConfiguration) o;
