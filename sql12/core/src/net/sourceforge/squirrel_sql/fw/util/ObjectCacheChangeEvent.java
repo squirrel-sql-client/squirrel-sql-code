@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectCacheChangeEvent<E extends IHasIdentifier>
+public class ObjectCacheChangeEvent
 {
 	/** The object added/removed. */
 	private IHasIdentifier _obj;
