@@ -32,8 +32,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  */
 class DriversListModel extends SortedListModel
 {
-    private static final long serialVersionUID = 1L;
-
     /** Application API. */
 	private IApplication _app;
 
