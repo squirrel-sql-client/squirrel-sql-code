@@ -59,8 +59,6 @@ public class AliasesAndDriversManager
 
    DriverListHolder _driverListHolder = new DriverListHolder();
 
-   private IApplication _app;
-
    /**
     * Ctor. Loads drivers and aliases from the XML document.
     *
@@ -94,8 +92,6 @@ public class AliasesAndDriversManager
       }
 
       _driverMgr = driverMgr;
-
-      _app = Main.getApplication();
 
       loadDrivers(driversFile, dftDriversURL, NullMessageHandler.getInstance());
       loadAliases(aliasesFile, NullMessageHandler.getInstance());
@@ -279,7 +275,7 @@ public class AliasesAndDriversManager
    public void removeAlias(SQLAlias alias)
    {
       SchemaInfoCacheSerializer.aliasRemoved(alias);
-      _app.getPluginManager().aliasRemoved(alias);
+      Main.getApplication().getPluginManager().aliasRemoved(alias);
       _aliasListHolder.remove(alias.getIdentifier());
    }
 
