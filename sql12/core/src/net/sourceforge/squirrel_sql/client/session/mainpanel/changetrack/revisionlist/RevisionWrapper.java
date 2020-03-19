@@ -90,12 +90,12 @@ public class RevisionWrapper
          }
          else
          {
-            ret = "\n" + splits[i];
+            ret += "\n" + splits[i];
          }
 
          if(i >= 1)
          {
-            return ret;
+            return ret + " ...";
          }
       }
 
