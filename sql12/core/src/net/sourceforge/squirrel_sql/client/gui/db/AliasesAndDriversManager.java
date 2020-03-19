@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.listholder.AliasListHolder;
 import net.sourceforge.squirrel_sql.client.gui.db.listholder.DriverListHolder;
@@ -30,7 +29,11 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
+import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
@@ -55,9 +58,9 @@ public class AliasesAndDriversManager
    private final SQLDriverManager _driverMgr;
 
 
-   AliasListHolder _aliasListHolder = new AliasListHolder();
+   private AliasListHolder _aliasListHolder = new AliasListHolder();
 
-   DriverListHolder _driverListHolder = new DriverListHolder();
+   private DriverListHolder _driverListHolder = new DriverListHolder();
 
    /**
     * Ctor. Loads drivers and aliases from the XML document.
