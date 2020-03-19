@@ -11,7 +11,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
@@ -28,7 +27,7 @@ public class SquirrelCli
 
    public static void connect(String aliasName, String password)
    {
-      Iterator<ISQLAlias> aliasIterator = Main.getApplication().getDataCache().aliases();
+      Iterator<? extends ISQLAlias> aliasIterator = Main.getApplication().getAliasesAndDriversManager().aliases();
 
       while(aliasIterator.hasNext())
       {
@@ -71,7 +70,7 @@ public class SquirrelCli
 
          sqlDriver.setName("temporaryDriver_" + url + "_" + sqlDriver.getIdentifier().toString());
 
-         Main.getApplication().getDataCache().addDriver(sqlDriver, NullMessageHandler.getInstance());
+         Main.getApplication().getAliasesAndDriversManager().addDriver(sqlDriver, NullMessageHandler.getInstance());
 
 
          SQLAlias alias = new SQLAlias(new UidIdentifier());

@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -40,7 +39,7 @@ public class AssignDriversCtrl
       {
          _dlg = new AssignDriversDlg(parent);
 
-         List<SQLDriver> sqlDriversSorted = new ArrayList<>(Main.getApplication().getDataCache().getDriverList());
+         List<SQLDriver> sqlDriversSorted = new ArrayList<>(Main.getApplication().getAliasesAndDriversManager().getDriverList());
          sqlDriversSorted.sort(Comparator.comparing(SQLDriver::getName));
          DefaultComboBoxModel<SQLDriver> availableDriversModel = (DefaultComboBoxModel<SQLDriver>) _dlg.cboAvailableDrivers.getModel();
          sqlDriversSorted.forEach(d -> availableDriversModel.addElement(d));

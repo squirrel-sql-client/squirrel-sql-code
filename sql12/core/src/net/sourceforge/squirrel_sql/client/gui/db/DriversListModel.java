@@ -57,7 +57,7 @@ class DriversListModel extends SortedListModel
 		}
 		_app = app;
 		load();
-		_app.getDataCache().addDriversListener(new MyDriversListener());
+		_app.getAliasesAndDriversManager().addDriversListener(new MyDriversListener());
 	}
 
 	/**
@@ -82,7 +82,7 @@ class DriversListModel extends SortedListModel
 	private void load()
 	{
 		clear();
-		Iterator<ISQLDriver> it = _app.getDataCache().drivers();
+		Iterator<? extends ISQLDriver> it = _app.getAliasesAndDriversManager().drivers();
 		while (it.hasNext())
 		{
 			addDriver(it.next());

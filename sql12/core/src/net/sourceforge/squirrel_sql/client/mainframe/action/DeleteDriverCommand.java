@@ -21,6 +21,7 @@ import java.awt.Frame;
 import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -85,7 +86,7 @@ public class DeleteDriverCommand implements ICommand
 	public void execute()
 	{
 		final Object[] args = {_sqlDriver.getName()};
-		final net.sourceforge.squirrel_sql.client.gui.db.DataCache cache = _app.getDataCache();
+		final AliasesAndDriversManager cache = _app.getAliasesAndDriversManager();
 		Iterator<ISQLAlias> it = cache.getAliasesForDriver(_sqlDriver);
 		if (it.hasNext())
 		{

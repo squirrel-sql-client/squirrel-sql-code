@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,7 +57,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -190,7 +188,7 @@ public class AliasInternalFrame extends DialogWidget
 	{
 		if (_driversCacheLis != null)
 		{
-			_app.getDataCache().removeDriversListener(_driversCacheLis);
+			_app.getAliasesAndDriversManager().removeDriversListener(_driversCacheLis);
 			_driversCacheLis = null;
 		}
 		super.dispose();
@@ -265,16 +263,12 @@ public class AliasInternalFrame extends DialogWidget
 			applyFromDialog(_sqlAlias);
 			if (_maintType == IMaintenanceType.NEW || _maintType == IMaintenanceType.COPY)
 			{
-				_app.getDataCache().addAlias(_sqlAlias);
+				_app.getAliasesAndDriversManager().addAlias(_sqlAlias);
 			}
          _app.savePreferences(ALIAS_DEFINITIONS);
 			dispose();
 		}
 		catch (ValidationException ex)
-		{
-			_app.showErrorDialog(ex);
-		}
-		catch (DuplicateObjectException ex)
 		{
 			_app.showErrorDialog(ex);
 		}
@@ -395,7 +389,7 @@ public class AliasInternalFrame extends DialogWidget
 		contentPane.add(createButtonsPanel(), gbc);
 
 		_driversCacheLis = new DriversCacheListener();
-		_app.getDataCache().addDriversListener(_driversCacheLis);
+		_app.getAliasesAndDriversManager().addDriversListener(_driversCacheLis);
 
 		GUIUtils.enableCloseByEscape(this);
    }
@@ -557,7 +551,7 @@ public class AliasInternalFrame extends DialogWidget
 		{
 			// Here the Alias is used to load the schema table of the Alias schema properties dialog.
 			// So *ALL* schemas must be loaded.
-			final DataCache cache = _app.getDataCache();
+			final AliasesAndDriversManager cache = _app.getAliasesAndDriversManager();
 			final IIdentifierFactory factory = IdentifierFactory.getInstance();
 			final SQLAlias alias = cache.createAlias(factory.createIdentifier());
 			try
@@ -601,8 +595,8 @@ public class AliasInternalFrame extends DialogWidget
 			setRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),
 											res.getIcon("list.driver.notfound")));
 			List<ISQLDriver> list = new ArrayList<ISQLDriver>();
-			for (Iterator it = AliasInternalFrame.this._app.getDataCache().drivers();
-					it.hasNext();)
+			for (Iterator it = AliasInternalFrame.this._app.getAliasesAndDriversManager().drivers();
+              it.hasNext();)
 			{
 				ISQLDriver sqlDriver = ((ISQLDriver) it.next());
                 if (prefs.getShowLoadedDriversOnly() 

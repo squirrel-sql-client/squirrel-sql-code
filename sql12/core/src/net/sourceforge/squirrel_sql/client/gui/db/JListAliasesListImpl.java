@@ -157,7 +157,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
          if (Dialogs.showYesNo(Main.getApplication().getMainFrame(), s_stringMgr.getString("JListAliasesListImpl.confirmDelete", toDel.getName())))
          {
             _model.remove(getList().getSelectedIndex());
-            Main.getApplication().getDataCache().removeAlias(toDel);
+            Main.getApplication().getAliasesAndDriversManager().removeAlias(toDel);
          }
       }
    }

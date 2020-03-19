@@ -764,7 +764,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    private void removeAlias(SQLAlias toDel)
    {
       _aliasesListModel.remove(_aliasesListModel.getIndex(toDel));
-      _app.getDataCache().removeAlias(toDel);
+      _app.getAliasesAndDriversManager().removeAlias(toDel);
    }
 
    public void selectListEntryAtPoint(Point point)
@@ -1042,13 +1042,13 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       try
       {
          IIdentifierFactory factory = IdentifierFactory.getInstance();
-         SQLAlias newAlias = Main.getApplication().getDataCache().createAlias(factory.createIdentifier());
+         SQLAlias newAlias = Main.getApplication().getAliasesAndDriversManager().createAlias(factory.createIdentifier());
          newAlias.assignFrom(source, false);
 
          try
          {
             _dontReactToAliasAdd = true;
-            Main.getApplication().getDataCache().addAlias(newAlias);
+            Main.getApplication().getAliasesAndDriversManager().addAlias(newAlias);
          }
          finally
          {

@@ -21,6 +21,7 @@ import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
 
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -73,7 +74,7 @@ class ExportAliasesCommand extends AbstractSaveCommand
 	 */
 	protected void writeToFile(File file) throws IOException, XMLException
 	{
-		final net.sourceforge.squirrel_sql.client.gui.db.DataCache cache = _plugin.getApplication().getDataCache();
+		final AliasesAndDriversManager cache = _plugin.getApplication().getAliasesAndDriversManager();
 		cache.saveAliases(file);
 	}
 

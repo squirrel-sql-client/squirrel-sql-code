@@ -25,7 +25,6 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -107,7 +106,7 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 */
 	public static AliasInternalFrame getCreateSheet()
 	{
-		final net.sourceforge.squirrel_sql.client.gui.db.DataCache cache = Main.getApplication().getDataCache();
+		final AliasesAndDriversManager cache = Main.getApplication().getAliasesAndDriversManager();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		final ISQLAlias alias = cache.createAlias(factory.createIdentifier());
 		final AliasInternalFrame sheet = new AliasInternalFrame(Main.getApplication(), alias, NEW);
@@ -131,7 +130,7 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 */
 	public static AliasInternalFrame getCopySheet(SQLAlias alias)
 	{
-		final DataCache cache = Main.getApplication().getDataCache();
+		final AliasesAndDriversManager cache = Main.getApplication().getAliasesAndDriversManager();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		SQLAlias newAlias = cache.createAlias(factory.createIdentifier());
 

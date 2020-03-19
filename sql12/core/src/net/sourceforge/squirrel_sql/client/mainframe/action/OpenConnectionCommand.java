@@ -129,7 +129,7 @@ public class OpenConnectionCommand
    {
       _conn = null;
       final IIdentifier driverID = _sqlAlias.getDriverIdentifier();
-      final ISQLDriver sqlDriver = Main.getApplication().getDataCache().getDriver(driverID);
+      final ISQLDriver sqlDriver = Main.getApplication().getAliasesAndDriversManager().getDriver(driverID);
       final SQLDriverManager mgr = Main.getApplication().getSQLDriverManager();
       try
       {

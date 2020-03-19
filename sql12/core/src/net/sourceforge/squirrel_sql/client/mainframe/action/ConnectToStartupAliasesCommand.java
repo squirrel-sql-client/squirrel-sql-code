@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 
 /**
@@ -62,10 +62,10 @@ public class ConnectToStartupAliasesCommand implements ICommand
    public void execute()
    {
       final List<ISQLAlias> aliases = new ArrayList<ISQLAlias>();
-      final DataCache cache = _app.getDataCache();
+      final AliasesAndDriversManager cache = _app.getAliasesAndDriversManager();
       synchronized (cache)
       {
-         for (Iterator<ISQLAlias> it = cache.aliases(); it.hasNext();)
+         for (Iterator<? extends ISQLAlias> it = cache.aliases(); it.hasNext();)
          {
             ISQLAlias alias = it.next();
             if (alias.isConnectAtStartup())
