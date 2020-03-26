@@ -536,6 +536,16 @@ public class AliasInternalFrame extends DialogWidget
 		if (createSession)
 		{
 			// Here the Alias equipped with all Schema properties is uses to create a proper Session.
+			try
+			{
+				applyFromDialog(_sqlAlias);
+			}
+			catch (ValidationException e)
+			{
+				_app.showErrorDialog(e);
+				return;
+			}
+
 			ConnectToAliasCallBack connectToAliasCallBack = new ConnectToAliasCallBack((SQLAlias) _sqlAlias)
 			{
 				@Override
