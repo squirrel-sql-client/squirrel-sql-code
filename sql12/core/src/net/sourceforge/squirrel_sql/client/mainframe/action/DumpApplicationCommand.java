@@ -160,7 +160,7 @@ public class DumpApplicationCommand implements ICommand
 			try
 			{
 				File tempFile = File.createTempFile(PREFIX, SUFFIX);
-				_app.getDataCache().saveDrivers(tempFile);
+				_app.getAliasesAndDriversManager().saveDrivers(tempFile);
 				files.add(tempFile);
                 //i18n[DumpApplicationCommand.title.drivers=Drivers]
 				titles.add(s_stringMgr.getString("DumpApplicationCommand.title.drivers"));
@@ -178,7 +178,7 @@ public class DumpApplicationCommand implements ICommand
 			try
 			{
 				File tempFile = File.createTempFile(PREFIX, SUFFIX);
-				_app.getDataCache().saveAliases(tempFile);
+				_app.getAliasesAndDriversManager().saveAliases(tempFile);
 				files.add(tempFile);
                 //i18n[DumpApplicationCommand.title.aliases=Aliases]
 				titles.add(s_stringMgr.getString("DumpApplicationCommand.title.aliases"));

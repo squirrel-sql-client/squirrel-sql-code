@@ -32,7 +32,7 @@ public class MultiAddSourceAction extends SquirrelAction {
 	public void actionPerformed(ActionEvent evt) {
 		try {
 			// List all the aliases in the system (then have user pick one).
-			Iterator<ISQLAlias> iterator = _session.getApplication().getDataCache().aliases();
+			Iterator<? extends ISQLAlias> iterator = _session.getApplication().getAliasesAndDriversManager().aliases();
 			ArrayList<ISQLAlias> aliasList = new ArrayList<ISQLAlias>();
 			while (iterator.hasNext()) {
 				ISQLAlias alias = iterator.next();

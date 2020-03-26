@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliastransfer;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasFolderState;
-import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.Java8CloseableFix;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
@@ -100,17 +100,26 @@ public class AliasTransferCtrl
             if (ZIP_ENTRY_SQL_ALIASES.equals(entry.getName()))
             {
                sqlAliasesReader = new XMLBeanReader();
-               sqlAliasesReader.load(new InputStreamReader(zipIn.getInputStream(entry)));
+               try (InputStreamReader rdr = new InputStreamReader(zipIn.getInputStream(entry)))
+               {
+                  sqlAliasesReader.load(rdr);
+               }
             }
             else if (ZIP_ENTRY_ALIAS_TREE.equals(entry.getName()))
             {
                treeFolderStateReader = new XMLBeanReader();
-               treeFolderStateReader.load(new InputStreamReader(zipIn.getInputStream(entry)));
+               try (InputStreamReader rdr = new InputStreamReader(zipIn.getInputStream(entry)))
+               {
+                  treeFolderStateReader.load(rdr);
+               }
             }
             else if (ZIP_ENTRY_DRIVER_IDENTIFIER_TO_NAME.equals(entry.getName()))
             {
                driverIdentifierToName = new Properties();
-               driverIdentifierToName.load(new InputStreamReader(zipIn.getInputStream(entry)));
+               try (InputStreamReader rdr = new InputStreamReader(zipIn.getInputStream(entry)))
+               {
+                  driverIdentifierToName.load(rdr);
+               }
             }
             else
             {
@@ -253,11 +262,11 @@ public class AliasTransferCtrl
    {
       Properties ret = new Properties();
 
-      DataCache dataCache = Main.getApplication().getDataCache();
+      AliasesAndDriversManager aliasesAndDriversManager = Main.getApplication().getAliasesAndDriversManager();
 
       for (SQLAlias a : sqlAliasesToExport)
       {
-         ISQLDriver driver = dataCache.getDriver(a.getDriverIdentifier());
+         ISQLDriver driver = aliasesAndDriversManager.getDriver(a.getDriverIdentifier());
 
          String driverName = "<<undefined>>";
          if (null != driver)

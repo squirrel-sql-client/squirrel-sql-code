@@ -11,8 +11,6 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 
-import javax.swing.*;
-
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -54,7 +52,7 @@ public class AliasesListModel extends SortedListModel
 		super();
 		_app = app;
 		load();
-		_app.getDataCache().addAliasesListener(new MyAliasesListener());
+		_app.getAliasesAndDriversManager().addAliasesListener(new MyAliasesListener());
 	}
 
 	/**
@@ -62,7 +60,7 @@ public class AliasesListModel extends SortedListModel
 	 */
 	private void load()
 	{
-		Iterator<ISQLAlias> it = _app.getDataCache().aliases();
+		Iterator<? extends ISQLAlias> it = _app.getAliasesAndDriversManager().aliases();
 		while (it.hasNext())
 		{
 			addAlias(it.next());

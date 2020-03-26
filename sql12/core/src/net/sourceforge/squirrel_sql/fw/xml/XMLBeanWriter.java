@@ -81,17 +81,26 @@ public final class XMLBeanWriter
 	 */
 	public void save(FileWrapper file) throws IOException
 	{
-		save(file.getFileOutputStream());
+		try (FileOutputStream fileOutputStream = file.getFileOutputStream())
+		{
+			save(fileOutputStream);
+		}
 	}
 
 	public void save(String fileName) throws IOException
 	{
-		save(new FileOutputStream(fileName));
+		try (FileOutputStream fos = new FileOutputStream(fileName))
+		{
+			save(fos);
+		}
 	}
 
 	public void save(File file) throws IOException
 	{
-		save(new FileOutputStream(file));
+		try (FileOutputStream fos = new FileOutputStream(file))
+		{
+			save(fos);
+		}
 	}
 
 	private void save(FileOutputStream fos) throws IOException
@@ -101,15 +110,10 @@ public final class XMLBeanWriter
 
 	public void saveToOutputStream(OutputStream os) throws IOException
 	{
-		BufferedOutputStream bos = new BufferedOutputStream(os);
-		try
+		try (BufferedOutputStream bos = new BufferedOutputStream(os))
 		{
 			XMLWriter wtr = new XMLWriter(bos);
 			wtr.write(_rootElement, true);
-		}
-		finally
-		{
-			bos.close();
 		}
 	}
 

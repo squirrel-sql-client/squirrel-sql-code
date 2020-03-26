@@ -28,7 +28,7 @@ public class CliSession extends CliSessionAdapter
       try
       {
          IIdentifier driverID = aliasToConnectTo.getDriverIdentifier();
-         ISQLDriver sqlDriver = Main.getApplication().getDataCache().getDriver(driverID);
+         ISQLDriver sqlDriver = Main.getApplication().getAliasesAndDriversManager().getDriver(driverID);
 
 
          SQLDriverManager sqlDriverManager = Main.getApplication().getSQLDriverManager();

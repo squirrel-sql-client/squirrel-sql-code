@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
@@ -131,7 +130,7 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 */
 	public DriverInternalFrame getCreateSheet()
 	{
-		final net.sourceforge.squirrel_sql.client.gui.db.DataCache cache = _app.getDataCache();
+		final AliasesAndDriversManager cache = _app.getAliasesAndDriversManager();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		final ISQLDriver driver = cache.createDriver(factory.createIdentifier());
 		final DriverInternalFrame sheet = new DriverInternalFrame(_app, driver, NEW);
@@ -155,7 +154,7 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 			throw new IllegalArgumentException("ISQLDriver == null");
 		}
 
-		final DataCache cache = _app.getDataCache();
+		final AliasesAndDriversManager cache = _app.getAliasesAndDriversManager();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		ISQLDriver newDriver = cache.createDriver(factory.createIdentifier());
 		try

@@ -2,7 +2,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.ExportImportTreeHandler;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -182,7 +181,7 @@ public class AliasesList implements IToogleableAliasesList
    {
       List<SQLAlias> ret = new ArrayList<>();
 
-      for (ISQLAlias isqlAlias : Main.getApplication().getDataCache().getAliasList())
+      for (ISQLAlias isqlAlias : Main.getApplication().getAliasesAndDriversManager().getAliasList())
       {
          for (SQLAlias importSqlAlias : importSqlAliases)
          {

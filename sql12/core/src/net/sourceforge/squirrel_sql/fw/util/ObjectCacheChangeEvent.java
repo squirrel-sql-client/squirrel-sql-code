@@ -26,11 +26,8 @@ import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectCacheChangeEvent<E extends IHasIdentifier> extends EventObject
+public class ObjectCacheChangeEvent
 {
-	/** The <CODE>ObjectCache</CODE> that object was added to/removed from. */
-	private ObjectCache<E> _cache;
-
 	/** The object added/removed. */
 	private IHasIdentifier _obj;
 
@@ -40,10 +37,8 @@ public class ObjectCacheChangeEvent<E extends IHasIdentifier> extends EventObjec
 	 * @param   source	The <CODE>ObjectCache</CODE> that change has happened to.
 	 * @param   obj		The object added/removed.
 	 */
-	ObjectCacheChangeEvent(ObjectCache<E> source, IHasIdentifier obj)
+	public ObjectCacheChangeEvent(IHasIdentifier obj)
 	{
-		super(source);
-		_cache = source;
 		_obj = obj;
 	}
 
@@ -55,11 +50,4 @@ public class ObjectCacheChangeEvent<E extends IHasIdentifier> extends EventObjec
 		return _obj;
 	}
 
-	/**
-	 * Return the <CODE>ObjectCache</CODE>.
-	 */
-	public ObjectCache<E> getObjectCache()
-	{
-		return _cache;
-	}
 }

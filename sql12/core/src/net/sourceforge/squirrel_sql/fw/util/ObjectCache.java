@@ -310,7 +310,7 @@ public class ObjectCache<E extends IHasIdentifier> implements IObjectCache<E>
 					// Lazily create the event.
 					if (evt == null)
 					{
-						evt = new ObjectCacheChangeEvent(ObjectCache.this, obj);
+						evt = new ObjectCacheChangeEvent(obj);
 					}
 					((IObjectCacheChangeListener)listeners[i + 1]).objectAdded(evt);
 				}
@@ -336,7 +336,7 @@ public class ObjectCache<E extends IHasIdentifier> implements IObjectCache<E>
 					// Lazily create the event:
 					if (evt == null)
 					{
-						evt = new ObjectCacheChangeEvent(ObjectCache.this, obj);
+						evt = new ObjectCacheChangeEvent(obj);
 					}
 					((IObjectCacheChangeListener)listeners[i + 1]).objectRemoved(evt);
 				}

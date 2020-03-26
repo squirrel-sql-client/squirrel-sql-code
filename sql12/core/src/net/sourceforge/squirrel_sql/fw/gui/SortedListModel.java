@@ -24,12 +24,8 @@ import javax.swing.DefaultListModel;
  */
 public class SortedListModel extends DefaultListModel
 {
-	/**
-	 * Default ctor.
-	 */
 	public SortedListModel()
 	{
-		super();
 	}
 
 	/**

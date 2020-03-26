@@ -19,21 +19,22 @@
 
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.*;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.*;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.plugins.sqlbookmark.exportimport.BookmarkExportImport;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  * Manage the bookmarks.
@@ -48,19 +49,10 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 {
 
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SQLBookmarkPreferencesController.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLBookmarkPreferencesController.class);
 
+   private SQLBookmarkPreferencesPanel _pnlPrefs;
 
-   /**
-    * The main panel for preference administration
-    */
-   protected SQLBookmarkPreferencesPanel _pnlPrefs;
-
-   /**
-    * Handle to the main application
-    */
-   protected IApplication _app;
 
    /**
     * Handle to the plugin
@@ -86,16 +78,12 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
     */
    public void initialize(IApplication app)
    {
-      this._app = app;
-
       // i18n[sqlbookmark.btnTextEdit=Edit]
-      _pnlPrefs.btnEdit.setText(s_stringMgr.getString("sqlbookmark.btnTextEdit"));
+      _pnlPrefs.btnEdit.setText(s_stringMgr.getString("SQLBookmarkPreferencesPanel.sqlbookmark.btnTextEdit"));
 
       DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
 
-      // i18n[sqlbookmark.nodeSquirrelMarks=SQuirreL bookmarks]
       _nodeSquirrelMarks = new DefaultMutableTreeNode(s_stringMgr.getString("sqlbookmark.nodeSquirrelMarks"));
-      // i18n[sqlbookmark.nodeUserMarks=User bookmarks]
       _nodeUserMarks = new DefaultMutableTreeNode(s_stringMgr.getString("sqlbookmark.nodeUserMarks"));
 
       root.add(_nodeUserMarks);
@@ -104,7 +92,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
       _pnlPrefs.treBookmarks.setModel(dtm);
       _pnlPrefs.treBookmarks.setRootVisible(false);
 
-      _pnlPrefs.treBookmarks.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+      _pnlPrefs.treBookmarks.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
       Bookmark[] defaultBookmarks = DefaultBookmarksFactory.getDefaultBookmarks();
       for (int i = 0; i < defaultBookmarks.length; i++)
@@ -131,63 +119,21 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       _pnlPrefs.chkUseContainsToFilterBookmarks.setSelected(Boolean.valueOf(useContainsToFilterBookmarks).booleanValue());
 
-      _pnlPrefs.treBookmarks.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener()
-      {
-         public void valueChanged(TreeSelectionEvent e)
-         {
-            onTreeSelectionChanged(e);
-         }
-      });
+      _pnlPrefs.treBookmarks.getSelectionModel().addTreeSelectionListener(e -> updateButtonsEnabled());
 
 
 
-      _pnlPrefs.btnRun.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onRun();
-         }
-      });
+      _pnlPrefs.btnRun.addActionListener(e -> onRun());
+      _pnlPrefs.btnAdd.addActionListener(e -> onAdd());
+      _pnlPrefs.btnEdit.addActionListener(e -> onEdit());
+      _pnlPrefs.btnDel.addActionListener(e -> onDelete());
+      _pnlPrefs.btnUp.addActionListener(e -> onUp());
+      _pnlPrefs.btnDown.addActionListener(e -> onDown());
 
+      _pnlPrefs.btnExport.addActionListener(e -> BookmarkExportImport.exportBookMarks(_nodeUserMarks, _pnlPrefs.treBookmarks));
+      _pnlPrefs.btnImport.addActionListener(e -> BookmarkExportImport.importBookMarks(_nodeUserMarks, _pnlPrefs.treBookmarks));
 
-      _pnlPrefs.btnAdd.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onAdd();
-         }
-      });
-      _pnlPrefs.btnEdit.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onEdit();
-         }
-      });
-      _pnlPrefs.btnDel.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onDelete();
-         }
-      });
-
-      _pnlPrefs.btnUp.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onUp();
-         }
-      });
-
-      _pnlPrefs.btnDown.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onDown();
-         }
-      });
-
+      updateButtonsEnabled();
 
    }
 
@@ -257,44 +203,82 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
       return _pnlPrefs;
    }
 
-   private void onTreeSelectionChanged(TreeSelectionEvent e)
+   private void updateButtonsEnabled()
    {
-      if(null == e.getPath())
-      {
-         return;
-      }
 
-      DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
-
-      if(false == dmtn.getUserObject() instanceof Bookmark)
-      {
-         return;
-      }
-
-      if(dmtn.getParent() == _nodeSquirrelMarks)
+      final TreePath[] selectionPaths = _pnlPrefs.treBookmarks.getSelectionPaths();
+      if(null == selectionPaths || 0 == selectionPaths.length)
       {
          _pnlPrefs.btnUp.setEnabled(false);
          _pnlPrefs.btnDown.setEnabled(false);
          _pnlPrefs.btnDel.setEnabled(false);
-         // i18n[sqlbookmark.btnTextView=View]
-         _pnlPrefs.btnEdit.setText(s_stringMgr.getString("sqlbookmark.btnTextView"));
+         _pnlPrefs.btnEdit.setEnabled(false);
+         _pnlPrefs.btnRun.setEnabled(false);
+         _pnlPrefs.btnImport.setEnabled(true);
+         _pnlPrefs.btnExport.setEnabled(true);
+         return;
+      }
+
+      _pnlPrefs.btnUp.setEnabled(true);
+      _pnlPrefs.btnDown.setEnabled(true);
+      _pnlPrefs.btnDel.setEnabled(true);
+      _pnlPrefs.btnEdit.setEnabled(true);
+      _pnlPrefs.btnRun.setEnabled(true);
+      _pnlPrefs.btnImport.setEnabled(true);
+      _pnlPrefs.btnExport.setEnabled(true);
+
+
+      if(1 < selectionPaths.length)
+      {
+         _pnlPrefs.btnRun.setEnabled(false);
+         _pnlPrefs.btnEdit.setEnabled(false);
+
+         if(false == BookMarksUtil.areOnlyUserBookmarksSelected(selectionPaths, _nodeUserMarks))
+         {
+            _pnlPrefs.btnUp.setEnabled(false);
+            _pnlPrefs.btnDown.setEnabled(false);
+            _pnlPrefs.btnDel.setEnabled(false);
+            _pnlPrefs.btnImport.setEnabled(false);
+            _pnlPrefs.btnExport.setEnabled(false);
+         }
+
       }
       else
       {
-         _pnlPrefs.btnUp.setEnabled(true);
-         _pnlPrefs.btnDown.setEnabled(true);
-         _pnlPrefs.btnDel.setEnabled(true);
-         // i18n[sqlbookmark.btnTextEdit=Edit]
-         _pnlPrefs.btnEdit.setText(s_stringMgr.getString("sqlbookmark.btnTextEdit"));
-      }
-   }
+         DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) selectionPaths[0].getLastPathComponent();
 
+         if(dmtn.getUserObject() instanceof Bookmark)
+         {
+            if (dmtn.getParent() == _nodeSquirrelMarks)
+            {
+               _pnlPrefs.btnUp.setEnabled(false);
+               _pnlPrefs.btnDown.setEnabled(false);
+               _pnlPrefs.btnDel.setEnabled(false);
+               _pnlPrefs.btnImport.setEnabled(false);
+               _pnlPrefs.btnExport.setEnabled(false);
+               _pnlPrefs.btnEdit.setText(s_stringMgr.getString("SQLBookmarkPreferencesPanel.sqlbookmark.btnTextView"));
+            }
+            else
+            {
+               _pnlPrefs.btnEdit.setText(s_stringMgr.getString("SQLBookmarkPreferencesPanel.sqlbookmark.btnTextEdit"));
+            }
+         }
+         else
+         {
+            _pnlPrefs.btnUp.setEnabled(false);
+            _pnlPrefs.btnDown.setEnabled(false);
+            _pnlPrefs.btnEdit.setEnabled(false);
+            _pnlPrefs.btnDel.setEnabled(false);
+            _pnlPrefs.btnImport.setEnabled(false);
+            _pnlPrefs.btnExport.setEnabled(false);
+         }
+      }
+
+   }
 
 
    private void onRun()
    {
-
-
       DefaultMutableTreeNode selNode = null;
       if(null != _pnlPrefs.treBookmarks.getSelectionPath())
       {
@@ -304,7 +288,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
       if (null == selNode || false == selNode.getUserObject() instanceof Bookmark)
       {
          // i18n[sqlbookmark.noRunSelection=Please select the bookmark to run]
-         _app.getMessageHandler().showErrorMessage(s_stringMgr.getString("sqlbookmark.noRunSelection"));
+         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("sqlbookmark.noRunSelection"));
          return;
       }
 
@@ -315,7 +299,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
       if(0 == apis.length)
       {
          // i18n[sqlbookmark.noSQLPanel=To run a bookmark you must open this window\nusing the "Edit Bookmarks" toolbar button of a Session window.\nThe bookmars SQL Code will then be written to the Session's SQL editor.]
-         JOptionPane.showMessageDialog(_app.getMainFrame(), s_stringMgr.getString("sqlbookmark.noSQLPanel"));
+         JOptionPane.showMessageDialog(Main.getApplication().getMainFrame(), s_stringMgr.getString("sqlbookmark.noSQLPanel"));
          return;
       }
 
@@ -324,7 +308,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
       for (int i = 0; i < apis.length; i++)
       {
          ISQLPanelAPI api = apis[i];
-         new RunBookmarkCommand(_app.getMainFrame(), api.getSession(), bm, _plugin ,api.getSQLEntryPanel()).execute();
+         new RunBookmarkCommand(Main.getApplication().getMainFrame(), api.getSession(), bm, _plugin ,api.getSQLEntryPanel()).execute();
       }
 
    }
@@ -333,7 +317,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
    public void onAdd()
    {
-      BookmarkEditController ctrlr = new BookmarkEditController(_app.getMainFrame(), null, true);
+      BookmarkEditController ctrlr = new BookmarkEditController(Main.getApplication().getMainFrame(), null, true, _nodeUserMarks);
 
       if (ctrlr.isCanceled())
       {
@@ -371,13 +355,13 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
       if (null == selNode || false == selNode.getUserObject() instanceof Bookmark)
       {
          // i18n[sqlbookmark.noEditSelection=Please select the bookmark to edit]
-         _app.getMessageHandler().showErrorMessage(s_stringMgr.getString("sqlbookmark.noEditSelection"));
+         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("sqlbookmark.noEditSelection"));
          return;
       }
 
       boolean editable = selNode.getParent() == _nodeUserMarks;
 
-      BookmarkEditController ctrlr = new BookmarkEditController(_app.getMainFrame(), (Bookmark) selNode.getUserObject(), editable);
+      BookmarkEditController ctrlr = new BookmarkEditController(Main.getApplication().getMainFrame(), (Bookmark) selNode.getUserObject(), editable, _nodeUserMarks);
 
       if(ctrlr.isCanceled())
       {
@@ -421,13 +405,13 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
       if (null == selNode || false == selNode.getUserObject() instanceof Bookmark)
       {
          // i18n[sqlbookmark.noDeleteSelection=Please select the bookmark to delete]
-         _app.getMessageHandler().showErrorMessage(s_stringMgr.getString("sqlbookmark.noDeleteSelection"));
+         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("sqlbookmark.noDeleteSelection"));
          return;
       }
 
 
       // i18n[sqlbookmark.deleteConfirm=Do you really wish to delete the selected bookmark?]
-      int ret = JOptionPane.showConfirmDialog(_app.getMainFrame(), s_stringMgr.getString("sqlbookmark.deleteConfirm"));
+      int ret = JOptionPane.showConfirmDialog(Main.getApplication().getMainFrame(), s_stringMgr.getString("sqlbookmark.deleteConfirm"));
       if(JOptionPane.YES_OPTION != ret)
       {
          return;
@@ -453,52 +437,67 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
    private void onUp()
    {
-      DefaultMutableTreeNode selNode = null;
-      if(null != _pnlPrefs.treBookmarks.getSelectionPath())
-      {
-         selNode = (DefaultMutableTreeNode) _pnlPrefs.treBookmarks.getSelectionPath().getLastPathComponent();
-      }
+      final TreePath[] selPaths = _pnlPrefs.treBookmarks.getSelectionPaths();
 
-      if (  null == selNode
-         || false == selNode.getUserObject() instanceof Bookmark
-         || 0 == _nodeUserMarks.getIndex(selNode))
+      if(null == selPaths || 0 == selPaths.length)
       {
          return;
       }
 
-      int selIx = _nodeUserMarks.getIndex(selNode);
 
-      _nodeUserMarks.insert(selNode, selIx - 1);
+      final boolean pathsContainTheFirstNode = Arrays.stream(selPaths).anyMatch(p -> null == ((DefaultMutableTreeNode) p.getLastPathComponent()).getPreviousSibling());
 
+      if(pathsContainTheFirstNode)
+      {
+         return;
+      }
+
+      // Note: Up / Down buttons are enabled only when without exception kids of _nodeUserMarks are selected
+
+      Arrays.sort(selPaths, Comparator.comparingInt(o -> _nodeUserMarks.getIndex((DefaultMutableTreeNode) o.getLastPathComponent())));
+
+      for (TreePath selPath : selPaths)
+      {
+         DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+         int selIx = _nodeUserMarks.getIndex(selNode);
+         _nodeUserMarks.insert(selNode, selIx - 1);
+      }
       ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(_nodeUserMarks);
-
-      selectNode(selNode);
+      _pnlPrefs.treBookmarks.setSelectionPaths(selPaths);
 
    }
 
 
    private void onDown()
    {
-      DefaultMutableTreeNode selNode = null;
-      if(null != _pnlPrefs.treBookmarks.getSelectionPath())
-      {
-         selNode = (DefaultMutableTreeNode) _pnlPrefs.treBookmarks.getSelectionPath().getLastPathComponent();
-      }
+      final TreePath[] selPaths = _pnlPrefs.treBookmarks.getSelectionPaths();
 
-      if (  null == selNode
-         || false == selNode.getUserObject() instanceof Bookmark
-         || _nodeUserMarks.getChildCount() - 1 == _nodeUserMarks.getIndex(selNode))
+      if(null == selPaths || 0 == selPaths.length)
       {
          return;
       }
 
-      int selIx = _nodeUserMarks.getIndex(selNode);
-      _nodeUserMarks.insert(selNode, selIx + 1);
 
+      final boolean pathsContainTheLastNode = Arrays.stream(selPaths).anyMatch(p -> null == ((DefaultMutableTreeNode) p.getLastPathComponent()).getNextSibling());
+
+      if(pathsContainTheLastNode)
+      {
+         return;
+      }
+
+      // Note: Up / Down buttons are enabled only when without exception kids of _nodeUserMarks are selected
+
+      Arrays.sort(selPaths, Comparator.comparingInt(o -> _nodeUserMarks.getIndex((DefaultMutableTreeNode) o.getLastPathComponent())));
+
+      ArrayUtils.reverse(selPaths);
+      for (TreePath selPath : selPaths)
+      {
+         DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+         int selIx = _nodeUserMarks.getIndex(selNode);
+         _nodeUserMarks.insert(selNode, selIx + 1);
+      }
       ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(_nodeUserMarks);
-
-      selectNode(selNode);
-
+      _pnlPrefs.treBookmarks.setSelectionPaths(selPaths);
    }
 
 }

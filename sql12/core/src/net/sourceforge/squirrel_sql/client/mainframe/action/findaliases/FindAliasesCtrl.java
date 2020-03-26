@@ -250,7 +250,7 @@ public class FindAliasesCtrl
 
       Object formerSelectedValue = _dlg.lstResult.getSelectedValue();
 
-      Vector<ISQLAlias> allAliases = new Vector<>(Main.getApplication().getDataCache().getAliasList());
+      Vector<ISQLAlias> allAliases = new Vector<>(Main.getApplication().getAliasesAndDriversManager().getAliasList());
 
 
       Vector<ISQLAlias> matchingAliases = new Vector<>();

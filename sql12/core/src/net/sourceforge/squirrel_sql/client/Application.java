@@ -47,7 +47,7 @@ import net.sourceforge.squirrel_sql.client.gui.SquirrelSplashScreen;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToStartupAliasesCommand;
@@ -104,7 +104,7 @@ public class Application implements IApplication
 
 	private SQLDriverManager _driverMgr;
 
-	private DataCache _cache;
+	private AliasesAndDriversManager _aliasesAndDriversManager;
 
 	private ActionRegistry _actionRegistry;
 
@@ -358,7 +358,7 @@ public class Application implements IApplication
 		try
 		{
 			final File file = _appFiles.getDatabaseAliasesFile();
-			_cache.saveAliases(file);
+			_aliasesAndDriversManager.saveAliases(file);
 		}
 		catch (Throwable th)
 		{
@@ -381,7 +381,7 @@ public class Application implements IApplication
 		try
 		{
 			final File file = _appFiles.getDatabaseDriversFile();
-			_cache.saveDrivers(file);
+			_aliasesAndDriversManager.saveDrivers(file);
 		}
 		catch (Throwable th)
 		{
@@ -471,9 +471,9 @@ public class Application implements IApplication
 	}
 
 	@Override
-	public DataCache getDataCache()
+	public AliasesAndDriversManager getAliasesAndDriversManager()
 	{
-		return _cache;
+		return _aliasesAndDriversManager;
 	}
 
 	@Override
@@ -871,9 +871,9 @@ public class Application implements IApplication
 
 	public void initDataCache()
 	{
-		_cache =
-			new DataCache(_driverMgr, _appFiles.getDatabaseDriversFile(), _appFiles.getDatabaseAliasesFile(),
-				_resources.getDefaultDriversUrl(), this);
+		_aliasesAndDriversManager =
+			new AliasesAndDriversManager(_driverMgr, _appFiles.getDatabaseDriversFile(), _appFiles.getDatabaseAliasesFile(),
+				_resources.getDefaultDriversUrl());
 	}
 
 	/**

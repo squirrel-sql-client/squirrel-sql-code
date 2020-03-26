@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Bookmarks Plugin: Bookmarks can be exported to file and imported.
+  See menu File --> Global Preferences --> Tab Bookmarks --> Export/Import buttons.
+
 Introduced Java 14 compatibility.
 
 Alias import/export: New button "Update...". This button becomes active when an import file was opened.
@@ -122,8 +125,6 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 
 Bug fixes:
-
-Change tracking: GIT revision history dialog: Multiline commit messages where correctly displayed.
 
 Connect button in Alias dialog didn't use schema properties.
 

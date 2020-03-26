@@ -259,7 +259,7 @@ public class ConnectToAliasCommand implements ICommand
       public void doConnect()
       {
          final IIdentifier driverID = _alias.getDriverIdentifier();
-         final ISQLDriver sqlDriver = _app.getDataCache().getDriver(driverID);
+         final ISQLDriver sqlDriver = _app.getAliasesAndDriversManager().getDriver(driverID);
 
          try
          {

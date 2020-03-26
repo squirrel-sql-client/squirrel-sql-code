@@ -373,13 +373,13 @@ public class ExportPanelBuilder
                 if (_exportDriversChk.getModel().isSelected()) {
                     File f = new File(_exportDriversText.getText()); 
                     if (!f.exists() || confirmOverwrite(f)) {
-                        _app.getDataCache().saveDrivers(f);
+                        _app.getAliasesAndDriversManager().saveDrivers(f);
                     }
                 }
                 if (_exportAliasesChk.getModel().isSelected()) {
                     File f = new File(_exportAliasesText.getText()); 
                     if (!f.exists() || confirmOverwrite(f)) {
-                        _app.getDataCache().saveAliases(f);
+                        _app.getAliasesAndDriversManager().saveAliases(f);
                     }
                 }
                 succeeded = true;

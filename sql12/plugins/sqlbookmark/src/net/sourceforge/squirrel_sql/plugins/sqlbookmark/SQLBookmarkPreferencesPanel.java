@@ -4,25 +4,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 
 public class SQLBookmarkPreferencesPanel extends JPanel
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SQLBookmarkPreferencesPanel.class);
-
-
-
-   private interface IPrefKeys
-   {
-      String BM_UP = "button.up.title";
-      String BM_DOWN = "button.down.title";
-      String BM_ADD = "button.add.title";
-      String BM_DEL = "button.del.title";
-      String BM_RUN = "button.run.title";
-   }
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLBookmarkPreferencesPanel.class);
 
    JTree treBookmarks;
 
@@ -32,6 +18,9 @@ public class SQLBookmarkPreferencesPanel extends JPanel
    JButton btnEdit;
    JButton btnDel;
    JButton btnRun;
+
+   JButton btnExport;
+   JButton btnImport;
 
    JCheckBox chkSquirrelMarksInPopup;
    JCheckBox chkUseContainsToFilterBookmarks;
@@ -47,13 +36,11 @@ public class SQLBookmarkPreferencesPanel extends JPanel
       gbc = new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
       add(new JScrollPane(treBookmarks), gbc);
 
-      JPanel buttonPane = createButtonPane(plugin);
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,5,5), 0,0);
-      add(buttonPane, gbc);
+      add(createButtonPane(), gbc);
 
-      JPanel southPane = createSouthPane(plugin);
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
-      add(southPane, gbc);
+      add(createSouthPane(plugin), gbc);
    }
 
    private JPanel createSouthPane(SQLBookmarkPlugin plugin)
@@ -84,26 +71,26 @@ public class SQLBookmarkPreferencesPanel extends JPanel
       return pnlSouth;
    }
 
-   private JPanel createButtonPane(SQLBookmarkPlugin plugin)
+   private JPanel createButtonPane()
    {
       JPanel buttonPane = new JPanel(new GridBagLayout());
 
       GridBagConstraints gbc;
 
-      btnRun = new JButton(plugin.getResourceString(IPrefKeys.BM_RUN));
+      btnRun = new JButton(s_stringMgr.getString("SQLBookmarkPreferencesPanel.button.run.title"));
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
       buttonPane.add(btnRun, gbc);
 
 
-      btnUp = new JButton(plugin.getResourceString(IPrefKeys.BM_UP));
+      btnUp = new JButton(s_stringMgr.getString("SQLBookmarkPreferencesPanel.button.up.title"));
       gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
       buttonPane.add(btnUp, gbc);
 
-      btnDown = new JButton(plugin.getResourceString(IPrefKeys.BM_DOWN));
+      btnDown = new JButton(s_stringMgr.getString("SQLBookmarkPreferencesPanel.button.down.title"));
       gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
       buttonPane.add(btnDown, gbc);
 
-      btnAdd = new JButton(plugin.getResourceString(IPrefKeys.BM_ADD));
+      btnAdd = new JButton(s_stringMgr.getString("SQLBookmarkPreferencesPanel.button.add.title"));
       gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
       buttonPane.add(btnAdd, gbc);
 
@@ -111,9 +98,20 @@ public class SQLBookmarkPreferencesPanel extends JPanel
       gbc = new GridBagConstraints(0,4,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
       buttonPane.add(btnEdit, gbc);
 
-      btnDel = new JButton(plugin.getResourceString(IPrefKeys.BM_DEL));
-      gbc = new GridBagConstraints(0,5,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
+      btnDel = new JButton(s_stringMgr.getString("SQLBookmarkPreferencesPanel.button.del.title"));
+      gbc = new GridBagConstraints(0,5,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,10,1), 0, 0);
       buttonPane.add(btnDel, gbc);
+
+
+      btnExport = new JButton(s_stringMgr.getString("SQLBookmarkPreferencesPanel.button.export.title"));
+      gbc = new GridBagConstraints(0,6,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
+      btnExport.setToolTipText(s_stringMgr.getString("SQLBookmarkPreferencesPanel.button.export.tooltip"));
+      buttonPane.add(btnExport, gbc);
+
+      btnImport = new JButton(s_stringMgr.getString("SQLBookmarkPreferencesPanel.button.import.title"));
+      gbc = new GridBagConstraints(0,7,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
+      btnImport.setToolTipText(s_stringMgr.getString("SQLBookmarkPreferencesPanel.button.import.tooltip"));
+      buttonPane.add(btnImport, gbc);
 
       gbc = new GridBagConstraints(0,6,1,1,0,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0);
       buttonPane.add(new JPanel(), gbc);

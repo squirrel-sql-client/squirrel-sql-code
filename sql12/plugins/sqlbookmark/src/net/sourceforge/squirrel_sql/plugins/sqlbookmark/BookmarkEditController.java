@@ -3,8 +3,10 @@ package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -15,13 +17,15 @@ public class BookmarkEditController
 
    private boolean _canceled;
    private BookmarkEditDialog _dlg;
+   private final DefaultMutableTreeNode _userBookmarksNode;
    private Bookmark _mark;
 
 
-   public BookmarkEditController(Frame owner, Bookmark mark, boolean editable)
+   public BookmarkEditController(Frame owner, Bookmark mark, boolean editable, DefaultMutableTreeNode userBookmarksNode)
    {
       _mark = mark;
       _dlg = new BookmarkEditDialog(owner, null == _mark);
+      _userBookmarksNode = userBookmarksNode;
 
       _dlg.btnOk.setEnabled(editable);
 
@@ -77,6 +81,23 @@ public class BookmarkEditController
          JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("sqlbookmark.enterSql"));
          return;
       }
+
+      if(null == _mark)
+      {
+         for (int i = 0; i < _userBookmarksNode.getChildCount(); i++)
+         {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) _userBookmarksNode.getChildAt(i);
+            Bookmark bookmark = (Bookmark) node.getUserObject();
+
+            if(StringUtilities.equalsRespectNullModuloEmptyAndWhiteSpace(bookmark.getName(), name))
+            {
+               JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("BookmarkEditController.duplicate.bookmark.name", name));
+               return;
+            }
+
+         }
+      }
+
 
 
       if(null == _mark)

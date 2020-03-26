@@ -540,7 +540,7 @@ public class MultiAliasChooser extends JDialog
 			//, alias.getUrl(), alias.getUserName(), alias.getPassword()
 			ISQLAlias alias = (ISQLAlias) MultiAliasChooser.this._aliasCbx.getSelectedItem();
 			IIdentifier driverID = alias.getDriverIdentifier();
-			ISQLDriver driver = _app.getDataCache().getDriver(driverID);
+			ISQLDriver driver = _app.getAliasesAndDriversManager().getDriver(driverID);
 			
 			String driverName = driver.getDriverClassName();
 			String url = alias.getUrl();

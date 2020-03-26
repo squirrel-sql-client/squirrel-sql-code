@@ -60,7 +60,7 @@ public class SQLALiasesCombo extends JComboBox
 	public void load(IApplication app)
 	{
 		removeAllItems();
-		for (Iterator<ISQLAlias> it = app.getDataCache().aliases(); it.hasNext();)
+		for (Iterator<? extends ISQLAlias> it = app.getAliasesAndDriversManager().aliases(); it.hasNext();)
 		{
 			ISQLAlias alias = it.next();
 			addItem(alias);

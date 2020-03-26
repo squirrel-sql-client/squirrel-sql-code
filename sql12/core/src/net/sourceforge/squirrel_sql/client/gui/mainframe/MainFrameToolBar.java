@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 
-import javax.swing.Action;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
@@ -157,7 +156,7 @@ public class MainFrameToolBar extends ToolBar
 			addActionListener(this);
 			setMaximumSize(getPreferredSize());
 
-			app.getDataCache().addAliasesListener(new MyAliasesListener(model, this));
+			app.getAliasesAndDriversManager().addAliasesListener(new MyAliasesListener(model, this));
 			
 			this.setName(this.getClass().getCanonicalName());
 		}
@@ -215,7 +214,7 @@ public class MainFrameToolBar extends ToolBar
 		 */
 		private void load()
 		{
-			Iterator<ISQLAlias> it = _myApp.getDataCache().aliases();
+			Iterator<? extends ISQLAlias> it = _myApp.getAliasesAndDriversManager().aliases();
 			while (it.hasNext())
 			{
 				addAlias(it.next());

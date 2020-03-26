@@ -109,21 +109,14 @@ public class XMLBeanReader implements Iterable<Object>
 		_cl = cl;
 		_beanColl.clear();
 
-		FileReader frdr = new FileReader(xmlFileName);
-		try
+
+		try(FileReader frdr = new FileReader(xmlFileName))
 		{
 			load(frdr, cl);
 		}
-		finally
+		catch (IOException ex)
 		{
-			try
-			{
-				frdr.close();
-			}
-			catch (IOException ex)
-			{
-				s_log.error("Error closing FileReader", ex);
-			}
+			s_log.error("Error closing FileReader", ex);
 		}
 	}
 

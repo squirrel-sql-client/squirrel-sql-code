@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DRIVER_DEFINITIONS;
 import net.sourceforge.squirrel_sql.fw.gui.DefaultFileListBoxModel;
@@ -45,7 +44,6 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -222,11 +220,11 @@ public class DriverInternalFrame extends DialogWidget
 			applyFromDialog();
 			if (_maintType == MaintenanceType.NEW || _maintType == MaintenanceType.COPY)
 			{
-				_app.getDataCache().addDriver(_sqlDriver, _app.getMessageHandler());
+				_app.getAliasesAndDriversManager().addDriver(_sqlDriver, _app.getMessageHandler());
 			}
 			else
 			{
-				_app.getDataCache().refreshDriver(_sqlDriver, _app.getMessageHandler());
+				_app.getAliasesAndDriversManager().refreshDriver(_sqlDriver, _app.getMessageHandler());
 			}
 
 			_app.savePreferences(DRIVER_DEFINITIONS);

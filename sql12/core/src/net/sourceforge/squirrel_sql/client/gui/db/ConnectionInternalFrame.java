@@ -28,7 +28,6 @@ import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetListener;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
@@ -43,8 +42,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -160,7 +157,7 @@ public class ConnectionInternalFrame extends DialogWidget
 		_alias = alias;
 		_handler = handler;
 
-		_sqlDriver = _app.getDataCache().getDriver(_alias.getDriverIdentifier());
+		_sqlDriver = _app.getAliasesAndDriversManager().getDriver(_alias.getDriverIdentifier());
 		if (_sqlDriver == null)
 		{
 			throw new IllegalStateException(s_stringMgr.getString("ConnectionInternalFrame.error.nodriver",
