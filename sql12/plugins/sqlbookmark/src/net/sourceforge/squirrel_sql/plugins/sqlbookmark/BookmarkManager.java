@@ -52,7 +52,7 @@ public class BookmarkManager implements ICompletorModel
    /**
     * List of all the loaded bookmarks
     */
-   private ArrayList<Bookmark> bookmarks = new ArrayList<Bookmark>();
+   private ArrayList<Bookmark> bookmarks = new ArrayList<>();
 
 	/** factory for creating FileWrappers which insulate the application from direct reference to File */
 	private FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
@@ -61,7 +61,7 @@ public class BookmarkManager implements ICompletorModel
    /**
     * Index of bookmark names to indexes in the bookmarks array
     */
-   private HashMap<String, Integer> bookmarkIdx = new HashMap<String, Integer>();
+   private HashMap<String, Integer> bookmarkIdx = new HashMap<>();
    private SQLBookmarkPlugin _plugin;
 
    public BookmarkManager(SQLBookmarkPlugin plugin)
@@ -236,8 +236,8 @@ public class BookmarkManager implements ICompletorModel
 
    public void removeAll()
    {
-      bookmarks = new ArrayList<Bookmark>();
-      bookmarkIdx = new HashMap<String, Integer>();
+      bookmarks = new ArrayList<>();
+      bookmarkIdx = new HashMap<>();
    }
    
 	/**

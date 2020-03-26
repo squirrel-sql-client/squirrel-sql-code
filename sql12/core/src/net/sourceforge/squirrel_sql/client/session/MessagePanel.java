@@ -31,6 +31,7 @@ import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
@@ -279,13 +280,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 
 	private void addLineOnEDT(String msg, SimpleAttributeSet saSet)
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				addLine(msg, saSet);
-			}
-		});
+		GUIUtils.processOnSwingEventThread(() -> addLine(msg, saSet));
 	}
 
 	/**

@@ -64,14 +64,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLBookmarkPlugin extends DefaultSessionPlugin
 {
+   private final static ILogger s_log = LoggerController.createLogger(SQLBookmarkPlugin.class);
 
-   /** Logger for this class. */
-   private final static ILogger s_log = 
-       LoggerController.createLogger(SQLBookmarkPlugin.class);  
-
-   private ArrayList<ISQLPanelAPI> _sqlPanelAPIsListeningForBookmarks = 
-       new ArrayList<ISQLPanelAPI>();
-
+   private ArrayList<ISQLPanelAPI> _sqlPanelAPIsListeningForBookmarks = new ArrayList<>();
 
    private static final String BOOKMARKS_PROPS_FILE = "bookmarks.properties";
 

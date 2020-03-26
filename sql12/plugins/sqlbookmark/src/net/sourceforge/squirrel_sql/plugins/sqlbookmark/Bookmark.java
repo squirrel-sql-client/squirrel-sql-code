@@ -19,8 +19,6 @@
 
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
-import java.io.Serializable;
-
 /**
  * A class encapsulating an SQL Bookmark.
  *
@@ -32,13 +30,13 @@ public class Bookmark
    /**
     * The name of the bookmark
     */
-   protected String _name;
+   private String _name;
 
    private String _description;
    /**
     * The SQL for the bookmark
     */
-   protected String _sql;
+   private String _sql;
    private String _toString;
 
    public Bookmark()
