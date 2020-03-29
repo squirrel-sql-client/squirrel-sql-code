@@ -101,8 +101,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String ALLOW_CTRL_MOUSE_CLICK_JUMP_TO_OBJECT_TREE = "AllowCtrlMouseClickJumpToObjectTree";
    }
 
-   private static final FontInfo DEFAULT_FONT_INFO =
-                           new FontInfo(new Font("Monospaced", 0, 12));
+   private static final FontInfo DEFAULT_FONT_INFO = new FontInfo(new Font("Monospaced", 0, 12));
 
    /** Object to handle property change events. */
    private transient PropertyChangeReporter _propChgReporter;

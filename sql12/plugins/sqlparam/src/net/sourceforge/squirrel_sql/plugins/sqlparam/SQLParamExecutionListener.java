@@ -17,9 +17,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlparam;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
+import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.SQLCommentRemover;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlparam.gui.AskParamValueDialog;
@@ -82,15 +81,17 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
    @Override
    public String statementExecuting(String sql)
    {
-      // log.info("SQL starting to execute: " + sql);
+//      // log.info("SQL starting to execute: " + sql);
+//
+//      // Removes -- comments
+//      sql = removeComments(sql);
+//
+//      //log.info("Removed comments: " + sql);
+//
+//      // Removes /*  */ comments
+//      sql = sql.replaceAll("\\/\\*(.|\\s)*?\\*\\/", "");
 
-      // Removes -- comments
-      sql = removeComments(sql);
-
-      //log.info("Removed comments: " + sql);
-
-      // Removes /*  */ comments
-      sql = sql.replaceAll("\\/\\*(.|\\s)*?\\*\\/", "");
+      sql = SQLCommentRemover.removeComments(sql);
 
       StringBuffer buffer = new StringBuffer(sql);
       Map<String, String> cache = _plugin.getCache();
@@ -152,76 +153,6 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
       //////////////////////////////////////////////////////////////////
    }
 
-   private static String removeComments(String sql)
-   {
-      List<Integer> literalsStartPositions = new ArrayList<Integer>();
-      List<Integer> literalsEndPositions = new ArrayList<Integer>();
-      Matcher lm = Pattern.compile("('(('')|[^'])*')").matcher(sql);
-      while (lm.find())
-      {
-         literalsStartPositions.add(lm.start());
-         literalsEndPositions.add(lm.end());
-      }
-
-      List<Integer> commentsStartPositions = new ArrayList<Integer>();
-      List<Integer> commentsEndPositions = new ArrayList<Integer>();
-      Matcher commentsm = Pattern.compile("--(.*?)\r?\n").matcher(sql);
-      while (commentsm.find())
-      {
-         if (isNotInsideOfAnyLiteral(commentsm.start(), literalsStartPositions, literalsEndPositions))
-         {
-            commentsStartPositions.add(commentsm.start());
-            commentsEndPositions.add(commentsm.end());
-         }
-      }
-
-      // it's possible that there's no \r\n after the last line comment
-      StringBuffer strippedSql = new StringBuffer(sql);
-      int commentStartIdx = -1;
-      if ((commentStartIdx = strippedSql.lastIndexOf("--")) != -1)
-      {
-         // commentStartIdx can NOT be before end of last matched comment [start, end)
-         boolean uniqueComment = true;
-         if (commentsEndPositions.size() > 0)
-         {
-            if (commentsEndPositions.get(commentsEndPositions.size() - 1) > commentStartIdx)
-            {
-               uniqueComment = false;
-            }
-         }
-         if (uniqueComment && isNotInsideOfAnyLiteral(commentStartIdx, literalsStartPositions, literalsEndPositions))
-         {
-            commentsStartPositions.add(commentStartIdx);
-            commentsEndPositions.add(strippedSql.length());
-         }
-      }
-
-      for (int i = commentsStartPositions.size() - 1; i >= 0; --i)
-      {
-         strippedSql = strippedSql.replace(commentsStartPositions.get(i), commentsEndPositions.get(i), "");
-      }
-
-      return strippedSql.toString();
-   }
-
-   // comment can not start in any of the literals
-   private static boolean isNotInsideOfAnyLiteral(int spos, List<Integer> literalsStartPositions, List<Integer> literalsEndPositions)
-   {
-      for (int i = 0; i < literalsStartPositions.size(); i++)
-      {
-         if (literalsStartPositions.get(i) <= spos && spos < literalsEndPositions.get(i))
-         {
-            return false;
-         }
-      }
-      return true;
-   }
-
-   public static void main(String[] args)
-   {
-      String testCase1 = "-- sql \n INSERT INTO code (txt) VALUES -- haha\n 'for(int i = e-1; i >= 0; --i)') -- nice test";
-      System.out.println(SQLParamExecutionListener.removeComments(testCase1));
-   }
 
    private AskParamValueDialog createParameterDialog(String parameter, String oldValue)
    {

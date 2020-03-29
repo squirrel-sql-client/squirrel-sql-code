@@ -126,6 +126,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+#1329 SQL Parametrisation Plugin: StackOverflowError occurred, see file long-comment.sql attached to the bug.
+
 Alias frame: Connect button didn't respect edits done just before the button was clicked.
 
 Connect button in Alias dialog didn't use schema properties.
