@@ -44,7 +44,10 @@ public class SQLCommentAndLiteralHandler
          }
 
          // We look backwards
-         if(_isInMultiLineComment && _script.startsWith(MULTI_LINE_COMMENT_END, posInScript - MULTI_LINE_COMMENT_END.length()))
+         if(   _isInMultiLineComment
+            && _script.startsWith(MULTI_LINE_COMMENT_END, posInScript - MULTI_LINE_COMMENT_END.length())
+            && ( posInScript >= 3 && false == _script.startsWith(MULTI_LINE_COMMENT_BEGIN, posInScript - 3) ) // Treats /*/
+         )
          {
             _isInMultiLineComment = false;
          }
@@ -56,15 +59,15 @@ public class SQLCommentAndLiteralHandler
             _isInMultiLineComment = _script.startsWith(MULTI_LINE_COMMENT_BEGIN, posInScript);
             _isInLineComment = _script.startsWith(_lineCommentBegin, posInScript);
 
-            if(_isInMultiLineComment && _removeMultiLineComment)
-            {
-               // NOTE: THIS CURRENTLY BREAKS MULTILINE-COMMENTS IN QueryHolder._originalQuery AND THUS IN SQL-HISTORY.
-               // E.G.: "/*My Multiline\nArticles\n*/\nSELECT * FROM articles"
-               // IT ALREADY DID BEFORE FIXING BUG #1329. IT SHOULD BE FIXED.
-
-               // skip ahead so the cursor is now immediately after the begin comment string
-               ret.setNextPosition(posInScript + MULTI_LINE_COMMENT_BEGIN.length() + 1);
-            }
+//            if(_isInMultiLineComment && _removeMultiLineComment)
+//            {
+//               // NOTE: THIS CURRENTLY BREAKS MULTILINE-COMMENTS IN QueryHolder._originalQuery AND THUS IN SQL-HISTORY.
+//               // E.G.: "/*My Multiline\nArticles\n*/\nSELECT * FROM articles"
+//               // IT ALREADY DID BEFORE FIXING BUG #1329. IT SHOULD BE FIXED.
+//
+//               // skip ahead so the cursor is now immediately after the begin comment string
+//               ret.setNextPosition(posInScript + MULTI_LINE_COMMENT_BEGIN.length() + 1);
+//            }
          }
 
          if((_isInMultiLineComment && _removeMultiLineComment) || _isInLineComment)

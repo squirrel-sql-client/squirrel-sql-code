@@ -309,8 +309,11 @@ public class QueryTokenizer implements IQueryTokenizer
         //String sql = "A'''' sss ;  GO ;; GO'";
         //String sql = "A\n--x\n--y\n/*\nB";
         //String sql = "GO GO";
-        String sql = "@c:\\tools\\sql\\file.sql";
-        
+        //String sql = "@c:\\tools\\sql\\file.sql";
+        //String sql = "/*PARAM1*/ thing /*C*/ = 'default value' /*/PARAM1*/";
+        String sql = "/*My Multiline\\nArticles\\n*/\\nSELECT * FROM articles";
+
+
         
         QueryTokenizer qt = new QueryTokenizer("GO", "--", true);
 
@@ -318,7 +321,9 @@ public class QueryTokenizer implements IQueryTokenizer
         
         while(qt.hasQuery())
         {
-            System.out.println(">" + qt.nextQuery() + "<");
+           final QueryHolder queryHolder = qt.nextQuery();
+           System.out.println("### Query>" + queryHolder.getQuery() + "<");
+            System.out.println("### Original Query>" + queryHolder.getOriginalQuery() + "<");
         }
     }
 

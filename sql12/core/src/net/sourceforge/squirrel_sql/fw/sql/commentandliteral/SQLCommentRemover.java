@@ -31,14 +31,16 @@ public class SQLCommentRemover
 
    public static void main(String[] args)
    {
-
       System.out.println(removeComments(sql));
-
-
    }
 
-   private static String sql =
-            "-- sql \n INSERT INTO code (txt) VALUES -- haha\n 'for(int i = e-1; i >= 0; --i)') -- nice test";
+
+//   Bug 479 (former bug number was 1639662): /*/ must not be treated as comment begin and end
+   private static final String sql =
+         "/*PARAM1*/ thing /*C*/ = 'default value' /*/PARAM1*/";
+
+//   private static String sql =
+//            "-- sql \n INSERT INTO code (txt) VALUES -- haha\n 'for(int i = e-1; i >= 0; --i)') -- nice test";
 
 
 //   private static String sql =
