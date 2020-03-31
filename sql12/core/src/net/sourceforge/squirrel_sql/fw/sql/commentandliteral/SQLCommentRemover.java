@@ -7,22 +7,14 @@ public class SQLCommentRemover
       final SQLCommentAndLiteralHandler commentAndLiteralHandler = new SQLCommentAndLiteralHandler(sql, "--", true);
 
       StringBuilder ret = new StringBuilder();
-      for (int i = 0; i < sql.length(); )
+      for (int i = 0; i < sql.length(); ++i)
       {
-         final NextPositionResult nextPositionResult = commentAndLiteralHandler.nextPosition(i);
+         final NextPositionAction nextPositionAction = commentAndLiteralHandler.nextPosition(i);
 
-         if(NextPositionAction.APPEND == nextPositionResult.getNextPositionAction())
+         if(NextPositionAction.APPEND == nextPositionAction)
          {
             ret.append(sql.charAt(i));
          }
-         else
-         {
-            // Looks like that to remain similar to QueryTokenizer.setScriptToTokenize(...) for now.
-            i = nextPositionResult.getNextPosition();
-            continue;
-         }
-
-         i = nextPositionResult.getNextPosition();
       }
 
       return ret.toString();

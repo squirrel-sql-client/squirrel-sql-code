@@ -17,20 +17,20 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
+import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.NextPositionAction;
+import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.SQLCommentAndLiteralHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
-import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.NextPositionAction;
-import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.NextPositionResult;
-import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.SQLCommentAndLiteralHandler;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class QueryTokenizer implements IQueryTokenizer
 {
@@ -156,105 +156,28 @@ public class QueryTokenizer implements IQueryTokenizer
     {
         _queries.clear();
         
-//        String MULTI_LINE_COMMENT_END = "*/";
-//        String MULTI_LINE_COMMENT_BEGIN = "/*";
-
         script = script.replace('\r', ' ');
 
         StringBuffer curQuery = new StringBuffer();
         StringBuffer curOriginalQuery = new StringBuffer();
 
-//        boolean isInLiteral = false;
-//        boolean isInMultiLineComment = false;
-//        boolean isInLineComment = false;
-//        int literalSepCount = 0;
-
 
        SQLCommentAndLiteralHandler commentAndLiteralHandler = new SQLCommentAndLiteralHandler(script, _lineCommentBegin, _removeMultiLineComment);
 
-        for (int i = 0; i < script.length();)
+        for (int i = 0; i < script.length(); ++i)
         {
-           final NextPositionResult nextPositionResult = commentAndLiteralHandler.nextPosition(i);
+           final NextPositionAction nextPositionAction = commentAndLiteralHandler.nextPosition(i);
 
            curOriginalQuery.append(script.charAt(i));
 
-           if(NextPositionAction.APPEND == nextPositionResult.getNextPositionAction())
+           if(NextPositionAction.APPEND == nextPositionAction)
            {
               curQuery.append(script.charAt(i));
            }
            else
            {
-              i = nextPositionResult.getNextPosition();
               continue;
            }
-
-
-//           char c = _script.charAt(posInScript);
-//
-//           if(false == isInLiteral)
-//           {
-//                ///////////////////////////////////////////////////////////
-//                // Handling of comments
-//
-//                // We look backwards
-//                if(isInLineComment && script.startsWith("\n", i - "\n".length()))
-//                {
-//                    isInLineComment = false;
-//                }
-//
-//                // We look backwards
-//                if(isInMultiLineComment && script.startsWith(MULTI_LINE_COMMENT_END, i - MULTI_LINE_COMMENT_END.length()))
-//                {
-//                    isInMultiLineComment = false;
-//                }
-//
-//
-//                if(false == isInLineComment && false == isInMultiLineComment)
-//                {
-//                    // We look forward
-//                    isInMultiLineComment = script.startsWith(MULTI_LINE_COMMENT_BEGIN, i);
-//                    isInLineComment = script.startsWith(_lineCommentBegin, i);
-//
-//                    if(isInMultiLineComment && _removeMultiLineComment)
-//                    {
-//                        // skip ahead so the cursor is now immediately after the begin comment string
-//                        i+=MULTI_LINE_COMMENT_BEGIN.length()+1;
-//                    }
-//                }
-//
-//                if((isInMultiLineComment && _removeMultiLineComment) || isInLineComment)
-//                {
-//                    // This is responsible that comments are not in curQuery
-//                    curOriginalQuery.append(c);
-//                    continue;
-//                }
-//                //
-//                ////////////////////////////////////////////////////////////
-//            }
-//
-//            curQuery.append(c);
-//            curOriginalQuery.append(c);
-//
-//            if ('\'' == c)
-//            {
-//                if(false == isInLiteral)
-//                {
-//                    isInLiteral = true;
-//                }
-//                else
-//                {
-//                    ++literalSepCount;
-//                }
-//            }
-//            else
-//            {
-//                if(0 != literalSepCount % 2)
-//                {
-//                    isInLiteral = false;
-//                }
-//                literalSepCount = 0;
-//            }
-
 
             int querySepLen = getLenOfQuerySepIfAtLastCharOfQuerySep(script, i, _querySep, commentAndLiteralHandler.isInLiteral());
 
@@ -274,8 +197,6 @@ public class QueryTokenizer implements IQueryTokenizer
                 curQuery.setLength(0);
                 curOriginalQuery.setLength(0);
             }
-
-           i = nextPositionResult.getNextPosition();
         }
 
         String lastQuery = curQuery.toString().trim();

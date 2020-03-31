@@ -1,5 +1,12 @@
 package net.sourceforge.squirrel_sql.fw.sql.commentandliteral;
 
+
+/**
+ * This code used to be part of {@link net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer#setScriptToTokenize(String)}
+ * and was moved here on 3/29/2020 to fix bug #1329.
+ *
+ * Moving the code was necessary to implement {@link SQLCommentRemover}
+ */
 public class SQLCommentAndLiteralHandler
 {
    private static final String MULTI_LINE_COMMENT_END = "*/";
@@ -21,14 +28,12 @@ public class SQLCommentAndLiteralHandler
       _removeMultiLineComment = removeMultiLineComment;
    }
 
-   public NextPositionResult nextPosition(int posInScript)
+   public NextPositionAction nextPosition(int posInScript)
    {
       if(_script.length() <= posInScript)
       {
          throw new IllegalStateException("Script position out of bounds: " + posInScript + " >= " + _script.length());
       }
-
-      NextPositionResult ret = new NextPositionResult(posInScript);
 
       char c = _script.charAt(posInScript);
 
@@ -46,7 +51,7 @@ public class SQLCommentAndLiteralHandler
          // We look backwards
          if(   _isInMultiLineComment
             && _script.startsWith(MULTI_LINE_COMMENT_END, posInScript - MULTI_LINE_COMMENT_END.length())
-            && ( posInScript >= 3 && false == _script.startsWith(MULTI_LINE_COMMENT_BEGIN, posInScript - 3) ) // Treats /*/
+            && isInBeginningOfMultiLineComment(posInScript) // Treats /*/
          )
          {
             _isInMultiLineComment = false;
@@ -58,16 +63,6 @@ public class SQLCommentAndLiteralHandler
             // We look forward
             _isInMultiLineComment = _script.startsWith(MULTI_LINE_COMMENT_BEGIN, posInScript);
             _isInLineComment = _script.startsWith(_lineCommentBegin, posInScript);
-
-//            if(_isInMultiLineComment && _removeMultiLineComment)
-//            {
-//               // NOTE: THIS CURRENTLY BREAKS MULTILINE-COMMENTS IN QueryHolder._originalQuery AND THUS IN SQL-HISTORY.
-//               // E.G.: "/*My Multiline\nArticles\n*/\nSELECT * FROM articles"
-//               // IT ALREADY DID BEFORE FIXING BUG #1329. IT SHOULD BE FIXED.
-//
-//               // skip ahead so the cursor is now immediately after the begin comment string
-//               ret.setNextPosition(posInScript + MULTI_LINE_COMMENT_BEGIN.length() + 1);
-//            }
          }
 
          if((_isInMultiLineComment && _removeMultiLineComment) || _isInLineComment)
@@ -75,7 +70,7 @@ public class SQLCommentAndLiteralHandler
             // This is responsible that comments are not in curQuery
             // curOriginalQuery.append(c);
             // continue;
-            return ret.setNextPositionAction(NextPositionAction.SKIP);
+            return NextPositionAction.SKIP;
          }
          //
          ////////////////////////////////////////////////////////////
@@ -104,7 +99,13 @@ public class SQLCommentAndLiteralHandler
          _literalSepCount = 0;
       }
 
-      return ret.setNextPositionAction(NextPositionAction.APPEND);
+      return NextPositionAction.APPEND;
+   }
+
+   private boolean isInBeginningOfMultiLineComment(int posInScript)
+   {
+      final int backwardCount = MULTI_LINE_COMMENT_BEGIN.length() + 1;
+      return posInScript >= backwardCount && false == _script.startsWith(MULTI_LINE_COMMENT_BEGIN, posInScript - backwardCount);
    }
 
 
