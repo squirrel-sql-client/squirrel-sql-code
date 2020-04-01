@@ -177,8 +177,13 @@ public class FileManagementCore
    private boolean saveIntern(boolean toNewFile)
    {
       boolean result = false;
+
+      File toSaveToBuf = null;
+      boolean wasSavedToNewFile = false;
+
       if (toNewFile)
       {
+         toSaveToBuf = _toSaveTo;
          _toSaveTo = null;
       }
 
@@ -236,6 +241,7 @@ public class FileManagementCore
             if (saveScript(frame, _toSaveTo, true))
             {
                result = true;
+               wasSavedToNewFile = true;
                break;
             }
             else
@@ -250,6 +256,12 @@ public class FileManagementCore
             break;
          }
       }
+
+      if(false == wasSavedToNewFile && null != toSaveToBuf)
+      {
+         _toSaveTo = toSaveToBuf;
+      }
+
       return result;
    }
 
@@ -260,9 +272,7 @@ public class FileManagementCore
       if (file.exists() && !file.canWrite())
       {
           // i18n[FileManager.error.cannotwritefile=File {0} \ncannot be written to.]
-          String msg = 
-              s_stringMgr.getString("FileManager.error.cannotwritefile", 
-                                    file.getAbsolutePath());
+         String msg = s_stringMgr.getString("FileManager.error.cannotwritefile", file.getAbsolutePath());
          Dialogs.showOk(frame, msg);
          return false;
       }
@@ -270,11 +280,8 @@ public class FileManagementCore
       if (askReplace && file.exists())
       {
           // i18n[FileManager.confirm.filereplace={0} \nalready exists. Do you want to replace it?]
-         String confirmMsg = 
-             s_stringMgr.getString("FileManager.confirm.filereplace", 
-                                   file.getAbsolutePath());
-          doSave =
-            Dialogs.showYesNo(frame, confirmMsg);
+         String confirmMsg =  s_stringMgr.getString("FileManager.confirm.filereplace", file.getAbsolutePath());
+          doSave = Dialogs.showYesNo(frame, confirmMsg);
          //i18n
          if (!doSave)
          {
@@ -309,8 +316,8 @@ public class FileManagementCore
             fos.write(sScript.getBytes());
             setFile(file);
             // i18n[FileManager.savedfile=Saved to {0}]
-            String msg = s_stringMgr.getString("FileManager.savedfile",
-                                               file.getAbsolutePath());
+            String msg = s_stringMgr.getString("FileManager.savedfile", file.getAbsolutePath());
+
             _fileEditorAPI.getSession().showMessage(msg);
          }
          catch (IOException ex)
