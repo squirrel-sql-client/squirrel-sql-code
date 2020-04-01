@@ -909,7 +909,7 @@ public class GUIUtils
 
 	public static void setMinimumWidth(JComponent comp, int width)
 	{
-		comp.setMinimumSize(new Dimension(width, comp.getMaximumSize().height));
+		comp.setMinimumSize(new Dimension(width, comp.getMinimumSize().height));
 	}
 
 	public static void setMinimumHeight(JComponent comp, int height)
