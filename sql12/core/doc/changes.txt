@@ -126,6 +126,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+#1423 The driver property list is empty.
+
 SQL editor: When a "Save as" operation was canceled the former file was lost.
 
 #1421 Fixed bug that may be responsible for UI hangs after SQL execution.
