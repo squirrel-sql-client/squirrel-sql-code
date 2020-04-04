@@ -68,8 +68,7 @@ public class CSVFileImporter implements IFileImporter
       this.settings.setUseDoubleQuotesAsTextQualifier(ImportPropsDAO.isUseDoubleQuotesAsTextQualifier());
    }
 
-   /*
-    * (non-Javadoc)
+   /**
     * @see net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter#open()
     */
    public boolean open() throws IOException
@@ -78,8 +77,7 @@ public class CSVFileImporter implements IFileImporter
       return true;
    }
 
-   /*
-    * (non-Javadoc)
+   /**
     * @see net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter#close()
     */
    public boolean close()
@@ -91,7 +89,7 @@ public class CSVFileImporter implements IFileImporter
       return true;
    }
 
-   /* (non-Javadoc)
+   /**
     * @see net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter#getPreview(int)
     */
    public String[][] getPreview(int noOfLines) throws IOException
@@ -143,7 +141,7 @@ public class CSVFileImporter implements IFileImporter
       {
          reader.close();
       }
-      reader = new CsvReader(new InputStreamReader(new FileInputStream(importFile), settings.getImportCharset()), settings.getSeperator(), _trimValues, false);
+      reader = new CsvReader(new InputStreamReader(new FileInputStream(importFile), settings.getImportCharset()), settings.getSeperator(), _trimValues, settings.isUseDoubleQuotesAsTextQualifier());
       reader.setSafetySwitch(safetySwitch);
       return true;
    }

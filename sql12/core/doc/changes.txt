@@ -126,6 +126,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+#1420 Data Import Plugin: Import plugin does not remove double quotes.
+
 #1423 The driver property list is empty.
 
 SQL editor: When a "Save as" operation was canceled the former file was lost.

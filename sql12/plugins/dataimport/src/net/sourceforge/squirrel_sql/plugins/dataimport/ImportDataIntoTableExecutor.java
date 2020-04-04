@@ -479,8 +479,8 @@ public class ImportDataIntoTableExecutor
       }
    }
 
-   private void setString(PreparedStatement stmt, int index,
-                          int mappedColumn) throws SQLException, IOException
+   private void setString(PreparedStatement stmt, int index, int mappedColumn)
+         throws SQLException, IOException
    {
       String string = _importer.getString(mappedColumn);
       if (null != string)

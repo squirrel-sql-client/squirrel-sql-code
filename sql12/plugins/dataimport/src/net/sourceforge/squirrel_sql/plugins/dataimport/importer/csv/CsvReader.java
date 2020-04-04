@@ -109,8 +109,7 @@ public class CsvReader
    {
       if (inputStream == null)
       {
-         throw new IllegalArgumentException(
-               "Parameter inputStream can not be null.");
+         throw new IllegalArgumentException("Parameter inputStream can not be null.");
       }
 
       this.inputStream = inputStream;
@@ -304,11 +303,9 @@ public class CsvReader
     */
    public void setEscapeMode(int escapeMode) throws IllegalArgumentException
    {
-      if (escapeMode != ESCAPE_MODE_DOUBLED
-            && escapeMode != ESCAPE_MODE_BACKSLASH)
+      if (escapeMode != ESCAPE_MODE_DOUBLED && escapeMode != ESCAPE_MODE_BACKSLASH)
       {
-         throw new IllegalArgumentException(
-               "Parameter escapeMode must be a valid value.");
+         throw new IllegalArgumentException("Parameter escapeMode must be a valid value.");
       }
 
       userSettings.escapeMode = escapeMode;
@@ -1333,16 +1330,13 @@ public class CsvReader
 
                if (userSettings.trimWhitespace && !startedWithQualifier)
                {
-                  while (lastLetter >= dataBuffer.columnStart
-                        && (dataBuffer.buffer[lastLetter] == Letters.SPACE || dataBuffer.buffer[lastLetter] == Letters.TAB))
+                  while (lastLetter >= dataBuffer.columnStart && (dataBuffer.buffer[lastLetter] == Letters.SPACE || dataBuffer.buffer[lastLetter] == Letters.TAB))
                   {
                      lastLetter--;
                   }
                }
 
-               currentValue = new String(dataBuffer.buffer,
-                     dataBuffer.columnStart, lastLetter
-                     - dataBuffer.columnStart + 1);
+               currentValue = new String(dataBuffer.buffer, dataBuffer.columnStart, lastLetter - dataBuffer.columnStart + 1);
             }
          }
          else
@@ -1353,15 +1347,13 @@ public class CsvReader
 
             if (userSettings.trimWhitespace && !startedWithQualifier)
             {
-               while (lastLetter >= 0
-                     && (columnBuffer.Buffer[lastLetter] == Letters.SPACE || columnBuffer.Buffer[lastLetter] == Letters.SPACE))
+               while (lastLetter >= 0 && (columnBuffer.Buffer[lastLetter] == Letters.SPACE || columnBuffer.Buffer[lastLetter] == Letters.SPACE))
                {
                   lastLetter--;
                }
             }
 
-            currentValue = new String(columnBuffer.Buffer, 0,
-                  lastLetter + 1);
+            currentValue = new String(columnBuffer.Buffer, 0, lastLetter + 1);
          }
       }
 
@@ -1399,8 +1391,7 @@ public class CsvReader
 
          boolean[] qualifiedHolder = new boolean[newLength];
 
-         System.arraycopy(isQualified, 0, qualifiedHolder, 0,
-               isQualified.length);
+         System.arraycopy(isQualified, 0, qualifiedHolder, 0, isQualified.length);
 
          isQualified = qualifiedHolder;
       }
