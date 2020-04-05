@@ -113,25 +113,42 @@ public class ResultAsText
       this._resultAsTextLineCallback.addLine(this.text);
    }
 
-   private CellStyle LEFT_ALIGN = new CellStyle(HorizontalAlign.LEFT, AbbreviationStyle.CROP, NullStyle.NULL_TEXT);
-   private CellStyle CENTER_ALIGN = new CellStyle(HorizontalAlign.CENTER, AbbreviationStyle.CROP, NullStyle.NULL_TEXT);
-   private CellStyle RIGHT_ALIGN = new CellStyle(HorizontalAlign.RIGHT, AbbreviationStyle.CROP, NullStyle.NULL_TEXT);
+   private CellStyle LEFT_ALIGN = new CellStyle(HorizontalAlign.LEFT, AbbreviationStyle.CROP, NullStyle.NULL_TEXT, false);
+   private CellStyle CENTER_ALIGN = new CellStyle(HorizontalAlign.CENTER, AbbreviationStyle.CROP, NullStyle.NULL_TEXT, false);
+   private CellStyle RIGHT_ALIGN = new CellStyle(HorizontalAlign.RIGHT, AbbreviationStyle.CROP, NullStyle.NULL_TEXT, false);
 
    private CellStyle getCellStyle(final ColumnDisplayDefinition def)
    {
-      if (def.getSqlType() == Types.BIGINT || //
-            def.getSqlType() == Types.BIT || //
-            def.getSqlType() == Types.DECIMAL || //
-            def.getSqlType() == Types.DOUBLE || //
-            def.getSqlType() == Types.FLOAT || //
-            def.getSqlType() == Types.INTEGER || //
-            def.getSqlType() == Types.NUMERIC || //
-            def.getSqlType() == Types.REAL || //
-            def.getSqlType() == Types.SMALLINT || //
-            def.getSqlType() == Types.TINYINT)
+
+     // Numbers
+     
+     if (def.getSqlType() == Types.BIGINT || //
+         def.getSqlType() == Types.BIT || //
+         def.getSqlType() == Types.DECIMAL || //
+         def.getSqlType() == Types.DOUBLE || //
+         def.getSqlType() == Types.FLOAT || //
+         def.getSqlType() == Types.INTEGER || //
+         def.getSqlType() == Types.NUMERIC || //
+         def.getSqlType() == Types.REAL || //
+         def.getSqlType() == Types.SMALLINT || //
+         def.getSqlType() == Types.TINYINT)
       {
          return RIGHT_ALIGN;
       }
+     
+      // Dates, times, timestamps
+
+     if (def.getSqlType() == Types.DATE|| //
+         def.getSqlType() == Types.TIME|| //
+         def.getSqlType() == Types.TIMESTAMP|| //
+         def.getSqlType() == Types.TIME_WITH_TIMEZONE|| //
+         def.getSqlType() == Types.TIMESTAMP_WITH_TIMEZONE)
+      {
+         return CENTER_ALIGN;
+      }
+
+      // Char, varchar, and the rest
+     
       return LEFT_ALIGN;
    }
 }
