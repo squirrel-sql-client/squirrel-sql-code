@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MarkCurrentSqlHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
@@ -82,14 +83,22 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
       Color bg = new Color(prefs.getWhiteSpaceStyle().getBackgroundRGB());
       setBackground(bg);
 
-      if (SyntaxPreferences.NO_CARET_COLOR != prefs.getCaretColorRGB())
+      if (SyntaxPreferences.NO_COLOR != prefs.getCaretColorRGB())
       {
          setCaretColor(new Color(prefs.getCaretColorRGB()));
       }
 
       setMarginLineEnabled(prefs.isTextLimitLineVisible());
       setMarginLinePosition(prefs.getTextLimitLineWidth());
-      setHighlightCurrentLine(prefs.isHighlightCurrentLine());
+
+      setHighlightCurrentLine(false);
+      if(SyntaxPreferences.NO_COLOR != prefs.getCurrentLineHighlightColorRGB())
+      {
+         setHighlightCurrentLine(true);
+         setCurrentLineHighlightColor(new Color(prefs.getCurrentLineHighlightColorRGB()));
+      }
+
+      setCurrentLineHighlightColor(new Color(prefs.getCurrentLineHighlightColorRGB()));
 
       if(null != System.getProperty("os.name") && System.getProperty("os.name").toUpperCase().startsWith("WINDOWS"))
       {

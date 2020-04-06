@@ -23,6 +23,7 @@ import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+import org.fife.ui.rtextarea.RTextAreaBase;
 
 /**
  * This JavaBean class represents the user specific
@@ -32,7 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  */
 public class SyntaxPreferences implements Serializable, Cloneable
 {
-   public static final int NO_CARET_COLOR = -1;
+   public static final int NO_COLOR = -1;
 
    public interface IPropertyNames
    {
@@ -67,6 +68,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
       String REPLACE_TABS_BY_SPACES = "replaceTabsBySpaces";
       String TEXT_LIMIT_LINE_WIDTH = "textLimitLineWidth";
       String HIGHLIGHT_CURRENT_LINE = "highlightCurrentLine";
+      String CURRENT_LINE_HIGHLIGHT_COLOR_RGB = "currentLineHighlightColorRGB";
       String LINE_NUMBERS_ENABLED = "lineNumbersEnabled";
       String CARET_COLOR_RGB = "caretColorRGB";
    }
@@ -121,6 +123,12 @@ public class SyntaxPreferences implements Serializable, Cloneable
 
    private boolean _highlightCurrentLine = true;
 
+   /**
+    * Default ist the same as {@link RTextAreaBase#DEFAULT_CURRENT_LINE_HIGHLIGHT_COLOR}
+    * which unfortunately isn't public ant thus can't be used here.
+    */
+   private int _currentLineHighlightColorRGB = new Color(255,255,170).getRGB();
+
    private boolean _lineNumbersEnabled = false;
 
    /**
@@ -128,7 +136,8 @@ public class SyntaxPreferences implements Serializable, Cloneable
     */
    private boolean _useCopyAsRtf = false;
 
-   private int _caretColorRGB = NO_CARET_COLOR;
+   private int _caretColorRGB = NO_COLOR;
+
 
    public SyntaxPreferences()
    {
@@ -353,8 +362,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
       {
          final Boolean oldValue = Boolean.valueOf(_highlightCurrentLine);
          _highlightCurrentLine = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.HIGHLIGHT_CURRENT_LINE,
-               oldValue, Boolean.valueOf(_highlightCurrentLine));
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.HIGHLIGHT_CURRENT_LINE, oldValue, Boolean.valueOf(_highlightCurrentLine));
       }
 
    }
@@ -363,6 +371,22 @@ public class SyntaxPreferences implements Serializable, Cloneable
    {
       return _lineNumbersEnabled;
    }
+
+   public int getCurrentLineHighlightColorRGB()
+   {
+      return _currentLineHighlightColorRGB;
+   }
+
+   public void setCurrentLineHighlightColorRGB(int data)
+   {
+      if (_currentLineHighlightColorRGB != data)
+      {
+         final int oldValue = _currentLineHighlightColorRGB;
+         _currentLineHighlightColorRGB = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.CURRENT_LINE_HIGHLIGHT_COLOR_RGB, oldValue, _currentLineHighlightColorRGB);
+      }
+   }
+
 
    public void setLineNumbersEnabled(boolean data)
    {

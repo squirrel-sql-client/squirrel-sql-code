@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#588 Define/change color used for highlight current line.
+  The former checkbox "Highlight current line" now allows to adjust the highlight color, too.
+
 Bookmarks Plugin: Bookmarks can be exported to file and imported.
   See menu File --> Global Preferences --> Tab Bookmarks --> Export/Import buttons.
 

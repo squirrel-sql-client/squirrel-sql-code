@@ -23,6 +23,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -41,8 +42,7 @@ import net.sourceforge.squirrel_sql.plugins.syntax.prefspanel.StylesList;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SyntaxPreferencesPanel
-	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
+public class SyntaxPreferencesPanel implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SyntaxPreferencesPanel.class);
 
@@ -160,7 +160,6 @@ public class SyntaxPreferencesPanel
 
       private final JCheckBox _chkTextLimitLineVisible = new JCheckBox(s_stringMgr.getString("syntax.textLimitLineVisible"));
       private final JTextField _txtTextLimitLineWidth = new JTextField();
-      private final JCheckBox _chkHighlightCurrentLine = new JCheckBox(s_stringMgr.getString("syntax.highlightCurrentLine"));
       private final JCheckBox _chkLineNumbersEnabled = new JCheckBox(s_stringMgr.getString("syntax.lineNumbersEnabled"));
       
       private final JCheckBox _useCopyAsRtf = new JCheckBox(s_stringMgr.getString("syntax.useCopyAsRtf"));
@@ -168,10 +167,11 @@ public class SyntaxPreferencesPanel
 		private final JTextField _txtTabLength = new JTextField();
 		private final JCheckBox _chkReplaceTabsBySpaces = new JCheckBox(s_stringMgr.getString("syntax.replaceTabsBySpaces"));
 
+		private final SwitchableColorCtrl _adjustCaretColorCtrl =
+				new SwitchableColorCtrl(s_stringMgr.getString("SyntaxPreferencesPanel.caretColor.checkbox.text"), s_stringMgr.getString("SyntaxPreferencesPanel.caretColor.color.chooser.title"));
 
-		private final AdjustCaretColorCtrl _adjustCaretColorCtrl = new AdjustCaretColorCtrl();
-
-
+		private final SwitchableColorCtrl _currentLineHighlightColorCtrl =
+				new SwitchableColorCtrl(s_stringMgr.getString("SyntaxPreferencesPanel.currentLineHighlightColor.checkbox.text"), s_stringMgr.getString("SyntaxPreferencesPanel.currentLineHighlightColor.color.chooser.title"));
 
 		private StylesListSelectionListener _listLis;
 
@@ -219,7 +219,6 @@ public class SyntaxPreferencesPanel
          _plainActiveOpt.setSelected(prefs.getUsePlainTextControl());
 
          _chkTextLimitLineVisible.setSelected(prefs.isTextLimitLineVisible());
-         _chkHighlightCurrentLine.setSelected(prefs.isHighlightCurrentLine());
          _chkLineNumbersEnabled.setSelected(prefs.isLineNumbersEnabled());
 
          _txtTextLimitLineWidth.setText("" + prefs.getTextLimitLineWidth());
@@ -234,8 +233,15 @@ public class SyntaxPreferencesPanel
 
 			updateControlStatus();
 
+			_adjustCaretColorCtrl.setColorRGB(prefs.getCaretColorRGB());
 
-			_adjustCaretColorCtrl.loadData(prefs);
+			if(prefs.isHighlightCurrentLine() && SyntaxPreferences.NO_COLOR == prefs.getCurrentLineHighlightColorRGB())
+			{
+				// Legacy: This property highlightCurrentLine was replaced by currentLineHighlightColorRGB.
+				prefs.setCurrentLineHighlightColorRGB(new Color(255,255,170).getRGB()); // The default highlight color from RTextAreaBase.DEFAULT_CURRENT_LINE_HIGHLIGHT_COLOR (privat)
+				prefs.setHighlightCurrentLine(false);
+			}
+			_currentLineHighlightColorCtrl.setColorRGB(prefs.getCurrentLineHighlightColorRGB());
 		}
 
 
@@ -256,7 +262,6 @@ public class SyntaxPreferencesPanel
          }
 
          prefs.setTextLimitLineVisible(_chkTextLimitLineVisible.isSelected());
-         prefs.setHighlightCurrentLine(_chkHighlightCurrentLine.isSelected());
          prefs.setLineNumbersEnabled(_chkLineNumbersEnabled.isSelected());
          prefs.setUseCopyAsRtf(_useCopyAsRtf.isSelected());
 
@@ -280,7 +285,12 @@ public class SyntaxPreferencesPanel
 			prefs.setWhiteSpaceStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.WHITE_SPACE));
 			prefs.setDataTypeStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.DATA_TYPES));
 
-			_adjustCaretColorCtrl.applyChanges(prefs);
+			prefs.setCaretColorRGB(_adjustCaretColorCtrl.getColorRGB());
+
+			prefs.setCurrentLineHighlightColorRGB(_currentLineHighlightColorCtrl.getColorRGB());
+			prefs.setHighlightCurrentLine(false); // Legacy: highlightCurrentLine was replaced by currentLineHighlightColorRGB.
+
+
 		}
 
 		private void fillTabLength(SyntaxPreferences prefs)
@@ -345,7 +355,7 @@ public class SyntaxPreferencesPanel
     		  _txtTextLimitLineWidth.setEnabled(_chkTextLimitLineVisible.isSelected());
     	  }
 
-    	  _chkHighlightCurrentLine.setEnabled(useRSyntaxControl);
+			_currentLineHighlightColorCtrl.setEnabled(useRSyntaxControl);
     	  _chkLineNumbersEnabled.setEnabled(useRSyntaxControl);
     	  _useCopyAsRtf.setEnabled(useRSyntaxControl);
 
@@ -367,8 +377,6 @@ public class SyntaxPreferencesPanel
          _plainActiveOpt.addChangeListener(evt -> updateControlStatus());
 
          _chkTextLimitLineVisible.addActionListener(e -> updateControlStatus());
-
-         _chkHighlightCurrentLine.addActionListener(e -> updateControlStatus());
 
          _chkLineNumbersEnabled.addActionListener(e -> updateControlStatus());
 
@@ -419,7 +427,7 @@ public class SyntaxPreferencesPanel
          pnlRet.add(createPnlLineLimit(), gbc);
 
          gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-         pnlRet.add(_chkHighlightCurrentLine, gbc);
+         pnlRet.add(_currentLineHighlightColorCtrl.createCaretColorPanel(), gbc);
 
          gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
          pnlRet.add(_chkLineNumbersEnabled, gbc);
