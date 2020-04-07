@@ -129,6 +129,9 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+"Result as Text" tab was erroneous when a result contained a '[' character.
+  Thanks to Alarcón Vladimir for the merge request.
+
 #1422 Window "Value of column" positioned to a "strange" location
   Thanks to Chris B for the suggested changes.
 
