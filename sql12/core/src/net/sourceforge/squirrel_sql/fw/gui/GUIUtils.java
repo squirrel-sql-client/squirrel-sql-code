@@ -733,8 +733,10 @@ public class GUIUtils
 				return rectInScreenCoordinates;
 			}
 
-			int dx = Math.abs(screenBounds.x + screenBounds.width - (rectInScreenCoordinates.x + rectInScreenCoordinates.width));
-			int dy = Math.abs(screenBounds.y + screenBounds.height - (rectInScreenCoordinates.y + rectInScreenCoordinates.height));
+//			int dx = Math.abs(screenBounds.x + screenBounds.width - (rectInScreenCoordinates.x + rectInScreenCoordinates.width));
+//			int dy = Math.abs(screenBounds.y + screenBounds.height - (rectInScreenCoordinates.y + rectInScreenCoordinates.height));
+			int dx = screenBounds.x + screenBounds.width - (rectInScreenCoordinates.x + rectInScreenCoordinates.width);
+			int dy = screenBounds.y + screenBounds.height - (rectInScreenCoordinates.y + rectInScreenCoordinates.height);
 
 			if(0 == minDx && 0 == minDy)
 			{
@@ -748,8 +750,18 @@ public class GUIUtils
 			}
 		}
 
-		rectInScreenCoordinates.x = Math.max(0, rectInScreenCoordinates.x - minDx);
-		rectInScreenCoordinates.y = Math.max(0, rectInScreenCoordinates.y - minDy);
+//		rectInScreenCoordinates.x = Math.max(0, rectInScreenCoordinates.x - minDx);
+//		rectInScreenCoordinates.y = Math.max(0, rectInScreenCoordinates.y - minDy);
+
+		if (minDx < 0)
+		{
+			rectInScreenCoordinates.x = Math.max(0, rectInScreenCoordinates.x + minDx);
+		}
+
+		if (minDy < 0)
+		{
+			rectInScreenCoordinates.y = Math.max(0, rectInScreenCoordinates.y + minDy);
+		}
 
 		return rectInScreenCoordinates;
 

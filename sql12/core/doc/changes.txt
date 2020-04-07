@@ -129,6 +129,9 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+#1422 Window "Value of column" positioned to a "strange" location
+  Thanks to Chris B for the suggested changes.
+
 #1420 Data Import Plugin: Import plugin does not remove double quotes.
 
 #1423 The driver property list is empty.
