@@ -21,6 +21,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -36,12 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 public class SessionSQLPropertiesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SessionSQLPropertiesPanel.class);
-
-	/** Application API. */
-	private final IApplication _app;
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionSQLPropertiesPanel.class);
 
 	/** The actual GUI panel that allows user to do the maintenance. */
 	private final SQLPropertiesPanel _myPanel;
@@ -63,13 +59,7 @@ public class SessionSQLPropertiesPanel
 	 */
 	public SessionSQLPropertiesPanel(IApplication app, ISession session) throws IllegalArgumentException
 	{
-		super();
-      if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		_app = app;
-		_myPanel = new SQLPropertiesPanel(app, session);
+		_myPanel = new SQLPropertiesPanel(Main.getApplication(), session);
       _scrolledMyPanel = new JScrollPane(_myPanel);
 
 		GUIUtils.forceScrollToBegin(_scrolledMyPanel);
@@ -78,7 +68,7 @@ public class SessionSQLPropertiesPanel
 
 	public void initialize(IApplication app)
 	{
-		_props = _app.getSquirrelPreferences().getSessionProperties();
+		_props = Main.getApplication().getSquirrelPreferences().getSessionProperties();
 		_myPanel.loadData(_props);
 	}
 

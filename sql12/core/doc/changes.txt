@@ -129,6 +129,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+#1369 Code Completion Plugin: Tab "Code Completion" in (New) Session Properties now displays right. (Introduced scrollbar)
+
 "Result as Text" tab was erroneous when a result contained a '[' character.
   The problem was reproducible by "select 'xyz' as a union all select '1[2'".
   Thanks to Alarcón Vladimir for the merge request.

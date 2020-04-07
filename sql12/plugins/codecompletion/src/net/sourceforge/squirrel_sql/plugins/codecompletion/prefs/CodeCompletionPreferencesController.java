@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -17,16 +18,20 @@ import java.awt.event.ActionEvent;
 public class CodeCompletionPreferencesController
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(CodeCompletionPreferencesController.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CodeCompletionPreferencesController.class);
 
 	private CodeCompletionPreferences _prefs;
 
 	private CodeCompletionPreferencesPanel _panel;
+	private JScrollPane _scrollPane;
 
    public CodeCompletionPreferencesController(CodeCompletionPreferences prefs)
 	{
       _panel = new CodeCompletionPreferencesPanel();
+      _scrollPane = new JScrollPane(_panel);
+		GUIUtils.forceScrollToBegin(_scrollPane);
+
+
 		_prefs = prefs;
 
 		switch(_prefs.getGeneralCompletionConfig())
@@ -145,7 +150,7 @@ public class CodeCompletionPreferencesController
 	 */
 	public Component getPanelComponent()
 	{
-		return _panel;
+		return _scrollPane;
 	}
 
 	/**

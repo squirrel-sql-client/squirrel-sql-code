@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.prefs;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
@@ -85,7 +86,7 @@ public class CodeCompletionPreferencesPanel extends JPanel
 
 		tblPrefixes = new JTable();
 		gbc = new GridBagConstraints(0,7,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5),0,0 );
-		add(new JScrollPane(tblPrefixes), gbc);
+		add(GUIUtils.setPreferredHeight(new JScrollPane(tblPrefixes), 200), gbc);
 
 
 		gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0 );
@@ -109,6 +110,8 @@ public class CodeCompletionPreferencesPanel extends JPanel
       gbc = new GridBagConstraints(0,13,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0 );
       chkSortColumnsAlphabetically = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.SortColumnsAlphabetically"));
       add(chkSortColumnsAlphabetically, gbc);
+
+      GUIUtils.setPreferredWidth(this, 550);
    }
 
 
