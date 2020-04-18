@@ -32,11 +32,11 @@ Prevented possible freeze during reconnect (ctrl+T):
   Call to Connection methods getTransactionIsolation(), getCatalog(), getAutoCommit() on old connection will now timeout.
 
 Aliases can be selectively be exported and imported into some other SQuirreL instance/installation:
- - To export Aliases goto menu Aliases --> "Import/Export Aliases".
+ - To export Aliases go to menu Aliases --> "Import/Export Aliases".
    This opens the import/export window to which Aliases can be dragged and dropped.
    These Aliases can be saved into an export file.
- - To import Aliases goto menu Aliases --> "Import/Export Aliases".
-   In the import/export window choose the Import button and navigate to an previously exported file.
+ - To import Aliases go to menu Aliases --> "Import/Export Aliases".
+   In the import/export window choose the Import button and navigate to a previously exported file.
    This will first open a dialog where drivers must be assigned.
    Then the imported Aliases can be dragged and dropped into SQuirrel's Aliases tree.
 
@@ -128,6 +128,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 
 Bug fixes:
+
+#1425 Fixed typos.
 
 #1369 Code Completion Plugin: Tab "Code Completion" in (New) Session Properties now displays right. (Introduced scrollbar)
 
