@@ -1,13 +1,17 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
+import java.awt.Toolkit;
+import java.util.Collections;
+import java.util.Map;
 import javax.swing.*;
 
 public class VerticalToggleButton extends JToggleButton
@@ -19,25 +23,50 @@ public class VerticalToggleButton extends JToggleButton
    {
       Font f = getFont();
       FontMetrics fm = getFontMetrics(f);
-      int captionHeight = fm.getHeight();
-      int captionWidth = fm.stringWidth(caption);
-      BufferedImage bi = new BufferedImage(captionHeight + 2 * HEIGHT_MARGIN, captionWidth + 2 * WIDHT_MARGIN, BufferedImage.TYPE_INT_ARGB);
-      Graphics2D g = (Graphics2D) bi.getGraphics();
+      int iconWidth = fm.getHeight() + 2 * HEIGHT_MARGIN;
+      int iconHeight = fm.stringWidth(caption) + 2 * WIDHT_MARGIN;
 
-      g.setColor(new Color(0, 0, 0, 0)); // transparent
-      g.fillRect(0, 0, bi.getWidth(), bi.getHeight());
+      Icon icon = new Icon()
+      {
+         @Override
+         public int getIconWidth()
+         {
+            return iconWidth;
+         }
 
-      g.setColor(getForeground());
-      g.setFont(f);
-      g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+         @Override
+         public int getIconHeight()
+         {
+            return iconHeight;
+         }
 
-      g.rotate(-Math.PI / 2);
-      g.translate(-bi.getHeight(), bi.getWidth());
-      g.drawString(caption, WIDHT_MARGIN , -HEIGHT_MARGIN - fm.getDescent());
+         @Override
+         public synchronized void paintIcon(Component c, Graphics g0, int x, int y)
+         {
+            Graphics2D g = (Graphics2D) g0.create(x, y, iconWidth, iconHeight);
 
-      Icon icon = new ImageIcon(bi);
-      setIcon(icon);
-      setActionCommand(caption);
+            g.setColor(new Color(0, 0, 0, 0)); // transparent
+            g.fillRect(0, 0, iconWidth, iconHeight);
+
+            g.setColor(c.getForeground());
+            g.setFont(f);
+            Map<?, ?> textHints = (Map<?, ?>) Toolkit
+                  .getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+            if (textHints == null)
+            {
+               textHints = Collections.singletonMap(RenderingHints.KEY_TEXT_ANTIALIASING,
+                                                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            }
+            g.addRenderingHints(textHints);
+
+            g.rotate(-Math.PI / 2);
+            g.translate(-iconHeight, iconWidth);
+            g.drawString(caption, WIDHT_MARGIN , -HEIGHT_MARGIN - fm.getDescent());
+            g.dispose();
+         }
+      };
+      super.setIcon(icon);
+      super.setActionCommand(caption);
    }
 
    public static void main(String[] args)
