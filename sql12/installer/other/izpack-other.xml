@@ -353,7 +353,7 @@
 			<description>
 				Provides native labels and user messages for use in a French locale (Erwan Duroselle)
          </description>
-			<file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_fr.jar" />
+			<file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_fr_FR.jar" />
 		</pack>
 
 		<pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - German">

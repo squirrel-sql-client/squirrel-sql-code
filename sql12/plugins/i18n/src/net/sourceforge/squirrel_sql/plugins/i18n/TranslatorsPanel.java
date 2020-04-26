@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.i18n;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -165,12 +168,25 @@ public class TranslatorsPanel extends JPanel
       ret.add(timestampLabel, gbc);
 */      
       
-      gbc = new GridBagConstraints(0, 7, 3, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 7, 3, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 5), 0, 0);
 		// i18n[I18n.bundles=Bundles]
-		ret.add(new JLabel(s_stringMgr.getString("I18n.bundles")), gbc);
+		ret.add(createBundlesTableLabel(), gbc);
 
 		gbc = new GridBagConstraints(0, 8, 3, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 0, 0, 5), 0, 0);
 		ret.add(new JScrollPane(tblBundels), gbc);
+
+		return ret;
+	}
+
+	private JPanel createBundlesTableLabel()
+	{
+		JPanel ret = new JPanel(new BorderLayout(5,0));
+		ret.add(new JLabel(s_stringMgr.getString("I18n.bundles")), BorderLayout.WEST);
+
+		final MultipleLineLabel lblWarn = new MultipleLineLabel(s_stringMgr.getString("I18n.warn,no.i18n"));
+		lblWarn.setForeground(Color.red);
+		lblWarn.setFont(lblWarn.getFont().deriveFont(Font.BOLD));
+		ret.add(lblWarn, BorderLayout.CENTER);
 
 		return ret;
 	}

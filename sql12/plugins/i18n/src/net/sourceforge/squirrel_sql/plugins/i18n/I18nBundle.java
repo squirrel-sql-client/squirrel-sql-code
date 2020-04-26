@@ -17,8 +17,7 @@ import java.net.URL;
 public class I18nBundle implements Comparable<I18nBundle>
 {
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(I18nProps.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(I18nProps.class);
 
 	private I18nProps _defaultProps;
 	private Locale _locale;
@@ -190,44 +189,6 @@ public class I18nBundle implements Comparable<I18nBundle>
 
 	public int compareTo(I18nBundle other)
 	{
-		return getName().compareTo(other.getName());
+		return getName().toLowerCase().compareTo(other.getName().toLowerCase());
 	}
-
-
-
-    /**
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((getName() == null) ? 0 : getName().hashCode());
-        return result;
-    }
-
-
-
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final I18nBundle other = (I18nBundle) obj;
-        if (getName() == null) {
-            if (other.getName() != null)
-                return false;
-        } else if (!getName().equals(other.getName()))
-            return false;
-        return true;
-    }
-	
-	
 }

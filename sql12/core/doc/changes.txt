@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Updated French translation. Thanks to Erwan Duroselle.
+
 #588 Define/change color used for highlight current line.
   The former checkbox "Highlight current line" now allows to adjust the highlight color, too.
 
@@ -128,6 +130,10 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 
 Bug fixes:
+
+#1426 I18n Plugin: Untranslatable strings remain after translation.
+  Several property files were missing in the I18n administration's bundles table.
+  See menu File --> Global Preferences --> tab I18n administration.
 
 #1425 Fixed typos.
 

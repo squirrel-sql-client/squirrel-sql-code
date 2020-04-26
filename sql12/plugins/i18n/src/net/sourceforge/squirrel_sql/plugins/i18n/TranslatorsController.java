@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -36,8 +37,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class TranslatorsController
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(TranslatorsController.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TranslatorsController.class);
 
 	private static ILogger logger = LoggerController.createLogger(TranslatorsController.class);
 
@@ -62,15 +62,13 @@ public class TranslatorsController
 	private JPopupMenu _popUp = new JPopupMenu();
 
 	// i18n[I18n.generateTemplateComments=Generate template comments for missing translations]
-	private JMenuItem _mnuGenerateTemplateComments =
-		new JMenuItem(s_stringMgr.getString("I18n.generateTemplateComments"));
+	private JMenuItem _mnuGenerateTemplateComments = new JMenuItem(s_stringMgr.getString("I18n.generateTemplateComments"));
 
 	// i18n[I18n.openIOnEditor=Open in Editor]
 	private JMenuItem _mnuOpenInEditor = new JMenuItem(s_stringMgr.getString("I18n.openIOnEditor"));
 
 	// i18n[I18n.ExecuteNativeToAscii=Execute nativeToAscii]
-	private JMenuItem _mnuExecuteNativeToAscii =
-		new JMenuItem(s_stringMgr.getString("I18n.ExecuteNativeToAscii"));
+	private JMenuItem _mnuExecuteNativeToAscii = new JMenuItem(s_stringMgr.getString("I18n.ExecuteNativeToAscii"));
 
 	TranslatorsController(TranslatorsPanel panel)
 	{
@@ -537,8 +535,8 @@ public class TranslatorsController
 
 		String pluginDir = new ApplicationFiles().getPluginsDirectory().getPath();
 
-		ArrayList<I18nProps> defaultI18nProps = new ArrayList<I18nProps>();
-		ArrayList<I18nProps> localizedI18nProps = new ArrayList<I18nProps>();
+		ArrayList<I18nProps> defaultI18nProps = new ArrayList<>();
+		ArrayList<I18nProps> localizedI18nProps = new ArrayList<>();
 
 		for (int i = 0; i < sourceUrls.length; i++)
 		{
@@ -548,8 +546,7 @@ public class TranslatorsController
 			{
 				findI18nInDir(selLocale, file, defaultI18nProps, localizedI18nProps, sourceUrls);
 			}
-			else if (file.getName().equalsIgnoreCase("squirrel-sql.jar")
-				|| file.getName().equalsIgnoreCase("fw.jar"))
+			else if (file.getName().equalsIgnoreCase("squirrel-sql.jar"))
 			{
 				findI18nInArchive(selLocale, file, defaultI18nProps, localizedI18nProps, sourceUrls);
 			}
@@ -565,7 +562,8 @@ public class TranslatorsController
 		{
 			I18nProps i18nProps = defaultI18nProps.get(i);
 			I18nBundle pack = new I18nBundle(i18nProps, selLocale, getWorkDir(false), sourceUrls);
-			if (!_panel.cbxExcludeComplete.isSelected() || pack.getMissingTranslationsCount()!=0) {
+			if (!_panel.cbxExcludeComplete.isSelected() || pack.getMissingTranslationsCount()!=0)
+			{
 				i18nBundlesByName.put(i18nProps.getPath(), pack);
 			}
 		}
@@ -645,8 +643,7 @@ public class TranslatorsController
 		return ret.toArray(new URL[ret.size()]);
 	}
 
-	private void findI18nInArchive(Locale selLoc, File file, ArrayList<I18nProps> defaultI18nProps,
-		ArrayList<I18nProps> localizedI18nProps, URL[] sourceUrls)
+	private void findI18nInArchive(Locale selLoc, File file, ArrayList<I18nProps> defaultI18nProps, ArrayList<I18nProps> localizedI18nProps, URL[] sourceUrls)
 	{
 		try
 		{
@@ -682,8 +679,7 @@ public class TranslatorsController
 
 	}
 
-	private void findI18nInDir(Locale selLoc, File dir, ArrayList<I18nProps> defaultI18nProps,
-		ArrayList<I18nProps> localizedI18nProps, URL[] sourceUrls)
+	private void findI18nInDir(Locale selLoc, File dir, ArrayList<I18nProps> defaultI18nProps, ArrayList<I18nProps> localizedI18nProps, URL[] sourceUrls)
 	{
 		File[] files = dir.listFiles();
 
@@ -714,8 +710,7 @@ public class TranslatorsController
 	 * Returns a boolean value indicating whether or not the specified filename is a translation properties
 	 * file.
 	 * 
-	 * @param filename
-	 *           the filename to examine
+	 * @param filename the filename to examine
 	 * @return true if filename is a translation properties file; false otherwise.
 	 */
 	private boolean isTranslationPropertyFile(String filename)
@@ -724,12 +719,9 @@ public class TranslatorsController
 		{
 			return false;
 		}
-		if (filename.endsWith(".properties") && filename.toLowerCase().contains("i18nstrings"))
+		if (filename.endsWith(".properties"))
 		{
 			return true;
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("File ("+filename+" doesn't appear to be a translation properties file.");
 		}
 		return false;
 	}
