@@ -301,7 +301,7 @@ public class BookmarkExportImport
       {
          XMLBeanReader xmlBeanReader = new XMLBeanReader();
 
-         xmlBeanReader.load(importFile);
+         xmlBeanReader.load(importFile, Bookmark.class.getClassLoader());
 
          final List<Bookmark> ret = xmlBeanReader.getBeans();
 

@@ -131,6 +131,10 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+#1429 Bookmarks Plugin: Import Bookmark fails with class not found exception
+
+#1428 Bookmarks Plugin: Import bookmark button greyed when no user bookmark is defined.
+
 #1426 I18n Plugin: Untranslatable strings remain after translation.
   Several property files were missing in the I18n administration's bundles table.
   See menu File --> Global Preferences --> tab I18n administration.

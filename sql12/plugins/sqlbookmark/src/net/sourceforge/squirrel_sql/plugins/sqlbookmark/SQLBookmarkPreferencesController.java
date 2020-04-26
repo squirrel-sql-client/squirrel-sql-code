@@ -269,7 +269,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
             _pnlPrefs.btnDown.setEnabled(false);
             _pnlPrefs.btnEdit.setEnabled(false);
             _pnlPrefs.btnDel.setEnabled(false);
-            _pnlPrefs.btnImport.setEnabled(false);
+            _pnlPrefs.btnImport.setEnabled(_nodeUserMarks == dmtn);
             _pnlPrefs.btnExport.setEnabled(false);
          }
       }
