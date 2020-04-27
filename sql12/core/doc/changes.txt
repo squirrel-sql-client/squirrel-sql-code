@@ -132,6 +132,7 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 Bug fixes:
 
 #1430 Cannot reconnect (Ctrl-Alt-T) with different username and password
+  Thanks to Leonardo Guzmán for the patch.
 
 #1429 Bookmarks Plugin: Import Bookmark fails with class not found exception
 
