@@ -61,7 +61,7 @@ public class ReconnectController
 
       if(false == Utilities.equalsRespectNull(_reconnectDialog.txtUser.getText(), jdbcData.getUser()))
       {
-         _reconnectInfo.setUser(_reconnectDialog.txtUrl.getText());
+         _reconnectInfo.setUser(_reconnectDialog.txtUser.getText());
       }
 
       if(false == Utilities.equalsRespectNull(new String(_reconnectDialog.txtPassword.getPassword()), jdbcData.getPassword()))
