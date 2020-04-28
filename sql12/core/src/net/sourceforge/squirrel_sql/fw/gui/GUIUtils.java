@@ -814,12 +814,16 @@ public class GUIUtils
          }
       });
 
+      if (btn instanceof JToggleButton)
+      {
+         btn.addChangeListener(e -> btn.setContentAreaFilled(btn.isSelected()));
+      }
       return btn;
    }
 
 	private static void setButtonContentAreaFilledRespectSelectedToggle(AbstractButton btn, boolean b)
 	{
-		if (btn instanceof JToggleButton /* && btn.isSelected() commented out for change tracking toggle buttons "Bold" and "Italics" */)
+		if (btn instanceof JToggleButton && btn.isSelected())
 		{
 			btn.setContentAreaFilled(true);
 			return;
