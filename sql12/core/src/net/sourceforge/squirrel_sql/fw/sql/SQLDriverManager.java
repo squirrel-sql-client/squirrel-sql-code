@@ -123,7 +123,7 @@ public class SQLDriverManager
 
 			if(null != reconnectInfo && null != reconnectInfo.getPassword())
 			{
-				myProps.put("user", reconnectInfo.getPassword());
+				myProps.put("password", reconnectInfo.getPassword());
 			}
 			else if (pw != null)
 			{

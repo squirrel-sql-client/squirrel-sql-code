@@ -131,6 +131,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+When password was changed in the reconnect dialog (Ctrl-Alt-T) the new password was not correctly passed to the JDBC driver.
+
 #1430 Cannot reconnect (Ctrl-Alt-T) with different username and password
   Thanks to Leonardo Guzmán for the patch.
 
