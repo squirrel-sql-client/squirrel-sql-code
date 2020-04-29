@@ -12,6 +12,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.AbstractButton;
+import javax.swing.JComponent;
 import javax.swing.JToggleButton;
 import java.awt.event.ActionEvent;
 
@@ -118,9 +119,9 @@ public class MarkDuplicatesChooserController
    }
 
 
-   public ButtonChooser getComponent()
+   public JComponent getComponent()
    {
-      return _toggleBtnChooser;
+      return _toggleBtnChooser.getComponent();
    }
 
    public boolean actionWasFired(ActionEvent e)

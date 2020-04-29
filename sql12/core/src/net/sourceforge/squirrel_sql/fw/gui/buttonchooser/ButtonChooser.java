@@ -5,23 +5,21 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import javax.swing.AbstractButton;
-import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.LayoutManager;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ButtonChooser extends JPanel
+public class ButtonChooser
 {
    private JButton _btnUndefinedDefault;
 
@@ -33,24 +31,34 @@ public class ButtonChooser extends JPanel
 
    private HashSet<JButton> _unclickableButtons = new HashSet<>();
 
-   private Container _container;
-   private int _btnIndex;
+   private JComponent _container;
 
    public ButtonChooser()
    {
-      super((LayoutManager) null);
-      setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-      _container = this;
-      addPropertyChangeListener("ancestor", evt ->
+      this(false);
+   }
+
+   public ButtonChooser(boolean toolBar)
+   {
+      if (toolBar)
       {
-         if (evt.getNewValue() instanceof JToolBar)
-         {
-            _btnIndex = getComponentIndex(this);
-            blendInto((Container) evt.getNewValue());
-         }
-      });
+         JToolBar palette = new JToolBar();
+         palette.setBorder(BorderFactory.createEmptyBorder());
+         palette.setFloatable(false);
+         palette.setRollover(true);
+         _container = palette;
+      }
+      else
+      {
+         _container = new JPanel(new BorderLayout());
+      }
       createUI();
       initListeners();
+   }
+
+   public JComponent getComponent()
+   {
+      return _container;
    }
 
    private void initListeners()
@@ -86,7 +94,7 @@ public class ButtonChooser extends JPanel
 
       displayAsCurrentButton(_btnUndefinedDefault);
 
-      _container.add(_btnCombo);
+      _container.add(_btnCombo, BorderLayout.LINE_END);
    }
 
    /**
@@ -131,7 +139,6 @@ public class ButtonChooser extends JPanel
 
       if (null != _btnCurrent)
       {
-         _btnIndex = getComponentIndex(_btnCurrent);
          _container.remove(_btnCurrent);
       }
 
@@ -139,7 +146,7 @@ public class ButtonChooser extends JPanel
 
       _btnCombo.setLinkedButton(_btnCurrent);
 
-      _container.add(_btnCurrent, _btnIndex);
+      _container.add(_btnCurrent, BorderLayout.CENTER, 0);
       _container.revalidate();
       _container.repaint();
 
@@ -193,27 +200,6 @@ public class ButtonChooser extends JPanel
          GUIUtils.styleAsToolbarButton(holder.getBtn());
       }
       GUIUtils.styleAsToolbarButton(_btnCombo);
-   }
-
-   private void blendInto(Container parent)
-   {
-      int currentIndex = _btnIndex;
-      for (Component c : getComponents())
-      {
-         parent.add(c, currentIndex++);
-      }
-      _container = parent;
-   }
-
-   public static int getComponentIndex(Component c)
-   {
-      Container parent = c.getParent();
-      for (int i = 0, n = parent.getComponentCount(); i < n; i++)
-      {
-         if (parent.getComponent(i) == c)
-            return i;
-      }
-      return -1;
    }
 
 }
