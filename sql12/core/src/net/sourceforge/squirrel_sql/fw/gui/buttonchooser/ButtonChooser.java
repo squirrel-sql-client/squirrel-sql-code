@@ -13,7 +13,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
-import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +52,7 @@ public class ButtonChooser
       }
       else
       {
-         _container = new JPanel(new BorderLayout());
+         _container = new JPanel(new GridBagLayout());
       }
       createUI();
       initListeners();
@@ -94,7 +96,10 @@ public class ButtonChooser
 
       displayAsCurrentButton(_btnUndefinedDefault);
 
-      _container.add(_btnCombo, BorderLayout.LINE_END);
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,2), 1,1);
+      _container.add(_btnCombo, gbc);
    }
 
    /**
@@ -146,7 +151,10 @@ public class ButtonChooser
 
       _btnCombo.setLinkedButton(_btnCurrent);
 
-      _container.add(_btnCurrent, BorderLayout.CENTER, 0);
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 1,1);
+      _container.add(_btnCurrent, gbc, 0);
       _container.revalidate();
       _container.repaint();
 
