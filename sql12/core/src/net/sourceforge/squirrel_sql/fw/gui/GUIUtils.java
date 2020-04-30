@@ -50,7 +50,9 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
+import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -816,9 +818,30 @@ public class GUIUtils
 
       if (btn instanceof JToggleButton)
       {
-         btn.addChangeListener(e -> btn.setContentAreaFilled(btn.isSelected()));
+         btn.addChangeListener(e ->
+               btn.setContentAreaFilled(btn.isSelected() || isMouseOver(btn)));
       }
       return btn;
+   }
+
+   private static boolean isMouseOver(Component component)
+   {
+      if (!component.isShowing() || GraphicsEnvironment.isHeadless())
+      {
+         return false;
+      }
+
+      GraphicsConfiguration gconf = component.getGraphicsConfiguration();
+      PointerInfo mousePointer = MouseInfo.getPointerInfo();
+      if (gconf.getDevice() != mousePointer.getDevice())
+      {
+         return false;
+      }
+
+      Point location = component.getLocationOnScreen();
+      Rectangle bounds = new Rectangle(location.x, location.y,
+                                       component.getWidth(), component.getHeight());
+      return bounds.contains(mousePointer.getLocation());
    }
 
 	private static void setButtonContentAreaFilledRespectSelectedToggle(AbstractButton btn, boolean b)
