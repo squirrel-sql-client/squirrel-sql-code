@@ -62,7 +62,7 @@ SQLParam Plugin: The parameter dialog has a new check box "Always quote values"
 "Color selected rows" dialog now remembers the last used color. See right mouse menu of SQL result tables.
 
 Postgres Plugin: Updated Plugin libs
-   from postgis-jdbc-1.3.3.jar, postgersql-8.3-603.jdbc3.jar to postgis-jdbc-2.3.0.jar, postgersql-42.2.9.jar
+   from postgis-jdbc-1.3.3.jar, postgresql-8.3-603.jdbc3.jar to postgis-jdbc-2.3.0.jar, postgresql-42.2.9.jar
 
 Driver dialog --> tab "Extra Class Path" --> button "Add": File chooser now remembers last directory.
 
