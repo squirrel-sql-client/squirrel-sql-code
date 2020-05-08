@@ -10,7 +10,13 @@ Enhancements:
 
 Bug fixes:
 
+#1433 Duplicate overlapping "HQL" label on the Hibernate tab/panel
+  Occurred when a JGoodies Look & Feel was used.
+  Thanks to Stanimir Stamenkov for the fix.
+
+
 #1432 / Merge request #49: Improve "button-chooser" appearance / Fix toolbar "button-chooser" artifacts on mouse over.
+  Occurred when a JGoodies Look & Feel was used.
   Thanks to Stanimir Stamenkov for the fix.
 
 Merge Request #48: Use smooth text scaling of vertical buttons ("Aliases" and "Drivers") label on hi-dpi screens.
@@ -18,6 +24,7 @@ Merge Request #48: Use smooth text scaling of vertical buttons ("Aliases" and "D
 
 #1434 Overlapping column name/label toggle button on Results tab.
   See feature request #487 for the scenario when a name/label toggle button is displayed.
+  Occurred when a JGoodies Look & Feel was used.
   Thanks to Stanimir Stamenkov for the fix.
 
 

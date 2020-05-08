@@ -58,6 +58,8 @@ public class HibernateTabPanel extends JPanel
       tabComponentOfHqlTab.getToWindowButton().setVisible(false);
       tabHibernateTabbedPane.setTabComponentAt(1, tabComponentOfHqlTab);
 
+      // See bug #1433
+      tabHibernateTabbedPane.setTitleAt(1, null);
 
 
 
