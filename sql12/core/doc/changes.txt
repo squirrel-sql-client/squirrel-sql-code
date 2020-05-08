@@ -13,6 +13,9 @@ Bug fixes:
 #1432 / Merge request #49: Improve "button-chooser" appearance / Fix toolbar "button-chooser" artifacts on mouse over.
   Thanks to Stanimir Stamenkov for the fix.
 
+Merge Request #48: Use smooth text scaling of vertical buttons ("Aliases" and "Drivers") label on hi-dpi screens.
+  Thanks to Stanimir Stamenkov for the fix.
+
 
 
 
