@@ -25,7 +25,7 @@ public class ChangeTrackTypeChooser
    private final SQLPanelApiChangedListener _sqlPanelApiChangedListener;
 
    private ChangeTrackAction _action;
-   private final ButtonChooser _buttonChooser = new ButtonChooser();
+   private final ButtonChooser _buttonChooser = new ButtonChooser(true);
    private JButton _btnTrackManual;
    private JButton _btnTrackFile;
    private JButton _btnTrackGit;
@@ -80,7 +80,7 @@ public class ChangeTrackTypeChooser
 
    public JComponent getComponent()
    {
-      return _buttonChooser;
+      return _buttonChooser.getComponent();
    }
 
    private void initActionAndListeners()

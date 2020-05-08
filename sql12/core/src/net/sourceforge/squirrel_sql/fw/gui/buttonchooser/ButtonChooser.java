@@ -2,18 +2,17 @@ package net.sourceforge.squirrel_sql.fw.gui.buttonchooser;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
-import java.awt.Dimension;
+import javax.swing.JToolBar;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -22,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ButtonChooser extends JPanel
+public class ButtonChooser
 {
    private JButton _btnUndefinedDefault;
 
@@ -34,11 +33,34 @@ public class ButtonChooser extends JPanel
 
    private HashSet<JButton> _unclickableButtons = new HashSet<>();
 
+   private JComponent _container;
+
    public ButtonChooser()
    {
-      super(new GridBagLayout());
+      this(false);
+   }
+
+   public ButtonChooser(boolean toolBar)
+   {
+      if (toolBar)
+      {
+         JToolBar palette = new JToolBar();
+         palette.setBorder(BorderFactory.createEmptyBorder());
+         palette.setFloatable(false);
+         palette.setRollover(true);
+         _container = palette;
+      }
+      else
+      {
+         _container = new JPanel(new GridBagLayout());
+      }
       createUI();
       initListeners();
+   }
+
+   public JComponent getComponent()
+   {
+      return _container;
    }
 
    private void initListeners()
@@ -59,6 +81,7 @@ public class ButtonChooser extends JPanel
          comboPopUp.add(mnu);
       }
 
+      comboPopUp.addPopupMenuListener(_btnCombo.getPopupMenuListener());
       comboPopUp.show(_btnCurrent, 0, _btnCurrent.getHeight());
    }
 
@@ -76,16 +99,7 @@ public class ButtonChooser extends JPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,2), 1,1);
-      add(_btnCombo, gbc);
-
-      GUIUtils.styleAsToolbarButton(_btnCombo);
-
-      _btnCombo.setPreferredSize(new Dimension(12, 28));
-      _btnCombo.setMinimumSize(new Dimension(12, 28));
-
-
-      setPreferredSize(new Dimension(38,28));
-      setMaximumSize(new Dimension(38,28));
+      _container.add(_btnCombo, gbc);
    }
 
    /**
@@ -130,19 +144,19 @@ public class ButtonChooser extends JPanel
 
       if (null != _btnCurrent)
       {
-         remove(_btnCurrent);
+         _container.remove(_btnCurrent);
       }
 
       _btnCurrent = btn;
 
-      GUIUtils.styleAsToolbarButton(_btnCurrent, true);
+      _btnCombo.setLinkedButton(_btnCurrent);
 
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 1,1);
-      add(_btnCurrent, gbc);
-      revalidate();
-      repaint();
+      _container.add(_btnCurrent, gbc, 0);
+      _container.revalidate();
+      _container.repaint();
 
       if(null != _buttonSelectedListener)
       {
@@ -186,4 +200,14 @@ public class ButtonChooser extends JPanel
    {
       return _buttons.stream().map(bh -> bh.getBtn()).collect(Collectors.toList());
    }
+
+   public void styleAsToolbarButton()
+   {
+      for (ButtonHolder holder : _buttons)
+      {
+         GUIUtils.styleAsToolbarButton(holder.getBtn());
+      }
+      GUIUtils.styleAsToolbarButton(_btnCombo);
+   }
+
 }

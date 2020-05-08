@@ -57,6 +57,7 @@ public class RowColAndSumController
          popupMenu.add(menuItem);
       }
 
+      popupMenu.addPopupMenuListener(comboButton.getPopupMenuListener());
       popupMenu.show(comboButton, 0, comboButton.getHeight());
    }
 

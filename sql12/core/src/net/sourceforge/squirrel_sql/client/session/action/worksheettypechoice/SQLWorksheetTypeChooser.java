@@ -17,7 +17,7 @@ public class SQLWorksheetTypeChooser
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLWorksheetTypeChooser.class);
 
    private NewSQLWorksheetAction _action;
-   private final ButtonChooser _buttonChooser = new ButtonChooser();
+   private final ButtonChooser _buttonChooser = new ButtonChooser(true);
 
    public SQLWorksheetTypeChooser(NewSQLWorksheetAction action)
    {
@@ -37,7 +37,7 @@ public class SQLWorksheetTypeChooser
 
    public JComponent getComponent()
    {
-      return _buttonChooser;
+      return _buttonChooser.getComponent();
    }
 
    private void initActionAndListeners()

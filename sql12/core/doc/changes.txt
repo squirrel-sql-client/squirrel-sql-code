@@ -1,6 +1,21 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in our GIT repository and in snapshots and future releases.
+===============================================================================================
+
+Enhancements:
+
+
+
+Bug fixes:
+
+#1432 / Merge request #49: Improve "button-chooser" appearance / Fix toolbar "button-chooser" artifacts on mouse over.
+  Thanks to Stanimir Stamenkov for the fix.
+
+
+
+
 4.1.0 (05/30/2020)
 ==================
 
