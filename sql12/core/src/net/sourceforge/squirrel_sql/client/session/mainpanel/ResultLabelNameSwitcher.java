@@ -16,10 +16,7 @@ import java.awt.event.ActionListener;
 
 public class ResultLabelNameSwitcher
 {
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(ResultLabelNameSwitcher.class);
-
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultLabelNameSwitcher.class);
 
    private final String _resultsTabTitle;
    private final int _tabIndex;
@@ -67,14 +64,7 @@ public class ResultLabelNameSwitcher
 
       _btnLabelNameSwitch = new SmallTabButton(s_stringMgr.getString("ResultLabelNameSwitcher.buttonToolTipHtml"), _currentIcon);
 
-      _btnLabelNameSwitch.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onSwitchLabelName();
-         }
-      });
+      _btnLabelNameSwitch.addActionListener(e -> onSwitchLabelName());
 
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2,2,1,0), 0,0);
@@ -82,6 +72,7 @@ public class ResultLabelNameSwitcher
       pnl.setOpaque(false);
 
       _tabResultTabs.setTabComponentAt(_tabIndex, pnl);
+      _tabResultTabs.setTitleAt(_tabIndex, null);
    }
 
    private void onSwitchLabelName()

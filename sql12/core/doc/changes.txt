@@ -16,7 +16,9 @@ Bug fixes:
 Merge Request #48: Use smooth text scaling of vertical buttons ("Aliases" and "Drivers") label on hi-dpi screens.
   Thanks to Stanimir Stamenkov for the fix.
 
-
+#1434 Overlapping column name/label toggle button on Results tab.
+  See feature request #487 for the scenario when a name/label toggle button is displayed.
+  Thanks to Stanimir Stamenkov for the fix.
 
 
 4.1.0 (05/30/2020)
