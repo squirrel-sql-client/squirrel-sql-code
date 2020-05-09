@@ -81,6 +81,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -1257,7 +1258,10 @@ public class Application implements IApplication
 		 * Swing's default laf prop 
 		 */
 		String userSpecifiedOverride = System.getProperty("swing.defaultlaf");
-		if (userSpecifiedOverride != null && !"".equals(userSpecifiedOverride)) { return; }
+		if (false == StringUtilities.isEmpty(userSpecifiedOverride))
+		{
+			return;
+		}
 
 		String lafClassName = args.useNativeLAF() ? UIManager.getSystemLookAndFeelClassName() : MetalLookAndFeel.class.getName();
 

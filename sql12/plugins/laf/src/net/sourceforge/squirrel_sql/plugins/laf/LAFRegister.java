@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -346,7 +347,7 @@ public class LAFRegister
 	private void installLookAndFeels()
 	{
 		// Map of JAR file URLs containing LAFs keyed by the LAF class name.
-		final Map<String, URL> lafs = loadInstallProperties();
+		final Map<String, List<URL>> lafs = loadInstallProperties();
 
 		final List<URL> lafUrls = new ArrayList<URL>();
 
@@ -363,10 +364,11 @@ public class LAFRegister
 		}
 
 		// Retrieve URLs of all the Look and Feel jars and store in lafUrls.
-		for (Iterator<URL> it = lafs.values().iterator(); it.hasNext();)
+		for (List<URL> jarUrls : lafs.values())
 		{
-			lafUrls.add(it.next());
+			lafUrls.addAll(jarUrls);
 		}
+
 		// Create a ClassLoader for all the LAF jars. Install all Look and Feels
 		// into the UIManager.
 		try
@@ -377,9 +379,9 @@ public class LAFRegister
 			for (Iterator<String> it = lafs.keySet().iterator(); it.hasNext();)
 			{
 				String className = it.next();
-				Class<?> lafClass = Class.forName(className, false, _lafClassLoader);
 				try
 				{
+					Class<?> lafClass = Class.forName(className, false, _lafClassLoader);
 					LookAndFeel laf = (LookAndFeel) lafClass.newInstance();
 					if (laf.isSupportedLookAndFeel())
 					{
@@ -389,7 +391,7 @@ public class LAFRegister
 				}
 				catch (Throwable th)
 				{
-					s_log.error("Error occurred loading Look and Feel: " + lafClass.getName(), th);
+					s_log.error("Error occurred loading Look and Feel: " + className, th);
 				}
 			}
 		}
@@ -479,9 +481,9 @@ public class LAFRegister
 	 * 
 	 * @return Map
 	 */
-	private Map<String, URL> loadInstallProperties()
+	private Map<String, List<URL>> loadInstallProperties()
 	{
-		Map<String, URL> lafs = new HashMap<String, URL>();
+		Map<String, List<URL>> lafs = new HashMap<>();
 		// Directory containing the standard LAF jar files.
 		final FileWrapper stdLafJarDir = _plugin.getLookAndFeelFolder();
 		// Load info about the standard LAFs that come with this plugin.
@@ -495,24 +497,22 @@ public class LAFRegister
 				{
 					break;
 				}
-				String jarName = rsrc.getString(LAFPluginResources.IKeys.JAR + i);
-				if (jarName == null || jarName.length() == 0)
+				String jarNames = rsrc.getString(LAFPluginResources.IKeys.JARS + i);
+				if (jarNames == null || jarNames.length() == 0)
 				{
 					break;
 				}
 
-				FileWrapper file = fileWrapperFactory.create(stdLafJarDir, jarName);
-				try
+				final String[] jarNamesArray = jarNames.split(";");
+
+				if(0 == jarNamesArray.length)
 				{
-					if (file.isFile() && file.exists())
-					{
-						lafs.put(className, file.toURI().toURL());
-					}
+					break;
 				}
-				catch (IOException ex)
-				{
-					s_log.error("Error occurred reading Look and Feel jar: " + file.getAbsolutePath(), ex);
-				}
+
+				List<URL> jarUrls = getJarUrls(stdLafJarDir, jarNamesArray);
+				lafs.put(className, jarUrls);
+
 			}
 			catch (MissingResourceException ignore)
 			{
@@ -524,8 +524,8 @@ public class LAFRegister
 		try
 		{
 			final FileWrapper extraLafsDir = _plugin.getUsersExtraLAFFolder();
-			FileWrapper extraFile =
-				fileWrapperFactory.create(extraLafsDir, ILAFConstants.USER_EXTRA_LAFS_PROPS_FILE);
+			FileWrapper extraFile = fileWrapperFactory.create(extraLafsDir, ILAFConstants.USER_EXTRA_LAFS_PROPS_FILE);
+
 			BufferedInputStream is = new BufferedInputStream(extraFile.getFileInputStream());
 			try
 			{
@@ -538,7 +538,7 @@ public class LAFRegister
 					{
 						break;
 					}
-					String jarName = props.getProperty(LAFPluginResources.IKeys.JAR + i);
+					String jarName = props.getProperty(LAFPluginResources.IKeys.JARS + i);
 					if (jarName == null || jarName.length() == 0)
 					{
 						break;
@@ -548,7 +548,7 @@ public class LAFRegister
 					{
 						if (file.isFile() && file.exists())
 						{
-							lafs.put(className, file.toURI().toURL());
+							lafs.put(className, new ArrayList<>(Collections.singletonList(file.toURI().toURL())));
 						}
 					}
 					catch (IOException ex)
@@ -567,6 +567,27 @@ public class LAFRegister
 			s_log.error("Error occurred loading extra LAFs property file", ex);
 		}
 		return lafs;
+	}
+
+	private List<URL> getJarUrls(FileWrapper stdLafJarDir, String[] jarNamesArray)
+	{
+		List<URL> jarUrls = new ArrayList<>();
+		for (String jarName : jarNamesArray)
+		{
+			FileWrapper file = fileWrapperFactory.create(stdLafJarDir, jarName);
+			try
+			{
+				if (file.isFile() && file.exists())
+				{
+					jarUrls.add(file.toURI().toURL());
+				}
+			}
+			catch (IOException ex)
+			{
+				s_log.error("Error occurred reading Look and Feel jar: " + file.getAbsolutePath(), ex);
+			}
+		}
+		return jarUrls;
 	}
 
 	/**

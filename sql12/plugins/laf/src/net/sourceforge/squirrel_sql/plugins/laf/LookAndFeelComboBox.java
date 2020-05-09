@@ -34,21 +34,17 @@ import net.sourceforge.squirrel_sql.plugins.laf.jtattoo.JTattooLafPlaceholder;
  */
 public class LookAndFeelComboBox extends JComboBox
 {
-    private static final long serialVersionUID = 1L;
-
     /**
 	 * <TT>LookAndFeelInfo</TT> objects keyed by the
 	 * Look and Feel name.
 	 */
-	private Map<String, LookAndFeelInfo> _lafsByName = 
-        new TreeMap<String, LookAndFeelInfo>();
+	private Map<String, LookAndFeelInfo> _lafsByName = new TreeMap<>();
 
 	/**
 	 * <TT>LookAndFeelInfo</TT> objects keyed by the
 	 * Class name of the Look and Feel.
 	 */
-	private Map<String, LookAndFeelInfo> _lafsByClassName = 
-        new TreeMap<String, LookAndFeelInfo>();
+	private Map<String, LookAndFeelInfo> _lafsByClassName = new TreeMap<>();
 
 	/**
 	 * Default ctor. Select the currently active L & F after
@@ -66,7 +62,6 @@ public class LookAndFeelComboBox extends JComboBox
 	 */
 	public LookAndFeelComboBox(String selectedLafName)
 	{
-		super();
 		generateLookAndFeelInfo();
 		if (selectedLafName == null)
 		{
@@ -109,7 +104,7 @@ public class LookAndFeelComboBox extends JComboBox
 		// Put all available "Look and Feel" objects into collections
 		// keyed by LAF name and by the class name.
 		LookAndFeelInfo[] info = UIManager.getInstalledLookAndFeels();
-		_lafsByName = new TreeMap<String, LookAndFeelInfo>();
+		_lafsByName = new TreeMap<>();
 		for (int i = 0; i < info.length; ++i)
 		{
 			_lafsByName.put(info[i].getName(), info[i]);

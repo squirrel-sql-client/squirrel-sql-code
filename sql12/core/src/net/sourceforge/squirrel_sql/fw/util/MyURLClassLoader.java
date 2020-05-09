@@ -37,13 +37,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 @SuppressWarnings("unchecked")
 public class MyURLClassLoader extends URLClassLoader
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(MyURLClassLoader.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MyURLClassLoader.class);
 
-	private Map<String, Class> _classes = new HashMap<String, Class>();
+	private Map<String, Class> _classes = new HashMap<>();
 
-	ArrayList<ClassLoaderListener> listeners = new ArrayList<ClassLoaderListener>();
+	ArrayList<ClassLoaderListener> listeners = new ArrayList<>();
 
 	public MyURLClassLoader(String fileName) throws IOException
 	{

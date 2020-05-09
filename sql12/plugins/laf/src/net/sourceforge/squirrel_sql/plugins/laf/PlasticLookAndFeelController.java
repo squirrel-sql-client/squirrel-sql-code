@@ -35,9 +35,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
  */
 class PlasticLookAndFeelController extends AbstractPlasticController
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(PlasticLookAndFeelController.class);
+	private static ILogger s_log = LoggerController.createLogger(PlasticLookAndFeelController.class);
 
 	/**
 	 * Look and Feel class names that this controller is responsible for.
@@ -47,6 +45,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 		"com.jgoodies.looks.plastic.PlasticLookAndFeel",
 		"com.jgoodies.looks.plastic.Plastic3DLookAndFeel",
 		"com.jgoodies.looks.plastic.PlasticXPLookAndFeel",
+		"com.jgoodies.looks.windows.WindowsLookAndFeel",
 	};
 
 	public static final String DEFAULT_LOOK_AND_FEEL_CLASS_NAME = LAF_CLASS_NAMES[1];
@@ -63,8 +62,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 	 * @param	plugin	The plugin that this controller is a part of.
 	 * @param	lafRegister	LAF register.
 	 */
-	PlasticLookAndFeelController(LAFPlugin plugin,
-								LAFRegister lafRegister)
+	PlasticLookAndFeelController(LAFPlugin plugin, LAFRegister lafRegister)
 	{
       super(plugin, lafRegister);
       try
@@ -172,8 +170,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 	 * doesn't get mixed up with preferences for other subclasses of
 	 * AbstractPlasticController
 	 */
-	public static final class PlasticThemePreferences
-		extends AbstractPlasticController.ThemePreferences
+	public static final class PlasticThemePreferences extends AbstractPlasticController.ThemePreferences
 	{
 	}
 }

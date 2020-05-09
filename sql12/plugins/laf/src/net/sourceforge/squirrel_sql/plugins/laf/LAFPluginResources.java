@@ -28,6 +28,6 @@ public final class LAFPluginResources extends PluginResources
 	interface IKeys
 	{
 		String CLASSNAME = "classname";
-		String JAR = "jar";
+		String JARS = "jars";
 	}
 }
