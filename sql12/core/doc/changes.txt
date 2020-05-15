@@ -22,6 +22,9 @@ Brushed up the Data Look and feel Plugin;
 
 Bug fixes:
 
+Command line interface (CLI):
+   JShell mode: Passing a SQL script file to method exec(...) didn't work.
+
 #1433 Duplicate overlapping "HQL" label on the Hibernate tab/panel
   Occurred when a JGoodies Look & Feel was used.
   Thanks to Stanimir Stamenkov for the fix.
