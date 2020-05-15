@@ -25,6 +25,8 @@ public class SquirrelCliHelp
       System.out.println("-- exec(<sqlOrSqlFile>) --> Executes one or more SQLs or the contents of an SQL script file.");
       System.out.println("     Currently \""  + getSqlSeparator() + "\" is defined as the separator for multiple SQLs. The separator can be defined in SQuirreL UI's \"New Session properties\".");
       System.out.println("-- exec(<sqlOrSqlFile>, <outputFile>) --> Allows to write the output to a file instead of STDOUT.");
+      System.out.println("-- exec(<sqlOrSqlFile>, <outputFile>, <formatted>) --> Allows to write the output to a file instead of STDOUT");
+      System.out.println("     When <formatted> is true File format will be according to SQuirreL's 'Store result of SQL to file' dialog.");
       System.out.println("-- close() --> Closes the current database connection.");
       System.out.println("-- help() --> Prints this help.");
 

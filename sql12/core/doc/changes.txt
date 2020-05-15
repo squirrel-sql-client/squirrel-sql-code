@@ -6,12 +6,19 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Command line interface (CLI):
+  The command line interface (CLI) allows to create formatted files according to the settings in SQuirreL's 'Store result of SQL to file' dialog.
+  CLI help commands will inform about details.
+  For information on the command line interface see Readme.txt in subdirectory squirrelcli of your SQuirreL installation.
+
+
 Brushed up the Data Look and feel Plugin;
   - Updated JGoodies Looks to version 2.5.3
   - Made JGoodies Windows look and feel available (Windows only)
   - Fixed several bugs which makes more Look and feels available
   NOTE: Some Look and Feels may cause performance or even functional problems.
         If you think you are seeing such problems switch to a Metal Look and Feel.
+
 
 Bug fixes:
 

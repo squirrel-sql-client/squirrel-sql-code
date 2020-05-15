@@ -68,4 +68,55 @@ public class TableExportPreferencesDAO
 
       Props.putString(PREF_KEY_LIMIT_ROWS, prefs.getLimitRows());
    }
+
+   public static TableExportPreferences createExportPreferencesForFile(String fileName)
+   {
+      TableExportPreferences prefs = loadPreferences();
+
+      prefs.setFile(fileName);
+
+      if(fileName.toUpperCase().endsWith("CSV"))
+      {
+         prefs.setFormatCSV(true);
+         prefs.setFormatXLSOld(false);
+         prefs.setFormatXLS(false);
+         prefs.setFormatXML(false);
+         prefs.setFormatJSON(false);
+      }
+      else if(fileName.toUpperCase().endsWith("XLS"))
+      {
+         prefs.setFormatCSV(false);
+         prefs.setFormatXLSOld(true);
+         prefs.setFormatXLS(false);
+         prefs.setFormatXML(false);
+         prefs.setFormatJSON(false);
+      }
+      else if(fileName.toUpperCase().endsWith("XLSX"))
+      {
+         prefs.setFormatCSV(false);
+         prefs.setFormatXLSOld(false);
+         prefs.setFormatXLS(true);
+         prefs.setFormatXML(false);
+         prefs.setFormatJSON(false);
+      }
+      else if(fileName.toUpperCase().endsWith("XML"))
+      {
+         prefs.setFormatCSV(false);
+         prefs.setFormatXLSOld(false);
+         prefs.setFormatXLS(false);
+         prefs.setFormatXML(true);
+         prefs.setFormatJSON(false);
+      }
+      else if(fileName.toUpperCase().endsWith("JSON"))
+      {
+         prefs.setFormatCSV(false);
+         prefs.setFormatXLSOld(false);
+         prefs.setFormatXLS(false);
+         prefs.setFormatXML(false);
+         prefs.setFormatJSON(true);
+      }
+      // else use the prefs predefined format
+
+      return prefs;
+   }
 }

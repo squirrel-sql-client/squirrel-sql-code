@@ -15,6 +15,7 @@ public enum SquirrelBatchOptions
    DRIVER(new Option("driver", true, "JDBC driver class name")),
    DRIVERCP(new Option("drivercp", true, "JDBC driver class path (a Java classpath)")),
    SQL(new Option("sql", true, "SQL statement or SQL script file")),
+   TO_FILE_FORMATTED(new Option("toFileFormatted", true, "File to create. File format will be according to SQuirreL's 'Store result of SQL to file' dialog.")),
    MAX_ROWS(new Option("maxrows", true, "Max rows of SQL query. 0 means no maximum. For default see SQuirreL GUI -> New Session Properties -> tab SQL")),
    USERDIR(new Option("userdir", true, "The user directory of your SQuirreL installation. Needed only if a non standard user directory is used.")),
    HELP(new Option("help", false, "Print help"));
@@ -84,6 +85,14 @@ public enum SquirrelBatchOptions
          catch (NumberFormatException e)
          {
             return MAX_ROWS._option.getOpt() + " must be an integer";
+         }
+      }
+
+      if(commandLine.hasOption(TO_FILE_FORMATTED._option.getOpt()))
+      {
+         if(commandLine.hasOption(MAX_ROWS._option.getOpt()))
+         {
+            return MAX_ROWS._option.getOpt() + " can not be combined with " + TO_FILE_FORMATTED._option.getOpt();
          }
       }
 

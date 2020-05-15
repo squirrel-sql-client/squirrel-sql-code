@@ -115,51 +115,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
          String sqlToWriteToFile = sqlWithFilePrefix.substring(fileEndMarkerPos + 1).trim();
 
 
-         TableExportPreferences prefs = TableExportPreferencesDAO.loadPreferences();
-
-         prefs.setFile(fileName);
-
-         if(fileName.toUpperCase().endsWith("CSV"))
-         {
-            prefs.setFormatCSV(true);
-            prefs.setFormatXLSOld(false);
-            prefs.setFormatXLS(false);
-            prefs.setFormatXML(false);
-            prefs.setFormatJSON(false);
-         }
-         else if(fileName.toUpperCase().endsWith("XLS"))
-         {
-            prefs.setFormatCSV(false);
-            prefs.setFormatXLSOld(true);
-            prefs.setFormatXLS(false);
-            prefs.setFormatXML(false);
-            prefs.setFormatJSON(false);
-         }
-         else if(fileName.toUpperCase().endsWith("XLSX"))
-         {
-            prefs.setFormatCSV(false);
-            prefs.setFormatXLSOld(false);
-            prefs.setFormatXLS(true);
-            prefs.setFormatXML(false);
-            prefs.setFormatJSON(false);
-         }
-         else if(fileName.toUpperCase().endsWith("XML"))
-         {
-            prefs.setFormatCSV(false);
-            prefs.setFormatXLSOld(false);
-            prefs.setFormatXLS(false);
-            prefs.setFormatXML(true);
-            prefs.setFormatJSON(false);
-         }
-         else if(fileName.toUpperCase().endsWith("JSON"))
-         {
-            prefs.setFormatCSV(false);
-            prefs.setFormatXLSOld(false);
-            prefs.setFormatXLS(false);
-            prefs.setFormatXML(false);
-            prefs.setFormatJSON(true);
-         }
-         // else use the prefs predefined format
+         TableExportPreferences prefs = TableExportPreferencesDAO.createExportPreferencesForFile(fileName);
 
          callResultSetExport(prefs, file , sqlToWriteToFile);
 

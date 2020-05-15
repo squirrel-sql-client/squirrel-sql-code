@@ -4,11 +4,6 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.cli.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 public class SquirrelBatch
 {
    public static void main(String[] args) throws ParseException
@@ -110,29 +105,16 @@ public class SquirrelBatch
 
       String sql = SquirrelBatchOptions.SQL.getValue(commandLine);
 
-      Path path = null;
-      try
-      {
-         path = Paths.get(sql);
-      }
-      catch (Exception e)
-      {
-      }
+      sql = CLISqlFileHandler.handleOptionalSqlFile(sql, false);
 
-      if(null != path && Files.isRegularFile(path))
+      if (SquirrelBatchOptions.TO_FILE_FORMATTED.hasParam(commandLine))
       {
-         try
-         {
-            sql = new String(Files.readAllBytes(path));
-         }
-         catch (IOException e)
-         {
-            System.err.println("ERROR: Failed to read file " + path.getFileName() + ": " + e.getMessage());
-            e.printStackTrace();
-         }
+         net.sourceforge.squirrel_sql.client.cli.SquirrelCli._execIntern(sql, SquirrelBatchOptions.TO_FILE_FORMATTED.getValue(commandLine), true);
       }
-
-      net.sourceforge.squirrel_sql.client.cli.SquirrelCli.exec(sql);
+      else
+      {
+         net.sourceforge.squirrel_sql.client.cli.SquirrelCli._execIntern(sql, null, false);
+      }
 
       net.sourceforge.squirrel_sql.client.cli.SquirrelCli.close();
 

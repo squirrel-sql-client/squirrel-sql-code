@@ -5,12 +5,22 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.gui.action.ExportFileWriter;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferencesDAO;
+import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ResultSetExportData;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
@@ -130,8 +140,57 @@ public class SquirrelCli
 
    public static void exec(String sql, String outputFile)
    {
+      exec(sql, outputFile, false);
+   }
+
+   public static void exec(String sql, String outputFile, boolean formatted)
+   {
+      sql = CLISqlFileHandler.handleOptionalSqlFile(sql, true);
+      _execIntern(sql, outputFile, formatted);
+   }
+
+   public static void _execIntern(String sql, String outputFile, boolean formatted)
+   {
       //System.out.println("sql = " + sql);
 
+      if (formatted)
+      {
+         // NOTE: Will break when SQL contains multiple SQLs, e.g. when a SQL file with more than one SQL was passed in batch mode.
+         // This behavior is known and for now accepted.
+         outputFormatted(sql, outputFile);
+      }
+      else
+      {
+         outputAsText(sql, outputFile);
+      }
+   }
+
+   /**
+    * NOTE: Will break when SQL contains multiple SQLs, e.g. when a SQL file with more than one SQL was passed in batch mode.
+    * This behavior is known and for now accepted.
+    */
+   private static void outputFormatted(String sql, String outputFile)
+   {
+      try
+      {
+         _cliConnectionData.ensureCliSessionCreated();
+
+         final ISQLConnection sqlConnection = _cliConnectionData.getCliSession().getSQLConnection();
+         final Statement stat = sqlConnection.getConnection().createStatement();
+         final DialectType dialectType = DialectFactory.getDialectType(sqlConnection.getSQLMetaData());
+
+         TableExportPreferences exportPrefs = TableExportPreferencesDAO.createExportPreferencesForFile(outputFile);
+
+         ExportFileWriter.writeFile(exportPrefs, new ResultSetExportData(stat.executeQuery(sql), dialectType), new CliProgressAbortCallback());
+      }
+      catch (SQLException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   private static void outputAsText(String sql, String outputFile)
+   {
       _cliConnectionData.ensureCliSessionCreated();
 
       ISQLExecuterHandler sqlExecuterHandlerProxy = new CliSQLExecuterHandler(_cliConnectionData.getCliSession(), outputFile);

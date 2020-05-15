@@ -214,10 +214,10 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
          }
       }
 
-      if(null != _outputFile)
-      {
-         System.out.println("Finshed writing file " + _outputFile);
-      }
+//      if(null != _outputFile)
+//      {
+//         System.out.println("Finshed writing file " + _outputFile);
+//      }
    }
 }
 
