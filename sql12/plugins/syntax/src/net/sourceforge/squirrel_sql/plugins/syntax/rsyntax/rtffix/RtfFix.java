@@ -13,6 +13,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.nio.charset.StandardCharsets;
 
+// Was formerly needed to fix bug #1394. See also https://github.com/bobbylight/RText/issues/39
+// Was deactivated after upgrade to rsyntaxtextarea-3.1.1.jar in order to fix bug #1394
+// May be removed some day.
 public class RtfFix
 {
    /**

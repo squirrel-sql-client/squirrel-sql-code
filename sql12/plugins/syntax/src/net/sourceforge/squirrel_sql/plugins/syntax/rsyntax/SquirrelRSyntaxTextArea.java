@@ -304,10 +304,10 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    }
 
 
-   public void copyAsStyledText()
-   {
-      RtfFix.copyAsStyledText(this);
-   }
+//   public void copyAsStyledText()
+//   {
+//      RtfFix.copyAsStyledText(this);
+//   }
 
    public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
    {

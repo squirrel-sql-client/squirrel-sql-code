@@ -22,6 +22,10 @@ Brushed up the Data Look and feel Plugin;
 
 Bug fixes:
 
+#1436 SQL editor: Copy didn't work for accented characters or cedillas
+  when "Copy shortcuts use Rich Text Format" was switched on.
+  To fix this problem RSyntax was upgraded to the latest version 3.1.1.
+
 Command line interface (CLI):
    JShell mode: Passing a SQL script file to method exec(...) didn't work.
 
