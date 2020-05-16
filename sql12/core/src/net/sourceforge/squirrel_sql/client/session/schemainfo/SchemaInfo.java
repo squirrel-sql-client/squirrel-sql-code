@@ -20,17 +20,6 @@ package net.sourceforge.squirrel_sql.client.session.schemainfo;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
@@ -41,11 +30,34 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBackAdaptor;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.UDTInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.SwingUtilities;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 public class SchemaInfo
 {
@@ -53,10 +65,8 @@ public class SchemaInfo
    public static final int TABLE_EXT_COLS_LOADED_IN_THIS_CALL = 1;
    public static final int TABLE_EXT_COLS_LOADED_BEFORE = 2;
 
-
-
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SchemaInfo.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SchemaInfo.class);
+   private static final ILogger s_log = LoggerController.createLogger(SchemaInfo.class);
 
    private boolean _loading = false;
    private boolean _loaded = false;
@@ -65,7 +75,6 @@ public class SchemaInfo
    ISession _session = null;
 
 
-   private static final ILogger s_log = LoggerController.createLogger(SchemaInfo.class);
    private SessionAdapter _sessionListener;
 
    /**
@@ -77,48 +86,37 @@ public class SchemaInfo
 
    static interface i18n {
        // i18n[SchemaInfo.loadingCatalogs=Loading catalogs]
-       String LOADING_CATALOGS_MSG = 
-           s_stringMgr.getString("SchemaInfo.loadingCatalogs");
+       String LOADING_CATALOGS_MSG = s_stringMgr.getString("SchemaInfo.loadingCatalogs");
        
        // i18n[SchemaInfo.loadingKeywords=Loading keywords]
-       String LOADING_KEYWORDS_MSG = 
-           s_stringMgr.getString("SchemaInfo.loadingKeywords");
+       String LOADING_KEYWORDS_MSG = s_stringMgr.getString("SchemaInfo.loadingKeywords");
        
        // i18n[SchemaInfo.loadingDataTypes=Loading data types]
-       String LOADING_DATATYPES_MSG = 
-           s_stringMgr.getString("SchemaInfo.loadingDataTypes");
+       String LOADING_DATATYPES_MSG = s_stringMgr.getString("SchemaInfo.loadingDataTypes");
        
        // i18n[SchemaInfo.loadingFunctions=Loading functions]
-       String LOADING_FUNCTIONS_MSG = 
-           s_stringMgr.getString("SchemaInfo.loadingFunctions");
+       String LOADING_FUNCTIONS_MSG = s_stringMgr.getString("SchemaInfo.loadingFunctions");
 
        // i18n[SchemaInfo.loadingTables=Loading tables]
-       String LOADING_TABLES_MSG = 
-           s_stringMgr.getString("SchemaInfo.loadingTables");
+       String LOADING_TABLES_MSG = s_stringMgr.getString("SchemaInfo.loadingTables");
        
        // i18n[SchemaInfo.loadingStoredProcedures=Loading stored procedures]
-       String LOADING_PROCS_MSG = 
-           s_stringMgr.getString("SchemaInfo.loadingStoredProcedures");
+       String LOADING_PROCS_MSG = s_stringMgr.getString("SchemaInfo.loadingStoredProcedures");
        
-       String LOADING_UDTS_MSG =
-           s_stringMgr.getString("SchemaInfo.loadingUDTs");
+       String LOADING_UDTS_MSG = s_stringMgr.getString("SchemaInfo.loadingUDTs");
 
        // i18n[SchemaInfo.loadingSchemas=Loading schemas]
-       String LOADING_SCHEMAS_MSG = 
-           s_stringMgr.getString("SchemaInfo.loadingSchemas");
-
+       String LOADING_SCHEMAS_MSG = s_stringMgr.getString("SchemaInfo.loadingSchemas");
    }
    
    
-   final HashMap<CaseInsensitiveString,CaseInsensitiveString> _tablesLoadingColsInBackground = 
-       new HashMap<CaseInsensitiveString,CaseInsensitiveString>();
+   final HashMap<CaseInsensitiveString,CaseInsensitiveString> _tablesLoadingColsInBackground = new HashMap<>();
 
 
    private SchemaInfoCache _schemaInfoCache;
 
 
-   private Vector<SchemaInfoUpdateListener> _listeners = 
-       new Vector<SchemaInfoUpdateListener>();
+   private Vector<SchemaInfoUpdateListener> _listeners = new Vector<>();
    private boolean _inInitialLoad;
    private long _initalLoadBeginTime;
    private boolean _sessionStartupTimeHintShown;
@@ -929,8 +927,7 @@ public class SchemaInfo
          s_log.error("Error", ex);
       }
 
-      Hashtable<CaseInsensitiveString, String> functionsBuf = 
-          new Hashtable<CaseInsensitiveString, String>();
+      Hashtable<CaseInsensitiveString, String> functionsBuf = new Hashtable<>();
       for (int i = 0; i < buf.size(); i++)
       {
          String func = buf.get(i);
