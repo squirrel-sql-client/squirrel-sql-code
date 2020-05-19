@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.SQLCommentAndLitera
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLToFileHandler;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -321,7 +322,7 @@ public class QueryTokenizer implements IQueryTokenizer
        for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext(); )
        {
           QueryHolder sql = iter.next();
-          if (sql.getQuery().startsWith(scriptIncludePrefix))
+          if (sql.getQuery().startsWith(scriptIncludePrefix) && false == SQLToFileHandler.startsWithSqlToFileMarker(sql.getQuery()))
           {
              try
              {

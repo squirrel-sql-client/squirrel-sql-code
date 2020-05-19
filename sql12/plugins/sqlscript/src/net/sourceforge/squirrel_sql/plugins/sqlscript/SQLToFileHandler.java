@@ -60,7 +60,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
       {
          String query = queryTokenizer.nextQuery().getQuery();
 
-         if(false == query.trim().toUpperCase().startsWith("@FILE"))
+         if(false == startsWithSqlToFileMarker(query))
          {
             sqlsNotToWriteToFile.append(query);
 
@@ -138,6 +138,15 @@ public class SQLToFileHandler implements ISQLExecutionListener
       {
          return sqlsNotToWriteToFile.toString();
       }
+   }
+
+   /**
+    * Used in {@link net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer#expandFileIncludes(String)} to
+    * prevent conflict with {{@link net.sourceforge.squirrel_sql.plugins.oracle.tokenizer.OracleQueryTokenizer#ORACLE_SCRIPT_INCLUDE_PREFIX}}
+    */
+   public static boolean startsWithSqlToFileMarker(String query)
+   {
+      return null != query && query.trim().toUpperCase().startsWith("@FILE");
    }
 
    private void callResultSetExport(TableExportPreferences prefs, File file, String sqlToWriteToFile)
