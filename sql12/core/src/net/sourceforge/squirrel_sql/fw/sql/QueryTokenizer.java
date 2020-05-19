@@ -18,13 +18,13 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.NextPositionAction;
 import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.SQLCommentAndLiteralHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLToFileHandler;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -322,7 +322,7 @@ public class QueryTokenizer implements IQueryTokenizer
        for (Iterator<QueryHolder> iter = _queries.iterator(); iter.hasNext(); )
        {
           QueryHolder sql = iter.next();
-          if (sql.getQuery().startsWith(scriptIncludePrefix) && false == SQLToFileHandler.startsWithSqlToFileMarker(sql.getQuery()))
+          if (sql.getQuery().startsWith(scriptIncludePrefix) && false == startsWithSqlToFileMarker(sql))
           {
              try
              {
@@ -348,6 +348,18 @@ public class QueryTokenizer implements IQueryTokenizer
        }
        _queries = tmp;
     }
+
+   private boolean startsWithSqlToFileMarker(QueryHolder sql)
+   {
+      ScriptPluginInterface si = (ScriptPluginInterface) Main.getApplication().getPluginManager().bindExternalPluginService("sqlscript", ScriptPluginInterface.class);
+
+      if(null == si)
+      {
+         return false;
+      }
+
+      return si.startsWithSqlToFileMarker(sql.getQuery());
+   }
 
    private List<String> getStatementsFromIncludeFile(String filename)
    {

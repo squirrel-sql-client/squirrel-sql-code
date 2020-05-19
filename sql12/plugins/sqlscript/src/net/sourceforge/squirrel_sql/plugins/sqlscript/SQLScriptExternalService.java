@@ -19,4 +19,8 @@ public class SQLScriptExternalService
       new CreateTableScriptCommand(sess.getObjectTreeAPIOfActiveSessionWindow(), _sqlScriptPlugin).scriptTablesToSQLEntryArea(tis);
    }
 
+   public boolean startsWithSqlToFileMarker(String sql)
+   {
+      return SQLToFileHandler.startsWithSqlToFileMarker(sql);
+   }
 }
