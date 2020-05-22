@@ -8,10 +8,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -30,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.LocaleUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -502,7 +502,7 @@ public class TranslatorsController
 	{
 		Locale selLocale = (Locale) _panel.cboLocales.getSelectedItem();
 
-		File workDir = null;
+		File workDir;
 		if (null != _panel.txtWorkingDir.getText() && 0 < _panel.txtWorkingDir.getText().trim().length())
 		{
 			workDir = new File(_panel.txtWorkingDir.getText());
@@ -531,7 +531,7 @@ public class TranslatorsController
 			JOptionPane.showMessageDialog(app.getMainFrame(), msg);
 		}
 
-		URL[] sourceUrls = getUrlsToLoadI18nPropertiesFrom(workDir);
+		URL[] sourceUrls = getUrlsToLoadI18nPropertiesFrom();
 
 		String pluginDir = new ApplicationFiles().getPluginsDirectory().getPath();
 
@@ -592,55 +592,59 @@ public class TranslatorsController
 
 	}
 
-	private URL[] getUrlsToLoadI18nPropertiesFrom(File workDir)
+	private URL[] getUrlsToLoadI18nPropertiesFrom()
 	{
-		ApplicationFiles af = new ApplicationFiles();
-
-		ArrayList<URL> ret = new ArrayList<URL>();
-		URL[] urls;
-
-		urls = ((URLClassLoader) _app.getClass().getClassLoader()).getURLs();
-
-		for (int i = 0; i < urls.length; i++)
+		try
 		{
-			File file = new File(urls[i].getFile().replaceAll("%20", " "));
-			if (file.getName().equals(af.getSQuirrelJarFile().getName()))
-			{
-				ret.add(urls[i]);
-			}
-			else if (file.getName().equals(af.getFwJarFile().getName()))
-			{
-				ret.add(urls[i]);
-			}
-		}
+			ApplicationFiles af = new ApplicationFiles();
 
-		PluginInfo[] pi = _app.getPluginManager().getPluginInformation();
+			ArrayList<URL> ret = new ArrayList<URL>();
+			// URL[] urls = ((URLClassLoader) _app.getClass().getClassLoader()).getURLs();
 
-		urls = _app.getPluginManager().getPluginURLs();
-		for (int i = 0; i < urls.length; i++)
-		{
-			String jarName = new File(urls[i].getFile()).getName();
+			String[] classPathEntries = System.getProperty("java.class.path").split(File.pathSeparator);
 
-			String cleanJarName;
-			if (jarName.endsWith(".jar"))
+			for (int i = 0; i < classPathEntries.length; i++)
 			{
-				cleanJarName = jarName.substring(0, jarName.length() - ".jar".length());
-			}
-			else
-			{
-				continue;
-			}
-
-			for (int j = 0; j < pi.length; j++)
-			{
-				if (pi[j].getInternalName().equalsIgnoreCase(cleanJarName))
+				//File file = new File(classPathEntries[i].replaceAll("%20", " "));
+				File file = new File(classPathEntries[i]);
+				if (file.getName().equals(af.getSQuirrelJarFile().getName()))
 				{
-					ret.add(urls[i]);
+					ret.add(file.toURI().toURL());
 				}
 			}
-		}
 
-		return ret.toArray(new URL[ret.size()]);
+			PluginInfo[] pi = _app.getPluginManager().getPluginInformation();
+
+			URL[] urls = _app.getPluginManager().getPluginURLs();
+			for (int i = 0; i < urls.length; i++)
+			{
+				String jarName = new File(urls[i].getFile()).getName();
+
+				String cleanJarName;
+				if (jarName.endsWith(".jar"))
+				{
+					cleanJarName = jarName.substring(0, jarName.length() - ".jar".length());
+				}
+				else
+				{
+					continue;
+				}
+
+				for (int j = 0; j < pi.length; j++)
+				{
+					if (pi[j].getInternalName().equalsIgnoreCase(cleanJarName))
+					{
+						ret.add(urls[i]);
+					}
+				}
+			}
+
+			return ret.toArray(new URL[0]);
+		}
+		catch (MalformedURLException e)
+		{
+			throw Utilities.wrapRuntime(e);
+		}
 	}
 
 	private void findI18nInArchive(Locale selLoc, File file, ArrayList<I18nProps> defaultI18nProps, ArrayList<I18nProps> localizedI18nProps, URL[] sourceUrls)

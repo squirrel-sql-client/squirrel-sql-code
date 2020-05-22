@@ -22,6 +22,11 @@ Brushed up the Data Look and feel Plugin;
 
 Bug fixes:
 
+Internationalization Plugin: On Java version later than 1.8.x the "Load bundles" function raised a ClassCastException.
+  See menu File --> Global Preferences -> Tab "i18n administration".
+  The Plugin, i.e. the functions of the "i18n administration" tab, offers support for translators of SQuirreL.
+  (Together with this change the outdated "Developers" tab was removed.)
+
 Error in feature #438 (output query to file by @file) when Oracle Plugin was installed.
   The error occurred because it ran into conflict with feature
   (use @ to specify script file to be executed without loading to SQL Editor),

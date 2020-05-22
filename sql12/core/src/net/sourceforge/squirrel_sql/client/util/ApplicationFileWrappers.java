@@ -74,6 +74,4 @@ public interface ApplicationFileWrappers
 
 	FileWrapper getSQuirrelJarFile();
 
-	FileWrapper getFwJarFile();
-
 }

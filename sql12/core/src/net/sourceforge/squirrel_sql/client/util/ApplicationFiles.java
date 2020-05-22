@@ -438,10 +438,6 @@ public class ApplicationFiles
       return ret;
    }
 
-   public File getFwJarFile()
-   {
-      return new File(_squirrelHomeDir.getPath() + File.separator + "lib" + File.separator + "fw.jar");
-   }
 
    /**
     * @return serialized List containing user specific configurations for WIKI tables.

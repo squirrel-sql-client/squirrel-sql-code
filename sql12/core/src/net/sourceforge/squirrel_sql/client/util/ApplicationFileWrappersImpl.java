@@ -209,13 +209,4 @@ public class ApplicationFileWrappersImpl implements ApplicationFileWrappers
 	public FileWrapper getSQuirrelJarFile() {
 		return _fileWrapperFactory.create(_appFiles.getSQuirrelJarFile());
 	}
-	
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers#getFwJarFile()
-	 */
-	public FileWrapper getFwJarFile() {
-		return _fileWrapperFactory.create(_appFiles.getFwJarFile());
-	}
-	
-	
 }
