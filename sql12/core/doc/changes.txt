@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+SQL Scripts Plugin: Improved names and tool tips of the scripting functions of Object tree's right mouse menu.
+
 Command line interface (CLI):
   The command line interface (CLI) allows to create formatted files according to the settings in SQuirreL's 'Store result of SQL to file' dialog.
   CLI help commands will inform about details.
