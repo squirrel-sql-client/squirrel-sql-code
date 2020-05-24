@@ -53,14 +53,7 @@ public class TableCopyAlignedCommand
       ColumnDisplayDefinition[] colDefs = columnDisplayDefinitions.toArray(new ColumnDisplayDefinition[columnDisplayDefinitions.size()]);
 
       final StringBuffer text = new StringBuffer();
-      ResultAsTextLineCallback resultAsTextLineCallback = new ResultAsTextLineCallback()
-      {
-         @Override
-         public void addLine(String line)
-         {
-            text.append(line);
-         }
-      };
+      ResultAsTextLineCallback resultAsTextLineCallback = line -> text.append(line);
 
       ResultAsText resultAsText = new ResultAsText(colDefs, true, resultAsTextLineCallback);
 

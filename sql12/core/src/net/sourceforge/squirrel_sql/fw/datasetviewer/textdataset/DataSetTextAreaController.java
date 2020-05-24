@@ -23,14 +23,7 @@ public class DataSetTextAreaController
 
    public void init(ColumnDisplayDefinition[] colDefs, boolean showHeadings)
    {
-		ResultAsTextLineCallback resultAsTextLineCallback = new ResultAsTextLineCallback()
-		{
-			@Override
-			public void addLine(String line)
-			{
-				_outText.append(line);
-			}
-		};
+		ResultAsTextLineCallback resultAsTextLineCallback = line -> _outText.append(line);
 
 		_resultAsText = new ResultAsText(colDefs, showHeadings, resultAsTextLineCallback);
 

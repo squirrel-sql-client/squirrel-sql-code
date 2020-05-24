@@ -24,6 +24,10 @@ Brushed up the Data Look and feel Plugin;
 
 Bug fixes:
 
+#589 CLI (command line): Increase string display limit
+  The column width of CLI output as well as of text outputs was limited to 100 characters.
+  The limit is now 1000000 characters.
+
 Internationalization Plugin: On Java version later than 1.8.x the "Load bundles" function raised a ClassCastException.
   See menu File --> Global Preferences -> Tab "i18n administration".
   The Plugin, i.e. the functions of the "i18n administration" tab, offers support for translators of SQuirreL.

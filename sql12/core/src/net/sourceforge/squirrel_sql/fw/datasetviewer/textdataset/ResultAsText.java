@@ -38,7 +38,7 @@ public class ResultAsText
    private int _rowCount = 0;
    private ResultAsTextLineCallback _resultAsTextLineCallback;
 
-   private static final int MAX_CELL_WIDTH = 100;
+   private static final int MAX_CELL_WIDTH = 1000000;
 
    private int columns;
    private Table t;
