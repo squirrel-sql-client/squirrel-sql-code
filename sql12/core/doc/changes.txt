@@ -62,7 +62,7 @@ Merge Request #48: Use smooth text scaling of vertical buttons ("Aliases" and "D
   Thanks to Stanimir Stamenkov for the fix.
 
 
-4.1.0 (05/30/2020)
+4.1.0 (04/30/2020)
 ==================
 
 Enhancements:
