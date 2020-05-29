@@ -64,20 +64,6 @@ public interface IDataSetViewer
 	 */
 	ColumnDisplayDefinition[] getColumnDefinitions();
 
-	/**
-	 * Specify whether to show the column headings.
-	 *
-	 * @param	show	<TT>true</TT> if headibgs to be shown else <TT>false</TT>.
-	 */
-	void showHeadings(boolean show);
-
-	/**
-	 * Return whether to show the column headings.
-	 *
-	 * @return whether to show the column headings.
-	 */
-	boolean getShowHeadings();
-
 	void show(IDataSet ds) throws DataSetException;
 
 	void show(IDataSet ds, IMessageHandler msgHandler) throws DataSetException;

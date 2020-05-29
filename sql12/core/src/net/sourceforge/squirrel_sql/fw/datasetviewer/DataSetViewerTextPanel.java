@@ -46,7 +46,7 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 	public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs)
 	{
 		super.setColumnDefinitions(colDefs);
-		_dataSetTextAreaController.init(colDefs, getShowHeadings());
+		_dataSetTextAreaController.init(colDefs, true);
 
 //
 //    Making TextOutput editable didn't work since the fix of #1051 "SQL Results: Text" mode is not working in ver. 3.4

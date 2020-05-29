@@ -45,8 +45,7 @@ public class ResultAsText
    private CellStyle[] cellStyles;
    private String text;
 
-   public ResultAsText(final ColumnDisplayDefinition[] colDefs, final boolean showHeadings,
-                       final ResultAsTextLineCallback resultAsTextLineCallback)
+   public ResultAsText(final ColumnDisplayDefinition[] colDefs, final boolean showHeadings, final ResultAsTextLineCallback resultAsTextLineCallback)
    {
 
       this._colDefs = colDefs;

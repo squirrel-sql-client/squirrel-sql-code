@@ -34,11 +34,7 @@ import javax.swing.*;
 public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(BaseDataSetViewerDestination.class);
-
-	/** Specifies whether to show the column headings. */
-	private boolean _showHeadings = true;
+	private static ILogger s_log = LoggerController.createLogger(BaseDataSetViewerDestination.class);
 
 	private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
 
@@ -88,26 +84,6 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	public ColumnDisplayDefinition[] getColumnDefinitions()
 	{
 		return _colDefs;
-	}
-
-	/**
-	 * Specify whether to show the column headings.
-	 *
-	 * @param	show	<TT>true</TT> if headibgs to be shown else <TT>false</TT>.
-	 */
-	public void showHeadings(boolean show)
-	{
-		_showHeadings = show;
-	}
-
-	/**
-	 * Return whether to show the column headings.
-	 *
-	 * @return whether to show the column headings.
-	 */
-	public boolean getShowHeadings()
-	{
-		return _showHeadings;
 	}
 
 	public synchronized void show(IDataSet ds) throws DataSetException
