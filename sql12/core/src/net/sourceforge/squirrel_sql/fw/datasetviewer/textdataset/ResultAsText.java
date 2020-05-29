@@ -33,63 +33,61 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 
 public class ResultAsText
 {
+   private static final int MAX_CELL_WIDTH = 1000000;
 
    private ColumnDisplayDefinition[] _colDefs;
    private int _rowCount = 0;
    private ResultAsTextLineCallback _resultAsTextLineCallback;
 
-   private static final int MAX_CELL_WIDTH = 1000000;
-
-   private int columns;
-   private Table t;
-   private CellStyle[] cellStyles;
-   private String text;
+   private Table _table;
+   private CellStyle[] _cellStyles;
+   private String _text;
 
    public ResultAsText(final ColumnDisplayDefinition[] colDefs, final boolean showHeadings, final ResultAsTextLineCallback resultAsTextLineCallback)
    {
 
-      this._colDefs = colDefs;
-      this._rowCount = 0;
-      this._resultAsTextLineCallback = resultAsTextLineCallback;
+      _colDefs = colDefs;
+      _rowCount = 0;
+      _resultAsTextLineCallback = resultAsTextLineCallback;
 
-      this.columns = this._colDefs.length;
-      this.cellStyles = new CellStyle[this.columns];
-      for (int i = 0; i < this.columns; ++i)
+      _cellStyles = new CellStyle[_colDefs.length];
+      for (int i = 0; i < _colDefs.length; ++i)
       {
-         this.cellStyles[i] = getCellStyle(colDefs[i]);
+         _cellStyles[i] = getCellStyle(colDefs[i]);
       }
+
       if (showHeadings)
       {
-         this.t = new Table(this.columns, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.HEADER_AND_COLUMNS);
-         for (int i = 0; i < this.columns; ++i)
+         _table = new Table(_colDefs.length, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.HEADER_AND_COLUMNS);
+         for (int i = 0; i < _colDefs.length; ++i)
          {
-            this.t.addCell(colDefs[i].getColumnHeading(), this.cellStyles[i]);
+            _table.addCell(colDefs[i].getColumnHeading(), _cellStyles[i]);
          }
       }
       else
       {
-         this.t = new Table(this.columns, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.NONE);
+         _table = new Table(_colDefs.length, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.NONE);
       }
-      for (int i = 0; i < this.columns; ++i)
+      for (int i = 0; i < _colDefs.length; ++i)
       {
-         this.t.setColumnWidth(i, 1, MAX_CELL_WIDTH);
+         _table.setColumnWidth(i, 1, MAX_CELL_WIDTH);
       }
    }
 
    public void addRow(Object[] row)
    {
       this._rowCount++;
-      for (int i = 0; i < this.columns; ++i)
+      for (int i = 0; i < _colDefs.length; ++i)
       {
          String cellValue = CellComponentFactory.renderObject(row[i], this._colDefs[i]);
-         t.addCell(cellValue, this.cellStyles[i]);
+         _table.addCell(cellValue, _cellStyles[i]);
       }
    }
 
    public void clear()
    {
       this._rowCount = 0;
-      this.text = null;
+      this._text = null;
    }
 
    public int getRowCount()
@@ -105,11 +103,11 @@ public class ResultAsText
 
    public void close()
    {
-      if (this.text == null)
+      if (this._text == null)
       {
-         this.text = this.t.render();
+         this._text = _table.render();
       }
-      this._resultAsTextLineCallback.addLine(this.text);
+      this._resultAsTextLineCallback.addLine(this._text);
    }
 
    private CellStyle LEFT_ALIGN = new CellStyle(HorizontalAlign.LEFT, AbbreviationStyle.CROP, NullStyle.NULL_TEXT, false);
