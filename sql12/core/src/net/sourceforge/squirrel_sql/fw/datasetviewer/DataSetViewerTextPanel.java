@@ -27,8 +27,7 @@ import java.awt.*;
 public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 {
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DataSetViewerTextPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataSetViewerTextPanel.class);
 
 
 	private DataSetTextAreaController _dataSetTextAreaController = new DataSetTextAreaController();

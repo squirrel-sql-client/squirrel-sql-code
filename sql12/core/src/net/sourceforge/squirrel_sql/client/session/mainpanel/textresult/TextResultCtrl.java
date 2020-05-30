@@ -11,8 +11,7 @@ import java.awt.*;
 
 public class TextResultCtrl implements LazyTabControllerCtrl
 {
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(TextResultCtrl.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TextResultCtrl.class);
 
 
    private final DataSetTextAreaController _dataSetTextAreaController;

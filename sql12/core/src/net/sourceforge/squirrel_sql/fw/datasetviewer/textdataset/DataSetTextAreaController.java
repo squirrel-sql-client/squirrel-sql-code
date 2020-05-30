@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
@@ -11,9 +13,7 @@ import java.util.Arrays;
 
 public class DataSetTextAreaController
 {
-
-	private DataSetTextArea _outText = null;
-   private ColumnDisplayDefinition[] _colDefs;
+	private DataSetTextArea _outText;
 	private ResultAsText _resultAsText;
 
 	public DataSetTextAreaController()
@@ -25,11 +25,23 @@ public class DataSetTextAreaController
    {
 		ResultAsTextLineCallback resultAsTextLineCallback = line -> _outText.append(line);
 
-		_resultAsText = new ResultAsText(colDefs, showHeadings, resultAsTextLineCallback);
-
+		_resultAsText = new ResultAsText(colDefs, showHeadings, isShowRowNumberInTextLayout(),resultAsTextLineCallback);
    }
 
-   public void clear()
+	private boolean isShowRowNumberInTextLayout()
+	{
+		boolean showRowNumberInTextLayout = Main.getApplication().getSquirrelPreferences().getSessionProperties().getShowRowNumberInTextLayout();
+
+		final ISession activeSession = Main.getApplication().getSessionManager().getActiveSession();
+		if (null != activeSession)
+		{
+			showRowNumberInTextLayout = activeSession.getProperties().getShowRowNumberInTextLayout();
+		}
+
+		return showRowNumberInTextLayout;
+	}
+
+	public void clear()
 	{
 		_outText.setText("");
 		if (null != _resultAsText)
@@ -71,10 +83,4 @@ public class DataSetTextAreaController
 	{
 		return _resultAsText.getRowCount();
 	}
-
-
-//   public TextPopupMenu getPopupMenu()
-//   {
-//      return _outText.getPopupMenu();
-//   }
 }

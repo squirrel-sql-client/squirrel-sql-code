@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#1438 (in bugs): Row numbers can be shown in text layout
+  To switch on row numbers in text layout see menu File --> New Session Properties --> tab General --> checkbox at the bottom of panel
+
 SQL Scripts Plugin: Improved names and tool tips of the scripting functions of Object tree's right mouse menu.
 
 Command line interface (CLI):

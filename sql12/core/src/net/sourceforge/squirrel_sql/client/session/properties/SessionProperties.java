@@ -93,6 +93,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String SQL_STATEMENT_SEPARATOR_STRING = "sqlStatementSeparatorString";
       String TABLE_CONTENTS_OUTPUT_CLASS_NAME = "tableContentsOutputClassName";
       String KEEP_TABLE_LAYOUT_ON_RERUN = "keepTableLayoutOnRerun";
+      String SHOW_ROW_NUMBERS_IN_TEXT_LAYOUT = "showRowNumberInTextLayout";
       String LIMIT_SQL_RESULT_TABS = "limitSqlResultTabs";
       String REMOVE_MULTI_LINE_COMMENT = "removeMultiLineComment";
       String SQL_USE_FETCH_SIZE = "sqlUseFetchSize";
@@ -253,13 +254,11 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
     */
    private boolean _loadColumnsInBackground;
 
+   private boolean _keepTableLayoutOnRerun = true;
+   private boolean _showRowNumberInTextLayout;
 
    /** Should the number of SQL result tabs be limited?. */
    private boolean _limitSqlResultTabs = true;
-
-
-   private boolean _keepTableLayoutOnRerun;
-
 
    /**
     * The maximum number of open result tabs.
@@ -1079,10 +1078,21 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
 
    public synchronized void setKeepTableLayoutOnRerun(boolean data)
    {
-      final boolean oldValue = _keepTableLayoutOnRerun;
+      boolean oldValue = _keepTableLayoutOnRerun;
       _keepTableLayoutOnRerun = data;
-      getPropertyChangeReporter().firePropertyChange(IPropertyNames.KEEP_TABLE_LAYOUT_ON_RERUN,
-                                    oldValue, _keepTableLayoutOnRerun);
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.KEEP_TABLE_LAYOUT_ON_RERUN, oldValue, _keepTableLayoutOnRerun);
+   }
+
+   public boolean getShowRowNumberInTextLayout()
+   {
+      return _showRowNumberInTextLayout;
+   }
+
+   public synchronized void setShowRowNumberInTextLayout(boolean data)
+   {
+      boolean oldValue = _showRowNumberInTextLayout;
+      _showRowNumberInTextLayout = data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_ROW_NUMBERS_IN_TEXT_LAYOUT, oldValue, _showRowNumberInTextLayout);
    }
 
 

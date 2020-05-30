@@ -74,6 +74,8 @@ public class GeneralSessionPropertiesPanel
 		String EDITABLE_TABLE = s_stringMgr.getString("generalSessionPropertiesPanel.editableTable");
       // i18n[generalSessionPropertiesPanel.chkKeepTableLayoutOnRerun=Keep table layout on rerun SQL]
       String KEEP_TABLE_LAYOUT_ON_RERUN= s_stringMgr.getString("generalSessionPropertiesPanel.chkKeepTableLayoutOnRerun");
+
+      String SHOW_ROW_NUMBERS_IN_TEXT_LAYOUT= s_stringMgr.getString("generalSessionPropertiesPanel.chkShowRowNumberInTextLayout");
       // i18n[generalSessionPropertiesPanel.text=Text]
 		String TEXT = s_stringMgr.getString("generalSessionPropertiesPanel.text");
 
@@ -153,6 +155,7 @@ public class GeneralSessionPropertiesPanel
 		private OutputTypeCombo _metaDataCmb = new OutputTypeCombo(false);
 		private OutputTypeCombo _sqlResultsCmb = new OutputTypeCombo(true);
 		private JCheckBox _chkKeepTableLayoutOnRerun = new JCheckBox();
+		private JCheckBox _chkShowRowNumberInTextLayout = new JCheckBox();
 		private OutputTypeCombo _tableContentsCmb = new OutputTypeCombo(true);
 		private SplitPaneOrientationCombo _splitPaneOrientationCmb = new SplitPaneOrientationCombo();
 
@@ -247,6 +250,7 @@ public class GeneralSessionPropertiesPanel
 			_metaDataCmb.selectClassName(props.getMetaDataOutputClassName());
 			_sqlResultsCmb.selectClassName(props.getSQLResultsOutputClassName());
 			_chkKeepTableLayoutOnRerun.setSelected(props.getKeepTableLayoutOnRerun());
+			_chkShowRowNumberInTextLayout.setSelected(props.getShowRowNumberInTextLayout());
 			_tableContentsCmb.selectClassName(props.getTableContentsOutputClassName());
 		}
 
@@ -256,6 +260,7 @@ public class GeneralSessionPropertiesPanel
 			props.setMetaDataOutputClassName(_metaDataCmb.getSelectedClassName());
 			props.setSQLResultsOutputClassName(_sqlResultsCmb.getSelectedClassName());
 			props.setKeepTableLayoutOnRerun(_chkKeepTableLayoutOnRerun.isSelected());
+			props.setShowRowNumberInTextLayout(_chkShowRowNumberInTextLayout.isSelected());
 			props.setTableContentsOutputClassName(_tableContentsCmb.getSelectedClassName());
 
 			TabPlacement tp = (TabPlacement)_mainTabPlacementCmb.getSelectedItem();
@@ -414,6 +419,13 @@ public class GeneralSessionPropertiesPanel
          gbc.gridwidth = 2;
          _chkKeepTableLayoutOnRerun.setText(GeneralSessionPropertiesPanelI18n.KEEP_TABLE_LAYOUT_ON_RERUN);
          pnl.add(_chkKeepTableLayoutOnRerun, gbc);
+
+			++gbc.gridy;
+         gbc.gridx = 0;
+			gbc.weightx = 1;
+         gbc.gridwidth = 2;
+         _chkShowRowNumberInTextLayout.setText(GeneralSessionPropertiesPanelI18n.SHOW_ROW_NUMBERS_IN_TEXT_LAYOUT);
+         pnl.add(_chkShowRowNumberInTextLayout, gbc);
 
 			return pnl;
 		}

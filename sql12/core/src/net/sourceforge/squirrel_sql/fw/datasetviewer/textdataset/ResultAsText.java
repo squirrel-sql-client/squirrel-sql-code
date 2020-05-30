@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset;
 
-import java.sql.Types;
-
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.CellStyle.AbbreviationStyle;
@@ -10,8 +12,7 @@ import org.nocrala.tools.texttablefmt.CellStyle.NullStyle;
 import org.nocrala.tools.texttablefmt.ShownBorders;
 import org.nocrala.tools.texttablefmt.Table;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import java.sql.Types;
 
 //drop table t;
 //
@@ -33,6 +34,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 
 public class ResultAsText
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultAsText.class);
+
+
    private static final int MAX_CELL_WIDTH = 1000000;
 
    private ColumnDisplayDefinition[] _colDefs;
@@ -43,11 +47,18 @@ public class ResultAsText
    private CellStyle[] _cellStyles;
    private String _text;
 
-   public ResultAsText(final ColumnDisplayDefinition[] colDefs, final boolean showHeadings, final ResultAsTextLineCallback resultAsTextLineCallback)
-   {
+   private boolean _showRowNumbers;
 
+   public ResultAsText(ColumnDisplayDefinition[] colDefs, boolean showHeadings, ResultAsTextLineCallback resultAsTextLineCallback)
+   {
+      this(colDefs, showHeadings, false, resultAsTextLineCallback);
+   }
+
+   public ResultAsText(ColumnDisplayDefinition[] colDefs, boolean showHeadings, boolean showRowNumbers, ResultAsTextLineCallback resultAsTextLineCallback)
+   {
       _colDefs = colDefs;
       _rowCount = 0;
+      _showRowNumbers = showRowNumbers;
       _resultAsTextLineCallback = resultAsTextLineCallback;
 
       _cellStyles = new CellStyle[_colDefs.length];
@@ -58,7 +69,17 @@ public class ResultAsText
 
       if (showHeadings)
       {
-         _table = new Table(_colDefs.length, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.HEADER_AND_COLUMNS);
+         if (_showRowNumbers)
+         {
+            _table = new Table(_colDefs.length + 1, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.HEADER_AND_COLUMNS);
+
+            _table.addCell(s_stringMgr.getString("ResultAsText.rowNumber"), RIGHT_ALIGN);
+         }
+         else
+         {
+            _table = new Table(_colDefs.length, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.HEADER_AND_COLUMNS);
+         }
+
          for (int i = 0; i < _colDefs.length; ++i)
          {
             _table.addCell(colDefs[i].getColumnHeading(), _cellStyles[i]);
@@ -66,8 +87,17 @@ public class ResultAsText
       }
       else
       {
-         _table = new Table(_colDefs.length, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.NONE);
+         if (_showRowNumbers)
+         {
+            _table = new Table(_colDefs.length + 1, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.NONE);
+         }
+         else
+         {
+            _table = new Table(_colDefs.length, BorderStyle.DESIGN_FORMAL_WIDE, ShownBorders.NONE);
+         }
       }
+
+
       for (int i = 0; i < _colDefs.length; ++i)
       {
          _table.setColumnWidth(i, 1, MAX_CELL_WIDTH);
@@ -76,7 +106,13 @@ public class ResultAsText
 
    public void addRow(Object[] row)
    {
-      this._rowCount++;
+      _rowCount++;
+
+      if (_showRowNumbers)
+      {
+         _table.addCell(Integer.toString(_rowCount), RIGHT_ALIGN);
+      }
+
       for (int i = 0; i < _colDefs.length; ++i)
       {
          String cellValue = CellComponentFactory.renderObject(row[i], this._colDefs[i]);
@@ -86,13 +122,13 @@ public class ResultAsText
 
    public void clear()
    {
-      this._rowCount = 0;
+      _rowCount = 0;
       this._text = null;
    }
 
    public int getRowCount()
    {
-      return this._rowCount;
+      return _rowCount;
    }
 
    public String getText()
