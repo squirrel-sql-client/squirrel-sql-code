@@ -500,6 +500,10 @@ public class LAFRegister
 				String jarNames = rsrc.getString(LAFPluginResources.IKeys.JARS + i);
 				if (jarNames == null || jarNames.length() == 0)
 				{
+					jarNames = rsrc.getString(LAFPluginResources.IKeys.JAR + i);
+				}
+				if (jarNames == null || jarNames.length() == 0)
+				{
 					break;
 				}
 
