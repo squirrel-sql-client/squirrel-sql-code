@@ -19,7 +19,7 @@ controls. It ships with the following Look and Feel implementations:</P>
     	<A HREF="http://www.infonode.net/">http://www.infonode.net/</A>
    	</LI>
    	
-	<LI>JGoodies Looks 2.1pre4 -
+	<LI>JGoodies Looks 2.5.3 -
     	<A HREF="http://www.jgoodies.com/">http://www.jgoodies.com</A>
    	</LI>
 
@@ -39,10 +39,6 @@ controls. It ships with the following Look and Feel implementations:</P>
 	   <A HREF="http://personales.ya.com/nimrod/index-en.html">http://personales.ya.com/nimrod/index-en.html</A>
    </LI>
 
-	<LI>Oyoaha 3.0rc1 -
-	   <A HREF="http://www.oyoaha.com/">http://www.oyoaha.com</A>
-	</LI>
-	
 	<LI>Skin 1.2.9 -
 	   <A HREF="http://www.l2fprod.com/">http://www.l2fprod.com</A>
 	</LI>
@@ -58,11 +54,9 @@ controls. It ships with the following Look and Feel implementations:</P>
 	<LI>The SwingSet theme - See the SwingSet demo of JDK 1.4.x</P>
 </UL>
 
-<p>The Oyoaha and Metouia Look &amp; Feels do not work under Java 6 and
-later.</p>
 
 <p>
-The &quot;Allow L&amp;F to set tilebar and window borders &quot;
+The &quot;Allow L&amp;F to set tilebar and window borders&quot;
 checkbox allows you to specify whether the Look and Feel can set
 these, otherwise the Window Manager will set them. This setting
 only takes effect for newly created windows.
@@ -76,31 +70,43 @@ specify the fonts used for various controls in SQuirreL. If you are
 using one of the Plastic Look and Feels it is suggested that you
 don't specify fonts on the Fonts Preferences Tab as these Look and
 Feels do a good job of specifying default fonts.</P>
-<P>Both the Skin and Oyoaha Look and Feels allow the use of &quot;skins&quot;.
+<P>The Skin Look and Feel allows the use of &quot;skins&quot;.
 Skin Look and Feel themepacks should be placed in the
 plugins/laf/skinlf-theme-packs directory within the SQuirreL program
-directory and Oyoaha themes should be placed in the directory
-plugins/laf/oyoaha-theme-packs.</P>
+directory.</P>
 <P>If you have other Look and Feel implementations that you would
 like to use with SQuirreL drop the jar files into the directory</P>
-<P>~/.squirrel-sql/plugins/laf/extralafs</P>
-<P>where ~ is your home directory. This directory will be created (if
+<pre>~/.squirrel-sql/plugins/laf/extralafs</pre>
+<P>where <code>~</code> is your home directory. This directory will be created (if
 it doesn't exist) the first time you run SQuirreL with the Look and
 Feel plugin installed. Then use a text editor to enter information
 about the new Look and Feel in the file</P>
-<P>~/.squirrel-sql/plugins/laf/extralafs/extralafs.properties</P>
-<P>Each new Look and Feel should have a line in extralafs.properties
-classnameX=LookAndFeelClassname which specifies the class name of the
+<pre>~/.squirrel-sql/plugins/laf/extralafs/extralafs.properties</pre>
+<P>Each new Look and Feel should have a line in <code>extralafs.properties</code>
+<code>classnameX=LookAndFeelClassname</code> which specifies the class name of the
 Look and Feel (consult the documentation that came with your new Look
-and Feel for this information) and an line jarX=JarFIleName which
+and Feel for this information) and an line <code>jarX=JarFIleName</code> which
 specifies the name of the jar (or zip) file that contains the Look
-and Feel. Replace X with 0 for the first Look and Feel specified, 1
-for the second etc.</P>
+and Feel. Replace <code>X</code> with <code>0</code> for the first Look and Feel
+specified, <code>1</code> for the second etc.</P>
 <P>Here is an example:</P>
 
 <pre>
 classname0=com.incors.plaf.kunststoff.KunststoffLookAndFeel
 jar0=kunststoff.jar
 </pre>
+
+<p>Multiple JARs may be specified by separating them with <code>;</code>
+(semicolon):</p>
+
+<pre>
+classname0=com.github.weisj.darklaf.DarkLaf
+jars0=darklaf-core.jar;darklaf-theme.jar;...
+</pre>
+
+<p>Note, the <code>jarX</code> prefix has been changed to <code>jarsX</code>.
+The former is still supported for backward compatibility with existing
+configurations.</p>
+
 </BODY>
 </HTML>

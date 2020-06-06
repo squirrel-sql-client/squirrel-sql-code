@@ -27,6 +27,10 @@ Brushed up the Data Look and feel Plugin;
 
 Bug fixes:
 
+#1441 Look and Feel (L&F) Plugin: Extra LaFs not shown
+  For information on how to add external Look and Feels consult the Look and Feel Plugin's section in SQuirreL's help.
+  Thanks to Stanimir Stamenkov for the fix.
+
 #589 CLI (command line): Increase string display limit
   The column width of CLI output as well as of text outputs was limited to 100 characters.
   The limit is now 1000000 characters.
