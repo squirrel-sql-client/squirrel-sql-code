@@ -27,6 +27,8 @@ Brushed up the Data Look and feel Plugin;
 
 Bug fixes:
 
+Change tracking: Improved right gutter to vertical scrollbar synchronization.
+
 #1441 Look and Feel (L&F) Plugin: Extra LaFs not shown
   For information on how to add external Look and Feels consult the Look and Feel Plugin's section in SQuirreL's help.
   Thanks to Stanimir Stamenkov for the fix.

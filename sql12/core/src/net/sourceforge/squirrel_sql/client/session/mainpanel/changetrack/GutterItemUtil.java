@@ -68,8 +68,37 @@ public class GutterItemUtil
          ret.width = ChangeTrackPanel.RIGHT_GUTTER_WIDTH;
 
 
-         double doubleY = (double) changeTrackPanel.trackingGutterRight.getHeight() * ((double) ret.y / (double) sqlEntry.getTextComponent().getHeight());
-         double doubleHeight = (double) changeTrackPanel.trackingGutterRight.getHeight() * ((double) ret.height / (double) sqlEntry.getTextComponent().getHeight());
+         int gutterHeight;
+         int gutterOffSet;
+
+         ////////////////////////////////////////////////////////////////////////////////////
+         // BEGIN: Heuristics to improve right gutter to vertical scrollbar synchronization
+         if (sqlEntry.getTextAreaEmbeddedInScrollPane().getVerticalScrollBar().getVisibleAmount() < sqlEntry.getTextComponent().getHeight())
+         {
+            // Vertical scrollbar is visible --> All gutter entries will be constraint to the possible positions of the scrollbar's slider.
+
+            // Supposes that the width of the Scrollbar matches the height of the scrollbar's up/down buttons
+            gutterOffSet = sqlEntry.getTextAreaEmbeddedInScrollPane().getVerticalScrollBar().getWidth();
+
+            gutterHeight = changeTrackPanel.trackingGutterRight.getHeight() - 2 * gutterOffSet;
+
+            if(sqlEntry.getTextAreaEmbeddedInScrollPane().getHorizontalScrollBar().isVisible())
+            {
+               gutterHeight -= gutterOffSet;
+            }
+         }
+         else
+         {
+            // Vertical scrollbar is NOT visible --> Right gutter matches editor exactly.
+
+            gutterHeight = changeTrackPanel.trackingGutterRight.getHeight();
+            gutterOffSet = 0;
+         }
+         // END: Heuristics to improve right gutter to vertical scrollbar synchronization
+         ////////////////////////////////////////////////////////////////////////////////////
+
+         double doubleY = (double) gutterHeight * ((double) ret.y / (double) sqlEntry.getTextComponent().getHeight()) + gutterOffSet;
+         double doubleHeight = (double) gutterHeight * ((double) ret.height / (double) sqlEntry.getTextComponent().getHeight());
 
          ret.y = (int) doubleY;
          ret.height = Math.max((int) doubleHeight, 2);
