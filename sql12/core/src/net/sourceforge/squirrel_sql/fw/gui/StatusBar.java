@@ -169,7 +169,7 @@ public class StatusBar extends JPanel
 		// up all available space.
 		_gbc.anchor = GridBagConstraints.WEST;
 		_gbc.weightx = 1.0;
-		_gbc.fill = GridBagConstraints.HORIZONTAL;
+		_gbc.fill = GridBagConstraints.BOTH;
 		_gbc.gridy = 0;
 		_gbc.gridx = 0;
 		addJComponent(_pnlLabelOrProgress);
