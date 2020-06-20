@@ -139,6 +139,8 @@ public class CatalogsPanel extends JPanel
 		setPreferredSize(prefSize);
 		setMaximumSize(prefSize);
 
+		setOpaque(false);
+
 		setVisible(true);
 
 		_parent.validate();
