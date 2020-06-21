@@ -141,7 +141,7 @@ public class StatusBar extends JPanel
 			comp.setFont(_font);
 			updateSubcomponentsFont(comp);
 		}
-		comp.setOpaque(false);
+		GUIUtils.inheritBackground(comp);
 		super.add(comp, _gbc);
 	}
 

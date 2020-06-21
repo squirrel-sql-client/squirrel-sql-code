@@ -139,7 +139,7 @@ public class CatalogsPanel extends JPanel
 		setPreferredSize(prefSize);
 		setMaximumSize(prefSize);
 
-		setOpaque(false);
+		GUIUtils.inheritBackground(this);
 
 		setVisible(true);
 

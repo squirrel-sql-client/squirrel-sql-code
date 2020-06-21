@@ -40,6 +40,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -58,12 +59,14 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -959,4 +962,50 @@ public class GUIUtils
 		comp.setMinimumSize(new Dimension(comp.getMinimumSize().width, height));
 		return comp;
 	}
+
+   public static void inheritBackground(Component comp)
+   {
+      if (comp instanceof JComponent)
+         ((JComponent) comp).setOpaque(false);
+
+      Color original = comp.isBackgroundSet() ? comp.getBackground() : null;
+      Runnable updateBackground = () ->
+      {
+         Component parent = comp.getParent();
+         comp.setBackground(parent != null && parent.isBackgroundSet()
+                            ? parent.getBackground()
+                            : original);
+      };
+
+      PropertyChangeListener backgroundListener = evt -> updateBackground.run();
+
+      comp.addHierarchyListener(evt ->
+      {
+         if ((evt.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) == 0)
+            return;
+
+         if (evt.getChanged() != comp)
+            return;
+
+         Container previous = evt.getChangedParent();
+         Container current = comp.getParent();
+
+         if (previous != current && previous != null)
+         {
+            previous.removePropertyChangeListener("background", backgroundListener);
+         }
+
+         if (current != null)
+         {
+            current.addPropertyChangeListener("background", backgroundListener);
+            updateBackground.run();
+         }
+      });
+
+      if (comp.getParent() != null)
+      {
+         comp.getParent().addPropertyChangeListener(backgroundListener);
+         updateBackground.run();
+      }
+   }
 }
