@@ -421,6 +421,7 @@ public class MainFrame extends JFrame
 			setLocation(new Point(10, 10));
 		}
 		setExtendedState(ws.getFrameExtendedState());
+		SwingUtilities.invokeLater(() -> setExtendedState(ws.getFrameExtendedState()));
 	}
 
    public JMenu getWindowsMenu()
