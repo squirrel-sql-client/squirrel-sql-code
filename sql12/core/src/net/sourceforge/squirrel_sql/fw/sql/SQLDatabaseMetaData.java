@@ -41,6 +41,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -2017,7 +2018,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	private DatabaseMetaData privateGetJDBCMetaData() throws SQLException
 	{
 		checkThread();
-		return _conn.getConnection().getMetaData();
+		return MetaDataTimeOutProxyFactory.wrap(_conn.getConnection().getMetaData());
 	}
 
 	/**

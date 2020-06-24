@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -288,7 +289,7 @@ public class TableFrameController
       {
          if(TableFramesModelChangeType.TABLE == changeType)
          {
-            DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
+            DatabaseMetaData metaData = MetaDataTimeOutProxyFactory.wrap(_session.getSQLConnection().getConnection().getMetaData());
             completeConstraints(metaData);
          }
       }
@@ -384,7 +385,7 @@ public class TableFrameController
    private boolean initFromDB()
       throws SQLException
    {
-      DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
+      DatabaseMetaData metaData = MetaDataTimeOutProxyFactory.wrap(_session.getSQLConnection().getConnection().getMetaData());
 
       ArrayList<ColumnInfo> colInfosBuf = GraphUtil.createColumnInfos(_session, _catalog, _schema, _tableName);
 
@@ -987,7 +988,7 @@ public class TableFrameController
    {
       try
       {
-         DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
+         DatabaseMetaData metaData = MetaDataTimeOutProxyFactory.wrap(_session.getSQLConnection().getConnection().getMetaData());
 
 
          if(null == _tablesExportedTo)

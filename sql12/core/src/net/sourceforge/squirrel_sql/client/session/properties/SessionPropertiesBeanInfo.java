@@ -132,6 +132,9 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 						new PropertyDescriptor(IPropNames.LOAD_COLUMNS_IN_BACKGROUND, SessionProperties.class,
 							"getLoadColumnsInBackground", "setLoadColumnsInBackground"),
 
+						new PropertyDescriptor(IPropNames.META_DATA_LOADING_TIME_OUT, SessionProperties.class,
+							"getMetaDataLoadingTimeOut", "setMetaDataLoadingTimeOut"),
+
                   new PropertyDescriptor(IPropNames.SQL_READ_ON, SessionProperties.class,
                         "getSQLReadOn", "setSQLReadOn"),
 

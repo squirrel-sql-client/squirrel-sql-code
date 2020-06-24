@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Option to keep Sessions from hanging or delaying when JDBC driver and/or database connection hangs or delays occur.
+  See menu File --> New Session Properties --> tab SQL --> section "Meta data loading".
+
 #1438 (in bugs): Row numbers can be shown in text layout
   To switch on row numbers in text layout see menu File --> New Session Properties --> tab General --> checkbox at the bottom of panel
 

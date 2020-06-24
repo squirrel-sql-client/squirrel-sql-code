@@ -54,6 +54,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String SHOW_SQL_ERRORS_IN_TAB = "showSQLErrorsInTab";
       String WRITE_SQL_ERRORS_TO_LOG = "writeSQLErrorsToLog";
       String LOAD_COLUMNS_IN_BACKGROUND = "loadColumnsInBackground";
+      String META_DATA_LOADING_TIME_OUT = "timeOutMetaDataLoading";
       String AUTO_COMMIT = "autoCommit";
 
       String CATALOG_FILTER_INCLUDE = "catalogFilterInclude";
@@ -253,6 +254,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
     * @see SchemaInfo.loadColumns()
     */
    private boolean _loadColumnsInBackground;
+   private long _useMetaDataLoadingTimeOut;
 
    private boolean _keepTableLayoutOnRerun = true;
    private boolean _showRowNumberInTextLayout;
@@ -503,9 +505,22 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       if (_loadColumnsInBackground != value)
       {
          _loadColumnsInBackground = value;
-         getPropertyChangeReporter().firePropertyChange(
-            IPropertyNames.LOAD_COLUMNS_IN_BACKGROUND,
-            !_loadColumnsInBackground, _loadColumnsInBackground);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.LOAD_COLUMNS_IN_BACKGROUND, !_loadColumnsInBackground, _loadColumnsInBackground);
+      }
+   }
+
+   public long getMetaDataLoadingTimeOut()
+   {
+      return _useMetaDataLoadingTimeOut;
+   }
+
+   public void setMetaDataLoadingTimeOut(long value)
+   {
+      if (_useMetaDataLoadingTimeOut != value)
+      {
+         long oldValue = _useMetaDataLoadingTimeOut;
+         _useMetaDataLoadingTimeOut = value;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.META_DATA_LOADING_TIME_OUT, oldValue, _useMetaDataLoadingTimeOut);
       }
    }
 

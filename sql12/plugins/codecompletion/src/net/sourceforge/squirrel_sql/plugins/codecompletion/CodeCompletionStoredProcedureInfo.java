@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.PrefixedConfig;
 
@@ -126,7 +127,8 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 	{
 		if (null == _params)
 		{
-			ResultSet res = _session.getSQLConnection().getConnection().getMetaData().getProcedureColumns(_catalog, _schema, _procName, null);
+			final DatabaseMetaData databaseMetaData = MetaDataTimeOutProxyFactory.wrap(_session.getSQLConnection().getConnection().getMetaData(), _session);
+			ResultSet res = databaseMetaData.getProcedureColumns(_catalog, _schema, _procName, null);
 
 			Vector<String> ret = new Vector<String>();
 			while (res.next())

@@ -24,7 +24,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,14 +32,16 @@ import java.awt.event.ActionListener;
 
 class SQLPropertiesPanel extends JPanel
 {
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(SQLPropertiesPanel.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLPropertiesPanel.class);
 
 
    private JCheckBox _abortOnErrorChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.abortonerror"));
    private JCheckBox _showSQLErrorsInTabChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.showSQLErrorsInTab"));
    private JCheckBox _writeSQLErrorsToLogChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.writesqlerrorstolog"));
    private JCheckBox _loadColumsInBackgroundChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.loadColumsInBackground"));
+
+   private IntegerField _metaDataLoadingTimeOutTxt = new IntegerField(8, 0);
+
    private JCheckBox _autoCommitChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.autocommit"));
    private JCheckBox _commitOnClose = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.commitonclose"));
 
@@ -91,6 +92,7 @@ class SQLPropertiesPanel extends JPanel
       _showSQLErrorsInTabChk.setSelected(props.getShowSQLErrorsInTab());
       _writeSQLErrorsToLogChk.setSelected(props.getWriteSQLErrorsToLog());
       _loadColumsInBackgroundChk.setSelected(props.getLoadColumnsInBackground());
+      _metaDataLoadingTimeOutTxt.setInt((int)props.getMetaDataLoadingTimeOut());
 
       _autoCommitChk.setSelected(props.getAutoCommit());
       _commitOnClose.setSelected(props.getCommitOnClosingConnection());
@@ -167,6 +169,7 @@ class SQLPropertiesPanel extends JPanel
       props.setShowSQLErrorsInTab(_showSQLErrorsInTabChk.isSelected());
       props.setWriteSQLErrorsToLog(_writeSQLErrorsToLogChk.isSelected());
       props.setLoadColumnsInBackground(_loadColumsInBackgroundChk.isSelected());
+      props.setMetaDataLoadingTimeOut(_metaDataLoadingTimeOutTxt.getInt());
       props.setAutoCommit(_autoCommitChk.isSelected());
       props.setCommitOnClosingConnection(_commitOnClose.isSelected());
 
@@ -318,7 +321,7 @@ class SQLPropertiesPanel extends JPanel
       ++gbc.gridy; // new line
       gbc.gridx = 0;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
-      pnl.add(createLoadColumnsInBackkgroundPanel(), gbc);
+      pnl.add(createMetdDataHandlingPanel(), gbc);
 
 
       if (null != _session)
@@ -360,20 +363,47 @@ class SQLPropertiesPanel extends JPanel
       return pnl;
    }
 
-   private JPanel createLoadColumnsInBackkgroundPanel()
+   private JPanel createMetdDataHandlingPanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
       GridBagConstraints gbc;
 
+      JPanel columnLoading = new JPanel(new GridBagLayout());
+
       gbc = new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
       String loadColsInBackgroundDescription = s_stringMgr.getString("SessionSQLPropertiesPanel.loadColsInBackgroundDescription");
-      ret.add(new MultipleLineLabel(loadColsInBackgroundDescription), gbc);
+      columnLoading.add(new MultipleLineLabel(loadColsInBackgroundDescription), gbc);
 
       gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
-      ret.add(_loadColumsInBackgroundChk, gbc);
+      columnLoading.add(_loadColumsInBackgroundChk, gbc);
 
-      ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.columnLoading")));
+      columnLoading.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.columnLoading")));
+
+      gbc = new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
+      ret.add(columnLoading, gbc);
+
+
+
+      JPanel metaDataTimeOut = new JPanel(new GridBagLayout());
+
+      gbc = new GridBagConstraints(0, 0, 2, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
+      String metaDataTimeOutDescription = s_stringMgr.getString("SessionSQLPropertiesPanel.metaDataTimeOutDescription");
+      metaDataTimeOut.add(new MultipleLineLabel(metaDataTimeOutDescription), gbc);
+
+      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      metaDataTimeOut.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.metaDataTimeOutMillis")), gbc);
+
+      gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0);
+      metaDataTimeOut.add(_metaDataLoadingTimeOutTxt, gbc);
+
+      metaDataTimeOut.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.metaDataLoading")));
+
+
+      gbc = new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
+      ret.add(metaDataTimeOut, gbc);
+
+      ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.metaDataHandling")));
 
       return ret;
    }
