@@ -48,6 +48,7 @@ public class ButtonChooser
          palette.setBorder(BorderFactory.createEmptyBorder());
          palette.setFloatable(false);
          palette.setRollover(true);
+         GUIUtils.inheritBackground(palette);
          _container = palette;
       }
       else

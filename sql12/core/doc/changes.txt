@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge request #53: Improved session-coloring
+  Note: Session coloring can be adjusted by right click on Alias --> Alias Properties --> tab Color
+  Thanks to Stanimir Stamenkov for the patch.
+
 Option to keep Sessions from hanging or delaying when JDBC driver and/or database connection hangs or delays occur.
   See menu File --> New Session Properties --> tab SQL --> section "Meta data loading".
 

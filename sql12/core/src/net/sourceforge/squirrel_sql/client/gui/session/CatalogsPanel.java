@@ -139,6 +139,8 @@ public class CatalogsPanel extends JPanel
 		setPreferredSize(prefSize);
 		setMaximumSize(prefSize);
 
+		GUIUtils.inheritBackground(this);
+
 		setVisible(true);
 
 		_parent.validate();

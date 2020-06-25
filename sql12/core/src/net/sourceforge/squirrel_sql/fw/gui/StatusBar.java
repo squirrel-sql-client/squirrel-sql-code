@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.awt.*;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
+import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
 /**
  * This is a statusbar component with a text control for messages.
@@ -141,15 +141,52 @@ public class StatusBar extends JPanel
 			comp.setFont(_font);
 			updateSubcomponentsFont(comp);
 		}
+		GUIUtils.inheritBackground(comp);
 		super.add(comp, _gbc);
 	}
 
 	public static Border createComponentBorder()
 	{
 		return BorderFactory.createCompoundBorder(
-			BorderFactory.createBevelBorder(BevelBorder.LOWERED),
+			thinLoweredBevel,
 			BorderFactory.createEmptyBorder(0, 4, 0, 4));
 	}
+
+	private static Border thinLoweredBevel = new AbstractBorder()
+	{
+		@Override public boolean isBorderOpaque() { return true; }
+
+		@Override public Insets getBorderInsets(Component c, Insets insets)
+		{
+			insets.top = insets.bottom = insets.left = insets.right = 1;
+			return insets;
+		}
+
+		@Override public void paintBorder(Component c, Graphics g, int x, int y, int width, int height)
+		{
+			Color oldColor = g.getColor();
+			int right = x + width - 1;
+			int bottom = y + height - 1;
+
+			g.translate(x, y);
+
+			Color darker = c.getBackground().darker();
+			Color brighter = c.getBackground().brighter();
+
+			g.setColor(darker);
+			g.drawLine(x, y, right, y);
+			g.setColor(brighter);
+			g.drawLine(x, bottom, right, bottom);
+
+			g.setColor(darker);
+			g.drawLine(x, y, x, bottom);
+			g.setColor(brighter);
+			g.drawLine(right, y, right, bottom);
+
+			g.translate(-x, -y);
+			g.setColor(oldColor);
+		}
+	};
 
 	private void createGUI()
 	{
@@ -168,7 +205,7 @@ public class StatusBar extends JPanel
 		// up all available space.
 		_gbc.anchor = GridBagConstraints.WEST;
 		_gbc.weightx = 1.0;
-		_gbc.fill = GridBagConstraints.HORIZONTAL;
+		_gbc.fill = GridBagConstraints.BOTH;
 		_gbc.gridy = 0;
 		_gbc.gridx = 0;
 		addJComponent(_pnlLabelOrProgress);
@@ -177,6 +214,7 @@ public class StatusBar extends JPanel
 		_gbc.weightx = 0.0;
 		_gbc.anchor = GridBagConstraints.CENTER;
 		_gbc.gridx = GridBagConstraints.RELATIVE;
+		_gbc.insets.left = 2;
 	}
 
 	private void updateSubcomponentsFont(Container cont)

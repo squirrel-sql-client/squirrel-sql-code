@@ -15,6 +15,7 @@ public class SessionColoringUtil
       if (colorProps.isOverrideToolbarBackgroundColor()) {
          int rgbValue = colorProps.getToolbarBackgroundColorRgbValue();
          toolBar.setBackground(new Color(rgbValue));
+         toolBar.setOpaque(true);
       }
    }
 
