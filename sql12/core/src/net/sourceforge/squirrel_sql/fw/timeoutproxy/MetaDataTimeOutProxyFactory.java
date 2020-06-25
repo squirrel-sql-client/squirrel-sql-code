@@ -20,6 +20,11 @@ public class MetaDataTimeOutProxyFactory
       if (null == session)
       {
          metaDataLoadingTimeOut = Main.getApplication().getSquirrelPreferences().getSessionProperties().getMetaDataLoadingTimeOut();
+
+         if(false == Main.getApplication().getSessionManager().isInCreateSession())
+         {
+            metaDataLoadingTimeOut = Main.getApplication().getSessionManager().getActiveSession().getProperties().getMetaDataLoadingTimeOut();
+         }
       }
       else
       {

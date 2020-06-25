@@ -74,6 +74,7 @@ public class SessionManager
    private Hashtable<IIdentifier, String[]> _allowedSchemasBySessionID = new Hashtable<>();
    private Hashtable<IIdentifier, String[]> _allSchemasBySessionID = new Hashtable<>();
    private HashSet<IIdentifier> _inCloseSession = new HashSet<>();
+   private Set<IIdentifier> _inCreateSession = Collections.synchronizedSet(new HashSet());
 
    /**
     * Ctor.
@@ -113,33 +114,32 @@ public class SessionManager
                                               SQLConnection conn, String user,
                                               String password)
    {
-      if (app == null)
+      final IIdentifier sessionId = _idFactory.createIdentifier();
+      try
       {
-         throw new IllegalArgumentException("null IApplication passed");
-      }
-      if (driver == null)
-      {
-         throw new IllegalArgumentException("null ISQLDriver passed");
-      }
-      if (alias == null)
-      {
-         throw new IllegalArgumentException("null ISQLAlias passed");
-      }
-      if (conn == null)
-      {
-         throw new IllegalArgumentException("null SQLConnection passed");
-      }
+         _inCreateSession.add(sessionId);
 
-      final Session sess = new Session(app, driver, alias, conn, user,
-                              password, _idFactory.createIdentifier());
-      _sessionsList.addLast(sess);
-      _sessionsById.put(sess.getIdentifier(), sess);
+         final Session sess = new Session(app, driver, alias, conn, user, password, sessionId);
+         _sessionsList.addLast(sess);
+         _sessionsById.put(sess.getIdentifier(), sess);
 
-      fireSessionAdded(sess);
-      setActiveSession(sess, false);
+         fireSessionAdded(sess);
+         setActiveSession(sess, false);
 
-      return sess;
+         return sess;
+      }
+      finally
+      {
+         _inCreateSession.remove(sessionId);
+      }
    }
+
+   public boolean isInCreateSession()
+   {
+      return 0 < _inCreateSession.size();
+   }
+
+
 
    public void setActiveSession(ISession session, boolean force)
    {
@@ -439,7 +439,7 @@ public class SessionManager
     * Fired when a session is connected (added) to the session
     * manager
     */
-   protected void fireSessionAdded(ISession session)
+   private void fireSessionAdded(ISession session)
    {
       Object[] listeners = listenerList.getListenerList();
       SessionEvent evt = null;
@@ -458,7 +458,7 @@ public class SessionManager
    /**
     * Fired when a session is closed (removed) from the session manager
     */
-   protected void fireSessionClosed(ISession session)
+   private void fireSessionClosed(ISession session)
    {
       Object[] listeners = listenerList.getListenerList();
       SessionEvent evt = null;
@@ -477,7 +477,7 @@ public class SessionManager
    /**
     * Fired when a session is about to close from the session manager
     */
-   protected void fireSessionClosing(ISession session)
+   private void fireSessionClosing(ISession session)
    {
       Object[] listeners = listenerList.getListenerList();
       SessionEvent evt = null;
@@ -499,7 +499,7 @@ public class SessionManager
     * Fired when all the session have been closed (removed) from the
     * session manager
     */
-   protected void fireAllSessionsClosed()
+   private void fireAllSessionsClosed()
    {
       Object[] listeners = listenerList.getListenerList();
       for (int i = listeners.length - 2; i >= 0; i -= 2)
@@ -514,7 +514,7 @@ public class SessionManager
    /**
     * Fired when the active session changed
     */
-   protected void fireSessionActivated(ISession session)
+   private void fireSessionActivated(ISession session)
    {
       Object[] listeners = listenerList.getListenerList();
       SessionEvent evt = null;
@@ -559,7 +559,7 @@ public class SessionManager
       }
    }
 
-   protected void fireConnectionClosedForReconnect(Session session)
+   void fireConnectionClosedForReconnect(Session session)
    {
       Object[] listeners = listenerList.getListenerList();
       SessionEvent evt = null;
@@ -575,7 +575,7 @@ public class SessionManager
       }
    }
 
-   protected void fireReconnected(Session session)
+   void fireReconnected(Session session)
    {
       Object[] listeners = listenerList.getListenerList();
       SessionEvent evt = null;
@@ -591,7 +591,7 @@ public class SessionManager
       }
    }
 
-   protected void fireReconnectFailed(Session session)
+   void fireReconnectFailed(Session session)
    {
       Object[] listeners = listenerList.getListenerList();
       SessionEvent evt = null;
@@ -608,7 +608,7 @@ public class SessionManager
    }
 
 
-   protected void fireSessionFinalized(final IIdentifier sessionIdentifier)
+   void fireSessionFinalized(final IIdentifier sessionIdentifier)
    {
       // invokeLater to make the call synchronto the event queue
       SwingUtilities.invokeLater(new Runnable()

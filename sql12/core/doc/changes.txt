@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Improved error message for meta data load timeouts.
+ See menu File --> New Session Properties --> tab SQL --> section "Meta data loading".
+
 Merge request #53: Improved Session coloring
   Note: Session coloring can be adjusted by right click on Alias --> Alias Properties --> tab Color
   Thanks to Stanimir Stamenkov for the patch.
