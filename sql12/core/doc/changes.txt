@@ -6,7 +6,7 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
-Merge request #53: Improved session-coloring
+Merge request #53: Improved Session coloring
   Note: Session coloring can be adjusted by right click on Alias --> Alias Properties --> tab Color
   Thanks to Stanimir Stamenkov for the patch.
 
@@ -24,7 +24,7 @@ Command line interface (CLI):
   For information on the command line interface see Readme.txt in subdirectory squirrelcli of your SQuirreL installation.
 
 
-Brushed up the Data Look and feel Plugin;
+Brushed up the Look and feel Plugin;
   - Updated JGoodies Looks to version 2.5.3
   - Made JGoodies Windows look and feel available (Windows only)
   - Fixed several bugs which makes more Look and feels available
@@ -33,6 +33,9 @@ Brushed up the Data Look and feel Plugin;
 
 
 Bug fixes:
+
+Session coloring: Checkbox for status bar coloring didn't work.
+  Note: Session coloring can be adjusted by right click on Alias --> Alias Properties --> tab Color
 
 Change tracking: Improved right gutter to vertical scrollbar synchronization.
 

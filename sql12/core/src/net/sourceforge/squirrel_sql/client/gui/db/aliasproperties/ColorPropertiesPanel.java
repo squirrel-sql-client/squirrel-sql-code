@@ -190,6 +190,7 @@ public class ColorPropertiesPanel extends JPanel
 		{
 			_props.setOverrideToolbarBackgroundColor(false);
 		}
+
 		if (objectTreeBackgroundColorChk.isSelected())
 		{
 			if (objectTreeBackgroundColor != null)
@@ -202,6 +203,7 @@ public class ColorPropertiesPanel extends JPanel
 		{
 			_props.setOverrideObjectTreeBackgroundColor(false);
 		}
+
 		if (statusBarBackgroundColorChk.isSelected())
 		{
 			if (statusBarBackgroundColor != null)
@@ -210,6 +212,12 @@ public class ColorPropertiesPanel extends JPanel
 				_props.setStatusBarBackgroundColorRgbValue(statusBarBackgroundColor.getRGB());
 			}
 		}
+		else
+		{
+			_props.setOverrideStatusBarBackgroundColor(false);
+		}
+
+
 		if (aliasBackgroundColorChk.isSelected())
 		{
 			if (aliasBackgroundColor != null)
@@ -220,8 +228,9 @@ public class ColorPropertiesPanel extends JPanel
 		}
 		else
 		{
-			_props.setOverrideStatusBarBackgroundColor(false);
+			_props.setOverrideAliasBackgroundColor(false);
 		}
+
 		return _props;
 	}
 
