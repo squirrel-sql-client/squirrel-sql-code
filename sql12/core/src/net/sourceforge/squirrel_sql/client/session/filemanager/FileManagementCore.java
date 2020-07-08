@@ -5,21 +5,16 @@ import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandle
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.filechooser.PreviewFileChooser;
-import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import java.awt.Frame;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 
 
 public class FileManagementCore
@@ -276,7 +271,21 @@ public class FileManagementCore
          Dialogs.showOk(frame, msg);
          return false;
       }
-      
+
+
+      try
+      {
+         file.toPath();
+      }
+      catch (InvalidPathException e)
+      {
+         s_log.error("Invalid file name: Call to File.toPath() raised error", e);
+
+         String msg = s_stringMgr.getString("FileManager.error.invalid.file.name", file.getAbsolutePath(), e.getMessage());
+         Dialogs.showError(frame, msg);
+         return false;
+      }
+
       if (askReplace && file.exists())
       {
           // i18n[FileManager.confirm.filereplace={0} \nalready exists. Do you want to replace it?]

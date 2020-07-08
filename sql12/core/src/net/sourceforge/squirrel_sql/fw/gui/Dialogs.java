@@ -17,17 +17,14 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.Frame;
-import java.io.File;
-
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
 /**
  * This class provides some methods for using standard JDK dialogs.
  *
@@ -104,6 +101,11 @@ public class Dialogs
 	public static void showOk(Component owner, String msg)
 	{
 		JOptionPane.showMessageDialog(owner, msg, "", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public static void showError(Component owner, String msg)
+	{
+		JOptionPane.showMessageDialog(owner, msg, "", JOptionPane.ERROR_MESSAGE);
 	}
 
 	private static boolean canSaveToFile(Frame parentFrame, File outFile)

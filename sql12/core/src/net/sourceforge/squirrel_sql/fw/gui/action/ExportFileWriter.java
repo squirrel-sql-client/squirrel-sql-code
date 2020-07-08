@@ -2,19 +2,15 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportCSVWriter;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportExcelWriter;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportJSONWriter;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportXMLWriter;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
+import net.sourceforge.squirrel_sql.fw.gui.action.exportData.*;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.JOptionPane;
-import java.awt.Window;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 
 public class ExportFileWriter
@@ -40,8 +36,12 @@ public class ExportFileWriter
       File file = null;
       try
       {
-
          file = new File(prefs.getFile());
+
+         // Checks if file name is valid.
+         // Raises an InvalidPathException if not.
+         file.toPath();
+
          if (null != file.getParentFile())
          {
             file.getParentFile().mkdirs();
