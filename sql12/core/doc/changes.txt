@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New entry in file icon menu: Copy file name to clipboard.
+
 Improved error message for meta data load timeouts.
  See menu File --> New Session Properties --> tab SQL --> section "Meta data loading".
 

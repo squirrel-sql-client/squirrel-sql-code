@@ -48,6 +48,10 @@ public class TitleFilePathHandler
       _popUp.add(mnuCopyFilePath);
       mnuCopyFilePath.addActionListener(e -> onCopyFilePath());
 
+      JMenuItem mnuCopyFileName = new JMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.copyFileName"));
+      _popUp.add(mnuCopyFileName);
+      mnuCopyFileName.addActionListener(e -> onCopyFileName());
+
 
       _popUp.addSeparator();
 
@@ -88,10 +92,30 @@ public class TitleFilePathHandler
 
    private void onCopyFilePath()
    {
+      _onCopyFile(true);
+   }
+
+   private void onCopyFileName()
+   {
+      _onCopyFile(false);
+   }
+
+   private void _onCopyFile(boolean fullPath)
+   {
       if(hasFile())
       {
          Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
-         StringSelection data = new StringSelection(_sqlFile.getAbsolutePath());
+         StringSelection data;
+
+         if (fullPath)
+         {
+            data = new StringSelection(_sqlFile.getAbsolutePath());
+         }
+         else
+         {
+            data = new StringSelection(_sqlFile.getName());
+         }
+
          clip.setContents(data, data);
       }
    }
