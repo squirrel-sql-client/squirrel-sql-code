@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
 
 public class SessionColoringUtil
@@ -36,6 +38,14 @@ public class SessionColoringUtil
       if (colorProps.isOverrideObjectTreeBackgroundColor()) {
          int rgbValue = colorProps.getObjectTreeBackgroundColorRgbValue();
          tree.setBackground(new Color(rgbValue));
+         Runnable updateNonSelectionColor = () ->
+         {
+            TreeCellRenderer cellRenderer = tree.getCellRenderer();
+            if (cellRenderer instanceof DefaultTreeCellRenderer)
+               ((DefaultTreeCellRenderer) cellRenderer).setBackgroundNonSelectionColor(new Color(rgbValue));
+         };
+         updateNonSelectionColor.run();
+         tree.addPropertyChangeListener("cellRenderer", evt -> updateNonSelectionColor.run());
       }
    }
 }
