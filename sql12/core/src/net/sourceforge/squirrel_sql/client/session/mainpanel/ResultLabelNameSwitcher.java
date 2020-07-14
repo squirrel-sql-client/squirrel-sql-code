@@ -72,7 +72,7 @@ public class ResultLabelNameSwitcher
       pnl.setOpaque(false);
 
       _tabResultTabs.setTabComponentAt(_tabIndex, pnl);
-      _tabResultTabs.setTitleAt(_tabIndex, null);
+      _tabResultTabs.setTitleAt(_tabIndex, "");
    }
 
    private void onSwitchLabelName()
