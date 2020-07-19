@@ -149,7 +149,9 @@ public class CancelPanel extends JPanel
       GUIUtils.forceWidth(txtNumberOfRowsRead, 120);
       ret.add(txtNumberOfRowsRead, gbc);
 
-      GUIUtils.setMinimumHeight(ret, 50);
+      // Removed on account of Stanimir Stamenkov's analysis in bug #1421 in comment on 2020-07-12.
+      //GUIUtils.setMinimumHeight(ret, 50);
+
       return ret;
    }
 

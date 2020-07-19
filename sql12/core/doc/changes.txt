@@ -39,6 +39,8 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+Fixed occasional visual cut inside "Executing SQL" tab (displayed prior to SQL Result tab) as mentioned in comment of bug #1421 on 2020-07-12.
+
 #1443 Windows: Saving SQL script or file export to filename containing colon claims success but uses part of file name only.
 
 Merge request #54: MS Windows: Maximized state of the main window wasn't restored properly if showing on a secondary monitor
