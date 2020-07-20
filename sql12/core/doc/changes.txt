@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Code completion Plugin: New options to choose if columns/tables and views/schemas/catalogs
+  are to be completed uppercase or lowercase or unchanged.
+  See menu File --> New Session Properties --> tab Code Completion --> bottom of panel.
+
 New entry in file icon menu: Copy file name to clipboard.
 
 Improved error message for meta data load timeouts.

@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.ISessionProperties
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.CompletionCaseSpelling;
 
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableCellEditor;
@@ -87,6 +88,10 @@ public class CodeCompletionPreferencesController
 
 		_panel.chkSortColumnsAlphabetically.setSelected(_prefs.isSortColumnsAlphabetically());
 
+		_panel._cboColumnUpperLower.setSelectedItem(CompletionCaseSpelling.valueOf(_prefs.getColumnCaseSpelling()));
+		_panel._cboTableViewUpperLower.setSelectedItem(CompletionCaseSpelling.valueOf(_prefs.getTableViewCaseSpelling()));
+		_panel._cboSchemaUpperLower.setSelectedItem(CompletionCaseSpelling.valueOf(_prefs.getSchemaCaseSpelling()));
+		_panel._cboCatalogUpperLower.setSelectedItem(CompletionCaseSpelling.valueOf(_prefs.getCatalogCaseSpelling()));
 
       _panel.btnNewRow.addActionListener(new ActionListener()
 		{
@@ -207,7 +212,13 @@ public class CodeCompletionPreferencesController
 
       _prefs.setSortColumnsAlphabetically(_panel.chkSortColumnsAlphabetically.isSelected());
 
-   }
+		_prefs.setColumnCaseSpelling(((CompletionCaseSpelling)_panel._cboColumnUpperLower.getSelectedItem()).name());
+		_prefs.setTableViewCaseSpelling(((CompletionCaseSpelling)_panel._cboTableViewUpperLower.getSelectedItem()).name());
+		_prefs.setSchemaCaseSpelling(((CompletionCaseSpelling)_panel._cboSchemaUpperLower.getSelectedItem()).name());
+		_prefs.setCatalogCaseSpelling(((CompletionCaseSpelling)_panel._cboCatalogUpperLower.getSelectedItem()).name());
+
+
+	}
 
 	private void stopEditing()
 	{

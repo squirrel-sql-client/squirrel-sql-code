@@ -18,18 +18,28 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 
+import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
+
 public class CodeCompletionCatalogInfo extends CodeCompletionInfo
 {
    private String _catalog;
+   private CodeCompletionPreferences _prefs;
 
-   public CodeCompletionCatalogInfo(String catalog)
+   public CodeCompletionCatalogInfo(String catalog, CodeCompletionPreferences prefs)
    {
       _catalog = catalog;
+      _prefs = prefs;
    }
 
    public String getCompareString()
    {
       return _catalog;
+   }
+
+   @Override
+   public String getCompletionString()
+   {
+      return CompletionCaseSpelling.valueOf(_prefs.getCatalogCaseSpelling()).adjustCaseSpelling(super.getCompletionString());
    }
 
    public String toString()

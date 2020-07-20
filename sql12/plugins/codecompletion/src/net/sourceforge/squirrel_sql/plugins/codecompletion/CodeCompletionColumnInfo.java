@@ -86,14 +86,19 @@ public class CodeCompletionColumnInfo extends CodeCompletionInfo
    @Override
    public String getCompletionString(CompletionParser completionParser)
    {
+      final String ret;
+
       if ( false == completionParser.isQualified() && _prefs.isCompleteColumnsQualified())
       {
-         return getTableQualifier() + getCompareString();
+         ret = getTableQualifier() + getCompareString();
       }
       else
       {
-         return super.getCompletionString();
+         ret = super.getCompletionString();
       }
+
+      return CompletionCaseSpelling.valueOf(_prefs.getColumnCaseSpelling()).adjustCaseSpelling(ret);
+
    }
 
    public String getCompareString()

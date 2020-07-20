@@ -201,4 +201,10 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
    {
       return _toString;
    }
+
+   @Override
+   public String getCompletionString()
+   {
+      return CompletionCaseSpelling.valueOf(_prefs.getTableViewCaseSpelling()).adjustCaseSpelling(super.getCompletionString());
+   }
 }

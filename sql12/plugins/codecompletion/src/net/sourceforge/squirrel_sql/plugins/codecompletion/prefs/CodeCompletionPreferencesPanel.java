@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.CompletionCaseSpelling;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,8 +12,7 @@ import java.text.NumberFormat;
 
 public class CodeCompletionPreferencesPanel extends JPanel
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(CodeCompletionPreferencesPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CodeCompletionPreferencesPanel.class);
 
 
 	JRadioButton optSPWithParams;
@@ -33,6 +33,11 @@ public class CodeCompletionPreferencesPanel extends JPanel
    JCheckBox chkMatchCamelCase;
    JCheckBox chkIncludeUDTs;
    JCheckBox chkSortColumnsAlphabetically;
+
+   JComboBox<CompletionCaseSpelling> _cboColumnUpperLower;
+   JComboBox<CompletionCaseSpelling> _cboTableViewUpperLower;
+   JComboBox<CompletionCaseSpelling> _cboSchemaUpperLower;
+   JComboBox<CompletionCaseSpelling> _cboCatalogUpperLower;
 
 
    public CodeCompletionPreferencesPanel()
@@ -111,7 +116,58 @@ public class CodeCompletionPreferencesPanel extends JPanel
       chkSortColumnsAlphabetically = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.SortColumnsAlphabetically"));
       add(chkSortColumnsAlphabetically, gbc);
 
+      gbc = new GridBagConstraints(0,14,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0 );
+      add(createCaseSpellingPanel(), gbc);
+
       GUIUtils.setPreferredWidth(this, 550);
+   }
+
+   private JPanel createCaseSpellingPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0 );
+      ret.add(new JLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.upper.lower.column.completion")), gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0),0,0 );
+      _cboColumnUpperLower = new JComboBox<>(CompletionCaseSpelling.values());
+      ret.add(_cboColumnUpperLower, gbc);
+
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0),0,0 );
+      ret.add(new JLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.upper.lower.table.completion")), gbc);
+
+      gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0 );
+      _cboTableViewUpperLower = new JComboBox<>(CompletionCaseSpelling.values());
+      ret.add(_cboTableViewUpperLower, gbc);
+
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0),0,0 );
+      ret.add(new JLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.upper.lower.schema.completion")), gbc);
+
+      gbc = new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0 );
+      _cboSchemaUpperLower = new JComboBox<>(CompletionCaseSpelling.values());
+      ret.add(_cboSchemaUpperLower, gbc);
+
+
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0),0,0 );
+      ret.add(new JLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.upper.lower.catalog.completion")), gbc);
+
+      gbc = new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0 );
+      _cboCatalogUpperLower = new JComboBox<>(CompletionCaseSpelling.values());
+      ret.add(_cboCatalogUpperLower, gbc);
+
+
+
+
+
+
+      ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("CodeCompletionPreferencesPanel.UpperCase.LowerCase")));
+
+
+      return ret;
    }
 
 

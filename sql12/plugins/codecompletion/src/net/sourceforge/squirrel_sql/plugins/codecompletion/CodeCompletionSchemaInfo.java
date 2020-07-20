@@ -18,13 +18,17 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 
+import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
+
 public class CodeCompletionSchemaInfo extends CodeCompletionInfo
 {
    private String _schema;
+   private CodeCompletionPreferences _prefs;
 
-   public CodeCompletionSchemaInfo(String schema)
+   public CodeCompletionSchemaInfo(String schema, CodeCompletionPreferences prefs)
    {
       _schema = schema;
+      _prefs = prefs;
    }
 
    public String getCompareString()
@@ -35,5 +39,11 @@ public class CodeCompletionSchemaInfo extends CodeCompletionInfo
    public String toString()
    {
       return _schema;
+   }
+
+   @Override
+   public String getCompletionString()
+   {
+      return CompletionCaseSpelling.valueOf(_prefs.getSchemaCaseSpelling()).adjustCaseSpelling(super.getCompletionString());
    }
 }

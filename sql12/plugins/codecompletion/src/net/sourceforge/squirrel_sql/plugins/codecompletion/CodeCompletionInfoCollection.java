@@ -171,15 +171,15 @@ public class CodeCompletionInfoCollection
             String[] catalogs = _session.getSchemaInfo().getCatalogs();
             for (int i = 0; i < catalogs.length; i++)
             {
-               completionInfos.add(new CodeCompletionCatalogInfo(catalogs[i]));
-               _catalogs.add(new CodeCompletionCatalogInfo(catalogs[i]));
+               completionInfos.add(new CodeCompletionCatalogInfo(catalogs[i], _prefs));
+               _catalogs.add(new CodeCompletionCatalogInfo(catalogs[i], _prefs));
             }
 
             String[] schemas = _session.getSchemaInfo().getSchemas();
             for (int i = 0; i < schemas.length; i++)
             {
-               completionInfos.add(new CodeCompletionSchemaInfo(schemas[i]));
-               _schemas.add(new CodeCompletionSchemaInfo(schemas[i]));
+               completionInfos.add(new CodeCompletionSchemaInfo(schemas[i], _prefs));
+               _schemas.add(new CodeCompletionSchemaInfo(schemas[i], _prefs));
             }
 
             AutoCorrectProvider autoCorrectProvider =

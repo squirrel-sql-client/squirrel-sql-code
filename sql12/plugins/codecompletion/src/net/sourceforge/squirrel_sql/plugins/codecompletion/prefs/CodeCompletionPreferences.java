@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.prefs;
 
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionPlugin;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.CompletionCaseSpelling;
 
 import java.io.Serializable;
 
@@ -20,6 +21,11 @@ public class CodeCompletionPreferences implements Serializable
    private boolean _sortColumnsAlphabetically = true;
    private boolean _showTableNameOfColumnsInCompletion;
    private boolean _completeColumnsQualified;
+
+   private String _catalogCaseSpelling = CompletionCaseSpelling.UNCHANGED.name();
+   private String _columnCaseSpelling = CompletionCaseSpelling.UNCHANGED.name();
+   private String _schemaCaseSpelling = CompletionCaseSpelling.UNCHANGED.name();
+   private String _tableViewCaseSpelling = CompletionCaseSpelling.UNCHANGED.name();
 
    public int getGeneralCompletionConfig()
 	{
@@ -109,5 +115,45 @@ public class CodeCompletionPreferences implements Serializable
    public void setCompleteColumnsQualified(boolean completeColumnsQualified)
    {
       _completeColumnsQualified = completeColumnsQualified;
+   }
+
+   public String getCatalogCaseSpelling()
+   {
+      return _catalogCaseSpelling;
+   }
+
+   public void setCatalogCaseSpelling(String catalogCaseSpelling)
+   {
+      _catalogCaseSpelling = catalogCaseSpelling;
+   }
+
+   public String getColumnCaseSpelling()
+   {
+      return _columnCaseSpelling;
+   }
+
+   public void setColumnCaseSpelling(String columnCaseSpelling)
+   {
+      _columnCaseSpelling = columnCaseSpelling;
+   }
+
+   public String getSchemaCaseSpelling()
+   {
+      return _schemaCaseSpelling;
+   }
+
+   public void setSchemaCaseSpelling(String schemaCaseSpelling)
+   {
+      _schemaCaseSpelling = schemaCaseSpelling;
+   }
+
+   public String getTableViewCaseSpelling()
+   {
+      return _tableViewCaseSpelling;
+   }
+
+   public void setTableViewCaseSpelling(String tableViewCaseSpelling)
+   {
+      _tableViewCaseSpelling = tableViewCaseSpelling;
    }
 }
