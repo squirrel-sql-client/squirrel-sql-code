@@ -190,6 +190,7 @@ public class MainPanel extends JPanel
       if(null != tab.getTabComponent())
       {
          _tabbedPane.setTabComponentAt(idx, tab.getTabComponent());
+         _tabbedPane.setTitleAt(idx, "");
       }
 
 
@@ -247,6 +248,7 @@ public class MainPanel extends JPanel
       if(null != tab.getTabComponent())
       {
          _tabbedPane.setTabComponentAt(idx, tab.getTabComponent());
+         _tabbedPane.setTitleAt(idx, "");
       }
 
       if(selectInsertedTab)

@@ -59,7 +59,7 @@ public class HibernateTabPanel extends JPanel
       tabHibernateTabbedPane.setTabComponentAt(1, tabComponentOfHqlTab);
 
       // See bug #1433
-      tabHibernateTabbedPane.setTitleAt(1, null);
+      tabHibernateTabbedPane.setTitleAt(1, "");
 
 
 

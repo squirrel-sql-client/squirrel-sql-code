@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge Request #60: JGoodies Plastic: Fixed overlapping Graph tab label
+  Thanks to Stanimir Stamenkov for the patch.
+
 Merge request #59: Improved Object tree coloring
   Note: Coloring of Session tabs can be adjusted by right click on Alias --> Alias Properties --> tab Color
   Thanks to Stanimir Stamenkov for the patch.
