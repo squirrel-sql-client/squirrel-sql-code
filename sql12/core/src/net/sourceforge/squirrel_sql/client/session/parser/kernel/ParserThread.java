@@ -125,7 +125,10 @@ public class ParserThread
             }
          }
 
-         _tableAliasInfos = tableAliasInfos.toArray(new TableAliasInfo[0]);
+         if(false == aliasesMayGotLostByErrors(tableAliasInfos, parsingResult))
+         {
+            _tableAliasInfos = tableAliasInfos.toArray(new TableAliasInfo[0]);
+         }
 
 
          for (ParseException parseError : parsingResult.getParseErrors())
@@ -139,6 +142,11 @@ public class ParserThread
 
          _errorInfos = errorInfos.toArray(new ErrorInfo[0]);
       }
+   }
+
+   private boolean aliasesMayGotLostByErrors(ArrayList<TableAliasInfo> tableAliasInfos, ParsingResult parsingResult)
+   {
+      return 0 == tableAliasInfos.size() && 0 < parsingResult.getParseErrors().size();
    }
 
 
