@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge request #59: Improved Object tree coloring
+  Note: Coloring of Session tabs can be adjusted by right click on Alias --> Alias Properties --> tab Color
+  Thanks to Stanimir Stamenkov for the patch.
+
 Code completion Plugin: New options to choose if columns/tables and views/schemas/catalogs
   are to be completed uppercase or lowercase or unchanged.
   See menu File --> New Session Properties --> tab Code Completion --> bottom of panel.
