@@ -70,6 +70,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TransferAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAltAcceleratorAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -875,6 +876,7 @@ public class WindowManager
 		actions.add(new ConnectToAliasAction(_app, al));
 		actions.add(new CreateAliasAction(_app));
 		actions.add(new FindAliasAction(_app, al));
+		actions.add(new FindAliasAltAcceleratorAction(_app, al));
 		actions.add(new SortAliasesAction(_app, al));
 		actions.add(new ColorAliasAction(_app, al));
 		actions.add(new AliasPropertiesAction(_app, al));

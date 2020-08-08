@@ -29,6 +29,7 @@ import javax.swing.JMenuItem;
 
 import net.sourceforge.squirrel_sql.client.action.ChanneledAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAltAcceleratorAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileDetachAction;
@@ -390,6 +391,8 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, AliasFileOpenAction.class, menu);
       menu.addSeparator();
       addToMenu(rsrc, FindAliasAction.class, menu);
+      addToMenu(rsrc, FindAliasAltAcceleratorAction.class, menu);
+		menu.addSeparator();
       addToMenu(rsrc, SortAliasesAction.class, menu);
       addToMenu(rsrc, ColorAliasAction.class, menu);
       menu.addSeparator();
@@ -426,7 +429,10 @@ final class MainFrameMenuBar extends JMenuBar
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.WINDOWS);
 		addToMenu(rsrc, ViewAliasesAction.class, menu);
+		menu.addSeparator();
 		addToMenu(rsrc, FindAliasAction.class, menu);
+		addToMenu(rsrc, FindAliasAltAcceleratorAction.class, menu);
+		menu.addSeparator();
 		addToMenu(rsrc, ViewDriversAction.class, menu);
 		addToMenu(rsrc, ViewLogsAction.class, menu);
       if (_app.getDesktopStyle().isInternalFrameStyle())
