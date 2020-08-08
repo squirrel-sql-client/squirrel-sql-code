@@ -81,13 +81,15 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
 		{
 			public void widgetActivated(WidgetEvent evt)
 			{
-            SwingUtilities.invokeLater(new Runnable()
-            {
-               public void run()
-               {
-                  _sqlPanel.getSQLEntryPanel().getTextComponent().requestFocus();
-               }
-            });
+				// Removing this fixed the following bug: When a "SQL Worksheet" was moved to an extra window
+				// several functions (first and foremost editing) in SQuirreL's main window didn't work anymore.
+            //SwingUtilities.invokeLater(new Runnable()
+            //{
+            //   public void run()
+            //   {
+            //      _sqlPanel.getSQLEntryPanel().getTextComponent().requestFocus();
+            //   }
+            //});
 			}
 
          public boolean widgetClosing(WidgetEvent e)

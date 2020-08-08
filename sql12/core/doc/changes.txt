@@ -58,6 +58,9 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+When a "SQL Worksheet" was moved to an extra window
+  several functions (first and foremost editing) in SQuirreL's main window didn't work anymore.
+
 Fixed occasional visual cut inside "Executing SQL" tab (displayed prior to SQL Result tab) as mentioned in comment of bug #1421 on 2020-07-12.
 
 #1443 Windows: Saving SQL script or file export to filename containing colon claims success but uses part of file name only.
