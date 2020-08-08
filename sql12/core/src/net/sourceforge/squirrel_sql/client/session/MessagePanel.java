@@ -116,7 +116,8 @@ public class MessagePanel extends JTextPane implements IMessageHandler
       StyleConstants.setBackground(_saSetMessage, Color.green);
 
       SimpleAttributeSet saSetMessageHistory = new SimpleAttributeSet();
-      StyleConstants.setBackground(saSetMessageHistory, getBackground());
+      // Just use text pane default colors.
+      //StyleConstants.setBackground(saSetMessageHistory, getBackground());
       _saSetHistoryBySaSet.put(_saSetMessage, saSetMessageHistory);
       //
       ////////////////////////////////////////////////////////////////

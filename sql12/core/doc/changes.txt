@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge request #61: Message panel: For some Look & Feels the background color was corrected.
+
 Library cleanup reduced installer jar size by more than 10 MB.
 
 Code Completion: Improved SQL-alias completion by retaining SQL-aliases of successful SQL-Parser runs.
