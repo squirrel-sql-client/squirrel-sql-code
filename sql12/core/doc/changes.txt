@@ -14,7 +14,7 @@ Code Completion: Improved SQL-alias completion by retaining SQL-aliases of succe
   I.e. as long as the SQL-Parser finds SQL errors, SQL-aliases of former parser runs will be used for code completion.
   Note: In connection with this change JSQLParser (https://github.com/JSQLParser/JSqlParser) was upgraded to version 3.3.
 
-Merge Request #60: JGoodies Plastic: Fixed overlapping Graph tab label
+Merge request #60: JGoodies Plastic: Fixed overlapping Graph tab label
   Thanks to Stanimir Stamenkov for the patch.
 
 Merge request #59: Improved Object tree coloring
