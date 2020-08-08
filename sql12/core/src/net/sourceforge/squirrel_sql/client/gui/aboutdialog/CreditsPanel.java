@@ -85,8 +85,7 @@ final class CreditsPanel extends JScrollPane
                String line = null;
                while ((line = rdr.readLine()) != null)
                {
-                  String internationalizedLine =
-                        Utilities.replaceI18NSpanLine(line, s_stringMgr);
+                  String internationalizedLine = Utilities.replaceI18NSpanLine(line, s_stringMgr);
                   buf.append(internationalizedLine);
                }
             }
