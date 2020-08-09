@@ -26,12 +26,13 @@ import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.MultipleWindowsHandler;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainDialog;
+import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainResult;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -55,9 +56,6 @@ public class SessionManager
    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionManager.class);
 
-   /** Application API. */
-   private final IApplication _app;
-
    private ISession _activeSession;
 
    /** Linked list of sessions. */
@@ -76,23 +74,8 @@ public class SessionManager
    private HashSet<IIdentifier> _inCloseSession = new HashSet<>();
    private Set<IIdentifier> _inCreateSession = Collections.synchronizedSet(new HashSet());
 
-   /**
-    * Ctor.
-    *
-    * @param	app		Application API.
-    *
-    * @throws	IllegalArgumentException
-    * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
-    */
-   public SessionManager(IApplication app)
+   public SessionManager()
    {
-      super();
-      if (app == null)
-      {
-         throw new IllegalArgumentException("IApplication == null");
-      }
-
-      _app = app;
    }
 
    /**
@@ -542,14 +525,24 @@ public class SessionManager
     */
    private boolean confirmClose(ISession session)
    {
-      if (!_app.getSquirrelPreferences().getConfirmSessionClose())
+      if (!Main.getApplication().getSquirrelPreferences().getConfirmSessionClose())
       {
          return session.confirmClose();
       }
 
-      final String msg = s_stringMgr.getString("SessionManager.confirmClose", session.getTitle());
+      String msg = s_stringMgr.getString("SessionManager.confirmClose", session.getTitle());
+      String switchOnHowTo = s_stringMgr.getString("SessionManager.confirmClose.switchOnHowTo", session.getTitle());
 
-      if (!Dialogs.showYesNo(SessionUtils.getOwningFrame(session), msg))
+      final DontShowAgainDialog confirmCloseDialog = new DontShowAgainDialog(SessionUtils.getOwningFrame(session), msg, switchOnHowTo);
+      confirmCloseDialog.setTitle(s_stringMgr.getString("SessionManager.confirmClose.title"));
+      DontShowAgainResult result = confirmCloseDialog.showAndGetResult("SessionManagerDontShowAgainId", 380, 180);
+
+      if(result.isDontShowAgain())
+      {
+         Main.getApplication().getSquirrelPreferences().setConfirmSessionClose(false);
+      }
+
+      if (false == result.isYes())
       {
          return false;
       }

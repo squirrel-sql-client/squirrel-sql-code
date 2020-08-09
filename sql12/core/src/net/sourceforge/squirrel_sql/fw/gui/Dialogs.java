@@ -32,18 +32,14 @@ import java.io.File;
  */
 public class Dialogs
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(Dialogs.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(Dialogs.class);
 
-	public static File selectFileForWriting(Frame parentFrame,
-							FileExtensionFilter[] filters)
+	public static File selectFileForWriting(Frame parentFrame, FileExtensionFilter[] filters)
 	{
 		return selectFileForWriting(parentFrame, filters, null);
 	}
 
-	public static File selectFileForWriting(Frame parentFrame,
-							FileExtensionFilter[] filters, JComponent accessory)
+	public static File selectFileForWriting(Frame parentFrame, FileExtensionFilter[] filters, JComponent accessory)
 	{
 		File outFile = null;
 		final JFileChooser chooser = new JFileChooser();
@@ -82,8 +78,7 @@ public class Dialogs
 
 	public static void showNotYetImplemented(Component owner)
 	{
-		JOptionPane.showMessageDialog(owner, s_stringMgr.getString("Dialogs.nyi"),
-										"", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(owner, s_stringMgr.getString("Dialogs.nyi"),"", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	public static boolean showYesNo(Component owner, String msg)
@@ -93,8 +88,7 @@ public class Dialogs
 
 	public static boolean showYesNo(Component owner, String msg, String title)
 	{
-		int rc = JOptionPane.showConfirmDialog(owner, msg, title,
-												JOptionPane.YES_NO_OPTION);
+		int rc = JOptionPane.showConfirmDialog(owner, msg, title, JOptionPane.YES_NO_OPTION);
 		return rc == JOptionPane.YES_OPTION;
 	}
 
@@ -114,16 +108,15 @@ public class Dialogs
 		{
 			return true;
 		}
-		String msg = s_stringMgr.getString("Dialogs.alreadyexists",
-											outFile.getAbsolutePath());
+		String msg = s_stringMgr.getString("Dialogs.alreadyexists",outFile.getAbsolutePath());
+
 		if (!Dialogs.showYesNo(parentFrame, msg))
 		{
 			return false;
 		}
 		if (!outFile.canWrite())
 		{
-			msg = s_stringMgr.getString("Dialogs.cannotwrite",
-											outFile.getAbsolutePath());
+			msg = s_stringMgr.getString("Dialogs.cannotwrite", outFile.getAbsolutePath());
 			Dialogs.showOk(parentFrame, msg);
 			return false;
 		}

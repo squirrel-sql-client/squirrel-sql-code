@@ -266,8 +266,7 @@ public class FileHandler
 
    public void onEditHappened(UndoableEditEvent e)
    {
-       IApplication app = Main.getApplication();
-      SquirrelPreferences prefs = app.getSquirrelPreferences();
+      SquirrelPreferences prefs = Main.getApplication().getSquirrelPreferences();
 
       if (_fileOpened || _fileSaved)
       {

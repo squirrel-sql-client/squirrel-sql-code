@@ -716,7 +716,7 @@ public class Application implements IApplication
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createSessionManager"));
 		// AliasMaintSheetFactory.initialize(this);
 		// DriverMaintSheetFactory.initialize(this);
-		_sessionManager = new SessionManager(this);
+		_sessionManager = new SessionManager();
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingprefs"));
 

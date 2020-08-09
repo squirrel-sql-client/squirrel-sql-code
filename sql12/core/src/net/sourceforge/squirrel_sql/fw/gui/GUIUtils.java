@@ -885,8 +885,14 @@ public class GUIUtils
 
 	public static Dimension initLocation(Window window, int defaultWidth, int defaultHeight)
 	{
-		String widthPropKey = window.getClass().getName() + ".WIDTH";
-		String heightPropKey = window.getClass().getName() + ".HEIGHT";
+		final String identifier = window.getClass().getName();
+		return initLocation(window, defaultWidth, defaultHeight, identifier);
+	}
+
+	public static Dimension initLocation(Window window, int defaultWidth, int defaultHeight, String identifier)
+	{
+		String widthPropKey = identifier + ".WIDTH";
+		String heightPropKey = identifier + ".HEIGHT";
 
 		Dimension size = new Dimension(Props.getInt(widthPropKey, defaultWidth), Props.getInt(heightPropKey, defaultHeight));
 		window.setSize(size);
@@ -919,7 +925,7 @@ public class GUIUtils
 		return size;
 	}
 
-   public static JTextField styleTextFieldToCopyableLabel(JTextField textField)
+	public static JTextField styleTextFieldToCopyableLabel(JTextField textField)
    {
       textField.setEditable(false);
       textField.setBackground(new JPanel().getBackground());
