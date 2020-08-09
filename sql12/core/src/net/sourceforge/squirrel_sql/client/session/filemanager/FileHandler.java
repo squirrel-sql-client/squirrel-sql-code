@@ -7,6 +7,8 @@ import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandle
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.util.PrintUtilities;
+import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainDialog;
+import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainResult;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -237,21 +239,48 @@ public class FileHandler
       {
          filename = file.getAbsolutePath();
       }
-      String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges",filename);
 
+      String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges", filename);
 
+      String switchBackOnHowTo;
+
+      final boolean isBufferEdit = (null == file);
+
+      if(isBufferEdit)
+      {
+         switchBackOnHowTo = s_stringMgr.getString("SQLPanelAPI.switchBackOnHowTo.buffer");
+      }
+      else
+      {
+         switchBackOnHowTo = s_stringMgr.getString("SQLPanelAPI.switchBackOnHowTo.file");
+      }
 
       String title =  s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle",": " + _fileEditorAPI.getSession().getAlias().getName());
 
-      JFrame f = (JFrame) _fileEditorAPI.getOwningFrame();
+      JFrame owner = (JFrame) _fileEditorAPI.getOwningFrame();
 
-      int option = JOptionPane.showConfirmDialog(f, msg, title, JOptionPane.YES_NO_CANCEL_OPTION);
+      DontShowAgainDialog dontShowAgainDialog = new DontShowAgainDialog(owner, msg, switchBackOnHowTo);
+      dontShowAgainDialog.setTitle(title);
 
-      if (option == JOptionPane.YES_OPTION)
+      final DontShowAgainResult res = dontShowAgainDialog.showAndGetResult("FileHandler.dontShowgAgainId", 400, 215);
+
+      if(res.isDontShowAgain())
+      {
+         if (isBufferEdit)
+         {
+            Main.getApplication().getSquirrelPreferences().setWarnForUnsavedBufferEdits(false);
+         }
+         else
+         {
+            Main.getApplication().getSquirrelPreferences().setWarnForUnsavedFileEdits(false);
+         }
+      }
+
+      if (res.isYes())
       {
          return fileSave();
       }
-      else if(option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION)
+      else if(res.isCancel())
       {
          return false;
       }

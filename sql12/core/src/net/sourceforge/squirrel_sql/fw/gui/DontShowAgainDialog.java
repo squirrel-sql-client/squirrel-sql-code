@@ -33,6 +33,8 @@ public class DontShowAgainDialog extends JDialog
       btnYes.addActionListener( e -> onYes());
       btnNo.addActionListener( e -> onNo());
       btnCancel.addActionListener( e -> onCancel());
+
+      getRootPane().setDefaultButton(btnYes);
    }
 
    private void onCancel()

@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Unsaved file/buffer changes dialogs Added "Don't show again" option.
+
+Confirm Session close dialog: Added "Don't show again" option.
+
 Find Alias function now has two keyboard short cuts: ctrl alt shift G and the former ctrl alt shift F.
    This change was needed because on Windows 10 ctrl alt shift F is blocked by the OS, see
    https://answers.microsoft.com/en-us/windows/forum/all/ctrl-alt-shift-f-no-longer-works-windows-10-pro/b3f2b3f9-46c7-4ecf-8d7d-4be0bf08d78b
