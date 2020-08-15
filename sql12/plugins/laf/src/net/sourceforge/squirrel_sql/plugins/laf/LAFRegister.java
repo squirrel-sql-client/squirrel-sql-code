@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -500,10 +499,6 @@ public class LAFRegister
 				String jarNames = rsrc.getString(LAFPluginResources.IKeys.JARS + i);
 				if (jarNames == null || jarNames.length() == 0)
 				{
-					jarNames = rsrc.getString(LAFPluginResources.IKeys.JAR + i);
-				}
-				if (jarNames == null || jarNames.length() == 0)
-				{
 					break;
 				}
 
@@ -542,22 +537,42 @@ public class LAFRegister
 					{
 						break;
 					}
-					String jarName = props.getProperty(LAFPluginResources.IKeys.JARS + i);
-					if (jarName == null || jarName.length() == 0)
+					String jarNames = props.getProperty(LAFPluginResources.IKeys.JARS + i);
+					if (jarNames == null || jarNames.length() == 0)
+					{
+						jarNames = rsrc.getString(LAFPluginResources.IKeys.JAR + i);
+					}
+					if (jarNames == null || jarNames.length() == 0)
 					{
 						break;
 					}
-					FileWrapper file = fileWrapperFactory.create(extraLafsDir, jarName);
-					try
+
+					final String[] jarNamesArray = jarNames.split(";");
+
+					if(0 == jarNamesArray.length)
 					{
-						if (file.isFile() && file.exists())
+						break;
+					}
+
+					List<URL> jarUrls = new ArrayList<>(1);
+					for (String jarName : jarNamesArray)
+					{
+						FileWrapper file = fileWrapperFactory.create(extraLafsDir, jarName);
+						try
 						{
-							lafs.put(className, new ArrayList<>(Collections.singletonList(file.toURI().toURL())));
+							if (file.isFile() && file.exists())
+							{
+								jarUrls.add(file.toURI().toURL());
+							}
+						}
+						catch (IOException ex)
+						{
+							s_log.error("Error occurred reading Look and Feel jar: " + file.getAbsolutePath(), ex);
 						}
 					}
-					catch (IOException ex)
+					if (!jarUrls.isEmpty())
 					{
-						s_log.error("Error occurred reading Look and Feel jar: " + file.getAbsolutePath(), ex);
+						lafs.put(className, jarUrls);
 					}
 				}
 			}
