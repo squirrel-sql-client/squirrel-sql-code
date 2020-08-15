@@ -66,6 +66,9 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+#1444 Save and close dialogs: The "how to switch back on" information of the "Don't show again" checkbox
+   is now accessible by a small information button.
+
 When a "SQL Worksheet" was moved to an extra window
   several functions (first and foremost editing) in SQuirreL's main window didn't work anymore.
 

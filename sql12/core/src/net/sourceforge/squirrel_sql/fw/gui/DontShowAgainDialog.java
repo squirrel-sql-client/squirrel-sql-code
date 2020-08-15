@@ -64,7 +64,7 @@ public class DontShowAgainDialog extends JDialog
    public DontShowAgainResult showAndGetResult(String identifier, int defaultWidth, int defaultHeight)
    {
       GUIUtils.enableCloseByEscape(this);
-      GUIUtils.initLocation(this, defaultWidth, defaultHeight, identifier);
+      GUIUtils.initLocation(this, defaultWidth, defaultHeight, "DontShowAgainDialog." + identifier);
 
       setVisible(true);
 
@@ -81,18 +81,30 @@ public class DontShowAgainDialog extends JDialog
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5),0,0 );
       add(new MultilineLabel(msg), gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(20,5,0,5),0,0 );
-      add(chkDontShowAgain, gbc);
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5),0,0 );
+      add(createDontShowAgainPanel(switchBackOnHowTo), gbc);
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(3,5,0,5),0,0 );
-      add(new MultilineLabel(switchBackOnHowTo), gbc);
-
-      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(20,5,0,5),0,0 );
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(20,5,0,5),0,0 );
       add(createButtonsPanel(), gbc);
 
-      gbc = new GridBagConstraints(0,4,1,1,1,1,GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0 );
+      gbc = new GridBagConstraints(0,3,1,1,1,1,GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0 );
       add(new JPanel(), gbc);
 
+   }
+
+   private JPanel createDontShowAgainPanel(String switchBackOnHowTo)
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0 );
+      ret.add(chkDontShowAgain, gbc);
+
+      gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0 );
+      ret.add(new SmallToolTipInfoButton(switchBackOnHowTo).getButton(), gbc);
+
+      return ret;
    }
 
    private JPanel createButtonsPanel()

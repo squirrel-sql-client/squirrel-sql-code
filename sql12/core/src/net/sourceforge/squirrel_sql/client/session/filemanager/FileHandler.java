@@ -262,7 +262,7 @@ public class FileHandler
       DontShowAgainDialog dontShowAgainDialog = new DontShowAgainDialog(owner, msg, switchBackOnHowTo);
       dontShowAgainDialog.setTitle(title);
 
-      final DontShowAgainResult res = dontShowAgainDialog.showAndGetResult("FileHandler.dontShowgAgainId", 400, 215);
+      final DontShowAgainResult res = dontShowAgainDialog.showAndGetResult("FileHandler.dontShowgAgainId", 400, 180);
 
       if(res.isDontShowAgain())
       {

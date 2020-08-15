@@ -535,7 +535,7 @@ public class SessionManager
 
       final DontShowAgainDialog confirmCloseDialog = new DontShowAgainDialog(SessionUtils.getOwningFrame(session), msg, switchOnHowTo);
       confirmCloseDialog.setTitle(s_stringMgr.getString("SessionManager.confirmClose.title"));
-      DontShowAgainResult result = confirmCloseDialog.showAndGetResult("SessionManagerDontShowAgainId", 380, 180);
+      DontShowAgainResult result = confirmCloseDialog.showAndGetResult("SessionManagerDontShowAgainId", 380, 150);
 
       if(result.isDontShowAgain())
       {
