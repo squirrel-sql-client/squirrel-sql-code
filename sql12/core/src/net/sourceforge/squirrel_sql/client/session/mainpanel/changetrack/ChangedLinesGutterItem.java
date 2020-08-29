@@ -4,7 +4,7 @@ import com.github.difflib.patch.ChangeDelta;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.matchpatch.ChangeRenderer;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.matchpatch.ChangeRendererStyle;
-import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JPanel;
@@ -130,7 +130,7 @@ public class ChangedLinesGutterItem implements GutterItem
 
          JPopupMenu popupMenu = new JPopupMenu();
          RevertablePopupPanel revertablePopupPanel = new RevertablePopupPanel(sourceText, _sqlEntry.getTextComponent().getFont());
-         revertablePopupPanel.btnCopy.addActionListener(ae -> CopyToClipboardUtil.copyToClip(sourceText));
+         revertablePopupPanel.btnCopy.addActionListener(ae -> ClipboardUtil.copyToClip(sourceText));
          revertablePopupPanel.btnRevert.addActionListener(ae -> onRevert(popupMenu));
 
          revertablePopupPanel.txtFormerText.setText("");

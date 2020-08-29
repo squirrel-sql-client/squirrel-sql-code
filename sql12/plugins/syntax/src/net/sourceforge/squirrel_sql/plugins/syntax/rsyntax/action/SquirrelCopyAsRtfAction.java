@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -64,6 +65,8 @@ public class SquirrelCopyAsRtfAction extends SquirrelAction implements ISQLPanel
       {
          SquirrelRSyntaxTextArea squirrelRSyntaxTextArea = (SquirrelRSyntaxTextArea) _panel.getSQLEntryPanel().getTextComponent();
          squirrelRSyntaxTextArea.copyAsStyledText();
+
+         Main.getApplication().getPasteHistory().addToPasteHistory(ClipboardUtil.getClipboardAsString());
       }
    }
 

@@ -1,10 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
+
+import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 
@@ -58,22 +56,11 @@ public class ClipboardCopyActionProxy implements Action
    @Override
    public void actionPerformed(ActionEvent e)
    {
-      try
-      {
-         _delegate.actionPerformed(e);
+      _delegate.actionPerformed(e);
 
-         Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
-         Transferable contents = clip.getContents(null);
+      String clipContent = ClipboardUtil.getClipboardAsString();
 
-         String clipContent =
-               (String)contents.getTransferData(DataFlavor.stringFlavor);
-
-
-         _clipboardCopyActionProxyListener.copyToClipboard(clipContent);
-      }
-      catch (Exception ex)
-      {
-         throw new RuntimeException(ex);
-      }
+      _clipboardCopyActionProxyListener.copyToClipboard(clipContent);
    }
+
 }

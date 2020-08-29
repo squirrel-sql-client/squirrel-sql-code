@@ -30,7 +30,7 @@ public class PasteFromHistoryController
 
       PasteHistory pasteHistory = Main.getApplication().getPasteHistory();
 
-      String[] histroy = pasteHistory.getHistroy();
+      String[] histroy = pasteHistory.getHistory();
 
       _dlg.lstHistoryItems.setListData(histroy);
 

@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.ResultAsText;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.ResultAsTextLineCallback;
-import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -73,6 +73,6 @@ public class TableCopyAlignedCommand
       }
       resultAsText.close();
       
-      CopyToClipboardUtil.copyToClip(text);
+      ClipboardUtil.copyToClip(text);
    }
 }

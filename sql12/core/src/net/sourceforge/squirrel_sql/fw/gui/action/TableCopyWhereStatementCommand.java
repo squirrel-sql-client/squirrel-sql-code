@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
-import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import javax.swing.JTable;
@@ -136,7 +136,7 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
             }
          }
 
-         CopyToClipboardUtil.copyToClip(buf);
+         ClipboardUtil.copyToClip(buf);
       }
    }
 

@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.findcolumn;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -153,6 +153,6 @@ public class ColumnCopyHandler
          Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("ColumnCopyHandler.warn.not.all.columns.qualified"));
       }
 
-      CopyToClipboardUtil.copyToClip(sb);
+      ClipboardUtil.copyToClip(sb);
    }
 }

@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import com.github.difflib.patch.DeleteDelta;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JPanel;
@@ -96,7 +96,7 @@ public class DeletedLinesGutterItem implements GutterItem
          JPopupMenu popupMenu = new JPopupMenu();
          RevertablePopupPanel revertablePopupPanel = new RevertablePopupPanel(displayText, _sqlEntry.getTextComponent().getFont());
 
-         revertablePopupPanel.btnCopy.addActionListener(ae -> CopyToClipboardUtil.copyToClip(displayText));
+         revertablePopupPanel.btnCopy.addActionListener(ae -> ClipboardUtil.copyToClip(displayText));
 
          revertablePopupPanel.btnRevert.addActionListener(ae -> onRevert(popupMenu));
 

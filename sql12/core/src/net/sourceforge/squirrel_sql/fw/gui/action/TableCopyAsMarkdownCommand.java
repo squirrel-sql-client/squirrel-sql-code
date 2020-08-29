@@ -4,7 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
-import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.steppschuh.markdowngenerator.table.Table;
@@ -98,7 +98,7 @@ public class TableCopyAsMarkdownCommand
 
       String line = new String(new char[width]).replace('\0', '-') + "\n";
 
-      CopyToClipboardUtil.copyToClip(line + markdownTable + "\n" + line);
+      ClipboardUtil.copyToClip(line + markdownTable + "\n" + line);
 
    }
 }

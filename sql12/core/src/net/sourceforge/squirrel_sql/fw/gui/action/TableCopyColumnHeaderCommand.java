@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import javax.swing.JTable;
@@ -40,6 +40,6 @@ public class TableCopyColumnHeaderCommand implements ICommand
          }
       }
 
-      CopyToClipboardUtil.copyToClip(buf);
+      ClipboardUtil.copyToClip(buf);
    }
 }

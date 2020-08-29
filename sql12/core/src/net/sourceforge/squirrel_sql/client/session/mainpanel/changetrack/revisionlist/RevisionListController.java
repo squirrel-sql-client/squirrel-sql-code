@@ -4,7 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackCloseDispatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackCloseListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.GitHandler;
-import net.sourceforge.squirrel_sql.fw.gui.CopyToClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -128,11 +128,11 @@ public class RevisionListController
       JPopupMenu popupMenu = new JPopupMenu();
 
       JMenuItem mnuPreviewCopy = new JMenuItem(s_stringMgr.getString("RevisionListController.preview.copy"));
-      mnuPreviewCopy.addActionListener(e -> CopyToClipboardUtil.copyToClip(_dlg.txtPreview.getSelectedText(), true));
+      mnuPreviewCopy.addActionListener(e -> ClipboardUtil.copyToClip(_dlg.txtPreview.getSelectedText(), true));
       popupMenu.add(mnuPreviewCopy);
 
       JMenuItem mnuPreviewCopyAll = new JMenuItem(s_stringMgr.getString("RevisionListController.preview.copy.all"));
-      mnuPreviewCopyAll.addActionListener(e -> CopyToClipboardUtil.copyToClip(_dlg.txtPreview.getText(), true));
+      mnuPreviewCopyAll.addActionListener(e -> ClipboardUtil.copyToClip(_dlg.txtPreview.getText(), true));
       popupMenu.add(mnuPreviewCopyAll);
 
       popupMenu.show(_dlg.txtPreview, me.getX(), me.getY());
@@ -233,7 +233,7 @@ public class RevisionListController
    {
       JMenuItem ret = new JMenuItem(s_stringMgr.getString(title));
 
-      ret.addActionListener(e -> CopyToClipboardUtil.copyToClip(toCopy));
+      ret.addActionListener(e -> ClipboardUtil.copyToClip(toCopy));
 
       return ret;
    }

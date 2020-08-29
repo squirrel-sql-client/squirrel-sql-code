@@ -68,6 +68,9 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+Paste history (ctrl +shift + v or insert) didn't work when copy as Rich Text Format was checked.
+  See menu File -> New Session Properties -> tab Syntax -> checkbox "Copy shortcuts use Rich Text Format".
+
 #1444 Save and close dialogs: The "how to switch back on" information of the "Don't show again" checkbox
    is now accessible by a small information button.
 
