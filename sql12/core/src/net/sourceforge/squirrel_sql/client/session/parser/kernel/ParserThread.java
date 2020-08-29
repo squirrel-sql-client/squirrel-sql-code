@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -87,24 +88,22 @@ public class ParserThread
    {
       List<StatementBounds> statementBoundsList = StatementBoundsPrediction.getStatementBoundsList(text, _parseTerminateRequestCheck);
 
-   _parseTerminateRequestCheck.check();
+      _parseTerminateRequestCheck.check();
 
-      ArrayList<ErrorInfo> errorInfos = new ArrayList<>();
-      ArrayList<TableAliasInfo> tableAliasInfos = new ArrayList<>();
+      ArrayList<ErrorInfo> errorInfosBuffer = new ArrayList<>();
+      ArrayList<TableAliasInfo> tableAliasInfosBuffer = new ArrayList<>();
 
       for (StatementBounds statementBounds : statementBoundsList)
       {
-
          _parseTerminateRequestCheck.check();
 
          ParsingResult parsingResult = JSqlParserAdapter.executeParsing(statementBounds);
 
          _parseTerminateRequestCheck.check();
 
-
+         List<TableAliasInfo> tableAliasInfosForCurrentStatement = new ArrayList<>();
          for (Table table : parsingResult.getTables())
          {
-
             _parseTerminateRequestCheck.check();
 
             TableQualifier tableQualifier = new TableQualifier(table.getFullyQualifiedName());
@@ -117,19 +116,27 @@ public class ParserThread
             {
                int beginPos = statementBounds.getBeginPos() + table.getASTNode().jjtGetFirstToken().absoluteBegin;
                int endPos = statementBounds.getBeginPos() + table.getASTNode().jjtGetFirstToken().absoluteEnd;
-               errorInfos.add(new ErrorInfo(s_stringMgr.getString("parserthread.undefinedTable"), beginPos, endPos));
+               errorInfosBuffer.add(new ErrorInfo(s_stringMgr.getString("parserthread.undefinedTable"), beginPos, endPos));
             }
             else if(null != table.getAlias())
             {
-               tableAliasInfos.add(new TableAliasInfo(table.getAlias().getName(), table.getFullyQualifiedName(), statementBounds.getBeginPos()));
+               tableAliasInfosForCurrentStatement.add(new TableAliasInfo(table.getAlias().getName(), table.getFullyQualifiedName(), statementBounds.getBeginPos()));
             }
          }
 
-         if(false == aliasesMayGotLostByErrors(tableAliasInfos, parsingResult))
+         if(aliasesMayGotLostByParserErrors(tableAliasInfosForCurrentStatement, parsingResult))
          {
-            _tableAliasInfos = tableAliasInfos.toArray(new TableAliasInfo[0]);
+            tableAliasInfosForCurrentStatement = new HeuristicSQLAliasParser().parse(statementBounds, _session.getSchemaInfo());
+
+            System.out.println("####################### " + new Date());
+            System.out.println("##");
+            for (TableAliasInfo tableAliasInfo : tableAliasInfosForCurrentStatement)
+            {
+               System.out.println(tableAliasInfo.getAliasName() + " -> " + tableAliasInfo.getTableName());
+            }
          }
 
+         tableAliasInfosBuffer.addAll(tableAliasInfosForCurrentStatement);
 
          for (ParseException parseError : parsingResult.getParseErrors())
          {
@@ -137,14 +144,15 @@ public class ParserThread
 
             int beginPos = statementBounds.getBeginPos() + parseError.currentToken.next.absoluteBegin;
             int endPos = statementBounds.getBeginPos() + parseError.currentToken.next.absoluteEnd;
-            errorInfos.add(new ErrorInfo(parseError.getMessage(), beginPos, endPos));
+            errorInfosBuffer.add(new ErrorInfo(parseError.getMessage(), beginPos, endPos));
          }
-
-         _errorInfos = errorInfos.toArray(new ErrorInfo[0]);
       }
+
+      _errorInfos = errorInfosBuffer.toArray(new ErrorInfo[0]);
+      _tableAliasInfos = tableAliasInfosBuffer.toArray(new TableAliasInfo[0]);
    }
 
-   private boolean aliasesMayGotLostByErrors(ArrayList<TableAliasInfo> tableAliasInfos, ParsingResult parsingResult)
+   private boolean aliasesMayGotLostByParserErrors(List<TableAliasInfo> tableAliasInfos, ParsingResult parsingResult)
    {
       return 0 == tableAliasInfos.size() && 0 < parsingResult.getParseErrors().size();
    }

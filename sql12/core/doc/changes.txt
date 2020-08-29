@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Code Completion: More improvements of SQL-alias completion. JSQLParser isn't the only source of SQL-alias information anymore.
+
 Unsaved file/buffer changes dialogs Added "Don't show again" option.
 
 Confirm Session close dialog: Added "Don't show again" option.

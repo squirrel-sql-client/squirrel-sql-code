@@ -28,7 +28,24 @@ public class JSqlParserAdapter
          }
       };
 
-      Statement statement = parser.Statement();
+      Statement statement = null ;
+
+      try
+      {
+         // For example for
+         // "SELECT suppliers. FROM suppliers su where su.id  = '-- Hahh"
+         // the following error is raised:
+         // net.sf.jsqlparser.parser.TokenMgrException: Lexical error
+         //   at line 1, column 61.  Encountered: <EOF> after : "\'-- Hahh "
+         //	  at net.sf.jsqlparser.parser.CCJSqlParserTokenManager.getNextToken(CCJSqlParserTokenManager.java:4736)
+         //
+         // But a parse error is still returned which makes it kind of Ok.
+
+         statement = parser.Statement();
+      }
+      catch (Exception e)
+      {
+      }
 
       if (null != statement) // Also a problem that occurs these days
       {

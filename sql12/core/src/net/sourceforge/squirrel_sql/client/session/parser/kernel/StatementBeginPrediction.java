@@ -1,13 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
 
-import java.util.ArrayList;
-
 public class StatementBeginPrediction
 {
    static int predictNextStatementBegin(String sqlEditorText, int startPos, ParseTerminateRequestCheck check)
    {
-      int commentIntervals[][] = calculateCommentIntervals(sqlEditorText, check);
+      SqlCommentHelper sqlCommentHelper = new SqlCommentHelper(sqlEditorText, check);
 
       int ret = startPos;
 
@@ -18,13 +16,13 @@ public class StatementBeginPrediction
       {
          if ('\'' == sqlEditorText.charAt(ret))
          {
-            if (false == isInComment(ret, commentIntervals))
+            if (false == sqlCommentHelper.isInComment(ret))
             {
                ++literalDelimsCount;
             }
          }
 
-         if (false == isInComment(ret, commentIntervals) && false == isInLiteral(literalDelimsCount))
+         if (false == sqlCommentHelper.isInComment(ret) && false == SqlLiteralHelper.isInLiteral(literalDelimsCount))
          {
             if ('(' == sqlEditorText.charAt(ret))
             {
@@ -38,8 +36,8 @@ public class StatementBeginPrediction
 
 
          if(
-               false == isInLiteral(literalDelimsCount)
-            && false == isInComment(ret, commentIntervals)
+               false == SqlLiteralHelper.isInLiteral(literalDelimsCount)
+            && false == sqlCommentHelper.isInComment(ret)
             && false == isInBrackets(openBracketsCount)
             && startsWithBeginKeyWord(sqlEditorText, ret)
            )
@@ -58,118 +56,11 @@ public class StatementBeginPrediction
       return ret;
    }
 
-   private static boolean isInLiteral(int literalDelimsCount)
-   {
-      return 1 == literalDelimsCount % 2;
-   }
-
    private static boolean isInBrackets(int openBracketsCount)
    {
       return 0 < openBracketsCount;
    }
 
-   private static int[][] calculateCommentIntervals(String sqlEditorText, ParseTerminateRequestCheck check)
-   {
-      ArrayList<int[]> ret = new ArrayList<>();
-      boolean inMultiLineComment = false;
-      boolean inLineComment = false;
-      boolean isaSlash = false;
-      boolean isaStar = false;
-      boolean isaMinus = false;
-
-      int[] curComment = null;
-
-      int literalDelimsCount = 0;
-
-
-      for(int i=0; i < sqlEditorText.length(); ++i)
-      {
-         check.check();
-
-
-         if (false == inLineComment && false == inMultiLineComment)
-         {
-            if ('\'' == sqlEditorText.charAt(i))
-            {
-               ++literalDelimsCount;
-            }
-
-            if(isInLiteral(literalDelimsCount))
-            {
-               continue;
-            }
-         }
-
-         if('*' == sqlEditorText.charAt(i) && isaSlash && false == inMultiLineComment && false == inLineComment)
-         {
-            inMultiLineComment = true;
-            curComment = new int[]{i-1, -1};
-         }
-         else if('/' == sqlEditorText.charAt(i) && isaStar && false == inLineComment && inMultiLineComment)
-         {
-            inMultiLineComment = false;
-            curComment[1] = i;
-            ret.add(curComment);
-            curComment = null;
-
-         }
-         else if('-' == sqlEditorText.charAt(i) && isaMinus && false == inMultiLineComment && false == inLineComment)
-         {
-            inLineComment = true;
-            curComment = new int[]{i-1, -1};
-         }
-         else if('\n' == sqlEditorText.charAt(i) && false == inMultiLineComment && inLineComment)
-         {
-            inLineComment = false;
-            curComment[1] = i;
-            ret.add(curComment);
-            curComment = null;
-         }
-
-
-
-         if('/' == sqlEditorText.charAt(i))
-         {
-            isaSlash = true;
-         }
-         else if('*' == sqlEditorText.charAt(i))
-         {
-            isaStar = true;
-         }
-         else if('-' == sqlEditorText.charAt(i))
-         {
-            isaMinus = true;
-         }
-         else
-         {
-            isaSlash = false;
-            isaStar = false;
-            isaMinus = false;
-         }
-      }
-
-      if(null != curComment)
-      {
-         curComment[1] = sqlEditorText.length();
-      }
-
-      return ret.toArray(new int[ret.size()][]);
-
-
-   }
-
-   private static boolean isInComment(int ret, int commentIntervals[][])
-   {
-      for(int i=0; i < commentIntervals.length; ++i)
-      {
-         if(commentIntervals[i][0] <= ret && ret <= commentIntervals[i][1])
-         {
-            return true;
-         }
-      }
-
-      return false;
-   }
 
    private static boolean startsWithBeginKeyWord(String sqlEditorText, int ret)
    {
