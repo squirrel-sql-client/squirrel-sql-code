@@ -67,7 +67,7 @@ public class HeuristicSQLAliasParser
          }
          else if(null != currentAliasableTable && false == schemaInfo.isKeyword(token))
          {
-            ret.add(new TableAliasInfo(token, currentAliasableTable, statementBounds.getBeginPos()));
+            ret.add(new TableAliasInfo(token, currentAliasableTable, statementBounds.getBeginPos(), statementBounds.getEndPos()));
 
             lastTokenAllowedTableAliasDefinition = false;
             currentAliasableTable = null;

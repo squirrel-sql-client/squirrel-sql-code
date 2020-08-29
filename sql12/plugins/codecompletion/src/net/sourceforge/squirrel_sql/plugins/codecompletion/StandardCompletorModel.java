@@ -90,7 +90,7 @@ public class StandardCompletorModel
          //
          //////////////////////////////////////////////////////////////////////////////
 
-         ret.addAll( Arrays.asList(_codeCompletionInfos.getInfosStartingWith(null, null, parser.getStringToParse())) );
+         ret.addAll( Arrays.asList(_codeCompletionInfos.getInfosStartingWith(null, null, parser.getStringToParse(), parser.getStringToParsePosition())) );
       }
       else // 1 < buf.size()
       {
@@ -129,7 +129,7 @@ public class StandardCompletorModel
             }
             else
             {
-               ret.addAll(Arrays.asList(_codeCompletionInfos.getInfosStartingWith(catalog, schema, tableNamePat2)));
+               ret.addAll(Arrays.asList(_codeCompletionInfos.getInfosStartingWith(catalog, schema, tableNamePat2, parser.getStringToParsePosition())));
             }
 
          }
@@ -147,10 +147,10 @@ public class StandardCompletorModel
 
    private ArrayList<? extends CodeCompletionInfo> getColumnsForName(String catalog, String schema, String name, String colNamePat, int colPos)
 	{
-		CodeCompletionInfo[] infos = _codeCompletionInfos.getInfosStartingWith(catalog, schema, name);
+		CodeCompletionInfo[] infos = _codeCompletionInfos.getInfosStartingWith(catalog, schema, name, colPos);
       CodeCompletionInfo toReturn = null;
 
-      if (colPos != -1)
+      if (colPos != TableAliasInfo.POSITION_NON)
 		{
 			// First check aliases
 			for (int j = 0; j < infos.length; j++)
@@ -162,7 +162,7 @@ public class StandardCompletorModel
 					{
 						// See if this is the same statement
 						CodeCompletionTableAliasInfo a = (CodeCompletionTableAliasInfo) info;
-						if (colPos >= a.getStatBegin())
+						if (a.isInStatementOfAlias(colPos)) // because is now already done in
 						{
 							toReturn = a;
 						}
@@ -202,7 +202,7 @@ public class StandardCompletorModel
 
       for (String lastSelectedCompletionName : _lastSelectedCompletionNames)
       {
-         ret.addAll(getColumnsForName(null, null, lastSelectedCompletionName, colNamePat, -1));
+         ret.addAll(getColumnsForName(null, null, lastSelectedCompletionName, colNamePat, TableAliasInfo.POSITION_NON));
       }
 
 		return ret;

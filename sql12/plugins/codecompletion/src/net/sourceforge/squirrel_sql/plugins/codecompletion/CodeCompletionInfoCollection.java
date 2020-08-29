@@ -34,7 +34,7 @@ public class CodeCompletionInfoCollection
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CodeCompletionInfoCollection.class);
 
    private Hashtable<String, Vector<CodeCompletionInfo>> _completionInfosByCataLogAndSchema = new Hashtable<>();
-   private Vector<CodeCompletionInfo> _aliasCompletionInfos = new Vector<>();
+   private Vector<CodeCompletionTableAliasInfo> _aliasCompletionInfos = new Vector<>();
 
    private Vector<CodeCompletionSchemaInfo> _schemas = new Vector<>();
    private Vector<CodeCompletionCatalogInfo> _catalogs = new Vector<>();
@@ -214,7 +214,7 @@ public class CodeCompletionInfoCollection
 	}
 
 
-	public CodeCompletionInfo[] getInfosStartingWith(String catalog, String schema, String prefix)
+	public CodeCompletionInfo[] getInfosStartingWith(String catalog, String schema, String prefix, int pos)
    {
 		load(catalog, schema, true);
 
@@ -251,8 +251,8 @@ public class CodeCompletionInfoCollection
 
 		for(int i=0; i < _aliasCompletionInfos.size(); ++i)
 		{
-			CodeCompletionInfo buf = _aliasCompletionInfos.get(i);
-			if(buf.matchesCompletionStringStart(trimmedPrefix, _useCompletionPrefs && _prefs.isMatchCamelCase()))
+         CodeCompletionTableAliasInfo buf = _aliasCompletionInfos.get(i);
+			if(buf.isInStatementOfAlias(pos) && buf.matchesCompletionStringStart(trimmedPrefix, _useCompletionPrefs && _prefs.isMatchCamelCase()))
 			{
 				ret.add(buf);
 			}

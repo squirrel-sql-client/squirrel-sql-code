@@ -18,12 +18,11 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
 public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
 {
-	private TableAliasInfo _aliasInfo;
+   private TableAliasInfo _aliasInfo;
 
    private String _toString;
 
@@ -49,4 +48,9 @@ public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
     {
         return _aliasInfo.getStatBegin();
     }
+
+   public boolean isInStatementOfAlias(int colPos)
+   {
+      return _aliasInfo.isInStatementOfAlias(colPos);
+   }
 }

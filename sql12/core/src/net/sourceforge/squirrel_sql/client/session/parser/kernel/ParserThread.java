@@ -120,7 +120,7 @@ public class ParserThread
             }
             else if(null != table.getAlias())
             {
-               tableAliasInfosForCurrentStatement.add(new TableAliasInfo(table.getAlias().getName(), table.getFullyQualifiedName(), statementBounds.getBeginPos()));
+               tableAliasInfosForCurrentStatement.add(new TableAliasInfo(table.getAlias().getName(), table.getFullyQualifiedName(), statementBounds.getBeginPos(), statementBounds.getEndPos()));
             }
          }
 
@@ -128,12 +128,12 @@ public class ParserThread
          {
             tableAliasInfosForCurrentStatement = new HeuristicSQLAliasParser().parse(statementBounds, _session.getSchemaInfo());
 
-            System.out.println("####################### " + new Date());
-            System.out.println("##");
-            for (TableAliasInfo tableAliasInfo : tableAliasInfosForCurrentStatement)
-            {
-               System.out.println(tableAliasInfo.getAliasName() + " -> " + tableAliasInfo.getTableName());
-            }
+//            System.out.println("####################### " + new Date());
+//            System.out.println("##");
+//            for (TableAliasInfo tableAliasInfo : tableAliasInfosForCurrentStatement)
+//            {
+//               System.out.println(tableAliasInfo.getAliasName() + " -> " + tableAliasInfo.getTableName());
+//            }
          }
 
          tableAliasInfosBuffer.addAll(tableAliasInfosForCurrentStatement);
