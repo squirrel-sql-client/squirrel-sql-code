@@ -33,7 +33,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.Cr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColLabelController;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
@@ -175,7 +174,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       IDataSetViewer resultDataSetViewer;
 		if (_allowEditing)
 		{
-         resultDataSetViewer = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
+         resultDataSetViewer = BaseDataSetViewerDestination.createInstance(props.getSQLResultsOutputClassName(), _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
 
          _rowColAndSumController.setDataSetViewer(resultDataSetViewer);
 
@@ -187,7 +186,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 			// and it becomes difficult to know which table (or tables!) an
 			// edited column belongs to.  Therefore limit the output
 			// to be read-only
-         resultDataSetViewer = BaseDataSetViewerDestination.getInstance(
+         resultDataSetViewer = BaseDataSetViewerDestination.createInstance(
                props.getReadOnlySQLResultsOutputClassName(), null, new DataModelImplementationDetails(_session, _exInfo), _session);
 
          _rowColAndSumController.setDataSetViewer(resultDataSetViewer);
@@ -202,7 +201,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       if (_session.getProperties().getShowResultsMetaData())
       {
-         IDataSetViewer metaDataSetViewer = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName(), null, new DataModelImplementationDetails(_session, _exInfo), _session);
+         IDataSetViewer metaDataSetViewer = BaseDataSetViewerDestination.createInstance(props.getMetaDataOutputClassName(), null, new DataModelImplementationDetails(_session, _exInfo), _session);
          _metaDataDataSetViewerFindHandler = new DataSetViewerFindHandler(metaDataSetViewer, _session);
       }
 	}
@@ -386,6 +385,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	{
 		add(_tabResultTabs, BorderLayout.CENTER);
 		_sqlResultExecuterPanelFacade.returnToTabbedPane(this);
+      _rowColAndSumController.setDataSetViewer(_resultDataSetViewerFindHandler.getDataSetViewer());
 	}
 
    @Override
@@ -436,7 +436,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
             {
                TableState resultSortableTableState = getTableState(_resultDataSetViewerFindHandler.getDataSetViewer());
 
-               IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
+               IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.createInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
                // _resultDataSetViewerFindHandler = new DataSetViewerFindHandler(dataSetViewer);
                _resultDataSetViewerFindHandler.replaceDataSetViewer(dataSetViewer);
 
@@ -462,7 +462,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
             TableState resultSortableTableState = getTableState(_resultDataSetViewerFindHandler.getDataSetViewer());
 
-            IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(readOnlyOutput, _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
+            IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.createInstance(readOnlyOutput, _creator, new DataModelImplementationDetails(_session, _exInfo), _session);
             _resultDataSetViewerFindHandler.replaceDataSetViewer(dataSetViewer);
 
 

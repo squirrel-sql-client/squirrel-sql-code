@@ -28,6 +28,7 @@ public class RowColAndSumController
    private SumFunctionController _sumFunctionController = new SumFunctionController();
    private IDataSetViewer _dataSetViewer;
    private RowColAndSumDisplay _rowColAndSumDisplay;
+   private RowColSumLayoutListener _rowColSumLayoutListener;
 
    public RowColAndSumController()
    {
@@ -44,6 +45,11 @@ public class RowColAndSumController
 
       _panel.add(btnCombo, BorderLayout.WEST);
       _panel.add(_containerPanel, BorderLayout.CENTER);
+   }
+
+   public void setRowColSumLayoutListener(RowColSumLayoutListener rowColSumLayoutListener)
+   {
+      _rowColSumLayoutListener = rowColSumLayoutListener;
    }
 
    private void onComboSelectDisplay(ComboButton comboButton)
@@ -93,7 +99,17 @@ public class RowColAndSumController
             break;
       }
 
-      if(_dataSetViewer instanceof DataSetViewerTablePanel)
+      callSelectionChanged();
+
+      if(null != _rowColSumLayoutListener)
+      {
+         _rowColSumLayoutListener.rowColSumLayoutDone();
+      }
+   }
+
+   private void callSelectionChanged()
+   {
+      if (_dataSetViewer instanceof DataSetViewerTablePanel)
       {
          DataSetViewerTable table = ((DataSetViewerTablePanel) _dataSetViewer).getTable();
          onRowColSelectionChanged(table.getSelectedRowCount(), table.getSelectedColumnCount(), table.getSelectedRow(), table.getSelectedColumn());
@@ -101,7 +117,6 @@ public class RowColAndSumController
       else
       {
          onRowColSelectionChanged(0, 0, -1, -1);
-
       }
    }
 
@@ -121,6 +136,8 @@ public class RowColAndSumController
             onRowColSelectionChanged(selectedRowCount, selectedColumnCount, selectedRow, selectedColumn);
          }
       });
+
+      callSelectionChanged();
    }
 
    private void onRowColSelectionChanged(int selectedRowCount, int selectedColumnCount, int selectedRow, int selectedColumn)

@@ -244,13 +244,13 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
       });
       addComponentToGridBag(GridBagConstraints.RELATIVE, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NONE, gridBag, refreshButton, panel);
 
-      _whoViewer = BaseDataSetViewerDestination.getInstance(props.getReadOnlySQLResultsOutputClassName(), null, null);
+      _whoViewer = BaseDataSetViewerDestination.createInstance(props.getReadOnlySQLResultsOutputClassName(), null, null);
       JScrollPane whoScroll = new JScrollPane(_whoViewer.getComponent());
       // i18n[mssql.currentActivity=Current Activity]
       whoScroll.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("mssql.currentActivity")));
       addComponentToGridBag(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, gridBag, whoScroll, panel);
 
-      _perfViewer = BaseDataSetViewerDestination.getInstance(props.getReadOnlySQLResultsOutputClassName(), null, null);
+      _perfViewer = BaseDataSetViewerDestination.createInstance(props.getReadOnlySQLResultsOutputClassName(), null, null);
       JScrollPane perfScroll = new JScrollPane(_perfViewer.getComponent());
       // i18n[mssql.performace=Performance Counters]
       perfScroll.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("mssql.performace")));

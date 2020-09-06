@@ -160,9 +160,9 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	}
 
 
-   public static IDataSetViewer getInstance(String sName, IDataSetUpdateableModel updateableModel, ISession session)
+   public static IDataSetViewer createInstance(String sName, IDataSetUpdateableModel updateableModel, ISession session)
    {
-      return getInstance(sName, updateableModel, null, session);
+      return createInstance(sName, updateableModel, null, session);
    }
 
 	/**
@@ -170,7 +170,7 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	 * If no instance can be made then the default
 	 * will be returned.
 	 */
-	public static IDataSetViewer getInstance(String sName, IDataSetUpdateableModel updateableModel, DataModelImplementationDetails dataModelImplementationDetails, ISession session)
+	public static IDataSetViewer createInstance(String sName, IDataSetUpdateableModel updateableModel, DataModelImplementationDetails dataModelImplementationDetails, ISession session)
 	{
 		IDataSetViewer dsv = null;
 		try

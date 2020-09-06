@@ -89,7 +89,7 @@ public class DataSetScrollingPanel extends JScrollPane
 		throws DataSetException
 	{
 		setBorder(BorderFactory.createEmptyBorder());
-		_viewer = BaseDataSetViewerDestination.getInstance(destClassName, updateableModel, dataModelImplementationDetails, _session);
+		_viewer = BaseDataSetViewerDestination.createInstance(destClassName, updateableModel, dataModelImplementationDetails, _session);
 		Runnable run = new Runnable()
 		{
 			public void run()

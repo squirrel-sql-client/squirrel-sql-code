@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
@@ -66,6 +67,7 @@ public class ResultFrame extends SessionDialogWidget
    private JCheckBox _chkOnTop;
    private TabButton _btnReRun;
    private JPanel _centerPanel;
+   private RowColAndSumController _rowColAndSumController = new RowColAndSumController();
 
    /**
     * Ctor.
@@ -97,7 +99,7 @@ public class ResultFrame extends SessionDialogWidget
       final IApplication app = session.getApplication();
 
 
-      getContentPane().add(createButtonPanel(session, app, checkStayOnTop), BorderLayout.NORTH);
+      getContentPane().add(createTopPanel(session, app, checkStayOnTop), BorderLayout.NORTH);
       _centerPanel = new JPanel(new GridLayout(1,1));
       getContentPane().add(_centerPanel, BorderLayout.CENTER);
       _centerPanel.add(_resultTab.getTabbedPaneOfResultTabs());
@@ -199,28 +201,27 @@ public class ResultFrame extends SessionDialogWidget
 
    private void onAddResultsTab(final SQLExecutionInfo info, final ResultSetDataSet rsds, final ResultSetMetaDataDataSet rsmdds, final IDataSetUpdateableTableModel creator, IResultTab resultTabToReplace)
    {
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            try
-            {
-               // We start a new frame here because reusing the current one for the new result led to repaint problems
-               _centerPanel.removeAll();
-               ResultTab tab = _resultTabFactory.createResultTab(info, creator, rsds, rsmdds);
-               ResultFrame frame = new ResultFrame(_session, tab, _resultTabFactory, _resultFrameListener, _chkOnTop.isSelected(), true);
-               showFrame(frame, true);
-               setVisible(false);
-               dispose();
+      // We start a new frame here because reusing the current one for the new result led to repaint problems
+      SwingUtilities.invokeLater(() -> showRerunResultsInNewFrame(info, creator, rsds, rsmdds));
+   }
 
-               _resultFrameListener.frameReplaced(ResultFrame.this, frame);
-            }
-            catch (Throwable t)
-            {
-               _session.showErrorMessage(t);
-            }
-         }
-      });
+   private void showRerunResultsInNewFrame(SQLExecutionInfo info, IDataSetUpdateableTableModel creator, ResultSetDataSet rsds, ResultSetMetaDataDataSet rsmdds)
+   {
+      try
+      {
+         _centerPanel.removeAll();
+         ResultTab tab = _resultTabFactory.createResultTab(info, creator, rsds, rsmdds);
+         ResultFrame frame = new ResultFrame(_session, tab, _resultTabFactory, _resultFrameListener, _chkOnTop.isSelected(), true);
+         showFrame(frame, true);
+         setVisible(false);
+         dispose();
+
+         _resultFrameListener.frameReplaced(ResultFrame.this, frame);
+      }
+      catch (Throwable t)
+      {
+         _session.showErrorMessage(t);
+      }
    }
 
    private void showFrame(ResultFrame frame, boolean isOnRerun)
@@ -241,7 +242,20 @@ public class ResultFrame extends SessionDialogWidget
       frame.requestFocus();
    }
 
-   private JPanel createButtonPanel(ISession session, IApplication app, boolean checkStayOnTop)
+   private JPanel createTopPanel(ISession session, IApplication app, boolean checkStayOnTop)
+   {
+      JPanel ret = new JPanel(new BorderLayout(15, 0));
+
+      JPanel pnlButtons = createLeftButtonsPanel(session, app, checkStayOnTop);
+      ret.add(pnlButtons, BorderLayout.WEST);
+
+      ret.add(new JPanel(), BorderLayout.CENTER);
+
+      ret.add(createRightUpperPanel(), BorderLayout.EAST);
+      return ret;
+   }
+
+   private JPanel createLeftButtonsPanel(ISession session, IApplication app, boolean checkStayOnTop)
    {
       JPanel pnlButtons = new JPanel(new GridBagLayout());
       GridBagConstraints gbc;
@@ -258,21 +272,43 @@ public class ResultFrame extends SessionDialogWidget
       initLayer();
 
       _chkOnTop.setVisible(session.getApplication().getDesktopStyle().supportsLayers());
-
-      gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5), 0,0);
-      pnlButtons.add(new JPanel(), gbc);
-
-      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      pnlButtons.add(createRightButtonsPanel(), gbc);
-
       return pnlButtons;
    }
+
+   private JPanel createRightUpperPanel()
+   {
+      JPanel ret = new JPanel(new BorderLayout(15,0));
+
+      ret.add(createRightButtonsPanel(), BorderLayout.EAST);
+
+      _rowColAndSumController.setDataSetViewer(_resultTab.getSQLResultDataSetViewer());
+
+      ret.add(_rowColAndSumController.getPanel(), BorderLayout.CENTER);
+      _rowColAndSumController.setRowColSumLayoutListener(() -> updateRightUpperPanelLayout(ret));
+      updateRightUpperPanelLayout(ret);
+
+      return ret;
+   }
+
+   public void updateRightUpperPanelLayout(JPanel panel)
+   {
+      //_panel.invalidate();
+      //SwingUtilities.invokeLater( () -> {_panel.revalidate(); _panel.getParent().revalidate(); _panel.getParent().getParent().revalidate();});
+      //SwingUtilities.invokeLater( () -> _panel.repaint());
+      panel.revalidate();
+      //panel.getParent().revalidate();
+      if (null != panel.getParent())
+      {
+         panel.getParent().revalidate();
+      }
+
+      //_panel.setBorder(BorderFactory.createLineBorder(Color.RED));
+   }
+
 
    private JPanel createRightButtonsPanel()
    {
       JPanel ret = new JPanel(new GridLayout(1,4));
-
-      //GridBagConstraints gbc;
 
       ImageIcon iconReRun = Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.RERUN);
       _btnReRun = new TabButton(iconReRun);

@@ -174,7 +174,7 @@ public class ExplainTab extends JPanel
 			public void run()
 			{
 				final IDataSetViewer resultSetOutput =
-					BaseDataSetViewerDestination.getInstance(outputClassName, _model, _session);
+					BaseDataSetViewerDestination.createInstance(outputClassName, _model, _session);
 				_resultSetSp.setViewportView(resultSetOutput.getComponent());
 				_resultSetSp.setRowHeader(null);
 				_rsds.resetCursor();
