@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
@@ -19,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -42,8 +44,9 @@ public class RowsWindowFrame extends JDialog
    private ArrayList<ColumnDisplayDefinition> _columnDisplayDefinitions;
    private ISession _session;
    private int _myCounterId;
-   private final DataSetViewerTablePanel _dataSetViewerTablePanel;
+   private DataSetViewerTablePanel _dataSetViewerTablePanel;
 
+   private RowColAndSumController _rowColAndSumController = new RowColAndSumController();
 
    public RowsWindowFrame(List<Object[]> rows, Window parent, ArrayList<ColumnDisplayDefinition> columnDisplayDefinitions, ISession session)
    {
@@ -51,18 +54,13 @@ public class RowsWindowFrame extends JDialog
       _columnDisplayDefinitions = columnDisplayDefinitions;
       _session = session;
 
+      _contentPanel = initContentPanel(rows);
+
       getContentPane().setLayout(new GridLayout(1,1));
-
-      _contentPanel = new JPanel(new GridLayout(1, 1));
       getContentPane().add(_contentPanel);
-
-
-      _dataSetViewerTablePanel = createDataSetViewerTablePanel(rows, _columnDisplayDefinitions);
-      _contentPanel.add(new JScrollPane(_dataSetViewerTablePanel.getComponent()));
 
       int width = Props.getInt(PREF_KEY_ROWS_WINDOW_FRAME_WIDTH, 300);
       int height = Props.getInt(PREF_KEY_ROWS_WINDOW_FRAME_HIGHT, 300);
-
 
       addWindowListener(new WindowAdapter()
       {
@@ -77,6 +75,33 @@ public class RowsWindowFrame extends JDialog
       setSize(new Dimension(width, height));
 
       setVisible(true);
+   }
+
+   private JPanel initContentPanel(List<Object[]> rows)
+   {
+      JPanel ret;
+      ret = new JPanel(new BorderLayout(0, 3));
+
+      _dataSetViewerTablePanel = createDataSetViewerTablePanel(rows, _columnDisplayDefinitions);
+      ret.add(new JScrollPane(_dataSetViewerTablePanel.getComponent()), BorderLayout.CENTER);
+
+
+      _rowColAndSumController.setDataSetViewer(_dataSetViewerTablePanel);
+      JPanel pnlNorth = new JPanel(new BorderLayout());
+
+      _rowColAndSumController.getPanel().setBorder(BorderFactory.createEmptyBorder(2,0,2,5));
+      pnlNorth.add(_rowColAndSumController.getPanel(), BorderLayout.EAST);
+      pnlNorth.add(new JPanel(), BorderLayout.CENTER);
+
+      _rowColAndSumController.setRowColSumLayoutListener(() -> onRowColSumLayoutDone(pnlNorth));
+
+      ret.add(pnlNorth, BorderLayout.NORTH);
+      return ret;
+   }
+
+   private void onRowColSumLayoutDone(JPanel pnlNorth)
+   {
+      pnlNorth.revalidate();
    }
 
    private void onWindowClosing()

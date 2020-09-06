@@ -30,6 +30,7 @@ public class SumFunctionController
    private FunctionController _functionController;
 
    private DataSetViewerTable _currentTable;
+   private RowColSumLayoutListener _rowColSumLayoutListener;
 
    public SumFunctionController()
    {
@@ -162,6 +163,17 @@ public class SumFunctionController
          _txtSum.setText("\u03A3(" + colName + ") = " + _currentRenderedSum);
       }
 
+      if (   null != _rowColSumLayoutListener
+          && null != _txtSum.getText()
+          && _txtSum.getSize().width < _txtSum.getFontMetrics(_txtSum.getFont()).stringWidth(_txtSum.getText()))
+      {
+         _rowColSumLayoutListener.rowColSumLayoutDone();
+      }
+
    }
 
+   public void setRowColSumLayoutListener(RowColSumLayoutListener rowColSumLayoutListener)
+   {
+      _rowColSumLayoutListener = rowColSumLayoutListener;
+   }
 }

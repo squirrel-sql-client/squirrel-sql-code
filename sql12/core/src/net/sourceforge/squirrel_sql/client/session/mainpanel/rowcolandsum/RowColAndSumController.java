@@ -50,6 +50,7 @@ public class RowColAndSumController
    public void setRowColSumLayoutListener(RowColSumLayoutListener rowColSumLayoutListener)
    {
       _rowColSumLayoutListener = rowColSumLayoutListener;
+      _sumFunctionController.setRowColSumLayoutListener(rowColSumLayoutListener);
    }
 
    private void onComboSelectDisplay(ComboButton comboButton)

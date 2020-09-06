@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Windows opened by table's right mouse menu items "Copy selected rows to new window" and "Copy colored rows to new window"
+   now show sums and row/column counts of selections.
+
 Code Completion: More improvements of SQL-alias completion. JSQLParser isn't the only source of SQL-alias information anymore.
 
 Unsaved file/buffer changes dialogs Added "Don't show again" option.
