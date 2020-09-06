@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetail
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -113,9 +114,11 @@ public class RowsWindowFrame extends JDialog
       RowSelectionTableUtil.getActualTableModel(_dataSetViewerTablePanel).allRowsAdded();
 
 
-      final JTable table = _dataSetViewerTablePanel.getTable();
+      DataSetViewerTable table = _dataSetViewerTablePanel.getTable();
 
-      table.invalidate();
+      table.getDataSetViewerTableModel().fireTableDataChanged();
+      table.validate();
+
 
       SwingUtilities.invokeLater(() -> scrollTableToBottom(table));
 

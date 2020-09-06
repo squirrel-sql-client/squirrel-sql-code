@@ -68,6 +68,9 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+Copying table rows to new window sometimes didn't work because of UI update problems.
+  Concerned table's right mouse menu items "Copy selected rows to new window" and "Copy colored rows to new window".
+
 When a SQL result tab was moved to a new window, sums and row/column counts were not available.
 
 Paste history (ctrl +shift + v or insert) didn't work when copy as Rich Text Format was checked.
@@ -776,7 +779,7 @@ Reworked corrections/abbreviations dialog. See Session toolbar button 'Configure
 
 Allowed Java version 10 in starter scripts.
 
-New right mouse menu entry 'Copy selected rows to new window' available in all tables.
+New right mouse menu entry '.cted rows to new window' available in all tables.
   If windows with with matching column names and column types already exist another pop up menu allows to append
   the selected rows to one of these windows.
 
