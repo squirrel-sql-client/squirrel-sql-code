@@ -109,11 +109,14 @@ public class DialectFactory
 
 	private static final TimesTenDialectExt timestenDialect = new TimesTenDialectExt();
 
-	private static final IntersystemsCacheDialectExt intersystemsCacheDialectExt =
-		new IntersystemsCacheDialectExt();
+	private static final IntersystemsCacheDialectExt intersystemsCacheDialectExt = new IntersystemsCacheDialectExt();
 
-	private static HashMap<String, HibernateDialect> dbNameDialectMap =
-		new HashMap<String, HibernateDialect>();
+	private static final SQLiteDialectExt sqliteDialectExt = new SQLiteDialectExt();
+
+	/**
+	 * TODO: Remove and put static dialects in DialectType enum.
+	 */
+	private static HashMap<String, HibernateDialect> dbNameDialectMap = new HashMap<>();
 
 	public static boolean isPromptForDialect = false;
 
@@ -162,6 +165,7 @@ public class DialectFactory
 		dbNameDialectMap.put(sybaseDialect.getDisplayName(), sybaseDialect);
 		dbNameDialectMap.put(timestenDialect.getDisplayName(), timestenDialect);
 		dbNameDialectMap.put(intersystemsCacheDialectExt.getDisplayName(), intersystemsCacheDialectExt);
+		dbNameDialectMap.put(sqliteDialectExt.getDisplayName(), sqliteDialectExt);
 	}
 
 	public static boolean isAxion(ISQLDatabaseMetaData md)
@@ -289,9 +293,14 @@ public class DialectFactory
 		return dialectSupportsProduct(md, timestenDialect);
 	}
 
-	public static boolean isIntersystemsCacheDialectExt(ISQLDatabaseMetaData md)
+	public static boolean isIntersystemsCache(ISQLDatabaseMetaData md)
 	{
 		return dialectSupportsProduct(md, intersystemsCacheDialectExt);
+	}
+
+	public static boolean isSQLite(ISQLDatabaseMetaData md)
+	{
+		return dialectSupportsProduct(md, sqliteDialectExt);
 	}
 
 	/**
@@ -390,7 +399,8 @@ public class DialectFactory
 		if (isProgress(md)) { return progressDialect; }
 		if (isSyBase(md)) { return sybaseDialect; }
 		if (isTimesTen(md)) { return timestenDialect; }
-		if (isIntersystemsCacheDialectExt(md)) { return intersystemsCacheDialectExt; }
+		if (isIntersystemsCache(md)) { return intersystemsCacheDialectExt; }
+		if (isSQLite(md)) { return sqliteDialectExt; }
 		// GenericDialect must be last, since it will claim that it supports any product/version. That is also
 		// why there is no isGenericDialect - it would always return true if there was one, making it useless.
 		return genericDialect;

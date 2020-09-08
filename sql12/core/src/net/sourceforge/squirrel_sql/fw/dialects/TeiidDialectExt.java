@@ -447,6 +447,11 @@ public class TeiidDialectExt extends CommonHibernateDialect
 		
 		return false;
 	}
-	
-	
+
+
+	@Override
+	public DialectType getDialectType()
+	{
+		return DialectType.TEIID;
+	}
 }

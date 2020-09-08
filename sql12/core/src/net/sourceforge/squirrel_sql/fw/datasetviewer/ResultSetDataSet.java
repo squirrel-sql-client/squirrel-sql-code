@@ -449,7 +449,7 @@ public class ResultSetDataSet implements IDataSet
          String columnName = getColumnName(i, md, idx);
          String columnTypeName = getColumnTypeName(i, md, idx);
          int baseColumnType = getColumnType(i, md, idx);
-         int columnType = fixColumnType(columnName, baseColumnType, columnTypeName);
+         int columnType = fixColumnType(columnName, baseColumnType, columnTypeName, _dialectType);
 
          columnDefs[i] = new ColumnDisplayDefinition(computeWidths ? colWidths[i] : Math.min(md.getColumnDisplaySize(idx), 1000),
                fullTableName + ":" + md.getColumnLabel(idx),
@@ -532,12 +532,16 @@ public class ResultSetDataSet implements IDataSet
     * Types.NULL to a sensible Type based on the column type name reported by the driver.  If the column type
     * name doesn't match (ignoring case) an existing JDBC type, then this method returns Types.VARCHAR.
     *
+    * For the same reason as described above, numeric types are interpreted as INTEGER, when they might be
+    * NUMERIC and actually overflow.
+    *
     * @param columnName     the name of the column
     * @param columnType     the type code that was given by the jdbc driver.
     * @param columnTypeName the type name of the column that was given by the jdbc driver
+    * @param dialectType
     * @return a type code that is not Types.NULL.
     */
-   private int fixColumnType(String columnName, int columnType, String columnTypeName)
+   private int fixColumnType(String columnName, int columnType, String columnTypeName, DialectType dialectType)
    {
       int result = columnType;
       if (columnType == Types.NULL)
@@ -548,13 +552,21 @@ public class ResultSetDataSet implements IDataSet
             result = Types.VARCHAR;
          }
       }
+      else if ( DialectType.SQLLITE == dialectType )
+      {
+         if (columnType == Types.INTEGER && "NUMERIC".equals(columnTypeName))
+         {
+            result = Types.NUMERIC;
+         }
+      }
+
       if (result != columnType)
       {
          if (s_log.isDebugEnabled())
          {
             s_log.debug("Converting type code for column " + columnName +
-                  ". Original column type code and name were Types.NULL and " + columnTypeName +
-                  "; New type code is " + JDBCTypeMapper.getJdbcTypeName(result));
+                  ". Original column type code and name were " + columnType + " (see code-constants in java.sql.Types) and " + columnTypeName +
+                  "; New type code is " + result);
          }
       }
       return result;

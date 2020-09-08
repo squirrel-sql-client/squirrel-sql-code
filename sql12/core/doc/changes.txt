@@ -71,6 +71,9 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+SQLite database: Sqlite NUMERIC type was rendered as INTEGER.
+  Thanks to Alexandru Bledea for merge request #62.
+
 Copying table rows to new window sometimes didn't work because of UI update problems.
   Concerned table's right mouse menu items "Copy selected rows to new window" and "Copy colored rows to new window".
 

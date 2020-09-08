@@ -129,4 +129,9 @@ public class IntersystemsCacheDialectExt extends CommonHibernateDialect
       return false;
    }
 
+   @Override
+   public DialectType getDialectType()
+   {
+      return DialectType.CACHE;
+   }
 }

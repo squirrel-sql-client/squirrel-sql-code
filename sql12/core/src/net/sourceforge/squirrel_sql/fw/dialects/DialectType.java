@@ -21,11 +21,13 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 /**
  * An enumeration class that provides an entry for each database that we have a
  * HibernateDialect (SQuirreL's version) implemented.
- * 
+ *
  * @author manningr
  */
-public enum DialectType {
+public enum DialectType
+{
    AXION,
+   CACHE,
    DAFFODIL,
    DB2,
    DERBY,
@@ -47,7 +49,10 @@ public enum DialectType {
    POINTBASE,
    POSTGRES,
    PROGRESS,
-   SYBASEASE, // Sybase Adaptive Server Enterprise 
+   SQLLITE,
+   SYBASEASE, // Sybase Adaptive Server Enterprise
+   TEIID,
    TIMESTEN,
+
    GENERIC
 }

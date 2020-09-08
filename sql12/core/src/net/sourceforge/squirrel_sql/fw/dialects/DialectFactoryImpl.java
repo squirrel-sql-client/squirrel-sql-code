@@ -148,7 +148,7 @@ public class DialectFactoryImpl implements IDialectFactory
 	 */
 	public boolean isIntersystemsCacheDialectExt(ISQLDatabaseMetaData md)
 	{
-		return DialectFactory.isIntersystemsCacheDialectExt(md);
+		return DialectFactory.isIntersystemsCache(md);
 	}
 
 	/**

@@ -92,8 +92,11 @@ public class JDBCTypeMapper
 	 */
 	public static int getJdbcType(String jdbcTypeName, int defaultVal)
 	{
+		if (jdbcTypeName == null)
+		{
+			return Types.NULL;
+		}
 
-		if (jdbcTypeName == null) { return Types.NULL; }
 		int result = defaultVal;
 
 		try
@@ -108,11 +111,7 @@ public class JDBCTypeMapper
 				}
 			}
 		}
-		catch (IllegalArgumentException e)
-		{
-			s_log.error("getJdbcTypeName: unexpected exception: " + e.getMessage(), e);
-		}
-		catch (IllegalAccessException e)
+		catch (Exception e)
 		{
 			s_log.error("getJdbcTypeName: unexpected exception: " + e.getMessage(), e);
 		}

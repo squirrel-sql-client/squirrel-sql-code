@@ -35,10 +35,12 @@ import org.hibernate.HibernateException;
  * A base class for dialects where the most frequently implemented behavior can located, to avoid code
  * duplication and make porting new dialects easier. This class will also be used when connecting to a
  * database for which no other dialect supports.
+ *
+ * See {@link SQLiteDialectExt} for a simple example of an implementation
  * 
  * @author manningr
  */
-public class CommonHibernateDialect implements HibernateDialect, StringTemplateConstants
+public abstract class CommonHibernateDialect implements HibernateDialect, StringTemplateConstants
 {
 	/** default template for drop column */
 	protected String DROP_COLUMN_SQL_TEMPLATE = ST_DROP_COLUMN_STYLE_ONE;
@@ -336,14 +338,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
-	 */
-	public DialectType getDialectType()
-	{
-		return DialectType.GENERIC;
-	}
-
-	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDisplayName()
 	 */
 	public String getDisplayName()
@@ -596,15 +590,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 			+ ") doesn't provide a java type for native type = " + nativeColumnTypeName);
 	}
 	
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getTypeName(int, int, int, int)
-	 */
-	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
-	{
-		// TODO Need to have a generic hibernate dialect extend this to provide the types.
-		throw new UnsupportedOperationException("Common dialect doesn't register column types");
-	}
-
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getTypeName(int)
 	 */
