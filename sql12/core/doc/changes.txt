@@ -71,6 +71,8 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+MS Excel export: Fixed error java.lang.ClassNotFoundException: org.dom4j.DocumentException
+
 SQLite database: Sqlite NUMERIC type was rendered as INTEGER.
   Thanks to Alexandru Bledea for merge request #62.
 
