@@ -17,22 +17,25 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.swing.JComponent;
-
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportPropsDAO;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FailedToInterpretHandler;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
+import net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv.csvreader.CsvReader;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This class implements the IFileImporter interface for reading CSV files.
@@ -41,6 +44,9 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
  */
 public class CSVFileImporter implements IFileImporter
 {
+
+   private final static ILogger s_log = LoggerController.createLogger(CSVFileImporter.class);
+
    private static final StringManager stringMgr = StringManagerFactory.getStringManager(CSVFileImporter.class);
 
    private CSVSettingsBean settings;
@@ -94,7 +100,7 @@ public class CSVFileImporter implements IFileImporter
     */
    public String[][] getPreview(int noOfLines) throws IOException
    {
-      CsvReader csvReader = new CsvReader(new InputStreamReader(new FileInputStream(importFile), settings.getImportCharset()), settings.getSeperator(), _trimValues, settings.isUseDoubleQuotesAsTextQualifier());
+      CsvReader csvReader = new CsvReader(new InputStreamReader(new FileInputStream(importFile), settings.getImportCharset()), getCharsetByName(settings.getImportCharset()), settings.getSeperator(), _trimValues, settings.isUseDoubleQuotesAsTextQualifier());
       String[][] data = new String[noOfLines][];
 
       int row = 0;
@@ -122,6 +128,24 @@ public class CSVFileImporter implements IFileImporter
       return outData;
    }
 
+   private Charset getCharsetByName(String importCharset)
+   {
+      Charset charset = null;
+
+      if (false == StringUtilities.isEmpty(importCharset))
+      {
+         try
+         {
+            charset = Charset.forName(importCharset);
+         }
+         catch (Exception e)
+         {
+            s_log.warn("Failed to find charset by name: " + importCharset, e);
+         }
+      }
+      return charset;
+   }
+
    /*
     * (non-Javadoc)
     * @see net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter#next()
@@ -141,7 +165,7 @@ public class CSVFileImporter implements IFileImporter
       {
          reader.close();
       }
-      reader = new CsvReader(new InputStreamReader(new FileInputStream(importFile), settings.getImportCharset()), settings.getSeperator(), _trimValues, settings.isUseDoubleQuotesAsTextQualifier());
+      reader = new CsvReader(new InputStreamReader(new FileInputStream(importFile), settings.getImportCharset()), getCharsetByName(settings.getImportCharset()), settings.getSeperator(), _trimValues, settings.isUseDoubleQuotesAsTextQualifier());
       reader.setSafetySwitch(safetySwitch);
       return true;
    }
