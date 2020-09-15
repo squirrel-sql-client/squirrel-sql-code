@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv.csvreader;
 
-class UserSettings
+class CsvReaderSettings
 {
    // having these as publicly accessible members will prevent
    // the overhead of the method call that exists on properties
@@ -26,9 +26,7 @@ class UserSettings
 
    public boolean skipEmptyRecords;
 
-   public boolean captureRawRecord;
-
-   public UserSettings()
+   public CsvReaderSettings()
    {
       caseSensitive = true;
       textQualifier = Letters.QUOTE;
@@ -41,6 +39,5 @@ class UserSettings
       escapeMode = CsvReader.ESCAPE_MODE_DOUBLED;
       safetySwitch = true;
       skipEmptyRecords = true;
-      captureRawRecord = true;
    }
 }

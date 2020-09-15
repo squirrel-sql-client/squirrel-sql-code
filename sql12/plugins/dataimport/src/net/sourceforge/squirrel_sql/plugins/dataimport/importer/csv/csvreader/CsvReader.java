@@ -45,9 +45,8 @@ public class CsvReader
 
    private Reader _inputStream;
 
-
    // this holds all the values for switches that the user is allowed to set
-   private UserSettings _userSettings = new UserSettings();
+   private CsvReaderSettings _csvReaderSettings = new CsvReaderSettings();
 
    private Charset _charset;
 
@@ -60,11 +59,7 @@ public class CsvReader
 
    private ColumnBuffer _columnBuffer = new ColumnBuffer();
 
-   private RawRecordBuffer _rawBuffer = new RawRecordBuffer();
-
    private boolean[] _isQualified;
-
-   private String _rawRecord = "";
 
    private HeadersHolder _headersHolder = new HeadersHolder();
 
@@ -107,26 +102,11 @@ public class CsvReader
 
       _inputStream = inputStream;
       _charset = charset;
-      _userSettings.delimiter = delimiter;
-      _userSettings.trimWhitespace = trimValues;
-      _userSettings.useTextQualifier = useTextQualifier;
+      _csvReaderSettings.delimiter = delimiter;
+      _csvReaderSettings.trimWhitespace = trimValues;
+      _csvReaderSettings.useTextQualifier = useTextQualifier;
 
       _isQualified = new boolean[_values.length];
-   }
-
-   public boolean getCaptureRawRecord()
-   {
-      return _userSettings.captureRawRecord;
-   }
-
-   public void setCaptureRawRecord(boolean captureRawRecord)
-   {
-      _userSettings.captureRawRecord = captureRawRecord;
-   }
-
-   public String getRawRecord()
-   {
-      return _rawRecord;
    }
 
    /**
@@ -138,7 +118,7 @@ public class CsvReader
     */
    public boolean getTrimWhitespace()
    {
-      return _userSettings.trimWhitespace;
+      return _csvReaderSettings.trimWhitespace;
    }
 
    /**
@@ -150,7 +130,7 @@ public class CsvReader
     */
    public void setTrimWhitespace(boolean trimWhitespace)
    {
-      _userSettings.trimWhitespace = trimWhitespace;
+      _csvReaderSettings.trimWhitespace = trimWhitespace;
    }
 
    /**
@@ -161,7 +141,7 @@ public class CsvReader
     */
    public Character getDelimiter()
    {
-      return _userSettings.delimiter;
+      return _csvReaderSettings.delimiter;
    }
 
    /**
@@ -171,12 +151,12 @@ public class CsvReader
     */
    public void setDelimiter(Character delimiter)
    {
-      _userSettings.delimiter = delimiter;
+      _csvReaderSettings.delimiter = delimiter;
    }
 
    public char getRecordDelimiter()
    {
-      return _userSettings.recordDelimiter;
+      return _csvReaderSettings.recordDelimiter;
    }
 
    /**
@@ -189,7 +169,7 @@ public class CsvReader
    public void setRecordDelimiter(char recordDelimiter)
    {
       _useCustomRecordDelimiter = true;
-      _userSettings.recordDelimiter = recordDelimiter;
+      _csvReaderSettings.recordDelimiter = recordDelimiter;
    }
 
    /**
@@ -199,7 +179,7 @@ public class CsvReader
     */
    public char getTextQualifier()
    {
-      return _userSettings.textQualifier;
+      return _csvReaderSettings.textQualifier;
    }
 
    /**
@@ -209,7 +189,7 @@ public class CsvReader
     */
    public void setTextQualifier(char textQualifier)
    {
-      _userSettings.textQualifier = textQualifier;
+      _csvReaderSettings.textQualifier = textQualifier;
    }
 
    /**
@@ -219,7 +199,7 @@ public class CsvReader
     */
    public boolean getUseTextQualifier()
    {
-      return _userSettings.useTextQualifier;
+      return _csvReaderSettings.useTextQualifier;
    }
 
    /**
@@ -229,7 +209,7 @@ public class CsvReader
     */
    public void setUseTextQualifier(boolean useTextQualifier)
    {
-      _userSettings.useTextQualifier = useTextQualifier;
+      _csvReaderSettings.useTextQualifier = useTextQualifier;
    }
 
    /**
@@ -239,7 +219,7 @@ public class CsvReader
     */
    public char getComment()
    {
-      return _userSettings.comment;
+      return _csvReaderSettings.comment;
    }
 
    /**
@@ -249,7 +229,7 @@ public class CsvReader
     */
    public void setComment(char comment)
    {
-      _userSettings.comment = comment;
+      _csvReaderSettings.comment = comment;
    }
 
    /**
@@ -259,7 +239,7 @@ public class CsvReader
     */
    public boolean getUseComments()
    {
-      return _userSettings.useComments;
+      return _csvReaderSettings.useComments;
    }
 
    /**
@@ -269,7 +249,7 @@ public class CsvReader
     */
    public void setUseComments(boolean useComments)
    {
-      _userSettings.useComments = useComments;
+      _csvReaderSettings.useComments = useComments;
    }
 
    /**
@@ -281,7 +261,7 @@ public class CsvReader
     */
    public int getEscapeMode()
    {
-      return _userSettings.escapeMode;
+      return _csvReaderSettings.escapeMode;
    }
 
    /**
@@ -299,17 +279,17 @@ public class CsvReader
          throw new IllegalArgumentException("Parameter escapeMode must be a valid value.");
       }
 
-      _userSettings.escapeMode = escapeMode;
+      _csvReaderSettings.escapeMode = escapeMode;
    }
 
    public boolean getSkipEmptyRecords()
    {
-      return _userSettings.skipEmptyRecords;
+      return _csvReaderSettings.skipEmptyRecords;
    }
 
    public void setSkipEmptyRecords(boolean skipEmptyRecords)
    {
-      _userSettings.skipEmptyRecords = skipEmptyRecords;
+      _csvReaderSettings.skipEmptyRecords = skipEmptyRecords;
    }
 
    /**
@@ -324,7 +304,7 @@ public class CsvReader
     */
    public boolean getSafetySwitch()
    {
-      return _userSettings.safetySwitch;
+      return _csvReaderSettings.safetySwitch;
    }
 
    /**
@@ -339,7 +319,7 @@ public class CsvReader
     */
    public void setSafetySwitch(boolean safetySwitch)
    {
-      _userSettings.safetySwitch = safetySwitch;
+      _csvReaderSettings.safetySwitch = safetySwitch;
    }
 
    /**
@@ -480,7 +460,6 @@ public class CsvReader
       checkClosed();
 
       _columnsCount = 0;
-      _rawBuffer.position = 0;
 
       _dataBuffer.lineStart = _dataBuffer.position;
 
@@ -497,7 +476,7 @@ public class CsvReader
          {
             if (_dataBuffer.position == _dataBuffer.count)
             {
-               checkDataLength();
+               readInputStreamToDataBuffer();
             }
             else
             {
@@ -507,8 +486,8 @@ public class CsvReader
 
                char currentLetter = _dataBuffer.buffer[_dataBuffer.position];
 
-               if (_userSettings.useTextQualifier
-                     && currentLetter == _userSettings.textQualifier)
+               if (_csvReaderSettings.useTextQualifier
+                     && currentLetter == _csvReaderSettings.textQualifier)
                {
                   // this will be a text qualified column, so
                   // we need to set startedWithQualifier to make it
@@ -523,9 +502,9 @@ public class CsvReader
                   _startedWithQualifier = true;
                   boolean lastLetterWasQualifier = false;
 
-                  char escapeChar = _userSettings.textQualifier;
+                  char escapeChar = _csvReaderSettings.textQualifier;
 
-                  if (_userSettings.escapeMode == ESCAPE_MODE_BACKSLASH)
+                  if (_csvReaderSettings.escapeMode == ESCAPE_MODE_BACKSLASH)
                   {
                      escapeChar = Letters.BACKSLASH;
                   }
@@ -543,7 +522,7 @@ public class CsvReader
                   {
                      if (_dataBuffer.position == _dataBuffer.count)
                      {
-                        checkDataLength();
+                        readInputStreamToDataBuffer();
                      }
                      else
                      {
@@ -555,12 +534,12 @@ public class CsvReader
                         {
                            _dataBuffer.columnStart = _dataBuffer.position + 1;
 
-                           if (null != _userSettings.delimiter && currentLetter == _userSettings.delimiter)
+                           if (null != _csvReaderSettings.delimiter && currentLetter == _csvReaderSettings.delimiter)
                            {
                               endColumn();
                            }
                            else if ((!_useCustomRecordDelimiter && (currentLetter == Letters.CR || currentLetter == Letters.LF))
-                                 || (_useCustomRecordDelimiter && currentLetter == _userSettings.recordDelimiter))
+                                 || (_useCustomRecordDelimiter && currentLetter == _csvReaderSettings.recordDelimiter))
                            {
                               endColumn();
 
@@ -624,7 +603,7 @@ public class CsvReader
                               _dataBuffer.columnStart = _dataBuffer.position + 1;
                            }
                         }
-                        else if (currentLetter == _userSettings.textQualifier)
+                        else if (currentLetter == _csvReaderSettings.textQualifier)
                         {
                            if (lastLetterWasEscape)
                            {
@@ -635,7 +614,7 @@ public class CsvReader
                            {
                               updateCurrentValue();
 
-                              if (_userSettings.escapeMode == ESCAPE_MODE_DOUBLED)
+                              if (_csvReaderSettings.escapeMode == ESCAPE_MODE_DOUBLED)
                               {
                                  lastLetterWasEscape = true;
                               }
@@ -643,7 +622,7 @@ public class CsvReader
                               lastLetterWasQualifier = true;
                            }
                         }
-                        else if (_userSettings.escapeMode == ESCAPE_MODE_BACKSLASH
+                        else if (_csvReaderSettings.escapeMode == ESCAPE_MODE_BACKSLASH
                               && lastLetterWasEscape)
                         {
                            switch (currentLetter)
@@ -737,12 +716,12 @@ public class CsvReader
                         {
                            if (lastLetterWasQualifier)
                            {
-                              if (null != _userSettings.delimiter && currentLetter == _userSettings.delimiter)
+                              if (null != _csvReaderSettings.delimiter && currentLetter == _csvReaderSettings.delimiter)
                               {
                                  endColumn();
                               }
                               else if ((!_useCustomRecordDelimiter && (currentLetter == Letters.CR || currentLetter == Letters.LF))
-                                    || (_useCustomRecordDelimiter && currentLetter == _userSettings.recordDelimiter))
+                                    || (_useCustomRecordDelimiter && currentLetter == _csvReaderSettings.recordDelimiter))
                               {
                                  endColumn();
 
@@ -771,7 +750,7 @@ public class CsvReader
                         {
                            _dataBuffer.position++;
 
-                           if (_userSettings.safetySwitch
+                           if (_csvReaderSettings.safetySwitch
                                  && _dataBuffer.position
                                  - _dataBuffer.columnStart
                                  + _columnBuffer.position > 100000)
@@ -798,7 +777,7 @@ public class CsvReader
 
                   } while (_hasMoreData && _startedColumn);
                }
-               else if (null != _userSettings.delimiter && currentLetter == _userSettings.delimiter)
+               else if (null != _csvReaderSettings.delimiter && currentLetter == _csvReaderSettings.delimiter)
                {
                   // we encountered a column with no data, so
                   // just send the end column
@@ -808,11 +787,11 @@ public class CsvReader
                   endColumn();
                }
                else if (_useCustomRecordDelimiter
-                     && currentLetter == _userSettings.recordDelimiter)
+                     && currentLetter == _csvReaderSettings.recordDelimiter)
                {
                   // this will skip blank lines
                   if (_startedColumn || _columnsCount > 0
-                        || !_userSettings.skipEmptyRecords)
+                        || !_csvReaderSettings.skipEmptyRecords)
                   {
                      endColumn();
 
@@ -831,7 +810,7 @@ public class CsvReader
                   // this will skip blank lines
                   if (_startedColumn
                         || _columnsCount > 0
-                        || (!_userSettings.skipEmptyRecords && (currentLetter == Letters.CR || _lastLetter != Letters.CR)))
+                        || (!_csvReaderSettings.skipEmptyRecords && (currentLetter == Letters.CR || _lastLetter != Letters.CR)))
                   {
                      endColumn();
 
@@ -844,8 +823,8 @@ public class CsvReader
 
                   _lastLetter = currentLetter;
                }
-               else if (_userSettings.useComments && _columnsCount == 0
-                     && currentLetter == _userSettings.comment)
+               else if (_csvReaderSettings.useComments && _columnsCount == 0
+                     && currentLetter == _csvReaderSettings.comment)
                {
                   // encountered a comment character at the beginning of
                   // the line so just ignore the rest of the line
@@ -854,7 +833,7 @@ public class CsvReader
 
                   skipLine();
                }
-               else if (_userSettings.trimWhitespace
+               else if (_csvReaderSettings.trimWhitespace
                      && (currentLetter == Letters.SPACE || currentLetter == Letters.TAB))
                {
                   // do nothing, this will trim leading whitespace
@@ -883,7 +862,7 @@ public class CsvReader
                      if (!firstLoop
                            && _dataBuffer.position == _dataBuffer.count)
                      {
-                        checkDataLength();
+                        readInputStreamToDataBuffer();
                      }
                      else
                      {
@@ -893,8 +872,8 @@ public class CsvReader
                            currentLetter = _dataBuffer.buffer[_dataBuffer.position];
                         }
 
-                        if (!_userSettings.useTextQualifier
-                              && _userSettings.escapeMode == ESCAPE_MODE_BACKSLASH
+                        if (!_csvReaderSettings.useTextQualifier
+                              && _csvReaderSettings.escapeMode == ESCAPE_MODE_BACKSLASH
                               && currentLetter == Letters.BACKSLASH)
                         {
                            if (lastLetterWasBackslash)
@@ -964,7 +943,7 @@ public class CsvReader
                               _dataBuffer.columnStart = _dataBuffer.position + 1;
                            }
                         }
-                        else if (_userSettings.escapeMode == ESCAPE_MODE_BACKSLASH
+                        else if (_csvReaderSettings.escapeMode == ESCAPE_MODE_BACKSLASH
                               && lastLetterWasBackslash)
                         {
                            switch (currentLetter)
@@ -1049,12 +1028,12 @@ public class CsvReader
                         }
                         else
                         {
-                           if (null != _userSettings.delimiter && currentLetter == _userSettings.delimiter)
+                           if (null != _csvReaderSettings.delimiter && currentLetter == _csvReaderSettings.delimiter)
                            {
                               endColumn();
                            }
                            else if ((!_useCustomRecordDelimiter && (currentLetter == Letters.CR || currentLetter == Letters.LF))
-                                 || (_useCustomRecordDelimiter && currentLetter == _userSettings.recordDelimiter))
+                                 || (_useCustomRecordDelimiter && currentLetter == _csvReaderSettings.recordDelimiter))
                            {
                               endColumn();
 
@@ -1072,7 +1051,7 @@ public class CsvReader
                         {
                            _dataBuffer.position++;
 
-                           if (_userSettings.safetySwitch
+                           if (_csvReaderSettings.safetySwitch
                                  && _dataBuffer.position
                                  - _dataBuffer.columnStart
                                  + _columnBuffer.position > 100000)
@@ -1109,7 +1088,7 @@ public class CsvReader
          // check to see if we hit the end of the file
          // without processing the current record
 
-         if (_startedColumn || (null != _userSettings.delimiter && _lastLetter == _userSettings.delimiter))
+         if (_startedColumn || (null != _csvReaderSettings.delimiter && _lastLetter == _csvReaderSettings.delimiter))
          {
             endColumn();
 
@@ -1117,68 +1096,12 @@ public class CsvReader
          }
       }
 
-      if (_userSettings.captureRawRecord)
-      {
-         if (_hasMoreData)
-         {
-            if (_rawBuffer.position == 0)
-            {
-               _rawRecord = new String(_dataBuffer.buffer,
-                     _dataBuffer.lineStart, _dataBuffer.position
-                     - _dataBuffer.lineStart - 1);
-            }
-            else
-            {
-               _rawRecord = new String(_rawBuffer.buffer, 0,
-                     _rawBuffer.position)
-                     + new String(_dataBuffer.buffer,
-                     _dataBuffer.lineStart, _dataBuffer.position
-                     - _dataBuffer.lineStart - 1);
-            }
-         }
-         else
-         {
-            // for hasMoreData to ever be false, all data would have had to
-            // have been
-            // copied to the raw buffer
-            _rawRecord = new String(_rawBuffer.buffer, 0, _rawBuffer.position);
-         }
-      }
-      else
-      {
-         _rawRecord = "";
-      }
-
       return _hasReadNextLine;
    }
 
-   /**
-    * @throws IOException Thrown if an error occurs while reading data from the
-    *                     source stream.
-    */
-   private void checkDataLength() throws IOException
+   private void readInputStreamToDataBuffer() throws IOException
    {
       updateCurrentValue();
-
-      if (_userSettings.captureRawRecord && _dataBuffer.count > 0)
-      {
-         if (_rawBuffer.buffer.length - _rawBuffer.position < _dataBuffer.count - _dataBuffer.lineStart)
-         {
-            int newLength = _rawBuffer.buffer.length + Math.max(_dataBuffer.count - _dataBuffer.lineStart, _rawBuffer.buffer.length);
-
-            char[] holder = new char[newLength];
-
-            System.arraycopy(_rawBuffer.buffer, 0, holder, 0, _rawBuffer.position);
-
-            _rawBuffer.buffer = holder;
-         }
-
-         System.arraycopy(_dataBuffer.buffer, _dataBuffer.lineStart,
-               _rawBuffer.buffer, _rawBuffer.position, _dataBuffer.count
-                     - _dataBuffer.lineStart);
-
-         _rawBuffer.position += _dataBuffer.count - _dataBuffer.lineStart;
-      }
 
       try
       {
@@ -1301,7 +1224,7 @@ public class CsvReader
             {
                int lastLetter = _dataBuffer.position - 1;
 
-               if (_userSettings.trimWhitespace && !_startedWithQualifier)
+               if (_csvReaderSettings.trimWhitespace && !_startedWithQualifier)
                {
                   while (lastLetter >= _dataBuffer.columnStart && (_dataBuffer.buffer[lastLetter] == Letters.SPACE || _dataBuffer.buffer[lastLetter] == Letters.TAB))
                   {
@@ -1318,7 +1241,7 @@ public class CsvReader
 
             int lastLetter = _columnBuffer.position - 1;
 
-            if (_userSettings.trimWhitespace && !_startedWithQualifier)
+            if (_csvReaderSettings.trimWhitespace && !_startedWithQualifier)
             {
                while (lastLetter >= 0 && (_columnBuffer.buffer[lastLetter] == Letters.SPACE || _columnBuffer.buffer[lastLetter] == Letters.SPACE))
                {
@@ -1334,7 +1257,7 @@ public class CsvReader
 
       _startedColumn = false;
 
-      if (_columnsCount >= 100000 && _userSettings.safetySwitch)
+      if (_columnsCount >= 100000 && _csvReaderSettings.safetySwitch)
       {
          close();
 
@@ -1518,7 +1441,7 @@ public class CsvReader
          {
             if (_dataBuffer.position == _dataBuffer.count)
             {
-               checkDataLength();
+               readInputStreamToDataBuffer();
             }
             else
             {
@@ -1552,8 +1475,6 @@ public class CsvReader
          _dataBuffer.lineStart = _dataBuffer.position + 1;
       }
 
-      _rawBuffer.position = 0;
-      _rawRecord = "";
 
       return skippedLine;
    }
@@ -1585,7 +1506,6 @@ public class CsvReader
             _headersHolder.indexByName = null;
             _dataBuffer.buffer = null;
             _columnBuffer.buffer = null;
-            _rawBuffer.buffer = null;
          }
 
          try
