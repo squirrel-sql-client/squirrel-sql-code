@@ -20,8 +20,15 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv.csvreader;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
 
@@ -31,6 +38,8 @@ import java.text.NumberFormat;
  */
 public class CsvReader
 {
+   private final static ILogger s_log = LoggerController.createLogger(CsvReader.class);
+
    /**
     * Double up the text qualifier to represent an occurance of the text
     * qualifier.
@@ -43,7 +52,8 @@ public class CsvReader
     */
    public static final int ESCAPE_MODE_BACKSLASH = 2;
 
-   private Reader _inputStream;
+   private FileInputStream _fileInputStream;
+   private InputStreamReader _inputStreamReader;
 
    // this holds all the values for switches that the user is allowed to set
    private CsvReaderSettings _csvReaderSettings = new CsvReaderSettings();
@@ -85,28 +95,61 @@ public class CsvReader
 
    private boolean _closed = false;
 
-   /**
-    * Constructs a {@link CsvReader CsvReader} object using a
-    * {@link java.io.Reader Reader} object as the data source.
-    *  @param inputStream The stream to use as the data source.
-    * @param importCharset
-    * @param delimiter   The character to use as the column delimiter.
-    * @param useTextQualifier
-    */
-   public CsvReader(Reader inputStream, Charset charset, Character delimiter, boolean trimValues, boolean useTextQualifier)
+   public CsvReader(File importFile, String charsetName, Character delimiter, boolean trimValues, boolean useTextQualifier)
    {
-      if (inputStream == null)
+      try
       {
-         throw new IllegalArgumentException("Parameter inputStream can not be null.");
+         final Charset charset = getCharsetByName(charsetName);
+
+         int bomLength = ByteObjectMarkerUtil.getBomLength(importFile, charset);
+
+         if(0 == bomLength)
+         {
+            _fileInputStream = new FileInputStream(importFile);
+            _inputStreamReader = new InputStreamReader(_fileInputStream, charset);
+         }
+         else
+         {
+            _fileInputStream = new FileInputStream(importFile);
+
+            // Remove BOM from stream.
+            byte[] dumBuf = new byte[bomLength];
+            _fileInputStream.read(dumBuf);
+
+            _inputStreamReader = new InputStreamReader(_fileInputStream, charset);
+         }
+
+         _charset = charset;
+         _csvReaderSettings.delimiter = delimiter;
+         _csvReaderSettings.trimWhitespace = trimValues;
+         _csvReaderSettings.useTextQualifier = useTextQualifier;
+
+         _isQualified = new boolean[_values.length];
+
+      }
+      catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
       }
 
-      _inputStream = inputStream;
-      _charset = charset;
-      _csvReaderSettings.delimiter = delimiter;
-      _csvReaderSettings.trimWhitespace = trimValues;
-      _csvReaderSettings.useTextQualifier = useTextQualifier;
+   }
 
-      _isQualified = new boolean[_values.length];
+   private Charset getCharsetByName(String importCharset)
+   {
+      Charset charset = null;
+
+      if (false == StringUtilities.isEmpty(importCharset))
+      {
+         try
+         {
+            charset = Charset.forName(importCharset);
+         }
+         catch (Exception e)
+         {
+            s_log.warn("Failed to find charset by name: " + importCharset, e);
+         }
+      }
+      return charset;
    }
 
    /**
@@ -1105,12 +1148,11 @@ public class CsvReader
 
       try
       {
-         _dataBuffer.count = _inputStream.read(_dataBuffer.buffer, 0, _dataBuffer.buffer.length);
+         _dataBuffer.count = _inputStreamReader.read(_dataBuffer.buffer, 0, _dataBuffer.buffer.length);
       }
       catch (IOException ex)
       {
          close();
-
          throw ex;
       }
 
@@ -1510,13 +1552,21 @@ public class CsvReader
 
          try
          {
-            _inputStream.close();
+            _inputStreamReader.close();
          }
-         catch (Exception e)
+         catch (Exception ignored)
          {
          }
+         _inputStreamReader = null;
 
-         _inputStream = null;
+         try
+         {
+            _fileInputStream.close();
+         }
+         catch (Exception ignored)
+         {
+         }
+         _fileInputStream= null;
 
          _closed = true;
       }
