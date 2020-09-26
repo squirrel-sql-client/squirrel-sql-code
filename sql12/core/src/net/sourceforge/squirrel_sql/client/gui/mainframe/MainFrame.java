@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.Application;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopContainerFactory;
@@ -54,7 +53,6 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Event;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -364,8 +362,7 @@ public class MainFrame extends JFrame
       content.add(_splitPn, BorderLayout.CENTER);
 
 		_statusBar = new MainFrameStatusBar(_app);
-		final Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
-		_statusBar.setFont(fn);
+		_app.getFontInfoStore().setUpStatusBarFont(_statusBar);
 
 		setJMenuBar(new MainFrameMenuBar(_app, getDesktopContainer(), _app.getActionCollection()));
 

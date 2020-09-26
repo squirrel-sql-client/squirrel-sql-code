@@ -16,6 +16,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -53,26 +54,32 @@ public class SchemaPanel extends JPanel
       gbc = new GridBagConstraints(0, 0, 1, 1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       JLabel label = new JLabel(s_stringMgr.getString("SchemaPanel.refresh.current.schema.label"));
       add(label, gbc);
-      _txtSchema.setMaximumSize(new Dimension(1000, maxHeight));
 
+      JPanel txtSizer = new JPanel(new BorderLayout())
+      {
+         @Override public Dimension getPreferredSize()
+         {
+            Dimension size = super.getPreferredSize();
+            size.width = _txtSchema.getFont().getSize() * 10;
+            return size;
+         }
+      };
+      txtSizer.add(_txtSchema);
 
       gbc = new GridBagConstraints(1, 0, 1, 1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,3,0,0), 0,0);
-      add(_txtSchema, gbc);
+      add(txtSizer, gbc);
       _txtSchema.setEditable(false);
-      _txtSchema.setMaximumSize(new Dimension(1000, maxHeight));
-      _txtSchema.setPreferredSize(new Dimension(130, maxHeight));
       //_txtSchema.setBorder(BorderFactory.createEmptyBorder());
+      _txtSchema.setMargin(new Insets(0, 0, 0, 0));
 
 
       gbc = new GridBagConstraints(2, 0, 1, 1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,3,0,0), 0,0);
       _btnRefresh = new SmallTabButton(s_stringMgr.getString("SchemaPanel.refresh.current.schema"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_REFRESH), 4);
       add(_btnRefresh, gbc);
-      _btnRefresh.setMaximumSize(new Dimension(1000, maxHeight));
 
       gbc = new GridBagConstraints(3, 0, 1, 1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,3,0,0), 0,0);
       _btnChooseSchema = new SmallTabButton(s_stringMgr.getString("SchemaPanel.refresh.choose.schema"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_CHOOSE_SCHEMA), 4);
       add(_btnChooseSchema, gbc);
-      _btnChooseSchema.setMaximumSize(new Dimension(1000, maxHeight));
 
 
       _btnRefresh.addActionListener(e -> onRefreshSchema(true));
@@ -97,9 +104,6 @@ public class SchemaPanel extends JPanel
       onRefreshSchema(false);
 
 
-      this.setMaximumSize(new Dimension(1000, maxHeight));
-      //this.setMinimumSize(new Dimension(300, maxHeight));
-      //this.setPreferredSize(new Dimension(300, 15));
    }
 
    private void onTxtSchemaClicked(MouseEvent me)

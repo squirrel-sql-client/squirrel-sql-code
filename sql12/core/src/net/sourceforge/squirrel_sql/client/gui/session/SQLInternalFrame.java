@@ -20,19 +20,25 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.gui.session.rowcolumnlabel.RowColumnLabel;
-import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
 
 public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFrame
 {
@@ -116,8 +122,7 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
 		contentPanel.add(_toolBar, BorderLayout.NORTH);
 		contentPanel.add(_sqlPanel.getSqlPanelSplitter(), BorderLayout.CENTER);
 
-		Font fn = app.getFontInfoStore().getStatusBarFontInfo().createFont();
-		_statusBar.setFont(fn);
+		app.getFontInfoStore().setUpStatusBarFont(_statusBar);
 		contentPanel.add(_statusBar, BorderLayout.SOUTH);
 
 		_statusBar.addJComponent(new SchemaPanel(session));

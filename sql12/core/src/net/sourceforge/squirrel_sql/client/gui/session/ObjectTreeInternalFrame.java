@@ -20,21 +20,12 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.sql.SQLException;
-
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -46,8 +37,17 @@ import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.sql.SQLException;
 
 /* Object Tree frame class*/
 public class ObjectTreeInternalFrame extends SessionTabWidget implements IObjectTreeInternalFrame
@@ -132,8 +132,7 @@ public class ObjectTreeInternalFrame extends SessionTabWidget implements IObject
 		contentPanel.add(_objTreePanel, BorderLayout.CENTER);
 		setContentPane(contentPanel);
 
-		Font fn = app.getFontInfoStore().getStatusBarFontInfo().createFont();
-		_statusBar.setFont(fn);
+		app.getFontInfoStore().setUpStatusBarFont(_statusBar);
 		contentPanel.add(_statusBar, BorderLayout.SOUTH);
 
 		_statusBar.addJComponent(new SchemaPanel(session));

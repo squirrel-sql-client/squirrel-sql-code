@@ -28,7 +28,17 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
+import net.sourceforge.squirrel_sql.client.session.action.NextSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.PreviousSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
+import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleObjectTreeBesidesEditorAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileDetachAction;
@@ -56,14 +66,15 @@ import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -282,8 +293,7 @@ public class SessionPanel extends JPanel
 
 		add(_mainPanel, BorderLayout.CENTER);
 
-		Font fn = app.getFontInfoStore().getStatusBarFontInfo().createFont();
-		_statusBar.setFont(fn);
+		app.getFontInfoStore().setUpStatusBarFont(_statusBar);
 		add(_statusBar, BorderLayout.SOUTH);
 
 		_objTreeSelectionLis = new ObjectTreeSelectionListener();

@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge Request #64: Improved status bar UI-rendering.
+   Thanks to Stanimir Stamenkov for the patch.
+
 SQL result --> Find column dialog --> Increased thickness of blinking search result marker.
 
 Introduced Java 15 compatibility.
