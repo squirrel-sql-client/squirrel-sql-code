@@ -75,6 +75,10 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+Merge request #63: Look and Feel Plugin: Using Java 11, choosing a L&F from <userdir>/plugins/laf/extralafs causes
+  java.lang.Error: no ComponentUI class for: javax.swing.JLabel[...]
+  Thanks to Stanimir Stamenkov for the patch.
+
 #1445 Data import plugin: Import file in UTF-8 BOM format messes up 1st data field.
 
 SQL editor: Search and also the replace windows did not open.
