@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+SQL result --> Find column dialog --> Increased thickness of blinking search result marker.
+
 Introduced Java 15 compatibility.
 
 Windows opened by table's right mouse menu items "Copy selected rows to new window" and "Copy colored rows to new window"

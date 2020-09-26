@@ -1,7 +1,13 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTable;
+import javax.swing.Timer;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -50,17 +56,27 @@ public class ScrollColumnToVisibleHandler
 
       Graphics graphics = table.getTableHeader().getGraphics();
 
-
-
       if(blinkCount++ % 2 == 0)
       {
          Color formerColor = graphics.getColor();
-
          graphics.setColor(Color.red);
+
+         Stroke formerStroke = null;
+         if (graphics instanceof Graphics2D)
+         {
+            formerStroke = ((Graphics2D)graphics).getStroke();
+            ((Graphics2D)graphics).setStroke(new BasicStroke(4));
+         }
 
          graphics.drawRect(headerRect.x, headerRect.y, headerRect.width-1, headerRect.height-1);
 
+
          graphics.setColor(formerColor);
+
+         if (graphics instanceof Graphics2D)
+         {
+            ((Graphics2D)graphics).setStroke(formerStroke);
+         }
       }
       else
       {
