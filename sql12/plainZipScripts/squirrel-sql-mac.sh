@@ -88,7 +88,7 @@ cd "$UNIX_STYLE_HOME"
 # minimum acceptable version (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should 
 # be all that is necessary for the version form. 
 #"$JAVACMD" -cp "$UNIX_STYLE_HOME/lib/versioncheck.jar" JavaVersionChecker 1.8 9 10 11 12
-"$JAVACMD" -cp "$UNIX_STYLE_HOME/../Resources/Java/lib/versioncheck.jar" JavaVersionChecker 1.8 9 10 11 12 13 14
+"$JAVACMD" -cp "$UNIX_STYLE_HOME/../Resources/Java/lib/versioncheck.jar" JavaVersionChecker 1.8 9 10 11 12 13 14 15
 if [ "$?" != "0" ]; then
   exit
 fi
