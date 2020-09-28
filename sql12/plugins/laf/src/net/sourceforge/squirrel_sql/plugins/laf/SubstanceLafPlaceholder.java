@@ -19,9 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.plaf.basic.BasicLookAndFeel;
 
 /**
  * This is simply a placeholder class that allows SQuirreL to populate the LAF chooser with the name 
@@ -34,49 +31,12 @@ import javax.swing.plaf.basic.BasicLookAndFeel;
  * Substance LAF is chosen.  Any change to the skin chooser will result in the Autumn LAF's setSkin method 
  * being called, transforming it into the LAF representing the chosen skin.   
  */
-public class SubstanceLafPlaceholder extends BasicLookAndFeel
+public class SubstanceLafPlaceholder extends PlaceholderLookAndFeel
 {
-
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
 
 	public SubstanceLafPlaceholder()
 	{
+	   super("Substance");
 	}
 
-	@Override
-	public String getDescription()
-	{
-		return "Substance";
-	}
-
-	@Override
-	public String getID()
-	{
-		return "Substance";
-	}
-
-	@Override
-	public String getName()
-	{
-		return "Substance";
-	}
-
-	@Override
-	public boolean isNativeLookAndFeel()
-	{
-		return true;
-	}
-
-	@Override
-	public boolean isSupportedLookAndFeel()
-	{
-		return false;
-	}
-
-	public LookAndFeelInfo getLookAndFeelInfo() {
-		return new UIManager.LookAndFeelInfo(this.getName(), SubstanceLafPlaceholder.class.getCanonicalName());
-	}
 }

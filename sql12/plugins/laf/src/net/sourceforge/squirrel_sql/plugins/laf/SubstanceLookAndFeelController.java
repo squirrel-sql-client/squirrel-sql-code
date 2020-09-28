@@ -19,22 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
@@ -44,6 +28,21 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
+
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.LookAndFeel;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Behavior for the Substance Look and Feel.
@@ -63,7 +62,7 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 
 	/** Placeholder LAF that identifies itself as "Substance".  No other LAF does this. */
 	public static final String SUBSTANCE_LAF_PLACEHOLDER_CLASS_NAME =
-		"net.sourceforge.squirrel_sql.plugins.laf.SubstanceLafPlaceholder";
+			new SubstanceLafPlaceholder().getClass().getName();
 
 	/** Preferences for this LAF. */
 	private SubstancePreferences _prefs;

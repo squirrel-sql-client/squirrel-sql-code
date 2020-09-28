@@ -17,15 +17,13 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.swing.JComboBox;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-
-import net.sourceforge.squirrel_sql.plugins.laf.jtattoo.JTattooLafPlaceholder;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 /**
  * This <TT>JComboBox</TT> will display all the Look and Feels
  * that have been registered with the <TT>UIManager</TT>.
@@ -111,18 +109,12 @@ public class LookAndFeelComboBox extends JComboBox
 			_lafsByClassName.put(info[i].getClassName(), info[i]);
 		}
 		
-		// Need to populate the list with the Substance placeholder, to allow the user to select substance, 
-		// and then the skin, which is the actual look and feel.
-		SubstanceLafPlaceholder substanceLaf = new SubstanceLafPlaceholder();
-		LookAndFeelInfo substanceLafInfo = substanceLaf.getLookAndFeelInfo();
-		_lafsByName.put(substanceLaf.getName(), substanceLafInfo);
-		_lafsByClassName.put(SubstanceLafPlaceholder.class.getName(), substanceLafInfo);
-		
-		// Need to populate the list with the JTattoo placeholder.
-		JTattooLafPlaceholder jtattooLaf = new JTattooLafPlaceholder();
-		LookAndFeelInfo jtattooLafInfo = jtattooLaf.getLookAndFeelInfo();
-		_lafsByName.put(jtattooLaf.getName(), jtattooLafInfo);
-		_lafsByClassName.put(JTattooLafPlaceholder.class.getName(), jtattooLafInfo);
+		// Populate the list with the placeholders.
+		for (LookAndFeelInfo lafInfo : PlaceholderLookAndFeel.getInfos())
+		{
+			_lafsByName.put(lafInfo.getName(), lafInfo);
+			_lafsByClassName.put(lafInfo.getClassName(), lafInfo);
+		}
 
 		// Add the names of all LAF objects to control. By doing thru the Map
 		// these will be sorted.

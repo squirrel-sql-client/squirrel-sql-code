@@ -19,23 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.laf.jtattoo;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
@@ -49,6 +32,22 @@ import net.sourceforge.squirrel_sql.plugins.laf.BaseLAFPreferencesPanelComponent
 import net.sourceforge.squirrel_sql.plugins.laf.DefaultLookAndFeelController;
 import net.sourceforge.squirrel_sql.plugins.laf.LAFPlugin;
 import net.sourceforge.squirrel_sql.plugins.laf.LAFRegister;
+
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.LookAndFeel;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Behavior for JTattoo Look and Feel.
@@ -69,7 +68,7 @@ public class JTattooLookAndFeelController extends DefaultLookAndFeelController
 
 	/** Placeholder LAF that identifies itself as "JTattoo".  No other LAF does this. */
 	public static final String JTATTOO_LAF_PLACEHOLDER_CLASS_NAME =
-		"net.sourceforge.squirrel_sql.plugins.laf.jtattoo.JTattooLafPlaceholder";
+			new JTattooLafPlaceholder().getClass().getName();
 
 	/** Preferences for this LAF. */
 	private JTattooPreferences _prefs;

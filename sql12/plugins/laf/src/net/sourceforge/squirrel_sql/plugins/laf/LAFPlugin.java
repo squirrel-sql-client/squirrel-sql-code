@@ -18,23 +18,8 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Iterator;
-
-import javax.swing.JTabbedPane;
 
 import com.jgoodies.looks.Options;
-
-import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
-import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactoryAdapter;
@@ -44,6 +29,18 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLException;
+import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
+
+import javax.swing.JTabbedPane;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * The Look and Feel plugin class.
@@ -262,7 +259,7 @@ public class LAFPlugin extends DefaultPlugin
 	 * 
 	 * @return folder as <TT>File</TT> that contains the extra LAFs supplied by the user.
 	 */
-	FileWrapper getUsersExtraLAFFolder()
+	public FileWrapper getUsersExtraLAFFolder()
 	{
 		return _userExtraLAFFolder;
 	}

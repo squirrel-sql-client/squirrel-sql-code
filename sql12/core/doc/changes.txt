@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge Request #65:
+   Look and feel Plugin: Added FlatLaf Look and Feel inspired by IntelliJ, see https://www.formdev.com/flatlaf/
+   Thanks to Stanimir Stamenkov for the patch.
+
 Merge Request #64: Improved status bar UI-rendering.
    Thanks to Stanimir Stamenkov for the patch.
 

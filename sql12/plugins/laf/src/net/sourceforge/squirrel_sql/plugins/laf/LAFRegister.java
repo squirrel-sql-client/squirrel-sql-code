@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.laf.flatlaf.FlatLookAndFeelController;
 import net.sourceforge.squirrel_sql.plugins.laf.jtattoo.JTattooLookAndFeelController;
 
 import javax.swing.JDialog;
@@ -45,8 +46,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -238,8 +241,7 @@ public class LAFRegister
 
 			// Set Look and Feel. If this is the Substance/JTattoo placeholder, skip it as it is not a real
 			// look and feel. The controller will handle setting the look and feel using the UIManager.
-			if (!lafClassName.equals(SubstanceLookAndFeelController.SUBSTANCE_LAF_PLACEHOLDER_CLASS_NAME)
-				&& !lafClassName.equals(JTattooLookAndFeelController.JTATTOO_LAF_PLACEHOLDER_CLASS_NAME))
+			if (!PlaceholderLookAndFeel.isPlaceholder(lafClassName))
 			{
 				if (s_log.isInfoEnabled())
 				{
@@ -348,7 +350,7 @@ public class LAFRegister
 		// Map of JAR file URLs containing LAFs keyed by the LAF class name.
 		final Map<String, List<URL>> lafs = loadInstallProperties();
 
-		final List<URL> lafUrls = new ArrayList<URL>();
+		final Collection<URL> lafUrls = new LinkedHashSet<>();
 
 		// Put the lafplugin jar into the list of lafUrls as it contains a LAF placeholder (for Substance).
 		String jarFilePath = _plugin.getPluginJarFilePath();
@@ -465,6 +467,15 @@ public class LAFRegister
 		catch (Throwable ex)
 		{
 			s_log.error("Error installing JTattooLookAndFeelController", ex);
+		}
+		try
+		{
+			_lafControllers.put(FlatLookAndFeelController.FLAT_LAF_PLACEHOLDER_CLASS_NAME,
+			                    new FlatLookAndFeelController(plugin, this));
+		}
+		catch (Throwable ex)
+		{
+			s_log.error("Error installing FlatLookAndFeelController", ex);
 		}
 
 		// Initialize all the LAF controllers.

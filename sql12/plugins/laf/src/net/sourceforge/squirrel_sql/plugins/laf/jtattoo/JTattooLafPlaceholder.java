@@ -19,9 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.laf.jtattoo;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.plaf.basic.BasicLookAndFeel;
+import net.sourceforge.squirrel_sql.plugins.laf.PlaceholderLookAndFeel;
 
 /**
  * This is simply a placeholder class that allows SQuirreL to populate the LAF chooser with the name 
@@ -31,49 +29,12 @@ import javax.swing.plaf.basic.BasicLookAndFeel;
  * LAFPluginResources.properties. So, rather than display a particular JTattoo LAF class to the user, this 
  * LAF sub-class has a generic name of "JTattoo". 
  */
-public class JTattooLafPlaceholder extends BasicLookAndFeel
+public class JTattooLafPlaceholder extends PlaceholderLookAndFeel
 {
-
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
 
 	public JTattooLafPlaceholder()
 	{
+	   super("JTattoo");
 	}
 
-	@Override
-	public String getDescription()
-	{
-		return "JTattoo";
-	}
-
-	@Override
-	public String getID()
-	{
-		return "JTattoo";
-	}
-
-	@Override
-	public String getName()
-	{
-		return "JTattoo";
-	}
-
-	@Override
-	public boolean isNativeLookAndFeel()
-	{
-		return true;
-	}
-
-	@Override
-	public boolean isSupportedLookAndFeel()
-	{
-		return false;
-	}
-
-	public LookAndFeelInfo getLookAndFeelInfo() {
-		return new UIManager.LookAndFeelInfo(this.getName(), JTattooLafPlaceholder.class.getCanonicalName());
-	}
 }
