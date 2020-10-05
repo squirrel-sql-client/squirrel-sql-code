@@ -82,6 +82,8 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+Look and feel Plugin: Fixed java.lang.ClassNotFoundException: net.sourceforge.squirrel_sql.plugins.laf.FlatLafPlaceholder
+
 Merge request #63: Look and Feel Plugin: Using Java 11, choosing a L&F from <userdir>/plugins/laf/extralafs causes
   java.lang.Error: no ComponentUI class for: javax.swing.JLabel[...]
   Thanks to Stanimir Stamenkov for the patch.
