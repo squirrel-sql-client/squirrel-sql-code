@@ -2,7 +2,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.AliasTreeColorer;
 import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.TreeAliasColorSelectionHandler;
 import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.AliasDndExport;
 import net.sourceforge.squirrel_sql.client.gui.db.aliastransfer.AliasDndImport;
@@ -79,8 +78,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private boolean _dontReactToAliasAdd = false ;
 
-   private AliasTreeColorer _aliasColorer;
-
    public JTreeAliasesListImpl(IApplication app, AliasesListModel aliasesListModel)
    {
       _app = app;
@@ -96,11 +93,9 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       _tree.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
       _tree.setToolTipText("init");
 
-      _aliasColorer = new AliasTreeColorer(_tree);
-
       _aliasDragState = new AliasDragState(_tree);
 
-      _tree.setCellRenderer(new AliasTreeCellRenderer(_aliasPasteState, _aliasColorer, _aliasDragState));
+      _tree.setCellRenderer(new AliasTreeCellRenderer(_aliasPasteState, _aliasDragState));
 
       initCancelCutAction();
 

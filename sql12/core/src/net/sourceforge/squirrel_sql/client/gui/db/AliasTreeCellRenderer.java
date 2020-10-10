@@ -1,9 +1,9 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.AliasTreeColorer;
-import net.sourceforge.squirrel_sql.fw.gui.TreeDndDropPosition;
+import net.sourceforge.squirrel_sql.client.gui.db.aliascolor.AliasColor;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -15,19 +15,40 @@ import java.awt.Component;
 public class AliasTreeCellRenderer extends DefaultTreeCellRenderer
 {
    private final AliasTreePasteState _aliasPasteState;
-   private final AliasTreeColorer _aliasColorer;
    private AliasDragState _aliasDragState;
 
-   public AliasTreeCellRenderer(AliasTreePasteState aliasPasteState, AliasTreeColorer aliasColorer, AliasDragState aliasDragState)
+   public AliasTreeCellRenderer(AliasTreePasteState aliasPasteState, AliasDragState aliasDragState)
    {
       _aliasPasteState = aliasPasteState;
-      _aliasColorer = aliasColorer;
       _aliasDragState = aliasDragState;
    }
 
+   @Override
    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus)
    {
-      return modifyRenderer(super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus), value);
+      Component renderer = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+      Color itemColor = AliasColor.getItemColor(value);
+      if (itemColor == null)
+      {
+         renderer.setBackground(null);
+         ((JComponent) renderer).setOpaque(false);
+      }
+      else
+      {
+         if (sel)
+         {
+            itemColor = colorWithAlpha(itemColor, (int) (255 * AliasColor.FACTOR));
+         }
+         renderer.setBackground(itemColor);
+         ((JComponent) renderer).setOpaque(true);
+      }
+      return modifyRenderer(renderer, value);
+   }
+
+   static Color colorWithAlpha(Color color, int alpha)
+   {
+      return AliasColor.colorOf(color.getRGB() & 0x00FFFFFF | (alpha << 24));
    }
 
    private Component modifyRenderer(Component component, Object node)
@@ -36,7 +57,6 @@ public class AliasTreeCellRenderer extends DefaultTreeCellRenderer
       ret.setEnabled(true);
 
       DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) node;
-      _aliasColorer.colorAliasRendererComponent(this, dmtn, ret);
 
       if (null != _aliasPasteState.getPathsToPaste() && AliasTreePasteMode.CUT.equals(_aliasPasteState.getPasteMode()))
       {
