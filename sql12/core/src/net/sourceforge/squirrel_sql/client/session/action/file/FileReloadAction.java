@@ -21,8 +21,8 @@ package net.sourceforge.squirrel_sql.client.session.action.file;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.IFileEditAction;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileReloadInfo;
 
 import java.awt.event.ActionEvent;
 
@@ -38,7 +38,7 @@ public class FileReloadAction extends SquirrelAction  implements IFileEditAction
 
    public void actionPerformed(ActionEvent e)
    {
-      _fileHandler.fileReload();
+      _fileHandler.fileReload(FileReloadInfo.USER_REQUEST_RELOAD_INFO);
 
    }
 

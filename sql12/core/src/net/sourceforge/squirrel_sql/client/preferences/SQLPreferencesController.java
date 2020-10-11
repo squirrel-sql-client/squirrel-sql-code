@@ -17,20 +17,22 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
 
-import javax.swing.*;
-
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanelController;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.PropertyCheck;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Rectangle;
 
 /**
  * This preferences panel allows maintenance of SQL preferences.
@@ -77,11 +79,13 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 
 		_panel.chkMarkCurrentSql.setSelected(prefs.isMarkCurrentSql());
 		_panel.getCurrentSqlMarkColorIcon().setColor(new Color(prefs.getCurrentSqlMarkColorRGB()));
-
 		initCurrentMarkGui();
+
 
 		_panel.chkReloadSqlContentsSql.setSelected(prefs.isReloadSqlContents());
 		_panel.txtMaxTextOutputColumnWidth.setInt(prefs.getMaxTextOutputColumnWidth());
+
+		_panel.chkNotifyExternalFileChanges.setSelected(prefs.isNotifyExternalFileChanges());
 
 
 		_panel.debugJdbcStream.setSelected(prefs.isJdbcDebugToStream());
@@ -116,6 +120,8 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 		{
 			prefs.setMaxTextOutputColumnWidth(maxTextOutputColumnWidth);
 		}
+
+		prefs.setNotifyExternalFileChanges(_panel.chkNotifyExternalFileChanges.isSelected());
 
 		if (_panel.debugJdbcStream.isSelected())
 		{

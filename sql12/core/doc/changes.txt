@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#558 SQL editor: External file changes are notified by a message box offering reload.
+  The feature can be switched off at
+  menu File --> Global Preferences --> tab SQL --> section General --> check box "Notify external file changes"
+
 Merge Request #65:
    Look and feel Plugin: Added FlatLaf Look and Feel inspired by IntelliJ, see https://www.formdev.com/flatlaf/
    Thanks to Stanimir Stamenkov for the patch.

@@ -5,12 +5,18 @@ import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandle
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.filechooser.PreviewFileChooser;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import java.awt.Frame;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,7 +32,7 @@ public class FileManagementCore
    private IFileEditorAPI _fileEditorAPI;
    private TitleFilePathHandler _titleFilePathHandler;
 
-   private File _toSaveTo = null;
+   private FileKeeper _toSaveTo = new FileKeeper();
 
    private FileChooserManager _fileChooserManager = new FileChooserManager();
 
@@ -178,8 +184,8 @@ public class FileManagementCore
 
       if (toNewFile)
       {
-         toSaveToBuf = _toSaveTo;
-         _toSaveTo = null;
+         toSaveToBuf = _toSaveTo.get();
+         _toSaveTo.set(null);
       }
 
       JFileChooser chooser = _fileChooserManager.initNewFileChooser();
@@ -211,9 +217,9 @@ public class FileManagementCore
 
          _fileEditorAPI.selectWidgetOrTab();
 
-         if (null != _toSaveTo)
+         if (null != _toSaveTo.get())
          {
-            if (saveScript(frame, _toSaveTo, false))
+            if (saveScript(frame, _toSaveTo.get(), false))
             {
                result = true;
             }
@@ -223,17 +229,17 @@ public class FileManagementCore
          if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
          {
             _fileChooserManager.saveWasApproved();
-            _toSaveTo = chooser.getSelectedFile();
+            _toSaveTo.set(chooser.getSelectedFile());
 
-            if (!_toSaveTo.exists() && null != _fileChooserManager.getSelectedFileEnding())
+            if (!_toSaveTo.get().exists() && null != _fileChooserManager.getSelectedFileEnding())
             {
-               if (!_toSaveTo.getAbsolutePath().endsWith(_fileChooserManager.getSelectedFileEnding()))
+               if (!_toSaveTo.get().getAbsolutePath().endsWith(_fileChooserManager.getSelectedFileEnding()))
                {
-                  _toSaveTo = new File(_toSaveTo.getAbsolutePath() + _fileChooserManager.getSelectedFileEnding());
+                  _toSaveTo.set(new File(_toSaveTo.get().getAbsolutePath() + _fileChooserManager.getSelectedFileEnding()));
                }
             }
 
-            if (saveScript(frame, _toSaveTo, true))
+            if (saveScript(frame, _toSaveTo.get(), true))
             {
                result = true;
                wasSavedToNewFile = true;
@@ -241,7 +247,7 @@ public class FileManagementCore
             }
             else
             {
-               _toSaveTo = null;
+               _toSaveTo.set(null);
                result = false;
                break;
             }
@@ -254,12 +260,15 @@ public class FileManagementCore
 
       if(false == wasSavedToNewFile && null != toSaveToBuf)
       {
-         _toSaveTo = toSaveToBuf;
+         _toSaveTo.set(toSaveToBuf);
       }
 
       return result;
    }
 
+   /**
+    * Supposed to be the only place where Files are written.
+    */
    private boolean saveScript(Frame frame, File file, boolean askReplace)
    {
       boolean doSave = false;
@@ -315,6 +324,7 @@ public class FileManagementCore
          // encoding problems for languages that are not
          // close to the english character set,
          // e.g. see Bug #1304 "Saving script ruins greek words"
+         Main.getApplication().getFileNotifier().beginFileWrite(file);
          FileOutputStream fos = null;
          try
          {
@@ -324,9 +334,8 @@ public class FileManagementCore
 
             fos.write(sScript.getBytes());
             setFile(file);
-            // i18n[FileManager.savedfile=Saved to {0}]
-            String msg = s_stringMgr.getString("FileManager.savedfile", file.getAbsolutePath());
 
+            String msg = s_stringMgr.getString("FileManager.savedfile", file.getAbsolutePath());
             _fileEditorAPI.getSession().showMessage(msg);
          }
          catch (IOException ex)
@@ -336,6 +345,7 @@ public class FileManagementCore
          finally
          {
          	ioUtil.closeOutputStream(fos);
+            Main.getApplication().getFileNotifier().endFileWrite(file);
          }
       }
       return true;
@@ -400,21 +410,19 @@ public class FileManagementCore
 
    private void setFile(File file)
    {
-      _toSaveTo = file;
-      //SQLPanelSelectionHandler.displayFileInTabComponent(_fileEditorAPI, file);
-
+      _toSaveTo.set(file);
       _titleFilePathHandler.setSqlFile(file);
    }
 
    public File getFile()
    {
-      return _toSaveTo;
+      return _toSaveTo.get();
    }
 
 
    public void clearCurrentFile()
    {
-      _toSaveTo = null;
+      _toSaveTo.set(null);
    }
 
    public void clearSqlFile()

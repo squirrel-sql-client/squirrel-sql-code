@@ -19,9 +19,6 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
@@ -38,6 +35,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
@@ -47,6 +45,10 @@ import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
+
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
 /**
  * Defines the API to do callbacks on the application.
  */
@@ -95,6 +97,7 @@ public interface IApplication
 
 	ShortcutManager getShortcutManager();
 
+	FileNotifier getFileNotifier();
 
 	/**
 	 * Retrieves the message handler for the application.

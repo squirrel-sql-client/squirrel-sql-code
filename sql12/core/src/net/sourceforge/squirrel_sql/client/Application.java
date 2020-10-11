@@ -21,58 +21,50 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.*;
-import java.sql.DriverManager;
-import java.util.*;
-
-import javax.swing.*;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-
-import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
-import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
-import net.sourceforge.squirrel_sql.client.gui.db.GlobalSQLAliasVersioner;
-import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
-import net.sourceforge.squirrel_sql.client.preferences.LocaleWrapper;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
-import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
-import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
-import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
-import net.sourceforge.squirrel_sql.fw.resources.LazyResourceBundle;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.action.ActionRegistry;
+import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelSplashScreen;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
+import net.sourceforge.squirrel_sql.client.gui.db.GlobalSQLAliasVersioner;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToStartupAliasesCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginLoadInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.client.preferences.LocaleWrapper;
 import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
+import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationStorage;
+import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
+import net.sourceforge.squirrel_sql.fw.resources.LazyResourceBundle;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.BareBonesBrowserLaunch;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
@@ -87,6 +79,30 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JOptionPane;
+import javax.swing.PopupFactory;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 /**
  * Defines the API to do callbacks on the application.
  * 
@@ -173,6 +189,8 @@ public class Application implements IApplication
 
 	// Must be done here because Plugin loading added more actions to _actionCollection.
 	private ShortcutManager _shortcutManager = new ShortcutManager();
+
+	private FileNotifier _fileNotifier = new FileNotifier();
 
 	private PropsImpl _propsImpl;
 
@@ -513,7 +531,13 @@ public class Application implements IApplication
 		return _shortcutManager;
 	}
 
-   public MainFrame getMainFrame()
+	@Override
+	public FileNotifier getFileNotifier()
+	{
+		return _fileNotifier;
+	}
+
+	public MainFrame getMainFrame()
 	{
 		// return _mainFrame;
 		return _windowManager.getMainFrame();

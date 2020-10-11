@@ -156,6 +156,9 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 						new PropertyDescriptor(MAX_TEXTOUTPUT_COLUMN_WIDTH, SquirrelPreferences.class, "getMaxTextOutputColumnWidth",
 							"setMaxTextOutputColumnWidth"),
 
+						new PropertyDescriptor(NOTIFY_EXTERNAL_FILE_CHANGES, SquirrelPreferences.class, "isNotifyExternalFileChanges",
+							"setNotifyExternalFileChanges"),
+
 						new PropertyDescriptor(ENABLE_CHANGE_TRACKING, SquirrelPreferences.class, "isEnableChangeTracking", "setEnableChangeTracking"),
 						new PropertyDescriptor(GIT_COMMIT_MSG_MANUALLY, SquirrelPreferences.class, "isGitCommitMsgManually", "setGitCommitMsgManually"),
 						new PropertyDescriptor(GIT_COMMIT_MSG_DEFAULT, SquirrelPreferences.class, "getGitCommitMsgDefault", "setGitCommitMsgDefault"),

@@ -43,6 +43,8 @@ public final class SQLPreferencesPanel extends JPanel
    JCheckBox chkReloadSqlContentsSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.reload.sql.contents"));
    IntegerField txtMaxTextOutputColumnWidth = new IntegerField();
 
+   JCheckBox chkNotifyExternalFileChanges = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.notify.external.file.changes"));
+
    JRadioButton debugJdbcDont = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugdont"));
    JRadioButton debugJdbcStream = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugstream"));
    JRadioButton debugJdbcWriter = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugwriter"));
@@ -147,6 +149,12 @@ public final class SQLPreferencesPanel extends JPanel
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.NONE;
       pnl.add(createMaxTextOutputColumnWidthPanel(), gbc);
+
+      gbc.gridx = 0;
+      gbc.gridy = 7;
+      gbc.gridwidth = GridBagConstraints.REMAINDER;
+      gbc.fill = GridBagConstraints.NONE;
+      pnl.add(chkNotifyExternalFileChanges, gbc);
 
       return pnl;
    }

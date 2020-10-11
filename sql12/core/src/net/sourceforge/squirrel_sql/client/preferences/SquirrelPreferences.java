@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import net.sourceforge.squirrel_sql.client.action.ActionKeys;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
@@ -26,13 +27,16 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.GitHand
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
-import java.awt.*;
+import java.awt.Color;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,7 +53,7 @@ import java.util.Iterator;
 public class SquirrelPreferences implements Serializable
 {
 
-	public interface IPropertyNames
+   public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
       String CONFIRM_SESSION_CLOSE = "confirmSessionClose";
@@ -103,6 +107,7 @@ public class SquirrelPreferences implements Serializable
       String REMEMBER_VALUE_OF_POPUP = "rememberValueOfPopup";
       String RELOAD_SQL_CONTENTS = "ReloadSqlContents";
       String MAX_TEXTOUTPUT_COLUMN_WIDTH = "MaxTextOutputColumnWidth";
+      String NOTIFY_EXTERNAL_FILE_CHANGES = "NotifyExternalFileChanges";
 
 		String ENABLE_CHANGE_TRACKING = "enableChangeTracking";
 		String GIT_COMMIT_MSG_MANUALLY = "gitCommitMsgManually";
@@ -269,6 +274,7 @@ public class SquirrelPreferences implements Serializable
 	private boolean _reloadSqlContents;
 
 	private int _maxTextOutputColumnWidth = IDataSetViewer.MAX_COLUMN_WIDTH;
+	private boolean _notifyExternalFileChanges = true;
 
 	/////////////////////////////////////////////////////////////////////////
 	// Change tracking properties
@@ -284,13 +290,11 @@ public class SquirrelPreferences implements Serializable
 	/////////////////////////////////////////////////////////////////////////
 
 
-
 	/**
 	 * Default ctor.
 	 */
 	public SquirrelPreferences()
 	{
-		super();
 		loadDefaults();
 	}
 
@@ -1394,5 +1398,13 @@ public class SquirrelPreferences implements Serializable
 		_insertEndBackgroundRGB = insertEndBackgroundRGB;
 	}
 
+	public void setNotifyExternalFileChanges(boolean notifyExternalFileChanges)
+	{
+		_notifyExternalFileChanges = notifyExternalFileChanges;
+	}
 
+	public boolean isNotifyExternalFileChanges()
+	{
+		return _notifyExternalFileChanges;
+	}
 }

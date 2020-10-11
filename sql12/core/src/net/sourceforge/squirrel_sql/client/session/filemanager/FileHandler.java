@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.filemanager;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
@@ -12,9 +11,9 @@ import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainResult;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import java.io.File;
@@ -22,7 +21,6 @@ import java.io.File;
 public class FileHandler
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FileHandler.class);
-
 
    private final FileManagementCore _fileManagementCore;
    private IFileEditorAPI _fileEditorAPI;
@@ -37,6 +35,10 @@ public class FileHandler
    {
       _fileManagementCore = new FileManagementCore(fileEditorAPI, titleFileHandler);
       _fileEditorAPI = fileEditorAPI;
+
+      final FileNotifierListener fileNotifierListener = file -> fileReload(new FileReloadInfo(file));
+      Main.getApplication().getFileNotifier().addFileNotifierListener(fileNotifierListener);
+      _fileEditorAPI.getSession().addSimpleSessionListener(() -> Main.getApplication().getFileNotifier().removeFileNotifierListener(fileNotifierListener));
    }
 
    public IFileEditorAPI getFileEditorAPI()
@@ -81,15 +83,43 @@ public class FileHandler
       _closeFile(true);
    }
 
-   public void fileReload()
+   public void fileReload(FileReloadInfo info)
    {
-      if(null == _fileManagementCore.getFile())
+      File file = _fileManagementCore.getFile();
+
+      if(info.isByUserRequest())
       {
-         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelAPI.nofileToRelaod"));
-         return;
+         if (null == file)
+         {
+            Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelAPI.nofileToRelaod"));
+            return;
+         }
+      }
+      else // if(info.isByFileWatcher())
+      {
+         if (false == Utilities.equalsRespectNull(info.getFile(), file))
+         {
+            return;
+         }
+
+         DontShowAgainDialog reloadReqDlg = new DontShowAgainDialog(
+               _fileEditorAPI.getOwningFrame(),
+               s_stringMgr.getString("FileHandler.fileChangeDetected.ReloadRequest", file.getAbsolutePath()),
+               s_stringMgr.getString("FileHandler.fileChangeDetected.switchBackOnHint"));
+
+         DontShowAgainResult reloadReqRes = reloadReqDlg.showAndGetResult("FileHandler.fileChangeDetected", 400, 200);
+
+         if(reloadReqRes.isDontShowAgain())
+         {
+            Main.getApplication().getFileNotifier().setNotifyExternalFileChanges(false);
+         }
+
+         if(false == reloadReqRes.isYes())
+         {
+            return;
+         }
       }
 
-      File file = _fileManagementCore.getFile();
 
       int caretPosition = _fileEditorAPI.getCaretPosition();
 
