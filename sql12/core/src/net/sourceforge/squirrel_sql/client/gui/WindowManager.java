@@ -118,13 +118,9 @@ import java.beans.PropertyVetoException;
  */
 public class WindowManager
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(WindowManager.class);
+	private static final ILogger s_log = LoggerController.createLogger(WindowManager.class);
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(WindowManager.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(WindowManager.class);
 
 	/**
 	 * Key to client property stored in internal frame that udentifies the

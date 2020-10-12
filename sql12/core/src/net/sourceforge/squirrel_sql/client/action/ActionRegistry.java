@@ -43,17 +43,6 @@ import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.EscapeDateAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.ToggleObjectTreeBesidesEditorAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileDetachAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileNewAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenRecentAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FilePrintAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileReloadAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FormatSQLAction;
 import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
@@ -75,8 +64,6 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoActio
 import net.sourceforge.squirrel_sql.client.session.action.RemoveNewLinesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RemoveQuotesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RenameSessionAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.QuitSoundAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
 import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
@@ -88,16 +75,30 @@ import net.sourceforge.squirrel_sql.client.session.action.ToggleAutoCommitAction
 import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabAnchoredAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleMinimizeResultsAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleObjectTreeBesidesEditorAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
 import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
 import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileDetachAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileNewAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenRecentAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FilePrintAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileReloadAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAllAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.QuitSoundAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 
 /**
@@ -275,6 +276,7 @@ public class ActionRegistry
       actionCollection.add(new QuitSoundAction());
 
       actionCollection.add(new ToggleObjectTreeBesidesEditorAction());
+      actionCollection.add(new FileSaveAllAction());
 
    }
 

@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -27,51 +26,49 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.CloneAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
+import java.awt.event.ActionEvent;
+
 /**
  * This <CODE>Action</CODE> displays a new tab connected t osame alias.
  *
  * @author jarmolow
  */
-public class NewAliasConnectionAction extends SquirrelAction implements ISessionAction {
-	private ISession _session;
+public class NewAliasConnectionAction extends SquirrelAction implements ISessionAction
+{
+   private ISession _session;
 
-	/**
-	 * Ctor.
-	 *
-	 * @param app
-	 *            Application API.
-	 *
-	 * @throws IllegalArgumentException
-	 *             Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
-	 */
-	public NewAliasConnectionAction(IApplication app) {
-		super(app);
-		if (app == null) {
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
+   /**
+    * Ctor.
+    *
+    * @param app Application API.
+    * @throws IllegalArgumentException Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
+    */
+   public NewAliasConnectionAction(IApplication app)
+   {
+      super(app);
+      if (app == null)
+      {
+         throw new IllegalArgumentException("Null IApplication passed");
+      }
 
-		setEnabled(false);
-	}
+      setEnabled(false);
+   }
 
-	/**
-	 * Display the tree.
-	 *
-	 * @param evt
-	 *            The event being processed.
-	 */
-	@Override
-	public void actionPerformed(ActionEvent evt) {
-		new CloneAliasCommand(getApplication(), (SQLAlias) _session.getAlias()).execute();;
-	}
+   /**
+    * Display the tree.
+    *
+    * @param evt The event being processed.
+    */
+   @Override
+   public void actionPerformed(ActionEvent evt)
+   {
+      new CloneAliasCommand(getApplication(), (SQLAlias) _session.getAlias()).execute();
+   }
 
-	@Override
-	public void setSession(ISession session) {
-		_session = session;
-		GUIUtils.processOnSwingEventThread(new Runnable() {
-			@Override
-			public void run() {
-				setEnabled(null != _session);
-			}
-		});
-	}
+   @Override
+   public void setSession(ISession session)
+   {
+      _session = session;
+      GUIUtils.processOnSwingEventThread(() -> setEnabled(null != _session));
+   }
 }

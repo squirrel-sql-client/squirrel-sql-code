@@ -19,13 +19,6 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Iterator;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
@@ -44,10 +37,11 @@ import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.NewAliasConnectionAction;
 import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
-import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.SQLWorksheetTypeChooser;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleAutoCommitAction;
+import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAllAction;
+import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
+import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.SQLWorksheetTypeChooser;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -59,6 +53,13 @@ import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
 /**
  * Toolbar for <CODE>MainFrame</CODE>.
  *
@@ -121,6 +122,7 @@ public class MainFrameToolBar extends ToolBar
 
 		add(actions.get(NewObjectTreeAction.class));
       add(actions.get(NewAliasConnectionAction.class));
+      add(actions.get(FileSaveAllAction.class));
    }
 
 
