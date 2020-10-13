@@ -195,7 +195,7 @@ public class FileManagementCore
 
       for (; ;)
       {
-         if (null == _toSaveTo)
+         if (null == _toSaveTo.get())
          {
             if (prefs.isFileOpenInPreviousDir())
             {
