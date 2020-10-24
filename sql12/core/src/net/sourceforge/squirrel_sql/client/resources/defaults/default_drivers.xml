@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Beans>
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>InterSystems IRIS Data Platform</name>
+		<driverClassName>com.intersystems.jdbc.IRISDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-78</string>
+		</identifier>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<url>jdbc:IRIS://&lt;host&gt;:&lt;1972&gt;/&lt;database&gt;</url>
+		<websiteUrl>https://github.com/intersystems-community/iris-driver-distribution</websiteUrl>
+	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<name>Elasticsearch</name>
@@ -584,9 +595,9 @@
            <string>-29</string>
        </identifier>
        <jarFileNames Indexed="true"/>
-       <name>Intersystems Cache</name>
-       <url>jdbc:Cache://&lt;host&gt;:1972/&lt;database&gt;</url>
-       <websiteUrl>http://www.intersystems.com/cache/index.html</websiteUrl>
+       <name>InterSystems Cache</name>
+       <url>jdbc:Cache://&lt;host&gt;:&lt;1972&gt;/&lt;database&gt;</url>
+       <websiteUrl>http://www.intersystems.com/cache</websiteUrl>
    </Bean>
 
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">

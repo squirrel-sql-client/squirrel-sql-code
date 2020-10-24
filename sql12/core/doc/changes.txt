@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New default driver definition for InterSystems IRIS.
+  Thanks to Dmitry Maslennikov
+
 #558 SQL editor: Save all button in main frame toolbar.
 
 #558 SQL editor: External file changes are notified by a message box offering reload.

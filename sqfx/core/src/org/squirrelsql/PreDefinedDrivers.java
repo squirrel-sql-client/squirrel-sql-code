@@ -17,7 +17,7 @@ public class PreDefinedDrivers
          new SQLDriver("PRE_DEF_0004", "SAPDB", "com.sap.dbtech.jdbc.DriverSapDB", "jdbc:sapdb:[//host/]dbname[?name=value[&name=value]*]", "http://www.sapdb.org/sap_db_jdbc.htm"),
          new SQLDriver("PRE_DEF_0005", "Pointbase Server", "com.pointbase.net.netJDBCDriver", "jdbc:pointbase:server://<server_name>/<dbname>", "http://www.datamirror.com/products/pointbase"),
          new SQLDriver("PRE_DEF_0006", "HSQLDB In-Memory", "org.hsqldb.jdbcDriver", "jdbc:hsqldb:.", "http://www.hsqldb.org/"),
-         new SQLDriver("PRE_DEF_0007", "Intersystems Cache", "com.intersys.jdbc.CacheDriver", "jdbc:Cache://<host>:1972/<database>", "http://www.intersystems.com/cache/index.html"),
+         new SQLDriver("PRE_DEF_0007", "InterSystems Cache", "com.intersys.jdbc.CacheDriver", "jdbc:Cache://<host>:<1972>/<database>", "http://www.intersystems.com/cache"),
          new SQLDriver("PRE_DEF_0008", "Firebird JayBird", "org.firebirdsql.jdbc.FBDriver", "jdbc:firebirdsql:[//host[:port]/]<database>", "http://www.firebirdsql.org"),
          new SQLDriver("PRE_DEF_0009", "MySQL Driver", "com.mysql.jdbc.Driver", "jdbc:mysql://<hostname>[,<failoverhost>][<:3306>]/<dbname>[?<param1>=<value1>][&<param2>=<value2>]", "http://dev.mysql.com"),
          new SQLDriver("PRE_DEF_0010", "jTDS Sybase", "net.sourceforge.jtds.jdbc.Driver", "jdbc:jtds:sybase://<hostname>[:<4100>]/<dbname>[;<property>=<value>[;...]]", "http://jtds.sourceforge.net"),
@@ -71,6 +71,7 @@ public class PreDefinedDrivers
          new SQLDriver("PRE_DEF_0058", "PostgreSQL", "org.postgresql.Driver", "jdbc:postgresql:[<//host>[:<5432>/]]<database>", "http://jdbc.postgresql.org"),
          new SQLDriver("PRE_DEF_0059", "Sybase Adaptive Server Enterprise", "com.sybase.jdbc2.jdbc.SybDriver", "jdbc:sybase:Tds:<host>:<port>/<DBNAME>", "http://www.sybase.com/products/middleware/jconnectforjdbc"),
          new SQLDriver("PRE_DEF_0060", "HP Vertica", "com.vertica.jdbc.Driver", "jdbc:vertica://10.10.92.160:5433/VMart?user=uidbadmin123&password=uidbadmin123", "http://www.vertica.com"),
+         new SQLDriver("PRE_DEF_0061", "InterSystems IRIS Data Platform", "com.intersystems.jdbc.IRISDriver", "jdbc:IRIS://<host>:<1972>/<database>", "https://github.com/intersystems-community/iris-driver-distribution"),
    };
    
    
