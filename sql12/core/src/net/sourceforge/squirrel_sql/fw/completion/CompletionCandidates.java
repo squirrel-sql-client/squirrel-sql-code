@@ -50,21 +50,25 @@ public class CompletionCandidates
       String prefix = null;
       for (CompletionInfo _candidate : _candidates)
       {
-         String completionString = _candidate.getCompletionString();
+         // With _candidate.getCompletionString() code completion didn't work right when Ctrl+Space was pressed with completion list open.
+         // The problem occurred when tables and stored procedures names partly matched.
+         // String compareString = _candidate.getCompletionString();
+
+         String compareString = _candidate.getCompareString();
          if (null == prefix)
          {
-            prefix = completionString;
+            prefix = compareString;
          }
          else
          {
             int ix;
-            int minLen = Math.min(prefix.length(), completionString.length());
+            int minLen = Math.min(prefix.length(), compareString.length());
 
             prefix = prefix.substring(0, minLen);
 
             for(ix =0; ix < minLen; ++ix)
             {
-               if(getCharAt(prefix, ix, caseSensitive) != getCharAt(completionString, ix, caseSensitive))
+               if(getCharAt(prefix, ix, caseSensitive) != getCharAt(compareString, ix, caseSensitive))
                {
                   prefix = prefix.substring(0, ix);
                   break;
