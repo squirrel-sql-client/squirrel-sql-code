@@ -318,6 +318,9 @@ public class Application implements IApplication
       saveAliases();
       s_log.info("saveApplicationState: saveAliases() ELAPSED: " + (System.currentTimeMillis() - begin));
 
+      saveRecentAliases();
+      s_log.info("saveApplicationState: saveRecentAliases() ELAPSED: " + (System.currentTimeMillis() - begin));
+
       _recentFilesManager.saveJsonBean(_appFiles.getRecentFilesJsonBeanFile());
       s_log.info("saveApplicationState: saveRecentFiles() ELAPSED: " + (System.currentTimeMillis() - begin));
 
@@ -391,6 +394,26 @@ public class Application implements IApplication
 			s_log.error(msg, th);
 		}
 	}
+
+	void saveRecentAliases()
+	{
+		try
+		{
+			getWindowManager().getRecentAliasesListCtrl().saveRecentAliases();
+		}
+		catch (Throwable th)
+		{
+			String thMsg = th.getMessage();
+			if (thMsg == null)
+			{
+				thMsg = "";
+			}
+			String msg = s_stringMgr.getString("Application.error.recentaliassave", th.getMessage());
+			showErrorDialog(msg, th);
+			s_log.error(msg, th);
+		}
+	}
+
 
 	/**
 	 * Saves the driver definitions that are in memory to the drivers file.
@@ -801,7 +824,7 @@ public class Application implements IApplication
 		initDataCache();
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createWindowManager"));
-		_windowManager = new WindowManager(this, args.getUserInterfaceDebugEnabled());
+		_windowManager = new WindowManager(args.getUserInterfaceDebugEnabled());
 
 		// _mainFrame = new MainFrame(this);
 

@@ -18,6 +18,11 @@ package net.sourceforge.squirrel_sql.client.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.fw.util.IJavaPropertyNames;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.URI;
@@ -25,13 +30,6 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.Arrays;
-
-import net.sourceforge.squirrel_sql.fw.util.IJavaPropertyNames;
-
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * This class contains information about files and directories used by the
@@ -455,5 +453,10 @@ public class ApplicationFiles
    public File getGitCommitMessageJsonBeanFile()
    {
       return new File(_userSettingsDir + File.separator + "gitCommitMessageJsonBean.json");
+   }
+
+   public File getRecentAliasesJsonBeanFile()
+   {
+      return new File(_userSettingsDir + File.separator + "recentAliasesJsonBean.json");
    }
 }

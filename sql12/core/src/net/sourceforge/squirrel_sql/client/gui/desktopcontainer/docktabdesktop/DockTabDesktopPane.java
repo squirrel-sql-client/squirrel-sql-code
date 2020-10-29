@@ -1,14 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import net.sourceforge.squirrel_sql.client.ApplicationListener;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
@@ -26,6 +17,35 @@ import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseSessionWindowAction;
 import net.sourceforge.squirrel_sql.client.session.action.RenameSessionAction;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
+
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 //
 public class DockTabDesktopPane extends JComponent implements IDesktopContainer
@@ -48,8 +68,8 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
    private JSplitPane _split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
    private boolean _inOnToggleOpenDock;
-   private ArrayList<DockHandle> _dockHandles = new ArrayList<DockHandle>();
-   private ArrayList<TabHandle> _tabHandles = new ArrayList<TabHandle>();
+   private ArrayList<DockHandle> _dockHandles = new ArrayList<>();
+   private ArrayList<TabHandle> _tabHandles = new ArrayList<>();
    private int _standardDividerSize;
 
    private HashSet<TabHandle> _handlesInRemoveTab_CloseButton = new HashSet<TabHandle>();

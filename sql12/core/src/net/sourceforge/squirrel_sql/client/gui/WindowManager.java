@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.gui;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
@@ -28,6 +29,8 @@ import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversList;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
+import net.sourceforge.squirrel_sql.client.gui.db.recentalias.RecentAliasesListCtrl;
+import net.sourceforge.squirrel_sql.client.gui.db.recentalias.ViewInAliasesAction;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
@@ -138,11 +141,10 @@ public class WindowManager
 	/** Applications main frame. */
 	private MainFrame _mainFrame;
 
-	/** Window containing list of database aliases. */
 	private AliasesListInternalFrame _aliasesListWindow;
-
-	/** Window containing list of JDBC driver definitions. */
 	private DriversListInternalFrame _driversListWindow;
+	private RecentAliasesListCtrl _recentAliasesListCtrl;
+
 
 	/** Window Factory for alias maintenace windows. */
 //	private final AliasWindowFactory _aliasWinFactory;
@@ -171,31 +173,16 @@ public class WindowManager
 	/**
 	 * Ctor.
 	 *
-	 * @param	app		Application API.
-	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public WindowManager(IApplication app, boolean enableUserInterfaceDebug)
+	public WindowManager(boolean enableUserInterfaceDebug)
 	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("IApplication == null");
-		}
-
-		_app = app;
+		_app = Main.getApplication();
 
 		_driverWinMgr = new DriverWindowManager(_app);
 
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				initialize();
-			}
-		}, true);
+		GUIUtils.processOnSwingEventThread(() -> initialize(), true);
 		new DebugEventListener().setEnabled(enableUserInterfaceDebug);
 		_sessionWindows = new SessionWindowsHolder(_app);
 	}
@@ -218,6 +205,11 @@ public class WindowManager
 	public DriversListInternalFrame getDriversListInternalFrame()
 	{
 		return _driversListWindow;
+	}
+
+	public RecentAliasesListCtrl getRecentAliasesListCtrl()
+	{
+		return _recentAliasesListCtrl;
 	}
 
 	public WindowState getAliasesWindowState()
@@ -848,8 +840,10 @@ public class WindowManager
 
 	private void initialize()
 	{
-		createAliasesListUI();
-		createDriversListUI();
+		_aliasesListWindow = createAliasesListWindow();
+		_driversListWindow = createDriversListWindow();
+		_recentAliasesListCtrl = new RecentAliasesListCtrl();
+
 		preLoadActions();
 		_app.getSessionManager().addSessionListener(_sessionListener);
 		createMainFrame();
@@ -861,7 +855,7 @@ public class WindowManager
 		_mainFrame = new MainFrame(_app);
    }
 
-	private void createAliasesListUI()
+	private AliasesListInternalFrame createAliasesListWindow()
 	{
 		final IToogleableAliasesList al = new AliasesList(_app);
 
@@ -885,12 +879,13 @@ public class WindowManager
 		actions.add(new CollapseAllAliasFolderAction(_app, al));
 		actions.add(new ExpandAllAliasFolderAction(_app, al));
 		actions.add(new TransferAliasAction(al));
+		actions.add(new ViewInAliasesAction());
 
-      _aliasesListWindow = new AliasesListInternalFrame(_app, al);
+      return new AliasesListInternalFrame(_app, al);
 
    }
 
-	private void createDriversListUI()
+	private DriversListInternalFrame createDriversListWindow()
 	{
 		final DriversList dl = new DriversList(_app);
 
@@ -901,7 +896,7 @@ public class WindowManager
 		actions.add(new CreateDriverAction(_app));
       actions.add(new ShowDriverWebsiteAction(_app, dl));
 
-		_driversListWindow = new DriversListInternalFrame(_app, dl);
+		return new DriversListInternalFrame(dl);
 	}
 
 	private void preLoadActions()
@@ -925,10 +920,16 @@ public class WindowManager
 
       prepareAliasWindow(ws);
       prepareDriversWindow(ws);
+      prepareRecentAliasesWindow();
 		prefs.setMainFrameWindowState(new MainFrameWindowState(this));
 	}
 
-   private void prepareDriversWindow(MainFrameWindowState ws)
+	private void prepareRecentAliasesWindow()
+	{
+		_mainFrame.addWidget(_recentAliasesListCtrl.getWidget());
+	}
+
+	private void prepareDriversWindow(MainFrameWindowState ws)
    {
       _mainFrame.addWidget(_driversListWindow);
       WindowState toolWs = ws.getDriversWindowState();

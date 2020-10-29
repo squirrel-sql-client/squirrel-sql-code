@@ -93,6 +93,7 @@ public class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 			public void widgetClosed(WidgetEvent evt)
 			{
 				Main.getApplication().getWindowManager().getAliasesListInternalFrame().getAliasesList().aliasChanged(sheet.getSQLAlias());
+				Main.getApplication().getWindowManager().getRecentAliasesListCtrl().aliasChanged(sheet.getSQLAlias());
 			}
 		});
 	}

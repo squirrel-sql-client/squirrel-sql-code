@@ -337,7 +337,7 @@ public class AliasesAndDriversManager
       {
          try
          {
-            _driverListHolder.load(driversFile.getPath());
+            _driverListHolder.load(driversFile);
             if (!drivers().hasNext())
             {
                loadDefaultDrivers(dftDriversURL);
@@ -511,7 +511,7 @@ public class AliasesAndDriversManager
    {
       try(Java8CloseableFix java8Dum = Main.getApplication().getGlobalSQLAliasVersioner().switchOff())
       {
-         _aliasListHolder.load(aliasesFile.getPath());
+         _aliasListHolder.load(aliasesFile);
       }
       catch (Exception ex)
       {

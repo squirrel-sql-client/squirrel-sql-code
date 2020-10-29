@@ -18,9 +18,8 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
@@ -30,104 +29,84 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 abstract class BaseListInternalFrame extends DockWidget
 {
-	protected interface IUserInterfaceFactory
-	{
-		ToolBar getToolBar();
-		BasePopupMenu getPopupMenu();
-		IBaseList getList();
-		String getWindowTitle();
-		ICommand getDoubleClickCommand(MouseEvent evt);
-		SquirrelPreferences getPreferences();
-	}
+   private static ILogger s_log = LoggerController.createLogger(BaseListInternalFrame.class);
 
-	/** Logger for this class. */
-	private static ILogger s_log =
-			LoggerController.createLogger(BaseListInternalFrame.class);
+   private IUserInterfaceFactory _uiFactory;
 
-	private IUserInterfaceFactory _uiFactory;
+   /**
+    * Popup menu for the list.
+    */
+   private BasePopupMenu _popupMenu;
 
-	/** Popup menu for the list. */
-	private BasePopupMenu _popupMenu;
+   /**
+    * Toolbar for window.
+    */
+   private ToolBar _toolBar;
 
-	/** Toolbar for window. */
-	private ToolBar _toolBar;
+   private boolean _hasBeenSized = false;
 
-	private boolean _hasBeenBuilt;
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(BaseListInternalFrame.class);
 
-	private boolean _hasBeenSized = false;
+   public BaseListInternalFrame(IUserInterfaceFactory uiFactory)
+   {
+      super(uiFactory.getWindowTitle(), true, true, Main.getApplication());
+      _uiFactory = uiFactory;
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(BaseListInternalFrame.class);
-    
-	public BaseListInternalFrame(IUserInterfaceFactory uiFactory, IApplication app)
-	{
-		super(uiFactory.getWindowTitle(), true, true, app);
-		_uiFactory = uiFactory;
+      createUserInterface();
+   }
 
-		createUserInterface();
-	}
+   protected IUserInterfaceFactory getUserInterfaceFactory()
+   {
+      return _uiFactory;
+   }
 
-	public void updateUI()
-	{
-		super.updateUI();
-		if (_hasBeenBuilt)
-		{
-			_hasBeenSized = false;
-			privateResize();
-		}
-	}
+   protected void setToolBar(ToolBar tb)
+   {
+      final Container content = getContentPane();
+      if (_toolBar != null)
+      {
+         content.remove(_toolBar);
+      }
+      if (tb != null)
+      {
+         content.add(tb, BorderLayout.NORTH);
+      }
+      _toolBar = tb;
+   }
 
-	protected IUserInterfaceFactory getUserInterfaceFactory()
-	{
-		return _uiFactory;
-	}
+   /**
+    * Process a mouse press event in this list. If this event is a trigger
+    * for a popup menu then display the popup menu.
+    *
+    * @param   evt    The mouse event being processed.
+    */
+   private void onMousePress(MouseEvent evt)
+   {
+      if (evt.isPopupTrigger())
+      {
 
-	protected void setToolBar(ToolBar tb)
-	{
-		final Container content = getContentPane();
-		if (_toolBar != null)
-		{
-			content.remove(_toolBar);
-		}
-		if (tb != null)
-		{
-			content.add(tb, BorderLayout.NORTH);
-		}
-		_toolBar = tb;
-	}
-
-	/**
-	 * Process a mouse press event in this list. If this event is a trigger
-	 * for a popup menu then display the popup menu.
-	 *
-	 * @param	evt	 The mouse event being processed.
-	 */
-	private void onMousePress(MouseEvent evt)
-	{
-		if (evt.isPopupTrigger())
-		{
-			
-			// If the user wants to select for Right mouse clicks then change the selection before popup appears
-         if (_uiFactory.getPreferences().getSelectOnRightMouseClick())
+         // If the user wants to select for Right mouse clicks then change the selection before popup appears
+         if (Main.getApplication().getSquirrelPreferences().getSelectOnRightMouseClick())
          {
             _uiFactory.getList().selectListEntryAtPoint(evt.getPoint());
          }
 
          if (_popupMenu == null)
-			{
-				_popupMenu = _uiFactory.getPopupMenu();
-			}
-			_popupMenu.show(evt);
-		}
-	}
+         {
+            _popupMenu = _uiFactory.getPopupMenu();
+         }
+         _popupMenu.show(evt);
+      }
+   }
 
    private void onMouseClicked(MouseEvent evt)
    {
@@ -142,7 +121,7 @@ abstract class BaseListInternalFrame extends DockWidget
             }
             catch (BaseException ex)
             {
-                      // i18n[BaseListInternalFrame.error.execdoubleclick=Error occurred executing doubleclick event]
+               // i18n[BaseListInternalFrame.error.execdoubleclick=Error occurred executing doubleclick event]
                s_log.error(s_stringMgr.getString("BaseListInternalFrame.error.execdoubleclick"), ex);
             }
          }
@@ -150,97 +129,69 @@ abstract class BaseListInternalFrame extends DockWidget
    }
 
 
-
    private void privateResize()
-	{
-		if (!_hasBeenSized)
-		{
-			if (_toolBar != null)
-			{
-				_hasBeenSized = true;
-				Dimension windowSize = getSize();
-				int rqdWidth = _toolBar.getPreferredSize().width + 15;
-				if (rqdWidth > windowSize.width)
-				{
-					windowSize.width = rqdWidth;
-					setSize(windowSize);
-				}
-			}
-		}
-	}
+   {
+      if (!_hasBeenSized)
+      {
+         if (_toolBar != null)
+         {
+            _hasBeenSized = true;
+            Dimension windowSize = getSize();
+            int rqdWidth = _toolBar.getPreferredSize().width + 15;
+            if (rqdWidth > windowSize.width)
+            {
+               windowSize.width = rqdWidth;
+               setSize(windowSize);
+            }
+         }
+      }
+   }
 
    private void createUserInterface()
-	{
-		// This is a tool window.
-		makeToolWindow(true);
+   {
+      // This is a tool window.
+      makeToolWindow(true);
 
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
-		// Pane to add window content to.
-		final Container content = getContentPane();
-		content.setLayout(new BorderLayout());
+      // Pane to add window content to.
+      final Container content = getContentPane();
+      content.setLayout(new BorderLayout());
 
-		String winTitle = _uiFactory.getWindowTitle();
-		if (winTitle != null)
-		{
-			setTitle(winTitle);
-		}
+      String winTitle = _uiFactory.getWindowTitle();
+      if (winTitle != null)
+      {
+         setTitle(winTitle);
+      }
 
-		// Put toolbar at top of window.
-		setToolBar(_uiFactory.getToolBar());
+      // Put toolbar at top of window.
+      setToolBar(_uiFactory.getToolBar());
 
-		// The main list for window.
-		final IBaseList list = _uiFactory.getList();
+      // The main list for window.
+      final IBaseList list = _uiFactory.getList();
 
 
-		// List in the centre of the window.
-		content.add(list.getComponent(), BorderLayout.CENTER);
+      // List in the centre of the window.
+      content.add(list.getComponent(), BorderLayout.CENTER);
 
-		// Add mouse listener for displaying popup menu.
-		list.addMouseListener(new MouseAdapter()
-		{
-			public void mousePressed(MouseEvent evt)
-			{
-				onMousePress(evt);
-			}
-			public void mouseReleased(MouseEvent evt)
-			{
-				onMousePress(evt);
-			}
+      // Add mouse listener for displaying popup menu.
+      list.addMouseListener(new MouseAdapter()
+      {
+         public void mousePressed(MouseEvent evt)
+         {
+            onMousePress(evt);
+         }
+
+         public void mouseReleased(MouseEvent evt)
+         {
+            onMousePress(evt);
+         }
 
          public void mouseClicked(MouseEvent evt)
          {
             onMouseClicked(evt);
          }
 
-		});
-
-
-//		// When window opened ensure it is wide enough to display the toolbar.
-//		// There is a bug in JDK1.2 where internalFrameOpened() doesn't get
-//		// called so we've used a workaround. The workaround doesn't work in
-//		// JDK1.3.
-//		addInternalFrameListener(new InternalFrameAdapter()
-//		{
-//			//private boolean _hasBeenActivated = false;
-//			//public void internalFrameActivated(InternalFrameEvent evt)
-//			//{
-//				//if (!_hasBeenActivated)
-//				//{
-//				////	_hasBeenActivated = true;
-//				//	privateResize();
-//				//}
-//				//list.requestFocus();
-//			//}
-//
-//			public void internalFrameOpened(InternalFrameEvent evt)
-//			{
-//				privateResize();
-//			}
-//
-//		});
-//
-//		validate();
-
-	}
+      });
+   }
 }

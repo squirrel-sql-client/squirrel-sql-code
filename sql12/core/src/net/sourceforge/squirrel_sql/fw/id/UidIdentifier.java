@@ -17,8 +17,9 @@ package net.sourceforge.squirrel_sql.fw.id;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.rmi.server.UID;
+
 import java.io.Serializable;
+import java.rmi.server.UID;
 
 public class UidIdentifier implements IIdentifier, Serializable
 {
@@ -31,8 +32,12 @@ public class UidIdentifier implements IIdentifier, Serializable
 
    public UidIdentifier()
    {
-      super();
-      _id = new UID().toString();
+      this(new UID().toString());
+   }
+
+   public UidIdentifier(String uidString)
+   {
+      _id = uidString;
    }
 
    public boolean equals(Object rhs)
@@ -45,7 +50,7 @@ public class UidIdentifier implements IIdentifier, Serializable
       return rc;
    }
 
-   public synchronized int hashCode()
+   public int hashCode()
    {
       return toString().hashCode();
    }
@@ -59,5 +64,10 @@ public class UidIdentifier implements IIdentifier, Serializable
    public void setString(String value)
    {
       _id = value;
+   }
+
+   public String getString()
+   {
+      return _id;
    }
 }

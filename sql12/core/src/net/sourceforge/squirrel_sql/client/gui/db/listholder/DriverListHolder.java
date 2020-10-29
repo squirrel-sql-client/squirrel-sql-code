@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -69,9 +70,14 @@ public class DriverListHolder implements ListHolder
       _listeners.remove(lis);
    }
 
-   public void load(String path)
+   public void load(File driversFile)
    {
-      try(FileReader fileReader = new FileReader(path))
+      if(false == driversFile.exists())
+      {
+         return;
+      }
+
+      try(FileReader fileReader = new FileReader(driversFile))
       {
          load(fileReader);
       }

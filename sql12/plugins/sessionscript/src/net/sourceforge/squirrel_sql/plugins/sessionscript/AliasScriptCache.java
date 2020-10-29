@@ -17,9 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
@@ -27,6 +24,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 /**
  * XML cache of SQL scripts.
  *
@@ -111,6 +112,11 @@ public class AliasScriptCache
 	{
 		try
 		{
+			if(false == new File(_scriptsFileName).exists())
+			{
+				return;
+			}
+
 			_cache.load(_scriptsFileName, getClass().getClassLoader());
 		}
 		catch (FileNotFoundException ignore)

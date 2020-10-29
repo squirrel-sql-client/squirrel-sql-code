@@ -17,15 +17,15 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.util.beanwrapper.RectangleWrapper;
+import net.sourceforge.squirrel_sql.fw.xml.IXMLAboutToBeWritten;
+
+import javax.swing.JInternalFrame;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.io.Serializable;
-
-import javax.swing.JInternalFrame;
-
-import net.sourceforge.squirrel_sql.fw.util.beanwrapper.RectangleWrapper;
-import net.sourceforge.squirrel_sql.fw.xml.IXMLAboutToBeWritten;
 /**
  * This bean will store the state of a window or an internal frame object.
  *
@@ -33,8 +33,6 @@ import net.sourceforge.squirrel_sql.fw.xml.IXMLAboutToBeWritten;
  */
 public class WindowState implements IXMLAboutToBeWritten, Serializable
 {
-	private static final long serialVersionUID = 2664203798124718385L;
-
 	/**
 	 * Window whose state is being stored. Only one of <TT>_window</TT>,
 	 * <TT>_frame</tt> and <TT>_internalFrame</TT> can be non-null.

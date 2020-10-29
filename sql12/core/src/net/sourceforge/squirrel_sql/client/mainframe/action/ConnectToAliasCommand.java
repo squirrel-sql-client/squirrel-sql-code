@@ -18,11 +18,9 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
-
-import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
@@ -43,6 +41,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.SwingUtilities;
+import java.sql.SQLException;
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
  * an <TT>ISQLAlias</TT>.
@@ -51,17 +52,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class ConnectToAliasCommand implements ICommand
 {
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ConnectToAliasCommand.class);
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ConnectToAliasCommand.class);
-
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(ConnectToAliasCommand.class);
-
-	/** Application API. */
-	private IApplication _app;
+	private static final ILogger s_log = LoggerController.createLogger(ConnectToAliasCommand.class);
 
 	/** The <TT>ISQLAlias</TT> to connect to. */
 	private SQLAlias _sqlAlias;
@@ -110,7 +103,6 @@ public class ConnectToAliasCommand implements ICommand
 		{
 			throw new IllegalArgumentException("Null ISQLAlias passed");
 		}
-		_app = app;
 		_sqlAlias = sqlAlias;
 		_createSession = createSession;
 		_callback = callback != null ? callback : new ConnectToAliasCallBack(_sqlAlias);
@@ -123,20 +115,22 @@ public class ConnectToAliasCommand implements ICommand
 	{
 		try
 		{
-			final SheetHandler hdl = new SheetHandler(_app, _sqlAlias, _createSession, _callback);
+			final SheetHandler hdl = new SheetHandler(Main.getApplication(), _sqlAlias, _createSession, _callback);
+
+			Main.getApplication().getWindowManager().getRecentAliasesListCtrl().aliasOpened(_sqlAlias);
 
 			GUIUtils.processOnSwingEventThread(() -> createConnectionInternalFrame(hdl));
 		}
 		catch (Exception ex)
 		{
-			_app.showErrorDialog(ex);
+			Main.getApplication().showErrorDialog(ex);
 		}
 	}
 
 	private void createConnectionInternalFrame(SheetHandler hdl)
 	{
-		ConnectionInternalFrame sheet = new ConnectionInternalFrame(_app, _sqlAlias, hdl);
-		_app.getMainFrame().addWidget(sheet);
+		ConnectionInternalFrame sheet = new ConnectionInternalFrame(Main.getApplication(), _sqlAlias, hdl);
+		Main.getApplication().getMainFrame().addWidget(sheet);
 		DialogWidget.centerWithinDesktop(sheet);
 		sheet.moveToFront();
 	}

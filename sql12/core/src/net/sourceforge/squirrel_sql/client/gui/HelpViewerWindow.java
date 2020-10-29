@@ -69,14 +69,9 @@ import java.util.Map;
  */
 public class HelpViewerWindow extends JFrame
 {
-	private static final long serialVersionUID = 1L;
-
-	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(HelpViewerWindow.class);
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(HelpViewerWindow.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(HelpViewerWindow.class);
 
 	/** Application API. */
 	private final IApplication _app;

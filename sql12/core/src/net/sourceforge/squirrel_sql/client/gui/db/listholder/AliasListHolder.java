@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,12 +69,17 @@ public class AliasListHolder implements ListHolder
       _listeners.remove(lis);
    }
 
-   public void load(String path)
+   public void load(File aliasesFile)
    {
       try
       {
+         if(false == aliasesFile.exists())
+         {
+            return;
+         }
+
          XMLBeanReader xmlBeanReader = new XMLBeanReader();
-         xmlBeanReader.load(path, getClass().getClassLoader());
+         xmlBeanReader.load(aliasesFile, getClass().getClassLoader());
 
          for (Object bean : xmlBeanReader.getBeans())
          {
