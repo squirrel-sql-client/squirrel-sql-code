@@ -117,7 +117,10 @@ public class ConnectToAliasCommand implements ICommand
 		{
 			final SheetHandler hdl = new SheetHandler(Main.getApplication(), _sqlAlias, _createSession, _callback);
 
-			Main.getApplication().getWindowManager().getRecentAliasesListCtrl().aliasOpened(_sqlAlias);
+			if (_createSession)
+			{
+				Main.getApplication().getWindowManager().getRecentAliasesListCtrl().startingCreateSession(_sqlAlias);
+			}
 
 			GUIUtils.processOnSwingEventThread(() -> createConnectionInternalFrame(hdl));
 		}

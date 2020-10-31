@@ -21,7 +21,8 @@ public class MetaDataTimeOutProxyFactory
       {
          metaDataLoadingTimeOut = Main.getApplication().getSquirrelPreferences().getSessionProperties().getMetaDataLoadingTimeOut();
 
-         if(false == Main.getApplication().getSessionManager().isInCreateSession())
+         if(   false == Main.getApplication().getSessionManager().isInCreateSession()
+            && null != Main.getApplication().getSessionManager().getActiveSession()) // Happens when testing or loading Schema table for a new Alias that has not yet been saved.
          {
             metaDataLoadingTimeOut = Main.getApplication().getSessionManager().getActiveSession().getProperties().getMetaDataLoadingTimeOut();
          }

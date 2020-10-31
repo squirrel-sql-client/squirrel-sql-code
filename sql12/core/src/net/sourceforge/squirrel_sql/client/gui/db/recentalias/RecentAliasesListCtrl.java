@@ -211,14 +211,15 @@ public class RecentAliasesListCtrl
       return _widget;
    }
 
-   public void aliasOpened(SQLAlias sqlAlias)
+   public void startingCreateSession(SQLAlias sqlAlias)
    {
       DefaultListModel model = (DefaultListModel) _widget.lstAliases.getModel();
 
-      final int curIx = model.indexOf(sqlAlias);
-      if(-1 < curIx)
+      int curIx = model.indexOf(sqlAlias);
+      while(-1 < curIx)
       {
          model.remove(curIx);
+         curIx = model.indexOf(sqlAlias);
       }
 
       model.add(0, sqlAlias);

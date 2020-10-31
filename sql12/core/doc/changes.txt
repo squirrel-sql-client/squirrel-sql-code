@@ -93,6 +93,8 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+When Aliases where tested they occurred multiple times in the recent Aliases list.
+
 Code completion didn't work right when Ctrl+Space was pressed with completion list open.
   The problem occurred when tables and stored procedures names partly matched.
 
