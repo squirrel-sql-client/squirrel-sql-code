@@ -2,7 +2,7 @@
 
 <Beans>
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-		<name>InterSystems IRIS Data Platform</name>
+		<name>InterSystems IRIS</name>
 		<driverClassName>com.intersystems.jdbc.IRISDriver</driverClassName>
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-78</string>
