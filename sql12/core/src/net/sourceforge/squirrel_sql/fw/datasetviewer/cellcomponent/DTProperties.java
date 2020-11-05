@@ -52,11 +52,11 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * set of data items within the other DataTypes.
  */
 
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class DTProperties {
 	
@@ -78,13 +78,7 @@ public class DTProperties {
 	 * containing the properties for that DataType.
 	 * There is only one copy of this table for all instances of this class.
 	 */
-	private static HashMap<String, HashMap<String, String>> dataTypes = 
-        new HashMap<String, HashMap<String, String>>();
-	
-	/**
-	 * ctor
-	 */
-	public DTProperties() {}
+	private static HashMap<String, HashMap<String, String>> dataTypes = new HashMap<>();
 	
 
 	/**

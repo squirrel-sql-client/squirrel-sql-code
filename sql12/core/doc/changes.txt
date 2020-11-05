@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Option to always use three digit milliseconds in default SQL Timestamp display.
+  See menu File --> Global Preference  --> tab "Data Type Controls"
+  --> section "Timestamp (SQL type 93)" --> checkbox "Always display Milliseconds in three digits".
+
 Recent Aliases list opened by new dock button on the left of application window.
 
 New default driver definition for InterSystems IRIS.

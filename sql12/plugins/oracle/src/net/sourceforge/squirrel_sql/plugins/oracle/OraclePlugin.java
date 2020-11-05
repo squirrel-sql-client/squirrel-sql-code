@@ -19,22 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.Iterator;
-
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
@@ -61,6 +45,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQ
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestampStatics;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -121,6 +106,21 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.UserDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.ViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tokenizer.OracleQueryTokenizer;
 import net.sourceforge.squirrel_sql.plugins.oracle.types.OracleXmlTypeDataTypeComponentFactory;
+
+import javax.swing.SwingUtilities;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * Oracle plugin class.
@@ -578,7 +578,7 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 		if (timeStampWhereClauseUsage != null)
 		{
 			int timeStampWhereClauseUsageInt = Integer.parseInt(timeStampWhereClauseUsage);
-			if (DataTypeTimestamp.USE_STRING_FORMAT == timeStampWhereClauseUsageInt)
+			if (DataTypeTimestampStatics.USE_STRING_FORMAT == timeStampWhereClauseUsageInt)
 			{
 				session.showWarningMessage(i18n.timestampWarning);
 				s_log.warn(i18n.timestampWarning);
