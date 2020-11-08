@@ -18,16 +18,18 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesAndDriversManager;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This <CODE>ICommand</CODE> connects to all aliases specified as "connect
@@ -37,31 +39,18 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
  */
 public class ConnectToStartupAliasesCommand implements ICommand
 {
-   /** Application API. */
-   private final IApplication _app;
+   private static final ILogger s_log = LoggerController.createLogger(ConnectToStartupAliasesCommand.class);
 
-   /**
-    * Ctor.
-    *
-    * @param	app		Application API
-    *
-    * @throws	IllegalArgumentException
-    * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
-    */
+   private IApplication _app;
+
    public ConnectToStartupAliasesCommand(IApplication app)
    {
-      super();
-      if (app == null)
-      {
-         throw new IllegalArgumentException("IApplication == null");
-      }
-
       _app = app;
    }
 
    public void execute()
    {
-      final List<ISQLAlias> aliases = new ArrayList<ISQLAlias>();
+      final List<ISQLAlias> aliases = new ArrayList<>();
       final AliasesAndDriversManager cache = _app.getAliasesAndDriversManager();
       synchronized (cache)
       {
@@ -78,6 +67,9 @@ public class ConnectToStartupAliasesCommand implements ICommand
       while (it.hasNext())
       {
          final SQLAlias alias = (SQLAlias) it.next();
+
+         s_log.info("Connecting during Application start to Alias: \"" + alias.getName() + "\" (JDBC-URL: " +  alias.getUrl() + ")");
+
          new ConnectToAliasCommand(_app, alias).execute();
       }
    }

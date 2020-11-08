@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Aliases which are configured to be connected to during application startup are now written to SQuirreL's logs.
+  See Alias check box "Connect at application startup" and menu Windows --> "View SQuirreL Logs".
+
 Option to always use three digit milliseconds in default SQL Timestamp display.
   See menu File --> Global Preference  --> tab "Data Type Controls"
   --> section "Timestamp (SQL type 93)" --> checkbox "Always display Milliseconds in three digits".
