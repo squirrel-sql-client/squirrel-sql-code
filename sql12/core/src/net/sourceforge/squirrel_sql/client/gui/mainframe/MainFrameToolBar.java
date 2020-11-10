@@ -289,10 +289,12 @@ public class MainFrameToolBar extends ToolBar
 			{
 				_model.addAlias((ISQLAlias) obj);
 			}
-			if (_control.getItemCount() == 1)
-			{
-				_control.setSelectedIndex(0);
-			}
+
+			// When Aliases were imported into an empty Alias tree this caused the first Alias to open.
+//			if (_control.getItemCount() == 1)
+//			{
+//				_control.setSelectedIndex(0);
+//			}
 		}
 
 		/**

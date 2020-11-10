@@ -240,7 +240,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private boolean onNodeAcceptsKids(DefaultMutableTreeNode selNode)
    {
-      return false == selNode.isLeaf();
+      return selNode.isRoot() || false == selNode.isLeaf();
    }
 
 
