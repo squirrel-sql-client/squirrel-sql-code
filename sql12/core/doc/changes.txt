@@ -100,6 +100,10 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+Fixed two bugs concerning File --> Global Preference  --> tab "Data Type Controls" --> section "Timestamp (SQL type 93)":
+  1. Checkbox "Always display Milliseconds in three digits" was checked by default.
+  2. When this checkbox was checked the time format was 12 instead of 24 hours.
+
 Alias import/export: When Aliases were dragged from the import window to an empty Alias tree no Aliases were imported.
 
 When Aliases where tested they occurred multiple times in the recent Aliases list.

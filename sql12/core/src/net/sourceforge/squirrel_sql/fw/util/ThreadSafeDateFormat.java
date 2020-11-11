@@ -32,7 +32,7 @@ import java.util.Date;
 public class ThreadSafeDateFormat
 {
 
-   public static final String DEFAULT_WITH_THREE_MILLI_DIGITS = "yyyy-MM-dd hh:mm:ss.SSS";
+   public static final String DEFAULT_WITH_THREE_MILLI_DIGITS = "yyyy-MM-dd HH:mm:ss.SSS";
    /**
     * internal protected instance of DateFormat
     */

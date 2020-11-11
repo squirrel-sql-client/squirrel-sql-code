@@ -149,11 +149,11 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
          _dataTypeTimestampStatics.setUseJavaDefaultFormat(false);
       }
 
-      _dataTypeTimestampStatics.setUseThreeDigitMillis(true);   // set to use the Java default
+      _dataTypeTimestampStatics.setUseThreeDigitMillis(false);   // set to use the Java default
       String useThreeDigitMillisString = DTProperties.get(DataTypeTimestamp.class.getName(), "useThreeDigitMillis");
-      if (useThreeDigitMillisString != null && useThreeDigitMillisString.equals("false"))
+      if (useThreeDigitMillisString != null && useThreeDigitMillisString.equals("true"))
       {
-         _dataTypeTimestampStatics.setUseThreeDigitMillis(false);
+         _dataTypeTimestampStatics.setUseThreeDigitMillis(true);
       }
 
       // get which locale-dependent format to use
