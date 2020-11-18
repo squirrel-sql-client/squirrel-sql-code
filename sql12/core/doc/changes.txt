@@ -101,6 +101,7 @@ Brushed up the Look and feel Plugin;
 Bug fixes:
 
 #1450 java.lang.StringIndexOutOfBoundsException occurred on opening logs window.
+  Thanks to Chris B for the fix.
 
 Fixed two bugs concerning File --> Global Preference  --> tab "Data Type Controls" --> section "Timestamp (SQL type 93)":
   1. Checkbox "Always display Milliseconds in three digits" was checked by default.
