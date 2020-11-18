@@ -98,6 +98,12 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
       // FlatLaf .properties
       for (FileWrapper props : userExtraLAFFolder.listFiles((dir, name) -> name.endsWith(".properties")))
       {
+         if (props.getName().equals("extralafs.properties"))
+         {
+            log.debug("FlatLaf theme: extralafs.properties skipped");
+            continue;
+         }
+
          Properties theme = new Properties();
          try (InputStream in = props.getFileInputStream())
          {

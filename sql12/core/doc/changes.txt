@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Look and feel Plugin: Upgraded FlatLaf Look and Feel to version 0.44.
+   Thanks to Stanimir Stamenkov for the patch.
+
 Aliases which are configured to be connected to during application startup are now written to SQuirreL's logs.
   See Alias check box "Connect at application startup" and menu Windows --> "View SQuirreL Logs".
 
