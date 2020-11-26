@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge Request #71: Brushed up the UI of SQuirreL's help.
+   Thanks to Stanimir Stamenkov for the patch.
+
+
 Look and feel Plugin: Upgraded FlatLaf Look and Feel to version 0.44.
    Thanks to Stanimir Stamenkov for the patch.
 

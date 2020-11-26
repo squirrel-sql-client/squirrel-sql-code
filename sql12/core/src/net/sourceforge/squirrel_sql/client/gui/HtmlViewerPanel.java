@@ -17,25 +17,6 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-
-import javax.swing.BorderFactory;
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
@@ -43,6 +24,40 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.BorderFactory;
+import javax.swing.InputMap;
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.HTMLFrameHyperlinkEvent;
+import javax.swing.text.html.StyleSheet;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 /**
  * This panel shows the contents of a HTML file.
  *
@@ -59,7 +74,24 @@ public class HtmlViewerPanel extends JPanel
         StringManagerFactory.getStringManager(HtmlViewerPanel.class);    
     
 	/** Text area containing the HTML. */
-	private final JEditorPane _contentsTxt = new JEditorPane();
+	private final JEditorPane _contentsTxt = new JEditorPane()
+	{
+		@Override public void paint(Graphics g)
+		{
+			if (g instanceof Graphics2D)
+			{
+				Graphics2D g2 = (Graphics2D) g.create();
+				g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				super.paint(g2);
+				g2.dispose();
+			}
+			else
+			{
+				super.paint(g);
+			}
+		}
+	};
 
 	/** <TT>JScrollPane</TT> for <TT>_contentsText</TT>. */
 	private JScrollPane _contentsScrollPane;
@@ -80,6 +112,8 @@ public class HtmlViewerPanel extends JPanel
 	 * Collection of listeners for events in this object.
 	 */
 	private EventListenerList _listenerList = new EventListenerList();
+
+	private StyleSheet _styleSheet;
 
 	/**
 	 * Ctor.
@@ -126,6 +160,44 @@ public class HtmlViewerPanel extends JPanel
 		fireHomeURLChanged();
 	}
 
+	public void setStyleURL(String urlSpec)
+	{
+		if (urlSpec == null)
+		{
+			_styleSheet = null;
+			return;
+		}
+
+		try
+		{
+			URL baseURL = getHomeURL();
+			URL styleURL = (baseURL != null)
+			               ? baseURL.toURI().resolve(urlSpec).toURL()
+			               : new URL(urlSpec);
+
+			_styleSheet = new StyleSheet();
+			try (InputStream in = styleURL.openStream();
+					Reader rules = new InputStreamReader(in))
+			{
+				_styleSheet.loadRules(rules, styleURL);
+			}
+		}
+		catch (URISyntaxException | IOException e)
+		{
+			s_log.warn("Problem loading style sheet: " + urlSpec, e);
+		}
+	}
+
+	public int getFontSize()
+	{
+		return _contentsTxt.getFont().getSize();
+	}
+
+	public void setFontSize(int size)
+	{
+		_contentsTxt.setFont(_contentsTxt.getFont().deriveFont((float) size));
+	}
+
 	/**
 	 * Adds a listener to this object.
 	 *
@@ -166,6 +238,11 @@ public class HtmlViewerPanel extends JPanel
 			_currentURL = url;
 			fireURLChanged();
 		}
+		else if (url.getRef() != null)
+		{
+			// Scroll to fragment.
+			_contentsTxt.setPage(url);
+		}
 	}
 
 	public synchronized void goBack()
@@ -192,9 +269,9 @@ public class HtmlViewerPanel extends JPanel
 
 	public void refreshPage()
 	{
-		final Point pos = _contentsScrollPane.getViewport().getViewPosition();
+		_contentsScrollPane.putClientProperty("savedScrollPosition", _contentsScrollPane.getViewport().getViewPosition());
+		_contentsTxt.getDocument().putProperty(Document.StreamDescriptionProperty, null);
 		displayURL(_currentURL);
-		_contentsScrollPane.getViewport().setViewPosition(pos);
 	}
 
 	/**
@@ -309,8 +386,58 @@ public class HtmlViewerPanel extends JPanel
 	 */
 	private JPanel createMainPanel()
 	{
-		_contentsTxt.setEditable(false);
+		Runnable keepEditableColors = () -> {
+			_contentsTxt.setEditable(true);
+			Color bg = _contentsTxt.getBackground();
+			Color fg = _contentsTxt.getForeground();
+			_contentsTxt.setEditable(false);
+			_contentsTxt.setBackground(bg);
+			_contentsTxt.setForeground(fg);
+		};
+		keepEditableColors.run();
+		_contentsTxt.addPropertyChangeListener("UI", evt -> keepEditableColors.run());
+		_contentsTxt.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+		//_contentsTxt.putClientProperty(JEditorPane.W3C_LENGTH_UNITS, true);
 		_contentsTxt.setContentType("text/html");
+		_contentsTxt.setEditorKitForContentType("text/html", new HTMLEditorKit()
+		{
+			@Override public Document createDefaultDocument()
+			{
+				HTMLDocument doc = (HTMLDocument) super.createDefaultDocument();
+				if (_styleSheet != null)
+				{
+					doc.getStyleSheet().addStyleSheet(_styleSheet);
+					doc.getStyleSheet().addRule("body { font-size: " + getFontSize() + "}");
+				}
+				return doc;
+			}
+		});
+		_contentsTxt.addPropertyChangeListener("font", evt ->
+		{
+			Object newFont = evt.getNewValue();
+			if (newFont instanceof Font)
+			{
+				Font oldFont = (Font) evt.getOldValue();
+				int fontSize = ((Font) newFont).getSize();
+				firePropertyChange("fontSize",
+						oldFont == null ? -1 : oldFont.getSize(), fontSize);
+				Document document = _contentsTxt.getDocument();
+				if (document instanceof HTMLDocument)
+				{
+					((HTMLDocument) document).getStyleSheet()
+							.addRule("body { font-size: " + fontSize + " }");
+				}
+			}
+		});
+		_contentsTxt.addPropertyChangeListener("page", evt ->
+		{
+			Object pos = _contentsScrollPane.getClientProperty("savedScrollPosition");
+			if (pos instanceof Point)
+			{
+				_contentsScrollPane.getViewport().setViewPosition((Point) pos);
+				_contentsScrollPane.putClientProperty("savedScrollPosition", null);
+			}
+		});
 		final TextPopupMenu pop = new TextPopupMenu();
 		pop.setTextComponent(_contentsTxt);
 		_contentsTxt.addMouseListener(new MouseAdapter()
@@ -336,10 +463,50 @@ public class HtmlViewerPanel extends JPanel
 		_contentsTxt.addHyperlinkListener(createHyperLinkListener());
 		_contentsScrollPane = new JScrollPane(_contentsTxt,
 									JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+									JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		pnl.add(_contentsScrollPane, BorderLayout.CENTER);
 
+		initKeyBindings();
+
 		return pnl;
+	}
+
+	private void initKeyBindings()
+	{
+		InputMap scrollKeys = new InputMap();
+		scrollKeys.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "scrollDown");
+		scrollKeys.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, KeyEvent.SHIFT_DOWN_MASK), "scrollUp");
+		scrollKeys.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), "scrollDown");
+		scrollKeys.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), "scrollUp");
+		scrollKeys.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), "scrollHome");
+		scrollKeys.put(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), "scrollEnd");
+		scrollKeys.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "unitScrollDown");
+		scrollKeys.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "unitScrollUp");
+		scrollKeys.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "unitScrollRight");
+		scrollKeys.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "unitScrollLeft");
+
+		InputMap scrollInput = _contentsScrollPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		scrollKeys.setParent(scrollInput.getParent());
+		scrollInput.setParent(scrollKeys);
+
+		InputMap editKeys = _contentsTxt.getInputMap();
+		for (KeyStroke keyStroke : scrollKeys.keys())
+		{
+			removeKey(editKeys, keyStroke);
+		}
+	}
+
+	private static void removeKey(InputMap inputMap, KeyStroke keyStroke)
+	{
+		Object command = inputMap.get(keyStroke);
+		if (command == null)
+			return;
+
+		InputMap current = inputMap;
+		while (current != null) {
+			current.remove(keyStroke);
+			current = current.getParent();
+		}
 	}
 
 	private HyperlinkListener createHyperLinkListener()

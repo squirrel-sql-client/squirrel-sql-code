@@ -17,12 +17,16 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 /**
  * This toolbar will navigate through a <TT>HtmlViewerPanel</TT>.
  *
@@ -68,6 +72,8 @@ public class HtmlViewerPanelToolBar extends ToolBar
 		add(new BackAction(_app));
 		add(new ForwardAction(_app));
 		add(new RefreshAction(_app));
+		mapInputAction(new SmallerFontAction());
+		mapInputAction(new BiggerFontAction());
 	}
 
 	private final class BackAction extends SquirrelAction
@@ -79,6 +85,8 @@ public class HtmlViewerPanelToolBar extends ToolBar
 			{
 				throw new IllegalArgumentException("Null IApplication passed");
 			}
+			super.putValue(Action.ACCELERATOR_KEY,
+			      KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.ALT_DOWN_MASK));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -96,6 +104,8 @@ public class HtmlViewerPanelToolBar extends ToolBar
 			{
 				throw new IllegalArgumentException("Null IApplication passed");
 			}
+			super.putValue(Action.ACCELERATOR_KEY,
+					KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.ALT_DOWN_MASK));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -113,6 +123,8 @@ public class HtmlViewerPanelToolBar extends ToolBar
 			{
 				throw new IllegalArgumentException("Null IApplication passed");
 			}
+			super.putValue(Action.ACCELERATOR_KEY,
+					KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -137,4 +149,49 @@ public class HtmlViewerPanelToolBar extends ToolBar
 			_pnl.goHome();
 		}
 	}
+
+	private final class BiggerFontAction extends AbstractAction
+	{
+		BiggerFontAction()
+		{
+			super("Increase Text Size");
+			super.putValue(Action.ACCELERATOR_KEY,
+					KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK));
+			_pnl.addPropertyChangeListener("fontSize", evt -> updateEnabled());
+			updateEnabled();
+		}
+
+		void updateEnabled()
+		{
+			super.setEnabled(_pnl.getFontSize() < 24);
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			_pnl.setFontSize(_pnl.getFontSize() + 1);
+		}
+	}
+
+	private final class SmallerFontAction extends AbstractAction
+	{
+		SmallerFontAction()
+		{
+			super("Decrease Text Size");
+			super.putValue(Action.ACCELERATOR_KEY,
+					KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
+			_pnl.addPropertyChangeListener("fontSize", evt -> updateEnabled());
+			updateEnabled();
+		}
+
+		void updateEnabled()
+		{
+			super.setEnabled(_pnl.getFontSize() > 11);
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			_pnl.setFontSize(_pnl.getFontSize() - 1);
+		}
+	}
+
 }

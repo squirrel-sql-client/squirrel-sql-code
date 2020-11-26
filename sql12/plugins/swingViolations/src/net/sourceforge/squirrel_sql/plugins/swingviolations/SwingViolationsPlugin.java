@@ -1,19 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.swingviolations;
 
-import javax.swing.RepaintManager;
-
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.plugins.swingviolations.EDTViolationRepaintManager;
+
+import javax.swing.RepaintManager;
 
 /**
  *
@@ -82,7 +76,7 @@ public class SwingViolationsPlugin extends DefaultSessionPlugin
 	 */
 	public String getHelpFileName()
 	{
-		return "doc/readme.html";
+		return "doc/readme.txt";
 	}
 
 	/**

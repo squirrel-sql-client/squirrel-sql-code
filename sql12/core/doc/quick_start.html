@@ -274,10 +274,10 @@ never need to change this argument.</p>
 
 <h2>How to Connect to a Database</h2>
 
-There are two pieces of information you need to supply to connect to a
+<p>There are two pieces of information you need to supply to connect to a
 database; the driver definition and the alias. The driver definition
 specifies the JDBC driver to use and the alias specifies the connection
-parameters.
+parameters.</p>
 <a name="the_driver"></a>
 
 <h3>The Driver</h3>
@@ -421,10 +421,10 @@ below:</p>
 <p align="CENTER"><img src="images/alias_properties_dialog.png"
 	border="0" alt="Alias Properties Dialog (Schema Tab)"></p>
 
-The
+<p>The
 <em>Connect database to refresh Schema table</em>
 button will load all schemas from the database into the table for
-customization.
+customization.</p>
 
 <br clear="LEFT">
 
@@ -455,8 +455,8 @@ background color is light red to indicate that caution should be used:
 <p align="CENTER"><img src="images/alias_properties_dialog3.png"
 	border="0" alt="Alias Properties Dialog (Color Tab)"></p>
  
-The following image shows what the color configuration above looks like for a new session created
-from this alias:
+<p>The following image shows what the color configuration above looks like for a new session created
+from this alias:</p>
 
 <p align="CENTER"><img src="images/session_background_color_example.png"
 	border="0" alt="Session Background Color Example"></p>
@@ -499,8 +499,8 @@ like:</p>
 <p align="CENTER"><img src="images/alias_window_no_tree.png"
 	border="0" alt="Alias Properties Dialog"></p>
 
-After enabling alias tree mode, you can add folders to contain the
-aliases and nest folders within folders. For example:
+<p>After enabling alias tree mode, you can add folders to contain the
+aliases and nest folders within folders. For example:</p>
 
 <p align="CENTER"><img src="images/alias_window_with_tree.png"
 	border="0" alt="Alias Properties Dialog"></p>
@@ -546,21 +546,21 @@ once you have connected to an alias. Multiple statements can be executed
 and the results will be displayed in multiple tabs below the SQL entry
 area.</p>
 
-<p>When the SQL tab is selected pressing <tt>&lt;ctrl&gt;&lt;enter&gt;</tt>,
+<p>When the SQL tab is selected pressing <kbd>&lt;ctrl&gt;&lt;enter&gt;</kbd>,
 taking the Execute SQL option from the Session menu or pressing the
 Execute SQL button in the session window tool bar will execute the
 entered SQL.</p>
 
-<p>If a single statement is entered then pressing <tt>&lt;ctrl&gt;&lt;enter&gt;</tt>
+<p>If a single statement is entered then pressing <kbd>&lt;ctrl&gt;&lt;enter&gt;</kbd>
 will execute just that statement.</p>
 
 <p>If you only want to execute part of the SQL entered then
-highlight the SQL that you want to execute and press <tt>&lt;ctrl&gt;&lt;enter&gt;</tt>.</p>
+highlight the SQL that you want to execute and press <kbd>&lt;ctrl&gt;&lt;enter&gt;</kbd>.</p>
 
 <p>To only execute a single statement amongst several statements
 (separated from the other statements by at least one blank line) within
 the SQL entry area then click on the line containing the statement that
-you want to execute and press <tt>&lt;ctrl&gt;&lt;enter&gt;</tt>.</p>
+you want to execute and press <kbd>&lt;ctrl&gt;&lt;enter&gt;</kbd>.</p>
 
 <p>The characters -- at the beginning of a line will turn it into a
 comment.</p>
@@ -576,7 +576,7 @@ contents of the cell.</p>
 shows all of these functions and allows the user to execute them. The
 functions in the popup may be filtered by typing the name of the filter
 into the filter text field. The tools popup can be opened by pressing
-&lt;Ctrl&gt;-t. A picture of the tools popup dialog is show below.</p>
+<kbd>&lt;Ctrl&gt;-t</kbd>. A picture of the tools popup dialog is show below.</p>
 
 <p align="CENTER"><img src="images/toolspopup.jpg" border="0"
 	alt="Tools popup"></p>
@@ -802,10 +802,10 @@ format or editing mode for the data in the Contents tab by the <em>Session
 Properties</em> option from the <em>Session</em> and clicking on the <em>General</em>
 tab and changing the selection for <em>Table Contents</em>.</p>
 
-Note that the individual data items may be displayed in different
+<p>Note that the individual data items may be displayed in different
 formats as described in
 <a href="#data_type_controls">"Data Type Controls"</a>
-.
+.</p>
 
 <h3><a name="howtoedit"></a>How To Edit</h3>
 
@@ -854,7 +854,7 @@ formats as described in
 <p>If the data in the cell gets really messed up and you are
 confused about what is going on, press the &lt;delete&gt; key until the
 original data appears (see below). If that doesn't work then immediately
-close the database connection without leaving the cell (&lt;ctrl&gt;W or
+close the database connection without leaving the cell (<kbd>&lt;ctrl&gt;W</kbd> or
 click the close button). This will abort the operation and avoid
 changing the DB.</p>
 
@@ -901,10 +901,10 @@ original contents of the cell, the DB will not be updated.</p>
 
 <h3><a name="insert_delete"></a>Inserting and Deleting Rows</h3>
 
-You may easily insert or delete rows in the table using the Contents Tab
+<p>You may easily insert or delete rows in the table using the Contents Tab
 For both operations the table must be editable (see
 <a href="#enablingediting">Enabling Editing</a>
-)
+)</p>
 
 <p>To insert a row into the table, click the right mouse button, and
 choose the "Insert row" option from the menu This brings up a separate
@@ -953,10 +953,10 @@ will need to use the Popup:</p>
 	window would show the actual contents of that field.</li>
 </ul>
 
-For these reasons the data may not be editable in the cell but still be
+<p>For these reasons the data may not be editable in the cell but still be
 editable in the Popup. If the data is not editable in the cell (i.e. the
 background does not change color when you click on it), you will need to
-bring up the Popup window to know whether the data can be edited there.
+bring up the Popup window to know whether the data can be edited there.</p>
 
 <p>To use the Popup, double-click in the cell to start the Popup,
 then edit the text in the text window. Editing uses the same mechanism
@@ -1106,7 +1106,7 @@ displayed with a cyan background</p>
 string value "&lt;null&gt; " (without the quotes). VARCHAR fields in the
 database may include that value as long as you do not try to edit them</p>
 
-Tables with a large number of columns or with a column containing a very
+<p>Tables with a large number of columns or with a column containing a very
 long value (not includeing BLOB/CLOB data types) may get an error when
 trying to update the DB because the WHERE clause is too long. In this
 case you should open the table in a session, go to the
@@ -1116,7 +1116,7 @@ clause size" That tool lets you specify which columns SQuirrel should
 use in the WHERE clause when doing the requested update on the cell
 contents See
 <a href="#session_menu">Session Menu</a>
-.
+.</p>
 
 <h3><a name="summary_of_how_it_works"></a>Summary of How it works
 (and why you may care)</h3>
@@ -1358,10 +1358,10 @@ DISTINCT, STRUCT, ARRAY, REF, and DATALINK. These are all handled as
 <p>Global Preferences specify configuration settings for the
 application.</p>
 
-The descriptions included here are for the tabs created by the core
+<p>The descriptions included here are for the tabs created by the core
 product and standard plugins (if standard plugins are installed).
 Optional Plugins may add other tabs to this window. See the
-Plugin-specific help for descriptions of the tabs added by that plugin.
+Plugin-specific help for descriptions of the tabs added by that plugin.</p>
 
 <h3>General Tab</h3>
 
@@ -1539,7 +1539,7 @@ Plugin-specific help for descriptions of the tabs added by that plugin.
 	a tooltip.</dd>
 </dl>
 
-The
+<p>The
 <b>JDBC Debug to Output Stream</b>
 has been deprecated by JavaSoft in favour of the
 <b>JDBC Debug To Writer</b>
@@ -1552,7 +1552,7 @@ information to the
 <b>Output Stream</b>
 than they do to the
 <b>Writer</b>
-.
+.</p>
 
 <h4>SQL Tab (SQL File)</h4>
 </dd>

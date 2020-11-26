@@ -17,13 +17,20 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import java.awt.Component;
 
 /**
@@ -133,8 +140,29 @@ public class ToolBar extends JToolBar
             {
                btn.setDisabledIcon(icon);
             }
+            mapInputAction(action, btn);
          }
       }
+   }
+
+   protected void mapInputAction(Action action)
+   {
+      mapInputAction(action, this);
+   }
+
+   protected void mapInputAction(Action action, JComponent component)
+   {
+      KeyStroke keyStroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
+      if (keyStroke == null)
+         return;
+
+      Object command = action.getValue(Action.ACTION_COMMAND_KEY);
+      if (command == null)
+      {
+         command = action.getClass().getName();
+      }
+      component.getActionMap().put(command, action);
+      component.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, command);
    }
 
    /**

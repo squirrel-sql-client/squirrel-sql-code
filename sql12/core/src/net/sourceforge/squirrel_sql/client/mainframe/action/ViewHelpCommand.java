@@ -24,6 +24,9 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
+
 /**
  * This <CODE>ICommand</CODE> displays the Help window.
  *
@@ -32,7 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 public class ViewHelpCommand implements ICommand
 {
 	/** Singleton instance of the help window. */
-	private static HelpViewerWindow s_window;
+	private static Reference<HelpViewerWindow> s_ref = new SoftReference<>(null);
 
 	/** Application API. */
 	private IApplication _app;
@@ -60,11 +63,13 @@ public class ViewHelpCommand implements ICommand
     */
 	public void execute() throws BaseException
 	{
+		HelpViewerWindow s_window = s_ref.get();
 		if (s_window == null)
 		{
 			s_window = new HelpViewerWindow(_app);
 			s_window.setSize(600, 400);
 			GUIUtils.centerWithinParent(s_window);
+			s_ref = new SoftReference<>(s_window);
 		}
 		s_window.setVisible(true);
 		s_window.toFront();	// Required on Linux.

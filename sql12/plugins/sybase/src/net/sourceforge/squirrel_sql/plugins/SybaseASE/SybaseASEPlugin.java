@@ -135,7 +135,7 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	 */
 	public String getHelpFileName()
 	{
-		return "doc/readme.html";
+		return "doc/readme.txt";
 	}
 
 	/**

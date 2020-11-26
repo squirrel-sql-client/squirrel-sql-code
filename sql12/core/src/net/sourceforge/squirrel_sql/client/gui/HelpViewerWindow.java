@@ -109,6 +109,7 @@ public class HelpViewerWindow extends JFrame
 	{
 		// i18n[HelpViewerWindow.title=SQuirreL SQL Client Help]
 		super(s_stringMgr.getString("HelpViewerWindow.title"));
+		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
@@ -226,6 +227,7 @@ public class HelpViewerWindow extends JFrame
 			public void run()
 			{
 				_detailPnl.setHomeURL(_homeURL);
+				_detailPnl.setStyleURL("style.css");
 				_tree.expandRow(0);
 				_tree.expandRow(2);
 				if (_app.getSquirrelPreferences().isFirstRun())
@@ -390,7 +392,7 @@ public class HelpViewerWindow extends JFrame
 					final String fn = pi[i].getLicenceFileName();
 					if (fn != null && fn.length() > 0)
 					{
-						DocumentNode dn = new DocumentNode(title, fileWrapperFactory.create(dir, fn));
+						DocumentNode dn = new DocumentNode(title, docRelative(dir, fn));
 						licenceRoot.add(dn);
 						_nodes.put(dn.getURL().toString(), dn);
 					}
@@ -410,7 +412,7 @@ public class HelpViewerWindow extends JFrame
 					final String fn = pi[i].getChangeLogFileName();
 					if (fn != null && fn.length() > 0)
 					{
-						DocumentNode dn = new DocumentNode(title, fileWrapperFactory.create(dir, fn));
+						DocumentNode dn = new DocumentNode(title, docRelative(dir, fn));
 						changeLogRoot.add(dn);
 						_nodes.put(dn.getURL().toString(), dn);
 					}
@@ -458,6 +460,21 @@ public class HelpViewerWindow extends JFrame
 		sp.setPreferredSize(new Dimension(200, 200));
 
 		return sp;
+	}
+
+	private FileWrapper docRelative(FileWrapper dir, String fn)
+	{
+		FileWrapper file = fileWrapperFactory.create(dir, fn);
+		if (!file.exists())
+		{
+			FileWrapper docRelative = fileWrapperFactory.create(fileWrapperFactory.create(dir, "doc"), fn);
+			if (docRelative.exists())
+			{
+				file = docRelative;
+				s_log.debug("Using doc/ relative: " + file);
+			}
+		}
+		return file;
 	}
 
 	HtmlViewerPanel createDetailsPanel()

@@ -1,34 +1,38 @@
-BODY, HTML {COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE: 10pt;}
+/*
+ * JEditorPane: Unitless lengths preserve the same outcome
+ * with 'w3cLengthUnits=true' or 'w3cLengthUnits=false', so
+ * prefer them over 'px' and 'pt' which produce opposite
+ * results with two of the settings.
+ */
 
-P {LINE-HEIGHT: 12pt; PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px}
+BODY { font-style: normal;
+       font-weight: normal }
 
-A {text-decoration: none;}
-A:link {COLOR: #0000FF;text-decoration: underline;}
-A:visited {COLOR: #0000FF;text-decoration: underline;}
-A:hover {COLOR: #FF0000;text-decoration: underline;}
-A:active {COLOR: #FF0000;text-decoration: underline;}
+/* StyleSheet: Relative font sizes for block-level elements are
+ * buggy.  For headings the scaling is applied twice.  For divs,
+ * paragraphs, lists and others it is applied three times and
+ * more (depending on nesting). */
+H1  { font-size: 126% } /* 160% */
+H2  { font-size: 118% } /* 140% */
+H3  { font-size: 110% } /* 120% */
+H4  { font-size: 100% }
+P   { font-size: 100% }
 
-H1, H2, H3, H4 {font-family: Verdana, Arial, Helvetica, serif; FONT-VARIANT: small-caps; text-decoration: none;}
-H1 {FONT-SIZE: 16pt;}
-H2 {FONT-SIZE: 14pt;}
-H3 {FONT-SIZE: 12pt;}
-H4 {FONT-SIZE: 10pt;}
+DIV, SPAN, OL, UL, LI, DL, DT, DD, TABLE, TR, TH, TD { font-size: inherit }
 
-PRE {font: normal 10pt Courier New, Courier, monospaced; background:#EEEEEE; padding:5pt;}
+H1, H2, H3, H4 { font-variant: small-caps }
 
-CODE {font: normal 100% Courier New, Courier, monospaced;}
+PRE { color: black;
+      background-color: #EEEEEE;
+      padding: 5px; padding: 5 }
 
-HR {Color: #CCCCCC;}
+CODE, SAMP, KBD { font-size: 100% }
 
-TABLE {BORDER-BOTTOM: thin;	BORDER-LEFT: thin; BORDER-RIGHT: thin; BORDER-TOP: thin;
-	MARGIN: 1px; PADDING-BOTTOM: 2px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px; PADDING-TOP: 2px;
-	FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE: 10pt;
-}
+KBD { background-color: #EEEEEE; color: black }
 
-TR { BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BORDER-RIGHT: medium none; BORDER-TOP: medium none;
-	MARGIN: 2px; PADDING-BOTTOM: 2px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px; PADDING-TOP: 2px;}
+BODY { margin-left: 7; margin-right: 7 }
+H1, H2, H3, H4, H5 { margin-top: 10; margin-bottom: 7 }
+P, PRE, OL, UL, DL, MENU, DIR { margin-top: 7; margin-bottom: 7 }
 
-TD {FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE: 10pt;}
-
-.menu {FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE: x	-small;}
+TABLE { border: none }
 
