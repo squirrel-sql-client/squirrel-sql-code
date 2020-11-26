@@ -107,6 +107,9 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+Derby Plugin: Merge Request #72: Don't shut Embedded Derby down while other sessions still active (open)
+   Thanks to Stanimir Stamenkov for the patch.
+
 #1450 java.lang.StringIndexOutOfBoundsException occurred on opening logs window.
   Thanks to Chris B for the fix.
 

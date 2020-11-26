@@ -19,11 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.derby;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.net.MalformedURLException;
-import java.sql.Driver;
-import java.sql.SQLException;
-import java.util.Properties;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -31,7 +26,6 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -64,6 +58,13 @@ import net.sourceforge.squirrel_sql.plugins.derby.tab.ViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tokenizer.DerbyQueryTokenizer;
 import net.sourceforge.squirrel_sql.plugins.derby.types.DerbyClobDataTypeComponentFactory;
 
+import java.lang.ref.WeakReference;
+import java.net.MalformedURLException;
+import java.sql.Driver;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Properties;
+
 /**
  * The main controller class for the Derby plugin.
  * 
@@ -95,6 +96,8 @@ public class DerbyPlugin extends DefaultSessionPlugin {
 
    /** manages our query tokenizing preferences */
    private PluginQueryTokenizerPreferencesManager _prefsManager = null;
+
+   private ArrayList<WeakReference<ISession>> _embeddedSessions = new ArrayList<>();
 
    /**
     * Return the internal name of this plugin.
@@ -242,6 +245,11 @@ public class DerbyPlugin extends DefaultSessionPlugin {
 
       GUIUtils.processOnSwingEventThread(() -> updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI()));
 
+      if (isEmbeddedDerby(session))
+      {
+         _embeddedSessions.add(new WeakReference<>(session));
+      }
+
       return new PluginSessionCallback()
       {
          @Override
@@ -308,14 +316,37 @@ public class DerbyPlugin extends DefaultSessionPlugin {
     * 
     * @author Alex Pivovarov
     */
-   private class SessionListener extends SessionAdapter {
+   private class SessionListener extends SessionAdapter
+   {
       @Override
-      public void sessionClosed(SessionEvent evt) {
+      public void sessionClosed(SessionEvent evt)
+      {
          ISession session = evt.getSession();
-         shutdownEmbeddedDerby(session);
+         if (flushEmbeddedSessions())
+         {
+            shutdownEmbeddedDerby(session);
+         }
       }
    }
+
+   boolean flushEmbeddedSessions()
+   {
+      for (int i = _embeddedSessions.size() - 1; i >= 0; i--)
+      {
+         ISession session = _embeddedSessions.get(i).get();
+         if (session == null || session.isClosed())
+         {
+            _embeddedSessions.remove(i);
+         }
+      }
+      return _embeddedSessions.isEmpty();
+   }
    
+   static boolean isEmbeddedDerby(final ISession session)
+   {
+      return session.getDriver().getDriverClassName().startsWith("org.apache.derby.jdbc.EmbeddedDriver");
+   }
+
    /**
     * Shutdown Embedded Derby DB and reload JDBC Driver
     * 
@@ -327,7 +358,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
    private void shutdownEmbeddedDerby(final ISession session) {
       try {
          ISQLDriver iSqlDr = session.getDriver();
-         if (!(iSqlDr.getDriverClassName().startsWith("org.apache.derby.jdbc.EmbeddedDriver"))) {
+         if (!isEmbeddedDerby(session)) {
             return;
          }
          //the code bellow is only for Embedded Derby Driver
