@@ -18,17 +18,16 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 import org.hibernate.HibernateException;
+
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An extension to the DB2DialectExt. Much of the behavior of DB2 is happily found in Derby.
@@ -119,6 +118,12 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 	@Override
 	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
 	{
+		if(code == Types.BOOLEAN)
+		{
+			// See bug #1452
+			return "boolean";
+		}
+
 		return _dialect.getTypeName(code, length, precision, scale);
 	}
 

@@ -18,18 +18,18 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
 import org.antlr.stringtemplate.StringTemplate;
 import org.hibernate.HibernateException;
+
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * A base class for dialects where the most frequently implemented behavior can located, to avoid code
@@ -567,14 +567,16 @@ public abstract class CommonHibernateDialect implements HibernateDialect, String
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getTypeName(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
 	 */
-	public String getTypeName(TableColumnInfo tcInfo) {
+	public String getTypeName(TableColumnInfo tcInfo)
+	{
 		int columnSize = tcInfo.getColumnSize();
 		int dataType = tcInfo.getDataType();
 		int precision = getPrecisionDigits(columnSize, dataType);
-		if (dataType == 1111) {
+		if (dataType == Types.OTHER)
+		{
 			dataType = getJavaTypeForNativeType(tcInfo.getTypeName());
 		}
-		
+
 		return getTypeName(dataType, columnSize, precision, tcInfo.getDecimalDigits());
 	}
 	

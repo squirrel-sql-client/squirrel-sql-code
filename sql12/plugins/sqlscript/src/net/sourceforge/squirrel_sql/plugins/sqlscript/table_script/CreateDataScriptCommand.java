@@ -25,16 +25,28 @@ import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.IAbortController;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
-import java.awt.*;
+import java.awt.Frame;
 import java.awt.event.WindowAdapter;
-import java.sql.*;
+import java.sql.Blob;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Calendar;
 
 public class CreateDataScriptCommand extends WindowAdapter implements ICommand
@@ -322,32 +334,43 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
 
                }
             }
-            else if (Types.BIT == colInfo[i].sqlType
-                     || Types.BOOLEAN == colInfo[i].sqlType)
+            else if (Types.BIT == colInfo[i].sqlType || Types.BOOLEAN == colInfo[i].sqlType)
             {
-               boolean iBoolean = fromResultSet ? srcResult.getBoolean(i + 1) : false;
+               boolean booleanValue = fromResultSet ? srcResult.getBoolean(i + 1) : false;
 
                if(fromResultSet && srcResult.wasNull())
                {
                   sbValues.append("null");
                }
-               else if (iBoolean)
-               {
-                   // PostgreSQL uses literal values true/false instead of 1/0.
-                   if (DialectFactory.isPostgreSQL(_session.getMetaData())) {
-                       sbValues.append("true");
-                   } else {
-                       sbValues.append(1);
-                   }
-               }
                else
                {
-                   // PostgreSQL uses literal values true/false instead of 1/0.
-                   if (DialectFactory.isPostgreSQL(_session.getMetaData())) {
-                       sbValues.append("false");
-                   } else {
-                       sbValues.append(0);
-                   }
+                  boolean dbSupportsTrueFalse = DialectFactory.isPostgreSQL(_session.getMetaData()) || DialectFactory.isDerby(_session.getMetaData());
+
+                  if (booleanValue)
+                  {
+                     // PostgreSQL uses literal values true/false instead of 1/0.
+                     // Derby, too, see bug 1452
+                     if (dbSupportsTrueFalse)
+                     {
+                        sbValues.append("true");
+                     }
+                     else
+                     {
+                        sbValues.append(1);
+                     }
+                  }
+                  else
+                  {
+                     // PostgreSQL uses literal values true/false instead of 1/0.
+                     if (dbSupportsTrueFalse)
+                     {
+                        sbValues.append("false");
+                     }
+                     else
+                     {
+                        sbValues.append(0);
+                     }
+                  }
                }
 
                if(false == fromResultSet)
@@ -355,24 +378,33 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
                   sbValues.append(getNullableComment(metaData, i+1));
                }
             }
-            else if (Types.BLOB == colInfo[i].sqlType
-            			|| Types.BINARY == colInfo[i].sqlType) {
-            	if(fromResultSet) {            
-                	if(srcResult.wasNull()) {
-                		sbValues.append("null");
-                	} else {
-                		byte[] binaryData = null;
-                		if (Types.BLOB == colInfo[i].sqlType) {
-                   		Blob blobResult = srcResult.getBlob(i+1);
-                   		binaryData = blobResult.getBytes(1, (int)blobResult.length());                			
-                		} else {
-                			binaryData = srcResult.getBytes(i+1);
-                		}
-                		sbValues.append(dialect.getBinaryLiteralString(binaryData));                			
-                	}
-            	} else {
-            		sbValues.append("'CAFEBABE'").append(getNullableComment(metaData, i+1));
-            	}
+            else if (Types.BLOB == colInfo[i].sqlType || Types.BINARY == colInfo[i].sqlType)
+            {
+               if (fromResultSet)
+               {
+                  if (srcResult.wasNull())
+                  {
+                     sbValues.append("null");
+                  }
+                  else
+                  {
+                     byte[] binaryData = null;
+                     if (Types.BLOB == colInfo[i].sqlType)
+                     {
+                        Blob blobResult = srcResult.getBlob(i + 1);
+                        binaryData = blobResult.getBytes(1, (int) blobResult.length());
+                     }
+                     else
+                     {
+                        binaryData = srcResult.getBytes(i + 1);
+                     }
+                     sbValues.append(dialect.getBinaryLiteralString(binaryData));
+                  }
+               }
+               else
+               {
+                  sbValues.append("'CAFEBABE'").append(getNullableComment(metaData, i + 1));
+               }
             } 
             else // Types.CHAR,
                  // Types.VARCHAR,
