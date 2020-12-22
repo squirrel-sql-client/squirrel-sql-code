@@ -46,6 +46,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.GotoColorMenuControl
 import net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby.TableCopySeparatedByCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues.ShowDistinctValuesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -89,6 +90,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyInsertStatementAction _copyInsertStatement = new CopyInsertStatementAction();
 	private CopyColumnHeaderAction _copyColumnHeader = new CopyColumnHeaderAction();
 	private ShowReferencesAction _showReferences = new ShowReferencesAction();
+	private ShowDistinctValuesAction _showDistinctValues = new ShowDistinctValuesAction();
 
 	private CopySelectedRowsToOwnWindowAction _copySelectedRowsToOwnWindow = new CopySelectedRowsToOwnWindowAction();
 	private ColorSelectedRowsAction _colorSelectedRows = new ColorSelectedRowsAction();
@@ -164,6 +166,9 @@ public class TablePopupMenu extends BasePopupMenu
 		{
 			addSeparator();
 			addAction(_showReferences);
+
+			addSeparator();
+			addAction(_showDistinctValues);
 		}
 
 		addSeparator();
@@ -486,6 +491,19 @@ public class TablePopupMenu extends BasePopupMenu
       public void actionPerformed(ActionEvent evt)
       {
          new ShowReferencesCommand(_dataSetViewerTablePanel.getTable(), _updateableModel, (JFrame) GUIUtils.getOwningFrame(_dataSetViewerTablePanel.getTable()), _session).execute();
+      }
+   }
+
+   private class ShowDistinctValuesAction extends BaseAction
+   {
+		ShowDistinctValuesAction()
+      {
+         super(s_stringMgr.getString("TablePopupMenu.showDistinctValues"));
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+         new ShowDistinctValuesCommand(_dataSetViewerTablePanel.getTable(), _updateableModel, (JFrame) GUIUtils.getOwningFrame(_dataSetViewerTablePanel.getTable()), _session).execute();
       }
    }
 

@@ -20,18 +20,17 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class SortableTableModel extends AbstractTableModel
 {
@@ -61,7 +60,6 @@ public class SortableTableModel extends AbstractTableModel
 
 	public SortableTableModel(TableModel model)
 	{
-		super();
 		setActualModel(model);
 	}
 

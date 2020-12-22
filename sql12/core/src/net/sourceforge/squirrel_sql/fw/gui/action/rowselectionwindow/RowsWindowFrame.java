@@ -1,14 +1,12 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -82,7 +80,7 @@ public class RowsWindowFrame extends JDialog
       JPanel ret;
       ret = new JPanel(new BorderLayout(0, 3));
 
-      _dataSetViewerTablePanel = createDataSetViewerTablePanel(rows, _columnDisplayDefinitions);
+      _dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(rows, _columnDisplayDefinitions, _session);
       ret.add(new JScrollPane(_dataSetViewerTablePanel.getComponent()), BorderLayout.CENTER);
 
 
@@ -232,22 +230,6 @@ public class RowsWindowFrame extends JDialog
       setTitle(s_stringMgr.getString("RowsWindowFrame.title") + " / " + _session.getTitle() + " / (" + _myCounterId + ")");
    }
 
-
-   private DataSetViewerTablePanel createDataSetViewerTablePanel(List<Object[]> allRows, List<ColumnDisplayDefinition> columnDisplayDefinitions)
-   {
-      try
-      {
-         SimpleDataSet ods = new SimpleDataSet(allRows, columnDisplayDefinitions.toArray(new ColumnDisplayDefinition[columnDisplayDefinitions.size()]));
-         DataSetViewerTablePanel dsv = new DataSetViewerTablePanel();
-         dsv.init(null, new DataModelImplementationDetails(_session), _session);
-         dsv.show(ods);
-         return dsv;
-      }
-      catch (DataSetException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
 
    public void markWindow(boolean b)
    {

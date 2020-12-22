@@ -18,12 +18,11 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.JTable;
-
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyWikiCommand;
+
+import javax.swing.JTable;
+import java.awt.event.ActionEvent;
 
 /**
  * Action, for copying the selection of a {@link JTable} as WIKI text into the clipboard.
@@ -33,8 +32,8 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyWikiCommand;
  * @author Stefan Willinger
  *
  */
-public class CopyWikiTableAction extends BaseAction{
-	private static final long serialVersionUID = -6527002300678829186L;
+public class CopyWikiTableAction extends BaseAction
+{
 	/**
 	 * WIKI specific configuration for this action.
 	 */
@@ -68,8 +67,9 @@ public class CopyWikiTableAction extends BaseAction{
 	public void actionPerformed(ActionEvent evt)
 	{
 		JTable table = callback.getJTable();
-		if (table != null){
-			new TableCopyWikiCommand(table,config ).execute();
+		if (table != null)
+		{
+			new TableCopyWikiCommand(table, config).execute();
 		}
 	}
 }

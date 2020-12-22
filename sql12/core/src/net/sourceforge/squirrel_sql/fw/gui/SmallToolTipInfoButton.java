@@ -5,15 +5,12 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.S
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JToolTip;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.Timer;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class SmallToolTipInfoButton
 {
@@ -90,4 +87,8 @@ public class SmallToolTipInfoButton
       return Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_INFO);
    }
 
+   public void setInfoText(String infoText)
+   {
+      _infoText = infoText;
+   }
 }

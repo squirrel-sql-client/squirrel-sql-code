@@ -33,7 +33,7 @@ public class TableCopyAsMarkdownCommand
       int[] selRows = _table.getSelectedRows();
       int[] selCols = _table.getSelectedColumns();
 
-      ArrayList<ColumnDisplayDefinition> columnDisplayDefinitions = new ArrayList<ColumnDisplayDefinition>();
+      ArrayList<ColumnDisplayDefinition> columnDisplayDefinitions = new ArrayList<>();
       for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
       {
          TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);

@@ -17,8 +17,9 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.da
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
@@ -26,8 +27,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
+import java.sql.SQLException;
 /**
  * This is the tab displaying the different table types in the database.
  *
@@ -35,10 +35,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
  */
 public class TableTypesTab extends BaseDataSetTab
 {
-    
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(TableTypesTab.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableTypesTab.class);
                 
 	/**
 	 * Return the title for the tab.

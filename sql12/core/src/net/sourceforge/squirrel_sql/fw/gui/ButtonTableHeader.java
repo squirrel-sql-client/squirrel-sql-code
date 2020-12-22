@@ -17,26 +17,36 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import net.sourceforge.squirrel_sql.fw.props.Props;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
+import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Rectangle2D;
 
 /**
  * @version 	$Id: ButtonTableHeader.java,v 1.10 2009-09-17 05:40:53 gerdwagner Exp $
@@ -102,7 +112,6 @@ public class ButtonTableHeader extends JTableHeader
     */
    public ButtonTableHeader()
    {
-      super();
       _pressed = false;
       _dragged = false;
       _pressedViewColumnIdx = -1;
@@ -113,14 +122,7 @@ public class ButtonTableHeader extends JTableHeader
       addMouseListener(hl);
       addMouseMotionListener(hl);
 
-      _sortingListener = new SortingListener()
-      {
-         @Override
-         public void sortingDone(int modelColumnIx, ColumnOrder columnOrder)
-         {
-            onSortingDone(modelColumnIx, columnOrder);
-         }
-      };
+      _sortingListener = (modelColumnIx, columnOrder) -> onSortingDone(modelColumnIx, columnOrder);
 
    }
 

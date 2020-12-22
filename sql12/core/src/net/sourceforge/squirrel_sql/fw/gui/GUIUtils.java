@@ -930,7 +930,7 @@ public class GUIUtils
       textField.setEditable(false);
       textField.setBackground(new JPanel().getBackground());
       textField.setBorder(null);
-      return  textField;
+      return textField;
    }
 
 	public static JComponent setPreferredWidth(JComponent comp, int width)
