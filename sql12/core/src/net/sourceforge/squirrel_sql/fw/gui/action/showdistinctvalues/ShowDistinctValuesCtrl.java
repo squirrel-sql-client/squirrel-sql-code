@@ -36,6 +36,12 @@ public class ShowDistinctValuesCtrl
 
    public ShowDistinctValuesCtrl(JFrame owningFrame, DataSetViewerTable sourceTable, ISession session)
    {
+      if(0 == sourceTable.getDataSetViewerTableModel().getRowCount())
+      {
+         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("ShowDistinctValuesCtrl.emptyTable"));
+         return;
+      }
+
       int selectedColumnIx = sourceTable.getSelectedColumn();
       if(-1 == selectedColumnIx)
       {
