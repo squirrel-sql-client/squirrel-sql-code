@@ -26,14 +26,17 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.LimitReadLengthFeatureUnstable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DefaultFindService;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService;
-import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 
-import javax.swing.*;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -223,19 +226,9 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 
    public int[] getSelectedModelRows()
    {
-      int[] selectedViewRows = _table.getSelectedRows();
-
-      int[] ret = new int[selectedViewRows.length];
-
-      for (int i = 0; i < selectedViewRows.length; i++)
-      {
-         ret[i] = (((SortableTableModel)_table.getModel()).transformToModelRow(selectedViewRows[i]));
-      }
-
-      return ret;
+      return _table.getSelectedModelRows();
    }
 
-   
    public int getColumnWidthForHeader(String header)
    {
       TableColumnModel columnModel = _table.getColumnModel();

@@ -149,18 +149,16 @@ public class ButtonTableHeader extends JTableHeader
       repaint();
    }
 
-   private int getViewColumnIndex(int modelColumnIx)
+   public int getViewColumnIndex(int modelColumnIx)
    {
-      int viewColumnIndex = -1;
-
       for (int i = 0; i < getTable().getColumnModel().getColumnCount(); i++)
       {
-           if(modelColumnIx == getTable().getColumnModel().getColumn(i).getModelIndex())
-           {
-               viewColumnIndex = i;
-           }
+         if (modelColumnIx == getTable().getColumnModel().getColumn(i).getModelIndex())
+         {
+            return i;
+         }
       }
-      return viewColumnIndex;
+      return -1;
    }
 
    public void setTable(JTable table)

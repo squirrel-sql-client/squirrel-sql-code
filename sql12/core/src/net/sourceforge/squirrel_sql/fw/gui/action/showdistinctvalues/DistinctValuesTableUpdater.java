@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -36,7 +37,7 @@ public class DistinctValuesTableUpdater
          DistinctValuesHolder distinctValuesHolder = new DistinctValuesHolder();
          for (int i=0; i < sourceTable.getDataSetViewerTableModel().getRowCount(); ++i)
          {
-            distinctValuesHolder.addDistinct(0, sourceTable.getValueAt(i, selectedColumn.getModelIndex()));
+            distinctValuesHolder.addDistinct(0, sourceTable.getValueAt(i, getViewColumnIndex(sourceTable, selectedColumn)));
          }
 
          final List<Object[]> distinctRows = distinctValuesHolder.getDistinctRows();
@@ -57,7 +58,7 @@ public class DistinctValuesTableUpdater
             {
                for (int i = 0; i < extTableColumns.size(); i++)
                {
-                  distinctValuesHolder.addDistinct(i, sourceTable.getValueAt(selRowIx, extTableColumns.get(i).getModelIndex()));
+                  distinctValuesHolder.addDistinct(i, sourceTable.getValueAt(selRowIx, getViewColumnIndex(sourceTable, extTableColumns.get(i))));
                }
             }
 
@@ -69,7 +70,7 @@ public class DistinctValuesTableUpdater
          }
          else
          {
-            doDistinctRows(sourceTable, session, selRows, extTableColumns);
+            doDistinctRows(sourceTable, session, sourceTable.getSelectedModelRows(), extTableColumns);
          }
       }
       else if(_dlg.optDistinctInSelectedRows.isSelected() )
@@ -84,7 +85,7 @@ public class DistinctValuesTableUpdater
             {
                for (int i = 0; i < extTableColumns.size(); i++)
                {
-                  distinctValuesHolder.addDistinct(i, sourceTable.getValueAt(selRowIx, extTableColumns.get(i).getModelIndex()));
+                  distinctValuesHolder.addDistinct(i, sourceTable.getValueAt(selRowIx, getViewColumnIndex(sourceTable, extTableColumns.get(i))));
                }
             }
 
@@ -96,7 +97,7 @@ public class DistinctValuesTableUpdater
          }
          else
          {
-            doDistinctRows(sourceTable, session, selRows, extTableColumns);
+            doDistinctRows(sourceTable, session, sourceTable.getSelectedModelRows(), extTableColumns);
          }
       }
       else if(_dlg.optDistinctInTable.isSelected() )
@@ -110,7 +111,7 @@ public class DistinctValuesTableUpdater
             {
                for (int i = 0; i < extTableColumns.size(); i++)
                {
-                  distinctValuesHolder.addDistinct(i, sourceTable.getValueAt(rowIx, extTableColumns.get(i).getModelIndex()));
+                  distinctValuesHolder.addDistinct(i, sourceTable.getValueAt(rowIx, getViewColumnIndex(sourceTable, extTableColumns.get(i))));
                }
             }
 
@@ -127,6 +128,11 @@ public class DistinctValuesTableUpdater
       }
    }
 
+   private int getViewColumnIndex(DataSetViewerTable sourceTable, ExtTableColumn column)
+   {
+      return sourceTable.getButtonTableHeader().getViewColumnIndex(column.getModelIndex());
+   }
+
    private void doDistinctRows(DataSetViewerTable sourceTable, ISession session, int[] selRows, ArrayList<ExtTableColumn> extTableColumns)
    {
       DistinctRowsHolder distinctRowsHolder = new DistinctRowsHolder(extTableColumns);
@@ -140,9 +146,10 @@ public class DistinctValuesTableUpdater
       }
       else
       {
-         for (int rowIx =0; rowIx < sourceTable.getRowCount(); ++rowIx)
+         for (int viewRowIx =0; viewRowIx < sourceTable.getRowCount(); ++viewRowIx)
          {
-            distinctRowsHolder.addRowDistinct(sourceTable.getDataSetViewerTableModel().getRowAt(rowIx));
+            int modelRowIx = ((SortableTableModel) sourceTable.getModel()).transformToModelRow(viewRowIx);
+            distinctRowsHolder.addRowDistinct(sourceTable.getDataSetViewerTableModel().getRowAt(modelRowIx));
          }
       }
 

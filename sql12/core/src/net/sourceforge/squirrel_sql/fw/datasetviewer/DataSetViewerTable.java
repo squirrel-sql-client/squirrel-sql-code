@@ -6,7 +6,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.ColoringService;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
-import net.sourceforge.squirrel_sql.fw.gui.DataSetViewerTableCopyAction;
 import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -438,4 +437,19 @@ public final class DataSetViewerTable extends JTable
    {
       return (ButtonTableHeader) getTableHeader();
    }
+
+   public int[] getSelectedModelRows()
+   {
+      int[] selectedViewRows = getSelectedRows();
+
+      int[] ret = new int[selectedViewRows.length];
+
+      for (int i = 0; i < selectedViewRows.length; i++)
+      {
+         ret[i] = (((SortableTableModel)getModel()).transformToModelRow(selectedViewRows[i]));
+      }
+
+      return ret;
+   }
+
 }

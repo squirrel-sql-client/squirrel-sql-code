@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New SQL result table right mouse menu item: "Show distinct values..."
+  Shows distinct values of a column and more.
+
 Merge Request #71: Brushed up the UI of SQuirreL's help.
    Thanks to Stanimir Stamenkov for the patch.
 

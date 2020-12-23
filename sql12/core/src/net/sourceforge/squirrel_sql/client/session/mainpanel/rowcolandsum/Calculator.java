@@ -50,6 +50,11 @@ public class Calculator
 
    private static SumAndColumn createSumAndColumn(DataSetViewerTable table, int[] selectedRows, int selectedColumn)
    {
+      if(false == table.getColumnModel().getColumn(selectedColumn) instanceof ExtTableColumn)
+      {
+         return null;
+      }
+
       ExtTableColumn column = (ExtTableColumn) table.getColumnModel().getColumn(selectedColumn);
 
       ColumnDisplayDefinition columnDisplayDefinition = column.getColumnDisplayDefinition();
