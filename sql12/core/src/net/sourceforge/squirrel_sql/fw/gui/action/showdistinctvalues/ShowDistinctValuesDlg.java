@@ -24,6 +24,7 @@ public class ShowDistinctValuesDlg extends JDialog
 
    JRadioButton optDistinctInColumn;
    JRadioButton optDistinctInSelection;
+   JRadioButton optDistinctInSelectedRows;
    JRadioButton optDistinctInTable;
 
    JRadioButton optDistinctInColumns;
@@ -95,16 +96,21 @@ public class ShowDistinctValuesDlg extends JDialog
       ret.add(optDistinctInSelection, gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0);
+      optDistinctInSelectedRows = new JRadioButton(s_stringMgr.getString("ShowDistinctValuesDlg.optDistinctInSelectedRows", selectedColumnName));
+      ret.add(optDistinctInSelectedRows, gbc);
+
+      gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0);
       optDistinctInTable = new JRadioButton(s_stringMgr.getString("ShowDistinctValuesDlg.optDistinctInTable", selectedColumnName));
       ret.add(optDistinctInTable, gbc);
 
       ButtonGroup grpInSelection = new ButtonGroup();
       grpInSelection.add(optDistinctInColumn);
       grpInSelection.add(optDistinctInSelection);
+      grpInSelection.add(optDistinctInSelectedRows);
       grpInSelection.add(optDistinctInTable);
 
 
-      gbc = new GridBagConstraints(2,3,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      gbc = new GridBagConstraints(2,4,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       ret.add(new JPanel(), gbc);
 
       ret.setBorder(BorderFactory.createEtchedBorder());
