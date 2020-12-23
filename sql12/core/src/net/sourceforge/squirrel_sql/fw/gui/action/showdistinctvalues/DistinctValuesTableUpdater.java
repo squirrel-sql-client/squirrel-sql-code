@@ -50,19 +50,7 @@ public class DistinctValuesTableUpdater
          // TODO if _dlg.optDistinctInColumns.isSelected()
 
          int[] selRows = sourceTable.getSelectedRows();
-         int[] selCols = sourceTable.getSelectedColumns();
-
-         ArrayList<ExtTableColumn> extTableColumns = new ArrayList<>();
-
-         for (int colIdx : selCols)
-         {
-            TableColumn col = sourceTable.getColumnModel().getColumn(colIdx);
-
-            if (col instanceof ExtTableColumn)
-            {
-               extTableColumns.add((ExtTableColumn) col);
-            }
-         }
+         ArrayList<ExtTableColumn> extTableColumns = getSelectedExtTableColumns(sourceTable);
 
          DistinctValuesHolder distinctValuesHolder = new DistinctValuesHolder();
          for (int selRowIx : selRows)
@@ -77,31 +65,7 @@ public class DistinctValuesTableUpdater
          DataSetViewerTablePanel dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions, session);
          _dlg.distinctTableScrollPane.setViewportView(dataSetViewerTablePanel.getComponent());
 
-         String statusBarText = null;
-
-         for (int i = 0; i < extTableColumns.size(); i++)
-         {
-            ExtTableColumn extTableColumn = extTableColumns.get(i);
-
-            String distinctValuesString = s_stringMgr.getString("ShowDistinctValuesCtrl.numberOfDistinctValuesInColumn", extTableColumn.getColumnDisplayDefinition().getColumnName(), distinctValuesHolder.getCountDistinctForColumn(i));
-            if(null == statusBarText)
-            {
-               statusBarText = distinctValuesString;
-            }
-            else
-            {
-               statusBarText += "; " + distinctValuesString;
-            }
-         }
-
-         _dlg.lblStatus.setText(statusBarText);
-         _dlg.lblStatus.setCaretPosition(0);
-
-
-         if(distinctValuesHolder.isNullsAdded())
-         {
-            _dlg.btnStatusBarInfoToolTip.setInfoText(s_stringMgr.getString("ShowDistinctValuesCtrl.information.nullsAdded"));
-         }
+         writeStatusBar(extTableColumns, distinctValuesHolder);
       }
       else if(_dlg.optDistinctInSelectedRows.isSelected() )
       {
@@ -124,31 +88,7 @@ public class DistinctValuesTableUpdater
          DataSetViewerTablePanel dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions, session);
          _dlg.distinctTableScrollPane.setViewportView(dataSetViewerTablePanel.getComponent());
 
-         String statusBarText = null;
-
-         for (int i = 0; i < extTableColumns.size(); i++)
-         {
-            ExtTableColumn extTableColumn = extTableColumns.get(i);
-
-            String distinctValuesString = s_stringMgr.getString("ShowDistinctValuesCtrl.numberOfDistinctValuesInColumn", extTableColumn.getColumnDisplayDefinition().getColumnName(), distinctValuesHolder.getCountDistinctForColumn(i));
-            if(null == statusBarText)
-            {
-               statusBarText = distinctValuesString;
-            }
-            else
-            {
-               statusBarText += "; " + distinctValuesString;
-            }
-         }
-
-         _dlg.lblStatus.setText(statusBarText);
-         _dlg.lblStatus.setCaretPosition(0);
-
-
-         if(distinctValuesHolder.isNullsAdded())
-         {
-            _dlg.btnStatusBarInfoToolTip.setInfoText(s_stringMgr.getString("ShowDistinctValuesCtrl.information.nullsAdded"));
-         }
+         writeStatusBar(extTableColumns, distinctValuesHolder);
       }
       else if(_dlg.optDistinctInTable.isSelected() )
       {
@@ -167,32 +107,54 @@ public class DistinctValuesTableUpdater
          DataSetViewerTablePanel dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions, session);
          _dlg.distinctTableScrollPane.setViewportView(dataSetViewerTablePanel.getComponent());
 
-         String statusBarText = null;
+         writeStatusBar(extTableColumns, distinctValuesHolder);
+      }
+   }
 
-         for (int i = 0; i < extTableColumns.size(); i++)
+   private void writeStatusBar(ArrayList<ExtTableColumn> extTableColumns, DistinctValuesHolder distinctValuesHolder)
+   {
+      String statusBarText = null;
+
+      for (int i = 0; i < extTableColumns.size(); i++)
+      {
+         ExtTableColumn extTableColumn = extTableColumns.get(i);
+
+         String distinctValuesString = s_stringMgr.getString("ShowDistinctValuesCtrl.numberOfDistinctValuesInColumn", extTableColumn.getColumnDisplayDefinition().getColumnName(), distinctValuesHolder.getCountDistinctForColumn(i));
+         if (null == statusBarText)
          {
-            ExtTableColumn extTableColumn = extTableColumns.get(i);
-
-            String distinctValuesString = s_stringMgr.getString("ShowDistinctValuesCtrl.numberOfDistinctValuesInColumn", extTableColumn.getColumnDisplayDefinition().getColumnName(), distinctValuesHolder.getCountDistinctForColumn(i));
-            if(null == statusBarText)
-            {
-               statusBarText = distinctValuesString;
-            }
-            else
-            {
-               statusBarText += "; " + distinctValuesString;
-            }
+            statusBarText = distinctValuesString;
          }
-
-         _dlg.lblStatus.setText(statusBarText);
-         _dlg.lblStatus.setCaretPosition(0);
-
-
-         if(distinctValuesHolder.isNullsAdded())
+         else
          {
-            _dlg.btnStatusBarInfoToolTip.setInfoText(s_stringMgr.getString("ShowDistinctValuesCtrl.information.nullsAdded"));
+            statusBarText += "; " + distinctValuesString;
          }
       }
+
+      _dlg.lblStatus.setText(statusBarText);
+      _dlg.lblStatus.setCaretPosition(0);
+
+
+      if (distinctValuesHolder.isNullsAdded())
+      {
+         _dlg.btnStatusBarInfoToolTip.setInfoText(s_stringMgr.getString("ShowDistinctValuesCtrl.information.nullsAdded"));
+      }
+   }
+
+   private ArrayList<ExtTableColumn> getSelectedExtTableColumns(DataSetViewerTable sourceTable)
+   {
+      int[] selCols = sourceTable.getSelectedColumns();
+      ArrayList<ExtTableColumn> extTableColumns = new ArrayList<>();
+
+      for (int colIdx : selCols)
+      {
+         TableColumn col = sourceTable.getColumnModel().getColumn(colIdx);
+
+         if (col instanceof ExtTableColumn)
+         {
+            extTableColumns.add((ExtTableColumn) col);
+         }
+      }
+      return extTableColumns;
    }
 
    private ArrayList<ExtTableColumn> getAllExtTableColumns(DataSetViewerTable sourceTable)
