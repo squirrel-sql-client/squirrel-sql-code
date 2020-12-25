@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New tool bar / right mouse menu functions in Alias tree: Collapse/Expand selected folder.
+
 New SQL result table right mouse menu item: "Show distinct values..."
   Shows distinct values of a column and more.
 

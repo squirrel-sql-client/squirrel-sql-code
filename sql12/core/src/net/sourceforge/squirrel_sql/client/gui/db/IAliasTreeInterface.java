@@ -13,4 +13,8 @@ public interface IAliasTreeInterface
    void collapseAll();
 
    void expandAll();
+
+   void collapseSelected();
+
+   void expandSelected();
 }

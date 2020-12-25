@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllButCurrentSessionsAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseAllAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseSelectedAliasFolderAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ColorAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
@@ -43,6 +44,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.DisplayPluginSummary
 import net.sourceforge.squirrel_sql.client.mainframe.action.DumpApplicationAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ExpandAllAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ExpandSelectedAliasFolderAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
@@ -489,6 +491,8 @@ final class MainFrameMenuBar extends JMenuBar
       addToMenu(rsrc, PasteAliasFolderAction.class, menu);
       addToMenu(rsrc, CollapseAllAliasFolderAction.class, menu);
       addToMenu(rsrc, ExpandAllAliasFolderAction.class, menu);
+      addToMenu(rsrc, CollapseSelectedAliasFolderAction.class, menu);
+      addToMenu(rsrc, ExpandSelectedAliasFolderAction.class, menu);
 		menu.addSeparator();
       addToMenu(rsrc, TransferAliasAction.class, menu);
 		return menu;

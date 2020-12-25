@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasFileOpenAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseAllAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseSelectedAliasFolderAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ColorAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
@@ -15,6 +16,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CutAliasFolderAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ExpandAllAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ExpandSelectedAliasFolderAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewAliasFolderAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.PasteAliasFolderAction;
@@ -91,6 +93,8 @@ final class AliasUserInterfaceFactory implements IUserInterfaceFactory
       _pm.add(actions.get(PasteAliasFolderAction.class));
       _pm.add(actions.get(CollapseAllAliasFolderAction.class));
       _pm.add(actions.get(ExpandAllAliasFolderAction.class));
+      _pm.add(actions.get(CollapseSelectedAliasFolderAction.class));
+      _pm.add(actions.get(ExpandSelectedAliasFolderAction.class));
       _pm.addSeparator();
       _pm.add(actions.get(TransferAliasAction.class));
 
@@ -198,6 +202,8 @@ final class AliasUserInterfaceFactory implements IUserInterfaceFactory
       _toolBar.add(actions.get(PasteAliasFolderAction.class));
       _toolBar.add(actions.get(CollapseAllAliasFolderAction.class));
       _toolBar.add(actions.get(ExpandAllAliasFolderAction.class));
+      _toolBar.add(actions.get(CollapseSelectedAliasFolderAction.class));
+      _toolBar.add(actions.get(ExpandSelectedAliasFolderAction.class));
       _toolBar.addSeparator();
       _toolBar.add(actions.get(TransferAliasAction.class));
    }

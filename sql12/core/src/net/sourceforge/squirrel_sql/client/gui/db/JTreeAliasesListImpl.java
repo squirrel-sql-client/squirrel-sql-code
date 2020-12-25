@@ -990,6 +990,18 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    }
 
    @Override
+   public void collapseSelected()
+   {
+      AliasTreeUtil.collapseRecursively(_tree.getSelectionPath(), _tree);
+   }
+
+   @Override
+   public void expandSelected()
+   {
+      AliasTreeUtil.expandRecursively(_tree.getSelectionPath(), _tree);
+   }
+
+   @Override
    public void aliasChanged(ISQLAlias sqlAlias)
    {
       DefaultMutableTreeNode node = findNode((SQLAlias) sqlAlias, (DefaultMutableTreeNode) _tree.getModel().getRoot());

@@ -51,6 +51,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasFileOpenAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseAllAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CollapseSelectedAliasFolderAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ColorAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
@@ -62,6 +63,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.CutAliasFolderAction
 import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ExpandAllAliasFolderAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ExpandSelectedAliasFolderAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewAliasFolderAction;
@@ -878,6 +880,8 @@ public class WindowManager
 		actions.add(new PasteAliasFolderAction(_app, al));
 		actions.add(new CollapseAllAliasFolderAction(_app, al));
 		actions.add(new ExpandAllAliasFolderAction(_app, al));
+		actions.add(new CollapseSelectedAliasFolderAction(_app, al));
+		actions.add(new ExpandSelectedAliasFolderAction(_app, al));
 		actions.add(new TransferAliasAction(al));
 		actions.add(new ViewInAliasesAction());
 
