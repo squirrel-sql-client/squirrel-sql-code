@@ -18,16 +18,17 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * This class will display the source for an Oracle object.
@@ -93,8 +94,14 @@ public class ObjectSourceTab extends BaseSourceTab
 				}
 			}
 
+			String ret = res.getString(1);
 
-			return res.getString(1);
+			while(res.next())
+			{
+				ret += res.getString(1);
+			}
+
+			return ret;
 		}
 		catch (SQLException e)
 		{

@@ -116,6 +116,9 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+Oracle Plugin: Parts (lines) of procedure source code could be missing
+   Reading procedure source code expected a single result line only but multiple are possible.
+
 #1455 Oracle Plugin: Show source code that fails to reformat as it comes from the database.
 
 #1452 Derby-DB: "Create table script" and "Create data script" didn't work for columns of type boolean.
