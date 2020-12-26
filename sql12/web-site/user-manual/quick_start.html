@@ -76,7 +76,10 @@ java -jar squirrel-sql-&lt;version&gt;-install.jar
 <P>On some operating systems (currently Windows NT, 2000 and XP)
 a shortcut will be created in the menu
 system. For Windows the file <TT>squirrel-sql.bat</TT> will run the
-application. For Unix the file is <TT>squirrel-sql.sh</TT>. The
+application. For Unix the file is <TT>squirrel-sql.sh</TT>.
+</P>
+
+<P>The
 <TT>squirrel-sql.jar</TT> file is executable so on those operating
 systems that support it you can run SQuirrel by double clicking
 <TT>squirrel-sql.jar</TT>. You can also run it by issuing the
@@ -97,6 +100,12 @@ under Linux. If this happens passing the -classic flag to the java
 executable appears to fix the problem. No similar problems have been
 reported with any other JDK on Linux.</P>
 
+<A NAME="environment_variables"><H2>Environment Variables</H2></A>
+
+<UL>
+	<LI><code>SQUIRREL_SQL_OPTS</code> can be set to configure JVM arguments for SQuirrel.
+		This environment variable will be honored by the scripts squirrel-sql.sh and squirrel-sql.bat.</LI>
+</UL>
 <A NAME="cmd_line_options"><H2>Command Line Options</H2></A>
 
 <P>The command line option <TT>-nosplash</TT> can be passed to the

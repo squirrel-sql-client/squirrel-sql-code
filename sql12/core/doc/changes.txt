@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge request #73: Add possibility to inject JVM arguments via SQUIRREL_SQL_OPTS command line environment variable.
+  Thanks to Antoine Levy-Lambert for thr patch.
+
 Find Alias dialog (ctrl alt shift G or F): Alias folders can be included in search.
   See check box in the upper part of the dialog.
   Double click on a Alias folder will go to the folder in the Alias tree.

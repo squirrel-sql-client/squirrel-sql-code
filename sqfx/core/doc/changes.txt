@@ -1,6 +1,9 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature (Merge request #73): Add possibility to inject JVM arguments via SQUIRREL_SQL_OPTS environment variable.
+  Thanks to Antoine Levy-Lambert for thr patch.
+
 Introduced Java 9 compatibility. Java 9 is also required from now on.
 
 Feature (in progress): Query builder: Non DB constraints can be create (using drag and drop) configured and removed (using right mouse menu).
