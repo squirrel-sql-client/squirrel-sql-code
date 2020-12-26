@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.AliasSearchWrapper;
 
 import javax.swing.BorderFactory;
 import javax.swing.JList;
@@ -11,7 +11,7 @@ import javax.swing.ListCellRenderer;
 import java.awt.Color;
 import java.awt.Component;
 
-public class FindAliasListCellRenderer implements ListCellRenderer
+public class FindAliasListCellRenderer implements ListCellRenderer<AliasSearchWrapper>
 {
    private final Color _defaultBackgroundColor;
 
@@ -21,16 +21,14 @@ public class FindAliasListCellRenderer implements ListCellRenderer
    }
 
    @Override
-   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+   public Component getListCellRendererComponent(JList<? extends AliasSearchWrapper> list, AliasSearchWrapper value, int index, boolean isSelected, boolean cellHasFocus)
    {
       if(null == value)
       {
          return null;
       }
 
-      SQLAlias sqlAlias = (SQLAlias) value;
-
-      JTextArea comp = new JTextArea(sqlAlias.getName() + "\n  URL: " + sqlAlias.getUrl() + "\n  User: " + sqlAlias.getUserName() + "\n");
+      JTextArea comp = new JTextArea(value.getSearchListDisplayString());
 
       comp.setEditable(false);
 
@@ -45,9 +43,9 @@ public class FindAliasListCellRenderer implements ListCellRenderer
       }
 
       
-      if(sqlAlias.getColorProperties().isOverrideAliasBackgroundColor())
+      if(AliasFolder.NO_COLOR_RGB != value.getColorRGB())
       {
-         Color bg = new Color(sqlAlias.getColorProperties().getAliasBackgroundColorRgbValue());
+         Color bg = new Color(value.getColorRGB());
 
          if (isSelected)
          {

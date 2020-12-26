@@ -7,8 +7,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -207,4 +209,9 @@ public class AliasesList implements IToogleableAliasesList
       return ret;
    }
 
+   @Override
+   public void goToAliasFolder(AliasFolder aliasFolder)
+   {
+      getCurrentImpl().goToAliasFolder(aliasFolder);
+   }
 }

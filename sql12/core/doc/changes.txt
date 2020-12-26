@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Find Alias dialog (ctrl alt shift G or F): Alias folders can be included in search.
+  See check box in the upper part of the dialog.
+  Double click on a Alias folder will go to the folder in the Alias tree.
+
 New tool bar / right mouse menu functions in Alias tree: Collapse/Expand selected folder.
 
 New SQL result table right mouse menu item: "Show distinct values..."

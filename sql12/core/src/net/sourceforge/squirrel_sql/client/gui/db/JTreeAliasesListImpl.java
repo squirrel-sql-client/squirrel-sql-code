@@ -50,6 +50,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 {
@@ -312,7 +313,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       for (int i = 0; i < _aliasesListModel.size(); i++)
       {
          SQLAlias sqlAlias = (SQLAlias) _aliasesListModel.get(i);
-         if(null == findNode(sqlAlias, rootNode))
+         if(null == AliasTreeUtil.findAliasNode(sqlAlias, rootNode))
          {
             unknownAliases.add(sqlAlias);
          }
@@ -355,27 +356,8 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
 
-      DefaultMutableTreeNode node = findNode(changedAlias, root);
+      DefaultMutableTreeNode node = AliasTreeUtil.findAliasNode(changedAlias, root);
       treeModel.nodeChanged(node);
-   }
-
-   private DefaultMutableTreeNode findNode(SQLAlias sqlAlias, DefaultMutableTreeNode tn)
-   {
-      if(sqlAlias.equals(tn.getUserObject()))
-      {
-         return tn;
-      }
-
-      for (int i = 0; i < tn.getChildCount(); i++)
-      {
-         DefaultMutableTreeNode ret = findNode(sqlAlias, (DefaultMutableTreeNode) tn.getChildAt(i));
-         if(null != ret)
-         {
-            return ret;
-         }
-      }
-
-      return null;
    }
 
    private void onAliasRemoved(ListDataEvent e)
@@ -441,7 +423,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       {
          if(-1 == _aliasesListModel.getIndex(sqlAlias))
          {
-            ret.add(findNode(sqlAlias, root));
+            ret.add(AliasTreeUtil.findAliasNode(sqlAlias, root));
          }
       }
 
@@ -696,18 +678,34 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    public void goToAlias(ISQLAlias aliasToGoTo)
    {
       DefaultMutableTreeNode root = (DefaultMutableTreeNode)_tree.getModel().getRoot();
-
-
-      DefaultMutableTreeNode node = findNode((SQLAlias) aliasToGoTo, root);
+      DefaultMutableTreeNode node = AliasTreeUtil.findAliasNode((SQLAlias) aliasToGoTo, root);
 
       if(null == node)
       {
          return;
       }
 
+      goToNode(node);
 
+   }
+
+   @Override
+   public void goToAliasFolder(AliasFolder aliasFolder)
+   {
+      DefaultMutableTreeNode root = (DefaultMutableTreeNode)_tree.getModel().getRoot();
+      DefaultMutableTreeNode node = AliasTreeUtil.findAliasFolderNode(aliasFolder, root);
+
+      if(null == node)
+      {
+         return;
+      }
+
+      goToNode(node);
+   }
+
+   private void goToNode(DefaultMutableTreeNode node)
+   {
       TreePath treePath = new TreePath(node.getPath());
-
 
       _tree.clearSelection();
 
@@ -718,8 +716,8 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       Rectangle bounds = _tree.getPathBounds(treePath);
 
       _tree.scrollRectToVisible(bounds);
-
    }
+
 
    @Override
    public void colorSelected()
@@ -1002,9 +1000,15 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    }
 
    @Override
+   public List<AliasFolder> getAllAliasFolders()
+   {
+      return AliasTreeUtil.getAllAliasFolders(_tree);
+   }
+
+   @Override
    public void aliasChanged(ISQLAlias sqlAlias)
    {
-      DefaultMutableTreeNode node = findNode((SQLAlias) sqlAlias, (DefaultMutableTreeNode) _tree.getModel().getRoot());
+      DefaultMutableTreeNode node = AliasTreeUtil.findAliasNode((SQLAlias) sqlAlias, (DefaultMutableTreeNode) _tree.getModel().getRoot());
 
       if (null != node)
       {

@@ -49,7 +49,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 	/** User Interface facory. */
 	private AliasUserInterfaceFactory _uiFactory;
 
-	public AliasesListInternalFrame(IApplication app, IAliasesList list)
+	public AliasesListInternalFrame(IApplication app, AliasesList list)
 	{
 		super(new AliasUserInterfaceFactory(list));
 		_app = app;
@@ -126,7 +126,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 
    }
 
-   public IAliasesList getAliasesList()
+   public AliasesList getAliasesList()
 	{
 		return _uiFactory.getAliasesList();
 	}

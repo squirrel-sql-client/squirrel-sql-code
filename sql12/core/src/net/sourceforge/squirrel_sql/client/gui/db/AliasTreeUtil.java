@@ -8,6 +8,8 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class AliasTreeUtil
@@ -60,4 +62,54 @@ public class AliasTreeUtil
          recurseChildNodes(new TreePath(buf), treePathConsumer);
       }
    }
+
+   public static List<AliasFolder> getAllAliasFolders(JTree tree)
+   {
+      final DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+
+      ArrayList<AliasFolder> ret = new ArrayList<>();
+
+      recurseChildNodes(new TreePath(root.getPath()), p -> fillFolder(p, ret));
+
+      return ret;
+   }
+
+   private static void fillFolder(TreePath treePath, ArrayList<AliasFolder> toFill)
+   {
+      if(((DefaultMutableTreeNode)treePath.getLastPathComponent()).getUserObject() instanceof AliasFolder)
+      {
+         toFill.add((AliasFolder) ((DefaultMutableTreeNode)treePath.getLastPathComponent()).getUserObject());
+      }
+   }
+
+   public static DefaultMutableTreeNode findAliasNode(SQLAlias sqlAlias, DefaultMutableTreeNode tn)
+   {
+      return _findNode(sqlAlias, tn);
+   }
+
+
+   public static DefaultMutableTreeNode findAliasFolderNode(AliasFolder aliasFolder, DefaultMutableTreeNode tn)
+   {
+      return _findNode(aliasFolder, tn);
+   }
+
+   private static DefaultMutableTreeNode _findNode(Object aliasOrAliasFolder, DefaultMutableTreeNode tn)
+   {
+      if(aliasOrAliasFolder.equals(tn.getUserObject()))
+      {
+         return tn;
+      }
+
+      for (int i = 0; i < tn.getChildCount(); i++)
+      {
+         DefaultMutableTreeNode ret = _findNode(aliasOrAliasFolder, (DefaultMutableTreeNode) tn.getChildAt(i));
+         if(null != ret)
+         {
+            return ret;
+         }
+      }
+
+      return null;
+   }
+
 }

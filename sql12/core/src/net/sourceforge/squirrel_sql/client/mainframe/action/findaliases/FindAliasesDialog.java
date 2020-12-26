@@ -22,8 +22,9 @@ public class FindAliasesDialog extends JDialog
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FindAliasesDialog.class);
 
    JTextField txtToSearch = new JTextField();
-   JList lstResult = new JList();
+   JList<AliasSearchWrapper> lstResult = new JList<>();
    JCheckBox chkRememberLastSearch = new JCheckBox(s_stringMgr.getString("FindAliasesCtrl.remember.last.search"));
+   JCheckBox chkIncludeAliasFolders = new JCheckBox(s_stringMgr.getString("FindAliasesCtrl.include.alias.folders"));
 
    JCheckBox chkLeaveOpen = new JCheckBox(s_stringMgr.getString("FindAliasesCtrl.leave.open"));
 
@@ -49,7 +50,7 @@ public class FindAliasesDialog extends JDialog
       pane.add(txtToSearch, gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
-      pane.add(chkRememberLastSearch, gbc);
+      pane.add(createToCheckBoxPanel(), gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10,5,5,5), 0,0);
       pane.add(new JScrollPane(lstResult), gbc);
@@ -60,6 +61,21 @@ public class FindAliasesDialog extends JDialog
       gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       pane.add(createButtonPanel(), gbc);
 
+   }
+
+   private JPanel createToCheckBoxPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(chkRememberLastSearch, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,10,0,0), 0,0);
+      ret.add(chkIncludeAliasFolders, gbc);
+
+      return ret;
    }
 
    private JPanel createButtonPanel()

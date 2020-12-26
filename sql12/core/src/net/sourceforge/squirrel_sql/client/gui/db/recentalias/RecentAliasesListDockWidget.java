@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.client.gui.db.recentalias;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.AliasSearchWrapper;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -23,7 +23,7 @@ public class RecentAliasesListDockWidget extends DockWidget
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RecentAliasesListDockWidget.class);
 
-   JList<SQLAlias> lstAliases = new JList<>();
+   JList<AliasSearchWrapper> lstAliases = new JList<>();
    IntegerField txtMaxNumRecent = new IntegerField(5, 1);
    JButton btnRemoveSelected = new JButton(s_stringMgr.getString("RecentAliasesListInternalFrame.removeSelected"));
    JButton btnClearList = new JButton(s_stringMgr.getString("RecentAliasesListInternalFrame.btnClearAliases"));

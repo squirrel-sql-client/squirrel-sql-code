@@ -28,7 +28,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversList;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.recentalias.RecentAliasesListCtrl;
 import net.sourceforge.squirrel_sql.client.gui.db.recentalias.ViewInAliasesAction;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
@@ -859,7 +858,7 @@ public class WindowManager
 
 	private AliasesListInternalFrame createAliasesListWindow()
 	{
-		final IToogleableAliasesList al = new AliasesList(_app);
+		final AliasesList al = new AliasesList(_app);
 
 		final ActionCollection actions = _app.getActionCollection();
 		actions.add(new ModifyAliasAction(_app, al));

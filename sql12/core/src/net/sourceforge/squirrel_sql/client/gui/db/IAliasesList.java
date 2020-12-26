@@ -46,4 +46,6 @@ public interface IAliasesList extends IBaseList
    void colorSelected();
 
    void aliasChanged(ISQLAlias sqlAlias);
+
+   void goToAliasFolder(AliasFolder aliasFolder);
 }

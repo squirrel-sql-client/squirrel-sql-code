@@ -228,4 +228,10 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 	public void aliasChanged(ISQLAlias sqlAlias)
 	{
 	}
+
+   @Override
+   public void goToAliasFolder(AliasFolder alias)
+   {
+      // Do nothing
+   }
 }

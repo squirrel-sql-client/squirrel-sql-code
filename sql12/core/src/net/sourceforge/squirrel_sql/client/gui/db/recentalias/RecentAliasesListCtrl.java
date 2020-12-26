@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.FindAliasListCellRenderer;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.AliasSearchWrapper;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.AliasesUtil;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -61,14 +62,14 @@ public class RecentAliasesListCtrl
 
       _widget.txtMaxNumRecent.setInt(jsonBean.getMaxRecentAliases());
 
-      DefaultListModel model = (DefaultListModel) _widget.lstAliases.getModel();
+      DefaultListModel<AliasSearchWrapper> model = (DefaultListModel<AliasSearchWrapper>) _widget.lstAliases.getModel();
 
       for (String recentAliasIdentifier : jsonBean.getRecentAliasesIdentifier())
       {
          SQLAlias alias = findAlias(recentAliasIdentifier);
          if(null != alias)
          {
-            model.addElement(alias);
+            model.addElement(new AliasSearchWrapper(alias));
          }
       }
       _widget.lstAliases.addMouseListener(new MouseAdapter() {
@@ -159,26 +160,26 @@ public class RecentAliasesListCtrl
 
    private SQLAlias getSelectedAliasChecked()
    {
-      SQLAlias selectedAlias = _widget.lstAliases.getSelectedValue();
+      AliasSearchWrapper selectedAliasSearchWrapper = _widget.lstAliases.getSelectedValue();
 
-      if(selectedAlias == null)
+      if(selectedAliasSearchWrapper == null)
       {
          String msg = s_stringMgr.getString("RecentAliasesListCtrl.no.selected.alias");
          JOptionPane.showMessageDialog(_widget.getContentPane(), msg);
          return null;
       }
 
-      SQLAlias orgAlias = findAlias(selectedAlias.getIdentifier().toString());
+      SQLAlias orgAlias = findAlias(selectedAliasSearchWrapper.getAlias().getIdentifier().toString());
 
       if(null == orgAlias)
       {
          String msg = s_stringMgr.getString("RecentAliasesListCtrl.alias.doesnt.exist");
          JOptionPane.showMessageDialog(_widget.getContentPane(), msg);
 
-         ((DefaultListModel)_widget.lstAliases.getModel()).removeElement(selectedAlias);
+         ((DefaultListModel<AliasSearchWrapper>)_widget.lstAliases.getModel()).removeElement(selectedAliasSearchWrapper);
          return null;
       }
-      return selectedAlias;
+      return (SQLAlias) selectedAliasSearchWrapper.getAlias();
    }
 
    private void onClearList(DefaultListModel model)
@@ -193,11 +194,11 @@ public class RecentAliasesListCtrl
 
    private void onRemoveSelected()
    {
-      DefaultListModel model = (DefaultListModel) _widget.lstAliases.getModel();
+      DefaultListModel<AliasSearchWrapper> model = (DefaultListModel<AliasSearchWrapper>) _widget.lstAliases.getModel();
 
-      for (SQLAlias sqlAlias : _widget.lstAliases.getSelectedValuesList())
+      for (AliasSearchWrapper aliasSearchWrapper : _widget.lstAliases.getSelectedValuesList())
       {
-         model.removeElement(sqlAlias);
+         model.removeElement(aliasSearchWrapper);
       }
    }
 
@@ -213,16 +214,18 @@ public class RecentAliasesListCtrl
 
    public void startingCreateSession(SQLAlias sqlAlias)
    {
-      DefaultListModel model = (DefaultListModel) _widget.lstAliases.getModel();
+      DefaultListModel<AliasSearchWrapper> model = (DefaultListModel<AliasSearchWrapper>) _widget.lstAliases.getModel();
 
-      int curIx = model.indexOf(sqlAlias);
+      final AliasSearchWrapper aliasSearchWrapper = new AliasSearchWrapper(sqlAlias);
+
+      int curIx = model.indexOf(aliasSearchWrapper);
       while(-1 < curIx)
       {
          model.remove(curIx);
-         curIx = model.indexOf(sqlAlias);
+         curIx = model.indexOf(aliasSearchWrapper);
       }
 
-      model.add(0, sqlAlias);
+      model.add(0, aliasSearchWrapper);
 
       while ( _widget.txtMaxNumRecent.getInt() < model.size())
       {
@@ -236,11 +239,11 @@ public class RecentAliasesListCtrl
 
       jsonBean.setMaxRecentAliases(_widget.txtMaxNumRecent.getInt());
 
-      DefaultListModel model = (DefaultListModel) _widget.lstAliases.getModel();
+      DefaultListModel<AliasSearchWrapper> model = (DefaultListModel<AliasSearchWrapper>) _widget.lstAliases.getModel();
 
-      for (Object aliasObj : model.toArray())
+      for (Object aliasSearchWrapper : model.toArray())
       {
-         final SQLAlias alias = findAlias(((SQLAlias) aliasObj).getIdentifier().toString());
+         final SQLAlias alias = findAlias(((AliasSearchWrapper) aliasSearchWrapper).getAlias().getIdentifier().toString());
          if(null != alias)
          {
             jsonBean.getRecentAliasesIdentifier().add(alias.getIdentifier().toString());

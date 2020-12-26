@@ -16,13 +16,25 @@ public class AliasesUtil
       viewInAliasesDockWidget(aliasToView, Main.getApplication().getWindowManager().getAliasesListInternalFrame().getAliasesList(), AliasesUtil.class);
    }
 
-   public static void viewInAliasesDockWidget(ISQLAlias selectedAlias, IAliasesList al, Object eventSource)
+   public static void viewInAliasesDockWidget(ISQLAlias selectedAlias, IAliasesList al, java.lang.Object eventSource)
+   {
+      viewInAliasesDockWidget(new AliasSearchWrapper(selectedAlias), al, eventSource);
+   }
+
+   public static void viewInAliasesDockWidget(AliasSearchWrapper aliasSearchWrapper, IAliasesList al, java.lang.Object eventSource)
    {
       IApplication app = Main.getApplication();
       AliasesListInternalFrame aliasesFrame = Main.getApplication().getWindowManager().getAliasesListInternalFrame();
 
       new ViewAliasesAction(app, aliasesFrame).actionPerformed(new ActionEvent(eventSource, 1, "Dummy"));
 
-      al.goToAlias(selectedAlias);
+      if (null != aliasSearchWrapper.getAlias())
+      {
+         al.goToAlias(aliasSearchWrapper.getAlias());
+      }
+      else
+      {
+         al.goToAliasFolder(aliasSearchWrapper.getAliasFolder());
+      }
    }
 }

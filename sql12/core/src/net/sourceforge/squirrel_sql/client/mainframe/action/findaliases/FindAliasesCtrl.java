@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findaliases;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
@@ -10,7 +11,6 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.FindAliasListCellRen
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -28,6 +28,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 
 public class FindAliasesCtrl
@@ -41,13 +42,17 @@ public class FindAliasesCtrl
 
    public static final String PREF_KEY_FIND_ALIAS_REMEMBER_LAST_SEARCH = "Squirrel.findAliasSheet.remember.last.search";
 
+   public static final String PREF_KEY_FIND_ALIAS_INCLUDE_ALIAS_FOLDERS = "Squirrel.findAliasSheet.include.alias.folders";
+
    public static final String PREF_KEY_FIND_ALIAS_LAST_SEARCH_STRING = "Squirrel.findAliasSheet.last.search.string";
 
 
    private FindAliasesDialog _dlg = new FindAliasesDialog();
+   private IAliasesList _aliasesList;
 
-   public FindAliasesCtrl(final IAliasesList al)
+   public FindAliasesCtrl(final IAliasesList aliasesList)
    {
+      _aliasesList = aliasesList;
       _dlg.setSize(getDimension());
 
       GUIUtils.centerWithinParent(_dlg);
@@ -86,7 +91,7 @@ public class FindAliasesCtrl
 
       _dlg.btnConnect.addActionListener(e -> onConnect());
 
-      _dlg.btnGoto.addActionListener(e -> onGoto(al));
+      _dlg.btnGoto.addActionListener(e -> onGoto());
 
       _dlg.btnClose.addActionListener(e -> onClose());
 
@@ -115,6 +120,10 @@ public class FindAliasesCtrl
 
       _dlg.chkRememberLastSearch.setFocusable(false);
       _dlg.chkRememberLastSearch.setSelected(Props.getBoolean(PREF_KEY_FIND_ALIAS_REMEMBER_LAST_SEARCH, false));
+
+      _dlg.chkIncludeAliasFolders.setFocusable(false);
+      _dlg.chkIncludeAliasFolders.setSelected(Props.getBoolean(PREF_KEY_FIND_ALIAS_INCLUDE_ALIAS_FOLDERS, false));
+      _dlg.chkIncludeAliasFolders.addActionListener(e -> updateList());
 
       if (_dlg.chkRememberLastSearch.isSelected())
       {
@@ -185,52 +194,58 @@ public class FindAliasesCtrl
 
    private void onConnect()
    {
-      ISQLAlias selectedAlias = (ISQLAlias) _dlg.lstResult.getSelectedValue();
+      AliasSearchWrapper selectedWrapperAlias = _dlg.lstResult.getSelectedValue();
 
-      if(null ==  selectedAlias)
+      if(null ==  selectedWrapperAlias)
       {
          return;
       }
 
-      ICompletionCallback completionCallback = null;
-
-      if (_dlg.chkLeaveOpen.isSelected())
+      if (null != selectedWrapperAlias.getAlias())
       {
-         completionCallback = new ConnectToAliasCallBack((SQLAlias) selectedAlias)
+         ICompletionCallback completionCallback = null;
+
+         if (_dlg.chkLeaveOpen.isSelected())
          {
-            @Override
-            public void sessionCreated(ISession session)
+            completionCallback = new ConnectToAliasCallBack((SQLAlias) selectedWrapperAlias.getAlias())
             {
-               _dlg.requestFocus();
-               _dlg.txtToSearch.requestFocus();
-               super.sessionCreated(session);
-            }
+               @Override
+               public void sessionCreated(ISession session)
+               {
+                  _dlg.requestFocus();
+                  _dlg.txtToSearch.requestFocus();
+                  super.sessionCreated(session);
+               }
 
-         };
+            };
+         }
+
+
+         new ConnectToAliasCommand(Main.getApplication(), (SQLAlias) selectedWrapperAlias.getAlias(), true, completionCallback).execute();
+
+         if(false == _dlg.chkLeaveOpen.isSelected())
+         {
+            onClosing();
+            _dlg.setVisible(false);
+            _dlg.dispose();
+         }
       }
-
-
-      new ConnectToAliasCommand(Main.getApplication(), (SQLAlias) selectedAlias, true, completionCallback).execute();
-
-      if(false == _dlg.chkLeaveOpen.isSelected())
+      else
       {
-         onClosing();
-         _dlg.setVisible(false);
-         _dlg.dispose();
+         onGoto();
       }
-
    }
 
-   private void onGoto(IAliasesList al)
+   private void onGoto()
    {
-      ISQLAlias selectedAlias = (ISQLAlias) _dlg.lstResult.getSelectedValue();
+      AliasSearchWrapper selectedAliasWrapper = _dlg.lstResult.getSelectedValue();
 
-      if(null == selectedAlias)
+      if(null == selectedAliasWrapper)
       {
          return;
       }
 
-      AliasesUtil.viewInAliasesDockWidget(selectedAlias, al, _dlg);
+      AliasesUtil.viewInAliasesDockWidget(selectedAliasWrapper, _aliasesList, _dlg);
 
 
       if(false == _dlg.chkLeaveOpen.isSelected())
@@ -250,31 +265,34 @@ public class FindAliasesCtrl
 
       String filterText = _dlg.txtToSearch.getText();
 
-      Object formerSelectedValue = _dlg.lstResult.getSelectedValue();
+      java.lang.Object formerSelectedValue = _dlg.lstResult.getSelectedValue();
 
-      Vector<ISQLAlias> allAliases = new Vector<>(Main.getApplication().getAliasesAndDriversManager().getAliasList());
+      Vector<AliasSearchWrapper> allAliasSearchWrappers = new Vector<>();
 
+      allAliasSearchWrappers.addAll(AliasSearchWrapper.wrapAliases(Main.getApplication().getAliasesAndDriversManager().getAliasList()));
 
-      Vector<ISQLAlias> matchingAliases = new Vector<>();
-
-      for (ISQLAlias alias : allAliases)
+      if (_dlg.chkIncludeAliasFolders.isSelected())
       {
-         if(matches(alias, filterText))
-         {
-            matchingAliases.add(alias);
-         }
+         List<AliasFolder> allAliasFolders =
+               Main.getApplication().getWindowManager().getAliasesListInternalFrame().getAliasesList().getAliasTreeInterface().getAllAliasFolders();
+
+         allAliasSearchWrappers.addAll(AliasSearchWrapper.wrapAliasFolders(allAliasFolders));
       }
 
 
-      Collections.sort(matchingAliases, new Comparator<ISQLAlias>() {
-         @Override
-         public int compare(ISQLAlias o1, ISQLAlias o2)
-         {
-            return o1.getName().compareTo(o2.getName());
-         }
-      });
+      Vector<AliasSearchWrapper> matchingAliasSearchWrappers = new Vector<>();
 
-      _dlg.lstResult.setListData(matchingAliases);
+      for (AliasSearchWrapper aliasSearchWrapper : allAliasSearchWrappers)
+      {
+         if(matches(aliasSearchWrapper, filterText))
+         {
+            matchingAliasSearchWrappers.add(aliasSearchWrapper);
+         }
+      }
+
+      Collections.sort(matchingAliasSearchWrappers, Comparator.comparing(AliasSearchWrapper::getName));
+
+      _dlg.lstResult.setListData(matchingAliasSearchWrappers);
       _dlg.lstResult.setSelectedValue(formerSelectedValue, true);
 
       if(-1 == _dlg.lstResult.getSelectedIndex())
@@ -293,18 +311,26 @@ public class FindAliasesCtrl
    }
 
 
-   private boolean matches(ISQLAlias alias, String filterText)
+   private boolean matches(AliasSearchWrapper aliasSearchWrapper, String filterText)
    {
       if(StringUtilities.isEmpty(filterText, true))
       {
          return true;
       }
 
-      return    (null != alias.getName() && -1 < alias.getName().toLowerCase().indexOf(filterText.toLowerCase()))
-             || (null != alias.getUrl() && -1 < alias.getUrl().toLowerCase().indexOf(filterText.toLowerCase()))
-             || (null != alias.getUserName() && -1 < alias.getUserName().toLowerCase().indexOf(filterText.toLowerCase()));
+      if (null != aliasSearchWrapper.getAlias())
+      {
+         return    (null != aliasSearchWrapper.getAlias().getName() && -1 < aliasSearchWrapper.getAlias().getName().toLowerCase().indexOf(filterText.toLowerCase()))
+                || (null != aliasSearchWrapper.getAlias().getUrl() && -1 < aliasSearchWrapper.getAlias().getUrl().toLowerCase().indexOf(filterText.toLowerCase()))
+                || (null != aliasSearchWrapper.getAlias().getUserName() && -1 < aliasSearchWrapper.getAlias().getUserName().toLowerCase().indexOf(filterText.toLowerCase()));
+      }
+      else
+      {
+         return  null != aliasSearchWrapper.getAliasFolder().getFolderName() && -1 < aliasSearchWrapper.getAliasFolder().getFolderName().toLowerCase().indexOf(filterText.toLowerCase());
+      }
 
    }
+
 
 
 
@@ -317,6 +343,8 @@ public class FindAliasesCtrl
 
 
       Props.putBoolean(PREF_KEY_FIND_ALIAS_REMEMBER_LAST_SEARCH, _dlg.chkRememberLastSearch.isSelected());
+
+      Props.putBoolean(PREF_KEY_FIND_ALIAS_INCLUDE_ALIAS_FOLDERS, _dlg.chkIncludeAliasFolders.isSelected());
 
       if (_dlg.chkRememberLastSearch.isSelected())
       {

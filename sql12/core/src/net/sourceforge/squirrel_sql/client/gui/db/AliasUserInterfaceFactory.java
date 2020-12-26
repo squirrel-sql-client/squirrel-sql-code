@@ -51,11 +51,11 @@ final class AliasUserInterfaceFactory implements IUserInterfaceFactory
 
 
    private IApplication _app;
-   private final IAliasesList _aliasesList;
+   private final AliasesList _aliasesList;
    private ToolBar _toolBar;
    private BasePopupMenu _pm = new BasePopupMenu();
 
-   AliasUserInterfaceFactory(IAliasesList list)
+   AliasUserInterfaceFactory(AliasesList list)
    {
       if (list == null)
       {
@@ -214,7 +214,7 @@ final class AliasUserInterfaceFactory implements IUserInterfaceFactory
       _toolBar = null;
    }
 
-   public IAliasesList getAliasesList()
+   public AliasesList getAliasesList()
    {
       return _aliasesList;
    }
