@@ -19,18 +19,6 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Vector;
-
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
@@ -44,10 +32,21 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
+
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Vector;
 
 /**
  * A simple utility class in which to place common code shared amongst the dialects. Since the dialects all
@@ -2686,8 +2685,7 @@ public class DialectUtils implements StringTemplateConstants
 		return formatQualified(table, schema, prefs.isQualifyTableNames(), prefs.isUseDoubleQuotes());
 	}
 
-	public static String formatQualified(String table, String schema, boolean qualifyTableNames,
-		boolean useDoubleQuotes)
+	public static String formatQualified(String table, String schema, boolean qualifyTableNames,  boolean useDoubleQuotes)
 	{
 		if (qualifyTableNames && null != schema && 0 < schema.trim().length())
 		{

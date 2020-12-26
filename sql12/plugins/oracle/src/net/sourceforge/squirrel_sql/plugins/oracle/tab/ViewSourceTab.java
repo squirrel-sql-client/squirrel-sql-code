@@ -17,26 +17,21 @@
  */
 package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
  * This class will display the source for an Oracle view.
  */
 public class ViewSourceTab extends OracleSourceTab
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ViewSourceTab.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ViewSourceTab.class);
 
-
-	/**
-	 * This interface defines locale specific strings.
-	 */
 	private interface i18n
 	{
 		// i18n[oracle.diplayScriptDetails=Display script details]

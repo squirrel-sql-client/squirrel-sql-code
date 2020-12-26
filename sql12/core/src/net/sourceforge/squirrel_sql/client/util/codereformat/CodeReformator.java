@@ -18,15 +18,15 @@ package net.sourceforge.squirrel_sql.client.util.codereformat;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class CodeReformator implements ICodeReformator
 {
@@ -50,7 +50,7 @@ public class CodeReformator implements ICodeReformator
    /**
     * @see ICodeReformator#reformat(java.lang.String)
     */
-   public String reformat(String in)
+   public String reformat(String in) throws CodeReformatException
    {
       in = flatenWhiteSpaces(in, false);
 
@@ -117,20 +117,19 @@ public class CodeReformator implements ICodeReformator
    }
 
 
-   private void validate(String beforeReformat, String afterReformat)
+   private void validate(String beforeReformat, String afterReformat) throws CodeReformatException
    {
       String normalizedBefore = getNormalized(beforeReformat);
       String normalizedAfter = getNormalized(afterReformat);
 
       if (!normalizedBefore.equalsIgnoreCase(normalizedAfter))
       {
-         int minLen = Math.min(normalizedAfter.length(), normalizedBefore
-               .length());
+         int minLen = Math.min(normalizedAfter.length(), normalizedBefore.length());
+
          StringBuffer diffPos = new StringBuffer();
          for (int i = 0; i < minLen; ++i)
          {
-            if (Character.toUpperCase(normalizedBefore.charAt(i)) != Character
-                  .toUpperCase(normalizedAfter.charAt(i)))
+            if (Character.toUpperCase(normalizedBefore.charAt(i)) != Character.toUpperCase(normalizedAfter.charAt(i)))
             {
                break;
             }
@@ -149,12 +148,7 @@ public class CodeReformator implements ICodeReformator
          msg.append(diffPos.toString());
          msg.append(_lineSep);
 
-         if (s_log.isInfoEnabled())
-         {
-            s_log.info(msg.toString());
-         }
-
-         throw new IllegalStateException(msg.toString());
+         throw new CodeReformatException(msg.toString());
       }
    }
 
