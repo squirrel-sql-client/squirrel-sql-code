@@ -1014,4 +1014,20 @@ public class GUIUtils
          updateBackground.run();
       }
    }
+
+   public static JPanel createVerticalSeparatorPanel()
+   {
+      JPanel separator = new JPanel();
+      separator.setPreferredSize(new Dimension(4, separator.getPreferredSize().height));
+      separator.setBorder(BorderFactory.createEtchedBorder());
+      return separator;
+   }
+
+   public static JPanel createHorizontalSeparatorPanel()
+   {
+      JPanel separator = new JPanel();
+      separator.setPreferredSize(new Dimension(separator.getPreferredSize().width, 4));
+      separator.setBorder(BorderFactory.createEtchedBorder());
+      return separator;
+   }
 }

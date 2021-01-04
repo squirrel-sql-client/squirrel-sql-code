@@ -2,18 +2,32 @@ package net.sourceforge.squirrel_sql.client.preferences.codereformat;
 
 import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.util.codereformat.PieceMarkerSpec;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
 public class FormatSqlPanel extends JPanel
 {
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(FormatSqlPanel.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FormatSqlPanel.class);
 
 
    public static enum KeywordBehaviour
@@ -63,6 +77,9 @@ public class FormatSqlPanel extends JPanel
       }
    }
 
+   JRadioButton radUseSquirrelInternalFormatter = new JRadioButton(s_stringMgr.getString("codereformat.FormatSqlPanel.use.squirrel.formatter"));
+   JRadioButton radUseVerticalBlankFormatter = new JRadioButton(s_stringMgr.getString("codereformat.FormatSqlPanel.use.vertical.blank.formatter"));
+
 
    JFormattedTextField txtIndentCount;
    JCheckBox chkIndentSections = new JCheckBox(s_stringMgr.getString("codereformat.FormatSqlPanel.indent.sections"));
@@ -101,8 +118,54 @@ public class FormatSqlPanel extends JPanel
 
       GridBagConstraints gbc;
 
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
+      ret.add(createFormatterSelectionPanel(), gbc);
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0);
+      ret.add(GUIUtils.createHorizontalSeparatorPanel(), gbc);
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      ret.add(createFormatterConfigPanel(keywordBehaviourPrefs), gbc);
+
+      return ret;
+   }
+
+   private JPanel createFormatterSelectionPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      ret.add(new JLabel (s_stringMgr.getString("codereformat.FormatSqlPanel.choose.formatter")), gbc);
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5),0,0);
+      ret.add(radUseSquirrelInternalFormatter, gbc);
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      ret.add(radUseVerticalBlankFormatter, gbc);
+
+      ButtonGroup bg = new ButtonGroup();
+      bg.add(radUseSquirrelInternalFormatter);
+      bg.add(radUseVerticalBlankFormatter);
+
+      gbc = new GridBagConstraints(0,3,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
+      ret.add(new MultipleLineLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.vertical.blank.indent.only.note")), gbc);
+
+      return ret;
+   }
+
+   private JPanel createFormatterConfigPanel(KeywordBehaviourPref[] keywordBehaviourPrefs)
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
       int gridy = 0;
 
+      gbc = new GridBagConstraints(0,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
+      ret.add(new JLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.config.title")), gbc);
+
+      ++gridy;
       int additionalRightInsetForScrollbar = 10;
       gbc = new GridBagConstraints(0,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       ret.add(new JLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.indentCount")), gbc);

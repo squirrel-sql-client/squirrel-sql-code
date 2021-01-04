@@ -18,10 +18,9 @@ package net.sourceforge.squirrel_sql.client.util.codereformat;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import com.github.vertical_blank.sqlformatter.SqlFormatter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +37,6 @@ public class CodeReformator implements ICodeReformator
     */
    private String _lineSep = ICodeReformator.CODE_REFORMATOR_LINE_SEPARATOR;
 
-   private static ILogger s_log = LoggerController.createLogger(CodeReformator.class);
    private CodeReformatorConfig _codeReformatorConfig;
 
 
@@ -47,10 +45,21 @@ public class CodeReformator implements ICodeReformator
       _codeReformatorConfig = codeReformatorConfig;
    }
 
-   /**
-    * @see ICodeReformator#reformat(java.lang.String)
-    */
+
+   @Override
    public String reformat(String in) throws CodeReformatException
+   {
+      if (_codeReformatorConfig.isUseVerticalBlankFormatter())
+      {
+         return SqlFormatter.format(in, _codeReformatorConfig.getIndent());
+      }
+      else
+      {
+         return squirrelInternalFormatting(in);
+      }
+   }
+
+   private String squirrelInternalFormatting(String in)
    {
       in = flatenWhiteSpaces(in, false);
 

@@ -70,7 +70,8 @@ public class CodeReformatorConfigFactory
             formatSqlPref.isIndentSections(),
             formatSqlPref.isLineBreakFor_AND_OR_in_FROM_clause(),
             formatSqlPref.isCommasAtLineBegin(),
-            ColumnListSpiltMode.valueOf(formatSqlPref.getColumnListSplitMode()));
+            ColumnListSpiltMode.valueOf(formatSqlPref.getColumnListSplitMode()),
+            formatSqlPref.isUseVerticalBlankFormatter());
    }
 
    private static ArrayList<PieceMarkerSpec> createPieceMarkerSpecs(KeywordBehaviourPref keywordBehaviourPref)

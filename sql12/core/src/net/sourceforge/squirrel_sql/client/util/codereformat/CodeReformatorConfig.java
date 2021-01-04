@@ -17,6 +17,7 @@ public class CodeReformatorConfig
    private boolean _commasAtLineBegin;
 
    private final ColumnListSpiltMode _selectListSplitMode;
+   private boolean _useVerticalBlankFormatter;
 
 
    /**
@@ -31,7 +32,8 @@ public class CodeReformatorConfig
                         boolean indentSections,
                         boolean lineBreakFor_AND_OR_in_FROM_clause,
                         boolean commasAtLineBegin,
-                        ColumnListSpiltMode selectListSplitMode)
+                        ColumnListSpiltMode selectListSplitMode,
+                        boolean useVerticalBlankFormatter)
    {
       _statementSeparator = statementSeparator;
       _commentSpecs = commentSpecs;
@@ -44,6 +46,7 @@ public class CodeReformatorConfig
       _keywordPieceMarkerSpec = specs.toArray(new PieceMarkerSpec[specs.size()]);
       _selectListSplitMode = selectListSplitMode;
 
+      _useVerticalBlankFormatter = useVerticalBlankFormatter;
    }
 
    public String getStatementSeparator()
@@ -94,5 +97,10 @@ public class CodeReformatorConfig
    public ColumnListSpiltMode getSelectListSpiltMode()
    {
       return _selectListSplitMode;
+   }
+
+   public boolean isUseVerticalBlankFormatter()
+   {
+      return _useVerticalBlankFormatter;
    }
 }

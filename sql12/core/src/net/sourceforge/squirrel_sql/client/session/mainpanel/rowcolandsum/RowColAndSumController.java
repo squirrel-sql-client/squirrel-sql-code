@@ -8,7 +8,6 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.buttonchooser.ComboButton;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
-import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -90,9 +89,7 @@ public class RowColAndSumController
 
             _containerPanel.add(_selectRowColLabelController.getPanel(), BorderLayout.WEST);
 
-            JPanel separator = new JPanel();
-            separator.setPreferredSize(new Dimension(4, separator.getPreferredSize().height));
-            separator.setBorder(BorderFactory.createEtchedBorder());
+            JPanel separator = GUIUtils.createVerticalSeparatorPanel();
 
             _containerPanel.add(separator);
 

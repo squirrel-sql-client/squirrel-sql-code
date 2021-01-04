@@ -39,6 +39,7 @@ public class FormatSqlPref
       new KeywordBehaviourPref(VALUES, FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID())
    };
 
+   private boolean _useVerticalBlankFormatter = false;
 
    private int _indent = 3;
    private int _preferedLineLength = 80;
@@ -129,5 +130,15 @@ public class FormatSqlPref
    public void setColumnListSplitMode(String columnListSplitMode)
    {
       _columnListSplitMode = columnListSplitMode;
+   }
+
+   public boolean isUseVerticalBlankFormatter()
+   {
+      return _useVerticalBlankFormatter;
+   }
+
+   public void setUseVerticalBlankFormatter(boolean useVerticalBlankFormatter)
+   {
+      _useVerticalBlankFormatter = useVerticalBlankFormatter;
    }
 }

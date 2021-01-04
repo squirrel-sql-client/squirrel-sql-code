@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Option to use the Vertical-blank Sql-formatter (https://github.com/vertical-blank/sql-formatter) instead of SQuirreL's internal formatter.
+  To switch to the Vertical-blank formatter go to menu File --> Global Preference --> tab "SQL formatting".
+  This change was inspired by the discussion in bug #1455.
+
 Merge request #73: Add possibility to inject JVM arguments via SQUIRREL_SQL_OPTS command line environment variable.
   Thanks to Antoine Levy-Lambert for thr patch.
 

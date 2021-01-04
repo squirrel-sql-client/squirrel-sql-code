@@ -9,23 +9,24 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
-import javax.swing.*;
-import java.awt.event.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.SwingUtilities;
+import java.awt.Rectangle;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 
 public class FormatSqlController
 {
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(FormatSqlController.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FormatSqlController.class);
 
 
    private FormatSqlPanel _formatSqlPanel;
    private FormatSqlPref _formatSqlPref;
-   private IApplication _app;
 
    public FormatSqlController(IApplication app)
    {
-      _app = app;
 
       _formatSqlPref = FormatSqlPrefReader.loadPref();
       _formatSqlPanel = new FormatSqlPanel(_formatSqlPref.getKeywordBehaviourPrefs());
@@ -36,14 +37,12 @@ public class FormatSqlController
 
       _formatSqlPanel.txtIndentCount.setValue(_formatSqlPref.getIndent());
 
-      ActionListener adjustValuesToConstraintListeners = new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            adjustValuesToConstraints();
-         }
-      };
+      ActionListener adjustValuesToConstraintListeners = e -> adjustValuesToConstraints();
+
+      _formatSqlPanel.radUseVerticalBlankFormatter.setSelected(_formatSqlPref.isUseVerticalBlankFormatter());
+      _formatSqlPanel.radUseSquirrelInternalFormatter.setSelected(false == _formatSqlPref.isUseVerticalBlankFormatter());
+      _formatSqlPanel.radUseVerticalBlankFormatter.addActionListener(adjustValuesToConstraintListeners);
+      _formatSqlPanel.radUseSquirrelInternalFormatter.addActionListener(adjustValuesToConstraintListeners);
 
       _formatSqlPanel.chkIndentSections.setSelected(_formatSqlPref.isIndentSections());
       _formatSqlPanel.chkIndentSections.addActionListener(adjustValuesToConstraintListeners);
@@ -150,7 +149,9 @@ public class FormatSqlController
 
    private void refreshExampleSql(FormatSqlPref formatSqlPref)
    {
-      String sqls;CodeReformator codeReformator = new CodeReformator(CodeReformatorConfigFactory.createConfig(formatSqlPref));
+      String sqls;
+
+      CodeReformator codeReformator = new CodeReformator(CodeReformatorConfigFactory.createConfig(formatSqlPref));
 
       sqls = codeReformator.reformat("SELECT table1.id,table2.number,table2.name,table2.info1,table2.info2,table2.info3,table2.info4,table2.info5,table2.info6,SUM(table1.amount) FROM table1 INNER JOIN table2 ON table.id1 = table2.table1_id1 AND table.id2 = table2.table1_id2 LEFT OUTER JOIN table3 ON table.id1 = table3.table1_id1 AND table.id2 = table3.table1_id3 WHERE table1.id IN (SELECT table1_id FROM table3 WHERE table3.name = 'Foo Bar' and table3.type = 'unknown_type') AND table2.name LIKE '%g%' GROUP BY table1.id,table2.number ORDER BY table1.id");
       sqls += "\n\n";
@@ -163,6 +164,8 @@ public class FormatSqlController
       sqls += codeReformator.reformat("DELETE FROM table1 WHERE  name = 'Hello' OR number = '1456-789'");
 
       _formatSqlPanel.txtExampleSqls.setText(sqls);
+
+      SwingUtilities.invokeLater(() -> _formatSqlPanel.txtExampleSqls.scrollRectToVisible(new Rectangle(0,0,1,1)));
    }
 
 
@@ -184,6 +187,8 @@ public class FormatSqlController
    private FormatSqlPref createFormatSqlPrefFromGui()
    {
       FormatSqlPref ret = new FormatSqlPref();
+
+      ret.setUseVerticalBlankFormatter(_formatSqlPanel.radUseVerticalBlankFormatter.isSelected());
 
       if (null != _formatSqlPanel.txtIndentCount.getText())
       {
@@ -221,7 +226,7 @@ public class FormatSqlController
       ret.setCommasAtLineBegin(_formatSqlPanel.radCommasAtLineBeginYes.isSelected());
 
 
-      ArrayList<KeywordBehaviourPref> buf = new ArrayList<KeywordBehaviourPref>();
+      ArrayList<KeywordBehaviourPref> buf = new ArrayList<>();
       for (KeywordBehaviourPrefCtrl keywordBehaviourPrefCtrl : _formatSqlPanel.keywordBehaviourPrefCtrls)
       {
          keywordBehaviourPrefCtrl.applyChanges();
