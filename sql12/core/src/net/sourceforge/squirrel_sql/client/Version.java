@@ -17,12 +17,12 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * Application version information.
  *
@@ -35,7 +35,7 @@ public class Version
 	 * No I18n/StringManager here. This class is used to early. The right Locale may not have been set yet.
 	 */
 	private static final String APP_NAME = "SQuirreL SQL Client";
-	private static final String COPYRIGHT = "Copyright (c) 2001-2020\nColin Bell, Gerd Wagner, Rob Manning and others";
+	private static final String COPYRIGHT = "Copyright (c) 2001-2021\nColin Bell, Gerd Wagner, Rob Manning and others";
 	private static final String WEB_SITE = "http://www.squirrelsql.org";
 	
 	private static String shortVersion = null;
