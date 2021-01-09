@@ -26,8 +26,8 @@ public class ReconnectDialog extends JDialog
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ReconnectController.class);
 
-   JButton btnYes = new JButton(s_stringMgr.getString("ReconnectAction.yes"));
-   JButton btnNo = new JButton(s_stringMgr.getString("ReconnectAction.no"));
+   JButton btnYes;
+   JButton btnNo;
    JButton btnCancel = new JButton(s_stringMgr.getString("ReconnectAction.cancel"));
    JButton btnToggleCollapsed;
    JTextField txtUrl = new JTextField();
@@ -67,8 +67,12 @@ public class ReconnectDialog extends JDialog
    {
       JPanel ret = new JPanel(new BorderLayout(5,5));
 
+      btnYes = new JButton(s_stringMgr.getString("ReconnectAction.yes"));
+      btnYes.setMnemonic(s_stringMgr.getString("ReconnectAction.yes.mnemonic").charAt(0));
       ret.add(btnYes, BorderLayout.WEST);
 
+      btnNo = new JButton(s_stringMgr.getString("ReconnectAction.no"));
+      btnNo.setMnemonic(s_stringMgr.getString("ReconnectAction.no.mnemonic").charAt(0));
       ret.add(btnNo, BorderLayout.CENTER);
 
       ret.add(btnCancel, BorderLayout.EAST);

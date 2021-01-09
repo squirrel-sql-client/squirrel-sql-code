@@ -18,8 +18,8 @@ public class DontShowAgainDialog extends JDialog
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DontShowAgainDialog.class);
 
    private JCheckBox chkDontShowAgain = new JCheckBox(s_stringMgr.getString("DontShowAgainDialog.dontShowAgainMsg"));
-   private JButton btnYes = new JButton(s_stringMgr.getString("DontShowAgainDialog.yes"));
-   private JButton btnNo = new JButton(s_stringMgr.getString("DontShowAgainDialog.no"));
+   private JButton btnYes;
+   private JButton btnNo;
    private JButton btnCancel = new JButton(s_stringMgr.getString("DontShowAgainDialog.cancel"));
    private DontShowAgainResult _result = new DontShowAgainResult();
 
@@ -114,9 +114,13 @@ public class DontShowAgainDialog extends JDialog
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0 );
+      btnYes = new JButton(s_stringMgr.getString("DontShowAgainDialog.yes"));
+      btnYes.setMnemonic(s_stringMgr.getString("DontShowAgainDialog.yes.mnemonic").charAt(0));
       ret.add(btnYes, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0),0,0 );
+      btnNo = new JButton(s_stringMgr.getString("DontShowAgainDialog.no"));
+      btnNo.setMnemonic(s_stringMgr.getString("DontShowAgainDialog.no.mnemonic").charAt(0));
       ret.add(btnNo, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0),0,0 );

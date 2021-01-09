@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#596 Shortcuts Alt-Y, Alt-N for the following dialogs:
+   Confirm Session closing (Ctrl-Q)
+   Reconnect to database (Ctrl-Alt-T)
+   Unsaved Changes
+
 Option to use the Vertical-blank Sql-formatter (https://github.com/vertical-blank/sql-formatter) instead of SQuirreL's internal formatter.
   To switch to the Vertical-blank formatter go to menu File --> Global Preference --> tab "SQL formatting".
   This change was inspired by the discussion in bug #1455.
