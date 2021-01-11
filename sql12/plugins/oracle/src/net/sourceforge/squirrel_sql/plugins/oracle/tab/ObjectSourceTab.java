@@ -23,7 +23,10 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,6 +40,8 @@ import java.sql.Statement;
  */
 public class ObjectSourceTab extends BaseSourceTab
 {
+	private static final ILogger s_log = LoggerController.createLogger(ObjectSourceTab.class);
+
 	private final String _columnData;
 
 	public ObjectSourceTab(String columnData, String hint)
@@ -68,17 +73,31 @@ public class ObjectSourceTab extends BaseSourceTab
 
 			IDatabaseObjectInfo doi = getDatabaseObjectInfo();
 
-			String sql1 = "select text from sys.dba_source " +
-					"where type = '" + _columnData + "' " +
-					"and owner = '" + doi.getSchemaName() + "' " +
-					"and name = '" + doi.getSimpleName() + "' " +
-					"order by line";
+			ResultSet res = null;
 
-			ResultSet res = stat.executeQuery(sql1);
-
-			if(false == res.next())
+			boolean read_sys_dba_source_failed = false;
+			try
 			{
-				res.close();
+				String sql1 = "select text from sys.dba_source " +
+						"where type = '" + _columnData + "' " +
+						"and owner = '" + doi.getSchemaName() + "' " +
+						"and name = '" + doi.getSimpleName() + "' " +
+						"order by line";
+
+				res = stat.executeQuery(sql1);
+			}
+			catch (Exception sys_dba_source_exc)
+			{
+				read_sys_dba_source_failed = true;
+				s_log.warn("Failed to read source from sys.dba_source. Will try sys.all_source next", sys_dba_source_exc);
+			}
+
+			if(read_sys_dba_source_failed || false == res.next())
+			{
+				if (false == read_sys_dba_source_failed)
+				{
+					res.close();
+				}
 
 				String sql2 = "select text from sys.all_source " +
 						"where type = '" + _columnData + "' " +
@@ -100,6 +119,9 @@ public class ObjectSourceTab extends BaseSourceTab
 			{
 				ret += res.getString(1);
 			}
+
+			SQLUtilities.closeResultSet(res);
+			SQLUtilities.closeStatement(stat);
 
 			return ret;
 		}
