@@ -930,7 +930,16 @@ public class SquirrelPreferences implements Serializable
 		}
 		catch (Exception ex)
 		{
-			s_log.error(s_stringMgr.getString("SquirrelPreferences.error.reading", prefsFile.getPath()), ex);
+			// This error message was formerly i18ned unnecessarily.
+			// The new version is supposed to be more stable especially during bootstrap.
+			if (null != prefsFile)
+			{
+				s_log.error("Error occurred reading from preferences file: " + prefsFile.getPath(), ex);
+			}
+			else
+			{
+				s_log.error("Error occurred reading preferences: ", ex);
+			}
 		}
 		return new SquirrelPreferences();
 	}
