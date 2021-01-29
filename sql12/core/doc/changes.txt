@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Brushed up the Mac OS installer (It is recommended to delete previous Mac OS version before installing the new version)
+  - Start up splash screen is displayed
+  - Plugins are loaded correctly (bug #1449)
+  - Look & Feel Plugin is available
+  - Legacy Mac OS Plugin was made an optional Plugin
+
 #596 Shortcuts Alt-Y, Alt-N for the following dialogs:
    Confirm Session closing (Ctrl-Q)
    Reconnect to database (Ctrl-Alt-T)

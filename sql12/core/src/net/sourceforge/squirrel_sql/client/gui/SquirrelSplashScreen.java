@@ -23,7 +23,7 @@ import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.awt.*;
+import java.awt.SplashScreen;
 
 public class SquirrelSplashScreen
 {
@@ -38,7 +38,7 @@ public class SquirrelSplashScreen
 
       if(null == splashScreen)
       {
-         s_log.error("No SplashScreen availabe", new NullPointerException("No SplashScreen availabe. Please check VM parameter -splash:"));
+         s_log.error("No SplashScreen availabe", new NullPointerException("No SplashScreen available. Please check VM parameter -splash:"));
          return;
       }
       _splashStringWriter = new SplashStringWriter(splashScreen, prefs.getShowPluginFilesInSplashScreen(), numberOffCallsToindicateNewTask);

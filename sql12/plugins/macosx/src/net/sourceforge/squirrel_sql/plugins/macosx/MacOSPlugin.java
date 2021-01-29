@@ -6,149 +6,108 @@
 
 package net.sourceforge.squirrel_sql.plugins.macosx;
 
-//import com.apple.eawt.ApplicationAdapter;
-//import com.apple.eawt.ApplicationEvent;
-//import com.apple.eawt.Application;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
- *
- * @author  rowen
+ * @author rowen
  */
-public class MacOSPlugin extends DefaultPlugin {
-    
-    private static final String COM_APPLE_EAWT_APPLICATION_CLASSNAME = "com.apple.eawt.Application";
-	private final static ILogger s_log = LoggerController.createLogger(MacOSPlugin.class);
+public class MacOSPlugin extends DefaultPlugin
+{
 
-    public String getAuthor() {
-        return("Neville Rowe");
-    }
-    
-    public String getDescriptiveName() {
-        return("Mac OS User Interface");
-    }
-    
-    public String getInternalName() {
-        return("macosx");
-    }
-    
-    public String getVersion() {
-        return("0.1");
-    }
+   private final static ILogger s_log = LoggerController.createLogger(MacOSPlugin.class);
 
-    public String getChangeLogFileName()
-    {
-            return "changes.txt";
-    }
+   public String getAuthor()
+   {
+      return ("Neville Rowe");
+   }
 
-    public String getHelpFileName()
-    {
-            return "readme.txt";
-    }
+   public String getDescriptiveName()
+   {
+      return ("Mac OS User Interface");
+   }
 
-    public String getLicenceFileName()
-    {
-            return "licence.txt";
-    }
+   public String getInternalName()
+   {
+      return ("macosx");
+   }
 
-    public synchronized void load(IApplication app) throws PluginException
-    {
-    	super.load(app);
-    }
+   public String getVersion()
+   {
+      return ("0.1");
+   }
 
-    public synchronized void initialize() throws PluginException
-    {
-       try
-       {
-          super.initialize();
-          final IApplication app = getApplication();
+   public String getChangeLogFileName()
+   {
+      return "changes.txt";
+   }
+
+   public String getHelpFileName()
+   {
+      return "readme.txt";
+   }
+
+   public String getLicenceFileName()
+   {
+      return "licence.txt";
+   }
+
+   public synchronized void load(IApplication app) throws PluginException
+   {
+      super.load(app);
+   }
+
+   public synchronized void initialize() throws PluginException
+   {
+      try
+      {
+         super.initialize();
+         final IApplication app = getApplication();
 
 
-          Class<?> com_apple_eawt_Application;
-          try
-          {
-             com_apple_eawt_Application = Class.forName(COM_APPLE_EAWT_APPLICATION_CLASSNAME);
-          }
-          catch (ClassNotFoundException e)
-          {
-         	 s_log.error("MacOSX plugin is loaded, but Apple support class isn't in the Classpath: "+
-         		 e.getMessage(), e);
+         Class<?> com_apple_eawt_Application;
+         Class<?> com_apple_eawt_ApplicationListener;
+         try
+         {
+            com_apple_eawt_Application = Class.forName("com.apple.eawt.Application");
+            com_apple_eawt_ApplicationListener = Class.forName("com.apple.eawt.ApplicationListener");
+         }
+         catch (ClassNotFoundException e)
+         {
+            s_log.error("MacOSX plugin is loaded, but Apple support class isn't in the Classpath: " + e.getMessage());
             return;
-          }
+         }
 
-          Method getApplication = com_apple_eawt_Application.getMethod("getApplication", new Class[0]);
+         Method getApplication = com_apple_eawt_Application.getMethod("getApplication", new Class[0]);
 
-          Object applicationInstance = getApplication.invoke(com_apple_eawt_Application, new Object[0]);
-
-          Class<?> com_apple_eawt_ApplicationListener = Class.forName("com.apple.eawt.ApplicationListener");
-
-          ApplicationListenerInvocationHandler handler = new ApplicationListenerInvocationHandler(app);
-          Object proxy = Proxy.newProxyInstance(IApplication.class.getClassLoader(), new Class[]{com_apple_eawt_ApplicationListener}, handler);
-
-//          com.apple.eawt.ApplicationAdapter applicationAdapter = new com.apple.eawt.ApplicationAdapter()
-//                 {
-//                    public void handleAbout(ApplicationEvent e)
-//                    {
-//                       e.setHandled(true);
-//                       new AboutCommand(app).execute();
-//                    }
-//
-//                    public void handleOpenApplication(ApplicationEvent e)
-//                    {
-//                    }
-//
-//                    public void handleOpenFile(ApplicationEvent e)
-//                    {
-//                    }
-//
-//                    public void handlePreferences(ApplicationEvent e)
-//                    {
-//                       e.setHandled(true);
-//                       new GlobalPreferencesCommand(app).execute();
-//                    }
-//
-//                    public void handlePrintFile(ApplicationEvent e)
-//                    {
-//                    }
-//
-//                    public void handleQuit(ApplicationEvent e)
-//                    {
-//                       e.setHandled(true);
-//                       app.getMainFrame().dispose();
-//                    }
-//                 };
+         Object applicationInstance = getApplication.invoke(com_apple_eawt_Application, new Object[0]);
 
 
-
-          Method addApplicationListener =
-             com_apple_eawt_Application.getMethod("addApplicationListener", new Class[]{com_apple_eawt_ApplicationListener});
-          addApplicationListener.invoke(applicationInstance, new Object[]{proxy});
-
-          Method addPreferencesMenuItem =
-             com_apple_eawt_Application.getMethod("addPreferencesMenuItem", new Class[0]);
-          addPreferencesMenuItem.invoke(applicationInstance, new Object[0]);
-
-          Method setEnabledPreferencesMenu =
-             com_apple_eawt_Application.getMethod("setEnabledPreferencesMenu", new Class[]{Boolean.TYPE});
-          setEnabledPreferencesMenu.invoke(applicationInstance, new Object[]{Boolean.TRUE});
+         ApplicationListenerInvocationHandler handler = new ApplicationListenerInvocationHandler(app);
+         Object proxy = Proxy.newProxyInstance(IApplication.class.getClassLoader(), new Class[]{com_apple_eawt_ApplicationListener}, handler);
 
 
-//          fApplication.addApplicationListener(applicationAdapter);
-//          fApplication.addPreferencesMenuItem();
-//          fApplication.setEnabledPreferencesMenu(true);
-       }
-       catch (Exception e)
-       {
-          s_log.error("initialize: encountered exception: "+e.getMessage(), e);
-          throw new RuntimeException(e);
-       }
-    }
+         Method addApplicationListener =
+               com_apple_eawt_Application.getMethod("addApplicationListener", new Class[]{com_apple_eawt_ApplicationListener});
+         addApplicationListener.invoke(applicationInstance, new Object[]{proxy});
+
+         Method addPreferencesMenuItem =
+               com_apple_eawt_Application.getMethod("addPreferencesMenuItem", new Class[0]);
+         addPreferencesMenuItem.invoke(applicationInstance, new Object[0]);
+
+         Method setEnabledPreferencesMenu =
+               com_apple_eawt_Application.getMethod("setEnabledPreferencesMenu", new Class[]{Boolean.TYPE});
+         setEnabledPreferencesMenu.invoke(applicationInstance, new Object[]{Boolean.TRUE});
+      }
+      catch (Exception e)
+      {
+         s_log.error("Failed to initialize MAC Plugin: encountered exception: " + e.getMessage(), e);
+      }
+   }
 }
