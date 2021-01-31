@@ -24,18 +24,30 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.*;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.findcolumn.FindColumnCtrl;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.AdditionalResultTabsController;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CloseAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ContinueReadChannel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -47,8 +59,14 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -256,8 +274,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 		final int rowCount = _rsds.currentRowCount();
 
-      _currentSqlLblCtrl.setSql(_sql);
-      _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
+      _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead(), _sql, _exInfo.getQueryHolder().getOriginalQuery());
 
       _additionalResultTabsController.setCurrentResult(_rsds);
 
