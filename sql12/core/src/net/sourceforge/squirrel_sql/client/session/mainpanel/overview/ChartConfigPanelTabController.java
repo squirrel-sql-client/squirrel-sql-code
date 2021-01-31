@@ -9,9 +9,8 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -143,14 +142,19 @@ public class ChartConfigPanelTabController
 
       if (null == e || ItemEvent.SELECTED == e.getStateChange())
       {
+
+         if(0 == cboColumns.getItemCount())
+         {
+            return;
+         }
+
+         ColumnComboModel selectedColumn = (ColumnComboModel) cboColumns.getSelectedItem();
          if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.DIFFERENCES_CHART)
          {
-            ColumnComboModel selectedColumn = (ColumnComboModel) cboColumns.getSelectedItem();
             _chartConfigPanelTab.cboTimeScale.setEnabled(IndexedColumnFactory.isTemporal(selectedColumn.getColumnDisplayDefinition()));
          }
          else
          {
-            ColumnComboModel selectedColumn = (ColumnComboModel) cboColumns.getSelectedItem();
             _chartConfigPanelTab.cboYAxisKind.setModel(new DefaultComboBoxModel(ChartConfigMode.getAvailableValues(selectedColumn.getColumnDisplayDefinition(), _chartConfigPanelTabMode)));
          }
       }
