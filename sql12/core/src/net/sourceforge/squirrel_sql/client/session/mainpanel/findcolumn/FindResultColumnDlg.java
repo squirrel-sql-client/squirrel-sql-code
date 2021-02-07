@@ -6,12 +6,25 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
-public class FindColumnDlg extends JDialog
+public class FindResultColumnDlg extends JDialog
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FindColumnDlg.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FindResultColumnDlg.class);
 
 
    JTextField txtFilter = new JTextField();
@@ -32,7 +45,7 @@ public class FindColumnDlg extends JDialog
 
 
 
-   public FindColumnDlg(Frame owner)
+   public FindResultColumnDlg(Frame owner)
    {
       super(owner, true);
 
@@ -59,7 +72,7 @@ public class FindColumnDlg extends JDialog
          @Override
          public void run()
          {
-            GUIUtils.centerWithinParent(FindColumnDlg.this);
+            GUIUtils.centerWithinParent(FindResultColumnDlg.this);
          }
       });
 

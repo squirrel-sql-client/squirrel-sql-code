@@ -133,8 +133,8 @@ import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindResultColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
@@ -567,7 +567,7 @@ final class MainFrameMenuBar extends JMenuBar
 		menu.addSeparator();
 		addToMenu(rsrc, CreateResultTabFrameAction.class, menu);
 		addToMenu(rsrc, FindInResultAction.class, menu);
-		addToMenu(rsrc, FindColumnAction.class, menu);
+		addToMenu(rsrc, FindResultColumnAction.class, menu);
 		addToMenu(rsrc, MarkDuplicatesToggleAction.class, menu);
 		addToMenu(rsrc, RerunCurrentSQLResultTabAction.class, menu);
 

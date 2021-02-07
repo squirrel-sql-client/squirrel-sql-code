@@ -17,18 +17,29 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write toS the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionColoringUtil;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
+import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
+import net.sourceforge.squirrel_sql.client.session.action.DeleteSelectedTablesAction;
+import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
+import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
+import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
+import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
+import net.sourceforge.squirrel_sql.client.session.action.ShowTableReferencesAction;
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
@@ -43,19 +54,18 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionColoringUtil;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.*;
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 /**
  * This is the tree showing the structure of objects in the database.
  *
@@ -141,7 +151,9 @@ class ObjectTree extends JTree
       addToPopup(actions.get(RefreshSchemaInfoAction.class));
       addToPopup(actions.get(RefreshObjectTreeItemAction.class));
 
-      addToPopup(DatabaseObjectType.TABLE, actions.get(EditWhereColsAction.class));
+		addToPopup(actions.get(FindColumnsAction.class));
+
+		addToPopup(DatabaseObjectType.TABLE, actions.get(EditWhereColsAction.class));
 
       addToPopup(DatabaseObjectType.TABLE, actions.get(SQLFilterAction.class));
       addToPopup(DatabaseObjectType.VIEW, actions.get(SQLFilterAction.class));

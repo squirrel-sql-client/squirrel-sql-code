@@ -28,12 +28,12 @@ import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetail
 import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.findcolumn.FindColumnCtrl;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.findcolumn.FindResultColumnCtrl;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.AdditionalResultTabsController;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CloseAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindResultColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum.RowColAndSumController;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -577,7 +577,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _markDuplicatesChooserController = new MarkDuplicatesChooserController(this);
       ret.add(_markDuplicatesChooserController.getComponent());
 
-      ret.add(new TabButton(new FindColumnAction(this)));
+      ret.add(new TabButton(new FindResultColumnAction(this)));
       ret.add(new TabButton(new FindInResultAction(this)));
       ret.add(new TabButton(new CreateResultTabFrameAction(this)));
       ret.add(new TabButton(new CloseAction(this)));
@@ -625,15 +625,15 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       DataSetViewerTablePanel dataSetViewerTablePanel = (DataSetViewerTablePanel) _resultDataSetViewerFindHandler.getDataSetViewer();
 
       _tabResultTabs.setSelectedIndex(0);
-      FindColumnCtrl findColumnCtrl = new FindColumnCtrl(GUIUtils.getOwningFrame(_tabResultTabs), dataSetViewerTablePanel);
+      FindResultColumnCtrl findResultColumnCtrl = new FindResultColumnCtrl(GUIUtils.getOwningFrame(_tabResultTabs), dataSetViewerTablePanel);
 
-      if(null != findColumnCtrl.getColumnToGoTo())
+      if(null != findResultColumnCtrl.getColumnToGoTo())
       {
-         dataSetViewerTablePanel.scrollColumnToVisible(findColumnCtrl.getColumnToGoTo().getExtTableColumn());
+         dataSetViewerTablePanel.scrollColumnToVisible(findResultColumnCtrl.getColumnToGoTo().getExtTableColumn());
       }
-      else if(null != findColumnCtrl.getColumnsToMoveToFront())
+      else if(null != findResultColumnCtrl.getColumnsToMoveToFront())
       {
-         dataSetViewerTablePanel.moveColumnsToFront(findColumnCtrl.getColumnsToMoveToFront());
+         dataSetViewerTablePanel.moveColumnsToFront(findResultColumnCtrl.getColumnsToMoveToFront());
       }
    }
 

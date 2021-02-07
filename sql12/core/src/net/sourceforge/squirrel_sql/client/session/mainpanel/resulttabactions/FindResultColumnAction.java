@@ -8,17 +8,17 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
 
 import java.awt.event.ActionEvent;
 
-public class FindColumnAction extends SquirrelAction implements ISQLPanelAction
+public class FindResultColumnAction extends SquirrelAction implements ISQLPanelAction
 {
    private ResultTabProvider _resultTabProvider;
 
-   public FindColumnAction(ResultTab resultTab)
+   public FindResultColumnAction(ResultTab resultTab)
    {
       super(Main.getApplication(), Main.getApplication().getResources());
       _resultTabProvider = new ResultTabProvider(resultTab);
    }
 
-   public FindColumnAction()
+   public FindResultColumnAction()
    {
       this(null);
    }

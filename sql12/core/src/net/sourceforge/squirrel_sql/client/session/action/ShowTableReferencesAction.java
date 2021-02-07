@@ -1,23 +1,19 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.action.InStatColumnInfo;
 import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ReferencesFrameStarter;
 import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.RootTable;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-public class ShowTableReferencesAction extends SquirrelAction
-      implements IObjectTreeAction
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ShowTableReferencesAction extends SquirrelAction implements IObjectTreeAction
 {
    private IObjectTreeAPI _tree;
 

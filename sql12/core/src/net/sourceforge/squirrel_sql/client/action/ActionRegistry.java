@@ -44,6 +44,7 @@ import net.sourceforge.squirrel_sql.client.session.action.EscapeDateAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
+import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FormatSQLAction;
 import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
@@ -95,8 +96,8 @@ import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.Ne
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.QuitSoundAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindInResultAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.FindResultColumnAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
@@ -200,6 +201,7 @@ public class ActionRegistry
       //this.add(new DropSelectedTablesAction(_app));
       actionCollection.add(new DeleteSelectedTablesAction(app));
       actionCollection.add(new ShowTableReferencesAction(app));
+      actionCollection.add(new FindColumnsAction(app));
       actionCollection.add(new DumpApplicationAction(app));
       actionCollection.add(new SavePreferencesAction(app));
       actionCollection.add(new DumpSessionAction(app));
@@ -258,7 +260,7 @@ public class ActionRegistry
       actionCollection.add(new RerunCurrentSQLResultTabAction());
       actionCollection.add(new CreateResultTabFrameAction());
       actionCollection.add(new FindInResultAction());
-      actionCollection.add(new FindColumnAction());
+      actionCollection.add(new FindResultColumnAction());
       actionCollection.add(new MarkDuplicatesToggleAction());
 
 
