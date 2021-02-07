@@ -27,5 +27,7 @@ public class FindColumnsAction extends SquirrelAction implements IObjectTreeActi
       {
          return;
       }
+
+      //new FindColumnsCtrl(_tree);
    }
 }

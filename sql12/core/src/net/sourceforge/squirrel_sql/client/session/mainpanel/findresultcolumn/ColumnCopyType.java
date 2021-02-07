@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel.findcolumn;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.findresultcolumn;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;

@@ -28,7 +28,7 @@ import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetail
 import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.findcolumn.FindResultColumnCtrl;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.findresultcolumn.FindResultColumnCtrl;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.lazyresulttab.AdditionalResultTabsController;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CloseAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.CreateResultTabFrameAction;
