@@ -20,7 +20,7 @@ public class SearchResultReader
 
    private ExecutorService _executorService = Executors.newSingleThreadExecutor();
    private Object sync = new Object();
-   private volatile boolean _doCancel = false;
+   private volatile boolean _doStopSearching = false;
 
    private FindColumnsDlg _dlg;
    private DislplayResultsCallback _dislplayResultsCallback;
@@ -32,13 +32,13 @@ public class SearchResultReader
       _dislplayResultsCallback = dislplayResultsCallback;
    }
 
-   void cancel()
+   void stopSearching()
    {
       synchronized (sync)
       {
-         if (_dlg.isCancelCloseOnCancel())
+         if (_dlg.isSearching())
          {
-            _doCancel = true;
+            _doStopSearching = true;
          }
       }
    }
@@ -47,14 +47,14 @@ public class SearchResultReader
    {
       try
       {
-         _doCancel = true;
+         _doStopSearching = true;
          if (null != _currentFuture)
          {
             // We don't want more than one thread running.
             _currentFuture.get();
          }
 
-         _doCancel = false;
+         _doStopSearching = false;
          SwingUtilities.invokeLater(() -> _findAndShowResults(0, filterString, schemaInfo, searchResults, tableInfos));
       }
       catch (Exception e)
@@ -78,7 +78,7 @@ public class SearchResultReader
                if(0 == beginIndex)
                {
                   System.out.println("#### Starting thread");
-                  GUIUtils.processOnSwingEventThread(() -> _dlg.switchBtnCancelCloseToCancel());
+                  GUIUtils.processOnSwingEventThread(() -> _dlg.setSearching(true));
 
                   int finalBeginIndex = i;
                   _currentFuture =
@@ -98,7 +98,7 @@ public class SearchResultReader
 
             for (ExtendedColumnInfo columnInfo : columnInfos)
             {
-               if(_doCancel)
+               if(_doStopSearching)
                {
                   synchronized (sync)
                   {
@@ -127,14 +127,14 @@ public class SearchResultReader
 
    private void cancelReadResultLoop()
    {
-      _dlg.switchBtnCancelCloseToClose();
-      _dlg.txtStatus.setText(_dlg.txtStatus.getText() + "  (" + s_stringMgr.getString("SearchResultReader.canceled") + ")");
+      _dlg.setSearching(false);
+      _dlg.txtStatus.setText(_dlg.txtStatus.getText() + "  (" + s_stringMgr.getString("SearchResultReader.stopped") + ")");
    }
 
    private void finishReadResultLoop(ArrayList<FindColumnsResultBean> searchResults)
    {
       _dislplayResultsCallback.displayResult(searchResults);
-      _dlg.switchBtnCancelCloseToClose();
+      _dlg.setSearching(false);
    }
 
    private FindColumnsResultBean createResultBean(ITableInfo tableInfo, ExtendedColumnInfo columnInfo)

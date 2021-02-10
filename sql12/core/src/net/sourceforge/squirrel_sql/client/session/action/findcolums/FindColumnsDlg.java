@@ -23,15 +23,12 @@ public class FindColumnsDlg extends JDialog
 
    JTextField txtFilter;
    JButton btnFind;
+   JButton btnStopSearching;
 
    DataSetViewerTablePanel tblSearchResult = new DataSetViewerTablePanel();
 
    JTextField txtStatus;
-   JButton btnCancelClose;
-
-   private String _closeString = s_stringMgr.getString("FindColumnsDlg.close");
-   private String _cancelString = s_stringMgr.getString("FindColumnsDlg.cancel");
-
+   JButton btnClose;
 
    public FindColumnsDlg(Window parent)
    {
@@ -65,11 +62,11 @@ public class FindColumnsDlg extends JDialog
       ret.add(txtStatus, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0 );
-      btnCancelClose = new JButton();
-      switchBtnCancelCloseToClose();
-      ret.add(btnCancelClose, gbc);
+      btnClose = new JButton(s_stringMgr.getString("FindColumnsDlg.close"));
+      setSearching(false);
+      ret.add(btnClose, gbc);
 
-      GUIUtils.setPreferredHeight(txtStatus, btnCancelClose.getPreferredSize().height);
+      GUIUtils.setPreferredHeight(txtStatus, btnClose.getPreferredSize().height);
 
       return ret;
    }
@@ -89,29 +86,24 @@ public class FindColumnsDlg extends JDialog
       btnFind = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND));
       ret.add(btnFind, gbc);
 
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0 );
+      btnStopSearching = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.STOP));
+      btnStopSearching.setToolTipText(s_stringMgr.getString("FindColumnsDlg.stopSearching"));
+      ret.add(btnStopSearching, gbc);
+
       GUIUtils.setPreferredHeight(txtFilter, btnFind.getPreferredSize().height);
 
       return ret;
 
    }
 
-   void switchBtnCancelCloseToClose()
+   void setSearching(boolean b)
    {
-      btnCancelClose.setText(_closeString);
+      btnStopSearching.setEnabled(b);
    }
 
-   void switchBtnCancelCloseToCancel()
+   public boolean isSearching()
    {
-      btnCancelClose.setText(_cancelString);
-   }
-
-   public boolean isCancelCloseOnClose()
-   {
-      return _closeString.equals(btnCancelClose.getText());
-   }
-
-   public boolean isCancelCloseOnCancel()
-   {
-      return _cancelString.equals(btnCancelClose.getText());
+      return btnStopSearching.isEnabled();
    }
 }

@@ -35,7 +35,7 @@ public class FindColumnsCtrl
    {
       _objectTreeAPI = objectTreeAPI;
 
-      _objectTreeAPI.getSession().addSimpleSessionListener(() -> {_searchResultReader.cancel();  close();});
+      _objectTreeAPI.getSession().addSimpleSessionListener(() -> {_searchResultReader.stopSearching();  close();});
 
       _dlg = new FindColumnsDlg(Main.getApplication().getMainFrame());
 
@@ -54,12 +54,12 @@ public class FindColumnsCtrl
 
       onFind();
 
-      GUIUtils.enableCloseByEscape(_dlg, dialog -> _searchResultReader.cancel());
+      GUIUtils.enableCloseByEscape(_dlg, dialog -> _searchResultReader.stopSearching());
       _dlg.addWindowListener(new WindowAdapter() {
          @Override
          public void windowClosing(WindowEvent e)
          {
-            _searchResultReader.cancel();
+            _searchResultReader.stopSearching();
          }
       });
 
@@ -78,8 +78,9 @@ public class FindColumnsCtrl
 
 
       _dlg.btnFind.addActionListener(e -> onFind());
+      _dlg.btnStopSearching.addActionListener(e -> _searchResultReader.stopSearching());
 
-      _dlg.btnCancelClose.addActionListener(e -> onCancelClose());
+      _dlg.btnClose.addActionListener(e -> onClose());
 
 
       _dlg.setVisible(true);
@@ -87,20 +88,10 @@ public class FindColumnsCtrl
       GUIUtils.forceFocus(_dlg.txtFilter);
    }
 
-   private void onCancelClose()
+   private void onClose()
    {
-      // DO NOT PUT _searchResultReader.cancel(); HERE,
-      // because _searchResultReader.cancel() may change the result of _dlg.isCancelCloseOnClose().
-
-      if(_dlg.isCancelCloseOnClose())
-      {
-         _searchResultReader.cancel();
-         close();
-      }
-      else
-      {
-         _searchResultReader.cancel();
-      }
+      _searchResultReader.stopSearching();
+      close();
    }
 
    private void onKeyPressed(KeyEvent e)

@@ -157,6 +157,8 @@ public class SquirrelResources extends Resources
 		String UNLOCK = "unlock";
 
 		String SAVE_ALL = "save_all";
+
+		String STOP = "stop";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)
