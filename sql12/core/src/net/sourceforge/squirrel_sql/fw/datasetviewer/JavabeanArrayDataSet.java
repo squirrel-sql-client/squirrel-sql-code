@@ -17,24 +17,31 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.util.EmptyIterator;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
-
-import net.sourceforge.squirrel_sql.fw.util.EmptyIterator;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 public class JavabeanArrayDataSet implements IDataSet
 {
 	private Object[] _currentRow;
 
-	private List<Object[]> _data;
-	private Iterator<Object[]> _dataIter = new EmptyIterator<Object[]>();
+	private List<Object[]> _data = new ArrayList<>();
+	private Iterator<Object[]> _dataIter = new EmptyIterator<>();
 
    private DataSetDefinition _dataSetDefinition;
    private BeanInfo _info;
@@ -260,5 +267,10 @@ public class JavabeanArrayDataSet implements IDataSet
    public void setIgnoreProperty(String ignoreProperty)
    {
       _ignoreProperties.add(ignoreProperty);
+   }
+
+   public int getSize()
+   {
+      return _data.size();
    }
 }

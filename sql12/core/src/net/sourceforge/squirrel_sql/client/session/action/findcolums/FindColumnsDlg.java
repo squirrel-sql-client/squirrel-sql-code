@@ -21,11 +21,16 @@ public class FindColumnsDlg extends JDialog
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FindColumnsDlg.class);
 
-
    JTextField txtFilter;
    JButton btnFind;
 
    DataSetViewerTablePanel tblSearchResult = new DataSetViewerTablePanel();
+
+   JTextField txtStatus;
+   JButton btnCancelClose;
+
+   private String _closeString = s_stringMgr.getString("FindColumnsDlg.close");
+   private String _cancelString = s_stringMgr.getString("FindColumnsDlg.cancel");
 
 
    public FindColumnsDlg(Window parent)
@@ -37,14 +42,40 @@ public class FindColumnsDlg extends JDialog
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0 );
-      getContentPane().add(createUpperPanel(), gbc);
+      getContentPane().add(createTopPanel(), gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0 );
       tblSearchResult.init(null, null);
       getContentPane().add(new JScrollPane(tblSearchResult.getComponent()), gbc);
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,2,2,2), 0,0 );
+      getContentPane().add(createBottomPanel(), gbc);
+
    }
 
-   private JPanel createUpperPanel()
+   private JPanel createBottomPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0 );
+      txtStatus = new JTextField();
+      txtStatus.setEditable(false);
+      ret.add(txtStatus, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0 );
+      btnCancelClose = new JButton();
+      switchBtnCancelCloseToClose();
+      ret.add(btnCancelClose, gbc);
+
+      GUIUtils.setPreferredHeight(txtStatus, btnCancelClose.getPreferredSize().height);
+
+      return ret;
+   }
+
+
+   private JPanel createTopPanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
@@ -62,5 +93,25 @@ public class FindColumnsDlg extends JDialog
 
       return ret;
 
+   }
+
+   void switchBtnCancelCloseToClose()
+   {
+      btnCancelClose.setText(_closeString);
+   }
+
+   void switchBtnCancelCloseToCancel()
+   {
+      btnCancelClose.setText(_cancelString);
+   }
+
+   public boolean isCancelCloseOnClose()
+   {
+      return _closeString.equals(btnCancelClose.getText());
+   }
+
+   public boolean isCancelCloseOnCancel()
+   {
+      return _cancelString.equals(btnCancelClose.getText());
    }
 }
