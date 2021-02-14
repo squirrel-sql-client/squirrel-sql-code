@@ -1,29 +1,49 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.findcolums.FindColumnsCtrl;
+import net.sourceforge.squirrel_sql.client.session.action.findcolums.FindColumnsScope;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeDndTransfer;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionListener;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Window;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.util.List;
 import java.util.TooManyListenersException;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 
 public class GraphDesktopController
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(GraphDesktopController.class);
-
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GraphDesktopController.class);
 
    private GraphDesktopPane _desktopPane;
    private ConstraintView _lastPressedConstraintView;
@@ -52,6 +72,7 @@ public class GraphDesktopController
 
    private JMenuItem _mnuRefreshAllTables;
    private JMenuItem _mnuScriptAllTables;
+   private JMenuItem _mnuFindColumns;
    private JMenuItem _mnuSelectAllTables;
    private JMenuItem _mnuSelectTablesByName;
    private JCheckBoxMenuItem _mnuShowConstraintNames;
@@ -219,125 +240,51 @@ public class GraphDesktopController
 
       _mnuCopyGraph= new JMenuItem(s_stringMgr.getString("graph.copyGraph"));
       _mnuCopyGraph.setIcon(_graphPluginResources.getIcon(GraphPluginResources.IKeys.COPY_GRAPH));
-      _mnuCopyGraph.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onCopyGraph();
-         }
-      });
+      _mnuCopyGraph.addActionListener(e -> onCopyGraph());
 
 
-      // i18n[graph.refreshAllTables=Refresh all tables]
 		_mnuRefreshAllTables = new JMenuItem(s_stringMgr.getString("graph.refreshAllTables"));
-      _mnuRefreshAllTables.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onRefreshAllTables();
-         }
-      });
+      _mnuRefreshAllTables.addActionListener(e -> onRefreshAllTables());
 
-		// i18n[graph.scriptAllTables=Script all tables]
 		_mnuScriptAllTables = new JMenuItem(s_stringMgr.getString("graph.scriptAllTables"));
-      _mnuScriptAllTables.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onScriptAllTables();
-         }
-      });
+      _mnuScriptAllTables.addActionListener(e -> onScriptAllTables());
+
+		_mnuFindColumns = new JMenuItem(s_stringMgr.getString("graph.FindColumns"));
+      _mnuFindColumns.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND_COLUMN));
+      _mnuFindColumns.addActionListener(e -> onFindColumns());
 
       /////////////////////////////////////////////////////////
       // Tablegroups
-		// i18n[graph.scriptAllTables=Script all tables]
 		_mnuSelectAllTables = new JMenuItem(s_stringMgr.getString("graph.selectAllTables"));
-		_mnuSelectAllTables.addActionListener(new ActionListener()
-	    {
-	       public void actionPerformed(ActionEvent e)
-	       {
-	          onSelectAllTables();
-	       }
-	    });
+		_mnuSelectAllTables.addActionListener(e -> onSelectAllTables());
 
-      // i18n[graph.scriptAllTables=Script all tables]
       _mnuSelectTablesByName = new JMenuItem(s_stringMgr.getString("graph.selectTablesByName"));
-      _mnuSelectTablesByName.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onSelectTablesByName();
-         }
-      });
+      _mnuSelectTablesByName.addActionListener(e -> onSelectTablesByName());
       /////////////////////////////////////////////////////////
 
-		// i18n[graph.showConstr=Show constraint names]
 		_mnuShowConstraintNames = new JCheckBoxMenuItem(s_stringMgr.getString("graph.showConstr"));
-      _mnuShowConstraintNames.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            _desktopPane.repaint();
-         }
-      });
+      _mnuShowConstraintNames.addActionListener(e -> _desktopPane.repaint());
 
 		// i18n[graph.showQualifiedTableNames=Show qualified table names]
 		_mnuShowQualifiedTableNames = new JCheckBoxMenuItem(s_stringMgr.getString("graph.showQualifiedTableNames"));
-      _mnuShowQualifiedTableNames.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onShowQualifiedTableNames();
-         }
-      });
+      _mnuShowQualifiedTableNames.addActionListener(e -> onShowQualifiedTableNames());
 
       ImageIcon toWInIcon = _graphPluginResources.getIcon(GraphPluginResources.IKeys.TO_WINDOW);
       _mnuToggleWindowTab = new JMenuItem(s_stringMgr.getString("graph.toggleWindowTab"), toWInIcon);
-      _mnuToggleWindowTab.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onToggleWindowTab();
-         }
-      });
+      _mnuToggleWindowTab.addActionListener(e -> onToggleWindowTab());
 
 
 		_mnuAllTablesDbOrder = new JMenuItem(s_stringMgr.getString("graph.allTablesDbOrderRequested"));
-      _mnuAllTablesDbOrder.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onAllTablesDbOrder();
-         }
-      });
+      _mnuAllTablesDbOrder.addActionListener(e -> onAllTablesDbOrder());
 
 		_mnuAllTablesByNameOrder = new JMenuItem(s_stringMgr.getString("graph.allTablesByNameOrderRequested"));
-      _mnuAllTablesByNameOrder.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onAllTablesByNameOrder();
-         }
-      });
+      _mnuAllTablesByNameOrder.addActionListener(e -> onAllTablesByNameOrder());
 
 		_mnuAllTablesPkConstOrder = new JMenuItem(s_stringMgr.getString("graph.allTablesPkConstOrderRequested"));
-      _mnuAllTablesPkConstOrder.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onAllTablesPkConstOrder();
-         }
-      });
+      _mnuAllTablesPkConstOrder.addActionListener(e -> onAllTablesPkConstOrder());
 
 		_mnuAllFilteredSelectedOrder = new JMenuItem(s_stringMgr.getString("graph.allTablesFilteredSelectedOrderRequested"));
-      _mnuAllFilteredSelectedOrder.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onAllTablesFilteredSelectedOrder();
-         }
-      });
+      _mnuAllFilteredSelectedOrder.addActionListener(e -> onAllTablesFilteredSelectedOrder());
 
       if (_listener.isLink())
       {
@@ -354,6 +301,8 @@ public class GraphDesktopController
       }
       _popUp.add(new JSeparator());
       _popUp.add(_mnuCopyGraph);
+      _popUp.add(new JSeparator());
+      _popUp.add(_mnuFindColumns);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuRefreshAllTables);
       _popUp.add(_mnuScriptAllTables);
@@ -397,6 +346,15 @@ public class GraphDesktopController
          @Override public void popupMenuCanceled(PopupMenuEvent e) {}
       });
 
+   }
+
+   private void onFindColumns()
+   {
+      final List<ITableInfo> tablesInGraph
+            = getTableFramesModel().getTblCtrls().stream().map(tc -> tc.getTableInfo()).collect(Collectors.toList());
+
+      FindColumnsScope findColumnsScope = new FindColumnsScope(GUIUtils.getOwningWindow(_desktopPane), tablesInGraph, _session);
+      new FindColumnsCtrl(findColumnsScope);
    }
 
    private void createLinkSavingMenus()

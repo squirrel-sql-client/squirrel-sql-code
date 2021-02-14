@@ -1,8 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.action.findcolums;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
@@ -32,13 +29,13 @@ public class FindColumnsCtrl
    private SearchResultReader _searchResultReader;
 
 
-   public FindColumnsCtrl(IObjectTreeAPI objectTreeAPI, ISession session)
+   public FindColumnsCtrl(FindColumnsScope findColumnsScope)
    {
-      _findColumnsScope = new FindColumnsScope(objectTreeAPI, session);
+      _findColumnsScope = findColumnsScope;
 
       _findColumnsScope.getSession().addSimpleSessionListener(() -> {_searchResultReader.stopSearching();  close();});
 
-      _dlg = new FindColumnsDlg(Main.getApplication().getMainFrame());
+      _dlg = new FindColumnsDlg(findColumnsScope.getOwningWindow());
 
       _searchResultReader = new SearchResultReader(_dlg, res -> displayResult(res));
 

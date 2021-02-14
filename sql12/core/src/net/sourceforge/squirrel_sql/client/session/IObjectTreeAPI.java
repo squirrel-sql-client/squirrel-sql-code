@@ -20,14 +20,11 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
-import java.util.List;
 
-import javax.swing.*;
-import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionListener;
-
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.*;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.FindInObjectTreeController;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -35,6 +32,14 @@ import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JTree;
+import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionListener;
+import java.awt.Component;
+import java.util.List;
 /**
  * This interface defines the API through which plugins can work with the object
  * tree.
@@ -279,10 +284,11 @@ public interface IObjectTreeAPI extends IHasIdentifier
     */
    void refreshSelectedTab() throws DataSetException;
 
-
    FindInObjectTreeController getFindController();
 
    Component getDetailTabComp();
+
+	JTree getObjectTree();
 
 	ObjectTreePosition getObjectTreePosition();
 }

@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.findcolums.FindColumnsCtrl;
+import net.sourceforge.squirrel_sql.client.session.action.findcolums.FindColumnsScope;
 
 import java.awt.event.ActionEvent;
 
@@ -42,6 +43,6 @@ public class FindColumnsAction extends SquirrelAction implements IObjectTreeActi
          return;
       }
 
-      new FindColumnsCtrl(_tree, _session);
+      new FindColumnsCtrl(new FindColumnsScope(_tree, _session));
    }
 }

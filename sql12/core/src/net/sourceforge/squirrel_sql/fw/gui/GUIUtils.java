@@ -209,19 +209,6 @@ public class GUIUtils
 		return getOwningFrame(SwingUtilities.windowForComponent(comp));
 	}
 
-	public static Dialog getOwningDialog(Component comp)
-	{
-		if (comp == null)
-		{
-			throw new IllegalArgumentException("null Component passed");
-		}
-
-		if (comp instanceof Dialog)
-		{
-			return (Dialog) comp;
-		}
-		return getOwningDialog(SwingUtilities.windowForComponent(comp));
-	}
 
 	public static Window getOwningWindow(Component comp)
 	{
@@ -230,7 +217,7 @@ public class GUIUtils
 			return (Window) comp;
 		}
 
-		Dialog owningDialog = getOwningDialog(comp);
+		Dialog owningDialog = _getOwningDialog(comp);
 
 		if(null != owningDialog)
 		{
@@ -242,6 +229,22 @@ public class GUIUtils
 		}
 	}
 
+	/**
+	 * Form outside use {@link #getOwningWindow(Component)}
+	 */
+	private static Dialog _getOwningDialog(Component comp)
+	{
+		if (comp == null)
+		{
+			return null;
+		}
+
+		if (comp instanceof Dialog)
+		{
+			return (Dialog) comp;
+		}
+		return _getOwningDialog(SwingUtilities.windowForComponent(comp));
+	}
 
 
 	/**

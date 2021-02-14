@@ -507,7 +507,7 @@ class SQLPropertiesPanel extends JPanel
       {
          font = fi.createFont();
       }
-      font = new FontChooser(GUIUtils.getOwningDialog(this)).showDialog(font);
+      font = new FontChooser(GUIUtils.getOwningWindow(this)).showDialog(font);
       if (font != null)
       {
          _fontBtn.setSelectedFont(font);
