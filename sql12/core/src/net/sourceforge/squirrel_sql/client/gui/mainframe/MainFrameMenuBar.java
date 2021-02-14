@@ -90,6 +90,7 @@ import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.EscapeDateAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FormatSQLAction;
 import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
@@ -399,6 +400,7 @@ final class MainFrameMenuBar extends JMenuBar
 		menu.addSeparator();
 		addToMenu(rsrc, ToolsPopupAction.class, menu);
 		addToMenu(rsrc, RefreshSchemaInfoAction.class, menu);
+		addToMenu(rsrc, FindColumnsAction.class, menu);
 		addToMenu(rsrc, ExecuteSqlAction.class, menu);
 		addToMenu(rsrc, ExecuteAllSqlsAction.class, menu);
       menu.add(createTransactionMenu(rsrc));

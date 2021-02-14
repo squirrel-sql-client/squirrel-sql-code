@@ -1,5 +1,18 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang.StringUtils;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -9,29 +22,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import org.apache.commons.lang.StringUtils;
-
 public class CatalogsPanel extends JPanel 
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(CatalogsPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CatalogsPanel.class);
 
-	private static final ILogger s_log =
-		LoggerController.createLogger(CatalogsPanel.class);
+	private static final ILogger s_log = LoggerController.createLogger(CatalogsPanel.class);
 
 	private ISession _session;
 	private JComponent _parent;
@@ -43,13 +38,7 @@ public class CatalogsPanel extends JPanel
 		_session = session;
 		_parent = parent;
 
-		_connectionPropetryListener = new PropertyChangeListener()
-		{
-			public void propertyChange(PropertyChangeEvent evt)
-			{
-				onConnectionPropertyChanged(evt);
-			}
-		};
+		_connectionPropetryListener = evt -> onConnectionPropertyChanged(evt);
 
 		setVisible(false);
 

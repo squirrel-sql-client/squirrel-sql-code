@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreePosition;
+import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
@@ -169,6 +170,7 @@ public class ObjectTreeInternalFrame extends SessionTabWidget implements IObject
 			setUseRolloverButtons(true);
 			setFloatable(false);
 			add(actions.get(RefreshSchemaInfoAction.class));
+			add(actions.get(FindColumnsAction.class));
 		}
 	}
 

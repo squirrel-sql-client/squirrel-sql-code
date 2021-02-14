@@ -3,32 +3,45 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.findcolums.FindColumnsCtrl;
 
 import java.awt.event.ActionEvent;
 
-public class FindColumnsAction extends SquirrelAction implements IObjectTreeAction
+public class FindColumnsAction extends SquirrelAction implements IObjectTreeAction, ISessionAction
 {
    private IObjectTreeAPI _tree;
+   private ISession _session;
 
    public FindColumnsAction(IApplication app)
    {
       super(app);
    }
 
+   @Override
+   public void setSession(ISession session)
+   {
+      _session = session;
+   }
+
    public void setObjectTree(IObjectTreeAPI tree)
    {
       _tree = tree;
-      setEnabled(null != _tree);
+      _setEnabled();
+   }
+
+   private void _setEnabled()
+   {
+      setEnabled(null != _tree || null != _session);
    }
 
    public void actionPerformed(ActionEvent e)
    {
-      if (_tree == null)
+      if (_tree == null && _session == null)
       {
          return;
       }
 
-      new FindColumnsCtrl(_tree);
+      new FindColumnsCtrl(_tree, _session);
    }
 }

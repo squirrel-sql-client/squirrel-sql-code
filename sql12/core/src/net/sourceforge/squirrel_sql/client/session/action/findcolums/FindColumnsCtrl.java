@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.action.findcolums;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
@@ -23,19 +24,19 @@ public class FindColumnsCtrl
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FindColumnsCtrl.class);
 
-
    private final FindColumnsDlg _dlg;
    private final JavabeanArrayDataSet _resultDataSet;
-   private IObjectTreeAPI _objectTreeAPI;
+
+   private FindColumnsScope _findColumnsScope;
 
    private SearchResultReader _searchResultReader;
 
 
-   public FindColumnsCtrl(IObjectTreeAPI objectTreeAPI)
+   public FindColumnsCtrl(IObjectTreeAPI objectTreeAPI, ISession session)
    {
-      _objectTreeAPI = objectTreeAPI;
+      _findColumnsScope = new FindColumnsScope(objectTreeAPI, session);
 
-      _objectTreeAPI.getSession().addSimpleSessionListener(() -> {_searchResultReader.stopSearching();  close();});
+      _findColumnsScope.getSession().addSimpleSessionListener(() -> {_searchResultReader.stopSearching();  close();});
 
       _dlg = new FindColumnsDlg(Main.getApplication().getMainFrame());
 
@@ -122,7 +123,7 @@ public class FindColumnsCtrl
 
          final String filterString = _dlg.txtFilter.getText().trim().toLowerCase();
 
-         final SchemaInfo schemaInfo = _objectTreeAPI.getSession().getSchemaInfo();
+         final SchemaInfo schemaInfo = _findColumnsScope.getSession().getSchemaInfo();
 
          ArrayList<FindColumnsResultBean> res = new ArrayList<>();
 

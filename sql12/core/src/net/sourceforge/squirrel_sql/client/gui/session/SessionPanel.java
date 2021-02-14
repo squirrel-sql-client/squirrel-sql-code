@@ -21,49 +21,21 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.rowcolumnlabel.RowColumnLabel;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
-import net.sourceforge.squirrel_sql.client.session.action.NextSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.PreviousSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
-import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
-import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
-import net.sourceforge.squirrel_sql.client.session.action.ToggleObjectTreeBesidesEditorAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileDetachAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileNewAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileOpenRecentAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FilePrintAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileReloadAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
-import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeChooser;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import javax.swing.Action;
@@ -73,11 +45,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class SessionPanel extends JPanel
 {
@@ -91,12 +60,11 @@ public class SessionPanel extends JPanel
 	private MainPanel _mainPanel;
 
 	/** Toolbar for window. */
-	private SessionPanelToolBar _toolBar;
+	private SessionPanelToolBar _sessionPanelToolBar;
 
-	private Vector<ToolbarItem> _externallyAddedToolbarActionsAndSeparators = new Vector<ToolbarItem>();
+	private ArrayList<ToolbarItem> _externallyAddedToolbarActionsAndSeparators = new ArrayList<>();
 
 	private StatusBar _statusBar = new StatusBar();
-	private boolean _hasBeenVisible;
 
 	private transient ObjectTreeSelectionListener _objTreeSelectionLis = null;
 	private TitleFilePathHandler _titleFileHandler = null;
@@ -127,17 +95,6 @@ public class SessionPanel extends JPanel
    {
       getMainSQLPaneAPI().addToToolsPopUp(selectionString, action);
    }
-
-
-	public void addNotify()
-	{
-		super.addNotify();
-		if (!_hasBeenVisible)
-		{
-			_hasBeenVisible = true;
-			_mainPanel.getObjectTreePanel().refreshTree();
-		}
-	}
 
 	public ISession getSession()
 	{
@@ -189,18 +146,18 @@ public class SessionPanel extends JPanel
 	public synchronized void addToToolbar(Action action)
 	{
 		_externallyAddedToolbarActionsAndSeparators.add(new ToolbarItem(action));
-		if (null != _toolBar)
+		if (null != _sessionPanelToolBar)
 		{
-			_toolBar.add(action);
+			_sessionPanelToolBar.add(action);
 		}
 	}
 
    public synchronized void addSeparatorToToolbar()
    {
       _externallyAddedToolbarActionsAndSeparators.add(new ToolbarItem());
-      if (null != _toolBar)
+      if (null != _sessionPanelToolBar)
       {
-         _toolBar.addSeparator();
+         _sessionPanelToolBar.addSeparator();
       }
    }
 
@@ -242,42 +199,40 @@ public class SessionPanel extends JPanel
 				}
 			});
 		}
-		if (propertyName == null
-				|| propertyName.equals(
-				SessionProperties.IPropertyNames.SHOW_TOOL_BAR))
+		if (propertyName == null || propertyName.equals(SessionProperties.IPropertyNames.SHOW_TOOL_BAR))
 		{
 			synchronized (this)
 			{
 				boolean show = props.getShowToolBar();
-				if (show != (_toolBar != null))
+				if (show != (_sessionPanelToolBar != null))
 				{
 					if (show)
 					{
-						if (_toolBar == null)
+						if (_sessionPanelToolBar == null)
 						{
-							_toolBar = new SessionPanelToolBar(session);
+							_sessionPanelToolBar = new SessionPanelToolBar(session, getObjectTreePanel());
 							for (int i = 0; i < _externallyAddedToolbarActionsAndSeparators.size(); i++)
 							{
 								ToolbarItem toolbarItem = _externallyAddedToolbarActionsAndSeparators.get(i);
 
 								if (toolbarItem.isSeparator())
 								{
-									_toolBar.addSeparator();
+									_sessionPanelToolBar.addSeparator();
 								}
 								else
 								{
-									_toolBar.add(toolbarItem.getAction());
+									_sessionPanelToolBar.add(toolbarItem.getAction());
 								}
 							}
-							add(_toolBar, BorderLayout.NORTH);
+							add(_sessionPanelToolBar, BorderLayout.NORTH);
 						}
 					}
 					else
 					{
-						if (_toolBar != null)
+						if (_sessionPanelToolBar != null)
 						{
-							remove(_toolBar);
-							_toolBar = null;
+							remove(_sessionPanelToolBar);
+							_sessionPanelToolBar = null;
 						}
 					}
 				}
@@ -323,12 +278,12 @@ public class SessionPanel extends JPanel
 
 	public String getSelectedCatalogFromCatalogsComboBox()
 	{
-		if(null == _toolBar)
+		if(null == _sessionPanelToolBar)
 		{
 			return null;
 		}
 
-		return _toolBar._catalogsPanel.getSelectedCatalog();
+		return _sessionPanelToolBar.getCatalogsPanel().getSelectedCatalog();
 	}
 
 	public IMainPanelTab getMainPanelTabAt(int tabIndex)
@@ -472,157 +427,6 @@ public class SessionPanel extends JPanel
 	public void performStateChanged()
 	{
 		_mainPanel.performStateChanged();
-	}
-
-	private class SessionPanelToolBar extends ToolBar
-   {
-      private IObjectTreeListener _lis;
-      private CatalogsPanel _catalogsPanel;
-
-      SessionPanelToolBar(final ISession session)
-      {
-         super();
-         createGUI(session);
-			SessionColoringUtil.colorToolbar(session, this);
-      }
-
-      public void addNotify()
-      {
-         super.addNotify();
-         if (!_hasBeenVisible)
-         {
-            _hasBeenVisible = true;
-            _mainPanel.getObjectTreePanel().refreshTree();
-         }
-      }
-
-      public void removeNotify()
-      {
-         super.removeNotify();
-         if (_lis != null)
-         {
-            getObjectTreePanel().removeObjectTreeListener(_lis);
-            _lis = null;
-         }
-      }
-
-      private void createGUI(ISession session)
-      {
-         _catalogsPanel = new CatalogsPanel(session, this);
-         _catalogsPanel.addActionListener(new CatalogsComboListener());
-
-
-         add(_catalogsPanel);
-         ActionCollection actions = session.getApplication().getActionCollection();
-         setUseRolloverButtons(true);
-         setFloatable(false);
-         add(actions.get(SessionPropertiesAction.class));
-         add(actions.get(RefreshSchemaInfoAction.class));
-         addSeparator();
-         add(actions.get(ExecuteSqlAction.class));
-			addSeparator();
-         add(actions.get(ExecuteAllSqlsAction.class));
-         addSeparator();
-//			actions.get(ExecuteSqlAction.class).setEnabled(false);
-         add(actions.get(SQLFilterAction.class));
-//			actions.get(SQLFilterAction.class).setEnabled(false);
-         addSeparator();
-         add(actions.get(FileNewAction.class));
-         add(actions.get(FileDetachAction.class));
-         add(actions.get(FileOpenAction.class));
-         add(actions.get(FileOpenRecentAction.class));
-         add(actions.get(FileAppendAction.class));
-         add(actions.get(FileSaveAction.class));
-         add(actions.get(FileSaveAsAction.class));
-         add(actions.get(FileCloseAction.class));
-         add(actions.get(FilePrintAction.class));
-         add(actions.get(FileReloadAction.class));
-
-			add(new ChangeTrackTypeChooser((ChangeTrackAction) actions.get(ChangeTrackAction.class), session).getComponent());
-
-         addSeparator();
-         add(actions.get(PreviousSqlAction.class));
-         add(actions.get(NextSqlAction.class));
-         add(actions.get(SelectSqlAction.class));
-         add(actions.get(GoToLastEditLocationAction.class));
-			addSeparator();
-         addToggleAction((IToggleAction) actions.get(ToggleObjectTreeBesidesEditorAction.class), session);
-      }
-   }
-
-	private final class CatalogsComboListener implements ActionListener
-	{
-		public void actionPerformed(ActionEvent evt)
-		{
-			String selectedCatalog = SessionPanel.this._toolBar._catalogsPanel.getSelectedCatalog();
-			if (selectedCatalog != null)
-			{
-				try
-				{
-               ISession session = getSession();
-					session.getSQLConnection().setCatalog(selectedCatalog);
-					refreshSchemaInBackground();
-				}
-				catch (SQLException ex)
-				{
-					getSession().showErrorMessage(ex);
-					SessionPanel.this._toolBar._catalogsPanel.refreshCatalogs();
-				}
-			}
-		}
-        
-		private void refreshSchemaInBackground()
-		{
-			final ISession session = getSession();
-			session.getApplication().getThreadPool().addTask(new Runnable()
-			{
-				public void run()
-				{
-					session.getSchemaInfo().reloadAll();
-					expandTreeInForeground();
-				}
-			});
-		}
-		
-		private void expandTreeInForeground() {
-			
-			final ISession session = getSession();
-			final String selectedCatalog = SessionPanel.this._toolBar._catalogsPanel.getSelectedCatalog();
-			
-			GUIUtils.processOnSwingEventThread(new Runnable() {
-				public void run() {
-					expandTablesForCatalog(session, selectedCatalog);
-				}
-			});
-		}
-		
-		
-      /**
-		 * Since the catalog has changed, it is necessary to reload the schema info and expand the tables node
-		 * in the tree. Saves the user a few clicks.
-		 * 
-		 * @param session
-		 *           the session whose ObjectTreePanel should be updated
-		 * @param selectedCatalog
-		 *           the catalog that was selected.
-		 */
-		private void expandTablesForCatalog(ISession session, String selectedCatalog)
-		{
-			IObjectTreeAPI api = session.getObjectTreeAPIOfActiveSessionWindow();
-			api.refreshTree(true);
-			if (api.selectInObjectTree(selectedCatalog, null, new FilterMatcher("TABLE", null)))
-			{
-				ObjectTreeNode[] nodes = api.getSelectedNodes();
-
-				if (nodes.length > 0)
-				{
-					ObjectTreeNode tableNode = nodes[0];
-
-					// send a tree expansion event to the object tree
-					api.expandNode(tableNode);
-				}
-			}
-		}
 	}
 
 
