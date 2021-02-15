@@ -29,8 +29,6 @@ import java.awt.Window;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -78,7 +76,7 @@ public class GraphDesktopController
    private JCheckBoxMenuItem _mnuShowConstraintNames;
    private JCheckBoxMenuItem _mnuShowQualifiedTableNames;
    private JMenuItem _mnuToggleWindowTab;
-   private GraphDesktopListener _listener;
+   private GraphDesktopChannel _channel;
    private ISession _session;
    private GraphPlugin _plugin;
    private ModeManager _modeManager;
@@ -92,9 +90,9 @@ public class GraphDesktopController
    private final RectangleSelectionHandler _rectangleSelectionHandler = new RectangleSelectionHandler();
 
 
-   public GraphDesktopController(GraphDesktopListener listener, ISession session, GraphPlugin plugin, ModeManager modeManager, boolean showDndDesktopImageAtStartup)
+   public GraphDesktopController(GraphDesktopChannel channel, ISession session, GraphPlugin plugin, ModeManager modeManager, boolean showDndDesktopImageAtStartup)
    {
-      _listener = listener;
+      _channel = channel;
       _session = session;
       _plugin = plugin;
       _graphPluginResources = new GraphPluginResources(_plugin);
@@ -190,7 +188,7 @@ public class GraphDesktopController
 
 
 
-            _listener.tablesDropped(objectTreeDndTransfer.getSelectedTables(), dtde.getLocation());
+            _channel.tablesDropped(objectTreeDndTransfer.getSelectedTables(), dtde.getLocation());
          }
 
       }
@@ -229,7 +227,7 @@ public class GraphDesktopController
    {
       _popUp = new JPopupMenu();
 
-      if (_listener.isLink())
+      if (_channel.isLink())
       {
          createLinkSavingMenus();
       }
@@ -286,7 +284,7 @@ public class GraphDesktopController
 		_mnuAllFilteredSelectedOrder = new JMenuItem(s_stringMgr.getString("graph.allTablesFilteredSelectedOrderRequested"));
       _mnuAllFilteredSelectedOrder.addActionListener(e -> onAllTablesFilteredSelectedOrder());
 
-      if (_listener.isLink())
+      if (_channel.isLink())
       {
          _popUp.add(_mnuSaveLinkAsLocalCopy);
          _popUp.add(_mnuSaveLinkedGraph);
@@ -353,83 +351,41 @@ public class GraphDesktopController
       final List<ITableInfo> tablesInGraph
             = getTableFramesModel().getTblCtrls().stream().map(tc -> tc.getTableInfo()).collect(Collectors.toList());
 
-      FindColumnsScope findColumnsScope = new FindColumnsScope(GUIUtils.getOwningWindow(_desktopPane), tablesInGraph, _session);
+      String findColumnsDlgTitle = s_stringMgr.getString("graph.findColumnsDialogTitle", _channel.getGraphName());
+      FindColumnsScope findColumnsScope = new FindColumnsScope(tablesInGraph, _session, GUIUtils.getOwningWindow(_desktopPane), findColumnsDlgTitle);
       new FindColumnsCtrl(findColumnsScope);
    }
 
    private void createLinkSavingMenus()
    {
       _mnuSaveLinkAsLocalCopy = new JMenuItem(s_stringMgr.getString("graph.saveLinkAsLocalCopy"));
-      _mnuSaveLinkAsLocalCopy.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onSaveLinkAsLocalCopy();
-         }
-      });
+      _mnuSaveLinkAsLocalCopy.addActionListener(e -> onSaveLinkAsLocalCopy());
 
       _mnuSaveLinkedGraph = new JMenuItem(s_stringMgr.getString("graph.saveLinkedGraph"));
-      _mnuSaveLinkedGraph.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onSaveLinkedGraph();
-         }
-      });
+      _mnuSaveLinkedGraph.addActionListener(e -> onSaveLinkedGraph());
 
       _mnuRemoveLink = new JMenuItem(s_stringMgr.getString("graph.removeLink"));
-      _mnuRemoveLink.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onRemoveLink();
-         }
-      });
+      _mnuRemoveLink.addActionListener(e -> onRemoveLink());
 
       _mnuShowLinkDetails = new JMenuItem(s_stringMgr.getString("graph.showLinkDetails"));
       _mnuShowLinkDetails.setIcon(_graphPluginResources.getIcon(GraphPluginResources.IKeys.LINK));
 
-      _mnuShowLinkDetails.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onShowLinkDetails();
-         }
-      });
+      _mnuShowLinkDetails.addActionListener(e -> onShowLinkDetails());
    }
 
    private void createGraphSavingMenus()
    {
       // i18n[graph.saveGraph=Save graph]
       _mnuSaveGraph = new JMenuItem(s_stringMgr.getString("graph.saveGraph"));
-      _mnuSaveGraph.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onSaveGraph();
-         }
-      });
+      _mnuSaveGraph.addActionListener(e -> onSaveGraph());
 
 
-      // i18n[graph.renameGraph=Rename graph]
       _mnuRenameGraph= new JMenuItem(s_stringMgr.getString("graph.renameGraph"));
-      _mnuRenameGraph.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onRenameGraph();
-         }
-      });
+      _mnuRenameGraph.addActionListener(e -> onRenameGraph());
 
       // i18n[graph.removeGraph=Remove graph]
       _mnuRemoveGraph= new JMenuItem(s_stringMgr.getString("graph.removeGraph"));
-      _mnuRemoveGraph.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onRemoveGraph();
-         }
-      });
+      _mnuRemoveGraph.addActionListener(e -> onRemoveGraph());
    }
 
    private void onPopupMenuWillBecomeInvisible()
@@ -443,39 +399,39 @@ public class GraphDesktopController
 
    private void onShowQualifiedTableNames()
    {
-      _listener.showQualifiedTableNamesRequested();
+      _channel.showQualifiedTableNamesRequested();
    }
 
    private void onAllTablesPkConstOrder()
    {
-      _listener.allTablesPkConstOrderRequested();
+      _channel.allTablesPkConstOrderRequested();
    }
 
    private void onAllTablesByNameOrder()
    {
-      _listener.allTablesByNameOrderRequested();
+      _channel.allTablesByNameOrderRequested();
    }
 
    private void onAllTablesDbOrder()
    {
-      _listener.allTablesDbOrderRequested();
+      _channel.allTablesDbOrderRequested();
    }
 
    private void onAllTablesFilteredSelectedOrder()
    {
-      _listener.allTablesFilteredSelectedOrderRequested();
+      _channel.allTablesFilteredSelectedOrderRequested();
    }
 
    private void onToggleWindowTab()
    {
-      _listener.toggleWindowTab();
+      _channel.toggleWindowTab();
    }
 
 
 
    private void onScriptAllTables()
    {
-      _listener.scriptAllTablesRequested();
+      _channel.scriptAllTablesRequested();
    }
 
    /////////////////////////////////////////////////////////
@@ -527,14 +483,14 @@ public class GraphDesktopController
 
    private void onRefreshAllTables()
    {
-      _listener.refreshAllTablesRequested();
+      _channel.refreshAllTablesRequested();
    }
 
    private void onRemoveGraph()
    {
       if(showRemoveOptionPane("graph.delGraph") == JOptionPane.YES_OPTION)
       {
-         _listener.removeRequest();
+         _channel.removeRequest();
          _modeManager.graphClosed();
       }
    }
@@ -553,41 +509,41 @@ public class GraphDesktopController
 		String newName = JOptionPane.showInputDialog(parent, s_stringMgr.getString("graph.newName"));
       if(null != newName && 0 != newName.trim().length())
       {
-         _listener.renameRequest(newName);
+         _channel.renameRequest(newName);
       }
    }
 
    private void onSaveGraph()
    {
-      _listener.saveGraphRequested();
+      _channel.saveGraphRequested();
    }
 
    private void onSaveLinkAsLocalCopy()
    {
-      _listener.saveLinkAsLocalCopy();
+      _channel.saveLinkAsLocalCopy();
    }
 
    private void onSaveLinkedGraph()
    {
-      _listener.saveLinkedGraph();
+      _channel.saveLinkedGraph();
    }
 
    private void onRemoveLink()
    {
       if(showRemoveOptionPane("graph.delLink") == JOptionPane.YES_OPTION)
       {
-         _listener.removeLink();
+         _channel.removeLink();
       }
    }
 
    private void onShowLinkDetails()
    {
-      _listener.showLinkDetails();
+      _channel.showLinkDetails();
    }
 
    private void onCopyGraph()
    {
-      _listener.copyGraph();
+      _channel.copyGraph();
    }
 
 

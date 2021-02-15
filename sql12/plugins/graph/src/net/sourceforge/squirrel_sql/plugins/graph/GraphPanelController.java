@@ -7,8 +7,12 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.SelectStructureXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Point;
 
 public class GraphPanelController
 {
@@ -19,7 +23,7 @@ public class GraphPanelController
    private JPanel _bottomPanelContainer;
    private int _standardDividerSize;
 
-   public GraphPanelController(TableFramesModel tableFramesModel, GraphDesktopListener graphDesktopListener, ISession session, GraphPlugin plugin, boolean showDndDesktopImageAtStartup)
+   public GraphPanelController(TableFramesModel tableFramesModel, GraphDesktopChannel graphDesktopChannel, ISession session, GraphPlugin plugin, boolean showDndDesktopImageAtStartup)
    {
       GraphControllerFacade graphControllerFacade = new GraphControllerFacade()
       {
@@ -55,7 +59,7 @@ public class GraphPanelController
       };
 
       _modeManager = new ModeManager(tableFramesModel, session, plugin, graphControllerFacade);
-      _graphDesktopController = new GraphDesktopController(graphDesktopListener, session, plugin, _modeManager, showDndDesktopImageAtStartup);
+      _graphDesktopController = new GraphDesktopController(graphDesktopChannel, session, plugin, _modeManager, showDndDesktopImageAtStartup);
 
       JScrollPane scrollPane = new JScrollPane(_graphDesktopController.getDesktopPane());
 

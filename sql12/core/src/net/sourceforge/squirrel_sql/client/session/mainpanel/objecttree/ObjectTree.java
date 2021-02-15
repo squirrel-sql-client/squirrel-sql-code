@@ -627,12 +627,13 @@ class ObjectTree extends JTree
     List<ITableInfo> getSelectedTables()
     {
         ObjectTreeNode[] nodes = getSelectedNodes();
-        ArrayList<ITableInfo> result = new ArrayList<ITableInfo>(); 
+        ArrayList<ITableInfo> result = new ArrayList<>();
         for (int i = 0; i < nodes.length; ++i)
         {
-            if (nodes[i].getDatabaseObjectType() == DatabaseObjectType.TABLE) {
-                result.add((ITableInfo)nodes[i].getDatabaseObjectInfo());
-            }
+			  if (nodes[i].getDatabaseObjectType() == DatabaseObjectType.TABLE)
+			  {
+				  result.add((ITableInfo) nodes[i].getDatabaseObjectInfo());
+			  }
         }
         return result;
     }

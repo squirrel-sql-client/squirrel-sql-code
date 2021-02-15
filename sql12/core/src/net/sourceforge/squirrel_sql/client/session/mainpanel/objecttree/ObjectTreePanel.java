@@ -275,15 +275,15 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
       // Register tabs to display in the details panel for table nodes.
       addDetailTab(type, new DatabaseObjectInfoTab());
 
-      ContentsTab conttentsTab = new ContentsTab(this);
-      conttentsTab.addListener(new DataSetUpdateableTableModelListener()
+      ContentsTab contentsTab = new ContentsTab(this);
+      contentsTab.addListener(new DataSetUpdateableTableModelListener()
       {
          public void forceEditMode(boolean mode)
          {
             onForceEditMode(mode);
          }
       });
-      addDetailTab(type, conttentsTab);
+      addDetailTab(type, contentsTab);
 
       addDetailTab(type, new RowCountTab());
       addDetailTab(type, new ColumnsTab());
@@ -597,7 +597,8 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>JMenu</TT> thrown.
 	 */
-	public void addToPopup(JMenu menu)	{
+	public void addToPopup(JMenu menu)
+	{
 		if (menu == null)
 		{
 			throw new IllegalArgumentException("JMenu == null");
@@ -625,7 +626,8 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     * 
     * @return list of <TT>ITableInfo</TT> objects.
     */
-   public List<ITableInfo> getSelectedTables() {
+   public List<ITableInfo> getSelectedTables()
+	{
       return _tree.getSelectedTables();
    }
    
@@ -633,17 +635,19 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     * Saves the tree paths that are currently selected.  These can then be 
     * restored with restoreSavedSelectedPaths.
     */
-   public void saveSelectedPaths() {
-      previouslySelectedPaths = _tree.getSelectionPaths();
-   }
+	public void saveSelectedPaths()
+	{
+		previouslySelectedPaths = _tree.getSelectionPaths();
+	}
    
    /**
     * Used to restore selected tree paths that were saved with saveSelectedPaths.
     */
-   public void restoreSavedSelectedPaths() {
-      _tree.setSelectionPaths(previouslySelectedPaths);
-      _tree.requestFocusInWindow();
-   }
+	public void restoreSavedSelectedPaths()
+	{
+		_tree.setSelectionPaths(previouslySelectedPaths);
+		_tree.requestFocusInWindow();
+	}
     
 	/**
 	 * Return an array of the currently selected database
@@ -723,14 +727,17 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
      */
     public void refreshSelectedTab() throws DataSetException 
     {
-        if (_selectedObjTreeTabbedPane != null) {
-            IObjectTab tab= _selectedObjTreeTabbedPane.getSelectedTab();
-            if (tab != null) {
-                if (tab instanceof BaseDataSetTab) {
-                    BaseDataSetTab btab = (BaseDataSetTab) tab;
-                    btab.refreshComponent();
-                }
-            }        
+		 if (_selectedObjTreeTabbedPane != null)
+		 {
+			 IObjectTab tab = _selectedObjTreeTabbedPane.getSelectedTab();
+			 if (tab != null)
+			 {
+				 if (tab instanceof BaseDataSetTab)
+				 {
+					 BaseDataSetTab btab = (BaseDataSetTab) tab;
+					 btab.refreshComponent();
+				 }
+			 }
         }
     }
     
@@ -744,9 +751,10 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     */
    public boolean selectInObjectTree(String catalog, String schema, FilterMatcher objectMatcher)
    {
-      if ("".equals(objectMatcher.getMetaDataMatchString())) {
-          return false;
-      }
+		if ("".equals(objectMatcher.getMetaDataMatchString()))
+		{
+			return false;
+		}
 
       TreePath treePath = getTreePath(catalog, schema, objectMatcher);
       if(null != treePath)

@@ -2,10 +2,10 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.List;
 
-public interface GraphDesktopListener
+public interface GraphDesktopChannel
 {
    void saveGraphRequested();
    void renameRequest(String newName);
@@ -40,4 +40,6 @@ public interface GraphDesktopListener
    void showLinkDetails();
 
    void copyGraph();
+
+   String getGraphName();
 }

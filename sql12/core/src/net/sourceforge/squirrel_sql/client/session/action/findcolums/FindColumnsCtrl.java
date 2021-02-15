@@ -35,7 +35,7 @@ public class FindColumnsCtrl
 
       _findColumnsScope.getSession().addSimpleSessionListener(() -> {_searchResultReader.stopSearching();  close();});
 
-      _dlg = new FindColumnsDlg(findColumnsScope.getOwningWindow());
+      _dlg = new FindColumnsDlg(findColumnsScope.getOwningWindow(), findColumnsScope.getDialogTitle());
 
       _searchResultReader = new SearchResultReader(_dlg, res -> displayResult(res));
 

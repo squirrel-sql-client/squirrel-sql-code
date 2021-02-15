@@ -1,19 +1,33 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.link.CopyGraphAction;
-import net.sourceforge.squirrel_sql.plugins.graph.link.LinkManager;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.WhereTreeNodeStructure;
 import net.sourceforge.squirrel_sql.plugins.graph.window.TabToWindowHandler;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.*;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.OrderStructureXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.SelectStructureXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Vector;
@@ -31,7 +45,7 @@ public class GraphController
    private static final int BORDER_X = ConstraintView.STUB_LENGTH + 10;
    private static final int BORDER_Y = 10;
    private AddTableRequestListener _addTableRequestListener;
-   private GraphDesktopListener _graphDesktopListener;
+   private GraphDesktopChannel _graphDesktopChannel;
    private GraphPlugin _plugin;
    private TabToWindowHandler _tabToWindowHandler;
    private GraphXmlSerializer _xmlSerializer;
@@ -42,43 +56,50 @@ public class GraphController
       _session = session;
       _plugin = plugin;
 
-      _graphDesktopListener = new GraphDesktopListener()
+      _graphDesktopChannel = new GraphDesktopChannel()
       {
          public void saveGraphRequested()
          {
             saveGraph();
          }
 
+         @Override
          public void renameRequest(String newName)
          {
             renameGraph(newName);
          }
 
+         @Override
          public void removeRequest()
          {
             removeGraph();
          }
 
+         @Override
          public void refreshAllTablesRequested()
          {
             refreshAllTables();
          }
 
+         @Override
          public void scriptAllTablesRequested()
          {
             scriptAllTables();
          }
 
+         @Override
          public void allTablesPkConstOrderRequested()
          {
             _tableFramesModel.allTablesPkConstOrder();
          }
 
+         @Override
          public void allTablesByNameOrderRequested()
          {
             _tableFramesModel.allTablesByNameOrder();
          }
 
+         @Override
          public void allTablesDbOrderRequested()
          {
             _tableFramesModel.allTablesDbOrder();
@@ -90,6 +111,7 @@ public class GraphController
             _tableFramesModel.allTablesFilteredSelectedOrder();
          }
 
+         @Override
          public void showQualifiedTableNamesRequested()
          {
             _tableFramesModel.refreshTableNames();
@@ -142,6 +164,12 @@ public class GraphController
          {
             onCopyGraph();
          }
+
+         @Override
+         public String getGraphName()
+         {
+            return _tabToWindowHandler.getTitle();
+         }
       };
 
 
@@ -154,7 +182,7 @@ public class GraphController
          _xmlSerializer = xmlSerializer;
       }
 
-      _panelController = new GraphPanelController(_tableFramesModel, _graphDesktopListener, _session, _plugin, showDndDesktopImageAtStartup);
+      _panelController = new GraphPanelController(_tableFramesModel, _graphDesktopChannel, _session, _plugin, showDndDesktopImageAtStartup);
 
       _tabToWindowHandler = new TabToWindowHandler(_panelController, _session, _plugin, _xmlSerializer.isLink());
 

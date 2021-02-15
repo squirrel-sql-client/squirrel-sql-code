@@ -30,9 +30,9 @@ public class FindColumnsDlg extends JDialog
    JTextField txtStatus;
    JButton btnClose;
 
-   public FindColumnsDlg(Window parent)
+   public FindColumnsDlg(Window parent, String dialogTitle)
    {
-      super(parent, s_stringMgr.getString("FindColumnsDlg.title"));
+      super(parent, dialogTitle);
 
       getContentPane().setLayout(new GridBagLayout());
 
