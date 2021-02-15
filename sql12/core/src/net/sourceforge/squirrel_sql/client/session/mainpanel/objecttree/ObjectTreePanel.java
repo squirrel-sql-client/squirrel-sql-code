@@ -377,23 +377,17 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     * Expands the specified tree node.
     * 
     * @param node the tree node to expand
-    */    
-    public void expandNode(ObjectTreeNode node) {
-        IDatabaseObjectInfo info = node.getDatabaseObjectInfo();
-        TreePath path = getTreePath(info.getCatalogName(), 
-                                    info.getSchemaName(), 
-                                    new FilterMatcher(info.getSimpleName(), null));    
-        _tree.fireTreeExpanded(path);
-    }
+    */
+	public void expandNode(ObjectTreeNode node)
+	{
+		IDatabaseObjectInfo info = node.getDatabaseObjectInfo();
+		TreePath path = getTreePath(info.getCatalogName(), info.getSchemaName(), new FilterMatcher(info.getSimpleName(), null));
+		_tree.fireTreeExpanded(path);
+	}
     
-    private void _addDetailTab(final DatabaseObjectType dboType, 
-                               final IObjectTab tab) 
+    private void _addDetailTab(final DatabaseObjectType dboType, final IObjectTab tab)
     {
-        GUIUtils.processOnSwingEventThread(new Runnable() {
-            public void run() {
-                addDetailTab(dboType, tab);
-            }
-        });
+        GUIUtils.processOnSwingEventThread(() -> addDetailTab(dboType, tab));
     }
     
 	/**
@@ -780,24 +774,17 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     * @return the TreePath to the node with the specified criteria, or the root
     *         node if a node with matching characteristics isn't found.
     */
-   private TreePath getTreePath(String catalog, String schema, FilterMatcher objectMatcher) {
-       ObjectTreeModel otm = (ObjectTreeModel) _tree.getModel();
-       TreePath treePath = 
-           otm.getPathToDbInfo(catalog, 
-                               schema, 
-                               objectMatcher,
-                               (ObjectTreeNode) otm.getRoot(), 
-                               false);
-       if(null == treePath)
-       {
-          treePath = otm.getPathToDbInfo(catalog, 
-                                         schema, 
-                                         objectMatcher,
-                                         (ObjectTreeNode) otm.getRoot(), 
-                                         true);
-       }
-       return treePath;
-   }
+	private TreePath getTreePath(String catalog, String schema, FilterMatcher objectMatcher)
+	{
+		ObjectTreeModel otm = (ObjectTreeModel) _tree.getModel();
+		TreePath treePath = otm.getPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(),false);
+
+		if (null == treePath)
+		{
+			treePath = otm.getPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(),true);
+		}
+		return treePath;
+	}
    
    /**
 	 * Add a known database object type to the object tree.

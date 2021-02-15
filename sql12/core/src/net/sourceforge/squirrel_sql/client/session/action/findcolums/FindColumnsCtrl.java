@@ -1,10 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.action.findcolums;
 
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -120,13 +118,8 @@ public class FindColumnsCtrl
 
          final String filterString = _dlg.txtFilter.getText().trim().toLowerCase();
 
-         final SchemaInfo schemaInfo = _findColumnsScope.getSession().getSchemaInfo();
 
-         ArrayList<FindColumnsResultBean> res = new ArrayList<>();
-
-         final ITableInfo[] tableInfos = schemaInfo.getITableInfos();
-
-         _searchResultReader.findAndShowResults(filterString, schemaInfo, res, tableInfos);
+         _searchResultReader.findAndShowResults(filterString, _findColumnsScope.getITableInfos(), _findColumnsScope.getSession().getSchemaInfo());
       }
       catch (DataSetException e)
       {

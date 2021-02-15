@@ -991,7 +991,7 @@ public class SchemaInfo
 
    public ITableInfo[] getITableInfos(String catalog, String schema, ObjFilterMatcher filterMatcher, String[] types)
    {
-      ArrayList<ITableInfo> ret = new ArrayList<ITableInfo>();
+      ArrayList<ITableInfo> ret = new ArrayList<>();
       if (null != types)
       {
          // By default null == types we return only cached types

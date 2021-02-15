@@ -43,8 +43,10 @@ public class SearchResultReader
       }
    }
 
-   void findAndShowResults(String filterString, SchemaInfo schemaInfo, final ArrayList<FindColumnsResultBean> searchResults, ITableInfo[] tableInfos)
+   void findAndShowResults(String filterString, ITableInfo[] tableInfos, SchemaInfo schemaInfo)
    {
+      ArrayList<FindColumnsResultBean> searchResults = new ArrayList<>();
+
       try
       {
          _doStopSearching = true;
