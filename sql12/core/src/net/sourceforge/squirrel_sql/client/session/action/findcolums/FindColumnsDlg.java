@@ -8,7 +8,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -29,6 +31,10 @@ public class FindColumnsDlg extends JDialog
 
    JTextField txtStatus;
    JButton btnClose;
+   private JCheckBox chkObjectName = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.objectName"));
+   private JCheckBox chkColumnName = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.columnName"));
+   private JCheckBox chkColumnTypeName = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.columnTypeName"));
+   private JCheckBox chkRemarks = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.remarks"));
 
    public FindColumnsDlg(Window parent, String dialogTitle)
    {
@@ -93,8 +99,45 @@ public class FindColumnsDlg extends JDialog
 
       GUIUtils.setPreferredHeight(txtFilter, btnFind.getPreferredSize().height);
 
+      gbc = new GridBagConstraints(0,3,3,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0 );
+      ret.add(createConfigPanel(), gbc);
+
       return ret;
 
+   }
+
+   private JPanel createConfigPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+
+      gbc = new GridBagConstraints(0,0,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0 );
+      ret.add(new JLabel(s_stringMgr.getString("FindColumnsDlg.place.holder.info")), gbc);
+
+
+      gbc = new GridBagConstraints(0,1,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,0,0,0), 0,0 );
+      ret.add(new JLabel(s_stringMgr.getString("FindColumnsDlg.find.in")), gbc);
+
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0 );
+      ret.add(chkObjectName, gbc);
+
+      gbc = new GridBagConstraints(1,2,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0 );
+      ret.add(chkColumnName, gbc);
+
+      gbc = new GridBagConstraints(2,2,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0 );
+      ret.add(new JLabel(s_stringMgr.getString("FindColumnsDlg.qualifier.info")), gbc);
+
+
+      gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0 );
+      ret.add(chkColumnTypeName, gbc);
+
+      gbc = new GridBagConstraints(1,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0 );
+      ret.add(chkRemarks, gbc);
+
+      return ret;
    }
 
    void setSearching(boolean b)

@@ -45,6 +45,7 @@ import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
+import net.sourceforge.squirrel_sql.client.session.action.FindColumnsInObjectTreeNodesAction;
 import net.sourceforge.squirrel_sql.client.session.action.FormatSQLAction;
 import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
@@ -202,6 +203,7 @@ public class ActionRegistry
       actionCollection.add(new DeleteSelectedTablesAction(app));
       actionCollection.add(new ShowTableReferencesAction(app));
       actionCollection.add(new FindColumnsAction(app));
+      actionCollection.add(new FindColumnsInObjectTreeNodesAction(app));
       actionCollection.add(new DumpApplicationAction(app));
       actionCollection.add(new SavePreferencesAction(app));
       actionCollection.add(new DumpSessionAction(app));

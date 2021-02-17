@@ -24,31 +24,30 @@ public class FindColumnsScope
    private ISession _session;
 
    private Window _owningWindow;
-   private List<ITableInfo> _tablesInGraph;
+   private List<ITableInfo> _tableInfos;
    private String _findDialogTitle;
 
-   public FindColumnsScope(List<ITableInfo> tablesInGraph, ISession session, Window owningWindow, String findDialogTitle)
+   public FindColumnsScope(List<ITableInfo> tablesInfos, ISession session, Window owningWindow, String findDialogTitle)
    {
       _owningWindow = owningWindow;
-      _tablesInGraph = tablesInGraph;
+      _tableInfos = tablesInfos;
       _session = session;
       _findDialogTitle = findDialogTitle;
    }
 
-   public FindColumnsScope(IObjectTreeAPI objectTreeAPI, ISession session)
+   public FindColumnsScope(ISession session)
    {
-      _objectTreeAPI = objectTreeAPI;
       _session = session;
       _owningWindow = GUIUtils.getOwningWindow(_session.getSessionPanel());
       _findDialogTitle = s_stringMgr.getString("FindColumnsScope.dialog.title.unspecified");
+   }
 
-      if(null != _objectTreeAPI)
-      {
-         _session = _objectTreeAPI.getSession();
-         _owningWindow = GUIUtils.getOwningWindow(_objectTreeAPI.getObjectTree());
-
-         _findDialogTitle = createDialogTitle();
-      }
+   public FindColumnsScope(IObjectTreeAPI objectTreeAPI)
+   {
+      _objectTreeAPI = objectTreeAPI;
+      _session = objectTreeAPI.getSession();
+      _owningWindow = GUIUtils.getOwningWindow(_objectTreeAPI.getObjectTree());
+      _findDialogTitle = createDialogTitle();
    }
 
    private String createDialogTitle()
@@ -118,9 +117,9 @@ public class FindColumnsScope
 
    public ITableInfo[] getITableInfos()
    {
-      if(null != _tablesInGraph)
+      if(null != _tableInfos)
       {
-         return _tablesInGraph.toArray(new ITableInfo[0]);
+         return _tableInfos.toArray(new ITableInfo[0]);
       }
 
       if(null == _objectTreeAPI || containsDatabaseNode(_objectTreeAPI.getSelectedNodes()))

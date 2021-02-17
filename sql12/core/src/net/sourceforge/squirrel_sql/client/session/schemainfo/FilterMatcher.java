@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 public class FilterMatcher
 {
    private String _sqlOrMetaDataMatchString;
-   private ArrayList<Pattern> _includeFilterPatterns = new ArrayList<Pattern>();
-   private ArrayList<Pattern> _excludeFilterPatterns = new ArrayList<Pattern>();
+   private ArrayList<Pattern> _includeFilterPatterns = new ArrayList<>();
+   private ArrayList<Pattern> _excludeFilterPatterns = new ArrayList<>();
 
    public FilterMatcher(String filterInclude, String filterExclude)
    {

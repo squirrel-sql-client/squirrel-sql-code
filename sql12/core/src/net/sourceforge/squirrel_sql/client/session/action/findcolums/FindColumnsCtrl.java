@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -29,59 +30,69 @@ public class FindColumnsCtrl
 
    public FindColumnsCtrl(FindColumnsScope findColumnsScope)
    {
-      _findColumnsScope = findColumnsScope;
-
-      _findColumnsScope.getSession().addSimpleSessionListener(() -> {_searchResultReader.stopSearching();  close();});
-
-      _dlg = new FindColumnsDlg(findColumnsScope.getOwningWindow(), findColumnsScope.getDialogTitle());
-
-      _searchResultReader = new SearchResultReader(_dlg, res -> displayResult(res));
-
-      _resultDataSet = new JavabeanArrayDataSet(FindColumnsResultBean.class);
-
-      for (FindColumnsResultTableDefinition def : FindColumnsResultTableDefinition.values())
+      try
       {
-         _resultDataSet.setColHeader(def.getBeanPropName(), def.getColHeader());
-         _resultDataSet.setColPos(def.getBeanPropName(), def.ordinal());
+         _findColumnsScope = findColumnsScope;
+
+         _findColumnsScope.getSession().addSimpleSessionListener(() -> {_searchResultReader.stopSearching();  close();});
+
+         _dlg = new FindColumnsDlg(findColumnsScope.getOwningWindow(), findColumnsScope.getDialogTitle());
+
+         _searchResultReader = new SearchResultReader(_dlg, res -> displayResult(res));
+
+         _resultDataSet = new JavabeanArrayDataSet(FindColumnsResultBean.class);
+
+         for (FindColumnsResultTableDefinition def : FindColumnsResultTableDefinition.values())
+         {
+            _resultDataSet.setColHeader(def.getBeanPropName(), def.getColHeader());
+            _resultDataSet.setColPos(def.getBeanPropName(), def.ordinal());
+         }
+
+         _dlg.tblSearchResult.getTable().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+         _dlg.tblSearchResult.getTable().getSelectionModel().setSelectionInterval(0,0);
+
+         _resultDataSet.setJavaBeanList(new ArrayList<>());
+         _dlg.tblSearchResult.show(_resultDataSet);
+         _dlg.tblSearchResult.getTable().getButtonTableHeader().adjustAllColWidths(true);
+
+
+         GUIUtils.enableCloseByEscape(_dlg, dialog -> _searchResultReader.stopSearching());
+         _dlg.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+               _searchResultReader.stopSearching();
+            }
+         });
+
+         GUIUtils.initLocation(_dlg, 800, 500);
+
+         _dlg.txtFilter.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e)
+            {
+               onKeyPressed(e);
+            }
+         });
+
+         // Would together with onKeyPressed() execute find twice.
+         //_dlg.getRootPane().setDefaultButton(_dlg.btnFind);
+
+
+         _dlg.btnFind.addActionListener(e -> onFind());
+         _dlg.btnStopSearching.addActionListener(e -> _searchResultReader.stopSearching());
+
+         _dlg.btnClose.addActionListener(e -> onClose());
+
+
+         _dlg.setVisible(true);
+
+         GUIUtils.forceFocus(_dlg.txtFilter);
       }
-
-      _dlg.tblSearchResult.getTable().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      _dlg.tblSearchResult.getTable().getSelectionModel().setSelectionInterval(0,0);
-
-      onFind();
-
-      GUIUtils.enableCloseByEscape(_dlg, dialog -> _searchResultReader.stopSearching());
-      _dlg.addWindowListener(new WindowAdapter() {
-         @Override
-         public void windowClosing(WindowEvent e)
-         {
-            _searchResultReader.stopSearching();
-         }
-      });
-
-      GUIUtils.initLocation(_dlg, 500, 500);
-
-      _dlg.txtFilter.addKeyListener(new KeyAdapter() {
-         @Override
-         public void keyPressed(KeyEvent e)
-         {
-            onKeyPressed(e);
-         }
-      });
-
-      // Would together with onKeyPressed() execute find twice.
-      //_dlg.getRootPane().setDefaultButton(_dlg.btnFind);
-
-
-      _dlg.btnFind.addActionListener(e -> onFind());
-      _dlg.btnStopSearching.addActionListener(e -> _searchResultReader.stopSearching());
-
-      _dlg.btnClose.addActionListener(e -> onClose());
-
-
-      _dlg.setVisible(true);
-
-      GUIUtils.forceFocus(_dlg.txtFilter);
+      catch (DataSetException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
    }
 
    private void onClose()
@@ -106,25 +117,21 @@ public class FindColumnsCtrl
 
    private void onFind()
    {
-      try
+      String filterString = null;
+
+      if(StringUtilities.isEmpty(_dlg.txtFilter.getText(), true))
       {
-         if(StringUtilities.isEmpty(_dlg.txtFilter.getText(), true))
+         if( JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(_dlg, s_stringMgr.getString("FindColumnsCtrl.msg.list.all.tables")) )
          {
-            _resultDataSet.setJavaBeanList(new ArrayList<>());
-            _dlg.tblSearchResult.show(_resultDataSet);
-            _dlg.tblSearchResult.getTable().getButtonTableHeader().adjustAllColWidths(true);
             return;
          }
-
-         final String filterString = _dlg.txtFilter.getText().trim().toLowerCase();
-
-
-         _searchResultReader.findAndShowResults(filterString, _findColumnsScope.getITableInfos(), _findColumnsScope.getSession().getSchemaInfo());
       }
-      catch (DataSetException e)
+      else
       {
-         throw Utilities.wrapRuntime(e);
+         filterString = _dlg.txtFilter.getText().trim();
       }
+
+      _searchResultReader.findAndShowResults(filterString, _findColumnsScope.getITableInfos(), _findColumnsScope.getSession().getSchemaInfo());
    }
 
 
