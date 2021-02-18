@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.action.findcolums;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -18,7 +19,16 @@ import java.util.ArrayList;
 
 public class FindColumnsCtrl
 {
+   private static final String PREF_KEY_FILTER_STRING = "FindColumnsCtrl.filter.string";
+
+   private static final String PREF_KEY_FIND_IN_OBJECT_NAME = "FindColumnsCtrl.find.in.objectName";
+   private static final String PREF_KEY_FIND_IN_COLUMN_NAME = "FindColumnsCtrl.find.in.columnName";
+   private static final String PREF_KEY_FIND_IN_COLUMN_TYPE_NAME = "FindColumnsCtrl.find.in.columnTypeName";
+   private static final String PREF_KEY_FIND_IN_REMARKS = "FindColumnsCtrl.find.in.remarks";
+
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FindColumnsCtrl.class);
+
+
 
    private final FindColumnsDlg _dlg;
    private final JavabeanArrayDataSet _resultDataSet;
@@ -34,7 +44,7 @@ public class FindColumnsCtrl
       {
          _findColumnsScope = findColumnsScope;
 
-         _findColumnsScope.getSession().addSimpleSessionListener(() -> {_searchResultReader.stopSearching();  close();});
+         _findColumnsScope.getSession().addSimpleSessionListener(() -> onClose());
 
          _dlg = new FindColumnsDlg(findColumnsScope.getOwningWindow(), findColumnsScope.getDialogTitle());
 
@@ -56,12 +66,12 @@ public class FindColumnsCtrl
          _dlg.tblSearchResult.getTable().getButtonTableHeader().adjustAllColWidths(true);
 
 
-         GUIUtils.enableCloseByEscape(_dlg, dialog -> _searchResultReader.stopSearching());
+         GUIUtils.enableCloseByEscape(_dlg, dialog -> onClose());
          _dlg.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e)
             {
-               _searchResultReader.stopSearching();
+               onWindowClosing();
             }
          });
 
@@ -85,6 +95,8 @@ public class FindColumnsCtrl
          _dlg.btnClose.addActionListener(e -> onClose());
 
 
+         applyPrefs();
+
          _dlg.setVisible(true);
 
          GUIUtils.forceFocus(_dlg.txtFilter);
@@ -95,10 +107,48 @@ public class FindColumnsCtrl
       }
    }
 
+
+   private void onWindowClosing()
+   {
+      storePrefs();
+      _searchResultReader.stopSearching();
+   }
+
    private void onClose()
    {
+      storePrefs();
       _searchResultReader.stopSearching();
-      close();
+      _dlg.setVisible(false);
+      _dlg.dispose();
+   }
+
+   private void applyPrefs()
+   {
+      _dlg.txtFilter.setText(Props.getString(PREF_KEY_FILTER_STRING, null));
+      _dlg.txtFilter.selectAll();
+
+      _dlg.chkColumnName.setSelected(Props.getBoolean(PREF_KEY_FIND_IN_COLUMN_NAME, true));
+      _dlg.chkObjectName.setSelected(Props.getBoolean(PREF_KEY_FIND_IN_OBJECT_NAME, false));
+      _dlg.chkColumnTypeName.setSelected(Props.getBoolean(PREF_KEY_FIND_IN_COLUMN_TYPE_NAME, false));
+      _dlg.chkRemarks.setSelected(Props.getBoolean(PREF_KEY_FIND_IN_REMARKS, false));
+   }
+
+
+   private void storePrefs()
+   {
+      if (StringUtilities.isEmpty(_dlg.txtFilter.getText(), true))
+      {
+         Props.putString(PREF_KEY_FILTER_STRING, null);
+      }
+      else
+      {
+         Props.putString(PREF_KEY_FILTER_STRING, _dlg.txtFilter.getText().trim());
+      }
+
+      Props.putBoolean(PREF_KEY_FIND_IN_OBJECT_NAME, _dlg.chkObjectName.isSelected());
+      Props.putBoolean(PREF_KEY_FIND_IN_COLUMN_NAME, _dlg.chkColumnName.isSelected());
+      Props.putBoolean(PREF_KEY_FIND_IN_COLUMN_TYPE_NAME, _dlg.chkColumnTypeName.isSelected());
+      Props.putBoolean(PREF_KEY_FIND_IN_REMARKS, _dlg.chkRemarks.isSelected());
    }
 
    private void onKeyPressed(KeyEvent e)
@@ -109,15 +159,10 @@ public class FindColumnsCtrl
       }
    }
 
-   private void close()
-   {
-      _dlg.setVisible(false);
-      _dlg.dispose();
-   }
-
    private void onFind()
    {
-      String filterString = null;
+
+      ColumnSearchCriterion searchCriterion = new ColumnSearchCriterion();
 
       if(StringUtilities.isEmpty(_dlg.txtFilter.getText(), true))
       {
@@ -128,10 +173,15 @@ public class FindColumnsCtrl
       }
       else
       {
-         filterString = _dlg.txtFilter.getText().trim();
+         searchCriterion.setFilterString(_dlg.txtFilter.getText());
       }
 
-      _searchResultReader.findAndShowResults(filterString, _findColumnsScope.getITableInfos(), _findColumnsScope.getSession().getSchemaInfo());
+      searchCriterion.setFindInObjectName(_dlg.chkObjectName.isSelected());
+      searchCriterion.setFindInColumnName(_dlg.chkColumnName.isSelected());
+      searchCriterion.setFindInColumnTypeName(_dlg.chkColumnTypeName.isSelected());
+      searchCriterion.setFindInRemarks(_dlg.chkRemarks.isSelected());
+
+      _searchResultReader.findAndShowResults(searchCriterion, _findColumnsScope.getITableInfos(), _findColumnsScope.getSession().getSchemaInfo());
    }
 
 

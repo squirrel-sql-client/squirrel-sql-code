@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Find columns function available in
+  - Session menu and toolbar (Alt+Shift+F)
+  - Right mouse menu of Object tree
+  - Right mouse menu of Graphs
+
 SQL result tab: Text on top of panel is now selectable and offers several copy functions in its right mouse menu.
 
 Brushed up the Mac OS installer (It is recommended to delete previous Mac OS version before installing the new version)

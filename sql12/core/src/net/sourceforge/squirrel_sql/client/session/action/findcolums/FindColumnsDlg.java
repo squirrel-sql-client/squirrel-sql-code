@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -24,6 +25,11 @@ public class FindColumnsDlg extends JDialog
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FindColumnsDlg.class);
 
    JTextField txtFilter;
+   JCheckBox chkObjectName = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.objectName"));
+   JCheckBox chkColumnName = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.columnName"));
+   JCheckBox chkColumnTypeName = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.columnTypeName"));
+   JCheckBox chkRemarks = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.remarks"));
+
    JButton btnFind;
    JButton btnStopSearching;
 
@@ -31,10 +37,6 @@ public class FindColumnsDlg extends JDialog
 
    JTextField txtStatus;
    JButton btnClose;
-   private JCheckBox chkObjectName = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.objectName"));
-   private JCheckBox chkColumnName = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.columnName"));
-   private JCheckBox chkColumnTypeName = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.columnTypeName"));
-   private JCheckBox chkRemarks = new JCheckBox(s_stringMgr.getString("FindColumnsDlg.find.in.remarks"));
 
    public FindColumnsDlg(Window parent, String dialogTitle)
    {
@@ -113,8 +115,8 @@ public class FindColumnsDlg extends JDialog
       GridBagConstraints gbc;
 
 
-      gbc = new GridBagConstraints(0,0,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0 );
-      ret.add(new JLabel(s_stringMgr.getString("FindColumnsDlg.place.holder.info")), gbc);
+      gbc = new GridBagConstraints(0,0,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(3,0,0,0), 0,0 );
+      ret.add(new MultipleLineLabel(s_stringMgr.getString("FindColumnsDlg.place.holder.info")), gbc);
 
 
       gbc = new GridBagConstraints(0,1,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,0,0,0), 0,0 );

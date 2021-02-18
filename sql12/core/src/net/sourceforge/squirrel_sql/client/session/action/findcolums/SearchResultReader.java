@@ -43,7 +43,7 @@ public class SearchResultReader
       }
    }
 
-   void findAndShowResults(String filterString, ITableInfo[] tableInfos, SchemaInfo schemaInfo)
+   void findAndShowResults(ColumnSearchCriterion searchCriterion, ITableInfo[] tableInfos, SchemaInfo schemaInfo)
    {
       ArrayList<FindColumnsResultBean> searchResults = new ArrayList<>();
 
@@ -57,7 +57,7 @@ public class SearchResultReader
          }
 
          _doStopSearching = false;
-         SwingUtilities.invokeLater(() -> _findAndShowResults(0, filterString, schemaInfo, searchResults, tableInfos));
+         SwingUtilities.invokeLater(() -> _findAndShowResults(0, searchCriterion, schemaInfo, searchResults, tableInfos));
       }
       catch (Exception e)
       {
@@ -65,7 +65,7 @@ public class SearchResultReader
       }
    }
 
-   private void _findAndShowResults(int beginIndex, String filterString, SchemaInfo schemaInfo, final ArrayList<FindColumnsResultBean> searchResults, ITableInfo[] tableInfos)
+   private void _findAndShowResults(int beginIndex, ColumnSearchCriterion searchCriterion, SchemaInfo schemaInfo, final ArrayList<FindColumnsResultBean> searchResults, ITableInfo[] tableInfos)
    {
       try
       {
@@ -84,7 +84,7 @@ public class SearchResultReader
 
                   int finalBeginIndex = i;
                   _currentFuture =
-                        _executorService.submit(() -> _findAndShowResults(finalBeginIndex, filterString, schemaInfo, searchResults, tableInfos));
+                        _executorService.submit(() -> _findAndShowResults(finalBeginIndex, searchCriterion, schemaInfo, searchResults, tableInfos));
                   return;
                }
                else
@@ -110,7 +110,7 @@ public class SearchResultReader
                   }
                }
 
-               if(-1 < columnInfo.getColumnName().toLowerCase().indexOf(filterString))
+               if(searchCriterion.matches(columnInfo))
                {
                   searchResults.add(createResultBean(tableInfo, columnInfo));
                }

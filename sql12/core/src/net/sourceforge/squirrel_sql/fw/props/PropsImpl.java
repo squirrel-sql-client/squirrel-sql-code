@@ -96,7 +96,14 @@ public class PropsImpl
          s_log.error(msg, new IllegalArgumentException(msg));
       }
 
-      putProperty(propKey, stringValue);
+      if (null == stringValue)
+      {
+         putProperty(propKey, NULL_PROP);
+      }
+      else
+      {
+         putProperty(propKey, stringValue);
+      }
    }
 
 
