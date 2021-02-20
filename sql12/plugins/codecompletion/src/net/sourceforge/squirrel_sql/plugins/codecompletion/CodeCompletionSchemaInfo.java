@@ -38,7 +38,7 @@ public class CodeCompletionSchemaInfo extends CodeCompletionInfo
 
    public String toString()
    {
-      return _schema;
+      return _schema + " (SCHEMA)";
    }
 
    @Override

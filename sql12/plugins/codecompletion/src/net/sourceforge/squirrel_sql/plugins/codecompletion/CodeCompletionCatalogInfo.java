@@ -44,6 +44,6 @@ public class CodeCompletionCatalogInfo extends CodeCompletionInfo
 
    public String toString()
    {
-      return _catalog;
+      return _catalog  + " (CATALOG)";
    }
 }

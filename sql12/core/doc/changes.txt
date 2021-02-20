@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+SQL code completion popup: Schema/Catalog-names are now displayed with appended "(SCHEMA)" / "(CATALOG)" respectively.
+
 Find columns function available in
   - Session menu and toolbar (Alt+Shift+F)
   - Right mouse menu of Object tree
