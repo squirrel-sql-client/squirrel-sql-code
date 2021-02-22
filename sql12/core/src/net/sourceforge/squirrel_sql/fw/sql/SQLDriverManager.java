@@ -17,15 +17,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.net.MalformedURLException;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -35,6 +26,16 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.net.MalformedURLException;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 /**
  * This class replaces the standard Java class <TT>java.ql.DriverManager</TT>.
  * The main reason for replacing it is that <TT>java.ql.DriverManager</TT>
@@ -44,40 +45,33 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLDriverManager
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SQLDriverManager.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLDriverManager.class);
 
-	private static final ILogger s_log =
-		LoggerController.createLogger(SQLDriverManager.class);
+	private static final ILogger s_log = LoggerController.createLogger(SQLDriverManager.class);
 
 	/**
 	 * Collection of instances of <TT>java.sql.Driver</TT> objects keyed
 	 * by the <TT>SQLDriver.getIdentifier()</TT>.
 	 */
-	private Map<IIdentifier, Driver> _driverInfo = 
-        new HashMap<IIdentifier, Driver>();
+	private Map<IIdentifier, Driver> _driverInfo = new HashMap<>();
 
 	/**
 	 * Collection of the <TT>SQLDriverClassLoader</TT> class loaders used for
 	 * each driver. keyed by <TT>SQLDriver.getIdentifier()</TT>.
 	 */
-	private Map<IIdentifier, SQLDriverClassLoader> _classLoaders = 
-        new HashMap<IIdentifier, SQLDriverClassLoader>();
+	private Map<IIdentifier, SQLDriverClassLoader> _classLoaders = new HashMap<>();
 
 	private MyDriverListener _myDriverListener = new MyDriverListener();
 
 	public synchronized void registerSQLDriver(ISQLDriver sqlDriver)
-		throws IllegalAccessException, InstantiationException,
-					ClassNotFoundException, MalformedURLException
+		throws IllegalAccessException, InstantiationException, ClassNotFoundException, MalformedURLException
 	{
 		unregisterSQLDriver(sqlDriver);
 		sqlDriver.addPropertyChangeListener(_myDriverListener);
-        SQLDriverClassLoader loader = new SQLDriverClassLoader(sqlDriver);
-		Driver driver = 
-            (Driver)(Class.forName(sqlDriver.getDriverClassName(), 
-                                   false, 
-                                   loader).newInstance());
+		SQLDriverClassLoader loader = new SQLDriverClassLoader(sqlDriver);
+
+		Driver driver = (Driver) (Class.forName(sqlDriver.getDriverClassName(), false, loader).newInstance());
+
 		_driverInfo.put(sqlDriver.getIdentifier(), driver);
 		_classLoaders.put(sqlDriver.getIdentifier(), loader);
 		sqlDriver.setJDBCDriverClassLoaded(true);
