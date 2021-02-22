@@ -145,7 +145,7 @@ Bug fixes:
 
 #1460 Scripts Plugin: Create table scripts contained redundant index for primary key.
 
-Object tree: NullPointerException occurred when a table's index tab was selected and the table's type other than "TABLE".
+Object tree: NullPointerException occurred when a table's index tab was selected and the table's type was other than "TABLE".
 
 Fixed NullPointer when "Overview / Charts" tab of a SQL result was selected with no numeric or temporal columns in result.
 
