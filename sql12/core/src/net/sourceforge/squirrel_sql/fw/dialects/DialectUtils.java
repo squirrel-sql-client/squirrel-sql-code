@@ -2458,12 +2458,12 @@ public class DialectUtils implements StringTemplateConstants
 		final List<String> result = new ArrayList<String>();
 		if (ti.getDatabaseObjectType() == DatabaseObjectType.VIEW) { return result; }
 
-		final List<IndexColInfo> pkCols = new ArrayList<IndexColInfo>();
+		final List<IndexColInfo> pkCols = new ArrayList<>();
 		if (primaryKeys != null)
 		{
 			for (final PrimaryKeyInfo pkInfo : primaryKeys)
 			{
-				pkCols.add(new IndexColInfo(pkInfo.getColumnName()));
+				pkCols.add(new IndexColInfo(pkInfo.getColumnName(), pkInfo.getKeySequence()));
 			}
 			Collections.sort(pkCols, IndexColInfo.NAME_COMPARATOR);
 		}

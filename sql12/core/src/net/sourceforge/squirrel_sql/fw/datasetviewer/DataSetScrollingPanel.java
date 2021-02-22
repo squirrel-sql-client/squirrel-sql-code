@@ -23,13 +23,13 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 public class DataSetScrollingPanel extends JScrollPane
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(DataSetScrollingPanel.class);
+	private static final ILogger s_log = LoggerController.createLogger(DataSetScrollingPanel.class);
 
 	private boolean _fullyCreated = false;
 	private IDataSetViewer _viewer;
@@ -68,7 +68,7 @@ public class DataSetScrollingPanel extends JScrollPane
 				createUserInterface(destClassName, null, dataModelImplementationDetails);
 				_fullyCreated = true;
 			}
-			Runnable run = new UIUpdater(_viewer, ds);
+			Runnable run = new DataSetScrollingPanelUpdater(_viewer, ds);
 			SwingUtilities.invokeLater(run);
 		}
 		catch (Exception ex)
@@ -100,35 +100,6 @@ public class DataSetScrollingPanel extends JScrollPane
 		SwingUtilities.invokeLater(run);
 	}
 
-	private final static class UIUpdater implements Runnable
-	{
-		/** Logger for this class. */
-		private static final ILogger s_log =
-			LoggerController.createLogger(UIUpdater.class);
-
-		private final IDataSetViewer _viewer;
-		private final IDataSet _ds;
-
-		UIUpdater(IDataSetViewer viewer, IDataSet ds)
-		{
-			super();
-			_viewer = viewer;
-			_ds = ds;
-		}
-
-		public void run()
-		{
-			try
-			{
-				_viewer.show(_ds);
-			}
-			catch (Throwable th)
-			{
-				s_log.error("Error processing a DataSet", th);
-			}
-		}
-	}
-	
 	/**
 	 * Get the viewer being used in this panel.
 	 */

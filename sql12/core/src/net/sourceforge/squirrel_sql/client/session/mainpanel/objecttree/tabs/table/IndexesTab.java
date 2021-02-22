@@ -35,11 +35,9 @@ public class IndexesTab extends BaseTableTab
 {
 	
     /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(IndexesTab.class);
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(IndexesTab.class);
 	
-    private static final int[] indexIndices = 
-                                new int[] {5, 6, 8, 9, 10, 4, 7, 11, 12, 13 };
+    private static final int[] indexIndices = new int[] {5, 6, 8, 9, 10, 4, 7, 11, 12, 13 };
     
 	/**
 	 * Return the title for the tab.
@@ -48,7 +46,6 @@ public class IndexesTab extends BaseTableTab
 	 */
 	public String getTitle()
 	{
-		//i18n[IndexesTab.title=Indexes]
 		return s_stringMgr.getString("IndexesTab.title");
 	}
 
@@ -59,7 +56,6 @@ public class IndexesTab extends BaseTableTab
 	 */
 	public String getHint()
 	{
-		//i18n[IndexesTab.hint=Show indexes for the selected table] 
 		return s_stringMgr.getString("IndexesTab.hint");
 	}
 
@@ -69,24 +65,30 @@ public class IndexesTab extends BaseTableTab
 	protected IDataSet createDataSet() throws DataSetException
 	{
 		final ISQLConnection conn = getSession().getSQLConnection();
-        final SQLDatabaseMetaData dmd = conn.getSQLMetaData();
-        
-        ITableInfo ti = getTableInfo();
-        if (! "TABLE".equalsIgnoreCase(ti.getType())) {
-      	  // Frontbase describes it's tables as "BASE TABLE".
-      	  if (!DialectFactory.isFrontBase(dmd)) {
-      		  return null;  
-      	  }
-        }
-        ResultSetDataSet rsds = 
-            dmd.getIndexInfo(getTableInfo(), indexIndices, true);
-        rsds.next(null);
-        String indexName = (String)rsds.get(1);
-        if (indexName == null) {
-            rsds.removeRow(0);
-        }
-        rsds.resetCursor();
-        return rsds;
+		final SQLDatabaseMetaData dmd = conn.getSQLMetaData();
+
+		ITableInfo ti = getTableInfo();
+		if (     false == "TABLE".equalsIgnoreCase(ti.getType())
+				&& false == "SYSTEM TABLE".equalsIgnoreCase(ti.getType())
+				&& false == "GLOBAL TEMPORARY".equalsIgnoreCase(ti.getType())
+				&& false == "LOCAL TEMPORARY".equalsIgnoreCase(ti.getType())
+		)
+		{
+			// Frontbase describes it's tables as "BASE TABLE".
+			if (!DialectFactory.isFrontBase(dmd))
+			{
+				return null;
+			}
+		}
+		ResultSetDataSet rsds = dmd.getIndexInfo(getTableInfo(), indexIndices, true);
+		rsds.next(null);
+		String indexName = (String) rsds.get(1);
+		if (indexName == null)
+		{
+			rsds.removeRow(0);
+		}
+		rsds.resetCursor();
+		return rsds;
 	}
 	
 }

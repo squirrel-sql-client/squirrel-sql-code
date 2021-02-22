@@ -19,9 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
@@ -40,6 +37,9 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CreateTableScriptCommand
 {
@@ -165,7 +165,7 @@ public class CreateTableScriptCommand
 
    private List<ITableInfo> convertArrayToList(IDatabaseObjectInfo[] dbObjs)
    {
-      List<ITableInfo> result = new ArrayList<ITableInfo>();
+      List<ITableInfo> result = new ArrayList<>();
       for (IDatabaseObjectInfo dbObj : dbObjs)
       {
          if (dbObj instanceof ITableInfo)
