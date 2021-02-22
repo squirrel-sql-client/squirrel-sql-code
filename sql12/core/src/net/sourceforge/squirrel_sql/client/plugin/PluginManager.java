@@ -21,21 +21,6 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
@@ -53,12 +38,27 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
-import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Manages plugins for the application.
@@ -78,7 +78,7 @@ public class PluginManager implements IPluginManager
 	private IApplication _app;
 
 	/** Classloader used for plugins. */
-	private MyURLClassLoader _pluginsClassLoader;
+	private SquirrelURLClassLoader _pluginsClassLoader;
 
 	/**
 	 * Contains a <TT>PluginInfo</TT> object for every plugin that we attempted to load.
@@ -444,7 +444,7 @@ public class PluginManager implements IPluginManager
 			}
 		}
 
-		_pluginsClassLoader = new MyURLClassLoader(urls);
+		_pluginsClassLoader = new SquirrelURLClassLoader(urls);
 		_pluginsClassLoader.addClassLoaderListener(classLoaderListener);
 		Class<?>[] classes = _pluginsClassLoader.getAssignableClasses(IPlugin.class, s_log);
 		for (int i = 0; i < classes.length; ++i)

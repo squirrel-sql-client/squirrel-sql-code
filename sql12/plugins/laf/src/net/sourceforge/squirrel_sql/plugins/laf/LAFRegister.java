@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
-import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -95,7 +95,7 @@ public class LAFRegister
 	private LAFPlugin _plugin;
 
 	/** Classloader for Look and Feel classes. */
-	private MyURLClassLoader _lafClassLoader;
+	private SquirrelURLClassLoader _lafClassLoader;
 
 	/**
 	 * Collection of <TT>ILookAndFeelController</TT> objects keyed by the Look and Feel class name.
@@ -375,7 +375,7 @@ public class LAFRegister
 		try
 		{
 			URL[] urls = new URL[lafUrls.size()];
-			_lafClassLoader = new MyURLClassLoader(lafUrls.toArray(urls));
+			_lafClassLoader = new SquirrelURLClassLoader(lafUrls.toArray(urls));
 
 			for (Iterator<String> it = lafs.keySet().iterator(); it.hasNext();)
 			{
