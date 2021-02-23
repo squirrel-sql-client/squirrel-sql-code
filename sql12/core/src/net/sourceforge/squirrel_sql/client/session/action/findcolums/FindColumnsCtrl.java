@@ -48,7 +48,7 @@ public class FindColumnsCtrl
 
          _dlg = new FindColumnsDlg(findColumnsScope.getOwningWindow(), findColumnsScope.getDialogTitle());
 
-         _searchResultReader = new SearchResultReader(_dlg, res -> displayResult(res));
+         _searchResultReader = new SearchResultReader(_dlg, (res, numberOfTablesDone, totalNumberOfTables) -> displayResult(res, numberOfTablesDone, totalNumberOfTables));
 
          _resultDataSet = new JavabeanArrayDataSet(FindColumnsResultBean.class);
 
@@ -185,7 +185,7 @@ public class FindColumnsCtrl
    }
 
 
-   private void displayResult(ArrayList<FindColumnsResultBean> searchResults)
+   private void displayResult(ArrayList<FindColumnsResultBean> searchResults, int numberOfTablesDone, int totalNumberOfTables)
    {
       try
       {
@@ -194,7 +194,7 @@ public class FindColumnsCtrl
          _dlg.tblSearchResult.show(_resultDataSet);
          _dlg.tblSearchResult.getTable().getButtonTableHeader().adjustAllColWidths(true);
 
-         _dlg.txtStatus.setText(s_stringMgr.getString("FindColumnsCtrl.result.count", _resultDataSet.getSize()));
+         _dlg.txtStatus.setText(s_stringMgr.getString("FindColumnsCtrl.result.count", _resultDataSet.getSize(), numberOfTablesDone, totalNumberOfTables));
       }
       catch (DataSetException e)
       {

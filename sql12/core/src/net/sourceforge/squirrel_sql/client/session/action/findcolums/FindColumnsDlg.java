@@ -13,6 +13,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import java.awt.GridBagConstraints;
@@ -32,6 +33,7 @@ public class FindColumnsDlg extends JDialog
 
    JButton btnFind;
    JButton btnStopSearching;
+   JProgressBar progressBar = new JProgressBar();
 
    DataSetViewerTablePanel tblSearchResult = new DataSetViewerTablePanel();
 
@@ -94,14 +96,19 @@ public class FindColumnsDlg extends JDialog
       btnFind = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND));
       ret.add(btnFind, gbc);
 
+      GUIUtils.setPreferredHeight(txtFilter, btnFind.getPreferredSize().height);
+
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0 );
       btnStopSearching = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.STOP));
       btnStopSearching.setToolTipText(s_stringMgr.getString("FindColumnsDlg.stopSearching"));
       ret.add(btnStopSearching, gbc);
 
-      GUIUtils.setPreferredHeight(txtFilter, btnFind.getPreferredSize().height);
+      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(0,5,0,0), 0,0 );
+      ret.add(progressBar, gbc);
+      GUIUtils.setPreferredWidth(progressBar, btnStopSearching.getPreferredSize().width / 2);
 
-      gbc = new GridBagConstraints(0,3,3,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0 );
+
+      gbc = new GridBagConstraints(0,3,4,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0 );
       ret.add(createConfigPanel(), gbc);
 
       return ret;
@@ -145,6 +152,8 @@ public class FindColumnsDlg extends JDialog
    void setSearching(boolean b)
    {
       btnStopSearching.setEnabled(b);
+      progressBar.setIndeterminate(b);
+      progressBar.setString("");
    }
 
    public boolean isSearching()

@@ -75,11 +75,12 @@ public class SearchResultReader
          {
             if(0 < i && System.currentTimeMillis() - beginMillis > 500)
             {
-               GUIUtils.processOnSwingEventThread(() -> _dislplayResultsCallback.displayResult(searchResults));
+               final int numberOfTablesDone = i + 1;
+               GUIUtils.processOnSwingEventThread(() -> _dislplayResultsCallback.displayResult(searchResults, numberOfTablesDone, tableInfos.length));
 
                if(0 == beginIndex)
                {
-                  System.out.println("#### Starting thread");
+                  //System.out.println("#### Starting thread");
                   GUIUtils.processOnSwingEventThread(() -> _dlg.setSearching(true));
 
                   int finalBeginIndex = i;
@@ -104,7 +105,7 @@ public class SearchResultReader
                {
                   synchronized (sync)
                   {
-                     System.out.println("#### Exit thread on cancel");
+                     //System.out.println("#### Exit thread on cancel");
                      GUIUtils.processOnSwingEventThread(() -> cancelReadResultLoop());
                      return;
                   }
@@ -116,7 +117,7 @@ public class SearchResultReader
                }
             }
          }
-         GUIUtils.processOnSwingEventThread(() -> finishReadResultLoop(searchResults));
+         GUIUtils.processOnSwingEventThread(() -> finishReadResultLoop(searchResults, tableInfos.length));
       }
       catch(Throwable e)
       {
@@ -133,9 +134,9 @@ public class SearchResultReader
       _dlg.txtStatus.setText(_dlg.txtStatus.getText() + "  (" + s_stringMgr.getString("SearchResultReader.stopped") + ")");
    }
 
-   private void finishReadResultLoop(ArrayList<FindColumnsResultBean> searchResults)
+   private void finishReadResultLoop(ArrayList<FindColumnsResultBean> searchResults, int totalNumberOfTables)
    {
-      _dislplayResultsCallback.displayResult(searchResults);
+      _dislplayResultsCallback.displayResult(searchResults, totalNumberOfTables, totalNumberOfTables);
       _dlg.setSearching(false);
    }
 

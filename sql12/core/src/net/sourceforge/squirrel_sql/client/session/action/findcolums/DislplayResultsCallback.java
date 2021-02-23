@@ -5,5 +5,5 @@ import java.util.ArrayList;
 @FunctionalInterface
 public interface DislplayResultsCallback
 {
-   void displayResult(ArrayList<FindColumnsResultBean> searchResults);
+   void displayResult(ArrayList<FindColumnsResultBean> searchResults, int numberOfTablesDone, int totalNumberOfTables);
 }
