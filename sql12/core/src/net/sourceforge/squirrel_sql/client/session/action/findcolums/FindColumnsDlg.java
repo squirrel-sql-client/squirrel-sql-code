@@ -106,6 +106,7 @@ public class FindColumnsDlg extends JDialog
       gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(0,5,0,0), 0,0 );
       ret.add(progressBar, gbc);
       GUIUtils.setPreferredWidth(progressBar, btnStopSearching.getPreferredSize().width / 2);
+      GUIUtils.setMinimumWidth(progressBar, btnStopSearching.getPreferredSize().width / 2);
 
 
       gbc = new GridBagConstraints(0,3,4,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0 );
