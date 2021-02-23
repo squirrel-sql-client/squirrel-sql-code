@@ -178,7 +178,7 @@ public class ActionRegistry
    public void preloadActions(ActionCollection actionCollection)
    {
       IApplication app = Main.getApplication();
-      actionCollection.add(new AboutAction(app));
+      actionCollection.add(new AboutAction());
       actionCollection.add(new CascadeAction(app));
       actionCollection.add(new ToolsPopupAction(app));
       actionCollection.add(new CloseAllSessionsAction(app));

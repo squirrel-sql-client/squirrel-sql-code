@@ -36,7 +36,7 @@ public class SquirrelResources extends Resources
 		String RESULTS_TABS = "result_tabs";
 		String DRIVERS = "drivers";
 //		String EDIT = "edit";
-		String OSX_FILE = "osxFile";
+		String APP_FILE_MENU = "appFileMenu";
 		String HELP = "help";
 		String PLUGINS = "plugins";
 		String PLUGIN_CHANGE_LOG = "pluginChangeLog";

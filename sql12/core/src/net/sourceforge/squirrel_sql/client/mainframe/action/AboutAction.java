@@ -17,10 +17,11 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+
+import java.awt.event.ActionEvent;
 
 /**
  * This <CODE>Action</CODE> displays the applications About Box.
@@ -32,18 +33,12 @@ public class AboutAction extends SquirrelAction
 	/**
 	 * Ctor.
 	 *
-	 * @param	app	Application API.
-	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public AboutAction(IApplication app)
+	public AboutAction()
 	{
-		super(app);
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
+		super(Main.getApplication());
 	}
 
 	/**

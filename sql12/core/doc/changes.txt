@@ -143,6 +143,8 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+Mac OS: Ensured all menus are available.
+
 #1460 Scripts Plugin: Create table scripts contained redundant index for primary key.
 
 Object tree: NullPointerException occurred when a table's index tab was selected and the table's type was other than "TABLE".
