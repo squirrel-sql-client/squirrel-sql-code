@@ -18,6 +18,19 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,18 +45,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
-import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * This class represents the metadata for a database. It is essentially a wrapper around
@@ -708,7 +709,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	public synchronized DataTypeInfo[] getDataTypes() throws SQLException
 	{
 		final DatabaseMetaData md = privateGetJDBCMetaData();
-		final ArrayList<DataTypeInfo> list = new ArrayList<DataTypeInfo>();
+		final ArrayList<DataTypeInfo> list = new ArrayList<>();
 		final ResultSet rs = md.getTypeInfo();
 		try
 		{
@@ -1082,15 +1083,21 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	public synchronized IUDTInfo[] getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types, ProgressCallBack progressCallBack) throws SQLException
 	{
 		DatabaseMetaData md = privateGetJDBCMetaData();
-		ArrayList<UDTInfo> list = new ArrayList<UDTInfo>();
+		ArrayList<UDTInfo> list = new ArrayList<>();
 		checkForInformix(catalog);
 		ResultSet rs = md.getUDTs(catalog, schemaPattern, typeNamePattern, types);
+
+		if(null == rs)
+		{
+			return new IUDTInfo[0];
+		}
+
 		try
 		{
 			final int[] cols = new int[] { 1, 2, 3, 4, 5, 6 };
 			DialectType dialectType = DialectFactory.getDialectType(this);
 			final ResultSetReader rdr = new ResultSetReader(rs, cols, dialectType);
-			Object[] row = null;
+			Object[] row;
 
 			int count = 0;
 			while ((row = rdr.readRow(BlockMode.INDIFFERENT)) != null)
@@ -1365,8 +1372,15 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	public synchronized ForeignKeyInfo[] getImportedKeysInfo(String catalog, String schema, String tableName)
 		throws SQLException
 	{
-		ResultSet rs = privateGetJDBCMetaData().getImportedKeys(catalog, schema, tableName);
-		return getForeignKeyInfo(rs);
+		try(ResultSet rs = privateGetJDBCMetaData().getImportedKeys(catalog, schema, tableName))
+		{
+			if(rs == null)
+			{
+				return new ForeignKeyInfo[0];
+			}
+
+			return getForeignKeyInfo(rs);
+		}
 	}
 
 	/**
@@ -1410,8 +1424,15 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	public synchronized ForeignKeyInfo[] getExportedKeysInfo(String catalog, String schema, String tableName)
 		throws SQLException
 	{
-		ResultSet rs = privateGetJDBCMetaData().getExportedKeys(catalog, schema, tableName);
-		return getForeignKeyInfo(rs);
+		try(ResultSet rs = privateGetJDBCMetaData().getExportedKeys(catalog, schema, tableName))
+		{
+			if(null == rs)
+			{
+				return new ForeignKeyInfo[0];
+			}
+
+			return getForeignKeyInfo(rs);
+		}
 	}
 
 	/**
@@ -1509,13 +1530,16 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 */
 	public List<IndexInfo> getIndexInfo(ITableInfo ti) throws SQLException
 	{
-		List<IndexInfo> result = new ArrayList<IndexInfo>();
-		ResultSet rs = null;
-		try
+		List<IndexInfo> result = new ArrayList<>();
+
+		try(ResultSet rs = privateGetJDBCMetaData().getIndexInfo(ti.getCatalogName(), ti.getSchemaName(),
+				ti.getSimpleName(), false, true))
 		{
-			rs =
-				privateGetJDBCMetaData().getIndexInfo(ti.getCatalogName(), ti.getSchemaName(),
-					ti.getSimpleName(), false, true);
+			if(null == rs)
+			{
+				return result;
+			}
+
 			while (rs.next())
 			{
 				String catalog = rs.getString(1);
@@ -1540,10 +1564,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException e)
 		{
-		}
-		finally
-		{
-			SQLUtilities.closeResultSet(rs);
+			s_log.error("Failed to load indexes", e);
 		}
 		return result;
 	}
@@ -1602,11 +1623,15 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	public synchronized PrimaryKeyInfo[] getPrimaryKey(String catalog, String schema, String table)
 		throws SQLException
 	{
-		final List<PrimaryKeyInfo> results = new ArrayList<PrimaryKeyInfo>();
-		ResultSet rs = null;
-		try
+		try(ResultSet rs = privateGetJDBCMetaData().getPrimaryKeys(catalog, schema, table))
 		{
-			rs = privateGetJDBCMetaData().getPrimaryKeys(catalog, schema, table);
+			if(null == rs)
+			{
+				return new PrimaryKeyInfo[0];
+			}
+
+			final List<PrimaryKeyInfo> results = new ArrayList<>();
+
 			while (rs.next())
 			{
 				PrimaryKeyInfo pkInfo = new PrimaryKeyInfo(rs.getString(1), // catalog
@@ -1618,14 +1643,9 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 					this);
 				results.add(pkInfo);
 			}
-		}
-		finally
-		{
-			SQLUtilities.closeResultSet(rs);
-		}
 
-		final PrimaryKeyInfo[] ar = new PrimaryKeyInfo[results.size()];
-		return results.toArray(ar);
+			return results.toArray(new PrimaryKeyInfo[0]);
+		}
 	}
 
 	/**
@@ -1806,7 +1826,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		
 		try
 		{
-			final Map<Integer, TableColumnInfo> columns = new TreeMap<Integer, TableColumnInfo>();
+			final Map<Integer, TableColumnInfo> columns = new TreeMap<>();
 			DatabaseMetaData md = privateGetJDBCMetaData();
 
 			// TODO this should not be here like this:
@@ -2062,8 +2082,14 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
    public synchronized String[] getDataTypesSimpleNames() throws SQLException
    {
       final DatabaseMetaData md = privateGetJDBCMetaData();
-      final List<String> list = new ArrayList<String>();
+      final List<String> list = new ArrayList<>();
       final ResultSet rs = md.getTypeInfo();
+
+      if(rs == null)
+		{
+			return new String[0];
+		}
+
       try
       {
          ResultSetColumnReader rdr = new ResultSetColumnReader(rs);

@@ -145,6 +145,8 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+#1458, second bug mentioned: Fixed several NullPointers when JDBC-drivers meta data functions returned null ResultSets.
+
 #1458 JDBC-driver class loading: Ensured that the JDBC-driver class loader
   searches driver jars first (i.e. jars from the extra class path of SQuirreL's driver definitions).
   This is to avoid exceptions resulting from version conflicts between classes contained
