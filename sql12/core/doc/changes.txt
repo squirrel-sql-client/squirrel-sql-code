@@ -145,6 +145,11 @@ Brushed up the Look and feel Plugin;
 
 Bug fixes:
 
+#1458 JDBC-driver class loading: Ensured that the JDBC-driver class loader
+  searches driver jars first (i.e. jars from the extra class path of SQuirreL's driver definitions).
+  This is to avoid exceptions resulting from version conflicts between classes contained
+  in the driver jars and in SQuirreL's libs.
+
 Mac OS: Ensured all menus are available.
 
 #1460 Scripts Plugin: Create table scripts contained redundant index for primary key.

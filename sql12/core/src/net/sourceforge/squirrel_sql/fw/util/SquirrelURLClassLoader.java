@@ -28,10 +28,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -39,7 +37,6 @@ public class SquirrelURLClassLoader extends URLClassLoader
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SquirrelURLClassLoader.class);
 
-	private Map<String, Class> _classes = new HashMap<>();
 
 	ArrayList<ClassLoaderListener> listeners = new ArrayList<>();
 
@@ -198,16 +195,4 @@ public class SquirrelURLClassLoader extends URLClassLoader
 		}
 	   return file;
    }
-
-	protected synchronized Class findClass(String className) throws ClassNotFoundException
-	{
-		Class cls = _classes.get(className);
-		if (cls == null)
-		{
-			cls = super.findClass(className);
-			_classes.put(className, cls);
-		}
-		return cls;
-	}
-
 }

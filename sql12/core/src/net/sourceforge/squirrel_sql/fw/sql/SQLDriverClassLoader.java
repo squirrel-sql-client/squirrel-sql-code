@@ -23,17 +23,21 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Driver;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SQLDriverClassLoader extends SquirrelURLClassLoader
 {
-    private final static ILogger s_log = LoggerController.createLogger(SQLDriverClassLoader.class);
-    
+	private final static ILogger s_log = LoggerController.createLogger(SQLDriverClassLoader.class);
+
 	public SQLDriverClassLoader(ISQLDriver sqlDriver) throws MalformedURLException
 	{
 		super(createURLs(sqlDriver.getName(), sqlDriver.getJarFileNames()));
@@ -65,7 +69,7 @@ public class SQLDriverClassLoader extends SquirrelURLClassLoader
 	}
 
 	private static URL[] createURLs(String driverName, String[] fileNames)
-		throws MalformedURLException
+			throws MalformedURLException
 	{
 		if (fileNames == null)
 		{
@@ -92,4 +96,149 @@ public class SQLDriverClassLoader extends SquirrelURLClassLoader
 		}
 		return urls;
 	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	// BEGIN: JDBC-DRIVER JARS FIRST LOADING
+	// The following two methods are based upon the idea of child first class loading,
+	// see https://medium.com/@isuru89/java-a-child-first-class-loader-cbd9c3d0305.
+	// But quite some adjustments were made in order to ensure that JDBC-driver jars
+	// (i.e. jars from the extra class path of SQuirreL's driver definitions) are accessed first.
+	// The aim is to avoid exceptions resulting from version conflicts between classes contained
+	// in the driver jars and in SQuirreL's libs.
+	//
+	// These changes where triggered by bug #1458. Attached to the this bug are JDBC-driver jars
+	// that allow to reproduce the problem.
+	//
+	@Override
+	protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
+	{
+		// has the class loaded already?
+		Class<?> loadedClass = findLoadedClass(name);
+		if (null != loadedClass)
+		{
+			checkResolveClass(resolve, loadedClass);
+			return loadedClass;
+		}
+
+		try
+		{
+			loadedClass = findClass(name);
+			checkResolveClass(resolve, loadedClass);
+			return loadedClass;
+		}
+		catch (ClassNotFoundException e)
+		{
+			try
+			{
+				loadedClass = super.loadClass(name, resolve);
+				checkResolveClass(resolve, loadedClass);
+				return loadedClass;
+			}
+			catch (ClassNotFoundException e2)
+			{
+				if (null != getSystemClassLoader())
+				{
+					loadedClass = getSystemClassLoader().loadClass(name);
+					checkResolveClass(resolve, loadedClass);
+					return loadedClass;
+				}
+				else
+				{
+					throw e2;
+				}
+			}
+		}
+	}
+
+	private void checkResolveClass(boolean resolve, Class<?> loadedClass)
+	{
+		if (resolve)
+		{
+			resolveClass(loadedClass);
+		}
+	}
+
+
+	@Override
+	public Enumeration<URL> getResources(String name) throws IOException
+	{
+		// Peculiar: Changing the order here results in a NullPointer
+		// when the JDBS-driver classes attached to bug #1458 are loaded.
+
+		List<URL> allRes = new LinkedList<>();
+
+		Enumeration<URL> sysResources = getSystemClassLoader().getResources(name);
+		if (sysResources != null)
+		{
+			while (sysResources.hasMoreElements())
+			{
+				allRes.add(sysResources.nextElement());
+			}
+		}
+
+		Enumeration<URL> thisRes = findResources(name);
+		if (thisRes != null)
+		{
+			while (thisRes.hasMoreElements())
+			{
+				allRes.add(thisRes.nextElement());
+			}
+		}
+
+		Enumeration<URL> parentRes = super.findResources(name);
+		if (parentRes != null)
+		{
+			while (parentRes.hasMoreElements())
+			{
+				allRes.add(parentRes.nextElement());
+			}
+		}
+
+		return new Enumeration<URL>()
+		{
+			Iterator<URL> it = allRes.iterator();
+
+			@Override
+			public boolean hasMoreElements()
+			{
+				return it.hasNext();
+			}
+
+			@Override
+			public URL nextElement()
+			{
+				return it.next();
+			}
+		};
+	}
+
+	@Override
+	public URL getResource(String name)
+	{
+		URL res = findResource(name);
+
+		if (res != null)
+		{
+			return res;
+		}
+
+		if (getSystemClassLoader() != null)
+		{
+			res = getSystemClassLoader().getResource(name);
+			if (res != null)
+			{
+				return res;
+			}
+		}
+
+		return super.getResource(name);
+	}
+
+	// END: JDBC-DRIVER JARS FIRST LOADING
+	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
 }
