@@ -15,9 +15,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 
-import static javax.sound.sampled.AudioFormat.Encoding.PCM_SIGNED;
-import static javax.sound.sampled.AudioSystem.getAudioInputStream;
-
 /**
  * SoundPlayer singleton.
  */
@@ -67,7 +64,7 @@ public enum  SoundPlayer
       AudioInputStream in = null;
       try
       {
-         in = getAudioInputStream(soundFile);
+         in = AudioSystem.getAudioInputStream(soundFile);
          AudioFormat outFormat = getOutFormat(in.getFormat());
          DataLine.Info info = new DataLine.Info(SourceDataLine.class, outFormat);
 
@@ -78,7 +75,7 @@ public enum  SoundPlayer
          GUIUtils.processOnSwingEventThread(() -> addQuitSoundToolbarButton());
          _sdl.start();
 
-         stream(getAudioInputStream(outFormat, in), _sdl);
+         stream(AudioSystem.getAudioInputStream(outFormat, in), _sdl);
       }
       catch (UnsupportedAudioFileException | LineUnavailableException | IOException e)
       {
@@ -99,7 +96,7 @@ public enum  SoundPlayer
    {
       final int ch = inFormat.getChannels();
       final float rate = inFormat.getSampleRate();
-      return new AudioFormat(PCM_SIGNED, rate, 16, ch, ch * 2, rate, false);
+      return new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, rate, 16, ch, ch * 2, rate, false);
    }
 
    private void stream(AudioInputStream in, SourceDataLine line) throws IOException
