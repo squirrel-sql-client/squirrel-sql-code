@@ -18,16 +18,16 @@
  */
 package net.sourceforge.squirrel_sql.client.plugin;
 
-import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
+
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 
 public interface IPluginManager
 {

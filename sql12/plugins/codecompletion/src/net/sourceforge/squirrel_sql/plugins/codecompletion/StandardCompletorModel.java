@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.synonym.SynonymHandler;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -30,7 +31,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -42,8 +42,10 @@ public class StandardCompletorModel
    private ILogger _log = LoggerController.createLogger(CodeCompletorModel.class);
    private CodeCompletionInfoCollection _codeCompletionInfos;
 
-	private ArrayList<String> _lastSelectedCompletionNames = new ArrayList<String>();
+	private ArrayList<String> _lastSelectedCompletionNames = new ArrayList<>();
    private CodeCompletionPlugin _plugin;
+
+   private SynonymHandler _synonymHandler;
 
    StandardCompletorModel(ISession session, CodeCompletionPlugin plugin, CodeCompletionInfoCollection codeCompletionInfos, IIdentifier sqlEntryPanelIdentifier)
    {
@@ -52,6 +54,8 @@ public class StandardCompletorModel
       {
          _session = session;
          _codeCompletionInfos = codeCompletionInfos;
+
+         _synonymHandler = new SynonymHandler(_session.getMetaData());
 
 			_session.getParserEventsProcessor(sqlEntryPanelIdentifier).addParserEventsListener(new ParserEventsAdapter()
 			{
@@ -177,6 +181,11 @@ public class StandardCompletorModel
 			{
 				if (infos[i].matchesCompletionString(name))
 				{
+               if (_synonymHandler.ignoreAsCodeCompletionTableInfo(infos[i]))
+               {
+                  // Ignore table synonyms
+                  continue;
+               }
 					toReturn = infos[i];
 					break;
 				}
@@ -196,9 +205,9 @@ public class StandardCompletorModel
 	}
 
 
-	private ArrayList<CodeCompletionInfo> getColumnsFromLastSelectionStartingWith(String colNamePat)
+   private ArrayList<CodeCompletionInfo> getColumnsFromLastSelectionStartingWith(String colNamePat)
 	{
-      ArrayList<CodeCompletionInfo> ret = new ArrayList<CodeCompletionInfo>();
+      ArrayList<CodeCompletionInfo> ret = new ArrayList<>();
 
       for (String lastSelectedCompletionName : _lastSelectedCompletionNames)
       {

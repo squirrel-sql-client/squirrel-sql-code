@@ -10,6 +10,13 @@ public class TableQualifier
    private String _schema;
    private String _tableName;
 
+   public TableQualifier(String catalog, String schema, String tableName)
+   {
+      _catalog = catalog;
+      _schema = schema;
+      _tableName = tableName;
+   }
+
    public TableQualifier(String name)
    {
       String[] splits = name.split("\\.");
@@ -29,7 +36,6 @@ public class TableQualifier
       {
          _catalog = list.get(2);
       }
-
    }
 
    public String getCatalog()

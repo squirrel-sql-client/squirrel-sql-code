@@ -34,11 +34,17 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,9 +167,7 @@ public class SessionPropertiesSheet extends SessionDialogWidget
                   }
                   catch (Exception e)
                   {
-                     s_log.error(
-                        "Unexpected exception while attempting to " +
-                           "refresh object tree: " + e.getMessage(), e);
+                     s_log.error("Unexpected exception while attempting to refresh object tree: " + e.getMessage(), e);
                   }
                }
             }

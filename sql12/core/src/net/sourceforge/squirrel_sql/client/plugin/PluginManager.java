@@ -67,14 +67,10 @@ import java.util.Map;
  */
 public class PluginManager implements IPluginManager
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(PluginManager.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PluginManager.class);
 
-	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(PluginManager.class);
 
-	/** Application API object. */
 	private IApplication _app;
 
 	/** Classloader used for plugins. */
@@ -101,8 +97,7 @@ public class PluginManager implements IPluginManager
 	 * Collection of active sessions. Keyed by <TT>ISession.getIdentifier()</TT> and contains a <TT>List</TT>
 	 * of active <TT>ISessionPlugin</TT> objects for the session.
 	 */
-	private final Map<IIdentifier, List<SessionPluginInfo>> _activeSessions =
-		new HashMap<IIdentifier, List<SessionPluginInfo>>();
+	private final Map<IIdentifier, List<SessionPluginInfo>> _activeSessions = new HashMap<>();
 
 	/**
 	 * Collection of <TT>PluginLoadInfo</TT> objects for the plugins. Stores info about how long it took to
@@ -110,8 +105,7 @@ public class PluginManager implements IPluginManager
 	 */
 	private final Map<String, PluginLoadInfo> _pluginLoadInfoColl = new HashMap<String, PluginLoadInfo>();
 
-	private HashMap<IIdentifier, List<PluginSessionCallback>> _pluginSessionCallbacksBySessionID =
-		new HashMap<IIdentifier, List<PluginSessionCallback>>();
+	private HashMap<IIdentifier, List<PluginSessionCallback>> _pluginSessionCallbacksBySessionID = new HashMap<>();
 
 	/** The class that listens for notifications as archives are being loaded */
 	private ClassLoaderListener classLoaderListener = null;

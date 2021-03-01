@@ -18,16 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Set;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import net.sourceforge.squirrel_sql.fw.gui.DialogUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IDialogUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -35,6 +25,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * This class maps SQLDatabaseMetaData instances to their corresponding Hibernate dialect.
@@ -340,15 +337,7 @@ public class DialectFactory
 			}
 			catch (Exception e)
 			{
-				s_log.error("Encountered unexpected exception while attempting to "
-					+ "determine database product name/version: " + e.getMessage());
-				if (s_log.isDebugEnabled())
-				{
-					StringWriter s = new StringWriter();
-					PrintWriter p = new PrintWriter(s);
-					e.printStackTrace(p);
-					s_log.debug(s.getBuffer().toString());
-				}
+				s_log.error("Encountered unexpected exception while attempting to determine database product name/version: " + e.getMessage(), e);
 			}
 		}
 		return result;

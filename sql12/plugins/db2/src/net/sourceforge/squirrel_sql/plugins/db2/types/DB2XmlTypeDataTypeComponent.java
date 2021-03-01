@@ -17,10 +17,6 @@
  */
 package net.sourceforge.squirrel_sql.plugins.db2.types;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
@@ -30,6 +26,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A custom DatatType implementation of IDataTypeComponent that can handle DB2's
@@ -157,8 +157,7 @@ public class DB2XmlTypeDataTypeComponent extends BaseDataTypeComponent
 				return NULL_VALUE_PATTERN;
 			}
 		} catch (Exception e) {
-			s_log.error("Unexpected exception while attempting to read "
-					+ "SYS.XMLType column", e);
+			s_log.error("Unexpected exception while attempting to read SYS.XMLType column", e);
 		}
 		if (result == null) {
 			result = i18n.CELL_ERROR_MSG;

@@ -18,11 +18,6 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
@@ -41,6 +36,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * @version $Id: DeleteTablesCommand.java,v 1.9 2008-10-11 22:55:54 manningr Exp $
@@ -139,7 +140,9 @@ public class DeleteTablesCommand implements ICommand
 			catch (Exception e)
 			{
 				s_log.error("Unexpected exception while attempting to order tables", e);
-			} finally {
+			}
+			finally
+			{
 				_cb.dispose();
 			}
 			final String sqlSep = _session.getQueryTokenizer().getSQLStatementSeparator();
@@ -167,15 +170,18 @@ public class DeleteTablesCommand implements ICommand
 				}
 				buf.append(" ").append(sqlSep).append(" ").append('\n');
 			}
-			if (buf.length() == 0) { return; }
+			if (buf.length() == 0)
+			{
+				return;
+			}
 			SQLExecuterTask executer = new SQLExecuterTask(_session, buf.toString(), null);
 
 			// Execute the sql synchronously
-			executer.run();			
+			executer.run();
 
 			GUIUtils.processOnSwingEventThread(new Runnable()
 			{
-				public void run()				
+				public void run()
 				{
 					_tree.refreshSelectedNodes();
 				}

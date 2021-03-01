@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.netezza.exp;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpanderFactory;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.synonym.SynonymHandler;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 
 /**
@@ -42,7 +43,7 @@ public class NetezzaSynonymInodeExpanderFactory implements INodeExpanderFactory
 	 */
 	public String getParentLabelForType(DatabaseObjectType type)
 	{
-		return "SYNONYM";
+		return SynonymHandler.SYNONYM_TABLE_TYPE_NAME;
 	}
 
 }

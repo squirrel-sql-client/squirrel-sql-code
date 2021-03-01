@@ -17,11 +17,6 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
@@ -29,6 +24,11 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 
 public class CodeCompletionTableInfo extends CodeCompletionInfo
 {
@@ -206,5 +206,10 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
    public String getCompletionString()
    {
       return CompletionCaseSpelling.valueOf(_prefs.getTableViewCaseSpelling()).adjustCaseSpelling(super.getCompletionString());
+   }
+
+   public String getTableType()
+   {
+      return _tableType;
    }
 }

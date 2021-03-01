@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.schemainfo.synonym.SynonymHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
@@ -100,8 +101,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 	/** Connection to database this class is supplying information for. */
 	private ISQLConnection _conn;
-	
-	private NetezzaSpecifics _netezzaSpecifics = null;
+
+	private SynonymHandler _synonymHandler = new SynonymHandler(this);
 
 	/**
 	 * Cache of commonly accessed metadata properties keyed by the method name that attempts to retrieve them.
@@ -909,7 +910,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			tableTypes.add("SYSTEM TABLE");
 			tableTypes.add("TABLE");
 			tableTypes.add("VIEW");
-			tableTypes.add("SYNONYM");
+			tableTypes.add(SynonymHandler.SYNONYM_TABLE_TYPE_NAME);
 		}
 
 		value = tableTypes.toArray(new String[tableTypes.size()]);
@@ -1763,16 +1764,14 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		String catalog = ti.getCatalogName();
 		String schema = ti.getSchemaName();
 		String table = escapeTableNames(ti.getSimpleName());
-		
-		if (DialectFactory.isNetezza(this)) {
-			if (_netezzaSpecifics == null)
-				_netezzaSpecifics = new NetezzaSpecifics(this);
-			NetezzaSynonym synonym = _netezzaSpecifics.returnSynonym(catalog, schema, table);
-			if (synonym != null) {
-				catalog = synonym.getCatalog();
-				schema = synonym.getSchema();
-				table = synonym.getTable();
-			}
+
+		TableQualifier synonymQualifier = _synonymHandler.getQualifiedSynonymName(catalog, schema, table);
+
+		if (null != synonymQualifier)
+		{
+			catalog = synonymQualifier.getCatalog();
+			schema = synonymQualifier.getSchema();
+			table = synonymQualifier.getTableName();
 		}
 
 		return privateGetJDBCMetaData().getColumns(catalog, schema, table, "%");
@@ -1829,22 +1828,15 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			final Map<Integer, TableColumnInfo> columns = new TreeMap<>();
 			DatabaseMetaData md = privateGetJDBCMetaData();
 
-			// TODO this should not be here like this:
-			// The usage of DialectFactory calls implies different SQLDatabaseMetaData classes
-			// for which different SQLDatabaseMetaDataFactory's should be created and registered.
-			// For now, I added Netezza here too, but refactoring should be done
-			// Function: resolve synonym to the referenced table, so we can get columns for that table
-			if (DialectFactory.isNetezza(this)) {
-				if (_netezzaSpecifics == null)
-					_netezzaSpecifics = new NetezzaSpecifics(this);
-				NetezzaSynonym synonym = _netezzaSpecifics.returnSynonym(catalog, schema, table);
-				if (synonym != null) {
-					catalog = synonym.getCatalog();
-					schema = synonym.getSchema();
-					table = synonym.getTable();
-				}
+			TableQualifier synonymQualifier = _synonymHandler.getQualifiedSynonymName(catalog, schema, table);
+
+			if (null != synonymQualifier)
+			{
+				catalog = synonymQualifier.getCatalog();
+				schema = synonymQualifier.getSchema();
+				table = synonymQualifier.getTableName();
 			}
-			
+
 			rs = md.getColumns(catalog, schema, table, "%");
 			
 			final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);

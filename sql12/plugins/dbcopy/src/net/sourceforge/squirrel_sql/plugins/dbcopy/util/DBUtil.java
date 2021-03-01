@@ -19,6 +19,35 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbcopy.util;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.ColTypeMapper;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.I18NBaseObject;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
+import org.hibernate.MappingException;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,26 +72,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
-import net.sourceforge.squirrel_sql.fw.sql.*;
-import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.ColTypeMapper;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.I18NBaseObject;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
-
-import org.hibernate.MappingException;
 
 /**
  * A utility class for interacting with the database.
@@ -249,8 +258,7 @@ public class DBUtil extends I18NBaseObject
 		return result;
 	}
 
-	public static boolean tableHasForeignKey(String destCatalog, String destSchema, String destTableName,
-	      ForeignKeyInfo fkInfo, SessionInfoProvider prov)
+	public static boolean tableHasForeignKey(String destCatalog, String destSchema, String destTableName, ForeignKeyInfo fkInfo, SessionInfoProvider prov)
 	{
 		boolean result = false;
 		try
@@ -258,7 +266,7 @@ public class DBUtil extends I18NBaseObject
 			SQLDatabaseMetaData md = prov.getDestSession().getSQLConnection().getSQLMetaData();
 
 			ITableInfo[] tables = md.getTables(destCatalog, destSchema, destTableName, new String[]
-				{ "TABLE" }, null);
+					{"TABLE"}, null);
 			if (tables != null && tables.length == 1)
 			{
 				ForeignKeyInfo[] fks = SQLUtilities.getImportedKeys(tables[0], md);
@@ -270,15 +278,16 @@ public class DBUtil extends I18NBaseObject
 						break;
 					}
 				}
-			} else
+			}
+			else
 			{
 				log.error("Couldn't find an exact match for destination table " + destTableName + " in schema "
-				      + destSchema + " and catalog " + destCatalog + ". Skipping FK constraint");
+						+ destSchema + " and catalog " + destCatalog + ". Skipping FK constraint");
 			}
-		} catch (SQLException e)
+		}
+		catch (SQLException e)
 		{
-			log.error("Unexpected exception while attempting to determine if " + "a table (" + destTableName
-			      + ") has a particular foreign " + "key");
+			log.error("Unexpected exception while attempting to determine if " + "a table (" + destTableName + ") has a particular foreign " + "key", e);
 		}
 		return result;
 	}
@@ -1740,16 +1749,14 @@ public class DBUtil extends I18NBaseObject
 			useCatalog = md.supportsCatalogsInTableDefinitions();
 		} catch (SQLException e)
 		{
-			log.info("Encountered unexpected exception while attempting to "
-			      + "determine if catalogs are used in table definitions");
+			log.info("Encountered unexpected exception while attempting to determine if catalogs are used in table definitions", e);
 		}
 		try
 		{
 			useSchema = md.supportsSchemasInTableDefinitions();
 		} catch (SQLException e)
 		{
-			log.info("Encountered unexpected exception while attempting to "
-			      + "determine if schemas are used in table definitions");
+			log.info("Encountered unexpected exception while attempting to determine if schemas are used in table definitions", e);
 		}
 		if (!useCatalog && !useSchema)
 		{
