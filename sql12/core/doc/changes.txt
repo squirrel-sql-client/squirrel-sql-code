@@ -146,6 +146,7 @@ Brushed up the Look and feel Plugin;
 Bug fixes:
 
 #1461 Oracle: Code completion didn't show columns for tables which have Synonyms.
+  Thanks to Waldson Dias for the fix.
 
 #1458, second bug mentioned: Fixed several NullPointers when JDBC-drivers meta data functions returned null ResultSets.
 
