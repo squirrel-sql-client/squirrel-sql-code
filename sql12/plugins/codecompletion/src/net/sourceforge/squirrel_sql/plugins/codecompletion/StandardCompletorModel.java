@@ -181,9 +181,8 @@ public class StandardCompletorModel
 			{
 				if (infos[i].matchesCompletionString(name))
 				{
-               if (_synonymHandler.ignoreAsCodeCompletionTableInfo(infos[i]))
+               if (ignoreAsCodeCompletionTableInfo(infos[i]))
                {
-                  // Ignore table synonyms
                   continue;
                }
 					toReturn = infos[i];
@@ -191,9 +190,6 @@ public class StandardCompletorModel
 				}
 			}
 		}
-
-
-
 
 		if (toReturn == null)
 		{
@@ -203,6 +199,18 @@ public class StandardCompletorModel
 
       return toReturn.getColumns(_session.getSchemaInfo(), colNamePat);
 	}
+
+
+   public boolean ignoreAsCodeCompletionTableInfo(CodeCompletionInfo info)
+   {
+      if (false == info instanceof CodeCompletionTableInfo)
+      {
+         return false;
+      }
+
+      CodeCompletionTableInfo codeCompletionTableInfo = (CodeCompletionTableInfo) info;
+      return _synonymHandler.ignoreAsCodeCompletionTableInfo(codeCompletionTableInfo.getTableType());
+   }
 
 
    private ArrayList<CodeCompletionInfo> getColumnsFromLastSelectionStartingWith(String colNamePat)

@@ -3,8 +3,6 @@ package net.sourceforge.squirrel_sql.client.session.schemainfo.synonym;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
-import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
-import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionTableInfo;
 
 import java.util.ArrayList;
 
@@ -91,7 +89,7 @@ public class SynonymHandler
       }
    }
 
-   public boolean ignoreAsCodeCompletionTableInfo(CodeCompletionInfo info)
+   public boolean ignoreAsCodeCompletionTableInfo(String tableType)
    {
       initLazy();
 
@@ -100,6 +98,6 @@ public class SynonymHandler
          return false;
       }
 
-      return info instanceof CodeCompletionTableInfo && SYNONYM_TABLE_TYPE_NAME.equals(((CodeCompletionTableInfo) info).getTableType());
+      return SYNONYM_TABLE_TYPE_NAME.equals(tableType);
    }
 }
