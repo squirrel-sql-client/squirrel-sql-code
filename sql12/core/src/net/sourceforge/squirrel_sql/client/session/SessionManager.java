@@ -19,16 +19,11 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
-import java.util.*;
-
-import javax.swing.*;
-import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainDialog;
@@ -42,6 +37,18 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.SwingUtilities;
+import javax.swing.event.EventListenerList;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class manages sessions.
@@ -138,7 +145,7 @@ public class SessionManager
     *
     * @return array of all connected sessions.
     */
-   public synchronized ISession[] getConnectedSessions()
+   public ISession[] getConnectedSessions()
    {
       return _sessionsList.toArray(new ISession[_sessionsList.size()]);
    }
@@ -148,71 +155,9 @@ public class SessionManager
     * session manager. Any new sql worksheets etc will be created
     * against this session
     */
-   public synchronized ISession getActiveSession()
+   public ISession getActiveSession()
    {
       return _activeSession;
-   }
-
-   /**
-    * Get the next session opened after the passed one.
-    *
-    * @return	The next session or the first one if the passed one is
-    * 			the last session.
-    */
-   public synchronized ISession getNextSession(ISession session)
-   {
-      final int sessionCount = _sessionsList.size();
-      int idx = _sessionsList.indexOf(session);
-      if (idx != -1)
-      {
-         ++idx;
-         if (idx >= sessionCount)
-         {
-            idx = 0;
-         }
-         return _sessionsList.get(idx);
-      }
-
-      s_log.error("SessionManager.getNextSession()-> Session " +
-               session.getIdentifier() + " not found in _sessionsList");
-      if (sessionCount > 0)
-      {
-         s_log.error("SessionManager.getNextSession()-> Returning first session");
-         return _sessionsList.getFirst();
-      }
-      s_log.error("SessionManager.getNextSession()-> List empty so returning passed session");
-      return session;
-   }
-
-   /**
-    * Get the next session opened before the passed one.
-    *
-    * @return	The previous session or the last one if the passed one is
-    * 			the first session.
-    */
-   public synchronized ISession getPreviousSession(ISession session)
-   {
-      final int sessionCount = _sessionsList.size();
-      int idx = _sessionsList.indexOf(session);
-      if (idx != -1)
-      {
-         --idx;
-         if (idx < 0)
-         {
-            idx = sessionCount - 1;
-         }
-         return _sessionsList.get(idx);
-      }
-
-      s_log.error("SessionManager.getPreviousSession()-> Session " +
-               session.getIdentifier() + " not found in _sessionsList");
-      if (sessionCount > 0)
-      {
-         s_log.error("SessionManager.getPreviousSession()-> Returning last session");
-         return _sessionsList.getLast();
-      }
-      s_log.error("SessionManager.getPreviousSession()-> List empty so returning passed session");
-      return session;
    }
 
    /**
@@ -238,12 +183,12 @@ public class SessionManager
     * @throws	IllegalArgumentException
     *			Thrown if <TT>null</TT>ISession passed.
     */
-   public synchronized boolean closeSession(ISession session)
+   public boolean closeSession(ISession session)
    {
       return closeSession(session, false);
    }
 
-   public synchronized boolean closeSession(ISession session, boolean doNothingAndReturnTrueWhenInClosing)
+   public boolean closeSession(ISession session, boolean doNothingAndReturnTrueWhenInClosing)
    {
 
       if(isInCloseSession(session))
@@ -346,7 +291,7 @@ public class SessionManager
     * 			will still be closed even though the connection may not have
     *			been.
     */
-   synchronized public boolean closeAllSessions()
+   public boolean closeAllSessions()
    {
       // Get an array since we dont want trouble with the sessionsList when
       // we remove the sessions from it.
@@ -361,7 +306,7 @@ public class SessionManager
       return true;
    }
 
-   synchronized public boolean closeAllButCurrentSessions()
+   public boolean closeAllButCurrentSessions()
    {
       ISession activeSession = getActiveSession();
 

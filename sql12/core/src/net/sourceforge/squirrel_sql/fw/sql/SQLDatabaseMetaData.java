@@ -109,7 +109,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 * Note, this cache should only be used for metadata that are not likely to be changed during an open
 	 * Session. Meta data that is likely to be changed should be kept in SchemaInfo.
 	 */
-	private Map<String, Object> _cache = Collections.synchronizedMap(new HashMap<String, Object>());
+	private Map<String, Object> _cache = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * If previous attempts to getSuperTables fail, then this will be set to false, and prevent further
