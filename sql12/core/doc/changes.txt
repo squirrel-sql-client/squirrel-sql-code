@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Table right mouse menu item "Show distinct values..." is available in more tables.
+
 Find columns function: Added search in progress indicator and number of tables searched.
 
 SQL code completion popup: Schema/Catalog-names are now displayed with appended "(SCHEMA)" / "(CATALOG)" respectively.

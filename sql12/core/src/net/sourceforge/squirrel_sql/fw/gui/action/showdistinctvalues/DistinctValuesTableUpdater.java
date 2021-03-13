@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
@@ -27,7 +26,7 @@ public class DistinctValuesTableUpdater
       _dlg = dlg;
    }
 
-   void updateTable(DataSetViewerTable sourceTable, ExtTableColumn selectedColumn, ISession session)
+   void updateTable(DataSetViewerTable sourceTable, ExtTableColumn selectedColumn)
    {
       _dlg.btnStatusBarInfoToolTip.setInfoText(s_stringMgr.getString("ShowDistinctValuesCtrl.noInformation"));
       _dlg.lblStatus.setText(null);
@@ -41,8 +40,7 @@ public class DistinctValuesTableUpdater
          }
 
          final List<Object[]> distinctRows = distinctValuesHolder.getDistinctRows();
-         DataSetViewerTablePanel dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(distinctRows, Collections.singletonList(selectedColumn.getColumnDisplayDefinition()), session);
-         _dlg.distinctTableScrollPane.setViewportView(dataSetViewerTablePanel.getComponent());
+         fillTablePanel(distinctRows, Collections.singletonList(selectedColumn.getColumnDisplayDefinition()));
 
          _dlg.lblStatus.setText(s_stringMgr.getString("ShowDistinctValuesCtrl.numberOfDistinctValuesInColumn", selectedColumn.getColumnDisplayDefinition().getColumnName(), distinctRows.size()));
       }
@@ -63,14 +61,13 @@ public class DistinctValuesTableUpdater
             }
 
             List<ColumnDisplayDefinition> columnDisplayDefinitions = extTableColumns.stream().map(c -> c.getColumnDisplayDefinition()).collect(Collectors.toList());
-            DataSetViewerTablePanel dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions, session);
-            _dlg.distinctTableScrollPane.setViewportView(dataSetViewerTablePanel.getComponent());
+            fillTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions);
 
             writeDistinctInColumnsStatusBar(extTableColumns, distinctValuesHolder);
          }
          else
          {
-            doDistinctRows(sourceTable, session, sourceTable.getSelectedModelRows(), extTableColumns);
+            doDistinctRows(sourceTable, sourceTable.getSelectedModelRows(), extTableColumns);
          }
       }
       else if(_dlg.optDistinctInSelectedRows.isSelected() )
@@ -90,14 +87,13 @@ public class DistinctValuesTableUpdater
             }
 
             List<ColumnDisplayDefinition> columnDisplayDefinitions = extTableColumns.stream().map(c -> c.getColumnDisplayDefinition()).collect(Collectors.toList());
-            DataSetViewerTablePanel dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions, session);
-            _dlg.distinctTableScrollPane.setViewportView(dataSetViewerTablePanel.getComponent());
+            fillTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions);
 
             writeDistinctInColumnsStatusBar(extTableColumns, distinctValuesHolder);
          }
          else
          {
-            doDistinctRows(sourceTable, session, sourceTable.getSelectedModelRows(), extTableColumns);
+            doDistinctRows(sourceTable, sourceTable.getSelectedModelRows(), extTableColumns);
          }
       }
       else if(_dlg.optDistinctInTable.isSelected() )
@@ -116,16 +112,21 @@ public class DistinctValuesTableUpdater
             }
 
             List<ColumnDisplayDefinition> columnDisplayDefinitions = extTableColumns.stream().map(c -> c.getColumnDisplayDefinition()).collect(Collectors.toList());
-            DataSetViewerTablePanel dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions, session);
-            _dlg.distinctTableScrollPane.setViewportView(dataSetViewerTablePanel.getComponent());
+            fillTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions);
 
             writeDistinctInColumnsStatusBar(extTableColumns, distinctValuesHolder);
          }
          else
          {
-            doDistinctRows(sourceTable, session, null, extTableColumns);
+            doDistinctRows(sourceTable, null, extTableColumns);
          }
       }
+   }
+
+   private void fillTablePanel(List<Object[]> distinctRows, List<ColumnDisplayDefinition> columnDisplayDefinitions)
+   {
+      DataSetViewerTablePanel dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(distinctRows, columnDisplayDefinitions);
+      _dlg.distinctTableScrollPane.setViewportView(dataSetViewerTablePanel.getComponent());
    }
 
    private int getViewColumnIndex(DataSetViewerTable sourceTable, ExtTableColumn column)
@@ -133,7 +134,7 @@ public class DistinctValuesTableUpdater
       return sourceTable.getButtonTableHeader().getViewColumnIndex(column.getModelIndex());
    }
 
-   private void doDistinctRows(DataSetViewerTable sourceTable, ISession session, int[] selRows, ArrayList<ExtTableColumn> extTableColumns)
+   private void doDistinctRows(DataSetViewerTable sourceTable, int[] selRows, ArrayList<ExtTableColumn> extTableColumns)
    {
       DistinctRowsHolder distinctRowsHolder = new DistinctRowsHolder(extTableColumns);
 
@@ -154,8 +155,8 @@ public class DistinctValuesTableUpdater
       }
 
       List<ColumnDisplayDefinition> columnDisplayDefinitions = extTableColumns.stream().map(c -> c.getColumnDisplayDefinition()).collect(Collectors.toList());
-      DataSetViewerTablePanel dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(distinctRowsHolder.getDistinctRows(), columnDisplayDefinitions, session);
-      _dlg.distinctTableScrollPane.setViewportView(dataSetViewerTablePanel.getComponent());
+
+      fillTablePanel(distinctRowsHolder.getDistinctRows(), columnDisplayDefinitions);
 
       writeDistinctInRowStatusBar(distinctRowsHolder);
    }

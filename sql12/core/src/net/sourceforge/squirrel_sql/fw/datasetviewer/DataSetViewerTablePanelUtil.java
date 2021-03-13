@@ -11,7 +11,7 @@ public class DataSetViewerTablePanelUtil
 {
    public static List<ExtTableColumn> getTableColumns(DataSetViewerTable table)
    {
-      ArrayList<ExtTableColumn> ret = new ArrayList<ExtTableColumn>();
+      ArrayList<ExtTableColumn> ret = new ArrayList<>();
 
       for (int i = 0; i < table.getColumnModel().getColumnCount(); i++)
       {
@@ -26,12 +26,24 @@ public class DataSetViewerTablePanelUtil
 
    }
 
+   public static DataSetViewerTablePanel createDataSetViewerTablePanel(List<Object[]> allRows, List<ColumnDisplayDefinition> columnDisplayDefinitions)
+   {
+      return createDataSetViewerTablePanel(allRows, columnDisplayDefinitions, null);
+   }
+
    public static DataSetViewerTablePanel createDataSetViewerTablePanel(List<Object[]> allRows, List<ColumnDisplayDefinition> columnDisplayDefinitions, ISession session)
    {
       try
       {
          DataSetViewerTablePanel dsv = new DataSetViewerTablePanel();
-         dsv.init(null, new DataModelImplementationDetails(session), session);
+         if (null != session)
+         {
+            dsv.init(null, new DataModelImplementationDetails(session), session);
+         }
+         else
+         {
+            dsv.init(null, null);
+         }
 
          SimpleDataSet ods = new SimpleDataSet(allRows, columnDisplayDefinitions.toArray(new ColumnDisplayDefinition[columnDisplayDefinitions.size()]));
          dsv.show(ods);

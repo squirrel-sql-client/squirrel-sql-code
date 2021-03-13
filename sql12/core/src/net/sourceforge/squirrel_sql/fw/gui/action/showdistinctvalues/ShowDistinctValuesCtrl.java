@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -9,9 +8,9 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JFrame;
 import javax.swing.Timer;
 import javax.swing.table.TableColumn;
+import java.awt.Window;
 
 public class ShowDistinctValuesCtrl
 {
@@ -28,7 +27,7 @@ public class ShowDistinctValuesCtrl
 
    private javax.swing.Timer _distinctTableUpdateTrigger;
 
-   public ShowDistinctValuesCtrl(JFrame owningFrame, DataSetViewerTable sourceTable, ISession session)
+   public ShowDistinctValuesCtrl(Window owningWindow, DataSetViewerTable sourceTable)
    {
       if(0 == sourceTable.getDataSetViewerTableModel().getRowCount())
       {
@@ -50,7 +49,7 @@ public class ShowDistinctValuesCtrl
          return;
       }
 
-      _dlg = new ShowDistinctValuesDlg(owningFrame, ((ExtTableColumn) selectedColumn).getColumnDisplayDefinition().getColumnName());
+      _dlg = new ShowDistinctValuesDlg(owningWindow, ((ExtTableColumn) selectedColumn).getColumnDisplayDefinition().getColumnName());
 
       _dlg.optDistinctInColumn.setSelected(Props.getBoolean(PREF_DISTINCT_IN_COLUMN, true));
       _dlg.optDistinctInSelection.setSelected(Props.getBoolean(PREF_DISTINCT_IN_SELECTION, false));
@@ -63,7 +62,7 @@ public class ShowDistinctValuesCtrl
 
       onDistinctInColumnOrSelectionChanged();
 
-      _distinctTableUpdateTrigger = new Timer(300, e -> new DistinctValuesTableUpdater(_dlg).updateTable(sourceTable, (ExtTableColumn)selectedColumn, session));
+      _distinctTableUpdateTrigger = new Timer(300, e -> new DistinctValuesTableUpdater(_dlg).updateTable(sourceTable, (ExtTableColumn)selectedColumn));
       _distinctTableUpdateTrigger.setRepeats(false);
       triggerTableUpdate();
 

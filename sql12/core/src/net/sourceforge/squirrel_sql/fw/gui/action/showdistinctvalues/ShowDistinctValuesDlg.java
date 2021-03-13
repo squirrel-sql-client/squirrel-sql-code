@@ -8,7 +8,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -17,6 +16,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 
 public class ShowDistinctValuesDlg extends JDialog
 {
@@ -35,7 +35,7 @@ public class ShowDistinctValuesDlg extends JDialog
    SmallToolTipInfoButton btnStatusBarInfoToolTip;
 
 
-   public ShowDistinctValuesDlg(JFrame owner, String selectedColumnName)
+   public ShowDistinctValuesDlg(Window owner, String selectedColumnName)
    {
       super(owner);
 
@@ -124,11 +124,14 @@ public class ShowDistinctValuesDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       optDistinctInColumns = new JRadioButton(s_stringMgr.getString("ShowDistinctValuesDlg.distinctInColumns"));
       ret.add(optDistinctInColumns, gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("ShowDistinctValuesDlg.distinctInColumnsInfo")).getButton(), gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
       optDistinctInRows = new JRadioButton(s_stringMgr.getString("ShowDistinctValuesDlg.distinctInRows"));
       ret.add(optDistinctInRows, gbc);
 

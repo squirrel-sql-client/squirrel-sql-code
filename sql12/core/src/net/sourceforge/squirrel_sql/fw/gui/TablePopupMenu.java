@@ -167,9 +167,10 @@ public class TablePopupMenu extends BasePopupMenu
 			addSeparator();
 			addAction(_showReferences);
 
-			addSeparator();
-			addAction(_showDistinctValues);
 		}
+
+		addSeparator();
+		addAction(_showDistinctValues);
 
 		addSeparator();
 		addAction(_copySelectedRowsToOwnWindow);
@@ -503,7 +504,7 @@ public class TablePopupMenu extends BasePopupMenu
 
       public void actionPerformed(ActionEvent evt)
       {
-         new ShowDistinctValuesCommand(_dataSetViewerTablePanel.getTable(), _updateableModel, (JFrame) GUIUtils.getOwningFrame(_dataSetViewerTablePanel.getTable()), _session).execute();
+         new ShowDistinctValuesCommand(_dataSetViewerTablePanel.getTable(), GUIUtils.getOwningWindow(_dataSetViewerTablePanel.getTable()), _session).execute();
       }
    }
 
