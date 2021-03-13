@@ -17,31 +17,34 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JCheckBox;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
-import javax.swing.BorderFactory;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
+import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @author gwg
@@ -86,8 +89,7 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 	private IRestorableTextComponent _textComponent;
 	
 	/** Internationalized strings for this class, shared/copied from ResultSetReader. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DataTypeUnknown.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataTypeUnknown.class);
 	
 	/* The CellRenderer used for this data type */
 	//??? For now, use the same renderer as everyone else.
@@ -103,8 +105,7 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 	 * by the static method getControlPanel, so we cannot use something
 	 * like getClass() to find this name.
 	 */
-	private static final String thisClassName =
-		"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeUnknown";
+	private static final String thisClassName = DataTypeUnknown.class.getName();
 
 	/*
 	 * Properties settable by the user
@@ -325,6 +326,11 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
 
+		return staticReadResultSet(rs, index, s_stringMgr.getString("DataTypeUnknown.unknown", _colDef.getSqlType()));
+	}
+
+	public static String staticReadResultSet(ResultSet rs, int index, String noReadMessage) throws SQLException
+	{
 		String data = null;
 		if (_readUnknown)
 		{
@@ -337,7 +343,7 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 		}
 		else
 		{
-			data = s_stringMgr.getString("DataTypeUnknown.unknown", _colDef.getSqlType() );
+			data = noReadMessage;
 		}
 
 		return data;

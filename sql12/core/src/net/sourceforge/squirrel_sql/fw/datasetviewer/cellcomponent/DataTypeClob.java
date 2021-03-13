@@ -17,6 +17,30 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
+import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -34,30 +58,6 @@ import java.io.StringReader;
 import java.sql.Clob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.JTextComponent;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
-import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 /**
  * @author gwg
@@ -255,16 +255,29 @@ public class DataTypeClob extends BaseDataTypeComponent
 	 * the text, much less edit it. The simplest solution is to allow editing of multi-line
 	 * text only in the Popup window.
 	 */
-	public boolean isEditableInCell(Object originalValue) {
-		// for convenience, cast the value object to its type
-		ClobDescriptor cdesc = (ClobDescriptor)originalValue;
+	public boolean isEditableInCell(Object originalValue)
+	{
+		if(false == _readClobs || false ==_readCompleteClobs)
+		{
+			return false;
+		}
 
-		if (wholeClobRead(cdesc)) {
+
+		// for convenience, cast the value object to its type
+		ClobDescriptor cdesc = (ClobDescriptor) originalValue;
+
+		if (wholeClobRead(cdesc))
+		{
 			// all the data from the clob has been read.
 			// make sure there are no newlines in it
-			if ( cdesc != null && cdesc.getData() != null && cdesc.getData().indexOf('\n') > -1)
-					return false;
-				else return true;
+			if (cdesc != null && cdesc.getData() != null && cdesc.getData().indexOf('\n') > -1)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
 		}
 
 		// since we do not have all of the data from the clob, we cannot allow editing
@@ -388,10 +401,16 @@ public class DataTypeClob extends BaseDataTypeComponent
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
 	 */
-	public boolean isEditableInPopup(Object originalValue) {
+	public boolean isEditableInPopup(Object originalValue)
+	{
+		if(false == _readClobs || false ==_readCompleteClobs)
+		{
+			return false;
+		}
+
 		// If all of the data has been read, then the clob can be edited in the Popup,
 		// otherwise it cannot
-		return wholeClobRead((ClobDescriptor)originalValue);
+		return wholeClobRead((ClobDescriptor) originalValue);
 	}
 
 	/*

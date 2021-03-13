@@ -17,44 +17,48 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Blob;
-import java.io.ByteArrayInputStream;
-
-import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
-import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
+import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @author gwg
@@ -83,12 +87,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
  * handling and resetting the cell to the original value.
  */
 
-public class DataTypeBlob extends BaseDataTypeComponent
-	implements IDataTypeComponent
+public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComponent
 {
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DataTypeBlob.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataTypeBlob.class);
+
+	private static ILogger s_log = LoggerController.createLogger(DataTypeBlob.class);
+
 
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;
@@ -111,8 +116,7 @@ public class DataTypeBlob extends BaseDataTypeComponent
 	 * by the static method getControlPanel, so we cannot use something
 	 * like getClass() to find this name.
 	 */
-	private static final String thisClassName =
-		"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob";
+	private static final String thisClassName = DataTypeBlob.class.getName();
 
 
 	/** Default length of BLOB to read */
@@ -224,11 +228,21 @@ public class DataTypeBlob extends BaseDataTypeComponent
 	 * Therefore we use a call to this function as a trigger to make sure
 	 * that we have all of the BLOB data, if that is possible.
 	 */
-	public boolean isEditableInCell(Object originalValue) {
-		if (!_readBlobs) {
+	public boolean isEditableInCell(Object originalValue)
+	{
+		if(false == _readBlobs || false ==_readCompleteBlobs)
+		{
 			return false;
 		}
-		return wholeBlobRead((BlobDescriptor)originalValue);
+
+		if (originalValue instanceof BlobDescriptor)
+		{
+			return wholeBlobRead((BlobDescriptor) originalValue);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -364,10 +378,23 @@ public class DataTypeBlob extends BaseDataTypeComponent
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
 	 */
-	public boolean isEditableInPopup(Object originalValue) {
+	public boolean isEditableInPopup(Object originalValue)
+	{
+		if(false == _readBlobs || false ==_readCompleteBlobs)
+		{
+			return false;
+		}
+
 		// If all of the data has been read, then the blob can be edited in the Popup,
 		// otherwise it cannot
-		return wholeBlobRead((BlobDescriptor)originalValue);
+		if (originalValue instanceof BlobDescriptor)
+		{
+			return wholeBlobRead((BlobDescriptor) originalValue);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	/*
@@ -456,17 +483,22 @@ public class DataTypeBlob extends BaseDataTypeComponent
 	 * Make sure the entire BLOB data is read in.
 	 * Return true if it has been read successfully, and false if not.
 	 */
-	private boolean wholeBlobRead(BlobDescriptor bdesc) {
+	private boolean wholeBlobRead(BlobDescriptor bdesc)
+	{
 		if (bdesc == null)
-			return true;	// can use an empty blob for editing
+		{
+			return true;   // can use an empty blob for editing
+		}
 
 		if (bdesc.getWholeBlobRead())
-			return true;	// the whole blob has been previously read in
+		{
+			return true;   // the whole blob has been previously read in
+		}
 
 		// data was not fully read in before, so try to do that now
-		try {
-			System.out.println("reading bytes from BLOB");
-			byte[] data = bdesc.getBlob().getBytes(1, (int)bdesc.getBlob().length());
+		try
+		{
+			byte[] data = bdesc.getBlob().getBytes(1, (int) bdesc.getBlob().length());
 
 			// read succeeded, so reset the BlobDescriptor to match
 			bdesc.setBlobRead(true);
@@ -475,14 +507,14 @@ public class DataTypeBlob extends BaseDataTypeComponent
 			bdesc.setUserSetBlobLimit(0);
 
 			// we successfully read the whole thing
-			 return true;
+			return true;
 		}
-		catch (Exception ex) {
+		catch (Exception ex)
+		{
 			bdesc.setBlobRead(false);
 			bdesc.setWholeBlobRead(false);
 			bdesc.setData(null);
-			//?? What to do with this error?
-			//?? error message = "Could not read the complete data. Error was: "+ex.getMessage());
+			s_log.warn("Failed to read Blob in DataTypeBlob.wholeBlobRead(...): " + ex);
 			return false;
 		}
 	}
@@ -501,57 +533,89 @@ public class DataTypeBlob extends BaseDataTypeComponent
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
-	public static Object staticReadResultSet(ResultSet rs, int index)
-		throws java.sql.SQLException {
+	public static Object staticReadResultSet(ResultSet rs, int index) throws java.sql.SQLException
+	{
 
-		// We always get the BLOB, even when we are not reading the contents.
-		// Since the BLOB is just a pointer to the BLOB data rather than the
-		// data itself, this operation should not take much time (as opposed
-		// to getting all of the data in the blob).
-		Blob blob = rs.getBlob(index);
+		 // We always get the BLOB, even when we are not reading the contents.
+		 // Since the BLOB is just a pointer to the BLOB data rather than the
+		 // data itself, this operation should not take much time (as opposed
+		 // to getting all of the data in the blob).
+		 Blob blob;
+		 try
+		 {
+			 blob = rs.getBlob(index);
 
-		if (rs.wasNull())
-			return null;
+			 if (rs.wasNull())
+			 {
+				 return null;
+			 }
+		 }
+		 catch (Exception e)
+		 {
+			 return handleBlobReadException(rs, index, e);
+		 }
 
-		// BLOB exists, so try to read the data from it
-		// based on the user's directions
-		if (_readBlobs)
+		 // BLOB exists, so try to read the data from it
+		 // based on the user's directions
+		 if (false == _readBlobs)
+		 {
+			 // user said not to read any of the data from the blob
+			 return new BlobDescriptor(blob, null, false, false, 0);
+		 }
+
+		 // User said to read at least some of the data from the blob
+		 byte[] blobData = null;
+		 if (blob != null)
+		 {
+			 int len = (int) blob.length();
+			 if (len > 0)
+			 {
+				 int charsToRead = len;
+				 if (!_readCompleteBlobs)
+				 {
+					 charsToRead = _readBlobsSize;
+				 }
+				 if (charsToRead > len)
+				 {
+					 charsToRead = len;
+				 }
+				 blobData = blob.getBytes(1, charsToRead);
+			 }
+		 }
+
+		 // determine whether we read all there was in the blob or not
+		 boolean wholeBlobRead = false;
+		 if (_readCompleteBlobs || blobData.length < _readBlobsSize)
+		 {
+			 wholeBlobRead = true;
+		 }
+
+		 return new BlobDescriptor(blob, blobData, true, wholeBlobRead, _readBlobsSize);
+	}
+
+	/**
+	 * See for example bug #1464: In SQL results SQLLite may give type Blob in ResultSetMetaData but it is a String.
+	 * rs.getBlob(index) results in
+	 * java.sql.SQLFeatureNotSupportedException
+	 *   at org.sqlite.jdbc4.JDBC4ResultSet.unused(JDBC4ResultSet.java:347)
+	 */
+	private static String handleBlobReadException(ResultSet rs, int index, Exception exceptionToHandle) throws SQLException
+	{
+		final String msg =
+				"Failed to call ResultSet.getBlob() in DataTypeBlob.staticReadResultSet(...).\n"
+						+ "If in case of Blob read errors you want SQuirreL to try to treat Blobs as type \"Unknown\" switch the Blob data type preferences to read all.\n"
+						+ "See menu File --> \"Global Preferences\" --> tab \"Data type controls\" --> section Blob.\n"
+						+ "Hint: Check out the settings of section Unknown as well.";
+
+		if (false == _readBlobs || false == _readCompleteBlobs)
 		{
-			// User said to read at least some of the data from the blob
-			byte[] blobData = null;
-			if (blob != null)
-			{
-				int len = (int)blob.length();
-				if (len > 0)
-				{
-					int charsToRead = len;
-					if (! _readCompleteBlobs)
-					{
-						charsToRead = _readBlobsSize;
-					}
-					if (charsToRead > len)
-					{
-						charsToRead = len;
-					}
-					blobData = blob.getBytes(1, charsToRead);
-				}
-			}
-
-			// determine whether we read all there was in the blob or not
-			boolean wholeBlobRead = false;
-			if (_readCompleteBlobs ||
-				blobData.length < _readBlobsSize)
-				wholeBlobRead = true;
-
-			return new BlobDescriptor(blob, blobData, true, wholeBlobRead,
-				_readBlobsSize);
-		}
-		else
-		{
-			// user said not to read any of the data from the blob
-			return new BlobDescriptor(blob, null, false, false, 0);
+			throw new RuntimeException(msg, exceptionToHandle);
 		}
 
+		// It can be very memory and performance challenging to read Blobs.
+		// That's why this workaround is done when the user chose to read complete Blobs only.
+		s_log.error(msg, exceptionToHandle);
+		return DataTypeUnknown.staticReadResultSet(rs, index, s_stringMgr.getString("DataTypeBlob.readAsStringError"));
 	}
 
 	/**

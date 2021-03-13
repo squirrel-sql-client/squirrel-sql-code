@@ -19,19 +19,17 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -71,6 +69,12 @@ public interface IDataTypeComponent {
      * not.
      */
     public boolean isEditableInCell(Object originalValue);
+
+    /**
+     * Returns true if data type may be edited in the popup, false if not.
+     */
+    public boolean isEditableInPopup(Object originalValue);
+
 
     /**
      * See if a value in a column has been limited in some way and needs to be
@@ -120,10 +124,6 @@ public interface IDataTypeComponent {
      * visible to the rest of the world.
      */
 
-    /**
-     * Returns true if data type may be edited in the popup, false if not.
-     */
-    public boolean isEditableInPopup(Object originalValue);
 
     /**
      * Get the JTextArea component for this data type to be used in the

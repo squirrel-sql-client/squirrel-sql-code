@@ -42,7 +42,9 @@ public class ColoringService
       Color customBackground = null;
 
       // if text cannot be edited in the cell but can be edited in
-      //				the popup, show that by changing the text colors.
+      // the popup, shows that by changing the text colors.
+      // Note: isEditableInCell() and isEditableInPopup() may result in reading Blob types, depending on configurations in preferences.
+      //       That is not the problem because when the coloring is done the cell will be shown anyway and thus the read will need occur anyway.
       if (dataTypeObject != null &&
             dataTypeObject.isEditableInCell(value) == false &&
             dataTypeObject.isEditableInPopup(value) == true)
