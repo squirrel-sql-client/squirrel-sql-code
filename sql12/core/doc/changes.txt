@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Look and feel Plugin: Upgraded FlatLaf Look and Feel to version 1.0.
+   Thanks to Stanimir Stamenkov for the patch.
+
 Table right mouse menu item "Show distinct values..." is available in more tables.
 
 Find columns function: Added search in progress indicator and number of tables searched.
