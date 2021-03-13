@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
@@ -34,36 +35,34 @@ import java.sql.SQLException;
 /**
  * This class will display the details for an DB2 index.
  */
-public class IndexDetailsTab extends BasePreparedStatementTab
+public class DB2SpecificColumnDetailsTab extends BasePreparedStatementTab
 {
-	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(IndexDetailsTab.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DB2SpecificColumnDetailsTab.class);
 
-	private final static ILogger s_log = LoggerController.createLogger(IndexDetailsTab.class);
+	private final static ILogger s_log = LoggerController.createLogger(DB2SpecificColumnDetailsTab.class);
 
 	/** Object that contains methods for retrieving SQL that works for each DB2 platform */
 	private final DB2Sql db2Sql;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param db2Sql
-	 *           Object that contains methods for retrieving SQL that works for each DB2 platform
-	 */
-	public IndexDetailsTab(DB2Sql db2Sql)
+	public DB2SpecificColumnDetailsTab(DB2Sql db2Sql)
 	{
-		super(s_stringMgr.getString("IndexDetailsTab.title"), s_stringMgr.getString("IndexDetailsTab.hint"), true);
+		super(s_stringMgr.getString("DB2SpecificColumnDetailsTab.title"), s_stringMgr.getString("DB2SpecificColumnDetailsTab.hint"), false);
 		this.db2Sql = db2Sql;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab#createStatement()
-	 */
+
 	@Override
 	protected PreparedStatement createStatement() throws SQLException
 	{
 		ISession session = getSession();
 		IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-		String sql = db2Sql.getIndexDetailsSql();
+		String sql = db2Sql.getDB2SpecificColumnDetailsSql();
+
+		if(StringUtilities.isEmpty(sql, true))
+		{
+			return null;
+		}
+
 		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(sql);
 		pstmt.setString(1, doi.getSchemaName());
 		pstmt.setString(2, doi.getSimpleName());

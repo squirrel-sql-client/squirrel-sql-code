@@ -21,9 +21,15 @@ public enum DB2PlatformType
 	public static DB2PlatformType getDB2PlatformTypeByName(String databaseProductName)
 	{
 		// See: http://tinyurl.com/95poonn for z/OS
-		if (databaseProductName.equals("DB2")) { return ZOS; }
-		
-		if (databaseProductName.equals("DB2 UDB for AS/400")) { return OS400; }
+		if (databaseProductName.equals("DB2"))
+		{
+			return ZOS;
+		}
+
+		if (databaseProductName.equals("DB2 UDB for AS/400"))
+		{
+			return OS400;
+		}
 
 		// I decided against this implementation since I may not have all of the platforms listed here.
 		// Since my former logic determined that everything but AS/400 is LUW, and I am pretty sure that

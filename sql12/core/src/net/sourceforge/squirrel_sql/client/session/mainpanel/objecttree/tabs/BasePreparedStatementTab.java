@@ -22,12 +22,17 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.MapDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.awt.*;
+import java.awt.Component;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -118,12 +123,18 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 		}
 
 
-		PreparedStatement pstmt = null;
+		PreparedStatement pstmt;
 		ResultSet rs = null;
 
       try
       {
          pstmt = createStatement();
+
+         if(null == pstmt)
+			{
+				return;
+			}
+
          rs = pstmt.executeQuery();
          final IDataSet ds = createDataSetFromResultSet(rs);
          _comp.load(ds, new DataModelImplementationDetails(getSession()));

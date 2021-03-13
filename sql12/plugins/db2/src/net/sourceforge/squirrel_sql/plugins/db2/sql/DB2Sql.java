@@ -3,28 +3,29 @@ package net.sourceforge.squirrel_sql.plugins.db2.sql;
 public interface DB2Sql
 {
 
-	String getUserDefinedFunctionSourceSql();
+   String getUserDefinedFunctionSourceSql();
 
-	String getUserDefinedFunctionDetailsSql();
+   String getUserDefinedFunctionDetailsSql();
 
-	String getTriggerDetailsSql();
+   String getTriggerDetailsSql();
 
-	public abstract String getViewSourceSql();
+   String getViewSourceSql();
 
-	public abstract String getSequenceDetailsSql();
+   String getSequenceDetailsSql();
 
-	public abstract String getProcedureSourceSql();
+   String getProcedureSourceSql();
 
-	public abstract String getUserDefinedFunctionListSql();
+   String getUserDefinedFunctionListSql();
 
-	public abstract String getSequenceListSql();
+   String getSequenceListSql();
 
-	public abstract String getTableIndexListSql();
+   String getTableIndexListSql();
 
-	public abstract String getTableTriggerListSql();
+   String getTableTriggerListSql();
 
-	public abstract String getIndexDetailsSql();
+   String getIndexDetailsSql();
 
-	public abstract String getTriggerSourceSql();
+   String getTriggerSourceSql();
 
+   String getDB2SpecificColumnDetailsSql();
 }

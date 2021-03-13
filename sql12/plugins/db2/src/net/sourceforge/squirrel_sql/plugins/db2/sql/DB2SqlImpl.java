@@ -716,23 +716,32 @@ public class DB2SqlImpl implements DB2Sql
 		}
 		
 		return result;
-	}	
-		
-	public String templateSql() {
-		String result = null;
-		switch(db2Type) {
-		case OS400:
-			result = "";
-			break;
-		case LUW:
-			result = "";
-			break;
-		case ZOS:
-			result = "";
-			break;
-		}
-		
-		return result;
 	}
-	
+
+   @Override
+   public String getDB2SpecificColumnDetailsSql()
+   {
+   	String ret = null;
+   	switch (db2Type)
+		{
+			case OS400:
+				ret = "SELECT " +
+						"COLUMN_NAME, DATA_TYPE, CCSID, COLUMN_HEADING, COLUMN_TEXT, COLUMN_DEFAULT, TABLE_OWNER, IS_UPDATABLE " +
+						"from QSYS2.SYSCOLUMNS " +
+						"where TABLE_SCHEMA = ? " +
+						"AND TABLE_NAME = ? ";
+				break;
+			case LUW:
+				ret = "SELECT " +
+						"COLNAME, TYPENAME, REMARKS, DEFAULT, COLLATIONNAME, COLLATIONSCHEMA " +
+						"FROM SYSCAT.COLUMNS " +
+						"where TABSCHEMA = ? " +
+						"AND TABNAME = ? ";
+				break;
+			case ZOS:
+		}
+
+      return ret;
+   }
+
 }
