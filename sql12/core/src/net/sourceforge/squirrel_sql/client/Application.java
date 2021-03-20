@@ -1256,7 +1256,11 @@ public class Application implements IApplication
 	 */
 	public void savePreferences(PreferenceType preferenceType)
 	{
-		if (!_prefs.getSavePreferencesImmediately()) { return; }
+		if (!_prefs.getSavePreferencesImmediately())
+		{
+			return;
+		}
+
 		switch (preferenceType)
 		{
 		case ALIAS_DEFINITIONS:
