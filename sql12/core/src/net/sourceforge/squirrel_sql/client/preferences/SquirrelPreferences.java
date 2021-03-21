@@ -53,7 +53,7 @@ import java.util.Iterator;
 public class SquirrelPreferences implements Serializable
 {
 
-   public interface IPropertyNames
+	public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
       String CONFIRM_SESSION_CLOSE = "confirmSessionClose";
@@ -99,6 +99,7 @@ public class SquirrelPreferences implements Serializable
       String SHOW_INFO_LOG_MESSAGES = "showInfoLogMessages";
       String SHOW_ERROR_LOG_MESSAGES = "showErrorLogMessages";
       String SAVE_PREFERENCES_IMMEDIATELY = "savePreferencesImmediately";   
+      String SAVE_ALIASES_AND_DRIVERS_IMMEDIATELY = "saveAliasesAndDriversImmediately";
       String SELECT_ON_RIGHT_MOUSE_CLICK = "selectOnRightMouseClick";
       String SHOW_PLEASE_WAIT_DIALOG = "showPleaseWaitDialog";
       String PREFERRED_LOCALE = "preferredLocale";
@@ -220,36 +221,38 @@ public class SquirrelPreferences implements Serializable
  	private boolean _firstRun = true;
 
 	/** Confirm closing sessions */
- 	private boolean _confirmSessionClose = true;
+	private boolean _confirmSessionClose = true;
 
-    /** Warn for JRE/JDBC Driver API Version mismatch */
-    private boolean _warnJreJdbcMismatch = true;
-    
+	/** Warn for JRE/JDBC Driver API Version mismatch */
+	private boolean _warnJreJdbcMismatch = true;
+
 	/** Collection of <TT>PluginStatus</tt> objects. */
 	private final ArrayList<PluginStatus> _pluginStatusInfoColl = new ArrayList<>();
 
-    /** Warning when closing session if a file was edited but not saved. */
-    private boolean _warnForUnsavedFileEdits = true;
+	/** Warning when closing session if a file was edited but not saved. */
+	private boolean _warnForUnsavedFileEdits = true;
 
-    /** Warning when closing session if a buffer was edited but not saved. */
-    private boolean _warnForUnsavedBufferEdits = true;
+	/** Warning when closing session if a buffer was edited but not saved. */
+	private boolean _warnForUnsavedBufferEdits = true;
 
-    /** Hint to Alias Schema Properties when Session startup takes considerable time */
-    private boolean _showSessionStartupTimeHint = true;
+	/** Hint to Alias Schema Properties when Session startup takes considerable time */
+	private boolean _showSessionStartupTimeHint = true;
 
-    /** Show DEBUG log messages in the log viewer */
-    private boolean _showDebugLogMessages = true;
+	/** Show DEBUG log messages in the log viewer */
+	private boolean _showDebugLogMessages = true;
 
-    /** Show INFO log messages in the log viewer */
-    private boolean _showInfoLogMessages = true;
+	/** Show INFO log messages in the log viewer */
+	private boolean _showInfoLogMessages = true;
 
-    /** Show ERROR log messages in the log viewer */
-    private boolean _showErrorLogMessages = true;
+	/** Show ERROR log messages in the log viewer */
+	private boolean _showErrorLogMessages = true;
 
-    /** Always save preferences immediately when they change, instead of at shutdown */
-    private boolean _savePreferencesImmediately = false;
+	/** Always save preferences immediately when they change, instead of at shutdown */
+	private boolean _savePreferencesImmediately = false;
 
-    /** Whether or not to change the selection while right-clicking on list or tree node */
+	private boolean _saveAliasesAndDriversImmediately = false;
+
+	/** Whether or not to change the selection while right-clicking on list or tree node */
     private boolean _selectOnRightMouseClick = true;
         
 	/** Object to handle property change events. */
@@ -1137,26 +1140,43 @@ public class SquirrelPreferences implements Serializable
    /**
     * @param data the _savePreferencesImmediately to set
     */
-   public void setSavePreferencesImmediately(boolean data) {
-       if (data != _savePreferencesImmediately)
-       {
-          final boolean oldValue = _savePreferencesImmediately;
-          _savePreferencesImmediately = data;
-          getPropertyChangeReporter().firePropertyChange(
-             IPropertyNames.SAVE_PREFERENCES_IMMEDIATELY,
-             oldValue, _savePreferencesImmediately);
-       }
-   }
+	public void setSavePreferencesImmediately(boolean data)
+	{
+		if (data != _savePreferencesImmediately)
+		{
+			final boolean oldValue = _savePreferencesImmediately;
+			_savePreferencesImmediately = data;
+			getPropertyChangeReporter().firePropertyChange( IPropertyNames.SAVE_PREFERENCES_IMMEDIATELY, oldValue, _savePreferencesImmediately);
+		}
+	}
 
    /**
     * @return the _showErrorLogMessages
     */
    public boolean getSavePreferencesImmediately() {
        return _savePreferencesImmediately;
-   }   
-   
-   
-   /**
+   }
+
+
+	public boolean getSaveAliasesAndDriversImmediately()
+	{
+		return _saveAliasesAndDriversImmediately;
+	}
+
+	public void setSaveAliasesAndDriversImmediately(boolean data)
+	{
+		if (data != _savePreferencesImmediately)
+		{
+			final boolean oldValue = _savePreferencesImmediately;
+			_savePreferencesImmediately = data;
+			getPropertyChangeReporter().firePropertyChange( IPropertyNames.SAVE_ALIASES_AND_DRIVERS_IMMEDIATELY, oldValue, _savePreferencesImmediately);
+		}
+
+		_saveAliasesAndDriversImmediately = data;
+	}
+
+
+	/**
     * Sets the behavior of changing the selected nodes in a list / tree when the popup menu is accessed. 
     * 
     * @param selectOnRightMouseClick if true, then if the popup is triggered over a non-selected node, that 

@@ -115,7 +115,7 @@ public class Application implements IApplication
 
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(Application.class);
 
-	private SquirrelPreferences _prefs;
+	private SquirrelPreferences _globalPreferences;
 
    private DesktopStyle _desktopStyle;
 
@@ -140,8 +140,6 @@ public class Application implements IApplication
 
 	/** This object manages the windows for this application. */
 	private WindowManager _windowManager;
-
-	private LoggerController _loggerFactory;
 
 	/** Factory used to create SQL entry panels. */
 	private ISQLEntryPanelFactory _sqlEntryFactory = new DefaultSQLEntryPanelFactory();
@@ -213,10 +211,10 @@ public class Application implements IApplication
 		// Setup the applications Look and Feel.
 		setupLookAndFeel(args);
 
-      _desktopStyle = new DesktopStyle(_prefs);
+      _desktopStyle = new DesktopStyle(_globalPreferences);
 
 		preferencesHaveChanged(null);
-		_prefs.addPropertyChangeListener(new PropertyChangeListener()
+		_globalPreferences.addPropertyChangeListener(new PropertyChangeListener()
 		{
 			public void propertyChange(PropertyChangeEvent evt)
 			{
@@ -227,7 +225,7 @@ public class Application implements IApplication
 		SquirrelSplashScreen splash = null;
 		if (args.getShowSplashScreen())
 		{
-			splash = new SquirrelSplashScreen(_prefs, 18);
+			splash = new SquirrelSplashScreen(_globalPreferences, 18);
 		}
 
       executeStartupTasks(splash, args);
@@ -240,9 +238,9 @@ public class Application implements IApplication
 
 	public void initResourcesAndPrefs()
 	{
-		_prefs = SquirrelPreferences.load();
+		_globalPreferences = SquirrelPreferences.load();
 
-		Locale locale = LocaleWrapper.constructPreferredLocale(_prefs);
+		Locale locale = LocaleWrapper.constructPreferredLocale(_globalPreferences);
 		if (null != locale)
 		{
 			Locale.setDefault(locale);
@@ -302,10 +300,6 @@ public class Application implements IApplication
 
 	private void _saveApplicationState_beforeWidgetClosing(long begin)
    {
-
-      _prefs.setFirstRun(false);
-      s_log.info("saveApplicationState: _prefs.setFirstRun(false) ELAPSED: " + (System.currentTimeMillis() - begin));
-
       for (ApplicationListener l : _listeners.toArray(new ApplicationListener[0]))
       {
          l.saveApplicationState();
@@ -344,7 +338,8 @@ public class Application implements IApplication
       saveUserSpecificWikiConfigurations();
       s_log.info("saveApplicationState: saveUserSpecificWikiConfigurations() ELAPSED: " + (System.currentTimeMillis() - begin));
 
-      _prefs.save();
+		_globalPreferences.setFirstRun(false);
+		_globalPreferences.save();
    }
 
 	private void _saveApplicationState_afterWidgetClosing(long begin)
@@ -353,10 +348,64 @@ public class Application implements IApplication
 		s_log.info("saveApplicationState: _propsImpl.saveProperties() ELAPSED: " + (System.currentTimeMillis() - begin));
 	}
 
-
 	/**
-     * 
-     */
+	 * Persists the specified category of preferences to file if the user has the
+	 * "always save preferences immediately" preference checked.
+	 *
+	 * @param preferenceType
+	 *           the enumerated type that indicates what category of preferences to be persisted.
+	 */
+	public void savePreferences(PreferenceType preferenceType)
+	{
+
+		if (_globalPreferences.getSaveAliasesAndDriversImmediately())
+		{
+			switch (preferenceType)
+			{
+				case ALIAS_DEFINITIONS:
+					saveAliases();
+					break;
+				case DRIVER_DEFINITIONS:
+					saveDrivers();
+					break;
+			}
+		}
+
+		if (_globalPreferences.getSavePreferencesImmediately())
+		{
+			switch (preferenceType)
+			{
+				case ALIAS_DEFINITIONS:
+					saveAliases();
+					break;
+				case DRIVER_DEFINITIONS:
+					saveDrivers();
+					break;
+				case DATATYPE_PREFERENCES:
+					saveDataTypePreferences();
+					_globalPreferences.setFirstRun(false);
+					_globalPreferences.save();
+					break;
+				case CELLIMPORTEXPORT_PREFERENCES:
+					saveCellImportExportInfo();
+					break;
+				case SQLHISTORY:
+					saveSQLHistory();
+					break;
+				case EDITWHERECOL_PREFERENCES:
+					saveEditWhereColsInfo();
+					break;
+				case WIKI_CONFIGURATION:
+					saveUserSpecificWikiConfigurations();
+					break;
+				default:
+					s_log.error("Unknown preference type: " + preferenceType);
+			}
+		}
+
+	}
+
+
 	private void closeOutputStreams()
 	{
 		if (_jdbcDebugOutputStream != null)
@@ -539,7 +588,7 @@ public class Application implements IApplication
 	@Override
 	public SquirrelPreferences getSquirrelPreferences()
 	{
-		return _prefs;
+		return _globalPreferences;
 	}
 
 	@Override
@@ -632,11 +681,6 @@ public class Application implements IApplication
 	public TaskThreadPool getThreadPool()
 	{
 		return _threadPool;
-	}
-
-	public LoggerController getLoggerFactory()
-	{
-		return _loggerFactory;
 	}
 
 	/**
@@ -777,11 +821,11 @@ public class Application implements IApplication
 			indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.notloadingplugins"));
 		}
 
-		UIFactory.initialize(_prefs, this);
+		UIFactory.initialize(_globalPreferences, this);
 		_pluginManager = new PluginManager(this);
 		if (args.getLoadPlugins())
 		{
-			if (null != splash && _prefs.getShowPluginFilesInSplashScreen())
+			if (null != splash && _globalPreferences.getShowPluginFilesInSplashScreen())
 			{
 				ClassLoaderListener listener = splash.getClassLoaderListener();
 				_pluginManager.setClassLoaderListener(listener);
@@ -804,7 +848,7 @@ public class Application implements IApplication
 		_actionRegistry = new ActionRegistry();
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadinguseracc"));
-		_actionRegistry.loadActionKeys(_prefs.getActionKeys());
+		_actionRegistry.loadActionKeys(_globalPreferences.getActionKeys());
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createjdbcmgr"));
 		initDriverManager();
@@ -884,7 +928,7 @@ public class Application implements IApplication
 
 		new ConnectToStartupAliasesCommand(this).execute();
 
-		if (_prefs.isFirstRun())
+		if (_globalPreferences.isFirstRun())
 		{
 			try
 			{
@@ -946,7 +990,7 @@ public class Application implements IApplication
 
 		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.SHOW_TOOLTIPS))
 		{
-			ToolTipManager.sharedInstance().setEnabled(_prefs.getShowToolTips());
+			ToolTipManager.sharedInstance().setEnabled(_globalPreferences.getShowToolTips());
 		}
 
 		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.JDBC_DEBUG_TYPE))
@@ -956,12 +1000,12 @@ public class Application implements IApplication
 
 		if (propName == null || propName.equals(SquirrelPreferences.IPropertyNames.LOGIN_TIMEOUT))
 		{
-			DriverManager.setLoginTimeout(_prefs.getLoginTimeout());
+			DriverManager.setLoginTimeout(_globalPreferences.getLoginTimeout());
 		}
 
 		if (propName == null || propName == SquirrelPreferences.IPropertyNames.PROXY)
 		{
-			new ProxyHandler().apply(_prefs.getProxySettings());
+			new ProxyHandler().apply(_globalPreferences.getProxySettings());
 		}
 	}
 
@@ -1048,11 +1092,11 @@ public class Application implements IApplication
 		// Get the history into an array.
 		try
 		{
-			if (_prefs.getSessionProperties().getLimitSQLEntryHistorySize())
+			if (_globalPreferences.getSessionProperties().getLimitSQLEntryHistorySize())
 			{
 				SQLHistoryItem[] data = _sqlHistory.getData();
 
-				int maxSize = _prefs.getSessionProperties().getSQLEntryHistorySize();
+				int maxSize = _globalPreferences.getSessionProperties().getSQLEntryHistorySize();
 				if (data.length > maxSize)
 				{
 					SQLHistoryItem[] reducedData = new SQLHistoryItem[maxSize];
@@ -1247,48 +1291,6 @@ public class Application implements IApplication
 		}
 	}
 
-	/**
-	 * Persists the specified category of preferences to file if the user has the
-	 * "always save preferences immediately" preference checked.
-	 * 
-	 * @param preferenceType
-	 *           the enumerated type that indicates what category of preferences to be persisted.
-	 */
-	public void savePreferences(PreferenceType preferenceType)
-	{
-		if (!_prefs.getSavePreferencesImmediately())
-		{
-			return;
-		}
-
-		switch (preferenceType)
-		{
-		case ALIAS_DEFINITIONS:
-			saveAliases();
-			break;
-		case DRIVER_DEFINITIONS:
-			saveDrivers();
-			break;
-		case DATATYPE_PREFERENCES:
-			saveDataTypePreferences();
-			break;
-		case CELLIMPORTEXPORT_PREFERENCES:
-			saveCellImportExportInfo();
-			break;
-		case SQLHISTORY:
-			saveSQLHistory();
-			break;
-		case EDITWHERECOL_PREFERENCES:
-			saveEditWhereColsInfo();
-			break;
-		case WIKI_CONFIGURATION:
-			saveUserSpecificWikiConfigurations();
-			break;
-		default:
-			s_log.error("Unknown preference type: " + preferenceType);
-		}
-	}
-
 	public void addApplicationListener(ApplicationListener l)
 	{
 		_listeners.add(l);
@@ -1345,7 +1347,7 @@ public class Application implements IApplication
 	private void setupJDBCLogging()
 	{
 		// If logging has changed.
-		if (_jdbcDebugType != _prefs.getJdbcDebugType())
+		if (_jdbcDebugType != _globalPreferences.getJdbcDebugType())
 		{
 			final ApplicationFiles appFiles = new ApplicationFiles();
 			final File outFile = appFiles.getJDBCDebugLogFile();
@@ -1364,7 +1366,7 @@ public class Application implements IApplication
 				_jdbcDebugOutputWriter = null;
 			}
 
-			if (_prefs.isJdbcDebugToStream())
+			if (_globalPreferences.isJdbcDebugToStream())
 			{
 				try
 				{
@@ -1385,7 +1387,7 @@ public class Application implements IApplication
 				}
 			}
 
-			if (_prefs.isJdbcDebugToWriter())
+			if (_globalPreferences.isJdbcDebugToWriter())
 			{
 				try
 				{
@@ -1405,7 +1407,7 @@ public class Application implements IApplication
 				}
 			}
 
-			_jdbcDebugType = _prefs.getJdbcDebugType();
+			_jdbcDebugType = _globalPreferences.getJdbcDebugType();
 		}
 	}
 

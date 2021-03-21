@@ -6,12 +6,16 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Option to save changes to Aliases and Drivers immediately (see bug #1456)
+  See menu File --> Global Preference --> tab General --> section General on the right
+  Warning: May cause performance problems.
+
 Introduced Java 16 compatibility.
 
 #599 DB2 Plugin: New Object tree details tab "DB2 column details" which for DB2 on AS400 among others shows CCSIDs.
 
 Look and feel Plugin: Upgraded FlatLaf Look and Feel to version 1.0.
-   Thanks to Stanimir Stamenkov for the patch.
+  Thanks to Stanimir Stamenkov for the patch.
 
 Table right mouse menu item "Show distinct values..." is available in more tables.
 

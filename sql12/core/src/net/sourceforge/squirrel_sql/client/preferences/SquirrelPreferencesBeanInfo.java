@@ -132,8 +132,12 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 							"getShowInfoLogMessages", "setShowInfoLogMessages"),
 						new PropertyDescriptor(SHOW_ERROR_LOG_MESSAGES, SquirrelPreferences.class,
 							"getShowErrorLogMessages", "setShowErrorLogMessages"),
+
 						new PropertyDescriptor(SAVE_PREFERENCES_IMMEDIATELY, SquirrelPreferences.class,
 							"getSavePreferencesImmediately", "setSavePreferencesImmediately"),
+						new PropertyDescriptor(SAVE_ALIASES_AND_DRIVERS_IMMEDIATELY, SquirrelPreferences.class,
+							"getSaveAliasesAndDriversImmediately", "setSaveAliasesAndDriversImmediately"),
+
 						new PropertyDescriptor(SELECT_ON_RIGHT_MOUSE_CLICK, SquirrelPreferences.class,
 							"getSelectOnRightMouseClick", "setSelectOnRightMouseClick"),
 						new PropertyDescriptor(SHOW_PLEASE_WAIT_DIALOG, SquirrelPreferences.class,

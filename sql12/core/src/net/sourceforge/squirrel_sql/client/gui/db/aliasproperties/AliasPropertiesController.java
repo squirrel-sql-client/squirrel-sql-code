@@ -1,21 +1,17 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class AliasPropertiesController
 {
@@ -113,6 +109,8 @@ public class AliasPropertiesController
          IAliasPropertiesPanelController aliasPropertiesController = _iAliasPropertiesPanelControllers.get(i);
          aliasPropertiesController.applyChanges();
       }
+
+      _app.savePreferences(PreferenceType.ALIAS_DEFINITIONS);
       performClose();
    }
 

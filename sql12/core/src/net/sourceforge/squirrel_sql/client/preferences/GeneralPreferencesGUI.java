@@ -1,15 +1,25 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 
-import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -50,7 +60,11 @@ final class GeneralPreferencesGUI extends JPanel
    private JCheckBox _warnForUnsavedFileEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedFileEdits"));
    private JCheckBox _warnForUnsavedBufferEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedBufferEdits"));
    private JCheckBox _showSessionStartupTimeHint = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showSessionStartupTimeHint"));
-   private JCheckBox _savePreferencesImmediately = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediately"));
+
+   private JRadioButton _saveNoPreferencesImmediatelyNone = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.saveNoPreferencesImmediately"));
+   private JRadioButton _saveAliasesAndDriversImmediately = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.saveAliasesAndDriversImmediately"));
+   private JRadioButton _savePreferencesImmediately = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediately_new"));
+
    private JCheckBox _selectOnRightMouseClick = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.selectOnRightMouseClick"));
    private JCheckBox _showPleaseWaitDialog = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showPleaseWaitDialog"));
    private JLabel _localeChooserLabel = new JLabel(s_stringMgr.getString("GeneralPreferencesPanel.localeChooserLabel"));
@@ -93,7 +107,12 @@ final class GeneralPreferencesGUI extends JPanel
       _warnForUnsavedFileEdits.setSelected(prefs.getWarnForUnsavedFileEdits());
       _warnForUnsavedBufferEdits.setSelected(prefs.getWarnForUnsavedBufferEdits());
       _showSessionStartupTimeHint.setSelected(prefs.getShowSessionStartupTimeHint());
+
+
+      _saveNoPreferencesImmediatelyNone.setSelected(true); // Default, may be reset by the following two on through their ButtonGroup
+      _saveAliasesAndDriversImmediately.setSelected(prefs.getSaveAliasesAndDriversImmediately());
       _savePreferencesImmediately.setSelected(prefs.getSavePreferencesImmediately());
+
       _selectOnRightMouseClick.setSelected(prefs.getSelectOnRightMouseClick());
       _showPleaseWaitDialog.setSelected(prefs.getShowPleaseWaitDialog());
       _maxColumnAdjustLengthCtrl.init(prefs.getMaxColumnAdjustLengthDefined(), prefs.getMaxColumnAdjustLength());
@@ -150,7 +169,10 @@ final class GeneralPreferencesGUI extends JPanel
       prefs.setWarnForUnsavedFileEdits(_warnForUnsavedFileEdits.isSelected());
       prefs.setWarnForUnsavedBufferEdits(_warnForUnsavedBufferEdits.isSelected());
       prefs.setShowSessionStartupTimeHint(_showSessionStartupTimeHint.isSelected());
+
+      prefs.setSaveAliasesAndDriversImmediately(_saveAliasesAndDriversImmediately.isSelected());
       prefs.setSavePreferencesImmediately(_savePreferencesImmediately.isSelected());
+
       prefs.setSelectOnRightMouseClick(_selectOnRightMouseClick.isSelected());
       prefs.setShowPleaseWaitDialog(_showPleaseWaitDialog.isSelected());
       prefs.setPreferredLocale(LocaleWrapper.getSelectedLocalePrefsString(_localeChooser));
@@ -312,10 +334,27 @@ final class GeneralPreferencesGUI extends JPanel
 
    private JPanel getSavePreferencesImmediatelyPanel()
    {
-      JPanel ret = new JPanel(new BorderLayout(3, 3));
+      JPanel ret = new JPanel(new GridBagLayout());
 
-      ret.add(new MultilineLabel(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediatelyWarning")), BorderLayout.CENTER);
-      ret.add(_savePreferencesImmediately, BorderLayout.SOUTH);
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0);
+      ret.add(new MultipleLineLabel(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediatelyWarning_new")), gbc);
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
+      ret.add(_saveNoPreferencesImmediatelyNone, gbc);
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
+      ret.add(_saveAliasesAndDriversImmediately, gbc);
+
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
+      ret.add(_savePreferencesImmediately, gbc);
+
+      ButtonGroup bg = new ButtonGroup();
+      bg.add(_saveNoPreferencesImmediatelyNone);
+      bg.add(_saveAliasesAndDriversImmediately);
+      bg.add(_savePreferencesImmediately);
+
 
       ret.setBorder(BorderFactory.createEtchedBorder());
       return ret;
