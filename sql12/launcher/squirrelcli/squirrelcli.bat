@@ -28,7 +28,7 @@ set SQUIRREL_CLI_HOME=%basedir%
 @rem that version of higher.  The arguments to JavaVersionChecker below specify the minimum acceptable version
 @rem (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should be all that is
 @rem necessary for the version form.
-"%LOCAL_JAVA%" -cp "%SQUIRREL_CLI_HOME%\..\lib\versioncheck.jar" JavaVersionChecker 1.8 9 10 11 12 13 14 15 16
+"%LOCAL_JAVA%" -cp "%SQUIRREL_CLI_HOME%\..\lib\versioncheck.jar" JavaVersionChecker 11 12 13 14 15 16
 if ErrorLevel 1 goto ExitForWrongJavaVersion
 
 :launchsquirrel
@@ -43,14 +43,12 @@ set _JAVA_OPTIONS=
 
 IF "%1" == "" (
    set EXECDONE=1
-   echo "Entering Java 9 JShell based mode. JAVA 9 or higher is required."
    set _JAVA_OPTIONS=-Dsquirrel.home="%SQUIRREL_CLI_HOME%\.."
    %JAVA_HOME%\bin\jshell.exe --class-path %CP%  "%SQUIRREL_CLI_HOME%/startsquirrelcli.jsh"
 )
 
 IF "%EXECDONE%" == "0" IF "%3" == "" IF NOT "%2" == "" IF "%1" == "-userdir" (
    set EXECDONE=1
-   echo "Entering Java 9 JShell based mode. JAVA 9 or higher is required."
    set _JAVA_OPTIONS=-Dsquirrel.home="%SQUIRREL_CLI_HOME%\.." -Dsquirrel.userdir="%2"
    %JAVA_HOME%\bin\jshell.exe --class-path %CP%  "%SQUIRREL_CLI_HOME%/startsquirrelcli.jsh"
 )

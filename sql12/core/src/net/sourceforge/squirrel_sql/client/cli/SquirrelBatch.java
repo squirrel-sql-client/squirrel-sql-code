@@ -2,7 +2,11 @@ package net.sourceforge.squirrel_sql.client.cli;
 
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.ParseException;
 
 public class SquirrelBatch
 {
@@ -32,7 +36,7 @@ public class SquirrelBatch
          HelpFormatter formatter = new HelpFormatter();
          formatter.printHelp("squirrelcli.sh or squirrelcli.bat", SquirrelBatchOptions.getOptions());
 
-         System.out.println("\nNote: No parameter (or -userdir only) enters Java 9 JShell based CLI.\n");
+         System.out.println("\nNote: No parameter (or -userdir only) enters Java JShell based CLI.\n");
 
          System.out.println();
          String squirrelUserDir = ApplicationFiles.getStandardUserDir();

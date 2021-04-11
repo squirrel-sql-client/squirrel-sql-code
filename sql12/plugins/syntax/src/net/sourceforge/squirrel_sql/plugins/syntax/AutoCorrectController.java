@@ -8,10 +8,14 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.*;
-import java.awt.event.ActionListener;
+import java.awt.Frame;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 
 public class AutoCorrectController
@@ -125,7 +129,7 @@ public class AutoCorrectController
 
          DefaultTableModel dtm = (DefaultTableModel) _dlg.tblAutoCorrects.getModel();
 
-         Vector<Vector<String>> dataVector = dtm.getDataVector();
+         Vector<Vector> dataVector = dtm.getDataVector();
 
          Vector<String> row = dataVector.get(selRow);
 
@@ -172,7 +176,7 @@ public class AutoCorrectController
 
       DefaultTableModel dtm = (DefaultTableModel) _dlg.tblAutoCorrects.getModel();
 
-      Vector<Vector<String>> dataVector = dtm.getDataVector();
+      Vector<Vector> dataVector = dtm.getDataVector();
 
       boolean found = false;
       for (int i = 0; i < dataVector.size(); i++)
@@ -210,7 +214,7 @@ public class AutoCorrectController
    {
       DefaultTableModel dtm = (DefaultTableModel) _dlg.tblAutoCorrects.getModel();
 
-      Vector<Vector<String>> dataVector = dtm.getDataVector();
+      Vector<Vector> dataVector = dtm.getDataVector();
 
 
       Hashtable<String, String> newAutoCorrects = new Hashtable<>();

@@ -77,4 +77,11 @@ public class CliInitializer
    {
       return _shellMode;
    }
+
+   public static boolean isInShellMode()
+   {
+      return null != _shellMode;
+   }
+
+
 }

@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.timeoutproxy;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.cli.CliInitializer;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 import java.lang.reflect.Proxy;
@@ -15,6 +16,11 @@ public class MetaDataTimeOutProxyFactory
 
    public static DatabaseMetaData wrap(DatabaseMetaData metaData, ISession session)
    {
+      if(CliInitializer.isInShellMode())
+      {
+         return metaData;
+      }
+
       long metaDataLoadingTimeOut;
 
       if (null == session)

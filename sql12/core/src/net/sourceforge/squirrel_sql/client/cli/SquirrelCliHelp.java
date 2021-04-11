@@ -10,10 +10,10 @@ public class SquirrelCliHelp
    {
       System.out.println();
       System.out.println("The squirrelcli* script offers two modes:");
-      System.out.println("1. The Java 9 JShell based mode (this mode).");
+      System.out.println("1. The Java JShell based mode (this mode).");
       System.out.println("2. The batch mode which you can learn about by entering squirrelcli* -help on your command line.");
       System.out.println();
-      System.out.println("This describes Java 9 JShell based mode (this mode):");
+      System.out.println("This describes Java JShell based mode (this mode):");
       System.out.println("- For information on JSell see http://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html");
       System.out.println("- The following functions are offered by SQuirreL's shell based mode:");
       System.out.println("-- connect(<aliasName>) --> Connects to an Alias defined in SQuirreL's UI.");

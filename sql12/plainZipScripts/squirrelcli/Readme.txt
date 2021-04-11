@@ -19,12 +19,11 @@ To get more information execute
 Troubleshooting:
 ----------------
 If the script doesn't work try setting the JAVA_HOME variable to your Java installation directory.
-Preferably you should use Java 9 or higher.
 
 
 Details:
 --------
 The squirrelcli* scripts offers two modes:
 1. The batch mode which, as mentioned above, you can learn about by entering squirrelcli* -help on your command line.
-2. The Java 9 JShell based mode which can be entered by executing the script with
-   no parameter (or -userdir only). This requires Java 9 or higher and JDK (not JRE) as JShell is only available in JDKs.
+2. The Java JShell based mode which can be entered by executing the script with
+   no parameter (or -userdir only). This requires JDK (not JRE) as JShell is only available in JDKs.

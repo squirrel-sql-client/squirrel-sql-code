@@ -43,7 +43,7 @@ cd "$UNIX_STYLE_HOME"
 # should be able to be run by that version or higher. The arguments to JavaVersionChecker below specify the
 # minimum acceptable version (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should
 # be all that is necessary for the version form.
-$JAVA_HOME/bin/java -cp "$UNIX_STYLE_HOME/../lib/versioncheck.jar" JavaVersionChecker 1.8 9 10 11 12 13 14 15 16
+$JAVA_HOME/bin/java -cp "$UNIX_STYLE_HOME/../lib/versioncheck.jar" JavaVersionChecker 11 12 13 14 15 16
 if [ "$?" != "0" ]; then
   exit
 fi
@@ -57,11 +57,11 @@ fi
 
 # Launch SQuirreL CLI
 if [ $# == 0 ]; then
-   echo "Entering Java 9 JShell based mode. JAVA 9 or higher is required."
+   echo "Entering JShell based mode."
    export _JAVA_OPTIONS="-Dsquirrel.home='$SQUIRREL_CLI_HOME'/.."
    $JAVA_HOME/bin/jshell --class-path "$CP"  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
 elif [ $# == 2 ] && [ $1 == "-userdir" ]; then
-   echo "Entering Java 9 JShell based mode. JAVA 9 or higher is required."
+   echo "Entering JShell based mode."
    export _JAVA_OPTIONS="-Dsquirrel.home='$SQUIRREL_CLI_HOME'/.. -Dsquirrel.userdir='$2'"
    $JAVA_HOME/bin/jshell --class-path "$CP"  "$UNIX_STYLE_HOME"/startsquirrelcli.jsh
 else

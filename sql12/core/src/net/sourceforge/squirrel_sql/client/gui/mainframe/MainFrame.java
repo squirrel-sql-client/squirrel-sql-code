@@ -128,6 +128,7 @@ public class MainFrame extends JFrame
 			}
 		});
 
+		DesktopSupport.handleDesktop();
 		SwingUtilities.invokeLater(() -> initializeDesktop());
 		
 	}
@@ -144,22 +145,33 @@ public class MainFrame extends JFrame
 		}
 	}
 
-	// ...
 	public void dispose()
 	{
-      boolean shouldDispose = true;
-      if (!_app.shutdown(true))
+		boolean shouldDispose = requestDispose();
+
+		if (shouldDispose)
       {
-         String msg = s_stringMgr.getString("MainFrame.errorOnClose");
-         shouldDispose = Dialogs.showYesNo(_app.getMainFrame(), msg);
-      }
-      if (shouldDispose)
-      {
-         closeAllToolWindows();
-         super.dispose();
-         System.exit(0);
-      }
+			execDisposeNoQuestion();
+		}
    }
+
+	public void execDisposeNoQuestion()
+	{
+		closeAllToolWindows();
+		super.dispose();
+		System.exit(0);
+	}
+
+	public boolean requestDispose()
+	{
+		boolean shouldDispose = true;
+		if (!_app.shutdown(true))
+		{
+			String msg = s_stringMgr.getString("MainFrame.errorOnClose");
+			shouldDispose = Dialogs.showYesNo(_app.getMainFrame(), msg);
+		}
+		return shouldDispose;
+	}
 
 	public void pack()
 	{
