@@ -954,6 +954,7 @@ Reworked corrections/abbreviations dialog. See Session toolbar button 'Configure
   will write the result of 'SELECT * FROM customers' to '/tmp/customers.xlsx'
   The settings for the output will be taken from the 'Store result of SQL to file' dialog.
   Please note the single quotes around the file name.
+  Also note: Existing files will be replaced.
 
 Allowed Java version 10 in starter scripts.
 
