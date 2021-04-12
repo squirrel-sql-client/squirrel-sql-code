@@ -2013,7 +2013,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		final StringTokenizer st = new StringTokenizer(data, ",");
 		while (st.hasMoreTokens())
 		{
-			list.add(st.nextToken());
+			list.add(st.nextToken().trim());
 		}
 		Collections.sort(list);
 

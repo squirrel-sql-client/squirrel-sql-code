@@ -14,6 +14,8 @@ Enhancements:
 
 Bug fixes:
 
+#600 (in feature requests): For Oracle DB Sessions keywords in Objects tab weren't sorted correctly because of leading white spaces.
+
 Command line interface (CLI):
   Fixed NullPointer in MetaDataTimeOutProxyFactory when executing SQL.
 

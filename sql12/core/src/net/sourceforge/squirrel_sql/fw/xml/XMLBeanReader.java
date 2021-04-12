@@ -18,6 +18,17 @@ package net.sourceforge.squirrel_sql.fw.xml;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.n3.nanoxml.IXMLElement;
+import net.n3.nanoxml.IXMLParser;
+import net.n3.nanoxml.StdXMLReader;
+import net.n3.nanoxml.XMLParserFactory;
+import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -33,16 +44,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import net.n3.nanoxml.IXMLElement;
-import net.n3.nanoxml.IXMLParser;
-import net.n3.nanoxml.StdXMLReader;
-import net.n3.nanoxml.XMLParserFactory;
-import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
-import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
-import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class XMLBeanReader implements Iterable<Object>
 {
@@ -183,7 +184,7 @@ public class XMLBeanReader implements Iterable<Object>
 			Object bean = beanClass.newInstance();
 			BeanInfo info = Introspector.getBeanInfo(bean.getClass(), Introspector.USE_ALL_BEANINFO);
 			PropertyDescriptor[] propDesc = info.getPropertyDescriptors();
-			Map<String, PropertyDescriptor> props = new HashMap<String, PropertyDescriptor>();
+			Map<String, PropertyDescriptor> props = new HashMap<>();
 			for (int i = 0; i < propDesc.length; ++i)
 			{
 				props.put(propDesc[i].getName(), propDesc[i]);

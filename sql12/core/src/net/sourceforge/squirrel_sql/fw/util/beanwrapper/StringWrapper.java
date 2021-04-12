@@ -33,7 +33,6 @@ public class StringWrapper
 
 	public StringWrapper(String string)
 	{
-		super();
 		setString(string);
 	}
 

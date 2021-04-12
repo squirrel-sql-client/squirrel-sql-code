@@ -83,10 +83,10 @@ public class AliasListHolder implements ListHolder
 
          for (Object bean : xmlBeanReader.getBeans())
          {
-            final SQLAlias sqlDriver = (SQLAlias) bean;
-            if (false == _sqlAliases.contains(sqlDriver))
+            final SQLAlias sqlAlias = (SQLAlias) bean;
+            if (false == _sqlAliases.contains(sqlAlias))
             {
-               _sqlAliases.add(sqlDriver);
+               _sqlAliases.add(sqlAlias);
             }
          }
       }
