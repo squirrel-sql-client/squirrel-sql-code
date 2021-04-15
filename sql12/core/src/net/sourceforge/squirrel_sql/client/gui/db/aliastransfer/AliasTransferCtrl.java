@@ -100,18 +100,12 @@ public class AliasTransferCtrl
             if (ZIP_ENTRY_SQL_ALIASES.equals(entry.getName()))
             {
                sqlAliasesReader = new XMLBeanReader();
-               try (InputStreamReader rdr = new InputStreamReader(zipIn.getInputStream(entry)))
-               {
-                  sqlAliasesReader.load(rdr);
-               }
+               sqlAliasesReader.load(zipIn.getInputStream(entry));
             }
             else if (ZIP_ENTRY_ALIAS_TREE.equals(entry.getName()))
             {
                treeFolderStateReader = new XMLBeanReader();
-               try (InputStreamReader rdr = new InputStreamReader(zipIn.getInputStream(entry)))
-               {
-                  treeFolderStateReader.load(rdr);
-               }
+               treeFolderStateReader.load(zipIn.getInputStream(entry));
             }
             else if (ZIP_ENTRY_DRIVER_IDENTIFIER_TO_NAME.equals(entry.getName()))
             {

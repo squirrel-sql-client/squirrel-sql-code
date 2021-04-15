@@ -1,19 +1,23 @@
 package net.sourceforge.squirrel_sql.plugins.graph.xmlbeans;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 import net.sourceforge.squirrel_sql.plugins.graph.link.LinkXmlBean;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class GraphXmlSerializer
@@ -79,7 +83,7 @@ public class GraphXmlSerializer
       try
       {
          XMLBeanReader br = new XMLBeanReader();
-         br.load(_cfg.getGraphFilePath(), this.getClass().getClassLoader());
+         br.load(LegacyNanoxmlConverter.convertXml(_cfg.getGraphFilePath()), this.getClass().getClassLoader());
          GraphControllerXmlBean ret = (GraphControllerXmlBean) br.iterator().next();
          Version32Converter.convert(ret);
          
@@ -99,7 +103,6 @@ public class GraphXmlSerializer
          throw new RuntimeException(e);
       }
    }
-
 
 
    public static GraphXmlSerializer[] getGraphXmSerializers(GraphPlugin plugin, ISession session)

@@ -12,7 +12,7 @@ import net.sourceforge.squirrel_sql.plugins.graph.GraphMainPanelTab;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBean;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 
@@ -46,7 +46,7 @@ public class CopyGraphAction extends SquirrelAction implements IMainPanelTabActi
       try
       {
          GraphControllerXmlBean xmlBean = graphController.createXmlBean();
-         xmlBean.set32Converted(true);
+         xmlBean.setConverted32(true);
 
          final StringSelection ss = new StringSelection(new XMLBeanWriter(xmlBean).getAsString());
          Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);

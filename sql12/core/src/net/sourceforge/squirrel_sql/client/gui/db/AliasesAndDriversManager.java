@@ -42,7 +42,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -397,14 +396,13 @@ public class AliasesAndDriversManager
     public ISQLDriver[] findMissingDefaultDrivers(URL url)
         throws IOException
     {
-       try(InputStream is = url.openStream();
-           InputStreamReader isr = new InputStreamReader(is))
+       try(InputStream is = url.openStream())
         {
            ISQLDriver[] result = null;
            ArrayList<ISQLDriver> missingDrivers = new ArrayList<>();
 
            DriverListHolder tmp = new DriverListHolder();
-           tmp.load(isr);
+           tmp.load(is);
 
            for (Iterator<? extends ISQLDriver> iter = tmp.getAll().iterator(); iter.hasNext(); )
            {
@@ -448,10 +446,9 @@ public class AliasesAndDriversManager
    public void loadDefaultDrivers(URL url) throws IOException
    {
 
-      try(InputStream is = url.openStream();
-          InputStreamReader isr = new InputStreamReader(is))
+      try(InputStream is = url.openStream())
       {
-         _driverListHolder.load(isr);
+         _driverListHolder.load(is);
       }
    }
 
@@ -564,11 +561,10 @@ public class AliasesAndDriversManager
     */
    private void mergeDefaultWebsites(URL defaultDriversUrl)
    {
-      try(InputStream is = defaultDriversUrl.openStream();
-          InputStreamReader isr = new InputStreamReader(is))
+      try(InputStream is = defaultDriversUrl.openStream())
       {
          DriverListHolder tmp = new DriverListHolder();
-         tmp.load(isr);
+         tmp.load(is);
 
          for (Iterator<? extends ISQLDriver> iter = tmp.getAll().iterator(); iter.hasNext(); )
          {

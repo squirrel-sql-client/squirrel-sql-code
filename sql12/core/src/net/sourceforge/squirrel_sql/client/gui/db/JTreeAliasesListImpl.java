@@ -292,8 +292,8 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 		{
 			// Throwing a runtime exception here will result in failure to launch the application. Since the tree
 			// structure can be recovered more easily than all of the user's aliases, we log an error and forget
-			// about the previous tree structure. Nanoxml will throw a runtime exception for any invalid xml
-			// that it finds, and we squelch that here with a log message so that launch can proceed. 
+			// about the previous tree structure. The Xml parser will throw a runtime exception for any invalid xml
+			// that it finds, and we squelch that here with a log message so that launch can proceed.
 			s_log.error("Unexpected exception while applying Aliases tree structure from file: "
 				+ file.getAbsolutePath(), e);
 		}

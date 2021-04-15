@@ -12,8 +12,8 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,9 +77,9 @@ public class DriverListHolder implements ListHolder
          return;
       }
 
-      try(FileReader fileReader = new FileReader(driversFile))
+      try(FileInputStream fis = new FileInputStream(driversFile))
       {
-         load(fileReader);
+         load(fis);
       }
       catch (Exception e)
       {
@@ -89,12 +89,12 @@ public class DriverListHolder implements ListHolder
       }
    }
 
-   public void load(InputStreamReader isr)
+   public void load(InputStream is)
    {
       try
       {
          XMLBeanReader xmlBeanReader = new XMLBeanReader();
-         xmlBeanReader.load(isr, getClass().getClassLoader());
+         xmlBeanReader.load(is, getClass().getClassLoader());
 
          for (Object bean : xmlBeanReader.getBeans())
          {

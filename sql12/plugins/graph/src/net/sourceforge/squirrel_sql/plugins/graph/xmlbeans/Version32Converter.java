@@ -9,7 +9,7 @@ public class Version32Converter
 {
    public static void convert(GraphControllerXmlBean ret)
    {
-      if(ret.is32Converted())
+      if(ret.isConverted32())
       {
          return;
       }
@@ -109,6 +109,6 @@ public class Version32Converter
 
    public static void markConverted(GraphControllerXmlBean xmlBean)
    {
-      xmlBean.set32Converted(true);
+      xmlBean.setConverted32(true);
    }
 }

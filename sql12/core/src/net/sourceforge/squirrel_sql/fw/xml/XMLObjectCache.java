@@ -20,11 +20,15 @@ package net.sourceforge.squirrel_sql.fw.xml;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCache;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
+import net.sourceforge.squirrel_sql.fw.util.ObjectCache;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
 /**
@@ -196,69 +200,6 @@ public class XMLObjectCache<E extends IHasIdentifier> implements IObjectCache<E>
 				throw new XMLException(s_stringMgr.getString("XMLObjectCache.error.notimplemented"));
 			}
 			add((E)obj);
-		}
-	}
-
-	/**
-	 * Load from a reader over an XML document. Use the system classloader and
-	 * don't ignore duplicate objects.
-	 *
-	 * @param	rdr	Reader over the XML document.
-	 *
-	 * @exception	XMLException
-	 *				Thrown if an XML error occurs.
-	 *
-	 * @exception	DuplicateObjectException
-	 *				Thrown if two objects of the same class
-	 *				and with the same identifier are added to the cache.
-	 */
-	public void load(Reader rdr) throws XMLException, DuplicateObjectException
-	{
-		load(rdr, null, false);
-	}
-
-	/**
-	 * Load from a reader over an XML document.
-	 *
-	 * @param	rdr					Reader over the XML document.
-	 * @param	cl					Class loader to use for object creation. Pass
-	 * 								<TT>null</TT> to use the system classloader.
-	 * @param	ignoreDuplicates	If <tt>true</TT> don't throw a
-	 * 								<TT>DuplicateObjectException</TT> but rather
-	 * 								ignore the attempt to add a duplicate, in
-	 *								this case there will be only one object added to
-	 *								the cache.
-	 *
-	 * @exception	XMLException
-	 *				Thrown if an XML error occurs.
-	 *
-	 * @exception	DuplicateObjectException
-	 *				Thrown if two objects of the same class
-	 *				and with the same identifier are added to the cache.
-	 */
-	public void load(Reader rdr, ClassLoader cl, boolean ignoreDuplicates)
-		throws XMLException, DuplicateObjectException
-	{
-		XMLBeanReader xmlRdr = new XMLBeanReader();
-		xmlRdr.load(rdr, cl);
-		for (Iterator<?> it = xmlRdr.iterator(); it.hasNext();)
-		{
-			final Object obj = it.next();
-			if (!(obj instanceof IHasIdentifier))
-			{
-				throw new XMLException(s_stringMgr.getString("XMLObjectCache.error.notimplemented"));
-			}
-			try
-			{
-				add((E) obj);
-			}
-			catch (DuplicateObjectException ex)
-			{
-				if (!ignoreDuplicates)
-				{
-					throw ex;
-				}
-			}
 		}
 	}
 

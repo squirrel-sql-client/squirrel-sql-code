@@ -19,24 +19,24 @@ package net.sourceforge.squirrel_sql.fw.xml;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.n3.nanoxml.IXMLElement;
-import net.n3.nanoxml.IXMLParser;
-import net.n3.nanoxml.StdXMLReader;
-import net.n3.nanoxml.XMLParserFactory;
-import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -111,9 +111,9 @@ public class XMLBeanReader implements Iterable<Object>
 		_beanColl.clear();
 
 
-		try(FileReader frdr = new FileReader(xmlFileName))
+		try(FileInputStream fis = new FileInputStream(xmlFileName))
 		{
-			load(frdr, cl);
+			load(fis, cl);
 		}
 		catch (IOException ex)
 		{
@@ -121,30 +121,39 @@ public class XMLBeanReader implements Iterable<Object>
 		}
 	}
 
-	public void load(Reader rdr) throws XMLException
+	public void load(InputStream is) throws XMLException
 	{
-		load(rdr, null);
+		load(is, null);
 	}
 
-	public void load(Reader rdr, ClassLoader cl) throws XMLException
+	public void load(InputStream is, ClassLoader cl) throws XMLException
 	{
 		try
 		{
-			final IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
-			parser.setReader(new StdXMLReader(rdr));
-			IXMLElement element = (IXMLElement) parser.parse();
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(is);
+
 			// Bug 2942351 (Program doesn't launch)
 			// looking at the source for StdXMLBuilder, it appears that parser.parse() could possibly return
 			// null. So check for null here and skip if necessary.
-			if (element != null)
+			if (doc != null)
 			{
-				Iterator it = new EnumerationIterator(element.enumerateChildren());
-				while (it.hasNext())
+				final NodeList beans = doc.getDocumentElement().getChildNodes();
+
+				for (int i = 0; i < beans.getLength(); i++)
 				{
-					final IXMLElement elem = (IXMLElement) it.next();
-					if (isBeanElement(elem))
+					final Node node = beans.item(i);
+
+					if(Node.ELEMENT_NODE != node.getNodeType())
 					{
-						_beanColl.add(loadBean(elem));
+						continue;
+					}
+
+					if (isBeanElement(node))
+					{
+						_beanColl.add(loadBean(node));
 					}
 				}
 			}
@@ -165,12 +174,12 @@ public class XMLBeanReader implements Iterable<Object>
 		return (List<T>) _beanColl;
 	}
 
-	private Object loadBean(IXMLElement beanElement) throws XMLException
+	private Object loadBean(Node beanNode) throws XMLException
 	{
 		String beanClassName = null;
 		try
 		{
-			beanClassName = getClassNameFromElement(beanElement);
+			beanClassName = getClassNameFromElement(beanNode);
 			beanClassName = fixClassName(beanClassName);
 			Class beanClass = null;
 			if (_cl == null)
@@ -189,14 +198,20 @@ public class XMLBeanReader implements Iterable<Object>
 			{
 				props.put(propDesc[i].getName(), propDesc[i]);
 			}
-			final List<IXMLElement> children = beanElement.getChildren();
-			for (Iterator<IXMLElement> it = children.iterator(); it.hasNext();)
+			final NodeList children = beanNode.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++)
 			{
-				final IXMLElement propElem = it.next();
-				final PropertyDescriptor curProp = props.get(propElem.getName());
+				final Node propNode = children.item(i);
+
+				if(Node.ELEMENT_NODE != propNode.getNodeType())
+				{
+					continue;
+				}
+
+				final PropertyDescriptor curProp = props.get(propNode.getNodeName());
 				if (curProp != null)
 				{
-					loadProperty(bean, curProp, propElem);
+					loadProperty(bean, curProp, propNode);
 				}
 			}
 
@@ -209,7 +224,7 @@ public class XMLBeanReader implements Iterable<Object>
 		}
 	}
 
-	private void loadProperty(Object bean, PropertyDescriptor propDescr, IXMLElement propElem)
+	private void loadProperty(Object bean, PropertyDescriptor propDescr, Node propNode)
 		throws XMLException
 	{
 		final Method setter = propDescr.getWriteMethod();
@@ -217,7 +232,13 @@ public class XMLBeanReader implements Iterable<Object>
 		{
 			final Class parmType = setter.getParameterTypes()[0];
 			final Class arrayType = parmType.getComponentType();
-			final String value = propElem.getContent();
+
+			String value = null;
+
+			if (0 < propNode.getChildNodes().getLength())
+			{
+				value = propNode.getChildNodes().item(0).getNodeValue();
+			}
 
 			if (value == null && (parmType.isPrimitive()))
 			{
@@ -227,9 +248,9 @@ public class XMLBeanReader implements Iterable<Object>
 				return;
 			}
 
-			if (isIndexedElement(propElem))
+			if (isIndexedElement(propNode))
 			{
-				Object[] data = loadIndexedProperty(propElem);
+				Object[] data = loadIndexedProperty(propNode);
 				try
 				{
 					// Arrays of Strings are a special case.
@@ -260,9 +281,9 @@ public class XMLBeanReader implements Iterable<Object>
 					throw new XMLException(ex);
 				}
 			}
-			else if (isBeanElement(propElem))
+			else if (isBeanElement(propNode))
 			{
-				Object data = loadBean(propElem);
+				Object data = loadBean(propNode);
 				try
 				{
 					setter.invoke(bean, new Object[] { data });
@@ -286,7 +307,7 @@ public class XMLBeanReader implements Iterable<Object>
 			}
 			else if (parmType == int.class)
 			{
-				Object data = new Integer(value);
+				Object data = Integer.valueOf(value);
 				try
 				{
 					setter.invoke(bean, new Object[] { data });
@@ -298,7 +319,7 @@ public class XMLBeanReader implements Iterable<Object>
 			}
 			else if (parmType == short.class)
 			{
-				Object data = new Short(value);
+				Object data = Short.valueOf(value);
 				try
 				{
 					setter.invoke(bean, new Object[] { data });
@@ -349,11 +370,11 @@ public class XMLBeanReader implements Iterable<Object>
 				Object data;
 				if (value != null && value.length() > 0)
 				{
-					data = new Character(value.charAt(0));
+					data = Character.valueOf(value.charAt(0));
 				}
 				else
 				{
-					data = new Character(' ');
+					data = Character.valueOf(' ');
 				}
 				try
 				{
@@ -379,31 +400,46 @@ public class XMLBeanReader implements Iterable<Object>
 		}
 	}
 
-	private Object[] loadIndexedProperty(IXMLElement beanElement) throws XMLException
+	private Object[] loadIndexedProperty(Node beanElement) throws XMLException
 	{
-		final List<Object> beans = new ArrayList<Object>();
-		final List<IXMLElement> children = beanElement.getChildren();
-		for (Iterator<IXMLElement> it = children.iterator(); it.hasNext();)
+		final List<Object> beans = new ArrayList<>();
+		final NodeList children = beanElement.getChildNodes();
+
+		for (int i = 0; i < children.getLength(); i++)
 		{
-			beans.add(loadBean(it.next()));
+			final Node child = children.item(i);
+
+			if(Node.ELEMENT_NODE != child.getNodeType())
+			{
+				continue;
+			}
+
+			beans.add(loadBean(child));
 		}
 		return beans.toArray(new Object[beans.size()]);
 	}
 
-	private boolean isBeanElement(IXMLElement elem)
+	private boolean isBeanElement(Node node)
 	{
-		return elem.getAttribute(XMLConstants.CLASS_ATTRIBUTE_NAME, null) != null;
+		return node.getAttributes().getNamedItem(XMLConstants.CLASS_ATTRIBUTE_NAME) != null;
 	}
 
-	private boolean isIndexedElement(IXMLElement elem)
+	private boolean isIndexedElement(Node elem)
 	{
-		String att = elem.getAttribute(XMLConstants.INDEXED, "false");
+		final Node indexed = elem.getAttributes().getNamedItem(XMLConstants.INDEXED);
+
+		if(null == indexed)
+		{
+			return false;
+		}
+
+		String att = indexed.getNodeValue();
 		return att != null && att.equals("true");
 	}
 
-	private String getClassNameFromElement(IXMLElement elem)
+	private String getClassNameFromElement(Node elem)
 	{
-		return elem.getAttribute(XMLConstants.CLASS_ATTRIBUTE_NAME, null);
+		return elem.getAttributes().getNamedItem(XMLConstants.CLASS_ATTRIBUTE_NAME).getNodeValue();
 	}
 
 	private String fixClassName(String className)

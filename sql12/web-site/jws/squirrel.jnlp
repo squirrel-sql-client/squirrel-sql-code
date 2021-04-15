@@ -13,8 +13,6 @@
   <resources>
     <j2se version="1.6+"/>
     <jar href="squirrel-sql.jar" main="true" />
-    <jar href="fw.jar"/>
-    <jar href="nanoxml.jar"/>
     <jar href="asm.jar"/>
     <jar href="cglib.jar"/>
     <jar href="commons-codec.jar"/>

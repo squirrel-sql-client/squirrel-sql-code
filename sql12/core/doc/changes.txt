@@ -14,6 +14,9 @@ Enhancements:
 
 Bug fixes:
 
+#1468 Single whitespace in driver properties are lost on application restart.
+  This fix required replacing outdated nanoxml library by standard Java XML functionality.
+
 #600 (in feature requests): For Oracle DB Sessions keywords in Objects tab weren't sorted correctly because of leading white spaces.
 
 Command line interface (CLI):

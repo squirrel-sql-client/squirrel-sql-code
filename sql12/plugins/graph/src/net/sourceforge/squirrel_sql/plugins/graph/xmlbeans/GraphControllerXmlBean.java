@@ -13,7 +13,7 @@ public class GraphControllerXmlBean
    private boolean _showQualifiedTableNames;
    private int _modeIndex;
    private boolean _queryHideNoJoins;
-   private boolean _32Converted;
+   private boolean _converted32;
    private WhereTreeNodeStructure _whereTreeNodeStructure;
    private OrderStructureXmlBean _orderStructure;
    private SelectStructureXmlBean _selectStructure;
@@ -99,14 +99,14 @@ public class GraphControllerXmlBean
       return _queryHideNoJoins;
    }
 
-   public void set32Converted(boolean a32Converted)
+   public void setConverted32(boolean converted32)
    {
-      _32Converted = a32Converted;
+      _converted32 = converted32;
    }
 
-   public boolean is32Converted()
+   public boolean isConverted32()
    {
-      return _32Converted;
+      return _converted32;
    }
 
    public WhereTreeNodeStructure getWhereTreeNodeStructure()
