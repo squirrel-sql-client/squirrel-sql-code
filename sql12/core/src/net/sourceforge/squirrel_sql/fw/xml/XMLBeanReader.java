@@ -130,6 +130,7 @@ public class XMLBeanReader implements Iterable<Object>
 	{
 		try
 		{
+			_cl = cl;
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
 			DocumentBuilder db = dbf.newDocumentBuilder();
