@@ -4,15 +4,19 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import java.awt.Frame;
+import java.awt.GridLayout;
 
 public class CreateTableOfCurrentSQLDialog extends JDialog
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(CreateTableOfCurrentSQLDialog.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateTableOfCurrentSQLDialog.class);
 
 
 	JButton btnOK;

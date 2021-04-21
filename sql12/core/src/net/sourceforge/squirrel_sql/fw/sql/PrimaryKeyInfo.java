@@ -39,15 +39,7 @@ public class PrimaryKeyInfo extends DatabaseObjectInfo
      * The table that has this primary key constraint
      */
     private String tableName = null;
-    
-    /**
-     * @deprecated use the version of the constructor that accepts args to 
-     *             provide complete information about this key.
-     */
-    PrimaryKeyInfo() {
-        super(null, null, null, null, null);
-    }
-    
+
     /**
      * Create a new PrimaryKeyInfo object.
      * 

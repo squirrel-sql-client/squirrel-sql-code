@@ -1,23 +1,23 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.fw.sql.IAbortController;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 
-public class AbortController implements IAbortController
+public class AbortController
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(AbortController.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AbortController.class);
 
    private JDialog _dlg;
-   private boolean _stop;
+   private volatile boolean _stop;
 
    public AbortController(Window owner)
    {
@@ -35,16 +35,15 @@ public class AbortController implements IAbortController
 
       _dlg.setResizable(false);
       _dlg.pack();
-      _dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+      _dlg.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-      btnAbort.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            _stop = true;
-            setVisible(false);
-         }
-      });
+      btnAbort.addActionListener(e -> onAbort());
+   }
+
+   private void onAbort()
+   {
+      _stop = true;
+      close();
    }
 
    /**
@@ -56,27 +55,32 @@ public class AbortController implements IAbortController
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.IAbortController#isVisble()
-    */
-   public boolean isVisble()
-   {
-      return _dlg.isVisible();
-   }
-
-   /**
     * @see net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.IAbortController#setVisible(boolean)
     */
-   public void setVisible(final boolean b)
+   public void show()
    {
-      GUIUtils.processOnSwingEventThread
-         (
-            new Runnable()
-            {
-               public void run()
-               {
-                  GUIUtils.centerWithinParent(_dlg);
-                  _dlg.setVisible(b);
-               }
-            });
+      GUIUtils.processOnSwingEventThread (() -> onShow());
+   }
+
+   private void onShow()
+   {
+      if(_dlg.isVisible())
+      {
+         return;
+      }
+
+      GUIUtils.centerWithinParent(_dlg);
+      _dlg.setVisible(true);
+   }
+
+   public void close()
+   {
+      GUIUtils.processOnSwingEventThread (() -> onClose());
+   }
+
+   private void onClose()
+   {
+      _dlg.setVisible(false);
+      _dlg.dispose();
    }
 }

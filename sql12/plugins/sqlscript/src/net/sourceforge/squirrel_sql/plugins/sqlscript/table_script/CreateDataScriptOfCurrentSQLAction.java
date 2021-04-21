@@ -18,34 +18,28 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.event.ActionEvent;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.StringScriptBuilder;
+
+import java.awt.event.ActionEvent;
 
 public class CreateDataScriptOfCurrentSQLAction extends SquirrelAction implements ISQLPanelAction
 {
-
-
-   /**
-    * Current session.
-    */
    private ISession _session;
 
-   /**
-    * Current plugin.
-    */
    private final SQLScriptPlugin _plugin;
 
-   public CreateDataScriptOfCurrentSQLAction(IApplication app, IResources resources,
-                                             SQLScriptPlugin plugin)
+   public CreateDataScriptOfCurrentSQLAction(IResources resources, SQLScriptPlugin plugin)
    {
-      super(app, resources);
+      super(Main.getApplication(), resources);
       _plugin = plugin;
    }
 
@@ -53,9 +47,25 @@ public class CreateDataScriptOfCurrentSQLAction extends SquirrelAction implement
    {
       if (_session != null)
       {
-         new CreateDataScriptOfCurrentSQLCommand(_session, _plugin).execute();
+         StringScriptBuilder sbRows = new StringScriptBuilder();
+         new CreateInsertScriptOfCurrentSQLCommand(_session).generateInserts(sbRows, () -> onScriptFinished(sbRows));
       }
    }
+
+   private void onScriptFinished(StringScriptBuilder ssb)
+   {
+      StringBuilder sb = ssb.getStringBuilder();
+      if (sb.length() > 0)
+      {
+         FrameWorkAcessor.getSQLPanelAPI(_session).appendSQLScript(sb.toString(), true);
+
+         if (false == _session.getSelectedMainTab() instanceof BaseSQLTab)
+         {
+            _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+         }
+      }
+   }
+
 
    public void setSQLPanel(ISQLPanelAPI panel)
    {

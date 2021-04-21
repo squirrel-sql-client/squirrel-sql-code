@@ -19,41 +19,51 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.*;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.insert.InsertGenerator;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.StringScriptBuilder;
 
-public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
+import javax.swing.SwingUtilities;
+import java.awt.Frame;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class CreateTableOfCurrentSQLCommand
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateTableOfCurrentSQLCommand.class);
 
+   private static final ILogger s_log =  LoggerController.createLogger(CreateTableOfCurrentSQLCommand.class);
 
-   /**
-    * Current plugin.
-    */
-   private final SQLScriptPlugin _plugin;
+   private final AbortController _abortController;
+
+
+   private ISession _session;
 
    /**
     * Ctor specifying the current session.
     */
-   public CreateTableOfCurrentSQLCommand(ISession session, SQLScriptPlugin plugin)
+   public CreateTableOfCurrentSQLCommand(ISession session)
    {
-      super(session, true);
-      _plugin = plugin;
+      _session = session;
+
+      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session));
+      _abortController = new AbortController(owningFrame);
+
    }
 
    /**
@@ -74,43 +84,20 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
       final boolean scriptOnly = ctrl.isScriptOnly();
       final boolean dropTable = ctrl.isDropTable();
 
+      ISQLPanelAPI api =  FrameWorkAcessor.getSQLPanelAPI(_session);
+      String script = api.getSQLScriptToBeExecuted();
 
-	
-      _session.getApplication().getThreadPool().addTask(new Runnable()
-      {
-         public void run()
-         {
-            /*
-             * Ok, this sleep is a hack. (Stefan)
-             * On my system (Ubuntu 10.10 Java 1.6.0_24), I get the cancel dialog in a unusable state.
-             * On my Windows system, this problem doesn't occurs.
-             * This small sleep does the tick, where synchronization fails :-(
-             *
-             */
-            try
-            {
-               Thread.sleep(50);
-            }
-            catch (InterruptedException e)
-            {
-               // nothing to do
-            }
-            doCreateTableOfCurrentSQL(sTable, scriptOnly, dropTable);
-         }
-      });
-      showAbortFrame();
+      _abortController.show();
+      _session.getApplication().getThreadPool().addTask(() -> doCreateTableOfCurrentSQL(script, sTable, scriptOnly, dropTable));
    }
 
-   private void doCreateTableOfCurrentSQL(final String sTable, final boolean scriptOnly, final boolean dropTable)
+   private void doCreateTableOfCurrentSQL(String script, String sTable, boolean scriptOnly, boolean dropTable)
    {
 
-      final StringBuffer sbScript = new StringBuffer();
+      StringBuilder sbScript = new StringBuilder();
       try
       {
-          ISQLPanelAPI api =  FrameWorkAcessor.getSQLPanelAPI(_session);
-          
-          String script = api.getSQLScriptToBeExecuted();
-          
+
          IQueryTokenizer qt = _session.getQueryTokenizer();
          qt.setScriptToTokenize(script);
          
@@ -126,7 +113,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
          try
          {
             StringBuilder sbCreate = new StringBuilder();
-            StringBuilder sbInsert = new StringBuilder();
+            StringScriptBuilder ssbInsert = new StringScriptBuilder();
             StringBuilder sbDrop = new StringBuilder();
             String statSep = ScriptUtil.getStatementSeparator(_session);
 
@@ -135,7 +122,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
             String sql = qt.nextQuery().getQuery();
             ResultSet srcResult = stmt.executeQuery(sql);
 
-            if(isAborted())
+            if(_abortController.isStop())
             {
                return;
             }
@@ -143,7 +130,8 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
 
             genCreate(srcResult, sTable, sbCreate);
 
-            genInserts(srcResult, sTable, sbInsert, true);
+            new InsertGenerator( _session).genInserts(srcResult, sTable, ssbInsert, true, false, () -> _abortController.isStop());
+            StringBuilder sbInsert = ssbInsert.getStringBuilderClone();
             sbInsert.append('\n').append(sql);
 
             sbDrop.append("DROP TABLE " + sTable);
@@ -161,8 +149,6 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
             SQLUtilities.closeStatement(stmt);
          }
 
-
-
          if (false == scriptOnly)
          {
             try
@@ -176,10 +162,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
             catch (Exception e)
             {
                _session.showErrorMessage(e);
-
-               // i18n[sqlscript.storeSqlInTableFailed=An error occurred during storing SQL result in table {0}. See messages for details.\nI will create the copy script. You may correct errors and run it again.]
-               String msg = s_stringMgr.getString("sqlscript.storeSqlInTableFailed", sTable);
-               JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
+               s_log.error(e);
             }
 
          }
@@ -187,26 +170,31 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
       catch (Exception e)
       {
          _session.showErrorMessage(e);
-         e.printStackTrace();
+         s_log.error(e);
       }
       finally
       {
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               hideAbortFrame();
-               if (scriptOnly && 0 < sbScript.toString().trim().length())
-               {
-                  FrameWorkAcessor.getSQLPanelAPI(_session).appendSQLScript(sbScript.toString(), true);
+         SwingUtilities.invokeLater(() -> onScriptFinished(scriptOnly, sbScript));
+      }
+   }
 
-                  if (false == _session.getSelectedMainTab() instanceof BaseSQLTab)
-                  {
-                     _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-                  }
-               }
+   private void onScriptFinished(boolean scriptOnly, StringBuilder sbScript)
+   {
+      try
+      {
+         if (scriptOnly && 0 < sbScript.toString().trim().length())
+         {
+            FrameWorkAcessor.getSQLPanelAPI(_session).appendSQLScript(sbScript.toString(), true);
+
+            if (false == _session.getSelectedMainTab() instanceof BaseSQLTab)
+            {
+               _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
             }
-         });
+         }
+      }
+      finally
+      {
+         _abortController.close();
       }
    }
 

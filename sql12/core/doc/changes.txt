@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+SQL Scripts Plugin: Create Data (INSERT) file from SQL.
+  Creates INSERT statements of an SQL result in a file.
+  Available in SQL editor's right mouse menu and tools popup (ctrl+T).
+
 #598 Mac OS: Apple's application close command "Command key"+Q now works the same way as Ctrl+Q.
   I.e. Preferences are saved on "Command key"+Q.
   Furthermore the Apple specific About-Command now displays SQuirreL's About-box.

@@ -19,49 +19,52 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.insert.InsertGenerator;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.ScriptBuilder;
+
+import javax.swing.SwingUtilities;
+import java.awt.Frame;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
-import net.sourceforge.squirrel_sql.fw.sql.*;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
-
-public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
+public class CreateInsertScriptOfCurrentSQLCommand
 {
 
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateDataScriptOfCurrentSQLCommand.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateInsertScriptOfCurrentSQLCommand.class);
+   private ISession _session;
 
-   private final SQLScriptPlugin _plugin;
+   private AbortController _abortController;
 
-   public CreateDataScriptOfCurrentSQLCommand(ISession session, SQLScriptPlugin plugin)
+   public CreateInsertScriptOfCurrentSQLCommand(ISession session)
    {
-      super(session, false);
-      _plugin = plugin;
+      _session = session;
+      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session));
+      _abortController = new AbortController(owningFrame);
    }
 
-   /**
-    * Execute this command.
-    */
-   public void execute()
+   public void generateInserts(ScriptBuilder sbRows, InsertScriptFinishedCallBack insertScriptFinishedCallBack)
    {
-      _session.getApplication().getThreadPool().addTask(() -> doCreateDataScript());
-      showAbortFrame();
+      _abortController.show();
+      _session.getApplication().getThreadPool().addTask(() -> doGenerateInserts(sbRows, insertScriptFinishedCallBack));
    }
 
-   private void doCreateDataScript()
+   private void doGenerateInserts(ScriptBuilder sbRows, InsertScriptFinishedCallBack insertScriptFinishedCallBack)
    {
-      final StringBuilder sbRows = new StringBuilder();
 
       try
       {
@@ -74,7 +77,6 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
 
          if(false == qt.hasQuery())
          {
-            // i18n[CreateDataScriptOfCurrentSQLCommand.noQuery=No query found to create the script from.]
             _session.showErrorMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.noQuery"));
             return;
          }
@@ -101,7 +103,7 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                   tableName = "PressCtrlH";
                }
 
-               genInserts(srcResult, tableName, sbRows, false);
+               new InsertGenerator(_session).genInserts(srcResult, tableName, sbRows, false, false, () -> _abortController.isStop());
             }
             finally
             {
@@ -115,24 +117,22 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
       }
       finally
       {
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               if (sbRows.length() > 0)
-               {
-                  FrameWorkAcessor.getSQLPanelAPI(_session).appendSQLScript(sbRows.toString(), true);
-
-                  if (false == _session.getSelectedMainTab() instanceof BaseSQLTab)
-                  {
-                     _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-                  }
-               }
-               hideAbortFrame();
-            }
-         });
+         SwingUtilities.invokeLater(() -> onScriptFinished(insertScriptFinishedCallBack));
       }
    }
+
+   private void onScriptFinished(InsertScriptFinishedCallBack insertScriptFinishedCallBack)
+   {
+      try
+      {
+         insertScriptFinishedCallBack.insertScriptFinished();
+      }
+      finally
+      {
+         _abortController.close();
+      }
+   }
+
 
    private String getFirstTableNameFromResultSetMetaData(ResultSet srcResult) throws SQLException
    {

@@ -25,17 +25,15 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 public interface IAbortController
 {
-
-	
 	/**
 	 * @return true if the user has indicated their desire to stop the long-running process; false otherwise. 
 	 */
-	public abstract boolean isStop();
+	boolean isStop();
 
 	/**
 	 * @return true if the widget has been displayed and is visible to the user.
 	 */
-	public abstract boolean isVisble();
+	boolean isVisble();
 
 	
 	/**
@@ -43,6 +41,6 @@ public interface IAbortController
 	 * 
 	 * @param b true displays the widget; false causes the widget to hide.
 	 */
-	public abstract void setVisible(final boolean b);
+	void setVisible(final boolean b);
 
 }
