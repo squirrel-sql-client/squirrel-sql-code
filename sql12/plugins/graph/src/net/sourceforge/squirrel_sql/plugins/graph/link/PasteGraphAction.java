@@ -13,11 +13,13 @@ import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 
 public class PasteGraphAction extends SquirrelAction implements ISessionAction
 {
@@ -44,14 +46,9 @@ public class PasteGraphAction extends SquirrelAction implements ISessionAction
 
          String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
 
-
          File graphTmp = File.createTempFile("graphTmp_", "_.xml");
 
-         FileWriter fw = new FileWriter(graphTmp);
-         fw.write(data);
-         fw.flush();
-         fw.close();
-
+         Files.writeString(graphTmp.toPath(), data, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 
          XMLBeanReader br = new XMLBeanReader();
          try

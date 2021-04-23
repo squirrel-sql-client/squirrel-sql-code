@@ -18,6 +18,8 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+Graph Plugin: Copy and paste of Graph with no purely ASCII name raised "SAXParseException ...Invalid byte 2 of 3-byte UTF-8 sequence".
+
 #1468 Single whitespace in driver properties are lost on application restart.
   This fix required replacing outdated nanoxml library by standard Java XML functionality.
 
