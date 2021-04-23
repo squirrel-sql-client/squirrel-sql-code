@@ -6,6 +6,24 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+=======================================================================================
+==
+The somewhat outdated nanoxml library (http://nanoxml.sourceforge.net/orig/)
+  was replaced by standard Java XML functionality.
+  - For large configuration files, e.g. many Aliases, start up and shutdown performance
+    will improve.
+  - Bug #1468 "Single whitespace in driver properties is ignored" is fixed.
+
+  CAUTION:
+  As this change concerns most of SQuirreL's configuration files
+  it is recommended to backup your SQuirreL user directory.
+
+  Known backward incompatibilities:
+  - Non ASCII characters may not correctly converted
+  - Graphs once saved with this version will not open correctly with former versions.
+==
+=======================================================================================
+
 SQL Scripts Plugin: Create Data (INSERT) file from SQL.
   Creates INSERT statements of an SQL result in a file.
   Available in SQL editor's right mouse menu and tools popup (ctrl+T).
@@ -14,7 +32,6 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
   I.e. Preferences are saved on "Command key"+Q.
   Furthermore the Apple specific About-Command now displays SQuirreL's About-box.
   NOTE: As a consequence of these changes the minimum required is Java 11.
-  -----
 
 Bug fixes:
 
