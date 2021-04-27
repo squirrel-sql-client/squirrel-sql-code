@@ -15,6 +15,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllButCurrentSe
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseSessionWindowAction;
+import net.sourceforge.squirrel_sql.client.session.action.GoToAliasSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.RenameSessionAction;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 
@@ -627,7 +628,8 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(CloseAllSessionsAction.class)));
       
       _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(RenameSessionAction.class)));
-      
+
+      _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(GoToAliasSessionAction.class)));
    }
 
    private JMenuItem createMenu(Action action)

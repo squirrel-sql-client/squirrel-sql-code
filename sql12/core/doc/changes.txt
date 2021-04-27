@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New right mouse menu item on Session tabs "Go to Alias" jumps to the Session's Alias.
+
 =======================================================================================
 ==
 The somewhat outdated nanoxml library (http://nanoxml.sourceforge.net/orig/)

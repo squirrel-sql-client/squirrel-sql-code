@@ -47,6 +47,7 @@ import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FindColumnsInObjectTreeNodesAction;
 import net.sourceforge.squirrel_sql.client.session.action.FormatSQLAction;
+import net.sourceforge.squirrel_sql.client.session.action.GoToAliasSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
 import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
@@ -259,13 +260,13 @@ public class ActionRegistry
 
       actionCollection.add(new RenameSessionAction(app));
 
+      actionCollection.add(new GoToAliasSessionAction());
+
       actionCollection.add(new RerunCurrentSQLResultTabAction());
       actionCollection.add(new CreateResultTabFrameAction());
       actionCollection.add(new FindInResultAction());
       actionCollection.add(new FindResultColumnAction());
       actionCollection.add(new MarkDuplicatesToggleAction());
-
-
 
       actionCollection.add(new InQuotesAction(app));
       actionCollection.add(new RemoveQuotesAction(app));
