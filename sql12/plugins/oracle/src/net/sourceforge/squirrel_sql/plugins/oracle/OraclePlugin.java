@@ -33,7 +33,6 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-import net.sourceforge.squirrel_sql.client.session.IAllowedSchemaChecker;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -312,14 +311,7 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 			coll.add(new NewSessionInfoWorksheetAction(app, _resources));
 			coll.add(new NewSGATraceWorksheetAction(app, _resources));
 
-			app.getSessionManager().addAllowedSchemaChecker(new IAllowedSchemaChecker()
-			{
-				@Override
-				public String[] getAllowedSchemas(ISQLConnection con, ISQLAliasExt alias)
-				{
-					return onGetAllowedSchemas(con, alias);
-				}
-			});
+			app.getSessionManager().addAllowedSchemaChecker((con, alias) -> onGetAllowedSchemas(con, alias));
 
 			File f = getGlobalPrefsFile();
 

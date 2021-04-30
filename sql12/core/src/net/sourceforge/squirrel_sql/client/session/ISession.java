@@ -20,11 +20,6 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.SQLException;
-
-import javax.swing.Action;
-import javax.swing.JComponent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
@@ -46,6 +41,10 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+
+import javax.swing.Action;
+import javax.swing.JComponent;
+import java.sql.SQLException;
 
 /**
  * The current session.
@@ -400,7 +399,7 @@ public interface ISession extends IHasIdentifier
     * The caller have to manage the connection by himself. Especially commit, roll back, close and so on. 
     * @return A new connection for the alias of the current session.
     */
-   public SQLConnection createUnmanagedConnection();
+   SQLConnection createUnmanagedConnection();
 
    boolean isSessionWidgetActive();
 

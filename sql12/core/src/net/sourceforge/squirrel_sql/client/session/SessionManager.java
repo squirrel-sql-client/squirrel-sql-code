@@ -629,7 +629,7 @@ public class SessionManager
             {
                if(null == uniqueAllowedSchemas)
                {
-                  uniqueAllowedSchemas = new HashMap<String, Object>();
+                  uniqueAllowedSchemas = new HashMap<>();
                }
 
                for (int j = 0; j < allowedSchemas.length; j++)
@@ -645,7 +645,7 @@ public class SessionManager
          }
          else
          {
-            ArrayList<String> list = new ArrayList<String>(uniqueAllowedSchemas.keySet());
+            ArrayList<String> list = new ArrayList<>(uniqueAllowedSchemas.keySet());
             Collections.sort(list);
             return list.toArray(new String[list.size()]);
          }

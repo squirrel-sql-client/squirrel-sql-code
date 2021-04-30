@@ -18,8 +18,42 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.ALIAS_DEFINITIONS;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.SmallToolTipInfoButton;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
+import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,33 +70,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.SmallToolTipInfoButton;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.ALIAS_DEFINITIONS;
 /**
  * This internal frame allows the maintenance of an database alias.
  *
@@ -86,18 +94,12 @@ public class AliasInternalFrame extends DialogWidget
 		int COPY = 3;
 	}
 
-	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =  StringManagerFactory.getStringManager(AliasInternalFrame.class);
+
+	private static final ILogger s_log = LoggerController.createLogger(AliasInternalFrame.class);
 
 	/** Number of characters to show in text fields. */
 	private static final int COLUMN_COUNT = 25;
-
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(AliasInternalFrame.class);
-
-	/** Application API. */
-	transient private final IApplication _app;
 
 	/** The <TT>ISQLAlias</TT> being maintained. */
 	private final ISQLAlias _sqlAlias;
@@ -140,13 +142,10 @@ public class AliasInternalFrame extends DialogWidget
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _btnAliasProps = new JButton(s_stringMgr.getString("AliasInternalFrame.props"));
 
-	/** Collection of the driver properties. */
-//	private SQLDriverPropertyCollection _sqlDriverProps;
 
 	/**
 	 * Ctor.
 	 *
-	 * @param	app			Application API.
 	 * @param	sqlAlias	The <TT>ISQLAlias</TT> to be maintained.
 	 * @param	maintType	The maintenance type.
 	 *
@@ -155,13 +154,10 @@ public class AliasInternalFrame extends DialogWidget
 	 * 			<TT>ISQLAlias</TT> or an invalid value passed for
 	 *			<TT>maintType</TT>.
 	 */
-	AliasInternalFrame(IApplication app, ISQLAlias sqlAlias, int maintType)
+	AliasInternalFrame(ISQLAlias sqlAlias, int maintType)
 	{
-		super("", true, app);
-		if (app == null)
-		{
-			throw new IllegalArgumentException("IApplication == null");
-		}
+		super("", true, Main.getApplication());
+
 		if (sqlAlias == null)
 		{
 			throw new IllegalArgumentException("ISQLAlias == null");
@@ -173,7 +169,6 @@ public class AliasInternalFrame extends DialogWidget
 			throw new IllegalArgumentException(msg);
 		}
 
-		_app = app;
 		_sqlAlias = sqlAlias;
 		_maintType = maintType;
 		createUserInterface();
@@ -188,7 +183,7 @@ public class AliasInternalFrame extends DialogWidget
 	{
 		if (_driversCacheLis != null)
 		{
-			_app.getAliasesAndDriversManager().removeDriversListener(_driversCacheLis);
+			Main.getApplication().getAliasesAndDriversManager().removeDriversListener(_driversCacheLis);
 			_driversCacheLis = null;
 		}
 		super.dispose();
@@ -263,14 +258,14 @@ public class AliasInternalFrame extends DialogWidget
 			applyFromDialog(_sqlAlias);
 			if (_maintType == IMaintenanceType.NEW || _maintType == IMaintenanceType.COPY)
 			{
-				_app.getAliasesAndDriversManager().addAlias(_sqlAlias);
+				Main.getApplication().getAliasesAndDriversManager().addAlias(_sqlAlias);
 			}
-         _app.savePreferences(ALIAS_DEFINITIONS);
+         Main.getApplication().savePreferences(ALIAS_DEFINITIONS);
 			dispose();
 		}
 		catch (ValidationException ex)
 		{
-			_app.showErrorDialog(ex);
+			Main.getApplication().showErrorDialog(ex);
 		}
 	}
 
@@ -300,7 +295,7 @@ public class AliasInternalFrame extends DialogWidget
 
 	private void showNewDriverDialog()
 	{
-		_app.getWindowManager().showNewDriverInternalFrame();
+		Main.getApplication().getWindowManager().showNewDriverInternalFrame();
 	}
 
 	private void showDriverPropertiesDialog()
@@ -308,11 +303,11 @@ public class AliasInternalFrame extends DialogWidget
 		try
 		{
          applyFromDialog(_sqlAlias);
-         new AliasPropertiesCommand(_sqlAlias, _app).execute();
+         new AliasPropertiesCommand(_sqlAlias, Main.getApplication()).execute();
 		}
 		catch (Exception ex)
 		{
-			_app.showErrorDialog(ex);
+			Main.getApplication().showErrorDialog(ex);
 		}
 	}
 
@@ -330,8 +325,7 @@ public class AliasInternalFrame extends DialogWidget
 		String winTitle; 
 		if (_maintType == IMaintenanceType.MODIFY)
 		{
-			winTitle = s_stringMgr.getString("AliasInternalFrame.changealias",
-											_sqlAlias.getName());
+			winTitle = s_stringMgr.getString("AliasInternalFrame.changealias", _sqlAlias.getName());
 		}
 		else
 		{
@@ -389,7 +383,7 @@ public class AliasInternalFrame extends DialogWidget
 		contentPane.add(createButtonsPanel(), gbc);
 
 		_driversCacheLis = new DriversCacheListener();
-		_app.getAliasesAndDriversManager().addDriversListener(_driversCacheLis);
+		Main.getApplication().getAliasesAndDriversManager().addDriversListener(_driversCacheLis);
 
 		GUIUtils.enableCloseByEscape(this);
    }
@@ -476,7 +470,7 @@ public class AliasInternalFrame extends DialogWidget
 		pnl.add(_chkSavePasswordEncrypted, gbc);
 
       gbc = new GridBagConstraints(1,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      _btnAliasProps.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
+      _btnAliasProps.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
       pnl.add(_btnAliasProps, gbc);
 
 
@@ -533,19 +527,18 @@ public class AliasInternalFrame extends DialogWidget
 
 	private void performConnect(boolean createSession)
 	{
+		try
+		{
+			applyFromDialog(_sqlAlias);
+		}
+		catch (ValidationException e)
+		{
+			Main.getApplication().showErrorDialog(e);
+			return;
+		}
+
 		if (createSession)
 		{
-			// Here the Alias equipped with all Schema properties is uses to create a proper Session.
-			try
-			{
-				applyFromDialog(_sqlAlias);
-			}
-			catch (ValidationException e)
-			{
-				_app.showErrorDialog(e);
-				return;
-			}
-
 			ConnectToAliasCallBack connectToAliasCallBack = new ConnectToAliasCallBack((SQLAlias) _sqlAlias)
 			{
 				@Override
@@ -559,21 +552,20 @@ public class AliasInternalFrame extends DialogWidget
 		}
 		else
 		{
-			// Here the Alias is used to load the schema table of the Alias schema properties dialog.
-			// So *ALL* schemas must be loaded.
-			final AliasesAndDriversManager cache = _app.getAliasesAndDriversManager();
-			final IIdentifierFactory factory = IdentifierFactory.getInstance();
-			final SQLAlias alias = cache.createAlias(factory.createIdentifier());
-			try
-			{
-				applyFromDialog(alias);
-			}
-			catch (ValidationException e)
-			{
-				_app.showErrorDialog(e);
-				return;
-			}
-			new ConnectToAliasCommand(_app, alias, createSession, new ConnectionTestCallBack(_app, alias)).execute();
+			// This branch is merely used for testing the connection from with the Alias frame.
+
+			// From the beginning of all revisions an Alias clone was created to perform a test.
+			// When working on bug #1469 no reason could be found to do so.
+			//	final AliasesAndDriversManager cache = Main.getApplication().getAliasesAndDriversManager();
+			//	final IIdentifierFactory factory = IdentifierFactory.getInstance();
+			//	final SQLAlias alias = cache.createAlias(factory.createIdentifier());
+			//
+			//	// Originally introduced for bug #1469.
+			//	if (null != _sqlAlias && _sqlAlias.getUseDriverProperties())
+			//	{
+			//		alias.setDriverProperties(_sqlAlias.getDriverPropertiesClone());
+			//	}
+			new ConnectToAliasCommand(Main.getApplication(), (SQLAlias) _sqlAlias, false, new ConnectionTestCallBack(Main.getApplication(), (SQLAlias) _sqlAlias)).execute();
 		}
 	}
 
@@ -594,31 +586,28 @@ public class AliasInternalFrame extends DialogWidget
 	 */
 	private final class DriversCombo extends JComboBox
 	{
-		private Map<IIdentifier, ISQLDriver> _map = 
-            new HashMap<IIdentifier, ISQLDriver>();
-        SquirrelPreferences prefs = _app.getSquirrelPreferences();
-		@SuppressWarnings("unchecked")
-        DriversCombo()
+		private Map<IIdentifier, ISQLDriver> _map = new HashMap<>();
+
+		SquirrelPreferences prefs = Main.getApplication().getSquirrelPreferences();
+
+		DriversCombo()
 		{
-			super();
-			SquirrelResources res = _app.getResources();
-			setRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),
-											res.getIcon("list.driver.notfound")));
+			SquirrelResources res = Main.getApplication().getResources();
+			setRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"), res.getIcon("list.driver.notfound")));
 			List<ISQLDriver> list = new ArrayList<ISQLDriver>();
-			for (Iterator it = AliasInternalFrame.this._app.getAliasesAndDriversManager().drivers();
-              it.hasNext();)
+			for (Iterator it = Main.getApplication().getAliasesAndDriversManager().drivers(); it.hasNext(); )
 			{
 				ISQLDriver sqlDriver = ((ISQLDriver) it.next());
-                if (prefs.getShowLoadedDriversOnly() 
-                        && !sqlDriver.isJDBCDriverClassLoaded()) 
-                {
-                    continue;
-                }
-                _map.put(sqlDriver.getIdentifier(), sqlDriver);
-                list.add(sqlDriver);                    
+				if (prefs.getShowLoadedDriversOnly() && !sqlDriver.isJDBCDriverClassLoaded())
+				{
+					continue;
+				}
+				_map.put(sqlDriver.getIdentifier(), sqlDriver);
+				list.add(sqlDriver);
 			}
+
 			Collections.sort(list, new DriverComparator());
-			for (Iterator it = list.iterator(); it.hasNext();)
+			for (Iterator it = list.iterator(); it.hasNext(); )
 			{
 				addItem(it.next());
 			}
@@ -634,8 +623,7 @@ public class AliasInternalFrame extends DialogWidget
 			return (ISQLDriver) getSelectedItem();
 		}
 
-		private class DriverComparator implements Comparator<ISQLDriver>,
-		                                          Serializable
+		private class DriverComparator implements Comparator<ISQLDriver>, Serializable
 		{
 			public int compare(ISQLDriver leftDriver, ISQLDriver rightDriver)
 			{
@@ -651,7 +639,6 @@ public class AliasInternalFrame extends DialogWidget
 
 				return leftDriver.toString().compareToIgnoreCase(rightDriver.toString());
 			}
-
 		}
 	}
 
@@ -675,7 +662,7 @@ public class AliasInternalFrame extends DialogWidget
 			{
 				String msg = s_stringMgr.getString("AliasInternalFrame.error.errorclosingconn");
 				s_log.error(msg, th);
-				_app.showErrorDialog(msg + ": " + th.toString());
+				Main.getApplication().showErrorDialog(msg + ": " + th.toString());
 			}
 
 			AliasInternalFrame.this.showOk(s_stringMgr.getString("AliasInternalFrame.connsuccess"));

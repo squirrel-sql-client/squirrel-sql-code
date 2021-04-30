@@ -52,17 +52,16 @@ public class ConnectToStartupAliasesCommand implements ICommand
    {
       final List<ISQLAlias> aliases = new ArrayList<>();
       final AliasesAndDriversManager cache = _app.getAliasesAndDriversManager();
-      synchronized (cache)
+
+      for (Iterator<? extends ISQLAlias> it = cache.aliases(); it.hasNext();)
       {
-         for (Iterator<? extends ISQLAlias> it = cache.aliases(); it.hasNext();)
+         ISQLAlias alias = it.next();
+         if (alias.isConnectAtStartup())
          {
-            ISQLAlias alias = it.next();
-            if (alias.isConnectAtStartup())
-            {
-               aliases.add(alias);
-            }
+            aliases.add(alias);
          }
       }
+
       final Iterator<ISQLAlias> it = aliases.iterator();
       while (it.hasNext())
       {

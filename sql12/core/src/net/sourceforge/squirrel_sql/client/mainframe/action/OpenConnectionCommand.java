@@ -18,8 +18,6 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.DriverManager;
-import java.util.concurrent.*;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
@@ -29,16 +27,17 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
-
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
+import java.sql.DriverManager;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
- * This <CODE>ICommand</CODE> allows the user to connect to
- * an <TT>ISQLAlias</TT>.
- *
- * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * When a Session is started and or a connection is tested this command is used by {@link ConnectToAliasCommand}.
  */
 public class OpenConnectionCommand
 {

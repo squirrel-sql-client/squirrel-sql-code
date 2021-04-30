@@ -18,6 +18,17 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang.StringUtils;
+
 import java.beans.PropertyChangeListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,19 +37,11 @@ import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.*;
-
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * This represents a connection to an SQL server. it is basically a wrapper around
@@ -50,11 +53,8 @@ public class SQLConnection implements ISQLConnection
 {
 	private ISQLDriver _sqlDriver;
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SQLConnection.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLConnection.class);
 
-	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(SQLConnection.class);
 
 	/** The <TT>java.sql.Connection</TT> this object is wrapped around. */
@@ -76,7 +76,6 @@ public class SQLConnection implements ISQLConnection
 
 	public SQLConnection(Connection conn, SQLDriverPropertyCollection connProps, ISQLDriver sqlDriver)
 	{
-		super();
 		_sqlDriver = sqlDriver;
 		if (conn == null) { throw new IllegalArgumentException("SQLConnection == null"); }
 		_conn = conn;

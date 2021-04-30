@@ -44,11 +44,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.SwingUtilities;
 import java.sql.SQLException;
+
 /**
- * This <CODE>ICommand</CODE> allows the user to connect to
- * an <TT>ISQLAlias</TT>.
- *
- * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * This command is used to start Sessions and to test connections.
+ * It delegates to {@link OpenConnectionCommand}.
  */
 public class ConnectToAliasCommand implements ICommand
 {
@@ -182,9 +181,8 @@ public class ConnectToAliasCommand implements ICommand
 		 * 			Thrown if <TT>null</TT>IApplication</TT>, <TT>ISQLAlias</TT>,
 		 * 			or <TT>ICompletionCallback</TT> passed.
 		 */
-		private SheetHandler(IApplication app, SQLAlias alias, boolean createSession, ICompletionCallback callback)
+		private  SheetHandler(IApplication app, SQLAlias alias, boolean createSession, ICompletionCallback callback)
 		{
-			super();
 			if (app == null)
 			{
 				throw new IllegalArgumentException("IApplication == null");
@@ -212,8 +210,7 @@ public class ConnectToAliasCommand implements ICommand
 		 * @param	password	The password entered.
 		 * @param	props		Connection properties.
 		 */
-		public void performOK(ConnectionInternalFrame connSheet, String user,
-								String password, SQLDriverPropertyCollection props)
+		public void performOK(ConnectionInternalFrame connSheet, String user, String password, SQLDriverPropertyCollection props)
 		{
 			_stopConnection = false;
 			_connSheet = connSheet;
@@ -262,13 +259,7 @@ public class ConnectToAliasCommand implements ICommand
          {
             final OpenConnectionCommand cmd = new OpenConnectionCommand(_alias, _user, _password, _props);
 
-            cmd.execute(new OpenConnectionCommandListener(){
-               @Override
-               public void openConnectionFinished(Throwable t)
-               {
-                  afterExecuteFinished(sqlDriver, cmd, t);
-               }
-            });
+            cmd.execute(t -> afterExecuteFinished(sqlDriver, cmd, t));
 
          }
          catch (Throwable ex)
@@ -340,8 +331,7 @@ public class ConnectToAliasCommand implements ICommand
 				}
 				catch (SQLException ex)
 				{
-                    // i18n[ConnectToAliasCommand.error.closeconnection=Error occurred closing Connection]
-					s_log.error(s_stringMgr.getString("ConnectToAliasCommand.error.closeconnection"), ex);
+					s_log.error("Error occurred closing connection", ex);
 				}
 			}
 		}

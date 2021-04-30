@@ -211,13 +211,7 @@ public class ConnectionInternalFrame extends DialogWidget
 
 		if (visible && _alias.isAutoLogon())
 		{
-			SwingUtilities.invokeLater(new Runnable()
-			{
-				public void run()
-				{
-					connect();
-				}
-			});
+			SwingUtilities.invokeLater(() -> connect());
 		}
 	}
 
