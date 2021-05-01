@@ -27,9 +27,11 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasComman
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -527,18 +529,19 @@ public class AliasInternalFrame extends DialogWidget
 
 	private void performConnect(boolean createSession)
 	{
-		try
-		{
-			applyFromDialog(_sqlAlias);
-		}
-		catch (ValidationException e)
-		{
-			Main.getApplication().showErrorDialog(e);
-			return;
-		}
 
 		if (createSession)
 		{
+			try
+			{
+				applyFromDialog(_sqlAlias);
+			}
+			catch (ValidationException e)
+			{
+				Main.getApplication().showErrorDialog(e);
+				return;
+			}
+
 			ConnectToAliasCallBack connectToAliasCallBack = new ConnectToAliasCallBack((SQLAlias) _sqlAlias)
 			{
 				@Override
@@ -552,20 +555,26 @@ public class AliasInternalFrame extends DialogWidget
 		}
 		else
 		{
-			// This branch is merely used for testing the connection from with the Alias frame.
 
-			// From the beginning of all revisions an Alias clone was created to perform a test.
-			// When working on bug #1469 no reason could be found to do so.
-			//	final AliasesAndDriversManager cache = Main.getApplication().getAliasesAndDriversManager();
-			//	final IIdentifierFactory factory = IdentifierFactory.getInstance();
-			//	final SQLAlias alias = cache.createAlias(factory.createIdentifier());
-			//
-			//	// Originally introduced for bug #1469.
-			//	if (null != _sqlAlias && _sqlAlias.getUseDriverProperties())
-			//	{
-			//		alias.setDriverProperties(_sqlAlias.getDriverPropertiesClone());
-			//	}
-			new ConnectToAliasCommand(Main.getApplication(), (SQLAlias) _sqlAlias, false, new ConnectionTestCallBack(Main.getApplication(), (SQLAlias) _sqlAlias)).execute();
+			// This block is merely used for testing the connection from within the Alias frame.
+			// We need to create a copy of the Alias because we don't want the test to automatically save changes.
+
+			final AliasesAndDriversManager cache = Main.getApplication().getAliasesAndDriversManager();
+			final IIdentifierFactory factory = IdentifierFactory.getInstance();
+			final SQLAlias alias = cache.createAlias(factory.createIdentifier());
+			alias.assignFrom((SQLAlias) _sqlAlias, false);
+
+			try
+			{
+				applyFromDialog(alias);
+			}
+			catch (ValidationException e)
+			{
+				Main.getApplication().showErrorDialog(e);
+				return;
+			}
+
+			new ConnectToAliasCommand(Main.getApplication(), alias, false, new ConnectionTestCallBack(Main.getApplication(), alias)).execute();
 		}
 	}
 
