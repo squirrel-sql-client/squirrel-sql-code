@@ -472,6 +472,8 @@ SQL results: The column lists of the "Find column" dialog of now over right mous
 
 Bug fixes:
 
+#1472 Unnecessary exception when ResultSet is closed before Statement
+
 #1469 Driver properties not passed when testing connection
 
 When password was changed in the reconnect dialog (Ctrl-Alt-T) the new password was not correctly passed to the JDBC driver.

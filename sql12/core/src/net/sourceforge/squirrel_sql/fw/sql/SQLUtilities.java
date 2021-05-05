@@ -18,6 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.fw.sql;
 
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,9 +30,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * @author manningr : except where noted
@@ -328,35 +328,40 @@ public class SQLUtilities
 		{
 			return;
 		}
-		// Close the ResultSet
-		try
-		{
-			rs.close();
-		} catch (SQLException e)
-		{
-			if (s_log.isDebugEnabled())
-			{
-				s_log.debug("Unexpected exception while closing ResultSet: " + e.getMessage(), e);
-			}
-		}
+
 		if (closeStatement)
 		{
-			// Close the ResultSet's Statement if it is non-null. This frees open
-			// cursors.
-
 			try
 			{
-				Statement stmt = rs.getStatement();
-				if (stmt != null)
+				Statement stmt = null;
+				if (false == rs.isClosed())
+				{
+					stmt = rs.getStatement();
+				}
+
+				if (null != stmt )
 				{
 					stmt.close();
 				}
-			} catch (SQLException e)
+			}
+			catch (SQLException e)
 			{
 				if (s_log.isDebugEnabled())
 				{
 					s_log.debug("Unexpected exception while closing " + "Statement: " + e.getMessage(), e);
 				}
+			}
+		}
+
+		try
+		{
+			rs.close();
+		}
+		catch (SQLException e)
+		{
+			if (s_log.isDebugEnabled())
+			{
+				s_log.debug("Unexpected exception while closing ResultSet: " + e.getMessage(), e);
 			}
 		}
 	}
