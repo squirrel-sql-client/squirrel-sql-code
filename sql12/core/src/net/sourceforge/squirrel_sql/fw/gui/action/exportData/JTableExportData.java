@@ -18,115 +18,124 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+
+import javax.swing.JTable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JTable;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-
 /**
  * The implementation of {@link IExportData} for exporting a {@link JTable}.
- * This class encapsulate the access to the model of a JTable. 
- * Its possible, to handle the full table, or only the selected part of it. 
+ * This class encapsulate the access to the model of a JTable.
+ * Its possible, to handle the full table, or only the selected part of it.
  * <p>
  * <b>Note:</b> This class is the result of a refactoring task. The code was taken from TableExportCsvCommand.
+ *
  * @author Stefan Willinger
- * 
  */
-public class JTableExportData implements IExportData {
+public class JTableExportData implements IExportData
+{
 
-	private JTable table;
+   private JTable table;
 
-	int nbrSelRows;
-	int nbrSelCols;
-	int[] selRows;
-	int[] selCols;
+   int nbrSelRows;
+   int nbrSelCols;
+   int[] selRows;
+   int[] selCols;
 
-	/**
-	 * Constructor using a JTable.
-	 * @param table the JTable to use.
-	 * @param complete flag, if the complete table or only the selection should be used.
-	 * 
-	 */
-	public JTableExportData(JTable table, boolean complete) {
-		this.table = table;
+   /**
+    * Constructor using a JTable.
+    *
+    * @param table    the JTable to use.
+    * @param complete flag, if the complete table or only the selection should be used.
+    */
+   public JTableExportData(JTable table, boolean complete)
+   {
+      this.table = table;
 
-		nbrSelRows = table.getSelectedRowCount();
-		if (0 == nbrSelRows || complete) {
-			nbrSelRows = table.getRowCount();
-		}
+      nbrSelRows = table.getSelectedRowCount();
+      if (0 == nbrSelRows || complete)
+      {
+         nbrSelRows = table.getRowCount();
+      }
 
-		nbrSelCols = table.getSelectedColumnCount();
-		if (0 == nbrSelCols || complete) {
-			nbrSelCols = table.getColumnCount();
-		}
+      nbrSelCols = table.getSelectedColumnCount();
+      if (0 == nbrSelCols || complete)
+      {
+         nbrSelCols = table.getColumnCount();
+      }
 
-		selRows = table.getSelectedRows();
-		if (0 == selRows.length || complete) {
-			selRows = new int[nbrSelRows];
-			for (int i = 0; i < selRows.length; i++) {
-				selRows[i] = i;
-			}
-		}
+      selRows = table.getSelectedRows();
+      if (0 == selRows.length || complete)
+      {
+         selRows = new int[nbrSelRows];
+         for (int i = 0; i < selRows.length; i++)
+         {
+            selRows[i] = i;
+         }
+      }
 
-		selCols = table.getSelectedColumns();
-		if (0 == selCols.length || complete) {
-			selCols = new int[nbrSelCols];
-			for (int i = 0; i < selCols.length; i++) {
-				selCols[i] = i;
-			}
-		}
+      selCols = table.getSelectedColumns();
+      if (0 == selCols.length || complete)
+      {
+         selCols = new int[nbrSelCols];
+         for (int i = 0; i < selCols.length; i++)
+         {
+            selCols[i] = i;
+         }
+      }
 
-	}
+   }
 
-	/**
-	 * Reads the header of the table.
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData#getHeaders()
-	 */
-	@Override
-	public Iterator<String> getHeaders() {
-		List<String> headers = new ArrayList<String>();
-		for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
-			String columnName = table.getColumnName(selCols[colIdx]);
-			headers.add(columnName);
-		}
-		return headers.iterator();
-	}
+   /**
+    * Reads the header of the table.
+    *
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData#getHeaders()
+    */
+   @Override
+   public Iterator<String> getHeaders()
+   {
+      List<String> headers = new ArrayList<String>();
+      for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
+      {
+         String columnName = table.getColumnName(selCols[colIdx]);
+         headers.add(columnName);
+      }
+      return headers.iterator();
+   }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData#getRows(boolean)
-	 */
-	@Override
-	public Iterator<IExportDataRow> getRows()
-	{
-		List<IExportDataRow> rows = new ArrayList<IExportDataRow>(nbrSelRows);
-		for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
-		{
-			List<IExportDataCell> cells = new ArrayList<IExportDataCell>(nbrSelCols);
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData#getRows(boolean)
+    */
+   @Override
+   public Iterator<IExportDataRow> getRows()
+   {
+      List<IExportDataRow> rows = new ArrayList<IExportDataRow>(nbrSelRows);
+      for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
+      {
+         List<IExportDataCell> cells = new ArrayList<IExportDataCell>(nbrSelCols);
 
-			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
-			{
-				ExportDataColumn cellObj;
+         for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
+         {
+            ExportDataColumn cellObj;
 
-				final Object obj = table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+            final Object obj = table.getValueAt(selRows[rowIdx], selCols[colIdx]);
 
-				if (table.getColumnModel().getColumn(colIdx) instanceof ExtTableColumn)
-				{
-					ExtTableColumn col = (ExtTableColumn) table.getColumnModel().getColumn(selCols[colIdx]);
-					cellObj = new ExportDataColumn(col.getColumnDisplayDefinition(), obj, rowIdx, colIdx);
-				}
-				else
-				{
-					cellObj = new ExportDataColumn(null, obj, rowIdx, colIdx);
-				}
-				cells.add(cellObj);
-			}
-			rows.add(new ExportDataRow(cells, rowIdx));
-		}
-		return rows.iterator();
-	}
+            if (table.getColumnModel().getColumn(colIdx) instanceof ExtTableColumn)
+            {
+               ExtTableColumn col = (ExtTableColumn) table.getColumnModel().getColumn(selCols[colIdx]);
+               cellObj = new ExportDataColumn(col.getColumnDisplayDefinition(), obj, rowIdx, colIdx);
+            }
+            else
+            {
+               cellObj = new ExportDataColumn(null, obj, rowIdx, colIdx);
+            }
+            cells.add(cellObj);
+         }
+         rows.add(new ExportDataRow(cells, rowIdx));
+      }
+      return rows.iterator();
+   }
 
 }

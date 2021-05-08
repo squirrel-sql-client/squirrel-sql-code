@@ -1,16 +1,13 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import java.sql.Types;
-
-import javax.swing.JTable;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportCSVWriter;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.JTableExportData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JTable;
+import java.sql.Types;
 
 /**
  * Command for exporting a {@link JTable} into a file.
@@ -59,7 +56,7 @@ public class TableExportCommand extends AbstractExportCommand
                Object cellObj = _table.getValueAt(rowIdx, colIdx);
                // TODO stefan why did we need the csv data?
                String data = DataExportCSVWriter.getDataCSV(sepChar, "" + cellObj);
-               if (data != null && ClobDescriptor.i18n.CLOB_LABEL.equals(data))
+               if (ClobDescriptor.i18n.CLOB_LABEL.equals(data))
                {
                   return true;
                }

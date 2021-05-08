@@ -18,14 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import java.awt.Desktop;
-import java.awt.Window;
-import java.io.File;
-import java.io.IOException;
-import java.text.NumberFormat;
-
-import javax.swing.*;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportCSVWriter;
@@ -39,6 +31,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JOptionPane;
+import java.awt.Desktop;
+import java.awt.Window;
+import java.io.File;
+import java.io.IOException;
+import java.text.NumberFormat;
 
 /**
  * Abstract command for exporting Data.
@@ -152,31 +151,8 @@ public abstract class AbstractExportCommand
 
             if (checkMissingData(ctrl.getSeparatorChar()))
             {
-               int choice = JOptionPane.showConfirmDialog(owner,
-                     i18n.missingClobDataMsg);
-               if (choice == JOptionPane.YES_OPTION)
-               {
-                  // Need to somehow call
-                  // SQLResultExecuterPanel.reRunSelectedResultTab(true);
-                  //
-                  // Something like :
-                  // SQLResultExecuterPanel panel = getPanel();
-                  // panel.reRunSelectedResultTab(true);
-                  //
-                  // However, that doesn't apply when the user is exporting from the
-                  // table contents table.  There needs to be a more generic way to
-                  // do this for all tables containing data that is to be exported
-                  // where some of the fields contain placeholders.
-                  // For now, we just inform the user and let them either continue
-                  // or abort and change the configuration manually,
-                  // re-run the query / reload the table data and re-export.
-               }
-               if (choice == JOptionPane.NO_OPTION)
-               {
-                  // abort the export
-                  return;
-               }
-               if (choice == JOptionPane.CANCEL_OPTION)
+               int choice = JOptionPane.showConfirmDialog(owner, i18n.missingClobDataMsg);
+               if (choice != JOptionPane.YES_OPTION)
                {
                   // abort the export
                   return;
@@ -318,10 +294,10 @@ public abstract class AbstractExportCommand
 	 * Subclasse may override this.
 	 * @return returns null.
 	 */
-	protected ProgressAbortCallback createProgressController() {
-		// default null;
-		return null;
-	}
+   protected ProgressAbortCallback createProgressController()
+   {
+      return null;
+   }
 
 	/**
 	 * @return
