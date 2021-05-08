@@ -36,25 +36,25 @@ public class ProgressAbortFactoryCallbackImpl implements ProgressAbortFactoryCal
    {
       return getOrCreate(null);
    }
-   public ProgressAbortCallback getOrCreate(ModalDisplayReachedCallBack modalDisplayReachedCallBack)
+   public ProgressAbortCallback getOrCreate(DisplayReachedCallBack displayReachedCallBack)
    {
       if (null == progressDialog)
       {
-         createProgressAbortDialog(modalDisplayReachedCallBack);
+         createProgressAbortDialog(displayReachedCallBack);
       }
       return progressDialog;
    }
 
    /**
     * Create and show a new  progress monitor with the ability to cancel the task.
-    * @param modalDisplayReachedCallBack
+    * @param displayReachedCallBack
     */
-   private void createProgressAbortDialog(ModalDisplayReachedCallBack modalDisplayReachedCallBack)
+   private void createProgressAbortDialog(DisplayReachedCallBack displayReachedCallBack)
    {
-      GUIUtils.processOnSwingEventThread(() -> showProgressDialog(modalDisplayReachedCallBack), true);
+      GUIUtils.processOnSwingEventThread(() -> showProgressDialog(displayReachedCallBack), true);
    }
 
-   private void showProgressDialog(ModalDisplayReachedCallBack modalDisplayReachedCallBack)
+   private void showProgressDialog(DisplayReachedCallBack displayReachedCallBack)
    {
       /*
        *  Copied from FormatSQLCommand.
@@ -69,7 +69,7 @@ public class ProgressAbortFactoryCallbackImpl implements ProgressAbortFactoryCal
 
       // i18n[CreateFileOfCurrentSQLCommand.progress.title=Exporting to a file.]
       String title = s_stringMgr.getString("CreateFileOfCurrentSQLCommand.progress.title", targetFile);
-      progressDialog = new ProgressAbortDialog(Main.getApplication().getMainFrame(), title, targetFile, reformatedSQL, 0, () -> onCancel(), modalDisplayReachedCallBack);
+      progressDialog = new ProgressAbortDialog(Main.getApplication().getMainFrame(), title, targetFile, reformatedSQL, 0, () -> onCancel(), displayReachedCallBack);
 
       progressDialog.setVisible(true);
    }

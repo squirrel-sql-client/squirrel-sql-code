@@ -18,17 +18,15 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.text.DateFormat;
-import java.util.Date;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.gui.TaskDescriptionComponent;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -42,17 +40,17 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.gui.TaskDescriptionComponent;
-import org.apache.commons.lang.StringUtils;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.text.DateFormat;
+import java.util.Date;
 
 /**
  * A monitor, which provide certain information to the user about a long running
@@ -74,12 +72,8 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 
    public final static ILogger s_log = LoggerController.createLogger(ProgressAbortDialog.class);
 
-   /**
-    * Internationalized strings for this class
-    */
-   private static final StringManager s_stringMgr = StringManagerFactory
-         .getStringManager(ProgressAbortDialog.class);
-   protected TaskDescriptionComponent taskDescription;
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ProgressAbortDialog.class);
+   private TaskDescriptionComponent taskDescription;
    private String targetFile;
    private String sql;
 
@@ -184,11 +178,9 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
     * @see JProgressBar#setIndeterminate(boolean)
     */
 
-   public ProgressAbortDialog(Frame owner, String title, String targetFile, String sql, int totalItems, IAbortEventHandler abortHandler, ModalDisplayReachedCallBack modalDisplayReachedCallBack)
+   public ProgressAbortDialog(Frame owner, String title, String targetFile, String sql, int totalItems, IAbortEventHandler abortHandler, DisplayReachedCallBack displayReachedCallBack)
    {
-      //this(owner, title, "", 0, true, abortHandler, modalDisplayReachedCallBack != null);
-
-      super(owner, title, modalDisplayReachedCallBack != null);
+      super(owner, title);
 
       setLocationRelativeTo(owner);
       init(title, totalItems, abortHandler);
@@ -198,14 +190,14 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
       setLabelValues();
 
 
-      if (null != modalDisplayReachedCallBack)
+      if (null != displayReachedCallBack)
       {
          addWindowListener(new WindowAdapter()
          {
             @Override
             public void windowOpened(WindowEvent e)
             {
-               modalDisplayReachedCallBack.dialogIsModalDisplaying();
+               displayReachedCallBack.dialogIsDisplaying();
             }
          });
       }

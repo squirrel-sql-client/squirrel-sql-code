@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#601 Run query output directly to a file (@file) blocks SQuirreL by a modal progress dialog.
+  The progress dialog was made non modal. It now works the same as when exporting an SQL
+  to file via right mouse or tools popup (ctrl+T).
+
 New right mouse menu item on Session tabs "Go to Alias" jumps to the Session's Alias.
 
 =======================================================================================
