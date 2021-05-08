@@ -3,12 +3,12 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,7 +18,7 @@ public class AliasPropertiesController
    private static HashMap<IIdentifier, AliasPropertiesController> _currentlyOpenInstancesByAliasID = new HashMap<>();
 
    private AliasPropertiesInternalFrame _frame;
-   private ArrayList<IAliasPropertiesPanelController> _iAliasPropertiesPanelControllers = new ArrayList<IAliasPropertiesPanelController>();
+   private ArrayList<IAliasPropertiesPanelController> _iAliasPropertiesPanelControllers = new ArrayList<>();
    private IApplication _app;
    private SQLAlias _alias;
 
@@ -49,27 +49,20 @@ public class AliasPropertiesController
       _frame.setVisible(true);
 
 
-      _frame.btnOk.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onOK();
-         }
-      });
+      _frame.btnOk.addActionListener(e -> onOK());
 
-      _frame.btnClose.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onClose();
-         }
+      _frame.btnClose.addActionListener(e -> onClose());
 
+      _frame.addWidgetListener(new WidgetAdapter(){
+         @Override
+         public void widgetClosed(WidgetEvent evt)
+         {
+            performClose();
+         }
       });
 
       GUIUtils.enableCloseByEscape(_frame, dw -> _currentlyOpenInstancesByAliasID.remove(_alias.getIdentifier()));
-
       loadTabs();
-
    }
 
    private void loadTabs()
@@ -99,6 +92,7 @@ public class AliasPropertiesController
    private void performClose()
    {
       _currentlyOpenInstancesByAliasID.remove(_alias.getIdentifier());
+      _frame.setVisible(false);
       _frame.dispose();
    }
 
