@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Tooltip of "Find in Object tree" search button mentions that code completion (ctrl+space)
+  may be used on the text field.
+
 #601 Run query output directly to a file (@file) blocks SQuirreL by a modal progress dialog.
   The progress dialog was made non modal. It now works the same as when exporting an SQL
   to file via right mouse or tools popup (ctrl+T).

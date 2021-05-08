@@ -4,9 +4,15 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class FindInObjectTreePanel extends JPanel
 {
@@ -28,7 +34,7 @@ public class FindInObjectTreePanel extends JPanel
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2,0,2,0), 0,0);
       _btnFind = new JButton(resources.getIcon(SquirrelResources.IImageNames.FIND));
       _btnFind.setBorder(BorderFactory.createEtchedBorder());
-      _btnFind.setToolTipText(s_stringMgr.getString("FindInObjectTreePanel.find"));
+      _btnFind.setToolTipText(s_stringMgr.getString("FindInObjectTreePanel.findNew"));
       add(_btnFind, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2,0,2,2), 0,0);
