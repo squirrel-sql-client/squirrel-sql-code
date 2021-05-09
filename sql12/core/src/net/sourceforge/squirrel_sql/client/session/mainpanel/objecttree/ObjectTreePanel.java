@@ -743,6 +743,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     * @param schema null means any schema
     * @return true if the Object was found and selected.
     */
+   @Override
    public boolean selectInObjectTree(String catalog, String schema, FilterMatcher objectMatcher)
    {
 		if ("".equals(objectMatcher.getMetaDataMatchString()))
@@ -753,8 +754,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
       TreePath treePath = getTreePath(catalog, schema, objectMatcher);
       if(null != treePath)
       {
-         _tree.setSelectionPath(treePath);
-         _tree.scrollPathToVisible(treePath);
+      	selectInObjectTree(treePath);
          return true;
       }
       else
@@ -763,7 +763,14 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
       }
    }
 
-   /**
+	@Override
+	public void selectInObjectTree(TreePath treePath)
+	{
+		_tree.setSelectionPath(treePath);
+		_tree.scrollPathToVisible(treePath);
+	}
+
+	/**
     * Get the TreePath to the node with the specified catalog, schema and 
     * object name.
     * 

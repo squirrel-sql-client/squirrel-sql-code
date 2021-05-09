@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Session status bar: Object tree bread crumbs are now clickable and can be copied.
+
 Tooltip of "Find in Object tree" search button mentions that code completion (ctrl+space)
   may be used on the text field.
 
@@ -63,6 +65,8 @@ Command line interface (CLI):
 ==================
 
 Enhancements:
+
+Session status bar: Fixed coloring of Schema text field. See Alias properties window --> tab Color.
 
 Option to save changes to Aliases and Drivers immediately (see bug #1456)
   See menu File --> Global Preference --> tab General --> section General on the right

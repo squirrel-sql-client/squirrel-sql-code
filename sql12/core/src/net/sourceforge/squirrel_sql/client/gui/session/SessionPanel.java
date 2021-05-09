@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandle
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
@@ -34,15 +35,18 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeListener;
@@ -50,9 +54,10 @@ import java.util.ArrayList;
 
 public class SessionPanel extends JPanel
 {
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionPanel.class);
+
 	private final IApplication _app;
 
-	/** ID of the session for this window. */
 	private IIdentifier _sessionId;
 
 	private PropertyChangeListener _propsListener;
@@ -66,7 +71,6 @@ public class SessionPanel extends JPanel
 
 	private StatusBar _statusBar = new StatusBar();
 
-	private transient ObjectTreeSelectionListener _objTreeSelectionLis = null;
 	private TitleFilePathHandler _titleFileHandler = null;
 
 	public SessionPanel(ISession session, TitleFilePathHandler titleFileHandler)
@@ -79,9 +83,37 @@ public class SessionPanel extends JPanel
 		_sessionId = session.getIdentifier();
 
 		SessionColoringUtil.colorStatusbar(session, _statusBar);
+
+		_statusBar.setHrefListener((linkDescription, hrefReferenceObject) -> onHrefClicked(linkDescription, hrefReferenceObject));
+
+
+		JMenuItem mnuCopyLast = new JMenuItem(s_stringMgr.getString("SessionPanel.statusbar.rightMouseMenu.copyLast"));
+		mnuCopyLast.addActionListener(e -> onStatusBarRightMouseMenuCopyLast());
+		_statusBar.setAdditionalRightMouseMenuItem(mnuCopyLast);
 	}
 
-   protected void initialize(ISession session)
+	private void onStatusBarRightMouseMenuCopyLast()
+	{
+		final TreePath refTreePath = (TreePath) _statusBar.getHrefReferenceObject();
+
+		if(null == refTreePath)
+		{
+			return;
+		}
+
+		ObjectTreeNode node = (ObjectTreeNode) refTreePath.getLastPathComponent();
+
+		ClipboardUtil.copyToClip(node.getDatabaseObjectInfo().getSimpleName(), true);
+	}
+
+	private void onHrefClicked(String linkDescription, Object hrefReferenceObject)
+	{
+		final TreePath treePathForLink = StatusBarHtml.getTreePathForLink(linkDescription, (TreePath) hrefReferenceObject);
+
+		new ObjectTreeSearch().viewInObjectTree(treePathForLink, getSession().getObjectTreeAPIOfActiveSessionWindow());
+	}
+
+	protected void initialize(ISession session)
 	{
       createGUI(session);
 		propertiesHaveChanged(null);
@@ -103,11 +135,6 @@ public class SessionPanel extends JPanel
 
 	public void sessionHasClosed()
 	{
-		if (_objTreeSelectionLis != null)
-		{
-			getObjectTreePanel().removeTreeSelectionListener(_objTreeSelectionLis);
-			_objTreeSelectionLis = null;
-		}
 
 		final ISession session = getSession();
 		if (session != null)
@@ -123,12 +150,7 @@ public class SessionPanel extends JPanel
 	}
 
 
-	public void setStatusBarMessage(final String msg)
-	{
-		GUIUtils.processOnSwingEventThread(() -> _statusBar.setText(msg));
-	}
-
-   public void setStatusBarProgress(final String msg, final int minimum, final int maximum, final int value)
+	public void setStatusBarProgress(final String msg, final int minimum, final int maximum, final int value)
    {
       GUIUtils.processOnSwingEventThread(() -> _statusBar.setStatusBarProgress(msg, minimum, maximum, value));
    }
@@ -251,8 +273,7 @@ public class SessionPanel extends JPanel
 		app.getFontInfoStore().setUpStatusBarFont(_statusBar);
 		add(_statusBar, BorderLayout.SOUTH);
 
-		_objTreeSelectionLis = new ObjectTreeSelectionListener();
-		getObjectTreePanel().addTreeSelectionListener(_objTreeSelectionLis);
+		getObjectTreePanel().addTreeSelectionListener(e -> onObjectTreeSelectionChanged(e));
 
 		addToStatusBar(new SchemaPanel(session));
 		addToStatusBar(new RowColumnLabel(_mainPanel));
@@ -429,26 +450,15 @@ public class SessionPanel extends JPanel
 		_mainPanel.performStateChanged();
 	}
 
-
-	private final class ObjectTreeSelectionListener implements TreeSelectionListener
+	public void onObjectTreeSelectionChanged(TreeSelectionEvent evt)
 	{
-		public void valueChanged(TreeSelectionEvent evt)
+		final TreePath selPath = evt.getNewLeadSelectionPath();
+		if (selPath != null)
 		{
-			final TreePath selPath = evt.getNewLeadSelectionPath();
-			if (selPath != null)
-			{
-				StringBuffer buf = new StringBuffer();
-				Object[] fullPath = selPath.getPath();
-				for (int i = 0; i < fullPath.length; ++i)
-				{
-					if (fullPath[i] instanceof ObjectTreeNode)
-					{
-						ObjectTreeNode node = (ObjectTreeNode)fullPath[i];
-						buf.append('/').append(node.toString());
-					}
-				}
-				setStatusBarMessage(buf.toString());
-			}
+			final String text = StatusBarHtml.createStatusBarHtml(selPath);
+
+			GUIUtils.processOnSwingEventThread(() -> _statusBar.setText(text, selPath));
 		}
 	}
+
 }

@@ -6,7 +6,8 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 
 
@@ -16,8 +17,6 @@ import java.util.ArrayList;
 public class ObjectTreeSearch
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ObjectTreeSearch.class);
-
-
 
    /**
     * View the Object at cursor in the Object Tree
@@ -43,7 +42,7 @@ public class ObjectTreeSearch
 
    public void viewInObjectTree(String objectName, IObjectTreeAPI objectTreeAPI)
    {
-      ObjectCandidates candidates = getObjectCandidates(objectName);
+      ObjectTreeSearchCandidates candidates = getObjectCandidates(objectName);
       if (candidates.size() == 0)
       {
          return;
@@ -54,7 +53,7 @@ public class ObjectTreeSearch
 
    public void viewObjectInObjectTree(String objectName, IObjectTreeAPI objectTreeAPI)
    {
-      ObjectCandidates candidates = getObjectCandidates(objectName);
+      ObjectTreeSearchCandidates candidates = getObjectCandidates(objectName);
       if (candidates.size() == 0)
       {
          return;
@@ -64,7 +63,7 @@ public class ObjectTreeSearch
 
    }
 
-   private void _viewInObjectTree(ObjectCandidates candidates, IObjectTreeAPI objectTreeAPI, boolean selectMainObjectTreeIfFound)
+   private void _viewInObjectTree(ObjectTreeSearchCandidates candidates, IObjectTreeAPI objectTreeAPI, boolean selectMainObjectTreeIfFound)
    {
       boolean success = false;
       while (candidates.hasNext())
@@ -90,9 +89,9 @@ public class ObjectTreeSearch
       }
    }
 
-   private ObjectCandidates getObjectCandidates(String objectName)
+   private ObjectTreeSearchCandidates getObjectCandidates(String objectName)
    {
-      ObjectCandidates ret = new ObjectCandidates(objectName);
+      ObjectTreeSearchCandidates ret = new ObjectTreeSearchCandidates(objectName);
 
       String[] splits = objectName.split("\\.");
 
@@ -141,51 +140,9 @@ public class ObjectTreeSearch
       return ret;
    }
 
-
-   private static class ObjectCandidates
+   public void viewInObjectTree(TreePath treePath, IObjectTreeAPI objectTreeAPI)
    {
-      ArrayList<ArrayList<String>> _candidates = new ArrayList<ArrayList<String>>();
-
-      int _curIndex = 0;
-      private String _searchString;
-
-      public ObjectCandidates(String searchString)
-      {
-         _searchString = searchString;
-      }
-
-
-      public boolean hasNext()
-      {
-         return _curIndex < _candidates.size();
-      }
-
-      public ArrayList<String> next()
-      {
-         return _candidates.get(_curIndex++);
-      }
-
-      public String getSearchString()
-      {
-         return _searchString;
-      }
-
-      public void add(String catalog, String schema, String object)
-      {
-         ArrayList<String> candidate = new ArrayList<String>(3);
-         candidate.add(catalog);
-         candidate.add(schema);
-         candidate.add(object);
-         _candidates.add(candidate);
-      }
-
-      public int size()
-      {
-         return _candidates.size();
-      }
+      objectTreeAPI.selectInObjectTree(treePath);
+      objectTreeAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB);
    }
-
-
-
-
 }

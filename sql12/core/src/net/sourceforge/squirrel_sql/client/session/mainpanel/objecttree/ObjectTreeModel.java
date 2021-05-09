@@ -20,6 +20,26 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
+import net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ProcedureTypeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableTypeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.UDTTypeExpander;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,26 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-
-import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
-import net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ProcedureTypeExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableTypeExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.UDTTypeExpander;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This is the model for the object tree.
  *
@@ -282,33 +282,34 @@ public class ObjectTreeModel extends DefaultTreeModel
             {
                try
                {
-                  List<ObjectTreeNode> children = 
-                      expanders[i].createChildren(startNode.getSession(), startNode);
+                  List<ObjectTreeNode> children = expanders[i].createChildren(startNode.getSession(), startNode);
 
-                  if(children.isEmpty()){
-                	  startNode.setNoChildrenFoundWithExpander(true);
-                  }else{
-                	  for (int j = 0; j < children.size(); j++)
-                	  {
-                		  ObjectTreeNode newChild = children.get(j);
-                		  if(0 == getExpanders(newChild.getDatabaseObjectType()).length)
-                		  {
-                			  newChild.setAllowsChildren(false);
-                		  }
-                		  else
-                		  {
-                			  newChild.setAllowsChildren(true);
-                		  }
+						if (children.isEmpty())
+						{
+							startNode.setNoChildrenFoundWithExpander(true);
+						}
+						else
+						{
+							for (int j = 0; j < children.size(); j++)
+							{
+								ObjectTreeNode newChild = children.get(j);
+								if (0 == getExpanders(newChild.getDatabaseObjectType()).length)
+								{
+									newChild.setAllowsChildren(false);
+								}
+								else
+								{
+									newChild.setAllowsChildren(true);
+								}
 
-                		  startNode.add(newChild);
-                	  }
-                  }
+								startNode.add(newChild);
+							}
+						}
                }
                catch (Exception e)
                {
                   String msg =
-                     "Error loading object type " +  startNode.getDatabaseObjectType() +
-                     ". Error: " + e.toString() +  ". See SQuirreL Logs for stackttrace.";
+                     "Error loading object type " +  startNode.getDatabaseObjectType() +". Error: " + e +  ". See SQuirreL Logs for stackttrace.";
                   startNode.getSession().showErrorMessage(msg);
                   logger.error(msg, e);
                }

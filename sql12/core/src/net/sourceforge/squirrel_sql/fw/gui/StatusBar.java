@@ -17,11 +17,36 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
 
-import javax.swing.*;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.text.BadLocationException;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 /**
  * This is a statusbar component with a text control for messages.
  *
@@ -29,16 +54,11 @@ import javax.swing.border.Border;
  */
 public class StatusBar extends JPanel
 {
-	private static final long serialVersionUID = 1L;
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(StatusBar.class);
 
-	/**
-	 * Message to display if there is no msg to display. Defaults to a
-	 * blank string.
-	 */
-	private String _msgWhenEmpty = " ";
 
 	/** Label showing the message in the statusbar. */
-	private final JLabel _textLbl = new JLabel();
+	private final JEditorPane _textLbl;
 
    private final JProgressBar _progressBar = new JProgressBar();
 
@@ -49,13 +69,93 @@ public class StatusBar extends JPanel
 
 	private Font _font;
 
+	private StatusBarHrefListener _statusBarHrefListener;
+	private Object _hrefReferenceObject;
+
+	private JMenuItem _additionalRightMouseMenuItem;
+
 	/**
 	 * Default ctor.
 	 */
 	public StatusBar()
 	{
 		super(new GridBagLayout());
+
+		_textLbl = new JEditorPane();
+		_textLbl.setEditable(false);
+
+		// Makes sure font size doesn't change when HTML is displayed.
+		_textLbl.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+
+		_textLbl.addHyperlinkListener( e -> onTextLblHyperEvent(e));
+
+		_textLbl.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				onTriggerTextLblRightMouseMenu(e);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				onTriggerTextLblRightMouseMenu(e);
+			}
+		});
+
 		createGUI();
+	}
+
+	private void onTriggerTextLblRightMouseMenu(MouseEvent me)
+	{
+		if(false == me.isPopupTrigger())
+		{
+			return;
+		}
+		JPopupMenu popupMenu = new JPopupMenu();
+
+		JMenuItem mnuCopyAll = new JMenuItem(s_stringMgr.getString("StatusBar.rightMouseMenu.copyAll"));
+		mnuCopyAll.addActionListener(e -> ClipboardUtil.copyToClip(getTextWithoutHtmlTags(_textLbl), true));
+		popupMenu.add(mnuCopyAll);
+
+		if (false == StringUtilities.isEmpty(_textLbl.getSelectedText(), true))
+		{
+			JMenuItem mnuCopySelected = new JMenuItem(s_stringMgr.getString("StatusBar.rightMouseMenu.copySelection"));
+			mnuCopySelected.addActionListener(e -> ClipboardUtil.copyToClip(_textLbl.getSelectedText(), true));
+			popupMenu.add(mnuCopySelected);
+		}
+
+		if (null != _additionalRightMouseMenuItem)
+		{
+			popupMenu.add(_additionalRightMouseMenuItem);
+		}
+
+		popupMenu.show(_textLbl, me.getX(), me.getY());
+
+	}
+
+	private String getTextWithoutHtmlTags(JEditorPane textLbl)
+	{
+		try
+		{
+			return textLbl.getDocument().getText(0, textLbl.getDocument().getLength());
+		}
+		catch (BadLocationException e)
+		{
+			throw Utilities.wrapRuntime(e);
+		}
+	}
+
+	private void onTextLblHyperEvent(HyperlinkEvent e)
+	{
+		if(null != _statusBarHrefListener)
+		{
+			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+			{
+				_statusBarHrefListener.hrefClicked(e.getDescription(), _hrefReferenceObject);
+			}
+		}
 	}
 
 	/**
@@ -66,7 +166,7 @@ public class StatusBar extends JPanel
 	 * @throws	IllegalArgumentException
 	 *			Thrown if <TT>null</TT> <TT>Font</TT> passed.
 	 */
-	public synchronized void setFont(Font font)
+	public void setFont(Font font)
 	{
 		if (font == null)
 		{
@@ -82,15 +182,31 @@ public class StatusBar extends JPanel
 	 *
 	 * @param	text	Text to display in the message label.
 	 */
-	public synchronized void setText(String text)
+	public void setText(String text)
 	{
+		setText(text, null);
+	}
+
+	public void setText(String text, Object hrefReferenceObject)
+	{
+		_hrefReferenceObject = hrefReferenceObject;
+
 		String myText = null;
 		if (text != null)
 		{
 			myText = text.trim();
 		}
+
 		if (myText != null && myText.length() > 0)
 		{
+			if (myText.toLowerCase().startsWith("<html>"))
+			{
+				_textLbl.setContentType("text/html");
+			}
+			else
+			{
+				_textLbl.setContentType("text/plain");
+			}
 			_textLbl.setText(myText);
 		}
 		else
@@ -99,34 +215,11 @@ public class StatusBar extends JPanel
 		}
 	}
 
-    /**
-     * Returns the text label's current value 
-     * @return
-     */
-    public synchronized String getText() {
-        return _textLbl.getText();
-    }
-    
-	public synchronized void clearText()
+	public void clearText()
 	{
-		_textLbl.setText(_msgWhenEmpty);
-	}
-
-	public synchronized void setTextWhenEmpty(String value)
-	{
-		final boolean wasEmpty = _textLbl.getText().equals(_msgWhenEmpty);
-		if (value != null && value.length() > 0)
-		{
-			_msgWhenEmpty = value;
-		}
-		else
-		{
-			_msgWhenEmpty = " ";
-		}
-		if (wasEmpty)
-		{
-			clearText();
-		}
+		_hrefReferenceObject = null;
+		_textLbl.setContentType("text/plain");
+		_textLbl.setText("");
 	}
 
 	public synchronized void addJComponent(JComponent comp)
@@ -271,13 +364,33 @@ public class StatusBar extends JPanel
 	public void setBackground(Color bg)
 	{
 		super.setBackground(bg);
-		if (_pnlLabelOrProgress != null) {
+		if (_pnlLabelOrProgress != null)
+		{
 			_pnlLabelOrProgress.setBackground(bg);
 		}
-		if (_progressBar != null) {
+		if (_progressBar != null)
+		{
 			_progressBar.setBackground(bg);
 		}
+
+		if (null != _textLbl)
+		{
+			_textLbl.setBackground(bg);
+		}
 	}
-   
-   
+
+	public void setHrefListener(StatusBarHrefListener statusBarHrefListener)
+	{
+		_statusBarHrefListener = statusBarHrefListener;
+	}
+
+	public void setAdditionalRightMouseMenuItem(JMenuItem additionalRightMouseMenuItem)
+	{
+		_additionalRightMouseMenuItem = additionalRightMouseMenuItem;
+	}
+
+	public Object getHrefReferenceObject()
+	{
+		return _hrefReferenceObject;
+	}
 }

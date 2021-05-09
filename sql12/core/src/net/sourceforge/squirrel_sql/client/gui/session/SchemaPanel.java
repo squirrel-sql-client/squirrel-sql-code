@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -47,9 +48,6 @@ public class SchemaPanel extends JPanel
       setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;
-
-      int maxHeight = 15;
-
 
       gbc = new GridBagConstraints(0, 0, 1, 1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       JLabel label = new JLabel(s_stringMgr.getString("SchemaPanel.refresh.current.schema.label"));
@@ -224,5 +222,16 @@ public class SchemaPanel extends JPanel
 
       invalidate();
 
+   }
+
+   @Override
+   public void setBackground(Color bg)
+   {
+      super.setBackground(bg);
+
+      if(null != _txtSchema)
+      {
+         _txtSchema.setBackground(bg);
+      }
    }
 }

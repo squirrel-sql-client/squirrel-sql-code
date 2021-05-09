@@ -38,6 +38,7 @@ import javax.swing.JMenu;
 import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
 import java.awt.Component;
 import java.util.List;
 /**
@@ -262,7 +263,9 @@ public interface IObjectTreeAPI extends IHasIdentifier
     * @return true if the Object was found and selected.
     */
    boolean selectInObjectTree(String catalog, String schema, FilterMatcher objectMatcher);
-   
+
+   void selectInObjectTree(TreePath treePath);
+
    /**
     * Selects the root node of the tree.
     */
