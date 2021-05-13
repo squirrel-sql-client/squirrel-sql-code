@@ -48,7 +48,9 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
-#1351 Clicking X in window "Properties for Alias: ..." is not really closing that window
+Status bar: Fixed background color and improved breadcrumb navigation.
+
+#1351 Clicking X in window "Properties for Alias: ..." is not really closing that window.
 
 Graph Plugin: Copy and paste of Graph with no purely ASCII name raised "SAXParseException ...Invalid byte 2 of 3-byte UTF-8 sequence".
 

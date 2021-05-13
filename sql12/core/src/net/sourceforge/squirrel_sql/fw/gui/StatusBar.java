@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -86,6 +87,7 @@ public class StatusBar extends JPanel
 
 		// Makes sure font size doesn't change when HTML is displayed.
 		_textLbl.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+		_textLbl.setBackground(new JLabel().getBackground());
 
 		_textLbl.addHyperlinkListener( e -> onTextLblHyperEvent(e));
 
