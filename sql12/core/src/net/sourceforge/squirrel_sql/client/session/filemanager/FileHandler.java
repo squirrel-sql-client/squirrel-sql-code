@@ -107,7 +107,7 @@ public class FileHandler
                s_stringMgr.getString("FileHandler.fileChangeDetected.ReloadRequest", file.getAbsolutePath()),
                s_stringMgr.getString("FileHandler.fileChangeDetected.switchBackOnHint"));
 
-         DontShowAgainResult reloadReqRes = reloadReqDlg.showAndGetResult("FileHandler.fileChangeDetected", 400, 200);
+         DontShowAgainResult reloadReqRes = reloadReqDlg.showAndGetResult("FileHandler.fileChangeDetected", 470, 200);
 
          if(reloadReqRes.isDontShowAgain())
          {
@@ -285,14 +285,14 @@ public class FileHandler
          switchBackOnHowTo = s_stringMgr.getString("SQLPanelAPI.switchBackOnHowTo.file");
       }
 
-      String title =  s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle",": " + _fileEditorAPI.getSession().getAlias().getName());
+      String title =  s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle", _fileEditorAPI.getSession().getAlias().getName());
 
       JFrame owner = (JFrame) _fileEditorAPI.getOwningFrame();
 
       DontShowAgainDialog dontShowAgainDialog = new DontShowAgainDialog(owner, msg, switchBackOnHowTo);
       dontShowAgainDialog.setTitle(title);
 
-      final DontShowAgainResult res = dontShowAgainDialog.showAndGetResult("FileHandler.dontShowgAgainId", 400, 180);
+      final DontShowAgainResult res = dontShowAgainDialog.showAndGetResult("FileHandler.dontShowgAgainId", 470, 200);
 
       if(res.isDontShowAgain())
       {

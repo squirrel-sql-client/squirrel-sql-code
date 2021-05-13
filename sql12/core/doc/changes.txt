@@ -48,6 +48,9 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+#1473 Unsaved changes dialog: Improved layout.
+  Thanks to joel3576 for parts of the changes.
+
 Status bar: Fixed background color and improved breadcrumb navigation.
 
 #1351 Clicking X in window "Properties for Alias: ..." is not really closing that window.

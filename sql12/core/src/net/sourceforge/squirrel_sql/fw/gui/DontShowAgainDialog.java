@@ -1,13 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
-import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -64,6 +65,7 @@ public class DontShowAgainDialog extends JDialog
    public DontShowAgainResult showAndGetResult(String identifier, int defaultWidth, int defaultHeight)
    {
       GUIUtils.enableCloseByEscape(this);
+      //GUIUtils.centerWithinParent(this);
       GUIUtils.initLocation(this, defaultWidth, defaultHeight, "DontShowAgainDialog." + identifier);
 
       setVisible(true);
@@ -77,19 +79,20 @@ public class DontShowAgainDialog extends JDialog
       getContentPane().setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;
+      gbc = new GridBagConstraints(0,0,1,2,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,10,0,20),0,0 );
+      add(new JLabel(UIManager.getIcon("OptionPane.questionIcon")), gbc);
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5),0,0 );
-      add(new MultilineLabel(msg), gbc);
+      gbc = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,0,10),0,0 );
+      add(new MultipleLineLabel(msg), gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5),0,0 );
+      gbc = new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,10,0,10),0,0 );
       add(createDontShowAgainPanel(switchBackOnHowTo), gbc);
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(20,5,0,5),0,0 );
+      gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(10,10,10,10),0,0 );
       add(createButtonsPanel(), gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,1,1,GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0 );
       add(new JPanel(), gbc);
-
    }
 
    private JPanel createDontShowAgainPanel(String switchBackOnHowTo)
