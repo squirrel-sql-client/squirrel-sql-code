@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Look and feel Plugin: Upgraded FlatLaf Look and Feel to version 1.1.2.
+
 Session status bar: Object tree bread crumbs are now clickable and can be copied.
 
 Tooltip of "Find in Object tree" search button mentions that code completion (ctrl+space)
