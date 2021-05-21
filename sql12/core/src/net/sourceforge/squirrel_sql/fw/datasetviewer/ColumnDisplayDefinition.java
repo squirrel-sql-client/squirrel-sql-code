@@ -17,15 +17,16 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Types;
 /**
  * This defines the display information for a column.
  *
@@ -166,15 +167,15 @@ public class ColumnDisplayDefinition
     *           the type of dialect of the current session.
     */
 	public ColumnDisplayDefinition(int displayWidth, String fullTableColumnName,
-                String columnName, String label, int sqlType, String sqlTypeName,
-				boolean isNullable, int columnSize, int precision, int scale,
-				boolean isSigned, boolean isCurrency, boolean isAutoIncrement,
-				DialectType dialectType,
-            ResultMetaDataTable resultMetaDataTable)
+											 String columnName, String label, int sqlType, String sqlTypeName,
+											 boolean isNullable, int columnSize, int precision, int scale,
+											 boolean isSigned, boolean isCurrency, boolean isAutoIncrement,
+											 DialectType dialectType,
+											 ResultMetaDataTable resultMetaDataTable)
 	{
 		init(displayWidth, fullTableColumnName, columnName, label, sqlType,
-             sqlTypeName, isNullable, columnSize, precision, scale,
-             isSigned, isCurrency, isAutoIncrement, dialectType);
+				sqlTypeName, isNullable, columnSize, precision, scale,
+				isSigned, isCurrency, isAutoIncrement, dialectType);
 
       _resultMetaDataTable = resultMetaDataTable;
 	}

@@ -469,7 +469,7 @@ public class ResultSetDataSet implements IDataSet
       return columnDefs;
    }
 
-   private ResultMetaDataTable createResultSetMetaDataTable(ResultSetMetaData md, int idx) throws SQLException
+   private ResultMetaDataTable createResultSetMetaDataTable(ResultSetMetaData md, int idx)
    {
       try
       {

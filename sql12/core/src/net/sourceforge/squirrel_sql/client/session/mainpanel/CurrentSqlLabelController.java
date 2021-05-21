@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -27,6 +28,7 @@ public class CurrentSqlLabelController
       _textPaneLabel = new JTextPane();
       _textPaneLabel.setContentType("text/html");
       _textPaneLabel.setEditable(false);
+      _textPaneLabel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
       _textPaneLabel.setBackground(new JLabel().getBackground());
 
       _textPaneLabel.addMouseListener(new MouseAdapter() {

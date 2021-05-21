@@ -40,7 +40,7 @@ public class DistinctValuesTableUpdater
          }
 
          final List<Object[]> distinctRows = distinctValuesHolder.getDistinctRows();
-         fillTablePanel(distinctRows, Collections.singletonList(selectedColumn.getColumnDisplayDefinition()));
+         fillTablePanel(distinctRows, distinctValuesHolder.maybeAppendCountColumn(Collections.singletonList(selectedColumn.getColumnDisplayDefinition())));
 
          _dlg.lblStatus.setText(s_stringMgr.getString("ShowDistinctValuesCtrl.numberOfDistinctValuesInColumn", selectedColumn.getColumnDisplayDefinition().getColumnName(), distinctRows.size()));
       }
@@ -61,7 +61,7 @@ public class DistinctValuesTableUpdater
             }
 
             List<ColumnDisplayDefinition> columnDisplayDefinitions = extTableColumns.stream().map(c -> c.getColumnDisplayDefinition()).collect(Collectors.toList());
-            fillTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions);
+            fillTablePanel(distinctValuesHolder.getDistinctRows(), distinctValuesHolder.maybeAppendCountColumn(columnDisplayDefinitions));
 
             writeDistinctInColumnsStatusBar(extTableColumns, distinctValuesHolder);
          }
@@ -87,7 +87,7 @@ public class DistinctValuesTableUpdater
             }
 
             List<ColumnDisplayDefinition> columnDisplayDefinitions = extTableColumns.stream().map(c -> c.getColumnDisplayDefinition()).collect(Collectors.toList());
-            fillTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions);
+            fillTablePanel(distinctValuesHolder.getDistinctRows(), distinctValuesHolder.maybeAppendCountColumn(columnDisplayDefinitions));
 
             writeDistinctInColumnsStatusBar(extTableColumns, distinctValuesHolder);
          }
@@ -112,7 +112,7 @@ public class DistinctValuesTableUpdater
             }
 
             List<ColumnDisplayDefinition> columnDisplayDefinitions = extTableColumns.stream().map(c -> c.getColumnDisplayDefinition()).collect(Collectors.toList());
-            fillTablePanel(distinctValuesHolder.getDistinctRows(), columnDisplayDefinitions);
+            fillTablePanel(distinctValuesHolder.getDistinctRows(), distinctValuesHolder.maybeAppendCountColumn(columnDisplayDefinitions));
 
             writeDistinctInColumnsStatusBar(extTableColumns, distinctValuesHolder);
          }
