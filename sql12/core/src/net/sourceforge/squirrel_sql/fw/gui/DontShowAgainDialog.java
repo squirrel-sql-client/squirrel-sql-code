@@ -9,10 +9,13 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class DontShowAgainDialog extends JDialog
 {
@@ -36,6 +39,16 @@ public class DontShowAgainDialog extends JDialog
       btnCancel.addActionListener( e -> onCancel());
 
       getRootPane().setDefaultButton(btnYes);
+
+      // auto-adjust height once dialog becomes visible
+      addComponentListener(new ComponentAdapter()
+      {
+         @Override
+         public void componentShown(ComponentEvent event)
+         {
+            setSize(new Dimension(getWidth(), getPreferredSize().height));
+         }
+      });
    }
 
    private void onCancel()
@@ -79,7 +92,7 @@ public class DontShowAgainDialog extends JDialog
       getContentPane().setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;
-      gbc = new GridBagConstraints(0,0,1,2,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,10,0,20),0,0 );
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,10,0,20),0,0 );
       add(new JLabel(UIManager.getIcon("OptionPane.questionIcon")), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,0,10),0,0 );
