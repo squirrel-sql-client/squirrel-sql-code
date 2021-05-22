@@ -18,35 +18,24 @@ package net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InvalidObjectsPanel extends JPanel
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(InvalidObjectsPanel.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(InvalidObjectsPanel.class);
 
-
-   /**
-    * Logger for this class.
-    */
-   private static final ILogger s_log = LoggerController.createLogger(InvalidObjectsPanel.class);
-
-   /**
-    * Current session.
-    */
    private ISession _session;
 
    private AutoWidthResizeTable _invalidObjects;
@@ -59,12 +48,6 @@ public class InvalidObjectsPanel extends JPanel
       "FROM sys.all_objects " +
       "WHERE status = 'INVALID'";
 
-   /**
-    * Ctor.
-    *
-    * @param   session    Current session.
-    * @throws IllegalArgumentException Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
-    */
    public InvalidObjectsPanel(ISession session)
    {
       super();
@@ -72,9 +55,6 @@ public class InvalidObjectsPanel extends JPanel
       createGUI();
    }
 
-   /**
-    * Current session.
-    */
    public ISession getSession()
    {
       return _session;
@@ -136,6 +116,7 @@ public class InvalidObjectsPanel extends JPanel
       setLayout(new BorderLayout());
       _invalidObjects = new AutoWidthResizeTable();
       _invalidObjects.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+      _invalidObjects.setAutoCreateRowSorter(true);
       add(new JScrollPane(_invalidObjects));
 
       repopulateInvalidObjects();

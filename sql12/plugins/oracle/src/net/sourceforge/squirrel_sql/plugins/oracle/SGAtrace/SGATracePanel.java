@@ -18,6 +18,18 @@ package net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
+import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,24 +37,9 @@ import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
-import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
-
 public class SGATracePanel extends JPanel
 {
-	private static final long serialVersionUID = 1L;
-
-	private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SGATracePanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SGATracePanel.class);
 
 	/** The SQL used to get SQL statistics from the SGA */
    private static final String sgaTraceSQL =
@@ -95,9 +92,6 @@ public class SGATracePanel extends JPanel
          "         sys.all_users b " +
          "   WHERE a.parsing_user_id = b.user_id ";
 
-   /**
-    * Current session.
-    */
    private ISession _session;
 
    private AutoWidthResizeTable _sgaTrace;
@@ -107,26 +101,10 @@ public class SGATracePanel extends JPanel
    private boolean _autoRefresh = false;
    private int _refreshPeriod = 10;
 
-   public class RefreshTimerTask extends TimerTask
+   public SGATracePanel(ISession session, int autoRefreshPeriod)
    {
-      public void run()
-      {
-         populateSGATrace();
-      }
-   }
-
-   /**
-    * Ctor.
-    *
-    * @param autoRefeshPeriod
-    * @param   session    Current session.
-    * @throws IllegalArgumentException Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
-    */
-   public SGATracePanel(ISession session, int autoRefeshPeriod)
-   {
-      super();
       _session = session;
-      _refreshPeriod = autoRefeshPeriod;
+      _refreshPeriod = autoRefreshPeriod;
       createGUI();
    }
 
@@ -149,9 +127,17 @@ public class SGATracePanel extends JPanel
       if (_autoRefresh && (_refreshPeriod > 0))
       {
          _refreshTimer = new Timer(true);
-         _refreshTimer.scheduleAtFixedRate(new RefreshTimerTask(),
-            _refreshPeriod * 1000,
-            _refreshPeriod * 1000);
+
+         final TimerTask timerTask = new TimerTask()
+         {
+            @Override
+            public void run()
+            {
+               GUIUtils.processOnSwingEventThread(() -> populateSGATrace());
+            }
+         };
+
+         _refreshTimer.scheduleAtFixedRate(timerTask, _refreshPeriod * 1000, _refreshPeriod * 1000);
       }
    }
 
@@ -162,11 +148,6 @@ public class SGATracePanel extends JPanel
          _autoRefresh = enable;
          resetTimer();
       }
-   }
-
-   public boolean getAutoRefesh()
-   {
-      return _autoRefresh;
    }
 
    public void setAutoRefreshPeriod(int seconds)
@@ -183,7 +164,7 @@ public class SGATracePanel extends JPanel
       return _refreshPeriod;
    }
 
-   protected DefaultTableModel createTableModel()
+   private DefaultTableModel createTableModel()
    {
       DefaultTableModel tm = new DefaultTableModel();
       // i18n[oracle.sqlText=SQL Text]
@@ -221,7 +202,7 @@ public class SGATracePanel extends JPanel
       return tm;
    }
 
-   public synchronized void populateSGATrace()
+   public void populateSGATrace()
    {
       if (!OraclePlugin.checkObjectAccessible(_session, sgaTraceSQL))
       {
@@ -235,7 +216,20 @@ public class SGATracePanel extends JPanel
          if (s.execute())
          {
             rs = s.getResultSet();
-            DefaultTableModel tm = createTableModel();
+
+            DefaultTableModel tm;
+            if ((_sgaTrace.getModel().getColumnCount() > 0) && (_sgaTrace.getModel() instanceof DefaultTableModel))
+            {
+               // Done on refresh. Assures table layout doesn't change.
+               tm = (DefaultTableModel)_sgaTrace.getModel();
+               tm.setRowCount(0);
+            }
+            else
+            {
+               // Done on startup
+               tm = createTableModel();
+            }
+
             while (rs.next())
             {
                String sqlText = rs.getString(1);
@@ -271,11 +265,12 @@ public class SGATracePanel extends JPanel
       catch (SQLException ex)
       {
          _session.showErrorMessage(ex);
-      } finally {
-      	SQLUtilities.closeResultSet(rs);
-      	SQLUtilities.closeStatement(s);
       }
-      
+      finally
+      {
+         SQLUtilities.closeResultSet(rs);
+         SQLUtilities.closeStatement(s);
+      }
    }
 
    private void createGUI()
@@ -283,6 +278,7 @@ public class SGATracePanel extends JPanel
       setLayout(new BorderLayout());
       _sgaTrace = new AutoWidthResizeTable(new DefaultTableModel());
       _sgaTrace.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+      _sgaTrace.setAutoCreateRowSorter(true);
       add(new JScrollPane(_sgaTrace));
 
       populateSGATrace();

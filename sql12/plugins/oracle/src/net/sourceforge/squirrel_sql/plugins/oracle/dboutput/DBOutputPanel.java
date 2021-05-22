@@ -18,11 +18,10 @@ package net.sourceforge.squirrel_sql.plugins.oracle.dboutput;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.BorderLayout;
-import java.sql.SQLException;
-import java.sql.CallableStatement;
-import java.util.Timer;
-import java.util.TimerTask;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,12 +29,11 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import java.awt.BorderLayout;
+import java.sql.CallableStatement;
+import java.sql.SQLException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DBOutputPanel extends JPanel
 {
@@ -67,7 +65,7 @@ public class DBOutputPanel extends JPanel
     * Ctor.
     *
     * @param autoRefeshPeriod
-    * @param   session    Current session.
+    * @param session          Current session.
     * @throws IllegalArgumentException Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
     */
    public DBOutputPanel(ISession session, int autoRefeshPeriod)
@@ -111,9 +109,16 @@ public class DBOutputPanel extends JPanel
       if (_autoRefresh && (_refreshPeriod > 0))
       {
          _refreshTimer = new Timer(true);
-         _refreshTimer.scheduleAtFixedRate(new RefreshTimerTask(),
-            _refreshPeriod * 1000,
-            _refreshPeriod * 1000);
+         final TimerTask timerTask = new TimerTask()
+         {
+            @Override
+            public void run()
+            {
+               GUIUtils.processOnSwingEventThread(() -> populateDBOutput());
+            }
+         };
+
+         _refreshTimer.scheduleAtFixedRate(timerTask, _refreshPeriod * 1000, _refreshPeriod * 1000);
       }
    }
 
@@ -159,7 +164,7 @@ public class DBOutputPanel extends JPanel
       }
    }
 
-   public synchronized void populateDBOutput()
+   public void populateDBOutput()
    {
       try
       {
@@ -181,7 +186,9 @@ public class DBOutputPanel extends JPanel
             {
                String str = c.getString(1);
                if (str != null)
+               {
                   buf.append(str);
+               }
                buf.append("\n");
             }
          }
@@ -206,13 +213,10 @@ public class DBOutputPanel extends JPanel
 
    private void createGUI()
    {
-      final IApplication app = _session.getApplication();
       setLayout(new BorderLayout());
       _textArea = new JTextArea();
       _textArea.setEditable(false);
-      add(new JScrollPane(_textArea,
-         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-         JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-	}
+      add(new JScrollPane(_textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+   }
 
 }

@@ -17,35 +17,35 @@ package net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-
-import net.sourceforge.squirrel_sql.fw.resources.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
+
+import java.awt.event.ActionEvent;
 
 public class GetSessionInfoAction extends SquirrelAction
 {
-        private SessionInfoPanel _panel;
+   private SessionInfoPanel _panel;
 
-	public GetSessionInfoAction(IApplication app, Resources resources, SessionInfoPanel panel)
-	{
-		super(app, resources);
-                _panel = panel;
-	}
+   public GetSessionInfoAction(IApplication app, Resources resources, SessionInfoPanel panel)
+   {
+      super(app, resources);
+      _panel = panel;
+   }
 
-	public void actionPerformed(ActionEvent evt)
-	{
-                CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
-                cursorChg.show();
-                try
-                {
-                        _panel.populateSessionInfo();
-                }
-                finally
-                {
-                        cursorChg.restore();
-                }
-	}
+   public void actionPerformed(ActionEvent evt)
+   {
+      CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
+      cursorChg.show();
+      try
+      {
+         _panel.populateSessionInfo();
+      }
+      finally
+      {
+         cursorChg.restore();
+      }
+   }
 }

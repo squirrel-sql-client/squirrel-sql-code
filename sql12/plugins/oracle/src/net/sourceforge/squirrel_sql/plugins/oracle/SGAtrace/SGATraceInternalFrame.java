@@ -18,19 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
@@ -40,37 +27,34 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrame;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrameCallback;
+import net.sourceforge.squirrel_sql.plugins.oracle.OracleToolBar;
+
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import java.awt.BorderLayout;
 
 public class SGATraceInternalFrame extends OracleInternalFrame
 {
-    private static final long serialVersionUID = 1L;
+   private static final String PREF_PART_SGA_FRAME = "SGAFrame";
 
 
-    private static final String PREF_PART_SGA_FRAME = "SGAFrame";
-
-
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SGATraceInternalFrame.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SGATraceInternalFrame.class);
 
    private SGATracePanel _sgaTracePanel;
-   /**
-    * Toolbar for window.
-    */
+
    private SGATraceToolBar _toolBar;
 
    transient private Resources _resources;
 
    public SGATraceInternalFrame(ISession session, Resources resources)
    {
-      // I18n[oracle.sgaTitle=Oracle SGA trace for: {0}]
       super(session, s_stringMgr.getString("oracle.sgaTitle", session.getTitle()));
       _resources = resources;
       createGUI();
-   }
-
-   public SGATracePanel getSGATracePanel()
-   {
-      return _sgaTracePanel;
    }
 
    private void createGUI()
@@ -86,29 +70,25 @@ public class SGATraceInternalFrame extends OracleInternalFrame
       });
 
 
-      Icon icon = _resources.getIcon(getClass(), "frameIcon"); //i18n
+      Icon icon = _resources.getIcon(getClass(), "frameIcon");
       if (icon != null)
       {
          setFrameIcon(icon);
       }
 
-      OracleInternalFrameCallback cb = new OracleInternalFrameCallback()
-      {
-
-         public void createPanelAndToolBar(boolean stayOnTop, int autoRefeshPeriod)
-         {
-            _sgaTracePanel = new SGATracePanel(getSession(), autoRefeshPeriod);
-            _toolBar = new SGATraceToolBar(getSession(), stayOnTop, autoRefeshPeriod);
-            JPanel contentPanel = new JPanel(new BorderLayout());
-            contentPanel.add(_toolBar, BorderLayout.NORTH);
-            contentPanel.add(_sgaTracePanel, BorderLayout.CENTER);
-            setContentPane(contentPanel);
-         }
-      };
+      OracleInternalFrameCallback cb = (stayOnTop, autoRefreshPeriod) -> onCreatePanelAndToolBar(stayOnTop, autoRefreshPeriod);
 
       initFromPrefs(PREF_PART_SGA_FRAME, cb);
+   }
 
-
+   private void onCreatePanelAndToolBar(boolean stayOnTop, int autoRefreshPeriod)
+   {
+      _sgaTracePanel = new SGATracePanel(getSession(), autoRefreshPeriod);
+      _toolBar = new SGATraceToolBar(getSession(), stayOnTop, autoRefreshPeriod);
+      JPanel contentPanel = new JPanel(new BorderLayout());
+      contentPanel.add(_toolBar, BorderLayout.NORTH);
+      contentPanel.add(_sgaTracePanel, BorderLayout.CENTER);
+      setContentPane(contentPanel);
    }
 
    /**
@@ -116,11 +96,9 @@ public class SGATraceInternalFrame extends OracleInternalFrame
     */
    private class SGATraceToolBar extends OracleToolBar
    {
-    private static final long serialVersionUID = 1L;
-
-    SGATraceToolBar(ISession session, boolean stayOnTop, int autoRefeshPeriod)
+      SGATraceToolBar(ISession session, boolean stayOnTop, int autoRefeshPeriod)
       {
-         super();
+         super(session, SGATraceInternalFrame.this);
          createGUI(session, stayOnTop, autoRefeshPeriod);
       }
 
@@ -137,25 +115,13 @@ public class SGATraceInternalFrame extends OracleInternalFrame
          //Create checkbox for enabling auto refresh
          // i18n[oracle.enableAutoRefresh=Enable auto refresh]
          final JCheckBox autoRefresh = new JCheckBox(s_stringMgr.getString("oracle.enableAutoRefresh"), false);
-         autoRefresh.addActionListener(new ActionListener()
-         {
-            public void actionPerformed(ActionEvent e)
-            {
-               _sgaTracePanel.setAutoRefresh(autoRefresh.isSelected());
-            }
-         });
+         autoRefresh.addActionListener(e -> _sgaTracePanel.setAutoRefresh(autoRefresh.isSelected()));
          add(autoRefresh);
 
          //Create spinner for update period
          final SpinnerNumberModel model = new SpinnerNumberModel(autoRefeshPeriod, 1, 60, 5);
          final JSpinner refreshRate = new JSpinner(model);
-         refreshRate.addChangeListener(new ChangeListener()
-         {
-            public void stateChanged(ChangeEvent e)
-            {
-               _sgaTracePanel.setAutoRefreshPeriod(model.getNumber().intValue());
-            }
-         });
+         refreshRate.addChangeListener(e -> _sgaTracePanel.setAutoRefreshPeriod(model.getNumber().intValue()));
          add(refreshRate);
          // i18n[oracle.refreshSecons=(seconds)]
          add(new JLabel(s_stringMgr.getString("oracle.refreshSecons")));

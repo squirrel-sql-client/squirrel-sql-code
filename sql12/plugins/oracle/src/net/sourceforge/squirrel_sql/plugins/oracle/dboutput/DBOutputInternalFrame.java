@@ -18,49 +18,33 @@ package net.sourceforge.squirrel_sql.plugins.oracle.dboutput;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.*;
-
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.resources.Resources;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrame;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrameCallback;
+import net.sourceforge.squirrel_sql.plugins.oracle.OracleToolBar;
+
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import java.awt.BorderLayout;
 
 public class DBOutputInternalFrame extends OracleInternalFrame
 {
    private static final String PREF_PART_DB_OUTPUT_FRAME = "DBOutputFrame";
 
-
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(DBOutputInternalFrame.class);
-
-   /**
-    * Application API.
-    */
-   private final IApplication _app;
-
-   /**
-    * ID of the session for this window.
-    */
-   private IIdentifier _sessionId;
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DBOutputInternalFrame.class);
 
    private DBOutputPanel _dbOutputPanel;
-   /**
-    * Toolbar for window.
-    */
+
    private DBOutputToolBar _toolBar;
 
    private Resources _resources;
@@ -69,15 +53,8 @@ public class DBOutputInternalFrame extends OracleInternalFrame
    {
       // I18n[oracle.dbOutputTitle=Oracle DB output for: {0}]
       super(session, s_stringMgr.getString("oracle.dbOutputTitle", session.getTitle()));
-      _app = session.getApplication();
       _resources = resources;
-      _sessionId = session.getIdentifier();
       createGUI(session);
-   }
-
-   public DBOutputPanel getDBOutputPanel()
-   {
-      return _dbOutputPanel;
    }
 
    private void createGUI(ISession session)
@@ -99,24 +76,22 @@ public class DBOutputInternalFrame extends OracleInternalFrame
       }
 
 
-      OracleInternalFrameCallback cb = new OracleInternalFrameCallback()
-      {
-
-         public void createPanelAndToolBar(boolean stayOnTop, int autoRefeshPeriod)
-         {
-            _dbOutputPanel = new DBOutputPanel(getSession(), autoRefeshPeriod);
-            _toolBar = new DBOutputToolBar(getSession(), stayOnTop, autoRefeshPeriod);
-            JPanel contentPanel = new JPanel(new BorderLayout());
-            contentPanel.add(_toolBar, BorderLayout.NORTH);
-            contentPanel.add(_dbOutputPanel, BorderLayout.CENTER);
-            setContentPane(contentPanel);
-
-            _dbOutputPanel.setAutoRefreshPeriod(autoRefeshPeriod);
-         }
-      };
+      OracleInternalFrameCallback cb = (stayOnTop, autoRefreshPeriod) -> onCreatePanelAndToolBar(stayOnTop, autoRefreshPeriod);
 
 
       initFromPrefs(PREF_PART_DB_OUTPUT_FRAME, cb);
+   }
+
+   private void onCreatePanelAndToolBar(boolean stayOnTop, int autoRefreshPeriod)
+   {
+      _dbOutputPanel = new DBOutputPanel(getSession(), autoRefreshPeriod);
+      _toolBar = new DBOutputToolBar(getSession(), stayOnTop, autoRefreshPeriod);
+      JPanel contentPanel = new JPanel(new BorderLayout());
+      contentPanel.add(_toolBar, BorderLayout.NORTH);
+      contentPanel.add(_dbOutputPanel, BorderLayout.CENTER);
+      setContentPane(contentPanel);
+
+      _dbOutputPanel.setAutoRefreshPeriod(autoRefreshPeriod);
    }
 
 
@@ -138,11 +113,11 @@ public class DBOutputInternalFrame extends OracleInternalFrame
 
       DBOutputToolBar(ISession session, boolean stayOnTop, int autoRefeshPeriod)
       {
-         super();
+         super(session, DBOutputInternalFrame.this);
          createGUI(session, stayOnTop, autoRefeshPeriod);
       }
 
-      private void createGUI(ISession session, boolean stayOnTop, int autoRefeshPeriod)
+      private void createGUI(ISession session, boolean stayOnTop, int autoRefreshPeriod)
       {
          IApplication app = session.getApplication();
          setUseRolloverButtons(true);
@@ -155,28 +130,16 @@ public class DBOutputInternalFrame extends OracleInternalFrame
          //Create checkbox for enabling auto refresh
          // i18n[oracle.dboutputEnableAutoRefer=Enable auto refresh]
          _autoRefresh = new JCheckBox(s_stringMgr.getString("oracle.dboutputEnableAutoRefer"), false);
-         _autoRefresh.addActionListener(new ActionListener()
-         {
-            public void actionPerformed(ActionEvent e)
-            {
-               _dbOutputPanel.setAutoRefresh(_autoRefresh.isSelected());
-            }
-         });
+         _autoRefresh.addActionListener(e -> _dbOutputPanel.setAutoRefresh(_autoRefresh.isSelected()));
          add(_autoRefresh);
 
 
          //Create spinner for update period
-         final SpinnerNumberModel model = new SpinnerNumberModel(autoRefeshPeriod, 1, 60, 5);
+         final SpinnerNumberModel model = new SpinnerNumberModel(autoRefreshPeriod, 1, 60, 5);
          JSpinner refreshRate = new JSpinner(model);
-         refreshRate.addChangeListener(new ChangeListener()
-         {
-            public void stateChanged(ChangeEvent e)
-            {
-               _dbOutputPanel.setAutoRefreshPeriod(model.getNumber().intValue());
-            }
-         });
+         refreshRate.addChangeListener(e -> _dbOutputPanel.setAutoRefreshPeriod(model.getNumber().intValue()));
          add(refreshRate);
-         // i18n[oracle.Seconds2=(seconds)]
+
          add(new JLabel(s_stringMgr.getString("oracle.Seconds2")));
       }
 

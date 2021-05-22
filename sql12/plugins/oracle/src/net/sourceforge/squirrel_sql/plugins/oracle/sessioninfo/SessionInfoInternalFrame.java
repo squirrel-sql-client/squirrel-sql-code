@@ -27,11 +27,17 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrame;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrameCallback;
+import net.sourceforge.squirrel_sql.plugins.oracle.OracleToolBar;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -91,16 +97,16 @@ public class SessionInfoInternalFrame extends OracleInternalFrame
       OracleInternalFrameCallback cb = new OracleInternalFrameCallback()
       {
 
-         public void createPanelAndToolBar(boolean stayOnTop, int autoRefeshPeriod)
+         public void createPanelAndToolBar(boolean stayOnTop, int autoRefreshPeriod)
          {
-            _sessionInfoPanel = new SessionInfoPanel(getSession(), autoRefeshPeriod);
-            _toolBar = new SessionInfoToolBar(getSession(), stayOnTop, autoRefeshPeriod);
+            _sessionInfoPanel = new SessionInfoPanel(getSession(), autoRefreshPeriod);
+            _toolBar = new SessionInfoToolBar(getSession(), stayOnTop, autoRefreshPeriod);
             JPanel contentPanel = new JPanel(new BorderLayout());
             contentPanel.add(_toolBar, BorderLayout.NORTH);
             contentPanel.add(_sessionInfoPanel, BorderLayout.CENTER);
             setContentPane(contentPanel);
 
-            _sessionInfoPanel.setAutoRefreshPeriod(autoRefeshPeriod);
+            _sessionInfoPanel.setAutoRefreshPeriod(autoRefreshPeriod);
          }
       };
 
@@ -114,7 +120,7 @@ public class SessionInfoInternalFrame extends OracleInternalFrame
    {
       SessionInfoToolBar(ISession session, boolean stayOnTop, int autoRefeshPeriod)
       {
-         super();
+         super(session, SessionInfoInternalFrame.this);
          createGUI(session, stayOnTop, autoRefeshPeriod);
       }
 

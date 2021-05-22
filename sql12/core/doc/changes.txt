@@ -53,6 +53,12 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+#1475 Oracle Plugin: SGA-Trace/Session Info/Invalid objects windows:
+  - Column widths changed on refresh
+  - Columns are now sortable
+  - Windows are opened centered on SQuirreL's main window and sizes are remembered.
+  Thanks to Chris B for parts of the changes.
+
 #1473 Unsaved changes dialog: Improved layout part two of 5/17/2021.
   Thanks to joel3576 for the changes.
 

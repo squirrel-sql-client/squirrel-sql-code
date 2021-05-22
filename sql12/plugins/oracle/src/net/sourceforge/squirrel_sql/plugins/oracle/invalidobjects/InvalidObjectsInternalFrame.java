@@ -27,9 +27,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrame;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrameCallback;
+import net.sourceforge.squirrel_sql.plugins.oracle.OracleToolBar;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class InvalidObjectsInternalFrame extends OracleInternalFrame
 {
@@ -84,7 +86,7 @@ public class InvalidObjectsInternalFrame extends OracleInternalFrame
       OracleInternalFrameCallback cb = new OracleInternalFrameCallback()
       {
 
-         public void createPanelAndToolBar(boolean stayOnTop, int autoRefeshPeriod)
+         public void createPanelAndToolBar(boolean stayOnTop, int autoRefreshPeriod)
          {
 
             _invalidObjectsPanel = new InvalidObjectsPanel(getSession());
@@ -111,7 +113,7 @@ public class InvalidObjectsInternalFrame extends OracleInternalFrame
    {
       InvalidObjectsToolBar(ISession session, boolean stayOnTop)
       {
-         super();
+         super(session, InvalidObjectsInternalFrame.this);
          createGUI(session, stayOnTop);
       }
 

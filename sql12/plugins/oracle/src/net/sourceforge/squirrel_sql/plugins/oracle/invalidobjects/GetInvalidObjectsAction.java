@@ -17,13 +17,13 @@ package net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-
-import net.sourceforge.squirrel_sql.fw.resources.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
+
+import java.awt.event.ActionEvent;
 
 public class GetInvalidObjectsAction extends SquirrelAction
 {
@@ -37,15 +37,15 @@ public class GetInvalidObjectsAction extends SquirrelAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-                CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
-                cursorChg.show();
-                try
-                {
-                        _panel.repopulateInvalidObjects();
-                }
-                finally
-                {
-                        cursorChg.restore();
-                }
+      CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
+      cursorChg.show();
+      try
+      {
+         _panel.repopulateInvalidObjects();
+      }
+      finally
+      {
+         cursorChg.restore();
+      }
 	}
 }

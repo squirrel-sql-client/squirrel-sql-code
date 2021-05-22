@@ -18,19 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.BorderLayout;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -39,15 +26,21 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
 
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import java.awt.BorderLayout;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class SessionInfoPanel extends JPanel
 {
-    private static final long serialVersionUID = 1L;
-
-   /**
-    * Logger for this class.
-    */
-   private static final ILogger s_log = 
-       LoggerController.createLogger(SessionInfoPanel.class);
+   private static final ILogger s_log = LoggerController.createLogger(SessionInfoPanel.class);
 
    //JMH Remove the current sql text. Create a tabbed pane for session details (including sql text)
    private static final String SESSION_INFO_SQL = "SELECT sess.Sid, " +
@@ -89,13 +82,7 @@ public class SessionInfoPanel extends JPanel
       "  AND sess.sql_hash_value = d.hash_value ( + ) " +
       "  AND ( d.child_number = 0 OR d.child_number IS NULL ) " +
       "ORDER BY sess.sid ";
-//JMH: For additional performance we could utilise the fixed_table_sequence column
-//from the session, to investigate which rows need to be updated on a refresh
-//See V$SESSION doco for more info.
 
-   /**
-    * Current session.
-    */
    transient private ISession _session;
 
    private AutoWidthResizeTable _sessionInfo;
@@ -104,14 +91,6 @@ public class SessionInfoPanel extends JPanel
 
    private boolean _autoRefresh = false;
    private int _refreshPeriod = 10;
-
-   public class RefreshTimerTask extends TimerTask
-   {
-      public void run()
-      {
-         populateSessionInfo();
-      }
-   }
 
    /**
     * Ctor.
@@ -122,7 +101,6 @@ public class SessionInfoPanel extends JPanel
     */
    public SessionInfoPanel(ISession session, int autoRefeshPeriod)
    {
-      super();
       _session = session;
       _refreshPeriod = autoRefeshPeriod;
       createGUI();
@@ -144,12 +122,20 @@ public class SessionInfoPanel extends JPanel
          //Nil out the timer so that it can be gc'd
          _refreshTimer = null;
       }
+
       if (_autoRefresh && (_refreshPeriod > 0))
       {
          _refreshTimer = new Timer(true);
-         _refreshTimer.scheduleAtFixedRate(new RefreshTimerTask(),
-            _refreshPeriod * 1000,
-            _refreshPeriod * 1000);
+         final TimerTask timerTask = new TimerTask()
+         {
+            @Override
+            public void run()
+            {
+               GUIUtils.processOnSwingEventThread(() -> populateSessionInfo());
+            }
+         };
+
+         _refreshTimer.scheduleAtFixedRate(timerTask,_refreshPeriod * 1000,_refreshPeriod * 1000);
       }
    }
 
@@ -213,7 +199,7 @@ public class SessionInfoPanel extends JPanel
       return tm;
    }
 
-   public synchronized void populateSessionInfo()
+   public void populateSessionInfo()
    {
       if (!OraclePlugin.checkObjectAccessible(_session, SESSION_INFO_SQL))
       {
@@ -224,12 +210,22 @@ public class SessionInfoPanel extends JPanel
       try
       {
          Connection con = _session.getSQLConnection().getConnection();
-         if (s_log.isDebugEnabled()) {
-             s_log.debug("populateSessionInfo: running sql - "+SESSION_INFO_SQL);
-         }
          pstmt = con.prepareStatement(SESSION_INFO_SQL);
          rs = pstmt.executeQuery();
-         final DefaultTableModel tm = createTableModel();
+
+         DefaultTableModel tm;
+         if ((_sessionInfo.getModel().getColumnCount() > 0) && (_sessionInfo.getModel() instanceof DefaultTableModel))
+         {
+            // Done on refresh. Assures table layout doesn't change.
+            tm = (DefaultTableModel)_sessionInfo.getModel();
+            tm.setRowCount(0);
+         }
+         else
+         {
+            // Done on startup
+            tm = createTableModel();
+         }
+
          while (rs.next())
          {
            String sid = rs.getString(1);
@@ -271,9 +267,11 @@ public class SessionInfoPanel extends JPanel
       catch (SQLException ex)
       {
          _session.showErrorMessage(ex);
-      } finally {
-          SQLUtilities.closeResultSet(rs);
-          SQLUtilities.closeStatement(pstmt);
+      }
+      finally
+      {
+         SQLUtilities.closeResultSet(rs);
+         SQLUtilities.closeStatement(pstmt);
       }
    }
 
@@ -282,18 +280,21 @@ public class SessionInfoPanel extends JPanel
     * 
     * @param tm the TableModel to set.
     */
-   private void updateTableModel(final DefaultTableModel tm) {
-       GUIUtils.processOnSwingEventThread(new Runnable() {
-           public void run() {
-               _sessionInfo.setModel(tm);
-               if (!hasResized)
-               {
-                 //Only resize once.
-                 hasResized = true;
-                 _sessionInfo.resizeColumnWidth(300);
-               }
-           }
-       });       
+   private void updateTableModel(final DefaultTableModel tm)
+   {
+      GUIUtils.processOnSwingEventThread(new Runnable()
+      {
+         public void run()
+         {
+            _sessionInfo.setModel(tm);
+            if (!hasResized)
+            {
+               //Only resize once.
+               hasResized = true;
+               _sessionInfo.resizeColumnWidth(300);
+            }
+         }
+      });
    }
    
    private void createGUI()
@@ -301,6 +302,7 @@ public class SessionInfoPanel extends JPanel
       setLayout(new BorderLayout());
       _sessionInfo = new AutoWidthResizeTable(new DefaultTableModel());
       _sessionInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+      _sessionInfo.setAutoCreateRowSorter(true);
       add(new JScrollPane(_sessionInfo));
       populateSessionInfo();
 	}
