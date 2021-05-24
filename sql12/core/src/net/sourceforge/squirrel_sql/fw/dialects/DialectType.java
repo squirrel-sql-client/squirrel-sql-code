@@ -44,6 +44,7 @@ public enum DialectType
    MSSQL,
    MYSQL,     // MySQL 4.x and below
    MYSQL5,    // MySQL 5.x and above
+   MARIADB,
    NETEZZA,
    ORACLE,
    POINTBASE,

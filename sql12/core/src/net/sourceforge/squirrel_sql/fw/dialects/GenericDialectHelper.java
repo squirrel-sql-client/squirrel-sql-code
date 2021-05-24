@@ -18,5 +18,9 @@ public class GenericDialectHelper extends Dialect
       registerColumnType(Types.TIMESTAMP, "timestamp");
       registerColumnType(Types.TINYINT, "integer");
       registerColumnType(Types.VARCHAR, "varchar($l)");
+
+      // Originally introduced for Maria-DB
+      registerColumnType(Types.NUMERIC, "numeric($p,$s)");
+      registerColumnType(Types.DECIMAL, "decimal($p,$s)");
    }
 }

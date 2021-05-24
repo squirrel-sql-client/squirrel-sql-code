@@ -88,6 +88,8 @@ public class DialectFactory
 
 	private static final MySQL5DialectExt mysql5Dialect = new MySQL5DialectExt();
 
+	private static final MariaDBDialectExt mariaDBDialect = new MariaDBDialectExt();
+
 	private static final NetezzaDialextExt netezzaDialect = new NetezzaDialextExt();
 	
 	private static final GreenplumDialectExt greenplumDialect = new GreenplumDialectExt();
@@ -152,6 +154,7 @@ public class DialectFactory
 		dbNameDialectMap.put(mckoiDialect.getDisplayName(), mckoiDialect);
 		dbNameDialectMap.put(mysqlDialect.getDisplayName(), mysqlDialect);
 		dbNameDialectMap.put(mysql5Dialect.getDisplayName(), mysql5Dialect);
+		dbNameDialectMap.put(mariaDBDialect.getDisplayName(), mariaDBDialect);
 		dbNameDialectMap.put(netezzaDialect.getDisplayName(), netezzaDialect);
 		dbNameDialectMap.put(greenplumDialect.getDisplayName(), greenplumDialect);
 		dbNameDialectMap.put(oracle9iDialect.getDisplayName(), oracle9iDialect);
@@ -248,6 +251,11 @@ public class DialectFactory
 	public static boolean isMySQL5(ISQLDatabaseMetaData md)
 	{
 		return dialectSupportsProduct(md, mysql5Dialect);
+	}
+
+	public static boolean isMariaDB(ISQLDatabaseMetaData md)
+	{
+		return dialectSupportsProduct(md, mariaDBDialect);
 	}
 
 	public static boolean isNetezza(ISQLDatabaseMetaData md)
@@ -379,6 +387,7 @@ public class DialectFactory
 		if (isMcKoi(md)) { return mckoiDialect; }
 		if (isMySQL(md)) { return mysqlDialect; }
 		if (isMySQL5(md)) { return mysql5Dialect; }
+		if (isMariaDB(md)) { return mariaDBDialect; }
 		if (isMSSQLServer(md)) { return sqlserverDialect; }
 		if (isNetezza(md)) { return netezzaDialect; }
 		if (isGreenplum(md)) { return greenplumDialect; }
