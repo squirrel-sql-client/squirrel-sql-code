@@ -87,7 +87,20 @@ public class InvalidObjectsPanel extends JPanel
          if (s.execute())
          {
             ResultSet rs = s.getResultSet();
-            DefaultTableModel tm = createTableModel();
+
+            DefaultTableModel tm;
+            if ((_invalidObjects.getModel().getColumnCount() > 0) && (_invalidObjects.getModel() instanceof DefaultTableModel))
+            {
+               // Done on refresh. Assures table layout doesn't change.
+               tm = (DefaultTableModel)_invalidObjects.getModel();
+               tm.setRowCount(0);
+            }
+            else
+            {
+               // Done on startup
+               tm = createTableModel();
+            }
+
             while (rs.next())
             {
                String owner = rs.getString(1);
