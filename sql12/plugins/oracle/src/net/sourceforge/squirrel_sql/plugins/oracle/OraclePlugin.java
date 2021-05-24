@@ -167,10 +167,13 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
    private IObjectTypes _objectTypes;
 
 	@Override
-	public SQLDatabaseMetaData fetchMeta(final ISQLConnection conn) {
-		return new SQLDatabaseMetaData(conn) {
+	public SQLDatabaseMetaData fetchMeta(final ISQLConnection conn)
+	{
+		return new SQLDatabaseMetaData(conn)
+		{
 			@Override
-			public String getOptionalPseudoColumnForDataSelection(final ITableInfo ti) {
+			public String getOptionalPseudoColumnForDataSelection(final ITableInfo ti)
+			{
 				return "ROWID";
 			}
 		};
@@ -289,8 +292,7 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 		tab.setHint(i18n.hint);
 		tab.setTitle(i18n.title);
 
-		return new IGlobalPreferencesPanel[]
-			{ tab };
+		return new IGlobalPreferencesPanel[]{tab};
 	}
 
 	@Override
@@ -893,9 +895,7 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 		
 		/* Adds a popup menu for SQL*Loader control files generation */
 		session.getSessionInternalFrame().getObjectTreeAPI().addToPopup(
-				DatabaseObjectType.TABLE,
-				new GenerateControlFileAction(getApplication(), _resources,
-						session));
+				DatabaseObjectType.TABLE, new GenerateControlFileAction(getApplication(), _resources, session));
 
 
 		// This fixes the issue where the tree is getting constructed prior to
@@ -903,24 +903,15 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 		// INSTANCES nodes have no children until the tree is refreshed). Even
 		// though this is a hack, it doesn't seem to negatively impact
 		// performance even when loading all schemas.
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				objTree.refreshTree();
-			}
-		});
+		GUIUtils.processOnSwingEventThread(() -> objTree.refreshTree());
 	}
 
-	private void addExpander(final IObjectTreeAPI objTree, final DatabaseObjectType dboType,
-	      final INodeExpander exp)
+	private void addExpander(final IObjectTreeAPI objTree, final DatabaseObjectType dboType, final INodeExpander exp)
 	{
 		objTree.addExpander(dboType, exp);
 	}
 
-	private void addDetailTab(final IObjectTreeAPI objTree, final DatabaseObjectType dboType,
-	      final IObjectTab tab)
+	private void addDetailTab(final IObjectTreeAPI objTree, final DatabaseObjectType dboType, final IObjectTab tab)
 	{
 		objTree.addDetailTab(dboType, tab);
 	}

@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
@@ -24,11 +25,11 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import java.io.Serializable;
 
 import static net.sourceforge.squirrel_sql.fw.resources.LibraryResources.IImageNames.*;
-
-import java.io.Serializable;
 
 /**
  *
@@ -38,11 +39,8 @@ import java.io.Serializable;
  */
 public class DatabaseObjectType implements IHasIdentifier, Serializable
 {
-   /** Internationalized strings for this class. */
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(DatabaseObjectType.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DatabaseObjectType.class);
 
-   /** Factory to generate unique IDs for these objects. */
    private final static IntegerIdentifierFactory s_idFactory = new IntegerIdentifierFactory();
 
    /** Other - general purpose. */
