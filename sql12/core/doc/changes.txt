@@ -53,6 +53,9 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+Test button in Add Alias window didn't work when a new Alias was created.
+  Note: The problem didn't occur when an existing Alias was copied.
+
 #1475 Oracle Plugin: SGA-Trace/Session Info/Invalid objects windows:
   - Column widths changed on refresh
   - Columns are now sortable

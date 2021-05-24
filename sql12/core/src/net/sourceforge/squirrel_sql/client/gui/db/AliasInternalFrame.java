@@ -562,7 +562,15 @@ public class AliasInternalFrame extends DialogWidget
 			final AliasesAndDriversManager cache = Main.getApplication().getAliasesAndDriversManager();
 			final IIdentifierFactory factory = IdentifierFactory.getInstance();
 			final SQLAlias alias = cache.createAlias(factory.createIdentifier());
-			alias.assignFrom((SQLAlias) _sqlAlias, false);
+
+			try
+			{
+				alias.assignFromWithValidationException((SQLAlias) _sqlAlias, false);
+			}
+			catch (ValidationException e)
+			{
+				// Occurs if we are just adding this Alias.
+			}
 
 			try
 			{

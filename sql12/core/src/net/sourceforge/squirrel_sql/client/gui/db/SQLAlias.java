@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
@@ -27,6 +26,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+import java.io.Serializable;
 
 /**
  * This represents a Database alias which is a description of the means
@@ -122,6 +123,18 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       _connectionProperties.acceptAliasVersioner(_versioner);
    }
 
+   public synchronized void assignFrom(SQLAlias sqlAlias, boolean withIdentifier)
+   {
+      try
+      {
+         assignFromWithValidationException(sqlAlias, withIdentifier);
+      }
+      catch (ValidationException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
    /**
     * Assign data from the passed <CODE>ISQLAlias</CODE> to this one.
     *
@@ -133,11 +146,11 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     *				Thrown if an error occurs assigning data from
     *				<CODE>sqlAlias</CODE>.
     */
-   public synchronized void assignFrom(SQLAlias sqlAlias, boolean withIdentifier)
+   public void assignFromWithValidationException(SQLAlias sqlAlias, boolean withIdentifier) throws ValidationException
    {
       try(Java8CloseableFix java8Dum = _versioner.switchOff())
       {
-         if(withIdentifier)
+         if (withIdentifier)
          {
             setIdentifier(sqlAlias.getIdentifier());
          }
@@ -163,10 +176,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
          _connectionProperties.setEnableConnectionKeepAlive(rhsConnProps.isEnableConnectionKeepAlive());
          _connectionProperties.setKeepAliveSleepTimeSeconds(rhsConnProps.getKeepAliveSleepTimeSeconds());
          _connectionProperties.setKeepAliveSqlStatement(rhsConnProps.getKeepAliveSqlStatement());
-      }
-      catch (ValidationException e)
-      {
-         throw Utilities.wrapRuntime(e);
       }
    }
 
