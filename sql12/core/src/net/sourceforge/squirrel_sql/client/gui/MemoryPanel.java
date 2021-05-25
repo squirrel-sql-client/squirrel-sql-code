@@ -16,38 +16,44 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.Timer;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-import java.text.DateFormat;
-
-import javax.swing.*;
-import javax.swing.Timer;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class MemoryPanel extends JPanel
 {
-    /** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(MemoryPanel.class);
-
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MemoryPanel.class);
 
 	private JProgressBar _bar;
 	private JButton _btnGarbage;
 	private JButton _btnSessionGCStatus;
 	transient private IApplication _app;
-	private HashMap<IIdentifier, MemorySessionInfo> _sessionInfosBySessionIDs = 
-        new HashMap<IIdentifier, MemorySessionInfo>();
+	private HashMap<IIdentifier, MemorySessionInfo> _sessionInfosBySessionIDs =  new HashMap<IIdentifier, MemorySessionInfo>();
 
 	public MemoryPanel(IApplication app)
 	{
@@ -110,6 +116,7 @@ public class MemoryPanel extends JPanel
 
 		this.setLayout(new BorderLayout(5,0));
 		this.add(pnlButtons, BorderLayout.EAST);
+		GUIUtils.setMinimumWidth(_bar, 150);
 		this.add(_bar, BorderLayout.CENTER);
 
 		this.setBorder(null);
@@ -160,6 +167,7 @@ public class MemoryPanel extends JPanel
 			}
 		});
 		t.start();
+
 	}
 
 	private void updateGcStatus()
@@ -239,8 +247,7 @@ public class MemoryPanel extends JPanel
 			};
 
 
-		MemorySessionInfo[] msis = 
-            _sessionInfosBySessionIDs.values().toArray(new MemorySessionInfo[0]);
+		MemorySessionInfo[] msis = _sessionInfosBySessionIDs.values().toArray(new MemorySessionInfo[0]);
 
 		Arrays.sort(msis);
 
@@ -279,95 +286,6 @@ public class MemoryPanel extends JPanel
 		errorDialog.setTitle(s_stringMgr.getString("MemoryPanel.statusDialogTitle"));
 		errorDialog.setVisible(true);
 	}
-
-	private static class MemorySessionInfo implements Comparable<MemorySessionInfo>
-	{
-		MemorySessionInfo(IIdentifier sessionId, String aliasName)
-		{
-			this.sessionId = sessionId;
-			this.aliasName = aliasName;
-		}
-
-		IIdentifier sessionId;
-		String aliasName;
-		java.util.Date created = new Date();
-		java.util.Date closed;
-		java.util.Date finalized;
-
-		public String toString()
-		{
-			DateFormat df = DateFormat.getInstance();
-
-			Object[] params = new Object[]
-				{
-					sessionId,
-					aliasName,
-					df.format(created),
-					null == closed ? "" : df.format(closed),
-					null == finalized ? "" :df.format(finalized)
-				};
-
-			if(null != closed && null == finalized)
-			{
-				// i18n[MemoryPanel.sessionInfo.toString1=Session: ID={0}, Alias={1}: created at {2}, closed at {3}]
-				return s_stringMgr.getString("MemoryPanel.sessionInfo.toString1", params);
-			}
-			else if(null == closed)
-			{
-				// i18n[MemoryPanel.sessionInfo.toString2=Session: ID={0}, Alias={1}: created at {2}]
-				return s_stringMgr.getString("MemoryPanel.sessionInfo.toString2", params);
-			}
-			else if(null != finalized)
-			{
-				// i18n[MemoryPanel.sessionInfo.toString3=Session: ID={0}, Alias={1}: created at {2}, closed at {3}, finalized at {4}]
-				return s_stringMgr.getString("MemoryPanel.sessionInfo.toString3", params);
-			}
-			else
-			{
-				throw new IllegalStateException("Unknown Session state");
-			}
-		}
-
-		public int compareTo(MemorySessionInfo other)
-		{
-			return Integer.valueOf(sessionId.toString()).compareTo(Integer.valueOf(other.sessionId.toString()));
-		}
-
-        /**
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result
-                    + ((sessionId == null) ? 0 : sessionId.hashCode());
-            return result;
-        }
-
-        /**
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            final MemorySessionInfo other = (MemorySessionInfo) obj;
-            if (sessionId == null) {
-                if (other.sessionId != null)
-                    return false;
-            } else if (!sessionId.equals(other.sessionId))
-                return false;
-            return true;
-        }
-		
-		
-	}
-
 
 
 	private static class SessionGCStatus

@@ -53,6 +53,8 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+Status bar: Memory display vanished on resizing SQuirreL's main window.
+
 Scripts Plugin: When scripting tables for MariaDB Decimal and Numeric columns where scripted without precision and scale.
 
 Test button in Add Alias window didn't work when a new Alias was created.
