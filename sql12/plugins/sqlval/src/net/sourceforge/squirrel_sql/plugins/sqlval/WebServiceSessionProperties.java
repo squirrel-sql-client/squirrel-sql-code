@@ -17,10 +17,11 @@ package net.sourceforge.squirrel_sql.plugins.sqlval;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+
+import java.io.Serializable;
 
 public class WebServiceSessionProperties implements Cloneable, Serializable
 {

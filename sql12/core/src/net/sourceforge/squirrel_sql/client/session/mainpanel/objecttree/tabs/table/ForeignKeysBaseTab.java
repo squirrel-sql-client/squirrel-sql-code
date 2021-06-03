@@ -18,23 +18,19 @@
  */
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table;
 
-import static java.sql.DatabaseMetaData.importedKeyCascade;
-import static java.sql.DatabaseMetaData.importedKeyNoAction;
-import static java.sql.DatabaseMetaData.importedKeyRestrict;
-import static java.sql.DatabaseMetaData.importedKeySetDefault;
-import static java.sql.DatabaseMetaData.importedKeySetNull;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.FilterDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.sql.DatabaseMetaData.*;
 
 /**
  * Base class to provide common code for both the Imported and Exported keys tabs.

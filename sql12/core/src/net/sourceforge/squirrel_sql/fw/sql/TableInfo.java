@@ -101,7 +101,7 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 		return false;
 	}
 
-	void addChild(ITableInfo tab)
+	public void addChild(ITableInfo tab)
 	{
 		if (_childList == null)
 		{

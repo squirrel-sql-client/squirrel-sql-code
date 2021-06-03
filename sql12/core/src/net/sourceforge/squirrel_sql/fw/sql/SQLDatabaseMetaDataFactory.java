@@ -1,9 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 
 public class SQLDatabaseMetaDataFactory {
 	

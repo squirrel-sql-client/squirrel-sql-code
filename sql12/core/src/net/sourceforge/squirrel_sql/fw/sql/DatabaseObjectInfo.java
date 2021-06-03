@@ -17,12 +17,11 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.Serializable;
-import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-
 import org.apache.commons.lang.StringUtils;
+
+import java.sql.SQLException;
 
 public class DatabaseObjectInfo implements IDatabaseObjectInfo
 {
@@ -58,10 +57,8 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
    /** Object type. @see DatabaseObjectType.*/
    private DatabaseObjectType _dboType = DatabaseObjectType.OTHER;
 
-   public DatabaseObjectInfo(String catalog, String schema, String simpleName,
-                             DatabaseObjectType dboType, ISQLDatabaseMetaData md)
+   public DatabaseObjectInfo(String catalog, String schema, String simpleName, DatabaseObjectType dboType, ISQLDatabaseMetaData md)
    {
-      super();
       if (dboType == null)
       {
          throw new IllegalArgumentException("DatabaseObjectType == null");
@@ -184,12 +181,14 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
       boolean supportsSchemasInTableDefinitions = false;
 
       // check for Informix - it has very "special" qualified names
-      if (DialectFactory.isInformix(md)) {
-          return getInformixQualifiedName();
+      if (DialectFactory.isInformix(md))
+      {
+         return getInformixQualifiedName();
       }
       // Progress claims to support catalogs in data manip - but it actually doesn't honor that claim. 
-      if (DialectFactory.isProgress(md)) {
-      	return getProgressQualifiedName();
+      if (DialectFactory.isProgress(md))
+      {
+         return getProgressQualifiedName();
       }
       
       try
@@ -235,8 +234,8 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
       try
       {
          identifierQuoteString = md.getIdentifierQuoteString();
-         if (identifierQuoteString != null
-            && identifierQuoteString.equals(" "))
+
+         if (identifierQuoteString != null && identifierQuoteString.equals(" "))
          {
             identifierQuoteString = null;
          }
@@ -252,8 +251,8 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
       }
                   
       StringBuilder buf = new StringBuilder();
-      if (supportsCatalogsInDataManipulation
-            && !StringUtils.isEmpty(_catalog))	  
+
+      if (supportsCatalogsInDataManipulation && !StringUtils.isEmpty(_catalog))
       {
          if (identifierQuoteString != null)
          {

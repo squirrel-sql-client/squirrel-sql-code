@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.sql.dbobj;
  */
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 /**
  * Describes one column in a set of columns that uniquely identifies a row in
  * a table.

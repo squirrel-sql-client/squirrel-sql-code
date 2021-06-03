@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.sql;
+package net.sourceforge.squirrel_sql.fw.sql.databasemetadata;
 
 /*
  * Copyright (C) 2002-2003 Colin Bell
@@ -27,6 +27,27 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.MetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
+import net.sourceforge.squirrel_sql.fw.sql.ResultSetColumnReader;
+import net.sourceforge.squirrel_sql.fw.sql.ResultSetDataSetDB2AIX64MetadataWrapper;
+import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
+import net.sourceforge.squirrel_sql.fw.sql.UDTInfo;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -43,7 +64,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -71,33 +91,7 @@ import java.util.TreeSet;
  */
 public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 {
-
-	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(SQLDatabaseMetaData.class);
-
-	/**
-	 * Full or partial names of various JDBC driivers that can be matched to <tt>getDriverName()</tt>.
-	 */
-	private interface IDriverNames
-	{
-		String AS400 = "AS/400 Toolbox for Java JDBC Driver";
-
-		/* work-around for bug which means we must use "dbo" for schema */
-		String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
-
-		String OPTA2000 = "i-net OPTA 2000";
-	}
-
-	public static class DriverMatch
-	{
-		private static final String COM_HTTX_DRIVER_PREFIX = "com.hxtt.sql.";
-
-		public static boolean isComHttxDriver(ISQLConnection con)
-		{
-			if (null == con) { return false; }
-			return con.getSQLDriver().getDriverClassName().startsWith(COM_HTTX_DRIVER_PREFIX);
-		}
-	}
 
 	/** Connection to database this class is supplying information for. */
 	private ISQLConnection _conn;
@@ -125,10 +119,12 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 * @throws IllegalArgumentException
 	 *            Thrown if null SQLConnection passed.
 	 */
-	protected SQLDatabaseMetaData(ISQLConnection conn)
+	public SQLDatabaseMetaData(ISQLConnection conn)
 	{
-		super();
-		if (conn == null) { throw new IllegalArgumentException("SQLDatabaseMetaData == null"); }
+		if (conn == null)
+		{
+			throw new IllegalArgumentException("SQLDatabaseMetaData == null");
+		}
 		_conn = conn;
 	}
 
@@ -661,7 +657,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getJDBCMetaData()
 	 */
-	public synchronized DatabaseMetaData getJDBCMetaData() throws SQLException
+	public DatabaseMetaData getJDBCMetaData() throws SQLException
 	{
 		return privateGetJDBCMetaData();
 	}
@@ -669,7 +665,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getMetaDataSet()
 	 */
-	public synchronized IDataSet getMetaDataSet() throws SQLException
+	public IDataSet getMetaDataSet() throws SQLException
 	{
 		return new MetaDataDataSet(privateGetJDBCMetaData());
 	}
@@ -749,59 +745,14 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getProcedures(java.lang.String,
 	 *      java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack)
 	 */
-	public synchronized IProcedureInfo[] getProcedures(String catalog, String schemaPattern,
-		String procedureNamePattern, ProgressCallBack progressCallBack) throws SQLException
+	public IProcedureInfo[] getProcedures(String catalog, String schemaPattern, String procedureNamePattern, ProgressCallBack progressCallBack)
+			throws SQLException
 	{
-		DatabaseMetaData md = privateGetJDBCMetaData();
-		ArrayList<ProcedureInfo> list = new ArrayList<ProcedureInfo>();
-		ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
-		if (rs != null)
-		{
-			int count = 0;
-			try
-			{
-				final int[] cols = new int[] { 1, 2, 3, 7, 8 };
-				DialectType dialectType = DialectFactory.getDialectType(this);
-				final ResultSetReader rdr = new ResultSetReader(rs, cols, dialectType);
-				Object[] row = null;
-				while ((row = rdr.readRow(BlockMode.INDIFFERENT)) != null)
-				{
-					// Sybase IQ using jdbc3 driver returns null for some procedure return types - this is probably
-					// outside the JDBC spec.
-					// The safest solution seems to be to set it to Unknown result type.
-					if (row[4] == null || false == row[4] instanceof Number)
-					{
-						if (row[4] != null)
-						{
-							s_log.warn("Error reading procedure meta data for column 8 (PROCEDURE_TYPE): " +
-                           "According to the API of java.sql.DatabaseMetaData.getProcedures(...) the type should be int but is " + row[4].getClass().getName() + " with value " + row[4]);
-						}
+		List<IProcedureInfo> procedureAndFunctionInfos = new ArrayList<>();
+		procedureAndFunctionInfos.addAll(ProcedureAndFunctionMetaData.getProcedureInfos(catalog, schemaPattern, procedureNamePattern, progressCallBack, this));
+		procedureAndFunctionInfos.addAll(ProcedureAndFunctionMetaData.getFunctionInfos(catalog, schemaPattern, procedureNamePattern, progressCallBack, this));
 
-						row[4] = DatabaseMetaData.procedureResultUnknown;
-
-					}
-					final int type = ((Number) row[4]).intValue();
-					ProcedureInfo pi =
-						new ProcedureInfo(getAsString(row[0]), getAsString(row[1]), getAsString(row[2]),
-							getAsString(row[3]), type, this);
-
-					list.add(pi);
-
-					if (null != progressCallBack)
-					{
-						if (0 == count++ % 200)
-						{
-							progressCallBack.currentlyLoading(pi.getSimpleName());
-						}
-					}
-				}
-			}
-			finally
-			{
-				SQLUtilities.closeResultSet(rs);
-			}
-		}
-		return list.toArray(new IProcedureInfo[list.size()]);
+		return procedureAndFunctionInfos.toArray(new IProcedureInfo[0]);
 	}
 
 	/**
@@ -817,7 +768,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 		// Use a set rather than a list as some combinations of MS SQL and the
 		// JDBC/ODBC return multiple copies of each table type.
-		final Set<String> tableTypes = new TreeSet<String>();
+		final Set<String> tableTypes = new TreeSet<>();
 		final ResultSet rs = md.getTableTypes();
 		if (rs != null)
 		{
@@ -924,7 +875,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 *      net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack)
 	 */
 	public synchronized ITableInfo[] getTables(String catalog, String schemaPattern, String tableNamePattern,
-		String[] types, ProgressCallBack progressCallBack) throws SQLException
+															 String[] types, ProgressCallBack progressCallBack) throws SQLException
 	{
 
 		final DatabaseMetaData md = privateGetJDBCMetaData();
@@ -1026,7 +977,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				}
 				ITableInfo tabInfo =
 					new TableInfo(tabResult.getString(1), tabResult.getString(2), tabResult.getString(3),
-						tabResult.getString(4), tblRemark, this);
+									  tabResult.getString(4), tblRemark, this);
 				if (nameMap != null)
 				{
 					nameMap.put(tabInfo.getSimpleName(), tabInfo);
@@ -1103,8 +1054,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			int count = 0;
 			while ((row = rdr.readRow(BlockMode.INDIFFERENT)) != null)
 			{
-				UDTInfo udtInfo = new UDTInfo(getAsString(row[0]), getAsString(row[1]), getAsString(row[2]),
-						getAsString(row[3]), getAsString(row[4]), getAsString(row[5]), this);
+				UDTInfo udtInfo = new UDTInfo(SQLDatabaseMetaDataUtil.getAsString(row[0]), SQLDatabaseMetaDataUtil.getAsString(row[1]), SQLDatabaseMetaDataUtil.getAsString(row[2]),
+						SQLDatabaseMetaDataUtil.getAsString(row[3]), SQLDatabaseMetaDataUtil.getAsString(row[4]), SQLDatabaseMetaDataUtil.getAsString(row[5]), this);
 
 				list.add(udtInfo);
 
@@ -1153,26 +1104,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 	}
 
-	private String getAsString(Object val)
-	{
-		if (null == val)
-		{
-			return null;
-		}
-		else
-		{
-			if (val instanceof String)
-			{
-				return (String) val;
-			}
-			else
-			{
-				return "" + val;
-			}
-		}
-
-	}
-
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getNumericFunctions()
 	 */
@@ -1182,7 +1113,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		String[] value = (String[]) _cache.get(key);
 		if (value != null) { return value; }
 
-		value = makeArray(privateGetJDBCMetaData().getNumericFunctions());
+		value = SQLDatabaseMetaDataUtil.makeArray(privateGetJDBCMetaData().getNumericFunctions());
 		_cache.put(key, value);
 		return value;
 	}
@@ -1196,7 +1127,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		String[] value = (String[]) _cache.get(key);
 		if (value != null) { return value; }
 
-		value = makeArray(privateGetJDBCMetaData().getStringFunctions());
+		value = SQLDatabaseMetaDataUtil.makeArray(privateGetJDBCMetaData().getStringFunctions());
 		_cache.put(key, value);
 		return value;
 	}
@@ -1210,7 +1141,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		String[] value = (String[]) _cache.get(key);
 		if (value != null) { return value; }
 
-		value = makeArray(privateGetJDBCMetaData().getSystemFunctions());
+		value = SQLDatabaseMetaDataUtil.makeArray(privateGetJDBCMetaData().getSystemFunctions());
 		_cache.put(key, value);
 		return value;
 	}
@@ -1224,7 +1155,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		String[] value = (String[]) _cache.get(key);
 		if (value != null) { return value; }
 
-		value = makeArray(privateGetJDBCMetaData().getTimeDateFunctions());
+		value = SQLDatabaseMetaDataUtil.makeArray(privateGetJDBCMetaData().getTimeDateFunctions());
 		_cache.put(key, value);
 		return value;
 	}
@@ -1238,7 +1169,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		String[] value = (String[]) _cache.get(key);
 		if (value != null) { return value; }
 
-		value = makeArray(privateGetJDBCMetaData().getSQLKeywords());
+		value = SQLDatabaseMetaDataUtil.makeArray(privateGetJDBCMetaData().getSQLKeywords());
 		_cache.put(key, value);
 		return value;
 	}
@@ -1465,7 +1396,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				if (!keys.containsKey(key))
 				{
 					keys.put(key, fki);
-					columns.put(key, new ArrayList<ForeignKeyColumnInfo>());
+					columns.put(key, new ArrayList<>());
 				}
 
 				ForeignKeyColumnInfo fkiCol =
@@ -1995,32 +1926,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
 	/**
-	 * Make a String array of the passed string. Commas separate the elements in the input string. The array is
-	 * sorted.
-	 * 
-	 * @param data
-	 *           Data to be split into the array.
-	 * @return data as an array.
-	 */
-	private static String[] makeArray(String data)
-	{
-		if (data == null)
-		{
-			data = "";
-		}
-
-		final List<String> list = new ArrayList<String>();
-		final StringTokenizer st = new StringTokenizer(data, ",");
-		while (st.hasMoreTokens())
-		{
-			list.add(st.nextToken().trim());
-		}
-		Collections.sort(list);
-
-		return list.toArray(new String[list.size()]);
-	}
-
-	/**
 	 * Return the <TT>DatabaseMetaData</TT> object for this connection.
 	 * 
 	 * @return The <TT>DatabaseMetaData</TT> object for this connection.
@@ -2029,7 +1934,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 */
 	private DatabaseMetaData privateGetJDBCMetaData() throws SQLException
 	{
-		checkThread();
 		return MetaDataTimeOutProxyFactory.wrap(_conn.getConnection().getMetaData());
 	}
 
@@ -2051,27 +1955,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		return buf.toString();
 	}
 
-	/**
-	 * Check the thread of the caller to see if it is the event dispatch thread and if we are debugging print a
-	 * debug log message with the call trace.
-	 */
-	private void checkThread()
-	{
-		/* This is extremely useful when trying to track down Swing UI freezing.
-		 * However, it currently fills the log which obscures other debug 
-		 * messages even though UI performance is acceptable, so it is commented 
-		 * out until it is needed later. 
-		if (s_log.isDebugEnabled() && SwingUtilities.isEventDispatchThread()) {
-		    try {
-		        throw new Exception("GUI Thread is doing database work");
-		    } catch (Exception e) {
-		        s_log.debug(e.getMessage(), e);
-		    }
-		}
-		*/
-	}
-
-   public synchronized String[] getDataTypesSimpleNames() throws SQLException
+	public synchronized String[] getDataTypesSimpleNames() throws SQLException
    {
       final DatabaseMetaData md = privateGetJDBCMetaData();
       final List<String> list = new ArrayList<>();

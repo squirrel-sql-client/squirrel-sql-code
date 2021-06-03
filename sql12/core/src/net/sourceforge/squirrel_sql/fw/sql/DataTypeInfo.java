@@ -1,4 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.sql;
+
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -36,7 +39,7 @@ public class DataTypeInfo extends DatabaseObjectInfo
 	private final int _maxScale;
 	private final int _numPrecRadix;
 
-	DataTypeInfo(String typeName, int dataType, int precision,
+	public DataTypeInfo(String typeName, int dataType, int precision,
 					String literalPrefix, String literalSuffix,
 					String createParams, int nullable, boolean caseSensitive,
 					int searchable, boolean unsigned, boolean money,

@@ -53,6 +53,10 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+#1416 To read procedures SQuirreL now calls java.sql.DataBaseMetaData.getFunctions(), too,
+   instead of java.sql.DataBaseMetaData.getProcedures() only.
+   From which method a procedure/function was read is displayed at the procedure's "Info" tab.
+
 Status bar: Memory display vanished on resizing SQuirreL's main window.
 
 Scripts Plugin: When scripting tables for MariaDB Decimal and Numeric columns where scripted without precision and scale.

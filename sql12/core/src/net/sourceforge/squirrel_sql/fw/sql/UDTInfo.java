@@ -18,19 +18,18 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+
 public class UDTInfo extends DatabaseObjectInfo implements IUDTInfo
 {
-    /** Java class name. */
 	private final String _javaClassName;
 
-	/** UDT Data Type. */
 	private final String _dataType;
 
-	/** UDT remarks. */
 	private final String _remarks;
 
-	UDTInfo(String catalog, String schema, String simpleName, String javaClassName,
-			String dataType, String remarks, SQLDatabaseMetaData md)
+	public UDTInfo(String catalog, String schema, String simpleName, String javaClassName,
+						String dataType, String remarks, SQLDatabaseMetaData md)
 	{
 		super(catalog, schema, simpleName, DatabaseObjectType.UDT, md);
 		_javaClassName = javaClassName;

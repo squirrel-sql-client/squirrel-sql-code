@@ -39,10 +39,11 @@ import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBackAdaptor;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.UDTInfo;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.DriverMatch;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -1032,7 +1033,7 @@ public class SchemaInfo
 
    private boolean fulfillsPlatformDependendMatches(ITableInfo iTableInfo, String catalog)
    {
-      if(SQLDatabaseMetaData.DriverMatch.isComHttxDriver(_session.getSQLConnection()))
+      if(DriverMatch.isComHttxDriver(_session.getSQLConnection()))
       {
          return ( iTableInfo.getCatalogName()==null && "\".\"".equals(catalog));
       }

@@ -10,20 +10,15 @@ package net.sourceforge.squirrel_sql.plugins.postgres;
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.*;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.plugin.*;
+import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
@@ -37,8 +32,14 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaDataFactory;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaDataFactory;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -49,8 +50,29 @@ import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresSequenceInodeEx
 import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresTableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresTableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.postgres.explain.ExplainExecuterPanel;
-import net.sourceforge.squirrel_sql.plugins.postgres.tab.*;
-import net.sourceforge.squirrel_sql.plugins.postgres.types.*;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.ActiveConnections;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexSourceTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.LockTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.ProcedureSourceTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.SequenceDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.TriggerDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.TriggerSourceTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.ViewSourceTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlArrayTypeDataTypeComponentFactory;
+import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlGeometryTypeDataTypeComponentFactory;
+import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlOtherTypeDataTypeComponentFactory;
+import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlUUIDTypeDataTypeComponentFactory;
+import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlXmlTypeDataTypeComponentFactory;
+
+import javax.swing.JMenu;
+import javax.swing.SwingUtilities;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The main controller class for the Postgres plugin.
