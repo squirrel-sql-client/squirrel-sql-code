@@ -17,13 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.sqlparam;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetCommand;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
@@ -33,6 +26,12 @@ import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.SQLCommentRemover;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlparam.gui.AskParamValueDialog;
+
+import javax.swing.SwingUtilities;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This listener listens for SQL execution.
@@ -91,9 +90,8 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
 //      // Removes /*  */ comments
 //      sql = sql.replaceAll("\\/\\*(.|\\s)*?\\*\\/", "");
 
-      sql = SQLCommentRemover.removeComments(sql);
-
-      StringBuffer buffer = new StringBuffer(sql);
+      final String workSql = SQLCommentRemover.removeComments(sql);
+      StringBuffer buffer = new StringBuffer(workSql);
       Map<String, String> cache = _plugin.getCache();
       Map<String, String> currentCache = new HashMap<>();
       Pattern p = Pattern.compile("[\\ \\(]:[a-zA-Z]\\w+");

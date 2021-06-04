@@ -50,8 +50,10 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
   NOTE: As a consequence of these changes the minimum required is Java 11.
 
 
-
 Bug fixes:
+
+SQLParam Plugin: When installed the Plugin removed SQL comments
+  even when the SQL didn't contain any parameters were replaced.
 
 #1416 To read procedures SQuirreL now calls java.sql.DataBaseMetaData.getFunctions(), too,
    instead of java.sql.DataBaseMetaData.getProcedures() only.
