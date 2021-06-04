@@ -20,19 +20,19 @@ package net.sourceforge.squirrel_sql.plugins.netezza.tokenizer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.regex.Pattern;
 
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
 import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.regex.Pattern;
 
 /**
  * This class is loaded by the Netezza Plugin and registered with all Netezza Sessions as the query tokenizer
@@ -53,7 +53,7 @@ public class NetezzaQueryTokenizer extends QueryTokenizer implements IQueryToken
 
 	public NetezzaQueryTokenizer(IQueryTokenizerPreferenceBean prefs)
 	{
-		super(prefs.getStatementSeparator(), prefs.getLineComment(), prefs.isRemoveMultiLineComments());
+		super(prefs.getStatementSeparator(), prefs.getLineComment(), prefs.isRemoveMultiLineComments(), prefs.isRemoveLineComments());
 		_prefs = prefs;
 	}
 
@@ -87,13 +87,7 @@ public class NetezzaQueryTokenizer extends QueryTokenizer implements IQueryToken
 	 */
 	protected void setFactory()
 	{
-		_tokenizerFactory = new ITokenizerFactory()
-		{
-			public IQueryTokenizer getTokenizer()
-			{
-				return new NetezzaQueryTokenizer(_prefs);
-			}
-		};
+		_tokenizerFactory = () -> new NetezzaQueryTokenizer(_prefs);
 	}
 
 	/**
@@ -217,6 +211,7 @@ public class NetezzaQueryTokenizer extends QueryTokenizer implements IQueryToken
 		{
 			TokenizerSessPropsInteractions ret = new TokenizerSessPropsInteractions();
 			ret.setTokenizerDefinesRemoveMultiLineComment(true);
+			ret.setTokenizerDefinesRemoveLineComment(true);
 			ret.setTokenizerDefinesStartOfLineComment(true);
 			ret.setTokenizerDefinesStatementSeparator(true);
 

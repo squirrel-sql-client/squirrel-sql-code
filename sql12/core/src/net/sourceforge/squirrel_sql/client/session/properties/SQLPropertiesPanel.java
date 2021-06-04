@@ -51,8 +51,9 @@ class SQLPropertiesPanel extends JPanel
 
    private JTextField _stmtSepField = new JTextField(5);
    private JTextField _solCommentField = new JTextField(2);
-   // i18n[SessionSQLPropertiesPanel.removeMultiLineComment=Remove multi line comment (/*...*/) from SQL before sending to database]
+
    private JCheckBox _removeMultiLineComment = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.removeMultiLineComment"));
+   private JCheckBox _removeLineComment = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.removeLineComment"));
 
    private JCheckBox _limitSQLResultTabsChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.limitsqlresulttabs"));
    private IntegerField _limitSQLResultTabsField = new IntegerField(5);
@@ -125,7 +126,7 @@ class SQLPropertiesPanel extends JPanel
             _solCommentField.setEditable(true);
          }
 
-         if (qtp.isTokenizerDefinesStatementSeparator())
+         if (qtp.isTokenizerDefinesRemoveMultiLineComment())
          {
             _removeMultiLineComment.setSelected(queryTokenizer.isRemoveMultiLineComment());
             _removeMultiLineComment.setEnabled(false);
@@ -135,12 +136,24 @@ class SQLPropertiesPanel extends JPanel
             _removeMultiLineComment.setSelected(props.getRemoveMultiLineComment());
             _removeMultiLineComment.setEnabled(true);
          }
+
+         if (qtp.isTokenizerDefinesRemoveLineComment())
+         {
+            _removeLineComment.setSelected(queryTokenizer.isRemoveLineComment());
+            _removeLineComment.setEnabled(false);
+         }
+         else
+         {
+            _removeLineComment.setSelected(props.getRemoveLineComment());
+            _removeLineComment.setEnabled(true);
+         }
       }
       else
       {
          _stmtSepField.setText(props.getSQLStatementSeparator());
          _solCommentField.setText(props.getStartOfLineComment());
          _removeMultiLineComment.setSelected(props.getRemoveMultiLineComment());
+         _removeLineComment.setSelected(props.getRemoveLineComment());
       }
 
       _shareSQLHistoryChk.setSelected(props.getSQLShareHistory());
@@ -188,6 +201,7 @@ class SQLPropertiesPanel extends JPanel
       props.setSQLStatementSeparator(_stmtSepField.getText());
       props.setStartOfLineComment(_solCommentField.getText());
       props.setRemoveMultiLineComment(_removeMultiLineComment.isSelected());
+      props.setRemoveLineComment(_removeLineComment.isSelected());
 
       props.setFontInfo(_fontBtn.getFontInfo());
 
@@ -359,6 +373,10 @@ class SQLPropertiesPanel extends JPanel
       gbc.gridwidth = 4;
       pnl.add(_removeMultiLineComment, gbc);
 
+      ++gbc.gridy; // new line
+      gbc.gridx = 0;
+      gbc.gridwidth = 4;
+      pnl.add(_removeLineComment, gbc);
 
       return pnl;
    }

@@ -19,20 +19,19 @@
 
 package net.sourceforge.squirrel_sql.plugins.netezza.prefs;
 
-import java.io.Serializable;
-
 import net.sourceforge.squirrel_sql.fw.preferences.BaseQueryTokenizerPreferenceBean;
+
+import java.io.Serializable;
 
 public class NetezzaPreferenceBean extends BaseQueryTokenizerPreferenceBean implements Cloneable, Serializable
 {
-	private static final long serialVersionUID = 8799498411960415923L;
-
-	public NetezzaPreferenceBean() {
-		super();
+	public NetezzaPreferenceBean()
+	{
 		statementSeparator = ";";
 		procedureSeparator = "ENDPROC";
 		lineComment = "--";
 		removeMultiLineComments = false;
+		removeLineComments = true;
 		installCustomQueryTokenizer = true;
 	}
 

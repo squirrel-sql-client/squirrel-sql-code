@@ -18,87 +18,52 @@
  */
 package net.sourceforge.squirrel_sql.fw.preferences;
 
-public interface IQueryTokenizerPreferenceBean {
+public interface IQueryTokenizerPreferenceBean
+{
 
-    /**
-     * @param statementSeparator the statementSeparator to set
-     */
     void setStatementSeparator(String statementSeparator);
 
-    /**
-     * @return the statementSeparator
-     */
     String getStatementSeparator();
 
-    /**
-     * @param procedureSeparator the procedureSeparator to set
-     */
     void setProcedureSeparator(String procedureSeparator);
 
-    /**
-     * @return the procedureSeparator
-     */
     String getProcedureSeparator();
 
-    /**
-     * @param lineComment the lineComment to set
-     */
     void setLineComment(String lineComment);
 
-    /**
-     * @return the lineComment
-     */
     String getLineComment();
 
-    /**
-     * @param removeMultiLineComments the removeMultiLineComments to set
-     */
     void setRemoveMultiLineComments(boolean removeMultiLineComments);
 
-    /**
-     * @return the removeMultiLineComments
-     */
     boolean isRemoveMultiLineComments();
 
-    /**
-     * @param installCustomQueryTokenizer the installCustomQueryTokenizer to set
-     */
+    boolean isRemoveLineComments();
+
+    void setRemoveLineComments(boolean removeLineComments);
+
     void setInstallCustomQueryTokenizer(boolean installCustomQueryTokenizer);
 
-    /**
-     * @return the installCustomQueryTokenizer
-     */
     boolean isInstallCustomQueryTokenizer();
 
     /**
      * Retrieve the client to use. This is only used if <TT>useAnonymousClient</TT>
      * is false.
-     * 
-     * @return Client name.
      */
     String getClientName();
     
     /**
      * Set the client name.
-     * 
-     * @param value
-     *            Client name
      */
     void setClientName(String value);
 
     /**
      * Retrieve the client version to use. This is only used if <TT>useAnonymousLogon</TT>
      * is false.
-     * 
-     * @return Client version.
      */
     String getClientVersion();
     
     /**
      * Set the client version.
-     * 
-     * @param value
-     *            Client version
      */
     void setClientVersion(String value);
     

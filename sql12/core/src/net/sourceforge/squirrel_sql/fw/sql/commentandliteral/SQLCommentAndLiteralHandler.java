@@ -15,17 +15,19 @@ public class SQLCommentAndLiteralHandler
    private String _script;
    private String _lineCommentBegin;
    private boolean _removeMultiLineComment;
+   private boolean _removeLineComment;
 
    private boolean _isInLiteral = false;
    private boolean _isInMultiLineComment = false;
    private boolean _isInLineComment = false;
    private int _literalSepCount = 0;
 
-   public SQLCommentAndLiteralHandler(String script, String lineCommentBegin, boolean removeMultiLineComment)
+   public SQLCommentAndLiteralHandler(String script, String lineCommentBegin, boolean removeMultiLineComment, boolean removeLineComment)
    {
       _script = script;
       _lineCommentBegin = lineCommentBegin;
       _removeMultiLineComment = removeMultiLineComment;
+      _removeLineComment = removeLineComment;
    }
 
    public NextPositionAction nextPosition(int posInScript)
@@ -65,7 +67,7 @@ public class SQLCommentAndLiteralHandler
             _isInLineComment = _script.startsWith(_lineCommentBegin, posInScript);
          }
 
-         if((_isInMultiLineComment && _removeMultiLineComment) || _isInLineComment)
+         if((_isInMultiLineComment && _removeMultiLineComment) || (_isInLineComment && _removeLineComment))
          {
             // This is responsible that comments are not in curQuery
             // curOriginalQuery.append(c);

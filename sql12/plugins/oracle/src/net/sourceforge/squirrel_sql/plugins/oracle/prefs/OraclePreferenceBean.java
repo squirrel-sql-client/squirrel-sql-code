@@ -18,18 +18,17 @@ package net.sourceforge.squirrel_sql.plugins.oracle.prefs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.Serializable;
-import java.util.TimeZone;
 
 import net.sourceforge.squirrel_sql.fw.preferences.BaseQueryTokenizerPreferenceBean;
+
+import java.io.Serializable;
+import java.util.TimeZone;
 
 /**
  * A bean class to store preferences for the Oracle plugin.
  */
-public class OraclePreferenceBean extends BaseQueryTokenizerPreferenceBean implements Cloneable, Serializable {
-
-    static final long serialVersionUID = 5818886723165356478L;
-
+public class OraclePreferenceBean extends BaseQueryTokenizerPreferenceBean implements Cloneable, Serializable
+{
     static final String UNSUPPORTED = "Unsupported";
 
     private boolean excludeRecycleBinTables = true;
@@ -40,12 +39,13 @@ public class OraclePreferenceBean extends BaseQueryTokenizerPreferenceBean imple
     
     private String sessionTimezone = TimeZone.getDefault().getID();
     
-    public OraclePreferenceBean() {
-        super();
+    public OraclePreferenceBean()
+    {
         statementSeparator = ";";
         procedureSeparator = "/";
         lineComment = "--";
         removeMultiLineComments = false;
+        removeLineComments = true;
         installCustomQueryTokenizer = true;
     }
 

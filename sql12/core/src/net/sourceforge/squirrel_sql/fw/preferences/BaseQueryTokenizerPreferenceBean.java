@@ -25,10 +25,10 @@ public class BaseQueryTokenizerPreferenceBean implements IQueryTokenizerPreferen
 {
 
 	/** Client Name. */
-	protected String clientName;
+	private String clientName;
 
 	/** Client version. */
-	protected String clientVersion;
+	private String clientVersion;
 
 	protected String statementSeparator = ";";
 
@@ -37,6 +37,8 @@ public class BaseQueryTokenizerPreferenceBean implements IQueryTokenizerPreferen
 	protected String lineComment = "--";
 
 	protected boolean removeMultiLineComments = false;
+
+	protected boolean removeLineComments = true;
 
 	protected boolean installCustomQueryTokenizer = true;
 
@@ -135,23 +137,28 @@ public class BaseQueryTokenizerPreferenceBean implements IQueryTokenizerPreferen
 		this.lineComment = lineComment;
 	}
 
-	/**
-	 * @return the removeMultiLineComments
-	 */
 	@Override
 	public boolean isRemoveMultiLineComments()
 	{
 		return removeMultiLineComments;
 	}
 
-	/**
-	 * @param removeMultiLineComments
-	 *           the removeMultiLineComments to set
-	 */
 	@Override
 	public void setRemoveMultiLineComments(boolean removeMultiLineComments)
 	{
 		this.removeMultiLineComments = removeMultiLineComments;
+	}
+
+	@Override
+	public boolean isRemoveLineComments()
+	{
+		return removeLineComments;
+	}
+
+	@Override
+	public void setRemoveLineComments(boolean removeLineComments)
+	{
+		this.removeLineComments = removeLineComments;
 	}
 
 	@Override

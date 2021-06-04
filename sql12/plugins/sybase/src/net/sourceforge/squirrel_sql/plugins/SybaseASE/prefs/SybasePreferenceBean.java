@@ -17,40 +17,32 @@ package net.sourceforge.squirrel_sql.plugins.SybaseASE.prefs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
+
+import java.io.Serializable;
 
 /**
  * A bean class to store preferences for the Sybase plugin.
  */
-public class SybasePreferenceBean implements Cloneable, 
-                                             Serializable,
-                                             IQueryTokenizerPreferenceBean {
-    
-	static final long serialVersionUID = 3722068008392095286L;
+public class SybasePreferenceBean implements Cloneable, Serializable, IQueryTokenizerPreferenceBean
+{
+	static final String UNSUPPORTED = "Unsupported";
 
-    static final String UNSUPPORTED = "Unsupported";
-
-    /** Client Name. */
 	private String _clientName;
 
-	/** Client version. */
 	private String _clientVersion;
-    
-    private String statementSeparator = "GO";
-    
-    private String procedureSeparator = "GO";
-    
-    private String lineComment = "--";
-    
-    private boolean removeMultiLineComments = false;
-    
-    private boolean installCustomQueryTokenizer = true;    
-    
-	public SybasePreferenceBean() {
-		super();
-	}
+
+	private String statementSeparator = "GO";
+
+	private String procedureSeparator = "GO";
+
+	private String lineComment = "--";
+
+	private boolean removeMultiLineComments = false;
+	private boolean removeLineComments = true;
+
+	private boolean installCustomQueryTokenizer = true;
 
 	/**
 	 * Return a copy of this object.
@@ -143,7 +135,19 @@ public class SybasePreferenceBean implements Cloneable,
         return removeMultiLineComments;
     }
 
-    /**
+	@Override
+	public boolean isRemoveLineComments()
+	{
+		return removeLineComments;
+	}
+
+	@Override
+	public void setRemoveLineComments(boolean removeLineComments)
+	{
+		this.removeLineComments = removeLineComments;
+	}
+
+	/**
      * @param installCustomQueryTokenizer the installCustomQueryTokenizer to set
      */
     public void setInstallCustomQueryTokenizer(boolean installCustomQueryTokenizer) {
@@ -170,8 +174,5 @@ public class SybasePreferenceBean implements Cloneable,
     public void setProcedureSeparator(String procedureSeparator) {
         this.procedureSeparator = procedureSeparator;
     }
-
-    
-	
 }
 

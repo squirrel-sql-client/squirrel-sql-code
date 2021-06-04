@@ -35,12 +35,13 @@ import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 public class DerbyQueryTokenizer extends QueryTokenizer implements IQueryTokenizer
 {
     private static final String DERBY_SCRIPT_INCLUDE_PREFIX = "run ";
-    
-	public DerbyQueryTokenizer(String sep, 
-                               String linecomment, 
-                               boolean removeMultiLineComment) 
+
+   public DerbyQueryTokenizer(String sep,
+                              String linecomment,
+                              boolean removeMultiLineComment,
+                              boolean removeLineComment)
 	{
-        super(sep, linecomment, removeMultiLineComment);
+        super(sep, linecomment, removeMultiLineComment, removeLineComment);
 	}
 
     public void setScriptToTokenize(String script) {
@@ -62,7 +63,8 @@ public class DerbyQueryTokenizer extends QueryTokenizer implements IQueryTokeniz
 	            return new DerbyQueryTokenizer(
                                 DerbyQueryTokenizer.this._querySep,
                                 DerbyQueryTokenizer.this._lineCommentBegin,
-                                DerbyQueryTokenizer.this._removeMultiLineComment);
+                                DerbyQueryTokenizer.this._removeMultiLineComment,
+                                DerbyQueryTokenizer.this._removeLineComment);
             }
         };
     }

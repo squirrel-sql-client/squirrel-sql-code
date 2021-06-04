@@ -20,9 +20,6 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tokenizer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.regex.Pattern;
 
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
@@ -32,6 +29,10 @@ import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.regex.Pattern;
 
 /**
  * This class is loaded by the Oracle Plugin and registered with all Oracle Sessions as the query tokenizer if
@@ -45,7 +46,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokenizer
 {
-	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(OracleQueryTokenizer.class);
 
 	private static final String PROCEDURE_PATTERN =
@@ -94,7 +94,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 
 	public OracleQueryTokenizer(IQueryTokenizerPreferenceBean prefs)
 	{
-		super(prefs.getStatementSeparator(), prefs.getLineComment(), prefs.isRemoveMultiLineComments());
+		super(prefs.getStatementSeparator(), prefs.getLineComment(), prefs.isRemoveMultiLineComments(), prefs.isRemoveLineComments());
 		_prefs = prefs;
 	}
 
@@ -348,6 +348,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
       {
          TokenizerSessPropsInteractions ret = new TokenizerSessPropsInteractions();
          ret.setTokenizerDefinesRemoveMultiLineComment(true);
+         ret.setTokenizerDefinesRemoveLineComment(true);
          ret.setTokenizerDefinesStartOfLineComment(true);
          ret.setTokenizerDefinesStatementSeparator(true);
          

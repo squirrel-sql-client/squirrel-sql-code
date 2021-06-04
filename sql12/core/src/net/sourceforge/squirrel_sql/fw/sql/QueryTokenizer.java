@@ -44,6 +44,7 @@ public class QueryTokenizer implements IQueryTokenizer
    protected String _lineCommentBegin = null;
 
    protected boolean _removeMultiLineComment = true;
+   protected boolean _removeLineComment = true;
 
    protected ITokenizerFactory _tokenizerFactory = null;
 
@@ -58,17 +59,19 @@ public class QueryTokenizer implements IQueryTokenizer
 
    public QueryTokenizer(String querySep,
                          String lineCommentBegin,
-                         boolean removeMultiLineComment)
+                         boolean removeMultiLineComment,
+                         boolean removeLineComment)
    {
       _querySep = querySep;
       _lineCommentBegin = lineCommentBegin;
       _removeMultiLineComment = removeMultiLineComment;
+      _removeLineComment = removeLineComment;
       setFactory();
    }
 
    public QueryTokenizer(IQueryTokenizerPreferenceBean prefs)
    {
-      this(prefs.getStatementSeparator(), prefs.getLineComment(), prefs.isRemoveMultiLineComments());
+      this(prefs.getStatementSeparator(), prefs.getLineComment(), prefs.isRemoveMultiLineComments(), prefs.isRemoveLineComments());
    }
 
    /**
@@ -163,7 +166,7 @@ public class QueryTokenizer implements IQueryTokenizer
         StringBuffer curOriginalQuery = new StringBuffer();
 
 
-       SQLCommentAndLiteralHandler commentAndLiteralHandler = new SQLCommentAndLiteralHandler(script, _lineCommentBegin, _removeMultiLineComment);
+       SQLCommentAndLiteralHandler commentAndLiteralHandler = new SQLCommentAndLiteralHandler(script, _lineCommentBegin, _removeMultiLineComment, _removeLineComment);
 
         for (int i = 0; i < script.length(); ++i)
         {
@@ -237,7 +240,7 @@ public class QueryTokenizer implements IQueryTokenizer
 
 
         
-        QueryTokenizer qt = new QueryTokenizer("GO", "--", true);
+        QueryTokenizer qt = new QueryTokenizer("GO", "--", true, true);
 
         qt.setScriptToTokenize(sql);
         
@@ -290,18 +293,27 @@ public class QueryTokenizer implements IQueryTokenizer
    }
 
    @Override
+   public boolean isRemoveLineComment()
+   {
+      return _removeLineComment;
+   }
+
+   @Override
    public TokenizerSessPropsInteractions getTokenizerSessPropsInteractions()
    {
       return new TokenizerSessPropsInteractions();
    }
 
-   /**
-     * @param multiLineComment the _removeMultiLineComment to set
-     */
-    public void setRemoveMultiLineComment(boolean multiLineComment) {
-        _removeMultiLineComment = multiLineComment;
-    }
-    
+   public void setRemoveMultiLineComment(boolean multiLineComment)
+   {
+      _removeMultiLineComment = multiLineComment;
+   }
+
+   public void setRemoveLineComment(boolean removeLineComment)
+   {
+      _removeLineComment = removeLineComment;
+   }
+
     /** 
      * This uses statements that begin with scriptIncludePrefix to indicate 
      * that the following text is a filename containing SQL statements that 
@@ -409,7 +421,7 @@ public class QueryTokenizer implements IQueryTokenizer
          }
          else
          {
-            qt = new QueryTokenizer(_querySep, _lineCommentBegin,_removeMultiLineComment);
+            qt = new QueryTokenizer(_querySep, _lineCommentBegin,_removeMultiLineComment,_removeLineComment);
          }
          qt.setScriptToTokenize(fileLines.toString());
          while (qt.hasQuery())

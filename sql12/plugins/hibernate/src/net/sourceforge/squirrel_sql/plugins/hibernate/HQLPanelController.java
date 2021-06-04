@@ -8,8 +8,10 @@ import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -80,7 +82,7 @@ public class HQLPanelController
       final IQueryTokenizer queryTokenizer = _sess.getQueryTokenizer();
       final String statementSeparator = queryTokenizer.getSQLStatementSeparator();
       final String startOfLineComment = queryTokenizer.getLineCommentBegin();
-      QueryTokenizer qt = new QueryTokenizer(statementSeparator, startOfLineComment, true);
+      QueryTokenizer qt = new QueryTokenizer(statementSeparator, startOfLineComment, true, true);
       qt.setScriptToTokenize(hql);
 
 

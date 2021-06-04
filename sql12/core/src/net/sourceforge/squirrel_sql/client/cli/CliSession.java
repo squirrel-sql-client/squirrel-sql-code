@@ -46,7 +46,11 @@ public class CliSession extends CliSessionAdapter
 
 
          _sessionProperties = Main.getApplication().getSquirrelPreferences().getSessionProperties();
-         _tokenizer = new QueryTokenizer(_sessionProperties.getSQLStatementSeparator(), _sessionProperties.getStartOfLineComment(), _sessionProperties.getRemoveMultiLineComment());
+
+         _tokenizer = new QueryTokenizer(_sessionProperties.getSQLStatementSeparator(),
+                                         _sessionProperties.getStartOfLineComment(),
+                                         _sessionProperties.getRemoveMultiLineComment(),
+                                         _sessionProperties.getRemoveLineComment());
 
       }
       catch (Exception e)

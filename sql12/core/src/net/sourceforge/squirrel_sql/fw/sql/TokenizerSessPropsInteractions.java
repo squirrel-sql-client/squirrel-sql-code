@@ -5,6 +5,7 @@ public class TokenizerSessPropsInteractions
    boolean _tokenizerDefinesStatementSeparator = false;
    boolean _tokenizerDefinesStartOfLineComment = false;
    boolean _tokenizerDefinesRemoveMultiLineComment = false;
+   boolean _tokenizerDefinesRemoveLineComment = false;
 
    public boolean isTokenizerDefinesStatementSeparator()
    {
@@ -34,5 +35,15 @@ public class TokenizerSessPropsInteractions
    public void setTokenizerDefinesRemoveMultiLineComment(boolean tokenizerDefinesRemoveMultiLineComment)
    {
       _tokenizerDefinesRemoveMultiLineComment = tokenizerDefinesRemoveMultiLineComment;
+   }
+
+   public boolean isTokenizerDefinesRemoveLineComment()
+   {
+      return _tokenizerDefinesRemoveLineComment;
+   }
+
+   public void setTokenizerDefinesRemoveLineComment(boolean tokenizerDefinesRemoveLineComment)
+   {
+      _tokenizerDefinesRemoveLineComment = tokenizerDefinesRemoveLineComment;
    }
 }

@@ -19,9 +19,9 @@ package net.sourceforge.squirrel_sql.plugins.SybaseASE.tokenizer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -38,10 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SybaseQueryTokenizer extends QueryTokenizer implements IQueryTokenizer
 {
-    /** Logger for this class. */
-    @SuppressWarnings("unused")
-    private final static ILogger s_log =
-        LoggerController.createLogger(SybaseQueryTokenizer.class);
+    private final static ILogger s_log = LoggerController.createLogger(SybaseQueryTokenizer.class);
     
     /** the preference bean */
     private IQueryTokenizerPreferenceBean _prefs = null;
@@ -52,22 +49,20 @@ public class SybaseQueryTokenizer extends QueryTokenizer implements IQueryTokeni
         _prefs = prefs;
 	}
 
-    public void setScriptToTokenize(String script) {
-        super.setScriptToTokenize(script);
-        _queryIterator = _queries.iterator();
-    }
+   public void setScriptToTokenize(String script)
+   {
+      super.setScriptToTokenize(script);
+      _queryIterator = _queries.iterator();
+   }
     
     /**
      * Sets the ITokenizerFactory which is used to create additional instances
      * of the IQueryTokenizer - this is used for handling file includes
      * recursively.  
-     */    
-	protected void setFactory() {
-	    _tokenizerFactory = new ITokenizerFactory() {
-	        public IQueryTokenizer getTokenizer() {
-	            return new SybaseQueryTokenizer(_prefs);
-            }
-        };
+     */
+    protected void setFactory()
+    {
+       _tokenizerFactory = () -> new SybaseQueryTokenizer(_prefs);
     }
 
    @Override
@@ -77,6 +72,7 @@ public class SybaseQueryTokenizer extends QueryTokenizer implements IQueryTokeni
       {
          TokenizerSessPropsInteractions ret = new TokenizerSessPropsInteractions();
          ret.setTokenizerDefinesRemoveMultiLineComment(true);
+         ret.setTokenizerDefinesRemoveLineComment(true);
          ret.setTokenizerDefinesStartOfLineComment(true);
          ret.setTokenizerDefinesStatementSeparator(true);
          

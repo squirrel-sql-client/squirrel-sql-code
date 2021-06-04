@@ -18,12 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.client.plugin.gui;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -33,11 +31,12 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-
-import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
-import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * This can be used (or subclassed) to provide a plugin-specific preference panel geared toward storing custom
@@ -66,11 +65,14 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 
 		// i18n[PreferencesPanel.removeMultiLineCommentLabel=Remove multi-line
 		// comments (/*...*/) from SQL before executing
-		String REMOVE_ML_COMMENT_LABEL = s_stringMgr.getString("PreferencesPanel.removeMultiLineCommentLabel");
+		String REMOVE_MULTILINE_COMMENT_LABEL = s_stringMgr.getString("PreferencesPanel.removeMultiLineCommentLabel");
+
+		String REMOVE_LINE_COMMENT_LABEL = s_stringMgr.getString("PreferencesPanel.removeLineCommentLabel");
 
 		// i18n[PreferencesPanel.removeMultiLineCommentLabelTipText=]
-		String REMOVE_ML_COMMENT_LABEL_TT =
-			s_stringMgr.getString("PreferencesPanel.removeMultiLineCommentLabelTipText");
+		String REMOVE_MULTILINE_COMMENT_LABEL_TT = s_stringMgr.getString("PreferencesPanel.removeMultiLineCommentLabelTipText");
+
+		String REMOVE_LINE_COMMENT_LABEL_TT = s_stringMgr.getString("PreferencesPanel.removeLineCommentLabelTipText");
 
 		// i18n[PreferencesPanel.statementSeparatorLabel=Statement Separator]
 		String STMT_SEP_LABEL = s_stringMgr.getString("PreferencesPanel.statementSeparatorLabel");
@@ -104,6 +106,7 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 	protected JLabel useCustomQTLabel = null;
 
 	protected JCheckBox removeMultiLineCommentCheckBox = null;
+	protected JCheckBox removeLineCommentCheckBox = null;
 
 	protected JTextField lineCommentTextField = null;
 
@@ -171,28 +174,28 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 
 	protected JPanel createTopPanel()
 	{
-		JPanel result = new JPanel(new GridBagLayout());
+		JPanel panel = new JPanel(new GridBagLayout());
 		// i18n[PreferencesPanel.borderLabel={0} Script Settings]
 		String borderLabel = s_stringMgr.getString("PreferencesPanel.borderLabel", _databaseName);
-		result.setBorder(getTitledBorder(borderLabel));
+		panel.setBorder(getTitledBorder(borderLabel));
 
-		addUseCustomQTCheckBox(result, 0, lastY++);
+		addUseCustomQTCheckBox(panel, 0, lastY++);
 
-		addLineCommentLabel(result, 0, lastY);
-		addLineCommentTextField(result, 1, lastY++);
+		addLineCommentLabel(panel, 0, lastY);
+		addLineCommentTextField(panel, 1, lastY++);
 
-		addStatementSeparatorLabel(result, 0, lastY);
-		addStatementSeparatorTextField(result, 1, lastY++);
+		addStatementSeparatorLabel(panel, 0, lastY);
+		addStatementSeparatorTextField(panel, 1, lastY++);
 
 		if (_showProcSep)
 		{
-			addProcedureSeparatorLabel(result, 0, lastY);
-			addProcedureSeparatorTextField(result, 1, lastY++);
+			addProcedureSeparatorLabel(panel, 0, lastY);
+			addProcedureSeparatorTextField(panel, 1, lastY++);
 		}
 
-		addRemoveMultiLineCommentCheckBox(result, 0, lastY++);
-
-		return result;
+		addRemoveMultiLineCommentCheckBox(panel, 0, lastY++);
+		addRemoveLineCommentCheckBox(panel, 0, lastY++);
+		return panel;
 	}
 
 	private void addUseCustomQTCheckBox(JPanel panel, int col, int row)
@@ -221,13 +224,29 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = col;
 		c.gridy = row;
+		c.anchor = GridBagConstraints.WEST;
 		c.gridwidth = 2; // Span across two columns
 		c.insets = new Insets(5, 30, 0, 0);
-		String cbLabel = i18n.REMOVE_ML_COMMENT_LABEL;
+		String cbLabel = i18n.REMOVE_MULTILINE_COMMENT_LABEL;
 		removeMultiLineCommentCheckBox = new JCheckBox(cbLabel);
 		removeMultiLineCommentCheckBox.setName("removeMultiLineCommentCheckBox");
-		removeMultiLineCommentCheckBox.setToolTipText(i18n.REMOVE_ML_COMMENT_LABEL_TT);
+		removeMultiLineCommentCheckBox.setToolTipText(i18n.REMOVE_MULTILINE_COMMENT_LABEL_TT);
 		panel.add(removeMultiLineCommentCheckBox, c);
+	}
+
+	private void addRemoveLineCommentCheckBox(JPanel panel, int col, int row)
+	{
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = col;
+		c.gridy = row;
+		c.gridwidth = 2; // Span across two columns
+		c.anchor = GridBagConstraints.WEST;
+		c.insets = new Insets(5, 30, 0, 0);
+		String cbLabel = i18n.REMOVE_LINE_COMMENT_LABEL;
+		removeLineCommentCheckBox = new JCheckBox(cbLabel);
+		removeLineCommentCheckBox.setName("removeLineCommentCheckBox");
+		removeLineCommentCheckBox.setToolTipText(i18n.REMOVE_LINE_COMMENT_LABEL_TT);
+		panel.add(removeLineCommentCheckBox, c);
 	}
 
 	private void addStatementSeparatorLabel(JPanel panel, int col, int row)
@@ -293,6 +312,7 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 		c.gridx = col;
 		c.gridy = row;
 		c.insets = new Insets(5, LEFT_INDENT_INSET_SIZE, 0, 0);
+		c.anchor = GridBagConstraints.WEST;
 		procedureSeparatorLabel = new JLabel(i18n.PROC_SEP_LABEL);
 		procedureSeparatorLabel.setHorizontalAlignment(JLabel.RIGHT);
 		procedureSeparatorLabel.setToolTipText(i18n.PROC_SEP_LABEL_TT);
@@ -323,6 +343,7 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 	{
 		IQueryTokenizerPreferenceBean _prefs = _prefsManager.getPreferences();
 		removeMultiLineCommentCheckBox.setSelected(_prefs.isRemoveMultiLineComments());
+		removeLineCommentCheckBox.setSelected(_prefs.isRemoveLineComments());
 		lineCommentTextField.setText(_prefs.getLineComment());
 		statementSeparatorTextField.setText(_prefs.getStatementSeparator());
 		if (_showProcSep)
@@ -337,6 +358,7 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 	{
 		IQueryTokenizerPreferenceBean _prefs = _prefsManager.getPreferences();
 		_prefs.setRemoveMultiLineComments(removeMultiLineCommentCheckBox.isSelected());
+		_prefs.setRemoveLineComments(removeLineCommentCheckBox.isSelected());
 		_prefs.setLineComment(lineCommentTextField.getText());
 		_prefs.setStatementSeparator(statementSeparatorTextField.getText());
 		if (_showProcSep)
@@ -368,6 +390,7 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 		if (useCustomQTCheckBox.isSelected())
 		{
 			removeMultiLineCommentCheckBox.setEnabled(true);
+			removeLineCommentCheckBox.setEnabled(true);
 			lineCommentTextField.setEnabled(true);
 			lineCommentLabel.setEnabled(true);
 			statementSeparatorTextField.setEnabled(true);
@@ -381,6 +404,7 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 		else
 		{
 			removeMultiLineCommentCheckBox.setEnabled(false);
+			removeLineCommentCheckBox.setEnabled(false);
 			lineCommentTextField.setEnabled(false);
 			lineCommentLabel.setEnabled(false);
 			statementSeparatorTextField.setEnabled(false);

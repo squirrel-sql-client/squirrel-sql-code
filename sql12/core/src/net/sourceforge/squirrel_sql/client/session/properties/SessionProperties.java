@@ -17,12 +17,6 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Font;
-import java.beans.PropertyChangeListener;
-import java.io.Serializable;
-
-import javax.swing.JSplitPane;
-import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
@@ -31,6 +25,12 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.ISessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+
+import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
+import java.awt.Font;
+import java.beans.PropertyChangeListener;
+import java.io.Serializable;
 
 /**
  * This class represents the settings for a session.
@@ -97,6 +97,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String SHOW_ROW_NUMBERS_IN_TEXT_LAYOUT = "showRowNumberInTextLayout";
       String LIMIT_SQL_RESULT_TABS = "limitSqlResultTabs";
       String REMOVE_MULTI_LINE_COMMENT = "removeMultiLineComment";
+      String REMOVE_LINE_COMMENT = "removeLineComment";
       String SQL_USE_FETCH_SIZE = "sqlUseFetchSize";
       String SQL_FETCH_SIZE = "sqlFetchSize";
       String ALLOW_CTRL_B_JUMP_TO_OBJECT_TREE = "AllowCtrlBJumpToObjectTree";
@@ -188,7 +189,9 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    private String _solComment = "--";
 
    private boolean _removeMultiLineComment = true;
-   
+
+   private boolean _removeLineComment = true;
+
    /** Font information for the SQL entry area. */
    private FontInfo _fi = (FontInfo)DEFAULT_FONT_INFO.clone();
 
@@ -816,8 +819,24 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       final boolean oldValue = _removeMultiLineComment;
       _removeMultiLineComment = data;
       getPropertyChangeReporter().firePropertyChange(
-         IPropertyNames.REMOVE_MULTI_LINE_COMMENT,
-         oldValue, _removeMultiLineComment);
+            IPropertyNames.REMOVE_MULTI_LINE_COMMENT,
+            oldValue,
+            _removeMultiLineComment);
+   }
+
+   public boolean getRemoveLineComment()
+   {
+      return _removeLineComment;
+   }
+
+   public synchronized void setRemoveLineComment(boolean data)
+   {
+      final boolean oldValue = _removeLineComment;
+      _removeLineComment = data;
+      getPropertyChangeReporter().firePropertyChange(
+            IPropertyNames.REMOVE_MULTI_LINE_COMMENT,
+            oldValue,
+            _removeLineComment);
    }
 
 

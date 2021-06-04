@@ -7,7 +7,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * 
  * @author rmmannin
  */
-public interface IQueryTokenizer {
+public interface IQueryTokenizer
+{
     
     /**
      * Returns a boolean value indicating whether or not there are more 
@@ -67,6 +68,8 @@ public interface IQueryTokenizer {
      * @return true if remove; falso otherwise.
      */
     boolean isRemoveMultiLineComment();
+
+    boolean isRemoveLineComment();
 
     TokenizerSessPropsInteractions getTokenizerSessPropsInteractions();
 }

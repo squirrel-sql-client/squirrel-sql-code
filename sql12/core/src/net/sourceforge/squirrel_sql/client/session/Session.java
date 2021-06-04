@@ -1120,8 +1120,9 @@ class Session implements ISession
          // object so that session property changes to the current session
          // are reflected in this default tokenizer.
          tokenizer = new QueryTokenizer(_props.getSQLStatementSeparator(),
-               _props.getStartOfLineComment(),
-               _props.getRemoveMultiLineComment());
+                                        _props.getStartOfLineComment(),
+                                        _props.getRemoveMultiLineComment(),
+                                        _props.getRemoveLineComment());
       }
       return tokenizer;
    }
@@ -1158,14 +1159,19 @@ class Session implements ISession
          _props.setSQLStatementSeparator(aTokenizer.getSQLStatementSeparator());
       }
 
-      if (tep.isTokenizerDefinesStatementSeparator())
+      if (tep.isTokenizerDefinesStartOfLineComment())
       {
          _props.setStartOfLineComment(aTokenizer.getLineCommentBegin());
       }
 
-      if (tep.isTokenizerDefinesStatementSeparator())
+      if (tep.isTokenizerDefinesRemoveMultiLineComment())
       {
          _props.setRemoveMultiLineComment(aTokenizer.isRemoveMultiLineComment());
+      }
+
+      if (tep.isTokenizerDefinesRemoveLineComment())
+      {
+         _props.setRemoveMultiLineComment(aTokenizer.isRemoveLineComment());
       }
    }
 

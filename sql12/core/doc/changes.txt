@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New Session properties and database specific Query tokenizers have an option
+  to keep SQuirreL from removing line comments "--..." before sending SQL to the database.
+  See menu File --> New Session Properties --> tab SQL -->
+  checkbox "Remove line comment (--...) from SQL before sending to database"
+
 "Show distinct values..." dialog: When the distinct values of just one column is displayed
   another column named "Frequency" is added to show how often the values occur.
 

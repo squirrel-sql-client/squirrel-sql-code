@@ -19,9 +19,9 @@ package net.sourceforge.squirrel_sql.plugins.mssql.tokenizer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -29,13 +29,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class MSSQLQueryTokenizer extends QueryTokenizer implements IQueryTokenizer
 {
-    /** Logger for this class. */
-    @SuppressWarnings("unused")
-    private final static ILogger s_log =
-        LoggerController.createLogger(MSSQLQueryTokenizer.class);
-    
-    /** the preference bean */
-    private IQueryTokenizerPreferenceBean _prefs = null;
+   private final static ILogger s_log = LoggerController.createLogger(MSSQLQueryTokenizer.class);
+
+   private IQueryTokenizerPreferenceBean _prefs = null;
     
 	public MSSQLQueryTokenizer(IQueryTokenizerPreferenceBean prefs)
 	{
@@ -43,7 +39,8 @@ public class MSSQLQueryTokenizer extends QueryTokenizer implements IQueryTokeniz
         _prefs = prefs;
 	}
 
-    public void setScriptToTokenize(String script) {
+    public void setScriptToTokenize(String script)
+    {
         super.setScriptToTokenize(script);
         
         _queryIterator = _queries.iterator();
@@ -55,11 +52,7 @@ public class MSSQLQueryTokenizer extends QueryTokenizer implements IQueryTokeniz
      * recursively.  
      */    
 	protected void setFactory() {
-	    _tokenizerFactory = new ITokenizerFactory() {
-	        public IQueryTokenizer getTokenizer() {
-	            return new MSSQLQueryTokenizer(_prefs);
-            }
-        };
+	    _tokenizerFactory = () -> new MSSQLQueryTokenizer(_prefs);
     }
 
    @Override
@@ -69,6 +62,7 @@ public class MSSQLQueryTokenizer extends QueryTokenizer implements IQueryTokeniz
       {
          TokenizerSessPropsInteractions ret = new TokenizerSessPropsInteractions();
          ret.setTokenizerDefinesRemoveMultiLineComment(true);
+         ret.setTokenizerDefinesRemoveLineComment(true);
          ret.setTokenizerDefinesStartOfLineComment(true);
          ret.setTokenizerDefinesStatementSeparator(true);
 

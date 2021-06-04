@@ -18,27 +18,27 @@
  */
 package net.sourceforge.squirrel_sql.plugins.derby.prefs;
 
-import java.io.Serializable;
-
 import net.sourceforge.squirrel_sql.fw.preferences.BaseQueryTokenizerPreferenceBean;
+
+import java.io.Serializable;
 
 /**
  * A preference bean for the Derby plugin.
  * 
  * @author manningr
  */
-public class DerbyPreferenceBean extends BaseQueryTokenizerPreferenceBean implements Cloneable, Serializable {
+public class DerbyPreferenceBean extends BaseQueryTokenizerPreferenceBean implements Cloneable, Serializable
+{
 
-   static final long serialVersionUID = 5818886723165356478L;
-   
    private boolean readClobsFully = true;
 
-   public DerbyPreferenceBean() {
-      super();
+   public DerbyPreferenceBean()
+   {
       statementSeparator = ";";
       procedureSeparator = "/";
       lineComment = "--";
       removeMultiLineComments = false;
+      removeLineComments = true;
       readClobsFully = true;
       installCustomQueryTokenizer = true;
    }

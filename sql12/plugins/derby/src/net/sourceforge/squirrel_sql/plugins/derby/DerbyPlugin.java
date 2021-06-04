@@ -240,7 +240,9 @@ public class DerbyPlugin extends DefaultSessionPlugin {
       if (prefBean.isInstallCustomQueryTokenizer())
       {
          DerbyQueryTokenizer tokenizer =
-               new DerbyQueryTokenizer(prefBean.getStatementSeparator(), prefBean.getLineComment(), prefBean.isRemoveMultiLineComments());session.setQueryTokenizer(tokenizer);
+               new DerbyQueryTokenizer(prefBean.getStatementSeparator(), prefBean.getLineComment(), prefBean.isRemoveMultiLineComments(), prefBean.isRemoveLineComments());
+
+         session.setQueryTokenizer(tokenizer);
       }
 
       GUIUtils.processOnSwingEventThread(() -> updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI()));

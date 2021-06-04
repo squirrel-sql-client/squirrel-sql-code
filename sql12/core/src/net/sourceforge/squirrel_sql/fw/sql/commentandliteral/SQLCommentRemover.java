@@ -4,7 +4,7 @@ public class SQLCommentRemover
 {
    public static String removeComments(String sql)
    {
-      final SQLCommentAndLiteralHandler commentAndLiteralHandler = new SQLCommentAndLiteralHandler(sql, "--", true);
+      final SQLCommentAndLiteralHandler commentAndLiteralHandler = new SQLCommentAndLiteralHandler(sql, "--", true, true);
 
       StringBuilder ret = new StringBuilder();
       for (int i = 0; i < sql.length(); ++i)

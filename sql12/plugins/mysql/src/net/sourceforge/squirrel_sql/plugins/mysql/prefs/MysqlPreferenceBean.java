@@ -18,27 +18,25 @@ package net.sourceforge.squirrel_sql.plugins.mysql.prefs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.preferences.BaseQueryTokenizerPreferenceBean;
+
+import java.io.Serializable;
 
 /**
  * A bean class to store preferences for the Oracle plugin.
  */
 public class MysqlPreferenceBean extends BaseQueryTokenizerPreferenceBean implements Cloneable, Serializable
 {
-
-	static final long serialVersionUID = 5818886723165356478L;
-
 	static final String UNSUPPORTED = "Unsupported";
 
 	public MysqlPreferenceBean()
 	{
-		super();
 		statementSeparator = ";";
 		procedureSeparator = "|";
 		lineComment = "--";
 		removeMultiLineComments = false;
+		removeLineComments = true;
 		installCustomQueryTokenizer = true;
 	}
 

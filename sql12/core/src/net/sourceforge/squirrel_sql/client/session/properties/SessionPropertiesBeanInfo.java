@@ -77,6 +77,8 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 							"getStartOfLineComment", "setStartOfLineComment"),
 						new PropertyDescriptor(IPropNames.REMOVE_MULTI_LINE_COMMENT, SessionProperties.class,
 							"getRemoveMultiLineComment", "setRemoveMultiLineComment"),
+						new PropertyDescriptor(IPropNames.REMOVE_LINE_COMMENT, SessionProperties.class,
+							"getRemoveLineComment", "setRemoveLineComment"),
 						new PropertyDescriptor(IPropNames.LIMIT_SQL_ENTRY_HISTORY_SIZE, SessionProperties.class,
 							"getLimitSQLEntryHistorySize", "setLimitSQLEntryHistorySize"),
 						new PropertyDescriptor(IPropNames.SQL_ENTRY_HISTORY_SIZE, SessionProperties.class,

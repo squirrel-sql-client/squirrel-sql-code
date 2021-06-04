@@ -18,18 +18,16 @@ package net.sourceforge.squirrel_sql.plugins.mssql.prefs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
+
+import java.io.Serializable;
 
 /**
  * A bean class to store preferences for the MS SQL-Server plugin.
  */
 public class MSSQLPreferenceBean implements Cloneable, Serializable, IQueryTokenizerPreferenceBean
 {
-
-	static final long serialVersionUID = -8870273703050156986L;
-
 	static final String UNSUPPORTED = "Unsupported";
 
 	/** Client Name. */
@@ -45,6 +43,7 @@ public class MSSQLPreferenceBean implements Cloneable, Serializable, IQueryToken
 	private String lineComment = "--";
 
 	private boolean removeMultiLineComments = false;
+	private boolean removeLineComments = true;
 
 	private boolean installCustomQueryTokenizer = true;
 
@@ -80,9 +79,6 @@ public class MSSQLPreferenceBean implements Cloneable, Serializable, IQueryToken
 
 	/**
 	 * Set the client name.
-	 * 
-	 * @param value
-	 *           Client name
 	 */
 	public void setClientName(String value)
 	{
@@ -91,74 +87,57 @@ public class MSSQLPreferenceBean implements Cloneable, Serializable, IQueryToken
 
 	/**
 	 * Retrieve the client version to use. This is only used if <TT>useAnonymousLogon</TT> is false.
-	 * 
-	 * @return Client version.
 	 */
 	public String getClientVersion()
 	{
 		return _clientVersion;
 	}
 
-	/**
-	 * Set the client version.
-	 * 
-	 * @param value
-	 *           Client version
-	 */
 	public void setClientVersion(String value)
 	{
 		_clientVersion = value;
 	}
 
-	/**
-	 * @param statementSeparator
-	 *           the statementSeparator to set
-	 */
 	public void setStatementSeparator(String statementSeparator)
 	{
 		this.statementSeparator = statementSeparator;
 	}
 
-	/**
-	 * @return the statementSeparator
-	 */
 	public String getStatementSeparator()
 	{
 		return statementSeparator;
 	}
 
-	/**
-	 * @param lineComment
-	 *           the lineComment to set
-	 */
 	public void setLineComment(String lineComment)
 	{
 		this.lineComment = lineComment;
 	}
 
-	/**
-	 * @return the lineComment
-	 */
 	public String getLineComment()
 	{
 		return lineComment;
 	}
 
-	/**
-	 * @param removeMultiLineComments
-	 *           the removeMultiLineComments to set
-	 */
 	public void setRemoveMultiLineComments(boolean removeMultiLineComments)
 	{
 		this.removeMultiLineComments = removeMultiLineComments;
 	}
 
-	/**
-	 * @return the removeMultiLineComments
-	 */
 	public boolean isRemoveMultiLineComments()
 	{
 		return removeMultiLineComments;
+	}
+
+	@Override
+	public boolean isRemoveLineComments()
+	{
+		return removeLineComments;
+	}
+
+	@Override
+	public void setRemoveLineComments(boolean removeLineComments)
+	{
+		this.removeLineComments = removeLineComments;
 	}
 
 	/**
@@ -170,25 +149,16 @@ public class MSSQLPreferenceBean implements Cloneable, Serializable, IQueryToken
 		this.installCustomQueryTokenizer = installCustomQueryTokenizer;
 	}
 
-	/**
-	 * @return the installCustomQueryTokenizer
-	 */
 	public boolean isInstallCustomQueryTokenizer()
 	{
 		return installCustomQueryTokenizer;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean#getProcedureSeparator()
-	 */
 	public String getProcedureSeparator()
 	{
 		return procedureSeparator;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean#setProcedureSeparator(java.lang.String)
-	 */
 	public void setProcedureSeparator(String procedureSeparator)
 	{
 		this.procedureSeparator = procedureSeparator;
