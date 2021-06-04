@@ -6,8 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
-New Session properties and database specific Query tokenizers have an option
-  to keep SQuirreL from removing line comments "--..." before sending SQL to the database.
+New Session properties and database specific Query tokenizers now have an option
+  to keep SQuirreL from removing line comments "--..." before sending SQLs to database.
   See menu File --> New Session Properties --> tab SQL -->
   checkbox "Remove line comment (--...) from SQL before sending to database"
 
