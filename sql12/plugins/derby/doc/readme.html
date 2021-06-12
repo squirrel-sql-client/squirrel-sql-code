@@ -24,6 +24,58 @@ additional functionality to work correctly:
 <LI>SYS.SYSVIEWS</LI>
 </UL>
 
+<p>Derby could be used/connected to as a <a
+href="https://db.apache.org/derby/docs/10.14/getstart/twwdactivity4.html"
+>network server</a>, and as in-JVM <a
+href="https://db.apache.org/derby/docs/10.14/getstart/twwdactivity3_Setup.html"
+>embedded engine</a>.</p>
+
+<h2>derby.system.home</h2>
+
+<p>For the purposes of embedded (in SQuirreL SQL) Derby usage, the <a
+href="https://db.apache.org/derby/docs/10.14/ref/rrefproper32066.html"
+>derby.system.home</a> is initialized in the <code>squirrel-sql</code>
+startup script like:</p>
+<pre>
+-Dderby.system.home=$HOME/.squirrel-sql/plugins/derby # or on Windows:
+-Dderby.system.home=%USERPROFILE%\.squirrel-sql\plugins\derby</pre>
+
+<p>That's where you would see <code>derby.log</code> of the embedded engine,
+and where relative database paths get resolved to.  For example,
+<code>jdbc:derby:SomeDB;create=true</code> will be created at
+<code>~/.squirrel-sql/plugins/derby/SomeDB</code>.  If you specify different
+<code>-userdir</code> to SQuirreL (<code>~/.squirrel-sql</code> being the
+default), or just need a different <code>derby.system.home</code> you could
+specify it in <code>SQUIRREL_SQL_OPTS</code> environment variable before
+invoking the startup script:
+<pre>
+SQUIRREL_SQL_OPTS="-Dderby.system.home=/path/to/derby-databases"</pre>
+
+<h2>Embedded Sessions</h2>
+
+<p>The plugin <a
+href="https://db.apache.org/derby/docs/10.14/devguide/tdevdvlp40464.html">shuts
+individual embedded databases down</a> whenever all sessions to the same
+database get closed.  This allows external processes to open the same databases
+further.  You may have Embedded Derby sessions to multiple databases opened in
+SQuirreL SQL, but you don't need to close all of them to externally access a
+specific database previously opened in SQuirreL.  You just need to have all
+sessions to that specific database closed.</p>
+
+<p><a href="https://db.apache.org/derby/docs/10.14/devguide/cdevdvlpinmemdb.html"
+>In-memory database</a> session handling is extended to explicitly ask whether
+you would like to drop the database upon closing the last session to it.  If you
+choose to "Keep" the instance it will be kept until you open a new session to
+it, having its state preserved.  When you close all sessions to it again, you'll
+be given the same "Drop"/"Keep" choice over.</p>
+
+<p>Possible enhancement to the in-memory database handling could be to expose
+convenient UI to <a
+href="https://db.apache.org/derby/docs/10.14/adminguide/cadminhubbkup01.html#cadminhubbkup01"
+><code>SYSCS_UTIL.SYSCS_BACKUP_DATABASE()</code></a> for <a
+href="https://db.apache.org/derby/docs/10.14/adminguide/cadminhubbkup98797.html"
+>persisting</a> such an instance to disk.</p>
+
 <H2>New Tabs</H2>
 
 <P>Triggers and Views are shown in the object tree and have 

@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge Request #76 Derby Plugin: Improved Derby shutdown handling for embedded DBs
+  Thanks to Stanimir Stamenkov for the merge Request.
+
 New Session properties and database specific Query tokenizers now have an option
   to keep SQuirreL from removing line comments "--..." before sending SQLs to database.
   See menu File --> New Session Properties --> tab SQL -->
