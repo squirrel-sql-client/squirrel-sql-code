@@ -26,7 +26,6 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -55,6 +54,8 @@ import java.awt.event.MouseEvent;
  */
 public class StatusBar extends JPanel
 {
+	private static final Color TRANSPARENT = new Color(0x00FFFFFF, true);
+
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(StatusBar.class);
 
 
@@ -87,7 +88,8 @@ public class StatusBar extends JPanel
 
 		// Makes sure font size doesn't change when HTML is displayed.
 		_textLbl.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
-		_textLbl.setBackground(new JLabel().getBackground());
+		_textLbl.setBackground(TRANSPARENT);
+		_textLbl.setOpaque(false);
 
 		_textLbl.addHyperlinkListener( e -> onTextLblHyperEvent(e));
 
@@ -373,11 +375,6 @@ public class StatusBar extends JPanel
 		if (_progressBar != null)
 		{
 			_progressBar.setBackground(bg);
-		}
-
-		if (null != _textLbl)
-		{
-			_textLbl.setBackground(bg);
 		}
 	}
 

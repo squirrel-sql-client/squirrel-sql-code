@@ -6,16 +6,18 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JEditorPane;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class CurrentSqlLabelController
 {
+   private static final Color TRANSPARENT = new Color(0x00FFFFFF, true);
+
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CurrentSqlLabelController.class);
 
    private String _normalizedSQL;
@@ -29,7 +31,8 @@ public class CurrentSqlLabelController
       _textPaneLabel.setContentType("text/html");
       _textPaneLabel.setEditable(false);
       _textPaneLabel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
-      _textPaneLabel.setBackground(new JLabel().getBackground());
+      _textPaneLabel.setBackground(TRANSPARENT);
+      _textPaneLabel.setOpaque(false);
 
       _textPaneLabel.addMouseListener(new MouseAdapter() {
 

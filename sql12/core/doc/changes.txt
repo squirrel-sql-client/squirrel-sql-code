@@ -6,8 +6,12 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge Request #77 Improved layout and Look & Feel compatibility for several components
+  including but not limited to: Status bar, top panel of SQL results, about dialog.
+  Thanks to Stanimir Stamenkov for the merge request.
+
 Merge Request #76 Derby Plugin: Improved Derby shutdown handling for embedded DBs
-  Thanks to Stanimir Stamenkov for the merge Request.
+  Thanks to Stanimir Stamenkov for the merge request.
 
 New Session properties and database specific Query tokenizers now have an option
   to keep SQuirreL from removing line comments "--..." before sending SQLs to database.

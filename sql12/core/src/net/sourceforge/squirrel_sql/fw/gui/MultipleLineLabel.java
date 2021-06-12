@@ -19,9 +19,13 @@ package net.sourceforge.squirrel_sql.fw.gui;
  */
 import javax.swing.JTextArea;
 import javax.swing.LookAndFeel;
+import javax.swing.plaf.TextUI;
+import java.awt.Color;
 
 public class MultipleLineLabel extends JTextArea
 {
+	private static final Color TRANSPARENT = new Color(0x00FFFFFF, true);
+
 	public MultipleLineLabel()
 	{
 		this("");
@@ -33,18 +37,15 @@ public class MultipleLineLabel extends JTextArea
 		setLineWrap(true);
 		setWrapStyleWord(true);
 		setText(title);
+		setBackground(TRANSPARENT);
+		setOpaque(false);
 	}
 
-	public void updateUI()
+	@Override
+	public void setUI(TextUI ui)
 	{
-		// installColorsAndFont needs to be run twice. Background and foreground
-		// colors only work if run after the super call but font only works if run
-		// before the super call. May be a bug in JDK 1.4
+		super.setUI(ui);
 		LookAndFeel.installBorder(this, "Label.border");
-		LookAndFeel.installColorsAndFont(this, "Label.background", "Label.foreground",
-											"Label.font");
-		super.updateUI();
-		LookAndFeel.installColorsAndFont(this, "Label.background", "Label.foreground",
-											"Label.font");
+		LookAndFeel.installColorsAndFont(this, "Label.background", "Label.foreground", "Label.font");
 	}
 }

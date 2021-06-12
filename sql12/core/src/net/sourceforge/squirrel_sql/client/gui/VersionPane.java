@@ -73,6 +73,7 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
    private void init()
    {
       String content = getContent();
+      putClientProperty(HONOR_DISPLAY_PROPERTIES, true);
       setContentType("text/html");
       StyledDocument doc = getStyledDocument();
       SimpleAttributeSet s = new SimpleAttributeSet();
@@ -81,7 +82,7 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
       try
       {
          doc.setParagraphAttributes(0, content.length(), s, false);
-         doc.insertString(0, content, s);
+         doc.insertString(0, content, null);
          if (_showWebsite)
          {
             String webContent = Version.getWebSite();
@@ -92,7 +93,7 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
             hrefAttr.addAttribute(HTML.Attribute.HREF, Version.getWebSite());
             w.addAttribute(HTML.Tag.A, hrefAttr);
             doc.setParagraphAttributes(content.length(), webContent.length(), w, false);
-            doc.insertString(content.length(), webContent, w);
+            doc.insertString(content.length(), webContent, null);
             if (Desktop.isDesktopSupported())
             {
                addMouseListener(this);

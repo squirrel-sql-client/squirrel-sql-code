@@ -30,6 +30,7 @@ final class CreditsPanel extends JScrollPane
 
       final JEditorPane credits = new JEditorPane();
       credits.setEditable(false);
+      credits.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
       credits.setContentType("text/html");
 
       // Required with the first beta of JDK1.4.1 to stop

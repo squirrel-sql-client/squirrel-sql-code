@@ -51,6 +51,7 @@ public class AboutBoxDialog extends JDialog
    private AboutBoxDialog()
    {
       super(Main.getApplication().getMainFrame(), s_stringMgr.getString("AboutBoxDialog.about"), true);
+      super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
       createGUI();
 
       GUIUtils.enableCloseByEscape(this);
@@ -134,7 +135,7 @@ public class AboutBoxDialog extends JDialog
 
    private JPanel createButtonBar()
    {
-      _closeBtn.addActionListener(evt -> setVisible(false));
+      _closeBtn.addActionListener(evt -> dispose());
 
       final ButtonBarBuilder builder = new ButtonBarBuilder();
       builder.addGlue();

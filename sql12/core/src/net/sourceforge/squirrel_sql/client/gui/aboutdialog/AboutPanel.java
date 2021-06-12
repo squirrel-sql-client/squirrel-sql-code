@@ -23,6 +23,8 @@ final class AboutPanel extends JPanel
       add(BorderLayout.CENTER, new JLabel(icon));
 
       VersionPane versionPane = new VersionPane(true);
+      versionPane.setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND, true));
+      versionPane.setForeground(Color.black);
       versionPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
       add(BorderLayout.SOUTH, versionPane);
    }
