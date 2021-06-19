@@ -59,6 +59,7 @@ import net.sourceforge.squirrel_sql.plugins.derby.tokenizer.DerbyQueryTokenizer;
 import net.sourceforge.squirrel_sql.plugins.derby.types.DerbyClobDataTypeComponentFactory;
 
 import javax.swing.JOptionPane;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.sql.Driver;
 import java.sql.SQLException;
@@ -239,6 +240,21 @@ public class DerbyPlugin extends DefaultSessionPlugin {
          /* Register custom DataTypeComponent factory for Derby CLOB type */
          CellComponentFactory.registerDataTypeFactory(new DerbyClobDataTypeComponentFactory());
       }      
+
+      String derbySystemHome = System.getProperty("derby.system.home", "");
+      if (derbySystemHome.isEmpty())
+      {
+         try
+         {
+            derbySystemHome = getPluginUserSettingsFolder().getAbsolutePath();
+            System.setProperty("derby.system.home", derbySystemHome);
+            s_log.info("derby.system.home set to: " + derbySystemHome);
+         }
+         catch (IOException e)
+         {
+            s_log.warn("Could not initialize derby.system.home", e);
+         }
+      }
    }
 
    /**

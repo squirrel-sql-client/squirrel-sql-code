@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge Request #78 Derby Plugin: When the Derby Plugin is installed it sets the JVM property derby.system.home
+  to the Plugin's user directory which is <SQUIRREL_USER_DIR>/plugins/derby/.
+  Users may change this default by setting the property in SQuirrel's start script.
+  Thanks to Stanimir Stamenkov for the merge request.
+
 Merge Request #77 Improved layout and Look & Feel compatibility for several components
   including but not limited to: Status bar, top panel of SQL results, about dialog.
   Thanks to Stanimir Stamenkov for the merge request.
