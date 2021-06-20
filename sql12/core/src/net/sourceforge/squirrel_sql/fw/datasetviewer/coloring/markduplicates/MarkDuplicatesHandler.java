@@ -3,7 +3,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 
-import javax.swing.JToggleButton;
 import java.awt.Color;
 import java.util.ArrayList;
 
@@ -24,6 +23,8 @@ public class MarkDuplicatesHandler
       _duplicateHandlers.add(new DuplicateConsecutiveValuesInColumnsHandler(_dataSetViewerTable));
       _duplicateHandlers.add(new DuplicateRowsHandler(_dataSetViewerTable));
       _duplicateHandlers.add(new DuplicateConsecutiveRowsHandler(_dataSetViewerTable));
+      _duplicateHandlers.add(new DuplicateCellsInSameRowHandler(_dataSetViewerTable));
+      _duplicateHandlers.add(new DuplicateCellsInSameRowIfConsecutiveHandler(_dataSetViewerTable));
    }
 
    public void markDuplicates(MarkDuplicatesMode mode)

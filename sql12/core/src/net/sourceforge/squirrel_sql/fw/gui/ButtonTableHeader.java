@@ -107,6 +107,8 @@ public class ButtonTableHeader extends JTableHeader
       }
    }
 
+   private ButtonTableHeaderDraggedColumnListener _buttonTableHeaderDraggedColumnListener;
+
    /**
     * Constructor for ButtonTableHeader.
     */
@@ -390,6 +392,11 @@ public class ButtonTableHeader extends JTableHeader
    }
 
 
+   public void setDraggedColumnListener(ButtonTableHeaderDraggedColumnListener buttonTableHeaderDraggedColumnListener)
+   {
+      _buttonTableHeaderDraggedColumnListener = buttonTableHeaderDraggedColumnListener;
+   }
+
    class HeaderListener extends MouseAdapter implements MouseMotionListener
    {
       /*
@@ -477,6 +484,13 @@ public class ButtonTableHeader extends JTableHeader
                _currentlySortedModelIdx = column;
             }
             repaint();
+         }
+         else
+         {
+            if(null != _buttonTableHeaderDraggedColumnListener)
+            {
+               _buttonTableHeaderDraggedColumnListener.columnDragged();
+            }
          }
          _dragged = false;
       }

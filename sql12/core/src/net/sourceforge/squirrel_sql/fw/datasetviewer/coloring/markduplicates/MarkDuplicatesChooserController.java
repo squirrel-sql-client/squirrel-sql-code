@@ -59,6 +59,36 @@ public class MarkDuplicatesChooserController
          SortableTableModel sortableTableModel = ((DataSetViewerTablePanel) dataSetViewer).getTable().getSortableTableModel();
          sortableTableModel.addSortingListener((modelColumnIx, columnOrder) -> onTableSorted());
       }
+
+      if(dataSetViewer instanceof DataSetViewerTablePanel)
+      {
+         ((DataSetViewerTablePanel) dataSetViewer).getTable().getButtonTableHeader().setDraggedColumnListener(() -> onColumnMoved());
+      }
+   }
+
+   private void onColumnMoved()
+   {
+      AbstractButton selButton = _toggleBtnChooser.getSelectedButton();
+      if(false == selButton.isSelected())
+      {
+         return;
+      }
+
+      MarkDuplicatesMode selectedMode = MarkDuplicatesMode.getModeByButton(selButton);
+      if( selectedMode == MarkDuplicatesMode.DUPLICATE_CONSECUTIVE_CELLS_IN_ROW)
+      {
+         try
+         {
+            _dontReactToEvents = true;
+            selButton.setSelected(false);
+         }
+         finally
+         {
+            _dontReactToEvents = false;
+         }
+
+         doMarkDuplicates();
+      }
    }
 
    private void onTableSorted()
@@ -189,4 +219,5 @@ public class MarkDuplicatesChooserController
          _dontReactToEvents = false;
       }
    }
+
 }

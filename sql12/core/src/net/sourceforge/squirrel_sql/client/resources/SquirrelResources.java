@@ -79,6 +79,8 @@ public class SquirrelResources extends Resources
       String DUPLICATE_VALUES_IN_COLUMNS_IF_CONSECUTIVE = "duplicateValuesInColumnsIfConsecutive";
       String DUPLICATE_ROWS = "duplicateRows";
       String DUPLICATE_ROWS_IF_CONSECUTIVE = "duplicateRowsIfConsecutive";
+		String DUPLICATE_CELLS_IN_ROW = "duplicateCellsInRow";
+		String DUPLICATE_CONSECUTIVE_CELLS_IN_ROW = "duplicateCellsInRowIfConsecutive";
 
       String FILTER = "filter";
 

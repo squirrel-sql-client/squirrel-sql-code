@@ -80,8 +80,6 @@ public class DuplicateValuesInColumnsHandler implements DuplicateHandler
                {
                   colorByDuplicateValue.put(value, SquirrelConstants.DUPLICATE_COLOR);
                }
-
-
             }
          }
       }

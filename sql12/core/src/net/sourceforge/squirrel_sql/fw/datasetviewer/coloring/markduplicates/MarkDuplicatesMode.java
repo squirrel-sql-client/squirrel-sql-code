@@ -9,9 +9,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JToggleButton;
-import java.util.Arrays;
 import java.util.Optional;
 
 public enum MarkDuplicatesMode
@@ -30,7 +28,15 @@ public enum MarkDuplicatesMode
 
    DUPLICATE_CONSECUTIVE_ROWS(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DUPLICATE_ROWS_IF_CONSECUTIVE),
                   StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateRowsIfConsecutive.text"),
-                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateRowsIfConsecutive.tooltip"));
+                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateRowsIfConsecutive.tooltip")),
+
+   DUPLICATE_CELLS_IN_ROW(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DUPLICATE_CELLS_IN_ROW),
+                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateCellsInSameRow.text"),
+                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateCellsInSameRow.tooltip")),
+
+   DUPLICATE_CONSECUTIVE_CELLS_IN_ROW(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DUPLICATE_CONSECUTIVE_CELLS_IN_ROW),
+                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateCellsInSameRowIfConsecutive.text"),
+                  StaticsAccess.s_stringMgr.getString("MarkDuplicatesMode.duplicateCellsInSameRowIfConsecutive.tooltip"));
 
 
    private static class StaticsAccess
