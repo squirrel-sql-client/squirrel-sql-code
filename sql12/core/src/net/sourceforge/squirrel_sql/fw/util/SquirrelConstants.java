@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class SquirrelConstants
 {
@@ -11,7 +11,7 @@ public class SquirrelConstants
    public static final Color CELL_EDITABLE_COLOR = Color.yellow;
 
    public static final Color DUPLICATE_COLOR = new Color(255, 153, 102);
-   public static final Color DUPLICATE_COLOR_DARKER = new Color(240, 138, 97);
+   public static final Color DUPLICATE_COLOR_DARKER = new Color(210, 128, 87);
 
    
    /*

@@ -5,18 +5,14 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
-import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 
 import java.awt.Color;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.TreeMap;
 
 public class DuplicateValuesInColumnsHandler implements DuplicateHandler
 {
    private DataSetViewerTable _dataSetViewerTable;
-   private HashMap<Integer, TreeMap<Object, Color>> _duplicateValuesByColumnModelIndex;
+   private HashMap<Integer, HashMap<Object, Color>> _duplicateValuesByColumnModelIndex;
 
    public DuplicateValuesInColumnsHandler(DataSetViewerTable dataSetViewerTable)
    {
@@ -39,48 +35,14 @@ public class DuplicateValuesInColumnsHandler implements DuplicateHandler
 
          DataSetViewerTableModel dataSetViewerTableModel = _dataSetViewerTable.getDataSetViewerTableModel();
 
-
-         // Without this comparator TreeMap breaks on null keys
-         Comparator treeMapKeyComparator = Comparator.nullsFirst(Comparator.naturalOrder());
-
-
          for (ExtTableColumn tableColumn : DataSetViewerTablePanelUtil.getTableColumns(_dataSetViewerTable))
          {
             int columnModelIndex = tableColumn.getModelIndex();
 
-            TreeMap<Object, Color> colorByDuplicateValue = new TreeMap<>(treeMapKeyComparator);
+            ValueListReader rdr = new ValueListReader(dataSetViewerTableModel.getRowCount(), ix -> dataSetViewerTableModel.getValueAt(ix, columnModelIndex));
+            HashMap<Object, Color> colorByDuplicateValue = DuplicatesColorer.getColorByDuplicateValueMap(rdr);
 
             _duplicateValuesByColumnModelIndex.put(columnModelIndex, colorByDuplicateValue);
-
-            HashSet<Object> buf = new HashSet<>();
-
-            for (int j = 0; j < dataSetViewerTableModel.getRowCount(); ++j)
-            {
-               Object val = dataSetViewerTableModel.getValueAt(j, columnModelIndex);
-
-
-               if(buf.contains(val))
-               {
-                  colorByDuplicateValue.put(val, null);
-               }
-               else
-               {
-                  buf.add(val);
-               }
-            }
-
-            int count = 0;
-            for (Object value : colorByDuplicateValue.keySet())
-            {
-               if(0 == ++count % 2)
-               {
-                  colorByDuplicateValue.put(value, SquirrelConstants.DUPLICATE_COLOR_DARKER);
-               }
-               else
-               {
-                  colorByDuplicateValue.put(value, SquirrelConstants.DUPLICATE_COLOR);
-               }
-            }
          }
       }
       finally

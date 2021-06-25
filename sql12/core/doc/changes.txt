@@ -7,8 +7,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 Enhancements:
 
 SQL Result: The "Mark duplicates ..." function has two new  modes:
-  - Duplicate cells in row
-  - Duplicate consecutive cells in row
+   - Duplicate cells in row
+   - Duplicate consecutive cells in row
+  Improved switching between lighter and darker duplicate color.
 
 Merge Request #78 Derby Plugin: When the Derby Plugin is installed it sets the JVM property derby.system.home
   to the Plugin's user directory which is <SQUIRREL_USER_DIR>/plugins/derby/.
