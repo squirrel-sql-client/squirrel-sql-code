@@ -2,12 +2,13 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
+import net.sourceforge.squirrel_sql.fw.gui.statusbar.StatusBar;
 
-import javax.swing.*;
+import javax.swing.JToolBar;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
-import java.awt.*;
+import java.awt.Color;
 
 public class SessionColoringUtil
 {

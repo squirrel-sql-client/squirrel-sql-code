@@ -52,8 +52,32 @@ public class AliasesList implements IToogleableAliasesList
    public AliasesList(IApplication app)
 	{
       AliasesListModel listModel = new AliasesListModel(app);
-      _jListImpl= new JListAliasesListImpl(app, listModel);
-      _jTreeImpl = new JTreeAliasesListImpl(app, listModel);
+      _jListImpl= new JListAliasesListImpl(app, listModel, item -> onAliasSelected(item));
+      _jTreeImpl = new JTreeAliasesListImpl(app, listModel, item -> onAliasSelected(item));
+   }
+
+   private void onAliasSelected(ISQLAlias item)
+   {
+      String label = null;
+      if (item != null)
+      {
+         // Avoid wrapping - just crop
+         label = "<html><span style='white-space: pre'>" + item.getUrl()
+               .replace("&", "&amp;").replace("<", "&lt;") + "</span></html>";
+      }
+      Main.getApplication().getMainFrame().setStatusText(label);
+   }
+
+   public void nowVisible(boolean b)
+   {
+      if (b)
+      {
+         onAliasSelected(getLeadSelectionValue());
+      }
+      else
+      {
+         onAliasSelected(null);
+      }
    }
 
    private IAliasesList getCurrentImpl()
@@ -134,6 +158,12 @@ public class AliasesList implements IToogleableAliasesList
 	public SQLAlias getSelectedAlias(MouseEvent evt)
 	{
       return getCurrentImpl().getSelectedAlias(evt);
+   }
+
+   @Override
+   public ISQLAlias getLeadSelectionValue()
+   {
+      return getCurrentImpl().getLeadSelectionValue();
    }
 
    public void sortAliases()

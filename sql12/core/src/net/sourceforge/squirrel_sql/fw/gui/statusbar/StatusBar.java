@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui;
+package net.sourceforge.squirrel_sql.fw.gui.statusbar;
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -30,7 +32,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
-import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.BadLocationException;
@@ -39,11 +40,9 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -244,46 +243,9 @@ public class StatusBar extends JPanel
 
 	public static Border createComponentBorder()
 	{
-		return BorderFactory.createCompoundBorder(
-			thinLoweredBevel,
-			BorderFactory.createEmptyBorder(0, 4, 0, 4));
+		return BorderFactory.createCompoundBorder(new ThinLoweredBevelBorder(),
+																BorderFactory.createEmptyBorder(0, 4, 0, 4));
 	}
-
-	private static Border thinLoweredBevel = new AbstractBorder()
-	{
-		@Override public boolean isBorderOpaque() { return true; }
-
-		@Override public Insets getBorderInsets(Component c, Insets insets)
-		{
-			insets.top = insets.bottom = insets.left = insets.right = 1;
-			return insets;
-		}
-
-		@Override public void paintBorder(Component c, Graphics g, int x, int y, int width, int height)
-		{
-			Color oldColor = g.getColor();
-			int right = x + width - 1;
-			int bottom = y + height - 1;
-
-			g.translate(x, y);
-
-			Color darker = c.getBackground().darker();
-			Color brighter = c.getBackground().brighter();
-
-			g.setColor(darker);
-			g.drawLine(x, y, right, y);
-			g.setColor(brighter);
-			g.drawLine(x, bottom, right, bottom);
-
-			g.setColor(darker);
-			g.drawLine(x, y, x, bottom);
-			g.setColor(brighter);
-			g.drawLine(right, y, right, bottom);
-
-			g.translate(-x, -y);
-			g.setColor(oldColor);
-		}
-	};
 
 	private void createGUI()
 	{

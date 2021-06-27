@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui;
+package net.sourceforge.squirrel_sql.fw.gui.statusbar;
 
 @FunctionalInterface
 public interface StatusBarHrefListener

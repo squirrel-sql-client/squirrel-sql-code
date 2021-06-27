@@ -455,4 +455,8 @@ public class MainFrame extends JFrame
 		return _toolBar;
 	}
 
+	public void setStatusText(String text)
+	{
+		_statusBar.setText(text);
+	}
 }

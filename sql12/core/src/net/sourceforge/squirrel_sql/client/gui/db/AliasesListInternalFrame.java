@@ -133,14 +133,15 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 
    public void nowVisible(final boolean b)
    {
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            _app.getMainFrame().setEnabledAliasesMenu(b);
-            _uiFactory.getAliasesList().requestFocus();
-         }
-      });
+      SwingUtilities.invokeLater(() -> _nowVisible(b));
+   }
+
+   private void _nowVisible(boolean b)
+   {
+      _app.getMainFrame().setEnabledAliasesMenu(b);
+      _uiFactory.getAliasesList().requestFocus();
+
+      _uiFactory.getAliasesList().nowVisible(b);
    }
 
    public void enableDisableActions()

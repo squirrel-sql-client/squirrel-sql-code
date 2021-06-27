@@ -79,7 +79,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private boolean _dontReactToAliasAdd = false ;
 
-   public JTreeAliasesListImpl(IApplication app, AliasesListModel aliasesListModel)
+   public JTreeAliasesListImpl(IApplication app, AliasesListModel aliasesListModel, AliasListSelectionListener selectionListener)
    {
       _app = app;
       _aliasesListModel = aliasesListModel;
@@ -129,6 +129,29 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       _aliasSortState = new AliasSortState(_tree);
 
+      if (selectionListener != null)
+      {
+         _tree.addPropertyChangeListener(JTree.LEAD_SELECTION_PATH_PROPERTY,
+                                         evt -> selectionListener.selectionChanged(getLeadSelectionValue()));
+      }
+   }
+
+   @Override
+   public ISQLAlias getLeadSelectionValue()
+   {
+      TreePath selectedPath = _tree.getLeadSelectionPath();
+      Object selectedNode = null;
+      if (selectedPath != null)
+      {
+         selectedNode = selectedPath.getLastPathComponent();
+      }
+
+      Object selectedValue = null;
+      if (selectedNode instanceof DefaultMutableTreeNode)
+      {
+         selectedValue = ((DefaultMutableTreeNode) selectedNode).getUserObject();
+      }
+      return (selectedValue instanceof ISQLAlias) ? (ISQLAlias) selectedValue : null;
    }
 
    private void initCancelCutAction()

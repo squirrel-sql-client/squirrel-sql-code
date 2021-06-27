@@ -48,4 +48,6 @@ public interface IAliasesList extends IBaseList
    void aliasChanged(ISQLAlias sqlAlias);
 
    void goToAliasFolder(AliasFolder aliasFolder);
+
+   ISQLAlias getLeadSelectionValue();
 }

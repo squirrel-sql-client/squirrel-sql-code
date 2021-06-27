@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappersImpl;
-import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
+import net.sourceforge.squirrel_sql.fw.gui.statusbar.StatusBar;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;

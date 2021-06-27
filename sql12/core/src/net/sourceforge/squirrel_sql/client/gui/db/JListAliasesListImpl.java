@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.JList;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -49,7 +50,7 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
     */
 	private final AliasesListModel _model;
 
-	public JListAliasesListImpl(IApplication app, AliasesListModel aliasesListModel)
+	public JListAliasesListImpl(IApplication app, AliasesListModel aliasesListModel, AliasListSelectionListener selectionListener)
 	{
       super(aliasesListModel, app);
       _model = aliasesListModel;
@@ -75,6 +76,24 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 				onIntervalRemoved(evt);
 			}
 		});
+
+		if (selectionListener != null)
+		{
+			getList().addListSelectionListener(evt -> selectionListener.selectionChanged(getLeadSelectionValue()));
+		}
+	}
+
+	@Override
+	public ISQLAlias getLeadSelectionValue()
+	{
+		JList<?> list = getList();
+		int selectedIndex = list.getLeadSelectionIndex();
+		Object selectedValue = null;
+		if (selectedIndex >= 0 && selectedIndex < list.getModel().getSize())
+		{
+			selectedValue = list.getModel().getElementAt(selectedIndex);
+		}
+		return (selectedValue instanceof ISQLAlias) ? (ISQLAlias) selectedValue : null;
 	}
 
 	private void onIntervalRemoved(ListDataEvent evt)

@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Merge Request #81: Show selected Alias's JDBC URL in the main window's status bar
+  Thanks to Stanimir Stamenkov for the merge request.
+
 SQL Result: The "Mark duplicates ..." function has two new  modes:
    - Duplicate cells in row
    - Duplicate consecutive cells in row
