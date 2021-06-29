@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.resources;
+package net.sourceforge.squirrel_sql.plugins.highresicon;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;

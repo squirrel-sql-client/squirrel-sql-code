@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.highresicon;
 
-import net.sourceforge.squirrel_sql.fw.resources.IconScale;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;

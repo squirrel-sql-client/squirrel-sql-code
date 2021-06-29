@@ -4,7 +4,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-import net.sourceforge.squirrel_sql.fw.resources.IconScale;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
@@ -112,7 +111,7 @@ public class HighResolutionIconPlugin extends DefaultPlugin
 		}
 
 		IconScale.setFollowTextSize(_highResPrefJsonBean.isScaleIconsWithText());
-		_iconHandler = new HighResIconHandler(this);
+		_iconHandler = new HighResIconHandler();
 		app.setIconHandler(_iconHandler);
 	}
 
