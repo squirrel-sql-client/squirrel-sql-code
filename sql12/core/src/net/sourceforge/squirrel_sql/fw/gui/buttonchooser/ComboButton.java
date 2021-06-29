@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.buttonchooser;
 
+import net.sourceforge.squirrel_sql.client.Main;
+
 import javax.swing.AbstractButton;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
@@ -21,8 +23,8 @@ import java.awt.event.MouseListener;
 
 public class ComboButton extends JToggleButton
 {
-   private static int triHeight = 3;
-   private static int dist = 3;
+   private static final int TRI_HEIGHT = 3;
+   private static final int DIST = 3;
 
    private AbstractButton linkedButton;
    private transient MouseListener hoverHandler = new HoverHandler();
@@ -36,7 +38,7 @@ public class ComboButton extends JToggleButton
 
    private int getMaxWidth()
    {
-      return (dist + triHeight) * 2;
+      return Main.getApplication().getIconHandler().iconScale_ceil((DIST + TRI_HEIGHT) * 2);
    }
 
    @Override
@@ -96,9 +98,11 @@ public class ComboButton extends JToggleButton
       }
 
       Polygon pg = new Polygon();
-      pg.addPoint(dist, size.height / 2 - triHeight);
-      pg.addPoint(size.width - dist, size.height / 2 - triHeight);
-      pg.addPoint(size.width / 2, size.height / 2 + triHeight);
+      int scaledHeight = Main.getApplication().getIconHandler().iconScale_round(TRI_HEIGHT);
+      int scaledDist = Main.getApplication().getIconHandler().iconScale_round(DIST);
+      pg.addPoint(scaledDist, size.height / 2 - scaledHeight);
+      pg.addPoint(size.width - scaledDist, size.height / 2 - scaledHeight);
+      pg.addPoint(size.width / 2, size.height / 2 + scaledHeight);
       g.fillPolygon(pg);
    }
 

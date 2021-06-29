@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New Plugin "High resolution icon"
+  Provides high resolution icons for  HiDPI screens.
+  Thanks to Stanimir Stamenkov for merge request #80 on which this Plugin is based.
+
 Merge Request #81: Show selected Alias's JDBC URL in the main window's status bar
   Thanks to Stanimir Stamenkov for the merge request.
 

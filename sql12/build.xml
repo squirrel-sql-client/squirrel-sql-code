@@ -220,6 +220,7 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="sybase"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="vertica"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="wikiTableConfigurations"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="highresicon"/></antcall>
     </target>
 
     <target name="compileMacPlugin" description="compileMacPlugin">

@@ -17,11 +17,13 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.io.Serializable;
-import javax.swing.UIManager;
+
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+
+import javax.swing.UIManager;
+import java.io.Serializable;
 /**
  * This JavaBean class represents the user specific
  * preferences for this plugin.
@@ -30,8 +32,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
  */
 public class LAFPreferences implements Cloneable, Serializable, IHasIdentifier
 {
-    static final long serialVersionUID = 5458252097202539743L;
-    
+
     /** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
 	private IIdentifier _id;
 	private String _lafClassName;

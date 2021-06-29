@@ -311,6 +311,14 @@
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/sybase" />
 		</pack>
 
+		<pack required="no" preselected="no" name="Optional Plugin - High resolution icon ">
+			<description>
+				Provides high resolution icons for  HiDPI screens
+			</description>
+			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/highresicon.jar" />
+			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/highresicon" />
+		</pack>
+
 		<pack required="no" preselected="no" name="Optional Plugin - Internationalization ">
 			<description>
 				Allows translators to quickly find missing translation files

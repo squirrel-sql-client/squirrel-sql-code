@@ -64,6 +64,8 @@ import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurat
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationStorage;
 import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
+import net.sourceforge.squirrel_sql.fw.resources.DefaultIconHandler;
+import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
 import net.sourceforge.squirrel_sql.fw.resources.LazyResourceBundle;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.BareBonesBrowserLaunch;
@@ -193,6 +195,8 @@ public class Application implements IApplication
 	private PropsImpl _propsImpl;
 
 	private GlobalSQLAliasVersioner _globalSQLAliasVersioner = new GlobalSQLAliasVersioner();
+
+	private IconHandler _iconHandler = new DefaultIconHandler();
 
 	public Application()
 	{
@@ -1461,4 +1465,15 @@ public class Application implements IApplication
 		return _globalSQLAliasVersioner;
    }
 
+	@Override
+	public IconHandler getIconHandler()
+	{
+		return _iconHandler;
+	}
+
+	@Override
+	public void setIconHandler(IconHandler iconHandler)
+	{
+		_iconHandler = iconHandler;
+	}
 }

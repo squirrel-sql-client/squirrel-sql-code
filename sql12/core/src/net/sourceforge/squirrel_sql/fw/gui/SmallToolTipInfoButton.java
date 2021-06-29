@@ -32,8 +32,8 @@ public class SmallToolTipInfoButton
       _infoText = infoText;
       _displayTimeMillis = displayTimeMillis;
 
-      _btnShowToolTip = new SmallTabButton(null, getSmallInfoIcon());
-      Dimension size = new Dimension(16, 16);
+      _btnShowToolTip = new SmallTabButton(null, getSmallInfoIcon(), 0);
+      Dimension size = _btnShowToolTip.getPreferredSize();
       _btnShowToolTip.setPreferredSize(size);
       _btnShowToolTip.setMinimumSize(size);
       _btnShowToolTip.setMaximumSize(size);

@@ -12,7 +12,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 
 public class RowColAndSumController
@@ -35,9 +34,6 @@ public class RowColAndSumController
 
       ComboButton btnCombo = new ComboButton();
       GUIUtils.styleAsToolbarButton(btnCombo);
-
-      btnCombo.setPreferredSize(new Dimension(12, btnCombo.getPreferredSize().height));
-      btnCombo.setMinimumSize(new Dimension(12, btnCombo.getMinimumSize().height));
 
       onDisplaySelected(RowColAndSumDisplay.valueOf(Props.getString(PREF_KEY_ROW_COL_AND_SUM_DISPLAY, RowColAndSumDisplay.ROW_COLS.name())));
       btnCombo.addActionListener(e -> onComboSelectDisplay(btnCombo));

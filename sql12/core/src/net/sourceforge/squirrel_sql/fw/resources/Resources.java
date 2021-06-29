@@ -431,43 +431,53 @@ public abstract class Resources implements IResources
 
 	private ImageIcon privateGetIcon(String iconName)
 	{
-		if (iconName != null && iconName.length() > 0)
+		URL url = getIconUrl(iconName);
+
+		if (url == null)
 		{
-			URL url;
-			String imagePathName = getImagePathName(iconName);
+			return null;
+		}
 
-			if (null == _classLoader)
+		return Main.getApplication().getIconHandler().createImageIcon(url);
+	}
+
+	private URL getIconUrl(String iconName)
+	{
+		if (StringUtilities.isEmpty(iconName, true))
+		{
+			return null;
+		}
+
+		URL url;
+		String imagePathName = getImagePathName(iconName);
+
+		if (null == _classLoader)
+		{
+			url = getClass().getResource(imagePathName);
+
+			// This slash stuff is a ...
+			if (null == url && imagePathName.startsWith("/"))
 			{
-				url = getClass().getResource(imagePathName);
-
-				// This slash stuff is a ...
-				if (null == url && imagePathName.startsWith("/"))
-				{
-					url = getClass().getResource(imagePathName.substring(1));
-				} else if (null == url && false == imagePathName.startsWith("/"))
-				{
-					url = getClass().getResource("/" + imagePathName);
-				}
-
-			} else
+				url = getClass().getResource(imagePathName.substring(1));
+			} else if (null == url && false == imagePathName.startsWith("/"))
 			{
-				url = _classLoader.getResource(imagePathName);
-
-				if (null == url && imagePathName.startsWith("/"))
-				{
-					url = _classLoader.getResource(imagePathName.substring(1));
-				} else if (null == url && false == imagePathName.startsWith("/"))
-				{
-					url = _classLoader.getResource("/" + imagePathName);
-				}
+				url = getClass().getResource("/" + imagePathName);
 			}
 
-			if (url != null)
+		}
+		else
+		{
+			url = _classLoader.getResource(imagePathName);
+
+			if (null == url && imagePathName.startsWith("/"))
 			{
-				return new ImageIcon(url);
+				url = _classLoader.getResource(imagePathName.substring(1));
+			} else if (null == url && false == imagePathName.startsWith("/"))
+			{
+				url = _classLoader.getResource("/" + imagePathName);
 			}
 		}
-		return null;
+		return url;
 	}
 
 	private String getResourceString(String keyName, String propName) throws MissingResourceException

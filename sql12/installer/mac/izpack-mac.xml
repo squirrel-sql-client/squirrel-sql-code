@@ -250,6 +250,12 @@
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/sybase" />
 		</pack>
 
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - High resolution icon ">
+			<description>Provides high resolution icons for  HiDPI screens</description>
+			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/highresicon.jar" />
+			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/highresicon" />
+		</pack>
+
 		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Internationalization ">
 			<description>Allows translators to quickly find missing translation files</description>
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/i18n.jar" />

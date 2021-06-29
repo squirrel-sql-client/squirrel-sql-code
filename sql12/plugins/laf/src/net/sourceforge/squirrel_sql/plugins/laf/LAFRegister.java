@@ -84,7 +84,7 @@ public class LAFRegister
 					"MenuBar.font", "MenuItem.acceleratorFont", "MenuItem.font", "PopupMenu.font",
 					"RadioButtonMenuItem.acceleratorFont", "RadioButtonMenuItem.font", },
 			// Static text
-			{ "Button.font", "CheckBox.font", "ComboBox.font", "InternalFrame.titleFont", "Label.font",
+			{ "Button.font", "CheckBox.font", "ComboBox.font", "InternalFrame.titleFont", "Label.font", "defaultFont",
 					"ProgressBar.font", "RadioButton.font", "TabbedPane.font", "TitledBorder.font",
 					"ToggleButton.font", "ToolBar.font", "ToolTip.font", }, };
 
@@ -127,7 +127,6 @@ public class LAFRegister
 	 */
 	LAFRegister(IApplication app, LAFPlugin plugin) throws IllegalArgumentException
 	{
-		super();
 		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");

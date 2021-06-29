@@ -743,4 +743,10 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 		return new PrintWriter(getFileWriter());
 	}
 
+	@Override
+	public File getFile()
+	{
+		return _wrappedFile;
+	}
+
 }

@@ -3,14 +3,26 @@ package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 
 public class ButtonTabComponent extends JPanel
@@ -269,12 +281,15 @@ public class ButtonTabComponent extends JPanel
       {
          super.paintComponent(g);
          Graphics2D g2 = (Graphics2D) g.create();
+
+         final IconHandler iconHandler = Main.getApplication().getIconHandler();
+
          //shift the image for pressed buttons
          if (getModel().isPressed())
          {
-            g2.translate(1, 1);
+            g2.translate(iconHandler.iconScale_round(1), iconHandler.iconScale_round(1));
          }
-         g2.setStroke(new BasicStroke(2));
+         g2.setStroke(new BasicStroke(iconHandler.iconScale_round(2)));
 
          if (getModel().isRollover())
          {
@@ -286,8 +301,10 @@ public class ButtonTabComponent extends JPanel
          }
 
          int delta = 6;
-         g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
-         g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
+         int deltaPlusOne = iconHandler.iconScale_round(delta + 1);
+         delta = iconHandler.iconScale_round(delta);
+         g2.drawLine(delta, delta, getWidth() - deltaPlusOne, getHeight() - deltaPlusOne);
+         g2.drawLine(getWidth() - deltaPlusOne, delta, delta, getHeight() - deltaPlusOne);
          g2.dispose();
       }
    }

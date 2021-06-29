@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -43,8 +42,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -83,6 +82,8 @@ import net.sourceforge.squirrel_sql.plugins.mysql.tab.UserGrantsTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tokenizer.MysqlQueryTokenizer;
 import net.sourceforge.squirrel_sql.plugins.mysql.types.MySQL5ByteTypeDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.plugins.mysql.types.MySQLByteTypeDataTypeComponentFactory;
+
+import javax.swing.JMenu;
 
 /**
  * MySQL plugin class.
@@ -200,9 +201,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	public synchronized void load(IApplication app) throws PluginException
 	{
 		super.load(app);
-		_resources = _resourcesFactory.createResource(getClass().getName(), this); 			
-      _objectTypes = new ObjectTypes(_resources);
-   }
+		_resources = _resourcesFactory.createResource(getClass().getName(), this);
+	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getChangeLogFileName()
@@ -256,6 +256,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	public synchronized void initialize() throws PluginException
 	{
 		super.initialize();
+
+		_objectTypes = new ObjectTypes(_resources);
 
 		final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();

@@ -1,5 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
+
+import javax.swing.ImageIcon;
+import javax.swing.RepaintManager;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,12 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ScrollableDesktopPane;
-import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 
 
 public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrintable
@@ -157,7 +157,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
          int x= (size.width - _desktopImage.getIconWidth())/2;
          int y= (size.height - _desktopImage.getIconHeight())/2;
 
-         g.drawImage(_desktopImage.getImage(), x, y, null);
+         _desktopImage.paintIcon(null, g, x, y);
       }
    }
 

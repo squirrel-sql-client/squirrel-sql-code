@@ -3,8 +3,11 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -39,7 +42,7 @@ public class ConstraintIconHandler
       int imageX = getImageX(line, icon);
       int imageY = getImageY(line, icon);
 
-      g.drawImage(icon.getImage(), imageX, imageY, null);
+      icon.paintIcon(null, g, imageX, imageY);
    }
 
    private ImageIcon getIcon(TableFrameController fkFrameOriginatingFrom,

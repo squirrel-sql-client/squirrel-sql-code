@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
+import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
@@ -54,7 +55,7 @@ import javax.swing.JMenu;
  */
 public interface IApplication
 {
-   interface IMenuIDs extends MainFrame.IMenuIDs
+	interface IMenuIDs extends MainFrame.IMenuIDs
 	{
 		// Empty body.
 	}
@@ -171,18 +172,19 @@ public interface IApplication
 	ISQLEntryPanelFactory getSQLEntryPanelFactory();
 
 	/**
+	 * Set the factory object used to create the SQL entry panel.
+	 *
+	 * @param	factory	the factory object used to create the SQL entry panel.
+	 */
+	void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory);
+
+	/**
 	 * Retrieve the application level SQL History object.
 	 *
 	 * @return		the application level SQL History object.
 	 */
 	SQLHistory getSQLHistory();
 
-	/**
-	 * Set the factory object used to create the SQL entry panel.
-	 *
-	 * @param	factory	the factory object used to create the SQL entry panel.
-	 */
-	void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory);
 
 	/**
 	 * Add a hierarchical menu to a menu.
@@ -271,4 +273,10 @@ public interface IApplication
 	PropsImpl getPropsImpl();
 
 	GlobalSQLAliasVersioner getGlobalSQLAliasVersioner();
+
+
+	IconHandler getIconHandler();
+
+	void setIconHandler(IconHandler iconHandler);
+
 }

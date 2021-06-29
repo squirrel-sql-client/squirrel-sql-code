@@ -1,12 +1,21 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
-import javax.swing.*;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
+
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.plaf.basic.BasicButtonUI;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 
 
 public class SmallTabButton<T> extends JButton
@@ -37,7 +46,7 @@ public class SmallTabButton<T> extends JButton
       int size;
       if (null == icon)
       {
-         size = 17;
+         size = Main.getApplication().getIconHandler().iconScale_ceil(17);
       }
       else
       {
@@ -107,31 +116,16 @@ public class SmallTabButton<T> extends JButton
 
       if (getModel().isPressed())
       {
-         g2.translate(1, 1);
+         final IconHandler iconHandler = Main.getApplication().getIconHandler();
+         g2.translate(iconHandler.iconScale_round(1), iconHandler.iconScale_round(1));
       }
 
       int x = (getWidth() - _icon.getIconWidth()) / 2;
       int y = (getHeight() - _icon.getIconHeight()) / 2;
-      g2.drawImage(iconToImage(_icon), x, y, null);
-
+      _icon.paintIcon(this, g2, x, y);
 
       g2.dispose();
    }
-
-   private Image iconToImage(Icon icon)
-   {
-      if(icon instanceof ImageIcon)
-      {
-         return ((ImageIcon) icon).getImage();
-      }
-      else
-      {
-         BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
-         icon.paintIcon(null, image.getGraphics(), 0, 0);
-         return image;
-      }
-   }
-
 
    @Override
    public void setIcon(Icon icon)
