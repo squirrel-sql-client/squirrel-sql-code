@@ -101,8 +101,8 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
             HashSet<String> uniqCols = new HashSet<>();
             for (int i = 0; i < schemColInfos.length; i++)
             {
-               if(   (null == _catalog || null == schemColInfos[i].getCatalog() || ("" + _catalog).equals("" + schemColInfos[i].getCatalog()))
-                  && (null == _schema || null == schemColInfos[i].getSchema() || ("" + _schema).equals("" + schemColInfos[i].getSchema()))   )
+               if(   (null == _catalog || null == schemColInfos[i].getCatalog() || ("" + _catalog).equalsIgnoreCase("" + schemColInfos[i].getCatalog()))
+                  && (null == _schema || null == schemColInfos[i].getSchema() || ("" + _schema).equalsIgnoreCase("" + schemColInfos[i].getSchema()))   )
                {
                   String columnName = schemColInfos[i].getColumnName();
                   String columnType = schemColInfos[i].getColumnType();
