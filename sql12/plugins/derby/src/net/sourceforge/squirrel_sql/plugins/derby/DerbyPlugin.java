@@ -74,22 +74,28 @@ import java.util.Properties;
 
 /**
  * The main controller class for the Derby plugin.
- * 
+ *
  * @author manningr
  */
-public class DerbyPlugin extends DefaultSessionPlugin {
+public class DerbyPlugin extends DefaultSessionPlugin
+{
 
    private static final String UNKNOWN_DBNAME = "<unknown>";
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DerbyPlugin.class);
 
-   /** Logger for this class. */
+   /**
+    * Logger for this class.
+    */
    private final static ILogger s_log = LoggerController.createLogger(DerbyPlugin.class);
 
-   /** API for the Obejct Tree. */
+   /**
+    * API for the Obejct Tree.
+    */
    private IObjectTreeAPI _treeAPI;
 
-   static interface i18n {
+   static interface i18n
+   {
       //i18n[DerbyPlugin.showViewSource=Show view source]
       String SHOW_VIEW_SOURCE = s_stringMgr.getString("DerbyPlugin.showViewSource");
 
@@ -115,7 +121,9 @@ public class DerbyPlugin extends DefaultSessionPlugin {
       String KEEP_OPTION = s_stringMgr.getString("DerbyPlugin.embeddedDerby.inMemoryKeepOption");
    }
 
-   /** manages our query tokenizing preferences */
+   /**
+    * manages our query tokenizing preferences
+    */
    private PluginQueryTokenizerPreferencesManager _prefsManager = null;
 
    private Map<String, List<WeakReference<ISession>>> _embeddedSessions = new HashMap<>();
@@ -129,117 +137,86 @@ public class DerbyPlugin extends DefaultSessionPlugin {
    /**
     * Return the internal name of this plugin.
     *
-    * @return  the internal name of this plugin.
+    * @return the internal name of this plugin.
     */
-   public String getInternalName() {
+   public String getInternalName()
+   {
       return "derby";
    }
 
    /**
     * Return the descriptive name of this plugin.
     *
-    * @return  the descriptive name of this plugin.
+    * @return the descriptive name of this plugin.
     */
-   public String getDescriptiveName() {
+   public String getDescriptiveName()
+   {
       return "Derby Plugin";
    }
 
    /**
     * Returns the current version of this plugin.
     *
-    * @return  the current version of this plugin.
+    * @return the current version of this plugin.
     */
-   public String getVersion() {
+   public String getVersion()
+   {
       return "0.13";
    }
 
    /**
     * Returns the authors name.
     *
-    * @return  the authors name.
+    * @return the authors name.
     */
-   public String getAuthor() {
+   public String getAuthor()
+   {
       return "Rob Manning";
    }
 
    /**
     * Returns a comma separated list of other contributors.
     *
-    * @return  Contributors names.
+    * @return Contributors names.
     */
-   public String getContributors() {
+   public String getContributors()
+   {
       return "Alex Pivovarov";
    }
 
    /**
     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
     */
-   public String getChangeLogFileName() {
+   public String getChangeLogFileName()
+   {
       return "changes.txt";
    }
 
    /**
     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
     */
-   public String getHelpFileName() {
+   public String getHelpFileName()
+   {
       return "doc/readme.html";
    }
 
    /**
     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
     */
-   public String getLicenceFileName() {
+   public String getLicenceFileName()
+   {
       return "licence.txt";
    }
 
    /**
     * Load this plugin.
     *
-    * @param	app	 Application API.
+    * @param   app    Application API.
     */
    public synchronized void load(IApplication app) throws PluginException
    {
       super.load(app);
       app.addApplicationListener(() -> _appShuttingDown = true);
-   }
-
-   /**
-    * Create panel for the Global Properties dialog.
-    * 
-    * @return  properties panel.
-    */
-   public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-      PluginQueryTokenizerPreferencesPanel _prefsPanel = new DerbyPluginPreferencesPanel(_prefsManager);
-
-      PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
-
-      tab.setHint(i18n.PREFS_HINT);
-      tab.setTitle(i18n.PREFS_TITLE);
-
-      return new IGlobalPreferencesPanel[] { tab };
-   }
-
-   /**
-    * Initialize this plugin.
-    */
-   public synchronized void initialize() throws PluginException {
-      super.initialize();
-      
-      //Add session ended listener -- needs for Embedded Derby DB
-      _app.getSessionManager().addSessionListener(new SessionListener());
-
-      
-
-      _prefsManager = new PluginQueryTokenizerPreferencesManager();
-      _prefsManager.initialize(this, new DerbyPreferenceBean());
-
-      /** Need to do this to pickup user's prefs from file */
-      DerbyPreferenceBean prefBean = (DerbyPreferenceBean) _prefsManager.getPreferences();
-
-      if (prefBean.isReadClobsFully()) {
-         /* Register custom DataTypeComponent factory for Derby CLOB type */
-         CellComponentFactory.registerDataTypeFactory(new DerbyClobDataTypeComponentFactory());
-      }      
 
       String derbySystemHome = System.getProperty("derby.system.home", "");
       if (derbySystemHome.isEmpty())
@@ -258,19 +235,60 @@ public class DerbyPlugin extends DefaultSessionPlugin {
    }
 
    /**
+    * Create panel for the Global Properties dialog.
+    *
+    * @return properties panel.
+    */
+   public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
+   {
+      PluginQueryTokenizerPreferencesPanel _prefsPanel = new DerbyPluginPreferencesPanel(_prefsManager);
+
+      PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
+
+      tab.setHint(i18n.PREFS_HINT);
+      tab.setTitle(i18n.PREFS_TITLE);
+
+      return new IGlobalPreferencesPanel[]{tab};
+   }
+
+   /**
+    * Initialize this plugin.
+    */
+   public synchronized void initialize() throws PluginException
+   {
+      super.initialize();
+
+      //Add session ended listener -- needs for Embedded Derby DB
+      _app.getSessionManager().addSessionListener(new SessionListener());
+
+
+      _prefsManager = new PluginQueryTokenizerPreferencesManager();
+      _prefsManager.initialize(this, new DerbyPreferenceBean());
+
+      /** Need to do this to pickup user's prefs from file */
+      DerbyPreferenceBean prefBean = (DerbyPreferenceBean) _prefsManager.getPreferences();
+
+      if (prefBean.isReadClobsFully())
+      {
+         /* Register custom DataTypeComponent factory for Derby CLOB type */
+         CellComponentFactory.registerDataTypeFactory(new DerbyClobDataTypeComponentFactory());
+      }
+   }
+
+   /**
     * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#allowsSessionStartedInBackground()
     */
-   public boolean allowsSessionStartedInBackground() {
+   public boolean allowsSessionStartedInBackground()
+   {
       return true;
    }
 
    /**
     * Session has been started. Update the tree api in using the event thread
     *
-    * @param   session     Session that has started.
-    *
-    * @return  <TT>true</TT> if session is Oracle in which case this plugin
-    *                          is interested in it.
+    * @param session Session that has started.
+    * @return <TT>true</TT> if session is Oracle in which case this plugin
+    * is interested in it.
     */
    public PluginSessionCallback sessionStarted(final ISession session)
    {
@@ -294,7 +312,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
       if (isEmbeddedDerby(session))
       {
          _embeddedSessions.computeIfAbsent(getDatabaseName(session), k -> new ArrayList<>())
-                          .add(new WeakReference<>(session));
+               .add(new WeakReference<>(session));
 
          _embeddedDriver = session.getDriver();
       }
@@ -329,7 +347,8 @@ public class DerbyPlugin extends DefaultSessionPlugin {
     * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#isPluginSession(net.sourceforge.squirrel_sql.client.session.ISession)
     */
    @Override
-   protected boolean isPluginSession(ISession session) {
+   protected boolean isPluginSession(ISession session)
+   {
       return DialectFactory.isDerby(session.getMetaData());
    }
 
@@ -338,8 +357,8 @@ public class DerbyPlugin extends DefaultSessionPlugin {
     */
    private void updateTreeApi(IObjectTreeAPI objectTreeAPI)
    {
-   	DerbyPreferenceBean prefBean = (DerbyPreferenceBean) _prefsManager.getPreferences();
-   	
+      DerbyPreferenceBean prefBean = (DerbyPreferenceBean) _prefsManager.getPreferences();
+
       _treeAPI = objectTreeAPI;
 
       _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, prefBean.getStatementSeparator()));
@@ -361,7 +380,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
    /**
     * A session listener that shutdown Embedded Derby when session and
     * connection are already closed
-    * 
+    *
     * @author Alex Pivovarov
     */
    private class SessionListener extends SessionAdapter
@@ -384,9 +403,9 @@ public class DerbyPlugin extends DefaultSessionPlugin {
       }
 
       int option = JOptionPane.showOptionDialog(null, // Application-modal
-            MessageFormat.format(i18n.DROP_DB_QUESTION, dbName.replaceFirst("^memory:", "")),
-            i18n.EMBEDDED_DERBY_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-            null, new Object[] { i18n.DROP_OPTION, i18n.KEEP_OPTION }, i18n.KEEP_OPTION);
+                                                MessageFormat.format(i18n.DROP_DB_QUESTION, dbName.replaceFirst("^memory:", "")),
+                                                i18n.EMBEDDED_DERBY_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                                                null, new Object[]{i18n.DROP_OPTION, i18n.KEEP_OPTION}, i18n.KEEP_OPTION);
       return option == JOptionPane.YES_OPTION;
    }
 
@@ -452,7 +471,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
          String jdbcURL = session.getMetaData().getURL();
          int semIdx = jdbcURL.indexOf(';');
          return (semIdx > 0) ? jdbcURL.substring("jdbc:derby:".length(), semIdx)
-                             : jdbcURL.substring("jdbc:derby:".length());
+               : jdbcURL.substring("jdbc:derby:".length());
       }
       catch (SQLException e)
       {
@@ -463,7 +482,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
 
    /**
     * Shutdown Embedded Derby DB and reload JDBC Driver
-    * 
+    *
     * @author Alex Pivovarov
     */
    private void shutdownEmbeddedDerby()
@@ -474,7 +493,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
    /**
     * Shutdown a single Embedded Derby database.
     *
-    * @param  dbName  the database name to shut down;
+    * @param dbName the database name to shut down;
     */
    private void shutdownEmbeddedDerby(String dbName)
    {
@@ -527,6 +546,4 @@ public class DerbyPlugin extends DefaultSessionPlugin {
          s_log.error(e.getMessage(), e);
       }
    }
-
-   
 }

@@ -81,6 +81,9 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+Derby Plugin / Merge Request #83: Initialized shutdown handling from Merge Request #76 earlier during application start.
+  Thanks to Stanimir Stamenkov for the merge request.
+
 Merge Request #82: Schema serialization cache file handles are not released on failure
   Thanks to Stanimir Stamenkov for the merge request.
 

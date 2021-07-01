@@ -34,11 +34,8 @@ href="https://db.apache.org/derby/docs/10.14/getstart/twwdactivity3_Setup.html"
 
 <p>For the purposes of embedded (in SQuirreL SQL) Derby usage, the <a
 href="https://db.apache.org/derby/docs/10.14/ref/rrefproper32066.html"
->derby.system.home</a> is initialized in the <code>squirrel-sql</code>
-startup script like:</p>
-<pre>
--Dderby.system.home=$HOME/.squirrel-sql/plugins/derby # or on Windows:
--Dderby.system.home=%USERPROFILE%\.squirrel-sql\plugins\derby</pre>
+>derby.system.home</a> is initialized by default to the
+<code>&lt;squirrel-user-home>/plugins/derby</code> directory.</p>
 
 <p>That's where you would see <code>derby.log</code> of the embedded engine,
 and where relative database paths get resolved to.  For example,
@@ -49,7 +46,7 @@ default), or just need a different <code>derby.system.home</code> you could
 specify it in <code>SQUIRREL_SQL_OPTS</code> environment variable before
 invoking the startup script:
 <pre>
-SQUIRREL_SQL_OPTS="-Dderby.system.home=/path/to/derby-databases"</pre>
+SQUIRREL_SQL_OPTS="-Dderby.system.home=/path/to/derby-system-home"</pre>
 
 <h2>Embedded Sessions</h2>
 
