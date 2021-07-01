@@ -81,6 +81,9 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+Merge Request #82: Schema serialization cache file handles are not released on failure
+  Thanks to Stanimir Stamenkov for the merge request.
+
 SQLParam Plugin: When installed the Plugin removed SQL comments
   even when the SQL didn't contain any parameters were replaced.
 

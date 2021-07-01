@@ -1,37 +1,30 @@
 package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
-import java.util.Hashtable;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Hashtable;
+
 public class SchemaInfoCacheSerializer
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SchemaInfoCacheSerializer.class);
-
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SchemaInfoCacheSerializer.class);
    private static final ILogger s_log = LoggerController.createLogger(SchemaInfoCacheSerializer.class);
-   private static Hashtable<IIdentifier, IIdentifier> _storingSessionIDs = 
-       new Hashtable<IIdentifier, IIdentifier>();
 
+   private static Hashtable<IIdentifier, IIdentifier> _storingSessionIDs = new Hashtable<>();
 
    public static SchemaInfoCache load(ISession session)
    {
@@ -70,20 +63,26 @@ public class SchemaInfoCacheSerializer
          return new SchemaInfoCache();
       }
 
-      try
+      try (FileInputStream fis = new FileInputStream(schemaCacheFile);
+           ObjectInputStream ois = new ObjectInputStream(fis);)
       {
-         FileInputStream fis = new FileInputStream(schemaCacheFile);
-         ObjectInputStream ois = new ObjectInputStream(fis)
-         {
-            protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
-            {
-               ClassLoader loader = SchemaInfoCache.class.getClassLoader();
-               return Class.forName(desc.getName(), false, loader);
-            }
-         };
+
+         // Formerly introduced for:
+         // 1448738: JDK 6.0 regression.
+         // Used the (correct) method for getting a class from the ClassLoader,
+         // according to the response to the bug report I submitted against Java SE 6.
+         // Details are here: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6446627
+         // ObjectInputStream ois = new ObjectInputStream(fis)
+         // {
+         //    protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
+         //    {
+         //       ClassLoader loader = SchemaInfoCache.class.getClassLoader();
+         //       return Class.forName(desc.getName(), false, loader);
+         //    }
+         // };
+
+
          SchemaInfoCache ret = (SchemaInfoCache) ois.readObject();
-         ois.close();
-         fis.close();
 
          ret.replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM();
 
@@ -100,14 +99,7 @@ public class SchemaInfoCacheSerializer
    {
 
       _storingSessionIDs.put(session.getIdentifier(), session.getIdentifier());
-      session.getApplication().getThreadPool().addTask(new Runnable()
-      {
-         public void run()
-         {
-            privateStore(schemaInfoCache, session);
-         }
-      });
-
+      session.getApplication().getThreadPool().addTask(() -> privateStore(schemaInfoCache, session));
    }
 
    private static void privateStore(SchemaInfoCache schemaInfoCache, ISession session)
@@ -130,11 +122,11 @@ public class SchemaInfoCacheSerializer
 
          schemaInfoCache.prepareSerialization();
 
-         FileOutputStream fos = new FileOutputStream(schemaCacheFile);
-         ObjectOutputStream oOut = new ObjectOutputStream(fos);
-         oOut.writeObject(schemaInfoCache);
-         oOut.close();
-         fos.close();
+         try (FileOutputStream fos = new FileOutputStream(schemaCacheFile);
+               ObjectOutputStream oOut = new ObjectOutputStream(fos))
+         {
+            oOut.writeObject(schemaInfoCache);
+         }
 
          // i18n[SchemaInfoCacheSerializer.endStore=Finished writing schema cache for Alias{0}. file: {1}]
          msgHandler.showMessage(s_stringMgr.getString("SchemaInfoCacheSerializer.endStore", params));
