@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -15,8 +16,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.util.Hashtable;
 
 public class SchemaInfoCacheSerializer
@@ -64,7 +67,7 @@ public class SchemaInfoCacheSerializer
       }
 
       try (FileInputStream fis = new FileInputStream(schemaCacheFile);
-           ObjectInputStream ois = new ObjectInputStream(fis);)
+           ObjectInputStream ois = createObjectInputStream(fis))
       {
 
          // Formerly introduced for:
@@ -93,6 +96,37 @@ public class SchemaInfoCacheSerializer
          s_log.error("Failed to load Schema cache. Note: this can happen when the SQuirreL version changed", e);
          return new SchemaInfoCache();
       }
+   }
+
+   private static ObjectInputStream createObjectInputStream(FileInputStream fis) throws IOException
+   {
+      // The "natural" choice for the reading ClassLoader as we are reading a SchemaInfoCache object.
+      ClassLoader[] loaderRef = new ClassLoader[]{SchemaInfoCache.class.getClassLoader()};
+
+      if(loaderRef[0] != Main.getApplication().getIconHandler().getClass().getClassLoader())
+      {
+         // Fixes the serialization form merge request #84:
+         // SchemaInfoCache contains objects of type DatabaseObjectType of which
+         // the member DatabaseObjectType._icon can not be read when the highresicon Plugin is used.
+         //
+         // In other words: This method is a workaround for the highresicon Plugin.
+         // If it wasn't for this workaround createObjectInputStream() would simply be implemented by "new ObjectInputStream();".
+         loaderRef[0] = Main.getApplication().getIconHandler().getClass().getClassLoader();
+
+         // Note:
+         // As this is testable in an installation outside the IDE only a log is helpful.
+         // Main.getApplication().getMessageHandler().showMessage("Because the highresicon Plugin is in use the Plugin's Classloader is used for schema cache deserialization.");
+         s_log.info("Because the highresicon Plugin is in use the Plugin's Classloader is used for schema cache deserialization.");
+      }
+
+      return new ObjectInputStream(fis)
+      {
+            @Override
+            protected Class<?> resolveClass(ObjectStreamClass desc) throws ClassNotFoundException
+            {
+               return Class.forName(desc.getName(), false, loaderRef[0]);
+            }
+      };
    }
 
    public static void store(final ISession session, final SchemaInfoCache schemaInfoCache)

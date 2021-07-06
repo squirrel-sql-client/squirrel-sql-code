@@ -81,6 +81,15 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+Merge Request #84: When schema caching was used
+  (see right mouse click on Alias --> Alias properties --> tab Schema)
+  the caches of all open Sessions were written when one Session was closed.
+  Thanks to Stanimir Stamenkov for merge request
+
+Merge Request #84: "High resolution icon" Plugin:
+  Reading of schema caches failed when the "High resolution icon" Plugin was used.
+  Thanks to Stanimir Stamenkov for merge request
+
 Code completion didn't work for SQLs with aliased tables when a table was (catalog and/or schema)
   qualified and the upper/lower case spelling of the qualifier didn't match the catalog's and/or schema's name in the database.
   Possibly there are connections to more recent comments to bug #1406.

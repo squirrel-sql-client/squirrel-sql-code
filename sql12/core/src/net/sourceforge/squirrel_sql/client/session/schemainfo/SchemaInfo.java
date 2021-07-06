@@ -153,7 +153,10 @@ public class SchemaInfo
 
          public void sessionClosing(SessionEvent evt)
          {
-            SchemaInfoCacheSerializer.store(_session, _schemaInfoCache);
+            if (null != _session && _session.getIdentifier().equals(evt.getSession().getIdentifier()))
+            {
+               SchemaInfoCacheSerializer.store(_session, _schemaInfoCache);
+            }
          }
       };
 
