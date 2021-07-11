@@ -81,6 +81,9 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+#1479 Linux/Unix start script: squirrel-sql.sh now does "exec" its final command
+  Thanks to Chris Bitmead for the pointer
+
 Merge Request #84: When schema caching was used
   (see right mouse click on Alias --> Alias properties --> tab Schema)
   the caches of all open Sessions were written when one Session was closed.
