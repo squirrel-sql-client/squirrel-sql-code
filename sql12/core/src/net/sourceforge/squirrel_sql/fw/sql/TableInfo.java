@@ -65,7 +65,7 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
       {
          super.replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM(DatabaseObjectType.TABLE);
       }
-      else if (DatabaseObjectType.TABLE.getKeyForSerializationReplace().equals(super.getDatabaseObjectType().getKeyForSerializationReplace()))
+      else if (DatabaseObjectType.VIEW.getKeyForSerializationReplace().equals(super.getDatabaseObjectType().getKeyForSerializationReplace()))
       {
          super.replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM(DatabaseObjectType.VIEW);
       }

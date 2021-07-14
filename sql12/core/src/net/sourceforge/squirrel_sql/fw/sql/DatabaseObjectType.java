@@ -173,7 +173,16 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
    /** Describes this object type. */
    private final String _name;
    private String _keyForSerializationReplace;
-   private Icon _icon;
+
+   // When deserializing of schema caches
+   // SQuirreL replaces deserialized objects of type DatabaseObjectType by the ones created during application startup.
+   // (See TableInfo.replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM(...).)
+   // That's why there's no need to serialize icons to schema caches.
+   //
+   // Thus by using transient here caches become smaller
+   // and the problems discussed in merge Request #84 are solved.
+   private transient Icon _icon;
+
    private boolean _isContainerNode;
 
    /**
