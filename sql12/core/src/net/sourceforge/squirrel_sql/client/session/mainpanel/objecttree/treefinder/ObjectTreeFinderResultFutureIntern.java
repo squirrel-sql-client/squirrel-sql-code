@@ -24,7 +24,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
    private ISession _session;
    private final long _startTime;
 
-   private ArrayList<ObjectTreeFinderTask> _taskList = new ArrayList<>();
+   private ArrayList<ObjectFinderTaskInfo> _taskList = new ArrayList<>();
 
    private boolean _isExecuting = false;
    private boolean _isFinished = false;
@@ -75,7 +75,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
 
       while (hasNextTask())
       {
-         nextTask().exec();
+         nextTask().getTask().exec();
          if(null != _treePath)
          {
             // We quit on first result.
@@ -95,9 +95,9 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
     * Tasks will be executed in the order added
     * and will be executed on EDT.
     */
-   void addTask(ObjectTreeFinderTask task)
+   void addTask(String descr, ObjectTreeFinderTask task)
    {
-      _taskList.add(task);
+      _taskList.add(new ObjectFinderTaskInfo(descr, task));
    }
 
 
@@ -111,7 +111,8 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
 
       while(hasNextTask())
       {
-         nextTask().exec();
+         ObjectFinderTaskInfo taskInfo = nextTask();
+         taskInfo.getTask().exec();
          if(null != _treePath)
          {
             // We quit on first result.
@@ -119,11 +120,11 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
             break;
          }
 
-         if(System.currentTimeMillis() - _startTime > 500)
+         if(System.currentTimeMillis() - _startTime > 50)
          {
             _timer.start();
             _progressValue = 4;
-            increaseProgress();
+            increaseProgress(taskInfo.getDescr());
             System.out.println("Entering timer");
             return;
          }
@@ -134,16 +135,20 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
       fireFinished();
    }
 
-   private void increaseProgress()
+   private void increaseProgress(String taskDescr)
    {
-      _session.getSessionPanel().setStatusBarProgress(s_stringMgr.getString("ObjectTreeFinderResultFutureIntern.SearchingObjectTree"), 0, MAX_PROGRESS, ++_progressValue % MAX_PROGRESS);
+      _session.getSessionPanel().setStatusBarProgress(s_stringMgr.getString("ObjectTreeFinderResultFutureIntern.SearchingObjectTree", taskDescr), 0, MAX_PROGRESS, ++_progressValue % MAX_PROGRESS);
    }
 
    private void onTimerTriggered()
    {
+      long thisTriggerEventsStartTime = System.currentTimeMillis();
+
+      int counter = 0;
       while(hasNextTask())
       {
-         nextTask().exec();
+         ObjectFinderTaskInfo taskInfo = nextTask();
+         taskInfo.getTask().exec();
          if(null != _treePath)
          {
             // We quit on first result.
@@ -151,10 +156,12 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
             break;
          }
 
-         increaseProgress();
 
-         if(_startTime - System.currentTimeMillis() > 30);
+         ++counter;
+         if(System.currentTimeMillis() - thisTriggerEventsStartTime> 50)
          {
+            System.out.println("Did " + counter + " Tasks in " + (System.currentTimeMillis() - thisTriggerEventsStartTime) + " millis");
+            increaseProgress(taskInfo.getDescr());
             // Wait for next trigger
             return;
          }
@@ -164,7 +171,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
       fireFinished();
    }
 
-   private ObjectTreeFinderTask nextTask()
+   private ObjectFinderTaskInfo nextTask()
    {
       if(false == hasNextTask())
       {

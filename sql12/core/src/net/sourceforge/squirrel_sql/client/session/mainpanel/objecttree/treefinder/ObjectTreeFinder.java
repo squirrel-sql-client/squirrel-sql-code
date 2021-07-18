@@ -47,13 +47,23 @@ public class ObjectTreeFinder
 
             for (INodeExpander expander : expanders)
             {
-               toFill.addTask(() -> doExpand(startNode, expander));
+               toFill.addTask(getExpandDescr(startNode), () -> doExpand(startNode, expander));
             }
          }
 
-         toFill.addTask(() -> recurseChildren(catalog, schema, objectMatcher, startNode, useExpanders, toFill));
+         toFill.addTask(getRecurseDescription(startNode), () -> recurseChildren(catalog, schema, objectMatcher, startNode, useExpanders, toFill));
          toFill.triggerExecution();
       }
+   }
+
+   private String getRecurseDescription(ObjectTreeNode startNode)
+   {
+      return "Checking " + new TreePath(startNode.getPath());
+   }
+
+   private String getExpandDescr(ObjectTreeNode startNode)
+   {
+      return "Loading child nodes of " + new TreePath(startNode.getPath());
    }
 
    private void recurseChildren(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderResultFutureIntern toFill)
