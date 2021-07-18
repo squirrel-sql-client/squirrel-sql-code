@@ -3,9 +3,11 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderResultFuture;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
+import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -79,7 +81,15 @@ final class CatalogsComboListener implements ActionListener
    {
       IObjectTreeAPI api = session.getObjectTreeAPIOfActiveSessionWindow();
       api.refreshTree(true);
-      if (api.selectInObjectTree(selectedCatalog, null, new FilterMatcher("TABLE", null)))
+
+      ObjectTreeFinderResultFuture resultFuture = api.selectInObjectTree(selectedCatalog, null, new FilterMatcher("TABLE", null));
+
+      resultFuture.addListenerOrdered(tn -> onFindFinished(tn, api));
+   }
+
+   private void onFindFinished(TreePath tn, IObjectTreeAPI api)
+   {
+      if (tn != null)
       {
          ObjectTreeNode[] nodes = api.getSelectedNodes();
 

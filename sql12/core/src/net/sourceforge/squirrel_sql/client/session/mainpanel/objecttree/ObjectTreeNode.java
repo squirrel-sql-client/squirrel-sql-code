@@ -17,19 +17,18 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import javax.swing.Icon;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+import java.util.ArrayList;
+import java.util.List;
 /**
  * This is a node in the object tree.
  *
@@ -37,15 +36,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class ObjectTreeNode extends DefaultMutableTreeNode
 {
-	/** Current session. */
-//	private final ISession _session;
-
-    private static final long serialVersionUID = 1L;
-
-    /** Application API. */
 	private final IApplication _app;
 
-	/** ID of the session for this window. */
 	private final IIdentifier _sessionId;
 
 	/** Describes the database object represented by this node. */
@@ -192,17 +184,16 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
       return _dboInfo.getDatabaseObjectType().getIcon();
    }
 
-/**
- * @return the noChildrenFoundWithExpander
- */
-public boolean hasNoChildrenFoundWithExpander() {
-	return noChildrenFoundWithExpander;
-}
+	public boolean hasNoChildrenFoundWithExpander()
+	{
+		return noChildrenFoundWithExpander;
+	}
 
-/**
- * @param noChildrenFoundWithExpander the noChildrenFoundWithExpander to set
- */
-public void setNoChildrenFoundWithExpander(boolean noChildrenFoundWithExpander) {
-	this.noChildrenFoundWithExpander = noChildrenFoundWithExpander;
-}
+	/**
+	 * @param noChildrenFoundWithExpander the noChildrenFoundWithExpander to set
+	 */
+	public void setNoChildrenFoundWithExpander(boolean noChildrenFoundWithExpander)
+	{
+		this.noChildrenFoundWithExpander = noChildrenFoundWithExpander;
+	}
 }

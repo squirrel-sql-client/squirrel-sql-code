@@ -203,11 +203,7 @@ public class SchemaInfo
 
       if(fireSchemaInfoUpdate)
       {
-      	GUIUtils.processOnSwingEventThread(new Runnable() {
-      		public void run() {
-      			fireSchemaInfoUpdate();
-      		}
-      	});
+      	GUIUtils.processOnSwingEventThread(() -> fireSchemaInfoUpdate());
       }
    }
 

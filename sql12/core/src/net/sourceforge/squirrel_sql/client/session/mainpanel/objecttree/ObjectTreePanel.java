@@ -49,6 +49,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.tab
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.RowIDTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.TablePriviligesTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.VersionColumnsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderResultFuture;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
@@ -381,7 +382,10 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	public void expandNode(ObjectTreeNode node)
 	{
 		IDatabaseObjectInfo info = node.getDatabaseObjectInfo();
-		TreePath path = getTreePath(info.getCatalogName(), info.getSchemaName(), new FilterMatcher(info.getSimpleName(), null));
+
+		//TreePath path = getTreePath(info.getCatalogName(), info.getSchemaName(), new FilterMatcher(info.getSimpleName(), null));
+		TreePath path = new TreePath(node.getPath());
+
 		_tree.fireTreeExpanded(path);
 	}
     
@@ -744,24 +748,26 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     * @return true if the Object was found and selected.
     */
    @Override
-   public boolean selectInObjectTree(String catalog, String schema, FilterMatcher objectMatcher)
+   public ObjectTreeFinderResultFuture selectInObjectTree(String catalog, String schema, FilterMatcher objectMatcher)
    {
 		if ("".equals(objectMatcher.getMetaDataMatchString()))
 		{
-			return false;
+			return ObjectTreeFinderResultFuture.EMPTY_FINISHED_RESULT;
 		}
 
-      TreePath treePath = getTreePath(catalog, schema, objectMatcher);
-      if(null != treePath)
-      {
-      	selectInObjectTree(treePath);
-         return true;
-      }
-      else
-      {
-         return false;
-      }
+		ObjectTreeFinderResultFuture resultFuture = findObjectTreePath(catalog, schema, objectMatcher);
+		resultFuture.addListenerOrdered(resultTreePath -> onFinderFinished(resultTreePath));
+
+		return resultFuture;
    }
+
+	private void onFinderFinished(TreePath resultTreePath)
+	{
+		if(null != resultTreePath)
+		{
+			selectInObjectTree(resultTreePath);
+		}
+	}
 
 	@Override
 	public void selectInObjectTree(TreePath treePath)
@@ -774,23 +780,25 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     * Get the TreePath to the node with the specified catalog, schema and 
     * object name.
     * 
-    * @param catalog the catalog that the node is located in - can be null
-    * @param schema the schema that the node is located in - can be null
     * @param object display name of the node
     *
-    * @return the TreePath to the node with the specified criteria, or the root
-    *         node if a node with matching characteristics isn't found.
+    * @param catalog the catalog that the node is located in - can be null
+    * @param schema the schema that the node is located in - can be null
     */
-	private TreePath getTreePath(String catalog, String schema, FilterMatcher objectMatcher)
+	private ObjectTreeFinderResultFuture findObjectTreePath(String catalog, String schema, FilterMatcher objectMatcher)
 	{
 		ObjectTreeModel otm = (ObjectTreeModel) _tree.getModel();
-		TreePath treePath = otm.getPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(),false);
 
-		if (null == treePath)
+		// First check already expanded nodes only.
+		// This should go fast which allows to execute all tasks immediately.
+		ObjectTreeFinderResultFuture future = otm.findPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(), false);
+		future.executeTillFinishNow();
+
+		if (null == future.getTreePath())
 		{
-			treePath = otm.getPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(),true);
+			future = otm.findPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(), true);
 		}
-		return treePath;
+		return future;
 	}
    
    /**

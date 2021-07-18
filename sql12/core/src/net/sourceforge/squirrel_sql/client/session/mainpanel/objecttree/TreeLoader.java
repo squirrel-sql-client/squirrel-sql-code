@@ -18,18 +18,14 @@
  */
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.SwingUtilities;
-import javax.swing.tree.TreePath;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * This class actually loads the tree.

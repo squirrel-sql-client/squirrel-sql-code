@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session;
 
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderResultFuture;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -65,25 +66,32 @@ public class ObjectTreeSearch
 
    private void _viewInObjectTree(ObjectTreeSearchCandidates candidates, IObjectTreeAPI objectTreeAPI, boolean selectMainObjectTreeIfFound)
    {
-      boolean success = false;
-      while (candidates.hasNext())
+      if(false == candidates.hasNext())
       {
-
-         ArrayList<String> catSchemObj = candidates.next();
-
-         success = objectTreeAPI.selectInObjectTree(catSchemObj.get(0), catSchemObj.get(1), new FilterMatcher(catSchemObj.get(2), null));
-
-         if (success && selectMainObjectTreeIfFound)
-         {
-            objectTreeAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB);
-            break;
-         }
-
+         return;
       }
 
-      if (false == success)
+      tryFindMatchForNextCandidate(candidates, objectTreeAPI, selectMainObjectTreeIfFound, null);
+   }
+
+   private void tryFindMatchForNextCandidate(ObjectTreeSearchCandidates candidates, IObjectTreeAPI objectTreeAPI, boolean selectMainObjectTreeIfFound, TreePath findResult)
+   {
+      if(null != findResult)
       {
-         // i18n[ObjectTreeSearch.error.objectnotfound=Could not locate the database object ''{0}'' in Object tree]
+         if (selectMainObjectTreeIfFound)
+         {
+            objectTreeAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB);
+         }
+      }
+      else if(candidates.hasNext())
+      {
+         ArrayList<String> catSchemObj;
+         catSchemObj = candidates.next();
+         ObjectTreeFinderResultFuture resultFuture = objectTreeAPI.selectInObjectTree(catSchemObj.get(0), catSchemObj.get(1), new FilterMatcher(catSchemObj.get(2), null));
+         resultFuture.addListenerOrdered(tn -> tryFindMatchForNextCandidate(candidates, objectTreeAPI, selectMainObjectTreeIfFound, tn));
+      }
+      else
+      {
          String msg = s_stringMgr.getString("ObjectTreeSearch.error.objectnotfound",candidates.getSearchString());
          JOptionPane.showMessageDialog(SessionUtils.getOwningFrame(objectTreeAPI.getSession()), msg);
       }
