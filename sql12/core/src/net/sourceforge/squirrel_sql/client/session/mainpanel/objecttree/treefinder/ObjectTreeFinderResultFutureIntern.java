@@ -8,12 +8,17 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.tree.TreePath;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * Note: NO THREADING is involved in this class.
- * Everything is done on the Event Dispatch Thread.
+ * Everything is done on the Event Dispatch Thread (EDT).
+ * One reason why threads aren't used is
+ * because expanders are hard to control.
+ * They might for example access Swing classes
+ * which must be accessed on the EDT only.
  */
 class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
 {
@@ -33,6 +38,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
    private int _taskIx = 0;
    private ArrayList<ObjectTreeFinderFinishListener> _listeners = new ArrayList<>();
    private int _progressValue;
+   private ActionListener _stopActionListener = e -> onStop();
 
 
    ObjectTreeFinderResultFutureIntern(ISession session)
@@ -45,7 +51,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
 
    void setTreePath(TreePath treePath)
    {
-      System.out.println("Found treePath = " + treePath);
+      //System.out.println("Found treePath = " + treePath);
       _treePath = treePath;
    }
 
@@ -125,19 +131,25 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
             _timer.start();
             _progressValue = 4;
             increaseProgress(taskInfo.getDescr());
-            System.out.println("Entering timer");
+            //System.out.println("Entering timer");
             return;
          }
       }
 
       // Because of th return in the loop we will reach here only when the timer wasn't used.
-      System.out.println("Finishing without timer");
+      //System.out.println("Finishing without timer");
       fireFinished();
    }
 
    private void increaseProgress(String taskDescr)
    {
-      _session.getSessionPanel().setStatusBarProgress(s_stringMgr.getString("ObjectTreeFinderResultFutureIntern.SearchingObjectTree", taskDescr), 0, MAX_PROGRESS, ++_progressValue % MAX_PROGRESS);
+      String msg = s_stringMgr.getString("ObjectTreeFinderResultFutureIntern.SearchingObjectTree", taskDescr);
+      _session.getSessionPanel().setStatusBarProgress(msg,0, MAX_PROGRESS, ++_progressValue % MAX_PROGRESS, _stopActionListener);
+   }
+
+   private void onStop()
+   {
+      disposeTimer();
    }
 
    private void onTimerTriggered()
@@ -160,14 +172,14 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
          ++counter;
          if(System.currentTimeMillis() - thisTriggerEventsStartTime> 50)
          {
-            System.out.println("Did " + counter + " Tasks in " + (System.currentTimeMillis() - thisTriggerEventsStartTime) + " millis");
+            //System.out.println("Did " + counter + " Tasks in " + (System.currentTimeMillis() - thisTriggerEventsStartTime) + " millis");
             increaseProgress(taskInfo.getDescr());
             // Wait for next trigger
             return;
          }
       }
 
-      System.out.println("Finished running with timer");
+      //System.out.println("Finished running with timer");
       fireFinished();
    }
 
@@ -189,7 +201,6 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
    private void fireFinished()
    {
       disposeTimer();
-      _session.getSessionPanel().setStatusBarProgressFinished();
       for (ObjectTreeFinderFinishListener listener : _listeners.toArray(new ObjectTreeFinderFinishListener[0]))
       {
          listener.finderFinished(_treePath);
@@ -202,6 +213,10 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
    {
       _timer.stop();
       Arrays.stream(_timer.getActionListeners()).forEach(al -> _timer.removeActionListener(al));
+      if (null != _session.getSessionPanel())
+      {
+         _session.getSessionPanel().setStatusBarProgressFinished();
+      }
    }
 
 }

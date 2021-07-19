@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.fw.gui.statusbar;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -26,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JMenuItem;
@@ -35,6 +38,7 @@ import javax.swing.JProgressBar;
 import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.BadLocationException;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -42,7 +46,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -63,11 +67,10 @@ public class StatusBar extends JPanel
 
    private final JProgressBar _progressBar = new JProgressBar();
 
-   private final JPanel _pnlLabelOrProgress = new JPanel();
+   private final JPanel _pnlLabelOrProgress = new JPanel(new BorderLayout());
 
-   /** Constraints used to add new controls to this statusbar. */
+	/** Constraints used to add new controls to this statusbar. */
 	private final GridBagConstraints _gbc = new GridBagConstraints();
-
 	private Font _font;
 
 	private StatusBarHrefListener _statusBarHrefListener;
@@ -243,8 +246,7 @@ public class StatusBar extends JPanel
 
 	public static Border createComponentBorder()
 	{
-		return BorderFactory.createCompoundBorder(new ThinLoweredBevelBorder(),
-																BorderFactory.createEmptyBorder(0, 4, 0, 4));
+		return BorderFactory.createCompoundBorder(new ThinLoweredBevelBorder(), BorderFactory.createEmptyBorder(0, 4, 0, 4));
 	}
 
 	private void createGUI()
@@ -257,14 +259,13 @@ public class StatusBar extends JPanel
 
       _progressBar.setStringPainted(true);
 
-      _pnlLabelOrProgress.setLayout(new GridLayout(1,1));
-      _pnlLabelOrProgress.add(_textLbl);
+      _pnlLabelOrProgress.add(_textLbl, BorderLayout.CENTER);
 
       // The message area is on the right of the statusbar and takes
 		// up all available space.
 		_gbc.anchor = GridBagConstraints.WEST;
 		_gbc.weightx = 1.0;
-		_gbc.fill = GridBagConstraints.BOTH;
+		_gbc.fill = GridBagConstraints.HORIZONTAL;
 		_gbc.gridy = 0;
 		_gbc.gridx = 0;
 		addJComponent(_pnlLabelOrProgress);
@@ -289,13 +290,20 @@ public class StatusBar extends JPanel
 		}
 	}
 
-   public void setStatusBarProgress(String msg, int minimum, int maximum, int value)
+   public void setStatusBarProgress(String msg, int minimum, int maximum, int value, ActionListener stopAction)
    {
       if(false == _pnlLabelOrProgress.getComponent(0) instanceof JProgressBar)
       {
-         _pnlLabelOrProgress.remove(0);
-         _pnlLabelOrProgress.add(_progressBar);
-         validate();
+         _pnlLabelOrProgress.removeAll();
+         _pnlLabelOrProgress.add(_progressBar, BorderLayout.CENTER);
+
+			if (null != stopAction)
+			{
+				JButton stopButton = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.STOP));
+				stopButton.addActionListener(stopAction);
+				_pnlLabelOrProgress.add(GUIUtils.styleAsToolbarButton(stopButton), BorderLayout.EAST);
+			}
+			validate();
       }
 
       _progressBar.setMinimum(minimum);
@@ -316,8 +324,8 @@ public class StatusBar extends JPanel
    {
       if(_pnlLabelOrProgress.getComponent(0) instanceof JProgressBar)
       {
-         _pnlLabelOrProgress.remove(0);
-         _pnlLabelOrProgress.add(_textLbl);
+         _pnlLabelOrProgress.removeAll();
+         _pnlLabelOrProgress.add(_textLbl, BorderLayout.CENTER);
          validate();
          repaint();
       }

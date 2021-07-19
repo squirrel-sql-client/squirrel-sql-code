@@ -49,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
@@ -152,7 +153,16 @@ public class SessionPanel extends JPanel
 
    public void setStatusBarProgress(final String msg, final int minimum, final int maximum, final int value)
    {
-      GUIUtils.processOnSwingEventThread(() -> _statusBar.setStatusBarProgress(msg, minimum, maximum, value));
+      setStatusBarProgress(msg, minimum, maximum, value, null);
+   }
+
+   /**
+    * @param stopAction On first call when the progress bar is created (and until setStatusBarProgressFinished() is called)
+    *                   if stopAction is not null a stop button is created on the left and the listener is attached to it.
+    */
+   public void setStatusBarProgress(final String msg, final int minimum, final int maximum, final int value, ActionListener stopAction)
+   {
+      GUIUtils.processOnSwingEventThread(() -> _statusBar.setStatusBarProgress(msg, minimum, maximum, value, stopAction));
    }
 
    public void setStatusBarProgressFinished()

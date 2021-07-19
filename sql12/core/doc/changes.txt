@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+When the Object tree is searched the Session's status displays a progress bar with a stop button.
+
 New Plugin "High resolution icon"
   Provides high resolution icons for  HiDPI screens.
   Thanks to Stanimir Stamenkov for merge request #80 on which this Plugin is based.
