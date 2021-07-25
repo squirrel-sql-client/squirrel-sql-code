@@ -33,13 +33,26 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
 import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTable.PrintMode;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
@@ -502,7 +515,7 @@ public class SmarttoolMissingIndicesFrame extends DialogWidget implements ISmart
 			for (int i = 0; i < tblResult.getRowCount() - 1; i++)
 			{
 				int records = getRecordCount(stmt, (String) tblResult.getValueAt(i, COL_TABLENAME));
-				tblResult.setValueAt(new Integer(records), i, COL_RECORDS);
+				tblResult.setValueAt(Integer.valueOf(records), i, COL_RECORDS);
 				((DefaultTableModel) tblResult.getModel()).fireTableDataChanged();
 			}
 			stmt.close();

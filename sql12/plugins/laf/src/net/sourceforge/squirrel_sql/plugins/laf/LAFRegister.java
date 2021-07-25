@@ -39,7 +39,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 import java.awt.Frame;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -212,53 +211,59 @@ public class LAFRegister
 	/**
 	 * Set the current Look and Feel to that specified in the app preferences.
 	 */
-	void setLookAndFeel(boolean force) throws ClassNotFoundException, IllegalAccessException,
-		InstantiationException, UnsupportedLookAndFeelException
+	void setLookAndFeel(boolean force)
 	{
-		final LAFPreferences prefs = _plugin.getLAFPreferences();
-		final String lafClassName = prefs.getLookAndFeelClassName();
-		// Get Look and Feel class object.
-		Class<?> lafClass = null;
-		if (_lafClassLoader != null)
+		try
 		{
-			lafClass = Class.forName(lafClassName, true, _lafClassLoader);
-		}
-		else
-		{
-			lafClass = Class.forName(lafClassName);
-		}
-		// Get the new Look and Feel object.
-		final LookAndFeel laf = (LookAndFeel) lafClass.newInstance();
-		// If a different LAF to the current one has been requested then
-		// change to the requested LAF.
-		LookAndFeel curLaf = UIManager.getLookAndFeel();
-		s_log.debug(curLaf);
-		if (force || curLaf == null || !curLaf.getName().equals(laf.getName()))
-		{
-			ILookAndFeelController lafCont = getLookAndFeelController(lafClassName);
-			lafCont.aboutToBeInstalled(this, laf);
-
-			// Set Look and Feel. If this is the Substance/JTattoo placeholder, skip it as it is not a real
-			// look and feel. The controller will handle setting the look and feel using the UIManager.
-			if (!PlaceholderLookAndFeel.isPlaceholder(lafClassName))
+			final LAFPreferences prefs = _plugin.getLAFPreferences();
+			final String lafClassName = prefs.getLookAndFeelClassName();
+			// Get Look and Feel class object.
+			Class<?> lafClass = null;
+			if (_lafClassLoader != null)
 			{
-				if (s_log.isInfoEnabled())
-				{
-					s_log.info("Setting lookandfeel class: " + lafClassName);
-				}
-
-				if (_lafClassLoader != null)
-				{
-					UIManager.put("ClassLoader", _lafClassLoader);
-					UIManager.setLookAndFeel(laf);
-				}
-				else
-				{
-					UIManager.setLookAndFeel(laf);
-				}
+				lafClass = Class.forName(lafClassName, true, _lafClassLoader);
 			}
-			lafCont.hasBeenInstalled(this, laf);
-			updateAllFrames();
+			else
+			{
+				lafClass = Class.forName(lafClassName);
+			}
+			// Get the new Look and Feel object.
+			final LookAndFeel laf = (LookAndFeel) lafClass.getDeclaredConstructor().newInstance();
+			// If a different LAF to the current one has been requested then
+			// change to the requested LAF.
+			LookAndFeel curLaf = UIManager.getLookAndFeel();
+			s_log.debug(curLaf);
+			if (force || curLaf == null || !curLaf.getName().equals(laf.getName()))
+			{
+				ILookAndFeelController lafCont = getLookAndFeelController(lafClassName);
+				lafCont.aboutToBeInstalled(this, laf);
+
+				// Set Look and Feel. If this is the Substance/JTattoo placeholder, skip it as it is not a real
+				// look and feel. The controller will handle setting the look and feel using the UIManager.
+				if (!PlaceholderLookAndFeel.isPlaceholder(lafClassName))
+				{
+					if (s_log.isInfoEnabled())
+					{
+						s_log.info("Setting lookandfeel class: " + lafClassName);
+					}
+
+					if (_lafClassLoader != null)
+					{
+						UIManager.put("ClassLoader", _lafClassLoader);
+						UIManager.setLookAndFeel(laf);
+					}
+					else
+					{
+						UIManager.setLookAndFeel(laf);
+					}
+				}
+				lafCont.hasBeenInstalled(this, laf);
+				updateAllFrames();
+			}
+		}
+		catch (Exception e)
+		{
+			throw Utilities.wrapRuntime(e);
 		}
 	}
 
@@ -382,7 +387,7 @@ public class LAFRegister
 				try
 				{
 					Class<?> lafClass = Class.forName(className, false, _lafClassLoader);
-					LookAndFeel laf = (LookAndFeel) lafClass.newInstance();
+					LookAndFeel laf = (LookAndFeel) lafClass.getDeclaredConstructor().newInstance();
 					if (laf.isSupportedLookAndFeel())
 					{
 						LookAndFeelInfo info = new LookAndFeelInfo(laf.getName(), lafClass.getName());

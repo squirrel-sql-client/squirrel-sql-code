@@ -62,7 +62,7 @@ public class TableCopyAsMarkdownCommand
 
 
       Table.Builder tableBuilder = new Table.Builder();
-      tableBuilder.addRow(colNames);
+      tableBuilder.addRow((Object[]) colNames);
 
       for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
       {

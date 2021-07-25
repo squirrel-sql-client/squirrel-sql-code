@@ -11,7 +11,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
-import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -60,7 +59,7 @@ public class HQLPanelController
 
       _hibernateChannel.addToToolbar(_runHQL);
 
-      KeyStroke ctrlEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, Event.CTRL_MASK);
+      KeyStroke ctrlEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_DOWN_MASK);
       _hqlEntryPanelManager.registerKeyboardAction(_runHQL, ctrlEnter);
    }
 

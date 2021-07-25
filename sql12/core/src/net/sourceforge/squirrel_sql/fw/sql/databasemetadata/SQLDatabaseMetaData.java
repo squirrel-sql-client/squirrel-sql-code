@@ -671,15 +671,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getTypeInfo()
-	 * @deprecated Replaced by getDataTypes
-	 */
-	public ResultSet getTypeInfo() throws SQLException
-	{
-		return privateGetJDBCMetaData().getTypeInfo();
-	}
-
-	/**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getTypesDataSet()
 	 */
 	public synchronized IDataSet getTypesDataSet() throws DataSetException
@@ -1213,18 +1204,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getColumnPrivileges(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-	 * @deprecated use getColumnPrivilegesDataSet instead.
-	 */
-	public ResultSet getColumnPrivileges(ITableInfo ti) throws SQLException
-	{
-		// MM-MYSQL driver doesnt support null for column name.
-		final String columns = DialectFactory.isMySQL(this) ? "%" : null;
-		return privateGetJDBCMetaData().getColumnPrivileges(ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName(), columns);
-	}
-
-	/**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getColumnPrivilegesDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
 	 *      int[], boolean)
 	 */
@@ -1502,16 +1481,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getPrimaryKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-	 * @deprecated use getPrimaryKey instead
-	 */
-	public ResultSet getPrimaryKeys(ITableInfo ti) throws SQLException
-	{
-		return privateGetJDBCMetaData().getPrimaryKeys(ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName());
-	}
-
-	/**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getPrimaryKey(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
 	 *      int[], boolean)
 	 */
@@ -1578,16 +1547,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 			return results.toArray(new PrimaryKeyInfo[0]);
 		}
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getProcedureColumns(net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo)
-	 * @deprecated use getProcedureColumnsDataSet instead
-	 */
-	public ResultSet getProcedureColumns(IProcedureInfo ti) throws SQLException
-	{
-		return privateGetJDBCMetaData().getProcedureColumns(ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName(), "%");
 	}
 
 	/**

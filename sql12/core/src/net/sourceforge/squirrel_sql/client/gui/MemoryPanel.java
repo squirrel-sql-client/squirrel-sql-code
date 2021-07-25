@@ -197,8 +197,7 @@ public class MemoryPanel extends JPanel
 
 		ret.numSessAwaitingGC = "" + numSessAwaitingGC;
 
-		// i18n [MemoryPanel.gcStatusToolTip={0} Sessions waiting for garbage collection]
-		ret.tooltip = s_stringMgr.getString("MemoryPanel.gcStatusToolTip", new Integer(ret.numSessAwaitingGC));
+		ret.tooltip = s_stringMgr.getString("MemoryPanel.gcStatusToolTip", Integer.valueOf(ret.numSessAwaitingGC));
 
 		ret.color = Color.yellow;
 		if(numSessAwaitingGC < 2)

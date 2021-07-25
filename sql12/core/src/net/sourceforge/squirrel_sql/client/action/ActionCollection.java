@@ -20,16 +20,6 @@ package net.sourceforge.squirrel_sql.client.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.Action;
-import javax.swing.KeyStroke;
-
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -42,11 +32,23 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.IMainPanelTabAction;
+import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents a collection of <TT>Action</CODE> objects for the
@@ -352,20 +354,14 @@ public class ActionCollection
 		Action action = null;
 		try
 		{
-            // i18n[ActionCollection.createActionInfo=Attempting to load action class - {0}]
-            String msg = 
-                s_stringMgr.getString("ActionCollection.createActionInfo", 
-                                      actionClassName);
-		    s_log.info(msg);
-            action = (Action)Class.forName(actionClassName).newInstance();
+			String msg =s_stringMgr.getString("ActionCollection.createActionInfo",actionClassName);
+			s_log.info(msg);
+			action = (Action) Class.forName(actionClassName).getDeclaredConstructor().newInstance();
 			_actionColl.put(actionClassName, action);
 		}
 		catch (Exception ex)
 		{
-            // i18n[ActionCollection.createActionError=Error occurred creating Action: {0}]
-            String msg = 
-                s_stringMgr.getString("ActionCollection.createActionError",
-                                      actionClassName);
+			String msg = s_stringMgr.getString("ActionCollection.createActionError", actionClassName);
 			s_log.error(msg, ex);
 		}
 		return action;

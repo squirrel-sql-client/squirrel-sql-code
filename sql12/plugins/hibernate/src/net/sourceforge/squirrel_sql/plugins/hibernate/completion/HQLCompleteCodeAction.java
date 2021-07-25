@@ -14,7 +14,7 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateChannel;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HqlSyntaxHighlightTokenMatcherProxy;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -74,7 +74,7 @@ public class HQLCompleteCodeAction extends SquirrelAction
 
 	private void performCompletionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
 	{
-      if(KeyEvent.VK_SPACE == keyCode && modifiers == KeyEvent.CTRL_MASK)
+      if(KeyEvent.VK_SPACE == keyCode && modifiers == KeyEvent.CTRL_DOWN_MASK)
       {
          // Code Completion has been done within Code Completion. Now just replace what all candidates have in common.
 

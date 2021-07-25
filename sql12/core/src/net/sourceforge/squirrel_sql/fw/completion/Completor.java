@@ -18,12 +18,33 @@
 package net.sourceforge.squirrel_sql.fw.completion;
 
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Keymap;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 
 public class Completor
 {
@@ -59,7 +80,7 @@ public class Completor
 		KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0, false),
 		KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0, false),
 		KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0, false),
-		KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, KeyEvent.CTRL_MASK, false)
+		KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, KeyEvent.CTRL_DOWN_MASK, false)
 	};
 
    private Action[] _originalActions = null;
@@ -137,7 +158,7 @@ public class Completor
 	{
 		if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_TAB)
 		{
-			completionSelected(e.getKeyCode(), e.getModifiers());
+			completionSelected(e.getKeyCode(), e.getModifiersEx());
 		}
       else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
@@ -344,30 +365,22 @@ public class Completor
 
 	public void show()
 	{
-		try
-		{
-			_currCandidates = _model.getCompletionCandidates(getTextTillCaret());
+      _currCandidates = _model.getCompletionCandidates(getTextTillCaret());
 
-			if(0 == _currCandidates.getCandidates().length)
-			{
-				return;
-			}
-			if(1 == _currCandidates.getCandidates().length)
-			{
-				fireEvent(_currCandidates.getCandidates()[0], KeyEvent.VK_ENTER, 0);
-				return;
-			}
+      if(0 == _currCandidates.getCandidates().length)
+      {
+         return;
+      }
+      if(1 == _currCandidates.getCandidates().length)
+      {
+         fireEvent(_currCandidates.getCandidates()[0], KeyEvent.VK_ENTER, 0);
+         return;
+      }
 
-         _txtComp.getEditor().modelToView(_currCandidates.getReplacementStart());
 
-			_completionList.setFont(_txtComp.getEditor().getFont());
-			fillAndShowCompletionList(_currCandidates.getCandidates());
-		}
-		catch (BadLocationException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
+      _completionList.setFont(_txtComp.getEditor().getFont());
+      fillAndShowCompletionList(_currCandidates.getCandidates());
+   }
 
    private void fillAndShowCompletionList(CompletionInfo[] candidates)
 	{
@@ -385,14 +398,14 @@ public class Completor
             model.addElement(candidates[i]);
          }
 
-         Rectangle caretBounds;
+         Rectangle2D caretBounds;
          if(_txtComp.editorEqualsFilter())
          {
-            caretBounds = _txtComp.getEditor().modelToView(_currCandidates.getReplacementStart());
+            caretBounds = _txtComp.getEditor().modelToView2D(_currCandidates.getReplacementStart());
          }
          else
          {
-            caretBounds = _txtComp.getEditor().modelToView(_txtComp.getEditor().getCaretPosition());
+            caretBounds = _txtComp.getEditor().modelToView2D(_txtComp.getEditor().getCaretPosition());
          }
 
          _popupMan.install(_completionPanel, caretBounds, PopupManager.BelowPreferred);

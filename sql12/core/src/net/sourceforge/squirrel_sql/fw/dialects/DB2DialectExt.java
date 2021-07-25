@@ -18,8 +18,15 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.CYCLE_CLAUSE;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.NO_CYCLE_CLAUSE;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import org.antlr.stringtemplate.StringTemplate;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.HibernateException;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -29,16 +36,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
-import org.antlr.stringtemplate.StringTemplate;
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.HibernateException;
+import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.CYCLE_CLAUSE;
+import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.NO_CYCLE_CLAUSE;
 
 /**
  * An extension to the standard Hibernate DB2 dialect
@@ -717,10 +716,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
-	 * @deprecated use the version that accepts the sequence name instead.
 	 */
-	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		final String tableName = column.getTableName();
 		final String columnName = column.getColumnName();

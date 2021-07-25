@@ -1,12 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 
 
 /**
@@ -49,19 +50,19 @@ public class KeyManager
    {
       KeyStroke keyStroke;
 
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.CTRL_MASK);
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK);
       _textPane.getKeymap().removeKeyStrokeBinding(keyStroke);
 
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.CTRL_MASK | Event.SHIFT_MASK);
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
       _textPane.getKeymap().removeKeyStrokeBinding(keyStroke);
 
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.CTRL_MASK);
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK);
       _textPane.getKeymap().removeKeyStrokeBinding(keyStroke);
 
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.CTRL_MASK | Event.SHIFT_MASK);
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
       _textPane.getKeymap().removeKeyStrokeBinding(keyStroke);
 
-		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, Event.CTRL_MASK);
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_DOWN_MASK);
 		_textPane.getKeymap().removeKeyStrokeBinding(keyStroke);
 	}
 
@@ -70,7 +71,7 @@ public class KeyManager
       KeyStroke keyStroke;
       Action act;
 
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.CTRL_MASK);
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK);
       act  = new AbstractAction()
       {
          public void actionPerformed(ActionEvent e)
@@ -80,7 +81,7 @@ public class KeyManager
       };
       _textPane.getKeymap().addActionForKeyStroke(keyStroke,act);
 
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.CTRL_MASK | Event.SHIFT_MASK);
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
       act  = new AbstractAction()
       {
          public void actionPerformed(ActionEvent e)
@@ -90,7 +91,7 @@ public class KeyManager
       };
       _textPane.getKeymap().addActionForKeyStroke(keyStroke,act);
 
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.CTRL_MASK);
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK);
       act  = new AbstractAction()
       {
          public void actionPerformed(ActionEvent e)
@@ -100,7 +101,7 @@ public class KeyManager
       };
       _textPane.getKeymap().addActionForKeyStroke(keyStroke,act);
 
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.CTRL_MASK | Event.SHIFT_MASK);
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
       act  = new AbstractAction()
       {
          public void actionPerformed(ActionEvent e)
@@ -110,7 +111,7 @@ public class KeyManager
       };
       _textPane.getKeymap().addActionForKeyStroke(keyStroke,act);
 
-		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, Event.CTRL_MASK);
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_DOWN_MASK);
 		act  = new AbstractAction()
 		{
 			public void actionPerformed(ActionEvent e)

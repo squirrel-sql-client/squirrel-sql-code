@@ -17,13 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.util.List;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -31,6 +24,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 import net.sourceforge.squirrel_sql.plugins.mysql.util.DBUtils;
+
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import java.util.List;
 /*
  * CopyTableCommand.java
  *
@@ -180,11 +180,7 @@ public class CopyTableCommand implements ICommand {
         buttonOk.setFont(new java.awt.Font("Dialog", 0, 12));
         // i18n[mysql.copyOk=Ok]
         buttonOk.setText(s_stringMgr.getString("mysql.copyOk"));
-        buttonOk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonOkActionPerformed(evt);
-            }
-        });
+        buttonOk.addActionListener(evt -> buttonOkActionPerformed());
 
         jd.getContentPane().add(buttonOk);
         buttonOk.setBounds(190, 230, 70, 26);
@@ -249,34 +245,45 @@ public class CopyTableCommand implements ICommand {
         jd.dispose();
     }
 
-    private void buttonOkActionPerformed(@SuppressWarnings("unused") java.awt.event.ActionEvent evt) {
+    private void buttonOkActionPerformed()
+    {
         newTableName = tfTableName.getText();
-		String selectedFields = "";
-		String fields = "";
-		Object[] obj = listFields.getSelectedValues();
-		for (int i = 0; i < obj.length; i++)
-		{
-			selectedFields += obj[i];
-			if (i < obj.length - 1)
-				selectedFields += ", ";
+        String selectedFields = "";
+        String fields = "";
+        List<Object> obj = listFields.getSelectedValuesList();
+        for (int i = 0; i < obj.size(); i++)
+        {
+            selectedFields += obj.get(i);
+            if (i < obj.size() - 1)
+            {
+                selectedFields += ", ";
             }
-		if (isAllFields)
+        }
+        if (isAllFields)
+        {
             fields = "*";
-		else
-			fields = selectedFields;
+        }
+        else
+        {
+            fields = selectedFields;
+        }
 
-		if (isStructure)
+        if (isStructure)
+        {
             SQLCommandRoot += "SELECT "
-                    + fields
-                    + " FROM "
-                    + oldTableName
-                    + " WHERE 1=0 ;";
-		else
+                  + fields
+                  + " FROM "
+                  + oldTableName
+                  + " WHERE 1=0 ;";
+        }
+        else
+        {
             SQLCommandRoot += "SELECT "
-                    + fields
-                    + " FROM "
-                    + oldTableName
-                    + " ;";
+                  + fields
+                  + " FROM "
+                  + oldTableName
+                  + " ;";
+        }
 
         SQLQuery = getQuery() + SQLCommandRoot;
         dbUtils.execute(SQLQuery);
@@ -284,8 +291,8 @@ public class CopyTableCommand implements ICommand {
         jd.setVisible(false);
         jd.dispose();
         JOptionPane.showMessageDialog(
-                null,
-                "Table " + newTableName + " created");
+              null,
+              "Table " + newTableName + " created");
 
     }
 

@@ -1,15 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyCommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -41,7 +37,7 @@ public class DataSetViewerTableCopyAction extends BaseAction
 
    public static KeyStroke getTableCopyActionKeyStroke()
    {
-      return KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+      return KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx());
    }
 
 }

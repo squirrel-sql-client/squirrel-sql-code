@@ -15,6 +15,7 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 
 public class DeletedLinesGutterItem implements GutterItem
 {
@@ -41,14 +42,14 @@ public class DeletedLinesGutterItem implements GutterItem
 
    private int getYOfLine(ISQLEntryPanel sqlEntry, int deletePosition)
    {
-      Rectangle rect;
+      Rectangle2D rect;
 
       Rectangle visibleRect = sqlEntry.getTextComponent().getVisibleRect();
 
       try
       {
-         rect = sqlEntry.getTextComponent().modelToView(sqlEntry.getTextComponent().getLineStartOffset(deletePosition));
-         return correctYForEditorBegin(rect.y - visibleRect.y);
+         rect = sqlEntry.getTextComponent().modelToView2D(sqlEntry.getTextComponent().getLineStartOffset(deletePosition));
+         return correctYForEditorBegin((int) (rect.getY() - visibleRect.y));
       }
       catch (BadLocationException e)
       {
@@ -57,9 +58,9 @@ public class DeletedLinesGutterItem implements GutterItem
             // We were below the end.
             if (0 < sqlEntry.getTextComponent().getLineCount())
             {
-               rect = sqlEntry.getTextComponent().modelToView(sqlEntry.getTextComponent().getLineStartOffset(sqlEntry.getTextComponent().getLineCount() - 1));
+               rect = sqlEntry.getTextComponent().modelToView2D(sqlEntry.getTextComponent().getLineStartOffset(sqlEntry.getTextComponent().getLineCount() - 1));
 
-               return correctYForEditorBegin(rect.y - visibleRect.y + rect.height);
+               return correctYForEditorBegin((int) (rect.getY() - visibleRect.y + rect.getHeight()));
             }
             else
             {

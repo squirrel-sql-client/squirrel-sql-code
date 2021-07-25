@@ -28,7 +28,8 @@ import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -95,7 +96,7 @@ public class CompleteCodeAction extends SquirrelAction
 
       String textTillCaret = _cc.getTextTillCaret();
 
-      if(KeyEvent.VK_SPACE == keyCode && modifiers == KeyEvent.CTRL_MASK)
+      if(KeyEvent.VK_SPACE == keyCode && modifiers == KeyEvent.CTRL_DOWN_MASK)
       {
          // Code Completion has been done within Code Completion.
          // and relaunch completion popup.  

@@ -136,7 +136,7 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
       JTextPane editor = (JTextPane) ev.getSource();
       editor.setEditable(false);
       Point pt = new Point(ev.getX(), ev.getY());
-      int pos = editor.viewToModel(pt);
+      int pos = editor.viewToModel2D(pt);
       if (pos >= 0)
       {
          Document eDoc = editor.getDocument();
@@ -181,7 +181,7 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
       JTextPane editor = (JTextPane) ev.getSource();
       editor.setEditable(false);
       Point pt = new Point(ev.getX(), ev.getY());
-      int pos = editor.viewToModel(pt);
+      int pos = editor.viewToModel2D(pt);
       if (pos >= 0)
       {
          Document eDoc = editor.getDocument();

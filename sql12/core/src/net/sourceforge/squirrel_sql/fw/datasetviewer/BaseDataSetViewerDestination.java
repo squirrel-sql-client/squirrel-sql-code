@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.DefaultCellEditor;
 
 /**
  * This provides base behaviour for implemtations of <TT>IDataSetViewerDestination</TT>.
@@ -176,7 +176,7 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 		try
 		{
 			Class<?> cls = Class.forName(sName);
-			dsv = (IDataSetViewer) cls.newInstance();
+			dsv = (IDataSetViewer) cls.getDeclaredConstructor().newInstance();
 			dsv.init(updateableModel, dataModelImplementationDetails, session);
 		}
 		catch (Exception e)

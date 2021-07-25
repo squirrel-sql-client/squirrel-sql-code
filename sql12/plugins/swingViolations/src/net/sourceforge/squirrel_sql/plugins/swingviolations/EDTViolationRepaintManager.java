@@ -18,6 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.plugins.swingviolations;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JComponent;
+import javax.swing.RepaintManager;
+import javax.swing.SwingUtilities;
 import java.applet.Applet;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -25,14 +32,6 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.lang.ref.WeakReference;
-
-import javax.swing.JComponent;
-import javax.swing.RepaintManager;
-import javax.swing.SwingUtilities;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * @author Stefan Willinger
@@ -123,7 +122,8 @@ public class EDTViolationRepaintManager extends RepaintManager{
 	 * @param h
 	 * @see javax.swing.RepaintManager#addDirtyRegion(java.applet.Applet, int, int, int, int)
 	 */
-	public void addDirtyRegion(Applet applet, int x, int y, int w, int h) {
+	public void addDirtyRegion(Applet applet, int x, int y, int w, int h)
+	{
 		delegate.addDirtyRegion(applet, x, y, w, h);
 	}
 

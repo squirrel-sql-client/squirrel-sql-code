@@ -52,7 +52,7 @@ class SquirrelStyledTextTransferable implements Transferable
 
    public DataFlavor[] getTransferDataFlavors()
    {
-      return (DataFlavor[]) FLAVORS.clone();
+      return FLAVORS.clone();
    }
 
    public boolean isDataFlavorSupported(DataFlavor flavor)

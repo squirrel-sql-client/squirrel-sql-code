@@ -41,6 +41,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -122,7 +123,7 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 		LookAndFeel skinObject;
 		try
 		{
-			skinObject = (LookAndFeel)skinClass.newInstance();
+			skinObject = (LookAndFeel)skinClass.getDeclaredConstructor().newInstance();
 			UIManager.setLookAndFeel(skinObject);
 			UIManager.getLookAndFeelDefaults().put("ClassLoader", _cl);
 		}
@@ -140,6 +141,14 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 		{
 			// UIManager.setLookAndFeel
 			s_log.error("Unable to set look and feel using skinClass("+skinName+"):"+e.getMessage(), e);
+		}
+		catch (InvocationTargetException e)
+		{
+			s_log.error("Unable to instantiate skinClass ("+skinName+"):"+e.getMessage(), e);
+		}
+		catch (NoSuchMethodException e)
+		{
+			s_log.error("Unable to instantiate skinClass ("+skinName+"):"+e.getMessage(), e);
 		}
 	}
 

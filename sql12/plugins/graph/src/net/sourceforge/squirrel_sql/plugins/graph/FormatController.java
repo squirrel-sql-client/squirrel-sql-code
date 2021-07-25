@@ -1,5 +1,21 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.fw.xml.XMLException;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
+
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,25 +25,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 public class FormatController {
 
@@ -306,15 +310,15 @@ public class FormatController {
 
    private void onDeleteSeletedListItems()
    {
-      Object[] selFormats = _dlg.lstFormats.getSelectedValues();
+      List<Object> selFormats = _dlg.lstFormats.getSelectedValuesList();
 
       Vector<FormatXmlBean> remainFormats = new Vector<FormatXmlBean>();
       for (int i = 0; i < _formats.length; i++)
       {
             boolean found = false;
-         for (int j = 0; j < selFormats.length; j++)
+         for (int j = 0; j < selFormats.size(); j++)
          {
-            if(_formats[i] == selFormats[j])
+            if(_formats[i] == selFormats.get(j))
             {
                     found = true;
                     break;

@@ -15,15 +15,14 @@
 
 package net.sourceforge.squirrel_sql.fw.completion;
 
-import java.awt.Rectangle;
-
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JRootPane;
-
+import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import java.awt.Component;
-import javax.swing.JViewport;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 
 /**
@@ -61,13 +60,11 @@ public class PopupManager
       _popupParent = popupParent;
    }
 
-   public void install(
-		JComponent popup, Rectangle cursorBounds, Placement placement)
+   public void install(JComponent popup, Rectangle2D cursorBounds, Placement placement)
 	{
 
 		// Update the bounds of the popup
-		Rectangle bounds = computeBounds(popup, _popupParent,
-			cursorBounds, placement);
+		Rectangle bounds = computeBounds(popup, _popupParent, cursorBounds, placement);
 
 		if (bounds != null)
 		{
@@ -137,8 +134,7 @@ public class PopupManager
 	 *    of the underlying view component.
 	 *    <CODE>null</CODE> if there is no place to display popup.
 	 */
-	protected static Rectangle computeBounds(JComponent popup,
-														  JComponent view, Rectangle cursorBounds, Placement placement)
+	protected static Rectangle computeBounds(JComponent popup, JComponent view, Rectangle2D cursorBounds, Placement placement)
 	{
 
 		Rectangle ret;
@@ -160,8 +156,7 @@ public class PopupManager
 		}
 		else
 		{ // not in scroll pane
-			ret = computeBounds(popup, view.getWidth(), view.getHeight(),
-				cursorBounds, placement);
+			ret = computeBounds(popup, view.getWidth(), view.getHeight(), cursorBounds, placement);
 		}
 
 		return ret;
@@ -218,8 +213,7 @@ public class PopupManager
 	 *    of the underlying view.
 	 *    <CODE>null</CODE> if there is no place to display popup.
 	 */
-	protected static Rectangle computeBounds(JComponent popup,
-														  int viewWidth, int viewHeight, Rectangle cursorBounds, Placement placement)
+	protected static Rectangle computeBounds(JComponent popup, int viewWidth, int viewHeight, Rectangle2D cursorBounds, Placement placement)
 	{
 
 		if (placement == null)
@@ -228,24 +222,19 @@ public class PopupManager
 		}
 
 		// Compute available height above the cursor
-		int aboveCursorHeight = cursorBounds.y;
-		int belowCursorY = cursorBounds.y + cursorBounds.height;
+		int aboveCursorHeight = (int) cursorBounds.getY();
+		int belowCursorY = (int) (cursorBounds.getY() + cursorBounds.getHeight());
 		int belowCursorHeight = viewHeight - belowCursorY;
 
 		// resolve Largest and *Preferred placements if possible
 		if (placement == Largest)
 		{
-			placement = (aboveCursorHeight < belowCursorHeight)
-				? Below
-				: Above;
+			placement = (aboveCursorHeight < belowCursorHeight) ? Below: Above;
 
 		}
-		else if (placement == AbovePreferred
-			&& aboveCursorHeight > belowCursorHeight // more space above
-		)
+		else if (placement == AbovePreferred && aboveCursorHeight > belowCursorHeight) // more space above
 		{
 			placement = Above;
-
 		}
 		else if (placement == BelowPreferred
 			&& belowCursorHeight > aboveCursorHeight // more space below
@@ -295,7 +284,7 @@ public class PopupManager
 		if (popupBounds != null)
 		{
 			//place popup according to caret position and Placement
-			popupBounds.x = Math.min(cursorBounds.x, viewWidth - popupBounds.width);
+			popupBounds.x = (int) Math.min(cursorBounds.getX(), viewWidth - popupBounds.width);
 
 			popupBounds.y = (placement == Above || placement == AbovePreferred)
 				? (aboveCursorHeight - popupBounds.height)

@@ -1,13 +1,13 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 
 
 public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction  implements ISQLPanelAction
@@ -92,7 +92,7 @@ public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction  implem
       {
          int modi = evt.getModifiers();
 
-         if((modi & InputEvent.CTRL_MASK) != 0 || (modi & InputEvent.CTRL_DOWN_MASK) != 0)
+         if((modi & InputEvent.CTRL_DOWN_MASK) != 0)
          {
             //System.out.println("CTRL+B");
             return _panel.getSession().getProperties().getAllowCtrlBJumpToObjectTree();

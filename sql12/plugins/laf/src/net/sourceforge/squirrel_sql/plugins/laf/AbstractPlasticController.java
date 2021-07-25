@@ -17,18 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingConstants;
-import javax.swing.plaf.metal.MetalTheme;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -36,6 +24,18 @@ import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.LookAndFeel;
+import javax.swing.SwingConstants;
+import javax.swing.plaf.metal.MetalTheme;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 /**
  * Base class for the LAF controllers for Plastic and Metal.
  *
@@ -128,11 +128,10 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 		{
 			try
 			{
-				
-				Class<?> clazz = 
-					Class.forName(PLASTIC_THEME_CLASS_NAMES[i], false, cl);
-				MetalTheme theme = (MetalTheme)clazz.newInstance();
-				_themes.put(theme.getName(), theme); 
+
+				Class<?> clazz = Class.forName(PLASTIC_THEME_CLASS_NAMES[i], false, cl);
+				MetalTheme theme = (MetalTheme) clazz.getDeclaredConstructor().newInstance();
+				_themes.put(theme.getName(), theme);
 			}
 			catch (Throwable th)
 			{

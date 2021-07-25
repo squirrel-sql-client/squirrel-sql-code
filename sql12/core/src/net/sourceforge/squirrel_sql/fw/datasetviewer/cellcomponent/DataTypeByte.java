@@ -17,21 +17,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -40,6 +25,22 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.I
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 /**
  * @author gwg
@@ -97,7 +98,8 @@ public class DataTypeByte extends BaseDataTypeComponent
 	/**
 	 * Constructor - save the data needed by this data type.
 	 */
-	public DataTypeByte(JTable table, ColumnDisplayDefinition colDef) {
+	public DataTypeByte(JTable table, ColumnDisplayDefinition colDef)
+	{
 		_table = table;
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
@@ -137,7 +139,8 @@ public class DataTypeByte extends BaseDataTypeComponent
 	 * to be able to view the entire contents of the cell even if it was not
 	 * completely loaded during the initial table setup.
 	 */
-	public boolean needToReRead(Object originalValue) {
+	public boolean needToReRead(Object originalValue)
+	{
 		// this DataType does not limit the data read during the initial load of the table,
 		// so there is no need to re-read the complete data later
 		return false;
@@ -181,18 +184,23 @@ public class DataTypeByte extends BaseDataTypeComponent
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
 	 */
-	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
+	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer)
+	{
 		// handle null, which is shown as the special string "<null>"
 		if (value.equals(StringUtilities.NULL_AS_STRING) || value.equals(""))
+		{
 			return null;
+		}
 
 		// Do the conversion into the object in a safe manner
-		try {
-			Object obj = new Byte(value);
+		try
+		{
+			Object obj = Byte.valueOf(value);
 			return obj;
 		}
-		catch (Exception e) {
-			messageBuffer.append(e.toString()+"\n");
+		catch (Exception e)
+		{
+			messageBuffer.append(e.toString() + "\n");
 			//?? do we need the message also, or is it automatically part of the toString()?
 			//messageBuffer.append(e.getMessage());
 			return null;
@@ -261,99 +269,116 @@ public class DataTypeByte extends BaseDataTypeComponent
 	 * Internal class for handling key events during editing
 	 * of both JTextField and JTextArea.
 	 */
-	 private class KeyTextHandler extends BaseKeyTextHandler {
-	 	public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				
-				// as a coding convenience, create a reference to the text component
-				// that is typecast to JTextComponent.  this is not essential, as we
-				// could typecast every reference, but this makes the code cleaner
-				JTextComponent _theComponent = (JTextComponent)DataTypeByte.this._textComponent;
-				String text = _theComponent.getText();
-	
-				// look for illegal chars
-				if ( ! DataTypeByte.this._isSigned && c == '-') {
-					// cannot use '-' when unsigned
-					_beepHelper.beep(_theComponent);
-					e.consume();
-				}
-												
-				// tabs and newlines get put into the text before this check,
-				// so remove them
-				// This only applies to Popup editing since these chars are
-				// not passed to this level by the in-cell editor.
-				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
-					// remove all instances of the offending char
-					int index = text.indexOf(c);
-					if (index != -1) {
-						if (index == text.length() -1) {
-							text = text.substring(0, text.length()-1);	// truncate string
-						}
-						else {
-							text = text.substring(0, index) + text.substring(index+1);
-						}
-						((IRestorableTextComponent)_theComponent).updateText( text);
-						_beepHelper.beep(_theComponent);
+	private class KeyTextHandler extends BaseKeyTextHandler
+	{
+		public void keyTyped(KeyEvent e)
+		{
+			char c = e.getKeyChar();
+
+			// as a coding convenience, create a reference to the text component
+			// that is typecast to JTextComponent.  this is not essential, as we
+			// could typecast every reference, but this makes the code cleaner
+			JTextComponent _theComponent = (JTextComponent) DataTypeByte.this._textComponent;
+			String text = _theComponent.getText();
+
+			// look for illegal chars
+			if (!DataTypeByte.this._isSigned && c == '-')
+			{
+				// cannot use '-' when unsigned
+				_beepHelper.beep(_theComponent);
+				e.consume();
+			}
+
+			// tabs and newlines get put into the text before this check,
+			// so remove them
+			// This only applies to Popup editing since these chars are
+			// not passed to this level by the in-cell editor.
+			if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER)
+			{
+				// remove all instances of the offending char
+				int index = text.indexOf(c);
+				if (index != -1)
+				{
+					if (index == text.length() - 1)
+					{
+						text = text.substring(0, text.length() - 1);   // truncate string
 					}
-					e.consume();
+					else
+					{
+						text = text.substring(0, index) + text.substring(index + 1);
+					}
+					((IRestorableTextComponent) _theComponent).updateText(text);
+					_beepHelper.beep(_theComponent);
 				}
+				e.consume();
+			}
 
 
-				if ( ! ( Character.isDigit(c) ||
+			if (!(Character.isDigit(c) ||
 					(c == '-') ||
 					(c == KeyEvent.VK_BACK_SPACE) ||
-					(c == KeyEvent.VK_DELETE) ) ) {
-					_beepHelper.beep(_theComponent);
-					e.consume();
-				}
+					(c == KeyEvent.VK_DELETE)))
+			{
+				_beepHelper.beep(_theComponent);
+				e.consume();
+			}
 
-				// check for max size reached (only works when DB provides non-zero scale info
-				if (DataTypeByte.this._scale > 0 &&
+			// check for max size reached (only works when DB provides non-zero scale info
+			if (DataTypeByte.this._scale > 0 &&
 					text.length() == DataTypeByte.this._scale &&
 					c != KeyEvent.VK_BACK_SPACE &&
-					c != KeyEvent.VK_DELETE) {
-					// max size reached
-					e.consume();
-					_beepHelper.beep(_theComponent);
+					c != KeyEvent.VK_DELETE)
+			{
+				// max size reached
+				e.consume();
+				_beepHelper.beep(_theComponent);
+			}
+
+			// handle cases of null
+			// The processing is different when nulls are allowed and when they are not.
+			//
+
+			if (DataTypeByte.this._isNullable)
+			{
+
+				// user enters something when field is null
+				if (text.equals(StringUtilities.NULL_AS_STRING))
+				{
+					if ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))
+					{
+						// delete when null => original value
+						DataTypeByte.this._textComponent.restoreText();
+						e.consume();
+					}
+					else
+					{
+						// non-delete when null => clear field and add text
+						DataTypeByte.this._textComponent.updateText("");
+						// fall through to normal processing of this key stroke
+					}
 				}
-
-				// handle cases of null
-				// The processing is different when nulls are allowed and when they are not.
-				//
-
-				if ( DataTypeByte.this._isNullable) {
-
-					// user enters something when field is null
-					if (text.equals(StringUtilities.NULL_AS_STRING)) {
-						if ((c==KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
-							// delete when null => original value
-							DataTypeByte.this._textComponent.restoreText();
+				else
+				{
+					// check for user deletes last thing in field
+					if ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))
+					{
+						if (text.length() <= 1)
+						{
+							// about to delete last thing in field, so replace with null
+							DataTypeByte.this._textComponent.updateText(StringUtilities.NULL_AS_STRING);
 							e.consume();
 						}
-						else {
-							// non-delete when null => clear field and add text
-							DataTypeByte.this._textComponent.updateText("");
-							// fall through to normal processing of this key stroke
-						}
 					}
-					else {
-						// check for user deletes last thing in field
-						if ((c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
-							if (text.length() <= 1 ) {
-								// about to delete last thing in field, so replace with null
-								DataTypeByte.this._textComponent.updateText(StringUtilities.NULL_AS_STRING);
-								e.consume();
-							}
-						}
-					}
-				}
-				else {
-                    // field is not nullable
-                    //
-                    handleNotNullableField(text, c, e, _textComponent);
 				}
 			}
+			else
+			{
+				// field is not nullable
+				//
+				handleNotNullableField(text, c, e, _textComponent);
+			}
 		}
+	}
 
 
 	

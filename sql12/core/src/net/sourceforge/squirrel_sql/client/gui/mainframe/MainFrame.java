@@ -52,8 +52,8 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Event;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -387,7 +387,7 @@ public class MainFrame extends JFrame
 		// alt may not work. This code is a workaround. See bug report
 		// 4736093 for more information.
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_ALT, Event.ALT_MASK, false),
+				KeyStroke.getKeyStroke(KeyEvent.VK_ALT, ActionEvent.ALT_MASK, false),
 				"repaint");
 
 		validate();

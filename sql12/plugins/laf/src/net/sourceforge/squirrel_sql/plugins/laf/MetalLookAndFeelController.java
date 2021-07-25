@@ -17,19 +17,20 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.util.Iterator;
-import java.util.Vector;
-import java.util.HashMap;
-
-import javax.swing.*;
-import javax.swing.plaf.metal.DefaultMetalTheme;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.metal.MetalTheme;
 
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
+
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.metal.MetalTheme;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Behaviour for the jGoodies Plastic Look and Feel. It also takes
@@ -107,7 +108,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
 
             ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
             Class<?> clazz = Class.forName(MetalLookAndFeelController.DEFAULT_METAL_THEME, false, cl);
-            MetalTheme theme = (MetalTheme) clazz.newInstance();
+            MetalTheme theme = (MetalTheme) clazz.getDeclaredConstructor().newInstance();
             _currentThemePrefs.setThemeName(theme.getName());
 
             try
@@ -145,7 +146,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
 			{
 				Class<?> clazz = Class.forName(_extraThemeClassNames[i], false, cl);
 
-            MetalTheme metalTheme = (MetalTheme) clazz.newInstance();
+            MetalTheme metalTheme = (MetalTheme) clazz.getDeclaredConstructor().newInstance();
             _themesByName.put(metalTheme.getName(), metalTheme);
             ret.add(metalTheme);
 

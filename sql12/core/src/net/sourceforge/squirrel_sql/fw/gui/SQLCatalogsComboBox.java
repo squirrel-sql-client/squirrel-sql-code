@@ -18,13 +18,10 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JComboBox;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.TreeMap;
 /**
@@ -96,36 +93,6 @@ public class SQLCatalogsComboBox extends JComboBox
     private boolean isEmptyCatalog(String catalog) {
    	 return catalog == null || "".equals(catalog);
     }
-    
-	/**
-	 * Set the <TT>SQLConnection</TT> for this control. Clear control and place all the catalog names from
-	 * the connection in it in alphabetic sequence. Select the first catalog.
-	 * 
-	 * @param conn
-	 *           <TT>SQLConnection</TT> to retrieve catalog names from.
-	 * @throws IllegalArgumentException
-	 *            Thrown if a <TT>null</TT> <TT>SQLConnection</TT> passed.
-	 * @throws SQLException
-	 *            Thrown if an SQL exception occurs.
-	 * @deprecated This method has been deprecated because the view should not have direct access to the model.
-	 *             Use the setCatalogs method instead.
-	 */
-	public void setConnection(ISQLConnection conn) throws SQLException
-	{
-		if (conn == null)
-		{
-			throw new IllegalArgumentException("SQLConnection == null");
-		}
-		final SQLDatabaseMetaData md = conn.getSQLMetaData();
-		if (md.supportsCatalogs())
-		{
-			final String[] catalogs = md.getCatalogs();
-			if (catalogs != null)
-			{
-				setCatalogs(catalogs, conn.getCatalog());
-			}
-		}
-	}
 
 	public String getSelectedCatalog()
 	{

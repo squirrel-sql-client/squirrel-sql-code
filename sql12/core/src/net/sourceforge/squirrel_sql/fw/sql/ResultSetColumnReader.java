@@ -180,11 +180,11 @@ public class ResultSetColumnReader
 						}
 						else
 						{
-							results = new Double(obj.toString());
+							results = Double.valueOf(obj.toString());
 						}
 						break;
 					default:
-						results = new Double(obj.toString());
+						results = Double.valueOf(obj.toString());
 						break;
 				}
 			}
@@ -220,24 +220,27 @@ public class ResultSetColumnReader
 					case Types.TINYINT:
 					case Types.INTEGER:
 					case Types.BIGINT :
-					    if (obj instanceof Number)
+						if (obj instanceof Number)
 						{
-							results = ((Number)obj).longValue();
+							results = ((Number) obj).longValue();
 						}
 						else
 						{
-							results = new Long(obj.toString());
+							results = Long.valueOf(obj.toString());
 						}
 						break;
-                    case Types.BIT:
-                        if ("true".equalsIgnoreCase(obj.toString())) {
-                            results = Long.valueOf(1);
-                        } else {
-                            results = Long.valueOf(0);
-                        }
-                        break;
+					case Types.BIT:
+						if ("true".equalsIgnoreCase(obj.toString()))
+						{
+							results = Long.valueOf(1);
+						}
+						else
+						{
+							results = Long.valueOf(0);
+						}
+						break;
 					default:
-						results = new Long(obj.toString());
+						results = Long.valueOf(obj.toString());
 						break;
 				}
 			}

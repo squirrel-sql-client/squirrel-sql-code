@@ -11,7 +11,7 @@ public class SQLGenerator
 
          String hql = (String) rcQuery.callMethod("unwrap", cl.loadClass("org.hibernate.query.Query")).callMethod("getQueryString").getCallee();
 
-         ReflectionCaller queryTranslatorFactoryRc = new ReflectionCaller(cl.loadClass("org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory").newInstance());
+         ReflectionCaller queryTranslatorFactoryRc = new ReflectionCaller(cl.loadClass("org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory").getDeclaredConstructor().newInstance());
 
          ReflectionCaller sessionFactoryImplementorRc =
             new ReflectionCaller(factoryWrapper.getEntityManagerFactory()).callMethod("unwrap", cl.loadClass("org.hibernate.engine.spi.SessionFactoryImplementor"));

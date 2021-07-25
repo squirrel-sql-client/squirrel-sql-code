@@ -64,7 +64,7 @@ class ReflectionCaller
    {
       try
       {
-         return new ReflectionCaller(getCalleeClass().newInstance(), _treatClassCalleeAsType);
+         return new ReflectionCaller(getCalleeClass().getDeclaredConstructor().newInstance(), _treatClassCalleeAsType);
       }
       catch (Exception e)
       {

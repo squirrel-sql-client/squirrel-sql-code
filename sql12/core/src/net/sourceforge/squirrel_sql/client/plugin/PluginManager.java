@@ -672,7 +672,7 @@ public class PluginManager implements IPluginManager
 		try
 		{
 			final PluginLoadInfo pli = new PluginLoadInfo();
-			final IPlugin plugin = (IPlugin) pluginClass.newInstance();
+			final IPlugin plugin = (IPlugin) pluginClass.getConstructor().newInstance();
 			pli.pluginCreated(plugin);
 			_pluginLoadInfoColl.put(plugin.getInternalName(), pli);
 			pi.setPlugin(plugin);

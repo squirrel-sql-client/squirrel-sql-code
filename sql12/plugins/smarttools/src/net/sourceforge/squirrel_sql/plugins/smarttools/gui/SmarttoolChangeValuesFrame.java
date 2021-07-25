@@ -32,11 +32,24 @@ import net.sourceforge.squirrel_sql.plugins.smarttools.STDataType;
 import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
 import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -993,7 +1006,7 @@ public class SmarttoolChangeValuesFrame extends DialogWidget implements ISmartto
 				{
 					vecRow.add(i18n.ERROR_ON_TABLE);
 				}
-				vecRow.add(new Integer(0));
+				vecRow.add(Integer.valueOf(0));
 				DefaultTableModel tm = (DefaultTableModel) tblResult.getModel();
 				tm.addRow(vecRow);
 				tm.fireTableDataChanged();
@@ -1128,13 +1141,13 @@ public class SmarttoolChangeValuesFrame extends DialogWidget implements ISmartto
 								+ getWhereCondition(columnName, oldValue);
 						int rowsAffected = stmt.executeUpdate(sql);
 						int rowCount = SmarttoolsHelper.getRowCount(stmt, tableName);
-						tblResult.setValueAt(new Integer(1), row, TABLE_COL_STATUS);
+						tblResult.setValueAt(Integer.valueOf(1), row, TABLE_COL_STATUS);
 						tblResult.setValueAt(rowsAffected + "/" + rowCount, row, TABLE_COL_RECORDS);
 					}
 					catch (SQLException e)
 					{
 						error = true;
-						tblResult.setValueAt(new Integer(2), row, TABLE_COL_STATUS);
+						tblResult.setValueAt(Integer.valueOf(2), row, TABLE_COL_STATUS);
 						log.error(e);
 					}
 

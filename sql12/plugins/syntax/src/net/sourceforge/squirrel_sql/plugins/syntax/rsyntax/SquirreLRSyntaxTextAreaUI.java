@@ -1,15 +1,18 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLEntryPanelUtil;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaDefaultInputMap;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaUI;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextAreaEditorKit;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.plaf.InputMapUIResource;
 import javax.swing.text.EditorKit;
 import javax.swing.text.JTextComponent;
@@ -20,11 +23,11 @@ import java.awt.event.KeyEvent;
 
 public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
 {
-   private static final KeyStroke RS_KEY_STROKE_TO_UPPER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
-   private static final KeyStroke RS_KEY_STROKE_TO_LOWER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+   private static final KeyStroke RS_KEY_STROKE_TO_UPPER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+   private static final KeyStroke RS_KEY_STROKE_TO_LOWER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 
-   private static final KeyStroke RS_KEY_STROKE_LINE_UP = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
-   private static final KeyStroke RS_KEY_STROKE_LINE_DOWN = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+   private static final KeyStroke RS_KEY_STROKE_LINE_UP = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+   private static final KeyStroke RS_KEY_STROKE_LINE_DOWN = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 
    private static final EditorKit _squirrel_defaultKit =
       new RSyntaxTextAreaEditorKit()
@@ -70,16 +73,16 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
 
    private void modifiyKeystrokes(InputMap shared)
    {
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.CTRL_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.CTRL_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_MASK));
+      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.CTRL_DOWN_MASK));
+      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.CTRL_DOWN_MASK));
+      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
+      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK));
+      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_DOWN_MASK));
 
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_MASK)); // ChangeTrackAction
+      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_DOWN_MASK));
+      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_DOWN_MASK));
+      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
+      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_DOWN_MASK)); // ChangeTrackAction
 
       /*
        *       Remove this Keystroke, because it triggers auto-complete of the current word with a matching most recent word,
@@ -97,8 +100,8 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
 
       
 
-      KeyStroke rsyntaxRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK);
-      KeyStroke squirrelRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK);
+      KeyStroke rsyntaxRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
+      KeyStroke squirrelRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK);
       shared.put(squirrelRedoStroke,shared.get(rsyntaxRedoStroke));
    }
 

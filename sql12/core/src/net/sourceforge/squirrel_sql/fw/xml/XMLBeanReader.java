@@ -191,7 +191,7 @@ public class XMLBeanReader implements Iterable<Object>
 			{
 				beanClass = Class.forName(beanClassName, true, _cl);
 			}
-			Object bean = beanClass.newInstance();
+			Object bean = beanClass.getDeclaredConstructor().newInstance();
 			BeanInfo info = Introspector.getBeanInfo(bean.getClass(), Introspector.USE_ALL_BEANINFO);
 			PropertyDescriptor[] propDesc = info.getPropertyDescriptors();
 			Map<String, PropertyDescriptor> props = new HashMap<>();
@@ -332,7 +332,7 @@ public class XMLBeanReader implements Iterable<Object>
 			}
 			else if (parmType == long.class)
 			{
-				Object data = new Long(value);
+				Object data = Long.valueOf(value);
 				try
 				{
 					setter.invoke(bean, new Object[] { data });
@@ -344,7 +344,7 @@ public class XMLBeanReader implements Iterable<Object>
 			}
 			else if (parmType == float.class)
 			{
-				Object data = new Float(value);
+				Object data = Float.valueOf(value);
 				try
 				{
 					setter.invoke(bean, new Object[] { data });
@@ -356,7 +356,7 @@ public class XMLBeanReader implements Iterable<Object>
 			}
 			else if (parmType == double.class)
 			{
-				Object data = new Double(value);
+				Object data = Double.valueOf(value);
 				try
 				{
 					setter.invoke(bean, new Object[] { data });

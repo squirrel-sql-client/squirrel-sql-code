@@ -7,9 +7,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.activation.DataHandler;
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.TransferHandler;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Point;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -55,7 +57,7 @@ public class DndHandler
 
    private void onMousePressed(MouseEvent e, JComponent comp, ISession session)
    {
-      if (1 == e.getClickCount() && false == e.isPopupTrigger() && 0 != (e.getModifiers() & MouseEvent.CTRL_MASK) )
+      if (1 == e.getClickCount() && false == e.isPopupTrigger() && 0 != (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) )
       {
          _lastExportedMouseEvent = e;
          if(comp instanceof DndColumn)

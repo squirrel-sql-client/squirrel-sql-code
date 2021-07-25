@@ -2,13 +2,10 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.PropertyCheck;
 
-import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Rectangle;
 
 public class GutterItemUtil
@@ -22,8 +19,8 @@ public class GutterItemUtil
 
          int lastLine = Math.min(beginLineTransformed + numberOfLinesTransformed, sqlEntry.getTextComponent().getLineCount() -1);
 
-         Rectangle beginRect = sqlEntry.getTextComponent().modelToView(sqlEntry.getTextComponent().getLineStartOffset(beginLineTransformed));
-         Rectangle endRect = sqlEntry.getTextComponent().modelToView(sqlEntry.getTextComponent().getLineStartOffset(lastLine));
+         Rectangle beginRect = GUIUtils.toRectangle(sqlEntry.getTextComponent().modelToView2D(sqlEntry.getTextComponent().getLineStartOffset(beginLineTransformed)));
+         Rectangle endRect = GUIUtils.toRectangle(sqlEntry.getTextComponent().modelToView2D(sqlEntry.getTextComponent().getLineStartOffset(lastLine)));
 
          Rectangle visibleRect = sqlEntry.getTextComponent().getVisibleRect();
 
@@ -56,8 +53,8 @@ public class GutterItemUtil
 
          int lastLine = Math.min(beginLineTransformed + numberOfLinesTransformed, sqlEntry.getTextComponent().getLineCount() -1);
 
-         Rectangle beginRect = sqlEntry.getTextComponent().modelToView(sqlEntry.getTextComponent().getLineStartOffset(beginLineTransformed));
-         Rectangle endRect = sqlEntry.getTextComponent().modelToView(sqlEntry.getTextComponent().getLineStartOffset(lastLine));
+         Rectangle beginRect = GUIUtils.toRectangle(sqlEntry.getTextComponent().modelToView2D(sqlEntry.getTextComponent().getLineStartOffset(beginLineTransformed)));
+         Rectangle endRect = GUIUtils.toRectangle(sqlEntry.getTextComponent().modelToView2D(sqlEntry.getTextComponent().getLineStartOffset(lastLine)));
 
          Rectangle ret = new Rectangle();
 

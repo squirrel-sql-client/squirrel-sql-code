@@ -18,6 +18,22 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -29,22 +45,6 @@ import java.io.OutputStreamWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.NumberFormat;
-
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * @author gwg This class provides the display components for handling Double data types, specifically SQL
@@ -230,11 +230,11 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 
 			if (FloatingPointBaseDTProperties.isUseJavaDefaultFormat())
 			{
-				obj = new Double(value);
+				obj = Double.valueOf(value);
 			}
 			else
 			{
-				obj = new Double("" + _numberFormat.parse(value));
+				obj = Double.valueOf(("" + _numberFormat.parse(value)));
 			}
 
 			return obj;
@@ -420,8 +420,14 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 	{
 
 		double data = rs.getDouble(index);
-		if (rs.wasNull()) return null;
-		else return new Double(data);
+		if (rs.wasNull())
+		{
+			return null;
+		}
+		else
+		{
+			return Double.valueOf(data);
+		}
 	}
 
 	/**
@@ -480,14 +486,20 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 			// if there was a problem with converting, then just fall through
 			// and continue as if there was no default given in the DB.
 			// Otherwise, use the converted object
-			if (mbuf.length() == 0) return newObject;
+			if (mbuf.length() == 0)
+			{
+				return newObject;
+			}
 		}
 
 		// no default in DB. If nullable, use null.
-		if (_isNullable) return null;
+		if (_isNullable)
+		{
+			return null;
+		}
 
 		// field is not nullable, so create a reasonable default value
-		return new Double(0);
+		return Double.valueOf(0);
 	}
 
 	/*

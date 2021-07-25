@@ -19,18 +19,10 @@
 
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.util.ArrayList;
-import java.util.List;
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -47,11 +39,18 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -180,10 +179,10 @@ public class ColumnListDialog extends JDialog implements IDisposableDialog
    public TableColumnInfo[] getSelectedColumnList()
    {
       ArrayList<TableColumnInfo> result = new ArrayList<>();
-      Object[] selectedColNames = columnList.getSelectedValues();
-      for (int i = 0; i < selectedColNames.length; i++)
+      List<Object> selectedColNames = columnList.getSelectedValuesList();
+      for (int i = 0; i < selectedColNames.size(); i++)
       {
-         String columnName = (String) selectedColNames[i];
+         String columnName = (String) selectedColNames.get(i);
          result.add(getColInfoByName(columnName));
       }
       return result.toArray(new TableColumnInfo[result.size()]);

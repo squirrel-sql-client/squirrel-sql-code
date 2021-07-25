@@ -244,10 +244,8 @@ public class FindResultColumnCtrl
    {
       _findResultColumnDlg.lstRight.clearSelection();
 
-      for (Object obj : _findResultColumnDlg.lstLeft.getSelectedValues())
+      for (FindColumnColWrapper findColumnColWrapper : _findResultColumnDlg.lstLeft.getSelectedValuesList())
       {
-         FindColumnColWrapper findColumnColWrapper = (FindColumnColWrapper) obj;
-
          _leftListModel.removeElement(findColumnColWrapper);
          _rightListModel.addElement(findColumnColWrapper);
 
@@ -259,10 +257,8 @@ public class FindResultColumnCtrl
    {
       _findResultColumnDlg.lstLeft.clearSelection();
 
-      for (Object obj : _findResultColumnDlg.lstRight.getSelectedValues())
+      for (FindColumnColWrapper findColumnColWrapper : _findResultColumnDlg.lstRight.getSelectedValuesList())
       {
-         FindColumnColWrapper findColumnColWrapper = (FindColumnColWrapper) obj;
-
          _rightListModel.removeElement(findColumnColWrapper);
          _leftListModel.addElement(findColumnColWrapper);
 

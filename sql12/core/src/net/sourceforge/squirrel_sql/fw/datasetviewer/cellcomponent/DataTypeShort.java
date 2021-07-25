@@ -17,21 +17,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -40,6 +25,22 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.I
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 
 /**
@@ -182,18 +183,23 @@ public class DataTypeShort extends BaseDataTypeComponent
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
 	 */
-	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
+	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer)
+	{
 		// handle null, which is shown as the special string "<null>"
 		if (value.equals(StringUtilities.NULL_AS_STRING) || value.equals(""))
+		{
 			return null;
+		}
 
 		// Do the conversion into the object in a safe manner
-		try {
-			Object obj = new Short(value);
+		try
+		{
+			Object obj = Short.valueOf(value);
 			return obj;
 		}
-		catch (Exception e) {
-			messageBuffer.append(e.toString()+"\n");
+		catch (Exception e)
+		{
+			messageBuffer.append(e.toString() + "\n");
 			//?? do we need the message also, or is it automatically part of the toString()?
 			//messageBuffer.append(e.getMessage());
 			return null;

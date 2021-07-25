@@ -17,15 +17,9 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer.excel;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FailedToInterpretHandler;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
-import net.sourceforge.squirrel_sql.plugins.dataimport.importer.UnsupportedFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -34,7 +28,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-import javax.swing.JComponent;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -240,7 +233,7 @@ public class ExcelFileImporter implements IFileImporter
 
          try
          {
-            return new Double(buf);
+            return Double.valueOf(buf);
          }
          catch (NumberFormatException e)
          {

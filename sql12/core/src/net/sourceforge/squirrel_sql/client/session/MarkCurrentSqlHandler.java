@@ -2,10 +2,13 @@ package net.sourceforge.squirrel_sql.client.session;
 
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 public class MarkCurrentSqlHandler
 {
@@ -69,17 +72,17 @@ public class MarkCurrentSqlHandler
 
          g.setColor(_markColor);
 
-         Rectangle beg = _textComponent.modelToView(bounds[0]);
-         Rectangle end = _textComponent.modelToView(bounds[1]);
+         Rectangle2D beg = _textComponent.modelToView2D(bounds[0]);
+         Rectangle2D end = _textComponent.modelToView2D(bounds[1]);
 
 
          int maxSqlX = getMaxSqlX(bounds, end);
 
          //x = beg.x;
          x = 0;
-         y = beg.y;
+         y = (int) beg.getY();
          width = maxSqlX - x;
-         height = end.height + end.y - beg.y;
+         height = (int) (end.getHeight() + end.getY() - beg.getY());
 
          g.drawRect(x, y, width, height);
 
@@ -103,7 +106,7 @@ public class MarkCurrentSqlHandler
 
    }
 
-   private int getMaxSqlX(int[] bounds, Rectangle end) throws BadLocationException
+   private int getMaxSqlX(int[] bounds, Rectangle2D end) throws BadLocationException
    {
       String text = _textComponent.getText();
 
@@ -112,11 +115,11 @@ public class MarkCurrentSqlHandler
       {
          if('\n' == text.charAt(i))
          {
-            Rectangle rectangle = _textComponent.modelToView(i);
-            maxSqlX = Math.max(maxSqlX, rectangle.x + rectangle.width);
+            Rectangle2D rectangle = _textComponent.modelToView2D(i);
+            maxSqlX = (int) Math.max(maxSqlX, rectangle.getX() + rectangle.getWidth());
          }
       }
-      maxSqlX = Math.max(maxSqlX, end.x + end.width);
+      maxSqlX = (int) Math.max(maxSqlX, end.getX() + end.getWidth());
       return maxSqlX;
    }
 

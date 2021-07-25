@@ -1033,4 +1033,9 @@ public class GUIUtils
       separator.setBorder(BorderFactory.createEtchedBorder());
       return separator;
    }
+
+	public static Rectangle toRectangle(Rectangle2D in)
+	{
+		return new Rectangle((int)in.getX(), (int)in.getY(), (int)in.getWidth(), (int)in.getHeight());
+	}
 }

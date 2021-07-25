@@ -1,8 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.InputEvent;
+import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -97,7 +100,7 @@ public class RectangleSelectionHandler
 
    private void initBeginPoint(MouseEvent e)
    {
-      if (SwingUtilities.isLeftMouseButton(e) && 0 == (e.getModifiers() & MouseEvent.CTRL_MASK))
+      if (SwingUtilities.isLeftMouseButton(e) && 0 == (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK))
       {
          _dragBeginPoint = e.getPoint();
       }

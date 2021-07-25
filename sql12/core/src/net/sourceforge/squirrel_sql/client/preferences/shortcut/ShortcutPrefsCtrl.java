@@ -270,7 +270,7 @@ public class ShortcutPrefsCtrl
       _currentKeyStroke = KeyStroke.getKeyStrokeForEvent(e);
       String shortcutText = ShortcutUtil.getKeystrokeString(_currentKeyStroke);
 
-      if(0 != e.getModifiers()
+      if(0 != e.getModifiersEx()
          && (
                   e.getKeyCode() == KeyEvent.VK_SHIFT
                || e.getKeyCode() == KeyEvent.VK_ALT

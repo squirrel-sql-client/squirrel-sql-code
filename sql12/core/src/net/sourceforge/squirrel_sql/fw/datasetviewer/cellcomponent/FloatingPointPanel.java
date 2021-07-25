@@ -5,11 +5,23 @@ import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.text.NumberFormat;
 
 /**
@@ -23,7 +35,7 @@ class FloatingPointPanel extends OkJPanel
 
    JRadioButton optUseLocaleDependendFormat = new JRadioButton();
    JRadioButton optUseUserDefinedFormat = new JRadioButton();
-   JRadioButton optUseJavaDefaultFormat = new JRadioButton(s_stringMgr.getString("floatingPointBase.useDefaultFormat", new Double(3.14159).toString()));
+   JRadioButton optUseJavaDefaultFormat = new JRadioButton(s_stringMgr.getString("floatingPointBase.useDefaultFormat", Double.valueOf(3.14159).toString()));
 
 
    IntegerField localeDependendMinimumFraction = new IntegerField(2);
@@ -238,7 +250,7 @@ class FloatingPointPanel extends OkJPanel
       numberFormat.setMaximumFractionDigits(maxFractionDigits);
 
       return s_stringMgr.getString("floatingPointBase.uselocaleDependendFormat",
-            numberFormat.format(new Double(1000000)), numberFormat.format(new Double(Math.PI)));
+                                   numberFormat.format(Double.valueOf(1000000)), numberFormat.format(Double.valueOf((Math.PI))));
    }
 
    private String createTextForOptUseUserDefinedFormat()
@@ -255,7 +267,7 @@ class FloatingPointPanel extends OkJPanel
                                                                     userDefinedMaximumFractionDigits);
 
       return s_stringMgr.getString("floatingPointBase.optUseUserDefinedFormat",
-            numberFormat.format(new Double(1000000)), numberFormat.format(new Double(Math.PI)));
+            numberFormat.format(Double.valueOf(1000000)), numberFormat.format(Double.valueOf(Math.PI)));
    }
 
    /**

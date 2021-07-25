@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MarkCurrentSqlHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
@@ -16,7 +15,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
-import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.rtffix.RtfFix;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search.SquirrelRSyntaxSearchEngine;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -202,7 +200,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 
    public String getToolTipText(MouseEvent event)
    {
-      int pos = viewToModel(event.getPoint());
+      int pos = viewToModel2D(event.getPoint());
 
       initParsing();
 

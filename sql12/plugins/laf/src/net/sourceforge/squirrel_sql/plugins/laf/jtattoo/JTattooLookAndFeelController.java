@@ -45,6 +45,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -130,7 +131,7 @@ public class JTattooLookAndFeelController extends DefaultLookAndFeelController
 		
 		try
 		{
-			skinObject = (LookAndFeel)skinClass.newInstance();
+			skinObject = (LookAndFeel)skinClass.getDeclaredConstructor().newInstance();
 			
 			// McWin requires special handling to make table header rows more visually appealing (square borders
 			// instead of rounded ones that look like buttons)
@@ -162,6 +163,14 @@ public class JTattooLookAndFeelController extends DefaultLookAndFeelController
 		{
 			// UIManager.setLookAndFeel
 			s_log.error("Unable to set look and feel using skinClass("+skinName+"):"+e.getMessage(), e);
+		}
+		catch (InvocationTargetException e)
+		{
+			s_log.error("Unable to instantiate skinClass ("+skinName+"):"+e.getMessage(), e);
+		}
+		catch (NoSuchMethodException e)
+		{
+			s_log.error("Unable to instantiate skinClass ("+skinName+"):"+e.getMessage(), e);
 		}
 	}
 

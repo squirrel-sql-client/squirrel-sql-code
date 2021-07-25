@@ -633,7 +633,7 @@ public class GraphDesktopController
       {
          _lastPressedConstraintView = hitData.getConstraintView();
 
-         if(InputEvent.BUTTON3_MASK == e.getModifiers())
+         if(InputEvent.BUTTON3_DOWN_MASK == e.getModifiersEx())
          {
             refreshSelection(hitData.getConstraintView(), false);
             SwingUtilities.invokeLater(new Runnable()
@@ -661,7 +661,7 @@ public class GraphDesktopController
 
       if(ConstraintHit.LINE == hitData.getConstraintHit())
       {
-         refreshSelection(hitData.getConstraintView(), InputEvent.BUTTON1_MASK == e.getModifiers() );
+         refreshSelection(hitData.getConstraintView(), InputEvent.BUTTON1_DOWN_MASK == e.getModifiersEx() );
          SwingUtilities.invokeLater(new Runnable()
          {
             public void run()

@@ -127,18 +127,6 @@ public abstract class BaseSourceTab extends BaseObjectTab
       return _scroller;
    }
 
-   /**
-    * Subclasses can use this to override the default behavior provided by the DefaultSourcePanel, with a
-    * subclass of BaseSourcePanel.
-    *
-    * @param panel
-    * @deprecated Use {@link #createSourcePanel()} as callback method.
-    */
-   public void setSourcePanel(BaseSourcePanel panel)
-   {
-      _comp = panel;
-   }
-
    protected void refreshComponent()
    {
       ISession session = getSession();
