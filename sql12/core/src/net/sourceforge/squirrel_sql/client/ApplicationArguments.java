@@ -173,6 +173,12 @@ public class ApplicationArguments implements IApplicationArguments
       }
    }
 
+	/**
+	 * Introduced in Feb. 2014.
+	 * Currently used by Plugins not hosted with SQuirreL only.
+	 * It's not clear if such Plugins really exist.
+	 * Implementors must override {@link net.sourceforge.squirrel_sql.client.plugin.IPlugin#getPluginApplicationArguments()}.
+	 */
    @Override
    public void addPluginApplicationArguments(Collection<IApplicationArgument> args) throws IllegalArgumentException
    {
@@ -181,7 +187,7 @@ public class ApplicationArguments implements IApplicationArguments
          return;
       }
 
-      Map<IApplicationArgument, Option> options = new HashMap<IApplicationArgument, Option>(args.size());
+      Map<IApplicationArgument, Option> options = new HashMap<>(args.size());
       for (IApplicationArgument arg : args)
       {
          Option option = new Option(arg.getArgumentName(), arg.getDescription());

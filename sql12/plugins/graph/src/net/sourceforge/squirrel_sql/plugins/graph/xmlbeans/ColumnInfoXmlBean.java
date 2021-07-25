@@ -115,17 +115,13 @@ public class ColumnInfoXmlBean
       this.decimalDigits = decimalDigits;
    }
 
-   /**
-    * @deprecated Since 3.2 The ColumnInfo does not have this information anymore
-    */
+   @Deprecated(since = "Since 3.2 The ColumnInfo does not have this information anymore")
    public boolean isNonDbConstraint()
    {
       return _nonDbConstraint;
    }
 
-   /**
-    * @deprecated Since 3.2 The ColumnInfo does not have this information anymore
-    */
+   @Deprecated(since = "Since 3.2 The ColumnInfo does not have this information anymore")
    public void setNonDbConstraint(boolean nonDbConstraint)
    {
       _nonDbConstraint = nonDbConstraint;

@@ -21,7 +21,12 @@ package net.sourceforge.squirrel_sql.client;
 import java.util.Collection;
 import java.util.Collections;
 
-
+/**
+ * Introduced in Feb. 2014.
+ * Currently used by Plugins not hosted with SQuirreL only.
+ * It's not clear if such Plugins really exist.
+ * Implementors must override {@link net.sourceforge.squirrel_sql.client.plugin.IPlugin#getPluginApplicationArguments()}.
+ */
 public class DefaultApplicationArgument implements IApplicationArgument {
 
     private String argumentName;

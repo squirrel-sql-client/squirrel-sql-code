@@ -8,9 +8,7 @@ public class ConstraintDataXmlBean
    private String constraintName;
    private boolean nonDbConstraint;
 
-   /**
-    * @deprecated Should be handled as _fkColumns if these don't already exist.
-    */
+   @Deprecated(since = "Should be handled as _fkColumns if these don't already exist")
    private ColumnInfoXmlBean[] columnInfoXmlBeans;
 
    private boolean _showThisConstraintName;
@@ -48,17 +46,13 @@ public class ConstraintDataXmlBean
       this.constraintName = constraintName;
    }
 
-   /**
-    * @deprecated Use getFkColumns() instead
-    */
+   @Deprecated(since = "Use getFkColumns() instead")
    public ColumnInfoXmlBean[] getColumnInfoXmlBeans()
    {
       return columnInfoXmlBeans;
    }
 
-   /**
-    * @deprecated Use setFkColumns() instead
-    */
+   @Deprecated(since = "Use getFkColumns() instead")
    public void setColumnInfoXmlBeans(ColumnInfoXmlBean[] columnInfoXmlBeans)
    {
       this.columnInfoXmlBeans = columnInfoXmlBeans;

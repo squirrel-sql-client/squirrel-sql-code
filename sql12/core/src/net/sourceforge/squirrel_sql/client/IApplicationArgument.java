@@ -21,6 +21,12 @@ package net.sourceforge.squirrel_sql.client;
 import java.util.Collection;
 
 /**
+ * Introduced in Feb. 2014.
+ * Currently used by Plugins not hosted with SQuirreL only.
+ * It's not clear if such Plugins really exist.
+ * Implementors must override {@link net.sourceforge.squirrel_sql.client.plugin.IPlugin#getPluginApplicationArguments()}.
+ *
+ *
  * Interface to encapsulate the concept of an application argument which is non-coupled to the argument implementation.
  * 
  * Use a structure of a simplified (string only, etc) version of the Apache CLI Option
