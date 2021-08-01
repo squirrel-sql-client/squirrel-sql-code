@@ -20,8 +20,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
 
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -29,12 +27,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.sql.Connection;
 import java.sql.Driver;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
+
 /**
  * This class replaces the standard Java class <TT>java.ql.DriverManager</TT>.
  * The main reason for replacing it is that <TT>java.ql.DriverManager</TT>
@@ -44,8 +40,6 @@ import java.util.Properties;
  */
 public class SQLDriverManager
 {
-	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLDriverManager.class);
-
 	private static final ILogger s_log = LoggerController.createLogger(SQLDriverManager.class);
 
 	/**
@@ -99,66 +93,21 @@ public class SQLDriverManager
 		return getConnection(sqlDriver, alias, user, pw, null);
 	}
 
-	public synchronized SQLConnection getConnection(ISQLDriver sqlDriver, ISQLAlias alias, String user, String pw, SQLDriverPropertyCollection props)
+	public SQLConnection getConnection(ISQLDriver sqlDriver, ISQLAlias alias, String user, String pw, SQLDriverPropertyCollection props)
 	{
 		return getConnection(sqlDriver, alias, user, pw, props, null);
 	}
 
 
-	public synchronized SQLConnection getConnection(ISQLDriver sqlDriver, ISQLAlias alias, String user, String pw, SQLDriverPropertyCollection props, ReconnectInfo reconnectInfo)
+	public SQLConnection getConnection(ISQLDriver sqlDriver, ISQLAlias alias, String user, String pw, SQLDriverPropertyCollection props, ReconnectInfo reconnectInfo)
 	{
-		try
+		Driver driver;
+		synchronized (this)
 		{
-			Properties myProps = new Properties();
-			if (props != null)
-			{
-				props.applyTo(myProps);
-			}
-
-			if(null != reconnectInfo && null != reconnectInfo.getUser())
-			{
-				myProps.put("user", reconnectInfo.getUser());
-			}
-			else if (user != null)
-			{
-				myProps.put("user", user);
-			}
-
-			if(null != reconnectInfo && null != reconnectInfo.getPassword())
-			{
-				myProps.put("password", reconnectInfo.getPassword());
-			}
-			else if (pw != null)
-			{
-				myProps.put("password", pw);
-			}
-
-			Driver driver = _driverInfo.get(sqlDriver.getIdentifier());
-			if (driver == null)
-			{
-				ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
-				driver = (Driver) (Class.forName(sqlDriver.getDriverClassName(),false,loader).getDeclaredConstructor().newInstance());
-			}
-
-			String url = alias.getUrl();
-
-			if(null != reconnectInfo && null != reconnectInfo.getUrl())
-			{
-				url = reconnectInfo.getUrl();
-			}
-
-			Connection jdbcConn = driver.connect(url, myProps);
-
-			if (jdbcConn == null)
-			{
-				throw new SQLException(s_stringMgr.getString("SQLDriverManager.error.noconnection"));
-			}
-			return new SQLConnection(jdbcConn, props, sqlDriver);
+			driver = _driverInfo.get(sqlDriver.getIdentifier());
 		}
-		catch (Exception e)
-		{
-			throw Utilities.wrapRuntime(e);
-		}
+
+		return SQLConnector.getSqlConnection(sqlDriver, alias, user, pw, props, reconnectInfo, driver);
 	}
 
 	/**

@@ -83,6 +83,9 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+When connecting to a database gets blocked in its initial call (java.sql.Driver.connect(...))
+  SQuirreL blocked connecting to any further database.
+
 #1474 File export dialog: When export file type was changed any string behind the last "." of the selected export file
    was replaced by the new file type's ending. Now only known file type endings are replaced.
    Examples:
