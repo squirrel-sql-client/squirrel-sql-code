@@ -16,7 +16,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
+
+import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -24,12 +28,6 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
-
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportController;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * Exports a data structure into a file.
@@ -110,7 +108,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IDataExportWriter#write(net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData)
+    * @see IDataExportWriter#write(IExportData)
     */
    public long write(IExportData data) throws Exception
    {

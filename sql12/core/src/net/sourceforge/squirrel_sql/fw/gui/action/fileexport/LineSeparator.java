@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui.action;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;

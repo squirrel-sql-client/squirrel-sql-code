@@ -1,10 +1,7 @@
-package net.sourceforge.squirrel_sql.fw.gui.action;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportCSVWriter;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.JTableExportData;
 
 import javax.swing.JTable;
 import java.sql.Types;
@@ -27,7 +24,7 @@ public class TableExportCommand extends AbstractExportCommand
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#checkMissingData(java.lang.String)
+    * @see AbstractExportCommand#checkMissingData(java.lang.String)
     */
    @Override
    protected boolean checkMissingData(String sepChar)
@@ -68,7 +65,7 @@ public class TableExportCommand extends AbstractExportCommand
 
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createExportData()
+    * @see AbstractExportCommand#createExportData()
     */
    @Override
    protected IExportData createExportData(TableExportController ctrl)

@@ -16,39 +16,35 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.io.File;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 /**
- * This class stores all target files of currently running exports.
+ * The data cell.
+ * Each cell knows its coordinates (row and column).
+ * The data cell may but must not have a {@link ColumnDisplayDefinition}. 
  * @author Stefan Willinger
  *
  */
-public class ExportFileContainer {
-	private static ExportFileContainer instance;
-	
-	private Set<File> fileSet = new HashSet<File>();
-	
-	private ExportFileContainer(){
-		
-	}
-	
-	
-	public static synchronized ExportFileContainer getInstance(){
-		if(instance == null){
-			instance = new ExportFileContainer();
-		}
-		return instance;
-	}
-	
-	public synchronized boolean add(File file){
-		return fileSet.add(file);
-	}
-	
-	public synchronized boolean remove(File file){
-		return fileSet.remove(file);
-	}
+public interface IExportDataCell {
+	/**
+	 * The value-object of the cell.
+	 */
+	Object getObject();
+	/**
+	 * The {@link ColumnDisplayDefinition} which is responsible for the object.
+	 * This maybe null.
+	 * @return the columnDisplayDefinition of this cell or null.
+	 */
+	ColumnDisplayDefinition getColumnDisplayDefinition();
+	/**
+	 * @return The index of the row.
+	 */
+	int getRowIndex();
+	/**
+	 * 
+	 * @return The index of the column.
+	 */
+	int getColumnIndex();
 }

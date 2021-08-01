@@ -36,7 +36,6 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInStatementCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInsertStatementCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyUpdateStatementCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyWhereStatementCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectEntireRowsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
@@ -44,7 +43,8 @@ import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectedRowsCom
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.CopyColoredRowsToNewWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.GotoColorMenuController;
 import net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby.TableCopySeparatedByCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportDataException;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues.ShowDistinctValuesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;

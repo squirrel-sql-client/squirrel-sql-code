@@ -16,24 +16,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action;
-
-import java.awt.Window;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ResultSetExportData;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.awt.Window;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Command for exporting a result set to a file.
@@ -77,7 +74,7 @@ public class ResultSetExportCommand extends AbstractExportCommand
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#checkMissingData(java.lang.String)
+    * @see AbstractExportCommand#checkMissingData(java.lang.String)
     */
    @Override
    protected boolean checkMissingData(String sepChar)
@@ -86,7 +83,7 @@ public class ResultSetExportCommand extends AbstractExportCommand
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createExportData()
+    * @see AbstractExportCommand#createExportData()
     */
    @Override
    protected IExportData createExportData(TableExportController ctrl) throws ExportDataException
@@ -111,7 +108,7 @@ public class ResultSetExportCommand extends AbstractExportCommand
 
    /**
     * @param owner
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createTableExportController()
+    * @see AbstractExportCommand#createTableExportController()
     */
    @Override
    protected TableExportController createTableExportController(final Window owner)
@@ -141,7 +138,7 @@ public class ResultSetExportCommand extends AbstractExportCommand
    /**
     * Create a new {@link ProgressAbortCallback}.
     *
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createProgressController()
+    * @see AbstractExportCommand#createProgressController()
     * @see ProgressAbortFactoryCallback
     */
    @Override

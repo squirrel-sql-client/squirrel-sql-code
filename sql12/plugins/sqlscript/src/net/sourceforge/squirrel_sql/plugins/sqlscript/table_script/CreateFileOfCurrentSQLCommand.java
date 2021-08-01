@@ -18,19 +18,11 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.NumberFormat;
-
-import javax.swing.*;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.gui.action.ResultSetExportCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportDlg;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExportCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportDlg;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -39,8 +31,16 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
-
 import org.apache.commons.lang.time.StopWatch;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.NumberFormat;
 
 /**
  * Command to export the result of the current SQL into a File.

@@ -1,17 +1,17 @@
-package net.sourceforge.squirrel_sql.fw.gui.action;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.File;
-
-import javax.swing.*;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
 
 public class TableExportController
 {
@@ -75,96 +75,29 @@ public class TableExportController
 
    private void initListeners()
    {
-      _dlg.btnOk.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onOK();
-         }
-      });
+      _dlg.btnOk.addActionListener(e -> onOK());
 
-      _dlg.btnCancel.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            closeDlg();
-         }
-      });
+      _dlg.btnCancel.addActionListener(e -> closeDlg());
 
-      _dlg.radFormatCSV.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onFormat(true);
-         }
-      });
+      _dlg.radFormatCSV.addActionListener(e -> onFormat(true));
 
-      _dlg.radFormatXLSX.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onFormat(true);
-         }
-      });
+      _dlg.radFormatXLSX.addActionListener(e -> onFormat(true));
 
-      _dlg.radFormatXLS.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onFormat(true);
-         }
-      });
+      _dlg.radFormatXLS.addActionListener(e -> onFormat(true));
 
-      _dlg.radFormatXML.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onFormat(true);
-         }
-      });
+      _dlg.radFormatXML.addActionListener(e -> onFormat(true));
 
-      _dlg.radFormatJSON.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onFormat(true);
-         }
-      });
+      _dlg.radFormatJSON.addActionListener(e -> onFormat(true));
 
 
-      _dlg.chkSeparatorTab.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onFormat(false);
-         }
-      });
+      _dlg.chkSeparatorTab.addActionListener(e -> onFormat(false));
 
 
-      _dlg.chkExecCommand.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onChkExecCommand();
-         }
-      });
+      _dlg.chkExecCommand.addActionListener(e -> onChkExecCommand());
 
-      _dlg.btnFile.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onFile();
-         }
+      _dlg.btnFile.addActionListener(e -> onFile());
 
-      });
-
-      _dlg.btnCommandFile.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onCommandFile();
-         }
-      });
+      _dlg.btnCommandFile.addActionListener(e -> onCommandFile());
    }
 
    private void onFormat(boolean replaceEnding)
@@ -237,23 +170,23 @@ public class TableExportController
 
       if (_dlg.radFormatCSV.isSelected())
       {
-         newEnding = "csv";
+         newEnding = FileEndings.CSV.get();
       }
       else if (_dlg.radFormatXLSX.isSelected())
       {
-         newEnding = "xlsx";
+         newEnding = FileEndings.XLSX.get();
       }
       else if (_dlg.radFormatXLS.isSelected())
       {
-         newEnding = "xls";
+         newEnding = FileEndings.XLS.get();
       }
       else if (_dlg.radFormatXML.isSelected())
       {
-         newEnding = "xml";
+         newEnding = FileEndings.XML.get();
       }
       else if (_dlg.radFormatJSON.isSelected())
       {
-         newEnding = "json";
+         newEnding = FileEndings.JSON.get();
       }
       else
       {
@@ -261,9 +194,7 @@ public class TableExportController
       }
 
       String file = _dlg.txtFile.getText();
-      if(null == file ||
-         0 == file.trim().length() ||
-         file.toUpperCase().endsWith("." + newEnding.toUpperCase()))
+      if(null == file || 0 == file.trim().length() || file.toUpperCase().endsWith("." + newEnding.toUpperCase()))
       {
          return;
       }
@@ -278,7 +209,15 @@ public class TableExportController
       }
       else if(file.lastIndexOf(".") > file.lastIndexOf(File.separator))
       {
-         newFile = file.substring(0, file.lastIndexOf(".")) + "." + newEnding;
+         if (FileEndings.fileEndsWithOneOf(file))
+         {
+            // We replace the ending only if it is a known ending, see bug #1474
+            newFile = file.substring(0, file.lastIndexOf(".")) + "." + newEnding;
+         }
+         else
+         {
+            newFile = file + "." + newEnding;
+         }
       }
       else
       {

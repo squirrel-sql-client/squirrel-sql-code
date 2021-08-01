@@ -16,22 +16,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * The implementation of {@link IExportData} for exporting data of a {@link ResultSet}
@@ -96,7 +95,7 @@ public class ResultSetExportData implements IExportData
     * Gets the headers for the data.
     * This depends on the extracted meta data of the result set.
     *
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData#getHeaders()
+    * @see IExportData#getHeaders()
     */
    @Override
    public Iterator<String> getHeaders()
@@ -116,7 +115,7 @@ public class ResultSetExportData implements IExportData
     * The result set will not be read into the memory. It creates a iterator, which reads one row at a time.
     * The amount of the used heap depends on the number of rows, that the JDBC-driver reads at once.
     *
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData#getRows()
+    * @see IExportData#getRows()
     */
    @Override
    public Iterator<IExportDataRow> getRows()

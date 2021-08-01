@@ -16,33 +16,39 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
+
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Exception to indicate a serious problem while dealing with {@link IExportData}.
- * If this exception occurs, there is no way to continue the export progress.  
+ * This class stores all target files of currently running exports.
  * @author Stefan Willinger
  *
  */
-public class ExportDataException extends Exception {
-
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Constructor, if the error depends on a other Exception (e.g. a SQLException)
-	 * @param message The message
-	 * @param cause The cause of the problem.
-	 */
-	public ExportDataException(String message, Throwable cause) {
-		super(message, cause);
+public class ExportFileContainer {
+	private static ExportFileContainer instance;
+	
+	private Set<File> fileSet = new HashSet<File>();
+	
+	private ExportFileContainer(){
+		
 	}
-
-	/**
-	 * Constructor, if the error does not depend on a other Exception.
-	 * @param message The occurred error.
-	 */
-	public ExportDataException(String message) {
-		super(message);
+	
+	
+	public static synchronized ExportFileContainer getInstance(){
+		if(instance == null){
+			instance = new ExportFileContainer();
+		}
+		return instance;
 	}
-
+	
+	public synchronized boolean add(File file){
+		return fileSet.add(file);
+	}
+	
+	public synchronized boolean remove(File file){
+		return fileSet.remove(file);
+	}
 }

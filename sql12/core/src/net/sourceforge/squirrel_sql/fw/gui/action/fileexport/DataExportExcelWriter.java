@@ -16,12 +16,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportController;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -180,7 +178,7 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
 
    /**
     * @throws java.io.IOException
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeWorking()
+    * @see AbstractDataExportFileWriter#beforeWorking()
     */
    @Override
    protected void beforeWorking(File file) throws IOException
@@ -200,7 +198,7 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
 
    /**
     * @throws java.lang.Exception
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addHeaderCell(int,
+    * @see AbstractDataExportFileWriter#addHeaderCell(int,
     * java.lang.String)
     */
    @Override
@@ -218,9 +216,9 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
 
    /**
     * @throws java.lang.Exception
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addCell(TableExportController,
+    * @see AbstractDataExportFileWriter#addCell(TableExportController,
     * int, int,
-    * net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell)
+    * IExportDataCell)
     */
    @Override
    protected void addCell(IExportDataCell cell) throws Exception
@@ -253,7 +251,7 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
 
    /**
     * @throws java.lang.Exception
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterWorking()
+    * @see AbstractDataExportFileWriter#afterWorking()
     */
    @Override
    protected void afterWorking() throws Exception

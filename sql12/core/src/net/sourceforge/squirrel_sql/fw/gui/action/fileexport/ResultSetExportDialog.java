@@ -16,19 +16,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * A customized {@link TableExportDlg}.

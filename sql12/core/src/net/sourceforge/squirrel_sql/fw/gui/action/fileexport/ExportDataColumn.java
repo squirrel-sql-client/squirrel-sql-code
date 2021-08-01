@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
@@ -40,7 +40,7 @@ public class ExportDataColumn implements IExportDataCell
 
    /**
     * @return the columnDisplayDefinition
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getColumnDisplayDefinition()
+    * @see IExportDataCell#getColumnDisplayDefinition()
     */
    public ColumnDisplayDefinition getColumnDisplayDefinition()
    {
@@ -57,7 +57,7 @@ public class ExportDataColumn implements IExportDataCell
 
    /**
     * @return the object
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getObject()
+    * @see IExportDataCell#getObject()
     */
    public Object getObject()
    {
@@ -74,7 +74,7 @@ public class ExportDataColumn implements IExportDataCell
 
    /**
     * @return the rowIndex
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getRowIndex()
+    * @see IExportDataCell#getRowIndex()
     */
    public int getRowIndex()
    {
@@ -91,7 +91,7 @@ public class ExportDataColumn implements IExportDataCell
 
    /**
     * @return the columnIndex
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell#getColumnIndex()
+    * @see IExportDataCell#getColumnIndex()
     */
    public int getColumnIndex()
    {

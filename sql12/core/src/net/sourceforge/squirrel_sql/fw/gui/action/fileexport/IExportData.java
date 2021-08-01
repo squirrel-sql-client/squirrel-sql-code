@@ -16,24 +16,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import java.util.Iterator;
 
 /**
- * A data row contains some cells and it knows the own row number.
+ * Interface, which describes the structure of data to export into various formats.
+ * The data can have a header row, and data rows.
+ * This interface makes sure, that a tabulated data structure can be exported to various formats.
  * @author Stefan Willinger
  *
  */
-public interface IExportDataRow {
+public interface IExportData {
+
 	/**
-	 * The cells of the row.
-	 * @return the cells of the row.
+	 * The header row.
+	 * @return the header.
 	 */
-	Iterator<IExportDataCell> getCells();
+	Iterator<String> getHeaders();
+
 	/**
-	 * The number of the row.
-	 * @return number of the row.
+	 * The rows of data.
+	 * Its not sure, how many rows are exists. The underlying system may do a lazy load of the rows.
+	 * @return the rows to export.
 	 */
-	int getRowIndex();
+	Iterator<IExportDataRow> getRows();
+
 }

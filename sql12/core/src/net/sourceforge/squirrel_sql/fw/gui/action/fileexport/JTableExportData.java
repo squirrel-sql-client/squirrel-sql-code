@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 
@@ -91,7 +91,7 @@ public class JTableExportData implements IExportData
    /**
     * Reads the header of the table.
     *
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData#getHeaders()
+    * @see IExportData#getHeaders()
     */
    @Override
    public Iterator<String> getHeaders()
@@ -106,7 +106,7 @@ public class JTableExportData implements IExportData
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData#getRows(boolean)
+    * @see IExportData#getRows(boolean)
     */
    @Override
    public Iterator<IExportDataRow> getRows()

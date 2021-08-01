@@ -83,6 +83,14 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+#1474 File export dialog: When export file type was changed any string behind the last "." of the selected export file
+   was replaced by the new file type's ending. Now only known file type endings are replaced.
+   Examples:
+    - When switching to export file type json the file name my.file.name
+      used to be changed to my.file.json and is now changed to my.file.name.json
+    - When switching to export file type json the file name my.file.csv
+      (as before) will we changed to my.file.json
+
 #1479 Linux/Unix start script: squirrel-sql.sh now does "exec" its final command
   Thanks to Chris Bitmead for the pointer
 

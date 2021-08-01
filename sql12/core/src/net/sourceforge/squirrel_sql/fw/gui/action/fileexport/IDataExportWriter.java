@@ -16,42 +16,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action;
-
-import javax.swing.JTable;
-
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 /**
- * Abstract base class for commands, which depends on a {@link JTable}
+ * A {@link IDataExportWriter} is responsible for exporting a data structure of {@link IExportData}.
  * @author Stefan Willinger
  *
  */
-public abstract class AbstractTableDependedCommand implements ICommand{
-	private JTable table;
-
-	public AbstractTableDependedCommand(JTable table)
-	{
-		super();
-		setTable(table);
-		
-	}
-
+public interface IDataExportWriter {
 	/**
-	 * @return the _table
+	 * Exports the data structure.
+	 * @param data The data to export
+	 * @return the number of written data rows or a negative value, if not the whole data are exported.
+	 * @throws Exception if any Exception occurs
 	 */
-	public JTable getTable() {
-		return this.table;
-	}
-
-	/**
-	 * @param _table the _table to set
-	 */
-	public void setTable(JTable table) {
-		if (table == null)
-		{
-			throw new IllegalArgumentException("JTable == null");
-		}
-		this.table = table;
-	}
+	long write(IExportData data) throws Exception;
 }

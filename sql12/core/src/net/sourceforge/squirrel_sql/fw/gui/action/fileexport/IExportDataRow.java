@@ -16,35 +16,24 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import java.util.Iterator;
 
 /**
- * The data cell.
- * Each cell knows its coordinates (row and column).
- * The data cell may but must not have a {@link ColumnDisplayDefinition}. 
+ * A data row contains some cells and it knows the own row number.
  * @author Stefan Willinger
  *
  */
-public interface IExportDataCell {
+public interface IExportDataRow {
 	/**
-	 * The value-object of the cell.
+	 * The cells of the row.
+	 * @return the cells of the row.
 	 */
-	Object getObject();
+	Iterator<IExportDataCell> getCells();
 	/**
-	 * The {@link ColumnDisplayDefinition} which is responsible for the object.
-	 * This maybe null.
-	 * @return the columnDisplayDefinition of this cell or null.
-	 */
-	ColumnDisplayDefinition getColumnDisplayDefinition();
-	/**
-	 * @return The index of the row.
+	 * The number of the row.
+	 * @return number of the row.
 	 */
 	int getRowIndex();
-	/**
-	 * 
-	 * @return The index of the column.
-	 */
-	int getColumnIndex();
 }

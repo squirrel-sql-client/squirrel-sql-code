@@ -16,15 +16,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportCSVWriter;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportExcelWriter;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportXMLWriter;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;

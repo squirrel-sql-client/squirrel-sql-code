@@ -16,30 +16,33 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
-
-import java.util.Iterator;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 /**
- * Interface, which describes the structure of data to export into various formats.
- * The data can have a header row, and data rows.
- * This interface makes sure, that a tabulated data structure can be exported to various formats.
+ * Exception to indicate a serious problem while dealing with {@link IExportData}.
+ * If this exception occurs, there is no way to continue the export progress.  
  * @author Stefan Willinger
  *
  */
-public interface IExportData {
+public class ExportDataException extends Exception {
+
+	private static final long serialVersionUID = 1L;
 
 	/**
-	 * The header row.
-	 * @return the header.
+	 * Constructor, if the error depends on a other Exception (e.g. a SQLException)
+	 * @param message The message
+	 * @param cause The cause of the problem.
 	 */
-	Iterator<String> getHeaders();
+	public ExportDataException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
 	/**
-	 * The rows of data.
-	 * Its not sure, how many rows are exists. The underlying system may do a lazy load of the rows.
-	 * @return the rows to export.
+	 * Constructor, if the error does not depend on a other Exception.
+	 * @param message The occurred error.
 	 */
-	Iterator<IExportDataRow> getRows();
+	public ExportDataException(String message) {
+		super(message);
+	}
 
 }

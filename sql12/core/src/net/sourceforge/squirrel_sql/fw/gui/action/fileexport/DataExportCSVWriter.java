@@ -16,7 +16,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,11 +29,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.gui.action.LineSeparator;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 
 /**
  * Exports {@link IExportData} to a CSV file.
@@ -103,7 +101,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterWorking()
+    * @see AbstractDataExportFileWriter#afterWorking()
     */
    @Override
    protected void afterWorking() throws Exception
@@ -113,7 +111,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addHeaderCell(int, int, java.lang.String)
+    * @see AbstractDataExportFileWriter#addHeaderCell(int, int, java.lang.String)
     */
    @Override
    protected void addHeaderCell(int colIdx, String columnName)
@@ -122,7 +120,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeWorking(java.io.File)
+    * @see AbstractDataExportFileWriter#beforeWorking(java.io.File)
     */
    @Override
    protected void beforeWorking(File file) throws Exception
@@ -132,7 +130,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
 
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addCell(int, int, net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell)
+    * @see AbstractDataExportFileWriter#addCell(int, int, IExportDataCell)
     */
    @Override
    protected void addCell(IExportDataCell cell)
@@ -142,7 +140,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterHeader()
+    * @see AbstractDataExportFileWriter#afterHeader()
     */
    @Override
    protected void afterHeader() throws Exception
@@ -152,7 +150,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeRow()
+    * @see AbstractDataExportFileWriter#beforeRow()
     */
    @Override
    public void beforeRow(int rowIdx) throws Exception
@@ -162,7 +160,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterRow()
+    * @see AbstractDataExportFileWriter#afterRow()
     */
    @Override
    public void afterRow() throws Exception

@@ -16,10 +16,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
-import java.io.File;
-import java.io.PrintWriter;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,13 +30,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.io.File;
+import java.io.PrintWriter;
 
 
 /**
@@ -69,7 +66,7 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#afterWorking()
+    * @see AbstractDataExportFileWriter#afterWorking()
     */
    @Override
    protected void afterWorking() throws Exception
@@ -101,7 +98,7 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addCell(int, int, net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportDataCell)
+    * @see AbstractDataExportFileWriter#addCell(int, int, IExportDataCell)
     */
    @Override
    protected void addCell(IExportDataCell cell) throws Exception
@@ -126,7 +123,7 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addHeaderCell(int, int, java.lang.String)
+    * @see AbstractDataExportFileWriter#addHeaderCell(int, int, java.lang.String)
     */
    @Override
    protected void addHeaderCell(int colIdx, String columnName) throws Exception
@@ -142,7 +139,7 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeWorking(java.io.File)
+    * @see AbstractDataExportFileWriter#beforeWorking(java.io.File)
     */
    @Override
    protected void beforeWorking(File file) throws Exception
@@ -165,7 +162,7 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeRow()
+    * @see AbstractDataExportFileWriter#beforeRow()
     */
    @Override
    public void beforeRow(int rowIdx) throws Exception
@@ -177,7 +174,7 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeRows()
+    * @see AbstractDataExportFileWriter#beforeRows()
     */
    @Override
    public void beforeRows()

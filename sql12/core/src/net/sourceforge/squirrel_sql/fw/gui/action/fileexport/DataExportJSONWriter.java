@@ -1,17 +1,15 @@
-package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
+package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.nio.file.Files;
 
 public class DataExportJSONWriter extends AbstractDataExportFileWriter
 {
