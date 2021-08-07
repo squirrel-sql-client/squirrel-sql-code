@@ -302,10 +302,6 @@ class Session implements ISession
    {
       if (!_closed)
       {
-         if (s_log.isDebugEnabled())
-         {
-            s_log.debug("Closing session: " + _id);
-         }
          stopKeepAliveTaskIfNecessary();
          if (null != _conn)
          {
@@ -330,10 +326,6 @@ class Session implements ISession
             }
             catch (Exception e)
             {
-               if (s_log.isInfoEnabled())
-               {
-                  s_log.info("Error stopping parser event processor", e);
-               }
             }
          }
 
@@ -370,10 +362,6 @@ class Session implements ISession
             }
 
 
-         }
-         if (s_log.isDebugEnabled())
-         {
-            s_log.debug("Successfully closed session: " + _id);
          }
       }
    }
@@ -995,10 +983,6 @@ class Session implements ISession
       }
       catch (Throwable e)
       {
-         if (s_log.isDebugEnabled())
-         {
-            s_log.debug(e);
-         }
          driverIs30Compliant = false;
       }
 

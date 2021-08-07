@@ -212,11 +212,14 @@ public class SessionManager
             session.getApplication().getPluginManager().sessionEnding(session);
 
             fireSessionClosing(session);
-            try {
-            	session.close();
-            } catch (SQLException sqle) {
-                s_log.error("Error closing Session", sqle);
-                session.showErrorMessage(s_stringMgr.getString("SessionManager.ErrorClosingSession", sqle));
+            try
+            {
+               session.close();
+            }
+            catch (SQLException sqle)
+            {
+               s_log.error("Error closing Session", sqle);
+               session.showErrorMessage(s_stringMgr.getString("SessionManager.ErrorClosingSession", sqle));
             }
             fireSessionClosed(session);
 
