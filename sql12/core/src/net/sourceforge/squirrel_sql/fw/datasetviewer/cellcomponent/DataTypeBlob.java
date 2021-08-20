@@ -535,6 +535,7 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 	  */
 	public static Object staticReadResultSet(ResultSet rs, int index) throws java.sql.SQLException
 	{
+		loadProperties();
 
 		 // We always get the BLOB, even when we are not reading the contents.
 		 // Since the BLOB is just a pointer to the BLOB data rather than the

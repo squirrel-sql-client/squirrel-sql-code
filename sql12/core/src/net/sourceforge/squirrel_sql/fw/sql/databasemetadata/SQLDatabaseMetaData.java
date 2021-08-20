@@ -1414,9 +1414,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		ResultSet rs = null;
 		try
 		{
-			rs =
-				privateGetJDBCMetaData().getIndexInfo(ti.getCatalogName(), ti.getSchemaName(),
-					ti.getSimpleName(), false, true);
+			rs = _getIndexInfo(ti);
 			ResultSetDataSet rsds = new ResultSetDataSet();
 			rsds.setResultSet(rs, columnIndices, computeWidths, DialectFactory.getDialectType(this));
 			return rsds;
@@ -1431,6 +1429,11 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 	}
 
+	private ResultSet _getIndexInfo(ITableInfo ti) throws SQLException
+	{
+		return privateGetJDBCMetaData().getIndexInfo(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), false, true);
+	}
+
 	/**
 	 * Returns a list of IndexInfos describing indexes for the specified table.
 	 * 
@@ -1443,8 +1446,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	{
 		List<IndexInfo> result = new ArrayList<>();
 
-		try(ResultSet rs = privateGetJDBCMetaData().getIndexInfo(ti.getCatalogName(), ti.getSchemaName(),
-				ti.getSimpleName(), false, true))
+		try(ResultSet rs = _getIndexInfo(ti))
 		{
 			if(null == rs)
 			{

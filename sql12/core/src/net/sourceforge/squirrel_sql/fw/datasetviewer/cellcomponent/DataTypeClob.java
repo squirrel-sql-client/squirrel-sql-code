@@ -169,29 +169,39 @@ public class DataTypeClob extends BaseDataTypeComponent
 	 * Properties window. In either case, the data is static and is set only
 	 * the first time we are called.
 	 */
-	private static void loadProperties() {
+	private static void loadProperties()
+	{
 
-		if (propertiesAlreadyLoaded == false) {
+		if (propertiesAlreadyLoaded == false)
+		{
 			// get parameters previously set by user, or set default values
-			_readClobs = false;	// set to the default
+			_readClobs = false;   // set to the default
 			String readClobsString = DTProperties.get(thisClassName, "readClobs");
 			if (readClobsString != null && readClobsString.equals("true"))
+			{
 				_readClobs = true;
+			}
 
-			_readCompleteClobs = false;	// set to the default
+			_readCompleteClobs = false;   // set to the default
 			String readCompleteClobsString = DTProperties.get(thisClassName, "readCompleteClobs");
 			if (readCompleteClobsString != null && readCompleteClobsString.equals("true"))
+			{
 				_readCompleteClobs = true;
-            
-			_readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;	// set to default
+			}
+
+			_readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;   // set to default
 			String readClobsSizeString = DTProperties.get(thisClassName, "readClobsSize");
 			if (readClobsSizeString != null)
+			{
 				_readClobsSize = Integer.parseInt(readClobsSizeString);
+			}
 
-			_makeNewlinesVisibleInCell = true;	// set to the default
+			_makeNewlinesVisibleInCell = true;   // set to the default
 			String makeNewlinesVisibleString = DTProperties.get(thisClassName, "makeNewlinesVisibleInCell");
 			if (makeNewlinesVisibleString != null && makeNewlinesVisibleString.equals("false"))
+			{
 				_makeNewlinesVisibleInCell = false;
+			}
 
 			propertiesAlreadyLoaded = true;
 		}
@@ -549,6 +559,9 @@ public class DataTypeClob extends BaseDataTypeComponent
 	public static Object staticReadResultSet(ResultSet rs, int index)
 		throws java.sql.SQLException
 	{
+		loadProperties();
+
+
 		// We always get the CLOB, even when we are not reading the contents.
 		// Since the CLOB is just a pointer to the CLOB data rather than the
 		// data itself, this operation should not take much time (as opposed
@@ -556,7 +569,9 @@ public class DataTypeClob extends BaseDataTypeComponent
 		Clob clob = rs.getClob(index);
 
 		if (rs.wasNull())
+		{
 			return null;
+		}
 
 		// CLOB exists, so try to read the data from it
 		// based on the user's directions
@@ -835,8 +850,6 @@ public class DataTypeClob extends BaseDataTypeComponent
 	  */
 	 private static class ClobOkJPanel extends OkJPanel
 	 {
-        private static final long serialVersionUID = 6613369906375451603L;
-
         /*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
@@ -908,7 +921,7 @@ public class DataTypeClob extends BaseDataTypeComponent
 			 setLayout(new GridBagLayout());
 
 			 // i18n[dataTypeClob.typeClob=CLOB   (SQL type 2005)]
-			 setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dataTypeClob.typeClob")));
+			 setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dataTypeClob.typeClob_NClob")));
 			 final GridBagConstraints gbc = new GridBagConstraints();
 			 gbc.fill = GridBagConstraints.HORIZONTAL;
 			 gbc.insets = new Insets(4, 4, 4, 4);

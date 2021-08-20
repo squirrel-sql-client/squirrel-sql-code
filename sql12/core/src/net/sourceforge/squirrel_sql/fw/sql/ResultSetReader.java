@@ -365,6 +365,7 @@ public class ResultSetReader
                      break;
 
                   case Types.CLOB:
+                  case Types.NCLOB:
                      // Since we are reading Meta-data about the DB, we should
                      // never see a CLOB. However, if we do we assume that
                      // it is printable text and that the user wants to see it, so

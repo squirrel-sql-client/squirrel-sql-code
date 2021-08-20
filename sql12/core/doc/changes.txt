@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+When reading data from a column of type NCLOB the same rules are applied
+  as when columns of type CLOB are read.
+  See menu File --> Global Preference --> tab "Data Type Controls"
+
 When the Object tree is searched the Session's status displays a progress bar with a stop button.
 
 New Plugin "High resolution icon"
@@ -82,6 +86,13 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 
 Bug fixes:
+
+#1482 DB2 fpr AS400 driver version 10.6/12.6 Index name were not displayed.
+  Note: As the driver changed the SQL type of the index name meta data column to NCLOB
+  in File --> Global Preference --> tab "Data Type Controls" the "Read contents" checkbox must be checked.
+
+For SQL types CLOB and BLOB at some occasions the data type properties where not respected.
+  See menu File --> Global Preference --> tab "Data Type Controls".
 
 When connecting to a database gets blocked in its initial call (java.sql.Driver.connect(...))
   SQuirreL blocked connecting to any further database.
