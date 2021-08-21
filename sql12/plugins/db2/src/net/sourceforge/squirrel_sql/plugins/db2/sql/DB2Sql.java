@@ -11,6 +11,8 @@ public interface DB2Sql
 
    String getViewSourceSql();
 
+   String getTableSourceSql();
+
    String getSequenceDetailsSql();
 
    String getProcedureSourceSql();

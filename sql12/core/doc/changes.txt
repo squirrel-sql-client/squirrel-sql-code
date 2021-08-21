@@ -87,7 +87,9 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
-#1482 DB2 fpr AS400 driver version 10.6/12.6 Index name were not displayed.
+#1483 DB2 Plugin: For DB2 AS400 view source tabs were empty.
+
+#1482 DB2 for AS400 driver version 10.6/12.6 Index name were not displayed.
   Note: As the driver changed the SQL type of the index name meta data column to NCLOB
   in File --> Global Preference --> tab "Data Type Controls" the "Read contents" checkbox must be checked.
 

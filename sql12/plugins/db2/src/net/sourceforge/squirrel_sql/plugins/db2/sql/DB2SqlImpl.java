@@ -155,37 +155,68 @@ public class DB2SqlImpl implements DB2Sql
 		
 		return result;
 	}
-	
-	/**
-	 * @see net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql#getViewSourceSql()
-	 */
+
 	@Override
-	public String getViewSourceSql() {
+	public String getViewSourceSql()
+	{
 		String result = null;
-		switch(db2Type) {
-		case OS400:
-			result = 
-					"select mqt_definition " + 
-					"from qsys2.systables " + 
-					"where table_schema = ? " + 
-					"and table_name = ? ";
-			break;
-		case LUW:
-			result = 
-					"SELECT text " + 
-					"FROM SYSCAT.VIEWS " + 
-					"WHERE viewschema = ? " +
-					"and viewname = ? ";
-			break;
-		case ZOS:
-			result = 
-					"SELECT TEXT " +
-					"FROM SYSIBM.SYSVIEWS " +
-					"WHERE CREATOR = ? " +
-					"AND NAME = ? ";
-			break;
+		switch (db2Type)
+		{
+			case OS400:
+				// Needs to be improved, see bug #1483
+				result =
+						"SELECT VIEW_DEFINITION " +
+								"FROM QSYS2.SYSVIEWS " +
+								"WHERE TABLE_SCHEMA = ? " +
+								"AND TABLE_NAME = ?";
+				break;
+			case LUW:
+				result =
+						"SELECT text " +
+								"FROM SYSCAT.VIEWS " +
+								"WHERE viewschema = ? " +
+								"and viewname = ? ";
+				break;
+			case ZOS:
+				result =
+						"SELECT TEXT " +
+								"FROM SYSIBM.SYSVIEWS " +
+								"WHERE CREATOR = ? " +
+								"AND NAME = ? ";
+				break;
 		}
-		
+
+		return result;
+	}
+
+	public String getTableSourceSql()
+	{
+		String result = null;
+		switch (db2Type)
+		{
+			case OS400:
+				result =
+						"select mqt_definition " +
+								"from qsys2.systables " +
+								"where table_schema = ? " +
+								"and table_name = ? ";
+				break;
+			case LUW:
+				result =
+						"SELECT text " +
+								"FROM SYSCAT.VIEWS " +
+								"WHERE viewschema = ? " +
+								"and viewname = ? ";
+				break;
+			case ZOS:
+				result =
+						"SELECT TEXT " +
+								"FROM SYSIBM.SYSVIEWS " +
+								"WHERE CREATOR = ? " +
+								"AND NAME = ? ";
+				break;
+		}
+
 		return result;
 	}
 

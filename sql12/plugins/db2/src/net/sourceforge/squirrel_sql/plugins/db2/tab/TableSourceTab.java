@@ -18,11 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.db2.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import static java.util.Arrays.asList;
-
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
@@ -37,6 +32,12 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 /**
  * This class will display the source for a DB2 table (including MQTs).
@@ -79,7 +80,7 @@ public class TableSourceTab extends FormattedSourceTab
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
 
 		ISQLConnection conn = session.getSQLConnection();
-		String sql = db2Sql.getViewSourceSql();
+		String sql = db2Sql.getTableSourceSql();
 
 		boolean isMQT = isMQT();
 		if (!isMQT)
@@ -141,7 +142,7 @@ public class TableSourceTab extends FormattedSourceTab
 		String sql = getRegularTableSelectSql(ti);
 		if (sql == null)
 		{
-			sql = db2Sql.getViewSourceSql();
+			sql = db2Sql.getTableSourceSql();
 		}
 		return sql;
 	}
