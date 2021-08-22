@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Improved import file dialog UI: When an import table is preselected a new label above the "Suggest new table"
+  button is explains:
+  "Inserting into table '<preselected import table>'. To create a new table instead click 'Suggest new table'."
+
 When reading data from a column of type NCLOB the same rules are applied
   as when columns of type CLOB are read.
   See menu File --> Global Preference --> tab "Data Type Controls"

@@ -32,21 +32,22 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.dataimport.EDTMessageBoxUtil;
 import net.sourceforge.squirrel_sql.plugins.dataimport.ImportDataIntoTableExecutor;
-
-import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.*;
-
 import net.sourceforge.squirrel_sql.plugins.dataimport.action.FileDisplayWrapper;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv.CSVFileImporter;
 
-import javax.swing.*;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.*;
 
 /**
  * This dialog has some options to specify how the file is imported into
@@ -88,14 +89,7 @@ public class ImportFileDialogCtrl
 
       _tableSuggestion = new TableSuggestion(_session, createdTableInfo -> onTableCreated(createdTableInfo));
 
-      String tableName = s_stringMgr.getString("ImportFileDialogCtrl.no.table");
-
-      if (null != _table)
-      {
-         tableName = _table.getSimpleName();
-      }
-
-      _importFileDialog = new ImportFileDialog(_importFile, _importer.getImportFileTypeDescription(), tableName);
+      _importFileDialog = new ImportFileDialog(_importFile, _importer.getImportFileTypeDescription(), _table);
 
       _importFileDialog.setSize(getDimension());
 
