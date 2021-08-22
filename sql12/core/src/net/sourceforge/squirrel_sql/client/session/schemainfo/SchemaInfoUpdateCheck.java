@@ -156,14 +156,12 @@ public class SchemaInfoUpdateCheck
          SQLDatabaseMetaData dmd = _session.getSQLConnection().getSQLMetaData();
          DatabaseObjectInfo sessionOI = new DatabaseObjectInfo(null, null, "SessionDummy", DatabaseObjectType.SESSION, dmd);
          _session.getSchemaInfo().reload(sessionOI, false);
-
-
       }
       else
       {
          for (IDatabaseObjectInfo doi : _databaseUpdateInfos.getUpdateDatabaseObjectInfos())
          {
-            _session.getSchemaInfo().reload(doi);
+            _session.getSchemaInfo().reload(doi,false);
          }
 
          for (String simpleTableName : _databaseUpdateInfos.getDropTableSimpleNames())

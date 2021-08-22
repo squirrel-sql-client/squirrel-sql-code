@@ -87,6 +87,8 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+#1484 SQuirreL's UI got blocked when multiple DDL statements were executed.
+
 #1483 DB2 Plugin: For DB2 AS400 view source tabs were empty.
 
 #1482 DB2 for AS400 driver version 10.6/12.6 Index name were not displayed.
