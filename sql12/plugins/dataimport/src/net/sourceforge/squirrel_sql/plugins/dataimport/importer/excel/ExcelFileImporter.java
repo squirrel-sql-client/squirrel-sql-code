@@ -113,14 +113,15 @@ public class ExcelFileImporter implements IFileImporter
          throw new  IllegalStateException("The Excel sheet has no rows.");
       }
 
-      int maxLines = (noOfLines < sht.getPhysicalNumberOfRows()) ? noOfLines : sht.getPhysicalNumberOfRows();
+      int maxLines = Math.min(noOfLines, sht.getPhysicalNumberOfRows());
       Row row = sht.getRow(0);
-      data = new String[maxLines][row.getPhysicalNumberOfCells()];
+      final int firstRowsNumberOfCells = row.getPhysicalNumberOfCells();
+      data = new String[maxLines][firstRowsNumberOfCells];
 
       for (int y = 0; y < maxLines; y++)
       {
          row = sht.getRow(y);
-         for (int x = 0; x < row.getPhysicalNumberOfCells(); x++)
+         for (int x = 0; x < firstRowsNumberOfCells; x++)
          {
             if (null == row.getCell(x))
             {

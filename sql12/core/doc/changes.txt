@@ -91,6 +91,9 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+#1486 Excel import failed with ArrayIndexOutOfBoundsException
+  when a sheet contained rows with more cells than the first row.
+
 #837 File Import: On error the (prepared) INSERT statement is logged.
 
 #1484 SQuirreL's UI got blocked when multiple DDL statements were executed.
