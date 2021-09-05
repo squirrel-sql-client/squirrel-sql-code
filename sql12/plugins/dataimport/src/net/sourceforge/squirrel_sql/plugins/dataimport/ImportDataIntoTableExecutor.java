@@ -221,7 +221,7 @@ public class ImportDataIntoTableExecutor
       }
       catch (SQLException sqle)
       {
-         importProgressCtrl.failedWithSQLException(sqle, stmt);
+         importProgressCtrl.failedWithSQLException(sqle, stmt, insertSQL);
       }
       catch (UnsupportedFormatException ufe)
       {

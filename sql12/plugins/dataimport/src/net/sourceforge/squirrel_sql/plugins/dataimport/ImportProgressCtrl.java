@@ -59,10 +59,11 @@ public class ImportProgressCtrl
       EDTMessageBoxUtil.showMessageDialogOnEDT(stringMgr.getString("ImportDataIntoTableExecutor.inserted", _currentRow, _table.getSimpleName()));
    }
 
-   public void failedWithSQLException(SQLException sqle, PreparedStatement stmt)
+   public void failedWithSQLException(SQLException sqle, PreparedStatement stmt, StringBuffer insertSQL)
    {
       String query = stmt == null ? "null" : stmt.toString();
       log.error("Failing query: " + query);
+      log.error("Failing INSERT statement: " + insertSQL);
       log.error("Failing line in CVS file: " + _currentRow);
       log.error("Database error", sqle);
 
