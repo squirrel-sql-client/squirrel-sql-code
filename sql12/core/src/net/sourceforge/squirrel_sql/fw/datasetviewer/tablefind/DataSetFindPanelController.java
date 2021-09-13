@@ -3,15 +3,33 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectedRowsCommand;
 import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang.StringUtils;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import java.awt.Color;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +72,7 @@ public class DataSetFindPanelController
 
       _dataSetFindPanel.btnShowRowsFoundInTable.addActionListener(e -> onShowRowsFoundInTable(session));
 
-
-
+      _dataSetFindPanel.btnChooseMatchesRowColor.addActionListener(e -> onChooseColorForRowsWithMatches());
 
       _dataSetFindPanel.btnHideFindPanel.addActionListener(e -> dataSetFindPanelListener.hideFindPanel());
 
@@ -74,6 +91,38 @@ public class DataSetFindPanelController
       _dataSetFindPanel.cboString.getEditor().setItem(null);
 
       initKeyStrokes();
+   }
+
+   private void onChooseColorForRowsWithMatches()
+   {
+      if(0 == _trace.getRowsFound().size())
+      {
+         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("DataSetFindPanelController.noMatchesToColor"));
+         return;
+      }
+
+      Color startColor = null;
+
+      int rgb = ColorSelectedRowsCommand.getPreviousRowColorRgb();
+      if(rgb != -1)
+      {
+         startColor = new Color(rgb);
+      }
+
+      Color newColor = JColorChooser.showDialog(GUIUtils.getOwningFrame(_dataSetViewerTablePanel.getTable()), s_stringMgr.getString("ColorSelectedRowsCommand.color.selected.rows"), startColor);
+
+      if (null == newColor)
+      {
+         return;
+      }
+
+      ColorSelectedRowsCommand.setPreviousRowColorRgb(newColor);
+
+      for (Integer row : _trace.getRowsFound())
+      {
+         _dataSetViewerTablePanel.getTable().getColoringService().getRowColorHandler().setColorForRow(row, newColor);
+      }
+      _dataSetViewerTablePanel.getTable().repaint();
    }
 
    private void initKeyStrokes()

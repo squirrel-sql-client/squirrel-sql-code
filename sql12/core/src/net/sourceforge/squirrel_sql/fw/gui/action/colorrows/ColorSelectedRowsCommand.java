@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.colorrows;
 
-import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.ColorPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -20,7 +19,6 @@ public class ColorSelectedRowsCommand
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ColorSelectedRowsCommand.class);
 
    private static final String PREF_KEY_PREVIOUS_COLOR_RGB = "ColorSelectedRowsCommand.previous.color.rgb";
-
 
 
    private DataSetViewerTable _table;
@@ -78,7 +76,7 @@ public class ColorSelectedRowsCommand
       {
          if(null == startColor)
          {
-            int rgb = Props.getInt(PREF_KEY_PREVIOUS_COLOR_RGB, -1);
+            int rgb = getPreviousRowColorRgb();
 
             if(rgb != -1)
             {
@@ -93,10 +91,19 @@ public class ColorSelectedRowsCommand
             return;
          }
 
-         Props.putInt(PREF_KEY_PREVIOUS_COLOR_RGB, newColor.getRGB());
+         setPreviousRowColorRgb(newColor);
       }
 
       _table.getColoringService().getRowColorHandler().setColorForSelectedRows(newColor);
    }
 
+   public static void setPreviousRowColorRgb(Color newColor)
+   {
+      Props.putInt(PREF_KEY_PREVIOUS_COLOR_RGB, newColor.getRGB());
+   }
+
+   public static int getPreviousRowColorRgb()
+   {
+      return Props.getInt(PREF_KEY_PREVIOUS_COLOR_RGB, -1);
+   }
 }

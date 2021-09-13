@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+SQL result's find function: New option to color rows with matches.
+
 Improved import file dialog UI: When an import table is preselected a new label above the "Suggest new table"
   button is explains:
   "Inserting into table '<preselected import table>'. To create a new table instead click 'Suggest new table'."

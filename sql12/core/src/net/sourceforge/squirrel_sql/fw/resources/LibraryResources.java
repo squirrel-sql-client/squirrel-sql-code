@@ -56,6 +56,7 @@ public class LibraryResources extends Resources
       String MARKED_TO_NEW_TABLE = "markedToTable";
       String HIDE = "hide";
       String HIDE_SELECTED = "hideSelected";
+      String COLOR_CHOOSE = "colorChoose";
    }
 
 	public LibraryResources() throws IllegalArgumentException

@@ -161,6 +161,7 @@ public class SquirrelResources extends Resources
 		String SAVE_ALL = "save_all";
 
 		String STOP = "stop";
+		String COLOR_CHOOSE = "colorChoose";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

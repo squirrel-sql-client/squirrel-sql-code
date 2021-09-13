@@ -101,4 +101,9 @@ public class RowColorHandler
    {
       return _colorByRow;
    }
+
+   public void setColorForRow(Integer row, Color color)
+   {
+      _colorByRow.put(row, color);
+   }
 }

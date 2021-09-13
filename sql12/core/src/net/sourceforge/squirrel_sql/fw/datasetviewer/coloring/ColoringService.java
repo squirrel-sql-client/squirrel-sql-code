@@ -61,16 +61,16 @@ public class ColoringService
          customBackground = _rowColorHandler.getBackgroundForRow(row, isSelected);
       }
 
-      Color findBackground = _findColorHandler.getBackgroundForCell(row, column);
-      if(null != findBackground)
-      {
-         customBackground = findBackground;
-      }
-
       Color markDuplicateBackground = _markDuplicatesHandler.getBackgroundForCell(row, column, value);
       if(null != markDuplicateBackground)
       {
          customBackground = markDuplicateBackground;
+      }
+
+      Color findBackground = _findColorHandler.getBackgroundForCell(row, column);
+      if(null != findBackground)
+      {
+         customBackground = findBackground;
       }
 
       if(null != _coloringCallback)

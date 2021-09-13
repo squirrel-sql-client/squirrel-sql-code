@@ -4,8 +4,14 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class DataSetFindPanel extends JPanel
 {
@@ -21,6 +27,7 @@ public class DataSetFindPanel extends JPanel
    JButton btnHideFindPanel;
    JButton btnHighlightFindResult;
    JButton btnShowRowsFoundInTable;
+   JButton btnChooseMatchesRowColor;
 
    public DataSetFindPanel()
    {
@@ -60,25 +67,31 @@ public class DataSetFindPanel extends JPanel
       btnUp.setBorder(BorderFactory.createEtchedBorder());
       add(btnUp, gbc);
 
-      gbc = new GridBagConstraints(5,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(5,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
       btnHighlightFindResult = new JButton(rsrc.getIcon(LibraryResources.IImageNames.TABLE_MARKED));
       btnHighlightFindResult.setToolTipText(s_stringMgr.getString("DataSetFindPanel.markFindResult"));
       btnHighlightFindResult.setBorder(BorderFactory.createEtchedBorder());
       add(btnHighlightFindResult, gbc);
 
-      gbc = new GridBagConstraints(6,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(6,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
       btnUnhighlightResult = new JButton(rsrc.getIcon(LibraryResources.IImageNames.TABLE_CLEAN));
       btnUnhighlightResult.setToolTipText(s_stringMgr.getString("DataSetFindPanel.unmarkFindResult"));
       btnUnhighlightResult.setBorder(BorderFactory.createEtchedBorder());
       add(btnUnhighlightResult, gbc);
 
-      gbc = new GridBagConstraints(7,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(7,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
       btnShowRowsFoundInTable = new JButton(rsrc.getIcon(LibraryResources.IImageNames.MARKED_TO_NEW_TABLE));
       btnShowRowsFoundInTable.setToolTipText(s_stringMgr.getString("DataSetFindPanel.showFoundRowsInTable"));
       btnShowRowsFoundInTable.setBorder(BorderFactory.createEtchedBorder());
       add(btnShowRowsFoundInTable, gbc);
 
-      gbc = new GridBagConstraints(8,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(8,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
+      btnChooseMatchesRowColor = new JButton(rsrc.getIcon(LibraryResources.IImageNames.COLOR_CHOOSE));
+      btnChooseMatchesRowColor.setToolTipText(s_stringMgr.getString("DataSetFindPanel.colorRowsWithMatches"));
+      btnChooseMatchesRowColor.setBorder(BorderFactory.createEtchedBorder());
+      add(btnChooseMatchesRowColor, gbc);
+
+      gbc = new GridBagConstraints(9,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnHideFindPanel = new JButton(rsrc.getIcon(LibraryResources.IImageNames.HIDE));
       btnHideFindPanel.setPressedIcon(rsrc.getIcon(LibraryResources.IImageNames.HIDE_SELECTED));
       btnHideFindPanel.setToolTipText(s_stringMgr.getString("DataSetFindPanel.hideFind"));
