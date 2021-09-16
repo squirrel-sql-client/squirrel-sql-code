@@ -81,9 +81,7 @@ public class ColoringService
          {
             customBackground = buf;
          }
-
       }
-
 
       if (null != customBackground)
       {

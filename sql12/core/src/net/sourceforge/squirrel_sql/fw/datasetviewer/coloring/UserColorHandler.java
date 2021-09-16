@@ -199,9 +199,9 @@ public class UserColorHandler
       return _colorByCell;
    }
 
-   public void setColorForRow(Integer row, Color color)
+   public void setColorForCell(Point cell, Color color)
    {
-      _colorByRow.put(row, color);
+      _colorByCell.put(cell, color);
    }
 
    public Set<Integer> getAllColoredRows()

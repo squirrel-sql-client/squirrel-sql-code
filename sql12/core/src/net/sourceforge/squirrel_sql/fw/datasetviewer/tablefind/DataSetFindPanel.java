@@ -27,7 +27,7 @@ public class DataSetFindPanel extends JPanel
    JButton btnHideFindPanel;
    JButton btnHighlightFindResult;
    JButton btnShowRowsFoundInTable;
-   JButton btnChooseMatchesRowColor;
+   JButton btnColorMatchedCells;
 
    public DataSetFindPanel()
    {
@@ -86,10 +86,10 @@ public class DataSetFindPanel extends JPanel
       add(btnShowRowsFoundInTable, gbc);
 
       gbc = new GridBagConstraints(8,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
-      btnChooseMatchesRowColor = new JButton(rsrc.getIcon(LibraryResources.IImageNames.COLOR_CHOOSE));
-      btnChooseMatchesRowColor.setToolTipText(s_stringMgr.getString("DataSetFindPanel.colorRowsWithMatches"));
-      btnChooseMatchesRowColor.setBorder(BorderFactory.createEtchedBorder());
-      add(btnChooseMatchesRowColor, gbc);
+      btnColorMatchedCells = new JButton(rsrc.getIcon(LibraryResources.IImageNames.COLOR_CHOOSE));
+      btnColorMatchedCells.setToolTipText(s_stringMgr.getString("DataSetFindPanel.colorMatchedCells"));
+      btnColorMatchedCells.setBorder(BorderFactory.createEtchedBorder());
+      add(btnColorMatchedCells, gbc);
 
       gbc = new GridBagConstraints(9,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnHideFindPanel = new JButton(rsrc.getIcon(LibraryResources.IImageNames.HIDE));

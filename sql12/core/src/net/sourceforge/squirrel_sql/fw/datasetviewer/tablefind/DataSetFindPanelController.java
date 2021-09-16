@@ -26,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -72,7 +73,7 @@ public class DataSetFindPanelController
 
       _dataSetFindPanel.btnShowRowsFoundInTable.addActionListener(e -> onShowRowsFoundInTable(session));
 
-      _dataSetFindPanel.btnChooseMatchesRowColor.addActionListener(e -> onChooseColorForRowsWithMatches());
+      _dataSetFindPanel.btnColorMatchedCells.addActionListener(e -> onColorMatchedCells());
 
       _dataSetFindPanel.btnHideFindPanel.addActionListener(e -> dataSetFindPanelListener.hideFindPanel());
 
@@ -93,9 +94,9 @@ public class DataSetFindPanelController
       initKeyStrokes();
    }
 
-   private void onChooseColorForRowsWithMatches()
+   private void onColorMatchedCells()
    {
-      if(0 == _trace.getRowsFound().size())
+      if(0 == _trace.getCellsFound().size())
       {
          Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("DataSetFindPanelController.noMatchesToColor"));
          return;
@@ -118,10 +119,18 @@ public class DataSetFindPanelController
 
       ColorSelectionCommand.setPreviousRowColorRgb(newColor);
 
-      for (Integer row : _trace.getRowsFound())
+      for (Point cell : _trace.getCellsFound())
       {
-         _dataSetViewerTablePanel.getTable().getColoringService().getUserColorHandler().setColorForRow(row, newColor);
+         // A little y vs. y mismatch here :o)
+         Point buf = new Point();
+         buf.x = cell.y;
+         buf.y = _dataSetViewerTablePanel.getTable().getSortableTableModel().transformToModelRow(cell.x);
+
+         _dataSetViewerTablePanel.getTable().getColoringService().getUserColorHandler().setColorForCell(buf, newColor);
       }
+
+      _dataSetFindPanel.btnUnhighlightResult.doClick(300);
+
       _dataSetViewerTablePanel.getTable().repaint();
    }
 

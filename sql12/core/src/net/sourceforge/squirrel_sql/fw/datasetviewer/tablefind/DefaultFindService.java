@@ -78,7 +78,7 @@ public class DefaultFindService implements FindService
    }
 
    @Override
-   public List<Object[]> getRowsForIndexes(ArrayList<Integer> rowIndexes)
+   public List<Object[]> getRowsForIndexes(List<Integer> rowIndexes)
    {
       ArrayList<Object[]> ret = new ArrayList<Object[]>();
 

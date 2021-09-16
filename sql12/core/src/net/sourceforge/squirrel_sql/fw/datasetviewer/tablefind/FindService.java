@@ -2,8 +2,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
-import java.awt.*;
-import java.util.ArrayList;
+import java.awt.Dimension;
 import java.util.List;
 
 public interface FindService
@@ -24,7 +23,7 @@ public interface FindService
 
    ColumnDisplayDefinition[] getColumnDisplayDefinitions();
 
-   List<Object[]> getRowsForIndexes(ArrayList<Integer> rowsFound);
+   List<Object[]> getRowsForIndexes(List<Integer> rowsFound);
 
    Dimension getVisibleSize();
 }
