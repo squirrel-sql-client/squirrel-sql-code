@@ -14,25 +14,25 @@ import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Point;
 
-public class ColorSelectedRowsCommand
+public class ColorSelectionCommand
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ColorSelectedRowsCommand.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ColorSelectionCommand.class);
 
    private static final String PREF_KEY_PREVIOUS_COLOR_RGB = "ColorSelectedRowsCommand.previous.color.rgb";
 
 
    private DataSetViewerTable _table;
+   private ColorSelectionType _selectionType;
 
-   public ColorSelectedRowsCommand(DataSetViewerTable table)
+   public ColorSelectionCommand(DataSetViewerTable table, ColorSelectionType selectionType)
    {
       _table = table;
+      _selectionType = selectionType;
    }
 
    public void execute()
    {
-      Color startColor = _table.getColoringService().getRowColorHandler().getFirstColorInSelection();
-
-
+      Color startColor = _table.getColoringService().getUserColorHandler().getFirstColorInSelection();
       if (null != startColor)
       {
          JPopupMenu popupMenu = new JPopupMenu();
@@ -76,7 +76,7 @@ public class ColorSelectedRowsCommand
       {
          if(null == startColor)
          {
-            int rgb = getPreviousRowColorRgb();
+            int rgb = getPreviousColorRgb();
 
             if(rgb != -1)
             {
@@ -94,7 +94,7 @@ public class ColorSelectedRowsCommand
          setPreviousRowColorRgb(newColor);
       }
 
-      _table.getColoringService().getRowColorHandler().setColorForSelectedRows(newColor);
+      _table.getColoringService().getUserColorHandler().setColorForSelection(newColor, _selectionType);
    }
 
    public static void setPreviousRowColorRgb(Color newColor)
@@ -102,7 +102,7 @@ public class ColorSelectedRowsCommand
       Props.putInt(PREF_KEY_PREVIOUS_COLOR_RGB, newColor.getRGB());
    }
 
-   public static int getPreviousRowColorRgb()
+   public static int getPreviousColorRgb()
    {
       return Props.getInt(PREF_KEY_PREVIOUS_COLOR_RGB, -1);
    }

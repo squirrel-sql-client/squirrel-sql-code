@@ -39,7 +39,8 @@ import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyWhereStatementCommand
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectAllCellsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableSelectEntireRowsCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.UndoMakeEditableCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectedRowsCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionType;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.CopyColoredRowsToNewWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.GotoColorMenuController;
 import net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby.TableCopySeparatedByCommand;
@@ -94,6 +95,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private CopySelectedRowsToOwnWindowAction _copySelectedRowsToOwnWindow = new CopySelectedRowsToOwnWindowAction();
 	private ColorSelectedRowsAction _colorSelectedRows = new ColorSelectedRowsAction();
+	private ColorSelectedCellsAction _colorSelectedCells = new ColorSelectedCellsAction();
 	private GotoColorMenuController _gotoColorMenuController = new GotoColorMenuController();
 	private CopyColoredRowsToNewWindowAction _copyColoredRowsToNewWindow = new CopyColoredRowsToNewWindowAction();
 
@@ -177,6 +179,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		addSeparator();
 		addAction(_colorSelectedRows);
+		addAction(_colorSelectedCells);
 
 		// This is a JMenu with sub menu items that's why we can't use addMenuItem(...).
 		add(_gotoColorMenuController.getParentMenu());
@@ -530,7 +533,20 @@ public class TablePopupMenu extends BasePopupMenu
 
       public void actionPerformed(ActionEvent evt)
       {
-         new ColorSelectedRowsCommand(_dataSetViewerTablePanel.getTable()).execute();
+         new ColorSelectionCommand(_dataSetViewerTablePanel.getTable(), ColorSelectionType.ROWS).execute();
+      }
+   }
+
+   private class ColorSelectedCellsAction extends BaseAction
+   {
+		ColorSelectedCellsAction()
+      {
+         super(s_stringMgr.getString("TablePopupMenu.ColorSelectedCells"));
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+         new ColorSelectionCommand(_dataSetViewerTablePanel.getTable(), ColorSelectionType.CELLS).execute();
       }
    }
 

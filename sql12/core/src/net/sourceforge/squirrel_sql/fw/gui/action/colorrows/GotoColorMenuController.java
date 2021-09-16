@@ -1,12 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.colorrows;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.UserColorHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +29,8 @@ public class GotoColorMenuController
    {
       _parentMenu.removeAll();
 
-      if(0 == table.getColoringService().getRowColorHandler().getColorByRow().size())
+      final UserColorHandler userColorHandler = table.getColoringService().getUserColorHandler();
+      if(0 == userColorHandler.getColorByRow().size() && 0 == userColorHandler.getColorByCell().size() )
       {
          JMenuItem menuItem = new JMenuItem(s_stringMgr.getString("GotoColorMenuController.no.colored.rows"));
          menuItem.setEnabled(false);
@@ -63,7 +66,21 @@ public class GotoColorMenuController
    {
       HashMap<Color, Integer> minViewIndexByColor = new HashMap<>();
 
-      for (Map.Entry<Integer, Color> modelRowColorEntry : table.getColoringService().getRowColorHandler().getColorByRow().entrySet())
+      final UserColorHandler userColorHandler = table.getColoringService().getUserColorHandler();
+
+      for (Map.Entry<Point, Color> modelCellColorEntry : userColorHandler.getColorByCell().entrySet())
+      {
+         Integer viewRow = table.getSortableTableModel().transformToViewRow(modelCellColorEntry.getKey().y);
+
+         Integer minViewRow = minViewIndexByColor.get(modelCellColorEntry.getValue());
+
+         if(null == minViewRow || viewRow.intValue() < minViewRow.intValue())
+         {
+            minViewIndexByColor.put(modelCellColorEntry.getValue(), viewRow);
+         }
+      }
+
+      for (Map.Entry<Integer, Color> modelRowColorEntry : userColorHandler.getColorByRow().entrySet())
       {
          Integer viewRow = table.getSortableTableModel().transformToViewRow(modelRowColorEntry.getKey());
 

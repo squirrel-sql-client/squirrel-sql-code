@@ -8,7 +8,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectedRowsCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionCommand;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -103,7 +103,7 @@ public class DataSetFindPanelController
 
       Color startColor = null;
 
-      int rgb = ColorSelectedRowsCommand.getPreviousRowColorRgb();
+      int rgb = ColorSelectionCommand.getPreviousColorRgb();
       if(rgb != -1)
       {
          startColor = new Color(rgb);
@@ -116,11 +116,11 @@ public class DataSetFindPanelController
          return;
       }
 
-      ColorSelectedRowsCommand.setPreviousRowColorRgb(newColor);
+      ColorSelectionCommand.setPreviousRowColorRgb(newColor);
 
       for (Integer row : _trace.getRowsFound())
       {
-         _dataSetViewerTablePanel.getTable().getColoringService().getRowColorHandler().setColorForRow(row, newColor);
+         _dataSetViewerTablePanel.getTable().getColoringService().getUserColorHandler().setColorForRow(row, newColor);
       }
       _dataSetViewerTablePanel.getTable().repaint();
    }

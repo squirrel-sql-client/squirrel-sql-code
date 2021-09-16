@@ -20,14 +20,14 @@ import java.awt.Color;
  */
 public class ColoringService
 {
-   private RowColorHandler _rowColorHandler;
+   private UserColorHandler _userColorHandler;
    private FindColorHandler _findColorHandler;
    private MarkDuplicatesHandler _markDuplicatesHandler;
    private ColoringCallback _coloringCallback;
 
    public ColoringService(DataSetViewerTable dataSetViewerTable)
    {
-      _rowColorHandler = new RowColorHandler(dataSetViewerTable);
+      _userColorHandler = new UserColorHandler(dataSetViewerTable);
       _findColorHandler = new FindColorHandler();
       _markDuplicatesHandler = new MarkDuplicatesHandler(dataSetViewerTable);
    }
@@ -58,7 +58,7 @@ public class ColoringService
          // since the previous entry might have changed the color,
          // we need to reset the color back to default value for table cells,
          // taking into account whether the cell is selected or not.
-         customBackground = _rowColorHandler.getBackgroundForRow(row, isSelected);
+         customBackground = _userColorHandler.getBackground(column, row, isSelected);
       }
 
       Color markDuplicateBackground = _markDuplicatesHandler.getBackgroundForCell(row, column, value);
@@ -92,9 +92,9 @@ public class ColoringService
 
    }
 
-   public RowColorHandler getRowColorHandler()
+   public UserColorHandler getUserColorHandler()
    {
-      return _rowColorHandler;
+      return _userColorHandler;
    }
 
    public FindColorHandler getFindColorHandler()

@@ -4,10 +4,11 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.RowColorHandlerSta
 import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 
-import javax.swing.*;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.HashMap;
 
 public class TableState
@@ -56,7 +57,7 @@ public class TableState
 
       if(table instanceof DataSetViewerTable)
       {
-         _rowColorHandlerState = ((DataSetViewerTable) table).getColoringService().getRowColorHandler().getState();
+         _rowColorHandlerState = ((DataSetViewerTable) table).getColoringService().getUserColorHandler().getState();
          _isShowingRowNumbers = ((DataSetViewerTable) table).isShowingRowNumbers();
       }
    }
@@ -106,7 +107,7 @@ public class TableState
 
       if(table instanceof DataSetViewerTable)
       {
-         ((DataSetViewerTable) table).getColoringService().getRowColorHandler().applyState(_rowColorHandlerState);
+         ((DataSetViewerTable) table).getColoringService().getUserColorHandler().applyState(_rowColorHandlerState);
 
          if(_isShowingRowNumbers)
          {

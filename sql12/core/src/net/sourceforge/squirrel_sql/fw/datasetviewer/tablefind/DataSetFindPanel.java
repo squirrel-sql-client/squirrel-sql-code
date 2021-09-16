@@ -55,13 +55,13 @@ public class DataSetFindPanel extends JPanel
       LibraryResources rsrc = new LibraryResources();
 
 
-      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
       btnDown = new JButton(rsrc.getIcon(LibraryResources.IImageNames.TABLE_DESCENDING));
       btnDown.setToolTipText(s_stringMgr.getString("DataSetFindPanel.findNext"));
       btnDown.setBorder(BorderFactory.createEtchedBorder());
       add(btnDown, gbc);
 
-      gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,0), 0,0);
       btnUp = new JButton(rsrc.getIcon(LibraryResources.IImageNames.TABLE_ASCENDING));
       btnUp.setToolTipText(s_stringMgr.getString("DataSetFindPanel.findPrevious"));
       btnUp.setBorder(BorderFactory.createEtchedBorder());

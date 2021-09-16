@@ -22,7 +22,7 @@ public class CopyColoredRowsToNewWindowCommand
    public void execute()
    {
 
-      Set<Integer> modelRowIndexes = _table.getColoringService().getRowColorHandler().getColorByRow().keySet();
+      Set<Integer> modelRowIndexes = _table.getColoringService().getUserColorHandler().getAllColoredRows();
 
       TreeMap<Integer, Object[]> rowsSortedByViewIndex = new TreeMap<>();
 
