@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Introduced Java 17 compatibility.
+
 Table's right mouse menus now offers to color selected cells.
 
 SQL result's find function: New option to color matched cells.
