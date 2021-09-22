@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -89,22 +90,16 @@ public class NetezzaSynonymParentExpander implements INodeExpander
 		ResultSet rs = null;
 		try
 		{
-			if (s_log.isDebugEnabled()) {
-				s_log.debug("createChildren: running SQL - "+SQL);
-				s_log.debug("createChildren: with SYNONYM_NAME = "+filterMatcher.getSqlLikeMatchString());
-				s_log.debug("createChildren: with schema = "+schemaName);
-				s_log.debug("createChildren: with catalog = "+catalogName);
-			}
-			
-			pstmt = conn.prepareStatement(SQL);
-			
+			//pstmt = conn.prepareStatement(SQL);
+			pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, SQL);
+
+
 			pstmt.setString(1, filterMatcher.getSqlLikeMatchString());
 
 			rs = pstmt.executeQuery();
 			while (rs.next())
 			{
-				IDatabaseObjectInfo si = new DatabaseObjectInfo(
-				   catalogName, schemaName, rs.getString(1), DatabaseObjectType.SYNONYM, md);
+				IDatabaseObjectInfo si = new DatabaseObjectInfo( catalogName, schemaName, rs.getString(1), DatabaseObjectType.SYNONYM, md);
 
 				if (filterMatcher.matches(si.getSimpleName()))
 				{

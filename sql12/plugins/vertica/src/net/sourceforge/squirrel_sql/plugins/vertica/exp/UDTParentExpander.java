@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 import net.sourceforge.squirrel_sql.plugins.vertica.VerticaObjectType;
 
 import java.sql.PreparedStatement;
@@ -42,77 +43,76 @@ import java.util.List;
 public class UDTParentExpander implements INodeExpander
 {
 
-	
-	/** SQL used to load system table names v2  */
-	
-	//private String SQL =
+
+   /**
+    * SQL used to load system table names v2
+    */
+
+   //private String SQL =
    ///		"SELECT FUNCTION_NAME FROM V_CATALOG.USER_FUNCTIONS" + 
-	//	" WHERE UPPER(PROCEDURE_TYPE) = 'USER DEFINED TRANSFORM' and SCHEMA_NAME = ? AND FUNCTION_NAME ILIKE ?" +
+   //	" WHERE UPPER(PROCEDURE_TYPE) = 'USER DEFINED TRANSFORM' and SCHEMA_NAME = ? AND FUNCTION_NAME ILIKE ?" +
    //     " ORDER BY FUNCTION_NAME";
-	
-	
-	private static final String SQL =
-		   		"SELECT FUNCTION_NAME FROM V_CATALOG.USER_TRANSFORMS" + 
-				" WHERE SCHEMA_NAME = ? AND FUNCTION_NAME ILIKE ?" +
-		        " ORDER BY FUNCTION_NAME";
-	
-	 
-	
-	/**
-	 * Default ctor.
-	 */
-	public UDTParentExpander()
-	{
-		super();
-	}
 
-	/**
-	 * Create the child nodes for the passed parent node and return them. Note
-	 * that this method should <B>not</B> actually add the child nodes to the
-	 * parent node as this is taken care of in the caller.
-	 *
-	 * @param	session	Current session.
-	 * @param	node	Node to be expanded.
-	 *
-	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
-	 *			nodes for the passed node.
-	 */
-	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
-		throws SQLException
-	{
 
-		
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+   private static final String SQL =
+         "SELECT FUNCTION_NAME FROM V_CATALOG.USER_TRANSFORMS" +
+               " WHERE SCHEMA_NAME = ? AND FUNCTION_NAME ILIKE ?" +
+               " ORDER BY FUNCTION_NAME";
 
-        final String catalogName      = parentNode.getDatabaseObjectInfo().getCatalogName();
-		final String schemaName       = parentNode.getDatabaseObjectInfo().getSchemaName();
-      
-		final ISQLConnection conn     = session.getSQLConnection();
-		final SQLDatabaseMetaData md  = conn.getSQLMetaData();
-		final PreparedStatement pstmt = conn.prepareStatement(SQL);
-		final ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
 
-        ResultSet rs = null;
-		try
-		{
-			pstmt.setString(1, schemaName);
-			pstmt.setString(2, filterMatcher.getSqlLikeMatchString());
+   /**
+    * Default ctor.
+    */
+   public UDTParentExpander()
+   {
+      super();
+   }
 
-            rs = pstmt.executeQuery();
-            while (rs.next())
-            {
-				IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName, schemaName,
-                                            rs.getString(1), VerticaObjectType.VUDT, md);
+   /**
+    * Create the child nodes for the passed parent node and return them. Note
+    * that this method should <B>not</B> actually add the child nodes to the
+    * parent node as this is taken care of in the caller.
+    *
+    * @param   session   Current session.
+    * @param   node   Node to be expanded.
+    * @return A list of <TT>ObjectTreeNode</TT> objects representing the child
+    * nodes for the passed node.
+    */
+   public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
+         throws SQLException
+   {
+      final List<ObjectTreeNode> childNodes = new ArrayList<>();
 
-                childNodes.add(new ObjectTreeNode(session, si));
-            }
-		}
-		finally
-		{
-		    SQLUtilities.closeResultSet(rs);
-            SQLUtilities.closeStatement(pstmt);
-		}
-		return childNodes;
-	}
+      final String catalogName = parentNode.getDatabaseObjectInfo().getCatalogName();
+      final String schemaName = parentNode.getDatabaseObjectInfo().getSchemaName();
+
+      final ISQLConnection conn = session.getSQLConnection();
+      final SQLDatabaseMetaData md = conn.getSQLMetaData();
+      //final PreparedStatement pstmt = conn.prepareStatement(SQL);
+      final PreparedStatement pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, SQL);
+      final ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
+
+      ResultSet rs = null;
+      try
+      {
+         pstmt.setString(1, schemaName);
+         pstmt.setString(2, filterMatcher.getSqlLikeMatchString());
+
+         rs = pstmt.executeQuery();
+         while (rs.next())
+         {
+            IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName, schemaName,
+                                                            rs.getString(1), VerticaObjectType.VUDT, md);
+
+            childNodes.add(new ObjectTreeNode(session, si));
+         }
+      }
+      finally
+      {
+         SQLUtilities.closeResultSet(rs);
+         SQLUtilities.closeStatement(pstmt);
+      }
+      return childNodes;
+   }
 
 }

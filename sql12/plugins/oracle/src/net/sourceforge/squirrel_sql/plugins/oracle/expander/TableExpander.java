@@ -64,22 +64,19 @@ public class TableExpander implements INodeExpander
 	 */
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode) throws SQLException
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		final List<ObjectTreeNode> childNodes = new ArrayList<>();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final String schemaName = parentDbinfo.getSchemaName();
 
-		IDatabaseObjectInfo dbinfo = new TriggerParentInfo(parentDbinfo,
-											schemaName, md, _objectTypes);
+		IDatabaseObjectInfo dbinfo = new TriggerParentInfo(parentDbinfo, schemaName, md, _objectTypes);
 		addNode(session, childNodes, dbinfo);
 		
-		IDatabaseObjectInfo cstrinfo = new ConstraintParentInfo(parentDbinfo,
-				schemaName, md, _objectTypes);
+		IDatabaseObjectInfo cstrinfo = new ConstraintParentInfo(parentDbinfo, schemaName, md, _objectTypes);
 		addNode(session, childNodes, cstrinfo);
 		
 		
-		IDatabaseObjectInfo indexInfo = new IndexParentInfo(parentDbinfo,
-				schemaName, md);
+		IDatabaseObjectInfo indexInfo = new IndexParentInfo(parentDbinfo, schemaName, md);
 		
 		IndexParentExpander tableIndexExpander = new IndexParentExpander();
 		tableIndexExpander.setTableIndexExtractor(new OracleTableIndexExtractor());

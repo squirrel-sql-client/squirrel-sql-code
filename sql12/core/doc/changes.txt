@@ -97,6 +97,11 @@ SQL Scripts Plugin: Create Data (INSERT) file from SQL.
 
 Bug fixes:
 
+#1488 Meta data loading timeouts now respect more locations
+   E.g. on Oracle SQuirreL freezes when the Object tree is accessed while a query is running.
+   This can be prevented by defining a Meta data loading timeout.
+   See menu File --> New Session Properties --> tab SQL --> section "Meta data loading"
+
 #1486 Excel import failed with ArrayIndexOutOfBoundsException
   when a sheet contained rows with more cells than the first row.
 

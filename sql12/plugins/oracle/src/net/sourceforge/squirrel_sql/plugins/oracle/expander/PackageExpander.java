@@ -17,15 +17,16 @@ package net.sourceforge.squirrel_sql.plugins.oracle.expander;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.ArrayList;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 /**
  * This class handles the expanding of a Package node. It will build all the
  * procedures for the package.
@@ -53,10 +54,9 @@ public class PackageExpander implements INodeExpander
 		return createProcedureNodes(session, packageName, schemaName);
 	}
 
-	private List<ObjectTreeNode> createProcedureNodes(ISession session, String catalogName,
-										String schemaName)
+	private List<ObjectTreeNode> createProcedureNodes(ISession session, String catalogName, String schemaName)
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		final List<ObjectTreeNode> childNodes = new ArrayList<>();
       IProcedureInfo[] procs = session.getSchemaInfo().getStoredProceduresInfos(catalogName, schemaName, new ObjFilterMatcher(session.getProperties()));
 		for (int i = 0; i < procs.length; ++i)
 		{

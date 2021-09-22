@@ -70,42 +70,31 @@ public class SchemaExpander implements INodeExpander
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSimpleName();
 
-		IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(catalogName,
-											schemaName, "PACKAGE",
-											_objectTypes.getPackageParent(), md);
+		IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(catalogName, schemaName, "PACKAGE", _objectTypes.getPackageParent(), md);
 		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
 		child.addExpander(new PackageParentExpander(_objectTypes));
 		childNodes.add(child);
 
 		ObjectType objType;
-		objType = new ObjectType(_objectTypes.getConsumerGroupParent(), "CONSUMER GROUP",
-										_objectTypes.getConsumerGroup());
-		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
-											md, objType));
+		objType = new ObjectType(_objectTypes.getConsumerGroupParent(), "CONSUMER GROUP", _objectTypes.getConsumerGroup());
+		childNodes.add(createObjectTypeNode(session, catalogName, schemaName, md, objType));
 
-		objType = new ObjectType(_objectTypes.getFunctionParent(), "FUNCTION",
-									DatabaseObjectType.FUNCTION);
-		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
-											md, objType));
+		objType = new ObjectType(_objectTypes.getFunctionParent(), "FUNCTION", DatabaseObjectType.FUNCTION);
+		childNodes.add(createObjectTypeNode(session, catalogName, schemaName, md, objType));
 
 		objType = new ObjectType(_objectTypes.getIndexParent(), "INDEX", DatabaseObjectType.INDEX);
-		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
-											md, objType));
+		childNodes.add(createObjectTypeNode(session, catalogName, schemaName, md, objType));
 
 		objType = new ObjectType(_objectTypes.getLobParent(), "LOB", _objectTypes.getLob());
-		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
-											md, objType));
+		childNodes.add(createObjectTypeNode(session, catalogName, schemaName, md, objType));
 
-		IDatabaseObjectInfo seqInfo = new DatabaseObjectInfo(catalogName,
-										schemaName, "SEQUENCE",
-										_objectTypes.getSequenceParent(), md);
+		IDatabaseObjectInfo seqInfo = new DatabaseObjectInfo(catalogName, schemaName, "SEQUENCE",_objectTypes.getSequenceParent(), md);
 		ObjectTreeNode node = new ObjectTreeNode(session, seqInfo);
 		node.addExpander(new SequenceParentExpander());
 		childNodes.add(node);
 
 		objType = new ObjectType(_objectTypes.getTypeParent(), "TYPE", _objectTypes.getType());
-		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
-											md, objType));
+		childNodes.add(createObjectTypeNode(session, catalogName, schemaName, md, objType));
 
 		return childNodes;
 	}

@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 import org.firebirdsql.squirrel.util.SystemTables;
 
 import java.sql.PreparedStatement;
@@ -67,13 +68,12 @@ public class AllIndexesParentExpander implements INodeExpander
 
         try
         {
-            pstmt = conn.prepareStatement(ALL_INDICES_SQL);
+            //pstmt = conn.prepareStatement(ALL_INDICES_SQL);
+            pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, ALL_INDICES_SQL);
             final ResultSet rs = pstmt.executeQuery();
             while (rs.next())
             {
-                IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, null,
-                                            rs.getString(1),
-                                            DatabaseObjectType.INDEX, md);
+                IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, null, rs.getString(1),DatabaseObjectType.INDEX, md);
                 childNodes.add(new ObjectTreeNode(session, doi));
             }
         }

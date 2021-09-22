@@ -33,12 +33,11 @@ public class TableExpander implements INodeExpander
 {
 	public TableExpander()
 	{
-		super();
 	}
 
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		final List<ObjectTreeNode> childNodes = new ArrayList<>();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final String schemaName = parentDbinfo.getSchemaName();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();

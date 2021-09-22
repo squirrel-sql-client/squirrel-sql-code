@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,64 +39,65 @@ import java.util.List;
  */
 public class SysTableParentExpander implements INodeExpander
 {
-	/** SQL used to load system table names  */
-	private static final String SQL =
-        "SELECT TABLE_NAME, TABLE_DESCRIPTION" +
-        " FROM V_CATALOG.SYSTEM_TABLES WHERE TABLE_SCHEMA=? AND TABLE_NAME ILIKE ?" +
-        " ORDER BY TABLE_NAME";
-	
-	/**
-	 * Default ctor.
-	 */
-	public SysTableParentExpander()
-	{
-		super();
-	}
+   /**
+    * SQL used to load system table names
+    */
+   private static final String SQL =
+         "SELECT TABLE_NAME, TABLE_DESCRIPTION" +
+               " FROM V_CATALOG.SYSTEM_TABLES WHERE TABLE_SCHEMA=? AND TABLE_NAME ILIKE ?" +
+               " ORDER BY TABLE_NAME";
 
-	/**
-	 * Create the child nodes for the passed parent node and return them. Note
-	 * that this method should <B>not</B> actually add the child nodes to the
-	 * parent node as this is taken care of in the caller.
-	 *
-	 * @param	session	Current session.
-	 * @param	node	Node to be expanded.
-	 *
-	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
-	 *			nodes for the passed node.
-	 */
-	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
-		throws SQLException
-	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+   /**
+    * Default ctor.
+    */
+   public SysTableParentExpander()
+   {
+      super();
+   }
 
-        final String catalogName      = parentNode.getDatabaseObjectInfo().getCatalogName();
-		final String schemaName       = parentNode.getDatabaseObjectInfo().getSchemaName();
-      
-		final ISQLConnection conn     = session.getSQLConnection();
-		final SQLDatabaseMetaData md  = conn.getSQLMetaData();
-		final PreparedStatement pstmt = conn.prepareStatement(SQL);
-		final ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
+   /**
+    * Create the child nodes for the passed parent node and return them. Note
+    * that this method should <B>not</B> actually add the child nodes to the
+    * parent node as this is taken care of in the caller.
+    *
+    * @param   session   Current session.
+    * @param   node   Node to be expanded.
+    * @return A list of <TT>ObjectTreeNode</TT> objects representing the child
+    * nodes for the passed node.
+    */
+   public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
+         throws SQLException
+   {
+      final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 
-        ResultSet rs = null;
-		try
-		{
-			pstmt.setString(1, schemaName);
-            pstmt.setString(2, filterMatcher.getSqlLikeMatchString());
+      final String catalogName = parentNode.getDatabaseObjectInfo().getCatalogName();
+      final String schemaName = parentNode.getDatabaseObjectInfo().getSchemaName();
 
-			rs = pstmt.executeQuery();
-            while (rs.next())
-            {
-            	ITableInfo si = new TableInfo(catalogName, schemaName, rs.getString(1).toUpperCase(),
-                                              "SYSTEM TABLE", rs.getString(2), md);
-               
-                childNodes.add(new ObjectTreeNode(session, si));
-            }
-		}
-		finally
-		{
-		    SQLUtilities.closeResultSet(rs);
-            SQLUtilities.closeStatement(pstmt);
-		}
-		return childNodes;
-	}
+      final ISQLConnection conn = session.getSQLConnection();
+      final SQLDatabaseMetaData md = conn.getSQLMetaData();
+      //final PreparedStatement pstmt = conn.prepareStatement(SQL);
+      final PreparedStatement pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, SQL);
+      final ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
+
+      ResultSet rs = null;
+      try
+      {
+         pstmt.setString(1, schemaName);
+         pstmt.setString(2, filterMatcher.getSqlLikeMatchString());
+
+         rs = pstmt.executeQuery();
+         while (rs.next())
+         {
+            ITableInfo si = new TableInfo(catalogName, schemaName, rs.getString(1).toUpperCase(), "SYSTEM TABLE", rs.getString(2), md);
+
+            childNodes.add(new ObjectTreeNode(session, si));
+         }
+      }
+      finally
+      {
+         SQLUtilities.closeResultSet(rs);
+         SQLUtilities.closeStatement(pstmt);
+      }
+      return childNodes;
+   }
 }

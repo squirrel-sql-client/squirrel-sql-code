@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -70,7 +71,7 @@ public class SessionParentExpander implements INodeExpander
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		final List<ObjectTreeNode> childNodes = new ArrayList<>();
 		final ISQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
@@ -80,7 +81,8 @@ public class SessionParentExpander implements INodeExpander
 		ResultSet rs = null;
 		try
 		{
-			pstmt = conn.prepareStatement(SQL);
+			//pstmt = conn.prepareStatement(SQL);
+			pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, SQL);
 			rs = pstmt.executeQuery();
 			while (rs.next())
 			{
@@ -89,8 +91,7 @@ public class SessionParentExpander implements INodeExpander
 				// session nodes are Oracle sessions that an administrator has the privileges to see.  So we 
 				// must not use DatabaseObjectType.SESSION, or else these nodes get expanded with the database
 				// DefaultdatabasExpander.
-				IDatabaseObjectInfo doi =
-					new DatabaseObjectInfo(null, schemaName, rs.getString(1), _objectTypes.getSession(), md);
+				IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, schemaName, rs.getString(1), _objectTypes.getSession(), md);
 				childNodes.add(new ObjectTreeNode(session, doi));
 			}
 		}

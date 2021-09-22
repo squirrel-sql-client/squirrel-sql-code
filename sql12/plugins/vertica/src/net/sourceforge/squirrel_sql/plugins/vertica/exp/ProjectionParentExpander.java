@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 import net.sourceforge.squirrel_sql.plugins.vertica.VerticaObjectType;
 
 import java.sql.PreparedStatement;
@@ -67,38 +68,38 @@ public class ProjectionParentExpander implements INodeExpander
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		final List<ObjectTreeNode> childNodes = new ArrayList<>();
 
-        IDatabaseObjectInfo parentInfo = parentNode.getDatabaseObjectInfo();
-        final String catalogName       = parentInfo.getCatalogName();
-		final String schemaName        = parentInfo.getSchemaName();
-        IDatabaseObjectInfo anchorTableInfo = ((ProjectionParentInfo)parentInfo).getTableInfo();
-     
-		final ISQLConnection conn      = session.getSQLConnection();
-		final SQLDatabaseMetaData md   = conn.getSQLMetaData();
-		final PreparedStatement pstmt  = conn.prepareStatement(SQL);
+		IDatabaseObjectInfo parentInfo = parentNode.getDatabaseObjectInfo();
+		final String catalogName = parentInfo.getCatalogName();
+		final String schemaName = parentInfo.getSchemaName();
+		IDatabaseObjectInfo anchorTableInfo = ((ProjectionParentInfo) parentInfo).getTableInfo();
+
+		final ISQLConnection conn = session.getSQLConnection();
+		final SQLDatabaseMetaData md = conn.getSQLMetaData();
+		//final PreparedStatement pstmt = conn.prepareStatement(SQL);
+		final PreparedStatement pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, SQL);
 		final ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
 
-        ResultSet rs = null;
+		ResultSet rs = null;
 		try
 		{
 			pstmt.setString(1, schemaName);
 			pstmt.setString(2, anchorTableInfo.getSimpleName());
 			pstmt.setString(3, filterMatcher.getSqlLikeMatchString());
 
-            rs = pstmt.executeQuery();
-            while (rs.next())
-            {
-				IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName, schemaName,
-                                            rs.getString(1), VerticaObjectType.PROJECTION, md);
+			rs = pstmt.executeQuery();
+			while (rs.next())
+			{
+				IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName, schemaName, rs.getString(1), VerticaObjectType.PROJECTION, md);
 
-                childNodes.add(new ObjectTreeNode(session, si));
-            }       
-        }
+				childNodes.add(new ObjectTreeNode(session, si));
+			}
+		}
 		finally
 		{
-		    SQLUtilities.closeResultSet(rs);
-            SQLUtilities.closeStatement(pstmt);
+			SQLUtilities.closeResultSet(rs);
+			SQLUtilities.closeStatement(pstmt);
 		}
 		return childNodes;
 	}

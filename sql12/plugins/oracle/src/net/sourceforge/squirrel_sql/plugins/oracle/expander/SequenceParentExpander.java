@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -80,7 +81,8 @@ public class SequenceParentExpander implements INodeExpander
       ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
 
 
-      final PreparedStatement pstmt = conn.prepareStatement(SQL);
+      //final PreparedStatement pstmt = conn.prepareStatement(SQL);
+		final PreparedStatement pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, SQL);
 		try
 		{
 			pstmt.setString(1, schemaName);

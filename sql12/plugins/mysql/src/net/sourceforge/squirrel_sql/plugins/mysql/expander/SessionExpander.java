@@ -63,12 +63,11 @@ public class SessionExpander implements INodeExpander
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		final List<ObjectTreeNode> childNodes = new ArrayList<>();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 
 		// Users.
-		DatabaseObjectInfo dboInfo = new DatabaseObjectInfo(null, null, "USERS",
-											_objectTypes.getUserParent(), md);
+		DatabaseObjectInfo dboInfo = new DatabaseObjectInfo(null, null, "USERS", _objectTypes.getUserParent(), md);
 		ObjectTreeNode node = new ObjectTreeNode(session, dboInfo);
 		childNodes.add(node);
 

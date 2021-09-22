@@ -18,13 +18,14 @@ package net.sourceforge.squirrel_sql.plugins.netezza.exp;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class handles the expanding of the "External Table" node. It will give a list of all the External 
@@ -64,7 +65,7 @@ public class NetezzaExtTableParentExpander implements INodeExpander
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 	      throws SQLException
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		final List<ObjectTreeNode> childNodes = new ArrayList<>();
 		return childNodes;
 	}
 }

@@ -17,16 +17,17 @@ package net.sourceforge.squirrel_sql.plugins.oracle.expander;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 
 /**
  * This class handles the expanding of a Procedure node. 
@@ -58,14 +59,15 @@ public class ProcedureExpander implements INodeExpander
    private List<ObjectTreeNode> createProcedureNodes(ISession session, String catalogName,
                                      String schemaName)
    {
-      final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
-      IProcedureInfo[] procs =
-         session.getSchemaInfo().getStoredProceduresInfos(catalogName, schemaName, new ObjFilterMatcher(session.getProperties()));
+      final List<ObjectTreeNode> childNodes = new ArrayList<>();
+      IProcedureInfo[] procs = session.getSchemaInfo().getStoredProceduresInfos(catalogName, schemaName, new ObjFilterMatcher(session.getProperties()));
 
       for (int i = 0; i < procs.length; ++i)
       {
          if (procs[i].getProcedureType() == DatabaseMetaData.procedureNoResult)
+         {
             childNodes.add(new ObjectTreeNode(session, procs[i]));
+         }
       }
       return childNodes;
    }

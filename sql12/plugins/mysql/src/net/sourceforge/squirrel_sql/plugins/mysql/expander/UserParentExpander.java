@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
 import java.sql.PreparedStatement;
@@ -85,20 +86,21 @@ public class UserParentExpander implements INodeExpander
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		final List<ObjectTreeNode> childNodes = new ArrayList<>();
 		final ISQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final String schemaName = parentDbinfo.getSchemaName();
 
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
+		//PreparedStatement pstmt = conn.prepareStatement(SQL);
+		final PreparedStatement pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, SQL);
+
 		try
 		{
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next())
 			{
-				IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, schemaName,
-											rs.getString(1), DatabaseObjectType.USER, md);
+				IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, schemaName, rs.getString(1), DatabaseObjectType.USER, md);
 				childNodes.add(new ObjectTreeNode(session, doi));
 			}
 		}

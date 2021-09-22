@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 
 import java.sql.PreparedStatement;
@@ -73,7 +74,8 @@ public class UserParentExpander implements INodeExpander
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final String schemaName = parentDbinfo.getSchemaName();
 
-		final PreparedStatement pstmt = conn.prepareStatement(isAdmin?SQL_ADMIN:SQL_USER);
+		// final PreparedStatement pstmt = conn.prepareStatement(isAdmin?SQL_ADMIN:SQL_USER);
+		final PreparedStatement pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, isAdmin?SQL_ADMIN:SQL_USER);
 		try
 		{
 			ResultSet rs = pstmt.executeQuery();

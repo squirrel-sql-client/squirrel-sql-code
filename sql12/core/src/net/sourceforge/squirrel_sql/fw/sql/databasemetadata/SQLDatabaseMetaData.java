@@ -1895,7 +1895,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 */
 	private DatabaseMetaData privateGetJDBCMetaData() throws SQLException
 	{
-		return MetaDataTimeOutProxyFactory.wrap(_conn.getConnection().getMetaData());
+		return MetaDataTimeOutProxyFactory.wrap(() -> _conn.getConnection().getMetaData());
 	}
 
 	/**

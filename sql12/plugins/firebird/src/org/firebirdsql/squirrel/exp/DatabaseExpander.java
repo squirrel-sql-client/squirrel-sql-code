@@ -44,14 +44,12 @@ public class DatabaseExpander implements INodeExpander {
         final String catalogName = parentDbinfo.getCatalogName();
         final String schemaName = parentDbinfo.getSimpleName();
         ObjectTreeNode node;
-        IDatabaseObjectInfo seqInfo = new DatabaseObjectInfo(catalogName,
-                schemaName, "GENERATORS", IObjectTypes.GENERATOR_PARENT, md);
+        IDatabaseObjectInfo seqInfo = new DatabaseObjectInfo(catalogName, schemaName, "GENERATORS", IObjectTypes.GENERATOR_PARENT, md);
         node = new ObjectTreeNode(session, seqInfo);
         node.addExpander(new GeneratorParentExpander(_plugin));
         childNodes.add(node);
         
-        seqInfo = new DatabaseObjectInfo(catalogName,
-                schemaName, "DOMAINS", IObjectTypes.DOMAIN_PARENT, md);
+        seqInfo = new DatabaseObjectInfo(catalogName, schemaName, "DOMAINS", IObjectTypes.DOMAIN_PARENT, md);
         node = new ObjectTreeNode(session, seqInfo);
         node.addExpander(new DomainParentExpander(_plugin));
         childNodes.add(node);

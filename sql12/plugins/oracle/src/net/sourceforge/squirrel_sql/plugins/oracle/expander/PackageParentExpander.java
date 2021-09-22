@@ -73,15 +73,13 @@ public class PackageParentExpander implements INodeExpander
 		final String schemaName = parentDbinfo.getSchemaName();
 
 		// Add package node to contain standalone procedures.
-		IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(null, schemaName,
-												"", _objectTypes.getPackage(), md);
+		IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(null, schemaName, "", _objectTypes.getPackage(), md);
 		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
 		child.setUserObject("Standalone");
 		childNodes.add(child);
 
 		// Add packages.
-		ObjectType objType = new ObjectType(_objectTypes.getPackage(), "PACKAGE",
-												_objectTypes.getPackage());
+		ObjectType objType = new ObjectType(_objectTypes.getPackage(), "PACKAGE", _objectTypes.getPackage());
 		INodeExpander exp = new ObjectTypeExpander(objType);
 		childNodes.addAll(exp.createChildren(session, parentNode));
 

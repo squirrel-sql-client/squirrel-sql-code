@@ -67,33 +67,22 @@ public class SchemaExpander implements INodeExpander
 	 */
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		final List<ObjectTreeNode> childNodes = new ArrayList<>();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSimpleName();
 
-        IDatabaseObjectInfo seqInfo = 
-            new DatabaseObjectInfo(catalogName,
-                                   schemaName, 
-                                   "SEQUENCE",
-                                   DatabaseObjectType.SEQUENCE_TYPE_DBO, 
-                                   md);
-        ObjectTreeNode node = new ObjectTreeNode(session, seqInfo);
-        node.addExpander(new SequenceParentExpander(db2Sql));
-        childNodes.add(node);
+		IDatabaseObjectInfo seqInfo = new DatabaseObjectInfo(catalogName, schemaName, "SEQUENCE", DatabaseObjectType.SEQUENCE_TYPE_DBO, md);
+		ObjectTreeNode node = new ObjectTreeNode(session, seqInfo);
+		node.addExpander(new SequenceParentExpander(db2Sql));
+		childNodes.add(node);
 
-        IDatabaseObjectInfo udfInfo = 
-            new DatabaseObjectInfo(catalogName,
-                                   schemaName, 
-                                   "UDF",
-                                   DatabaseObjectType.UDF_TYPE_DBO, 
-                                   md);
-        ObjectTreeNode udfnode = new ObjectTreeNode(session, udfInfo);
-        udfnode.addExpander(new UDFParentExpander(db2Sql));
-        childNodes.add(udfnode);
-        
-        
+		IDatabaseObjectInfo udfInfo = new DatabaseObjectInfo(catalogName, schemaName, "UDF", DatabaseObjectType.UDF_TYPE_DBO, md);
+		ObjectTreeNode udfnode = new ObjectTreeNode(session, udfInfo);
+		udfnode.addExpander(new UDFParentExpander(db2Sql));
+		childNodes.add(udfnode);
+
 		return childNodes;
 	}
 

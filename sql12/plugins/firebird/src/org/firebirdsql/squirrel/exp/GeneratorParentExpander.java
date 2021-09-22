@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.firebirdsql.squirrel.FirebirdPlugin;
@@ -40,74 +41,82 @@ import java.util.List;
 /**
  * This class handles the expanding of the "Sequence Group" node. It will give a
  * list of all the Sequences available in the schema.
- * 
+ *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell </A>
  */
-public class GeneratorParentExpander implements INodeExpander {
+public class GeneratorParentExpander implements INodeExpander
+{
 
-    /** SQL used to load info about sequences. */
-    private static final String SQL = "select cast(rdb$generator_name as varchar(31)) as rdb$generator_name"
-            + " from rdb$generators where rdb$system_flag is null";
+   /**
+    * SQL used to load info about sequences.
+    */
+   private static final String SQL = "select cast(rdb$generator_name as varchar(31)) as rdb$generator_name"
+         + " from rdb$generators where rdb$system_flag is null";
 
-    /** Logger for this class. */
-    @SuppressWarnings("unused")
-    private static final ILogger s_log = LoggerController
-            .createLogger(GeneratorParentExpander.class);
+   /**
+    * Logger for this class.
+    */
+   @SuppressWarnings("unused")
+   private static final ILogger s_log = LoggerController.createLogger(GeneratorParentExpander.class);
 
-    /** The plugin. */
-    @SuppressWarnings("unused")
-    private final FirebirdPlugin _plugin;
+   /**
+    * The plugin.
+    */
+   @SuppressWarnings("unused")
+   private final FirebirdPlugin _plugin;
 
-    /**
-     * Ctor.
-     * 
-     * @throws IllegalArgumentException
-     *             Thrown if <TT>null</TT> <TT>OraclePlugin</TT> passed.
-     */
-    GeneratorParentExpander(FirebirdPlugin plugin) {
-        super();
-        if (plugin == null) { throw new IllegalArgumentException(
-                "FirebirdPlugin == null"); }
+   /**
+    * Ctor.
+    *
+    * @throws IllegalArgumentException Thrown if <TT>null</TT> <TT>OraclePlugin</TT> passed.
+    */
+   GeneratorParentExpander(FirebirdPlugin plugin)
+   {
+      if (plugin == null)
+      {
+         throw new IllegalArgumentException("FirebirdPlugin == null");
+      }
 
-        _plugin = plugin;
-    }
+      _plugin = plugin;
+   }
 
-    /**
-     * Create the child nodes for the passed parent node and return them. Note
-     * that this method should <B>not </B> actually add the child nodes to the
-     * parent node as this is taken care of in the caller.
-     * 
-     * @param session
-     *            Current session.
-     * @param node
-     *            Node to be expanded.
-     * 
-     * @return A list of <TT>ObjectTreeNode</TT> objects representing the
-     *         child nodes for the passed node.
-     */
-    public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
-            throws SQLException {
-        final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
-        final IDatabaseObjectInfo parentDbinfo = parentNode
-                .getDatabaseObjectInfo();
-        final ISQLConnection conn = session.getSQLConnection();
-        final SQLDatabaseMetaData md = session.getSQLConnection()
-                .getSQLMetaData();
-        final String catalogName = parentDbinfo.getCatalogName();
-        final String schemaName = parentDbinfo.getSchemaName();
+   /**
+    * Create the child nodes for the passed parent node and return them. Note
+    * that this method should <B>not </B> actually add the child nodes to the
+    * parent node as this is taken care of in the caller.
+    *
+    * @param session Current session.
+    * @param node    Node to be expanded.
+    * @return A list of <TT>ObjectTreeNode</TT> objects representing the
+    * child nodes for the passed node.
+    */
+   public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
+         throws SQLException
+   {
+      final List<ObjectTreeNode> childNodes = new ArrayList<>();
+      final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
+      final ISQLConnection conn = session.getSQLConnection();
+      final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+      final String catalogName = parentDbinfo.getCatalogName();
+      final String schemaName = parentDbinfo.getSchemaName();
 
-        PreparedStatement pstmt = conn.prepareStatement(SQL);
-        try {
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName,
-                        schemaName, rs.getString(1),
-                        DatabaseObjectType.SEQUENCE, md);
-                childNodes.add(new ObjectTreeNode(session, si));
-            }
-        } finally {
-            pstmt.close();
-        }
-        return childNodes;
-    }
+      //PreparedStatement pstmt = conn.prepareStatement(SQL);
+      final PreparedStatement pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, SQL);
+      try
+      {
+         ResultSet rs = pstmt.executeQuery();
+         while (rs.next())
+         {
+            IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName,
+                                                            schemaName, rs.getString(1),
+                                                            DatabaseObjectType.SEQUENCE, md);
+            childNodes.add(new ObjectTreeNode(session, si));
+         }
+      }
+      finally
+      {
+         pstmt.close();
+      }
+      return childNodes;
+   }
 }

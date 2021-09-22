@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -88,27 +89,28 @@ public class GreenplumExtTableParentExpander implements INodeExpander
 		ResultSet rs = null;
 		try
 		{
-			pstmt = conn.prepareStatement(SQL);
+			//pstmt = conn.prepareStatement(SQL);
+			pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, SQL);
 
-            pstmt.setString(1, schemaName);
+			pstmt.setString(1, schemaName);
 
-            //I dont know how to get the user and db_name
-            //pstmt.setString(2, "gpadmin");
-            //pstmt.setString(3, "db_name");
+			//I dont know how to get the user and db_name
+			//pstmt.setString(2, "gpadmin");
+			//pstmt.setString(3, "db_name");
 
 			rs = pstmt.executeQuery();
 
-			while(rs.next())
+			while (rs.next())
 			{
 				IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName, schemaName, rs.getString(1), DatabaseObjectType.TABLE_TYPE_DBO, md);
 
-				if(filterMatcher.matches(si.getSimpleName()))
+				if (filterMatcher.matches(si.getSimpleName()))
 				{
 					childNodes.add(new ObjectTreeNode(session, si));
 				}
 			}
 		}
-        finally
+		finally
 		{
 			SQLUtilities.closeResultSet(rs, true);
 		}

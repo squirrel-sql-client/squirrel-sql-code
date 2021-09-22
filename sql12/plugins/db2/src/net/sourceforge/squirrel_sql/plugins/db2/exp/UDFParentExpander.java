@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
 
 import java.sql.PreparedStatement;
@@ -71,7 +72,7 @@ public class UDFParentExpander implements INodeExpander
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
 	{
-		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
+		final List<ObjectTreeNode> childNodes = new ArrayList<>();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final ISQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
@@ -81,7 +82,8 @@ public class UDFParentExpander implements INodeExpander
 
 		String sql = db2Sql.getUserDefinedFunctionListSql();
 
-		final PreparedStatement pstmt = conn.prepareStatement(sql);
+		//final PreparedStatement pstmt = conn.prepareStatement(sql);
+		final PreparedStatement pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, sql);
 		ResultSet rs = null;
 		try
 		{

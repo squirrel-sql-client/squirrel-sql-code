@@ -146,7 +146,7 @@ public class DBUtil extends I18NBaseObject
 	private static List<String> getPKColumnList(ISQLConnection sourceConn, ITableInfo ti) throws SQLException
 	{
 		ArrayList<String> pkColumns = new ArrayList<String>();
-		DatabaseMetaData md = MetaDataTimeOutProxyFactory.wrap(sourceConn.getConnection().getMetaData());
+		DatabaseMetaData md = MetaDataTimeOutProxyFactory.wrap(() -> sourceConn.getConnection().getMetaData());
 		ResultSet rs = null;
 		if (md.supportsCatalogsInTableDefinitions())
 		{
@@ -1323,7 +1323,7 @@ public class DBUtil extends I18NBaseObject
 		ResultSet rs = null;
 		try
 		{
-			DatabaseMetaData md = MetaDataTimeOutProxyFactory.wrap(con.getConnection().getMetaData());
+			DatabaseMetaData md = MetaDataTimeOutProxyFactory.wrap(() -> con.getConnection().getMetaData());
 			String cat = ti.getCatalogName();
 			String schema = ti.getSchemaName();
 			String tableName = ti.getSimpleName();
@@ -1829,7 +1829,7 @@ public class DBUtil extends I18NBaseObject
 		}
 		try
 		{
-			DatabaseMetaData md = MetaDataTimeOutProxyFactory.wrap(session.getSQLConnection().getConnection().getMetaData());
+			DatabaseMetaData md = MetaDataTimeOutProxyFactory.wrap(() -> session.getSQLConnection().getConnection().getMetaData());
 
 			// Don't change the case of the identifier if database allows mixed
 			// case.

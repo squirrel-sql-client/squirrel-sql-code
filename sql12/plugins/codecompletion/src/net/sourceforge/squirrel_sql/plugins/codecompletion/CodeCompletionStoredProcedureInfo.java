@@ -5,10 +5,10 @@ import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.PrefixedConfig;
 
-import java.sql.SQLException;
-import java.sql.ResultSet;
 import java.sql.DatabaseMetaData;
-import java.util.Vector;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
@@ -127,10 +127,10 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 	{
 		if (null == _params)
 		{
-			final DatabaseMetaData databaseMetaData = MetaDataTimeOutProxyFactory.wrap(_session.getSQLConnection().getConnection().getMetaData(), _session);
+			final DatabaseMetaData databaseMetaData = MetaDataTimeOutProxyFactory.wrap(() -> _session.getSQLConnection().getConnection().getMetaData(), _session);
 			ResultSet res = databaseMetaData.getProcedureColumns(_catalog, _schema, _procName, null);
 
-			Vector<String> ret = new Vector<String>();
+			ArrayList<String> ret = new ArrayList<>();
 			while (res.next())
 			{
 				switch (res.getInt("COLUMN_TYPE"))

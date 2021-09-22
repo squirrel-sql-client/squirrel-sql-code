@@ -15,12 +15,31 @@ import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndEvent;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -285,17 +304,10 @@ public class TableFrameController
 
    private void onTableFramesModelChanged(TableFramesModelChangeType changeType)
    {
-      try
+      if(TableFramesModelChangeType.TABLE == changeType)
       {
-         if(TableFramesModelChangeType.TABLE == changeType)
-         {
-            DatabaseMetaData metaData = MetaDataTimeOutProxyFactory.wrap(_session.getSQLConnection().getConnection().getMetaData());
-            completeConstraints(metaData);
-         }
-      }
-      catch (SQLException e)
-      {
-         throw new RuntimeException(e);
+         DatabaseMetaData metaData = MetaDataTimeOutProxyFactory.wrap(() -> _session.getSQLConnection().getConnection().getMetaData());
+         completeConstraints(metaData);
       }
    }
 
@@ -385,7 +397,7 @@ public class TableFrameController
    private boolean initFromDB()
       throws SQLException
    {
-      DatabaseMetaData metaData = MetaDataTimeOutProxyFactory.wrap(_session.getSQLConnection().getConnection().getMetaData());
+      DatabaseMetaData metaData = MetaDataTimeOutProxyFactory.wrap(() -> _session.getSQLConnection().getConnection().getMetaData());
 
       ArrayList<ColumnInfo> colInfosBuf = GraphUtil.createColumnInfos(_session, _catalog, _schema, _tableName);
 
@@ -988,12 +1000,11 @@ public class TableFrameController
    {
       try
       {
-         DatabaseMetaData metaData = MetaDataTimeOutProxyFactory.wrap(_session.getSQLConnection().getConnection().getMetaData());
-
+         DatabaseMetaData metaData = MetaDataTimeOutProxyFactory.wrap(() -> _session.getSQLConnection().getConnection().getMetaData());
 
          if(null == _tablesExportedTo)
          {
-            Hashtable<String, String> exportBuf = new Hashtable<String, String>();
+            Hashtable<String, String> exportBuf = new Hashtable<>();
             ResultSet res = metaData.getExportedKeys(_catalog, _schema, _tableName);
             while(res.next())
             {

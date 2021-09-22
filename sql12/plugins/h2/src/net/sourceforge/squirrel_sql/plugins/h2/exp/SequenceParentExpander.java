@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -81,6 +82,8 @@ public class SequenceParentExpander implements INodeExpander
 		ResultSet rs = null;
 		try
 		{
+			//pstmt = conn.prepareStatement(SQL);
+			pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, SQL);
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, schemaName);
 			pstmt.setString(2, filterMatcher.getSqlLikeMatchString());

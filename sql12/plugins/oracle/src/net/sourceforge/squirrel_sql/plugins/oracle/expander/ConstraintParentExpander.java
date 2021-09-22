@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.StatementExecutionTimeOutHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -61,8 +62,10 @@ public class ConstraintParentExpander implements INodeExpander {
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final IDatabaseObjectInfo tableInfo = ((ConstraintParentInfo)parentDbinfo).getTableInfo();
 		final String schemaName = parentDbinfo.getSchemaName();
-		final PreparedStatement pstmt = conn.prepareStatement(SQL);
-		
+		//final PreparedStatement pstmt = conn.prepareStatement(SQL);
+		final PreparedStatement pstmt = StatementExecutionTimeOutHandler.prepareStatement(conn, SQL);
+
+
 		try	{
 			pstmt.setString(1, tableInfo.getSchemaName());
 			pstmt.setString(2, tableInfo.getSimpleName());
