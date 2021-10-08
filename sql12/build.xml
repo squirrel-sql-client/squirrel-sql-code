@@ -221,6 +221,7 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="vertica"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="wikiTableConfigurations"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="highresicon"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="cache"/></antcall>
     </target>
 
     <target name="compileMacPlugin" description="compileMacPlugin">

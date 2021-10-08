@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.titlefilepath;
 
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.ButtonTabComponent;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent;
 
 
 /**

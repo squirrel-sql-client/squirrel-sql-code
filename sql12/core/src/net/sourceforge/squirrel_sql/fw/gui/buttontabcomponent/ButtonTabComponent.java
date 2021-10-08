@@ -1,20 +1,5 @@
-package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
+package net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-import javax.swing.plaf.ColorUIResource;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -23,8 +8,27 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.plaf.ColorUIResource;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 
+/**
+ * SQuirreL's standard tab-component to use in JTabbedPane.setTabComponentAt(...)
+ * which provides a standard close button and "move to new window" button.
+ */
 public class ButtonTabComponent extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ButtonTabComponent.class);
@@ -90,7 +94,7 @@ public class ButtonTabComponent extends JPanel
       setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
 
 
-      _btnToWindow = new SmallTabButton(s_stringMgr.getString("docktabdesktop.ButtonTabComponent.detachButtonTooltip"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.TAB_DETACH_SMALL));
+      _btnToWindow = new SmallTabButton(s_stringMgr.getString("ButtonTabComponent.detachButtonTooltip"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.TAB_DETACH_SMALL));
 
       _pnlSmallTabButtons.add(_btnToWindow);
    }
@@ -270,7 +274,7 @@ public class ButtonTabComponent extends JPanel
 
       private CloseTabButton(ButtonTabComponent tabComponent)
       {
-         super(s_stringMgr.getString("docktabdesktop.ButtonTabComponent.toolTip"), null);
+         super(s_stringMgr.getString("ButtonTabComponent.toolTip"), null);
 
          this.tabComponent = tabComponent;
       }

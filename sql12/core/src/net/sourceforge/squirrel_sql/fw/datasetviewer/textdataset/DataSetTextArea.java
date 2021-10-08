@@ -1,17 +1,22 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset;
 
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JTextArea;
+
+import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 
 public class DataSetTextArea extends JTextArea
 {
    private TextPopupMenu _textPopupMenu;
 
-   DataSetTextArea()
+   public DataSetTextArea()
+   {
+      this(null);
+   }
+
+   public DataSetTextArea(String text)
    {
       setEditable(false);
       setLineWrap(false);
@@ -19,6 +24,11 @@ public class DataSetTextArea extends JTextArea
 
       _textPopupMenu = new TextPopupMenu();
       _textPopupMenu.setTextComponent(this);
+
+      if(null != text)
+      {
+         setText(text);
+      }
 
       addMouseListener(new MouseAdapter()
       {

@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent;
+
 public class RemoveTabHandelResult
 {
    private ButtonTabComponent _removedButtonTabComponent;

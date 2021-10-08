@@ -1,6 +1,15 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in our GIT repository and in snapshots and future releases.
+===============================================================================================
+
+Bug fixes:
+
+SQL error result tabs can be closed by click on mouse wheel.
+
+
+
 4.3.0 (10/02/2021)
 ==================
 

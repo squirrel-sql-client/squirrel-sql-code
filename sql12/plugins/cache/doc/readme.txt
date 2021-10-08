@@ -1,0 +1,1 @@
+Plugin to show query statistics and plan for the Intersystems Cache database.
