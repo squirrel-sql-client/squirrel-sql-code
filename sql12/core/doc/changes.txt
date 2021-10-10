@@ -1,6 +1,16 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in our GIT repository and in snapshots and future releases.
+===============================================================================================
+
+Enhancements:
+
+New SQL editor function to delete the current SQL statement.
+  Accessible by short cut Ctrl+Shift+Del, tools popup, right mouse menu.
+  Note: Corresponding functions to copy (Ctrl+Shift+x) and cut (Ctrl+Shift+x) already exist.
+
+
 4.3.0 (10/02/2021)
 ==================
 

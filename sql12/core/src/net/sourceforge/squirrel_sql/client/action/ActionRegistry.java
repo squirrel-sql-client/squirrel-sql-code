@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAc
 import net.sourceforge.squirrel_sql.client.session.action.CopySqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.CutSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.DeleteSelectedTablesAction;
+import net.sourceforge.squirrel_sql.client.session.action.DeleteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.EscapeDateAction;
@@ -170,6 +171,7 @@ public class ActionRegistry
       toolsPopupController.addAction("date", ac.get(EscapeDateAction.class));
       toolsPopupController.addAction("sqlcut", ac.get(CutSqlAction.class));
       toolsPopupController.addAction("sqlcopy", ac.get(CopySqlAction.class));
+      toolsPopupController.addAction("sqldel", ac.get(DeleteSqlAction.class));
       toolsPopupController.addAction("remnewlines", ac.get(RemoveNewLinesAction.class));
       toolsPopupController.addAction("pastehist", ac.get(PasteFromHistoryAction.class));
 
@@ -274,6 +276,7 @@ public class ActionRegistry
       actionCollection.add(new EscapeDateAction(app));
       actionCollection.add(new CutSqlAction(app));
       actionCollection.add(new CopySqlAction(app));
+      actionCollection.add(new DeleteSqlAction(app));
       actionCollection.add(new RemoveNewLinesAction(app));
       actionCollection.add(new PasteFromHistoryAction(app));
       actionCollection.add(new PasteFromHistoryAltAcceleratorAction(app));
