@@ -15,7 +15,6 @@ New SQL editor function to delete the current SQL statement.
   Note: Corresponding functions to copy (Ctrl+Shift+x) and cut (Ctrl+Shift+x) already exist.
 
 
-
 Bug fixes:
 
 SQL error result tabs can be closed by click on mouse wheel.
