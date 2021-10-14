@@ -17,6 +17,8 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+SQL result's find function -->  Color matches: "No resource found ..." message in coloring dialog's title.
+
 SQL error result tabs can be closed by click on mouse wheel.
 
 

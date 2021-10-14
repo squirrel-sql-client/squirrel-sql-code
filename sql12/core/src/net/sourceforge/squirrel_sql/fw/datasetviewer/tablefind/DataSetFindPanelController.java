@@ -110,7 +110,7 @@ public class DataSetFindPanelController
          startColor = new Color(rgb);
       }
 
-      Color newColor = JColorChooser.showDialog(GUIUtils.getOwningFrame(_dataSetViewerTablePanel.getTable()), s_stringMgr.getString("ColorSelectedRowsCommand.color.selected.rows"), startColor);
+      Color newColor = JColorChooser.showDialog(GUIUtils.getOwningFrame(_dataSetViewerTablePanel.getTable()), s_stringMgr.getString("DataSetFindPanel.colorMatchedCells"), startColor);
 
       if (null == newColor)
       {
