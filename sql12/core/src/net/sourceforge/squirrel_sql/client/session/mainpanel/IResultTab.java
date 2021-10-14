@@ -18,21 +18,12 @@
  */
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
+import javax.swing.JComponent;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesHandler;
-import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-
-import javax.swing.JComponent;
 
 public interface IResultTab
 {

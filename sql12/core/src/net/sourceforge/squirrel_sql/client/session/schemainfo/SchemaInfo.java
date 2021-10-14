@@ -21,6 +21,17 @@ package net.sourceforge.squirrel_sql.client.session.schemainfo;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
@@ -48,17 +59,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.SwingUtilities;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
 
 public class SchemaInfo
 {
@@ -298,15 +298,36 @@ public class SchemaInfo
             s_log.error("Error loading functions", ex);
          }
 
-         progress = loadTables(null, null, null, null, progress);
-         notifyTablesLoaded();
+         try
+         {
+            progress = loadTables(null, null, null, null, progress);
+            notifyTablesLoaded();
+         }
+         catch(Exception ex)
+         {
+            s_log.error("Error loading tables", ex);
+         }
 
 
-         progress = loadStoredProcedures(null, null, null, progress);
-         notifyStoredProceduresLoaded();
+         try
+         {
+            progress = loadStoredProcedures(null, null, null, progress);
+            notifyStoredProceduresLoaded();
+         }
+         catch(Exception ex)
+         {
+            s_log.error("Error loading procedures", ex);
+         }
 
-         progress = loadUDTs(null, null, null, progress);
-         notifyUDTsLoaded();
+         try
+         {
+            progress = loadUDTs(null, null, null, progress);
+            notifyUDTsLoaded();
+         }
+         catch(Exception ex)
+         {
+            s_log.error("Error loading UDTS", ex);
+         }
 
       }
       finally

@@ -18,6 +18,26 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
@@ -31,24 +51,20 @@ import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultT
 import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabAnchoredAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
-import java.util.ArrayList;
 /**
  * This is the panel where SQL scripts are executed and results presented.
  *
@@ -236,7 +252,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 
    private void removeErrorPanels()
    {
-      ArrayList<ErrorPanel> toRemove = new ArrayList<ErrorPanel>();
+      ArrayList<ErrorPanel> toRemove = new ArrayList<>();
 
       for (int i = 0; i < _tabbedExecutionsPanel.getTabCount(); i++)
       {
@@ -317,14 +333,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 
    private void onDisplayErrors(final ArrayList<String> sqlExecErrorMsgs, final String lastExecutedStatement)
    {
-      Runnable runnable = new Runnable()
-      {
-         public void run()
-         {
-            showErrorPanel(sqlExecErrorMsgs, lastExecutedStatement);
-         }
-      };
-
+      Runnable runnable = () -> showErrorPanel(sqlExecErrorMsgs, lastExecutedStatement);
       SwingUtilities.invokeLater(runnable);
    }
 
@@ -650,7 +659,27 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
         return (IResultTab)_tabbedExecutionsPanel.getSelectedComponent();
     }
 
-    private void onAddResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, IDataSetUpdateableTableModel creator, IResultTab resultTabToReplace)
+   @Override
+   public void addCustomResult(CustomResultPanel resultPanel, String title, Icon icon)
+   {
+      _tabbedExecutionsPanel.add(title, resultPanel);
+      _tabbedExecutionsPanel.setSelectedComponent(resultPanel);
+      int selectedIndex = _tabbedExecutionsPanel.getSelectedIndex();
+
+      ButtonTabComponent tabComponent = new ButtonTabComponent(title, icon);
+      tabComponent.getClosebutton().addActionListener(e -> onCustomTabClose(resultPanel));
+      tabComponent.getToWindowButton().setVisible(false);
+      _tabbedExecutionsPanel.setTabComponentAt(selectedIndex, tabComponent);
+
+      checkResultTabLimit();
+   }
+
+   private void onCustomTabClose(CustomResultPanel customResultPanel)
+   {
+      _resultTabClosing.closeTab(customResultPanel);
+   }
+
+   private void onAddResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds, IDataSetUpdateableTableModel creator, IResultTab resultTabToReplace)
     {
        try
        {
@@ -693,9 +722,10 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
          public void run()
          {
             _tabbedExecutionsPanel.addTab(SQLResultExecuterPanel.i18n.EXEC_SQL_MSG,
-                  null,
-                  cancelPanelCtrl.getPanel(),
-                  SQLResultExecuterPanel.i18n.CANCEL_SQL_MSG);
+                                          null,
+                                          cancelPanelCtrl.getPanel(),
+                                          SQLResultExecuterPanel.i18n.CANCEL_SQL_MSG);
+
             _tabbedExecutionsPanel.setSelectedComponent(cancelPanelCtrl.getPanel());
          }
       });
@@ -884,7 +914,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 
          Component comp = _tabbedExecutionsPanel.getComponentAt(tab);
 
-         if(comp instanceof IResultTab)
+         if(comp instanceof IResultTab || comp instanceof ErrorPanel || comp instanceof CustomResultPanel)
          {
             _resultTabClosing.closeTab((JComponent) comp);
          }

@@ -31,7 +31,7 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -47,6 +47,7 @@ import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
@@ -402,4 +403,10 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 	{
 		throw new UnsupportedOperationException("ExplainExecuter has no ResultTabs");
 	}
+
+   @Override
+   public void addCustomResult(CustomResultPanel resultPanelm, String title, Icon icon)
+   {
+
+   }
 }

@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -41,6 +41,9 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import com.sun.treetable.AbstractTreeTableModel;
+import com.sun.treetable.JTreeTable;
+import com.sun.treetable.TreeTableModel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -48,6 +51,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabLi
 import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -56,10 +60,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import com.sun.treetable.AbstractTreeTableModel;
-import com.sun.treetable.JTreeTable;
-import com.sun.treetable.TreeTableModel;
 
 
 /**
@@ -877,7 +877,9 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
       throw new UnsupportedOperationException("ExplainPlanExecuter has no ResultTabs");
   }
 
+   @Override
+   public void addCustomResult(CustomResultPanel resultPanel, String title, Icon icon)
+   {
 
-  
-
+   }
 }

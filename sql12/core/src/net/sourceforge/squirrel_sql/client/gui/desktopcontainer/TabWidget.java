@@ -6,14 +6,13 @@ import java.awt.Rectangle;
 import java.awt.event.FocusListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
-
 import javax.swing.Icon;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 
 public class TabWidget implements IWidget
 {

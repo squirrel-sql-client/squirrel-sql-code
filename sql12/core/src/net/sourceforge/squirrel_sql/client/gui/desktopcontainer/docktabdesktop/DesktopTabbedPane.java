@@ -1,14 +1,15 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.MouseEvent;
+import javax.swing.Icon;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.dndtabbedpane.DnDTabbedPane;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.MouseWheelClickOnTabListener;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 
 public class DesktopTabbedPane extends DnDTabbedPane
 {

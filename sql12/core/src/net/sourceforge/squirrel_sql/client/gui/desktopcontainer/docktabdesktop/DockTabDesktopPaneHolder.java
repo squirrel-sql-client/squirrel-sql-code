@@ -1,9 +1,10 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.TabWidget;
-
-import javax.swing.*;
 import java.util.ArrayList;
+import javax.swing.JTabbedPane;
+
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.TabWidget;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 
 public interface DockTabDesktopPaneHolder
 {

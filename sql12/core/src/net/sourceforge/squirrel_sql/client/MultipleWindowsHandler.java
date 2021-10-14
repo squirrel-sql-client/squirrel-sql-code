@@ -1,17 +1,17 @@
 package net.sourceforge.squirrel_sql.client;
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.TabWidget;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPaneHolder;
-import net.sourceforge.squirrel_sql.client.gui.builders.dndtabbedpane.OutwardDndTabbedPaneChanel;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.RemoveTabHandelResult;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
-
-import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
 import java.util.HashSet;
+import javax.swing.JTabbedPane;
+
+import net.sourceforge.squirrel_sql.client.gui.builders.dndtabbedpane.OutwardDndTabbedPaneChanel;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.TabWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPaneHolder;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.RemoveTabHandelResult;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 
 public class MultipleWindowsHandler
 {

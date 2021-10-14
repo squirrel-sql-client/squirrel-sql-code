@@ -1,15 +1,16 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class ResultTabClosing
 {
@@ -155,6 +156,11 @@ public class ResultTabClosing
       else if (tab instanceof CancelPanel)
       {
          ((CancelPanel) tab).closeBtn.doClick();
+      }
+      else if (tab instanceof CustomResultPanel )
+      {
+         _tabbedExecutionsPanel.remove(tab);
+         ((CustomResultPanel) tab).dispose();
       }
    }
 }

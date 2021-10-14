@@ -1,16 +1,16 @@
-package net.sourceforge.squirrel_sql.fw.gui;
+package net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-
+import java.awt.Dimension;
+import java.awt.Point;
 import javax.swing.ImageIcon;
 import javax.swing.JToolTip;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.Timer;
-import java.awt.Dimension;
-import java.awt.Point;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 public class SmallToolTipInfoButton
 {

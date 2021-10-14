@@ -6,9 +6,19 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+New Plugin for the Intersystem Cache database. The Plugin adds a new toolbar button to
+  show statistics and query plan for an SQL query.
+  Thanks to Martin Weissenborn for the Cache specific requirements
+
 New SQL editor function to delete the current SQL statement.
   Accessible by short cut Ctrl+Shift+Del, tools popup, right mouse menu.
   Note: Corresponding functions to copy (Ctrl+Shift+x) and cut (Ctrl+Shift+x) already exist.
+
+
+
+Bug fixes:
+
+SQL error result tabs can be closed by click on mouse wheel.
 
 
 4.3.0 (10/02/2021)
