@@ -10,6 +10,13 @@ SQL error result tabs can be closed by click on mouse wheel.
 
 
 
+Enhancements:
+
+New Plugin for the Intersystem Cache database. The Plugin adds a new toolbar button to
+  show statistics and query plan for an SQL query.
+  Thanks to Martin Weissenborn for the Cache specific requirements
+
+
 4.3.0 (10/02/2021)
 ==================
 

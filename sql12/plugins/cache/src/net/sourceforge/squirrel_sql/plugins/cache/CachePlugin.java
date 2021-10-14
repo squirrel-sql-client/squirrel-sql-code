@@ -65,7 +65,7 @@ public class CachePlugin extends DefaultSessionPlugin
 	 */
 	public String getAuthor()
 	{
-		return "Gerd Wagner, Martin Weisenborn";
+		return "Gerd Wagner, Martin Weissenborn";
 	}
 
 
