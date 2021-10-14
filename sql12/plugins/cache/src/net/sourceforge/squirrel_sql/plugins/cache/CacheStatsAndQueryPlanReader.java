@@ -91,8 +91,8 @@ public class CacheStatsAndQueryPlanReader implements Runnable
             return;
          }
 
-         String errMsg = e.toString();
-         Main.getApplication().getMessageHandler().showErrorMessage(errMsg);
+         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("StatisticsAndQueryPlanAction.failed.to.query.statistics", e));
+         displayText(s_stringMgr.getString("StatisticsAndQueryPlanAction.failed.to.query.statistics", e.toString()));
          s_log.error(e);
       }
 
