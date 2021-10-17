@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappersImpl;
-import net.sourceforge.squirrel_sql.fw.gui.statusbar.StatusBar;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
@@ -41,6 +41,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
@@ -82,8 +83,7 @@ public class HelpViewerWindow extends JFrame
 	/** Panel that displays the help document. */
 	private HtmlViewerPanel _detailPnl;
 
-	/** Statusbar at bottom of window. */
-	private StatusBar _statusBar = new StatusBar();
+	private JTextField _statusBar = new JTextField();
 
 	/** Home URL. */
 	private URL _homeURL;
@@ -217,6 +217,8 @@ public class HelpViewerWindow extends JFrame
 
 		contentPane.add(new HtmlViewerPanelToolBar(_app, _detailPnl), BorderLayout.NORTH);
 
+		_statusBar.setEditable(false);
+		GUIUtils.inheritBackground(_statusBar);
 		_app.getFontInfoStore().setUpStatusBarFont(_statusBar);
 		contentPane.add(_statusBar, BorderLayout.SOUTH);
 

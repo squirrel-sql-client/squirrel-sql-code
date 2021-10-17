@@ -32,7 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
-import net.sourceforge.squirrel_sql.fw.gui.statusbar.StatusBar;
+import net.sourceforge.squirrel_sql.fw.gui.statusbar.SessionStatusBar;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -47,7 +47,7 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
 
 	private SQLInternalFrameToolBar _toolBar;
 
-	private StatusBar _statusBar = new StatusBar();
+	private SessionStatusBar _sessionStatusBar = new SessionStatusBar();
 
 	public SQLInternalFrame(ISession session)
 	{
@@ -122,14 +122,14 @@ public class SQLInternalFrame extends SessionTabWidget implements ISQLInternalFr
 		contentPanel.add(_toolBar, BorderLayout.NORTH);
 		contentPanel.add(_sqlPanel.getSqlPanelSplitter(), BorderLayout.CENTER);
 
-		app.getFontInfoStore().setUpStatusBarFont(_statusBar);
-		contentPanel.add(_statusBar, BorderLayout.SOUTH);
+		app.getFontInfoStore().setUpStatusBarFont(_sessionStatusBar);
+		contentPanel.add(_sessionStatusBar, BorderLayout.SOUTH);
 
-		_statusBar.addJComponent(new SchemaPanel(session));
-		_statusBar.addJComponent(new RowColumnLabel(_sqlPanel.getSQLEntryPanel()));
+		_sessionStatusBar.addJComponent(new SchemaPanel(session));
+		_sessionStatusBar.addJComponent(new RowColumnLabel(_sqlPanel.getSQLEntryPanel()));
 
 
-		SessionColoringUtil.colorStatusbar(session, _statusBar);
+		SessionColoringUtil.colorStatusbar(session, _sessionStatusBar);
 
 		setContentPane(contentPanel);
 		validate();

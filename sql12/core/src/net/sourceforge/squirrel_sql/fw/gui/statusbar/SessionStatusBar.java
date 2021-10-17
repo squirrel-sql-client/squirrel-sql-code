@@ -27,7 +27,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -35,13 +34,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
-import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.BadLocationException;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -55,11 +51,11 @@ import java.awt.event.MouseEvent;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class StatusBar extends JPanel
+public class SessionStatusBar extends JPanel
 {
 	private static final Color TRANSPARENT = new Color(0x00FFFFFF, true);
 
-	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(StatusBar.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionStatusBar.class);
 
 
 	/** Label showing the message in the statusbar. */
@@ -81,7 +77,7 @@ public class StatusBar extends JPanel
 	/**
 	 * Default ctor.
 	 */
-	public StatusBar()
+	public SessionStatusBar()
 	{
 		super(new GridBagLayout());
 
@@ -174,23 +170,9 @@ public class StatusBar extends JPanel
 	 */
 	public void setFont(Font font)
 	{
-		if (font == null)
-		{
-			throw new IllegalArgumentException("Font == null");
-		}
 		super.setFont(font);
 		_font = font;
-		updateSubcomponentsFont(this);
-	}
-
-	/**
-	 * Set the text to display in the message label.
-	 *
-	 * @param	text	Text to display in the message label.
-	 */
-	public void setText(String text)
-	{
-		setText(text, null);
+		StatusBarUtil.updateSubcomponentsFont(this, _font);
 	}
 
 	public void setText(String text, Object hrefReferenceObject)
@@ -228,25 +210,20 @@ public class StatusBar extends JPanel
 		_textLbl.setText("");
 	}
 
-	public synchronized void addJComponent(JComponent comp)
+	public void addJComponent(JComponent comp)
 	{
 		if (comp == null)
 		{
 			throw new IllegalArgumentException("JComponent == null");
 		}
-		comp.setBorder(createComponentBorder());
+		comp.setBorder(StatusBarUtil.createComponentBorder());
 		if (_font != null)
 		{
 			comp.setFont(_font);
-			updateSubcomponentsFont(comp);
+			StatusBarUtil.updateSubcomponentsFont(comp, _font);
 		}
 		GUIUtils.inheritBackground(comp);
 		super.add(comp, _gbc);
-	}
-
-	public static Border createComponentBorder()
-	{
-		return BorderFactory.createCompoundBorder(new ThinLoweredBevelBorder(), BorderFactory.createEmptyBorder(0, 4, 0, 4));
 	}
 
 	private void createGUI()
@@ -277,20 +254,7 @@ public class StatusBar extends JPanel
 		_gbc.insets.left = 2;
 	}
 
-	private void updateSubcomponentsFont(Container cont)
-	{
-		Component[] comps = cont.getComponents();
-		for (int i = 0; i < comps.length; ++i)
-		{
-			comps[i].setFont(_font);
-			if (comps[i] instanceof Container)
-			{
-				updateSubcomponentsFont((Container)comps[i]);
-			}
-		}
-	}
-
-   public void setStatusBarProgress(String msg, int minimum, int maximum, int value, ActionListener stopAction)
+	public void setStatusBarProgress(String msg, int minimum, int maximum, int value, ActionListener stopAction)
    {
       if(false == _pnlLabelOrProgress.getComponent(0) instanceof JProgressBar)
       {

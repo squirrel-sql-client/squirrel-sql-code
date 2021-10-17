@@ -35,7 +35,7 @@ import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.gui.statusbar.StatusBar;
+import net.sourceforge.squirrel_sql.fw.gui.statusbar.SessionStatusBar;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -54,7 +54,7 @@ public class ObjectTreeInternalFrame extends SessionTabWidget implements IObject
 
 	private ObjectTreeToolBar _toolBar;
 
-	private StatusBar _statusBar = new StatusBar();
+	private SessionStatusBar _sessionStatusBar = new SessionStatusBar();
 
 
 	private boolean _hasBeenVisible = false;
@@ -130,12 +130,12 @@ public class ObjectTreeInternalFrame extends SessionTabWidget implements IObject
 		contentPanel.add(_objTreePanel, BorderLayout.CENTER);
 		setContentPane(contentPanel);
 
-		app.getFontInfoStore().setUpStatusBarFont(_statusBar);
-		contentPanel.add(_statusBar, BorderLayout.SOUTH);
+		app.getFontInfoStore().setUpStatusBarFont(_sessionStatusBar);
+		contentPanel.add(_sessionStatusBar, BorderLayout.SOUTH);
 
-		_statusBar.addJComponent(new SchemaPanel(session));
+		_sessionStatusBar.addJComponent(new SchemaPanel(session));
 
-		SessionColoringUtil.colorStatusbar(session, _statusBar);
+		SessionColoringUtil.colorStatusbar(session, _sessionStatusBar);
 
 		validate();
 	}

@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.statusbar.StatusBar;
+import net.sourceforge.squirrel_sql.fw.gui.statusbar.SessionStatusBar;
 
 import javax.swing.JToolBar;
 import javax.swing.JTree;
@@ -22,12 +22,12 @@ public class SessionColoringUtil
       }
    }
 
-   public static void colorStatusbar(ISession session, StatusBar statusBar)
+   public static void colorStatusbar(ISession session, SessionStatusBar sessionStatusBar)
    {
       SQLAliasColorProperties colorProps = session.getAlias().getColorProperties();
       if (colorProps.isOverrideStatusBarBackgroundColor()) {
          int rgbValue = colorProps.getStatusBarBackgroundColorRgbValue();
-         statusBar.setBackground(new Color(rgbValue));
+         sessionStatusBar.setBackground(new Color(rgbValue));
       }
 
 

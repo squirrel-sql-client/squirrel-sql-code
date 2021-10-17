@@ -33,7 +33,6 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.statusbar.StatusBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
@@ -134,7 +133,7 @@ public class ConnectionInternalFrame extends DialogWidget
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _driverPropsBtn = new JButton(s_stringMgr.getString("ConnectionInternalFrame.props"));
 
-	private StatusBar _statusBar = new StatusBar();
+	private JTextField _statusBar = new JTextField();
 
 	/**
 	 * Ctor.
@@ -333,10 +332,11 @@ public class ConnectionInternalFrame extends DialogWidget
       setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
       makeToolWindow(true);
 
-      final String winTitle =
-         s_stringMgr.getString("ConnectionInternalFrame.title", _alias.getName());
+      final String winTitle = s_stringMgr.getString("ConnectionInternalFrame.title", _alias.getName());
       setTitle(winTitle);
 
+		_statusBar.setEditable(false);
+		GUIUtils.inheritBackground(_statusBar);
       _app.getFontInfoStore().setUpStatusBarFont(_statusBar);
 
       final JPanel content = new JPanel(new BorderLayout());

@@ -974,8 +974,10 @@ public class GUIUtils
 
    public static void inheritBackground(Component comp)
    {
-      if (comp instanceof JComponent)
-         ((JComponent) comp).setOpaque(false);
+		if (comp instanceof JComponent)
+		{
+			((JComponent) comp).setOpaque(false);
+		}
 
       Color original = comp.isBackgroundSet() ? comp.getBackground() : null;
       Runnable updateBackground = () ->

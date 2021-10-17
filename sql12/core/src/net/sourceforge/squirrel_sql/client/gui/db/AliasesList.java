@@ -61,9 +61,11 @@ public class AliasesList implements IToogleableAliasesList
       String label = null;
       if (item != null)
       {
+//         // Avoid wrapping - just crop
+//         label = "<html><span style='white-space: pre'>" + item.getUrl()
+//               .replace("&", "&amp;").replace("<", "&lt;") + "</span></html>";
          // Avoid wrapping - just crop
-         label = "<html><span style='white-space: pre'>" + item.getUrl()
-               .replace("&", "&amp;").replace("<", "&lt;") + "</span></html>";
+         label = item.getUrl();
       }
       Main.getApplication().getMainFrame().setStatusText(label);
    }

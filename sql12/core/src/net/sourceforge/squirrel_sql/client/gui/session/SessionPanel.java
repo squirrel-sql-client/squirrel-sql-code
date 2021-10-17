@@ -37,7 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.statusbar.StatusBar;
+import net.sourceforge.squirrel_sql.fw.gui.statusbar.SessionStatusBar;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -70,7 +70,7 @@ public class SessionPanel extends JPanel
 
    private ArrayList<ToolbarItem> _externallyAddedToolbarActionsAndSeparators = new ArrayList<>();
 
-   private StatusBar _statusBar = new StatusBar();
+   private SessionStatusBar _sessionStatusBar = new SessionStatusBar();
 
    private TitleFilePathHandler _titleFileHandler = null;
 
@@ -83,19 +83,19 @@ public class SessionPanel extends JPanel
       _app = session.getApplication();
       _sessionId = session.getIdentifier();
 
-      SessionColoringUtil.colorStatusbar(session, _statusBar);
+      SessionColoringUtil.colorStatusbar(session, _sessionStatusBar);
 
-      _statusBar.setHrefListener((linkDescription, hrefReferenceObject) -> onHrefClicked(linkDescription, hrefReferenceObject));
+      _sessionStatusBar.setHrefListener((linkDescription, hrefReferenceObject) -> onHrefClicked(linkDescription, hrefReferenceObject));
 
 
       JMenuItem mnuCopyLast = new JMenuItem(s_stringMgr.getString("SessionPanel.statusbar.rightMouseMenu.copyLast"));
       mnuCopyLast.addActionListener(e -> onStatusBarRightMouseMenuCopyLast());
-      _statusBar.setAdditionalRightMouseMenuItem(mnuCopyLast);
+      _sessionStatusBar.setAdditionalRightMouseMenuItem(mnuCopyLast);
    }
 
    private void onStatusBarRightMouseMenuCopyLast()
    {
-      final TreePath refTreePath = (TreePath) _statusBar.getHrefReferenceObject();
+      final TreePath refTreePath = (TreePath) _sessionStatusBar.getHrefReferenceObject();
 
       if(null == refTreePath)
       {
@@ -162,12 +162,12 @@ public class SessionPanel extends JPanel
     */
    public void setStatusBarProgress(final String msg, final int minimum, final int maximum, final int value, ActionListener stopAction)
    {
-      GUIUtils.processOnSwingEventThread(() -> _statusBar.setStatusBarProgress(msg, minimum, maximum, value, stopAction));
+      GUIUtils.processOnSwingEventThread(() -> _sessionStatusBar.setStatusBarProgress(msg, minimum, maximum, value, stopAction));
    }
 
    public void setStatusBarProgressFinished()
    {
-      GUIUtils.processOnSwingEventThread(() -> _statusBar.setStatusBarProgressFinished());
+      GUIUtils.processOnSwingEventThread(() -> _sessionStatusBar.setStatusBarProgressFinished());
    }
 
    /**
@@ -201,7 +201,7 @@ public class SessionPanel extends JPanel
     */
    public void addToStatusBar(JComponent comp)
    {
-      _statusBar.addJComponent(comp);
+      _sessionStatusBar.addJComponent(comp);
    }
 
    /**
@@ -211,7 +211,7 @@ public class SessionPanel extends JPanel
     */
    public void removeFromStatusBar(JComponent comp)
    {
-      _statusBar.remove(comp);
+      _sessionStatusBar.remove(comp);
    }
 
    private void propertiesHaveChanged(String propertyName)
@@ -273,8 +273,8 @@ public class SessionPanel extends JPanel
 
       add(_mainPanel, BorderLayout.CENTER);
 
-      app.getFontInfoStore().setUpStatusBarFont(_statusBar);
-      add(_statusBar, BorderLayout.SOUTH);
+      app.getFontInfoStore().setUpStatusBarFont(_sessionStatusBar);
+      add(_sessionStatusBar, BorderLayout.SOUTH);
 
       getObjectTreePanel().addTreeSelectionListener(e -> onObjectTreeSelectionChanged(e));
 
@@ -459,12 +459,12 @@ public class SessionPanel extends JPanel
 
       if (selPath == null)
       {
-         GUIUtils.processOnSwingEventThread(() -> _statusBar.setText(null));
+         GUIUtils.processOnSwingEventThread(() -> _sessionStatusBar.clearText());
          return;
       }
 
       TreePath newBreadCrumbPath = selPath;
-      final TreePath currentBreadCrumbPath = (TreePath) _statusBar.getHrefReferenceObject();
+      final TreePath currentBreadCrumbPath = (TreePath) _sessionStatusBar.getHrefReferenceObject();
 
       // If the new selected path is a parent of the current bread crumb path
       // we leave the bread crumbs as they are to allow a bit of backward navigation.
@@ -477,6 +477,6 @@ public class SessionPanel extends JPanel
 
       final String text = StatusBarHtml.createStatusBarHtml(newBreadCrumbPath);
       TreePath finalNewBreadCrumbPath = newBreadCrumbPath;
-      GUIUtils.processOnSwingEventThread(() -> _statusBar.setText(text, finalNewBreadCrumbPath));
+      GUIUtils.processOnSwingEventThread(() -> _sessionStatusBar.setText(text, finalNewBreadCrumbPath));
    }
 }
