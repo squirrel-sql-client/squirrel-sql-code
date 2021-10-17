@@ -18,26 +18,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
@@ -60,11 +40,27 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 /**
  * This is the panel where SQL scripts are executed and results presented.
  *
@@ -85,8 +81,6 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
     
 	private ISession _session;
 
-	private MyPropertiesListener _propsListener;
-
 	/** Each tab is a <TT>ResultTab</TT> showing the results of a query. */
 	private JTabbedPane _tabbedExecutionsPanel;
 
@@ -106,10 +100,25 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 
    public SQLResultExecuterPanel(ISession session)
 	{
+      this(session, false);
+   }
+
+   public SQLResultExecuterPanel(ISession session, boolean processSessionPropertyChanges)
+	{
       _resultTabFactory = new ResultTabFactory(session, createSQLResultExecuterPanelFacade());
-		setSession(session);
-		createGUI();
-		propertiesHaveChanged(null);
+      _session = session;
+
+      if (processSessionPropertyChanges)
+      {
+         _session.getProperties().addPropertyChangeListener(evt -> propertiesHaveChanged(evt.getPropertyName()));
+      }
+
+      createGUI();
+
+      if (processSessionPropertyChanges)
+      {
+         propertiesHaveChanged(null);
+      }
 
       _resultTabClosing = new ResultTabClosing(_tabIconManager, _tabbedExecutionsPanel);
    }
@@ -161,27 +170,7 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 		return this;
 	}
 
-	/**
-	 * Set the current session.
-	 *
-	 * @param	session	 Current session.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
-	 */
-	public synchronized void setSession(ISession session)
-	{
-		if (session == null)
-		{
-			throw new IllegalArgumentException("Null ISession passed");
-		}
-		sessionClosing();
-		_session = session;
-		_propsListener = new MyPropertiesListener();
-		_session.getProperties().addPropertyChangeListener(_propsListener);
-	}
-
-	/** Current session. */
+   /** Current session. */
 	public ISession getSession()
 	{
 		return _session;
@@ -505,23 +494,6 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
    }
 
    /**
-	 * Sesssion is ending.
-	 * Remove all listeners that this component has setup. Close all
-	 * torn off result tab windows.
-	 */
-	void sessionClosing()
-	{
-		if (_propsListener != null)
-		{
-			_session.getProperties().removePropertyChangeListener(
-					_propsListener);
-			_propsListener = null;
-		}
-
-		closeAllSQLResultFrames();
-	}
-
-   /**
 	 * Display the next tab in the SQL results.
 	 */
 	public void gotoNextResultsTab()
@@ -828,56 +800,26 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 	{
 		final SessionProperties props = _session.getProperties();
 
-		if (propName == null
-		        || propName.equals(SessionProperties.IPropertyNames.AUTO_COMMIT))
-		{
-            SetAutoCommitTask task = new SetAutoCommitTask();
-		    if (SwingUtilities.isEventDispatchThread()) {
-                _session.getApplication().getThreadPool().addTask(task);
-            } else {
-                task.run();
-            }
-        }
+      if (propName == null || propName.equals(SessionProperties.IPropertyNames.AUTO_COMMIT))
+      {
+         SetSessionAutoCommitTask task = new SetSessionAutoCommitTask(_session);
+         if (SwingUtilities.isEventDispatchThread())
+         {
+            _session.getApplication().getThreadPool().addTask(task);
+         }
+         else
+         {
+            task.run();
+         }
+      }
 
-		if (propName == null
-				|| propName
-						.equals(SessionProperties.IPropertyNames.SQL_EXECUTION_TAB_PLACEMENT))
+		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_EXECUTION_TAB_PLACEMENT))
 		{
 			_tabbedExecutionsPanel.setTabPlacement(props.getSQLExecutionTabPlacement());
 		}
 	}
 
-    private class SetAutoCommitTask implements Runnable {
-                
-        public void run() {
-            final ISQLConnection conn = _session.getSQLConnection();
-            final SessionProperties props = _session.getProperties();
-            if (conn != null)
-            {
-                boolean auto = true;
-                try
-                {
-                    auto = conn.getAutoCommit();
-                }
-                catch (SQLException ex)
-                {
-                    s_log.error("Error with transaction control", ex);
-                    _session.showErrorMessage(ex);
-                }
-                try
-                {
-                    conn.setAutoCommit(props.getAutoCommit());
-                }
-                catch (SQLException ex)
-                {
-                    props.setAutoCommit(auto);
-                    _session.showErrorMessage(ex);
-                }
-            }        
-        }
-    }
-   
-	private void createGUI()
+   private void createGUI()
 	{
       final SessionProperties props = _session.getProperties();
 		_tabbedExecutionsPanel = UIFactory.getInstance().createTabbedPane(props.getSQLExecutionTabPlacement(), true);
@@ -1013,43 +955,4 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
          }
       }
    }
-
-
-   private class MyPropertiesListener implements PropertyChangeListener
-	{
-		private boolean _listening = true;
-
-		void stopListening()
-		{
-			_listening = false;
-		}
-
-		void startListening()
-		{
-			_listening = true;
-		}
-
-		public void propertyChange(PropertyChangeEvent evt)
-		{
-			if (_listening)
-			{
-				propertiesHaveChanged(evt.getPropertyName());
-			}
-		}
-	}
-
-	private final static class ResultTabInfo
-	{
-		final ResultTab _tab;
-		ResultFrame _resultFrame;
-
-		ResultTabInfo(ResultTab tab)
-		{
-			if (tab == null)
-			{
-				throw new IllegalArgumentException("Null ResultTab passed");
-			}
-			_tab = tab;
-		}
-	}
 }

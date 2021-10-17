@@ -531,7 +531,10 @@ public class SQLConnection implements ISQLConnection
 
 	protected void validateConnection() throws SQLException
 	{
-		if (_conn == null) { throw new SQLException(s_stringMgr.getString("SQLConnection.noConn")); }
+		if (_conn == null)
+		{
+			throw new SQLException(s_stringMgr.getString("SQLConnection.noConn"));
+		}
 	}
 
 	/**

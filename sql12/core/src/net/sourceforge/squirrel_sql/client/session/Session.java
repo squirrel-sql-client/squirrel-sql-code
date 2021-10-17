@@ -33,9 +33,10 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
-import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
+import net.sourceforge.squirrel_sql.client.mainframe.action.openconnection.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
+import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
@@ -109,7 +110,7 @@ class Session implements ISession
    /**
     * Connection to database.
     */
-   private SQLConnection _conn;
+   private SessionConnectionPool _sessionConnectionPool;
 
    /**
     * Driver used to connect to database.
@@ -231,17 +232,19 @@ class Session implements ISession
 
       _alias.assignFrom(alias, true);
 
-      _conn = conn;
+      _props = (SessionProperties) _app.getSquirrelPreferences().getSessionProperties().clone();
+
       _user = user;
       _password = password;
       _id = sessionId;
 
+      //_conn = conn;
+      _sessionConnectionPool = createConnectionPool(conn);
+
       setupTitle();
 
-      _props = (SessionProperties) _app.getSquirrelPreferences().getSessionProperties().clone();
-
       _connLis = new SQLConnectionListener();
-      _conn.addPropertyChangeListener(_connLis);
+      _sessionConnectionPool.getMasterSQLConnection().addPropertyChangeListener(_connLis);
 
       checkDriverVersion();
 
@@ -256,6 +259,11 @@ class Session implements ISession
       });
       startKeepAliveTaskIfNecessary();
       _simpleSessionListenerManager = new SimpleSessionListenerManager(app, this);
+   }
+
+   private SessionConnectionPool createConnectionPool(SQLConnection conn)
+   {
+      return new SessionConnectionPool(conn, _alias, _user, _password, _props, () -> _msgHandler, () -> _sessionSheet.getSelectedCatalogFromCatalogsComboBox());
    }
 
    private void startKeepAliveTaskIfNecessary()
@@ -277,7 +285,7 @@ class Session implements ISession
          }
 
 
-         _sessionConnectionKeepAlive = new SessionConnectionKeepAlive(_conn, sleepMillis, keepAliveSql, _alias.getName());
+         _sessionConnectionKeepAlive = new SessionConnectionKeepAlive(_sessionConnectionPool, sleepMillis, keepAliveSql, _alias.getName());
 
          _app.getThreadPool().addTask(_sessionConnectionKeepAlive, "Session Connection Keep-Alive (" + _alias.getName() + ")");
       }
@@ -303,16 +311,15 @@ class Session implements ISession
       if (!_closed)
       {
          stopKeepAliveTaskIfNecessary();
-         if (null != _conn)
+         if (null != _sessionConnectionPool)
          {
             // _conn is null when session is closed after reconnect (ctrl t) failure.
-            _conn.removePropertyChangeListener(_connLis);
+            _sessionConnectionPool.getMasterSQLConnection().removePropertyChangeListener(_connLis);
          }
          _connLis = null;
 
 
-         IParserEventsProcessor[] procs =
-               _parserEventsProcessorsByEntryPanelIdentifier.values().toArray(new IParserEventsProcessor[0]);
+         IParserEventsProcessor[] procs = _parserEventsProcessorsByEntryPanelIdentifier.values().toArray(new IParserEventsProcessor[0]);
 
 
          for (int i = 0; i < procs.length; i++)
@@ -334,7 +341,7 @@ class Session implements ISession
 
          try
          {
-            closeSQLConnection();
+            closeConnectionPool();
          }
          finally
          {
@@ -435,7 +442,19 @@ class Session implements ISession
     */
    public ISQLConnection getSQLConnection()
    {
-      return _conn;
+      return _sessionConnectionPool.getMasterSQLConnection();
+   }
+
+   @Override
+   public ISQLConnection checkOutUserQuerySQLConnection()
+   {
+      return _sessionConnectionPool.checkOutUserQuerySQLConnection();
+   }
+
+   @Override
+   public void returnUserQuerySQLConnection(ISQLConnection conn)
+   {
+      _sessionConnectionPool.returnUserQuerySQLConnection(conn);
    }
 
    /**
@@ -539,18 +558,18 @@ class Session implements ISession
       }
    }
 
-   public synchronized void closeSQLConnection() throws SQLException
+   private synchronized void closeConnectionPool() throws SQLException
    {
-      if (_conn != null)
+      if (_sessionConnectionPool != null)
       {
          stopKeepAliveTaskIfNecessary();
          try
          {
-            _conn.close();
+            _sessionConnectionPool.close();
          }
          finally
          {
-            _conn = null;
+            _sessionConnectionPool = null;
          }
       }
    }
@@ -576,7 +595,7 @@ class Session implements ISession
 
       try
       {
-         connState.saveState(_conn, getProperties(), _msgHandler, _sessionSheet.getSelectedCatalogFromCatalogsComboBox());
+         connState.saveState(_sessionConnectionPool.getMasterSQLConnection(), getProperties(), _msgHandler, _sessionSheet.getSelectedCatalogFromCatalogsComboBox());
       }
       catch (Exception e)
       {
@@ -586,7 +605,7 @@ class Session implements ISession
       final OpenConnectionCommand cmd = new OpenConnectionCommand(_alias, _user, _password, connState.getConnectionProperties(), reconnectInfo);
       try
       {
-         closeSQLConnection();
+         closeConnectionPool();
          _app.getSessionManager().fireConnectionClosedForReconnect(this);
       }
       catch (SQLException ex)
@@ -636,12 +655,14 @@ class Session implements ISession
          }
 
 
-         _conn = cmd.getSQLConnection();
+         final SQLConnection conn = cmd.getSQLConnection();
          if (connState != null)
          {
-            connState.restoreState(_conn, _msgHandler);
             getProperties().setAutoCommit(connState.getAutoCommit());
          }
+
+         _sessionConnectionPool = createConnectionPool(conn);
+
          final String msg = s_stringMgr.getString("Session.reconn", _alias.getName());
          _msgHandler.showMessage(msg);
          _app.getSessionManager().fireReconnected(this);
@@ -956,7 +977,7 @@ class Session implements ISession
       // let's warn the user if the driver doesn't support DatabaseMetaData
       // methods that were added in JDBC 2.1 and JDBC 3.0 specifications.
 
-      SQLDatabaseMetaData md = _conn.getSQLMetaData();
+      SQLDatabaseMetaData md = _sessionConnectionPool.getMasterSQLConnection().getSQLMetaData();
       try
       {
          md.supportsResultSetType(ResultSet.TYPE_FORWARD_ONLY);
@@ -1164,9 +1185,9 @@ class Session implements ISession
     */
    public ISQLDatabaseMetaData getMetaData()
    {
-      if (_conn != null)
+      if (_sessionConnectionPool != null)
       {
-         return _conn.getSQLMetaData();
+         return _sessionConnectionPool.getMasterSQLConnection().getSQLMetaData();
       }
       else
       {
@@ -1288,5 +1309,11 @@ class Session implements ISession
    public Object getSessionLocal(Object key)
    {
       return _sessionLocales.get(key);
+   }
+
+   @Override
+   public SessionConnectionPool getConnectionPool()
+   {
+      return _sessionConnectionPool;
    }
 }

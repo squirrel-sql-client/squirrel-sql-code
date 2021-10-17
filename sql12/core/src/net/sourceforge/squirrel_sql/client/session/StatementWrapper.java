@@ -19,7 +19,7 @@ public class StatementWrapper implements StatementCallback
    private boolean _maxRowsWasSet;
    private ISession _session;
    private Statement _statement;
-   private ArrayList<ResultSetWrapper> _resultSetWrappers = new ArrayList<ResultSetWrapper>();
+   private ArrayList<ResultSetWrapper> _resultSetWrappers = new ArrayList<>();
    private boolean _hasReturnedResultSet;
 
    public StatementWrapper(Statement stmt)

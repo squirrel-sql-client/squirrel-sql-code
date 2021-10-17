@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
+import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
@@ -79,6 +80,12 @@ public interface ISession extends IHasIdentifier
    ISQLConnection getSQLConnection();
 
    /**
+    * Make sure a checked out connection is returned by {@link #returnUserQuerySQLConnection(ISQLConnection)}
+    */
+   ISQLConnection checkOutUserQuerySQLConnection();
+   void returnUserQuerySQLConnection(ISQLConnection conn);
+
+   /**
     * Return the current SQL connection database metadata.
     *
     * @return the current SQL connection database metadata.
@@ -125,13 +132,6 @@ public interface ISession extends IHasIdentifier
     *			been.
     */
    void close() throws SQLException;
-
-   /**
-    * Close the current connection to the database.
-    *
-    * @throws	SQLException	if an SQL error occurs.
-    */
-   void closeSQLConnection() throws SQLException;
 
    void setSessionInternalFrame(SessionInternalFrame sif);
 
@@ -421,4 +421,6 @@ public interface ISession extends IHasIdentifier
    Object getSessionLocal(Object key);
 
    void putSessionLocal(Object key, Object value);
+
+   SessionConnectionPool getConnectionPool();
 }

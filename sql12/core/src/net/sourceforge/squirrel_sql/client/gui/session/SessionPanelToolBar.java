@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.catalogscombo.CatalogsPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
@@ -56,10 +57,8 @@ class SessionPanelToolBar extends ToolBar
    private void createGUI(ISession session)
    {
       _catalogsPanel = new CatalogsPanel(session, this);
-      _catalogsPanel.addActionListener(new CatalogsComboListener(session, _catalogsPanel));
-
-
       add(_catalogsPanel);
+
       ActionCollection actions = session.getApplication().getActionCollection();
       setUseRolloverButtons(true);
       setFloatable(false);

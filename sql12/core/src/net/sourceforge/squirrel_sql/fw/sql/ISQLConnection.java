@@ -30,7 +30,7 @@ import java.util.Date;
 
 public interface ISQLConnection
 {
-   public interface IPropertyNames
+   interface IPropertyNames
    {
       String AUTO_COMMIT = "autocommit";
       String CATALOG = "catalog";

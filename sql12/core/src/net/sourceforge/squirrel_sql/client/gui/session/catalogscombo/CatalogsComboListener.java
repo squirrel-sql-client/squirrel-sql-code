@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.gui.session;
+package net.sourceforge.squirrel_sql.client.gui.session.catalogscombo;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -10,7 +10,6 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 
 final class CatalogsComboListener implements ActionListener
 {
@@ -30,10 +29,11 @@ final class CatalogsComboListener implements ActionListener
       {
          try
          {
-            _session.getSQLConnection().setCatalog(selectedCatalog);
+            //_session.getSQLConnection().setCatalog(selectedCatalog);
+            _session.getConnectionPool().setSessionCatalog(selectedCatalog);
             refreshSchemaInBackground();
          }
-         catch (SQLException ex)
+         catch (Exception ex)
          {
             _session.showErrorMessage(ex);
             _catalogsPanel.refreshCatalogs();
@@ -60,13 +60,7 @@ final class CatalogsComboListener implements ActionListener
       final ISession session = _session;
       final String selectedCatalog = _catalogsPanel.getSelectedCatalog();
 
-      GUIUtils.processOnSwingEventThread(new Runnable()
-      {
-         public void run()
-         {
-            expandTablesForCatalog(session, selectedCatalog);
-         }
-      });
+      GUIUtils.processOnSwingEventThread(() -> expandTablesForCatalog(session, selectedCatalog));
    }
 
 

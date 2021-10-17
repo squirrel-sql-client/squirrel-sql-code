@@ -218,19 +218,12 @@ public class SessionPanel extends JPanel
    {
       final ISession session = getSession();
       final SessionProperties props = session.getProperties();
-      if (propertyName == null
-            || propertyName.equals(
-            SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION))
+
+      if (propertyName == null || propertyName.equals(SessionProperties.IPropertyNames.COMMIT_ON_CLOSING_CONNECTION))
       {
-         _app.getThreadPool().addTask(new Runnable()
-         {
-            public void run()
-            {
-               session.getSQLConnection().setCommitOnClose(
-                     props.getCommitOnClosingConnection());
-            }
-         });
+         _app.getThreadPool().addTask(() -> session.getConnectionPool().setSessionCommitOnClose(props.getCommitOnClosingConnection()));
       }
+
       if (propertyName == null || propertyName.equals(SessionProperties.IPropertyNames.SHOW_TOOL_BAR))
       {
          synchronized (this)

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.gui.session;
+package net.sourceforge.squirrel_sql.client.gui.session.catalogscombo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -103,7 +103,7 @@ public class CatalogsPanel extends JPanel
 		}
 		catch (SQLException e)
 		{
-			s_log.error(s_stringMgr.getString("SessionPanel.error.retrievecatalog"), e);
+			s_log.error(s_stringMgr.getString("CatalogsPanel.error.retrievecatalog"), e);
 		}
 	}
 
@@ -113,7 +113,7 @@ public class CatalogsPanel extends JPanel
 		GridBagConstraints gbc;
 
 		gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
-		JLabel lblCatalogs = new JLabel(s_stringMgr.getString("SessionPanel.catalog"));
+		JLabel lblCatalogs = new JLabel(s_stringMgr.getString("CatalogsPanel.catalog"));
 		add(lblCatalogs, gbc);
 
 
@@ -133,6 +133,9 @@ public class CatalogsPanel extends JPanel
 		setVisible(true);
 
 		_parent.validate();
+
+		addActionListener(new CatalogsComboListener(_session, this));
+
 	}
 
 	public void addActionListener(ActionListener catalogsComboListener)
@@ -155,13 +158,7 @@ public class CatalogsPanel extends JPanel
 	{
 		removeAll();
 
-		_session.getApplication().getThreadPool().addTask(new Runnable()
-		{
-			public void run()
-			{
-				initInBackground();
-			}
-		});
+		_session.getApplication().getThreadPool().addTask(() -> initInBackground());
 	}
 
 	public String getSelectedCatalog()

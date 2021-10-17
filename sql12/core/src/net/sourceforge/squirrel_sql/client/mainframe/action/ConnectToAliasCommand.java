@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.mainframe.action.openconnection.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -279,7 +280,6 @@ public class ConnectToAliasCommand implements ICommand
             }
 
 
-            SQLConnection conn;
             if (_alias.isAutoLogon())
             {
                // If the user checked Auto Logon but gave wrong username/password
@@ -291,7 +291,7 @@ public class ConnectToAliasCommand implements ICommand
             }
 
 
-            conn = cmd.getSQLConnection();
+				SQLConnection conn = cmd.getSQLConnection();
             if (_stopConnection)
             {
                if (conn != null)

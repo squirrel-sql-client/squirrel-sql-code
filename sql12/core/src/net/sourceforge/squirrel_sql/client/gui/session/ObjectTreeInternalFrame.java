@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.client.gui.session.catalogscombo.CatalogsPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -33,7 +34,6 @@ import net.sourceforge.squirrel_sql.client.session.ObjectTreePosition;
 import net.sourceforge.squirrel_sql.client.session.action.FindColumnsAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
-import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.gui.statusbar.StatusBar;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -45,10 +45,7 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
-import java.sql.SQLException;
 
 /* Object Tree frame class*/
 public class ObjectTreeInternalFrame extends SessionTabWidget implements IObjectTreeInternalFrame
@@ -162,7 +159,6 @@ public class ObjectTreeInternalFrame extends SessionTabWidget implements IObject
 		private void createGUI(ISession session, ObjectTreePanel panel)
 		{
          _catalogsPanel = new CatalogsPanel(session, this);
-         _catalogsPanel.addActionListener(new CatalogsComboListener(session));
          add(_catalogsPanel);
 
          ActionCollection actions = session.getApplication()
@@ -171,37 +167,6 @@ public class ObjectTreeInternalFrame extends SessionTabWidget implements IObject
 			setFloatable(false);
 			add(actions.get(RefreshSchemaInfoAction.class));
 			add(actions.get(FindColumnsAction.class));
-		}
-	}
-
-	private static final class CatalogsComboListener implements ActionListener
-	{
-		private ISession _session;
-
-		public CatalogsComboListener(ISession session)
-		{
-			_session = session;
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			Object src = evt.getSource();
-			if (src instanceof SQLCatalogsComboBox)
-			{
-				SQLCatalogsComboBox cmb = (SQLCatalogsComboBox)src;
-				String catalog = cmb.getSelectedCatalog();
-				if (catalog != null)
-				{
-					try
-					{
-						_session.getSQLConnection().setCatalog(catalog);
-					}
-					catch (SQLException ex)
-					{
-						_session.showErrorMessage(ex);
-					}
-				}
-			}
 		}
 	}
 

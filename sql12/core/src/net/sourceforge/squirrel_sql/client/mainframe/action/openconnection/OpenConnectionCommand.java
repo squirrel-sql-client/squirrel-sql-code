@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.mainframe.action;
+package net.sourceforge.squirrel_sql.client.mainframe.action.openconnection;
 /*
  * Copyright (C) 2001-2003 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  */
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -31,8 +32,6 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.SwingUtilities;
 import java.sql.DriverManager;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -87,20 +86,28 @@ public class OpenConnectionCommand
     */
 	public void execute(final OpenConnectionCommandListener openConnectionCommandListener)
    {
-      ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-      Runnable taskConnect = () -> executeConnect();
+      final Future future = OpenConnectionThreadPool.submit(() -> executeConnect());
 
-      final Future future = executorService.submit(taskConnect);
-
-      Runnable taskAwaitConnect = () -> awaitConnection(future, openConnectionCommandListener);
-
-      executorService.submit(taskAwaitConnect);
+      OpenConnectionThreadPool.submit(() -> awaitConnection(future, openConnectionCommandListener));
 	}
 
    public void executeAndWait()
    {
-      executeConnect();
+      //executeConnect();
+
+      Runnable taskConnect = () -> executeConnect();
+
+      final Future future = OpenConnectionThreadPool.submit(taskConnect);
+
+      Throwable[] ref = new Throwable[1];
+
+      awaitConnection(future, t -> ref[0] = t);
+
+      if(null != ref[0])
+      {
+         throw Utilities.wrapRuntime(ref[0]);
+      }
    }
 
    private void awaitConnection(Future future, final OpenConnectionCommandListener openConnectionCommandListener)

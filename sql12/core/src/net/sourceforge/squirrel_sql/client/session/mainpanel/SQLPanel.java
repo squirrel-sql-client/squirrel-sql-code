@@ -44,7 +44,6 @@ import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndRead
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -71,7 +70,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -145,7 +143,7 @@ public class SQLPanel extends JPanel
 		setSession(session);
 		createGUI();
 		propertiesHaveChanged(null);
-		_sqlExecPanel = new SQLResultExecuterPanel(session);
+		_sqlExecPanel = new SQLResultExecuterPanel(session, true);
 
 		_sqlExecutorHistoryAdapter = new SQLExecutionAdapter()
 		{
@@ -202,7 +200,14 @@ public class SQLPanel extends JPanel
 		}
 		sessionClosing();
 		_session = session;
-		_propsListener = new MyPropertiesListener();
+		if (null == _propsListener)
+		{
+			_propsListener = new MyPropertiesListener();
+		}
+		else
+		{
+			_session.getProperties().removePropertyChangeListener(_propsListener);
+		}
 		_session.getProperties().addPropertyChangeListener(_propsListener);
 	}
 
@@ -538,20 +543,22 @@ public class SQLPanel extends JPanel
 	private void propertiesHaveChanged(String propName)
 	{
 		final SessionProperties props = _session.getProperties();
-		if (propName == null || propName.equals(
-				SessionProperties.IPropertyNames.SQL_SHARE_HISTORY))
+		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_SHARE_HISTORY))
 		{
 			_sqlCombo.setUseSharedModel(props.getSQLShareHistory());
 		}
 
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.AUTO_COMMIT))
 		{
-            SetAutoCommitTask task = new SetAutoCommitTask();
-            if (SwingUtilities.isEventDispatchThread()) {
-                _session.getApplication().getThreadPool().addTask(task);
-            } else {
-                task.run();
-            }
+			SetSessionAutoCommitTask task = new SetSessionAutoCommitTask(_session);
+			if (SwingUtilities.isEventDispatchThread())
+			{
+				_session.getApplication().getThreadPool().addTask(task);
+			}
+			else
+			{
+				task.run();
+			}
 		}
 
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS))
@@ -608,36 +615,6 @@ public class SQLPanel extends JPanel
 		_toggleResultMinimizeHandler.toggleMinimizeResults();
 	}
 
-	private class SetAutoCommitTask implements Runnable {
-        
-        public void run() {
-            final ISQLConnection conn = _session.getSQLConnection();
-            final SessionProperties props = _session.getProperties();
-            if (conn != null)
-            {
-                boolean auto = true;
-                try
-                {
-                    auto = conn.getAutoCommit();
-                }
-                catch (SQLException ex)
-                {
-                    s_log.error("Error with transaction control", ex);
-                    _session.showErrorMessage(ex);
-                }
-                try
-                {
-                    conn.setAutoCommit(props.getAutoCommit());
-                }
-                catch (SQLException ex)
-                {
-                    props.setAutoCommit(auto);
-                    _session.showErrorMessage(ex);
-                }
-            }        
-        }
-    }    
-    
 	private void createGUI()
 	{
 		final IApplication app = _session.getApplication();
@@ -736,24 +713,9 @@ public class SQLPanel extends JPanel
 
 	private class MyPropertiesListener implements PropertyChangeListener
 	{
-		private boolean _listening = true;
-
-		void stopListening()
-		{
-			_listening = false;
-		}
-
-		void startListening()
-		{
-			_listening = true;
-		}
-
 		public void propertyChange(PropertyChangeEvent evt)
 		{
-			if (_listening)
-			{
-				propertiesHaveChanged(evt.getPropertyName());
-			}
+			propertiesHaveChanged(evt.getPropertyName());
 		}
 	}
 

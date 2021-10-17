@@ -1,15 +1,14 @@
-package net.sourceforge.squirrel_sql.fw.timeoutproxy;
+package net.sourceforge.squirrel_sql.client.mainframe.action.openconnection;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class StaticTimeOutThreadPool
+public class OpenConnectionThreadPool
 {
    private static ExecutorService s_executorService;
 
-   static <T> Future<T> submit(Callable<T> task)
+   static Future submit(Runnable runnable)
    {
       // A bit thread unclean. May result in duplicate ExecutorService creation.
       if (null == s_executorService)
@@ -17,7 +16,6 @@ public class StaticTimeOutThreadPool
          s_executorService = Executors.newCachedThreadPool();
       }
 
-      return s_executorService.submit(task);
+      return s_executorService.submit(runnable);
    }
-
 }

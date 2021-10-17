@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
+import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
@@ -47,6 +48,18 @@ public class CliSessionAdapter implements ISession
    public ISQLConnection getSQLConnection()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
+   public ISQLConnection checkOutUserQuerySQLConnection()
+   {
+      return getSQLConnection();
+   }
+
+   @Override
+   public void returnUserQuerySQLConnection(ISQLConnection conn)
+   {
+
    }
 
    @Override
@@ -87,12 +100,6 @@ public class CliSessionAdapter implements ISession
 
    @Override
    public void close() throws SQLException
-   {
-      throw new UnsupportedOperationException("Must be implemented in derived class");
-   }
-
-   @Override
-   public void closeSQLConnection() throws SQLException
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
    }
@@ -369,6 +376,12 @@ public class CliSessionAdapter implements ISession
 
    @Override
    public void putSessionLocal(Object key, Object value)
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
+   public SessionConnectionPool getConnectionPool()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
    }
