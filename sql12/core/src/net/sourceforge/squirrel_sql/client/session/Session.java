@@ -66,7 +66,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -74,11 +73,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 /**
@@ -148,8 +144,6 @@ class Session implements ISession
     * Set to <TT>true</TT> once session closed.
     */
    private boolean _closed;
-
-   private List<JComponent> _statusBarToBeAdded = new ArrayList<>();
 
    private SQLConnectionListener _connLis = null;
 
@@ -682,21 +676,7 @@ class Session implements ISession
       _msgHandler = handler != null ? handler : NullMessageHandler.getInstance();
    }
 
-   public synchronized void setSessionSheet(SessionPanel child)
-   {
-      _sessionSheet = child;
-      if (_sessionSheet != null)
-      {
-         final ListIterator<JComponent> it = _statusBarToBeAdded.listIterator();
-         while (it.hasNext())
-         {
-            addToStatusBar(it.next());
-            it.remove();
-         }
-      }
-   }
-
-   public synchronized void setSessionInternalFrame(SessionInternalFrame sif)
+   public void setSessionInternalFrame(SessionInternalFrame sif)
    {
       _sessionInternalFrame = sif;
 
@@ -704,12 +684,6 @@ class Session implements ISession
       _activeActiveSessionWindow = sif;
 
       _sessionSheet = sif.getSessionPanel();
-      final ListIterator<JComponent> it = _statusBarToBeAdded.listIterator();
-      while (it.hasNext())
-      {
-         addToStatusBar(it.next());
-         it.remove();
-      }
    }
 
    public synchronized SessionInternalFrame getSessionInternalFrame()
@@ -755,40 +729,6 @@ class Session implements ISession
    public int addMainTab(IMainPanelTab tab)
    {
       return _sessionSheet.addMainTab(tab);
-   }
-
-   /**
-    * Add component to the session sheets status bar.
-    *
-    * @param   comp   Component to add.
-    */
-   public synchronized void addToStatusBar(JComponent comp)
-   {
-      if (_sessionSheet != null)
-      {
-         _sessionSheet.addToStatusBar(comp);
-      }
-      else
-      {
-         _statusBarToBeAdded.add(comp);
-      }
-   }
-
-   /**
-    * Remove component from the session sheets status bar.
-    *
-    * @param   comp   Component to remove.
-    */
-   public synchronized void removeFromStatusBar(JComponent comp)
-   {
-      if (_sessionSheet != null)
-      {
-         _sessionSheet.removeFromStatusBar(comp);
-      }
-      else
-      {
-         _statusBarToBeAdded.remove(comp);
-      }
    }
 
    /**

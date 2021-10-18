@@ -27,7 +27,6 @@ import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import java.sql.SQLException;
 
 public class CliSessionAdapter implements ISession
@@ -172,18 +171,6 @@ public class CliSessionAdapter implements ISession
 
    @Override
    public int addMainTab(IMainPanelTab tab)
-   {
-      throw new UnsupportedOperationException("Must be implemented in derived class");
-   }
-
-   @Override
-   public void addToStatusBar(JComponent comp)
-   {
-      throw new UnsupportedOperationException("Must be implemented in derived class");
-   }
-
-   @Override
-   public void removeFromStatusBar(JComponent comp)
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
    }

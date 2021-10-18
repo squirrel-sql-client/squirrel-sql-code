@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
+import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPoolStatusBarCtrl;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
@@ -43,7 +44,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.TreeSelectionEvent;
@@ -121,6 +121,8 @@ public class SessionPanel extends JPanel
 
       _propsListener = evt -> propertiesHaveChanged(evt.getPropertyName());
 
+      getObjectTreePanel().addTreeSelectionListener(e -> onObjectTreeSelectionChanged(e));
+
       session.getProperties().addPropertyChangeListener(_propsListener);
    }
 
@@ -194,26 +196,6 @@ public class SessionPanel extends JPanel
    }
 
 
-   /**
-    * Add component to the session sheets status bar.
-    *
-    * @param   comp   Component to add.
-    */
-   public void addToStatusBar(JComponent comp)
-   {
-      _sessionStatusBar.addJComponent(comp);
-   }
-
-   /**
-    * Remove component from the session sheets status bar.
-    *
-    * @param   comp   Component to remove.
-    */
-   public void removeFromStatusBar(JComponent comp)
-   {
-      _sessionStatusBar.remove(comp);
-   }
-
    private void propertiesHaveChanged(String propertyName)
    {
       final ISession session = getSession();
@@ -275,11 +257,10 @@ public class SessionPanel extends JPanel
 
       app.getFontInfoStore().setUpStatusBarFont(_sessionStatusBar);
       add(_sessionStatusBar, BorderLayout.SOUTH);
+      _sessionStatusBar.addJComponent(new SessionConnectionPoolStatusBarCtrl(session).getStatusBarPanel());
+      _sessionStatusBar.addJComponent(new SchemaPanel(session));
+      _sessionStatusBar.addJComponent(new RowColumnLabel(_mainPanel));
 
-      getObjectTreePanel().addTreeSelectionListener(e -> onObjectTreeSelectionChanged(e));
-
-      addToStatusBar(new SchemaPanel(session));
-      addToStatusBar(new RowColumnLabel(_mainPanel));
       validate();
    }
 

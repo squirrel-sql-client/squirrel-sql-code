@@ -162,6 +162,8 @@ public class SquirrelResources extends Resources
 
 		String STOP = "stop";
 		String COLOR_CHOOSE = "colorChoose";
+
+		String VIEW_DETAILS = "view_details";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

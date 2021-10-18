@@ -44,7 +44,6 @@ import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import java.sql.SQLException;
 
 /**
@@ -182,20 +181,6 @@ public interface ISession extends IHasIdentifier
     *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
     */
    int addMainTab(IMainPanelTab tab);
-
-   /**
-    * Add component to the session sheets status bar.
-    *
-    * @param	comp	Component to add.
-    */
-   void addToStatusBar(JComponent comp);
-
-   /**
-    * Remove component to the session sheets status bar.
-    *
-    * @param	comp	Component to remove.
-    */
-   void removeFromStatusBar(JComponent comp);
 
    /**
     * Add a listener to this session
