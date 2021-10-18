@@ -6,20 +6,25 @@ import javax.swing.JMenu;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * Plugin to show query statistics and plan for the Intersystems Cache database.
  */
 public class CachePlugin extends DefaultSessionPlugin
 {
+
+	private Action _statisticsAndQueryPlanAction;
+
 	private interface IMenuResourceKeys
 	{
 		String MENU = "cache";
@@ -140,37 +145,84 @@ public class CachePlugin extends DefaultSessionPlugin
 	{
 		addStatisticsAndQueryPlanSessionMenuAction(session);
 
+		return new PluginSessionCallback()
+		{
+			@Override
+			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+			{
+				initSqlInternalFrame(sqlInternalFrame, session);
+			}
+
+			@Override
+			public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
+			{
+
+			}
+
+			@Override
+			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+			{
+
+			}
+
+			@Override
+			public void objectTreeInSQLTabOpened(ObjectTreePanel objectTreePanel)
+			{
+
+			}
+		};
+	}
+
+	private void initSqlInternalFrame(SQLInternalFrame sqlInternalFrame, ISession session)
+	{
+		if ( false == DialectFactory.isIntersystemsCache(session.getMetaData()))
+		{
+			return;
+		}
+
+		ActionCollection coll = Main.getApplication().getActionCollection();
+
+		if( null == _statisticsAndQueryPlanAction )
+		{
+			_statisticsAndQueryPlanAction = new StatisticsAndQueryPlanAction(_resources);
+			coll.add(_statisticsAndQueryPlanAction);
+		}
+
+		JMenu menu = _resources.createMenu(IMenuResourceKeys.MENU);
+		Main.getApplication().addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
 
 
-		return new PluginSessionCallbackAdaptor();
+		_resources.addToMenu(_statisticsAndQueryPlanAction, menu);
+
+		sqlInternalFrame.addSeparatorToToolbar();
+		sqlInternalFrame.addToToolbar(coll.get(StatisticsAndQueryPlanAction.class));
 	}
 
 	private void addStatisticsAndQueryPlanSessionMenuAction(ISession session)
 	{
-		try
+		if( false == DialectFactory.isIntersystemsCache(session.getMetaData()) )
 		{
-			if ( false == DialectFactory.isIntersystemsCache(session.getMetaData()))
-			{
-				return;
-			}
-
-			ActionCollection coll = Main.getApplication().getActionCollection();
-
-			JMenu menu = _resources.createMenu(IMenuResourceKeys.MENU);
-			Main.getApplication().addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
-
-			Action act = new StatisticsAndQueryPlanAction(_resources);
-			coll.add(act);
-			_resources.addToMenu(act, menu);
-
-			session.addSeparatorToToolbar();
-			session.addToToolbar(coll.get(StatisticsAndQueryPlanAction.class));
-
+			return;
 		}
-		catch (Exception e)
+
+		ActionCollection coll = Main.getApplication().getActionCollection();
+
+		if( null == _statisticsAndQueryPlanAction )
 		{
-			throw Utilities.wrapRuntime(e);
+			_statisticsAndQueryPlanAction = new StatisticsAndQueryPlanAction(_resources);
+			coll.add(_statisticsAndQueryPlanAction);
 		}
+
+		JMenu menu = _resources.createMenu(IMenuResourceKeys.MENU);
+		Main.getApplication().addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+
+
+		_resources.addToMenu(_statisticsAndQueryPlanAction, menu);
+
+		session.addSeparatorToToolbar();
+		session.addToToolbar(coll.get(StatisticsAndQueryPlanAction.class));
 	}
+
+
 
 }
