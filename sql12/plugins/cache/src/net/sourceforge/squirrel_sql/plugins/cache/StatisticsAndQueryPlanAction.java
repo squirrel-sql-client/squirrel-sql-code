@@ -41,7 +41,6 @@ public class StatisticsAndQueryPlanAction extends SquirrelAction implements ISQL
    {
       super(Main.getApplication(), resources);
       _resources = resources;
-
    }
 
    public void actionPerformed(ActionEvent e)
