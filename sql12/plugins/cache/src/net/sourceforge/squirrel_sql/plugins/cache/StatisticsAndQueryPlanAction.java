@@ -41,7 +41,6 @@ public class StatisticsAndQueryPlanAction extends SquirrelAction implements ISQL
    {
       super(Main.getApplication(), resources);
       _resources = resources;
-
    }
 
    public void actionPerformed(ActionEvent e)
@@ -93,6 +92,7 @@ public class StatisticsAndQueryPlanAction extends SquirrelAction implements ISQL
    public void setSQLPanel(ISQLPanelAPI sqlPanelAPI)
    {
       _sqlPanelAPI = sqlPanelAPI;
+      setEnabled(null != _sqlPanelAPI);
    }
 
 
