@@ -35,12 +35,13 @@ ClassMethod GetPlan(pNamespace As %String = "SHD", pSQL As %String = "") As %Str
 
     ; If it is a select query and there is no where and no top in the select, then a select top 1000 is inserted,
     ; so that the query doesn't run forever.
-     If $SYSTEM.SQL.SQLUPPER(pSQL)'["WHERE"&($SYSTEM.SQL.SQLUPPER(pSQL)'["TOP")&($SYSTEM.SQL.SQLUPPER(pSQL)["SELECT") { set pSQL=$Replace($SYSTEM.SQL.SQLUPPER(pSQL),"SELECT ","SELECT TOP 1000 ") }
-
+     If $ZConvert(pSQL,"U")'["WHERE"&($ZConvert(pSQL,"U")'["TOP")&($ZConvert(pSQL,"U")'["DISTINCT")&($ZConvert(pSQL,"U")["SELECT") { set pSQL=$Replace($ZConvert(pSQL,"U"),"SELECT ","SELECT TOP 1000 ") }
+      ;w !,"sql  ",pSQL
+     ;r !,"weiter ",a
      SET myquery = pSQL
      SET tStatement = ##class(%SQL.Statement).%New()
      SET qStatus = tStatement.%Prepare(myquery)
-     IF qStatus'=1 { set tResult= "SQL Error : "_$SYSTEM.Status.GetErrorText(qStatus) QUIT}
+     IF qStatus'=1 { set tResult= "SQL Error : "_$SYSTEM.Status.GetErrorText(qStatus)_" SQL "_pSQL QUIT}     
 
      SET oldstat=$SYSTEM.SQL.SetSQLStatsJob(3)
 
