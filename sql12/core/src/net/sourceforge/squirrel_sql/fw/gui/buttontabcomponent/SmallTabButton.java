@@ -1,5 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
+
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -7,15 +16,6 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.plaf.basic.BasicButtonUI;
-
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
 
 
 public class SmallTabButton<T> extends JButton
@@ -23,6 +23,11 @@ public class SmallTabButton<T> extends JButton
    private Icon _icon;
    private T _userObject;
 
+
+   public SmallTabButton(int sizeOffset)
+   {
+      this(null, null, null, sizeOffset);
+   }
 
    public SmallTabButton(String toolTipText, ImageIcon icon)
    {
@@ -87,7 +92,14 @@ public class SmallTabButton<T> extends JButton
          if (component instanceof AbstractButton)
          {
             AbstractButton button = (AbstractButton) component;
-            button.setBorderPainted(true);
+            if (button.isEnabled())
+            {
+               button.setBorderPainted(true);
+            }
+            else
+            {
+               button.setBorderPainted(false);
+            }
          }
       }
 

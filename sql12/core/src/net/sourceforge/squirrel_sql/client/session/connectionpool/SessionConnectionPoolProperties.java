@@ -2,18 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.connectionpool;
 
 public class SessionConnectionPoolProperties
 {
-   private boolean _useQuerySqlConnections = false;
-   private int _maxQuerySqlConnectionsCount = 3;
-
-   public boolean isUseQuerySqlConnections()
-   {
-      return _useQuerySqlConnections;
-   }
-
-   public void setUseQuerySqlConnections(boolean useQuerySqlConnections)
-   {
-      _useQuerySqlConnections = useQuerySqlConnections;
-   }
+   private int _maxQuerySqlConnectionsCount = 2;
 
    public int getMaxQuerySqlConnectionsCount()
    {

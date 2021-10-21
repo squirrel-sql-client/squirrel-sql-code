@@ -19,20 +19,25 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsCommand;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
-import net.sourceforge.squirrel_sql.fw.util.log.ILoggerListener;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILoggerListener;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Vector;
-import java.util.Date;
 import java.text.DateFormat;
+import java.util.Date;
+import java.util.Vector;
 
 
 /**
@@ -56,9 +61,9 @@ public class LogPanel extends JPanel
    private static final int LOG_TYPE_ERROR = 2;
 
 
-   private JButton _btnLastLog = new JButton();
    private JLabel _lblLogInfo = new JLabel();
-   private JButton _btnViewLogs = new JButton();
+   private SmallTabButton _btnLastLog = new SmallTabButton(4);
+   private JButton _btnViewLogs = new SmallTabButton(4);
 
    private Timer _displayLastLogTimer;
    private Timer _whiteIconTimer;

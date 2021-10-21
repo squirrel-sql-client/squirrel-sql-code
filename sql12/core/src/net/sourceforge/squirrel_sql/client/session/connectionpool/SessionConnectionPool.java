@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.connectionpool;
 
 import net.sourceforge.squirrel_sql.client.mainframe.action.openconnection.OpenConnectionUtil;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -31,6 +32,8 @@ public class SessionConnectionPool
    private CatalogComboReader _catalogComboReader;
 
    private HashMap<ISQLConnection, Integer> _querySQLConnections_checkOutCount = new HashMap<>();
+
+   private SessionConnectionPoolChangeListener _sessionConnectionPoolChangeListener;
 
    /**
     * When autoCommit is set to false the connection pool is switched off.
@@ -79,10 +82,20 @@ public class SessionConnectionPool
    {
       try
       {
-         if(false == _autoCommit || false == _sessionConnectionPoolProperties.isUseQuerySqlConnections() )
+         if(false == _autoCommit || 0 == _sessionConnectionPoolProperties.getMaxQuerySqlConnectionsCount() )
          {
             return _masterConnection;
          }
+
+         // From here on we know the pool is active.
+
+         if ( 0 == _querySQLConnections_checkOutCount.size())
+         {
+            // No connection created yet: Create the first and return it.
+            final ISQLConnection buf = createNewQuerySQLConnection();
+            return buf;
+         }
+
 
          ISQLConnection ret = getMinCheckoutCountQuerySQLConnections();
          int checkOutCount = _querySQLConnections_checkOutCount.get(ret);
@@ -96,7 +109,6 @@ public class SessionConnectionPool
          if ( _querySQLConnections_checkOutCount.size() < _sessionConnectionPoolProperties.getMaxQuerySqlConnectionsCount())
          {
             final ISQLConnection buf = createNewQuerySQLConnection();
-            _querySQLConnections_checkOutCount.put(buf, 1);
             return buf;
          }
 
@@ -105,7 +117,7 @@ public class SessionConnectionPool
       }
       finally
       {
-         updateConnectionDisplay();
+         fireChanged();
       }
    }
 
@@ -121,7 +133,7 @@ public class SessionConnectionPool
       }
       finally
       {
-         updateConnectionDisplay();
+         fireChanged();
       }
    }
 
@@ -156,19 +168,28 @@ public class SessionConnectionPool
     */
    private ISQLConnection createNewQuerySQLConnection()
    {
-      if(false == _autoCommit)
+      try
       {
-         throw new IllegalStateException("How could we get here?");
+         if(false == _autoCommit)
+         {
+            throw new IllegalStateException("How could we get here?");
+         }
+
+         SQLConnectionState sqlConnectionState = new SQLConnectionState();
+         sqlConnectionState.saveState(_masterConnection, _sessionProperties, _messageHandlerReader.getMessageHandler(), _catalogComboReader.getCatalogFormComboBox());
+
+         final SQLConnection sqlConnection = OpenConnectionUtil.createSQLConnection(_sqlAlias, _userName, _password, sqlConnectionState.getConnectionProperties());
+
+         sqlConnectionState.restoreState(sqlConnection, _messageHandlerReader.getMessageHandler());
+
+         _querySQLConnections_checkOutCount.put(sqlConnection, 1);
+
+         return sqlConnection;
       }
-
-      SQLConnectionState sqlConnectionState = new SQLConnectionState();
-      sqlConnectionState.saveState(_masterConnection, _sessionProperties, _messageHandlerReader.getMessageHandler(), _catalogComboReader.getCatalogFormComboBox());
-
-      final SQLConnection sqlConnection = OpenConnectionUtil.createSQLConnection(_sqlAlias, _userName, _password, sqlConnectionState.getConnectionProperties());
-
-      sqlConnectionState.restoreState(sqlConnection, _messageHandlerReader.getMessageHandler());
-
-      return sqlConnection;
+      finally
+      {
+         fireChanged();
+      }
    }
 
    public void close()
@@ -223,6 +244,10 @@ public class SessionConnectionPool
 
          throw Utilities.wrapRuntime(e);
       }
+      finally
+      {
+         fireChanged();
+      }
    }
 
    public void setSessionCatalog(String selectedCatalog)
@@ -264,10 +289,43 @@ public class SessionConnectionPool
       toClose.forEach(con -> closeConnection(con));
    }
 
-
-   private void updateConnectionDisplay()
+   public void setPoolChangeListner(SessionConnectionPoolChangeListener sessionConnectionPoolChangeListener)
    {
-      // TODO:
+      _sessionConnectionPoolChangeListener = sessionConnectionPoolChangeListener;
    }
 
+   private void fireChanged()
+   {
+      if (null != _sessionConnectionPoolChangeListener)
+      {
+         GUIUtils.processOnSwingEventThread(() -> _sessionConnectionPoolChangeListener.changed());
+      }
+   }
+
+   public SessionConnectionPoolProperties getConnectionPoolProperties()
+   {
+      return _sessionConnectionPoolProperties;
+   }
+
+
+   public boolean isAutoCommit()
+   {
+      return _autoCommit;
+   }
+
+   public int getInUseQuerySqlConnectionsCount()
+   {
+      if(false == _autoCommit)
+      {
+         return 0;
+      }
+
+      return (int) _querySQLConnections_checkOutCount.values().stream().filter(inUseCount ->  inUseCount > 0).count();
+
+   }
+
+   public int getMaxCheckoutCount()
+   {
+      return _querySQLConnections_checkOutCount.values().stream().max(Integer::compare).get();
+   }
 }

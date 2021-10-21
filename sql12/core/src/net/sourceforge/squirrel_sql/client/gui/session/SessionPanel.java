@@ -257,7 +257,7 @@ public class SessionPanel extends JPanel
 
       app.getFontInfoStore().setUpStatusBarFont(_sessionStatusBar);
       add(_sessionStatusBar, BorderLayout.SOUTH);
-      _sessionStatusBar.addJComponent(new SessionConnectionPoolStatusBarCtrl(session).getStatusBarPanel());
+      _sessionStatusBar.addJComponent(new SessionConnectionPoolStatusBarCtrl(session, _sessionStatusBar).getStatusBarPanel());
       _sessionStatusBar.addJComponent(new SchemaPanel(session));
       _sessionStatusBar.addJComponent(new RowColumnLabel(_mainPanel));
 

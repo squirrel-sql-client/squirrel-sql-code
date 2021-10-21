@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
@@ -20,16 +21,19 @@ public class SessionConnectionPoolStatusBarPanel extends JPanel
    SmallTabButton btnState;
    SmallTabButton btnDetails;
 
-   public SessionConnectionPoolStatusBarPanel()
+   public SessionConnectionPoolStatusBarPanel(JComponent parent)
    {
       super(new BorderLayout());
 
       textLbl.setEditable(false);
 
-      // TODO
-      textLbl.setText("Query connection pool size = 4 / active = 3");
       add(textLbl, BorderLayout.CENTER);
       GUIUtils.inheritBackground(textLbl);
+
+      // SessionConnectionPool.state.message.over.used is the longest message.
+      final int txtLblWidth = 5 + parent.getFontMetrics(parent.getFont()).stringWidth(s_stringMgr.getString("SessionConnectionPool.state.message.over.used", 10, 10));
+      GUIUtils.setPreferredWidth(textLbl, txtLblWidth);
+      GUIUtils.setMinimumWidth(textLbl, txtLblWidth);
 
       add(createButtonPanel(), BorderLayout.EAST);
    }
@@ -38,8 +42,8 @@ public class SessionConnectionPoolStatusBarPanel extends JPanel
    {
       JPanel ret = new JPanel(new GridLayout(1, 2));
 
-      //btnState = new SmallTabButton(s_stringMgr.getString("SessionConnectionPool.state"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.WHITE_GEM), 4);
-      btnState = new SmallTabButton(s_stringMgr.getString("SessionConnectionPool.state"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.GREEN_GEM), 4);
+      btnState = new SmallTabButton(4);
+      btnState.setEnabled(false);
       ret.add(btnState);
 
       btnDetails = new SmallTabButton(s_stringMgr.getString("SessionConnectionPool.details"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.VIEW_DETAILS), 4);
