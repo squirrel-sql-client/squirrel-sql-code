@@ -57,6 +57,7 @@ public class StatisticsAndQueryPlanAction extends SquirrelAction implements ISQL
          if( StringUtilities.isEmpty(sql,true) )
          {
             Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("StatisticsAndQueryPlanAction.empty.sql"));
+            return;
          }
 
          // Needed to remove comments
