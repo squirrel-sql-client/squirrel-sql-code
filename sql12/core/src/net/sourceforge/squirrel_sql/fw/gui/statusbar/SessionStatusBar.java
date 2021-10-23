@@ -38,7 +38,6 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.BadLocationException;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -230,9 +229,9 @@ public class SessionStatusBar extends JPanel
 	{
 		clearText();
 
-      Dimension progSize = _progressBar.getPreferredSize();
-      progSize.height = _textLbl.getPreferredSize().height;
-      _progressBar.setPreferredSize(progSize);
+//      Dimension progSize = _progressBar.getPreferredSize();
+//      progSize.height = _textLbl.getPreferredSize().height;
+//      _progressBar.setPreferredSize(progSize);
 
       _progressBar.setStringPainted(true);
 
@@ -242,14 +241,14 @@ public class SessionStatusBar extends JPanel
 		// up all available space.
 		_gbc.anchor = GridBagConstraints.WEST;
 		_gbc.weightx = 1.0;
-		_gbc.fill = GridBagConstraints.HORIZONTAL;
+		_gbc.fill = GridBagConstraints.BOTH;
 		_gbc.gridy = 0;
 		_gbc.gridx = 0;
 		addJComponent(_pnlLabelOrProgress);
 
 		// Any other components are on the right.
 		_gbc.weightx = 0.0;
-		_gbc.anchor = GridBagConstraints.CENTER;
+		_gbc.anchor = GridBagConstraints.WEST;
 		_gbc.gridx = GridBagConstraints.RELATIVE;
 		_gbc.insets.left = 2;
 	}
@@ -267,7 +266,7 @@ public class SessionStatusBar extends JPanel
 				stopButton.addActionListener(stopAction);
 				_pnlLabelOrProgress.add(GUIUtils.styleAsToolbarButton(stopButton), BorderLayout.EAST);
 			}
-			validate();
+			invalidate();
       }
 
       _progressBar.setMinimum(minimum);
@@ -290,7 +289,7 @@ public class SessionStatusBar extends JPanel
       {
          _pnlLabelOrProgress.removeAll();
          _pnlLabelOrProgress.add(_textLbl, BorderLayout.CENTER);
-         validate();
+         invalidate();
          repaint();
       }
    }
