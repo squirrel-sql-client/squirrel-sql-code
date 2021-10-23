@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.connectionpool;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.mainframe.action.openconnection.OpenConnectionUtil;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -8,6 +9,8 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
 import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -20,6 +23,8 @@ import java.util.Set;
 public class SessionConnectionPool
 {
    private static final ILogger s_log = LoggerController.createLogger(SessionConnectionPool.class);
+
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionConnectionPool.class);
 
    private SessionConnectionPoolProperties _sessionConnectionPoolProperties = new SessionConnectionPoolProperties();
 
@@ -44,7 +49,6 @@ public class SessionConnectionPool
     * Which means that as long as we don't
     */
    private volatile boolean _autoCommit;
-
 
    public SessionConnectionPool(SQLConnection masterConnection,
                                 ISQLAlias sqlAlias,
@@ -172,7 +176,7 @@ public class SessionConnectionPool
       {
          if(false == _autoCommit)
          {
-            throw new IllegalStateException("How could we get here?");
+            throw new IllegalStateException("How could we get here as _autoCommit == false switches the pool off?");
          }
 
          SQLConnectionState sqlConnectionState = new SQLConnectionState();
@@ -182,9 +186,20 @@ public class SessionConnectionPool
 
          sqlConnectionState.restoreState(sqlConnection, _messageHandlerReader.getMessageHandler());
 
+         // Just for safety and to express that query connections are always in autoCommit = true mode.
+         sqlConnection.setAutoCommit(true);
+
+         // It's important that this happens last as we don't want erroneously created connections in the pool.
          _querySQLConnections_checkOutCount.put(sqlConnection, 1);
 
          return sqlConnection;
+      }
+      catch (Throwable t)
+      {
+         final String msg = s_stringMgr.getString("SessionConnectionPool.failed.to.create.pool.connection");
+         Main.getApplication().getMessageHandler().showErrorMessage(msg, Utilities.getDeepestThrowable(t));
+         s_log.error(msg, t);
+         return _masterConnection;
       }
       finally
       {
@@ -222,7 +237,7 @@ public class SessionConnectionPool
     * I.e. {@link #checkOutUserQuerySQLConnection()} will return the {@link #_masterConnection} only.
     * That is why we change autoCommit of the _masterConnection only.
     */
-   public void setSessionAutoCommit(boolean autoCommit)
+   public synchronized void setSessionAutoCommit(boolean autoCommit)
    {
       _autoCommit = false;
       try
@@ -289,10 +304,16 @@ public class SessionConnectionPool
       toClose.forEach(con -> closeConnection(con));
    }
 
-   public void setPoolChangeListner(SessionConnectionPoolChangeListener sessionConnectionPoolChangeListener)
+   public void setPoolChangeListener(SessionConnectionPoolChangeListener sessionConnectionPoolChangeListener)
    {
       _sessionConnectionPoolChangeListener = sessionConnectionPoolChangeListener;
    }
+
+   public SessionConnectionPoolChangeListener getPoolChangeListener()
+   {
+      return _sessionConnectionPoolChangeListener;
+   }
+
 
    private void fireChanged()
    {

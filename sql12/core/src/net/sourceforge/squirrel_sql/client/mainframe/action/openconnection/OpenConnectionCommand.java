@@ -86,10 +86,9 @@ public class OpenConnectionCommand
     */
 	public void execute(final OpenConnectionCommandListener openConnectionCommandListener)
    {
-
       final Future future = OpenConnectionThreadPool.submit(() -> executeConnect());
 
-      OpenConnectionThreadPool.submit(() -> awaitConnection(future, openConnectionCommandListener));
+      OpenConnectionThreadPool.submit(() -> awaitConnection(future, openConnectionCommandListener, false) );
 	}
 
    public void executeAndWait()
@@ -102,7 +101,7 @@ public class OpenConnectionCommand
 
       Throwable[] ref = new Throwable[1];
 
-      awaitConnection(future, t -> ref[0] = t);
+      awaitConnection(future, t -> ref[0] = t, true);
 
       if(null != ref[0])
       {
@@ -110,7 +109,7 @@ public class OpenConnectionCommand
       }
    }
 
-   private void awaitConnection(Future future, final OpenConnectionCommandListener openConnectionCommandListener)
+   private void awaitConnection(Future future, final OpenConnectionCommandListener openConnectionCommandListener, boolean processImmediately)
    {
       try
       {
@@ -123,11 +122,25 @@ public class OpenConnectionCommand
             future.get();
          }
 
-         SwingUtilities.invokeLater(() -> openConnectionCommandListener.openConnectionFinished(null));
+         if (processImmediately)
+         {
+            openConnectionCommandListener.openConnectionFinished(null);
+         }
+         else
+         {
+            SwingUtilities.invokeLater(() -> openConnectionCommandListener.openConnectionFinished(null));
+         }
       }
       catch (final Throwable t)
       {
-         SwingUtilities.invokeLater(() -> openConnectionCommandListener.openConnectionFinished(t));
+         if (processImmediately)
+         {
+            openConnectionCommandListener.openConnectionFinished(t);
+         }
+         else
+         {
+            SwingUtilities.invokeLater(() -> openConnectionCommandListener.openConnectionFinished(t));
+         }
       }
    }
 

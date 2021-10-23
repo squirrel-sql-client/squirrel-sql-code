@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session.connectionpool;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -13,6 +15,7 @@ public class SessionConnectionPoolStatusBarCtrl extends JComponent
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionConnectionPoolStatusBarCtrl.class);
 
    private final SessionConnectionPoolStatusBarPanel _statusBarPanel;
+   private SessionAdapter _sessionReconnectListener;
    private ISession _session;
 
 
@@ -21,8 +24,27 @@ public class SessionConnectionPoolStatusBarCtrl extends JComponent
       _session = session;
       _statusBarPanel = new SessionConnectionPoolStatusBarPanel(parent);
 
-      _session.getConnectionPool().setPoolChangeListner(() -> onPoolChanged());
+      initPoolListening();
+
       onPoolChanged();
+   }
+
+   private void initPoolListening()
+   {
+      _session.getConnectionPool().setPoolChangeListener(() -> onPoolChanged());
+
+      _sessionReconnectListener = new SessionAdapter()
+      {
+         @Override
+         public void reconnected(SessionEvent evt)
+         {
+            evt.getSession().getConnectionPool().setPoolChangeListener(() -> onPoolChanged());
+         }
+      };
+
+      Main.getApplication().getSessionManager().addSessionListener(_sessionReconnectListener);
+
+      _session.addSimpleSessionListener(() -> Main.getApplication().getSessionManager().removeSessionListener(_sessionReconnectListener));
    }
 
    private void onPoolChanged()

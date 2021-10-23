@@ -510,8 +510,10 @@ public class SessionManager
          {
             // Lazily create the event:
             if (evt == null)
+            {
                evt = new SessionEvent(session);
-            ((ISessionListener)listeners[i + 1]).connectionClosedForReconnect(evt);
+            }
+            ((ISessionListener) listeners[i + 1]).connectionClosedForReconnect(evt);
          }
       }
    }
@@ -526,8 +528,10 @@ public class SessionManager
          {
             // Lazily create the event:
             if (evt == null)
+            {
                evt = new SessionEvent(session);
-            ((ISessionListener)listeners[i + 1]).reconnected(evt);
+            }
+            ((ISessionListener) listeners[i + 1]).reconnected(evt);
          }
       }
    }
@@ -542,8 +546,10 @@ public class SessionManager
          {
             // Lazily create the event:
             if (evt == null)
+            {
                evt = new SessionEvent(session);
-            ((ISessionListener)listeners[i + 1]).reconnectFailed(evt);
+            }
+            ((ISessionListener) listeners[i + 1]).reconnectFailed(evt);
          }
       }
    }
