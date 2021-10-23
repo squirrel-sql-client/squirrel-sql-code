@@ -537,7 +537,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    {
       if (_queryConnectionPoolSize != value)
       {
-         long oldValue = _queryConnectionPoolSize;
+         int oldValue = _queryConnectionPoolSize;
          _queryConnectionPoolSize = value;
          getPropertyChangeReporter().firePropertyChange(IPropertyNames.QUERY_CONNECTION_POOL_SIZE, oldValue, _queryConnectionPoolSize);
       }

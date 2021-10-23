@@ -4,12 +4,15 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesCommand;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 public class SessionConnectionPoolStatusBarCtrl extends JComponent
 {
@@ -25,7 +28,7 @@ public class SessionConnectionPoolStatusBarCtrl extends JComponent
       _session = session;
       _statusBarPanel = new SessionConnectionPoolStatusBarPanel(parent);
 
-      _statusBarPanel.btnState.addActionListener( e -> onChangeConnectionPoolSize());
+      _statusBarPanel.btnConfigureConnectionPoolSize.addActionListener( e -> onChangeConnectionPoolSize());
 
       initPoolListening();
 
@@ -34,7 +37,29 @@ public class SessionConnectionPoolStatusBarCtrl extends JComponent
 
    private void onChangeConnectionPoolSize()
    {
-      NewSessionPropertiesSheet.showSheet();
+      JPopupMenu popupMenu = new JPopupMenu();
+
+      final JMenuItem mnuCurrentSession = new JMenuItem(s_stringMgr.getString("SessionConnectionPool.pool.size.for.current.session"));
+      mnuCurrentSession.addActionListener( e -> openSessionPropertiesAtSqlTab(true));
+      popupMenu.add(mnuCurrentSession);
+
+      final JMenuItem mnuFutureSessions = new JMenuItem(s_stringMgr.getString("SessionConnectionPool.pool.size.for.future.sessions"));
+      mnuFutureSessions.addActionListener( e -> openSessionPropertiesAtSqlTab(false));
+      popupMenu.add(mnuFutureSessions);
+
+      popupMenu.show(_statusBarPanel.btnConfigureConnectionPoolSize, _statusBarPanel.btnConfigureConnectionPoolSize.getWidth(), _statusBarPanel.btnConfigureConnectionPoolSize.getHeight());
+   }
+
+   private void openSessionPropertiesAtSqlTab(boolean forCurrentSession)
+   {
+      if(forCurrentSession)
+      {
+         new SessionPropertiesCommand(_session, 2).execute();
+      }
+      else
+      {
+         NewSessionPropertiesSheet.showSheet(2);
+      }
    }
 
    private void initPoolListening()

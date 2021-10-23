@@ -17,6 +17,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,6 +30,7 @@ public class SessionConnectionPool
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionConnectionPool.class);
 
    private final SQLConnection _masterConnection;
+   private final PropertyChangeListener _propertyChangeListener;
    private SessionProperties _sessionProperties;
    private final ISQLAlias _sqlAlias;
    private final String _userName;
@@ -76,13 +78,21 @@ public class SessionConnectionPool
       _messageHandlerReader = messageHandlerReader;
       _catalogComboReader = catalogComboReader;
 
-      _sessionProperties.addPropertyChangeListener(evt -> onPropertyChange(evt));
+      _propertyChangeListener = evt -> onPropertyChange(evt);
+      _sessionProperties.addPropertyChangeListener(_propertyChangeListener);
    }
 
    private void onPropertyChange(PropertyChangeEvent evt)
    {
       if (StringUtilities.equalsRespectNullModuloEmptyAndWhiteSpace(evt.getPropertyName(), SessionProperties.IPropertyNames.QUERY_CONNECTION_POOL_SIZE))
       {
+         if(evt.getNewValue() instanceof Integer
+            && evt.getOldValue() instanceof Integer
+            && (Integer) evt.getNewValue() < (Integer) evt.getOldValue())
+         {
+            Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("SessionConnectionPool.decreasing.existing.connections.not.close"));
+         }
+
          fireChanged();
       }
    }
@@ -219,6 +229,7 @@ public class SessionConnectionPool
 
    public void close()
    {
+      _sessionProperties.removePropertyChangeListener(_propertyChangeListener);
       getAllSQLConnections().forEach(con -> closeConnection(con));
    }
 

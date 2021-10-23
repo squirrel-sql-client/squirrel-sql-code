@@ -51,6 +51,9 @@ import java.util.List;
 // JASON: Rename to NewSessionPropertiesInternalFrame
 public class NewSessionPropertiesSheet extends DialogWidget
 {
+	public static final String PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH = "Squirrel.newSessionPropsSheetWidth";
+	public static final String PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT = "Squirrel.newSessionPropsSheetHeight";
+
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(NewSessionPropertiesSheet.class);
 
 	private static final ILogger s_log = LoggerController.createLogger(NewSessionPropertiesSheet.class);
@@ -62,10 +65,9 @@ public class NewSessionPropertiesSheet extends DialogWidget
 	private JLabel _titleLbl = new JLabel();
 
 	private IApplication _app;
-	private List<INewSessionPropertiesPanel> _panels = new ArrayList<INewSessionPropertiesPanel>();
+	private List<INewSessionPropertiesPanel> _panels = new ArrayList<>();
 
-	public static final String PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH = "Squirrel.newSessionPropsSheetWidth";
-	public static final String PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT = "Squirrel.newSessionPropsSheetHeight";
+	private JTabbedPane _tabbedPane;
 
 
 	private NewSessionPropertiesSheet(IApplication app)
@@ -101,6 +103,11 @@ public class NewSessionPropertiesSheet extends DialogWidget
 	 */
 	public static synchronized void showSheet()
 	{
+		showSheet(null);
+	}
+
+	public static synchronized void showSheet(Integer tabIndexToSelect)
+	{
 		if (s_instance == null)
 		{
 			s_instance = new NewSessionPropertiesSheet(Main.getApplication());
@@ -109,7 +116,23 @@ public class NewSessionPropertiesSheet extends DialogWidget
 		{
 			s_instance.moveToFront();
 		}
+
+		if(null != tabIndexToSelect)
+		{
+			s_instance.selectTabIndex(tabIndexToSelect);
+		}
 	}
+
+	public void selectTabIndex(int index)
+	{
+		int tabCount = _tabbedPane.getTabCount();
+
+		if(0 <= index && index < tabCount)
+		{
+			_tabbedPane.setSelectedIndex(index);
+		}
+	}
+
 
 	public void dispose()
 	{
@@ -198,13 +221,13 @@ public class NewSessionPropertiesSheet extends DialogWidget
 		}
 
 		// Add all panels to the tabbed pane.
-		final JTabbedPane tabPane = UIFactory.getInstance().createTabbedPane();
+		_tabbedPane = UIFactory.getInstance().createTabbedPane();
 		for (Iterator<INewSessionPropertiesPanel> it = _panels.iterator(); it.hasNext();)
 		{
 			INewSessionPropertiesPanel pnl = it.next();
 			String winTitle = pnl.getTitle();
 			String hint = pnl.getHint();
-			tabPane.addTab(winTitle, null, pnl.getPanelComponent(), hint);
+			_tabbedPane.addTab(winTitle, null, pnl.getPanelComponent(), hint);
 		}
 
 		final JPanel contentPane = new JPanel(new GridBagLayout());
@@ -222,7 +245,7 @@ public class NewSessionPropertiesSheet extends DialogWidget
 		contentPane.add(_titleLbl, gbc);
 		++gbc.gridy;
 		gbc.weighty = 1;
-		contentPane.add(tabPane, gbc);
+		contentPane.add(_tabbedPane, gbc);
 
 		++gbc.gridy;
 		gbc.weighty = 0;

@@ -33,14 +33,6 @@ public class SessionPropertiesCommand implements ICommand
 	private final ISession _session;
    private int _tabIndexToSelect = -1;
 
-   /**
-    * Ctor.
-    *
-    * @param	session The session whose properties are to be displayed/maintained.
-    *
-    * @throws	IllegalArgumentException
-    *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
-    */
    public SessionPropertiesCommand(ISession session)
    {
       this(session, -1);
@@ -48,7 +40,6 @@ public class SessionPropertiesCommand implements ICommand
 
    public SessionPropertiesCommand(ISession session, int tabIndexToSelect)
    {
-      super();
       _tabIndexToSelect = tabIndexToSelect;
       if (session == null)
       {
