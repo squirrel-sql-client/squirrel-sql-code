@@ -41,6 +41,7 @@ class SQLPropertiesPanel extends JPanel
    private JCheckBox _loadColumsInBackgroundChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.loadColumsInBackground"));
 
    private IntegerField _metaDataLoadingTimeOutTxt = new IntegerField(8, 0);
+   private IntegerField _queryConnectionPoolSizeTxt = new IntegerField(3, 0);
 
    private JCheckBox _autoCommitChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.autocommit"));
    private JCheckBox _commitOnClose = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.commitonclose"));
@@ -94,6 +95,7 @@ class SQLPropertiesPanel extends JPanel
       _writeSQLErrorsToLogChk.setSelected(props.getWriteSQLErrorsToLog());
       _loadColumsInBackgroundChk.setSelected(props.getLoadColumnsInBackground());
       _metaDataLoadingTimeOutTxt.setInt((int)props.getMetaDataLoadingTimeOut());
+      _queryConnectionPoolSizeTxt.setInt((int)props.getQueryConnectionPoolSize());
 
       _autoCommitChk.setSelected(props.getAutoCommit());
       _commitOnClose.setSelected(props.getCommitOnClosingConnection());
@@ -183,6 +185,7 @@ class SQLPropertiesPanel extends JPanel
       props.setWriteSQLErrorsToLog(_writeSQLErrorsToLogChk.isSelected());
       props.setLoadColumnsInBackground(_loadColumsInBackgroundChk.isSelected());
       props.setMetaDataLoadingTimeOut(_metaDataLoadingTimeOutTxt.getInt());
+      props.setQueryConnectionPoolSize(_queryConnectionPoolSizeTxt.getInt());
       props.setAutoCommit(_autoCommitChk.isSelected());
       props.setCommitOnClosingConnection(_commitOnClose.isSelected());
 
@@ -335,7 +338,7 @@ class SQLPropertiesPanel extends JPanel
       ++gbc.gridy; // new line
       gbc.gridx = 0;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
-      pnl.add(createMetdDataHandlingPanel(), gbc);
+      pnl.add(createAvoidUiHangsPanel(), gbc);
 
 
       if (null != _session)
@@ -381,12 +384,33 @@ class SQLPropertiesPanel extends JPanel
       return pnl;
    }
 
-   private JPanel createMetdDataHandlingPanel()
+   private JPanel createAvoidUiHangsPanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
       GridBagConstraints gbc;
 
+      // Query connection pool
+      JPanel queryConnectionPool = new JPanel(new GridBagLayout());
+
+      gbc = new GridBagConstraints(0, 0, 2, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
+      String queryConnectionPoolDescription = s_stringMgr.getString("SessionSQLPropertiesPanel.queryConnectionPoolDescription");
+      queryConnectionPool.add(new MultipleLineLabel(queryConnectionPoolDescription), gbc);
+
+      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      queryConnectionPool.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.queryConnectionPoolSize")), gbc);
+
+      gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0);
+      queryConnectionPool.add(_queryConnectionPoolSizeTxt, gbc);
+
+      queryConnectionPool.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.queryConnectionPool")));
+
+      gbc = new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 0, 5, 0), 0, 0);
+      ret.add(queryConnectionPool, gbc);
+
+
+
+      // Column loading
       JPanel columnLoading = new JPanel(new GridBagLayout());
 
       gbc = new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
@@ -398,14 +422,14 @@ class SQLPropertiesPanel extends JPanel
 
       columnLoading.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.columnLoading")));
 
-      gbc = new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
+      gbc = new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
       ret.add(columnLoading, gbc);
 
 
-
+      // Meta data timeout
       JPanel metaDataTimeOut = new JPanel(new GridBagLayout());
 
-      gbc = new GridBagConstraints(0, 0, 2, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
+      gbc = new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
       String metaDataTimeOutDescription = s_stringMgr.getString("SessionSQLPropertiesPanel.metaDataTimeOutDescription");
       metaDataTimeOut.add(new MultipleLineLabel(metaDataTimeOutDescription), gbc);
 
@@ -417,11 +441,12 @@ class SQLPropertiesPanel extends JPanel
 
       metaDataTimeOut.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.metaDataLoading")));
 
-
-      gbc = new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
+      gbc = new GridBagConstraints(0, 2, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
       ret.add(metaDataTimeOut, gbc);
 
-      ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.metaDataHandling")));
+
+      // Avoid UI hangs border
+      ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.avoid.ui.hangs")));
 
       return ret;
    }

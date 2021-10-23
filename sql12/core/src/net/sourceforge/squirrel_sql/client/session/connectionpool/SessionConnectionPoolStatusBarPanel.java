@@ -19,7 +19,7 @@ public class SessionConnectionPoolStatusBarPanel extends JPanel
 
    JTextField textLbl = new JTextField();
    SmallTabButton btnState;
-   SmallTabButton btnDetails;
+   SmallTabButton btnConfigureConnectionPoolSize;
 
    public SessionConnectionPoolStatusBarPanel(JComponent parent)
    {
@@ -46,8 +46,8 @@ public class SessionConnectionPoolStatusBarPanel extends JPanel
       btnState.setEnabled(false);
       ret.add(btnState);
 
-      btnDetails = new SmallTabButton(s_stringMgr.getString("SessionConnectionPool.details"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.VIEW_DETAILS), 4);
-      ret.add(btnDetails);
+      btnConfigureConnectionPoolSize = new SmallTabButton(s_stringMgr.getString("SessionConnectionPool.configure.size"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.VIEW_DETAILS), 4);
+      ret.add(btnConfigureConnectionPoolSize);
 
       return ret;
    }

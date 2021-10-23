@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
@@ -32,11 +33,17 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,15 +51,9 @@ import java.util.List;
 // JASON: Rename to NewSessionPropertiesInternalFrame
 public class NewSessionPropertiesSheet extends DialogWidget
 {
-    private static final long serialVersionUID = 1L;
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(NewSessionPropertiesSheet.class);
 
-    /** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(NewSessionPropertiesSheet.class);
-
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(NewSessionPropertiesSheet.class);
+	private static final ILogger s_log = LoggerController.createLogger(NewSessionPropertiesSheet.class);
 
 	/** Singleton instance of this class. */
 	private static NewSessionPropertiesSheet s_instance;
@@ -97,16 +98,12 @@ public class NewSessionPropertiesSheet extends DialogWidget
 	/**
 	 * Show the Preferences dialog
 	 *
-	 * @param	app		Application API.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT> object passed.
 	 */
-	public static synchronized void showSheet(IApplication app)
+	public static synchronized void showSheet()
 	{
 		if (s_instance == null)
 		{
-			s_instance = new NewSessionPropertiesSheet(app);
+			s_instance = new NewSessionPropertiesSheet(Main.getApplication());
 		}
 		else
 		{

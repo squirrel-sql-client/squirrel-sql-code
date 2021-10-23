@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.connectionpool;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
@@ -24,9 +25,16 @@ public class SessionConnectionPoolStatusBarCtrl extends JComponent
       _session = session;
       _statusBarPanel = new SessionConnectionPoolStatusBarPanel(parent);
 
+      _statusBarPanel.btnState.addActionListener( e -> onChangeConnectionPoolSize());
+
       initPoolListening();
 
       onPoolChanged();
+   }
+
+   private void onChangeConnectionPoolSize()
+   {
+      NewSessionPropertiesSheet.showSheet();
    }
 
    private void initPoolListening()
@@ -49,7 +57,7 @@ public class SessionConnectionPoolStatusBarCtrl extends JComponent
 
    private void onPoolChanged()
    {
-      final int maxQuerySqlConnectionsCount = _session.getConnectionPool().getConnectionPoolProperties().getMaxQuerySqlConnectionsCount();
+      final int maxQuerySqlConnectionsCount = _session.getConnectionPool().getQueryConnectionPoolSize();
       final int inUseQuerySqlConnectionsCount = _session.getConnectionPool().getInUseQuerySqlConnectionsCount();
       final boolean autoCommit = _session.getConnectionPool().isAutoCommit();
 

@@ -137,7 +137,10 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 						new PropertyDescriptor(IPropNames.META_DATA_LOADING_TIME_OUT, SessionProperties.class,
 							"getMetaDataLoadingTimeOut", "setMetaDataLoadingTimeOut"),
 
-                  new PropertyDescriptor(IPropNames.SQL_READ_ON, SessionProperties.class,
+						new PropertyDescriptor(IPropNames.QUERY_CONNECTION_POOL_SIZE, SessionProperties.class,
+													  "getQueryConnectionPoolSize", "setQueryConnectionPoolSize"),
+
+						new PropertyDescriptor(IPropNames.SQL_READ_ON, SessionProperties.class,
                         "getSQLReadOn", "setSQLReadOn"),
 
                   new PropertyDescriptor(IPropNames.SQL_READ_ON_BLOCK_SIZE, SessionProperties.class,

@@ -17,14 +17,15 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
+
+import java.awt.event.ActionEvent;
 
 public class NewSessionPropertiesAction extends SquirrelAction
 {
-
 	public NewSessionPropertiesAction(IApplication app)
 	{
 		super(app);
@@ -32,6 +33,6 @@ public class NewSessionPropertiesAction extends SquirrelAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		new NewSessionPropertiesCommand(getApplication()).execute();
+		NewSessionPropertiesSheet.showSheet();
 	}
 }

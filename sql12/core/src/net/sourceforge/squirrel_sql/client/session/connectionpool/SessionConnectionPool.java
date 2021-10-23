@@ -11,10 +11,12 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
 import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,8 +27,6 @@ public class SessionConnectionPool
    private static final ILogger s_log = LoggerController.createLogger(SessionConnectionPool.class);
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionConnectionPool.class);
-
-   private SessionConnectionPoolProperties _sessionConnectionPoolProperties = new SessionConnectionPoolProperties();
 
    private final SQLConnection _masterConnection;
    private SessionProperties _sessionProperties;
@@ -75,6 +75,16 @@ public class SessionConnectionPool
       _password = password;
       _messageHandlerReader = messageHandlerReader;
       _catalogComboReader = catalogComboReader;
+
+      _sessionProperties.addPropertyChangeListener(evt -> onPropertyChange(evt));
+   }
+
+   private void onPropertyChange(PropertyChangeEvent evt)
+   {
+      if (StringUtilities.equalsRespectNullModuloEmptyAndWhiteSpace(evt.getPropertyName(), SessionProperties.IPropertyNames.QUERY_CONNECTION_POOL_SIZE))
+      {
+         fireChanged();
+      }
    }
 
    public synchronized ISQLConnection getMasterSQLConnection()
@@ -86,7 +96,7 @@ public class SessionConnectionPool
    {
       try
       {
-         if(false == _autoCommit || 0 == _sessionConnectionPoolProperties.getMaxQuerySqlConnectionsCount() )
+         if(false == _autoCommit || 0 == _sessionProperties.getQueryConnectionPoolSize() )
          {
             return _masterConnection;
          }
@@ -110,7 +120,7 @@ public class SessionConnectionPool
             return ret;
          }
 
-         if ( _querySQLConnections_checkOutCount.size() < _sessionConnectionPoolProperties.getMaxQuerySqlConnectionsCount())
+         if ( _querySQLConnections_checkOutCount.size() < _sessionProperties.getQueryConnectionPoolSize())
          {
             final ISQLConnection buf = createNewQuerySQLConnection();
             return buf;
@@ -309,23 +319,12 @@ public class SessionConnectionPool
       _sessionConnectionPoolChangeListener = sessionConnectionPoolChangeListener;
    }
 
-   public SessionConnectionPoolChangeListener getPoolChangeListener()
-   {
-      return _sessionConnectionPoolChangeListener;
-   }
-
-
    private void fireChanged()
    {
       if (null != _sessionConnectionPoolChangeListener)
       {
          GUIUtils.processOnSwingEventThread(() -> _sessionConnectionPoolChangeListener.changed());
       }
-   }
-
-   public SessionConnectionPoolProperties getConnectionPoolProperties()
-   {
-      return _sessionConnectionPoolProperties;
    }
 
 
@@ -348,5 +347,10 @@ public class SessionConnectionPool
    public int getMaxCheckoutCount()
    {
       return _querySQLConnections_checkOutCount.values().stream().max(Integer::compare).get();
+   }
+
+   public int getQueryConnectionPoolSize()
+   {
+      return _sessionProperties.getQueryConnectionPoolSize();
    }
 }

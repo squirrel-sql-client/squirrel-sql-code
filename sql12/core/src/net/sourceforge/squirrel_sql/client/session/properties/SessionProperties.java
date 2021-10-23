@@ -55,6 +55,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String WRITE_SQL_ERRORS_TO_LOG = "writeSQLErrorsToLog";
       String LOAD_COLUMNS_IN_BACKGROUND = "loadColumnsInBackground";
       String META_DATA_LOADING_TIME_OUT = "timeOutMetaDataLoading";
+      String QUERY_CONNECTION_POOL_SIZE = "queryConnectionPoolSize";
       String AUTO_COMMIT = "autoCommit";
 
       String CATALOG_FILTER_INCLUDE = "catalogFilterInclude";
@@ -258,6 +259,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
     */
    private boolean _loadColumnsInBackground;
    private long _useMetaDataLoadingTimeOut;
+   private int _queryConnectionPoolSize;
 
    private boolean _keepTableLayoutOnRerun = true;
    private boolean _showRowNumberInTextLayout;
@@ -524,6 +526,20 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
          long oldValue = _useMetaDataLoadingTimeOut;
          _useMetaDataLoadingTimeOut = value;
          getPropertyChangeReporter().firePropertyChange(IPropertyNames.META_DATA_LOADING_TIME_OUT, oldValue, _useMetaDataLoadingTimeOut);
+      }
+   }
+   public int getQueryConnectionPoolSize()
+   {
+      return _queryConnectionPoolSize;
+   }
+
+   public void setQueryConnectionPoolSize(int value)
+   {
+      if (_queryConnectionPoolSize != value)
+      {
+         long oldValue = _queryConnectionPoolSize;
+         _queryConnectionPoolSize = value;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.QUERY_CONNECTION_POOL_SIZE, oldValue, _queryConnectionPoolSize);
       }
    }
 
