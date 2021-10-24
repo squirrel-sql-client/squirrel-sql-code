@@ -6,7 +6,7 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
-Query connection pool.
+#1488 Query connection pool.
   See Session status bar and menu File --> New Session properties
   --> tab SQL --> section "Avoid application hangs/delays"
   Often JDBC drivers block calls to a database connection when a SQL is being executed.
