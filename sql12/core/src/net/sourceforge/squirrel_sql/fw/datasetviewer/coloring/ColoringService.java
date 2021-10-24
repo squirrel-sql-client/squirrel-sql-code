@@ -21,12 +21,14 @@ import java.awt.Color;
 public class ColoringService
 {
    private UserColorHandler _userColorHandler;
+   private DataSetViewerTable _dataSetViewerTable;
    private FindColorHandler _findColorHandler;
    private MarkDuplicatesHandler _markDuplicatesHandler;
    private ColoringCallback _coloringCallback;
 
    public ColoringService(DataSetViewerTable dataSetViewerTable)
    {
+      _dataSetViewerTable = dataSetViewerTable;
       _userColorHandler = new UserColorHandler(dataSetViewerTable);
       _findColorHandler = new FindColorHandler();
       _markDuplicatesHandler = new MarkDuplicatesHandler(dataSetViewerTable);
@@ -45,20 +47,26 @@ public class ColoringService
       // the popup, shows that by changing the text colors.
       // Note: isEditableInCell() and isEditableInPopup() may result in reading Blob types, depending on configurations in preferences.
       //       That is not the problem because when the coloring is done the cell will be shown anyway and thus the read will need occur anyway.
-      if (dataTypeObject != null &&
-            dataTypeObject.isEditableInCell(value) == false &&
-            dataTypeObject.isEditableInPopup(value) == true)
+      if(dataTypeObject != null &&
+         dataTypeObject.isEditableInCell(value) == false &&
+         dataTypeObject.isEditableInPopup(value) == true)
       {
          // Use a CYAN background to indicate that the cell is
          // editable in the popup
          customBackground = SquirrelConstants.MULTI_LINE_CELL_COLOR;
       }
-      else
+      else if(null == value)
       {
-         // since the previous entry might have changed the color,
-         // we need to reset the color back to default value for table cells,
-         // taking into account whether the cell is selected or not.
-         customBackground = _userColorHandler.getBackground(column, row, isSelected);
+         if(false == isSelected)
+         {
+            customBackground = SquirrelConstants.NULL_COLOR;
+         }
+      }
+
+      Color userColor = _userColorHandler.getBackground(column, row, isSelected);
+      if(null != userColor)
+      {
+         customBackground = userColor;
       }
 
       Color markDuplicateBackground = _markDuplicatesHandler.getBackgroundForCell(row, column, value);
@@ -86,6 +94,17 @@ public class ColoringService
       if (null != customBackground)
       {
          cellRenderer.setBackground(customBackground);
+      }
+      else
+      {
+         if (isSelected)
+         {
+            cellRenderer.setBackground(_dataSetViewerTable.getSelectionBackground());
+         }
+         else
+         {
+            cellRenderer.setBackground(_dataSetViewerTable.getBackground());
+         }
       }
 
    }

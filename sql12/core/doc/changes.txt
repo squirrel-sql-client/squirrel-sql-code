@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#603 NULL values are colored in light green.
+
 Query connection pool.
   See Session status bar and menu File --> New Session properties
   --> tab SQL --> section "Avoid application hangs/delays"

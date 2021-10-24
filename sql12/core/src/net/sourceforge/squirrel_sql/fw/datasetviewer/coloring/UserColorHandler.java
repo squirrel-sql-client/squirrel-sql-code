@@ -124,22 +124,10 @@ public class UserColorHandler
 
    public Color getBackground(int column, int viewRow, boolean isSelected)
    {
-      Color backGround;
-
-      if (isSelected)
-      {
-         backGround = _dataSetViewerTable.getSelectionBackground();
-      }
-      else
-      {
-         backGround =  _dataSetViewerTable.getBackground();
-      }
-
-
       if(0 == _colorByRow.size() && 0 == _colorByCell.size())
       {
          // A little performance
-         return backGround;
+         return null;
       }
 
       int modelRow = _dataSetViewerTable.getSortableTableModel().transformToModelRow(viewRow);
@@ -147,6 +135,8 @@ public class UserColorHandler
       _readBufferPoint.x = column;
       _readBufferPoint.y = modelRow;
       final Color cellColor = _colorByCell.get(_readBufferPoint);
+
+      Color backGround = null;
 
       if(null != cellColor)
       {
