@@ -6,6 +6,18 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Query connection pool.
+  See Session status bar and menu File --> New Session properties
+  --> tab SQL --> section "Avoid application hangs/delays"
+  Often JDBC drivers block calls to a database connection when a SQL is being executed.
+  By default a SQuirreL Session uses a single connection. That is why UI hangs may occur
+  when the database connection is accessed during SQL execution. To avoid such hangs
+  SQuirreL now allows a 'query connection pool' of additional connections
+  which are used for SQLs executed from within the SQL editor only.
+  Furthermore the pool allows parallel SQL execution even if the connection blocks during execution.
+  Note: To keep a Session from blocking itself the pool is switched off when autocommit is switched off.
+
+
 New Plugin for the Intersystem Cache database. The Plugin adds a new toolbar button to
   show statistics and query plan for an SQL query.
   Thanks to Martin Weissenborn for the Cache specific requirements
