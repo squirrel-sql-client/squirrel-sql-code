@@ -31,7 +31,7 @@ public class SessionConnectionPool
 
    private final SQLConnection _masterConnection;
    private final PropertyChangeListener _propertyChangeListener;
-   private SessionProperties _sessionProperties;
+   private final SessionProperties _sessionProperties;
    private final ISQLAlias _sqlAlias;
    private final String _userName;
    private final String _password;

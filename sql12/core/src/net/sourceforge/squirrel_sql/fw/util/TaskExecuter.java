@@ -83,7 +83,7 @@ class TaskExecuter implements Runnable
 				}
 				catch (Throwable th)
 				{
-					_callback.showMessage(th);
+					_callback.showErrorMessage(th);
 				}
 			}
 		}

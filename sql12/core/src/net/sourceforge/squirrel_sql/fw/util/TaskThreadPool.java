@@ -20,15 +20,14 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JFrame;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TaskThreadPool
 {
@@ -143,24 +142,10 @@ public class TaskThreadPool
 			return null;
 		}
 
-		public void showMessage(final Throwable th)
+		public void showErrorMessage(final Throwable th)
 		{
          s_log.error("Error", th);
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               //i18n[TaskThreadPool.errorDuringTaskExecMsg=Error occurred during task execution:]
-               StringBuffer msg = 
-                   new StringBuffer(
-                       s_stringMgr.getString(
-                                      "TaskThreadPool.errorDuringTaskExecMsg"));
-               msg.append("\n");
-               msg.append(th.getMessage());
-               JOptionPane.showMessageDialog(_parentForMessages, msg.toString());
-               throw new RuntimeException(th);
-            }
-         });
+			Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("TaskThreadPool.errorDuringTaskExecMsg"), th);
 		}
 	}
 }

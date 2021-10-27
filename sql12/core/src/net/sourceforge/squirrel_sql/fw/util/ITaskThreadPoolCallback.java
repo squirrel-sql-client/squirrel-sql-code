@@ -25,12 +25,14 @@ package net.sourceforge.squirrel_sql.fw.util;
  * Callback class for <TT>TaskThreadPool</TT>. Allows
  * <TT>TaskExecuter</TT> objects to make calls on the thread pool
  */
-interface ITaskThreadPoolCallback {
-	void incrementFreeThreadCount();
-	void decrementFreeThreadCount();
+interface ITaskThreadPoolCallback
+{
+   void incrementFreeThreadCount();
 
-	Runnable nextTask();
+   void decrementFreeThreadCount();
 
-	void showMessage(Throwable th);
+   Runnable nextTask();
+
+   void showErrorMessage(Throwable th);
 }
 

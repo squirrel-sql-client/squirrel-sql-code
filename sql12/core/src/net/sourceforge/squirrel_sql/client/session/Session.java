@@ -436,19 +436,30 @@ class Session implements ISession
     */
    public ISQLConnection getSQLConnection()
    {
+      checkConnectionPool();
       return _sessionConnectionPool.getMasterSQLConnection();
    }
 
    @Override
    public ISQLConnection checkOutUserQuerySQLConnection()
    {
+      checkConnectionPool();
       return _sessionConnectionPool.checkOutUserQuerySQLConnection();
    }
 
    @Override
    public void returnUserQuerySQLConnection(ISQLConnection conn)
    {
+      checkConnectionPool();
       _sessionConnectionPool.returnUserQuerySQLConnection(conn);
+   }
+
+   private void checkConnectionPool()
+   {
+      if(null == _sessionConnectionPool)
+      {
+         throw new IllegalStateException("No ConnectionPool instance. This may happen when reconnect (Ctrl+T) failed.");
+      }
    }
 
    /**
@@ -589,11 +600,18 @@ class Session implements ISession
 
       try
       {
-         connState.saveState(_sessionConnectionPool.getMasterSQLConnection(), getProperties(), _msgHandler, _sessionSheet.getSelectedCatalogFromCatalogsComboBox());
+         if(null != _sessionConnectionPool)
+         {
+            connState.saveState(_sessionConnectionPool.getMasterSQLConnection(), getProperties(), _msgHandler, _sessionSheet.getSelectedCatalogFromCatalogsComboBox());
+         }
+         else
+         {
+            connState.saveState(null, getProperties(), _msgHandler, _sessionSheet.getSelectedCatalogFromCatalogsComboBox());
+         }
       }
       catch (Exception e)
       {
-         s_log.error(e);
+         s_log.error("Failed to save connection state", e);
       }
 
       final OpenConnectionCommand cmd = new OpenConnectionCommand(_alias, _user, _password, connState.getConnectionProperties(), reconnectInfo);
@@ -650,12 +668,23 @@ class Session implements ISession
 
 
          final SQLConnection conn = cmd.getSQLConnection();
-         if (connState != null)
+         try
          {
-            getProperties().setAutoCommit(connState.getAutoCommit());
+            if (connState != null)
+            {
+               connState.restoreState(conn, _msgHandler);
+            }
+         }
+         finally
+         {
+            _sessionConnectionPool = createConnectionPool(conn);
          }
 
-         _sessionConnectionPool = createConnectionPool(conn);
+         if (connState != null)
+         {
+            // Do this after _sessionConnectionPool is initialized because it accesses the pool in SetSessionAutoCommitTask
+            _props.setAutoCommit(connState.getAutoCommit());
+         }
 
          final String msg = s_stringMgr.getString("Session.reconn", _alias.getName());
          _msgHandler.showMessage(msg);
