@@ -24,6 +24,7 @@ public class ColoringService
    private DataSetViewerTable _dataSetViewerTable;
    private FindColorHandler _findColorHandler;
    private MarkDuplicatesHandler _markDuplicatesHandler;
+   private NullValueColorHandler _nullValueColorHandler;
    private ColoringCallback _coloringCallback;
 
    public ColoringService(DataSetViewerTable dataSetViewerTable)
@@ -32,6 +33,7 @@ public class ColoringService
       _userColorHandler = new UserColorHandler(dataSetViewerTable);
       _findColorHandler = new FindColorHandler();
       _markDuplicatesHandler = new MarkDuplicatesHandler(dataSetViewerTable);
+      _nullValueColorHandler = new NullValueColorHandler(_dataSetViewerTable);
    }
 
    public void colorCell(CellRenderer cellRenderer, IDataTypeComponent dataTypeObject, JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
@@ -57,9 +59,9 @@ public class ColoringService
       }
       else if(null == value)
       {
-         if(false == isSelected)
+         if(false == isSelected && _nullValueColorHandler.isColorNullValues())
          {
-            customBackground = SquirrelConstants.NULL_COLOR;
+            customBackground = _nullValueColorHandler.getNullValueColor();
          }
       }
 

@@ -77,7 +77,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
 
    public void init(IDataSetUpdateableModel updateableModel, int listSelectionMode, DataModelImplementationDetails dataModelImplementationDetails, ISession session)
    {
-      if (null != dataModelImplementationDetails)
+		if (null != dataModelImplementationDetails)
       {
          _dataModelImplementationDetails = dataModelImplementationDetails;
       }
@@ -87,14 +87,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
       _selectionHandler = new DataSetViewerTableListSelectionHandler(_table);
       _updateableModel = updateableModel;
 
-      _table.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-      {
-         @Override
-         public void valueChanged(ListSelectionEvent e)
-         {
-            onSelectionChanged();
-         }
-      });
+      _table.getSelectionModel().addListSelectionListener(e -> onSelectionChanged());
    }
 
    private void onSelectionChanged()
@@ -576,7 +569,6 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination implem
    public void disableContinueRead()
    {
       _continueReadHandler.disableContinueRead();
-
    }
 
 }

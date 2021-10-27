@@ -38,6 +38,7 @@ public final class DataSetViewerTable extends JTable
 
 
    private DataSetViewerTablePanel _dataSetViewerTablePanel;
+   private ISession _session;
    private final int _multiplier;
    private static final String data = "THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG";
 
@@ -48,13 +49,14 @@ public final class DataSetViewerTable extends JTable
    private ButtonTableHeader _tableHeader = new ButtonTableHeader();
 
 
-   private ColoringService _coloringService = new ColoringService(this);
+   private ColoringService _coloringService;
 
 
    DataSetViewerTable(DataSetViewerTablePanel dataSetViewerTablePanel, IDataSetViewAccess dataSetViewAccess, IDataSetUpdateableModel updateableObject, int listSelectionMode, ISession session)
    {
       super(new SortableTableModel(new DataSetViewerTableModel(dataSetViewerTablePanel)));
       _dataSetViewerTablePanel = dataSetViewerTablePanel;
+      _session = session;
 
       _multiplier = getFontMetrics(getFont()).stringWidth(data) / data.length();
       setRowHeight(getFontMetrics(getFont()).getHeight());
@@ -74,14 +76,9 @@ public final class DataSetViewerTable extends JTable
       // just in case table is editable, call dataSetViewAccess to set up cell editors
       _dataSetViewerTablePanel.setCellEditors(this);
 
-      /*
-       * TODO: When 1.4 is the earliest version supported, add the following line:
-       *		setSurrendersFocusOnKeystroke(true);
-       * This should help handle some problems with navigation using tab & return
-       * to move through cells.
-       */
 
-
+      // Do in the end of constructor as we pass this as parameter.
+      _coloringService = new ColoringService(this);
    }
 
 
@@ -452,4 +449,8 @@ public final class DataSetViewerTable extends JTable
       return ret;
    }
 
+   public ISession getSessionOrNull()
+   {
+      return _session;
+   }
 }

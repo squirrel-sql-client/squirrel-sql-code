@@ -6,7 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
-#603 NULL values are colored in light green.
+#603 NULL values can be colored.
+  To change or switch of NULL value coloring
+  go to menu File --> New Session Properties --> bottom of tab General.
 
 Query connection pool.
   See Session status bar and menu File --> New Session properties

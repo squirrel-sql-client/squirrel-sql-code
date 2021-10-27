@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
+import java.awt.Color;
 import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
@@ -39,7 +40,6 @@ import java.io.Serializable;
  */
 public class SessionProperties implements Cloneable, Serializable, ISessionProperties
 {
-
    public interface IDataSetDestinations
    {
       String TEXT = DataSetViewerTextPanel.class.getName();
@@ -103,6 +103,8 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String SQL_FETCH_SIZE = "sqlFetchSize";
       String ALLOW_CTRL_B_JUMP_TO_OBJECT_TREE = "AllowCtrlBJumpToObjectTree";
       String ALLOW_CTRL_MOUSE_CLICK_JUMP_TO_OBJECT_TREE = "AllowCtrlMouseClickJumpToObjectTree";
+      String NULL_VALUE_COLOR_RGB = "nullValueColorRGB";
+      String COLOR_NULL_VALUES = "colorNullValues";
    }
 
    private static final FontInfo DEFAULT_FONT_INFO = new FontInfo(new Font("Monospaced", 0, 12));
@@ -287,17 +289,13 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
 
     private boolean _allowCtrlMouseClickJumpToObjectTree = true;
 
-   /**
-    * Default ctor.
-    */
+   private boolean _colorNullValues = true;
+   private int _nullValueColorRGB = new Color(234, 255, 234).getRGB();
+
    public SessionProperties()
    {
-      super();
    }
 
-   /**
-    * Return a copy of this object.
-    */
    @Override
    public Object clone()
    {
@@ -988,9 +986,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       {
          final int oldValue = _sqlExecutionTabPlacement;
          _sqlExecutionTabPlacement = value;
-         getPropertyChangeReporter().firePropertyChange(
-            IPropertyNames.SQL_EXECUTION_TAB_PLACEMENT,
-            oldValue, _sqlExecutionTabPlacement);
+         getPropertyChangeReporter().firePropertyChange( IPropertyNames.SQL_EXECUTION_TAB_PLACEMENT, oldValue, _sqlExecutionTabPlacement);
       }
    }
 
@@ -1018,9 +1014,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
 
          final int oldValue = _sqlResultsTabPlacement;
          _sqlResultsTabPlacement = value;
-         getPropertyChangeReporter().firePropertyChange(
-            IPropertyNames.SQL_RESULTS_TAB_PLACEMENT,
-            oldValue, _sqlResultsTabPlacement);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.SQL_RESULTS_TAB_PLACEMENT, oldValue, _sqlResultsTabPlacement);
       }
    }
 
@@ -1062,8 +1056,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    {
       final String oldValue = _catalogFilterInclude;
       _catalogFilterInclude = data;
-      getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG_FILTER_INCLUDE,
-                                    oldValue, _catalogFilterInclude);
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG_FILTER_INCLUDE, oldValue, _catalogFilterInclude);
    }
 
    /**
@@ -1153,8 +1146,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    {
       final String oldValue = _catalogFilterExclude;
       _catalogFilterExclude = data;
-      getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG_FILTER_EXCLUDE,
-                                    oldValue, _catalogFilterExclude);
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG_FILTER_EXCLUDE, oldValue, _catalogFilterExclude);
    }
 
    /**
@@ -1164,10 +1156,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    {
       final String oldValue = _schemaFilterExclude;
       _schemaFilterExclude = data;
-      getPropertyChangeReporter().firePropertyChange(
-         IPropertyNames.SCHEMA_FILTER_EXCLUDE,
-         oldValue,
-         _schemaFilterExclude);
+      getPropertyChangeReporter().firePropertyChange( IPropertyNames.SCHEMA_FILTER_EXCLUDE, oldValue, _schemaFilterExclude);
    }
 
    public synchronized void setTableTypeFilterExclude(String data)
@@ -1229,9 +1218,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    {
       final boolean oldValue = _showResultsMetaData;
       _showResultsMetaData = data;
-      getPropertyChangeReporter().firePropertyChange(
-                     IPropertyNames.SHOW_RESULTS_META_DATA,
-                     oldValue, _showResultsMetaData);
+      getPropertyChangeReporter().firePropertyChange( IPropertyNames.SHOW_RESULTS_META_DATA, oldValue, _showResultsMetaData);
    }
 
    /**
@@ -1285,4 +1272,27 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
         _allowCtrlMouseClickJumpToObjectTree = allowCtrlMouseClickJumpToObjectTree;
     }
 
+   public void setNullValueColorRGB(int data)
+   {
+      final int oldValue = _nullValueColorRGB;
+      _nullValueColorRGB = data;
+      getPropertyChangeReporter().firePropertyChange( IPropertyNames.NULL_VALUE_COLOR_RGB, oldValue, _nullValueColorRGB);
+   }
+
+   public int getNullValueColorRGB()
+   {
+      return _nullValueColorRGB;
+   }
+
+   public boolean isColorNullValues()
+   {
+      return _colorNullValues;
+   }
+
+   public void setColorNullValues(boolean data)
+   {
+      final boolean oldValue = _colorNullValues;
+      _colorNullValues = data;
+      getPropertyChangeReporter().firePropertyChange( IPropertyNames.COLOR_NULL_VALUES, oldValue, _colorNullValues);
+   }
 }

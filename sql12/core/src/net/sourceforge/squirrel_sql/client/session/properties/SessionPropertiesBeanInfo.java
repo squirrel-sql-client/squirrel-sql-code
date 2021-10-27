@@ -150,7 +150,13 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
                         "getAllowCtrlBJumpToObjectTree", "setAllowCtrlBJumpToObjectTree"),
 
                   new PropertyDescriptor(IPropNames.ALLOW_CTRL_MOUSE_CLICK_JUMP_TO_OBJECT_TREE, SessionProperties.class,
-                        "getAllowCtrlMouseClickJumpToObjectTree", "setAllowCtrlMouseClickJumpToObjectTree")
+                        "getAllowCtrlMouseClickJumpToObjectTree", "setAllowCtrlMouseClickJumpToObjectTree"),
+
+                  new PropertyDescriptor(IPropNames.NULL_VALUE_COLOR_RGB, SessionProperties.class,
+                        "getNullValueColorRGB", "setNullValueColorRGB"),
+
+                  new PropertyDescriptor(IPropNames.COLOR_NULL_VALUES, SessionProperties.class,
+                        "isColorNullValues", "setColorNullValues")
             };
 
 			return result;
