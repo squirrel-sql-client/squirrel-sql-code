@@ -450,8 +450,11 @@ class Session implements ISession
    @Override
    public void returnUserQuerySQLConnection(ISQLConnection conn)
    {
-      checkConnectionPool();
-      _sessionConnectionPool.returnUserQuerySQLConnection(conn);
+      // During reconnnect connections of pools that were closed may be returned. We ignore those.
+      if(null != _sessionConnectionPool)
+      {
+         _sessionConnectionPool.returnUserQuerySQLConnection(conn);
+      }
    }
 
    private void checkConnectionPool()

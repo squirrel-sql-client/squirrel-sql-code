@@ -72,6 +72,9 @@ public class SessionConnectionPoolStatusBarCtrl extends JComponent
          public void reconnected(SessionEvent evt)
          {
             evt.getSession().getConnectionPool().setPoolChangeListener(() -> onPoolChanged());
+
+            // Update the display immediately after reconnect.
+            onPoolChanged();
          }
       };
 

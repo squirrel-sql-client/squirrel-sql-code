@@ -148,16 +148,17 @@ public class SessionConnectionPool
 
    public synchronized void returnUserQuerySQLConnection(ISQLConnection conn)
    {
-      try
+      if(_masterConnection != conn)
       {
-         if(_masterConnection != conn)
+         // When a connection is returned after reconnect it won't be in the new pool.
+         // We just ignore them here.
+         // Such a connection should be closed or at least it should have been tried to close.
+         if(_querySQLConnections_checkOutCount.containsKey(conn))
          {
             _querySQLConnections_checkOutCount.put(conn, Math.max(_querySQLConnections_checkOutCount.get(conn) - 1, 0));
+            // Fire when a regular pool connection was returned only.
+            fireChanged();
          }
-      }
-      finally
-      {
-         fireChanged();
       }
    }
 

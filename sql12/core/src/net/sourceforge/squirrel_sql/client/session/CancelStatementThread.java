@@ -61,9 +61,10 @@ public class CancelStatementThread extends Thread
 
       try
       {
-          if (_stmtWrapper != null) {
-              _stmtWrapper.cancel();
-          }
+         if(_stmtWrapper != null)
+         {
+            _stmtWrapper.cancel();
+         }
          cancelSucceeded = true;
       }
       catch (Throwable t)
