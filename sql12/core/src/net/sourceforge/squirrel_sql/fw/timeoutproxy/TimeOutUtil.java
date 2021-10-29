@@ -14,6 +14,8 @@ public class TimeOutUtil
 {
    private static final ILogger s_log = LoggerController.createLogger(TimeOutUtil.class);
 
+   public static final int STD_INVOKE_WITH_TIMEOUT_MILLIS = 300;
+
 
    public static long getMetaDataLoadingTimeOutOfActiveSession()
    {
@@ -32,7 +34,16 @@ public class TimeOutUtil
       try
       {
          final Future future = StaticTimeOutThreadPool.submit((Callable) () -> onSubmit(timeoutableInvoker));
-         future.get(getMetaDataLoadingTimeOutOfActiveSession(), TimeUnit.MILLISECONDS);
+         final long metaDataLoadingTimeOutOfActiveSession = getMetaDataLoadingTimeOutOfActiveSession();
+
+         if(0 == metaDataLoadingTimeOutOfActiveSession)
+         {
+            future.get(STD_INVOKE_WITH_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+         }
+         else
+         {
+            future.get(metaDataLoadingTimeOutOfActiveSession, TimeUnit.MILLISECONDS);
+         }
       }
       catch (TimeoutException e)
       {
@@ -51,7 +62,17 @@ public class TimeOutUtil
       try
       {
          final Future<T> future = StaticTimeOutThreadPool.submit(() -> timeoutableCaller.call());
-         return future.get(getMetaDataLoadingTimeOutOfActiveSession(), TimeUnit.MILLISECONDS);
+
+         final long metaDataLoadingTimeOutOfActiveSession = getMetaDataLoadingTimeOutOfActiveSession();
+
+         if(0 == metaDataLoadingTimeOutOfActiveSession)
+         {
+            return future.get(STD_INVOKE_WITH_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+         }
+         else
+         {
+            return future.get(metaDataLoadingTimeOutOfActiveSession, TimeUnit.MILLISECONDS);
+         }
       }
       catch (TimeoutException e)
       {

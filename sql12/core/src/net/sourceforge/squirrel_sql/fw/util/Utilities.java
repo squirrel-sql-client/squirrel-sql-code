@@ -17,6 +17,11 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,18 +34,8 @@ import java.io.StringWriter;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * General purpose utilities functions.
@@ -529,28 +524,13 @@ public class Utilities
       return sqlEx + ", SQL State: " + sqlEx.getSQLState() + ", Error Code: " + sqlEx.getErrorCode();
    }
 
-   public static <T> T callWithTimeOut(Callable<T> callable) throws TimeoutException
+   public static <T> T callWithTimeout(Callable<T> callable)
    {
-      return callWithTimeOut(callable, 300);
+      return TimeOutUtil.callWithTimeout(() -> callable.call());
    }
 
-   public static <T> T callWithTimeOut(Callable<T> callable, int timeoutMilliSeconds) throws TimeoutException
+   public static void invokeWithTimeout(Runnable toInvoke)
    {
-      try
-      {
-         ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-         Future<T> future = executorService.submit(callable);
-
-         return future.get(timeoutMilliSeconds, TimeUnit.MILLISECONDS);
-      }
-      catch (TimeoutException te)
-      {
-         throw te;
-      }
-      catch (Exception e)
-      {
-         throw Utilities.wrapRuntime(e);
-      }
+      TimeOutUtil.invokeWithTimeout(() -> toInvoke.run());
    }
 }

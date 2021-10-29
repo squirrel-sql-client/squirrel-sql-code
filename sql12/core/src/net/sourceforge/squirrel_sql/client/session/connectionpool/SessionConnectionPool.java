@@ -230,8 +230,15 @@ public class SessionConnectionPool
 
    public void close()
    {
-      _sessionProperties.removePropertyChangeListener(_propertyChangeListener);
-      getAllSQLConnections().forEach(con -> closeConnection(con));
+      try
+      {
+         _sessionProperties.removePropertyChangeListener(_propertyChangeListener);
+         TimeOutUtil.invokeWithTimeout(() -> getAllSQLConnections().forEach(con -> closeConnection(con)));
+      }
+      catch (Throwable t)
+      {
+         s_log.error("Error closing connections of connection pool", t);
+      }
    }
 
    private void closeConnection(ISQLConnection con)
@@ -272,7 +279,7 @@ public class SessionConnectionPool
          s_log.error("Setting autoCommit failed", e);
          try
          {
-            _autoCommit = TimeOutUtil.callWithTimeout(() -> _masterConnection.getAutoCommit());
+            _autoCommit = Utilities.callWithTimeout(() -> _masterConnection.getAutoCommit());
          }
          catch (Exception ex)
          {

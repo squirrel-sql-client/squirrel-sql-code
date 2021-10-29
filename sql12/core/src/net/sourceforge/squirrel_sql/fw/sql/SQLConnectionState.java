@@ -26,8 +26,6 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.util.concurrent.TimeoutException;
-
 
 /**
  * This class will save the state of an <TT>SQLConnection</TT> and
@@ -61,7 +59,7 @@ public class SQLConnectionState
 			{
 				// The user may be reconnecting because the current connection is dead or unstable.
 				// By callWithTimeOut() we make sure we don't get stuck in the calling getTransactionIsolation().
-				_transIsolation = Utilities.callWithTimeOut(() -> con.getTransactionIsolation());
+				_transIsolation = Utilities.callWithTimeout(() -> con.getTransactionIsolation());
 			}
 		}
 		catch (Exception ex)
@@ -84,7 +82,7 @@ public class SQLConnectionState
 
 			if(null != con)
 			{
-				_catalog = Utilities.callWithTimeOut(() -> con.getCatalog());
+				_catalog = Utilities.callWithTimeout(() -> con.getCatalog());
 			}
 		}
 		catch (Exception ex)
@@ -109,7 +107,7 @@ public class SQLConnectionState
 
          if(null != con)
 			{
-				_autoCommit = Utilities.callWithTimeOut(() -> con.getAutoCommit());
+				_autoCommit = Utilities.callWithTimeout(() -> con.getAutoCommit());
 			}
 		}
 		catch (Exception ex)
@@ -126,7 +124,7 @@ public class SQLConnectionState
 
 			if(null != con)
 			{
-				_connProps = Utilities.callWithTimeOut(() -> con.getConnectionProperties());
+				_connProps = Utilities.callWithTimeout(() -> con.getConnectionProperties());
 			}
 		}
 		catch (Exception e)
