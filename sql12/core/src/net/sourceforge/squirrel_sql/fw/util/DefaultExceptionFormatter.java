@@ -18,13 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.fw.util;
 
-import java.sql.DataTruncation;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-
 import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.sql.DataTruncation;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
 
 /**
  * The default implementation of ExceptionFormatter which is used by Session's
@@ -48,36 +48,47 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
     /**
      * @see net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter#format(java.lang.Throwable)
      */
-    public String format(Throwable th) {
-        if (th == null) {
+    public String format(Throwable th)
+    {
+        if(th == null)
+        {
             throw new IllegalArgumentException("format: th cannot be null");
         }
         StringBuilder result = new StringBuilder();
-        
+
         String postError = "";
         Throwable cause = th;
-        if (th instanceof SQLExecutionException) {
-            postError = ((SQLExecutionException)th).getPostError();
-            cause = th.getCause();
+        if(th instanceof SQLExecutionException)
+        {
+            postError = ((SQLExecutionException) th).getPostError();
+            cause = Utilities.getDeepestThrowable(th);
         }
-        
+
         String customMessage = null;
-        
-        if (customFormatter != null && customFormatter.formatsException(cause)) {
-            try {
+
+        if(customFormatter != null && customFormatter.formatsException(cause))
+        {
+            try
+            {
                 customMessage = customFormatter.format(cause);
-            } catch (Exception e) {
-                s_log.error( 
-                    "Exception occurred while formatting:  "+e.getMessage(), e);
             }
-        } 
-        
-        if (customMessage != null) {
+            catch (Exception e)
+            {
+                s_log.error(
+                      "Exception occurred while formatting:  " + e.getMessage(), e);
+            }
+        }
+
+        if(customMessage != null)
+        {
             result.append(customMessage);
-        } else {
+        }
+        else
+        {
             result.append(defaultFormatSQLException(cause));
         }
-        if (postError != null && !"".equals(postError)) {
+        if(postError != null && !"".equals(postError))
+        {
             result.append("\n");
             result.append(postError);
         }
@@ -85,15 +96,23 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
         return result.toString();
     }
 
-    public String defaultFormatSQLException(Throwable cause) {
+    public String defaultFormatSQLException(Throwable cause)
+    {
         StringBuilder result = new StringBuilder();
-        if (cause instanceof DataTruncation) {
-            result.append(getDataTruncationMessage((DataTruncation)cause));
-        } else if (cause instanceof SQLWarning){
-            result.append(getSQLWarningMessage((SQLWarning)cause));
-        } else if (cause instanceof SQLException) {
-            result.append(getSQLExceptionMessage((SQLException)cause));
-        } else {
+        if(cause instanceof DataTruncation)
+        {
+            result.append(getDataTruncationMessage((DataTruncation) cause));
+        }
+        else if(cause instanceof SQLWarning)
+        {
+            result.append(getSQLWarningMessage((SQLWarning) cause));
+        }
+        else if(cause instanceof SQLException)
+        {
+            result.append(getSQLExceptionMessage((SQLException) cause));
+        }
+        else
+        {
             result.append(cause.toString());
         }
         return result.toString();

@@ -53,6 +53,7 @@ import net.sourceforge.squirrel_sql.fw.timeoutproxy.MetaDataTimeOutProxyFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -112,12 +113,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	private boolean supportsSuperTables = true;
 
 	/**
-	 * ctor specifying the connection that we are retrieving metadata for.
-	 * 
-	 * @param conn
-	 *           Connection to database.
-	 * @throws IllegalArgumentException
-	 *            Thrown if null SQLConnection passed.
+	 * Take care objects of this class are used locally enough as they are not aware of reconnects (Ctrl+T).
 	 */
 	public SQLDatabaseMetaData(ISQLConnection conn)
 	{
@@ -1895,7 +1891,13 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 */
 	private DatabaseMetaData privateGetJDBCMetaData() throws SQLException
 	{
-		return MetaDataTimeOutProxyFactory.wrap(() -> _conn.getConnection().getMetaData());
+		final Connection connection = _conn.getConnection();
+		if(null == connection)
+		{
+			throw new IllegalStateException("Failed to read database meta data. Connection may have been closed by reconnect (Ctrl+T)");
+		}
+
+		return MetaDataTimeOutProxyFactory.wrap(() -> connection.getMetaData());
 	}
 
 	/**

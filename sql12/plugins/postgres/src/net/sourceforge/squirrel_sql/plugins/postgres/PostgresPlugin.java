@@ -36,9 +36,7 @@ import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaDataFactory;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaDataFactory;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -67,12 +65,6 @@ import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlXmlTypeData
 
 import javax.swing.JMenu;
 import javax.swing.SwingUtilities;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The main controller class for the Postgres plugin.
@@ -92,8 +84,6 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
         _resourcesFactory = resourcesFactory;
     }
 
-    /** Logger for this class. */
-    @SuppressWarnings("unused")
     private final static ILogger s_log = LoggerController.createLogger(PostgresPlugin.class);
 
     /** Internationalized strings for this class. */
@@ -360,52 +350,9 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
     }
 
     @Override
-    public SQLDatabaseMetaData fetchMeta(final ISQLConnection conn) {
-        return new SQLDatabaseMetaData(conn) {
+    public SQLDatabaseMetaData fetchMeta(final ISQLConnection conn)
+    {
+        return new PostgresSQLDatabaseMetaData(conn);
+    }
 
-            private Map<String, Boolean> oidSupportForTable = new HashMap<String, Boolean>();
-
-            @Override
-            public String getOptionalPseudoColumnForDataSelection(final ITableInfo ti) {
-                Boolean supports = oidSupportForTable.get(ti.getQualifiedName());
-                if (supports == null) {
-                    supports = false;
-                    try {
-                        ResultSet rs = conn.createStatement().executeQuery(
-                                "SELECT TRUE FROM   pg_attribute " +
-                                "WHERE  attrelid = '" + ti.getQualifiedName() + "'::regclass " +
-                                "AND    attname = 'oid' AND NOT attisdropped"
-                        );
-                        if (rs.next()) {
-                            supports = true;
-                        }
-                    }catch (SQLException sqlE) {
-                        s_log.error("During oid existance checking", sqlE);
-                    }
-                    oidSupportForTable.put(ti.getQualifiedName(), supports);
-                }
-                return supports ? "oid" : null;
-            }
-
-            @Override
-            public synchronized String[] getDataTypesSimpleNames() throws SQLException {
-                String sql = "SELECT t.typname FROM pg_catalog.pg_type t"
-                    + " JOIN pg_catalog.pg_namespace n ON (t.typnamespace = n.oid) " + " WHERE n.nspname != 'pg_toast' "
-                    + " AND typelem = 0 AND typrelid = 0";
-
-                List<String> retn = new ArrayList<String>();
-                ResultSet rs = conn.createStatement().executeQuery(sql);
-                try {
-                    while (rs.next()) {
-                        retn.add(rs.getString(1));
-                    }
-                } finally {
-                    SQLUtilities.closeResultSet(rs);
-                }
-
-                return retn.toArray(new String[retn.size()]);
-            }
-
-        };
-   }
 }

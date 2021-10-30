@@ -8,10 +8,12 @@ import java.util.Map;
 
 public class SQLDatabaseMetaDataFactory {
 	
-	private static Map<DialectType, ISQLDatabaseMetaDataFactory> registeredOverrides = new HashMap<DialectType, ISQLDatabaseMetaDataFactory>();
+	private static Map<DialectType, ISQLDatabaseMetaDataFactory> registeredOverrides = new HashMap<>();
 
-	public static SQLDatabaseMetaData fetchMeta(DialectType type, ISQLConnection conn) {
-		if (registeredOverrides.containsKey(type)) {
+	public static SQLDatabaseMetaData fetchMeta(DialectType type, ISQLConnection conn)
+	{
+		if(registeredOverrides.containsKey(type))
+		{
 			return registeredOverrides.get(type).fetchMeta(conn);
 		}
 		return new SQLDatabaseMetaData(conn);

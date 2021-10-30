@@ -233,6 +233,8 @@ public class SessionConnectionPool
       try
       {
          _sessionProperties.removePropertyChangeListener(_propertyChangeListener);
+
+         // In case the pool is big we timeout this call itself.
          TimeOutUtil.invokeWithTimeout(() -> getAllSQLConnections().forEach(con -> closeConnection(con)));
       }
       catch (Throwable t)
@@ -243,14 +245,8 @@ public class SessionConnectionPool
 
    private void closeConnection(ISQLConnection con)
    {
-      try
-      {
-         TimeOutUtil.invokeWithTimeout(() -> con.close());
-      }
-      catch (Throwable t)
-      {
-         s_log.error("Error closing connection", t);
-      }
+      // ISQLConnection.close() has decent timeout and error handling itself.
+      con.close();
    }
 
    public synchronized Set<ISQLConnection> getAllSQLConnections()

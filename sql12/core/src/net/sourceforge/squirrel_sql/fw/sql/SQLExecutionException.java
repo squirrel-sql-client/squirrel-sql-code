@@ -18,31 +18,35 @@
  */
 package net.sourceforge.squirrel_sql.fw.sql;
 
-public class SQLExecutionException extends Throwable {
-    
-    private static final long serialVersionUID = -3594099581993936333L;
-    
-    /** Further explanation or detail about the cause */
-    private String postError = null;
-    
-    public SQLExecutionException(Throwable cause, String postError) {
-        super(cause);
-        this.postError = postError;
-    }
+public class SQLExecutionException extends Throwable
+{
 
-    /**
-     * @param postError the postError to set
-     */
-    public void setPostError(String postError) {
-        this.postError = postError;
-    }
+   /**
+    * Further explanation or detail about the cause
+    */
+   private String postError = null;
 
-    /**
-     * @return the postError
-     */
-    public String getPostError() {
-        return postError;
-    }
-    
-    
+   public SQLExecutionException(Throwable cause, String postError)
+   {
+      super(cause);
+      this.postError = postError;
+   }
+
+   /**
+    * @param postError the postError to set
+    */
+   public void setPostError(String postError)
+   {
+      this.postError = postError;
+   }
+
+   /**
+    * @return the postError
+    */
+   public String getPostError()
+   {
+      return postError;
+   }
+
+
 }

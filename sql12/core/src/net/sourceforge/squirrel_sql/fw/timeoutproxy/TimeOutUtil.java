@@ -29,11 +29,16 @@ public class TimeOutUtil
       return metaDataLoadingTimeOut;
    }
 
+   /**
+    * If a user defined meta data loading timeout exists this is used
+    * else {@link #STD_INVOKE_WITH_TIMEOUT_MILLIS} is used.
+    */
    public static void invokeWithTimeout(TimeOutableInvoker timeoutableInvoker)
    {
+      boolean usedMetaDataLoadingTimeout = false;
       try
       {
-         final Future future = StaticTimeOutThreadPool.submit((Callable) () -> onSubmit(timeoutableInvoker));
+         final Future future = StaticTimeOutThreadPool.submit((Callable) () -> runnableToCallableWrapperFunction(timeoutableInvoker));
          final long metaDataLoadingTimeOutOfActiveSession = getMetaDataLoadingTimeOutOfActiveSession();
 
          if(0 == metaDataLoadingTimeOutOfActiveSession)
@@ -47,9 +52,16 @@ public class TimeOutUtil
       }
       catch (TimeoutException e)
       {
-         final String msg = "Timeout as configured in menu File --> New Session Properties --> tab SQL --> section \"Meta data loading\" occured.";
-         s_log.error(msg);
-         throw new RuntimeException(msg, e);
+         if(usedMetaDataLoadingTimeout)
+         {
+            final String msg = "Timeout as configured in menu File --> New Session Properties --> tab SQL --> section \"Meta data loading\" occured.";
+            s_log.error(msg);
+            throw new RuntimeException(msg, e);
+         }
+         else
+         {
+            throw Utilities.wrapRuntime(e);
+         }
       }
       catch (Exception e)
       {
@@ -57,12 +69,16 @@ public class TimeOutUtil
       }
    }
 
+   /**
+    * If a user defined meta data loading timeout exists this is used
+    * else {@link #STD_INVOKE_WITH_TIMEOUT_MILLIS} is used.
+    */
    public static <T> T callWithTimeout(TimeOutableCaller<T> timeoutableCaller)
    {
+      boolean usedMetaDataLoadingTimeout = false;
       try
       {
          final Future<T> future = StaticTimeOutThreadPool.submit(() -> timeoutableCaller.call());
-
          final long metaDataLoadingTimeOutOfActiveSession = getMetaDataLoadingTimeOutOfActiveSession();
 
          if(0 == metaDataLoadingTimeOutOfActiveSession)
@@ -71,14 +87,22 @@ public class TimeOutUtil
          }
          else
          {
+            usedMetaDataLoadingTimeout = true;
             return future.get(metaDataLoadingTimeOutOfActiveSession, TimeUnit.MILLISECONDS);
          }
       }
       catch (TimeoutException e)
       {
-         final String msg = "Timeout as configured in menu File --> New Session Properties --> tab SQL --> section \"Meta data loading\" occured.";
-         s_log.error(msg);
-         throw new RuntimeException(msg, e);
+         if(usedMetaDataLoadingTimeout)
+         {
+            final String msg = "Timeout as configured in menu File --> New Session Properties --> tab SQL --> section \"Meta data loading\" occured.";
+            s_log.error(msg);
+            throw new RuntimeException(msg, e);
+         }
+         else
+         {
+            throw Utilities.wrapRuntime(e);
+         }
       }
       catch (Exception e)
       {
@@ -86,7 +110,7 @@ public class TimeOutUtil
       }
    }
 
-   private static Object onSubmit(TimeOutableInvoker timeoutableInvoker)
+   private static Object runnableToCallableWrapperFunction(TimeOutableInvoker timeoutableInvoker)
    {
       try
       {
@@ -97,5 +121,17 @@ public class TimeOutUtil
       {
          throw Utilities.wrapRuntime(e);
       }
+   }
+
+   public static long getDefaultOrConfiguredTimeoutMillis()
+   {
+      final long metaDataLoadingTimeOutOfActiveSession = getMetaDataLoadingTimeOutOfActiveSession();
+
+      if(0 == metaDataLoadingTimeOutOfActiveSession)
+      {
+         return STD_INVOKE_WITH_TIMEOUT_MILLIS;
+      }
+
+      return metaDataLoadingTimeOutOfActiveSession;
    }
 }

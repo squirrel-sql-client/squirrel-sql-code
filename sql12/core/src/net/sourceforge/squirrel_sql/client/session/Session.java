@@ -457,14 +457,6 @@ class Session implements ISession
       }
    }
 
-   private void checkConnectionPool()
-   {
-      if(null == _sessionConnectionPool)
-      {
-         throw new IllegalStateException("No ConnectionPool instance. This may happen when reconnect (Ctrl+T) failed.");
-      }
-   }
-
    /**
     * @return <TT>ISQLDriver</TT> for this session.
     */
@@ -1286,6 +1278,15 @@ class Session implements ISession
    @Override
    public SessionConnectionPool getConnectionPool()
    {
+      checkConnectionPool();
       return _sessionConnectionPool;
+   }
+
+   private void checkConnectionPool()
+   {
+      if(null == _sessionConnectionPool)
+      {
+         throw new IllegalStateException("No ConnectionPool instance. This may happen when reconnect (Ctrl+T) failed.");
+      }
    }
 }

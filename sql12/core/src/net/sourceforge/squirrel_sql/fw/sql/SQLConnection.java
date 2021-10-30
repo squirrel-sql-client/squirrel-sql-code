@@ -23,9 +23,11 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang.StringUtils;
@@ -38,10 +40,6 @@ import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -111,27 +109,23 @@ public class SQLConnection implements ISQLConnection
 	 */
 	public void close()
 	{
-		int timeoutSeconds = 2;
-
       try
       {
-			ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-			Future<?> future = executorService.submit(() -> _closeIntern());
-
-         future.get(timeoutSeconds, TimeUnit.SECONDS);
-
-      }
-      catch (TimeoutException e)
-      {
-         String message =
-               "The database connection took longer than " + timeoutSeconds + " seconds to close. " +
-               "Maybe closing will succeed later but SQuirreL stops waiting to stay responsive for user interaction.";
-         s_log.error(message, e);
+			TimeOutUtil.invokeWithTimeout(() -> _closeIntern());
       }
       catch (Throwable e)
       {
-         s_log.error("Error while closing connection", e);
+			if(Utilities.getDeepestThrowable(e) instanceof TimeoutException)
+			{
+				String message =
+						"The database connection took longer than " + TimeOutUtil.getDefaultOrConfiguredTimeoutMillis() + " millis to close. " +
+						"Maybe closing will succeed later but SQuirreL stops waiting to stay responsive for user interaction.";
+				s_log.error(message, e);
+			}
+			else
+			{
+				s_log.error("Error while closing connection", e);
+			}
       }
       finally
       {

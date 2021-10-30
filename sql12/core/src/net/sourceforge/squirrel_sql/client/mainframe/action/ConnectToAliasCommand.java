@@ -44,7 +44,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.SwingUtilities;
-import java.sql.SQLException;
 
 /**
  * This command is used to start Sessions and to test connections.
@@ -329,7 +328,7 @@ public class ConnectToAliasCommand implements ICommand
 				{
 					conn.close();
 				}
-				catch (SQLException ex)
+				catch (Exception ex)
 				{
 					s_log.error("Error occurred closing connection", ex);
 				}

@@ -36,7 +36,7 @@ public interface ISQLConnection
       String CATALOG = "catalog";
    }
 
-   void close() throws SQLException;
+   void close();
 
    void commit() throws SQLException;
 
