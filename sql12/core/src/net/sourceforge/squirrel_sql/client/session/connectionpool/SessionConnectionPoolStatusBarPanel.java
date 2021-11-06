@@ -43,7 +43,9 @@ public class SessionConnectionPoolStatusBarPanel extends JPanel
       JPanel ret = new JPanel(new GridLayout(1, 2));
 
       btnState = new SmallTabButton(4);
-      btnState.setEnabled(false);
+      btnState.setFocusable(false);
+      btnState.setBorder(null);
+      btnState.setToolTipText(s_stringMgr.getString("SessionConnectionPoolStatusBarPanel.state.html.tooltip"));
       ret.add(btnState);
 
       btnConfigureConnectionPoolSize = new SmallTabButton(s_stringMgr.getString("SessionConnectionPool.configure.size"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.VIEW_DETAILS), 4);

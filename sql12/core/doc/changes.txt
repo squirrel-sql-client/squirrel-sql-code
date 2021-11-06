@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Query connection pool: Added tooltip for state colors in the connection pool's status bar.
+
 #603 NULL values can be colored.
   To change or switch off NULL value coloring
   go to menu File --> New Session Properties --> bottom of tab General.
