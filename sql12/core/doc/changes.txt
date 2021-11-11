@@ -35,6 +35,8 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Intersystem Cache Plugin bug fix: Whenever a new Session was opened another Session menu items was added.
+
 SQL result's find function -->  Color matches: "No resource found ..." message in coloring dialog's title.
 
 SQL error result tabs can be closed by click on mouse wheel.

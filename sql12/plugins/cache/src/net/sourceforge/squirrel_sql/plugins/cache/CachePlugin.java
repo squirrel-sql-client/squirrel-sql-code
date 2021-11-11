@@ -211,13 +211,11 @@ public class CachePlugin extends DefaultSessionPlugin
 		{
 			_statisticsAndQueryPlanAction = new StatisticsAndQueryPlanAction(_resources);
 			coll.add(_statisticsAndQueryPlanAction);
+
+			JMenu menu = _resources.createMenu(IMenuResourceKeys.MENU);
+			Main.getApplication().addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+			_resources.addToMenu(_statisticsAndQueryPlanAction, menu);
 		}
-
-		JMenu menu = _resources.createMenu(IMenuResourceKeys.MENU);
-		Main.getApplication().addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
-
-
-		_resources.addToMenu(_statisticsAndQueryPlanAction, menu);
 
 		session.addSeparatorToToolbar();
 		session.addToToolbar(coll.get(StatisticsAndQueryPlanAction.class));
