@@ -53,7 +53,7 @@ import java.util.Iterator;
 public class SquirrelPreferences implements Serializable
 {
 
-	public interface IPropertyNames
+   public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
       String CONFIRM_SESSION_CLOSE = "confirmSessionClose";

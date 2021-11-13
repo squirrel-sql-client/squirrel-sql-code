@@ -634,4 +634,8 @@ public class LAFRegister
 		this.fileWrapperFactory = fileWrapperFactory;
 	}
 
+	public MetalLookAndFeelController getMetalLookAndFeelController()
+	{
+		return (MetalLookAndFeelController) _lafControllers.get(MetalLookAndFeelController.METAL_LAF_CLASS_NAME);
+	}
 }

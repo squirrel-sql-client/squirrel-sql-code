@@ -1,18 +1,15 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.IApplication;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 
 public class BookmarksAccessor
 {
-
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(BookmarksAccessor.class);
-
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(BookmarksAccessor.class);
 
    private static BookmarksExternalService getService(IApplication application)
    {

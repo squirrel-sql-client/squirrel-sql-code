@@ -17,8 +17,9 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.LayoutManager;
+
 import javax.swing.JPanel;
+import java.awt.LayoutManager;
 /**
  * Base class for any LAF Controller component to be placed in the
  * Look And Feel Preferences panel.
@@ -27,9 +28,6 @@ import javax.swing.JPanel;
  */
 public abstract class BaseLAFPreferencesPanelComponent extends JPanel
 {
-
-	private static final long serialVersionUID = 1L;
-		
 	public BaseLAFPreferencesPanelComponent()
 	{
 		super();

@@ -19,11 +19,9 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.jgoodies.looks.Options;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactoryAdapter;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactoryComponentCreatedEvent;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
@@ -36,8 +34,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
+import net.sourceforge.squirrel_sql.plugins.laf.externalservice.LAFExternalService;
+import net.sourceforge.squirrel_sql.plugins.laf.externalservice.LAFExternalServiceImpl;
 
-import javax.swing.JTabbedPane;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
@@ -77,7 +76,10 @@ public class LAFPlugin extends DefaultPlugin
 	private FileWrapper _userExtraLAFFolder;
 
 	/** Cache of settings for the plugin. */
-	private final XMLObjectCache<LAFPreferences> _settingsCache = new XMLObjectCache<LAFPreferences>();
+	private final XMLObjectCache<LAFPreferences> _settingsCache = new XMLObjectCache<>();
+
+	private LAFExternalServiceImpl _lafExternalServices;
+	private LAFPreferencesTab _lafPreferencesTab;
 
 	/**
 	 * Return the internal name of this plugin.
@@ -211,6 +213,8 @@ public class LAFPlugin extends DefaultPlugin
 
 		// Update font used for status bars.
 		_lafRegister.updateStatusBarFont();
+
+		_lafExternalServices = new LAFExternalServiceImpl(this);
 	}
 
 	/**
@@ -240,8 +244,21 @@ public class LAFPlugin extends DefaultPlugin
 	 */
 	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
 	{
-		return new IGlobalPreferencesPanel[] { new LAFPreferencesTab(this, _lafRegister),
-				new LAFFontsTab(this, _lafRegister), };
+		return new IGlobalPreferencesPanel[]
+				{
+						getLafPreferncesTab(),
+						new LAFFontsTab(this, _lafRegister),
+				};
+	}
+
+	private LAFPreferencesTab getLafPreferncesTab()
+	{
+		if(null == _lafPreferencesTab)
+		{
+			_lafPreferencesTab = new LAFPreferencesTab(this, _lafRegister);
+		}
+
+		return _lafPreferencesTab;
 	}
 
 	/**
@@ -269,7 +286,7 @@ public class LAFPlugin extends DefaultPlugin
 	 * 
 	 * @return The preferences info object for this plugin.
 	 */
-	LAFPreferences getLAFPreferences()
+	public LAFPreferences getLAFPreferences()
 	{
 		return _lafPrefs;
 	}
@@ -437,18 +454,31 @@ public class LAFPlugin extends DefaultPlugin
 		}
 	}
 
-	private static class UIFactoryListener extends UIFactoryAdapter
+	public void applyMetalOcean()
 	{
-		/**
-		 * A tabbed panel object has been created.
-		 * 
-		 * @param evt
-		 *           event object.
-		 */
-		public void tabbedPaneCreated(UIFactoryComponentCreatedEvent evt)
-		{
-			final JTabbedPane pnl = (JTabbedPane) evt.getComponent();
-			pnl.putClientProperty(Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);
-		}
+		applyMetalLafWithTheme(MetalThemePreferencesUtil.DEFAULT_METAL_THEME_CLASS_NAME);
+	}
+
+	public void applyMetalCharCoal()
+	{
+		applyMetalLafWithTheme(MetalThemePreferencesUtil.CHARCOAL_THEME_CLASS_NAME);
+
+	}
+
+	private void applyMetalLafWithTheme(String metalThemeClassName)
+	{
+		_lafPrefs.setLookAndFeelClassName(MetalLookAndFeelController.METAL_LAF_CLASS_NAME);
+		getLafPreferncesTab().initialize(Main.getApplication());
+		_lafRegister.setLookAndFeel(false);
+
+		MetalLookAndFeelController metalLookAndFeelController = _lafRegister.getMetalLookAndFeelController();
+		metalLookAndFeelController.applyTheme(metalThemeClassName);
+	}
+
+
+	@Override
+	public LAFExternalService getExternalService()
+	{
+		return _lafExternalServices;
 	}
 }

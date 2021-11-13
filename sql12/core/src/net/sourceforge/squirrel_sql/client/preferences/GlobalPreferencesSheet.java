@@ -32,15 +32,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -48,7 +45,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -254,14 +250,8 @@ public class GlobalPreferencesSheet extends DialogWidget
       cursorChg.show();
       try
       {
-         final boolean isDebug = s_log.isDebugEnabled();
-         long start = 0;
          for (Iterator<IGlobalPreferencesPanel> it = _panels.iterator(); it.hasNext(); )
          {
-            if (isDebug)
-            {
-               start = System.currentTimeMillis();
-            }
             IGlobalPreferencesPanel pnl = it.next();
             try
             {
@@ -272,12 +262,6 @@ public class GlobalPreferencesSheet extends DialogWidget
                final String msg = s_stringMgr.getString("GlobalPreferencesSheet.error.saving", pnl.getTitle());
                s_log.error(msg, th);
                Main.getApplication().showErrorDialog(msg, th);
-            }
-            if (isDebug)
-            {
-               s_log.debug("Panel " + pnl.getTitle()
-                     + " applied changes in "
-                     + (System.currentTimeMillis() - start) + "ms");
             }
          }
       }

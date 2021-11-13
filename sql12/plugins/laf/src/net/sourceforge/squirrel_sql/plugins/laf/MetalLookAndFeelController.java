@@ -18,19 +18,15 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
-import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
 
 /**
  * Behaviour for the jGoodies Plastic Look and Feel. It also takes
@@ -38,24 +34,18 @@ import java.util.Vector;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class MetalLookAndFeelController extends AbstractPlasticController
+public class MetalLookAndFeelController extends AbstractPlasticController
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(MetalLookAndFeelController.class);
+	private static ILogger s_log = LoggerController.createLogger(MetalLookAndFeelController.class);
 
-	static final String METAL_LAF_CLASS_NAME = MetalLookAndFeel.class.getName();
+	public static final String METAL_LAF_CLASS_NAME = MetalLookAndFeel.class.getName();
 
 	private String[] _extraThemeClassNames = new String[0];
 
-
-
-	/** Preferences for this LAF. */
 	private MetalThemePreferences _currentThemePrefs;
 
 	private MetalTheme _defaultMetalTheme;
-   private static final String DEFAULT_METAL_THEME = "javax.swing.plaf.metal.OceanTheme";
-   private HashMap<String, MetalTheme> _themesByName = new HashMap<String, MetalTheme>();
+	private HashMap<String, MetalTheme> _themesByName = new HashMap<>();
 
    /**
 	 * Ctor specifying the Look and Feel plugin and register.
@@ -63,68 +53,36 @@ class MetalLookAndFeelController extends AbstractPlasticController
 	 * @param	plugin		The plugin that this controller is a part of.
 	 * @param	lafRegister	LAF register.
 	 */
-	MetalLookAndFeelController(LAFPlugin plugin,
-										LAFRegister lafRegister)
+	MetalLookAndFeelController(LAFPlugin plugin, LAFRegister lafRegister)
 	{
-
       super(plugin, lafRegister);
 
-      try
-      {
-         _extraThemeClassNames = new String[]
-            {
-               DEFAULT_METAL_THEME,
-               ////////////////////////////////////////////////////////////////////
-               // These classes have no package see swingsetthemes.jar
-               "AquaTheme",
-               "CharcoalTheme",
-               "ContrastTheme",
-               "EmeraldTheme",
-               "RubyTheme",
-               //
-               ///////////////////////////////////////////////////////////////////
+		_extraThemeClassNames = new String[]
+				{
+						MetalThemePreferencesUtil.DEFAULT_METAL_THEME_CLASS_NAME,
+						////////////////////////////////////////////////////////////////////
+						// These classes have no package see swingsetthemes.jar
+						"AquaTheme",
+						MetalThemePreferencesUtil.CHARCOAL_THEME_CLASS_NAME,
+						"ContrastTheme",
+						"EmeraldTheme",
+						"RubyTheme",
+						//
+						///////////////////////////////////////////////////////////////////
 
-               /////////////////////////////////////////////////////////////////////////////
-               // This theme was presented to SQuirreL by Karsten Lentzsch of jgoodies.com.
-               // It is SQuirreL's default theme if the LAF plugin is not used.
-               // Here we make the AllBluesBoldMetalTheme also available within the LAF plugin.
-               // Thanks a lot Karsten.
-               "net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme",
-               //
-               ////////////////////////////////////////////////////////////////////////////
-            };
+						/////////////////////////////////////////////////////////////////////////////
+						// This theme was presented to SQuirreL by Karsten Lentzsch of jgoodies.com.
+						// It is SQuirreL's default theme if the LAF plugin is not used.
+						// Here we make the AllBluesBoldMetalTheme also available within the LAF plugin.
+						// Thanks a lot Karsten.
+						"net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme",
+						//
+						////////////////////////////////////////////////////////////////////////////
+				};
 
-         _defaultMetalTheme = new DefaultMetalTheme();
+		_defaultMetalTheme = new DefaultMetalTheme();
 
-         XMLObjectCache cache = plugin.getSettingsCache();
-         Iterator<?> it = cache.getAllForClass(MetalThemePreferences.class);
-         if (it.hasNext())
-         {
-            _currentThemePrefs = (MetalThemePreferences) it.next();
-         }
-         else
-         {
-            _currentThemePrefs = new MetalThemePreferences();
-
-            ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
-            Class<?> clazz = Class.forName(MetalLookAndFeelController.DEFAULT_METAL_THEME, false, cl);
-            MetalTheme theme = (MetalTheme) clazz.getDeclaredConstructor().newInstance();
-            _currentThemePrefs.setThemeName(theme.getName());
-
-            try
-            {
-               cache.add(_currentThemePrefs);
-            }
-            catch (DuplicateObjectException ex)
-            {
-               s_log.error("MetalThemePreferences object already in XMLObjectCache", ex);
-            }
-         }
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
+		_currentThemePrefs = MetalThemePreferencesUtil.getMetalThemePreferences(plugin, getLAFRegister());
    }
 
 	/**
@@ -136,7 +94,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
 	{
 		ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
 
-		Vector<MetalTheme> ret = new Vector<MetalTheme>();
+		ArrayList<MetalTheme> ret = new ArrayList<>();
 
 		boolean defaultThemeIsIncluded = false;
 
@@ -184,7 +142,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
    }
 
 
-	void installCurrentTheme(LookAndFeel laf, MetalTheme theme)
+	void installMetalTheme(MetalTheme theme)
 	{
 		// This works only on JDK 1.5
 		// With JDK 1.4.x fonts will be bold for all SwingSet themes.
@@ -214,6 +172,14 @@ class MetalLookAndFeelController extends AbstractPlasticController
 		_currentThemePrefs.setThemeName(name);
 	}
 
+	public void applyTheme(String metalThemeClassName)
+	{
+		final MetalTheme theme = super.getMetalThemeForClassName(metalThemeClassName);
+		_currentThemePrefs.setThemeName(theme.getName());
+		getPlasticPrefsPanel().loadPreferencesPanel();
+		installMetalTheme(theme);
+	}
+
 
 	/**
 	 * Preferences for the Metal LAF. Subclassed purely to give it a
@@ -221,8 +187,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
 	 * doesn't get mixed up with preferences for other subclasses of
 	 * AbstractPlasticController
 	 */
-	public static final class MetalThemePreferences
-		extends AbstractPlasticController.ThemePreferences
+	public static final class MetalThemePreferences extends ThemePreferences
 	{
 	}
 }

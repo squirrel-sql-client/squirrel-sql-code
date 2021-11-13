@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesController;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
@@ -8,7 +9,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -26,9 +25,7 @@ import java.awt.event.ActionListener;
 final class GeneralPreferencesGUI extends JPanel
 {
 
-   /** Internationalized strings for this class. */
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(GeneralPreferencesGUI.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GeneralPreferencesGUI.class);
 
    private JRadioButton _tabbedStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.tabbedStyle"));
    private JRadioButton _internalFrameStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.internalFrameStyle"));
@@ -67,11 +64,11 @@ final class GeneralPreferencesGUI extends JPanel
 
    private JCheckBox _selectOnRightMouseClick = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.selectOnRightMouseClick"));
    private JCheckBox _showPleaseWaitDialog = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showPleaseWaitDialog"));
-   private JLabel _localeChooserLabel = new JLabel(s_stringMgr.getString("GeneralPreferencesPanel.localeChooserLabel"));
 
    private JComboBox _localeChooser = new JComboBox(LocaleWrapper.getAvailableLocaleWrappers());
    private MaxColumnAdjustLengthCtrl _maxColumnAdjustLengthCtrl = new MaxColumnAdjustLengthCtrl();
 
+   private ThemesController _themesController = new ThemesController();
 
    GeneralPreferencesGUI()
    {
@@ -262,6 +259,12 @@ final class GeneralPreferencesGUI extends JPanel
       ++gbc.gridy;
       pnl.add(_rememberValueOfPopup, gbc);
 
+      ++gbc.gridy;
+      final GridBagConstraints gbcClone = (GridBagConstraints) gbc.clone();
+      gbcClone.fill = GridBagConstraints.NONE;
+      gbcClone.anchor = GridBagConstraints.NORTHWEST;
+      pnl.add(_themesController.getPanel(), gbcClone);
+
       return pnl;
    }
 
@@ -323,12 +326,20 @@ final class GeneralPreferencesGUI extends JPanel
 
    private JPanel createLocalePanel()
    {
-      _localeChooser.setBorder(new EmptyBorder(5, 20, 5, 30));
-      JPanel localePanel = new JPanel();
-      BoxLayout layout = new BoxLayout(localePanel, BoxLayout.X_AXIS);
-      localePanel.setLayout(layout);
-      localePanel.add(_localeChooserLabel);
-      localePanel.add(_localeChooser);
+      JPanel localePanel = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,0),0,0 );
+      localePanel.add(new JLabel(s_stringMgr.getString("GeneralPreferencesPanel.localeChooserLabel")), gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,0),0,0 );
+      GUIUtils.setPreferredWidth(_localeChooser, 300);
+      localePanel.add(_localeChooser, gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(0,0,5,0),0,0 );
+      localePanel.add(new JPanel(), gbc);
+
       return localePanel;
    }
 

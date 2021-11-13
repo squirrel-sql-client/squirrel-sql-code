@@ -20,11 +20,11 @@ package net.sourceforge.squirrel_sql.plugins.laf;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
-import javax.swing.LookAndFeel;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
 import java.util.Iterator;
@@ -119,8 +119,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 		_prefs.setThemeName(name);
 	}
 
-	void installCurrentTheme(LookAndFeel laf, MetalTheme theme)
-		throws BaseException
+	void installMetalTheme(MetalTheme theme)
 	{
 		try
 		{
@@ -160,7 +159,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
       }
 		catch (Throwable th)
 		{
-			throw new BaseException(th);
+			throw Utilities.wrapRuntime(th);
 		}
 	}
 
@@ -170,7 +169,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 	 * doesn't get mixed up with preferences for other subclasses of
 	 * AbstractPlasticController
 	 */
-	public static final class PlasticThemePreferences extends AbstractPlasticController.ThemePreferences
+	public static final class PlasticThemePreferences extends ThemePreferences
 	{
 	}
 }
