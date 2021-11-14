@@ -179,7 +179,7 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
    {
       for (Map.Entry<String, Class<? extends LookAndFeel>> entry : flatProxy.getStandardThemes().entrySet())
       {
-         if(entry.getValue().getName().equals(flatLafThemeName))
+         if(entry.getKey().equals(flatLafThemeName))
          {
             selectedTheme.setName(entry.getKey());
             getThemePrefsPanel().loadPreferencesPanel();
