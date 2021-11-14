@@ -18,8 +18,8 @@ public class LAFExternalServiceImpl implements LAFExternalService
    }
 
    @Override
-   public void applyMetalCharCoal()
+   public void applyFlatLafDark()
    {
-      _lafPlugin.applyMetalCharCoal();
+      _lafPlugin.applyFlatLafDark();
    }
 }

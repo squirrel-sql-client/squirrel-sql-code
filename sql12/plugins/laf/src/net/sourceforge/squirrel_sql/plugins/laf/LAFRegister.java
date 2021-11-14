@@ -638,4 +638,9 @@ public class LAFRegister
 	{
 		return (MetalLookAndFeelController) _lafControllers.get(MetalLookAndFeelController.METAL_LAF_CLASS_NAME);
 	}
+
+	public FlatLookAndFeelController getFlatLafLookAndFeelController()
+	{
+		return (FlatLookAndFeelController) _lafControllers.get(FlatLookAndFeelController.FLAT_LAF_PLACEHOLDER_CLASS_NAME);
+	}
 }

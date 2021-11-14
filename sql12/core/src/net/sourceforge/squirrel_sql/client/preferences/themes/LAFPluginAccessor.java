@@ -28,8 +28,8 @@ public class LAFPluginAccessor
       getService().applyMetalOcean();
    }
 
-   public static void applyMetalCharCoal()
+   public static void applyFlatLafDark()
    {
-      getService().applyMetalCharCoal();
+      getService().applyFlatLafDark();
    }
 }

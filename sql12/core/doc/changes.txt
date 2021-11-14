@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#481 Introduced option to choose between the default (light) color theme and a dark theme.
+  Changing to the dark color theme is done by switching to the FlatLaf Look&Feel with theme Flat Dark
+  and by adjusting the SQL editor colors. The color theme can be switched at
+  menu File --> Global Preferences --> tab General --> bottom off section Appearance.
+
 Query connection pool: Added tooltip for state colors in the connection pool's status bar.
 
 #603 NULL values can be colored.

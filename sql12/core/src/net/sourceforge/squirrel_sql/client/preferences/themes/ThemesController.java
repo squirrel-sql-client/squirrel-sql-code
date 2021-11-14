@@ -56,7 +56,7 @@ public class ThemesController
                return;
             }
 
-            LAFPluginAccessor.applyMetalCharCoal();
+            LAFPluginAccessor.applyFlatLafDark();
             SyntaxPluginAccessor.applyDarkTheme();
 
             break;

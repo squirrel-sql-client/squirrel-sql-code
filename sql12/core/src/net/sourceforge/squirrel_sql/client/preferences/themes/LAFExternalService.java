@@ -4,5 +4,5 @@ public interface LAFExternalService
 {
    void applyMetalOcean();
 
-   void applyMetalCharCoal();
+   void applyFlatLafDark();
 }

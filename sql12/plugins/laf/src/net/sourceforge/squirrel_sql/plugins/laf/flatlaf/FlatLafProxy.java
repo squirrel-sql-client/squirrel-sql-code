@@ -12,8 +12,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
-class FlatLafProxy
+public class FlatLafProxy
 {
+   public static final String FLAT_DARK_THEME_NAME = "Flat Dark";
    private Map<String, Class<? extends LookAndFeel>> standardThemes;
    private Constructor<?> themeCtor;
    private Field themeName;
@@ -36,7 +37,7 @@ class FlatLafProxy
    {
       Map<String, Class<? extends LookAndFeel>> themes = new LinkedHashMap<>();
       themes.put("Flat Light", lafClassLoader.loadClass("com.formdev.flatlaf.FlatLightLaf").asSubclass(LookAndFeel.class));
-      themes.put("Flat Dark", lafClassLoader.loadClass("com.formdev.flatlaf.FlatDarkLaf").asSubclass(LookAndFeel.class));
+      themes.put(FLAT_DARK_THEME_NAME, lafClassLoader.loadClass("com.formdev.flatlaf.FlatDarkLaf").asSubclass(LookAndFeel.class));
       themes.put("Flat IntelliJ", lafClassLoader.loadClass("com.formdev.flatlaf.FlatIntelliJLaf").asSubclass(LookAndFeel.class));
       themes.put("Flat Darcula", lafClassLoader.loadClass("com.formdev.flatlaf.FlatDarculaLaf").asSubclass(LookAndFeel.class));
       standardThemes = Collections.unmodifiableMap(themes);

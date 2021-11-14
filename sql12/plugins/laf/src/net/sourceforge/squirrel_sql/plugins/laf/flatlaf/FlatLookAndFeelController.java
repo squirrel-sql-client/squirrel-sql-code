@@ -38,6 +38,7 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
    private FileWrapper userExtraLAFFolder;
 
    private FlatLafProxy flatProxy;
+   private ThemePrefsPanel _themePrefsPanel;
 
    public FlatLookAndFeelController(LAFPlugin plugin, LAFRegister register)
    {
@@ -128,15 +129,25 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
    @Override
    public void hasBeenInstalled(LAFRegister lafRegister, LookAndFeel laf)
    {
+      _hasBeenInstalled();
+   }
+
+   private void _hasBeenInstalled()
+   {
       Object theme = getAvailableThemes().get(selectedTheme.getName());
       try
       {
          LookAndFeel lnf;
-         if (theme instanceof Class) {
+         if(theme instanceof Class)
+         {
             lnf = ((Class<LookAndFeel>) theme).getConstructor().newInstance();
-         } else if (theme instanceof Properties) {
+         }
+         else if(theme instanceof Properties)
+         {
             lnf = flatProxy.createPropsLaf(selectedTheme.getName(), (Properties) theme);
-         } else {
+         }
+         else
+         {
             lnf = flatProxy.createLaf(theme);
          }
          UIManager.put("ClassLoader", lnf.getClass().getClassLoader());
@@ -151,19 +162,42 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
    @Override
    public BaseLAFPreferencesPanelComponent getPreferencesComponent()
    {
-      availableThemes = null; // Reload user themes.
-      return new PrefsPanel(this);
+      return getThemePrefsPanel();
+   }
+
+   private ThemePrefsPanel getThemePrefsPanel()
+   {
+      if(null == _themePrefsPanel)
+      {
+         availableThemes = null; // Reload user themes.
+         _themePrefsPanel = new ThemePrefsPanel(this);
+      }
+      return _themePrefsPanel;
+   }
+
+   public void applyTheme(String flatLafThemeName)
+   {
+      for (Map.Entry<String, Class<? extends LookAndFeel>> entry : flatProxy.getStandardThemes().entrySet())
+      {
+         if(entry.getValue().getName().equals(flatLafThemeName))
+         {
+            selectedTheme.setName(entry.getKey());
+            getThemePrefsPanel().loadPreferencesPanel();
+            _hasBeenInstalled();
+            break;
+         }
+      }
    }
 
 
    @SuppressWarnings("serial")
-   private static class PrefsPanel extends BaseLAFPreferencesPanelComponent
+   private static class ThemePrefsPanel extends BaseLAFPreferencesPanelComponent
    {
       private FlatLookAndFeelController ctrl;
 
       private JComboBox<String> themeList;
 
-      PrefsPanel(FlatLookAndFeelController ctrl)
+      ThemePrefsPanel(FlatLookAndFeelController ctrl)
       {
          this.ctrl = ctrl;
          initUI();

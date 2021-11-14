@@ -36,6 +36,8 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 import net.sourceforge.squirrel_sql.plugins.laf.externalservice.LAFExternalService;
 import net.sourceforge.squirrel_sql.plugins.laf.externalservice.LAFExternalServiceImpl;
+import net.sourceforge.squirrel_sql.plugins.laf.flatlaf.FlatLafProxy;
+import net.sourceforge.squirrel_sql.plugins.laf.flatlaf.FlatLookAndFeelController;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -456,23 +458,22 @@ public class LAFPlugin extends DefaultPlugin
 
 	public void applyMetalOcean()
 	{
-		applyMetalLafWithTheme(MetalThemePreferencesUtil.DEFAULT_METAL_THEME_CLASS_NAME);
-	}
-
-	public void applyMetalCharCoal()
-	{
-		applyMetalLafWithTheme(MetalThemePreferencesUtil.CHARCOAL_THEME_CLASS_NAME);
-
-	}
-
-	private void applyMetalLafWithTheme(String metalThemeClassName)
-	{
 		_lafPrefs.setLookAndFeelClassName(MetalLookAndFeelController.METAL_LAF_CLASS_NAME);
 		getLafPreferncesTab().initialize(Main.getApplication());
 		_lafRegister.setLookAndFeel(false);
 
 		MetalLookAndFeelController metalLookAndFeelController = _lafRegister.getMetalLookAndFeelController();
-		metalLookAndFeelController.applyTheme(metalThemeClassName);
+		metalLookAndFeelController.applyTheme(MetalThemePreferencesUtil.DEFAULT_METAL_THEME_CLASS_NAME);
+	}
+
+	public void applyFlatLafDark()
+	{
+		_lafPrefs.setLookAndFeelClassName(FlatLookAndFeelController.FLAT_LAF_PLACEHOLDER_CLASS_NAME);
+		getLafPreferncesTab().initialize(Main.getApplication());
+		_lafRegister.setLookAndFeel(false);
+
+		FlatLookAndFeelController flatLafLookAndFeelController = _lafRegister.getFlatLafLookAndFeelController();
+		flatLafLookAndFeelController.applyTheme(FlatLafProxy.FLAT_DARK_THEME_NAME);
 	}
 
 
