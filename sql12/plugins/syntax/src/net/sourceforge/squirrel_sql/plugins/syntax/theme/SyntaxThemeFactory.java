@@ -74,7 +74,7 @@ public class SyntaxThemeFactory
 
       ret.getTableStyle().setName(IConstants.IStyleNames.TABLE);
       ret.getTableStyle().setBackgroundRGB(Color.white.getRGB());
-      ret.getTableStyle().setTextRGB(new Color(0,153,0).getRGB());
+      ret.getTableStyle().setTextRGB(new Color(0,133,0).getRGB());
       ret.getTableStyle().setBold(false);
       ret.getTableStyle().setItalic(false);
 
