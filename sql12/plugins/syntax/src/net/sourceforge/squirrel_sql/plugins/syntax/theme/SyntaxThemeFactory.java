@@ -144,7 +144,7 @@ public class SyntaxThemeFactory
 
       ret.getReservedWordStyle().setName(IConstants.IStyleNames.RESERVED_WORD);
       ret.getReservedWordStyle().setBackgroundRGB(Color.black.getRGB());
-      ret.getReservedWordStyle().setTextRGB(Color.blue.getRGB());
+      ret.getReservedWordStyle().setTextRGB(new Color(0, 208, 255).getRGB());
       ret.getReservedWordStyle().setBold(false);
       ret.getReservedWordStyle().setItalic(false);
 
@@ -156,7 +156,7 @@ public class SyntaxThemeFactory
 
       ret.getTableStyle().setName(IConstants.IStyleNames.TABLE);
       ret.getTableStyle().setBackgroundRGB(Color.black.getRGB());
-      ret.getTableStyle().setTextRGB(new Color(0,153,0).getRGB());
+      ret.getTableStyle().setTextRGB(new Color(183, 231, 137).getRGB());
       ret.getTableStyle().setBold(false);
       ret.getTableStyle().setItalic(false);
 
