@@ -36,23 +36,26 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQ
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutUtil;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.RSyntaxSQLEntryPanel;
+import net.sourceforge.squirrel_sql.plugins.syntax.externalservice.SyntaxExternalService;
+import net.sourceforge.squirrel_sql.plugins.syntax.externalservice.SyntaxExternalServiceImpl;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirreLRSyntaxTextAreaUI;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
 import org.fife.ui.rtextarea.RTextAreaEditorKit;
 
-import javax.swing.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -60,7 +63,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * The Ostermiller plugin class. This plugin adds syntax highlighting to the SQL entry area.
+ * This plugin adds syntax highlighting to the SQL entry area.
  * 
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -68,57 +71,10 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SyntaxPlugin.class);
 
-	static interface i18n
-	{
-		// i18n[SyntaxPlugin.touppercase=touppercase]
-		String TO_UPPER_CASE = s_stringMgr.getString("SyntaxPlugin.touppercase");
-
-		// i18n[SyntaxPlugin.tolowercase=tolowercase]
-		String TO_LOWER_CASE = s_stringMgr.getString("SyntaxPlugin.tolowercase");
-
-		// i18n[SyntaxPlugin.find=find]
-		String FIND = s_stringMgr.getString("SyntaxPlugin.find");
-
-		// i18n[SyntaxPlugin.findSelected=findselected]
-		String FIND_SELECTED = s_stringMgr.getString("SyntaxPlugin.findselected");
-
-		// i18n[SyntaxPlugin.repeatLastFind=findrepeatlast]
-		String REPEAT_LAST_FIND = s_stringMgr.getString("SyntaxPlugin.repeatLastFind");
-
-		// i18n[SyntaxPlugin.markSelected=markselected]
-		String MARK_SELECTED = s_stringMgr.getString("SyntaxPlugin.markSelected");
-
-		// i18n[SyntaxPlugin.replace=replace]
-		String REPLACE = s_stringMgr.getString("SyntaxPlugin.replace");
-
-		// i18n[SyntaxPlugin.unmark=unmark]
-		String UNMARK = s_stringMgr.getString("SyntaxPlugin.unmark");
-
-		// i18n[SyntaxPlugin.gotoline=gotoline]
-		String GO_TO_LINE = s_stringMgr.getString("SyntaxPlugin.gotoline");
-
-		// i18n[SyntaxPlugin.autocorr=autocorr]
-		String AUTO_CORR = s_stringMgr.getString("SyntaxPlugin.autocorr");
-
-		// i18n[SyntaxPlugin.duplicateline=duplicateline]
-		String DUP_LINE = s_stringMgr.getString("SyntaxPlugin.duplicateline");
-
-		// i18n[SyntaxPlugin.comment=comment]
-		String COMMENT = s_stringMgr.getString("SyntaxPlugin.comment");
-
-		// i18n[SyntaxPlugin.uncomment=uncomment]
-		String UNCOMMENT = s_stringMgr.getString("SyntaxPlugin.uncomment");
-
-		// i18n[SyntaxPlugin.copyasrtf=copyasrtf]
-		String COPY_AS_RTF = s_stringMgr.getString("SyntaxPlugin.copyasrtf");;
-
-	}
-
-	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SyntaxPlugin.class);
 
 	/** SyntaxPreferences for new sessions. */
-	private SyntaxPreferences _newSessionPrefs;
+	private SyntaxPreferences _syntaxPreferences;
 
 	/** Folder to store user settings in. */
 	private FileWrapper _userSettingsFolder;
@@ -127,8 +83,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 	private SQLEntryPanelFactoryProxy _sqlEntryFactoryProxy;
 
 	/** Listeners to the preferences object in each open session. */
-	private Map<IIdentifier, SessionPreferencesListener> _prefListeners =
-		new HashMap<IIdentifier, SessionPreferencesListener>();
+	private Map<IIdentifier, SessionPreferencesListener> _prefListeners = new HashMap<>();
 
 	/** Resources for this plugin. */
 	private SyntaxPluginResources _resources;
@@ -355,21 +310,11 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 	/**
 	 * Called when a session created but the UI hasn't been built for the session.
 	 * 
-	 * @param session
-	 *           The session that is starting.
+	 * @param session The session that is starting.
 	 */
 	public void sessionCreated(ISession session)
 	{
-		SyntaxPreferences prefs = null;
-
-		try
-		{
-			prefs = (SyntaxPreferences) _newSessionPrefs.clone();
-		}
-		catch (CloneNotSupportedException ex)
-		{
-			throw new InternalError("CloneNotSupportedException for SyntaxPreferences");
-		}
+		SyntaxPreferences prefs = Utilities.cloneObject(_syntaxPreferences, SyntaxPreferences.class.getClassLoader());
 
 		session.putPluginObject(this, IConstants.ISessionKeys.PREFS, prefs);
 
@@ -410,7 +355,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 
 	public SyntaxPreferences getSyntaxPreferences()
 	{
-		return _newSessionPrefs;
+		return _syntaxPreferences;
 	}
 
 	private void initSessionSheet(ISession session)
@@ -529,7 +474,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 	 */
 	public INewSessionPropertiesPanel[] getNewSessionPropertiesPanels()
 	{
-		return new INewSessionPropertiesPanel[] { new SyntaxPreferencesPanel(_newSessionPrefs, _resources) };
+		return new INewSessionPropertiesPanel[] { new SyntaxPreferencesPanel(_syntaxPreferences, _resources) };
 	}
 
 	/**
@@ -539,20 +484,13 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 	 */
 	public ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session)
 	{
-		SyntaxPreferences sessionPrefs =
-			(SyntaxPreferences) session.getPluginObject(this, IConstants.ISessionKeys.PREFS);
-
+		SyntaxPreferences sessionPrefs = (SyntaxPreferences) session.getPluginObject(this, IConstants.ISessionKeys.PREFS);
 		return new ISessionPropertiesPanel[] { new SyntaxPreferencesPanel(sessionPrefs, _resources) };
 	}
 
 	public SyntaxPluginResources getResources()
 	{
 		return _resources;
-	}
-
-	ISQLEntryPanelFactory getSQLEntryAreaFactory()
-	{
-		return _sqlEntryFactoryProxy;
 	}
 
 	/**
@@ -570,7 +508,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 
 			if (it.hasNext())
 			{
-				_newSessionPrefs = (SyntaxPreferences) it.next();
+				_syntaxPreferences = (SyntaxPreferences) it.next();
 			}
 		}
 		catch (FileNotFoundException ignore)
@@ -583,9 +521,9 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 			s_log.error(msg, ex);
 		}
 
-		if (_newSessionPrefs == null)
+		if (_syntaxPreferences == null)
 		{
-			_newSessionPrefs = new SyntaxPreferences();
+			_syntaxPreferences = new SyntaxPreferences();
 		}
 	}
 
@@ -596,7 +534,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 	{
 		try
 		{
-			final XMLBeanWriter wtr = new XMLBeanWriter(_newSessionPrefs);
+			final XMLBeanWriter wtr = new XMLBeanWriter(_syntaxPreferences);
 			wtr.save(fileWrapperFactory.create(_userSettingsFolder, IConstants.USER_PREFS_FILE_NAME));
 		}
 		catch (Exception ex)
@@ -606,75 +544,14 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		}
 	}
 
-	public Object getExternalService()
-	{
-		return getAutoCorrectProviderImpl();
-	}
-
 	public AutoCorrectProviderImpl getAutoCorrectProviderImpl()
 	{
 		return _autoCorrectProvider;
 	}
 
-	private static final class SessionPreferencesListener implements PropertyChangeListener
+	public SyntaxExternalService getExternalService()
 	{
-		private SyntaxPlugin _plugin;
-
-		private ISession _session;
-
-		SessionPreferencesListener(SyntaxPlugin plugin, ISession session)
-		{
-			super();
-			_plugin = plugin;
-			_session = session;
-		}
-
-		public void propertyChange(PropertyChangeEvent evt)
-		{
-			String propName = evt.getPropertyName();
-
-			if (false == SyntaxPreferences.IPropertyNames.USE_RSYNTAX_CONTROL.equals(propName))
-			{
-
-				// Not the Textcontrol itself changed but some other of the Syntax Preferences, for example a
-				// color.
-				// So we tell the current control to update the preferences.
-				Object pluginObject =
-					_session.getPluginObject(_plugin, IConstants.ISessionKeys.SQL_ENTRY_CONTROL);
-
-
-				if (pluginObject instanceof RSyntaxSQLEntryPanel)
-				{
-					((RSyntaxSQLEntryPanel) pluginObject).updateFromPreferences();
-				}
-			}
-			else
-			{
-				/*
-								We don't support switching the entry control during a session
-								because several things, that are attached to the entry control
-								from outside this plugin would need to reinitialize too.
-								For example code completion and edit extras.
-
-								synchronized (_session)
-								{
-									ISQLEntryPanelFactory factory = _plugin.getSQLEntryAreaFactory();
-									ISQLEntryPanel pnl = factory.createSQLEntryPanel(_session);
-									_session.getMainSQLPanelAPI(_plugin).installSQLEntryPanel(pnl);
-								}
-								*/
-
-				String msg =
-				// i18n[syntax.switchingNotSupported=Switching the editor of a runninig session is not
-				// supported.\nYou may switch the entry area in the New Session Properties dialog]
-					s_stringMgr.getString("syntax.switchingNotSupported");
-
-				JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
-
-				throw new SyntaxPrefChangeNotSupportedException();
-
-			}
-
-		}
+		return new SyntaxExternalServiceImpl(this);
 	}
+
 }

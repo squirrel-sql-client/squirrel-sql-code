@@ -18,12 +18,12 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.Color;
+import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
+import net.sourceforge.squirrel_sql.plugins.syntax.theme.SyntaxTheme;
+import net.sourceforge.squirrel_sql.plugins.syntax.theme.SyntaxThemeFactory;
+
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-
-import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
-import org.fife.ui.rtextarea.RTextAreaBase;
 
 /**
  * This JavaBean class represents the user specific
@@ -31,7 +31,7 @@ import org.fife.ui.rtextarea.RTextAreaBase;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SyntaxPreferences implements Serializable, Cloneable
+public class SyntaxPreferences implements Serializable
 {
    public static final int NO_COLOR = -1;
 
@@ -81,39 +81,6 @@ public class SyntaxPreferences implements Serializable, Cloneable
    private boolean _usePlainTextControl = false;
    private boolean _useRSyntaxTextArea = true;
 
-   /** If <TT>true</TT> use the block caret. */
-//	private boolean _blockCaretEnabled = false;
-
-   /** If <TT>true</TT> caret should blink. */
-//	private boolean _blinkCaret = true;
-
-   /** If <TT>true</TT> show EOL markers. */
-//	private boolean _showEndOfLineMarkers = false;
-
-   /** If <TT>true</TT> show matching brackets. */
-//	private boolean _bracketHighlighting = true;
-
-   /** If <TT>true</TT> the current line should be highlighted. */
-//	private boolean _currentLineHighlighting = true;
-
-   /**
-    * If <TT>true</TT> line numbers should be displayed.
-    */
-//	private boolean _showLineNumbers = false;
-
-   private SyntaxStyle _columnStyle = new SyntaxStyle();
-   private SyntaxStyle _commentStyle = new SyntaxStyle();
-   private SyntaxStyle _dataTypeStyle = new SyntaxStyle();
-   private SyntaxStyle _errorStyle = new SyntaxStyle();
-   private SyntaxStyle _functionStyle = new SyntaxStyle();
-   private SyntaxStyle _identifierStyle = new SyntaxStyle();
-   private SyntaxStyle _literalStyle = new SyntaxStyle();
-   private SyntaxStyle _operatorStyle = new SyntaxStyle();
-   private SyntaxStyle _reservedWordStyle = new SyntaxStyle();
-   private SyntaxStyle _separatorStyle = new SyntaxStyle();
-   private SyntaxStyle _tableStyle = new SyntaxStyle();
-   private SyntaxStyle _whiteSpaceStyle = new SyntaxStyle();
-
 
    private boolean _textLimitLineVisible = false;
    private int _textLimitLineWidth = 80;
@@ -123,11 +90,6 @@ public class SyntaxPreferences implements Serializable, Cloneable
 
    private boolean _highlightCurrentLine = true;
 
-   /**
-    * Default ist the same as {@link RTextAreaBase#DEFAULT_CURRENT_LINE_HIGHLIGHT_COLOR}
-    * which unfortunately isn't public ant thus can't be used here.
-    */
-   private int _currentLineHighlightColorRGB = new Color(255,255,170).getRGB();
 
    private boolean _lineNumbersEnabled = false;
 
@@ -136,109 +98,18 @@ public class SyntaxPreferences implements Serializable, Cloneable
     */
    private boolean _useCopyAsRtf = false;
 
-   private int _caretColorRGB = NO_COLOR;
+
+   private SyntaxTheme _syntaxTheme;
 
 
    public SyntaxPreferences()
    {
-      _columnStyle.setName(IConstants.IStyleNames.COLUMN);
-      _columnStyle.setBackgroundRGB(Color.white.getRGB());
-      _columnStyle.setTextRGB(-10066432);
-      _columnStyle.setBold(false);
-      _columnStyle.setItalic(false);
-
-      _commentStyle.setName(IConstants.IStyleNames.COMMENT);
-      _commentStyle.setBackgroundRGB(Color.white.getRGB());
-      _commentStyle.setTextRGB(Color.lightGray.darker().getRGB());
-      _commentStyle.setBold(false);
-      _commentStyle.setItalic(false);
-
-      _dataTypeStyle.setName(IConstants.IStyleNames.DATA_TYPE);
-      _dataTypeStyle.setBackgroundRGB(Color.white.getRGB());
-      _dataTypeStyle.setTextRGB(Color.yellow.darker().getRGB());
-      _dataTypeStyle.setBold(false);
-      _dataTypeStyle.setItalic(false);
-
-      _errorStyle.setName(IConstants.IStyleNames.ERROR);
-      _errorStyle.setBackgroundRGB(Color.white.getRGB());
-      _errorStyle.setTextRGB(Color.red.getRGB());
-      _errorStyle.setBold(false);
-      _errorStyle.setItalic(false);
-
-      _functionStyle.setName(IConstants.IStyleNames.FUNCTION);
-      _functionStyle.setBackgroundRGB(Color.white.getRGB());
-      _functionStyle.setTextRGB(Color.black.getRGB());
-      _functionStyle.setBold(false);
-      _functionStyle.setItalic(false);
-
-      _identifierStyle.setName(IConstants.IStyleNames.IDENTIFIER);
-      _identifierStyle.setBackgroundRGB(Color.white.getRGB());
-      _identifierStyle.setTextRGB(Color.black.getRGB());
-      _identifierStyle.setBold(false);
-      _identifierStyle.setItalic(false);
-
-      _literalStyle.setName(IConstants.IStyleNames.LITERAL);
-      _literalStyle.setBackgroundRGB(Color.white.getRGB());
-      _literalStyle.setTextRGB(11546720);
-      _literalStyle.setBold(false);
-      _literalStyle.setItalic(false);
-
-      _operatorStyle.setName(IConstants.IStyleNames.OPERATOR);
-      _operatorStyle.setBackgroundRGB(Color.white.getRGB());
-      _operatorStyle.setTextRGB(Color.black.getRGB());
-      _operatorStyle.setBold(true);
-      _operatorStyle.setItalic(false);
-
-      _reservedWordStyle.setName(IConstants.IStyleNames.RESERVED_WORD);
-      _reservedWordStyle.setBackgroundRGB(Color.white.getRGB());
-      _reservedWordStyle.setTextRGB(Color.blue.getRGB());
-      _reservedWordStyle.setBold(false);
-      _reservedWordStyle.setItalic(false);
-
-      _separatorStyle.setName(IConstants.IStyleNames.SEPARATOR);
-      _separatorStyle.setBackgroundRGB(Color.white.getRGB());
-      _separatorStyle.setTextRGB(0x000080); // Navy.
-      _separatorStyle.setBold(false);
-      _separatorStyle.setItalic(false);
-
-      _tableStyle.setName(IConstants.IStyleNames.TABLE);
-      _tableStyle.setBackgroundRGB(Color.white.getRGB());
-      _tableStyle.setTextRGB(-16738048);
-      _tableStyle.setBold(false);
-      _tableStyle.setItalic(false);
-
-      _whiteSpaceStyle.setName(IConstants.IStyleNames.WHITESPACE);
-      _whiteSpaceStyle.setBackgroundRGB(Color.white.getRGB());
-      _whiteSpaceStyle.setTextRGB(Color.black.getRGB());
-      _whiteSpaceStyle.setBold(false);
-      _whiteSpaceStyle.setItalic(false);
-
-//		final TextAreaDefaults dfts = TextAreaDefaults.getDefaults();
-//		_columnStyle = dfts.styles[Token.COLUMN];
-//		_commentStyle = dfts.styles[Token.COMMENT1];
-//		_keyword1Style = dfts.styles[Token.KEYWORD];
-//		_keyword2Style = dfts.styles[Token.DATA_TYPE];
-//		_keyword3Style = dfts.styles[Token.FUNCTION];
-//		_labelStyle = dfts.styles[Token.LABEL];
-//		_literalStyle = dfts.styles[Token.LITERAL1];
-//		_operatorStyle = dfts.styles[Token.OPERATOR];
-//		_otherStyle = dfts.styles[Token.NULL];
-//		_tableStyle = dfts.styles[Token.TABLE];
+      initSyntaxTheme(SyntaxThemeFactory.createDefaultLightTheme());
    }
 
-   public Object clone() throws CloneNotSupportedException
+   public void initSyntaxTheme(SyntaxTheme syntaxTheme)
    {
-      try
-      {
-         SyntaxPreferences prefs = (SyntaxPreferences) super.clone();
-         prefs._propChgReporter = null;
-
-         return prefs;
-      }
-      catch (CloneNotSupportedException ex)
-      {
-         throw new InternalError(ex.getMessage()); // Impossible.
-      }
+      _syntaxTheme = syntaxTheme;
    }
 
    public void addPropertyChangeListener(PropertyChangeListener listener)
@@ -292,8 +163,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
       {
          final Boolean oldValue = Boolean.valueOf(_textLimitLineVisible);
          _textLimitLineVisible = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TEXT_LIMIT_LINE_VISIBLE,
-               oldValue, Boolean.valueOf(_textLimitLineVisible));
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TEXT_LIMIT_LINE_VISIBLE, oldValue, Boolean.valueOf(_textLimitLineVisible));
       }
    }
 
@@ -308,8 +178,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
       {
          final Boolean oldValue = Boolean.valueOf(_replaceTabsBySpaces);
          _replaceTabsBySpaces = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.REPLACE_TABS_BY_SPACES,
-               oldValue, Boolean.valueOf(_replaceTabsBySpaces));
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.REPLACE_TABS_BY_SPACES, oldValue, Boolean.valueOf(_replaceTabsBySpaces));
       }
 
    }
@@ -325,10 +194,8 @@ public class SyntaxPreferences implements Serializable, Cloneable
       {
          final Integer oldValue = _tabLength;
          _tabLength = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TAB_LENGTH,
-               oldValue, (Integer) _tabLength);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TAB_LENGTH, oldValue, (Integer) _tabLength);
       }
-
    }
 
 
@@ -343,8 +210,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
       {
          final Integer oldValue = Integer.valueOf(_textLimitLineWidth);
          _textLimitLineWidth = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TEXT_LIMIT_LINE_WIDTH,
-               oldValue, Integer.valueOf(_textLimitLineWidth));
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TEXT_LIMIT_LINE_WIDTH, oldValue, Integer.valueOf(_textLimitLineWidth));
       }
 
    }
@@ -374,16 +240,16 @@ public class SyntaxPreferences implements Serializable, Cloneable
 
    public int getCurrentLineHighlightColorRGB()
    {
-      return _currentLineHighlightColorRGB;
+      return _syntaxTheme.getCurrentLineHighlightColorRGB();
    }
 
    public void setCurrentLineHighlightColorRGB(int data)
    {
-      if (_currentLineHighlightColorRGB != data)
+      if (_syntaxTheme.getCurrentLineHighlightColorRGB() != data)
       {
-         final int oldValue = _currentLineHighlightColorRGB;
-         _currentLineHighlightColorRGB = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.CURRENT_LINE_HIGHLIGHT_COLOR_RGB, oldValue, _currentLineHighlightColorRGB);
+         final int oldValue = _syntaxTheme.getCurrentLineHighlightColorRGB();
+         _syntaxTheme.setCurrentLineHighlightColorRGB(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.CURRENT_LINE_HIGHLIGHT_COLOR_RGB, oldValue, _syntaxTheme.getCurrentLineHighlightColorRGB());
       }
    }
 
@@ -401,19 +267,19 @@ public class SyntaxPreferences implements Serializable, Cloneable
 
    public int getCaretColorRGB()
    {
-      return _caretColorRGB;
+      return _syntaxTheme.getCaretColorRGB();
    }
 
    public void setCaretColorRGB(int caretColorRGB)
    {
-      final int oldValue = _caretColorRGB;
-      _caretColorRGB = caretColorRGB;
-      getPropertyChangeReporter().firePropertyChange(IPropertyNames.CARET_COLOR_RGB, oldValue, _caretColorRGB);
+      final int oldValue = _syntaxTheme.getCaretColorRGB();
+      _syntaxTheme.setCaretColorRGB(caretColorRGB);
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.CARET_COLOR_RGB, oldValue, _syntaxTheme.getCaretColorRGB());
    }
 
    public SyntaxStyle getCommentStyle()
    {
-      return _commentStyle;
+      return _syntaxTheme.getCommentStyle();
    }
 
    public void setCommentStyle(SyntaxStyle data)
@@ -423,18 +289,17 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_commentStyle != data)
+      if (_syntaxTheme.getCommentStyle() != data)
       {
-         final SyntaxStyle oldValue = _commentStyle;
-         _commentStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.COMMENT_STYLE,
-               oldValue, _commentStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getCommentStyle();
+         _syntaxTheme.setCommentStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.COMMENT_STYLE, oldValue, _syntaxTheme.getCommentStyle());
       }
    }
 
    public SyntaxStyle getDataTypeStyle()
    {
-      return _dataTypeStyle;
+      return _syntaxTheme.getDataTypeStyle();
    }
 
    public void setDataTypeStyle(SyntaxStyle data)
@@ -444,18 +309,17 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_dataTypeStyle != data)
+      if (_syntaxTheme.getDataTypeStyle() != data)
       {
-         final SyntaxStyle oldValue = _dataTypeStyle;
-         _dataTypeStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.DATA_TYPE_STYLE,
-               oldValue, _dataTypeStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getDataTypeStyle();
+         _syntaxTheme.setDataTypeStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.DATA_TYPE_STYLE, oldValue, _syntaxTheme.getDataTypeStyle());
       }
    }
 
    public SyntaxStyle getErrorStyle()
    {
-      return _errorStyle;
+      return _syntaxTheme.getErrorStyle();
    }
 
    public void setErrorStyle(SyntaxStyle data)
@@ -465,18 +329,17 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_errorStyle != data)
+      if (_syntaxTheme.getErrorStyle() != data)
       {
-         final SyntaxStyle oldValue = _errorStyle;
-         _errorStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.ERROR_STYLE,
-               oldValue, _errorStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getErrorStyle();
+         _syntaxTheme.setErrorStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.ERROR_STYLE, oldValue, _syntaxTheme.getErrorStyle());
       }
    }
 
    public SyntaxStyle getFunctionStyle()
    {
-      return _functionStyle;
+      return _syntaxTheme.getFunctionStyle();
    }
 
    public void setFunctionStyle(SyntaxStyle data)
@@ -486,18 +349,17 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_functionStyle != data)
+      if (_syntaxTheme.getFunctionStyle() != data)
       {
-         final SyntaxStyle oldValue = _functionStyle;
-         _functionStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.FUNCTION_STYLE,
-               oldValue, _functionStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getFunctionStyle();
+         _syntaxTheme.setFunctionStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.FUNCTION_STYLE, oldValue, _syntaxTheme.getFunctionStyle());
       }
    }
 
    public SyntaxStyle getIdentifierStyle()
    {
-      return _identifierStyle;
+      return _syntaxTheme.getIdentifierStyle();
    }
 
    public void setIdentifierStyle(SyntaxStyle data)
@@ -507,19 +369,18 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_identifierStyle != data)
+      if (_syntaxTheme.getIdentifierStyle() != data)
       {
-         final SyntaxStyle oldValue = _identifierStyle;
-         _identifierStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.IDENTIFIER_STYLE,
-               oldValue, _identifierStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getIdentifierStyle();
+         _syntaxTheme.setIdentifierStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.IDENTIFIER_STYLE, oldValue, _syntaxTheme.getIdentifierStyle());
       }
    }
 
 
    public SyntaxStyle getLiteralStyle()
    {
-      return _literalStyle;
+      return _syntaxTheme.getLiteralStyle();
    }
 
    public void setLiteralStyle(SyntaxStyle data)
@@ -529,18 +390,17 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_literalStyle != data)
+      if (_syntaxTheme.getLiteralStyle() != data)
       {
-         final SyntaxStyle oldValue = _literalStyle;
-         _literalStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.LITERAL_STYLE,
-               oldValue, _literalStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getLiteralStyle();
+         _syntaxTheme.setLiteralStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.LITERAL_STYLE, oldValue, _syntaxTheme.getLiteralStyle());
       }
    }
 
    public SyntaxStyle getTableStyle()
    {
-      return _tableStyle;
+      return _syntaxTheme.getTableStyle();
    }
 
    public void setTableStyle(SyntaxStyle data)
@@ -550,18 +410,17 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_tableStyle != data)
+      if (_syntaxTheme.getTableStyle() != data)
       {
-         final SyntaxStyle oldValue = _tableStyle;
-         _tableStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TABLE_STYLE,
-               oldValue, _tableStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getTableStyle();
+         _syntaxTheme.setTableStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TABLE_STYLE, oldValue, _syntaxTheme.getTableStyle());
       }
    }
 
    public SyntaxStyle getColumnStyle()
    {
-      return _columnStyle;
+      return _syntaxTheme.getColumnStyle();
    }
 
    public void setColumnStyle(SyntaxStyle data)
@@ -571,18 +430,17 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_columnStyle != data)
+      if (_syntaxTheme.getColumnStyle() != data)
       {
-         final SyntaxStyle oldValue = _columnStyle;
-         _columnStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.COLUMN_STYLE,
-               oldValue, _columnStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getColumnStyle();
+         _syntaxTheme.setColumnStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.COLUMN_STYLE, oldValue, _syntaxTheme.getColumnStyle());
       }
    }
 
    public SyntaxStyle getOperatorStyle()
    {
-      return _operatorStyle;
+      return _syntaxTheme.getOperatorStyle();
    }
 
    public void setOperatorStyle(SyntaxStyle data)
@@ -592,18 +450,17 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_operatorStyle != data)
+      if (_syntaxTheme.getOperatorStyle() != data)
       {
-         final SyntaxStyle oldValue = _operatorStyle;
-         _operatorStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.OPERATOR_STYLE,
-               oldValue, _operatorStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getOperatorStyle();
+         _syntaxTheme.setOperatorStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.OPERATOR_STYLE, oldValue, _syntaxTheme.getOperatorStyle());
       }
    }
 
    public SyntaxStyle getReservedWordStyle()
    {
-      return _reservedWordStyle;
+      return _syntaxTheme.getReservedWordStyle();
    }
 
    public void setReservedWordStyle(SyntaxStyle data)
@@ -613,18 +470,17 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_reservedWordStyle != data)
+      if (_syntaxTheme.getReservedWordStyle() != data)
       {
-         final SyntaxStyle oldValue = _reservedWordStyle;
-         _reservedWordStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.RESERVED_WORD_STYLE,
-               oldValue, _reservedWordStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getReservedWordStyle();
+         _syntaxTheme.setReservedWordStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.RESERVED_WORD_STYLE, oldValue, _syntaxTheme.getReservedWordStyle());
       }
    }
 
    public SyntaxStyle getSeparatorStyle()
    {
-      return _separatorStyle;
+      return _syntaxTheme.getSeparatorStyle();
    }
 
    public void setSeparatorStyle(SyntaxStyle data)
@@ -634,18 +490,17 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_separatorStyle != data)
+      if (_syntaxTheme.getSeparatorStyle() != data)
       {
-         final SyntaxStyle oldValue = _separatorStyle;
-         _separatorStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.SEPARATOR_STYLE,
-               oldValue, _separatorStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getSeparatorStyle();
+         _syntaxTheme.setSeparatorStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.SEPARATOR_STYLE, oldValue, _syntaxTheme.getSeparatorStyle());
       }
    }
 
    public SyntaxStyle getWhiteSpaceStyle()
    {
-      return _whiteSpaceStyle;
+      return _syntaxTheme.getWhiteSpaceStyle();
    }
 
    public void setWhiteSpaceStyle(SyntaxStyle data)
@@ -655,12 +510,11 @@ public class SyntaxPreferences implements Serializable, Cloneable
          throw new IllegalArgumentException("SyntaxStyle==null");
       }
 
-      if (_whiteSpaceStyle != data)
+      if (_syntaxTheme.getWhiteSpaceStyle() != data)
       {
-         final SyntaxStyle oldValue = _whiteSpaceStyle;
-         _whiteSpaceStyle = data;
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.WHITE_SPACE_STYLE,
-               oldValue, _whiteSpaceStyle);
+         final SyntaxStyle oldValue = _syntaxTheme.getWhiteSpaceStyle();
+         _syntaxTheme.setWhiteSpaceStyle(data);
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.WHITE_SPACE_STYLE, oldValue, _syntaxTheme.getWhiteSpaceStyle());
       }
    }
 

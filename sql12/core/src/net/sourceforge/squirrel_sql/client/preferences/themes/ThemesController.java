@@ -47,13 +47,18 @@ public class ThemesController
             }
 
             LAFPluginAccessor.applyMetalOcean();
+            SyntaxPluginAccessor.applyDefaultTheme();
+
             break;
          case DARK:
             if (JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(_themesPanel, s_stringMgr.getString("ThemesController.apply.dark.theme")))
             {
                return;
             }
+
             LAFPluginAccessor.applyMetalCharCoal();
+            SyntaxPluginAccessor.applyDarkTheme();
+
             break;
       }
 

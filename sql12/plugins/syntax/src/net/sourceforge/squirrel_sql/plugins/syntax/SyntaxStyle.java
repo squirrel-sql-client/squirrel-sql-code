@@ -30,35 +30,25 @@ import java.io.Serializable;
  */
 public class SyntaxStyle implements Serializable
 {
-	private static final long serialVersionUID = 5071458594077779491L;
-
-	/** name fo this style. */
+	/** name of this style. */
 	private String _name;
 
 	/** Is this an italic style. */
 	private boolean _isItalic = false;
 
-	/** Is this an bold style. */
+	/** Is this a bold style. */
 	private boolean _isBold = false;
 
 	private int _textRGB = Color.black.getRGB();
 
 	private int _backgroundRGB = Color.white.getRGB();
 
-	/**
-	 * Default ctor.
-	 */
 	public SyntaxStyle()
 	{
-		super();
 	}
 
-	/**
-	 * Copy ctor.
-	 */
 	public SyntaxStyle(SyntaxStyle rhs)
 	{
-		super();
 		setName(rhs.getName());
 		setItalic(rhs.isItalic());
 		setBold(rhs.isBold());

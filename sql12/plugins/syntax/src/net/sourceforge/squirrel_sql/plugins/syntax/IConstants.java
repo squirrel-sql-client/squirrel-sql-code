@@ -38,7 +38,7 @@ public interface IConstants
 		String SQL_ENTRY_CONTROL = "sqlentry";
 	}
 
-	interface IStyleNames
+	public interface IStyleNames
 	{
 		String COLUMN = "columnName";
 		String COMMENT = "comment";

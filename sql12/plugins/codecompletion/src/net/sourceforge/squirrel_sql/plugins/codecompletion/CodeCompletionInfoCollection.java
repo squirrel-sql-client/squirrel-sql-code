@@ -26,8 +26,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
-import javax.swing.*;
-import java.util.*;
+import javax.swing.JOptionPane;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 public class CodeCompletionInfoCollection
 {
@@ -182,17 +186,16 @@ public class CodeCompletionInfoCollection
                _schemas.add(new CodeCompletionSchemaInfo(schemas[i], _prefs));
             }
 
-            AutoCorrectProvider autoCorrectProvider =
-               (AutoCorrectProvider) _session.getApplication().getPluginManager().bindExternalPluginService("syntax", AutoCorrectProvider.class);
+            SyntaxExternalService syntaxExternalService =
+               (SyntaxExternalService) _session.getApplication().getPluginManager().bindExternalPluginService("syntax", SyntaxExternalService.class);
 
-            if(null == autoCorrectProvider)
+            if(null == syntaxExternalService)
             {
-					// i18n[codecompletion.useSyntaxPlugin=Code completion will work better if you use the Syntax plugin. Get it from squirrelsql.org, it's free!]
 					_session.showMessage(s_stringMgr.getString("codecompletion.useSyntaxPlugin"));
             }
             else
             {
-               Hashtable<String, String> autoCorrections = autoCorrectProvider.getAutoCorrects();
+               Hashtable<String, String> autoCorrections = syntaxExternalService.getAutoCorrects();
 
                for(Enumeration<String> e=autoCorrections.keys(); e.hasMoreElements();)
                {
