@@ -108,6 +108,8 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    }
 
    private static final FontInfo DEFAULT_FONT_INFO = new FontInfo(new Font("Monospaced", 0, 12));
+   public static final int DEFAULT_NULL_VALUE_COLOR_RGB = new Color(234, 255, 234).getRGB();
+
 
    /** Object to handle property change events. */
    private transient PropertyChangeReporter _propChgReporter;
@@ -290,7 +292,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
     private boolean _allowCtrlMouseClickJumpToObjectTree = true;
 
    private boolean _colorNullValues = true;
-   private int _nullValueColorRGB = new Color(234, 255, 234).getRGB();
+   private int _nullValueColorRGB = DEFAULT_NULL_VALUE_COLOR_RGB;
 
    public SessionProperties()
    {

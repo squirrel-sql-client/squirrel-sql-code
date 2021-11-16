@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Choosing color theme (see previous entry) now adjusts NULL value coloring, too.
+
 #481 Introduced option to choose between the default (light) color theme and a dark theme.
   Changing to the dark color theme is done by switching to the FlatLaf Look&Feel with theme Flat Dark
   and by adjusting the SQL editor colors. The color theme can be switched at

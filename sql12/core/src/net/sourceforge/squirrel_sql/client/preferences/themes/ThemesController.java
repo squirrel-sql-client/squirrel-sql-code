@@ -1,10 +1,13 @@
 package net.sourceforge.squirrel_sql.client.preferences.themes;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JOptionPane;
+import java.awt.Color;
 
 public class ThemesController
 {
@@ -48,6 +51,7 @@ public class ThemesController
 
             LAFPluginAccessor.applyMetalOcean();
             SyntaxPluginAccessor.applyDefaultTheme();
+            Main.getApplication().getSquirrelPreferences().getSessionProperties().setNullValueColorRGB(SessionProperties.DEFAULT_NULL_VALUE_COLOR_RGB);
 
             break;
          case DARK:
@@ -58,6 +62,8 @@ public class ThemesController
 
             LAFPluginAccessor.applyFlatLafDark();
             SyntaxPluginAccessor.applyDarkTheme();
+            Main.getApplication().getSquirrelPreferences().getSessionProperties().setNullValueColorRGB(new Color(90,100,90).getRGB());
+
 
             break;
       }
