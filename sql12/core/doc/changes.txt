@@ -42,6 +42,10 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Hibernate Plugin: Prevented HQL execution error when
+  - a mapped collection-attribute wasn't an instance of java.util.Collection
+  - the toString() method of a mapped object raised an exception
+
 Intersystem Cache Plugin bug fix: Whenever a new Session was opened another Session menu items was added.
 
 SQL result's find function -->  Color matches: "No resource found ..." message in coloring dialog's title.

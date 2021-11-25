@@ -142,7 +142,7 @@ public class ObjectSubstituteFactory
 
       MappedClassInfoData mappedClassInfoData = findMappedClassInfoData(o, infoDataByClassName, infoDataFromProperty);
 
-      ret = new ObjectSubstitute(mappedClassInfoData, o.toString());
+      ret = new ObjectSubstitute(mappedClassInfoData, _toString(o));
       doneObjs.put(o, ret);
 
       PropertyAccessor pkAccessor = PropertyAccessor.createAccessor(o.getClass(), mappedClassInfoData.getIndentifierHibernatePropertyInfo().getPropertyName());
@@ -181,16 +181,51 @@ public class ObjectSubstituteFactory
          }
          else
          {
-            ArrayList<ObjectSubstitute> objectSubstituteCollection = new ArrayList<ObjectSubstitute>();
+            ArrayList<ObjectSubstitute> objectSubstituteCollection = new ArrayList<>();
 
-            Collection col = (Collection) accessor.get(o);
-            if (isInitialized(col))
+            if( accessor.get(o) instanceof Collection )
             {
-               objectSubstituteCollection = _prepareObjectSubstitutesForCollection(col, infoDataByClassName, doneObjs);
-            }
+               Collection col = (Collection) accessor.get(o);
+               if (isInitialized(col))
+               {
+                  objectSubstituteCollection = _prepareObjectSubstitutesForCollection(col, infoDataByClassName, doneObjs);
+               }
 
-            PropertySubstitute propertySubstitute = new PropertySubstitute(hibernatePropertyInfo, objectSubstituteCollection, isInitialized(col));
-            ret.putSubstituteValueByPropertyName(hibernatePropertyInfo.getPropertyName(), propertySubstitute);
+               PropertySubstitute propertySubstitute = new PropertySubstitute(hibernatePropertyInfo, objectSubstituteCollection, isInitialized(col));
+               ret.putSubstituteValueByPropertyName(hibernatePropertyInfo.getPropertyName(), propertySubstitute);
+            }
+            else
+            {
+               // Dummy PropertySubstitute
+               PropertySubstitute propertySubstitute = new PropertySubstitute(hibernatePropertyInfo,
+                                                                     "<noInstanceOf_java.util.Collection_notLoaded>",
+                                                                     false);
+
+               ret.putSubstituteValueByPropertyName(hibernatePropertyInfo.getPropertyName(), propertySubstitute);
+            }
+         }
+      }
+
+      return ret;
+   }
+
+   private String _toString(Object o)
+   {
+      String ret = "<unknownError>";
+
+      try
+      {
+         ret = o.toString();
+      }
+      catch(Throwable t)
+      {
+         try
+         {
+            ret = t.toString();
+         }
+         catch(Exception e)
+         {
+            // Remains "<unknownError>"
          }
       }
 
