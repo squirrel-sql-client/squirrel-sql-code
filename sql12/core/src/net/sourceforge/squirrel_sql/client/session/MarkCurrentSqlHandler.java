@@ -79,8 +79,18 @@ public class MarkCurrentSqlHandler
 
          int maxSqlX = getMaxSqlX(bounds, end);
 
-         //x = beg.x;
+         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+         // With the new option(*) to use statement separators instead of empty lines as bounds of SQL to execute
+         // it becomes possible to e.g. have two SQLs in the same line. In this case setting x = 0 may not be considered right.
+         //
+         // Before changing this be aware that even a rectangle might be inadequate in case of the option(*).
+         // To avoid this complexity for now we refrain from adjusting this and wait for the time when many ;) users complain.
+         //
+         // Note: Central class for option(*) is SQLStatementSeparatorBasedBoundsHandler
          x = 0;
+         //
+         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
          y = (int) beg.getY();
          width = maxSqlX - x;
          height = (int) (end.getHeight() + end.getY() - beg.getY());

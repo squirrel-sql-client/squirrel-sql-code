@@ -32,7 +32,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Rectangle;
 
 /**
  * This preferences panel allows maintenance of SQL preferences.
@@ -201,10 +200,7 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 			_panel = new SQLPreferencesPanel(_changeTrackPrefsPanelController.getPanel());
 			_scrollPane = new JScrollPane(_panel);
 
-			GUIUtils.forceProperty(() -> {
-				_panel.scrollRectToVisible(new Rectangle(0,0,1,1));
-				return 0 == _panel.getVisibleRect().y;
-			});
+			GUIUtils.forceScrollToBegin(_scrollPane);
 		}
 		return _scrollPane;
 	}

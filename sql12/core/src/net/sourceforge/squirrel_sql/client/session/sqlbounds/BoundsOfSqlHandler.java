@@ -33,7 +33,6 @@ public class BoundsOfSqlHandler
    /**
     * The non selection separator is two new lines. Two new lines with white spaces in between
     * is counted as separator too.
-    * @return
     */
    public int[] getSqlBoundsBySeparatorRule(int iCaretPos)
    {
@@ -52,7 +51,7 @@ public class BoundsOfSqlHandler
    {
       if(Main.getApplication().getSquirrelPreferences().isUseStatementSeparatorAsSqlToExecuteBounds())
       {
-         return SQLStatementSeparatorBasedBoundsHandler.nextIndexOfStateSep(_session.getQueryTokenizer(), sql, pos);
+         return SQLStatementSeparatorBasedBoundsHandler.nextIndexOfStateSep(sql, pos, _session.getQueryTokenizer());
       }
       else
       {
@@ -64,7 +63,7 @@ public class BoundsOfSqlHandler
    {
       if(Main.getApplication().getSquirrelPreferences().isUseStatementSeparatorAsSqlToExecuteBounds())
       {
-         return SQLStatementSeparatorBasedBoundsHandler.previousIndexOfStateSep(_session.getQueryTokenizer(), sql, pos);
+         return SQLStatementSeparatorBasedBoundsHandler.previousIndexOfStateSep(sql, pos, _session.getQueryTokenizer());
       }
       else
       {
