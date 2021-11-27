@@ -22,11 +22,11 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tokenizer;
  */
 
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
-import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.ITokenizerFactory;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 

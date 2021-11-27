@@ -1,8 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.sql.commentandliteral;
 
 
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
+
 /**
- * This code used to be part of {@link net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer#setScriptToTokenize(String)}
+ * This code used to be part of {@link QueryTokenizer#setScriptToTokenize(String)}
  * and was moved here on 3/29/2020 to fix bug #1329.
  *
  * Moving the code was necessary to implement {@link SQLCommentRemover}

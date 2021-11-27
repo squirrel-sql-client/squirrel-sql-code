@@ -32,152 +32,153 @@ import java.beans.SimpleBeanInfo;
 public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements SquirrelPreferences.IPropertyNames
 {
 
-	/**
-	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
-	 * getPropertyDescriptors().
-	 * 
-	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
-	 */
-	@Override	
-	public PropertyDescriptor[] getPropertyDescriptors()
-	{
-		try
-		{
-			PropertyDescriptor[] result =
-				new PropertyDescriptor[]
-					{
-						new PropertyDescriptor(SESSION_PROPERTIES, SquirrelPreferences.class,
-							"getSessionProperties", "setSessionProperties"),
-						new PropertyDescriptor(MAIN_FRAME_STATE, SquirrelPreferences.class,
-							"getMainFrameWindowState", "setMainFrameWindowState"),
-						new PropertyDescriptor(SHOW_CONTENTS_WHEN_DRAGGING, SquirrelPreferences.class,
-							"getShowContentsWhenDragging", "setShowContentsWhenDragging"),
+   /**
+    * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+    * getPropertyDescriptors().
+    * 
+    * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+    */
+   @Override   
+   public PropertyDescriptor[] getPropertyDescriptors()
+   {
+      try
+      {
+         PropertyDescriptor[] result =
+            new PropertyDescriptor[]
+               {
+                  new PropertyDescriptor(SESSION_PROPERTIES, SquirrelPreferences.class,
+                     "getSessionProperties", "setSessionProperties"),
+                  new PropertyDescriptor(MAIN_FRAME_STATE, SquirrelPreferences.class,
+                     "getMainFrameWindowState", "setMainFrameWindowState"),
+                  new PropertyDescriptor(SHOW_CONTENTS_WHEN_DRAGGING, SquirrelPreferences.class,
+                     "getShowContentsWhenDragging", "setShowContentsWhenDragging"),
 
-						new PropertyDescriptor(TABBED_STYLE, SquirrelPreferences.class,
-							"getTabbedStyle", "setTabbedStyle"),
-						new PropertyDescriptor(USE_SCROLLABLE_TABBED_PANES_FOR_SESSION_TABS, SquirrelPreferences.class,
-							"getUseScrollableTabbedPanesForSessionTabs", "setUseScrollableTabbedPanesForSessionTabs"),
-						new PropertyDescriptor(SHOW_TABBED_STYLE_HINT, SquirrelPreferences.class,
-							"getShowTabbedStyleHint", "setShowTabbedStyleHint"),
+                  new PropertyDescriptor(TABBED_STYLE, SquirrelPreferences.class,
+                     "getTabbedStyle", "setTabbedStyle"),
+                  new PropertyDescriptor(USE_SCROLLABLE_TABBED_PANES_FOR_SESSION_TABS, SquirrelPreferences.class,
+                     "getUseScrollableTabbedPanesForSessionTabs", "setUseScrollableTabbedPanesForSessionTabs"),
+                  new PropertyDescriptor(SHOW_TABBED_STYLE_HINT, SquirrelPreferences.class,
+                     "getShowTabbedStyleHint", "setShowTabbedStyleHint"),
 
-						new PropertyDescriptor(LOGIN_TIMEOUT, SquirrelPreferences.class, "getLoginTimeout",
-							"setLoginTimeout"),
-						new PropertyDescriptor(LARGE_SCRIPT_STMT_COUNT, SquirrelPreferences.class,
-							"getLargeScriptStmtCount", "setLargeScriptStmtCount"),
+                  new PropertyDescriptor(LOGIN_TIMEOUT, SquirrelPreferences.class, "getLoginTimeout",
+                     "setLoginTimeout"),
+                  new PropertyDescriptor(LARGE_SCRIPT_STMT_COUNT, SquirrelPreferences.class,
+                     "getLargeScriptStmtCount", "setLargeScriptStmtCount"),
 
-						new PropertyDescriptor(ALLOW_RUN_ALL_SQLS_IN_EDITOR, SquirrelPreferences.class,
-							"isAllowRunAllSQLsInEditor", "setAllowRunAllSQLsInEditor"),
+                  new PropertyDescriptor(ALLOW_RUN_ALL_SQLS_IN_EDITOR, SquirrelPreferences.class,
+                     "isAllowRunAllSQLsInEditor", "setAllowRunAllSQLsInEditor"),
 
-						new PropertyDescriptor(MARK_CURRENT_SQL, SquirrelPreferences.class,
-								"isMarkCurrentSql", "setMarkCurrentSql"),
-						new PropertyDescriptor(CURRENT_SQL_MARK_COLOR_RGB, SquirrelPreferences.class,
-								"getCurrentSqlMarkColorRGB", "setCurrentSqlMarkColorRGB"),
+                  new PropertyDescriptor(MARK_CURRENT_SQL, SquirrelPreferences.class,
+                        "isMarkCurrentSql", "setMarkCurrentSql"),
+                  new PropertyDescriptor(CURRENT_SQL_MARK_COLOR_RGB, SquirrelPreferences.class,
+                        "getCurrentSqlMarkColorRGB", "setCurrentSqlMarkColorRGB"),
 
-						new PropertyDescriptor(JDBC_DEBUG_TYPE, SquirrelPreferences.class, "getJdbcDebugType",
-							"setJdbcDebugType"),
-						new PropertyDescriptor(SHOW_MAIN_STATUS_BAR, SquirrelPreferences.class,
-							"getShowMainStatusBar", "setShowMainStatusBar"),
-						new PropertyDescriptor(SHOW_MAIN_TOOL_BAR, SquirrelPreferences.class, "getShowMainToolBar",
-							"setShowMainToolBar"),
-						new PropertyDescriptor(SHOW_ALIASES_TOOL_BAR, SquirrelPreferences.class,
-							"getShowAliasesToolBar", "setShowAliasesToolBar"),
-						new PropertyDescriptor(SHOW_DRIVERS_TOOL_BAR, SquirrelPreferences.class,
-							"getShowDriversToolBar", "setShowDriversToolBar"),
-						new PropertyDescriptor(SHOW_TOOLTIPS, SquirrelPreferences.class, "getShowToolTips",
-							"setShowToolTips"),
-						new PropertyDescriptor(SCROLLABLE_TABBED_PANES, SquirrelPreferences.class,
-							"getUseScrollableTabbedPanes", "setUseScrollableTabbedPanes"),
-						new IndexedPropertyDescriptor(ACTION_KEYS, SquirrelPreferences.class, "getActionKeys",
-							"setActionKeys", "getActionKeys", "setActionKeys"),
-						new PropertyDescriptor(PROXY, SquirrelPreferences.class, "getProxySettings",
-							"setProxySettings"),
-						new PropertyDescriptor(UPDATE, SquirrelPreferences.class, "getUpdateSettings",
-							"setUpdateSettings"),
-						new PropertyDescriptor(SHOW_LOADED_DRIVERS_ONLY, SquirrelPreferences.class,
-							"getShowLoadedDriversOnly", "setShowLoadedDriversOnly"),
-						new PropertyDescriptor(MAXIMIMIZE_SESSION_SHEET_ON_OPEN, SquirrelPreferences.class,
-							"getMaximizeSessionSheetOnOpen", "setMaximizeSessionSheetOnOpen"),
-						new PropertyDescriptor(SHOW_COLOR_ICONS_IN_TOOLBAR, SquirrelPreferences.class,
-							"getShowColoriconsInToolbar", "setShowColoriconsInToolbar"),
-						new PropertyDescriptor(FIRST_RUN, SquirrelPreferences.class, "isFirstRun", "setFirstRun"),
-						new PropertyDescriptor(CONFIRM_SESSION_CLOSE, SquirrelPreferences.class,
-							"getConfirmSessionClose", "setConfirmSessionClose"),
-						new IndexedPropertyDescriptor(PLUGIN_STATUSES, SquirrelPreferences.class,
-							"getPluginStatuses", "setPluginStatuses", "getPluginStatus", "setPluginStatus"),
-						new PropertyDescriptor(NEW_SESSION_VIEW, SquirrelPreferences.class, "getNewSessionView",
-							"setNewSessionView"),
-						new PropertyDescriptor(FILE_OPEN_IN_PREVIOUS_DIR, SquirrelPreferences.class,
-							"isFileOpenInPreviousDir", "setFileOpenInPreviousDir"),
-						new PropertyDescriptor(FILE_OPEN_IN_SPECIFIED_DIR, SquirrelPreferences.class,
-							"isFileOpenInSpecifiedDir", "setFileOpenInSpecifiedDir"),
-						new PropertyDescriptor(FILE_SPECIFIED_DIR, SquirrelPreferences.class,
-							"getFileSpecifiedDir", "setFileSpecifiedDir"),
-						new PropertyDescriptor(FILE_PREVIOUS_DIR, SquirrelPreferences.class, "getFilePreviousDir",
-							"setFilePreviousDir"),
-						new PropertyDescriptor(SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN, SquirrelPreferences.class,
-							"getShowPluginFilesInSplashScreen", "setShowPluginFilesInSplashScreen"),
-						new PropertyDescriptor(USE_SHORT_SESSION_TITLE, SquirrelPreferences.class,
-							"getUseShortSessionTitle", "setUseShortSessionTitle"),
-						new PropertyDescriptor(WARN_JRE_JDBC_MISMATCH, SquirrelPreferences.class,
-							"getWarnJreJdbcMismatch", "setWarnJreJdbcMismatch"),
-						new PropertyDescriptor(WARN_FOR_UNSAVED_FILE_EDITS, SquirrelPreferences.class,
-							"getWarnForUnsavedFileEdits", "setWarnForUnsavedFileEdits"),
-						new PropertyDescriptor(WARN_FOR_UNSAVED_BUFFER_EDITS, SquirrelPreferences.class,
-							"getWarnForUnsavedBufferEdits", "setWarnForUnsavedBufferEdits"),
-						new PropertyDescriptor(SHOW_SESSION_STARTUP_TIME_HINT, SquirrelPreferences.class,
-							"getShowSessionStartupTimeHint", "setShowSessionStartupTimeHint"),
-						new PropertyDescriptor(SHOW_DEBUG_LOG_MESSAGES, SquirrelPreferences.class,
-							"getShowDebugLogMessage", "setShowDebugLogMessages"),
-						new PropertyDescriptor(SHOW_INFO_LOG_MESSAGES, SquirrelPreferences.class,
-							"getShowInfoLogMessages", "setShowInfoLogMessages"),
-						new PropertyDescriptor(SHOW_ERROR_LOG_MESSAGES, SquirrelPreferences.class,
-							"getShowErrorLogMessages", "setShowErrorLogMessages"),
+                  new PropertyDescriptor(USE_STATEMENT_SEPARATOR_AS_SQL_TO_EXECUTE_BOUNDS, SquirrelPreferences.class,
+                                         "isUseStatementSeparatorAsSqlToExecuteBounds", "setUseStatementSeparatorAsSqlToExecuteBounds"),
 
-						new PropertyDescriptor(SAVE_PREFERENCES_IMMEDIATELY, SquirrelPreferences.class,
-							"getSavePreferencesImmediately", "setSavePreferencesImmediately"),
-						new PropertyDescriptor(SAVE_ALIASES_AND_DRIVERS_IMMEDIATELY, SquirrelPreferences.class,
-							"getSaveAliasesAndDriversImmediately", "setSaveAliasesAndDriversImmediately"),
+                  new PropertyDescriptor(JDBC_DEBUG_TYPE, SquirrelPreferences.class, "getJdbcDebugType",
+                                            "setJdbcDebugType"),
+                  new PropertyDescriptor(SHOW_MAIN_STATUS_BAR, SquirrelPreferences.class,
+                     "getShowMainStatusBar", "setShowMainStatusBar"),
+                  new PropertyDescriptor(SHOW_MAIN_TOOL_BAR, SquirrelPreferences.class, "getShowMainToolBar",
+                     "setShowMainToolBar"),
+                  new PropertyDescriptor(SHOW_ALIASES_TOOL_BAR, SquirrelPreferences.class,
+                     "getShowAliasesToolBar", "setShowAliasesToolBar"),
+                  new PropertyDescriptor(SHOW_DRIVERS_TOOL_BAR, SquirrelPreferences.class,
+                     "getShowDriversToolBar", "setShowDriversToolBar"),
+                  new PropertyDescriptor(SHOW_TOOLTIPS, SquirrelPreferences.class, "getShowToolTips",
+                     "setShowToolTips"),
+                  new PropertyDescriptor(SCROLLABLE_TABBED_PANES, SquirrelPreferences.class,
+                     "getUseScrollableTabbedPanes", "setUseScrollableTabbedPanes"),
+                  new IndexedPropertyDescriptor(ACTION_KEYS, SquirrelPreferences.class, "getActionKeys",
+                     "setActionKeys", "getActionKeys", "setActionKeys"),
+                  new PropertyDescriptor(PROXY, SquirrelPreferences.class, "getProxySettings",
+                     "setProxySettings"),
+                  new PropertyDescriptor(UPDATE, SquirrelPreferences.class, "getUpdateSettings",
+                     "setUpdateSettings"),
+                  new PropertyDescriptor(SHOW_LOADED_DRIVERS_ONLY, SquirrelPreferences.class,
+                     "getShowLoadedDriversOnly", "setShowLoadedDriversOnly"),
+                  new PropertyDescriptor(MAXIMIMIZE_SESSION_SHEET_ON_OPEN, SquirrelPreferences.class,
+                     "getMaximizeSessionSheetOnOpen", "setMaximizeSessionSheetOnOpen"),
+                  new PropertyDescriptor(SHOW_COLOR_ICONS_IN_TOOLBAR, SquirrelPreferences.class,
+                     "getShowColoriconsInToolbar", "setShowColoriconsInToolbar"),
+                  new PropertyDescriptor(FIRST_RUN, SquirrelPreferences.class, "isFirstRun", "setFirstRun"),
+                  new PropertyDescriptor(CONFIRM_SESSION_CLOSE, SquirrelPreferences.class,
+                     "getConfirmSessionClose", "setConfirmSessionClose"),
+                  new IndexedPropertyDescriptor(PLUGIN_STATUSES, SquirrelPreferences.class,
+                     "getPluginStatuses", "setPluginStatuses", "getPluginStatus", "setPluginStatus"),
+                  new PropertyDescriptor(FILE_OPEN_IN_PREVIOUS_DIR, SquirrelPreferences.class,
+                     "isFileOpenInPreviousDir", "setFileOpenInPreviousDir"),
+                  new PropertyDescriptor(FILE_OPEN_IN_SPECIFIED_DIR, SquirrelPreferences.class,
+                     "isFileOpenInSpecifiedDir", "setFileOpenInSpecifiedDir"),
+                  new PropertyDescriptor(FILE_SPECIFIED_DIR, SquirrelPreferences.class,
+                     "getFileSpecifiedDir", "setFileSpecifiedDir"),
+                  new PropertyDescriptor(FILE_PREVIOUS_DIR, SquirrelPreferences.class, "getFilePreviousDir",
+                     "setFilePreviousDir"),
+                  new PropertyDescriptor(SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN, SquirrelPreferences.class,
+                     "getShowPluginFilesInSplashScreen", "setShowPluginFilesInSplashScreen"),
+                  new PropertyDescriptor(USE_SHORT_SESSION_TITLE, SquirrelPreferences.class,
+                     "getUseShortSessionTitle", "setUseShortSessionTitle"),
+                  new PropertyDescriptor(WARN_JRE_JDBC_MISMATCH, SquirrelPreferences.class,
+                     "getWarnJreJdbcMismatch", "setWarnJreJdbcMismatch"),
+                  new PropertyDescriptor(WARN_FOR_UNSAVED_FILE_EDITS, SquirrelPreferences.class,
+                     "getWarnForUnsavedFileEdits", "setWarnForUnsavedFileEdits"),
+                  new PropertyDescriptor(WARN_FOR_UNSAVED_BUFFER_EDITS, SquirrelPreferences.class,
+                     "getWarnForUnsavedBufferEdits", "setWarnForUnsavedBufferEdits"),
+                  new PropertyDescriptor(SHOW_SESSION_STARTUP_TIME_HINT, SquirrelPreferences.class,
+                     "getShowSessionStartupTimeHint", "setShowSessionStartupTimeHint"),
+                  new PropertyDescriptor(SHOW_DEBUG_LOG_MESSAGES, SquirrelPreferences.class,
+                     "getShowDebugLogMessage", "setShowDebugLogMessages"),
+                  new PropertyDescriptor(SHOW_INFO_LOG_MESSAGES, SquirrelPreferences.class,
+                     "getShowInfoLogMessages", "setShowInfoLogMessages"),
+                  new PropertyDescriptor(SHOW_ERROR_LOG_MESSAGES, SquirrelPreferences.class,
+                     "getShowErrorLogMessages", "setShowErrorLogMessages"),
 
-						new PropertyDescriptor(SELECT_ON_RIGHT_MOUSE_CLICK, SquirrelPreferences.class,
-							"getSelectOnRightMouseClick", "setSelectOnRightMouseClick"),
-						new PropertyDescriptor(SHOW_PLEASE_WAIT_DIALOG, SquirrelPreferences.class,
-							"getShowPleaseWaitDialog", "setShowPleaseWaitDialog"),
-						new PropertyDescriptor(PREFERRED_LOCALE, SquirrelPreferences.class, "getPreferredLocale",
-							"setPreferredLocale"),
+                  new PropertyDescriptor(SAVE_PREFERENCES_IMMEDIATELY, SquirrelPreferences.class,
+                     "getSavePreferencesImmediately", "setSavePreferencesImmediately"),
+                  new PropertyDescriptor(SAVE_ALIASES_AND_DRIVERS_IMMEDIATELY, SquirrelPreferences.class,
+                     "getSaveAliasesAndDriversImmediately", "setSaveAliasesAndDriversImmediately"),
 
-						new PropertyDescriptor(MAX_COLUMN_ADJUST_LENGTH_DEFINED, SquirrelPreferences.class, "getMaxColumnAdjustLengthDefined",
-							"setMaxColumnAdjustLengthDefined"),
+                  new PropertyDescriptor(SELECT_ON_RIGHT_MOUSE_CLICK, SquirrelPreferences.class,
+                     "getSelectOnRightMouseClick", "setSelectOnRightMouseClick"),
+                  new PropertyDescriptor(SHOW_PLEASE_WAIT_DIALOG, SquirrelPreferences.class,
+                     "getShowPleaseWaitDialog", "setShowPleaseWaitDialog"),
+                  new PropertyDescriptor(PREFERRED_LOCALE, SquirrelPreferences.class, "getPreferredLocale",
+                     "setPreferredLocale"),
 
-						new PropertyDescriptor(MAX_COLUMN_ADJUST_LENGTH, SquirrelPreferences.class, "getMaxColumnAdjustLength",
-							"setMaxColumnAdjustLength"),
+                  new PropertyDescriptor(MAX_COLUMN_ADJUST_LENGTH_DEFINED, SquirrelPreferences.class, "getMaxColumnAdjustLengthDefined",
+                     "setMaxColumnAdjustLengthDefined"),
 
-						new PropertyDescriptor(REMEMBER_VALUE_OF_POPUP, SquirrelPreferences.class, "isRememberValueOfPopup",
-							"setRememberValueOfPopup"),
+                  new PropertyDescriptor(MAX_COLUMN_ADJUST_LENGTH, SquirrelPreferences.class, "getMaxColumnAdjustLength",
+                     "setMaxColumnAdjustLength"),
 
-						new PropertyDescriptor(RELOAD_SQL_CONTENTS, SquirrelPreferences.class, "isReloadSqlContents",
-							"setReloadSqlContents"),
+                  new PropertyDescriptor(REMEMBER_VALUE_OF_POPUP, SquirrelPreferences.class, "isRememberValueOfPopup",
+                     "setRememberValueOfPopup"),
 
-						new PropertyDescriptor(MAX_TEXTOUTPUT_COLUMN_WIDTH, SquirrelPreferences.class, "getMaxTextOutputColumnWidth",
-							"setMaxTextOutputColumnWidth"),
+                  new PropertyDescriptor(RELOAD_SQL_CONTENTS, SquirrelPreferences.class, "isReloadSqlContents",
+                     "setReloadSqlContents"),
 
-						new PropertyDescriptor(NOTIFY_EXTERNAL_FILE_CHANGES, SquirrelPreferences.class, "isNotifyExternalFileChanges",
-							"setNotifyExternalFileChanges"),
+                  new PropertyDescriptor(MAX_TEXTOUTPUT_COLUMN_WIDTH, SquirrelPreferences.class, "getMaxTextOutputColumnWidth",
+                     "setMaxTextOutputColumnWidth"),
 
-						new PropertyDescriptor(ENABLE_CHANGE_TRACKING, SquirrelPreferences.class, "isEnableChangeTracking", "setEnableChangeTracking"),
-						new PropertyDescriptor(GIT_COMMIT_MSG_MANUALLY, SquirrelPreferences.class, "isGitCommitMsgManually", "setGitCommitMsgManually"),
-						new PropertyDescriptor(GIT_COMMIT_MSG_DEFAULT, SquirrelPreferences.class, "getGitCommitMsgDefault", "setGitCommitMsgDefault"),
-						new PropertyDescriptor(DELETED_BOLD, SquirrelPreferences.class, "isDeletedBold", "setDeletedBold"),
-						new PropertyDescriptor(DELETED_ITALICS, SquirrelPreferences.class, "isDeletedItalics", "setDeletedItalics"),
-						new PropertyDescriptor(DELETED_FOREGROUND_RGB, SquirrelPreferences.class, "getDeletedForegroundRGB", "setDeletedForegroundRGB"),
-						new PropertyDescriptor(INSERT_BEGIN_BACKGROUND_RGB, SquirrelPreferences.class, "getInsertBeginBackgroundRGB", "setInsertBeginBackgroundRGB"),
-						new PropertyDescriptor(INSERT_END_BACKGROUND_RGB, SquirrelPreferences.class, "getInsertEndBackgroundRGB", "setInsertEndBackgroundRGB"),
-				};
+                  new PropertyDescriptor(NOTIFY_EXTERNAL_FILE_CHANGES, SquirrelPreferences.class, "isNotifyExternalFileChanges",
+                     "setNotifyExternalFileChanges"),
 
-			return result;
-		}
-		catch (IntrospectionException e)
-		{
-			throw new Error(e);
-		}
-	}
+                  new PropertyDescriptor(ENABLE_CHANGE_TRACKING, SquirrelPreferences.class, "isEnableChangeTracking", "setEnableChangeTracking"),
+                  new PropertyDescriptor(GIT_COMMIT_MSG_MANUALLY, SquirrelPreferences.class, "isGitCommitMsgManually", "setGitCommitMsgManually"),
+                  new PropertyDescriptor(GIT_COMMIT_MSG_DEFAULT, SquirrelPreferences.class, "getGitCommitMsgDefault", "setGitCommitMsgDefault"),
+                  new PropertyDescriptor(DELETED_BOLD, SquirrelPreferences.class, "isDeletedBold", "setDeletedBold"),
+                  new PropertyDescriptor(DELETED_ITALICS, SquirrelPreferences.class, "isDeletedItalics", "setDeletedItalics"),
+                  new PropertyDescriptor(DELETED_FOREGROUND_RGB, SquirrelPreferences.class, "getDeletedForegroundRGB", "setDeletedForegroundRGB"),
+                  new PropertyDescriptor(INSERT_BEGIN_BACKGROUND_RGB, SquirrelPreferences.class, "getInsertBeginBackgroundRGB", "setInsertBeginBackgroundRGB"),
+                  new PropertyDescriptor(INSERT_END_BACKGROUND_RGB, SquirrelPreferences.class, "getInsertEndBackgroundRGB", "setInsertEndBackgroundRGB"),
+            };
+
+         return result;
+      }
+      catch (IntrospectionException e)
+      {
+         throw new Error(e);
+      }
+   }
 }

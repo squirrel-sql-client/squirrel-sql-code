@@ -7,8 +7,8 @@ import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 

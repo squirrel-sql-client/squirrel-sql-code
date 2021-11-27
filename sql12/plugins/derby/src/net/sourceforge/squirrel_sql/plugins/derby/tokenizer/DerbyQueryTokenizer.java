@@ -19,9 +19,9 @@ package net.sourceforge.squirrel_sql.plugins.derby.tokenizer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.ITokenizerFactory;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
 
 /**
  * This class is loaded by the Derby Plugin and registered with all Derby 

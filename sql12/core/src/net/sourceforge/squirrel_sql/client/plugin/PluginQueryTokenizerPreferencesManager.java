@@ -18,10 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.client.plugin;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Iterator;
-
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
@@ -33,6 +29,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Iterator;
+
 /**
  * This is intended to be used by plugins that have custom IQueryTokenizers, which require some sort of
  * preference management (loading/storing preference beans to XML file and vice-versa). In reality this
@@ -43,10 +43,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
  */
 public class PluginQueryTokenizerPreferencesManager
 {
-
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(PluginQueryTokenizerPreferencesManager.class);
+	private final static ILogger s_log = LoggerController.createLogger(PluginQueryTokenizerPreferencesManager.class);
 
 	/** Name of preferences file. */
 	private static final String USER_PREFS_FILE_NAME = "prefs.xml";

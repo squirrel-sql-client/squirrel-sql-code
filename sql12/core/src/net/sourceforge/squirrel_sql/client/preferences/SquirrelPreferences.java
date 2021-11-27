@@ -53,7 +53,7 @@ import java.util.Iterator;
 public class SquirrelPreferences implements Serializable
 {
 
-   public interface IPropertyNames
+	public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
       String CONFIRM_SESSION_CLOSE = "confirmSessionClose";
@@ -65,10 +65,10 @@ public class SquirrelPreferences implements Serializable
       String ALLOW_RUN_ALL_SQLS_IN_EDITOR = "allowRunAllSQLsInEditor";
       String MARK_CURRENT_SQL = "markCurrentSql";
       String CURRENT_SQL_MARK_COLOR_RGB = "currentSqlMarkColorRGB";
+		String USE_STATEMENT_SEPARATOR_AS_SQL_TO_EXECUTE_BOUNDS = "useStatementSeparatorAsSqlToExecuteBounds";
       String MAIN_FRAME_STATE = "mainFrameWindowState";
       String MAXIMIMIZE_SESSION_SHEET_ON_OPEN = "maximizeSessionSheetOnOpen";
-      String NEW_SESSION_VIEW = "newSessionView";
-      String PLUGIN_OBJECTS = "pluginObjects";
+		String PLUGIN_OBJECTS = "pluginObjects";
       String PLUGIN_STATUSES = "pluginStatuses";
       String PROXY = "proxyPerferences";
       String UPDATE = "updatePreferences";
@@ -174,10 +174,6 @@ public class SquirrelPreferences implements Serializable
 
 	private boolean _allowRunAllSQLsInEditor = true;
 
-	/** The View to start when a new session is created. */
-	// JASON: What are its valid values?
-	private String _newSessionView;
-
 	/** Show tooltips for controls. */
 	private boolean _showToolTips = true;
 
@@ -272,6 +268,8 @@ public class SquirrelPreferences implements Serializable
 	private int _currentSqlMarkColorRGB = Color.blue.getRGB();
 	private boolean _markCurrentSql = true;
 
+	private boolean _useStatementSeparatorAsSqlToExecuteBounds = false;
+
 	private boolean _rememberValueOfPopup = false;
 
 	private boolean _reloadSqlContents;
@@ -292,10 +290,6 @@ public class SquirrelPreferences implements Serializable
 	// Change tracking properties
 	/////////////////////////////////////////////////////////////////////////
 
-
-	/**
-	 * Default ctor.
-	 */
 	public SquirrelPreferences()
 	{
 		loadDefaults();
@@ -311,24 +305,7 @@ public class SquirrelPreferences implements Serializable
 		getPropertyChangeReporter().removePropertyChangeListener(listener);
 	}
 
-	public String getNewSessionView()
-	{
-		return _newSessionView;
-	}
-	
-	public synchronized void setNewSessionView(String data)
-	{
-		if (((data == null) && (_newSessionView != null)) || (data != null)
-				&& !data.equals(_newSessionView))
-		{
-			final String oldValue = _newSessionView;
-			_newSessionView = data;
-			getPropertyChangeReporter().firePropertyChange(
-					IPropertyNames.NEW_SESSION_VIEW, oldValue, _newSessionView);
-		}
-	}
-
-   public SessionProperties getSessionProperties()
+	public SessionProperties getSessionProperties()
 	{
 		return _sessionProps;
 	}
@@ -1298,6 +1275,17 @@ public class SquirrelPreferences implements Serializable
 	{
 		_markCurrentSql = markCurrentSql;
 	}
+
+	public boolean isUseStatementSeparatorAsSqlToExecuteBounds()
+	{
+		return _useStatementSeparatorAsSqlToExecuteBounds;
+	}
+
+	public void setUseStatementSeparatorAsSqlToExecuteBounds(boolean useStatementSeparatorAsSqlToExecuteBounds)
+	{
+		_useStatementSeparatorAsSqlToExecuteBounds = useStatementSeparatorAsSqlToExecuteBounds;
+	}
+
 
 	public int getCurrentSqlMarkColorRGB()
 	{

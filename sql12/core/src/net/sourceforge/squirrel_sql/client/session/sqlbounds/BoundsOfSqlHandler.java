@@ -1,14 +1,19 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.session.sqlbounds;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 import javax.swing.text.JTextComponent;
 
 public class BoundsOfSqlHandler
 {
    private JTextComponent _textComponent;
+   private ISession _session;
 
-   public BoundsOfSqlHandler(JTextComponent textComponent)
+   public BoundsOfSqlHandler(JTextComponent textComponent, ISession session)
    {
       _textComponent = textComponent;
+      _session = session;
    }
 
    public int[] getBoundsOfSQLToBeExecuted()
@@ -36,14 +41,39 @@ public class BoundsOfSqlHandler
 
       String sql = _textComponent.getText();
 
-      bounds[0] = lastIndexOfStateSep(sql, iCaretPos);
-      bounds[1] = indexOfStateSep(sql, iCaretPos);
+      bounds[0] = previousIndexOfStateSep(sql, iCaretPos);
+      bounds[1] = nextIndexOfStateSep(sql, iCaretPos);
 
       return bounds;
 
    }
 
-   private int indexOfStateSep(String sql, int pos)
+   private int nextIndexOfStateSep(String sql, int pos)
+   {
+      if(Main.getApplication().getSquirrelPreferences().isUseStatementSeparatorAsSqlToExecuteBounds())
+      {
+         return SQLStatementSeparatorBasedBoundsHandler.nextIndexOfStateSep(_session.getQueryTokenizer(), sql, pos);
+      }
+      else
+      {
+         return nextIndexOfNewLineSeparator(sql, pos);
+      }
+   }
+
+   private int previousIndexOfStateSep(String sql, int pos)
+   {
+      if(Main.getApplication().getSquirrelPreferences().isUseStatementSeparatorAsSqlToExecuteBounds())
+      {
+         return SQLStatementSeparatorBasedBoundsHandler.previousIndexOfStateSep(_session.getQueryTokenizer(), sql, pos);
+      }
+      else
+      {
+         return previousIndexOfNewLineSeparator(sql, pos);
+      }
+   }
+
+
+   private int nextIndexOfNewLineSeparator(String sql, int pos)
    {
       int ix = pos;
 
@@ -73,7 +103,8 @@ public class BoundsOfSqlHandler
       }
    }
 
-   private int lastIndexOfStateSep(String sql, int pos)
+
+   private int previousIndexOfNewLineSeparator(String sql, int pos)
    {
       int ix = pos;
 

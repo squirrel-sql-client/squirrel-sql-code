@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.sql;
+package net.sourceforge.squirrel_sql.fw.sql.querytokenizer;
 
 
 public interface ScriptPluginInterface

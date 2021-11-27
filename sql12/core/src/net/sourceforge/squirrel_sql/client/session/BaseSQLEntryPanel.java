@@ -1,20 +1,22 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
+import net.sourceforge.squirrel_sql.client.session.sqlbounds.BoundsOfSqlHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
+
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /*
  * Copyright (C) 2001-2003 Colin Bell
@@ -65,7 +67,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
    private void initLater()
    {
       getTextComponent().addMouseListener(_sqlEntryMouseListener);
-      _boundsOfSqlHandler = new BoundsOfSqlHandler(getTextComponent());
+      _boundsOfSqlHandler = new BoundsOfSqlHandler(getTextComponent(), getSession());
 
 		_lastEditLocationHandler = new LastEditLocationHandler(getTextComponent());
    }

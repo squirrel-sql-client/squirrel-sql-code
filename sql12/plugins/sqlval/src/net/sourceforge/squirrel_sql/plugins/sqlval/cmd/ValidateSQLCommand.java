@@ -17,9 +17,11 @@ package net.sourceforge.squirrel_sql.plugins.sqlval.cmd;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import com.mimer.ws.validateSQL.ValidatorResult;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -28,8 +30,6 @@ import net.sourceforge.squirrel_sql.plugins.sqlval.WebServicePreferences;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceSession;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceSessionProperties;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceValidator;
-
-import com.mimer.ws.validateSQL.ValidatorResult;
 
 /**
  * This <CODE>ICommand</CODE> will validate the passed SQL.

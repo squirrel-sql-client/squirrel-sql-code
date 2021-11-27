@@ -18,17 +18,15 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import java.awt.event.WindowAdapter;
-
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
-import org.apache.commons.lang.StringUtils;
+import java.awt.event.WindowAdapter;
 
 /**
  * The base class for data script commands, they depends on the current selected SQL statement.

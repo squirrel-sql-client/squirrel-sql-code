@@ -4,15 +4,15 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import java.sql.SQLException;

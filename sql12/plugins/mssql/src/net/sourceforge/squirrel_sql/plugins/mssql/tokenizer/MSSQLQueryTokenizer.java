@@ -21,9 +21,9 @@ package net.sourceforge.squirrel_sql.plugins.mssql.tokenizer;
  */
 
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 

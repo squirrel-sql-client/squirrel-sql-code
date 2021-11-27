@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.sql;
+package net.sourceforge.squirrel_sql.fw.sql.querytokenizer;
 
 
 /**
@@ -42,7 +42,9 @@ public interface IQueryTokenizer
      * setScriptToTokenize has not yet been called.
      */
     int getQueryCount();
-    
+
+    IQueryTokenizer createQueryTokenizerClone();
+
     /**
      * Returns the statement separator being used for this session.  This may be
      * the user's preference, or in the case of a plugin that provides a custom

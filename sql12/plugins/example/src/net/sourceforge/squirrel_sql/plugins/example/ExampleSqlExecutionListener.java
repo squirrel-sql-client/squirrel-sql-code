@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.example;
 
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
-import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 /*

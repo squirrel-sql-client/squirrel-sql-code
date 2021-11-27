@@ -20,10 +20,10 @@ package net.sourceforge.squirrel_sql.client.session.event;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 
 import java.util.EventListener;
-import java.util.List;
+
 /**
  * This listener is called whenever an SQL script is about to be
  * executed.

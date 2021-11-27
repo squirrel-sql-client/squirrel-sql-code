@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.sql;
+package net.sourceforge.squirrel_sql.fw.sql.querytokenizer;
 /*
  * Copyright (C) 2001-2003 Johan Compagner
  * jcompagner@j-com.nl
@@ -48,14 +48,7 @@ public class QueryTokenizer implements IQueryTokenizer
 
    protected ITokenizerFactory _tokenizerFactory = null;
 
-   /**
-    * Logger for this class.
-    */
    private final static ILogger s_log = LoggerController.createLogger(QueryTokenizer.class);
-
-   public QueryTokenizer()
-   {
-   }
 
    public QueryTokenizer(String querySep,
                          String lineCommentBegin,
@@ -81,7 +74,7 @@ public class QueryTokenizer implements IQueryTokenizer
     */
    protected void setFactory()
    {
-      _tokenizerFactory = () -> new QueryTokenizer();
+      _tokenizerFactory = () -> new QueryTokenizer(_querySep, _lineCommentBegin,_removeMultiLineComment,_removeLineComment);
    }
     
 
@@ -412,17 +405,10 @@ public class QueryTokenizer implements IQueryTokenizer
       {
          s_log.error("Unexpected exception while reading lines from file (" + filename + ")", e);
       }
+
       if (fileLines.toString().length() > 0)
       {
-         IQueryTokenizer qt = null;
-         if (_tokenizerFactory != null)
-         {
-            qt = _tokenizerFactory.getTokenizer();
-         }
-         else
-         {
-            qt = new QueryTokenizer(_querySep, _lineCommentBegin,_removeMultiLineComment,_removeLineComment);
-         }
+         IQueryTokenizer qt = createQueryTokenizerClone();
          qt.setScriptToTokenize(fileLines.toString());
          while (qt.hasQuery())
          {
@@ -434,8 +420,23 @@ public class QueryTokenizer implements IQueryTokenizer
       return result;
    }
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer#getSQLStatementSeparator()
+   @Override
+   public IQueryTokenizer createQueryTokenizerClone()
+   {
+      IQueryTokenizer qt;
+      if (_tokenizerFactory != null)
+      {
+         qt = _tokenizerFactory.getTokenizer();
+      }
+      else
+      {
+         qt = new QueryTokenizer(_querySep, _lineCommentBegin,_removeMultiLineComment,_removeLineComment);
+      }
+      return qt;
+   }
+
+   /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer#getSQLStatementSeparator()
      */
     public String getSQLStatementSeparator() {
         return _querySep;

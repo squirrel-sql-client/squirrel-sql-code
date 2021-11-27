@@ -23,7 +23,6 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
@@ -34,7 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQ
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -42,7 +41,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.h2.exp.H2SequenceInodeExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.h2.exp.H2TableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.h2.exp.H2TableTriggerExtractorImpl;
-import net.sourceforge.squirrel_sql.plugins.h2.tab.*;
+import net.sourceforge.squirrel_sql.plugins.h2.tab.IndexDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.h2.tab.IndexSourceTab;
+import net.sourceforge.squirrel_sql.plugins.h2.tab.SequenceDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.h2.tab.TriggerDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.h2.tab.ViewSourceTab;
 
 
 /**

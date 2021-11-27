@@ -40,6 +40,8 @@ public final class SQLPreferencesPanel extends JPanel
    JCheckBox chkMarkCurrentSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.mark.current.sql"));
    JButton btnCurrentSqlMarkColorRGB = new JButton();
 
+   JCheckBox chkUseStatementSeparatorAsSqlToExecuteBounds = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.use.statement.separator.as.current.bounds"));
+
    JCheckBox chkReloadSqlContentsSql = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.reload.sql.contents"));
    IntegerField txtMaxTextOutputColumnWidth = new IntegerField();
 
@@ -141,17 +143,23 @@ public final class SQLPreferencesPanel extends JPanel
       gbc.gridx = 0;
       gbc.gridy = 5;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
+      gbc.fill = GridBagConstraints.NONE;
+      pnl.add(chkUseStatementSeparatorAsSqlToExecuteBounds, gbc);
+
+      gbc.gridx = 0;
+      gbc.gridy = 6;
+      gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.HORIZONTAL;
       pnl.add(createReloadSQLContentsPanel(), gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 6;
+      gbc.gridy = 7;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.NONE;
       pnl.add(createMaxTextOutputColumnWidthPanel(), gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 7;
+      gbc.gridy = 8;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.fill = GridBagConstraints.NONE;
       pnl.add(chkNotifyExternalFileChanges, gbc);

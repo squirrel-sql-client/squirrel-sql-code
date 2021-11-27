@@ -3,8 +3,8 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 

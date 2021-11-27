@@ -21,8 +21,8 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetComm
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.sql.commentandliteral.SQLCommentRemover;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlparam.gui.AskParamValueDialog;

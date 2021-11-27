@@ -81,6 +81,7 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 		_panel.getCurrentSqlMarkColorIcon().setColor(new Color(prefs.getCurrentSqlMarkColorRGB()));
 		initCurrentMarkGui();
 
+		_panel.chkUseStatementSeparatorAsSqlToExecuteBounds.setSelected(prefs.isUseStatementSeparatorAsSqlToExecuteBounds());
 
 		_panel.chkReloadSqlContentsSql.setSelected(prefs.isReloadSqlContents());
 		_panel.txtMaxTextOutputColumnWidth.setInt(prefs.getMaxTextOutputColumnWidth());
@@ -111,6 +112,8 @@ public class SQLPreferencesController implements IGlobalPreferencesPanel
 
 		prefs.setMarkCurrentSql(_panel.chkMarkCurrentSql.isSelected());
 		prefs.setCurrentSqlMarkColorRGB((_panel.getCurrentSqlMarkColorIcon()).getColor().getRGB());
+
+		prefs.setUseStatementSeparatorAsSqlToExecuteBounds(_panel.chkUseStatementSeparatorAsSqlToExecuteBounds.isSelected());
 
 		prefs.setReloadSqlContents(_panel.chkReloadSqlContentsSql.isSelected());
 

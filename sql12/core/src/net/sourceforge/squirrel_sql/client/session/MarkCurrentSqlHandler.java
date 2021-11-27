@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session;
 
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.sqlbounds.BoundsOfSqlHandler;
 
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
@@ -38,7 +39,7 @@ public class MarkCurrentSqlHandler
 
 
       _textComponent = textComponent;
-      _boundsOfSqlHandler = new BoundsOfSqlHandler(_textComponent);
+      _boundsOfSqlHandler = new BoundsOfSqlHandler(_textComponent, session);
    }
 
    public void paintMark(final Graphics g)

@@ -10,8 +10,9 @@ import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportFileWriter;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExportData;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferencesDAO;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.QueryHolder;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -141,7 +142,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
    }
 
    /**
-    * Used in {@link net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer#expandFileIncludes(String)} to
+    * Used in {@link QueryTokenizer#expandFileIncludes(String)} to
     * prevent conflict with {{@link net.sourceforge.squirrel_sql.plugins.oracle.tokenizer.OracleQueryTokenizer#ORACLE_SCRIPT_INCLUDE_PREFIX}}
     */
    public static boolean startsWithSqlToFileMarker(String query)
