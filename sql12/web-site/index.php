@@ -54,9 +54,6 @@
 		case 'changes':
 			$pageFileName = 'latest-changes.html';
 			break;
-	    case 'yourkit':
-	    	$pageFileName = 'yourkit.html';
-	    	break;
 		default:
 			$pageFileName = 'home.html';
 			break;
