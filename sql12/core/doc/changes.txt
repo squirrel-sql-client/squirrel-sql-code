@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Look and Feel plugin: Replace Substance Look & Feel by Radiance Look & Feel
+  Thanks to Slavomir Varchula for the patch.
+
+Look and Feel plugin: Upgrade FlatLaF to 1.6.4
+  Thanks to Slavomir Varchula for the patch.
+
 #1090 (in bugs): Option to use statement separators instead of empty lines as bounds of SQL to execute.
   See menu File --> Global Preferences --> tab SQL --> section General
   --> checkbox "Use statement separator (instead of empty line) as bounds of current SQL"

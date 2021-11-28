@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -16,6 +15,7 @@ import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,6 +61,10 @@ final class LAFPreferencesPanel extends JPanel
 
    private LAFPreferences _prefs;
 
+
+   private JPanel _lafPnl;
+   private JPanel _configHolderPnl = new JPanel(new GridLayout(1, 1));
+
    /**
     * Listener on the Look and Feel combo box.
     */
@@ -73,7 +77,7 @@ final class LAFPreferencesPanel extends JPanel
     */
    private BaseLAFPreferencesPanelComponent _curLAFConfigComp;
 
-   private JPanel _lafPnl;
+
 
    LAFPreferencesPanel(LAFPlugin plugin, LAFRegister lafRegister)
    {
@@ -135,58 +139,49 @@ final class LAFPreferencesPanel extends JPanel
 
    private void createUserInterface()
    {
-      final GridBagConstraints gbc = new GridBagConstraints();
-      gbc.anchor = GridBagConstraints.WEST;
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-      gbc.insets = new Insets(4, 4, 4, 4);
+      GridBagConstraints gbc;
 
-      gbc.gridy = 0;
-      gbc.gridx = 0;
-      add(createSettingsPanel(), gbc);
+      _lafPnl = createLookAndFeelPanel();
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
+      add(_lafPnl, gbc);
 
-      ++gbc.gridy;
-      add(createLookAndFeelPanel(), gbc);
-
-      ++gbc.gridy;
-      gbc.gridx = 0;
-      gbc.gridwidth = GridBagConstraints.REMAINDER;
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
       add(new MultipleLineLabel(LAFPreferencesPanelI18n.LAF_WARNING), gbc);
 
-      ++gbc.gridy;
-      gbc.gridx = 0;
-      gbc.gridwidth = GridBagConstraints.REMAINDER;
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
       MultipleLineLabel enforedWarningLabel = new MultipleLineLabel(LAFPreferencesPanelI18n.LAF_CRITICAL_WARNING);
       enforedWarningLabel.setForeground(Color.red);
       add(enforedWarningLabel, gbc);
+
+      gbc = new GridBagConstraints(0,3,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
+      add(new JPanel(), gbc);
    }
 
    private JPanel createLookAndFeelPanel()
    {
-      _lafPnl = new JPanel(new GridBagLayout());
-      // i18n[laf.broderLaf=Look and Feel]
-      _lafPnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("laf.broderLaf")));
+      JPanel ret = new JPanel(new GridBagLayout());
+      ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("laf.broderLaf")));
 
-      final GridBagConstraints gbc = new GridBagConstraints();
-      gbc.weightx = 1;
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-      gbc.insets = new Insets(4, 4, 4, 4);
-      gbc.anchor = GridBagConstraints.WEST;
+      GridBagConstraints gbc = new GridBagConstraints();
 
-      gbc.gridx = 0;
-      gbc.gridy = 0;
-      _lafPnl.add(new JLabel(LAFPreferencesPanelI18n.LOOK_AND_FEEL, SwingConstants.RIGHT), gbc);
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(4, 4, 4, 4),0,0);
+      ret.add(new JLabel(LAFPreferencesPanelI18n.LOOK_AND_FEEL, SwingConstants.RIGHT), gbc);
 
-      ++gbc.gridx;
-      _lafPnl.add(_lafCmb, gbc);
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(4, 4, 4, 4),0,0);
+      ret.add(_lafCmb, gbc);
 
-      gbc.gridx = 0;
-      ++gbc.gridy;
-      _lafPnl.add(new JLabel(LAFPreferencesPanelI18n.LAF_LOC, SwingConstants.RIGHT), gbc);
 
-      ++gbc.gridx;
-      _lafPnl.add(new OutputLabel(_plugin.getLookAndFeelFolder().getAbsolutePath()), gbc);
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(4, 4, 4, 4),0,0);
+      ret.add(new JLabel(LAFPreferencesPanelI18n.LAF_LOC, SwingConstants.RIGHT), gbc);
 
-      return _lafPnl;
+      gbc = new GridBagConstraints(1,1,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
+      ret.add(new MultipleLineLabel(_plugin.getLookAndFeelFolder().getAbsolutePath()), gbc);
+
+
+      gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(4, 0, 4, 4),0,0);
+      ret.add(_configHolderPnl, gbc);
+
+      return ret;
    }
 
    private JPanel createSettingsPanel()
@@ -212,7 +207,7 @@ final class LAFPreferencesPanel extends JPanel
    {
       if(_curLAFConfigComp != null)
       {
-         _lafPnl.remove(_curLAFConfigComp);
+         _configHolderPnl.remove(_curLAFConfigComp);
          _curLAFConfigComp = null;
       }
 
@@ -229,25 +224,20 @@ final class LAFPreferencesPanel extends JPanel
                if(_curLAFConfigComp != null)
                {
                   _curLAFConfigComp.loadPreferencesPanel();
-                  final GridBagConstraints gbc = new GridBagConstraints();
-                  gbc.fill = GridBagConstraints.HORIZONTAL;
-                  gbc.insets = new Insets(4, 4, 4, 4);
-                  gbc.gridx = 0;
-                  gbc.gridy = GridBagConstraints.RELATIVE;
-                  gbc.gridwidth = GridBagConstraints.REMAINDER;
-                  _lafPnl.add(_curLAFConfigComp, gbc);
+
+//                  final GridBagConstraints gbc = new GridBagConstraints();
+//                  gbc.fill = GridBagConstraints.HORIZONTAL;
+//                  gbc.insets = new Insets(4, 4, 4, 4);
+//                  gbc.gridx = 0;
+//                  gbc.gridy = GridBagConstraints.RELATIVE;
+//                  gbc.gridwidth = GridBagConstraints.REMAINDER;
+//                  _lafPnl.add(_curLAFConfigComp, gbc);
+
+                  _configHolderPnl.add(_curLAFConfigComp);
+                  //_configHolderPnl.invalidate();
                }
             }
-            else
-            {
-               s_log.debug("No ILookAndFeelController found for: " +
-                           selLafClassName);
-            }
          }
-      }
-      else
-      {
-         s_log.debug("Selected Look and Feel class is null");
       }
       validate();
    }

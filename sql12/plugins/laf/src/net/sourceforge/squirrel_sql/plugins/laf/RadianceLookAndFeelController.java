@@ -46,61 +46,54 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Behavior for the Substance Look and Feel.
+ * Behavior for the Radiance Look and Feel.
  * 
  */
-public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
-{
-	/** Class name of the Substance LAF class to use by default. This can be re-skinned at any time. */
-	private static final String SUBSTANCE_LOOK_AND_FEEL_CLASS = 
-		"org.jvnet.substance.skin.SubstanceAutumnLookAndFeel";
-	
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SubstanceLookAndFeelController.class);
+public class RadianceLookAndFeelController extends DefaultLookAndFeelController {
+	/**
+	 * Class name of the Radiance LAF class to use by default. This can be
+	 * re-skinned at any time.
+	 */
+	private static final String RADIANCE_LOOK_AND_FEEL_CLASS = "org.pushingpixels.radiance.theming.api.skin.RadianceBusinessLookAndFeel";
+
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RadianceLookAndFeelController.class);
 
 	/** Logger for this class. */
-	private static final ILogger s_log = LoggerController.createLogger(SubstanceLookAndFeelController.class);
+	private static final ILogger s_log = LoggerController.createLogger(RadianceLookAndFeelController.class);
 
-	/** Placeholder LAF that identifies itself as "Substance".  No other LAF does this. */
-	public static final String SUBSTANCE_LAF_PLACEHOLDER_CLASS_NAME =
-			new SubstanceLafPlaceholder().getClass().getName();
+	/**
+	 * Placeholder LAF that identifies itself as "Radiance". No other LAF does this.
+	 */
+	public static final String RADIANCE_LAF_PLACEHOLDER_CLASS_NAME = new RadianceLafPlaceholder().getClass().getName();
 
 	/** Preferences for this LAF. */
-	private SubstancePreferences _prefs;
+	private RadiancePreferences _prefs;
 
-	private SubstanceLafData _lafData = null;
+	private RadianceLafData _lafData = null;
 
 	private ClassLoader _cl = null;
-	
+
 	/**
 	 * Ctor specifying the Look and Feel plugin.
 	 * 
-	 * @param plugin
-	 *           The plugin that this controller is a part of.
+	 * @param plugin The plugin that this controller is a part of.
 	 */
-	SubstanceLookAndFeelController(LAFPlugin plugin, LAFRegister register) throws IOException
-	{
+	RadianceLookAndFeelController(LAFPlugin plugin, LAFRegister register) throws IOException {
 		super();
 
 		_cl = register.getLookAndFeelClassLoader();
-		_lafData = new SubstanceLafData(_cl);
-		
+		_lafData = new RadianceLafData(_cl);
+
 		XMLObjectCache cache = plugin.getSettingsCache();
-		Iterator<?> it = cache.getAllForClass(SubstancePreferences.class);
-		if (it.hasNext())
-		{
-			_prefs = (SubstancePreferences) it.next();
-		}
-		else
-		{
-			_prefs = new SubstancePreferences();
-			try
-			{
+		Iterator<?> it = cache.getAllForClass(RadiancePreferences.class);
+		if (it.hasNext()) {
+			_prefs = (RadiancePreferences) it.next();
+		} else {
+			_prefs = new RadiancePreferences();
+			try {
 				cache.add(_prefs);
-			}
-			catch (DuplicateObjectException ex)
-			{
-				s_log.error("SubstancePreferences object already in XMLObjectCache", ex);
+			} catch (DuplicateObjectException ex) {
+				s_log.error("RadiancePreferences object already in XMLObjectCache", ex);
 			}
 		}
 
@@ -109,80 +102,62 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 	/**
 	 * This Look and Feel is about to be installed. Load the selected themepack.
 	 */
-	public void aboutToBeInstalled(LAFRegister lafRegister, LookAndFeel laf)
-	{
+	public void aboutToBeInstalled(LAFRegister lafRegister, LookAndFeel laf) {
 	}
 
 	/**
 	 * This Look and Feel has just been installed.
 	 */
-	public void hasBeenInstalled(LAFRegister lafRegister, LookAndFeel laf)
-	{
+	public void hasBeenInstalled(LAFRegister lafRegister, LookAndFeel laf) {
 		final String skinName = _prefs.getSkinName();
 		Class<?> skinClass = _lafData.getSkinClassForName(skinName);
 		LookAndFeel skinObject;
-		try
-		{
-			skinObject = (LookAndFeel)skinClass.getDeclaredConstructor().newInstance();
+		try {
+			skinObject = (LookAndFeel) skinClass.getDeclaredConstructor().newInstance();
 			UIManager.setLookAndFeel(skinObject);
 			UIManager.getLookAndFeelDefaults().put("ClassLoader", _cl);
-		}
-		catch (InstantiationException e)
-		{
+		} catch (InstantiationException e) {
 			// skinClass.newInstance();
-			s_log.error("Unable to instantiate skinClass ("+skinName+"):"+e.getMessage(), e);
-		}
-		catch (IllegalAccessException e)
-		{
+			s_log.error("Unable to instantiate skinClass (" + skinName + "):" + e.getMessage(), e);
+		} catch (IllegalAccessException e) {
 			// skinClass.newInstance();
-			s_log.error("Unable to instantiate skinClass ("+skinName+"):"+e.getMessage(), e);
-		}
-		catch (UnsupportedLookAndFeelException e)
-		{
+			s_log.error("Unable to instantiate skinClass (" + skinName + "):" + e.getMessage(), e);
+		} catch (UnsupportedLookAndFeelException e) {
 			// UIManager.setLookAndFeel
-			s_log.error("Unable to set look and feel using skinClass("+skinName+"):"+e.getMessage(), e);
-		}
-		catch (InvocationTargetException e)
-		{
-			s_log.error("Unable to instantiate skinClass ("+skinName+"):"+e.getMessage(), e);
-		}
-		catch (NoSuchMethodException e)
-		{
-			s_log.error("Unable to instantiate skinClass ("+skinName+"):"+e.getMessage(), e);
+			s_log.error("Unable to set look and feel using skinClass(" + skinName + "):" + e.getMessage(), e);
+		} catch (InvocationTargetException e) {
+			s_log.error("Unable to instantiate skinClass (" + skinName + "):" + e.getMessage(), e);
+		} catch (NoSuchMethodException e) {
+			s_log.error("Unable to instantiate skinClass (" + skinName + "):" + e.getMessage(), e);
 		}
 	}
 
 	/**
 	 * @see ILookAndFeelController#getPreferencesComponent()
 	 */
-	public BaseLAFPreferencesPanelComponent getPreferencesComponent()
-	{
-		return new SubstanceSkinPrefsPanel(this);
+	public BaseLAFPreferencesPanelComponent getPreferencesComponent() {
+		return new RadianceSkinPrefsPanel(this);
 	}
 
-	private static final class SubstanceSkinPrefsPanel extends BaseLAFPreferencesPanelComponent
-	{
+	private static final class RadianceSkinPrefsPanel extends BaseLAFPreferencesPanelComponent {
 		private static final long serialVersionUID = 1L;
 
-		interface SkinPrefsPanelI18n
-		{
-			// i18n[SubstanceLookAndFeelController.substanceSkinLabel=Substance Skin:]
-			String THEME_PACK = s_stringMgr.getString("SubstanceLookAndFeelController.substanceSkinLabel");
+		interface SkinPrefsPanelI18n {
+			// i18n[RadianceLookAndFeelController.radianceSkinLabel=Radiance Skin:]
+			String THEME_PACK = s_stringMgr.getString("RadianceLookAndFeelController.radianceSkinLabel");
 		}
 
-		private SubstanceLookAndFeelController _ctrl;
+		private RadianceLookAndFeelController _ctrl;
 
 		private JComboBox _skinCmb = new JComboBox();
 
-		SubstanceSkinPrefsPanel(SubstanceLookAndFeelController ctrl)
-		{
+		RadianceSkinPrefsPanel(RadianceLookAndFeelController ctrl) {
 			super(new GridBagLayout());
 			_ctrl = ctrl;
 			createUserInterface();
 		}
 
-		private void createUserInterface()
-		{
+		private void createUserInterface() {
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.anchor = GridBagConstraints.WEST;
 			gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -199,21 +174,18 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 		/**
 		 * @see BaseLAFPreferencesPanelComponent#loadPreferencesPanel()
 		 */
-		public void loadPreferencesPanel()
-		{
+		public void loadPreferencesPanel() {
 			super.loadPreferencesPanel();
-			Set<String> substanceThemes = _ctrl._lafData.getSubstanceSkins();
-			Object[] comboItems = new Object[substanceThemes.size()];
+			Set<String> radianceThemes = _ctrl._lafData.getRadianceSkins();
+			Object[] comboItems = new Object[radianceThemes.size()];
 			int count = 0;
-			for (String theme : substanceThemes)
-			{
+			for (String theme : radianceThemes){
 				comboItems[count++] = theme;
 			}
 			ComboBoxModel model = new DefaultComboBoxModel(comboItems);
 			_skinCmb.setModel(model);
 			_skinCmb.setSelectedItem(_ctrl._prefs.getSkinName());
-			if (_skinCmb.getSelectedIndex() == -1 && _skinCmb.getModel().getSize() > 0)
-			{
+			if(_skinCmb.getSelectedIndex() == -1 && _skinCmb.getModel().getSize() > 0){
 				_skinCmb.setSelectedIndex(0);
 			}
 		}
@@ -221,36 +193,31 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 		/**
 		 * @see BaseLAFPreferencesPanelComponent#applyChanges()
 		 */
-		public boolean applyChanges()
-		{
+		public boolean applyChanges() {
 			super.applyChanges();
 			_ctrl._prefs.setSkinName((String) _skinCmb.getSelectedItem());
 			return true;
 		}
 	}
 
-	public static final class SubstancePreferences implements IHasIdentifier
-	{
+	public static final class RadiancePreferences implements IHasIdentifier {
 
 		private String _skinName;
 
 		private IntegerIdentifier _id = new IntegerIdentifier(1);
 
-		public String getSkinName()
-		{
+		public String getSkinName() {
 			return _skinName;
 		}
 
-		public void setSkinName(String value)
-		{
+		public void setSkinName(String value) {
 			_skinName = value;
 		}
 
 		/**
 		 * @return The unique identifier for this object.
 		 */
-		public IIdentifier getIdentifier()
-		{
+		public IIdentifier getIdentifier() {
 			return _id;
 		}
 	}

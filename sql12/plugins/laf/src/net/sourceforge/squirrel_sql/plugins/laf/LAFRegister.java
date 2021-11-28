@@ -456,8 +456,8 @@ public class LAFRegister
 		}
 		try
 		{
-			_lafControllers.put(SubstanceLookAndFeelController.SUBSTANCE_LAF_PLACEHOLDER_CLASS_NAME,
-				new SubstanceLookAndFeelController(plugin, this));
+			_lafControllers.put(RadianceLookAndFeelController.RADIANCE_LAF_PLACEHOLDER_CLASS_NAME,
+				new RadianceLookAndFeelController(plugin, this));
 		}
 		catch (Throwable ex)
 		{
