@@ -52,6 +52,13 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+#1492 The SQL editors "Find in Object Tree" function (ctrl+B) and Object Tree search did not respect the current schema.
+  Some (not yet all) databases support the JDBC API function to read the current schema.
+  If so SQuirreL shows the current schema in its Session status bar.
+  Now SQuirreL also respects the current schema when searching the Object Tree.
+  I.e. if the same table name exists in two schemas SQuirreL preferably finds the one in the current schema.
+
+
 Hibernate Plugin: Prevented HQL execution error when
   - a mapped collection-attribute wasn't an instance of java.util.Collection
   - the toString() method of a mapped object raised an exception

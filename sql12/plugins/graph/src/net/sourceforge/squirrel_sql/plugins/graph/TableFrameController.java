@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
+import net.sourceforge.squirrel_sql.client.session.objecttreesearch.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;

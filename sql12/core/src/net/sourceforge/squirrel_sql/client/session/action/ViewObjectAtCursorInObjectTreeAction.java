@@ -4,7 +4,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
+import net.sourceforge.squirrel_sql.client.session.objecttreesearch.ObjectTreeSearch;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;

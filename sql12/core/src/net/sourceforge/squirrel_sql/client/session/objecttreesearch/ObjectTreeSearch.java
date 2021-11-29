@@ -1,15 +1,20 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.session.objecttreesearch;
 
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderResultFuture;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.JOptionPane;
 import javax.swing.tree.TreePath;
-import java.util.ArrayList;
 
 
 /**
@@ -17,6 +22,8 @@ import java.util.ArrayList;
  */
 public class ObjectTreeSearch
 {
+   private static final ILogger s_log = LoggerController.createLogger(ObjectTreeSearch.class);
+
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ObjectTreeSearch.class);
 
    /**
@@ -43,7 +50,7 @@ public class ObjectTreeSearch
 
    public void viewInObjectTree(String objectName, IObjectTreeAPI objectTreeAPI)
    {
-      ObjectTreeSearchCandidates candidates = getObjectCandidates(objectName);
+      ObjectTreeSearchCandidates candidates = getObjectCandidates(objectName, objectTreeAPI.getSession());
       if (candidates.size() == 0)
       {
          return;
@@ -54,7 +61,7 @@ public class ObjectTreeSearch
 
    public void viewObjectInObjectTree(String objectName, IObjectTreeAPI objectTreeAPI)
    {
-      ObjectTreeSearchCandidates candidates = getObjectCandidates(objectName);
+      ObjectTreeSearchCandidates candidates = getObjectCandidates(objectName, objectTreeAPI.getSession());
       if (candidates.size() == 0)
       {
          return;
@@ -85,9 +92,9 @@ public class ObjectTreeSearch
       }
       else if(candidates.hasNext())
       {
-         ArrayList<String> catSchemObj;
-         catSchemObj = candidates.next();
-         ObjectTreeFinderResultFuture resultFuture = objectTreeAPI.selectInObjectTree(catSchemObj.get(0), catSchemObj.get(1), new FilterMatcher(catSchemObj.get(2), null));
+         ObjectTreeSearchCandidate candidate;
+         candidate = candidates.next();
+         ObjectTreeFinderResultFuture resultFuture = objectTreeAPI.selectInObjectTree(candidate.getCatalog(), candidate.getSchema(), new FilterMatcher(candidate.getObject(), null));
          resultFuture.addListenerOrdered(tn -> tryFindMatchForNextCandidate(candidates, objectTreeAPI, selectMainObjectTreeIfFound, tn));
       }
       else
@@ -97,36 +104,46 @@ public class ObjectTreeSearch
       }
    }
 
-   private ObjectTreeSearchCandidates getObjectCandidates(String objectName)
+   private ObjectTreeSearchCandidates getObjectCandidates(String objectName, ISession session)
    {
       ObjectTreeSearchCandidates ret = new ObjectTreeSearchCandidates(objectName);
 
       String[] splits = objectName.split("\\.");
 
-
-      for (int i = splits.length-1; i >=0 ; i--)
+      if(splits.length >= 3)
       {
-         String object = null;
-         String schema = null;
-         String catalog = null;
-
-         object = removeQuotes(splits[i]);
-
-         if (i+1 < splits.length)
-         {
-            schema = splits[i+1];
-         }
-
-         if (i+2 < splits.length)
-         {
-            catalog = splits[i+2];
-         }
-         if (catalog == null && schema == null && "".equals(object)) {
-             continue;
-         }
-         ret.add(catalog, schema, object);
+         ret.add(splits[0], splits[1], splits[2]);
+         ret.add(null, removeQuotes(splits[1]), removeQuotes(splits[2]));
+         ret.add(removeQuotes(splits[1]), null, removeQuotes(splits[2])); // For databases that support catalogs but not schemas
+         ret.add(null, null, splits[2]);
       }
+      else if(splits.length == 2)
+      {
+         ret.add(null, removeQuotes(splits[0]), removeQuotes(splits[1]));
+         ret.add(removeQuotes(splits[0]), null, removeQuotes(splits[1])); // For databases that support catalogs but not schemas
+         ret.add(null, null, removeQuotes(splits[0]));
+      }
+      else if(splits.length == 1)
+      {
 
+         try
+         {
+            String currentSchema = session.getSQLConnection().getSchema();
+            if( false == StringUtilities.isEmpty(currentSchema, true) )
+            {
+               ret.addFirst(null, currentSchema, removeQuotes(splits[0]));
+            }
+         }
+         catch (Throwable e)
+         {
+            // By now its not yet too common to support java.sql.Connection.getSchema().
+            // That's why we don't issue a warning here.
+            //s_log.warn("Failed to load current schema name: " + e);
+         }
+
+         ret.add(null, null, removeQuotes(splits[0]));
+
+      }
       return ret;
    }
 

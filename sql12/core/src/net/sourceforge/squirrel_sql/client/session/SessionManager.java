@@ -57,10 +57,8 @@ import java.util.Set;
  */
 public class SessionManager
 {
-   /** Logger for this class. */
    private static final ILogger s_log = LoggerController.createLogger(SessionManager.class);
 
-   /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionManager.class);
 
    private ISession _activeSession;

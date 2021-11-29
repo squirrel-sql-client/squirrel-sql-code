@@ -26,7 +26,6 @@ import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandle
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPoolStatusBarCtrl;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -35,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLTab;
+import net.sourceforge.squirrel_sql.client.session.objecttreesearch.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;

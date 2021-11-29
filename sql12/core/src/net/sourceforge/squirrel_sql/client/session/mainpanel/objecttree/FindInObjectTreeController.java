@@ -3,13 +3,19 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-
-import javax.swing.*;
-import java.awt.event.*;
+import net.sourceforge.squirrel_sql.client.session.objecttreesearch.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.fw.props.Props;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 public class FindInObjectTreeController
 {
