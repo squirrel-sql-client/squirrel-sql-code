@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
  */
 public class CSVSettingsBean implements Cloneable, Serializable
 {
+   public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
    private Character seperator = ';';
 
@@ -35,7 +36,7 @@ public class CSVSettingsBean implements Cloneable, Serializable
    private boolean useDoubleQuotesAsTextQualifier;
 
 
-   private String dateFormat = "yyyy-MM-dd HH:mm:ss";
+   private String dateFormat = DEFAULT_DATE_FORMAT;
 
    public CSVSettingsBean()
    {

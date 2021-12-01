@@ -52,6 +52,8 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Data import Plugin: An invalid date format in the "Import file settings" dialog led to errors in the subsequent import dialog.
+
 #1492 The SQL editors "Find in Object Tree" function (ctrl+B) and Object Tree search did not respect the current schema.
   Some (not yet all) databases support the JDBC API function to read the current schema.
   If so SQuirreL shows the current schema in its Session status bar.

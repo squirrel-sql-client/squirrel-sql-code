@@ -24,19 +24,20 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.nio.charset.Charset;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportPropsDAO;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 
@@ -48,6 +49,8 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPan
 public class CSVSettingsPanel extends ConfigurationPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CSVSettingsPanel.class);
+
+   private static ILogger s_log = LoggerController.createLogger(CSVSettingsPanel.class);
 
    private JRadioButton radUseChar = new JRadioButton(s_stringMgr.getString("CSVSettingsPanel.useChar"));
    private JTextField txtSeperatorChar = new JTextField(2);
@@ -180,7 +183,24 @@ public class CSVSettingsPanel extends ConfigurationPanel
       settings.setUseDoubleQuotesAsTextQualifier(chkUseDoubleQuotesAsTextQualifier.isSelected());
 
       ImportPropsDAO.setCSVSeparator(settings.getSeperator());
-      ImportPropsDAO.setCSVDateFormat(settings.getDateFormat());
+
+      try
+      {
+         new SimpleDateFormat(ImportPropsDAO.getCSVDateFormat()).parse(settings.getDateFormat());
+         ImportPropsDAO.setCSVDateFormat(settings.getDateFormat());
+      }
+      catch(ParseException e)
+      {
+         ImportPropsDAO.setCSVDateFormat(CSVSettingsBean.DEFAULT_DATE_FORMAT);
+         String msg = s_stringMgr.getString("CSVSettingsPanel.warn.invalid.date.format",
+                                            settings.getDateFormat(),
+                                            e.getMessage(),
+                                            CSVSettingsBean.DEFAULT_DATE_FORMAT);
+
+         Main.getApplication().getMessageHandler().showWarningMessage(msg);
+         s_log.warn(msg, e);
+      }
+
       ImportPropsDAO.setImportCharset(settings.getImportCharset());
       ImportPropsDAO.setUseDoubleQuotesAsTextQualifier(settings.isUseDoubleQuotesAsTextQualifier());
 
