@@ -17,6 +17,11 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer.excel;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FailedToInterpretHandler;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
@@ -27,12 +32,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * This implementation of the <code>IFileImporter</code> interface is to
@@ -236,9 +235,9 @@ public class ExcelFileImporter implements IFileImporter
          {
             return Double.valueOf(buf);
          }
-         catch (NumberFormatException e)
+         catch (Exception e)
          {
-            return _failedToInterpretHandler.failedToInterpretNumeric(column, buf);
+            return _failedToInterpretHandler.failedToInterpretNumeric(column, buf, e);
          }
       }
       else
@@ -272,9 +271,9 @@ public class ExcelFileImporter implements IFileImporter
          {
             return new SimpleDateFormat().parse(buf);
          }
-         catch (ParseException e)
+         catch (Exception e) // Type of this exception was changed from Java 11 to Java 17
          {
-            return _failedToInterpretHandler.failedToInterpretDate(column, buf);
+            return _failedToInterpretHandler.failedToInterpretDate(column, buf, e);
          }
 
       }

@@ -1,13 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.dataimport.importer;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.util.Calendar;
-import java.util.Date;
 
 public class FailedToInterpretHandler
 {
@@ -17,14 +17,14 @@ public class FailedToInterpretHandler
 
 
    private int numberOfLogs = 0;
-   public Double failedToInterpretNumeric(int column, String toInterpret)
+   public Double failedToInterpretNumeric(int column, String toInterpret, Exception e)
    {
 
       if(10 == numberOfLogs)
       {
          String msg = stringMgr.getString("ExcelFileImporter.failed.to.interpret.numeric.no.more.messages", numberOfLogs);
          Main.getApplication().getMessageHandler().showErrorMessage(msg);
-         s_log.error(msg);
+         s_log.error(msg, e);
 
          ++numberOfLogs;
 
@@ -50,13 +50,13 @@ public class FailedToInterpretHandler
    }
 
 
-   public Date failedToInterpretDate(int column, String toInterpret)
+   public Date failedToInterpretDate(int column, String toInterpret, Exception e)
    {
       if(10 == numberOfLogs)
       {
          String msg = stringMgr.getString("ExcelFileImporter.failed.to.interpret.date.no.more.messages", numberOfLogs);
          Main.getApplication().getMessageHandler().showErrorMessage(msg);
-         s_log.error(msg);
+         s_log.error(msg, e);
 
          ++numberOfLogs;
       }

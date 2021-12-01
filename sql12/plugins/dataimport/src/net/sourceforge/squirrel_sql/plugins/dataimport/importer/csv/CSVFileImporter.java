@@ -17,6 +17,11 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -26,12 +31,6 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPan
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FailedToInterpretHandler;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv.csvreader.CsvReader;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * This class implements the IFileImporter interface for reading CSV files.
@@ -204,9 +203,9 @@ public class CSVFileImporter implements IFileImporter
       {
          return Double.parseDouble(doubleS);
       }
-      catch (NumberFormatException nfe)
+      catch (Exception nfe)
       {
-         return _failedToInterpretHandler.failedToInterpretNumeric(column, doubleS);
+         return _failedToInterpretHandler.failedToInterpretNumeric(column, doubleS, nfe);
       }
    }
 
@@ -228,9 +227,9 @@ public class CSVFileImporter implements IFileImporter
       {
          return new SimpleDateFormat(settings.getDateFormat()).parse(dateString);
       }
-      catch (ParseException pe)
+      catch (Exception pe) // Type of this exception was changed from Java 11 to Java 17
       {
-         return _failedToInterpretHandler.failedToInterpretDate(column, dateString);
+         return _failedToInterpretHandler.failedToInterpretDate(column, dateString, pe);
       }
    }
 

@@ -1,8 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.dataimport.gui;
 
-import net.sourceforge.squirrel_sql.fw.props.Props;
-
 import java.nio.charset.Charset;
+
+import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv.CSVSettingsBean;
 
 public class ImportPropsDAO
 {
@@ -140,7 +141,7 @@ public class ImportPropsDAO
 
    public static String getCSVDateFormat()
    {
-      return Props.getString(PREF_KEY_CSV_DATE_FORMAT,"yyyy-MM-dd HH:mm:ss");
+      return Props.getString(PREF_KEY_CSV_DATE_FORMAT, CSVSettingsBean.DEFAULT_DATE_FORMAT);
    }
 
    public static String getImportCharset()

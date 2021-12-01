@@ -24,7 +24,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.nio.charset.Charset;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -189,7 +188,7 @@ public class CSVSettingsPanel extends ConfigurationPanel
          new SimpleDateFormat(ImportPropsDAO.getCSVDateFormat()).parse(settings.getDateFormat());
          ImportPropsDAO.setCSVDateFormat(settings.getDateFormat());
       }
-      catch(ParseException e)
+      catch(Exception e) // Type of this exception was changed from Java 11 to Java 17
       {
          ImportPropsDAO.setCSVDateFormat(CSVSettingsBean.DEFAULT_DATE_FORMAT);
          String msg = s_stringMgr.getString("CSVSettingsPanel.warn.invalid.date.format",
