@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesController;
+import net.sourceforge.squirrel_sql.client.session.messagepanel.MessagePrefsCtrl;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
@@ -19,8 +20,6 @@ import javax.swing.JTextField;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 final class GeneralPreferencesGUI extends JPanel
 {
@@ -67,8 +66,7 @@ final class GeneralPreferencesGUI extends JPanel
 
    private JComboBox _localeChooser = new JComboBox(LocaleWrapper.getAvailableLocaleWrappers());
    private MaxColumnAdjustLengthCtrl _maxColumnAdjustLengthCtrl = new MaxColumnAdjustLengthCtrl();
-
-   private ThemesController _themesController = new ThemesController();
+   private MessagePrefsCtrl _messagePrefsCtrl = new MessagePrefsCtrl();
 
    GeneralPreferencesGUI()
    {
@@ -116,24 +114,11 @@ final class GeneralPreferencesGUI extends JPanel
 
       LocaleWrapper.setSelectedLocalePrefsString(_localeChooser, prefs.getPreferredLocale());
 
-      _tabbedStyle.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onStyleChanged();
-         }
-      });
+      _tabbedStyle.addActionListener(e -> onStyleChanged());
 
-      _internalFrameStyle.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onStyleChanged();
-         }
-      });
+      _internalFrameStyle.addActionListener(e -> onStyleChanged());
 
+      _messagePrefsCtrl.loadData(prefs);
    }
 
    private void onStyleChanged()
@@ -175,6 +160,8 @@ final class GeneralPreferencesGUI extends JPanel
       prefs.setPreferredLocale(LocaleWrapper.getSelectedLocalePrefsString(_localeChooser));
       prefs.setMaxColumnAdjustLengthDefined(_maxColumnAdjustLengthCtrl.isMaxColumnAdjustLengthDefined());
       prefs.setMaxColumnAdjustLength(_maxColumnAdjustLengthCtrl.getMaxColumnAdjustLength());
+
+      _messagePrefsCtrl.applyChanges(prefs);
    }
 
    private void createUserInterface()
@@ -260,10 +247,16 @@ final class GeneralPreferencesGUI extends JPanel
       pnl.add(_rememberValueOfPopup, gbc);
 
       ++gbc.gridy;
-      final GridBagConstraints gbcClone = (GridBagConstraints) gbc.clone();
-      gbcClone.fill = GridBagConstraints.NONE;
-      gbcClone.anchor = GridBagConstraints.NORTHWEST;
-      pnl.add(_themesController.getPanel(), gbcClone);
+      final GridBagConstraints gbcThemes = (GridBagConstraints) gbc.clone();
+      gbcThemes.fill = GridBagConstraints.NONE;
+      gbcThemes.anchor = GridBagConstraints.NORTHWEST;
+      pnl.add(new ThemesController(_messagePrefsCtrl).getPanel(), gbcThemes);
+
+      ++gbc.gridy;
+      final GridBagConstraints gbcMessagePanel = (GridBagConstraints) gbc.clone();
+      gbcMessagePanel.fill = GridBagConstraints.NONE;
+      gbcMessagePanel.anchor = GridBagConstraints.NORTHWEST;
+      pnl.add(_messagePrefsCtrl.getPanel(), gbcMessagePanel);
 
       return pnl;
    }

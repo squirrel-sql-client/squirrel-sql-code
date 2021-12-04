@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#605 The message panel's colors are made configurable.
+  See menu File --> Global Preferences --> tab General
+  --> section Appearance --> subsection "Message panel layout" on the bottom.
+  This feature is used internally used to adjust the message panel coloring for the dark theme.
+  If you were already using dark theme before this feature was implemented please re-apply the dark theme.
+
 Look and Feel plugin: Replace Substance Look & Feel by Radiance Look & Feel
   Thanks to Slavomir Varchula for the patch.
 

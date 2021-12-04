@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.TabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.MessagePanel;
+import net.sourceforge.squirrel_sql.client.session.messagepanel.MessagePanel;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -85,8 +85,7 @@ public class MainFrame extends JFrame
 	private MainFrameStatusBar _statusBar;
 
 	/** Message panel at bottom of window. */
-	// JASON: Should be part of status bar?
-	private MessagePanel _msgPnl;
+	private MessagePanel _messagePanel;
 
 	/** If <TT>true</TT> then status bar is visible. */
 	private boolean _statusBarVisible = false;
@@ -262,7 +261,7 @@ public class MainFrame extends JFrame
 
    public MessagePanel getMessagePanel()
 	{
-		return _msgPnl;
+		return _messagePanel;
 	}
 
 	private void preferencesHaveChanged(PropertyChangeEvent evt)
@@ -320,8 +319,7 @@ public class MainFrame extends JFrame
 
 	private void closeAllToolWindows()
 	{
-		IWidget[] frames =
-			WidgetUtils.getOpenToolWindows(getDesktopContainer().getAllWidgets());
+		IWidget[] frames = WidgetUtils.getOpenToolWindows(getDesktopContainer().getAllWidgets());
 		for (int i = 0; i < frames.length; ++i)
 		{
 			frames[i].dispose();
@@ -343,7 +341,7 @@ public class MainFrame extends JFrame
 		final JScrollPane sp = new JScrollPane(getDesktopContainer().getComponent());
 		sp.setBorder(BorderFactory.createEmptyBorder());
 
-		_msgPnl = new MessagePanel()
+		_messagePanel = new MessagePanel()
       {
          public void setSize(int width, int height)
          {
@@ -359,17 +357,17 @@ public class MainFrame extends JFrame
             }
          }
       };
-      _msgPnl.setName(MessagePanel.class.toString());
-		_msgPnl.setEditable(false);
+      _messagePanel.setName(MessagePanel.class.toString());
+		_messagePanel.setEditable(false);
 
 
 		_splitPn = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		_splitPn.add(sp);
-		_splitPn.add(new JScrollPane(_msgPnl));
+		_splitPn.add(new JScrollPane(_messagePanel));
 
       _splitPn.setResizeWeight(1);
       _splitPn.setOneTouchExpandable(true);
-      _splitPnResizeHandler = new SplitPnResizeHandler(_splitPn, _msgPnl);
+      _splitPnResizeHandler = new SplitPnResizeHandler(_splitPn, _messagePanel);
 
 
       content.add(_splitPn, BorderLayout.CENTER);

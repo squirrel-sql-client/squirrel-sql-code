@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.preferences.themes;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.messagepanel.MessagePrefsCtrl;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -23,15 +24,16 @@ public class ThemesController
     *
     */
    private ThemesEnum _lastAppliedTheme;
+   private MessagePrefsCtrl _messagePrefsCtrl;
 
-   public ThemesController()
+   public ThemesController(MessagePrefsCtrl messagePrefsCtrl)
    {
+      _messagePrefsCtrl = messagePrefsCtrl;
       _themesPanel = new ThemesPanel();
 
       _lastAppliedTheme = ThemesEnum.valueOf(Props.getString(PREF_KEY_THEMESCONTROLLER_LAST_APPLIED_THEMS, ThemesEnum.LIGH.name()));
 
       _themesPanel.cboThemes.setSelectedItem(_lastAppliedTheme);
-
 
       _themesPanel.btnApply.addActionListener(e -> onApply());
    }
@@ -53,6 +55,7 @@ public class ThemesController
             SyntaxPluginAccessor.applyDefaultTheme();
             Main.getApplication().getSquirrelPreferences().getSessionProperties().setNullValueColorRGB(SessionProperties.DEFAULT_NULL_VALUE_COLOR_RGB);
 
+            _messagePrefsCtrl.switchToLight();
             break;
          case DARK:
             if (JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(_themesPanel, s_stringMgr.getString("ThemesController.apply.dark.theme")))
@@ -64,7 +67,7 @@ public class ThemesController
             SyntaxPluginAccessor.applyDarkTheme();
             Main.getApplication().getSquirrelPreferences().getSessionProperties().setNullValueColorRGB(new Color(90,100,90).getRGB());
 
-
+            _messagePrefsCtrl.switchToDark();
             break;
       }
 

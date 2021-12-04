@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -41,144 +43,124 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
    @Override   
    public PropertyDescriptor[] getPropertyDescriptors()
    {
+      return new PropertyDescriptor[]
+      {
+            prop(SESSION_PROPERTIES, SquirrelPreferences.class, "getSessionProperties", "setSessionProperties"),
+            prop(MAIN_FRAME_STATE, SquirrelPreferences.class, "getMainFrameWindowState", "setMainFrameWindowState"),
+            prop(SHOW_CONTENTS_WHEN_DRAGGING, SquirrelPreferences.class, "getShowContentsWhenDragging", "setShowContentsWhenDragging"),
+
+            prop(TABBED_STYLE, SquirrelPreferences.class, "getTabbedStyle", "setTabbedStyle"),
+            prop(USE_SCROLLABLE_TABBED_PANES_FOR_SESSION_TABS, SquirrelPreferences.class, "getUseScrollableTabbedPanesForSessionTabs", "setUseScrollableTabbedPanesForSessionTabs"),
+            prop(SHOW_TABBED_STYLE_HINT, SquirrelPreferences.class, "getShowTabbedStyleHint", "setShowTabbedStyleHint"),
+
+            prop(LOGIN_TIMEOUT, SquirrelPreferences.class, "getLoginTimeout", "setLoginTimeout"),
+            prop(LARGE_SCRIPT_STMT_COUNT, SquirrelPreferences.class, "getLargeScriptStmtCount", "setLargeScriptStmtCount"),
+
+            prop(ALLOW_RUN_ALL_SQLS_IN_EDITOR, SquirrelPreferences.class, "isAllowRunAllSQLsInEditor", "setAllowRunAllSQLsInEditor"),
+
+            prop(MARK_CURRENT_SQL, SquirrelPreferences.class, "isMarkCurrentSql", "setMarkCurrentSql"),
+            prop(CURRENT_SQL_MARK_COLOR_RGB, SquirrelPreferences.class, "getCurrentSqlMarkColorRGB", "setCurrentSqlMarkColorRGB"),
+
+            prop(USE_STATEMENT_SEPARATOR_AS_SQL_TO_EXECUTE_BOUNDS, SquirrelPreferences.class, "isUseStatementSeparatorAsSqlToExecuteBounds", "setUseStatementSeparatorAsSqlToExecuteBounds"),
+
+            prop(JDBC_DEBUG_TYPE, SquirrelPreferences.class, "getJdbcDebugType", "setJdbcDebugType"),
+            prop(SHOW_MAIN_STATUS_BAR, SquirrelPreferences.class, "getShowMainStatusBar", "setShowMainStatusBar"),
+            prop(SHOW_MAIN_TOOL_BAR, SquirrelPreferences.class, "getShowMainToolBar", "setShowMainToolBar"),
+            prop(SHOW_ALIASES_TOOL_BAR, SquirrelPreferences.class, "getShowAliasesToolBar", "setShowAliasesToolBar"),
+            prop(SHOW_DRIVERS_TOOL_BAR, SquirrelPreferences.class, "getShowDriversToolBar", "setShowDriversToolBar"),
+            prop(SHOW_TOOLTIPS, SquirrelPreferences.class, "getShowToolTips", "setShowToolTips"),
+            prop(SCROLLABLE_TABBED_PANES, SquirrelPreferences.class, "getUseScrollableTabbedPanes", "setUseScrollableTabbedPanes"),
+            ixProp(ACTION_KEYS, SquirrelPreferences.class, "getActionKeys", "setActionKeys", "getActionKeys", "setActionKeys"),
+            prop(PROXY, SquirrelPreferences.class, "getProxySettings", "setProxySettings"),
+            prop(UPDATE, SquirrelPreferences.class, "getUpdateSettings", "setUpdateSettings"),
+            prop(SHOW_LOADED_DRIVERS_ONLY, SquirrelPreferences.class, "getShowLoadedDriversOnly", "setShowLoadedDriversOnly"),
+            prop(MAXIMIMIZE_SESSION_SHEET_ON_OPEN, SquirrelPreferences.class, "getMaximizeSessionSheetOnOpen", "setMaximizeSessionSheetOnOpen"),
+            prop(SHOW_COLOR_ICONS_IN_TOOLBAR, SquirrelPreferences.class, "getShowColoriconsInToolbar", "setShowColoriconsInToolbar"),
+            prop(FIRST_RUN, SquirrelPreferences.class, "isFirstRun", "setFirstRun"),
+            prop(CONFIRM_SESSION_CLOSE, SquirrelPreferences.class, "getConfirmSessionClose", "setConfirmSessionClose"),
+            ixProp(PLUGIN_STATUSES, SquirrelPreferences.class, "getPluginStatuses", "setPluginStatuses", "getPluginStatus", "setPluginStatus"),
+            prop(FILE_OPEN_IN_PREVIOUS_DIR, SquirrelPreferences.class, "isFileOpenInPreviousDir", "setFileOpenInPreviousDir"),
+            prop(FILE_OPEN_IN_SPECIFIED_DIR, SquirrelPreferences.class, "isFileOpenInSpecifiedDir", "setFileOpenInSpecifiedDir"),
+            prop(FILE_SPECIFIED_DIR, SquirrelPreferences.class, "getFileSpecifiedDir", "setFileSpecifiedDir"),
+            prop(FILE_PREVIOUS_DIR, SquirrelPreferences.class, "getFilePreviousDir", "setFilePreviousDir"),
+            prop(SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN, SquirrelPreferences.class, "getShowPluginFilesInSplashScreen", "setShowPluginFilesInSplashScreen"),
+            prop(USE_SHORT_SESSION_TITLE, SquirrelPreferences.class, "getUseShortSessionTitle", "setUseShortSessionTitle"),
+            prop(WARN_JRE_JDBC_MISMATCH, SquirrelPreferences.class, "getWarnJreJdbcMismatch", "setWarnJreJdbcMismatch"),
+            prop(WARN_FOR_UNSAVED_FILE_EDITS, SquirrelPreferences.class, "getWarnForUnsavedFileEdits", "setWarnForUnsavedFileEdits"),
+            prop(WARN_FOR_UNSAVED_BUFFER_EDITS, SquirrelPreferences.class, "getWarnForUnsavedBufferEdits", "setWarnForUnsavedBufferEdits"),
+            prop(SHOW_SESSION_STARTUP_TIME_HINT, SquirrelPreferences.class, "getShowSessionStartupTimeHint", "setShowSessionStartupTimeHint"),
+            prop(SHOW_DEBUG_LOG_MESSAGES, SquirrelPreferences.class, "getShowDebugLogMessage", "setShowDebugLogMessages"),
+            prop(SHOW_INFO_LOG_MESSAGES, SquirrelPreferences.class, "getShowInfoLogMessages", "setShowInfoLogMessages"),
+            prop(SHOW_ERROR_LOG_MESSAGES, SquirrelPreferences.class, "getShowErrorLogMessages", "setShowErrorLogMessages"),
+
+            prop(SAVE_PREFERENCES_IMMEDIATELY, SquirrelPreferences.class, "getSavePreferencesImmediately", "setSavePreferencesImmediately"),
+            prop(SAVE_ALIASES_AND_DRIVERS_IMMEDIATELY, SquirrelPreferences.class, "getSaveAliasesAndDriversImmediately", "setSaveAliasesAndDriversImmediately"),
+
+            prop(SELECT_ON_RIGHT_MOUSE_CLICK, SquirrelPreferences.class, "getSelectOnRightMouseClick", "setSelectOnRightMouseClick"),
+            prop(SHOW_PLEASE_WAIT_DIALOG, SquirrelPreferences.class, "getShowPleaseWaitDialog", "setShowPleaseWaitDialog"),
+            prop(PREFERRED_LOCALE, SquirrelPreferences.class, "getPreferredLocale", "setPreferredLocale"),
+
+            prop(MAX_COLUMN_ADJUST_LENGTH_DEFINED, SquirrelPreferences.class, "getMaxColumnAdjustLengthDefined", "setMaxColumnAdjustLengthDefined"),
+
+            prop(MAX_COLUMN_ADJUST_LENGTH, SquirrelPreferences.class, "getMaxColumnAdjustLength", "setMaxColumnAdjustLength"),
+
+            prop(REMEMBER_VALUE_OF_POPUP, SquirrelPreferences.class, "isRememberValueOfPopup", "setRememberValueOfPopup"),
+
+            prop(RELOAD_SQL_CONTENTS, SquirrelPreferences.class, "isReloadSqlContents", "setReloadSqlContents"),
+
+            prop(MAX_TEXTOUTPUT_COLUMN_WIDTH, SquirrelPreferences.class, "getMaxTextOutputColumnWidth", "setMaxTextOutputColumnWidth"),
+
+            prop(NOTIFY_EXTERNAL_FILE_CHANGES, SquirrelPreferences.class, "isNotifyExternalFileChanges", "setNotifyExternalFileChanges"),
+
+            prop(ENABLE_CHANGE_TRACKING, SquirrelPreferences.class, "isEnableChangeTracking", "setEnableChangeTracking"),
+            prop(GIT_COMMIT_MSG_MANUALLY, SquirrelPreferences.class, "isGitCommitMsgManually", "setGitCommitMsgManually"),
+            prop(GIT_COMMIT_MSG_DEFAULT, SquirrelPreferences.class, "getGitCommitMsgDefault", "setGitCommitMsgDefault"),
+            prop(DELETED_BOLD, SquirrelPreferences.class, "isDeletedBold", "setDeletedBold"),
+            prop(DELETED_ITALICS, SquirrelPreferences.class, "isDeletedItalics", "setDeletedItalics"),
+            prop(DELETED_FOREGROUND_RGB, SquirrelPreferences.class, "getDeletedForegroundRGB", "setDeletedForegroundRGB"),
+            prop(INSERT_BEGIN_BACKGROUND_RGB, SquirrelPreferences.class, "getInsertBeginBackgroundRGB", "setInsertBeginBackgroundRGB"),
+            prop(INSERT_END_BACKGROUND_RGB, SquirrelPreferences.class, "getInsertEndBackgroundRGB", "setInsertEndBackgroundRGB"),
+
+            prop(MESSAGE_PANEL_MESSAGE_FOREGROUND, SquirrelPreferences.class, "getMessagePanelMessageForeground", "setMessagePanelMessageForeground"),
+            prop(MESSAGE_PANEL_MESSAGE_BACKGROUND, SquirrelPreferences.class, "getMessagePanelMessageBackground", "setMessagePanelMessageBackground"),
+            prop(MESSAGE_PANEL_MESSAGE_HISTORY_FOREGROUND, SquirrelPreferences.class, "getMessagePanelMessageHistoryForeground", "setMessagePanelMessageHistoryForeground"),
+            prop(MESSAGE_PANEL_MESSAGE_HISTORY_BACKGROUND, SquirrelPreferences.class, "getMessagePanelMessageHistoryBackground", "setMessagePanelMessageHistoryBackground"),
+            prop(MESSAGE_PANEL_WARNING_FOREGROUND, SquirrelPreferences.class, "getMessagePanelWarningForeground", "setMessagePanelWarningForeground"),
+            prop(MESSAGE_PANEL_WARNING_BACKGROUND, SquirrelPreferences.class, "getMessagePanelWarningBackground", "setMessagePanelWarningBackground"),
+            prop(MESSAGE_PANEL_WARNING_HISTORY_FOREGROUND, SquirrelPreferences.class, "getMessagePanelWarningHistoryForeground", "setMessagePanelWarningHistoryForeground"),
+            prop(MESSAGE_PANEL_WARNING_HISTORY_BACKGROUND, SquirrelPreferences.class, "getMessagePanelWarningHistoryBackground", "setMessagePanelWarningHistoryBackground"),
+            prop(MESSAGE_PANEL_ERROR_FOREGROUND, SquirrelPreferences.class, "getMessagePanelErrorForeground", "setMessagePanelErrorForeground"),
+            prop(MESSAGE_PANEL_ERROR_BACKGROUND, SquirrelPreferences.class, "getMessagePanelErrorBackground", "setMessagePanelErrorBackground"),
+            prop(MESSAGE_PANEL_ERROR_HISTORY_FOREGROUND, SquirrelPreferences.class, "getMessagePanelErrorHistoryForeground", "setMessagePanelErrorHistoryForeground"),
+            prop(MESSAGE_PANEL_ERROR_HISTORY_BACKGROUND, SquirrelPreferences.class, "getMessagePanelErrorHistoryBackground", "setMessagePanelErrorHistoryBackground"),
+            prop(MESSAGE_PANEL_WHITE_BACKGROUND_AS_UI_DEFAULT, SquirrelPreferences.class, "isMessagePanelWhiteBackgroundAsUIDefault", "setMessagePanelWhiteBackgroundAsUIDefault"),
+            prop(MESSAGE_PANEL_BLACK_FOREGROUND_AS_UI_DEFAULT, SquirrelPreferences.class, "isMessagePanelBlackForegroundAsUIDefault", "setMessagePanelBlackForegroundAsUIDefault")
+         };
+   }
+
+   private PropertyDescriptor prop(String propertyName, Class<?> beanClass, String readMethodName, String writeMethodName)
+   {
       try
       {
-         PropertyDescriptor[] result =
-            new PropertyDescriptor[]
-               {
-                  new PropertyDescriptor(SESSION_PROPERTIES, SquirrelPreferences.class,
-                     "getSessionProperties", "setSessionProperties"),
-                  new PropertyDescriptor(MAIN_FRAME_STATE, SquirrelPreferences.class,
-                     "getMainFrameWindowState", "setMainFrameWindowState"),
-                  new PropertyDescriptor(SHOW_CONTENTS_WHEN_DRAGGING, SquirrelPreferences.class,
-                     "getShowContentsWhenDragging", "setShowContentsWhenDragging"),
-
-                  new PropertyDescriptor(TABBED_STYLE, SquirrelPreferences.class,
-                     "getTabbedStyle", "setTabbedStyle"),
-                  new PropertyDescriptor(USE_SCROLLABLE_TABBED_PANES_FOR_SESSION_TABS, SquirrelPreferences.class,
-                     "getUseScrollableTabbedPanesForSessionTabs", "setUseScrollableTabbedPanesForSessionTabs"),
-                  new PropertyDescriptor(SHOW_TABBED_STYLE_HINT, SquirrelPreferences.class,
-                     "getShowTabbedStyleHint", "setShowTabbedStyleHint"),
-
-                  new PropertyDescriptor(LOGIN_TIMEOUT, SquirrelPreferences.class, "getLoginTimeout",
-                     "setLoginTimeout"),
-                  new PropertyDescriptor(LARGE_SCRIPT_STMT_COUNT, SquirrelPreferences.class,
-                     "getLargeScriptStmtCount", "setLargeScriptStmtCount"),
-
-                  new PropertyDescriptor(ALLOW_RUN_ALL_SQLS_IN_EDITOR, SquirrelPreferences.class,
-                     "isAllowRunAllSQLsInEditor", "setAllowRunAllSQLsInEditor"),
-
-                  new PropertyDescriptor(MARK_CURRENT_SQL, SquirrelPreferences.class,
-                        "isMarkCurrentSql", "setMarkCurrentSql"),
-                  new PropertyDescriptor(CURRENT_SQL_MARK_COLOR_RGB, SquirrelPreferences.class,
-                        "getCurrentSqlMarkColorRGB", "setCurrentSqlMarkColorRGB"),
-
-                  new PropertyDescriptor(USE_STATEMENT_SEPARATOR_AS_SQL_TO_EXECUTE_BOUNDS, SquirrelPreferences.class,
-                                         "isUseStatementSeparatorAsSqlToExecuteBounds", "setUseStatementSeparatorAsSqlToExecuteBounds"),
-
-                  new PropertyDescriptor(JDBC_DEBUG_TYPE, SquirrelPreferences.class, "getJdbcDebugType",
-                                            "setJdbcDebugType"),
-                  new PropertyDescriptor(SHOW_MAIN_STATUS_BAR, SquirrelPreferences.class,
-                     "getShowMainStatusBar", "setShowMainStatusBar"),
-                  new PropertyDescriptor(SHOW_MAIN_TOOL_BAR, SquirrelPreferences.class, "getShowMainToolBar",
-                     "setShowMainToolBar"),
-                  new PropertyDescriptor(SHOW_ALIASES_TOOL_BAR, SquirrelPreferences.class,
-                     "getShowAliasesToolBar", "setShowAliasesToolBar"),
-                  new PropertyDescriptor(SHOW_DRIVERS_TOOL_BAR, SquirrelPreferences.class,
-                     "getShowDriversToolBar", "setShowDriversToolBar"),
-                  new PropertyDescriptor(SHOW_TOOLTIPS, SquirrelPreferences.class, "getShowToolTips",
-                     "setShowToolTips"),
-                  new PropertyDescriptor(SCROLLABLE_TABBED_PANES, SquirrelPreferences.class,
-                     "getUseScrollableTabbedPanes", "setUseScrollableTabbedPanes"),
-                  new IndexedPropertyDescriptor(ACTION_KEYS, SquirrelPreferences.class, "getActionKeys",
-                     "setActionKeys", "getActionKeys", "setActionKeys"),
-                  new PropertyDescriptor(PROXY, SquirrelPreferences.class, "getProxySettings",
-                     "setProxySettings"),
-                  new PropertyDescriptor(UPDATE, SquirrelPreferences.class, "getUpdateSettings",
-                     "setUpdateSettings"),
-                  new PropertyDescriptor(SHOW_LOADED_DRIVERS_ONLY, SquirrelPreferences.class,
-                     "getShowLoadedDriversOnly", "setShowLoadedDriversOnly"),
-                  new PropertyDescriptor(MAXIMIMIZE_SESSION_SHEET_ON_OPEN, SquirrelPreferences.class,
-                     "getMaximizeSessionSheetOnOpen", "setMaximizeSessionSheetOnOpen"),
-                  new PropertyDescriptor(SHOW_COLOR_ICONS_IN_TOOLBAR, SquirrelPreferences.class,
-                     "getShowColoriconsInToolbar", "setShowColoriconsInToolbar"),
-                  new PropertyDescriptor(FIRST_RUN, SquirrelPreferences.class, "isFirstRun", "setFirstRun"),
-                  new PropertyDescriptor(CONFIRM_SESSION_CLOSE, SquirrelPreferences.class,
-                     "getConfirmSessionClose", "setConfirmSessionClose"),
-                  new IndexedPropertyDescriptor(PLUGIN_STATUSES, SquirrelPreferences.class,
-                     "getPluginStatuses", "setPluginStatuses", "getPluginStatus", "setPluginStatus"),
-                  new PropertyDescriptor(FILE_OPEN_IN_PREVIOUS_DIR, SquirrelPreferences.class,
-                     "isFileOpenInPreviousDir", "setFileOpenInPreviousDir"),
-                  new PropertyDescriptor(FILE_OPEN_IN_SPECIFIED_DIR, SquirrelPreferences.class,
-                     "isFileOpenInSpecifiedDir", "setFileOpenInSpecifiedDir"),
-                  new PropertyDescriptor(FILE_SPECIFIED_DIR, SquirrelPreferences.class,
-                     "getFileSpecifiedDir", "setFileSpecifiedDir"),
-                  new PropertyDescriptor(FILE_PREVIOUS_DIR, SquirrelPreferences.class, "getFilePreviousDir",
-                     "setFilePreviousDir"),
-                  new PropertyDescriptor(SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN, SquirrelPreferences.class,
-                     "getShowPluginFilesInSplashScreen", "setShowPluginFilesInSplashScreen"),
-                  new PropertyDescriptor(USE_SHORT_SESSION_TITLE, SquirrelPreferences.class,
-                     "getUseShortSessionTitle", "setUseShortSessionTitle"),
-                  new PropertyDescriptor(WARN_JRE_JDBC_MISMATCH, SquirrelPreferences.class,
-                     "getWarnJreJdbcMismatch", "setWarnJreJdbcMismatch"),
-                  new PropertyDescriptor(WARN_FOR_UNSAVED_FILE_EDITS, SquirrelPreferences.class,
-                     "getWarnForUnsavedFileEdits", "setWarnForUnsavedFileEdits"),
-                  new PropertyDescriptor(WARN_FOR_UNSAVED_BUFFER_EDITS, SquirrelPreferences.class,
-                     "getWarnForUnsavedBufferEdits", "setWarnForUnsavedBufferEdits"),
-                  new PropertyDescriptor(SHOW_SESSION_STARTUP_TIME_HINT, SquirrelPreferences.class,
-                     "getShowSessionStartupTimeHint", "setShowSessionStartupTimeHint"),
-                  new PropertyDescriptor(SHOW_DEBUG_LOG_MESSAGES, SquirrelPreferences.class,
-                     "getShowDebugLogMessage", "setShowDebugLogMessages"),
-                  new PropertyDescriptor(SHOW_INFO_LOG_MESSAGES, SquirrelPreferences.class,
-                     "getShowInfoLogMessages", "setShowInfoLogMessages"),
-                  new PropertyDescriptor(SHOW_ERROR_LOG_MESSAGES, SquirrelPreferences.class,
-                     "getShowErrorLogMessages", "setShowErrorLogMessages"),
-
-                  new PropertyDescriptor(SAVE_PREFERENCES_IMMEDIATELY, SquirrelPreferences.class,
-                     "getSavePreferencesImmediately", "setSavePreferencesImmediately"),
-                  new PropertyDescriptor(SAVE_ALIASES_AND_DRIVERS_IMMEDIATELY, SquirrelPreferences.class,
-                     "getSaveAliasesAndDriversImmediately", "setSaveAliasesAndDriversImmediately"),
-
-                  new PropertyDescriptor(SELECT_ON_RIGHT_MOUSE_CLICK, SquirrelPreferences.class,
-                     "getSelectOnRightMouseClick", "setSelectOnRightMouseClick"),
-                  new PropertyDescriptor(SHOW_PLEASE_WAIT_DIALOG, SquirrelPreferences.class,
-                     "getShowPleaseWaitDialog", "setShowPleaseWaitDialog"),
-                  new PropertyDescriptor(PREFERRED_LOCALE, SquirrelPreferences.class, "getPreferredLocale",
-                     "setPreferredLocale"),
-
-                  new PropertyDescriptor(MAX_COLUMN_ADJUST_LENGTH_DEFINED, SquirrelPreferences.class, "getMaxColumnAdjustLengthDefined",
-                     "setMaxColumnAdjustLengthDefined"),
-
-                  new PropertyDescriptor(MAX_COLUMN_ADJUST_LENGTH, SquirrelPreferences.class, "getMaxColumnAdjustLength",
-                     "setMaxColumnAdjustLength"),
-
-                  new PropertyDescriptor(REMEMBER_VALUE_OF_POPUP, SquirrelPreferences.class, "isRememberValueOfPopup",
-                     "setRememberValueOfPopup"),
-
-                  new PropertyDescriptor(RELOAD_SQL_CONTENTS, SquirrelPreferences.class, "isReloadSqlContents",
-                     "setReloadSqlContents"),
-
-                  new PropertyDescriptor(MAX_TEXTOUTPUT_COLUMN_WIDTH, SquirrelPreferences.class, "getMaxTextOutputColumnWidth",
-                     "setMaxTextOutputColumnWidth"),
-
-                  new PropertyDescriptor(NOTIFY_EXTERNAL_FILE_CHANGES, SquirrelPreferences.class, "isNotifyExternalFileChanges",
-                     "setNotifyExternalFileChanges"),
-
-                  new PropertyDescriptor(ENABLE_CHANGE_TRACKING, SquirrelPreferences.class, "isEnableChangeTracking", "setEnableChangeTracking"),
-                  new PropertyDescriptor(GIT_COMMIT_MSG_MANUALLY, SquirrelPreferences.class, "isGitCommitMsgManually", "setGitCommitMsgManually"),
-                  new PropertyDescriptor(GIT_COMMIT_MSG_DEFAULT, SquirrelPreferences.class, "getGitCommitMsgDefault", "setGitCommitMsgDefault"),
-                  new PropertyDescriptor(DELETED_BOLD, SquirrelPreferences.class, "isDeletedBold", "setDeletedBold"),
-                  new PropertyDescriptor(DELETED_ITALICS, SquirrelPreferences.class, "isDeletedItalics", "setDeletedItalics"),
-                  new PropertyDescriptor(DELETED_FOREGROUND_RGB, SquirrelPreferences.class, "getDeletedForegroundRGB", "setDeletedForegroundRGB"),
-                  new PropertyDescriptor(INSERT_BEGIN_BACKGROUND_RGB, SquirrelPreferences.class, "getInsertBeginBackgroundRGB", "setInsertBeginBackgroundRGB"),
-                  new PropertyDescriptor(INSERT_END_BACKGROUND_RGB, SquirrelPreferences.class, "getInsertEndBackgroundRGB", "setInsertEndBackgroundRGB"),
-            };
-
-         return result;
+         return new PropertyDescriptor(propertyName, beanClass, readMethodName, writeMethodName);
       }
       catch (IntrospectionException e)
       {
-         throw new Error(e);
+         throw Utilities.wrapRuntime(e);
       }
    }
+
+   public IndexedPropertyDescriptor ixProp(String propertyName, Class<?> beanClass, String readMethodName, String writeMethodName,String indexedReadMethodName, String indexedWriteMethodName)
+   {
+      try
+      {
+         return new IndexedPropertyDescriptor(propertyName, beanClass, readMethodName, writeMethodName, indexedReadMethodName, indexedWriteMethodName);
+      }
+      catch (IntrospectionException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+
 }

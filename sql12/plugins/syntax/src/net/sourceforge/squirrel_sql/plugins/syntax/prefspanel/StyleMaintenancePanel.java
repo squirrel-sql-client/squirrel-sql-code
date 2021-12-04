@@ -17,19 +17,19 @@ package net.sourceforge.squirrel_sql.plugins.syntax.prefspanel;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * This panel allows maintenance of the selected Syntax Style.
@@ -54,7 +54,6 @@ public class StyleMaintenancePanel extends JToolBar
 
 	public StyleMaintenancePanel(StylesList list, SyntaxPluginResources rsrc)
 	{
-		super();
 		_list = list;
 
 		this.setFloatable(false);

@@ -1040,4 +1040,20 @@ public class GUIUtils
 	{
 		return new Rectangle((int)in.getX(), (int)in.getY(), (int)in.getWidth(), (int)in.getHeight());
 	}
+
+	public static int getMaxStringWidth(JComponent comp, String ... strings)
+	{
+		final FontMetrics fm = comp.getFontMetrics(comp.getFont());
+
+		int ret = 0;
+		for (String str : strings)
+		{
+			if(ret < fm.stringWidth(str))
+			{
+				ret = fm.stringWidth(str);
+			}
+		}
+
+		return ret;
+	}
 }

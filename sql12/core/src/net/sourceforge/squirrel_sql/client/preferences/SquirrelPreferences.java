@@ -119,6 +119,26 @@ public class SquirrelPreferences implements Serializable
 		String INSERT_BEGIN_BACKGROUND_RGB = "insertBeginBackgroundRGB";
 		String INSERT_END_BACKGROUND_RGB = "insertEndBackgroundRGB";
 
+		String MESSAGE_PANEL_MESSAGE_FOREGROUND = "messagePanelMessageForeground";
+		String MESSAGE_PANEL_MESSAGE_BACKGROUND = "messagePanelMessageBackground";
+		String MESSAGE_PANEL_MESSAGE_HISTORY_FOREGROUND = "messagePanelMessageHistoryForeground";
+		String MESSAGE_PANEL_MESSAGE_HISTORY_BACKGROUND = "messagePanelMessageHistoryBackground";
+
+		String MESSAGE_PANEL_WARNING_FOREGROUND = "messagePanelWarningForeground";
+		String MESSAGE_PANEL_WARNING_BACKGROUND = "messagePanelWarningBackground";
+		String MESSAGE_PANEL_WARNING_HISTORY_FOREGROUND = "messagePanelWarningHistoryForeground";
+		String MESSAGE_PANEL_WARNING_HISTORY_BACKGROUND = "messagePanelWarningHistoryBackground";
+
+		String MESSAGE_PANEL_ERROR_FOREGROUND = "messagePanelErrorForeground";
+		String MESSAGE_PANEL_ERROR_BACKGROUND = "messagePanelErrorBackground";
+		String MESSAGE_PANEL_ERROR_HISTORY_FOREGROUND = "messagePanelErrorHistoryForeground";
+		String MESSAGE_PANEL_ERROR_HISTORY_BACKGROUND = "messagePanelErrorHistoryBackground";
+
+		String MESSAGE_PANEL_WHITE_BACKGROUND_AS_UI_DEFAULT = "messagePanelWhiteBackgroundAsUIDefault";
+		String MESSAGE_PANEL_BLACK_FOREGROUND_AS_UI_DEFAULT = "messagePanelBlackForegroundAsUIDefault";
+
+
+
 	}
 
    public interface IJdbcDebugTypes
@@ -289,6 +309,29 @@ public class SquirrelPreferences implements Serializable
 	private int _insertEndBackgroundRGB = new Color(255, 170, 109).getRGB();
 	// Change tracking properties
 	/////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////
+	// Message panel properties
+	private int _messagePanelMessageForeground = Color.black.getRGB();
+	private int _messagePanelMessageBackground =  Color.green.getRGB();
+	private int _messagePanelMessageHistoryForeground = Color.black.getRGB();
+	private int _messagePanelMessageHistoryBackground = Color.white.getRGB();
+
+	private int _messagePanelWarningForeground = Color.black.getRGB();
+	private int _messagePanelWarningBackground = Color.yellow.getRGB();
+	private int _messagePanelWarningHistoryForeground = Color.black.getRGB();
+	private int _messagePanelWarningHistoryBackground = new Color(255,255,210).getRGB(); // a light yellow
+
+	private int _messagePanelErrorForeground = Color.red.getRGB();
+	private int _messagePanelErrorBackground = Color.white.getRGB();
+	private int _messagePanelErrorHistoryForeground = new Color(255,102,102).getRGB();
+	private int _messagePanelErrorHistoryBackground = Color.white.getRGB();
+
+	private boolean _messagePanelWhiteBackgroundAsUIDefault = true;
+	private boolean _messagePanelBlackForegroundAsUIDefault = true;
+	// Message panel properties
+	/////////////////////////////////////////////////////////////////////////
+
 
 	public SquirrelPreferences()
 	{
@@ -1423,5 +1466,145 @@ public class SquirrelPreferences implements Serializable
 	public boolean isNotifyExternalFileChanges()
 	{
 		return _notifyExternalFileChanges;
+	}
+
+	public int getMessagePanelMessageForeground()
+	{
+		return _messagePanelMessageForeground;
+	}
+
+	public void setMessagePanelMessageForeground(int messagePanelMessageForeground)
+	{
+		_messagePanelMessageForeground = messagePanelMessageForeground;
+	}
+
+	public int getMessagePanelMessageBackground()
+	{
+		return _messagePanelMessageBackground;
+	}
+
+	public void setMessagePanelMessageBackground(int messagePanelMessageBackground)
+	{
+		_messagePanelMessageBackground = messagePanelMessageBackground;
+	}
+
+	public int getMessagePanelMessageHistoryForeground()
+	{
+		return _messagePanelMessageHistoryForeground;
+	}
+
+	public void setMessagePanelMessageHistoryForeground(int messagePanelMessageHistoryForeground)
+	{
+		_messagePanelMessageHistoryForeground = messagePanelMessageHistoryForeground;
+	}
+
+	public int getMessagePanelMessageHistoryBackground()
+	{
+		return _messagePanelMessageHistoryBackground;
+	}
+
+	public void setMessagePanelMessageHistoryBackground(int messagePanelMessageHistoryBackground)
+	{
+		_messagePanelMessageHistoryBackground = messagePanelMessageHistoryBackground;
+	}
+
+	public int getMessagePanelWarningForeground()
+	{
+		return _messagePanelWarningForeground;
+	}
+
+	public void setMessagePanelWarningForeground(int messagePanelWarningForeground)
+	{
+		_messagePanelWarningForeground = messagePanelWarningForeground;
+	}
+
+	public int getMessagePanelWarningBackground()
+	{
+		return _messagePanelWarningBackground;
+	}
+
+	public void setMessagePanelWarningBackground(int messagePanelWarningBackground)
+	{
+		_messagePanelWarningBackground = messagePanelWarningBackground;
+	}
+
+	public int getMessagePanelWarningHistoryForeground()
+	{
+		return _messagePanelWarningHistoryForeground;
+	}
+
+	public void setMessagePanelWarningHistoryForeground(int messagePanelWarningHistoryForeground)
+	{
+		_messagePanelWarningHistoryForeground = messagePanelWarningHistoryForeground;
+	}
+
+	public int getMessagePanelWarningHistoryBackground()
+	{
+		return _messagePanelWarningHistoryBackground;
+	}
+
+	public void setMessagePanelWarningHistoryBackground(int messagePanelWarningHistoryBackground)
+	{
+		_messagePanelWarningHistoryBackground = messagePanelWarningHistoryBackground;
+	}
+
+	public int getMessagePanelErrorForeground()
+	{
+		return _messagePanelErrorForeground;
+	}
+
+	public void setMessagePanelErrorForeground(int messagePanelErrorForeground)
+	{
+		_messagePanelErrorForeground = messagePanelErrorForeground;
+	}
+
+	public int getMessagePanelErrorBackground()
+	{
+		return _messagePanelErrorBackground;
+	}
+
+	public void setMessagePanelErrorBackground(int messagePanelErrorBackground)
+	{
+		_messagePanelErrorBackground = messagePanelErrorBackground;
+	}
+
+	public int getMessagePanelErrorHistoryForeground()
+	{
+		return _messagePanelErrorHistoryForeground;
+	}
+
+	public void setMessagePanelErrorHistoryForeground(int messagePanelErrorHistoryForeground)
+	{
+		_messagePanelErrorHistoryForeground = messagePanelErrorHistoryForeground;
+	}
+
+	public int getMessagePanelErrorHistoryBackground()
+	{
+		return _messagePanelErrorHistoryBackground;
+	}
+
+	public void setMessagePanelErrorHistoryBackground(int messagePanelErrorHistoryBackground)
+	{
+		_messagePanelErrorHistoryBackground = messagePanelErrorHistoryBackground;
+	}
+
+	public boolean isMessagePanelWhiteBackgroundAsUIDefault()
+	{
+		return _messagePanelWhiteBackgroundAsUIDefault;
+	}
+
+	public void setMessagePanelWhiteBackgroundAsUIDefault(boolean messagePanelWhiteBackgroundAsUIDefault)
+	{
+		_messagePanelWhiteBackgroundAsUIDefault = messagePanelWhiteBackgroundAsUIDefault;
+	}
+
+	public boolean isMessagePanelBlackForegroundAsUIDefault()
+	{
+		return _messagePanelBlackForegroundAsUIDefault;
+	}
+
+	public void setMessagePanelBlackForegroundAsUIDefault(boolean messagePanelBlackForegroundAsUIDefault)
+	{
+		_messagePanelBlackForegroundAsUIDefault = messagePanelBlackForegroundAsUIDefault;
 	}
 }

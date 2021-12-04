@@ -1,11 +1,14 @@
 package net.sourceforge.squirrel_sql.client.gui.mainframe;
 
-import net.sourceforge.squirrel_sql.client.session.MessagePanel;
+import net.sourceforge.squirrel_sql.client.session.messagepanel.MessagePanel;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 
 public class SplitPnResizeHandler

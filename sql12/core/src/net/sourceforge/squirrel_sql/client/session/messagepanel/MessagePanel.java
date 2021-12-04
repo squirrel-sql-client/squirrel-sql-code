@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.session.messagepanel;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,20 +17,9 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.HashMap;
 
-import javax.swing.Action;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
@@ -41,6 +30,17 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.Action;
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 /**
  * This is the message panel at the bottom of the session sheet.
  *
@@ -58,103 +58,172 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 	 * Attribute sets for error and last message.
 	 */
 	private SimpleAttributeSet _saSetMessage;
-//	private SimpleAttributeSet _saSetErrorHistory;
-	private SimpleAttributeSet _saSetError;
-	private SimpleAttributeSet _saSetWarning;
+	private SimpleAttributeSet _saSetMessageHistory;
 
-	/**
-	 * Save into these attributes the parameters of the last message being output.
-	 * @todo In the near future: if more than one message shall be remembered, then these variables
-	 * need to be replaced with a dynamic storage (ArrayList or similar).
-	 */
+	private SimpleAttributeSet _saSetWarning;
+	private SimpleAttributeSet _saSetWarningHistory;
+
+	private SimpleAttributeSet _saSetError;
+	private SimpleAttributeSet _saSetErrorHistory;
+
 	private int _lastLength;
 	private String _lastMessage;
-	private SimpleAttributeSet _lastSASet;
+	private SimpleAttributeSet _lastSaSet;
 
-   private HashMap<SimpleAttributeSet, SimpleAttributeSet> _saSetHistoryBySaSet 
-       = new HashMap<SimpleAttributeSet, SimpleAttributeSet>();
 
-   private static interface I18N {
-       //i18n[MessagePanel.clearLabel=Clear]
-       String CLEAR_LABEL = s_stringMgr.getString("MessagePanel.clearLabel");
-   }
+   private DefaultExceptionFormatter defaultExceptionFormatter = new DefaultExceptionFormatter();
    
-   private DefaultExceptionFormatter defaultExceptionFormatter = 
-       new DefaultExceptionFormatter();
-   
-   /**
-    * Default ctor.
-    */
    public MessagePanel()
    {
-      super();
-
-      _popupMenu.setTextComponent(this);
-
-      // Add mouse listener for displaying popup menu.
-      addMouseListener(new MouseAdapter()
-      {
-         public void mousePressed(MouseEvent evt)
-         {
-            if (evt.isPopupTrigger())
-            {
-               _popupMenu.show(evt);
-            }
-         }
-         public void mouseReleased(MouseEvent evt)
-         {
-            if (evt.isPopupTrigger())
-            {
-               _popupMenu.show(evt);
-            }
-         }
-      });
-
-      ///////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////
       // Message
       _saSetMessage = new SimpleAttributeSet();
-      StyleConstants.setBackground(_saSetMessage, Color.green);
-
-      SimpleAttributeSet saSetMessageHistory = new SimpleAttributeSet();
-      // Just use text pane default colors.
-      //StyleConstants.setBackground(saSetMessageHistory, getBackground());
-      _saSetHistoryBySaSet.put(_saSetMessage, saSetMessageHistory);
+      _saSetMessageHistory = new SimpleAttributeSet();
       //
       ////////////////////////////////////////////////////////////////
-
 
       ///////////////////////////////////////////////////////////////////
       // Warning
       _saSetWarning = new SimpleAttributeSet();
-      StyleConstants.setBackground(_saSetWarning, Color.yellow);
-
-      SimpleAttributeSet saSetWarningHistory = new SimpleAttributeSet();
-      StyleConstants.setBackground(saSetWarningHistory, new Color(255,255,210)); // a light yellow
-      _saSetHistoryBySaSet.put(_saSetWarning, saSetWarningHistory);
+		_saSetWarningHistory = new SimpleAttributeSet();
       //
       ////////////////////////////////////////////////////////////////
 
-
       /////////////////////////////////////////////////////////////////
       // Error
-      // Attention: Do not use background colors here.
-      // Color blind people cannot read black writing on red background.
       _saSetError = new SimpleAttributeSet();
-      //StyleConstants.setBackground(_saSetError, Color.red);
-      StyleConstants.setForeground(_saSetError, Color.red);
-
-      SimpleAttributeSet saSetErrorHistory = new SimpleAttributeSet();
-      //StyleConstants.setBackground(saSetErrorHistory, Color.pink);
-      StyleConstants.setForeground(saSetErrorHistory, new Color(255,102,102));
-      _saSetHistoryBySaSet.put(_saSetError, saSetErrorHistory);
+		_saSetErrorHistory = new SimpleAttributeSet();
       //
       //////////////////////////////////////////////////////////////////
 
+		applyMessagePanelStyle(Main.getApplication().getSquirrelPreferences());
 
-   }
+		initPopup();
+	}
+
+	public void applyMessagePanelStyle(SquirrelPreferences prefs)
+	{
+		MessagePanelStylePreferenceWrapper wrp = new MessagePanelStylePreferenceWrapper(prefs);
+
+		// Messages
+		if(wrp.isSetMessageBackground())
+		{
+			StyleConstants.setBackground(_saSetMessage, wrp.getMessageBackground());
+		}
+		if(wrp.isSetMessageForeground())
+		{
+			StyleConstants.setForeground(_saSetMessage, wrp.getMessageForeground());
+		}
+
+		if(wrp.isSetMessageHistoryBackground())
+		{
+			StyleConstants.setBackground(_saSetMessageHistory, wrp.getMessageHistoryBackground());
+		}
+		if(wrp.isSetMessageHistoryForeground())
+		{
+			StyleConstants.setForeground(_saSetMessageHistory, wrp.getMessageHistoryForeground());
+		}
 
 
-   public void addToMessagePanelPopup(Action action)
+		// Warnings
+		if(wrp.isSetWarningBackground())
+		{
+			StyleConstants.setBackground(_saSetWarning, wrp.getWarningBackground());
+		}
+		if(wrp.isSetWarningForeground())
+		{
+			StyleConstants.setForeground(_saSetWarning, wrp.getWarningForeground());
+		}
+
+		if(wrp.isSetWarningHistoryBackground())
+		{
+			StyleConstants.setBackground(_saSetWarningHistory, wrp.getWarningHistoryBackground());
+		}
+		if(wrp.isSetWarningHistoryForeground())
+		{
+			StyleConstants.setForeground(_saSetWarningHistory, wrp.getWarningHistoryForeground());
+		}
+
+		// Errors
+		if(wrp.isSetErrorBackground())
+		{
+			StyleConstants.setBackground(_saSetError, wrp.getErrorBackground());
+		}
+		if(wrp.isSetErrorForeground())
+		{
+			StyleConstants.setForeground(_saSetError, wrp.getErrorForeground());
+		}
+
+		if(wrp.isSetErrorHistoryBackground())
+		{
+			StyleConstants.setBackground(_saSetErrorHistory, wrp.getErrorHistoryBackground());
+		}
+		if(wrp.isSetErrorHistoryForeground())
+		{
+			StyleConstants.setForeground(_saSetErrorHistory, wrp.getErrorHistoryForeground());
+		}
+
+//		StyleConstants.setBackground(_saSetMessage, Color.green);
+//
+//		StyleConstants.setBackground(_saSetWarning, Color.yellow);
+//		StyleConstants.setBackground(getHistorySaSet(_saSetWarning), new Color(255,255,210)); // a light yellow
+//
+//
+//		StyleConstants.setForeground(_saSetError, Color.red);
+//		StyleConstants.setForeground(getHistorySaSet(_saSetError), new Color(255,102,102));
+
+	}
+
+	/**
+	 * Not using a Map or equals here because SimpleAttributeSet's equals() / hashCode()
+	 * depends on its contents and {@link #applyMessagePanelStyle(SquirrelPreferences)} changes the contents
+	 */
+	private SimpleAttributeSet getHistorySaSet(SimpleAttributeSet saSet)
+	{
+		if(saSet == _saSetMessage)
+		{
+			return _saSetMessageHistory;
+		}
+		else if(saSet == _saSetWarning)
+		{
+			return _saSetWarningHistory;
+		}
+		else if(saSet == _saSetError)
+		{
+			return _saSetErrorHistory;
+		}
+		else
+		{
+			throw new IllegalArgumentException("Don't know any history SimpleAttributeSet for " + saSet);
+		}
+	}
+
+	private void initPopup()
+	{
+		_popupMenu.setTextComponent(this);
+
+		// Add mouse listener for displaying popup menu.
+		addMouseListener(new MouseAdapter()
+		{
+			public void mousePressed(MouseEvent evt)
+			{
+				if (evt.isPopupTrigger())
+				{
+					_popupMenu.show(evt);
+				}
+			}
+			public void mouseReleased(MouseEvent evt)
+			{
+				if (evt.isPopupTrigger())
+				{
+					_popupMenu.show(evt);
+				}
+			}
+		});
+	}
+
+
+	public void addToMessagePanelPopup(Action action)
    {
 		_popupMenu.add(action);
    }
@@ -300,7 +369,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
          // Checks if the former message should be highlighted in a 'history' color.
          if (document.getLength() >= _lastLength && null != _lastMessage)
 			{
-            SimpleAttributeSet historySaSet = _saSetHistoryBySaSet.get(_lastSASet);
+            SimpleAttributeSet historySaSet = getHistorySaSet(_lastSaSet);
             document.remove(_lastLength, _lastMessage.length());
             document.insertString(document.getLength(), _lastMessage, historySaSet);
 			}
@@ -309,7 +378,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 
          _lastLength = document.getLength();
 			_lastMessage = string;
-			_lastSASet = saSet;
+			_lastSaSet = saSet;
 
 			document.insertString(document.getLength(), string, saSet);
 		}
@@ -337,6 +406,21 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 		select(len, len);
 	}
 
+	private void clearMessages()
+	{
+		try
+		{
+			Document doc = MessagePanel.this.getDocument();
+			doc.remove(0, doc.getLength());
+			_lastMessage = null;
+		}
+		catch (BadLocationException ex)
+		{
+			s_log.error("Error clearing document", ex);
+		}
+	}
+
+
 	/**
 	 * Popup menu for this message panel.
 	 */
@@ -344,7 +428,6 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 	{
 		public MessagePanelPopupMenu()
 		{
-			super();
 			add(new ClearAction());
 		}
 
@@ -357,22 +440,14 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 		{
 			protected ClearAction()
 			{
-				super(I18N.CLEAR_LABEL);
+				super(s_stringMgr.getString("MessagePanel.clearLabel"));
 			}
 
 			public void actionPerformed(ActionEvent evt)
 			{
-				try
-				{
-					Document doc = MessagePanel.this.getDocument();
-					doc.remove(0, doc.getLength());
-					_lastMessage = null;
-				}
-				catch (BadLocationException ex)
-				{
-					s_log.error("Error clearing document", ex);
-				}
+				clearMessages();
 			}
 		}
 	}
+
 }
