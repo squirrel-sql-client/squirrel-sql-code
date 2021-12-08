@@ -182,32 +182,6 @@ public class Utilities
    }
 
    /**
-    * Clean the passed string. Replace whitespace characters with a single
-    * space. If a <TT>null</TT> string passed return an empty string. E.G.
-    * replace
-    *
-    * [pre]
-    * \t\tselect\t* from\t\ttab01
-    * [/pre]
-    *
-    * with
-    *
-    * [pre]
-    * select * from tab01
-    * [/pre]
-    *
-    * @deprecated	Use <tt>StringUtilities.cleanString(String)</tt> instead.
-    *
-    * @param	str	String to be cleaned.
-    *
-    * @return	Cleaned string.
-    */
-   public static String cleanString(String str)
-   {
-      return StringUtilities.cleanString(str);
-   }
-
-   /**
     * Return the suffix of the passed file name.
     *
     * @param	fileName	File name to retrieve suffix for.
@@ -298,42 +272,6 @@ public class Utilities
          return fmt.format(val).concat(" KB");
       }
       return fmt.format(val).concat(" bytes");
-   }
-
-   /**
-    * Split a string based on the given delimiter, but don't remove
-    * empty elements.
-    *
-    * @deprecated	Use <tt>StringUtilities.split(String, char)</tt>
-    *				instead.
-    *
-    * @param	str			The string to be split.
-    * @param	delimiter	Split string based on this delimiter.
-    *
-    * @return	Array of split strings. Guaranteeded to be not null.
-    */
-   public static String[] splitString(String str, char delimiter)
-   {
-      return StringUtilities.split(str, delimiter);
-   }
-
-   /**
-    * Split a string based on the given delimiter, optionally removing
-    * empty elements.
-    *
-    * @deprecated	Use <tt>StringUtilities.split(String, char, boolean)</tt>
-    *				instead.
-    *
-    * @param	str			The string to be split.
-    * @param	delimiter	Split string based on this delimiter.
-    * @param	removeEmpty	If <tt>true</tt> then remove empty elements.
-    *
-    * @return	Array of split strings. Guaranteeded to be not null.
-    */
-   public static String[] splitString(String str, char delimiter,
-                                      boolean removeEmpty)
-   {
-      return StringUtilities.split(str, delimiter, removeEmpty);
    }
 
    /**

@@ -20,7 +20,9 @@ public class ApplicationListenerInvocationHandler implements InvocationHandler
       _app = app;
       try
       {
-         _com_apple_eawt_ApplicationAdapter_Instance = Class.forName("com.apple.eawt.ApplicationAdapter").newInstance();
+         _com_apple_eawt_ApplicationAdapter_Instance =
+               Class.forName("com.apple.eawt.ApplicationAdapter").getConstructor().newInstance();
+
          _com_apple_eawt_ApplicationEvent = Class.forName("com.apple.eawt.ApplicationEvent");
          _setHandled = _com_apple_eawt_ApplicationEvent.getMethod("setHandled", new Class[]{Boolean.TYPE});
 

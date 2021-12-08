@@ -17,19 +17,19 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.PropertyChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
+
+import java.beans.PropertyChangeListener;
 
 public interface ISQLDriver extends IHasIdentifier, Comparable<ISQLDriver>
 {
 	/**
 	 * JavaBean property names for this class.
 	 */
-	public interface IPropertyNames
+	interface IPropertyNames
 	{
 		String DRIVER_CLASS = "driverClassName";
 		String ID = "identifier";
@@ -68,21 +68,9 @@ public interface ISQLDriver extends IHasIdentifier, Comparable<ISQLDriver>
 	void setDriverClassName(String driverClassName)
 		throws ValidationException;
 
-	/**
-	 * @deprecated	Replaced by getJarFileURLs().
-	 */
 	String getJarFileName();
 
 	void setJarFileName(String value) throws ValidationException;
-
-	StringWrapper[] getJarFileNameWrappers();
-
-	StringWrapper getJarFileNameWrapper(int idx) throws ArrayIndexOutOfBoundsException;
-
-
-	void setJarFileNameWrappers(StringWrapper[] value);
-
-	void setJarFileNameWrapper(int idx, StringWrapper value) throws ArrayIndexOutOfBoundsException;
 
 	String[] getJarFileNames();
 	void setJarFileNames(String[] values);

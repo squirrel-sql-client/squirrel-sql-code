@@ -17,17 +17,18 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.PropertyChangeListener;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
+
+import java.beans.PropertyChangeListener;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This represents a JDBC driver.
  * This class is a <CODE>JavaBean</CODE>.
@@ -330,42 +331,6 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	public void setJDBCDriverClassLoaded(boolean cl)
 	{
 		_jdbcDriverClassLoaded = cl;
-		//TODO: Decide whether this should be a bound property or not.
-		//		getPropertyChangeReporter().firePropertyChange(ISQLDriver.IPropertyNames.NAME, _name, _name);
-	}
-
-	public synchronized StringWrapper[] getJarFileNameWrappers()
-	{
-		StringWrapper[] wrappers = new StringWrapper[_jarFileNamesList.size()];
-		for (int i = 0; i < wrappers.length; ++i)
-		{
-			wrappers[i] = new StringWrapper(_jarFileNamesList.get(i));
-		}
-		return wrappers;
-	}
-
-	public StringWrapper getJarFileNameWrapper(int idx)
-		throws ArrayIndexOutOfBoundsException
-	{
-		return new StringWrapper(_jarFileNamesList.get(idx));
-	}
-
-	public void setJarFileNameWrappers(StringWrapper[] value)
-	{
-		_jarFileNamesList.clear();
-		if (value != null)
-		{
-			for (int i = 0; i < value.length; ++i)
-			{
-				_jarFileNamesList.add(value[i].getString());
-			}
-		}
-	}
-
-	public void setJarFileNameWrapper(int idx, StringWrapper value)
-		throws ArrayIndexOutOfBoundsException
-	{
-		_jarFileNamesList.set(idx, value.getString());
 	}
 
 	private String getString(String data)
