@@ -1,17 +1,17 @@
 package net.sourceforge.squirrel_sql.client.session.connectionpool;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
 
 public class SessionConnectionPoolStatusBarPanel extends JPanel
 {
@@ -46,6 +46,7 @@ public class SessionConnectionPoolStatusBarPanel extends JPanel
       btnState.setFocusable(false);
       btnState.setBorder(null);
       btnState.setToolTipText(s_stringMgr.getString("SessionConnectionPoolStatusBarPanel.state.html.tooltip"));
+      GUIUtils.showExtraToolTipOnClick(btnState);
       ret.add(btnState);
 
       btnConfigureConnectionPoolSize = new SmallTabButton(s_stringMgr.getString("SessionConnectionPool.configure.size"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.VIEW_DETAILS), 4);

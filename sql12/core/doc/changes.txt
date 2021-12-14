@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Query connection pool: Display tooltip when the pool status button is clicked.
+
 On Log4j2 vulnerability CVE-2021-44228 concerning versions >=2.0-beta9 and <=2.14.1:
   Made transparent which logging libraries (Jars) SQuirreL uses by replacing logging Jars
   with no version in their file names and by making sure logging Jars are not bundled in other Jars.
