@@ -8,13 +8,14 @@ Enhancements:
 
 Query connection pool: Display tooltip when the pool status button is clicked.
 
-On Log4j2 vulnerability CVE-2021-44228 concerning all versions from 2.0-beta9 to 2.14.1:
+On Log4j vulnerability CVE-2021-44228 (log4shell) concerning Log4j2 versions from 2.0-beta9 to 2.14.1:
   Made transparent which logging libraries (Jars) SQuirreL uses by replacing logging Jars
   with no version in their file names and by making sure logging Jars are not bundled in other Jars.
   The logging Jars SQuirreL uses are: log4j-1.2.17.jar, slf4j-api-1.7.32.jar, commons-logging-1.2.jar.
   For information on the vulnerability see
   https://logging.apache.org/log4j/2.x/security.html
   https://nvd.nist.gov/vuln/detail/CVE-2021-44228
+  https://www.cisa.gov/uscert/apache-log4j-vulnerability-guidance
 
 Upgraded to latest RSyntax version 3.1.3.
 
