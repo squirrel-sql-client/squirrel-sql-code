@@ -1,15 +1,19 @@
 package net.sourceforge.squirrel_sql.client.gui.pastefromhistory;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.*;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class PasteFromHistoryController
@@ -30,47 +34,28 @@ public class PasteFromHistoryController
 
       PasteHistory pasteHistory = Main.getApplication().getPasteHistory();
 
-      String[] histroy = pasteHistory.getHistory();
+      String[] history = pasteHistory.getHistory();
 
-      _dlg.lstHistoryItems.setListData(histroy);
+      _dlg.lstHistoryItems.setListData(history);
 
-      if (0 < histroy.length)
+      if (0 < history.length)
       {
          _dlg.lstHistoryItems.setSelectedIndex(0);
-         _dlg.txtHistoryDetail.setText(histroy[0]);
+         _dlg.txtHistoryDetail.setText(history[0]);
       }
 
 
       _dlg.setSize(getDimension());
 
 
-      _dlg.btnCancel.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            close();
-         }
-      });
+      _dlg.btnCancel.addActionListener(e -> close());
 
-      _dlg.btnOk.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onOk();
-         }
-      });
+      _dlg.btnOk.addActionListener(e -> onOk());
 
 
       _dlg.lstHistoryItems.requestFocus();
 
-      _dlg.lstHistoryItems.addListSelectionListener(new ListSelectionListener()
-      {
-         @Override
-         public void valueChanged(ListSelectionEvent e)
-         {
-            onSelectionChanged(e);
-         }
-      });
+      _dlg.lstHistoryItems.addListSelectionListener(e -> onSelectionChanged(e));
 
       _dlg.lstHistoryItems.addMouseListener(new MouseAdapter() {
          @Override
@@ -93,16 +78,7 @@ public class PasteFromHistoryController
 
       GUIUtils.centerWithinParent(_dlg);
 
-      SwingUtilities.invokeLater(new Runnable() {
-         @Override
-         public void run()
-         {
-            _dlg.lstHistoryItems.requestFocus();
-         }
-      });
-
-
-
+      SwingUtilities.invokeLater(() -> _dlg.lstHistoryItems.requestFocus());
    }
 
    private void onListMouseClicked(MouseEvent e)
@@ -122,11 +98,14 @@ public class PasteFromHistoryController
          _sqlPanelAPI.getSQLEntryPanel().replaceSelection(selected);
       }
 
-      ///////////////////////////////////////////////////////////////////////
-      // Put the pasted entry on top of the history
+      ///////////////////////////////////////////////////////////////////////////////
+      // Put the pasted entry on top of the history and set it as clipboard content
+      StringSelection contents = new StringSelection(selected);
+      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, contents);
+
       Main.getApplication().getPasteHistory().addToPasteHistory(selected);
       //
-      ///////////////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////////////////////
 
       close();
    }

@@ -8,7 +8,7 @@ Enhancements:
 
 Query connection pool: Display tooltip when the pool status button is clicked.
 
-On Log4j2 vulnerability CVE-2021-44228 concerning versions >=2.0-beta9 and <=2.14.1:
+On Log4j2 vulnerability CVE-2021-44228 concerning all versions from 2.0-beta9 to 2.14.1:
   Made transparent which logging libraries (Jars) SQuirreL uses by replacing logging Jars
   with no version in their file names and by making sure logging Jars are not bundled in other Jars.
   The logging Jars SQuirreL uses are: log4j-1.2.17.jar, slf4j-api-1.7.32.jar, commons-logging-1.2.jar.
@@ -69,6 +69,8 @@ New SQL editor function to delete the current SQL statement.
 
 
 Bug fixes:
+
+Paste history (ctrl +shift + v or insert): When an entry is selected to paste it is made the current clipboard content.
 
 Data import Plugin: An invalid date format in the "Import file settings" dialog led to errors in the subsequent import dialog.
 

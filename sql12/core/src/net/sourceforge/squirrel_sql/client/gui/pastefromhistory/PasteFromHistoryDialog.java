@@ -1,12 +1,22 @@
 package net.sourceforge.squirrel_sql.client.gui.pastefromhistory;
 
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class PasteFromHistoryDialog extends JDialog
 {
@@ -29,13 +39,7 @@ public class PasteFromHistoryDialog extends JDialog
       splitPane.setTopComponent(new JScrollPane(lstHistoryItems));
       splitPane.setBottomComponent(new JScrollPane(txtHistoryDetail));
 
-      SwingUtilities.invokeLater(new Runnable() {
-         @Override
-         public void run()
-         {
-            splitPane.setDividerLocation(0.5d);
-         }
-      });
+      SwingUtilities.invokeLater(() -> splitPane.setDividerLocation(0.5d));
 
       getContentPane().setLayout(new BorderLayout());
 
