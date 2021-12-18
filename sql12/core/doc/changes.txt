@@ -6,6 +6,14 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Fixed Log4j vulnerability CVE-2021-4104 concerning Log4j version 1.*.
+  The vulnerability received attention in connection with CVE-2021-44228 (log4shell).
+  CVE-2021-44228 (log4shell) was already addressed below.
+  For details on CVE-2021-4104 see https://nvd.nist.gov/vuln/detail/CVE-2021-4104
+  SQuirreL's log4j-1.2.17.jar was fixed as described at
+  https://access.redhat.com/security/cve/CVE-2021-4104
+  and renamed to log4j-1.2.17_patched_for_CVE-2021-4104.jar.
+
 Query connection pool: Display tooltip when the pool status button is clicked.
 
 On Log4j vulnerability CVE-2021-44228 (log4shell) concerning Log4j2 versions from 2.0-beta9 to 2.14.1:
