@@ -69,7 +69,7 @@ public class ProxySettings implements Cloneable, Serializable, IProxySettings
 		}
 		catch(CloneNotSupportedException ex)
 		{
-			throw new InternalError(ex.getMessage()); // Impossible.
+			throw Utilities.wrapRuntime(ex); // Impossible.
 		}
 	}
 

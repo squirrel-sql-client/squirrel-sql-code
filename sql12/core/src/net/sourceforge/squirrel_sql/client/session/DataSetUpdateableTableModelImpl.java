@@ -1,5 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
@@ -17,17 +26,9 @@ import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.JOptionPane;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
 
 
 public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableModel
@@ -477,7 +478,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          message.append(
                s_stringMgr.getString(
                      "DataSetUpdateableTableModelImpl.error.rereadingdb",
-                     ex.getMessage()));
+                     Utilities.getExceptionStringSave(ex)));
 
 
          LimitReadLengthFeatureUnstable.someErrorReReading(ex);
@@ -542,19 +543,9 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
       catch (SQLException ex)
       {
-         //i18n[DataSetUpdateableTableModelImpl.error.updateproblem=There
-         //was a problem reported during the update.
-         //The DB message was:\n{0}\nThis may or may not be serious depending
-         //on the above message.\nThe data was probably not changed in the
-         //database.\nYou may need to refresh the table to get an accurate
-         //view of the current data.]
-         String errMsg = s_stringMgr.getString(
-               "DataSetUpdateableTableModelImpl.error.updateproblem",
-               ex.getMessage());
-         s_log.error("updateTableComponent: unexpected exception - " +
-               ex.getMessage() + " while executing SQL: " + sql, ex);
+         s_log.error("updateTableComponent: unexpected exception - " + ex.getMessage() + " while executing SQL: " + sql, ex);
 
-
+         String errMsg = s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.updateproblem", Utilities.getExceptionStringSave(ex));
          return errMsg;
       }
       finally
@@ -993,7 +984,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // i18n[DataSetUpdateableTableModelImpl.error.duringInsert=Exception seen during check on DB.  Exception was:\n{0}\nInsert was probably not completed correctly.  DB may be corrupted!]
          return s_stringMgr.getString(
                "DataSetUpdateableTableModelImpl.error.duringInsert",
-               ex.getMessage());
+               Utilities.getExceptionStringSave(ex));
       }
 
       if (count != 1)

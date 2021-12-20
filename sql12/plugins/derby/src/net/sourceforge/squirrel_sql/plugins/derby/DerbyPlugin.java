@@ -19,6 +19,20 @@ package net.sourceforge.squirrel_sql.plugins.derby;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.sql.Driver;
+import java.sql.SQLException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -57,20 +71,6 @@ import net.sourceforge.squirrel_sql.plugins.derby.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.ViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tokenizer.DerbyQueryTokenizer;
 import net.sourceforge.squirrel_sql.plugins.derby.types.DerbyClobDataTypeComponentFactory;
-
-import javax.swing.JOptionPane;
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.sql.Driver;
-import java.sql.SQLException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * The main controller class for the Derby plugin.

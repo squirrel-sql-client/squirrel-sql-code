@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
@@ -24,9 +27,6 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
  * Base class for tabs to the added to one of the object panels.
@@ -106,7 +106,6 @@ public abstract class BaseObjectTab implements IObjectTab
 	{
 		if (!_hasBeenDisplayed)
 		{
-			s_log.debug("Refreshing " + getTitle() + " table tab.");
 			try
 			{
 				clear();
@@ -114,10 +113,7 @@ public abstract class BaseObjectTab implements IObjectTab
 			}
 			catch (Throwable th)
 			{
-				th.printStackTrace();
-				if (s_log.isDebugEnabled()) {
-					s_log.debug("Unexpected exception: "+th.getMessage(), th);
-				}
+				s_log.error(th);
 				getSession().showErrorMessage(th);
 			}
 			_hasBeenDisplayed = true;

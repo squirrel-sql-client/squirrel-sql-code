@@ -1,17 +1,18 @@
 package net.sourceforge.squirrel_sql.plugins.dataimport;
 
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import javax.swing.Timer;
+
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.UnsupportedFormatException;
-
-import javax.swing.Timer;
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 public class ImportProgressCtrl
 {
@@ -71,8 +72,8 @@ public class ImportProgressCtrl
       GUIUtils.processOnSwingEventThread(() -> close());
 
       EDTMessageBoxUtil.showMessageDialogOnEDT(
-            stringMgr.getString("ImportDataIntoTableExecutor.sqlException", sqle.getMessage(), Integer.toString(_currentRow)),
-            stringMgr.getString("ImportDataIntoTableExecutor.error"));
+                                stringMgr.getString("ImportDataIntoTableExecutor.sqlException", Utilities.getExceptionStringSave(sqle),Integer.toString(_currentRow)),
+                                stringMgr.getString("ImportDataIntoTableExecutor.error"));
 
 
    }
@@ -85,7 +86,7 @@ public class ImportProgressCtrl
       GUIUtils.processOnSwingEventThread(() -> close());
 
       EDTMessageBoxUtil.showMessageDialogOnEDT(
-            stringMgr.getString("ImportDataIntoTableExecutor.ioException", ioe.getMessage(), _currentRow),
+            stringMgr.getString("ImportDataIntoTableExecutor.ioException", Utilities.getExceptionStringSave(ioe), _currentRow),
             stringMgr.getString("ImportDataIntoTableExecutor.error"));
 
 
@@ -98,7 +99,7 @@ public class ImportProgressCtrl
       GUIUtils.processOnSwingEventThread(() -> close());
 
       EDTMessageBoxUtil.showMessageDialogOnEDT(
-            stringMgr.getString("ImportDataIntoTableExecutor.UnsupportedFormatException", ufe.getMessage(), _currentRow),
+            stringMgr.getString("ImportDataIntoTableExecutor.UnsupportedFormatException", Utilities.getExceptionStringSave(ufe), _currentRow),
             stringMgr.getString("ImportDataIntoTableExecutor.error"));
 
    }

@@ -18,16 +18,17 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.beans.PropertyChangeListener;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.beans.PropertyChangeListener;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * This represents a JDBC driver.
@@ -163,7 +164,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		}
 		catch (CloneNotSupportedException ex)
 		{
-			throw new InternalError(ex.getMessage()); // Impossible.
+			throw Utilities.wrapRuntime(ex); // Impossible.
 		}
 	}
 

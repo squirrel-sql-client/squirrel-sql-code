@@ -1,5 +1,13 @@
 package net.sourceforge.squirrel_sql.client.session.filemanager;
 
+import java.awt.Frame;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
@@ -11,16 +19,9 @@ import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import java.awt.Frame;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.InvalidPathException;
 
 
 public class FileManagementCore
@@ -290,7 +291,7 @@ public class FileManagementCore
       {
          s_log.error("Invalid file name: Call to File.toPath() raised error", e);
 
-         String msg = s_stringMgr.getString("FileManager.error.invalid.file.name", file.getAbsolutePath(), e.getMessage());
+         String msg = s_stringMgr.getString("FileManager.error.invalid.file.name", file.getAbsolutePath(), Utilities.getExceptionStringSave(e));
          Dialogs.showError(frame, msg);
          return false;
       }

@@ -18,16 +18,26 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.UIManager;
+
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.sql.SQLException;
 
 public class ErrorDialog extends JDialog
 {
@@ -130,14 +140,7 @@ public class ErrorDialog extends JDialog
 	{
 		if (msg == null || msg.length() == 0)
 		{
-			if (th != null)
-			{
-				msg = th.getMessage();
-				if (msg == null || msg.length() == 0)
-				{
-					msg = th.toString();
-				}
-			}
+			msg = Utilities.getExceptionStringSave(th);
 		}
 		if (msg == null || msg.length() == 0)
 		{
@@ -205,11 +208,7 @@ public class ErrorDialog extends JDialog
 		{
 			if (th != null)
 			{
-				msg = th.getMessage();
-				if (msg == null || msg.length() == 0)
-				{
-					msg = th.toString();
-				}
+				msg = Utilities.getExceptionStringSave(th);
 			}
 		}
 		if (msg == null || msg.length() == 0)

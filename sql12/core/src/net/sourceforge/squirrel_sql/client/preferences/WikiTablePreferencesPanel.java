@@ -31,7 +31,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -56,7 +55,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurat
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -758,17 +757,11 @@ public class WikiTablePreferencesPanel extends JPanel {
 				try{
 					setValue(config);
 				}catch (IllegalArgumentException e) {
-					application.showErrorDialog(e.getMessage());
+					application.showErrorDialog(Utilities.getExceptionStringSave(e));
 					JTextField textField = (JTextField) event.getComponent();
 					String text = textField.getText();
 					System.out.println(text);
-					SwingUtilities.invokeLater(new Runnable() {
-						
-						@Override
-						public void run() {
-							event.getComponent().requestFocus();
-						}
-					});
+					SwingUtilities.invokeLater(() -> event.getComponent().requestFocus());
 				}
 				showExample(config);
 			}

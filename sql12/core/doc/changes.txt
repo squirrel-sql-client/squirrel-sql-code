@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Improved error messages which are displayed as message boxes or in SQuirreL's message panel.
+
 Fixed Log4j vulnerability CVE-2021-4104 concerning Log4j version 1.*.
   The vulnerability received attention in connection with CVE-2021-44228 (log4shell).
   CVE-2021-44228 (log4shell) was already addressed below.

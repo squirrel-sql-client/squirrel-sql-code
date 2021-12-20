@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.awt.Font;
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 public class FontInfo implements Cloneable, Serializable
 {
     private static final long serialVersionUID = 1L;
@@ -67,7 +69,7 @@ public class FontInfo implements Cloneable, Serializable
 		}
 		catch (CloneNotSupportedException ex)
 		{
-			throw new InternalError(ex.getMessage()); // Impossible.
+			throw Utilities.wrapRuntime(ex);
 		}
 	}
 

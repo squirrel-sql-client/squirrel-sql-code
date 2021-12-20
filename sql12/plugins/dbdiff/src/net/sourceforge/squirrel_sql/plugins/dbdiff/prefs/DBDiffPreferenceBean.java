@@ -21,6 +21,8 @@ package net.sourceforge.squirrel_sql.plugins.dbdiff.prefs;
 
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 /**
  * A bean class to store preferences for the DB Diff plugin.
  */
@@ -67,7 +69,7 @@ public class DBDiffPreferenceBean implements Cloneable, Serializable, IPluginPre
 		}
 		catch (final CloneNotSupportedException ex)
 		{
-			throw new InternalError(ex.getMessage()); // Impossible.
+			throw Utilities.wrapRuntime(ex); // Impossible.
 		}
 	}
 

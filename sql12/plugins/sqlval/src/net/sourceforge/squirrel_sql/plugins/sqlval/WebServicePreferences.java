@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.sqlval;
  */
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 public class WebServicePreferences implements Cloneable, Serializable
 {
 	static final String UNSUPPORTED = "Unsupported";
@@ -57,7 +59,7 @@ public class WebServicePreferences implements Cloneable, Serializable
 		}
 		catch (CloneNotSupportedException ex)
 		{
-			throw new InternalError(ex.getMessage()); // Impossible.
+			throw Utilities.wrapRuntime(ex); // Impossible.
 		}
 	}
 

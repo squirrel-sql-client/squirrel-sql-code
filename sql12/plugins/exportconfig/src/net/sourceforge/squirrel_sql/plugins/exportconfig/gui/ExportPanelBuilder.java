@@ -17,11 +17,11 @@ package net.sourceforge.squirrel_sql.plugins.exportconfig.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -30,19 +30,19 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.DefaultFormBuilder;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPreferences;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.layout.FormLayout;
 /**
  * This builder creates the component that allows the user to select what they
  * want to export and where it should be exported to.
@@ -407,7 +407,7 @@ public class ExportPanelBuilder
             if (!succeeded && !cancelled) {
                 outcomeMessage = 
                     s_stringMgr.getString("ExportPanel.failedmessage",
-                                          ex.getMessage());
+														Utilities.getExceptionStringSave(ex));
                 title = s_stringMgr.getString("ExportPanel.failedtitle");
                 optionType = JOptionPane.ERROR_MESSAGE;
             }

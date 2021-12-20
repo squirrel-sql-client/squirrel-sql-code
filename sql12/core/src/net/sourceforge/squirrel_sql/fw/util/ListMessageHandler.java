@@ -99,7 +99,7 @@ public class ListMessageHandler implements IMessageHandler
    @Override
    public void showErrorMessage(String string, Throwable ex)
    {
-      _errMsgs.add(string + " | " + ex.getMessage());
+      _errMsgs.add(string + " | " + Utilities.getExceptionStringSave(ex));
    }
 
    public void showWarningMessage(String msg)

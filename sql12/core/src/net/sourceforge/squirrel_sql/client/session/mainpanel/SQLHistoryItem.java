@@ -21,6 +21,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 /**
  * This JavaBean is the object stored in The <TT>SQLHistoryComboBox</TT>. It
  * represents an SQL query.
@@ -116,7 +118,7 @@ public class SQLHistoryItem implements Serializable, Cloneable
 		}
 		catch (CloneNotSupportedException ex)
 		{
-			throw new InternalError(ex.getMessage()); // Impossible.
+			throw Utilities.wrapRuntime(ex);
 		}
 	}
 

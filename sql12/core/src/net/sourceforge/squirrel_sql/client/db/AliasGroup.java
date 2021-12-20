@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 /**
  * Objects of this class hold a collection of <TT>ISQLAlias</TT> objects.
  *
@@ -102,7 +104,7 @@ public class AliasGroup implements Cloneable, Serializable, Comparable<AliasGrou
 		}
 		catch (CloneNotSupportedException ex)
 		{
-			throw new InternalError(ex.getMessage()); // Impossible.
+			throw Utilities.wrapRuntime(ex);
 		}
 	}
 

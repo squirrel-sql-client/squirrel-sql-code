@@ -18,10 +18,11 @@ package net.sourceforge.squirrel_sql.plugins.sqlval;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.Serializable;
+
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
-
-import java.io.Serializable;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class WebServiceSessionProperties implements Cloneable, Serializable
 {
@@ -64,7 +65,7 @@ public class WebServiceSessionProperties implements Cloneable, Serializable
 		}
 		catch (CloneNotSupportedException ex)
 		{
-			throw new InternalError(ex.getMessage()); // Impossible.
+			throw Utilities.wrapRuntime(ex); // Impossible.
 		}
 	}
 

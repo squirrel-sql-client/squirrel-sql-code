@@ -14,10 +14,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
-import net.sourceforge.squirrel_sql.fw.props.Props;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -26,13 +24,13 @@ import javax.swing.JPopupMenu;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.LocaleUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import org.apache.commons.lang.StringUtils;
 
 public class TranslatorsController
@@ -392,10 +390,9 @@ public class TranslatorsController
 		}
 		catch (IOException e)
 		{
-			// i18n[i18n.executingCommandFailed=Execution failed with error: {0}]
-			String msg = s_stringMgr.getString("i18n.executingCommandFailed", e.getMessage());
+			String msg = s_stringMgr.getString("i18n.executingCommandFailed", Utilities.getExceptionStringSave(e));
 			_app.getMessageHandler().showMessage(msg);
-			throw new RuntimeException(e);
+			throw Utilities.wrapRuntime(e);
 
 		}
 	}

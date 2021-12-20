@@ -1,14 +1,23 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class WaitPanel extends JPanel
 {
@@ -85,7 +94,7 @@ public class WaitPanel extends JPanel
    public void displayError(Throwable t)
    {
       prepareForErrorDisplay();
-      _label.setText(s_stringMgr.getString("WaitPanel.errorOccured", t.getMessage()));
+      _label.setText(s_stringMgr.getString("WaitPanel.errorOccured", Utilities.getExceptionStringSave(t)));
    }
 
    public void displayHqlQueryError(String errMsg)

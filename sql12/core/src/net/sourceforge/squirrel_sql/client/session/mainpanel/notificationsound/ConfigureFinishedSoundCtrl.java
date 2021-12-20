@@ -1,22 +1,23 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileFilter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class ConfigureFinishedSoundCtrl
 {
@@ -145,7 +146,7 @@ public class ConfigureFinishedSoundCtrl
       catch (Throwable e)
       {
          s_log.error("Error testing execution finished sound", e);
-         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("FinishedNotificationSoundHandler.error.testing.finished.sound", e.getMessage()));
+         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("FinishedNotificationSoundHandler.error.testing.finished.sound", Utilities.getExceptionStringSave(e)));
       }
       finally
       {

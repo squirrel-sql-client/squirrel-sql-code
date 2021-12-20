@@ -105,20 +105,6 @@ public class BaseException extends Exception
 		}
 	}
 
-	private static String getMessageFromException(Throwable th)
-	{
-		String rtn = "";
-		if (th != null)
-		{
-			String msg = th.getMessage();
-			if (msg != null)
-			{
-				rtn = msg;
-			}
-		}
-		return rtn;
-	}
-
 	/**
 	 * Retrieve the exception that this one is wrapped around. This can be
 	 * <TT>null</TT>.

@@ -1,14 +1,15 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound;
 
+import javax.swing.JComponent;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.JComponent;
 
 public class FinishedNotificationSoundHandler
 {
@@ -71,7 +72,7 @@ public class FinishedNotificationSoundHandler
       catch (Throwable e)
       {
          s_log.error("Error playing execution finished sound", e);
-         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("FinishedNotificationSoundHandler.error.playing.finished.sound", e.getMessage()));
+         Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("FinishedNotificationSoundHandler.error.playing.finished.sound", Utilities.getExceptionStringSave(e)));
       }
    }
 

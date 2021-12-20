@@ -1,14 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.timeoutproxy;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class TimeOutUtil
 {
@@ -75,6 +75,11 @@ public class TimeOutUtil
     */
    public static <T> T callWithTimeout(TimeOutableCaller<T> timeoutableCaller)
    {
+      return callWithTimeout(timeoutableCaller, STD_INVOKE_WITH_TIMEOUT_MILLIS);
+   }
+
+   public static <T> T callWithTimeout(TimeOutableCaller<T> timeoutableCaller, int timeOutMillis)
+   {
       boolean usedMetaDataLoadingTimeout = false;
       try
       {
@@ -83,7 +88,7 @@ public class TimeOutUtil
 
          if(0 == metaDataLoadingTimeOutOfActiveSession)
          {
-            return future.get(STD_INVOKE_WITH_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+            return future.get(timeOutMillis, TimeUnit.MILLISECONDS);
          }
          else
          {

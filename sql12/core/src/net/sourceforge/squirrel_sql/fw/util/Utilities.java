@@ -18,10 +18,6 @@ package net.sourceforge.squirrel_sql.fw.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,6 +32,10 @@ import java.text.NumberFormat;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * General purpose utilities functions.
@@ -467,8 +467,50 @@ public class Utilities
       return TimeOutUtil.callWithTimeout(() -> callable.call());
    }
 
+   public static <T> T callWithTimeout(Callable<T> callable, int timeOutMillis)
+   {
+      return TimeOutUtil.callWithTimeout(() -> callable.call(), timeOutMillis);
+   }
+
    public static void invokeWithTimeout(Runnable toInvoke)
    {
       TimeOutUtil.invokeWithTimeout(() -> toInvoke.run());
+   }
+
+   /**
+    * DO NOT USE for writing logs (s_log = LoggerController.createLogger(...))
+    * but only for displaying in SQuirreL's message panel or for display in message boxes.
+    *
+    * Returns toString() instead of getMessage() because e.g. for NullPointers getMessage() just returns "null".
+    */
+   public static String getExceptionStringSave(Throwable ex)
+   {
+      if(null == ex)
+      {
+         return null;
+      }
+
+      String ret = "Failed to extract error message. Check logs for details.";
+
+      try
+      {
+         ret = ex.toString();
+      }
+      catch(Exception excCallingToString)
+      {
+         s_log.error("Failed to call toString() on exception (will try to log the original exception next): ", excCallingToString);
+         s_log.error("Original exception on which calling toString() failed: ", ex);
+      }
+
+      try
+      {
+         Throwable deepest =  callWithTimeout(() -> getDeepestThrowable(ex), 20);
+         ret = deepest.toString();
+      }
+      catch(Exception e)
+      {
+      }
+
+      return ret;
    }
 }

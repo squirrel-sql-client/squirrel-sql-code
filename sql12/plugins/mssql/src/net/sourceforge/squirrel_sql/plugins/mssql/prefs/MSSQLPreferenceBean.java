@@ -19,9 +19,10 @@ package net.sourceforge.squirrel_sql.plugins.mssql.prefs;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
-
 import java.io.Serializable;
+
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * A bean class to store preferences for the MS SQL-Server plugin.
@@ -63,7 +64,7 @@ public class MSSQLPreferenceBean implements Cloneable, Serializable, IQueryToken
 		}
 		catch (CloneNotSupportedException ex)
 		{
-			throw new InternalError(ex.getMessage()); // Impossible.
+			throw Utilities.wrapRuntime(ex); // Impossible.
 		}
 	}
 
