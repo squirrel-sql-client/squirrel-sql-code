@@ -35,6 +35,7 @@ import javax.swing.JTextField;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportPropsDAO;
@@ -185,19 +186,20 @@ public class CSVSettingsPanel extends ConfigurationPanel
 
       try
       {
-         new SimpleDateFormat(ImportPropsDAO.getCSVDateFormat()).parse(settings.getDateFormat());
+         new SimpleDateFormat(settings.getDateFormat());
          ImportPropsDAO.setCSVDateFormat(settings.getDateFormat());
       }
       catch(Exception e) // Type of this exception was changed from Java 11 to Java 17
       {
+         s_log.warn("Failed to interpret date format \"" + settings.getDateFormat() + "\"):", e);
+
          ImportPropsDAO.setCSVDateFormat(CSVSettingsBean.DEFAULT_DATE_FORMAT);
          String msg = s_stringMgr.getString("CSVSettingsPanel.warn.invalid.date.format",
                                             settings.getDateFormat(),
-                                            e.getMessage(),
+                                            Utilities.getExceptionStringSave(e),
                                             CSVSettingsBean.DEFAULT_DATE_FORMAT);
 
          Main.getApplication().getMessageHandler().showWarningMessage(msg);
-         s_log.warn(msg, e);
       }
 
       ImportPropsDAO.setImportCharset(settings.getImportCharset());

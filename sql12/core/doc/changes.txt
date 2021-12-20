@@ -81,6 +81,8 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Data import Plugin: Fixed date format validation check.
+
 Paste history (ctrl +shift + v or insert): When an entry is selected to paste it is made the current clipboard content.
 
 Data import Plugin: An invalid date format in the "Import file settings" dialog led to errors in the subsequent import dialog.
