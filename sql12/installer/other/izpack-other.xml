@@ -1,4 +1,7 @@
-<installation version="1.0">
+<izpack:installation version="5.0"
+					 xmlns:izpack="http://izpack.org/schema/installation"
+					 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					 xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
 
 	<info>
 		<appname>SQuirreL SQL Client</appname>
@@ -36,17 +39,17 @@
 		<panel classname="FinishPanel" />
 	</panels>
 
-	<!--  According to http://groups.google.com/group/izpack-user/browse_thread/thread/2404ab03d63e464a, 
-	      we need to include ShellLink_x64.dll for shortcuts to work on 64-bit Windows. -->
-	<native type="izpack" name="ShellLink.dll">
-		<os family="windows" />
-	</native>
-	<native type="izpack" name="ShellLink_x64.dll">
-		<os family="windows" />
-	</native>
+	<natives>
+		<native type="izpack" name="ShellLink.dll">
+			<os family="windows"/>
+		</native>
+		<native type="izpack" name="ShellLink_x64.dll">
+			<os family="windows"/>
+		</native>
+	</natives>
 
 	<listeners>
-		<listener installer="SummaryLoggerInstallerListener" />
+		<listener classname="com.izforge.izpack.event.SummaryLoggerInstallerListener" stage="install" />
 	</listeners>
 
 	<packs>
@@ -83,9 +86,15 @@
 			<executable targetfile="$INSTALL_PATH/squirrel-sql.sh" stage="never" />
 			<executable targetfile="$INSTALL_PATH/squirrelcli/squirrelcli.sh" stage="never" />
 
+			<updatecheck>
+				<include name="lib/**" />
+				<include name="doc/**" />
+				<include name="icons/**" />
+			</updatecheck>
+
 		</pack>
 
-		<pack name="Standard" required="no" depends="Base" installGroups="StandardPlugins">
+		<pack name="Standard" required="no" installGroups="StandardPlugins">
 			<description>Standard Plugins: Code completion, Graph, Look &amp; Feel, SQL Script, Syntax, DB Copy, DB Diff, Refactoring, Data Import</description>
 
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/codecompletion.jar" />
@@ -117,6 +126,11 @@
 
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dataimport.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dataimport" />
+
+			<updatecheck>
+				<include name="plugins/**" />
+				<exclude name="plugins/laf/**" />
+			</updatecheck>
 
 		</pack>
 
@@ -419,4 +433,4 @@
 		</pack>
 
 	</packs>
-</installation>
+</izpack:installation>
