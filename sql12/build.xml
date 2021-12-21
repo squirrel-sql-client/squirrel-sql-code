@@ -89,12 +89,13 @@
                 inheritAll="true">
         </izpack>
 
-<!--        <izpack input="installer/mac/izpack-mac.xml"-->
-<!--                output="output/izPackInstallJars/squirrel-sql-${squirrelsql.version}-MACOSX-install.jar"-->
-<!--                installerType="standard"-->
-<!--                basedir="${basedir}"-->
-<!--                izPackDir="${izpack-dist}">-->
-<!--        </izpack>-->
+        <izpack input="installer/mac/izpack-mac.xml"
+                output="output/izPackInstallJars/squirrel-sql-${squirrelsql.version}-MACOSX-install.jar"
+                installerType="standard"
+                basedir="${basedir}"
+                izPackDir="${izpack-dist}"
+                inheritAll="true">
+        </izpack>
 
     </target>
 

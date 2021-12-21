@@ -1,5 +1,8 @@
-<installation
-	version="1.0">
+<izpack:installation version="5.0"
+					 xmlns:izpack="http://izpack.org/schema/installation"
+					 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					 xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
+
 	<info>
 		<appname>SQuirreL SQL Client</appname>
 		<appsubpath>SQuirreLSQL.app</appsubpath>
@@ -71,9 +74,16 @@
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java" src="output/dist/squirrel-sql.jar" />
 
 			<fileset targetdir="$INSTALL_PATH/Contents/Resources/Java/lib" dir="output/dist/lib">  <include name="*.jar" /> </fileset>
+
+			<updatecheck>
+				<include name="Contents/Resources/Java/lib/**" />
+				<include name="Contents/Resources/Java/doc/**" />
+				<include name="Contents/MacOS/icons/**" />
+			</updatecheck>
+
 		</pack>
 
-		<pack name="Standard" required="no" depends="Base" installGroups="StandardPlugins">
+		<pack name="Standard" required="no" installGroups="StandardPlugins">
 			<description>Standard Plugins: Code completion, Graph, Look &amp; Feel, SQL Script, Syntax, DB Copy, DB Diff, Refactoring, Data Import</description>
 
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/codecompletion" />
@@ -105,6 +115,12 @@
 
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/dataimport" />
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/dataimport.jar" />
+
+			<updatecheck>
+				<include name="Contents/MacOS/plugins/**" />
+				<exclude name="Contents/MacOS/plugins/laf/**" />
+			</updatecheck>
+
 		</pack>
 		
 		 <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Mac OS Plugin (older Mac versions only)">
@@ -329,4 +345,4 @@
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/lib" src="translations/squirrel-sql_es.jar" />
 		</pack>
 	</packs>
-</installation>
+</izpack:installation>
