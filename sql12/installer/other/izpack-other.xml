@@ -3,6 +3,8 @@
 					 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 					 xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
 
+	<!-- <logging level="OFF" /> does not work-->
+
 	<info>
 		<appname>SQuirreL SQL Client</appname>
 		<appsubpath>squirrel-sql-@{squirrelsql.version}</appsubpath>
@@ -86,6 +88,8 @@
 			<executable targetfile="$INSTALL_PATH/squirrel-sql.sh" stage="never" />
 			<executable targetfile="$INSTALL_PATH/squirrelcli/squirrelcli.sh" stage="never" />
 
+			<!-- Takes care that the included directories contain only files the installer provides,
+			     i.e. all other files are deleted. -->
 			<updatecheck>
 				<include name="lib/**" />
 				<include name="doc/**" />
@@ -127,6 +131,8 @@
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dataimport.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="output/dist/plugins/dataimport" />
 
+			<!-- Takes care that the included directories contain only files the installer provides,
+                 i.e. all other files are deleted. -->
 			<updatecheck>
 				<include name="plugins/**" />
 				<exclude name="plugins/laf/**" />

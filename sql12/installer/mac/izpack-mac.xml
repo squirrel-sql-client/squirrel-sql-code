@@ -3,6 +3,8 @@
 					 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 					 xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
 
+	<!-- <logging level="OFF" /> does not work-->
+
 	<info>
 		<appname>SQuirreL SQL Client</appname>
 		<appsubpath>SQuirreLSQL.app</appsubpath>
@@ -23,6 +25,7 @@
 			write="yes" />
 		<javaversion>1.6</javaversion>
 	</info>
+
 	<guiprefs
 		height="480"
 		resizable="yes"
@@ -50,8 +53,8 @@
 		<panel
 			classname="FinishPanel" />
 	</panels>
-	<packs>
 
+	<packs>
 		<pack name="Base" required="yes" installGroups="Core"> <description>SQL Client</description>
 			<file targetdir="$INSTALL_PATH/Contents/MacOS" src="launcher/mac/squirrel-sql.sh" />
 
@@ -75,6 +78,8 @@
 
 			<fileset targetdir="$INSTALL_PATH/Contents/Resources/Java/lib" dir="output/dist/lib">  <include name="*.jar" /> </fileset>
 
+			<!-- Takes care that the included directories contain only files the installer provides,
+		         i.e. all other files are deleted. -->
 			<updatecheck>
 				<include name="Contents/Resources/Java/lib/**" />
 				<include name="Contents/Resources/Java/doc/**" />
@@ -116,6 +121,8 @@
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/dataimport" />
 			<file targetdir="$INSTALL_PATH/Contents/MacOS/plugins" src="output/dist/plugins/dataimport.jar" />
 
+			<!-- Takes care that the included directories contain only files the installer provides,
+                 i.e. all other files are deleted. -->
 			<updatecheck>
 				<include name="Contents/MacOS/plugins/**" />
 				<exclude name="Contents/MacOS/plugins/laf/**" />
