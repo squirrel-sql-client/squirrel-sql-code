@@ -8,10 +8,10 @@ Enhancements:
 
 Installer:
     - Upgraded Izpack installer to version 5.1.3
-    - lib, doc, icon and plugin directories (except from laf) are now update checked, This means
+    - lib, doc, icon and plugin directories (except from laf) are now update checked. This means
       that files which aren't in the installer are removed from the installation directory.
     NOTE: Upgrading installations done with the previous installer version does not work.
-    Please install into a new, empty directory.
+    Please install into an empty directory.
 
 Improved error messages which are displayed as message boxes or in SQuirreL's message panel.
 
