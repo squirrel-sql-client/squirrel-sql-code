@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInOb
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.client.session.sqlbounds.BoundsOfSqlHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 

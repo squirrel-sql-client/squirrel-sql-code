@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset;
 
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
+
+import javax.swing.JTextArea;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JTextArea;
-
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 
 public class DataSetTextArea extends JTextArea
 {

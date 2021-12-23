@@ -3,13 +3,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Arrays;
+import javax.swing.JComponent;
 
 public class DataSetTextAreaController
 {

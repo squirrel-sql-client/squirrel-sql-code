@@ -3,6 +3,11 @@ package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.SQLEntryPanelUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextActionUtil;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextCopyAction;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextCutAction;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPasteAction;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextSelectAllAction;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaDefaultInputMap;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaUI;
@@ -35,7 +40,13 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
          @Override
          public Action[] getActions()
          {
-            return TextAction.augmentList(super.getActions(), new Action[]{new SQuirrelSelectWordAction()});
+            return TextAction.augmentList(super.getActions(),
+                                          new Action[]
+                                                {
+                                                      new SQuirrelSelectWordAction(),
+                                                      new SQuirrelCopyAction(),
+                                                      new SQuirrelCutAction()
+                                                });
          }
       };
 
@@ -71,18 +82,18 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       return map;
    }
 
-   private void modifiyKeystrokes(InputMap shared)
+   private void modifiyKeystrokes(InputMap sharedIM)
    {
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.CTRL_DOWN_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.CTRL_DOWN_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_DOWN_MASK));
 
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_DOWN_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_DOWN_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
-      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_DOWN_MASK)); // ChangeTrackAction
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_DOWN_MASK));
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_DOWN_MASK));
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_DOWN_MASK)); // ChangeTrackAction
 
       /*
        *       Remove this Keystroke, because it triggers auto-complete of the current word with a matching most recent word,
@@ -90,19 +101,32 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
        *       See RTADefaultInputMap()
        *       put(KeyStroke.getKeyStroke(' '), RTextAreaEditorKit.rtaDumbCompleteWordAction); 
        */
-      shared.remove(KeyStroke.getKeyStroke(' '));
+      sharedIM.remove(KeyStroke.getKeyStroke(' '));
 
-      shared.put(getToUpperCaseKeyStroke(), RTextAreaEditorKit.rtaUpperSelectionCaseAction);
-      shared.put(getToLowerCaseKeyStroke(), RTextAreaEditorKit.rtaLowerSelectionCaseAction);
+      sharedIM.put(getToUpperCaseKeyStroke(), RTextAreaEditorKit.rtaUpperSelectionCaseAction);
+      sharedIM.put(getToLowerCaseKeyStroke(), RTextAreaEditorKit.rtaLowerSelectionCaseAction);
 
-      shared.put(getLineUpKeyStroke(), RTextAreaEditorKit.rtaLineUpAction);
-      shared.put(getLineDownKeyStroke(), RTextAreaEditorKit.rtaLineDownAction);
+      sharedIM.put(getLineUpKeyStroke(), RTextAreaEditorKit.rtaLineUpAction);
+      sharedIM.put(getLineDownKeyStroke(), RTextAreaEditorKit.rtaLineDownAction);
 
       
 
       KeyStroke rsyntaxRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
       KeyStroke squirrelRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK);
-      shared.put(squirrelRedoStroke,shared.get(rsyntaxRedoStroke));
+      sharedIM.put(squirrelRedoStroke,sharedIM.get(rsyntaxRedoStroke));
+
+
+      // These standard Actions need to be removed and put again
+      // because sharedIM is able to store more than one action
+      // Note: All RTextAreaEditorKit....Action attributes are statically inherited from DefaultEditorKit.
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.put(TextCopyAction.getKeyStroke(), RTextAreaEditorKit.copyAction);
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.put(TextCutAction.getKeyStroke(), RTextAreaEditorKit.cutAction);
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.put(TextPasteAction.getKeyStroke(), RTextAreaEditorKit.pasteAction);
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.put(TextSelectAllAction.getKeyStroke(), RTextAreaEditorKit.selectAllAction);
    }
 
    public IUndoHandler createUndoHandler()
@@ -166,14 +190,13 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       return KeyStroke.getKeyStroke(Main.getApplication().getShortcutManager().registerAccelerator(RTextAreaEditorKit.rtaLineDownAction, SquirreLRSyntaxTextAreaUI.RS_KEY_STROKE_LINE_DOWN));
    }
 
-
-
-
    @Override
    public EditorKit getEditorKit(JTextComponent tc)
    {
       return _squirrel_defaultKit;
    }
+
+
 
    private static class SQuirrelSelectWordAction extends RSyntaxTextAreaEditorKit.SelectWordAction
    {
@@ -182,6 +205,22 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
          int[] wordBoundsAtCursor = SQLEntryPanelUtil.getWordBoundsAtCursor(textArea, false);
          textArea.setSelectionStart(wordBoundsAtCursor[0]);
          textArea.setSelectionEnd(wordBoundsAtCursor[1]);
+      }
+   }
+
+   private static class SQuirrelCopyAction extends RSyntaxTextAreaEditorKit.CopyAction
+   {
+      public void actionPerformedImpl(ActionEvent e, RTextArea textArea)
+      {
+         TextActionUtil.wrapCopyActionToSelectLineOnEmptySelection(textArea, e, () -> SQuirrelCopyAction.super.actionPerformedImpl(e, textArea));
+      }
+   }
+
+   private static class SQuirrelCutAction extends RSyntaxTextAreaEditorKit.CutAction
+   {
+      public void actionPerformedImpl(ActionEvent e, RTextArea textArea)
+      {
+         TextActionUtil.wrapCutActionToSelectLineOnEmptySelection(textArea, e, () -> SQuirrelCutAction.super.actionPerformedImpl(e, textArea));
       }
    }
 }

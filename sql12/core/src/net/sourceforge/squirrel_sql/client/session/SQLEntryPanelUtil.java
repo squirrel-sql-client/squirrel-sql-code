@@ -30,7 +30,76 @@ public class SQLEntryPanelUtil
       return beginAndEndPos;
    }
 
-   static boolean isParseStop(char c, boolean treatDotAsStop)
+   public static int[] getLineBoundsAtCursor(JTextComponent textComponent)
+   {
+      String text = textComponent.getText();
+      int caretPos = textComponent.getCaretPosition();
+
+      if(0 == text.length())
+      {
+         return new int[]{0,0};
+      }
+
+      int beg = getPrevNewLineOrTextBegin(caretPos, text);
+      int end = getNextNewLineOrTextEnd(caretPos, text);
+
+      return new int[]{beg, end};
+   }
+
+   private static int getNextNewLineOrTextEnd(int caretPos, String text)
+   {
+      if(caretPos == text.length())
+      {
+         return text.length();
+      }
+
+      if('\n' == text.charAt(caretPos))
+      {
+         return caretPos + 1;
+      }
+
+      final int nextNL = text.indexOf('\n', caretPos);
+
+      if(-1 == nextNL)
+      {
+         return text.length();
+      }
+      else
+      {
+         return nextNL + 1;
+      }
+   }
+
+   private static int getPrevNewLineOrTextBegin(int caretPos, String text)
+   {
+      if(caretPos == 0)
+      {
+         return 0;
+      }
+
+      int pos = caretPos;
+      if(caretPos == text.length() || '\n' == text.charAt(caretPos) )
+      {
+         pos = caretPos -1;
+      }
+
+      for (int i = pos;; --i)
+      {
+         if(i <= 0)
+         {
+            return 0;
+         }
+
+         if('\n' == text.charAt(i))
+         {
+            return i + 1;
+         }
+      }
+
+   }
+
+
+   private static boolean isParseStop(char c, boolean treatDotAsStop)
    {
       return
          '(' == c ||

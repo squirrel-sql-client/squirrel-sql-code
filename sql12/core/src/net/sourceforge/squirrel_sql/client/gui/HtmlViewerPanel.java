@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.client.gui;
  */
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;

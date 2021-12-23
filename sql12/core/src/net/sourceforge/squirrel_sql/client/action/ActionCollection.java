@@ -281,7 +281,7 @@ public class ActionCollection
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ActionKeys[]</TT> passed.
 	 */
-	public synchronized void loadActionKeys(ActionKeys[] actionKeys)
+	public void loadActionKeys(ActionKeys[] actionKeys)
 	{
 		if (actionKeys == null)
 		{
