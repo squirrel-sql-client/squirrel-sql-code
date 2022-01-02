@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+SQL editor: New function to remove the current line (ctrl+DELETE).
+  Note: A popular alternative shortcut for this function is ctrl+Y.
+  You may redefine the shortcut at menu File --> Global Preferences --> tab "Keyboard shortcuts".
+
 SQL editor:
   - With no text selected copy (ctrl+C) and cut (ctrl+X) now copy respectively cut the current line.
   - The copy (ctrl+C), cut (ctrl+X), paste (ctrl+V) and select all (ctrl+A) shortcuts

@@ -83,6 +83,7 @@ import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.ConvertToStringBuilderAction;
 import net.sourceforge.squirrel_sql.client.session.action.CopySqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.CutSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.DeleteCurrentLineAction;
 import net.sourceforge.squirrel_sql.client.session.action.DeleteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
@@ -424,6 +425,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, CutSqlAction.class, menu);
 		addToMenu(rsrc, CopySqlAction.class, menu);
 		addToMenu(rsrc, DeleteSqlAction.class, menu);
+		addToMenu(rsrc, DeleteCurrentLineAction.class, menu);
 		addToMenu(rsrc, RemoveNewLinesAction.class, menu);
 
 

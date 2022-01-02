@@ -454,8 +454,11 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
 
       if (false == _tabbedExecutionsPanel.getSelectedComponent() instanceof IResultTab)
       {
-         String msg = s_stringMgr.getString("SQLResultExecuterPanel.nonStickyPanel");
-         JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
+         if(null != _tabbedExecutionsPanel.getSelectedComponent())
+         {
+            String msg = s_stringMgr.getString("SQLResultExecuterPanel.nonStickyPanel");
+            JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
+         }
          return;
       }
 
@@ -475,6 +478,12 @@ public class SQLResultExecuterPanel extends JPanel implements ISQLResultExecuter
       }
 
       int selectedIndex = _tabbedExecutionsPanel.getSelectedIndex();
+
+      if(-1 == selectedIndex)
+      {
+         // Occurs when no tabs exist
+         return;
+      }
 
       if (_resultTabClosing.isAnchoredAt(selectedIndex))
       {

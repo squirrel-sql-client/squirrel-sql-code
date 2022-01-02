@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.ConvertToStringBuilderAction;
 import net.sourceforge.squirrel_sql.client.session.action.CopySqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.CutSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.DeleteCurrentLineAction;
 import net.sourceforge.squirrel_sql.client.session.action.DeleteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.EscapeDateAction;
 import net.sourceforge.squirrel_sql.client.session.action.FormatSQLAction;
@@ -141,9 +142,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
 		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
 
-
-
-
+      item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(DeleteCurrentLineAction.class));
+      resources.configureMenuItem(ac.get(DeleteCurrentLineAction.class), item);
 
       item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(RemoveNewLinesAction.class));
       resources.configureMenuItem(ac.get(RemoveNewLinesAction.class), item);

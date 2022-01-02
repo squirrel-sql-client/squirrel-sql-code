@@ -1,22 +1,19 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
-import java.awt.event.ActionEvent;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+import java.awt.event.ActionEvent;
 
 
 public class DuplicateLineAction extends SquirrelAction implements ISQLPanelAction
 {
-    private static final long serialVersionUID = 1L;
-    
-    transient private ISQLPanelAPI _panel;
+   private ISQLPanelAPI _panel;
    private ISQLEntryPanel _isqlEntryPanel;
 
    public DuplicateLineAction(IApplication app, SyntaxPluginResources rsrc)

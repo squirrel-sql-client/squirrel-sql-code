@@ -70,7 +70,7 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       if (shared == null)
       {
          shared = new RSyntaxTextAreaDefaultInputMap();
-         modifiyKeystrokes(shared);
+         modifyKeystrokes(shared);
          UIManager.put("RSyntaxTextAreaUI.inputMap", shared);
       }
 
@@ -82,7 +82,10 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       return map;
    }
 
-   private void modifiyKeystrokes(InputMap sharedIM)
+   /**
+    * For information on RSyntax's keystrokes see {@link org.fife.ui.rtextarea.RTADefaultInputMap}
+    */
+   private void modifyKeystrokes(InputMap sharedIM)
    {
       sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.CTRL_DOWN_MASK));
       sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.CTRL_DOWN_MASK));
@@ -94,6 +97,9 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_DOWN_MASK));
       sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
       sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_DOWN_MASK)); // ChangeTrackAction
+
+      // Removes RTextAreaEditorKit.rtaDeleteRestOfLineAction in favour of DeleteCurrentLineAction.
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_DOWN_MASK));
 
       /*
        *       Remove this Keystroke, because it triggers auto-complete of the current word with a matching most recent word,
@@ -114,6 +120,8 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       KeyStroke rsyntaxRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
       KeyStroke squirrelRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK);
       sharedIM.put(squirrelRedoStroke,sharedIM.get(rsyntaxRedoStroke));
+      // This enables users to redefine to the default ctrl+DELETE for DeleteCurrentLineAction by the popular alternativ ctrl+Y
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK));
 
 
       // These standard Actions need to be removed and put again
