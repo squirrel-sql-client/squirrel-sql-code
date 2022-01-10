@@ -97,6 +97,8 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+HXTT Drivers: MS Excel tables were not displayed.
+
 Error handling: In some exception stack traces were not logged.
 
 Data import Plugin: Fixed date format validation check.
