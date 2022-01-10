@@ -97,6 +97,8 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Error handling: In some exception stack traces were not logged.
+
 Data import Plugin: Fixed date format validation check.
 
 Paste history (ctrl +shift + v or insert): When an entry is selected to paste it is made the current clipboard content.

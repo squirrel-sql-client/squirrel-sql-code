@@ -18,8 +18,8 @@ package net.sourceforge.squirrel_sql.fw.util.log;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -78,7 +78,14 @@ public class Log4jLogger implements ILogger
 	 */
 	public void info(Object message)
 	{
-		_log.info(message);
+		if(message instanceof Throwable)
+		{
+			_log.info(null , (Throwable) message);
+		}
+		else
+		{
+			_log.info(message);
+		}
 		_listener.info(_clazz, message);
 	}
 
@@ -96,7 +103,14 @@ public class Log4jLogger implements ILogger
 	 */
 	public void warn(Object message)
 	{
-		_log.warn(message);
+		if(message instanceof Throwable)
+		{
+			_log.warn(null , (Throwable) message);
+		}
+		else
+		{
+			_log.warn(message);
+		}
 		_listener.warn(_clazz, message);
 	}
 
@@ -114,7 +128,14 @@ public class Log4jLogger implements ILogger
 	 */
 	public void error(Object message)
 	{
-		_log.error(message);
+		if(message instanceof Throwable)
+		{
+			_log.error(null , (Throwable) message);
+		}
+		else
+		{
+			_log.error(message);
+		}
 		_listener.error(_clazz, message);
 	}
 

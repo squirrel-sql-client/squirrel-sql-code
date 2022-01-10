@@ -15,6 +15,20 @@ package net.sourceforge.squirrel_sql.client.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Vector;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsCommand;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -24,20 +38,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILoggerListener;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Vector;
 
 
 /**
@@ -98,7 +98,7 @@ public class LogPanel extends JPanel
          public void info(Class<?> source, Object message)
          {
             _statistics.setInfoCount(_statistics._infoCount + 1);
-            addLog(LOG_TYPE_INFO, source.getName(), message, null);
+            addLog(LOG_TYPE_INFO, source.getName(), message, message instanceof Throwable ? (Throwable) message : null);
          }
 
          public void info(Class<?> source, Object message, Throwable th)
@@ -110,7 +110,7 @@ public class LogPanel extends JPanel
          public void warn(Class<?> source, Object message)
          {
             _statistics.setWarnCount(_statistics._warnCount + 1);
-            addLog(LOG_TYPE_WARN, source.getName(), message, null);
+            addLog(LOG_TYPE_WARN, source.getName(), message, message instanceof Throwable ? (Throwable) message : null);
          }
 
          public void warn(Class<?> source, Object message, Throwable th)
