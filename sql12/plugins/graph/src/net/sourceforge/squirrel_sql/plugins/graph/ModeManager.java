@@ -1,5 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryBuilderController;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.WhereTreeNodeStructure;
@@ -7,11 +13,6 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.OrderStructureXmlBean
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.SelectStructureXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class ModeManager
 {
@@ -104,14 +105,7 @@ public class ModeManager
          listener.modeChanged(_mnuMode.getMode());
       }
 
-      SwingUtilities.invokeLater(
-      new Runnable()
-      {
-         public void run()
-         {
-            _tableFramesModel.recalculateAllConnections();
-         }
-      });
+      SwingUtilities.invokeLater(() -> _tableFramesModel.recalculateAllConnections());
    }
 
    public ModeMenuItem getModeMenuItem()

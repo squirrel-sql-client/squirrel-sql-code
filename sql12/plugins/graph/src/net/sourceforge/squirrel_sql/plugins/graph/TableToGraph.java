@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 
 public class TableToGraph
 {
@@ -21,6 +20,7 @@ public class TableToGraph
                if (0 == controllers.length)
                {
                   toAddTo = plugin.createNewGraphControllerForSession(session, false);
+                  toAddTo.setMode(Mode.QUERY_BUILDER);
                }
                else
                {
@@ -34,6 +34,8 @@ public class TableToGraph
                   if(null == dlg.getSelectedController())
                   {
                      toAddTo = plugin.createNewGraphControllerForSession(session, false);
+                     toAddTo.setMode(Mode.QUERY_BUILDER);
+
                   }
                   else
                   {

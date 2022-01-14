@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Graph Plugin, Object tree --> select table(s) --> right mouse menu "Add to graph": Now creates Graph tabs
+  in "Query builder" mode instead of "Default" mode.
+
 SQL editor: New function to remove the current line (ctrl+DELETE).
   Note: A popular alternative shortcut for this function is ctrl+Y.
   You may redefine the shortcut at menu File --> Global Preferences --> tab "Keyboard shortcuts".

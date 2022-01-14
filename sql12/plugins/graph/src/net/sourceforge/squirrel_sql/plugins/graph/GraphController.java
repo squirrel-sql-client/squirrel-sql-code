@@ -1,5 +1,21 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Window;
+import java.awt.geom.Rectangle2D;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -15,22 +31,6 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.SelectStructureXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.awt.geom.Rectangle2D;
-import java.util.List;
-import java.util.Vector;
 
 
 public class GraphController
@@ -592,8 +592,13 @@ public class GraphController
 
    public void showQueryBuilderInWindowBesidesObjectTree()
    {
-      _panelController.getModeManager().setMode(Mode.QUERY_BUILDER);
+      setMode(Mode.QUERY_BUILDER);
       _tabToWindowHandler.showInWindowBesidesObjectTree();
+   }
+
+   public void setMode(Mode mode)
+   {
+      _panelController.getModeManager().setMode(mode);
    }
 
    public boolean isMyGraphMainPanelTab(GraphMainPanelTab graphMainPanelTab)
