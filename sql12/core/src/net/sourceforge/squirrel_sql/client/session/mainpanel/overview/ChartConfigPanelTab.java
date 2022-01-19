@@ -4,8 +4,15 @@ import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class ChartConfigPanelTab extends JPanel
 {
@@ -67,6 +74,15 @@ public class ChartConfigPanelTab extends JPanel
          cboYColumns = new JComboBox();
          add(cboYColumns, gbc);
       }
+      else if(chartConfigPanelTabMode == ChartConfigPanelTabMode.SCATTER_CHART)
+      {
+         gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,10,5,5),0,0);
+         add(new JLabel(s_stringMgr.getString("OverviewPanel.YAxis")), gbc);
+
+         gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0,10,5,5),0,0);
+         cboYColumns = new JComboBox();
+         add(cboYColumns, gbc);
+      }
       else if(chartConfigPanelTabMode == ChartConfigPanelTabMode.DIFFERENCES_CHART)
       {
          gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,10,5,5),0,0);
@@ -91,7 +107,9 @@ public class ChartConfigPanelTab extends JPanel
       }
 
 
-      if(chartConfigPanelTabMode != ChartConfigPanelTabMode.XY_CHART && chartConfigPanelTabMode != ChartConfigPanelTabMode.DIFFERENCES_CHART)
+      if(   chartConfigPanelTabMode != ChartConfigPanelTabMode.XY_CHART
+         && chartConfigPanelTabMode != ChartConfigPanelTabMode.SCATTER_CHART
+         && chartConfigPanelTabMode != ChartConfigPanelTabMode.DIFFERENCES_CHART)
       {
          gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,10,5,5),0,0);
          add(new JLabel(s_stringMgr.getString("OverviewPanel.maxBarCount")), gbc);

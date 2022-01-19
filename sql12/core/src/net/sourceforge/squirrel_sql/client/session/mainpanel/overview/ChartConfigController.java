@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.JScrollPane;
 import java.util.ArrayList;
 
 public class ChartConfigController
@@ -22,6 +22,7 @@ public class ChartConfigController
                   new ChartConfigPanelTabController(app, ChartConfigPanelTabMode.SINGLE_COLUMN),
                   new ChartConfigPanelTabController(app, ChartConfigPanelTabMode.TWO_COLUMN),
                   new ChartConfigPanelTabController(app, ChartConfigPanelTabMode.XY_CHART),
+                  new ChartConfigPanelTabController(app, ChartConfigPanelTabMode.SCATTER_CHART),
                   new ChartConfigPanelTabController(app, ChartConfigPanelTabMode.DIFFERENCES_CHART),
             };
 

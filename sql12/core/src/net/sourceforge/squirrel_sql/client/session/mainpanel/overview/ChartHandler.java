@@ -30,7 +30,14 @@ public class ChartHandler
 
    public static final int MAX_LEGEND_ENTRIES = 10;
 
-   public static void doChart(DataScale xAxisDataScale, DataScale yAxisDataScale, DataScaleTable dataScaleTable, Integer callDepth, ChartConfigPanelTabMode chartConfigPanelTabMode, ChartConfigMode mode, Frame parent, TimeScale timeScale)
+   public static void doChart(DataScale xAxisDataScale,
+                              DataScale yAxisDataScale,
+                              DataScaleTable dataScaleTable,
+                              Integer callDepth,
+                              ChartConfigPanelTabMode chartConfigPanelTabMode,
+                              ChartConfigMode mode,
+                              Frame parent,
+                              TimeScale timeScale)
    {
       try
       {
@@ -41,12 +48,20 @@ public class ChartHandler
          String label;
 
 
-         if (chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART || chartConfigPanelTabMode == ChartConfigPanelTabMode.DIFFERENCES_CHART)
+         if (   chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART
+             || chartConfigPanelTabMode == ChartConfigPanelTabMode.DIFFERENCES_CHART)
          {
             XYChartCreator xyChartCreator = new XYChartCreator(xAxisDataScale, yAxisDataScale, dataScaleTable, chartConfigPanelTabMode == ChartConfigPanelTabMode.DIFFERENCES_CHART, timeScale);
             title = xyChartCreator.getTitle();
             chart = xyChartCreator.getChart();
             label = xyChartCreator.getLabel();
+         }
+         else if (chartConfigPanelTabMode == ChartConfigPanelTabMode.SCATTER_CHART)
+         {
+            ScatterChartCreator scatterChartCreator = new ScatterChartCreator(xAxisDataScale, yAxisDataScale, dataScaleTable);
+            title = scatterChartCreator.getTitle();
+            chart = scatterChartCreator.getChart();
+            label = scatterChartCreator.getLabel();
          }
          else
          {

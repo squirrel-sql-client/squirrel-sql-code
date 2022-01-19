@@ -12,7 +12,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 public class ChartConfigPanelTabController
 {
@@ -29,7 +28,9 @@ public class ChartConfigPanelTabController
       _chartConfigPanelTabMode = chartConfigPanelTabMode;
       _chartConfigPanelTab = new ChartConfigPanelTab(chartConfigPanelTabMode);
 
-      if(chartConfigPanelTabMode != ChartConfigPanelTabMode.XY_CHART && chartConfigPanelTabMode != ChartConfigPanelTabMode.DIFFERENCES_CHART)
+      if(   chartConfigPanelTabMode != ChartConfigPanelTabMode.XY_CHART
+         && chartConfigPanelTabMode != ChartConfigPanelTabMode.SCATTER_CHART
+         && chartConfigPanelTabMode != ChartConfigPanelTabMode.DIFFERENCES_CHART)
       {
          _chartConfigPanelTab.cboCallDepth.setModel(new DefaultComboBoxModel(CallDepthComboModel.createModels()));
          _chartConfigPanelTab.cboCallDepth.setSelectedItem(CallDepthComboModel.getDefaultSelected());
@@ -37,49 +38,25 @@ public class ChartConfigPanelTabController
 
       if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.SINGLE_COLUMN)
       {
-         _chartConfigPanelTab.cboXColumns.addItemListener(new ItemListener()
-         {
-            @Override
-            public void itemStateChanged(ItemEvent e)
-            {
-               onColumnSelected(e, ChartConfigPanelTabController.this._chartConfigPanelTab.cboXColumns);
-            }
-         });
+         _chartConfigPanelTab.cboXColumns.addItemListener(e -> onColumnSelected(e, ChartConfigPanelTabController.this._chartConfigPanelTab.cboXColumns));
       }
       else if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.TWO_COLUMN)
       {
-         _chartConfigPanelTab.cboYColumns.addItemListener(new ItemListener()
-         {
-            @Override
-            public void itemStateChanged(ItemEvent e)
-            {
-               onColumnSelected(e, ChartConfigPanelTabController.this._chartConfigPanelTab.cboYColumns);
-            }
-         });
+         _chartConfigPanelTab.cboYColumns.addItemListener(e -> onColumnSelected(e, ChartConfigPanelTabController.this._chartConfigPanelTab.cboYColumns));
       }
       else if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
       {
-         _chartConfigPanelTab.cboYColumns.addItemListener(new ItemListener()
-         {
-            @Override
-            public void itemStateChanged(ItemEvent e)
-            {
-               onColumnSelected(e, ChartConfigPanelTabController.this._chartConfigPanelTab.cboYColumns);
-            }
-         });
+         _chartConfigPanelTab.cboYColumns.addItemListener(e -> onColumnSelected(e, ChartConfigPanelTabController.this._chartConfigPanelTab.cboYColumns));
+      }
+      else if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.SCATTER_CHART)
+      {
+         _chartConfigPanelTab.cboYColumns.addItemListener(e -> onColumnSelected(e, ChartConfigPanelTabController.this._chartConfigPanelTab.cboYColumns));
       }
       else if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.DIFFERENCES_CHART)
       {
          _chartConfigPanelTab.cboTimeScale.setModel(new DefaultComboBoxModel(TimeScale.values()));
 
-         _chartConfigPanelTab.cboYColumns.addItemListener(new ItemListener()
-         {
-            @Override
-            public void itemStateChanged(ItemEvent e)
-            {
-               onColumnSelected(e, ChartConfigPanelTabController.this._chartConfigPanelTab.cboYColumns);
-            }
-         });
+         _chartConfigPanelTab.cboYColumns.addItemListener(e -> onColumnSelected(e, ChartConfigPanelTabController.this._chartConfigPanelTab.cboYColumns));
       }
 
       _chartConfigPanelTab.btnChart.addActionListener(e -> onChart());
@@ -101,6 +78,11 @@ public class ChartConfigPanelTabController
          fillColumnCombo(_chartConfigPanelTab.cboYColumns, false);
       }
       else if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
+      {
+         fillColumnCombo(_chartConfigPanelTab.cboXColumns, true);
+         fillColumnCombo(_chartConfigPanelTab.cboYColumns, true);
+      }
+      else if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.SCATTER_CHART)
       {
          fillColumnCombo(_chartConfigPanelTab.cboXColumns, true);
          fillColumnCombo(_chartConfigPanelTab.cboYColumns, true);
@@ -135,7 +117,8 @@ public class ChartConfigPanelTabController
     */
    private void onColumnSelected(ItemEvent e, JComboBox cboColumns)
    {
-      if(_chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
+      if(  _chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART
+         || _chartConfigPanelTabMode == ChartConfigPanelTabMode.SCATTER_CHART )
       {
          return;
       }
@@ -176,7 +159,9 @@ public class ChartConfigPanelTabController
       Integer callDepth = null;
       ChartConfigMode chartConfigMode = null;
 
-      if (_chartConfigPanelTabMode != ChartConfigPanelTabMode.XY_CHART && _chartConfigPanelTabMode != ChartConfigPanelTabMode.DIFFERENCES_CHART)
+      if (   _chartConfigPanelTabMode != ChartConfigPanelTabMode.XY_CHART
+          && _chartConfigPanelTabMode != ChartConfigPanelTabMode.SCATTER_CHART
+          && _chartConfigPanelTabMode != ChartConfigPanelTabMode.DIFFERENCES_CHART)
       {
          CallDepthComboModel selItem = (CallDepthComboModel) _chartConfigPanelTab.cboCallDepth.getSelectedItem();
          callDepth = selItem.getCallDepth();

@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Charts for SQL results now allow to create scatter plots of column values.
+  See tab "Overview/Charts" of a SQL result --> Toggle button "Charts" on the right --> tab "Scatter chart".
+  With this feature the JFreeChart version SQuirreL uses was upgraded to version 1.5.3.
+
 Graph Plugin, Object tree --> select table(s) --> right mouse menu "Add to graph": Now creates Graph tabs
   in "Query builder" mode instead of "Default" mode.
 

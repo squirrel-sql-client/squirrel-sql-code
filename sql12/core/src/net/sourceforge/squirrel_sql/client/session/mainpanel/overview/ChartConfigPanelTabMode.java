@@ -5,6 +5,7 @@ public enum ChartConfigPanelTabMode
    SINGLE_COLUMN("overview.ChartConfigController.tabSingleColChart"),
    TWO_COLUMN("overview.ChartConfigController.tabTwoColumnChart"),
    XY_CHART("overview.ChartConfigController.XYChart"),
+   SCATTER_CHART("overview.ChartConfigController.ScatterChart"),
    DIFFERENCES_CHART("overview.ChartConfigController.differencesChart");
 
    private String _tabTitleKey;
