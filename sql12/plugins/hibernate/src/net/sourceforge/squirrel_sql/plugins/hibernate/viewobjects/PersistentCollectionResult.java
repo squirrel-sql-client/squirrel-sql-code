@@ -1,12 +1,12 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import java.util.ArrayList;
+
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
-
-import java.util.ArrayList;
 
 
 public class PersistentCollectionResult
@@ -24,7 +24,12 @@ public class PersistentCollectionResult
 
 
       String propertyName = _propertyInfo.getHibernatePropertyInfo().getPropertyName();
-      String className = _propertyInfo.getMappedClassInfo().getClassName();
+
+      String className = "<unknown>";
+      if( null != _propertyInfo.getMappedClassInfo() )
+      {
+         className = _propertyInfo.getMappedClassInfo().getClassName();
+      }
 
       if(hprPersistentCollection.wasInitialized())
       {

@@ -104,6 +104,8 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Hibernate Plugin: Fixed NullPointer in the "Object tree representation" of HQL query results.
+
 HXTT Drivers: MS Excel tables were not displayed.
 
 Error handling: In some exception stack traces were not logged.
