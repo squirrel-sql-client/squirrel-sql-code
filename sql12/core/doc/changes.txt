@@ -104,6 +104,9 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+SQL editor: Parser (JSqlParser) raised NullPointerException
+  when the editor contained "DELETE FROM " without a table name.
+
 Hibernate Plugin: Fixed NullPointer in the "Object tree representation" of HQL query results.
 
 HXTT Drivers: MS Excel tables were not displayed.

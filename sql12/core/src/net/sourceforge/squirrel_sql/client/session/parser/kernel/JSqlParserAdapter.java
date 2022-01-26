@@ -1,13 +1,13 @@
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
+import java.util.ArrayList;
+
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.parser.StringProvider;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.util.TablesNamesFinder;
-
-import java.util.ArrayList;
 
 public class JSqlParserAdapter
 {
@@ -23,8 +23,11 @@ public class JSqlParserAdapter
          @Override
          public void visit(Table table)
          {
-            super.visit(table);
-            tables.add(table);
+            if( null != table )
+            {
+               super.visit(table);
+               tables.add(table);
+            }
          }
       };
 
