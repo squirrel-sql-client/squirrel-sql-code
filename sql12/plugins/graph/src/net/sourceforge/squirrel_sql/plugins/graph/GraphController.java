@@ -1,21 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.awt.geom.Rectangle2D;
-import java.util.List;
-import java.util.Vector;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -31,6 +15,23 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.SelectStructureXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Window;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 
 public class GraphController
@@ -160,9 +161,9 @@ public class GraphController
          }
 
          @Override
-         public void copyGraph()
+         public void copyGraph(boolean selectionOnly)
          {
-            onCopyGraph();
+            onCopyGraph(selectionOnly);
          }
 
          @Override
@@ -234,9 +235,9 @@ public class GraphController
       _tabToWindowHandler.showGraph(lazyLoadListener, selectTab);
    }
 
-   private void onCopyGraph()
+   private void onCopyGraph(boolean selectionOnly)
    {
-      CopyGraphAction.copyGraph(this);
+      CopyGraphAction.copyGraph(this, selectionOnly);
    }
 
    private void onShowLinkDetails()
@@ -359,7 +360,7 @@ public class GraphController
 
    private void onSaveLinkAsLocalCopy()
    {
-      _xmlSerializer.saveLinkAsLocalCopy(createXmlBean());
+      _xmlSerializer.saveLinkAsLocalCopy(createXmlBean(false));
       _panelController.changedFromLinkToLocalCopy();
       _tabToWindowHandler.changedFromLinkToLocalCopy();
    }
@@ -367,14 +368,24 @@ public class GraphController
 
    public void saveGraph()
    {
-      GraphControllerXmlBean xmlBean = createXmlBean();
+      GraphControllerXmlBean xmlBean = createXmlBean(false);
       _xmlSerializer.write(xmlBean);
    }
 
-   public GraphControllerXmlBean createXmlBean()
+   public GraphControllerXmlBean createXmlBean(boolean selectionOnly)
    {
+
       GraphControllerXmlBean xmlBean = new GraphControllerXmlBean();
-      xmlBean.setTitle(_tabToWindowHandler.getTitle());
+
+      if(selectionOnly)
+      {
+         xmlBean.setTitle(s_stringMgr.getString("graph.graphController.selection.of", _tabToWindowHandler.getTitle()));
+      }
+      else
+      {
+         xmlBean.setTitle(_tabToWindowHandler.getTitle());
+      }
+
       xmlBean.setShowConstraintNames(_panelController.getDesktopController().isShowConstraintNames());
       xmlBean.setShowQualifiedTableNames(_panelController.getDesktopController().isShowQualifiedTableNames());
       xmlBean.setZoomerXmlBean(_panelController.getDesktopController().getZoomer().getXmlBean());
@@ -385,17 +396,24 @@ public class GraphController
       xmlBean.setOrderStructure(_panelController.getModeManager().getOrderStructure());
       xmlBean.setSelectStructure(_panelController.getModeManager().getSelectStructure());
 
-      Vector<TableFrameController> tblCtrls = _tableFramesModel.getTblCtrls();
-
-      TableFrameControllerXmlBean[] frameXmls = new TableFrameControllerXmlBean[tblCtrls.size()];
-
-
-      for (int i = 0; i < tblCtrls.size(); i++)
+      List<TableFrameController> tblCtrlsToInclude;
+      if(selectionOnly)
       {
-         TableFrameController tableFrameController = tblCtrls.get(i);
-         frameXmls[i] = tableFrameController.getXmlBean();
+         List<TableFrame> groupFrames = _panelController.getDesktopController().getDesktopPane().getGroupFrames();
+         tblCtrlsToInclude = _tableFramesModel.getTblCtrlsByFrames(groupFrames);
       }
-      xmlBean.setTableFrameControllerXmls(frameXmls);
+      else
+      {
+         tblCtrlsToInclude = _tableFramesModel.getTblCtrls();
+      }
+
+      ArrayList<TableFrameControllerXmlBean> frameXmls = new ArrayList<>();
+
+      for (TableFrameController tableFrameController : tblCtrlsToInclude)
+      {
+         frameXmls.add(tableFrameController.getXmlBean());
+      }
+      xmlBean.setTableFrameControllerXmls(frameXmls.toArray(new TableFrameControllerXmlBean[0]));
       return xmlBean;
    }
 

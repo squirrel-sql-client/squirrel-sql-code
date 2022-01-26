@@ -38,14 +38,14 @@ public class CopyGraphAction extends SquirrelAction implements IMainPanelTabActi
 
       GraphController graphController = _graphPlugin.getGraphControllerForMainTab(_selectedMainTab, _session);
 
-      copyGraph(graphController);
+      copyGraph(graphController, false);
    }
 
-   public static void copyGraph(GraphController graphController)
+   public static void copyGraph(GraphController graphController, boolean selectionOnly)
    {
       try
       {
-         GraphControllerXmlBean xmlBean = graphController.createXmlBean();
+         GraphControllerXmlBean xmlBean = graphController.createXmlBean(selectionOnly);
          xmlBean.setConverted32(true);
 
          final StringSelection ss = new StringSelection(new XMLBeanWriter(xmlBean).getAsString());

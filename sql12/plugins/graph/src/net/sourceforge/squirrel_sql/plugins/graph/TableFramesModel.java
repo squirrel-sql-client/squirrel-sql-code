@@ -1,13 +1,14 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Timer;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class TableFramesModel
 {
@@ -318,5 +319,10 @@ public class TableFramesModel
       }
 
       throw new IllegalArgumentException("Column " + tableName + "." + columnName + " does not exist.");
+   }
+
+   public java.util.List<TableFrameController> getTblCtrlsByFrames(java.util.List<TableFrame> tableFrames)
+   {
+      return _openTableFrameCtrls.stream().filter(tfc -> tableFrames.contains(tfc.getFrame())).collect(Collectors.toList());
    }
 }

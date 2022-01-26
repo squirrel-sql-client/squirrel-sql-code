@@ -73,6 +73,7 @@ public class GraphDesktopController
    private JMenuItem _mnuFindColumns;
    private JMenuItem _mnuSelectAllTables;
    private JMenuItem _mnuSelectTablesByName;
+   private JMenuItem _mnuCopySelectTables;
    private JCheckBoxMenuItem _mnuShowConstraintNames;
    private JCheckBoxMenuItem _mnuShowQualifiedTableNames;
    private JMenuItem _mnuToggleWindowTab;
@@ -258,9 +259,12 @@ public class GraphDesktopController
 
       _mnuSelectTablesByName = new JMenuItem(s_stringMgr.getString("graph.selectTablesByName"));
       _mnuSelectTablesByName.addActionListener(e -> onSelectTablesByName());
+
+      _mnuCopySelectTables = new JMenuItem(s_stringMgr.getString("graph.copySelectedTables"));
+      _mnuCopySelectTables.addActionListener(e -> onCopySelectTables());
       /////////////////////////////////////////////////////////
 
-		_mnuShowConstraintNames = new JCheckBoxMenuItem(s_stringMgr.getString("graph.showConstr"));
+      _mnuShowConstraintNames = new JCheckBoxMenuItem(s_stringMgr.getString("graph.showConstr"));
       _mnuShowConstraintNames.addActionListener(e -> _desktopPane.repaint());
 
 		// i18n[graph.showQualifiedTableNames=Show qualified table names]
@@ -309,6 +313,7 @@ public class GraphDesktopController
       // Tablegroups
       _popUp.add(_mnuSelectAllTables);
       _popUp.add(_mnuSelectTablesByName);
+      _popUp.add(_mnuCopySelectTables);
       _popUp.add(new JSeparator());
       /////////////////////////////////////////////////////////
       _popUp.add(_mnuAllTablesDbOrder);
@@ -479,6 +484,12 @@ public class GraphDesktopController
          }
       }
    }
+
+   private void onCopySelectTables()
+   {
+      _channel.copyGraph(true);
+   }
+
    /////////////////////////////////////////////////////////
 
    private void onRefreshAllTables()
@@ -543,7 +554,7 @@ public class GraphDesktopController
 
    private void onCopyGraph()
    {
-      _channel.copyGraph();
+      _channel.copyGraph(false);
    }
 
 

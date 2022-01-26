@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Graph Plugin: New right mouse menu item available on a Graphs desktop (background):
+  "Copy selected tables" which allows to copy and paste the selected tables.
+  To paste copied tables use the toolbar button "Paste Graph".
+
 Charts for SQL results now allow to create scatter plots of column values.
   See tab "Overview/Charts" of a SQL result --> Toggle button "Charts" on the right --> tab "Scatter chart".
   With this feature the JFreeChart version SQuirreL uses was upgraded to version 1.5.3.

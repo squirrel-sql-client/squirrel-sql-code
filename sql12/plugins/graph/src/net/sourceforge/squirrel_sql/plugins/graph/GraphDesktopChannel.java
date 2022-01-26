@@ -39,7 +39,7 @@ public interface GraphDesktopChannel
 
    void showLinkDetails();
 
-   void copyGraph();
+   void copyGraph(boolean selectionOnly);
 
    String getGraphName();
 }

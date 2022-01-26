@@ -12,8 +12,21 @@ import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPluginResources;
 import net.sourceforge.squirrel_sql.plugins.graph.link.CopyGraphAction;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -127,7 +140,7 @@ public class GraphWindowController
 
    private void onCopyGraph()
    {
-      CopyGraphAction.copyGraph(_plugin.getGraphControllerForMainTab(_graphMainPanelTab, _session));
+      CopyGraphAction.copyGraph(_plugin.getGraphControllerForMainTab(_graphMainPanelTab, _session), false);
    }
 
    private String createTitle(GraphMainPanelTab graphMainPanelTab)

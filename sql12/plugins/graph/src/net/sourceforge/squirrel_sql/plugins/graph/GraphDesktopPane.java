@@ -31,7 +31,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
 
    /////////////////////////////////////////////////////////
    // Tablegroups
-   private transient Set<TableFrame> _groupFrames = new HashSet<TableFrame>();
+   private transient Set<TableFrame> _groupFrames = new HashSet<>();
    /////////////////////////////////////////////////////////
 
    private RectangleSelectionHandler _rectangleSelectionHandler;
@@ -122,7 +122,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
 
    public List<TableFrame> getGroupFrames()
    {
-      return new ArrayList<TableFrame>(this._groupFrames);
+      return new ArrayList<>(this._groupFrames);
    }
 
    public boolean isGroupFrame(TableFrame f)
