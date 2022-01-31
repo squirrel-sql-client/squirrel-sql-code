@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class PropertySubstitute  implements Serializable
@@ -32,10 +33,33 @@ public class PropertySubstitute  implements Serializable
 
       if(null != plainValue && plainValue.getClass().isEnum())
       {
-         _plainValue = ""  + plainValue;
+         _plainValue = getEnumConstantName(plainValue);
       }
 
       _initialized = isInitialized;
+   }
+
+   private String getEnumConstantName(Object plainValue)
+   {
+      try
+      {
+         Class enumClass = plainValue.getClass();
+
+         for( Field declaredField : enumClass.getDeclaredFields() )
+         {
+            declaredField.setAccessible(true);
+            if(declaredField.isEnumConstant() && declaredField.get(enumClass) == plainValue )
+            {
+               return declaredField.getName();
+            }
+         }
+
+         return "<unknown>";
+      }
+      catch(Throwable e)
+      {
+         return "<unknown> " + e;
+      }
    }
 
    public HibernatePropertyInfo getHibernatePropertyInfo()
