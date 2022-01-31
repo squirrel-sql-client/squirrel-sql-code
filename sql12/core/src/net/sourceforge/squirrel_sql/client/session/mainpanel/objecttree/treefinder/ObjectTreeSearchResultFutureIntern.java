@@ -20,9 +20,9 @@ import java.util.Arrays;
  * They might for example access Swing classes
  * which must be accessed on the EDT only.
  */
-class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
+class ObjectTreeSearchResultFutureIntern implements ObjectTreeSearchResultFuture
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ObjectTreeFinderResultFutureIntern.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ObjectTreeSearchResultFutureIntern.class);
    public static final int MAX_PROGRESS = 50;
 
    private TreePath _treePath;
@@ -41,7 +41,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
    private ActionListener _stopActionListener = e -> onStop();
 
 
-   ObjectTreeFinderResultFutureIntern(ISession session)
+   ObjectTreeSearchResultFutureIntern(ISession session)
    {
       _session = session;
       _startTime = System.currentTimeMillis();

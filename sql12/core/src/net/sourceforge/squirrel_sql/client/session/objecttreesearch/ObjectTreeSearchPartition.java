@@ -1,12 +1,12 @@
 package net.sourceforge.squirrel_sql.client.session.objecttreesearch;
 
-public class ObjectTreeSearchCandidate
+public class ObjectTreeSearchPartition
 {
    private String catalog;
    private String schema;
    private String object;
 
-   public ObjectTreeSearchCandidate(String catalog, String schema, String object)
+   public ObjectTreeSearchPartition(String catalog, String schema, String object)
    {
       this.catalog = catalog;
       this.schema = schema;

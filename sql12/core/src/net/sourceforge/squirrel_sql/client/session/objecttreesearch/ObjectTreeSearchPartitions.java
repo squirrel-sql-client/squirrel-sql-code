@@ -3,14 +3,18 @@ package net.sourceforge.squirrel_sql.client.session.objecttreesearch;
 import java.util.ArrayList;
 import java.util.List;
 
-class ObjectTreeSearchCandidates
+/**
+ * Allows to partition the Object tree in order to allow multiple search runs (tasks)
+ * which can be searched through on the EDT using a {@link javax.swing.Timer}.
+ */
+class ObjectTreeSearchPartitions
 {
-   private ArrayList<ObjectTreeSearchCandidate> _candidates = new ArrayList<>();
+   private ArrayList<ObjectTreeSearchPartition> _candidates = new ArrayList<>();
 
    private int _curIndex = 0;
    private String _searchString;
 
-   public ObjectTreeSearchCandidates(String searchString)
+   public ObjectTreeSearchPartitions(String searchString)
    {
       _searchString = searchString;
    }
@@ -21,7 +25,7 @@ class ObjectTreeSearchCandidates
       return _curIndex < _candidates.size();
    }
 
-   public ObjectTreeSearchCandidate next()
+   public ObjectTreeSearchPartition next()
    {
       return _candidates.get(_curIndex++);
    }
@@ -33,7 +37,7 @@ class ObjectTreeSearchCandidates
 
    public void add(String catalog, String schema, String object)
    {
-      ObjectTreeSearchCandidate candidate = new ObjectTreeSearchCandidate(catalog, schema, object);
+      ObjectTreeSearchPartition candidate = new ObjectTreeSearchPartition(catalog, schema, object);
       _candidates.add(candidate);
    }
 
@@ -42,14 +46,14 @@ class ObjectTreeSearchCandidates
       return _candidates.size();
    }
 
-   public List<ObjectTreeSearchCandidate> getList()
+   public List<ObjectTreeSearchPartition> getList()
    {
       return _candidates;
    }
 
    public void addFirst(String catalog, String schema, String object)
    {
-      ObjectTreeSearchCandidate candidate = new ObjectTreeSearchCandidate(catalog, schema, object);
+      ObjectTreeSearchPartition candidate = new ObjectTreeSearchPartition(catalog, schema, object);
       _candidates.add(0, candidate);
    }
 }

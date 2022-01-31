@@ -6,7 +6,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderResultFuture;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeSearchResultFuture;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -51,38 +51,38 @@ public class ObjectTreeSearch
 
    public void viewInObjectTree(String objectName, IObjectTreeAPI objectTreeAPI)
    {
-      ObjectTreeSearchCandidates candidates = getObjectCandidates(objectName, objectTreeAPI.getSession());
-      if (candidates.size() == 0)
+      ObjectTreeSearchPartitions partitions = getSearchPartitions(objectName, objectTreeAPI.getSession());
+      if (partitions.size() == 0)
       {
          return;
       }
 
-      _viewInObjectTree(candidates, objectTreeAPI, true, ObjectTreeFinderGoToNextResultHandle.DONT_GO_TO_NEXT_RESULT_HANDLE);
+      _viewInObjectTree(partitions, objectTreeAPI, true, ObjectTreeFinderGoToNextResultHandle.DONT_GO_TO_NEXT_RESULT_HANDLE);
    }
 
    public void viewObjectInObjectTree(String objectName, IObjectTreeAPI objectTreeAPI, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
    {
-      ObjectTreeSearchCandidates candidates = getObjectCandidates(objectName, objectTreeAPI.getSession());
-      if (candidates.size() == 0)
+      ObjectTreeSearchPartitions partitions = getSearchPartitions(objectName, objectTreeAPI.getSession());
+      if (partitions.size() == 0)
       {
          return;
       }
 
-      _viewInObjectTree(candidates, objectTreeAPI, false, goToNextResultHandle);
+      _viewInObjectTree(partitions, objectTreeAPI, false, goToNextResultHandle);
 
    }
 
-   private void _viewInObjectTree(ObjectTreeSearchCandidates candidates, IObjectTreeAPI objectTreeAPI, boolean selectMainObjectTreeIfFound, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
+   private void _viewInObjectTree(ObjectTreeSearchPartitions partitions, IObjectTreeAPI objectTreeAPI, boolean selectMainObjectTreeIfFound, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
    {
-      if(false == candidates.hasNext())
+      if(false == partitions.hasNext())
       {
          return;
       }
 
-      tryFindMatchForNextCandidate(candidates, objectTreeAPI, selectMainObjectTreeIfFound, null, goToNextResultHandle);
+      tryFindMatchForNextPartition(partitions, objectTreeAPI, selectMainObjectTreeIfFound, null, goToNextResultHandle);
    }
 
-   private void tryFindMatchForNextCandidate(ObjectTreeSearchCandidates candidates, IObjectTreeAPI objectTreeAPI, boolean selectMainObjectTreeIfFound, TreePath findResult, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
+   private void tryFindMatchForNextPartition(ObjectTreeSearchPartitions partitions, IObjectTreeAPI objectTreeAPI, boolean selectMainObjectTreeIfFound, TreePath findResult, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
    {
       if(null != findResult)
       {
@@ -91,32 +91,32 @@ public class ObjectTreeSearch
             objectTreeAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB);
          }
       }
-      else if(candidates.hasNext())
+      else if(partitions.hasNext())
       {
-         ObjectTreeSearchCandidate candidate;
-         candidate = candidates.next();
-         ObjectTreeFinderResultFuture resultFuture = objectTreeAPI.selectInObjectTree(candidate.getCatalog(), candidate.getSchema(), new FilterMatcher(candidate.getObject(), null), goToNextResultHandle);
-         resultFuture.addFinishedListenerOrdered(tn -> tryFindMatchForNextCandidate(candidates, objectTreeAPI, selectMainObjectTreeIfFound, tn, goToNextResultHandle));
+         ObjectTreeSearchPartition partition;
+         partition = partitions.next();
+         ObjectTreeSearchResultFuture resultFuture = objectTreeAPI.selectInObjectTree(partition.getCatalog(), partition.getSchema(), new FilterMatcher(partition.getObject(), null), goToNextResultHandle);
+         resultFuture.addFinishedListenerOrdered(tn -> tryFindMatchForNextPartition(partitions, objectTreeAPI, selectMainObjectTreeIfFound, tn, goToNextResultHandle));
       }
       else
       {
          if(goToNextResultHandle.hasPreviousResults())
          {
-            String msg = s_stringMgr.getString("ObjectTreeSearch.message.no.more.objects.found",candidates.getSearchString());
+            String msg = s_stringMgr.getString("ObjectTreeSearch.message.no.more.objects.found",partitions.getSearchString());
             JOptionPane.showMessageDialog(SessionUtils.getOwningFrame(objectTreeAPI.getSession()), msg);
          }
          else
          {
-            String msg = s_stringMgr.getString("ObjectTreeSearch.error.objectnotfound",candidates.getSearchString());
+            String msg = s_stringMgr.getString("ObjectTreeSearch.error.objectnotfound",partitions.getSearchString());
             JOptionPane.showMessageDialog(SessionUtils.getOwningFrame(objectTreeAPI.getSession()), msg);
          }
          goToNextResultHandle.reachedEmptyResult();
       }
    }
 
-   private ObjectTreeSearchCandidates getObjectCandidates(String objectName, ISession session)
+   private ObjectTreeSearchPartitions getSearchPartitions(String objectName, ISession session)
    {
-      ObjectTreeSearchCandidates ret = new ObjectTreeSearchCandidates(objectName);
+      ObjectTreeSearchPartitions ret = new ObjectTreeSearchPartitions(objectName);
 
       String[] splits = objectName.split("\\.");
 

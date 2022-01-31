@@ -4,9 +4,9 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 
 import javax.swing.tree.TreePath;
 
-public interface ObjectTreeFinderResultFuture
+public interface ObjectTreeSearchResultFuture
 {
-   ObjectTreeFinderResultFuture EMPTY_FINISHED_RESULT = new ObjectTreeFinderResultFuture() {
+   ObjectTreeSearchResultFuture EMPTY_FINISHED_RESULT = new ObjectTreeSearchResultFuture() {
       @Override
       public void executeTillFinishNow()
       {

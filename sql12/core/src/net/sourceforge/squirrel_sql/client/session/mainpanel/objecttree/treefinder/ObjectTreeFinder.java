@@ -26,14 +26,14 @@ public class ObjectTreeFinder
       _expanders = expanders;
    }
 
-   public ObjectTreeFinderResultFuture findPathToDbInfo(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
+   public ObjectTreeSearchResultFuture findPathToDbInfo(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
    {
-      ObjectTreeFinderResultFutureIntern toFill = new ObjectTreeFinderResultFutureIntern(_session);
+      ObjectTreeSearchResultFutureIntern toFill = new ObjectTreeSearchResultFutureIntern(_session);
       _getPathToDbInfo(catalog, schema, objectMatcher, startNode, useExpanders, toFill, goToNextResultHandle);
       return toFill;
    }
 
-   private void _getPathToDbInfo(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderResultFutureIntern toFill, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
+   private void _getPathToDbInfo(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeSearchResultFutureIntern toFill, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
    {
       if(dbObjectInfoEquals(catalog, schema, objectMatcher, startNode.getDatabaseObjectInfo()) && false == goToNextResultHandle.isAPreviousResult((startNode.getPath())))
       {
@@ -68,7 +68,7 @@ public class ObjectTreeFinder
       return "Loading child nodes of " + new TreePath(startNode.getPath());
    }
 
-   private void recurseChildren(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderResultFutureIntern toFill, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
+   private void recurseChildren(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeSearchResultFutureIntern toFill, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
    {
       for(int i = 0; i < startNode.getChildCount(); ++i)
       {

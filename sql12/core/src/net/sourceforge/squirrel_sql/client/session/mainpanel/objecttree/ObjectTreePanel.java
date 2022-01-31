@@ -50,7 +50,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.tab
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.TablePriviligesTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.VersionColumnsTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderResultFuture;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeSearchResultFuture;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
@@ -750,14 +750,14 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     * @return true if the Object was found and selected.
     */
    @Override
-   public ObjectTreeFinderResultFuture selectInObjectTree(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
+   public ObjectTreeSearchResultFuture selectInObjectTree(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
    {
 		if ("".equals(objectMatcher.getMetaDataMatchString()))
 		{
-			return ObjectTreeFinderResultFuture.EMPTY_FINISHED_RESULT;
+			return ObjectTreeSearchResultFuture.EMPTY_FINISHED_RESULT;
 		}
 
-		ObjectTreeFinderResultFuture resultFuture = findObjectTreePath(catalog, schema, objectMatcher, goToNextResultHandle);
+		ObjectTreeSearchResultFuture resultFuture = findObjectTreePath(catalog, schema, objectMatcher, goToNextResultHandle);
 		resultFuture.addFinishedListenerOrdered(resultTreePath -> onFinderFinished(resultTreePath));
 
 		return resultFuture;
@@ -788,13 +788,13 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     * @param catalog the catalog that the node is located in - can be null
     * @param schema the schema that the node is located in - can be null
     */
-	private ObjectTreeFinderResultFuture findObjectTreePath(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
+	private ObjectTreeSearchResultFuture findObjectTreePath(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
 	{
 		ObjectTreeModel otm = (ObjectTreeModel) _tree.getModel();
 
 		// First check already expanded nodes only.
 		// This should go fast which allows to execute all tasks immediately.
-		ObjectTreeFinderResultFuture future = otm.findPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(), false, goToNextResultHandle);
+		ObjectTreeSearchResultFuture future = otm.findPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) otm.getRoot(), false, goToNextResultHandle);
 		future.executeTillFinishNow();
 
 		if (null == future.getTreePath())

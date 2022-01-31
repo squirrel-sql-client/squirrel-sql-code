@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.UDTTypeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinder;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderResultFuture;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeSearchResultFuture;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 
@@ -197,7 +197,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 		return _expanders.getExpanders(dboType);
 	}
 
-	public ObjectTreeFinderResultFuture findPathToDbInfo(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
+	public ObjectTreeSearchResultFuture findPathToDbInfo(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
 	{
 		return new ObjectTreeFinder(getRootObjectTreeNode().getSession(), _expanders).findPathToDbInfo(catalog, schema, objectMatcher, startNode, useExpanders, goToNextResultHandle);
 	}
