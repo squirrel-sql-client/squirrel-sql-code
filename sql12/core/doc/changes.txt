@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Object tree search: Repeatedly hitting the search button now traverses matches.
+
 Graph Plugin: New right mouse menu item available on a Graphs desktop (background):
   "Copy selected tables" which allows to copy and paste the selected tables.
   To paste copied tables use the toolbar button "Paste Graph".

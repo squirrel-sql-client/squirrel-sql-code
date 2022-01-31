@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder;
 
-public class ObjectFinderTaskInfo
+public class ObjectTreeFinderTaskInfo
 {
    private final String _descr;
    private final ObjectTreeFinderTask _task;
 
-   public ObjectFinderTaskInfo(String descr, ObjectTreeFinderTask task)
+   public ObjectTreeFinderTaskInfo(String descr, ObjectTreeFinderTask task)
    {
       _descr = descr;
       _task = task;

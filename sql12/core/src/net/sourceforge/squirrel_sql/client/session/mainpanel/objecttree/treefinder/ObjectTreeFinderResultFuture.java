@@ -19,7 +19,7 @@ public interface ObjectTreeFinderResultFuture
       }
 
       @Override
-      public void addListenerOrdered(ObjectTreeFinderFinishListener listener)
+      public void addFinishedListenerOrdered(ObjectTreeFinderFinishListener listener)
       {
          listener.finderFinished(null);
       }
@@ -29,5 +29,5 @@ public interface ObjectTreeFinderResultFuture
 
    TreePath getTreePath();
 
-   void addListenerOrdered(ObjectTreeFinderFinishListener listener);
+   void addFinishedListenerOrdered(ObjectTreeFinderFinishListener listener);
 }

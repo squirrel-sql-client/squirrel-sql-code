@@ -4,16 +4,18 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
 import net.sourceforge.squirrel_sql.client.session.objecttreesearch.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
@@ -25,6 +27,7 @@ public class FindInObjectTreeController
    private FindInObjectTreePanel _findInObjectTreePanel;
    private DefaultSQLEntryPanel _filterEditSQLEntryPanel;
    private IObjectTreeAPI _objectTreeAPI;
+   private ObjectTreeFinderGoToNextResultHandle _goToNextResultHandle = new ObjectTreeFinderGoToNextResultHandle();
 
    public FindInObjectTreeController(IObjectTreeAPI objectTreeAPI)
    {
@@ -59,21 +62,9 @@ public class FindInObjectTreeController
       _findInObjectTreePanel._btnApplyAsFilter.setSelected(filter);
 
 
-      _findInObjectTreePanel._btnFind.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onFind(false);
-         }
-      });
+      _findInObjectTreePanel._btnFind.addActionListener(e -> onFind(false));
 
-      _findInObjectTreePanel._btnApplyAsFilter.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onFind(false == _findInObjectTreePanel._btnApplyAsFilter.isSelected());
-         }
-      });
+      _findInObjectTreePanel._btnApplyAsFilter.addActionListener(e -> onFind(false == _findInObjectTreePanel._btnApplyAsFilter.isSelected()));
    }
 
    private void onFind(boolean unfilterTreeFirst)
@@ -84,15 +75,25 @@ public class FindInObjectTreeController
          _objectTreeAPI.refreshSelectedNodes();
       }
 
+      final String searchString = _filterEditSQLEntryPanel.getText();
+      if(StringUtilities.isEmpty(searchString, true))
+      {
+         return;
+      }
+
       if(_findInObjectTreePanel._btnApplyAsFilter.isSelected())
       {
-         _objectTreeAPI.getSession().getProperties().setObjectFilterInclude(_filterEditSQLEntryPanel.getText());
-         _objectTreeAPI.refreshSelectedNodes();
-          new ObjectTreeSearch().viewObjectInObjectTree(_objectTreeAPI.getSession().getProperties().getObjectFilterInclude(), _objectTreeAPI);
+         if(_goToNextResultHandle.setCurrentSearchState(searchString, true))
+         {
+            _objectTreeAPI.getSession().getProperties().setObjectFilterInclude(searchString);
+            _objectTreeAPI.refreshSelectedNodes();
+         }
+         SwingUtilities.invokeLater(() -> new ObjectTreeSearch().viewObjectInObjectTree(searchString, _objectTreeAPI, _goToNextResultHandle));
       }
       else
       {
-         new ObjectTreeSearch().viewObjectInObjectTree(_filterEditSQLEntryPanel.getText(), _objectTreeAPI);
+         _goToNextResultHandle.setCurrentSearchState(searchString, false);
+         new ObjectTreeSearch().viewObjectInObjectTree(searchString, _objectTreeAPI, _goToNextResultHandle);
       }
    }
 

@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.gui.session.catalogscombo;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderResultFuture;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -76,9 +77,9 @@ final class CatalogsComboListener implements ActionListener
       IObjectTreeAPI api = session.getObjectTreeAPIOfActiveSessionWindow();
       api.refreshTree(true);
 
-      ObjectTreeFinderResultFuture resultFuture = api.selectInObjectTree(selectedCatalog, null, new FilterMatcher("TABLE", null));
+      ObjectTreeFinderResultFuture resultFuture = api.selectInObjectTree(selectedCatalog, null, new FilterMatcher("TABLE", null), ObjectTreeFinderGoToNextResultHandle.DONT_GO_TO_NEXT_RESULT_HANDLE);
 
-      resultFuture.addListenerOrdered(tn -> onFindFinished(tn, api));
+      resultFuture.addFinishedListenerOrdered(tn -> onFindFinished(tn, api));
    }
 
    private void onFindFinished(TreePath tn, IObjectTreeAPI api)

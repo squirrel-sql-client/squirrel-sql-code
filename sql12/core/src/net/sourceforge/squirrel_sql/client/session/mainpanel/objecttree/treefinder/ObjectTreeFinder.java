@@ -26,18 +26,20 @@ public class ObjectTreeFinder
       _expanders = expanders;
    }
 
-   public ObjectTreeFinderResultFuture findPathToDbInfo(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders)
+   public ObjectTreeFinderResultFuture findPathToDbInfo(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
    {
       ObjectTreeFinderResultFutureIntern toFill = new ObjectTreeFinderResultFutureIntern(_session);
-      _getPathToDbInfo(catalog, schema, objectMatcher, startNode, useExpanders, toFill);
+      _getPathToDbInfo(catalog, schema, objectMatcher, startNode, useExpanders, toFill, goToNextResultHandle);
       return toFill;
    }
 
-   private void _getPathToDbInfo(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderResultFutureIntern toFill)
+   private void _getPathToDbInfo(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderResultFutureIntern toFill, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
    {
-      if(dbObjectInfoEquals(catalog, schema, objectMatcher, startNode.getDatabaseObjectInfo()))
+      if(dbObjectInfoEquals(catalog, schema, objectMatcher, startNode.getDatabaseObjectInfo()) && false == goToNextResultHandle.isAPreviousResult((startNode.getPath())))
       {
-         toFill.setTreePath(new TreePath(startNode.getPath()));
+         final TreePath resultTreePath = new TreePath(startNode.getPath());
+         goToNextResultHandle.addPreviousResult(resultTreePath);
+         toFill.setTreePath(resultTreePath);
       }
       else
       {
@@ -51,7 +53,7 @@ public class ObjectTreeFinder
             }
          }
 
-         toFill.addTask(getRecurseDescription(startNode), () -> recurseChildren(catalog, schema, objectMatcher, startNode, useExpanders, toFill));
+         toFill.addTask(getRecurseDescription(startNode), () -> recurseChildren(catalog, schema, objectMatcher, startNode, useExpanders, toFill, goToNextResultHandle));
          toFill.triggerExecution();
       }
    }
@@ -66,11 +68,11 @@ public class ObjectTreeFinder
       return "Loading child nodes of " + new TreePath(startNode.getPath());
    }
 
-   private void recurseChildren(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderResultFutureIntern toFill)
+   private void recurseChildren(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders, ObjectTreeFinderResultFutureIntern toFill, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle)
    {
       for(int i = 0; i < startNode.getChildCount(); ++i)
       {
-         _getPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) startNode.getChildAt(i), useExpanders, toFill);
+         _getPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) startNode.getChildAt(i), useExpanders, toFill, goToNextResultHandle);
          if(null != toFill.getTreePath())
          {
             return;

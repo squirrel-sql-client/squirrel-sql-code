@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
 import net.sourceforge.squirrel_sql.client.session.objecttreesearch.ObjectTreeSearch;
 
 import java.awt.event.ActionEvent;
@@ -53,7 +54,7 @@ public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction  implem
 
       if (_panel.getSQLPanelSplitter().isSplit())
       {
-         new ObjectTreeSearch().viewObjectInObjectTree(stringAtCursor, _panel.getSQLPanelSplitter().getObjectTreePanel());
+         new ObjectTreeSearch().viewObjectInObjectTree(stringAtCursor, _panel.getSQLPanelSplitter().getObjectTreePanel(), ObjectTreeFinderGoToNextResultHandle.DONT_GO_TO_NEXT_RESULT_HANDLE);
       }
       else
       {

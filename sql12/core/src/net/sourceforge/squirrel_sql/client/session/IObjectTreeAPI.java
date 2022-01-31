@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExp
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderResultFuture;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -259,10 +260,11 @@ public interface IObjectTreeAPI extends IHasIdentifier
     * Tries to locate the object given by the paramteres in the Object tree.
     * The first matching object found is selected.
     *
-    * @param catalog null means any catalog
+    * @param goToNextResultHandle
+	 * @param catalog null means any catalog
     * @param schema null means any schema
     */
-	ObjectTreeFinderResultFuture selectInObjectTree(String catalog, String schema, FilterMatcher objectMatcher);
+	ObjectTreeFinderResultFuture selectInObjectTree(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeFinderGoToNextResultHandle goToNextResultHandle);
 
    void selectInObjectTree(TreePath treePath);
 

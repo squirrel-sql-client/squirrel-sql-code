@@ -29,7 +29,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
    private ISession _session;
    private final long _startTime;
 
-   private ArrayList<ObjectFinderTaskInfo> _taskList = new ArrayList<>();
+   private ArrayList<ObjectTreeFinderTaskInfo> _taskList = new ArrayList<>();
 
    private boolean _isExecuting = false;
    private boolean _isFinished = false;
@@ -62,7 +62,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
    }
 
    @Override
-   public void addListenerOrdered(ObjectTreeFinderFinishListener listener)
+   public void addFinishedListenerOrdered(ObjectTreeFinderFinishListener listener)
    {
       if(_isFinished)
       {
@@ -103,7 +103,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
     */
    void addTask(String descr, ObjectTreeFinderTask task)
    {
-      _taskList.add(new ObjectFinderTaskInfo(descr, task));
+      _taskList.add(new ObjectTreeFinderTaskInfo(descr, task));
    }
 
 
@@ -117,7 +117,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
 
       while(hasNextTask())
       {
-         ObjectFinderTaskInfo taskInfo = nextTask();
+         ObjectTreeFinderTaskInfo taskInfo = nextTask();
          taskInfo.getTask().exec();
          if(null != _treePath)
          {
@@ -159,7 +159,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
       int counter = 0;
       while(hasNextTask())
       {
-         ObjectFinderTaskInfo taskInfo = nextTask();
+         ObjectTreeFinderTaskInfo taskInfo = nextTask();
          taskInfo.getTask().exec();
          if(null != _treePath)
          {
@@ -183,7 +183,7 @@ class ObjectTreeFinderResultFutureIntern implements ObjectTreeFinderResultFuture
       fireFinished();
    }
 
-   private ObjectFinderTaskInfo nextTask()
+   private ObjectTreeFinderTaskInfo nextTask()
    {
       if(false == hasNextTask())
       {
