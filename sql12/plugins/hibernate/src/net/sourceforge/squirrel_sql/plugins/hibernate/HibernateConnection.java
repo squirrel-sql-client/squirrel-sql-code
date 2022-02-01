@@ -5,10 +5,15 @@ import java.security.Permission;
 import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.*;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateServerConnection;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateSqlConnectionData;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HqlQueryResult;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.MappedClassInfoData;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ServerMain;
 
 public class HibernateConnection
 {
@@ -74,7 +79,7 @@ public class HibernateConnection
          {
             try
             {
-               _hibernateServerConnection.closeConnection();
+               TimeOutUtil.invokeWithTimeout(() -> _hibernateServerConnection.closeConnection());
             }
             catch (Throwable t)
             {
@@ -83,7 +88,7 @@ public class HibernateConnection
 
             try
             {
-               _serverMain.exit();
+               TimeOutUtil.invokeWithTimeout(() -> _serverMain.exit());
             }
             catch (Throwable t)
             {
@@ -95,7 +100,7 @@ public class HibernateConnection
       {
          try
          {
-            _hibernateServerConnection.closeConnection();
+            TimeOutUtil.invokeWithTimeout(() -> _hibernateServerConnection.closeConnection());
          }
          catch (Throwable t)
          {

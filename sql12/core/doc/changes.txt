@@ -110,6 +110,10 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Hibernate Plugin: Avoided possible hang on connection close
+  This uses the meta data loading timeout,
+  see menu File --> New Session Properties --> tab SQL --> section "Meta data loading"
+
 Hibernate Plugin: Mapped enum constants are now displayed by their name instead of their toString() value.
 
 SQL editor: Parser (JSqlParser) raised NullPointerException
