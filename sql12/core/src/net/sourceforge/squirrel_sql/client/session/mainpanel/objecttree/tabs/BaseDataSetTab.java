@@ -121,21 +121,16 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 			throw new IllegalStateException("Null ISession");
 		}
 
-      super._app.getThreadPool().addTask(new Runnable()
-      {
-         @Override
-		public void run()
-         {
-            try
-            {
-               getComponent().load(createDataSet(), new DataModelImplementationDetails(session));
-            }
-            catch (DataSetException e)
-            {
-               s_log.error("", e);
-            }
-         }
-      });
+		super._app.getThreadPool().addTask(() -> {
+			try
+			{
+				getComponent().load(createDataSet(), new DataModelImplementationDetails(session));
+			}
+			catch (DataSetException e)
+			{
+				s_log.error(e);
+			}
+		});
 
    }
 

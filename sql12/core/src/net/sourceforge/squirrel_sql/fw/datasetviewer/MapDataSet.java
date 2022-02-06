@@ -17,21 +17,16 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.Iterator;
-import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import java.util.Iterator;
+import java.util.Map;
+
 public class MapDataSet implements IDataSet
 {
-
-   /** Internationalized strings for this class. */
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(MapDataSet.class);
-
-
    private interface i18n
    {
       // i18n[mapdataset.unsupported=<Unsupported>]
@@ -41,6 +36,8 @@ public class MapDataSet implements IDataSet
       // i18n[mapdataset.value=Value]
       String VALUE_COLUMN = s_stringMgr.getString("mapdataset.value");
    }
+
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MapDataSet.class);
 
    /** Number of columns in <TT>DataSet</TT>. */
    private final static int s_columnCount = 2;
@@ -63,9 +60,8 @@ public class MapDataSet implements IDataSet
    /** Current row used when iterating through using <TT>IDataSet.next()</TT>. */
    private Object[] _curRow = new Object[2];
 
-   public MapDataSet(Map<?,?> src) throws DataSetException
+   public MapDataSet(Map<?,?> src)
    {
-      super();
       if (src == null)
       {
          throw new IllegalArgumentException("Map == null");

@@ -110,6 +110,9 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+#1495 Object tree root node: Supported refactorings were empty
+  when the Object tree's root node was reselected.
+
 Hibernate Plugin: Avoided possible hang on connection close
   This uses the meta data loading timeout,
   see menu File --> New Session Properties --> tab SQL --> section "Meta data loading"
