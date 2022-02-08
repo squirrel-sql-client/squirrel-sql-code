@@ -164,6 +164,9 @@ public class SquirrelResources extends Resources
 		String COLOR_CHOOSE = "colorChoose";
 
 		String VIEW_DETAILS = "view_details";
+
+		String PERCENT = "percent";
+		String PERCENT_NEGATED = "percent_negated";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

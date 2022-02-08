@@ -22,7 +22,7 @@ import java.awt.event.KeyEvent;
 public class FindInObjectTreeController
 {
    private static final String PREF_KEY_OBJECT_TREE_SEARCH_FILTER = "Squirrel.objTreeSearchFilter";
-
+   private static final String PREF_KEY_OBJECT_TREE_SEARCH_APPEND_WILDCARD = "Squirrel.appendWildcard";
 
    private FindInObjectTreePanel _findInObjectTreePanel;
    private DefaultSQLEntryPanel _filterEditSQLEntryPanel;
@@ -59,12 +59,15 @@ public class FindInObjectTreeController
 
 
       boolean filter = Props.getBoolean(PREF_KEY_OBJECT_TREE_SEARCH_FILTER, false);
-      _findInObjectTreePanel._btnApplyAsFilter.setSelected(filter);
+      _findInObjectTreePanel.btnApplyAsFilter.setSelected(filter);
+
+      boolean appendWildcard = Props.getBoolean(PREF_KEY_OBJECT_TREE_SEARCH_APPEND_WILDCARD, true);
+      _findInObjectTreePanel.setAppendWildcard(appendWildcard);
 
 
-      _findInObjectTreePanel._btnFind.addActionListener(e -> onFind(false));
+      _findInObjectTreePanel.btnFind.addActionListener(e -> onFind(false));
 
-      _findInObjectTreePanel._btnApplyAsFilter.addActionListener(e -> onFind(false == _findInObjectTreePanel._btnApplyAsFilter.isSelected()));
+      _findInObjectTreePanel.btnApplyAsFilter.addActionListener(e -> onFind(false == _findInObjectTreePanel.btnApplyAsFilter.isSelected()));
    }
 
    private void onFind(boolean unfilterTreeFirst)
@@ -75,13 +78,15 @@ public class FindInObjectTreeController
          _objectTreeAPI.refreshSelectedNodes();
       }
 
-      final String searchString = _filterEditSQLEntryPanel.getText();
+
+      final String searchString = getSearchString();
+
       if(StringUtilities.isEmpty(searchString, true))
       {
          return;
       }
 
-      if(_findInObjectTreePanel._btnApplyAsFilter.isSelected())
+      if(_findInObjectTreePanel.btnApplyAsFilter.isSelected())
       {
          if(_goToNextResultHandle.setCurrentSearchState(searchString, true))
          {
@@ -97,9 +102,25 @@ public class FindInObjectTreeController
       }
    }
 
+   private String getSearchString()
+   {
+      String ret = _filterEditSQLEntryPanel.getText();
+
+      if(StringUtilities.isEmpty(ret, true))
+      {
+         return null;
+      }
+
+      if(_findInObjectTreePanel.isAppendWildCard() && -1 == ret.indexOf('%'))
+      {
+         return ret + "%";
+      }
+      return ret;
+   }
+
    private void onEnter()
    {
-      _findInObjectTreePanel._btnFind.doClick();
+      _findInObjectTreePanel.btnFind.doClick();
    }
 
 
@@ -116,6 +137,7 @@ public class FindInObjectTreeController
 
    public void dispose()
    {
-      Props.putBoolean(PREF_KEY_OBJECT_TREE_SEARCH_FILTER, _findInObjectTreePanel._btnApplyAsFilter.isSelected());
+      Props.putBoolean(PREF_KEY_OBJECT_TREE_SEARCH_FILTER, _findInObjectTreePanel.btnApplyAsFilter.isSelected());
+      Props.putBoolean(PREF_KEY_OBJECT_TREE_SEARCH_APPEND_WILDCARD, _findInObjectTreePanel.isAppendWildCard());
    }
 }

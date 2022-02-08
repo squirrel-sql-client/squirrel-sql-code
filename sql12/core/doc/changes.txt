@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Object tree search: Option to automatically append the wildcard '%' to the search string.
+  See the switchable button on the right of the search textfield.
+
 Object tree search: Repeatedly hitting the search button now traverses matches.
 
 Graph Plugin: New right mouse menu item available on a Graphs desktop (background):

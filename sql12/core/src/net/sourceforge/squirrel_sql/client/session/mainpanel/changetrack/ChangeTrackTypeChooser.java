@@ -6,7 +6,6 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
 import net.sourceforge.squirrel_sql.client.session.action.toolbarbuttonchooser.ToolbarButtonChooserUtil;
-import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.SQLWorksheetTypeEnum;
 import net.sourceforge.squirrel_sql.fw.gui.buttonchooser.ButtonChooser;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -158,7 +157,7 @@ public class ChangeTrackTypeChooser
             _buttonChooser.setSelectedButton(_btnTrackGit);
             break;
          default:
-            throw new IllegalStateException("Unknown Type " + SQLWorksheetTypeEnum.getSelectedType());
+            throw new IllegalStateException("Unknown Type " + type);
       }
    }
 

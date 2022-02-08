@@ -34,14 +34,21 @@ public class ButtonChooser
    private HashSet<JButton> _unclickableButtons = new HashSet<>();
 
    private JComponent _container;
+   private ButtonChooserOrientation _orientation;
 
    public ButtonChooser()
    {
-      this(false);
+      this(false, ButtonChooserOrientation.RIGHT);
    }
 
    public ButtonChooser(boolean toolBar)
    {
+      this(toolBar, ButtonChooserOrientation.RIGHT);
+   }
+
+   public ButtonChooser(boolean toolBar, ButtonChooserOrientation orientation)
+   {
+      _orientation = orientation;
       if (toolBar)
       {
          JToolBar palette = new JToolBar();
@@ -99,7 +106,14 @@ public class ButtonChooser
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,2), 1,1);
+      if(_orientation == ButtonChooserOrientation.RIGHT)
+      {
+         gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,2), 0,0);
+      }
+      else
+      {
+         gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+      }
       _container.add(_btnCombo, gbc);
    }
 
@@ -154,8 +168,17 @@ public class ButtonChooser
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 1,1);
-      _container.add(_btnCurrent, gbc, 0);
+      if(_orientation == ButtonChooserOrientation.RIGHT)
+      {
+         gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+         _container.add(_btnCurrent, gbc, 0);
+      }
+      else
+      {
+         gbc = new GridBagConstraints(1,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+         _container.add(_btnCurrent, gbc);
+      }
+
       _container.revalidate();
       _container.repaint();
 
@@ -211,4 +234,8 @@ public class ButtonChooser
       GUIUtils.styleAsToolbarButton(_btnCombo);
    }
 
+   public void setPreferedHight(int height)
+   {
+      GUIUtils.setPreferredHeight(_container, height);
+   }
 }
