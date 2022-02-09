@@ -21,11 +21,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Behaves like a ComboBox with buttons in it.
+ * Suitable for changing buttons to provide variants of functions.
+ */
 public class ButtonChooser
 {
    private JButton _btnUndefinedDefault;
 
-   private ComboButton _btnCombo = new ComboButton();
+   private ComboButton _btnCombo;
    private AbstractButton _btnCurrent;
 
    private List<ButtonHolder> _buttons= new ArrayList<>();
@@ -34,6 +38,7 @@ public class ButtonChooser
    private HashSet<JButton> _unclickableButtons = new HashSet<>();
 
    private JComponent _container;
+   private boolean _inToolBar;
    private ButtonChooserOrientation _orientation;
 
    public ButtonChooser()
@@ -41,26 +46,32 @@ public class ButtonChooser
       this(false, ButtonChooserOrientation.RIGHT);
    }
 
-   public ButtonChooser(boolean toolBar)
+   public ButtonChooser(boolean inToolBar)
    {
-      this(toolBar, ButtonChooserOrientation.RIGHT);
+      this(inToolBar, ButtonChooserOrientation.RIGHT);
    }
 
-   public ButtonChooser(boolean toolBar, ButtonChooserOrientation orientation)
+   public ButtonChooser(boolean inToolBar, ButtonChooserOrientation orientation)
    {
+      _inToolBar = inToolBar;
       _orientation = orientation;
-      if (toolBar)
+      _btnCombo = new ComboButton();
+
+      if (_inToolBar)
       {
-         JToolBar palette = new JToolBar();
-         palette.setBorder(BorderFactory.createEmptyBorder());
-         palette.setFloatable(false);
-         palette.setRollover(true);
-         GUIUtils.inheritBackground(palette);
-         _container = palette;
+         // Helps to make the ButtonChooser match the toolBar style.
+         JToolBar toolBarComp= new JToolBar();
+         toolBarComp.setBorder(BorderFactory.createEmptyBorder());
+         toolBarComp.setFloatable(false);
+         toolBarComp.setRollover(true);
+         GUIUtils.inheritBackground(toolBarComp);
+         _container = toolBarComp;
       }
       else
       {
+         // When NOT in toolbar we style the container ourselves. That is GridBagLayout and to all buttons GUIUtils.styleAsToolbarButton() is applied.
          _container = new JPanel(new GridBagLayout());
+         GUIUtils.styleAsToolbarButton(_btnCombo);
       }
       createUI();
       initListeners();
@@ -104,17 +115,26 @@ public class ButtonChooser
 
       displayAsCurrentButton(_btnUndefinedDefault);
 
-      GridBagConstraints gbc;
-
-      if(_orientation == ButtonChooserOrientation.RIGHT)
+      if(_inToolBar)
       {
-         gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,2), 0,0);
+         _container.add(_btnCombo);
       }
       else
       {
-         gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+         // When NOT in toolbar we style the container ourselves. That is GridBagLayout and to all buttons GUIUtils.styleAsToolbarButton() is applied.
+         GridBagConstraints gbc;
+
+         if(_orientation == ButtonChooserOrientation.RIGHT)
+         {
+            gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,2), 0,0);
+         }
+         else
+         {
+            gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+         }
+
+         _container.add(_btnCombo, gbc);
       }
-      _container.add(_btnCombo, gbc);
    }
 
    /**
@@ -124,6 +144,12 @@ public class ButtonChooser
    public void addButton(AbstractButton btn)
    {
       _buttons.add(new ButtonHolder(btn));
+
+      if(false == _inToolBar)
+      {
+         // When NOT in toolbar we style the container ourselves. That is GridBagLayout and to all buttons GUIUtils.styleAsToolbarButton() is applied.
+         GUIUtils.styleAsToolbarButton(btn);
+      }
 
       if(_btnCurrent == _btnUndefinedDefault)
       {
@@ -138,6 +164,13 @@ public class ButtonChooser
    {
       btn.setEnabled(false);
       btn.setDisabledIcon(btn.getIcon());
+
+      if(false == _inToolBar)
+      {
+         // When NOT in toolbar we style the container ourselves. That is GridBagLayout and to all buttons GUIUtils.styleAsToolbarButton() is applied.
+         GUIUtils.styleAsToolbarButton(btn);
+      }
+
       _unclickableButtons.add(btn);
 
       addButton(btn);
@@ -166,17 +199,32 @@ public class ButtonChooser
 
       _btnCombo.setLinkedButton(_btnCurrent);
 
-      GridBagConstraints gbc;
-
-      if(_orientation == ButtonChooserOrientation.RIGHT)
+      if(_inToolBar)
       {
-         gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
-         _container.add(_btnCurrent, gbc, 0);
+         if(_orientation == ButtonChooserOrientation.RIGHT)
+         {
+            _container.add(_btnCurrent, 0);
+         }
+         else
+         {
+            _container.add(_btnCurrent);
+         }
       }
       else
       {
-         gbc = new GridBagConstraints(1,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
-         _container.add(_btnCurrent, gbc);
+         // When NOT in toolbar we style the container ourselves. That is GridBagLayout and to all buttons GUIUtils.styleAsToolbarButton() is applied.
+         GridBagConstraints gbc;
+
+         if(_orientation == ButtonChooserOrientation.RIGHT)
+         {
+            gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+            _container.add(_btnCurrent, gbc, 0);
+         }
+         else
+         {
+            gbc = new GridBagConstraints(1,0,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+            _container.add(_btnCurrent, gbc);
+         }
       }
 
       _container.revalidate();
@@ -225,16 +273,7 @@ public class ButtonChooser
       return _buttons.stream().map(bh -> bh.getBtn()).collect(Collectors.toList());
    }
 
-   public void styleAsToolbarButton()
-   {
-      for (ButtonHolder holder : _buttons)
-      {
-         GUIUtils.styleAsToolbarButton(holder.getBtn());
-      }
-      GUIUtils.styleAsToolbarButton(_btnCombo);
-   }
-
-   public void setPreferedHight(int height)
+   public void setPreferredHeight(int height)
    {
       GUIUtils.setPreferredHeight(_container, height);
    }

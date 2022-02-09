@@ -50,7 +50,7 @@ public class FindInObjectTreePanel extends JPanel
 
       gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2,1,2,0), 0,0);
       chooserAppendWildcard = createWildcardChooser(resources);
-      chooserAppendWildcard.setPreferedHight(btnFind.getPreferredSize().height);
+      chooserAppendWildcard.setPreferredHeight(btnFind.getPreferredSize().height);
       add(chooserAppendWildcard.getComponent(), gbc);
 
       GUIUtils.setPreferredHeight(textComponent, btnFind.getPreferredSize().height);
@@ -73,7 +73,6 @@ public class FindInObjectTreePanel extends JPanel
       btnDontAppendWildcard.setBorder(BorderFactory.createEmptyBorder());
       ret.addUnclickableButton(btnDontAppendWildcard);
 
-      ret.styleAsToolbarButton();
       return ret;
    }
 

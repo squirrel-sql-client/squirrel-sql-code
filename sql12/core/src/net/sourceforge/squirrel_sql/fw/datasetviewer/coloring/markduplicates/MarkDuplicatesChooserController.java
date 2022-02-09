@@ -50,8 +50,6 @@ public class MarkDuplicatesChooserController
 
       _toggleBtnChooser.setButtonSelectedListener((newSelectedButton, formerSelectedButton) -> onButtonSelected((JToggleButton)newSelectedButton, (JToggleButton)formerSelectedButton));
 
-      _toggleBtnChooser.styleAsToolbarButton();
-
       IDataSetViewer dataSetViewer = _resultTab.getSQLResultDataSetViewer();
 
       if(dataSetViewer instanceof DataSetViewerTablePanel)
