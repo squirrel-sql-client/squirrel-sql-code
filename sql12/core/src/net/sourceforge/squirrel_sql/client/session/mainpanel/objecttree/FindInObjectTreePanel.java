@@ -64,11 +64,12 @@ public class FindInObjectTreePanel extends JPanel
       ButtonChooser ret = new ButtonChooser(false, ButtonChooserOrientation.LEFT);
 
       btnAppendWildcard = new JButton(s_stringMgr.getString("FindInObjectTreePanel.appendWildcard"), resources.getIcon(SquirrelResources.IImageNames.PERCENT));
-      //btnAppendWildcard.setToolTipText(s_stringMgr.getString("FindInObjectTreePanel.appendWildcard.tooltip"));
+      btnAppendWildcard.setToolTipText(s_stringMgr.getString("FindInObjectTreePanel.appendWildcard"));
       btnAppendWildcard.setBorder(BorderFactory.createEmptyBorder());
       ret.addUnclickableButton(btnAppendWildcard);
 
       btnDontAppendWildcard = new JButton(s_stringMgr.getString("FindInObjectTreePanel.dontAppendWildcard"), resources.getIcon(SquirrelResources.IImageNames.PERCENT_NEGATED));
+      btnDontAppendWildcard.setToolTipText(s_stringMgr.getString("FindInObjectTreePanel.dontAppendWildcard"));
       btnDontAppendWildcard.setBorder(BorderFactory.createEmptyBorder());
       ret.addUnclickableButton(btnDontAppendWildcard);
 
