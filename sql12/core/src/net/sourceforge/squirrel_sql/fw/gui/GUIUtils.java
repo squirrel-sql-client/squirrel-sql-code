@@ -598,15 +598,26 @@ public class GUIUtils
 	}
 
 
+	public static void executeDelayed(Runnable runnable)
+	{
+		forceProperty(() -> {runnable.run(); return true;}, null, 100);
+	}
+
 	public static void forceProperty(PropertyCheck propertyCheck)
 	{
 		forceProperty(propertyCheck, null);
 	}
+
 	public static void forceProperty(PropertyCheck propertyCheck, Runnable callOnSuccess)
+	{
+		forceProperty(propertyCheck, callOnSuccess, 100);
+	}
+
+	public static void forceProperty(PropertyCheck propertyCheck, Runnable callOnSuccess, int delayMillis)
 	{
 		final Timer[] timerRef = new Timer[1];
 
-		timerRef[0] = new Timer(100, new ActionListener()
+		timerRef[0] = new Timer(delayMillis, new ActionListener()
 		{
 			private int maxCount = 0;
 

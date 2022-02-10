@@ -23,8 +23,9 @@ import java.awt.Font;
 import java.awt.dnd.DropTarget;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
-
-import javax.swing.*;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
@@ -44,7 +45,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 
@@ -340,6 +340,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void requestFocus()
 	{
+		//System.out.println("RSyntaxSQLEntryPanel.requestFocus " + new Date());
 		SwingUtilities.invokeLater(() -> _textArea.requestFocus());
 	}
 

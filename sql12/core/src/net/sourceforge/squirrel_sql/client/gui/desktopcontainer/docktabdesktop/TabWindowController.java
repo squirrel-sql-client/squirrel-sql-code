@@ -20,6 +20,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.TabWidget;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.SquirrelDesktopManager;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -101,6 +102,8 @@ public class TabWindowController implements DockTabDesktopPaneHolder
       _tabWindowFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
       _tabWindowFrame.setVisible(true);
+
+      GUIUtils.executeDelayed(() -> _tabWindowFrame.toFront());
    }
 
    private void onTabWasRemoved()

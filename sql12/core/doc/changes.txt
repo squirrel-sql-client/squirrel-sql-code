@@ -115,6 +115,8 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+SQL editor and tab focus incorrectly changed when SQuirreL was used in multiple windows and with multiple Sessions.
+
 Hibernate Plugin: Avoided possible hang on connection close
   This uses the meta data loading timeout,
   see menu File --> New Session Properties --> tab SQL --> section "Meta data loading"
