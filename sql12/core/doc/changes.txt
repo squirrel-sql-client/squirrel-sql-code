@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Upgraded JSQL-Parser (https://github.com/JSQLParser/JSqlParser) to version 4.3.
+
 Object tree search: Option to automatically append the wildcard '%' to the search string.
   See the switchable button on the right of the search textfield.
 
@@ -112,9 +114,6 @@ New SQL editor function to delete the current SQL statement.
 
 
 Bug fixes:
-
-#1495 Object tree root node: Supported refactorings were empty
-  when the Object tree's root node was reselected.
 
 Hibernate Plugin: Avoided possible hang on connection close
   This uses the meta data loading timeout,
