@@ -948,37 +948,37 @@ public class GUIUtils
       return textField;
    }
 
-	public static JComponent setPreferredWidth(JComponent comp, int width)
+	public static Component setPreferredWidth(Component comp, int width)
 	{
 		comp.setPreferredSize(new Dimension(width, comp.getPreferredSize().height));
 		return comp;
 	}
 
-	public static JComponent setPreferredHeight(JComponent comp, int height)
+	public static Component setPreferredHeight(Component comp, int height)
 	{
 		comp.setPreferredSize(new Dimension(comp.getPreferredSize().width, height));
 		return comp;
 	}
 
-	public static JComponent setMaximumWidth(JComponent comp, int width)
+	public static Component setMaximumWidth(Component comp, int width)
 	{
 		comp.setMaximumSize(new Dimension(width, comp.getMaximumSize().height));
 		return comp;
 	}
 
-	public static JComponent setMaximumHeight(JComponent comp, int height)
+	public static Component setMaximumHeight(Component comp, int height)
 	{
 		comp.setMaximumSize(new Dimension(comp.getMaximumSize().width, height));
 		return comp;
 	}
 
-	public static JComponent setMinimumWidth(JComponent comp, int width)
+	public static Component setMinimumWidth(Component comp, int width)
 	{
 		comp.setMinimumSize(new Dimension(width, comp.getMinimumSize().height));
 		return comp;
 	}
 
-	public static JComponent setMinimumHeight(JComponent comp, int height)
+	public static Component setMinimumHeight(Component comp, int height)
 	{
 		comp.setMinimumSize(new Dimension(comp.getMinimumSize().width, height));
 		return comp;

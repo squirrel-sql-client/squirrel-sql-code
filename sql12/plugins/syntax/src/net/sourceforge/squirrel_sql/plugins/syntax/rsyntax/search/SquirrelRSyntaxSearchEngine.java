@@ -1,24 +1,27 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search;
 
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.regex.PatternSyntaxException;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import org.fife.ui.rtextarea.*;
-
-import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import java.awt.*;
-import java.awt.event.*;
-import java.lang.reflect.Method;
-import java.util.Vector;
-import java.util.regex.PatternSyntaxException;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
+import org.fife.ui.rtextarea.RTextArea;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
+import org.fife.ui.rtextarea.SearchResult;
 
 public class SquirrelRSyntaxSearchEngine
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SquirrelRSyntaxSearchEngine.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SquirrelRSyntaxSearchEngine.class);
 
 
    private ISession _session;
@@ -68,35 +71,14 @@ public class SquirrelRSyntaxSearchEngine
          _dialog = new SquirrelFindDialog(owningFrame, _squirrelRSyntaxTextArea);
       }
 
-      _dialog.addFindActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onFind();
-         }
-      });
+      _dialog.addFindActionListener(e -> onFind());
 
-      _dialog.addReplaceActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onReplace();
-         }
-      });
+      _dialog.addReplaceActionListener(e -> onReplace());
 
-      _dialog.addReplaceAllActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onReplaceAll();
-         }
-      });
+      _dialog.addReplaceAllActionListener(e -> onReplaceAll());
 
 
-      Vector<String> comboBoxStrings = new Vector<String>();
+      ArrayList<String> comboBoxStrings = new ArrayList<>();
 
       if(null != _lastSearchString)
       {
@@ -118,16 +100,29 @@ public class SquirrelRSyntaxSearchEngine
 
       _dialog.setVisible(true);
 
-      _dialog.addClosingListener(new SearchDialogClosingListener(){
-         @Override
-         public void searchDialogClosing()
-         {
-            onDialogClosing();
-         }
-      });
+      _dialog.addClosingListener(() -> onDialogClosing());
 
       storeCaretState();
       _foundAtLeastOne = false;
+
+
+      GUIUtils.forceProperty(()-> onForceWidth(_dialog));
+
+   }
+
+   private boolean onForceWidth(ISquirrelSearchDialog dialog)
+   {
+      int width = 480;
+
+      if( width <= dialog.getDialog().getWidth())
+      {
+         return true;
+      }
+
+      GUIUtils.setPreferredWidth(dialog.getDialog(), width);
+      GUIUtils.setMinimumWidth((dialog.getDialog()), width);
+      //dialog.getDialog().doLayout();
+      return false;
    }
 
    private void onReplaceAll()
