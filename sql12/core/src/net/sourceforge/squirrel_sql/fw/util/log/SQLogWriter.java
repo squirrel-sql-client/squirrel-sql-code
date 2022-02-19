@@ -40,6 +40,17 @@ public class SQLogWriter
       _executorService.submit(() -> writeLogEntry(clazz, level, message, th));
    }
 
+   public boolean isDebugEnabled()
+   {
+      return _minimumLogLevel.higherOrEqual(SQLogLevel.DEBUG);
+   }
+
+   public boolean isInfoEnabled()
+   {
+      return _minimumLogLevel.higherOrEqual(SQLogLevel.INFO);
+   }
+
+
    private void writeLogEntry(Class clazz, SQLogLevel level, Object message, Throwable th)
    {
       String logEntry = String.format("%s [%s] %s  %s  - %s\n%s",

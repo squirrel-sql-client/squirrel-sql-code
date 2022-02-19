@@ -47,14 +47,12 @@ public class SQLoggerKernel
 
    public static boolean isDebugEnabled()
    {
-      // TODO
-      return false;
+      return s_sqLogWriterSingleton.isDebugEnabled();
    }
 
    public static boolean isInfoEnabled()
    {
-      // TODO
-      return true;
+      return s_sqLogWriterSingleton.isInfoEnabled();
    }
 
    private static void printLog(Class clazz, SQLogLevel level, Object message)

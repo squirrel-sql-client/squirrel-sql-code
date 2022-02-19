@@ -124,6 +124,9 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Logging (after dropping dependency on log4j): With log level DEBUG (i.e. command line parameter --log-level DEBUG)
+  some debug logs weren't written to SQuirreL's log file, see <userDir>/logs/.
+
 Fixed: Depending on previous search string lengths the SQL editors search(Ctrl+f) and replace(Ctrl+h) dialogs
   were to small to be GUI-layouted correctly.
 
