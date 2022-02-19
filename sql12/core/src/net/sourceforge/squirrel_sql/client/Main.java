@@ -3,10 +3,14 @@ package net.sourceforge.squirrel_sql.client;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.log.SquirrelLoggerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.SystemOutToLog;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import java.awt.AWTEvent;
+import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.PrintStream;
 /*
@@ -77,7 +81,7 @@ public class Main
 
    private static void startApp()
    {
-      LoggerController.registerLoggerFactory(new SquirrelLoggerFactory(true));
+      LoggerController.registerLoggerFactory(new SquirrelLoggerFactory());
       s_log = LoggerController.createLogger(Main.class);
 
       System.setErr(new PrintStream(new SystemOutToLog(System.err)));

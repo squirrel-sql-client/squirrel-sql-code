@@ -98,7 +98,8 @@ public class SquirrelPreferences implements Serializable
       String SHOW_DEBUG_LOG_MESSAGES = "showDebugLogMessages";
       String SHOW_INFO_LOG_MESSAGES = "showInfoLogMessages";
       String SHOW_ERROR_LOG_MESSAGES = "showErrorLogMessages";
-      String SAVE_PREFERENCES_IMMEDIATELY = "savePreferencesImmediately";   
+      String SHOW_WARN_LOG_MESSAGES = "showWarnLogMessages";
+      String SAVE_PREFERENCES_IMMEDIATELY = "savePreferencesImmediately";
       String SAVE_ALIASES_AND_DRIVERS_IMMEDIATELY = "saveAliasesAndDriversImmediately";
       String SELECT_ON_RIGHT_MOUSE_CLICK = "selectOnRightMouseClick";
       String SHOW_PLEASE_WAIT_DIALOG = "showPleaseWaitDialog";
@@ -262,6 +263,9 @@ public class SquirrelPreferences implements Serializable
 
 	/** Show ERROR log messages in the log viewer */
 	private boolean _showErrorLogMessages = true;
+
+	/** Show WARN log messages in the log viewer */
+	private boolean _showWarnLogMessages = true;
 
 	/** Always save preferences immediately when they change, instead of at shutdown */
 	private boolean _savePreferencesImmediately = false;
@@ -1136,27 +1140,36 @@ public class SquirrelPreferences implements Serializable
        return _showInfoLogMessages;
    }
 
-   /**
-    * @param data the _showErrorLogMessages to set
-    */
-   public void setShowErrorLogMessages(boolean data) {
-       if (data != _showErrorLogMessages)
-       {
-          final boolean oldValue = _showErrorLogMessages;
-          _showErrorLogMessages = data;
-          getPropertyChangeReporter().firePropertyChange(
-             IPropertyNames.SHOW_ERROR_LOG_MESSAGES,
-             oldValue, _showErrorLogMessages);
-       }
-   }
+	public void setShowErrorLogMessages(boolean data)
+	{
+		if(data != _showErrorLogMessages)
+		{
+			final boolean oldValue = _showErrorLogMessages;
+			_showErrorLogMessages = data;
+			getPropertyChangeReporter().firePropertyChange( IPropertyNames.SHOW_ERROR_LOG_MESSAGES, oldValue, _showErrorLogMessages);
+		}
+	}
 
-   /**
-    * @return the _showErrorLogMessages
-    */
-   public boolean getShowErrorLogMessages() {
-       return _showErrorLogMessages;
-   }
-   
+	public boolean getShowErrorLogMessages()
+	{
+		return _showErrorLogMessages;
+	}
+
+	public void setShowWarnLogMessages(boolean data)
+	{
+		if(data != _showWarnLogMessages)
+		{
+			final boolean oldValue = _showWarnLogMessages;
+			_showWarnLogMessages = data;
+			getPropertyChangeReporter().firePropertyChange( IPropertyNames.SHOW_ERROR_LOG_MESSAGES, oldValue, _showWarnLogMessages);
+		}
+	}
+
+	public boolean getShowWarnLogMessages()
+	{
+		return _showWarnLogMessages;
+	}
+
    /**
     * @param data the _savePreferencesImmediately to set
     */

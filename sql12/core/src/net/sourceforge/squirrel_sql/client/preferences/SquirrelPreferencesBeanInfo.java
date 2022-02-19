@@ -91,6 +91,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
             prop(SHOW_SESSION_STARTUP_TIME_HINT, SquirrelPreferences.class, "getShowSessionStartupTimeHint", "setShowSessionStartupTimeHint"),
             prop(SHOW_DEBUG_LOG_MESSAGES, SquirrelPreferences.class, "getShowDebugLogMessage", "setShowDebugLogMessages"),
             prop(SHOW_INFO_LOG_MESSAGES, SquirrelPreferences.class, "getShowInfoLogMessages", "setShowInfoLogMessages"),
+            prop(SHOW_WARN_LOG_MESSAGES, SquirrelPreferences.class, "getShowWarnLogMessages", "setShowWarnLogMessages"),
             prop(SHOW_ERROR_LOG_MESSAGES, SquirrelPreferences.class, "getShowErrorLogMessages", "setShowErrorLogMessages"),
 
             prop(SAVE_PREFERENCES_IMMEDIATELY, SquirrelPreferences.class, "getSavePreferencesImmediately", "setSavePreferencesImmediately"),

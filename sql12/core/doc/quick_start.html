@@ -254,7 +254,7 @@ squirrel-sql.bat [options]
 
 Options:
  -userdir,--user-settings-dir &lt;userdir&gt;   User settings directory
- -l,--log-config-file &lt;config-file&gt;       Logging configuration file
+ -level,--log-level					      Minimum log level
  -home,--squirrel-home &lt;home&gt;             SQuirreL home directory
  -n,--native-laf                          Use native look and feel
  -nop,--no-plugins                        Don't load plugins
@@ -2198,37 +2198,7 @@ color will change from light blue to red any time the last log message
 contains an error. This button displays the last message when clicked
 and for most errors it also provides a stack trace of the exception
 encountered (if there was one). This information can be invaluable for
-the developers in tracking down the cause of the error. An example of
-this dialog window appears below:
-
-<p align="center"><img src="images/last_log_entry_dialog.png"
-	alt="Last Log Entry Dialog"></p>
-
-In addition to the three types of error messages covered above, SQuirreL
-can be configured to log Debug messages which are even more useful at
-times then just the Error, Warning and Info messages. This configuration
-is accomplished by editing the log4j.properties file which is located in
-the SQuirreL install directory. This file has a line in it that looks
-like: 
-<pre>
-        log4j.rootLogger=info, SquirrelAppender
-</pre> 
-To enable Debug messages to be written to the log, edit this file in
-your favourite text editor, changing the above line to:
-<pre>
-        log4j.rootLogger=debug, SquirrelAppender
-</pre> 
-The update feature uses HttpClient to manage downloads from the Update 
-website and this can produce a great volume of debug log messages.  If 
-debugging is enabled according to the above instructions, the following 
-lines should also be added to log4j.properties at the same time that debug
-is enabled:
-<pre>
-log4j.logger.org.apache.commons.httpclient=WARN, SquirrelAppender
-log4j.logger.httpclient=WARN, SquirrelAppender
-</pre> 
-Once this file has been saved, then SQuirreL should be restarted to
-apply the change.
+the developers in tracking down the cause of the error.
 
 <h2><a name="menus"></a>Menus</h2>
 

@@ -25,75 +25,72 @@ import java.util.Collection;
  * Currently used by Plugins not hosted with SQuirreL only.
  * It's not clear if such Plugins really exist.
  * Implementors must override {@link net.sourceforge.squirrel_sql.client.plugin.IPlugin#getPluginApplicationArguments()}.
- *
- *
+ * <p>
+ * <p>
  * Interface to encapsulate the concept of an application argument which is non-coupled to the argument implementation.
- * 
+ * <p>
  * Use a structure of a simplified (string only, etc) version of the Apache CLI Option
  */
-public interface IApplicationArgument {
-    /**
-     * Single dash argument name:
-     * 
-     * java -jar squirrel.jar -arg argumentValue
-     * 
-     * @return string value of the 'short' arg
-     */
-    String getArgumentName();
-    
-    /**
-     * Double dash argument name:
-     * 
-     * java -jar squirrel.jar --long-argument argumentValue
-     * 
-     * @return string value of the 'long' argument
-     */    
-    String getLongArgumentName();
-    
-    /**
-     * 
-     * @return Description used when help is printed or args are not properly set
-     */    
-    String getDescription();
-    
-    /**
-     * 
-     * @return true if the argument is required
-     */
-    boolean isRequired();
-    
-    /**
-     * 
-     * java -jar squirrel.jar -arg value1 value2 value 3
-     * 
-     * @return number of String values to accept from the command line
-     */
-    int getNumberOfArgumentValues();
-    
-    /**
-     * Allows the values to be set by the parser
-     * 
-     * @param argumentValues 
-     */
-    void setArgumentValues(Collection<String> argumentValues);
-    
-    /**
-     * 
-     * @return the argument values, if set
-     */
-    Collection<String> getArgumentValues();
-    
-    /**
-     * Retrieve one value from the argument value collection (should be the first one)
-     * 
-     * @return the first argument value
-     */
-    String getValue();
-    
-    /**
-     * Useful for 0 value arguments
-     * 
-     * @return true if the argument was set
-     */
-    boolean isSet();
+public interface IApplicationArgument
+{
+   /**
+    * Single dash argument name:
+    * <p>
+    * java -jar squirrel.jar -arg argumentValue
+    *
+    * @return string value of the 'short' arg
+    */
+   String getArgumentName();
+
+   /**
+    * Double dash argument name:
+    * <p>
+    * java -jar squirrel.jar --long-argument argumentValue
+    *
+    * @return string value of the 'long' argument
+    */
+   String getLongArgumentName();
+
+   /**
+    * @return Description used when help is printed or args are not properly set
+    */
+   String getDescription();
+
+   /**
+    * @return true if the argument is required
+    */
+   boolean isRequired();
+
+   /**
+    * java -jar squirrel.jar -arg value1 value2 value 3
+    *
+    * @return number of String values to accept from the command line
+    */
+   int getNumberOfArgumentValues();
+
+   /**
+    * Allows the values to be set by the parser
+    *
+    * @param argumentValues
+    */
+   void setArgumentValues(Collection<String> argumentValues);
+
+   /**
+    * @return the argument values, if set
+    */
+   Collection<String> getArgumentValues();
+
+   /**
+    * Retrieve one value from the argument value collection (should be the first one)
+    *
+    * @return the first argument value
+    */
+   String getValue();
+
+   /**
+    * Useful for 0 value arguments
+    *
+    * @return true if the argument was set
+    */
+   boolean isSet();
 }

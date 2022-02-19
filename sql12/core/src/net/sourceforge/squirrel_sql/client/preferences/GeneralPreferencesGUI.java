@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesController;
 import net.sourceforge.squirrel_sql.client.session.messagepanel.MessagePrefsCtrl;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -378,8 +377,6 @@ final class GeneralPreferencesGUI extends JPanel
 
       ApplicationFiles appFiles = new ApplicationFiles();
       String execLogFile = appFiles.getExecutionLogFile().getPath();
-      String configFile = ApplicationArguments.getInstance().getLoggingConfigFileName();
-      configFile = null == configFile ? s_stringMgr.getString("GeneralPreferencesPanel.unspecified") : configFile;
 
       gbc.gridx = 0;
       gbc.gridy = 0;
@@ -387,18 +384,9 @@ final class GeneralPreferencesGUI extends JPanel
       GUIUtils.styleTextFieldToCopyableLabel(execLogFileField);
       pnl.add(execLogFileField, gbc);
 
-      ++gbc.gridy;
-      JTextField configFileField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.configfileNew", configFile));
-      GUIUtils.styleTextFieldToCopyableLabel(configFileField);
-      pnl.add(configFileField, gbc);
-
       gbc.weightx = 1.0;
-
       gbc.gridy = 0;
       ++gbc.gridx;
-      pnl.add(new JPanel(), gbc);
-
-      ++gbc.gridy;
       pnl.add(new JPanel(), gbc);
 
       return pnl;

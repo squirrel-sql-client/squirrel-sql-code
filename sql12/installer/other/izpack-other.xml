@@ -71,7 +71,6 @@
 			<file targetdir="$INSTALL_PATH" src="launcher/squirrel-sql.bat" />
 			<file targetdir="$INSTALL_PATH" src="launcher/addpath.bat" />
 			<file targetdir="$INSTALL_PATH" src="launcher/squirrel-sql.sh" />
-			<file targetdir="$INSTALL_PATH" src="launcher/log4j.properties" />
 
 			<file targetdir="$INSTALL_PATH" src="output/dist/squirrel-sql.jar" />
 			<fileset targetdir="$INSTALL_PATH/lib" dir="output/dist/lib">

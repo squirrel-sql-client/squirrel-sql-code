@@ -73,7 +73,6 @@
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java" src="core/doc" />
 
 			<file targetdir="$INSTALL_PATH/Contents/Resources" src="installer/mac/acorn.icns" />
-			<file targetdir="$INSTALL_PATH/Contents/Resources/Java" src="launcher/log4j.properties" />
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java" src="output/dist/squirrel-sql.jar" />
 
 			<fileset targetdir="$INSTALL_PATH/Contents/Resources/Java/lib" dir="output/dist/lib">  <include name="*.jar" /> </fileset>

@@ -68,14 +68,10 @@ public class ViewLogsSheet extends DialogWidget
 
 
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ViewLogsSheet.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ViewLogsSheet.class);
 
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(ViewLogsSheet.class);
-
-	/** Singleton instance of this class. */
-	private static ViewLogsSheet s_instance;
 
 	/** Application API. */
 	private final IApplication _app;
@@ -93,6 +89,8 @@ public class ViewLogsSheet extends DialogWidget
 	private final JButton _refreshBtn = new JButton(s_stringMgr.getString("ViewLogsSheet.refresh"));
 
 	private final JCheckBox _errorChkbox = new JCheckBox("Errors");
+
+	private final JCheckBox _warnChkbox = new JCheckBox("Warnings");
 
 	private final JCheckBox _debugChkbox = new JCheckBox("Debug");
 
@@ -147,40 +145,19 @@ public class ViewLogsSheet extends DialogWidget
 	 */
 	public static synchronized void showSheet(IApplication app)
 	{
-		if (s_instance == null)
-		{
-			s_instance = new ViewLogsSheet(app);
-			app.getMainFrame().addWidget(s_instance);
-			centerWithinDesktop(s_instance);
-		}
-
-		final boolean wasVisible = s_instance.isVisible();
-		if (!wasVisible)
-		{
-			s_instance.setVisible(true);
-		}
-		s_instance.moveToFront();
-		if (!wasVisible && !s_instance._refreshing)
-		{
-			s_instance.startRefreshingLog();
-		}
+		ViewLogsSheet logsSheet = new ViewLogsSheet(app);
+		app.getMainFrame().addWidget(logsSheet);
+		centerWithinDesktop(logsSheet);
+		logsSheet.setVisible(true);
+		logsSheet.moveToFront();
+		logsSheet.startRefreshingLog();
 	}
 
-	/**
-	 * Nulls the singleton instance of this class in a thread-safe way.
-	 */
-	public static synchronized void disposeInstance()
-	{
-		s_instance = null;
-	}
 
 	@Override
 	public void dispose()
 	{
-		// Stop refresh if it is running.
 		_closing = true;
-
-		ViewLogsSheet.disposeInstance();
 
 		Dimension size = getSize();
 		Props.putInt(PREF_KEY_LOGS_SHEET_WIDTH, size.width);
@@ -256,9 +233,9 @@ public class ViewLogsSheet extends DialogWidget
 				{
 					if (logFile.exists() && logFile.canRead())
 					{
-						final BufferedReader rdr = new BufferedReader(new FileReader(logFile));
-						try
+						try(BufferedReader rdr = new BufferedReader(new FileReader(logFile)))
 						{
+							ViewLogSheetAppendState viewLogSheetAppendState = new ViewLogSheetAppendState();
 							String line = null;
 							StringBuilder chunk = new StringBuilder(16384);
 							while ((line = rdr.readLine()) != null)
@@ -268,21 +245,17 @@ public class ViewLogsSheet extends DialogWidget
 								if (chunk.length() > 16000)
 								{
 									final String finalLine = chunk.toString();
-									SwingUtilities.invokeAndWait(new Runnable()
-									{
-										public void run()
+									SwingUtilities.invokeAndWait(() -> {
+										if (!_closing)
 										{
-											if (!_closing)
-											{
-												_logContentsTxt.append(finalLine);
-											}
+											_logContentsTxt.append(finalLine);
 										}
 									});
 									chunk = new StringBuilder(16384);
 								}
 								else
 								{
-									if (shouldAppendLineToChunk(line))
+									if (shouldAppendLineToChunk(line, viewLogSheetAppendState))
 									{
 										chunk.append(line).append('\n');
 									}
@@ -302,10 +275,6 @@ public class ViewLogsSheet extends DialogWidget
 									}
 								}
 							});
-						}
-						finally
-						{
-							rdr.close();
 						}
 					}
 				}
@@ -356,44 +325,56 @@ public class ViewLogsSheet extends DialogWidget
 
 	/**
 	 * 199828 [Foo Thread] message
-	 * 
-	 * @param line
-	 * @return
 	 */
-	private boolean shouldAppendLineToChunk(String line)
+	private boolean shouldAppendLineToChunk(String line, ViewLogSheetAppendState state)
 	{
 		boolean result = false;
-		if (line == null || line.length() == 0) { return false; }
-		if (_errorChkbox.isSelected() && _debugChkbox.isSelected() && _infoChkbox.isSelected()) { return true; }
+
+		if(line == null || line.length() == 0)
+		{
+			return false;
+		}
+
+		if(_errorChkbox.isSelected() && _warnChkbox.isSelected() && _infoChkbox.isSelected() && _debugChkbox.isSelected() )
+		{
+			return true;
+		}
+
 		final int threadNameEndIdx = line.indexOf("]");
-		if (threadNameEndIdx > -1)
-		{
-			char levelChar = ' ';
-			if (line.length() > threadNameEndIdx + 2)
+
+//		if (threadNameEndIdx > -1)
+//		{
+			if (threadNameEndIdx > -1 && line.length() > threadNameEndIdx + 2)
 			{
-				levelChar = line.charAt(threadNameEndIdx + 2);
+				state.setLevelChar(line.charAt(threadNameEndIdx + 2));
 			}
-			if (_errorChkbox.isSelected() && levelChar == 'E')
+
+			if (_errorChkbox.isSelected() && state.isError())
+			{
+				state.setLevelChar(line.charAt(threadNameEndIdx + 2));
+				result = true;
+			}
+			else if (_warnChkbox.isSelected() && state.isWarn())
 			{
 				result = true;
 			}
-			if (_debugChkbox.isSelected() && levelChar == 'D')
+			else if (_infoChkbox.isSelected() && state.isInfo())
 			{
 				result = true;
 			}
-			if (_infoChkbox.isSelected() && levelChar == 'I')
+			else if (_debugChkbox.isSelected() && state.isDebug())
 			{
 				result = true;
 			}
-			if (levelChar != 'E' && levelChar != 'D' && levelChar != 'I')
+			else if (state.isUnknown())
 			{
 				result = true;
 			}
-		}
-		else
-		{
-			result = true;
-		}
+//		}
+//		else
+//		{
+//			result = true;
+//		}
 		return result;
 	}
 
@@ -490,49 +471,26 @@ public class ViewLogsSheet extends DialogWidget
 		final JPanel pnl = new JPanel();
 
 		pnl.add(_refreshBtn);
-		_refreshBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				startRefreshingLog();
-			}
-		});
+		_refreshBtn.addActionListener(evt -> startRefreshingLog());
 
 		final JButton closeBtn = new JButton(s_stringMgr.getString("ViewLogsSheet.close"));
-		closeBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				performClose();
-			}
-		});
+		closeBtn.addActionListener(evt -> performClose());
 		pnl.add(closeBtn);
 
 		_errorChkbox.setSelected(_prefs.getShowErrorLogMessages());
-		_errorChkbox.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				_prefs.setShowErrorLogMessages(_errorChkbox.isSelected());
-			}
-		});
+		_errorChkbox.addActionListener(e -> _prefs.setShowErrorLogMessages(_errorChkbox.isSelected()));
+
+		_warnChkbox.setSelected(_prefs.getShowWarnLogMessages());
+		_warnChkbox.addActionListener(e -> _prefs.setShowWarnLogMessages(_errorChkbox.isSelected()));
+
 		_infoChkbox.setSelected(_prefs.getShowInfoLogMessages());
-		_infoChkbox.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				_prefs.setShowInfoLogMessages(_infoChkbox.isSelected());
-			}
-		});
+		_infoChkbox.addActionListener(e -> _prefs.setShowInfoLogMessages(_infoChkbox.isSelected()));
+
 		_debugChkbox.setSelected(_prefs.getShowDebugLogMessage());
-		_debugChkbox.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				_prefs.setShowDebugLogMessages(_debugChkbox.isSelected());
-			}
-		});
+		_debugChkbox.addActionListener(e -> _prefs.setShowDebugLogMessages(_debugChkbox.isSelected()));
+
 		pnl.add(_errorChkbox);
+		pnl.add(_warnChkbox);
 		pnl.add(_infoChkbox);
 		pnl.add(_debugChkbox);
 

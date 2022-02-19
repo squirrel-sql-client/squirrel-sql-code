@@ -28,6 +28,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -60,42 +61,34 @@ public class ApplicationArguments implements IApplicationArguments
 	public interface IOptions
 	{
 		String[] HELP = { "h", "help", "Display Help and exit"};
-		String[] SQUIRREL_HOME = { "home", "squirrel-home",
-									"SQuirreL home directory"};
-		String[] LOG_FILE = { "l", "log-config-file",
-											"Logging configuration file"};
-		String[] USE_DEFAULT_METAL_THEME = { "m", "use-default-metal-theme",
-											"Use default metal theme (not valid if L&F Plugin is used)"};
-		String[] USE_NATIVE_LAF = { "n", "native-laf",
-									"Use native look and feel"};
+		String[] SQUIRREL_HOME = { "home", "squirrel-home", "SQuirreL home directory"};
+		String[] USE_DEFAULT_METAL_THEME = { "m", "use-default-metal-theme", "Use default metal theme (not valid if L&F Plugin is used)"};
+		String[] USE_NATIVE_LAF = { "n", "native-laf", "Use native look and feel"};
 		String[] NO_PLUGINS = {"nop", "no-plugins", "Don't load plugins"};
 		String[] NO_SPLASH = { "nos", "no-splash", "Don't display splash screen"};
-		String[] USER_SETTINGS_DIR = { "userdir", "user-settings-dir",
-								"User settings directory"};
-		String[] UI_DEBUG = {"uidebug", "user-interface-debugging", 
-			"Provides tool-tips and highlighting of UI components for easy identification" };
-		String[] PLUGIN_LIST = { "pluginlist", "plugin-classpath-list", 
-			"Specify a comma-delimited list of plugins to load from the CLASSPATH" };
-		String[] SHUTDOWN_TIMEOUT_SECONDS = { "s", "shutdown-timeout-seconds", 
-			"Specify the number of seconds to allow the application to run before exiting the VM" };
-
-		String[] DETECT_LONG_RUNNING_SWING_EDT_EVENTS = { "detectEDT", "detect-long-running-swing-edt-events",
-			"Detect long running Swing Event Dispatch Thread events" };
+		String[] USER_SETTINGS_DIR = { "userdir", "user-settings-dir", "User settings directory"};
+		String[] LOG_FILE = { "l", "log-config-file", "deprecated/unused"};
+		String[] LOG_LEVEL = { "level", "log-level", "Minimum log level to write to <userdir>" + File.separator + "logs" + File.separator + ". Values: ERROR, WARNING, INFO (default), DEBUG"};
+		String[] UI_DEBUG = {"uidebug", "user-interface-debugging", "Provides tool-tips and highlighting of UI components for easy identification" };
+		String[] PLUGIN_LIST = { "pluginlist", "plugin-classpath-list", "Specify a comma-delimited list of plugins to load from the CLASSPATH" };
+		String[] SHUTDOWN_TIMEOUT_SECONDS = { "s", "shutdown-timeout-seconds","Specify the number of seconds to allow the application to run before exiting the VM" };
+		String[] DETECT_LONG_RUNNING_SWING_EDT_EVENTS = { "detectEDT", "detect-long-running-swing-edt-events","Detect long running Swing Event Dispatch Thread events" };
 
 
 		String[][] ALL_OPTIONS =
 		{
-			HELP,
-			SQUIRREL_HOME,
-			LOG_FILE,
-			USE_DEFAULT_METAL_THEME,
-			USE_NATIVE_LAF,
-			NO_SPLASH,
-			USER_SETTINGS_DIR,
-			UI_DEBUG,
-			PLUGIN_LIST,
-			SHUTDOWN_TIMEOUT_SECONDS,
-			DETECT_LONG_RUNNING_SWING_EDT_EVENTS
+				HELP,
+				SQUIRREL_HOME,
+				USE_DEFAULT_METAL_THEME,
+				USE_NATIVE_LAF,
+				NO_SPLASH,
+				USER_SETTINGS_DIR,
+				LOG_FILE,
+				LOG_LEVEL,
+				UI_DEBUG,
+				PLUGIN_LIST,
+				SHUTDOWN_TIMEOUT_SECONDS,
+				DETECT_LONG_RUNNING_SWING_EDT_EVENTS
 		};
 	}
 
@@ -120,8 +113,11 @@ public class ApplicationArguments implements IApplicationArguments
 	 */
 	private String _userSettingsDir = null;
 
-	/** Path for logging configuration file */
+	/** Out of use since Log4J was removed. */
 	private String _loggingConfigFile = null;
+
+	/** Path for logging configuration file */
+	private String _logLevel = null;
 
 	/** List of plugins to load from the classloader */
 	private List<String> _pluginList = null;
@@ -146,7 +142,6 @@ public class ApplicationArguments implements IApplicationArguments
       _rawArgs = args;
    }
 
-   @Override
    public void validateArgs(final boolean stopAtUnknownArgs) throws IllegalArgumentException
    {
       final CommandLineParser parser = new GnuParser()
@@ -179,7 +174,6 @@ public class ApplicationArguments implements IApplicationArguments
 	 * It's not clear if such Plugins really exist.
 	 * Implementors must override {@link net.sourceforge.squirrel_sql.client.plugin.IPlugin#getPluginApplicationArguments()}.
 	 */
-   @Override
    public void addPluginApplicationArguments(Collection<IApplicationArgument> args) throws IllegalArgumentException
    {
       if (args.isEmpty())
@@ -242,6 +236,10 @@ public class ApplicationArguments implements IApplicationArguments
             {
                s_instance._loggingConfigFile = s_instance._cmdLine.getOptionValue(IOptions.LOG_FILE[0]);
             }
+            if (s_instance._cmdLine.hasOption(IOptions.LOG_LEVEL[0]))
+            {
+               s_instance._logLevel = s_instance._cmdLine.getOptionValue(IOptions.LOG_LEVEL[0]);
+            }
             if (s_instance._cmdLine.hasOption(IOptions.PLUGIN_LIST[0]))
             {
                String pluginList = s_instance._cmdLine.getOptionValue(IOptions.PLUGIN_LIST[0]);
@@ -277,9 +275,9 @@ public class ApplicationArguments implements IApplicationArguments
 	 */
 	public static ApplicationArguments getInstance()
 	{
-		if (s_instance == null)
+		if(s_instance == null)
 		{
-                    s_instance = new ApplicationArguments(new String[] {});
+			s_instance = new ApplicationArguments(new String[]{});
 		}
 		return s_instance;
 	}
@@ -323,11 +321,16 @@ public class ApplicationArguments implements IApplicationArguments
 
 
    /**
-	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getLoggingConfigFileName()
+	 * Out of use since Log4J was removed.
 	 */
 	public String getLoggingConfigFileName()
 	{
 		return _loggingConfigFile;
+	}
+
+	public String getLogLevel()
+	{
+		return _logLevel;
 	}
 
 	/**
@@ -417,7 +420,10 @@ public class ApplicationArguments implements IApplicationArguments
 
 		opt = createAnOptionWithArgument(IOptions.LOG_FILE);
 		_options.addOption(opt);
-		
+
+		opt = createAnOptionWithArgument(IOptions.LOG_LEVEL);
+		_options.addOption(opt);
+
 		opt = createAnOption(IOptions.UI_DEBUG);
 		_options.addOption(opt);
 		

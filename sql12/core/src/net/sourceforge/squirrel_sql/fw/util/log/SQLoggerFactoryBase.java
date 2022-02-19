@@ -17,19 +17,14 @@ package net.sourceforge.squirrel_sql.fw.util.log;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import org.apache.log4j.BasicConfigurator;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
-public class Log4jLoggerFactory implements ILoggerFactory
+public class SQLoggerFactoryBase implements ILoggerFactory
 {
 	private ILoggerListener _listenerOfAllLoggers;
-	private Vector<ILoggerListener> _listeners =new Vector<ILoggerListener>();
 
-	public Log4jLoggerFactory()
-	{
-		this(true);
-	}
+	private ArrayList<ILoggerListener> _listeners =new ArrayList<>();
 
 	public void addLoggerListener(ILoggerListener l)
 	{
@@ -41,9 +36,7 @@ public class Log4jLoggerFactory implements ILoggerFactory
 		_listeners.remove(l);
 	}
 
-
-
-	public Log4jLoggerFactory(boolean doBasicConfig)
+	public SQLoggerFactoryBase()
 	{
 		_listenerOfAllLoggers = new ILoggerListener()
 		{
@@ -144,15 +137,11 @@ public class Log4jLoggerFactory implements ILoggerFactory
 			}
 		};
 
-		if (doBasicConfig)
-		{
-			BasicConfigurator.configure();
-		}
 	}
 
 	public ILogger createLogger(Class<?> clazz)
 	{
-		return new Log4jLogger(clazz, _listenerOfAllLoggers);
+		return new SquirrelLogger(clazz, _listenerOfAllLoggers);
 	}
 
 	public void shutdown()

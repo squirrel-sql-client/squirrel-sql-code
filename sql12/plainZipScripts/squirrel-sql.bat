@@ -31,7 +31,7 @@ if ErrorLevel 1 goto ExitForWrongJavaVersion
 SET CP="%SQUIRREL_SQL_HOME%\squirrel-sql.jar;%SQUIRREL_SQL_HOME%\lib\*"
 echo "CP=%CP%"
 
-SET TMP_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\log4j.properties" --squirrel-home "%SQUIRREL_SQL_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
+SET TMP_PARMS= --squirrel-home "%SQUIRREL_SQL_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 @rem -Dsun.java2d.noddraw=true prevents performance problems on Win32 systems.
 

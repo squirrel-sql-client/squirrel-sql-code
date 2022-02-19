@@ -165,14 +165,7 @@ passed on requests.</P>
 
 <A NAME="logging"><H4>Logging</H4></A>
 
-Logging is done via the <A HREF="http://jakarta.apache.org/log4j/">log4j</A>
-API from the <A HREF="http://www.apache.org">Apache Foundation</A>.
-
-<P>The configuration file for logging is passed in via the
-<TT>-loggingConfigFile</TT> application argument. E.G.
-<TT>-loggingConfigFile=log4j.properties</TT>. The standard configuration file
-specifies the appender <TT>SquirrelAppender</TT> which writes out to the
-text file <TT>&lt;user-home&gt;\squirrel-sql\squirrel-sql.log</TT></P>
+Logs are written to the text file <TT>&lt;user-home&gt;\squirrel-sql\squirrel-sql.log</TT></P>
 
 <P>To use logging in your classes you need to import the logging
 classes:</P>

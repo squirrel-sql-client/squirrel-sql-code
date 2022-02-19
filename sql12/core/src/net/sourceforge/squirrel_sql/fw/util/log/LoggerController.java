@@ -1,8 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.util.log;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
-import org.apache.log4j.Level;
 /*
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -23,13 +22,13 @@ import org.apache.log4j.Level;
  */
 public class LoggerController
 {
-	private static Vector<ILoggerFactory> s_oldfactories = new Vector<ILoggerFactory>();
-	private static ILoggerFactory s_factory = new Log4jLoggerFactory();
+	private static ArrayList<ILoggerFactory> s_oldfactories = new ArrayList<>();
+	private static ILoggerFactory s_factory = new SQLoggerFactoryBase();
 
    public static void registerLoggerFactory(ILoggerFactory factory)
 	{
 		s_oldfactories.add(s_factory);
-		s_factory = factory != null ? factory : new Log4jLoggerFactory();
+		s_factory = factory != null ? factory : new SQLoggerFactoryBase();
 	}
 
 	public static ILogger createLogger(Class<?> clazz)

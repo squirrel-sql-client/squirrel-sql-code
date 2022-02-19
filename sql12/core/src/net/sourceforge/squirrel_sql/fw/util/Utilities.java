@@ -18,6 +18,10 @@ package net.sourceforge.squirrel_sql.fw.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,10 +36,6 @@ import java.text.NumberFormat;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.sourceforge.squirrel_sql.fw.timeoutproxy.TimeOutUtil;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * General purpose utilities functions.
@@ -95,7 +95,7 @@ public class Utilities
    {
       if (th == null)
       {
-         throw new IllegalArgumentException("Throwable == null");
+         return "";
       }
 
       StringWriter sw = new StringWriter();
@@ -120,7 +120,6 @@ public class Utilities
          }
          catch (IOException ex)
          {
-            s_log.error("Unexpected error closing StringWriter", ex);
          }
       }
    }
