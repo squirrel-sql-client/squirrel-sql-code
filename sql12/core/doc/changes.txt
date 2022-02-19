@@ -124,6 +124,10 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+#1497 When table-editing columns of type NUMERIC OR DECIMAL SQuirreL tried to validate if the edited number's
+  scale and precision match the column definition. This was dropped.
+  SQuirreL now lets the database decide if the edited value can be stored.
+
 Logging (after dropping dependency on log4j): With log level DEBUG (i.e. command line parameter --log-level DEBUG)
   some debug logs weren't written to SQuirreL's log file, see <userDir>/logs/.
 

@@ -17,24 +17,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.text.NumberFormat;
-
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -47,6 +29,24 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.NumberFormat;
 
 /**
  * @author gwg
@@ -240,8 +240,10 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer)
 	{
 		// handle null, which is shown as the special string "<null>"
-		if (value.equals(StringUtilities.NULL_AS_STRING) || value.equals(""))
+		if(value.equals(StringUtilities.NULL_AS_STRING) || value.equals(""))
+		{
 			return null;
+		}
 
 		// Do the conversion into the object in a safe manner
 		try
@@ -257,57 +259,50 @@ public class DataTypeBigDecimal extends FloatingPointBase
 				obj = new BigDecimal("" + _numberFormat.parse(value));
 			}
 
+			// Bug 1497: Simply let the database decide.
+			//	// Some DBs give a negative number when they do not have a value for
+			//	// the scale.  Assume that if the _scale is 0 or positive that the DB really
+			//	// means for that to be the scale, but if it is negative then we do not check.
+			//	if (_scale >= 0 && obj.scale() > _scale)
+			//	{
+			//		Object[] args = new Object[]{obj.scale(), _scale};
+			//		String msg = s_stringMgr.getString("dataTypeBigDecimal.scaleEceeded", args);
+			//
+			//		messageBuffer.append(msg);
+			//		return null;
+			//	}
+			//
+			//	// check the total number of digits in the number.
+			//	// Since the string version of the number is the representation of
+			//	// the digits in that number and including possibly a plus or minus
+			//	// and a decimal, start by counting the number of digits in the string.
+			//	int objPrecision = value.length();
+			//	// now remove the non-digit chars, if any
+			//	if(value.indexOf("+") > -1 || value.indexOf("-") > -1)
+			//	{
+			//		objPrecision--;
+			//	}
+			//	if(value.indexOf(".") > -1)
+			//	{
+			//		objPrecision = value.indexOf(".");
+			//	}
+			//
+			//	// Some drivers (e.g. Oracle) give precision as 0 in some cases.
+			//	// When precision is 0, we cannot check the length, so do not try.
+			//	if (_precision > 0 && objPrecision > _precision)
+			//	{
+			//		Object[] args = new Object[]{objPrecision, _precision};
+			//		String msg = s_stringMgr.getString("dataTypeBigDecimal.precisionEceeded", args);
+			//
+			//		messageBuffer.append(msg);
+			//		return null;
+			//	}
 
-			// Some DBs give a negative number when they do not have a value for
-			// the scale.  Assume that if the _scale is 0 or positive that the DB really
-			// means for that to be the scale, but if it is negative then we do not check.
-			if (_scale >= 0 && obj.scale() > _scale)
-			{
-				Object[] args = new Object[]{
-                        Integer.valueOf(obj.scale()), 
-                        Integer.valueOf(_scale)
-                };
-				// i18n[dataTypeBigDecimal.scaleEceeded=Scale Exceeded: Number 
-                //of digits to right of decimal place ({0})\nis greater than 
-                //allowed in column ({1}).]
-				String msg = s_stringMgr.getString("dataTypeBigDecimal.scaleEceeded", args);
-
-				messageBuffer.append(msg);
-				return null;
-			}
-
-			// check the total number of digits in the number.
-			// Since the string version of the number is therepresentation of
-			// the digits in that number and including possibly a plus or minus
-			// and a decimal, start by counting the number of digits in the string.
-			int objPrecision = value.length();
-			// now remove the non-digit chars, if any
-			if (value.indexOf("+") > -1 || value.indexOf("-") > -1)
-				objPrecision--;
-			if (value.indexOf(".") > -1)
-				objPrecision--;
-
-			// Some drivers (e.g. Oracle) give precision as 0 in some cases.
-			// When precision is 0, we cannot check the length, so do not try.
-			if (_precision > 0 && objPrecision > _precision)
-			{
-				Object[] args = new Object[]{
-                        Integer.valueOf(objPrecision), 
-                        Integer.valueOf(_precision)
-                };
-				// i18n[dataTypeBigDecimal.precisionEceeded=Precision Exceeded: 
-                //Number of digits in number ({0})\nis greater than allowed in 
-                //column ({1})]
-				String msg = s_stringMgr.getString("dataTypeBigDecimal.precisionEceeded", args);
-
-				messageBuffer.append(msg);
-				return null;
-			}
 			return obj;
 		}
 		catch (Exception e)
 		{
-			messageBuffer.append(e.toString() + "\n");
+			messageBuffer.append(e + "\n");
 			//?? do we need the message also, or is it automatically part of the toString()?
 			//messageBuffer.append(e.getMessage());
 			return null;
