@@ -29,11 +29,8 @@ public class MapDataSet implements IDataSet
 {
    private interface i18n
    {
-      // i18n[mapdataset.unsupported=<Unsupported>]
-      String UNSUPPORTED = s_stringMgr.getString("hashtabledataset.unsupported");
-      // i18n[mapdataset.key=Key]
-      String NAME_COLUMN = s_stringMgr.getString("hashtabledataset.key");
-      // i18n[mapdataset.value=Value]
+      String UNSUPPORTED = s_stringMgr.getString("mapdataset.unsupported");
+      String NAME_COLUMN = s_stringMgr.getString("mapdataset.key");
       String VALUE_COLUMN = s_stringMgr.getString("mapdataset.value");
    }
 
