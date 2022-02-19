@@ -34,14 +34,22 @@ public class SquirrelLoggerFactory extends SQLoggerFactoryBase
 {
 	public SquirrelLoggerFactory()
 	{
+		this(true);
+	}
+	public SquirrelLoggerFactory(boolean withStartupLogging)
+	{
+		setAllLoggingFrameworkLoggersToWarning();
+
 		SQLoggerKernel.init();
-		doStartupLogging();
+
+		if(withStartupLogging)
+		{
+			doStartupLogging();
+		}
 	}
 
 	private void doStartupLogging()
 	{
-		setAllLoggingFrameworkLoggersToWarning();
-
 		final ILogger log = createLogger(getClass());
 		log.info("#############################################################################################################");
 		log.info("# Starting " + Version.getVersion() + " at " + DateFormat.getInstance().format(new Date()));

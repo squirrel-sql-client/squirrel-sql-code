@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.Application;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.SquirrelLoggerFactory;
 
 public class CliInitializer
 {
@@ -50,8 +51,9 @@ public class CliInitializer
 
       Application application = new Application();
       Main.setApplication(application);
-      application.initResourcesAndPrefs();
       application.initAppFiles();
+      new SquirrelLoggerFactory(false);
+      application.initResourcesAndPrefs();
       application.initDriverManager();
       application.initDataCache();
    }
