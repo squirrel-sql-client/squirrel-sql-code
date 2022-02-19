@@ -4,7 +4,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
 import java.util.Hashtable;
@@ -12,11 +11,8 @@ import java.util.Hashtable;
 
 public class ScriptUtil
 {
-	
-   private static SQLScriptPreferenceBean prefs = 
-	   							SQLScriptPreferencesManager.getPreferences();
-    
-   Hashtable<String, String> _uniqueColNames = new Hashtable<String, String>();
+
+   Hashtable<String, String> _uniqueColNames = new Hashtable<>();
 
    /**
     * This method provides unique column names.
@@ -88,7 +84,7 @@ public class ScriptUtil
     */
    public static String getTableName(ITableInfo ti) 
    {
-      return getTableName(ti, prefs.isQualifyTableNames(), prefs.isUseDoubleQuotes());
+      return getTableName(ti, SQLScriptPreferencesManager.getPreferences().isQualifyTableNames(), SQLScriptPreferencesManager.getPreferences().isUseDoubleQuotes());
    }
 
    public static String getTableName(ITableInfo ti, boolean qualifyTableNames, boolean useDoubleQuotes)
