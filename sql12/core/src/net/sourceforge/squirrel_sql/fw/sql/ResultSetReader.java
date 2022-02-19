@@ -657,9 +657,7 @@ public class ResultSetReader
                case Types.OTHER:
 
                default:
-                  row[i] = CellComponentFactory.readResultSet(
-                        colDefs[i], _rs.getResultSet(), idx, limitDataRead);
-
+                  row[i] = CellComponentFactory.readResultSet(colDefs[i], _rs.getResultSet(), idx, limitDataRead);
                   break;
 
             }

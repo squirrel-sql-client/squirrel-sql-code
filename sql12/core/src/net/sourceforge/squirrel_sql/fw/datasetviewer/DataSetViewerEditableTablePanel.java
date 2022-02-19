@@ -21,16 +21,21 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -198,9 +203,10 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// if either of the values is null and the other is not, then the data has
 		// changed and we fall-through to the change process.  Otherwise, check
 		// the object contents.
-		if (oldValue != null && newValue != null) {
+		if(oldValue != null && newValue != null)
+		{
 			// ask the DataType object if the two values are the same
-			if (CellComponentFactory.areEqual( getColDefs()[col], oldValue, newValue))
+			if(CellComponentFactory.areEqual(getColDefs()[col], oldValue, newValue))
 			{
 				return new int[0];   // the caller does not need to know that nothing happened
 			}
@@ -213,8 +219,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// conditions in the current DB
 		if (getUpdateableModelReference() != null)
 		{
-			message = ((IDataSetUpdateableTableModel) getUpdateableModelReference()).
-					getWarningOnCurrentData(getRow(row), getColDefs(), col, oldValue);
+			message = ((IDataSetUpdateableTableModel) getUpdateableModelReference()).getWarningOnCurrentData(getRow(row), getColDefs(), col, oldValue);
 		}
 
 		if (message != null)
@@ -223,9 +228,11 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			// IMPORTANT: this dialog is SYNCHRONOUS (ie. we do not proceed until
 			// user gives a response).  This is critical since this function provides
 			// a return value to its caller that depends on the user input.
-			// i18n[baseDataSetViewerDestination.warning=Warning]
-			int option = JOptionPane.showConfirmDialog(SwingUtilities.windowForComponent(getComponent()), message, s_stringMgr.getString("baseDataSetViewerDestination.warning"),
-				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			int option = JOptionPane.showConfirmDialog(getComponent(),
+																	 message,
+																	 s_stringMgr.getString("baseDataSetViewerDestination.warning"),
+																	 JOptionPane.YES_NO_OPTION,
+																	 JOptionPane.WARNING_MESSAGE);
 
 			if ( option != JOptionPane.YES_OPTION)
 			{
@@ -237,18 +244,21 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// conditions in the DB as it will be after doing the update
 		if (getUpdateableModelReference() != null)
 		{
-			message = ((IDataSetUpdateableTableModel) getUpdateableModelReference()).
-					getWarningOnProjectedUpdate(getRow(row), getColDefs(), col, newValue);
+			message = ((IDataSetUpdateableTableModel) getUpdateableModelReference()). getWarningOnProjectedUpdate(getRow(row), getColDefs(), col, newValue);
 		}
 
-		if (message != null) {
+		if(message != null)
+		{
 			// set up dialog to ask user if it is ok to proceed
 			// IMPORTANT: this dialog is SYNCHRONOUS (ie. we do not proceed until
 			// user gives a response).  This is critical since this function provides
 			// a return value to its caller that depends on the user input.
-			// i18n[baseDataSetViewerDestination.warning2=Warning]
-			int option = JOptionPane.showConfirmDialog(SwingUtilities.windowForComponent(getComponent()), message, s_stringMgr.getString("baseDataSetViewerDestination.warning2"),
-				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			int option = JOptionPane.showConfirmDialog(SwingUtilities.windowForComponent(getComponent()),
+																	 message,
+																	 s_stringMgr.getString("baseDataSetViewerDestination.warning2"),
+																	 JOptionPane.YES_NO_OPTION,
+																	 JOptionPane.WARNING_MESSAGE);
+
 			if ( option != JOptionPane.YES_OPTION)
 			{
 				return new int[0];	// no update done to underlying data
@@ -262,15 +272,15 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// (Since the table is supposed to be editable, we should have an
 		// IDataSetUpdateableTableModel object set in our super class.)
 
-		message = ((IDataSetUpdateableTableModel)getUpdateableModelReference()).
-			updateTableComponent(getRow(row), getColDefs(), col, oldValue, newValue);
+		message = ((IDataSetUpdateableTableModel)getUpdateableModelReference()). updateTableComponent(getRow(row), getColDefs(), col, oldValue, newValue);
 
 		if (message != null)
 		{
 			// tell user that there was a problem
-			// i18n[baseDataSetViewerDestination.error=Error]
-			JOptionPane.showMessageDialog(SwingUtilities.windowForComponent(getComponent()), message, s_stringMgr.getString("baseDataSetViewerDestination.error"),
-				JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(getComponent(),
+													message,
+													s_stringMgr.getString("baseDataSetViewerDestination.error"),
+													JOptionPane.ERROR_MESSAGE);
 
 			// tell caller that the underlying data was not updated
 			//?? is this always true, or could the data be updated with a warning?

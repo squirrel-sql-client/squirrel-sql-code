@@ -1,14 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
-import javax.swing.JOptionPane;
-
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
@@ -29,6 +20,15 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JOptionPane;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 
 public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableModel
@@ -211,8 +211,10 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    {
 
       // if we could not identify which table to edit, tell user
-      if (ti == null)
+      if(ti == null)
+      {
          return TI_ERROR_MESSAGE;
+      }
 
       List<IWhereClausePart> whereClauseParts = getWhereClause(values, colDefs, col, oldValue);
 

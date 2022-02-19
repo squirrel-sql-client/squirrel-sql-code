@@ -21,16 +21,15 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
-
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public final class DataSetViewerTableModel extends AbstractTableModel
 {
-   private List<Object[]> _data = new ArrayList<Object[]>();
+   private List<Object[]> _data = new ArrayList<>();
    private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
    private IDataSetViewAccess _dataSetViewAccess = null;
 

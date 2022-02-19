@@ -192,13 +192,12 @@ public final class DataSetViewerTable extends JTable
 
       int modelIndex = getColumnModel().getColumn(col).getModelIndex();
       ColumnDisplayDefinition colDef = _dataSetViewerTablePanel.getColumnDefinitions()[modelIndex];
-      Object newValueObject = CellComponentFactory.validateAndConvert(
-            colDef, getValueAt(row, col), (String) newValueString, messageBuffer);
+
+      Object newValueObject =
+            CellComponentFactory.validateAndConvert(colDef, getValueAt(row, col), (String) newValueString, messageBuffer);
 
       if (messageBuffer.length() > 0)
       {
-
-         // i18n[dataSetViewerTablePanel.textCantBeConverted=The given text cannot be converted into the internal object.\nThe database has not been changed.\nThe conversion error was:\n{0}]
          String msg = s_stringMgr.getString("dataSetViewerTablePanel.textCantBeConverted", messageBuffer);
 
          if (s_log.isDebugEnabled())

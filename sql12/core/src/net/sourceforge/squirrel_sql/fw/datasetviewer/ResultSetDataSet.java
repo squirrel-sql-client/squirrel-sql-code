@@ -165,7 +165,7 @@ public class ResultSetDataSet implements IDataSet
       }
 
       _iCurrent = -1;
-      _alData = new ArrayList<Object[]>();
+      _alData = new ArrayList<>();
 
       if (rs == null)
       {
@@ -175,8 +175,7 @@ public class ResultSetDataSet implements IDataSet
       try
       {
          ResultSetMetaData md = rs.getResultSet().getMetaData();
-         _columnCount = columnIndices != null ? columnIndices.length
-               : md.getColumnCount();
+         _columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
 
          // Done before actually reading the data from the ResultSet. If done
          // after
@@ -185,10 +184,7 @@ public class ResultSetDataSet implements IDataSet
          // when processing ResultSetMetaData methods for the ResultSet
          // returned for
          // DatabasemetaData.getExportedKeys.
-         ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md,
-               fullTableName,
-               columnIndices,
-               computeWidths);
+         ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md, fullTableName, columnIndices, computeWidths);
 
 
          _dataSetDefinition = new DataSetDefinition(colDefs, columnIndices);
