@@ -62,7 +62,7 @@ public class SquirrelLogger implements ILogger
 	{
 		if(message instanceof Throwable)
 		{
-			SQLoggerKernel.warn(null , (Throwable) message);
+			SQLoggerKernel.warn(_clazz, message , (Throwable) message);
 		}
 		else
 		{
@@ -87,7 +87,7 @@ public class SquirrelLogger implements ILogger
 	{
 		if(message instanceof Throwable)
 		{
-			SQLoggerKernel.error(null , (Throwable) message);
+			SQLoggerKernel.error(_clazz , null, (Throwable) message);
 		}
 		else
 		{
