@@ -8,7 +8,7 @@ Enhancements:
 
 Dependency on Log4j (https://logging.apache.org/log4j) was removed.
   SQuirreL uses no Log4j libraries anymore.
-  The former command line parameter -l / --log-config-file is obsolet and removed from SQuirreL's start scripts.
+  The former command line parameter -l / --log-config-file is obsolete and removed from SQuirreL's start scripts.
   The new optional command line parameter -level / --log-level
   allows to specify the minimum log level to write to <userdir>/logs/.
   Possible levels are ERROR, WARNING, INFO, DEBUG. The default level is INFO.
