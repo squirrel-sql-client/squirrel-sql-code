@@ -51,6 +51,7 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
     */
    public TableCopyUpdateStatementCommand(JTable table, DataModelImplementationDetails dataModelImplementationDetails)
    {
+      super(dataModelImplementationDetails.getSession());
       _dataModelImplementationDetails = dataModelImplementationDetails;
       if (table == null)
       {

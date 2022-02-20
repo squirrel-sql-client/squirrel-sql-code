@@ -52,6 +52,7 @@ public class TableCopyInsertStatementCommand extends TableCopySqlPartCommandBase
     */
    public TableCopyInsertStatementCommand(JTable table, DataModelImplementationDetails dataModelImplementationDetails)
    {
+      super(dataModelImplementationDetails.getSession());
       _dataModelImplementationDetails = dataModelImplementationDetails;
       if (table == null)
       {

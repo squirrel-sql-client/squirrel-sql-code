@@ -1,16 +1,20 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
-import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
+import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ReferencesFrameStarter;
+import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.RootTable;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 public class ShowReferencesCommand
@@ -45,7 +49,7 @@ public class ShowReferencesCommand
       }
 
 
-      ArrayList<InStatColumnInfo> inStatColumnInfos = new TableCopyInStatementCommand(_table).getInStatColumnInfos();
+      ArrayList<InStatColumnInfo> inStatColumnInfos = new TableCopyInStatementCommand(_table, _session).getInStatColumnInfos();
 
 
       if (null == globalDbTable)

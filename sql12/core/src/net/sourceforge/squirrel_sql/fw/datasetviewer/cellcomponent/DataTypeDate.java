@@ -17,6 +17,34 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
+import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -31,34 +59,8 @@ import java.io.OutputStreamWriter;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.text.DateFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.JTextComponent;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * @author gwg
@@ -87,13 +89,17 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * handling and resetting the cell to the original value.
  */
 
-public class DataTypeDate extends BaseDataTypeComponent
-	implements IDataTypeComponent
+public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComponent
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DataTypeDate.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataTypeDate.class);
 
-   /** Logger for this class. */
+	private static final String PROP_USE_JAVA_DEFAULT_FORMAT = "useJavaDefaultFormat";
+	private static final String PROP_LOCALE_FORMAT = "localeFormat";
+	private static final String PROP_LENIENT = "lenient";
+	private static final String PROP_READ_DATE_AS_TIMESTAMP = "readDateAsTimestamp";
+	private static final String PROP_DATE_SCRIPT_FORMAT = "dateScriptFormat";
+
+	/** Logger for this class. */
    private static ILogger s_log = LoggerController.createLogger(DataTypeDate.class);
 
 	/* whether nulls are allowed or not */
@@ -117,8 +123,7 @@ public class DataTypeDate extends BaseDataTypeComponent
 	 * by the static method getControlPanel, so we cannot use something
 	 * like getClass() to find this name.
 	 */
-	private static final String thisClassName =
-		"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate";
+	private static final String thisClassName = "net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate";
 
 
 	/** Default date format */
@@ -128,38 +133,40 @@ public class DataTypeDate extends BaseDataTypeComponent
 	 * Properties settable by the user
 	 */
 	 // flag for whether we have already loaded the properties or not
-	 private static boolean propertiesAlreadyLoaded = false;
+	private static boolean propertiesAlreadyLoaded = false;
 
-	 // flag for whether to use the default Java format (true)
-	 // or the Locale-dependent format (false)
-	 private static boolean useJavaDefaultFormat = true;
+	// flag for whether to use the default Java format (true)
+	// or the Locale-dependent format (false)
+	private static boolean useJavaDefaultFormat = true;
 
-	 // which locale-dependent format to use; short, medium, long, or full
-	 private static int localeFormat = DEFAULT_LOCALE_FORMAT;
+	// which locale-dependent format to use; short, medium, long, or full
+	private static int localeFormat = DEFAULT_LOCALE_FORMAT;
 
-	 // Whether to force user to enter dates in exact format or use heuristics to guess it
-	 private static boolean lenient = true;
+	// Whether to force user to enter dates in exact format or use heuristics to guess it
+	private static boolean lenient = true;
 
-     // Whether or not to read date type columns with rs.getTimestamp() 
-     private static boolean readDateAsTimestamp = false;
+	// Whether or not to read date type columns with rs.getTimestamp()
+	private static boolean readDateAsTimestamp = false;
+
+	private static TemporalScriptGenerationFormat dateScriptFormat = TemporalScriptGenerationFormat.STD_JDBC_FORMAT;
      
 	 // The DateFormat object to use for all locale-dependent formatting.
 	 // This is reset each time the user changes the previous settings.
-	 private static ThreadSafeDateFormat dateFormat = 
-	     new ThreadSafeDateFormat(localeFormat);
-    private boolean _renderExceptionHasBeenLogged;
+	 private static ThreadSafeDateFormat dateFormat = new ThreadSafeDateFormat(localeFormat);
 
+    private boolean _renderExceptionHasBeenLogged;
 
    /**
     * Constructor - save the data needed by this data type.
     */
-   public DataTypeDate(JTable table, ColumnDisplayDefinition colDef) {
-      _table = table;
-      _colDef = colDef;
-      _isNullable = colDef.isNullable();
+	public DataTypeDate(JTable table, ColumnDisplayDefinition colDef)
+	{
+		_table = table;
+		_colDef = colDef;
+		_isNullable = colDef.isNullable();
 
-      loadProperties();
-   }
+		loadProperties();
+	}
 
 	/** Internal function to get the user-settable properties from the DTProperties,
 	 * if they exist, and to ensure that defaults are set if the properties have
@@ -175,63 +182,82 @@ public class DataTypeDate extends BaseDataTypeComponent
 		//set the property values
 		// Note: this may have already been done by another instance of
 		// this DataType created to handle a different column.
-		if (propertiesAlreadyLoaded == false) {
-            propertiesAlreadyLoaded = true;
+		if (propertiesAlreadyLoaded == false)
+		{
+         propertiesAlreadyLoaded = true;
 			// get parameters previously set by user, or set default values
 			useJavaDefaultFormat =true;	// set to use the Java default
-			String useJavaDefaultFormatString = DTProperties.get(
-				thisClassName, "useJavaDefaultFormat");
-			if (useJavaDefaultFormatString != null && useJavaDefaultFormatString.equals("false"))
-				useJavaDefaultFormat =false;
+			String useJavaDefaultFormatString = DTProperties.get(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT);
+			if(useJavaDefaultFormatString != null && useJavaDefaultFormatString.equals("false"))
+			{
+				useJavaDefaultFormat = false;
+			}
 
 			// get which locale-dependent format to use
 			localeFormat =DateFormat.SHORT;	// set to use the Java default
-			String localeFormatString = DTProperties.get(
-				thisClassName, "localeFormat");
-			if (localeFormatString != null)
+			String localeFormatString = DTProperties.get(thisClassName, PROP_LOCALE_FORMAT);
+			if(localeFormatString != null)
+			{
 				localeFormat = Integer.parseInt(localeFormatString);
+			}
 
 			// use lenient input or force user to enter exact format
 			lenient = true;	// set to allow less stringent input
-			String lenientString = DTProperties.get(
-				thisClassName, "lenient");
-			if (lenientString != null && lenientString.equals("false"))
-				lenient =false;
+			String lenientString = DTProperties.get(thisClassName, PROP_LENIENT);
+			if(lenientString != null && lenientString.equals("false"))
+			{
+				lenient = false;
+			}
             
-            // Bug #1757076
-            // always use false unless user specifies otherwise; this breaks
-            // date editing in Derby (possibly DB2 as well)
-            readDateAsTimestamp = false;
-            String readDateAsTimestampString = 
-                DTProperties.get(thisClassName, "readDateAsTimestamp");
-            if (readDateAsTimestampString != null && 
-                    readDateAsTimestampString.equals("true")) 
-            {
-                readDateAsTimestamp = true;
-            }
-            
-            /*
-             * After loading the properties, we must initialize the dateFormat.
-             * See Bug 3086444
-             */
-            initDateFormat(localeFormat, lenient);
+			// Bug #1757076
+			// always use false unless user specifies otherwise; this breaks
+			// date editing in Derby (possibly DB2 as well)
+			readDateAsTimestamp = false;
+			String readDateAsTimestampString = DTProperties.get(thisClassName, PROP_READ_DATE_AS_TIMESTAMP);
+			if (readDateAsTimestampString != null && readDateAsTimestampString.equals("true"))
+			{
+				 readDateAsTimestamp = true;
+			}
+
+			dateScriptFormat = getDateScriptFormat();
+
+			/*
+			 * After loading the properties, we must initialize the dateFormat.
+			 * See Bug 3086444
+			 */
+			initDateFormat(localeFormat, lenient);
 		}
 	}
-	
+
+	public static TemporalScriptGenerationFormat getDateScriptFormat()
+	{
+		TemporalScriptGenerationFormat ret = TemporalScriptGenerationFormat.STD_JDBC_FORMAT;
+		final String formatName = DTProperties.get(thisClassName, PROP_DATE_SCRIPT_FORMAT);
+		if(false == StringUtilities.isEmpty(formatName, true))
+		{
+			final TemporalScriptGenerationFormat timestampScriptFormat = TemporalScriptGenerationFormat.valueOf(formatName);
+			ret = timestampScriptFormat;
+		}
+		return ret;
+	}
+
+
 	/**
 	 * Defines the dateFormat with the specific format and lenient options
 	 */
-	private static void initDateFormat(int format, boolean lenient) {
-		 dateFormat = new ThreadSafeDateFormat(format);	// lenient is set next
-		 dateFormat.setLenient(lenient);
+	private static void initDateFormat(int format, boolean lenient)
+	{
+		dateFormat = new ThreadSafeDateFormat(format);   // lenient is set next
+		dateFormat.setLenient(lenient);
 	}
 
-    public static boolean getReadDateAsTimestamp() {
-        propertiesAlreadyLoaded = false;
-        loadProperties();
-        return readDateAsTimestamp;
-    }
-    
+	public static boolean getReadDateAsTimestamp()
+	{
+		propertiesAlreadyLoaded = false;
+		loadProperties();
+		return readDateAsTimestamp;
+	}
+
 	/**
 	 * Return the name of the java class used to hold this data type.
 	 */
@@ -541,27 +567,39 @@ public class DataTypeDate extends BaseDataTypeComponent
 		}
 		else
 		{
-            // if value contains ":" it probably has a time component
-            boolean hasTimeComponent = (value.toString().indexOf(":") != -1);
-            
-            // if value contains "-" it probably has a date component
-            boolean hasDateComponent = (value.toString().indexOf("-") != -1);
-            
-            if (hasTimeComponent && hasDateComponent) {
-                // treat it like a timestamp
-                return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={ts '" + value.toString() + "'}");
-            } else if (hasTimeComponent) {
-                // treat it like a time - no date component
-                return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={t '" + value.toString() + "'}");
-            } else {
-                if (DialectFactory.isOracle(md)) {
-                    // Oracle stores time information in java.sql.Types.Date columns
-                    // This tells Oracle that we are only talking about the date part.                    
-                    return new NoParameterWhereClausePart(_colDef, "trunc(" + _colDef.getColumnName() + ")={d '" + value.toString() + "'}");
-                } else {
-                    return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={d '" + value.toString() + "'}");
-                }
-            }               
+			// if value contains ":" it probably has a time component
+			boolean hasTimeComponent = (value.toString().indexOf(":") != -1);
+
+			// if value contains "-" it probably has a date component
+			boolean hasDateComponent = (value.toString().indexOf("-") != -1);
+
+			if(hasTimeComponent && hasDateComponent)
+			{
+				// treat it like a timestamp
+				//return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "= {ts '" + value.toString() + "'}");
+				return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + " = " + TemporalUtils.format((java.util.Date) value, Types.TIMESTAMP));
+			}
+			else if(hasTimeComponent)
+			{
+				// treat it like a time - no date component
+				// return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={t '" + value.toString() + "'}");
+				return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + " = " + TemporalUtils.format((java.util.Date) value, Types.TIME));
+			}
+			else
+			{
+				if(DialectFactory.isOracle(md))
+				{
+					// Oracle stores time information in java.sql.Types.Date columns
+					// This tells Oracle that we are only talking about the date part.
+					//return new NoParameterWhereClausePart(_colDef, "trunc(" + _colDef.getColumnName() + ")={d '" + value.toString() + "'}");
+					return new NoParameterWhereClausePart(_colDef, "trunc(" + _colDef.getColumnName() + ") = " + TemporalUtils.format((java.util.Date) value, Types.DATE));
+				}
+				else
+				{
+					//return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={d '" + value.toString() + "'}");
+					return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + " = " + TemporalUtils.format((java.util.Date) value, Types.DATE));
+				}
+			}
 		}
 	}
 
@@ -761,9 +799,7 @@ public class DataTypeDate extends BaseDataTypeComponent
 	// Class that displays the various formats available for dates
 	public static class DateFormatTypeCombo extends JComboBox
 	{
-        private static final long serialVersionUID = 1L;
-
-        public DateFormatTypeCombo()
+		public DateFormatTypeCombo()
 		{
 			// i18n[dataTypeDate.full=Full ({0})]
 			addItem(s_stringMgr.getString("dataTypeDate.full", DateFormat.getDateInstance(DateFormat.FULL).format(new java.util.Date())));
@@ -803,8 +839,6 @@ public class DataTypeDate extends BaseDataTypeComponent
 	  */
 	 private static class DateOkJPanel extends OkJPanel
 	 {
-        private static final long serialVersionUID = 1L;
-
         /*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
@@ -825,10 +859,10 @@ public class DataTypeDate extends BaseDataTypeComponent
 		 // i18n[dataTypeDate.allowInexact=allow inexact format on input]
 		 private JCheckBox lenientChk = new JCheckBox(s_stringMgr.getString("dataTypeDate.allowInexact"));
 
-         // whether or not to read date type columns with rs.getTimestamp()
-         // i18n[dataTypeDate.readDateAsTimestamp=Interpret DATE columns as TIMESTAMP]
-         private JCheckBox readdDateAsTimestampChk = 
-             new JCheckBox(s_stringMgr.getString("dataTypeDate.readDateAsTimestamp"));
+		 // whether or not to read date type columns with rs.getTimestamp()
+		 private JCheckBox readdDateAsTimestampChk = new JCheckBox(s_stringMgr.getString("dataTypeDate.readDateAsTimestamp"));
+
+		 private TemporalScriptGenerationCtrl _temporalScriptGenerationCtrl;
          
 		 public DateOkJPanel()
 		 {
@@ -861,10 +895,19 @@ public class DataTypeDate extends BaseDataTypeComponent
 			 dateFormatTypeDropLabel.setEnabled(! useJavaDefaultFormatChk.isSelected());
 			 lenientChk.setEnabled(! useJavaDefaultFormatChk.isSelected());
 
-             /*
-              * Create the panel and add the GUI items to it
-              */
+			 final Date currentSqlDate = new Date(new java.util.Date().getTime());
+			 _temporalScriptGenerationCtrl = new TemporalScriptGenerationCtrl(TemporalUtils.getStdJDBCFormat(currentSqlDate),
+																									TemporalUtils.getStringFormat(currentSqlDate),
+																									dateScriptFormat);
 
+			 layoutPanel();
+		 } // end of constructor for inner class
+
+		 private void layoutPanel()
+		 {
+			 /*
+			  * Create the panel and add the GUI items to it
+			  */
 			 setLayout(new GridBagLayout());
 
 			 // i18n[dataTypeDate.typeDate=Date   (SQL type 91)]
@@ -892,10 +935,14 @@ public class DataTypeDate extends BaseDataTypeComponent
 			 ++gbc.gridy;
 			 add(lenientChk, gbc);
 
-             gbc.gridx = 0;
-             ++gbc.gridy;
-             add(readdDateAsTimestampChk, gbc);             
-		 } // end of constructor for inner class
+			 gbc.gridx = 0;
+			 ++gbc.gridy;
+			 add(readdDateAsTimestampChk, gbc);
+
+			 gbc.gridx = 0;
+			 ++gbc.gridy;
+			 add(_temporalScriptGenerationCtrl.getPanel(), gbc);
+		 }
 
 
 		 /**
@@ -906,30 +953,23 @@ public class DataTypeDate extends BaseDataTypeComponent
 		 {
 			 // get the values from the controls and set them in the static properties
 			 useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
-			 DTProperties.put(thisClassName,
-			                  "useJavaDefaultFormat", 
-			                  Boolean.valueOf(useJavaDefaultFormat).toString());
-
+			 DTProperties.put(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT, Boolean.valueOf(useJavaDefaultFormat).toString());
 
 			 localeFormat = dateFormatTypeDrop.getValue();
-			 dateFormat = new ThreadSafeDateFormat(localeFormat);	// lenient is set next
-			 DTProperties.put(thisClassName,
-			                  "localeFormat", 
-			                  Integer.toString(localeFormat));
+			 dateFormat = new ThreadSafeDateFormat(localeFormat);   // lenient is set next
+			 DTProperties.put(thisClassName, PROP_LOCALE_FORMAT, Integer.toString(localeFormat));
 
 			 lenient = lenientChk.isSelected();
 			 dateFormat.setLenient(lenient);
-			 DTProperties.put(thisClassName,
-			                  "lenient", 
-			                  Boolean.valueOf(lenient).toString());
-             
-             readDateAsTimestamp = readdDateAsTimestampChk.isSelected();
-             DTProperties.put(thisClassName,
-                              "readDateAsTimestamp",
-                              Boolean.valueOf(readDateAsTimestamp).toString());
-             
-             initDateFormat(localeFormat, lenient);
-             
+			 DTProperties.put(thisClassName, PROP_LENIENT, Boolean.valueOf(lenient).toString());
+
+			 readDateAsTimestamp = readdDateAsTimestampChk.isSelected();
+			 DTProperties.put(thisClassName, PROP_READ_DATE_AS_TIMESTAMP, Boolean.valueOf(readDateAsTimestamp).toString());
+
+			 dateScriptFormat = _temporalScriptGenerationCtrl.getFormat();
+			 DTProperties.put(thisClassName, PROP_DATE_SCRIPT_FORMAT, dateScriptFormat.name());
+
+			 initDateFormat(localeFormat, lenient);
 		 }
 
 	 } // end of inner class

@@ -567,8 +567,8 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 	{
 
 		String tsClassName = DataTypeTimestamp.class.getName();
-		String timeStampWhereClauseUsage = DTProperties.get(
-		   tsClassName, DataTypeTimestamp.WHERE_CLAUSE_USAGE_KEY);
+		String timeStampWhereClauseUsage = DTProperties.get(tsClassName, DataTypeTimestamp.WHERE_CLAUSE_USAGE_KEY);
+
 		if (timeStampWhereClauseUsage != null)
 		{
 			int timeStampWhereClauseUsageInt = Integer.parseInt(timeStampWhereClauseUsage);

@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
@@ -47,8 +48,9 @@ public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase imp
     * @param	table	The <TT>JTable</TT> to get data from.
     * @throws	IllegalArgumentException Thrown if <tt>null</tt> <tt>JTable</tt> passed.
     */
-   public TableCopyInStatementCommand(JTable table)
+   public TableCopyInStatementCommand(JTable table, ISession session)
    {
+      super(session);
       if (table == null)
       {
          throw new IllegalArgumentException("JTable == null");

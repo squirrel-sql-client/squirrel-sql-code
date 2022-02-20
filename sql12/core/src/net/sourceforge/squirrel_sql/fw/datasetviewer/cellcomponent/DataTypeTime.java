@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
 import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -57,7 +58,9 @@ import java.io.OutputStreamWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Time;
+import java.sql.Types;
 import java.text.DateFormat;
+import java.util.Date;
 
 /**
  * @author gwg
@@ -86,12 +89,14 @@ import java.text.DateFormat;
  * handling and resetting the cell to the original value.
  */
 
-public class DataTypeTime extends BaseDataTypeComponent
-   implements IDataTypeComponent
+public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComponent
 {
+   private static final String PROP_LENIENT = "lenient";
+   private static final String PROP_LOCALE_FORMAT = "localeFormat";
+   private static final String PROP_USE_JAVA_DEFAULT_FORMAT = "useJavaDefaultFormat";
+   private static final String PROP_TIME_SCRIPT_FORMAT = "timeScriptFormat";
 
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(DataTypeTime.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataTypeTime.class);
 
    /** Logger for this class. */
    private static ILogger s_log = LoggerController.createLogger(DataTypeTime.class);
@@ -126,22 +131,25 @@ public class DataTypeTime extends BaseDataTypeComponent
    private static int DEFAULT_LOCALE_FORMAT = DateFormat.SHORT;
 
    /*
-     * Properties settable by the user
-     */
-    // flag for whether we have already loaded the properties or not
-    private static boolean propertiesAlreadyLoaded = false;
+    * Properties settable by the user
+    */
+   // flag for whether we have already loaded the properties or not
+   private static boolean propertiesAlreadyLoaded = false;
 
-    // flag for whether to use the default Java format (true)
-    // or the Locale-dependent format (false)
-    private static boolean useJavaDefaultFormat = true;
+   // flag for whether to use the default Java format (true)
+   // or the Locale-dependent format (false)
+   private static boolean useJavaDefaultFormat = true;
 
-    // which locale-dependent format to use; short, medium, long, or full
-    private static int localeFormat = DEFAULT_LOCALE_FORMAT;
+   // which locale-dependent format to use; short, medium, long, or full
+   private static int localeFormat = DEFAULT_LOCALE_FORMAT;
 
-    // Whether to force user to enter dates in exact format or use heuristics to guess it
-    private static boolean lenient = true;
+   // Whether to force user to enter dates in exact format or use heuristics to guess it
+   private static boolean lenient = true;
 
-    // The DateFormat object to use for all locale-dependent formatting.
+   private static TemporalScriptGenerationFormat timeScriptFormat;
+
+
+   // The DateFormat object to use for all locale-dependent formatting.
     // This is reset each time the user changes the previous settings.
     private static ThreadSafeDateFormat dateFormat = new ThreadSafeDateFormat(localeFormat, true);
     private boolean _renderExceptionHasBeenLogged;
@@ -166,32 +174,39 @@ public class DataTypeTime extends BaseDataTypeComponent
     * Properties window.  In either case, the data is static and is set only
     * the first time we are called.
     */
-   private static void loadProperties() {
+   private static void loadProperties()
+   {
 
       //set the property values
       // Note: this may have already been done by another instance of
       // this DataType created to handle a different column.
-      if (propertiesAlreadyLoaded == false) {
+      if(propertiesAlreadyLoaded == false)
+      {
          // get parameters previously set by user, or set default values
-         useJavaDefaultFormat =true;	// set to use the Java default
-         String useJavaDefaultFormatString = DTProperties.get(
-            thisClassName, "useJavaDefaultFormat");
-         if (useJavaDefaultFormatString != null && useJavaDefaultFormatString.equals("false"))
-            useJavaDefaultFormat =false;
+         useJavaDefaultFormat = true;   // set to use the Java default
+         String useJavaDefaultFormatString = DTProperties.get(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT);
+         if(useJavaDefaultFormatString != null && useJavaDefaultFormatString.equals("false"))
+         {
+            useJavaDefaultFormat = false;
+         }
 
          // get which locale-dependent format to use
-         localeFormat =DateFormat.SHORT;	// set to use the Java default
-         String localeFormatString = DTProperties.get(
-            thisClassName, "localeFormat");
-         if (localeFormatString != null)
+         localeFormat = DateFormat.SHORT;   // set to use the Java default
+         String localeFormatString = DTProperties.get(thisClassName, PROP_LOCALE_FORMAT);
+         if(localeFormatString != null)
+         {
             localeFormat = Integer.parseInt(localeFormatString);
+         }
 
          // use lenient input or force user to enter exact format
-         lenient = true;	// set to allow less stringent input
-         String lenientString = DTProperties.get(
-            thisClassName, "lenient");
-         if (lenientString != null && lenientString.equals("false"))
-            lenient =false;
+         lenient = true;   // set to allow less stringent input
+         String lenientString = DTProperties.get(thisClassName, PROP_LENIENT);
+         if(lenientString != null && lenientString.equals("false"))
+         {
+            lenient = false;
+         }
+
+         timeScriptFormat = getTimeScriptFormat();
 
          /*
           * After loading the properties, we must initialize the dateFormat.
@@ -205,10 +220,24 @@ public class DataTypeTime extends BaseDataTypeComponent
    /**
     * Defines the dateFormat with the specific format and lenient options
     */
-   private static void initDateFormat(int format, boolean lenient) {
-       dateFormat = new ThreadSafeDateFormat(format, true);	// lenient is set next
-       dateFormat.setLenient(lenient);
+   private static void initDateFormat(int format, boolean lenient)
+   {
+      dateFormat = new ThreadSafeDateFormat(format, true);   // lenient is set next
+      dateFormat.setLenient(lenient);
    }
+
+   public static TemporalScriptGenerationFormat getTimeScriptFormat()
+   {
+      TemporalScriptGenerationFormat ret = TemporalScriptGenerationFormat.STD_JDBC_FORMAT;
+      final String formatName = DTProperties.get(thisClassName, PROP_TIME_SCRIPT_FORMAT);
+      if(false == StringUtilities.isEmpty(formatName, true))
+      {
+         final TemporalScriptGenerationFormat timestampScriptFormat = TemporalScriptGenerationFormat.valueOf(formatName);
+         ret = timestampScriptFormat;
+      }
+      return ret;
+   }
+
 
 
    /**
@@ -225,24 +254,27 @@ public class DataTypeTime extends BaseDataTypeComponent
    /**
     * Render a value into text for this DataType.
     */
-   public String renderObject(Object value) {
+   public String renderObject(Object value)
+   {
       // use the Java default date-to-string
-      if (useJavaDefaultFormat == true || value == null)
-         return (String)_renderer.renderObject(value);
+      if(useJavaDefaultFormat == true || value == null)
+      {
+         return (String) _renderer.renderObject(value);
+      }
 
       // use a date formatter
       try
       {
-          return (String)_renderer.renderObject(dateFormat.format(value));
+         return (String) _renderer.renderObject(dateFormat.format(value));
       }
       catch (Exception e)
       {
-          if(false == _renderExceptionHasBeenLogged)
-          {
-              _renderExceptionHasBeenLogged = true;
-              s_log.error("Could not format \"" + value + "\" as date type", e);
-          }
-          return (String) _renderer.renderObject(value);
+         if(false == _renderExceptionHasBeenLogged)
+         {
+            _renderExceptionHasBeenLogged = true;
+            s_log.error("Could not format \"" + value + "\" as date type", e);
+         }
+         return (String) _renderer.renderObject(value);
       }
    }
 
@@ -503,11 +535,17 @@ public class DataTypeTime extends BaseDataTypeComponent
     * 	"columnName is null"
     * or whatever is appropriate for this column in the database.
     */
-   public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
-      if (value == null || value.toString() == null || value.toString().length() == 0)
+   public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
+   {
+      if(value == null || value.toString() == null || value.toString().length() == 0)
+      {
          return new IsNullWhereClausePart(_colDef);
+      }
       else
-         return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={t '" + value.toString() +"'}");
+      {
+         //return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "= {t '" + value.toString() + "'}");
+         return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + " = " + TemporalUtils.format((Date) value, Types.TIME, null));
+      }
    }
 
 
@@ -706,7 +744,6 @@ public class DataTypeTime extends BaseDataTypeComponent
    // Class that displays the various formats available for dates
    public static class DateFormatTypeCombo extends JComboBox
    {
-    private static final long serialVersionUID = 1L;
 
     public DateFormatTypeCombo()
       {
@@ -748,29 +785,25 @@ public class DataTypeTime extends BaseDataTypeComponent
      */
     private static class TimeOkJPanel extends OkJPanel
     {
-        private static final long serialVersionUID = 1L;
-        /*
-         * GUI components - need to be here because they need to be
-         * accessible from the event handlers to alter each other's state.
-         */
+       /*
+        * GUI components - need to be here because they need to be
+        * accessible from the event handlers to alter each other's state.
+        */
        // check box for whether to use Java Default or a Locale-dependent format
 
-
        private JCheckBox useJavaDefaultFormatChk =
-          // i18n[dataTypeTime.useDefaultFormat=Use default format ({0})]
-          new JCheckBox(s_stringMgr.getString("dataTypeTime.useDefaultFormat", new Time(new java.util.Date().getTime()).toString()));
+             new JCheckBox(s_stringMgr.getString("dataTypeTime.useDefaultFormat", new Time(new java.util.Date().getTime()).toString()));
 
        // label for the date format combo, used to enable/disable text
-       // i18n[dataTypeTime.useDefaultFormat2= or locale-dependent format:]
        private RightLabel dateFormatTypeDropLabel = new RightLabel(s_stringMgr.getString("dataTypeTime.useDefaultFormat2"));
 
        // Combo box for read-all/read-part of blob
        private DateFormatTypeCombo dateFormatTypeDrop = new DateFormatTypeCombo();
 
        // checkbox for whether to interpret input leniently or not
-       // i18n[dataTypeTime.inexact=allow inexact format on input]
        private JCheckBox lenientChk = new JCheckBox(s_stringMgr.getString("dataTypeTime.inexact"));
 
+       private TemporalScriptGenerationCtrl _temporalScriptGenerationCtrl;
 
        public TimeOkJPanel()
        {
@@ -800,14 +833,20 @@ public class DataTypeTime extends BaseDataTypeComponent
           dateFormatTypeDropLabel.setEnabled(! useJavaDefaultFormatChk.isSelected());
           lenientChk.setEnabled(! useJavaDefaultFormatChk.isSelected());
 
-          /*
-              * Create the panel and add the GUI items to it
-             */
+          final java.sql.Time currentSqlTime = new java.sql.Time(new java.util.Date().getTime());
+          _temporalScriptGenerationCtrl = new TemporalScriptGenerationCtrl(TemporalUtils.getStdJDBCFormat(currentSqlTime),
+                                                                           TemporalUtils.getStringFormat(currentSqlTime),
+                                                                           timeScriptFormat);
 
+
+          layoutPanel();
+
+       } // end of constructor for inner class
+
+       private void layoutPanel()
+       {
           setLayout(new GridBagLayout());
 
-
-          // i18n[dataTypeTime.typeTime=Time   (SQL type 92)]
           setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dataTypeTime.typeTime")));
           final GridBagConstraints gbc = new GridBagConstraints();
           gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -832,7 +871,10 @@ public class DataTypeTime extends BaseDataTypeComponent
           ++gbc.gridy;
           add(lenientChk, gbc);
 
-       } // end of constructor for inner class
+          gbc.gridx = 0;
+          ++gbc.gridy;
+          add(_temporalScriptGenerationCtrl.getPanel(), gbc);
+       }
 
 
        /**
@@ -843,25 +885,23 @@ public class DataTypeTime extends BaseDataTypeComponent
        {
           // get the values from the controls and set them in the static properties
           useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
-          DTProperties.put(thisClassName,
-                          "useJavaDefaultFormat", 
-                          Boolean.valueOf(useJavaDefaultFormat).toString());
+          DTProperties.put(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT, Boolean.valueOf(useJavaDefaultFormat).toString());
 
 
           localeFormat = dateFormatTypeDrop.getValue();
-          dateFormat = new ThreadSafeDateFormat(localeFormat, true);	// lenient is set next
-          DTProperties.put(thisClassName,
-                           "localeFormat", 
-                           Integer.toString(localeFormat));
+          dateFormat = new ThreadSafeDateFormat(localeFormat, true);   // lenient is set next
+          DTProperties.put(thisClassName, PROP_LOCALE_FORMAT, Integer.toString(localeFormat));
 
           lenient = lenientChk.isSelected();
           dateFormat.setLenient(lenient);
-          DTProperties.put(thisClassName,
-                           "lenient", 
-                           Boolean.valueOf(lenient).toString());
+          DTProperties.put(thisClassName, PROP_LENIENT, Boolean.valueOf(lenient).toString());
+
+          timeScriptFormat = _temporalScriptGenerationCtrl.getFormat();
+          DTProperties.put(thisClassName, PROP_TIME_SCRIPT_FORMAT, timeScriptFormat.name());
+
 
           initDateFormat(localeFormat, lenient);
-          
+
        }
 
     } // end of inner class

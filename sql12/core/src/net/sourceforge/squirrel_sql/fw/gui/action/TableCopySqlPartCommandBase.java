@@ -1,24 +1,27 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import java.sql.Timestamp;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
+
 import java.sql.Types;
 import java.util.Calendar;
 import java.util.Formatter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 
 public class TableCopySqlPartCommandBase
 {
+   private ISession _session;
 
    enum StatType
    {
         IN, WHERE, UPDATE
    }
 
+   public TableCopySqlPartCommandBase(ISession session)
+   {
+      _session = session;
+   }
 
    protected String getData(ColumnDisplayDefinition colDef, Object cellObj, StatType statType)
    {
@@ -52,30 +55,36 @@ public class TableCopySqlPartCommandBase
                java.util.Date date = (java.util.Date) cellObj;
                Calendar cal = Calendar.getInstance();
                cal.setTime(date);
-               return getPrefixForStatType(statType, false) + "{t '" + prefixNulls(cal.get(Calendar.HOUR_OF_DAY), 2) + ":" +
-                               prefixNulls(cal.get(Calendar.MINUTE), 2) + ":" +
-                               prefixNulls(cal.get(Calendar.SECOND), 2) + "'}";
+
+               //return getPrefixForStatType(statType, false) + "{t '" + prefixNulls(cal.get(Calendar.HOUR_OF_DAY), 2) + ":" +
+               //                prefixNulls(cal.get(Calendar.MINUTE), 2) + ":" +
+               //                prefixNulls(cal.get(Calendar.SECOND), 2) + "'}";
+               return getPrefixForStatType(statType, false) + TemporalUtils.format(date, Types.TIME, _session);
+
             }
             else if(colDef.getSqlType() == Types.DATE && cellObj instanceof java.util.Date)
             {
                java.util.Date date = (java.util.Date) cellObj;
                Calendar cal = Calendar.getInstance();
                cal.setTime(date);
-               return getPrefixForStatType(statType, false) + "{d '" + prefixNulls(cal.get(Calendar.YEAR), 4) + "-" +
-                               prefixNulls(cal.get(Calendar.MONTH) + 1, 2) + "-" +
-                               prefixNulls(cal.get(Calendar.DAY_OF_MONTH) ,2) + "'}";
+               //return getPrefixForStatType(statType, false) + "{d '" + prefixNulls(cal.get(Calendar.YEAR), 4) + "-" +
+               // prefixNulls(cal.get(Calendar.MONTH) + 1, 2) + "-" +
+               // prefixNulls(cal.get(Calendar.DAY_OF_MONTH) ,2) + "'}";
+               return getPrefixForStatType(statType, false) + TemporalUtils.format(date, Types.DATE, _session);
             }
             else if(colDef.getSqlType() == Types.TIMESTAMP && cellObj instanceof java.util.Date)
             {
                java.util.Date date = (java.util.Date) cellObj;
                Calendar cal = Calendar.getInstance();
                cal.setTime(date);
-               return getPrefixForStatType(statType, false) + "{ts '" + prefixNulls(cal.get(Calendar.YEAR), 4) + "-" +
-                     prefixNulls(cal.get(Calendar.MONTH) + 1, 2) + "-" +
-                     prefixNulls(cal.get(Calendar.DAY_OF_MONTH), 2) + " " +
-                     prefixNulls(cal.get(Calendar.HOUR_OF_DAY), 2) + ":" +
-                     prefixNulls(cal.get(Calendar.MINUTE), 2) + ":" +
-                     prefixNulls(cal.get(Calendar.SECOND), 2) + getNanoString(date);
+
+               //return getPrefixForStatType(statType, false) + "{ts '" + prefixNulls(cal.get(Calendar.YEAR), 4) + "-" +
+               //      prefixNulls(cal.get(Calendar.MONTH) + 1, 2) + "-" +
+               //      prefixNulls(cal.get(Calendar.DAY_OF_MONTH), 2) + " " +
+               //      prefixNulls(cal.get(Calendar.HOUR_OF_DAY), 2) + ":" +
+               //      prefixNulls(cal.get(Calendar.MINUTE), 2) + ":" +
+               //      prefixNulls(cal.get(Calendar.SECOND), 2) + getNanoString(date);
+               return getPrefixForStatType(statType, false) + TemporalUtils.format(date, Types.TIMESTAMP, _session);
             }
             else if(cellObj instanceof Byte[] || cellObj instanceof byte[])
             {
@@ -134,24 +143,24 @@ public class TableCopySqlPartCommandBase
       }
    }
 
-   private String getNanoString(java.util.Date date)
-   {
-      if(false == date instanceof Timestamp)
-      {
-         return "'}";
-      }
-
-      Timestamp ts = (Timestamp) date;
-
-      int nanos = ts.getNanos() / 1000;
-
-      if(0 == nanos)
-      {
-         return "'}";
-      }
-
-      return "." + prefixNulls(nanos, 6) + "'}";
-   }
+//   private String getNanoString(java.util.Date date)
+//   {
+//      if(false == date instanceof Timestamp)
+//      {
+//         return "'}";
+//      }
+//
+//      Timestamp ts = (Timestamp) date;
+//
+//      int nanos = ts.getNanos() / 1000;
+//
+//      if(0 == nanos)
+//      {
+//         return "'}";
+//      }
+//
+//      return "." + prefixNulls(nanos, 6) + "'}";
+//   }
 
    private String getPrefixForStatType(StatType statType, boolean isNullVal)
    {

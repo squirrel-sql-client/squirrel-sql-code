@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.insert;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ScriptUtil;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.ScriptBuilder;
@@ -19,8 +19,6 @@ import java.util.Calendar;
 public class InsertGenerator
 {
    private ISession _session;
-
-   private Boolean _dialectSupportsSubSecondTimestamps;
 
    public InsertGenerator(ISession session)
    {
@@ -114,36 +112,50 @@ public class InsertGenerator
 
                   if (Types.DATE == colInfo[i].sqlType)
                   {
-                     String esc = "{d '" + prefixNulls(calendar.get(Calendar.YEAR), 4) + "-" +
-                        prefixNulls(calendar.get(Calendar.MONTH) + 1, 2) + "-" +
-                        prefixNulls(calendar.get(Calendar.DAY_OF_MONTH), 2) + "'}";
-                     esc = fromResultSet ? esc : esc + getNullableComment(metaData, i+1);
+                     //String esc = "{d '" + StringUtilities.prefixNulls(calendar.get(Calendar.YEAR), 4) + "-" +
+                     //             StringUtilities.prefixNulls(calendar.get(Calendar.MONTH) + 1, 2) + "-" +
+                     //             StringUtilities.prefixNulls(calendar.get(Calendar.DAY_OF_MONTH), 2) + "'}";
+                     String esc = TemporalUtils.format(timestamp, Types.DATE, _session);
+
+                     if(!fromResultSet)
+                     {
+                        esc = esc + getNullableComment(metaData, i + 1);
+                     }
+
                      sbValues.append(esc);
                   }
                   else if (Types.TIME == colInfo[i].sqlType)
                   {
-                     String esc = "{t '" + prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2) + ":" +
-                        prefixNulls(calendar.get(Calendar.MINUTE), 2) + ":" +
-                        prefixNulls(calendar.get(Calendar.SECOND), 2) + "'}";
-                     esc = fromResultSet ? esc : esc + getNullableComment(metaData, i+1);
+                     //String esc = "{t '" + StringUtilities.prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2) + ":" +
+                     //             StringUtilities.prefixNulls(calendar.get(Calendar.MINUTE), 2) + ":" +
+                     //             StringUtilities.prefixNulls(calendar.get(Calendar.SECOND), 2) + "'}";
+                     String esc = TemporalUtils.format(timestamp, Types.TIME, _session);
+
+                     if(!fromResultSet)
+                     {
+                        esc = esc + getNullableComment(metaData, i + 1);
+                     }
+
                      sbValues.append(esc);
                   }
                   else if (Types.TIMESTAMP == colInfo[i].sqlType)
                   {
-                  	Timestamp ts = (Timestamp)timestamp;
+                     //Timestamp ts = (Timestamp)timestamp;
+                     //
+                     //StringBuilder esc = new StringBuilder("{ts '");
+                     //esc.append(StringUtilities.prefixNulls(calendar.get(Calendar.YEAR), 4)).append("-");
+                     //esc.append(StringUtilities.prefixNulls(calendar.get(Calendar.MONTH) + 1, 2)).append("-");
+                     //esc.append(StringUtilities.prefixNulls(calendar.get(Calendar.DAY_OF_MONTH), 2)).append(" ");
+                     //esc.append(StringUtilities.prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2)).append(":");
+                     //esc.append(StringUtilities.prefixNulls(calendar.get(Calendar.MINUTE), 2)).append(":");
+                     //esc.append(StringUtilities.prefixNulls(calendar.get(Calendar.SECOND), 2)).append(".");
+                     //esc.append(TemporalUtils.getNanos(ts, _session));
+                     //esc.append("'}");
+                     String esc = TemporalUtils.format(timestamp, Types.TIMESTAMP, _session);
 
-                     StringBuilder esc = new StringBuilder("{ts '");
-                     esc.append(prefixNulls(calendar.get(Calendar.YEAR), 4)).append("-");
-                     esc.append(prefixNulls(calendar.get(Calendar.MONTH) + 1, 2)).append("-");
-                     esc.append(prefixNulls(calendar.get(Calendar.DAY_OF_MONTH), 2)).append(" ");
-                     esc.append(prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2)).append(":");
-                     esc.append(prefixNulls(calendar.get(Calendar.MINUTE), 2)).append(":");
-                     esc.append(prefixNulls(calendar.get(Calendar.SECOND), 2)).append(".");
-                     esc.append(getNanos(ts, _session));
-                     esc.append("'}");
-
-                     if (!fromResultSet) {
-                     	esc.append(getNullableComment(metaData, i+1));
+                     if(!fromResultSet)
+                     {
+                        esc += getNullableComment(metaData, i + 1);
                      }
                      sbValues.append(esc);
                   }
@@ -332,57 +344,6 @@ public class InsertGenerator
 //      return sResult;
    }
 
-   /**
-	 * Returns the sub-second precision value from the specified timestamp if supported by the session's
-	 * dialect.
-	 *
-	 * @param ts
-	 *           the Timestamp to get the nanosecond value from
-	 * @param dialectSupportsSubSecondTimestamps1
-    * @param session
-    * @return a string representing the nanosecond value.
-	 */
-	private String getNanos(Timestamp ts, ISession session) throws SQLException
-	{
-		ISQLDatabaseMetaData md = session.getMetaData();
-		HibernateDialect dialect = DialectFactory.getDialect(md);
-
-		boolean dialectSupportsSubSecondTimestamps = getTimestampFlag();
-
-      if (!dialectSupportsSubSecondTimestamps || dialect.getTimestampMaximumFractionalDigits() == 0)
-      {
-         return "";
-      }
-
-		String result = "" + ts.getNanos();
-
-      int timestampMaximumFractionalDigits = dialect.getTimestampMaximumFractionalDigits();
-      if(result.length() >= timestampMaximumFractionalDigits)
-      {
-         result = result.substring(0, timestampMaximumFractionalDigits);
-      }
-		return result;
-	}
-
-   /**
-    * If necessary inits the timestamp flag and returns the value indicating whether or not this _session
-    * supports sub-second timestamps.
-    *
-    * @return true if supported; false otherwise.
-    * @param dialectSupportsSubSecondTimestamps
-    * @param _session
-    */
-   private boolean getTimestampFlag()
-   {
-      if (_dialectSupportsSubSecondTimestamps == null)
-      {
-         ISQLDatabaseMetaData md = _session.getMetaData();
-         HibernateDialect dialect = DialectFactory.getDialect(md);
-         _dialectSupportsSubSecondTimestamps = dialect.supportsSubSecondTimestamps();
-      }
-      return _dialectSupportsSubSecondTimestamps;
-   }
-
    private String getNullableComment(ResultSetMetaData metaData, int colIndex) throws SQLException
    {
       if(ResultSetMetaData.columnNoNulls == metaData.isNullable(colIndex))
@@ -393,18 +354,6 @@ public class InsertGenerator
       {
          return "";
       }
-   }
-
-   private String prefixNulls(int toPrefix, int digitCount)
-   {
-      String ret = "" + toPrefix;
-
-      while (ret.length() < digitCount)
-      {
-         ret = 0 + ret;
-      }
-
-      return ret;
    }
 
    private String getStatementSeparator(ISession session)

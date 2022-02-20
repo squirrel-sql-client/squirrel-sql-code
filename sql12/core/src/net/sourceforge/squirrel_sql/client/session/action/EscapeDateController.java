@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
-import java.awt.*;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
@@ -100,6 +100,7 @@ public class EscapeDateController
                              prefixNulls(_frame.txtHour.getText(), 2) + ":" +
                              prefixNulls(_frame.txtMinute.getText(), 2) + ":" +
                              prefixNulls(_frame.txtSecond.getText(), 2) + "'}";
+
 
       _escapeDateListener.setDateString(esc);
       _frame.setVisible(false);

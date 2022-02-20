@@ -10,7 +10,7 @@ public class JDBCTemporalEscapeParse
 {
 
    private String _hql;
-   private TreeMap<String, Date> _datesByParamName = new TreeMap<String, Date>();
+   private TreeMap<String, Date> _datesByParamName = new TreeMap<>();
    private TemporalData[] _temporalDatas = new TemporalData[]{new TimeStampData(), new DateData(), new TimeData()};
 
 

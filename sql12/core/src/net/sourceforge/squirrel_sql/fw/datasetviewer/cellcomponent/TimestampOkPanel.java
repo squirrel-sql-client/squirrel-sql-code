@@ -1,8 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
 import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
 
 import javax.swing.BorderFactory;
@@ -28,47 +30,48 @@ class TimestampOkPanel extends OkJPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataTypeTimestamp.class);
 
+   private Timestamp _currentTimeStamp = new Timestamp(new java.util.Date().getTime());
 
-   private Timestamp currentTimeStamp = new Timestamp(new java.util.Date().getTime());
+   private JRadioButton _radUseJavaDefaultFormat = new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.defaultFormat") + "(" + _currentTimeStamp + ")");
 
-   private JRadioButton useJavaDefaultFormatRad = new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.defaultFormat") + "(" + currentTimeStamp + ")");
+   private JCheckBox _useThreeDigitMillisChk = new JCheckBox(s_stringMgr.getString("dateTypeTimestamp.useThreeDigitMillis") + "(" + createThreeDigitMillisExample() + ")");
 
-   private JCheckBox useThreeDigitMillisChk= new JCheckBox(s_stringMgr.getString("dateTypeTimestamp.useThreeDigitMillis") + "(" + createThreeDigitMillisExample() + ")");
+   private JRadioButton _radUseLocaleDependentFormat = new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.orLocaleDependent"));
 
-   private JRadioButton useLocaleDependentFormatRad = new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.orLocaleDependent"));
+   private final ButtonGroup _formatButtonGroup;
 
-   private final ButtonGroup formatButtonGroup;
-
-   private DateFormatTypeCombo dateFormatTypeCbo = new DateFormatTypeCombo();
+   private DateFormatTypeCombo _dateFormatTypeCbo = new DateFormatTypeCombo();
 
    // checkbox for whether to interpret input leniently or not
    // i18n[dateTypeTimestamp.allowInexact=allow inexact format on input]
-   private JCheckBox lenientChk = new JCheckBox(s_stringMgr.getString("dateTypeTimestamp.allowInexact"));
+   private JCheckBox _lenientChk = new JCheckBox(s_stringMgr.getString("dateTypeTimestamp.allowInexact"));
 
    // Objects needed to handle radio buttons
-   private JRadioButton doNotUseButton = new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.timestampInWhere"));
+   private JRadioButton _radInternalWhereDoNotUse = new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.timestampInWhere"));
 
-   // i18n[dateTypeTimestamp.jdbcEscape=Use JDBC standard escape format ]
-   String jdbcEscapeMsg = s_stringMgr.getString("dateTypeTimestamp.jdbcEscape");
+   private String _internalWhereEscapeMsg = s_stringMgr.getString("dateTypeTimestamp.jdbcEscape");
 
-   private JRadioButton useTimestampFormatButton = new JRadioButton(jdbcEscapeMsg + "( \"{ts '" + currentTimeStamp + "'}\")");
+   private JRadioButton _radInternalWhereUseTimestampFormat = new JRadioButton(_internalWhereEscapeMsg + "( \"" + TemporalUtils.getStdJDBCFormat(_currentTimeStamp) + "\")");
 
-   // i18n[dateTypeTimestamp.stringVersion=Use String version of Timestamp ]
-   String stringVersionMsg = s_stringMgr.getString("dateTypeTimestamp.stringVersion");
+   private String _stringVersionMsg = s_stringMgr.getString("dateTypeTimestamp.stringVersion");
 
-   private JRadioButton useStringFormatButton = new JRadioButton(stringVersionMsg + "('" + currentTimeStamp + "')");
+   private JRadioButton _radInternalWhereUseStringFormat = new JRadioButton(_stringVersionMsg + "(\"" + TemporalUtils.getStringFormat(_currentTimeStamp) + "\")");
 
-   // IMPORTANT: put the buttons into the array in same order as their
-   // associated values defined for whereClauseUsage.
-
-   private ButtonModel radioButtonModels[] =
+   /**
+    * IMPORTANT: put the buttons into the array in same order as their
+    * associated values defined for whereClauseUsage.
+    */
+   private ButtonModel _radioButtonModels[] =
          {
-            doNotUseButton.getModel(),
-            useTimestampFormatButton.getModel(),
-            useStringFormatButton.getModel()
+            _radInternalWhereDoNotUse.getModel(),
+            _radInternalWhereUseTimestampFormat.getModel(),
+            _radInternalWhereUseStringFormat.getModel()
          };
 
-   private ButtonGroup whereClauseUsageGroup = new ButtonGroup();
+   private ButtonGroup _btnGroupInternalWhereClauseUsage = new ButtonGroup();
+
+   private TemporalScriptGenerationCtrl _temporalScriptGenerationCtrl;
+
    private DataTypeTimestampStatics _dataTypeTimestampStatics;
 
 
@@ -76,49 +79,46 @@ class TimestampOkPanel extends OkJPanel
    {
       _dataTypeTimestampStatics = dataTypeTimestampStatics;
 
-      useJavaDefaultFormatRad.setSelected(_dataTypeTimestampStatics.isUseJavaDefaultFormat());
-      useLocaleDependentFormatRad.setSelected(false == _dataTypeTimestampStatics.isUseJavaDefaultFormat());
-      useThreeDigitMillisChk.setSelected(_dataTypeTimestampStatics.isUseThreeDigitMillis());
+      _radUseJavaDefaultFormat.setSelected(_dataTypeTimestampStatics.isUseJavaDefaultFormat());
+      _radUseLocaleDependentFormat.setSelected(false == _dataTypeTimestampStatics.isUseJavaDefaultFormat());
+      _useThreeDigitMillisChk.setSelected(_dataTypeTimestampStatics.isUseThreeDigitMillis());
 
-      formatButtonGroup = new ButtonGroup();
-      formatButtonGroup.add(useJavaDefaultFormatRad);
-      formatButtonGroup.add(useLocaleDependentFormatRad);
+      _formatButtonGroup = new ButtonGroup();
+      _formatButtonGroup.add(_radUseJavaDefaultFormat);
+      _formatButtonGroup.add(_radUseLocaleDependentFormat);
 
 
-      useJavaDefaultFormatRad.addActionListener(e -> onRadioButtonChanged());
-      useLocaleDependentFormatRad.addActionListener(e -> onRadioButtonChanged());
+      _radUseJavaDefaultFormat.addActionListener(e -> onRadioButtonChanged());
+      _radUseLocaleDependentFormat.addActionListener(e -> onRadioButtonChanged());
       onRadioButtonChanged();
 
 
       // Combo box for read-all/read-part of blob
-      dateFormatTypeCbo.setSelectedIndex(_dataTypeTimestampStatics.getLocaleFormat());
+      _dateFormatTypeCbo.setSelectedIndex(_dataTypeTimestampStatics.getLocaleFormat());
 
       // lenient checkbox
-      lenientChk.setSelected(_dataTypeTimestampStatics.isLenient());
+      _lenientChk.setSelected(_dataTypeTimestampStatics.isLenient());
 
       // where clause usage group
-      whereClauseUsageGroup.add(doNotUseButton);
-      whereClauseUsageGroup.add(useTimestampFormatButton);
-      whereClauseUsageGroup.add(useStringFormatButton);
-      whereClauseUsageGroup.setSelected(radioButtonModels[_dataTypeTimestampStatics.getWhereClauseUsage()], true);
+      _btnGroupInternalWhereClauseUsage.add(_radInternalWhereDoNotUse);
+      _btnGroupInternalWhereClauseUsage.add(_radInternalWhereUseTimestampFormat);
+      _btnGroupInternalWhereClauseUsage.add(_radInternalWhereUseStringFormat);
+      _btnGroupInternalWhereClauseUsage.setSelected(_radioButtonModels[_dataTypeTimestampStatics.getInternalWhereClauseUsage()], true);
 
+      _temporalScriptGenerationCtrl = new TemporalScriptGenerationCtrl(TemporalUtils.getStdJDBCFormat(_currentTimeStamp),
+                                                                       TemporalUtils.getStringFormat(_currentTimeStamp),
+                                                                       _dataTypeTimestampStatics.getTimestampScriptFormat());
 
-
-      /*
-       * Create the panel and add the GUI items to it
-       */
 
       layoutPanel();
-
-
    }
 
    private void onRadioButtonChanged()
    {
-      dateFormatTypeCbo.setEnabled(useLocaleDependentFormatRad.isSelected());
-      lenientChk.setEnabled(useLocaleDependentFormatRad.isSelected());
+      _dateFormatTypeCbo.setEnabled(_radUseLocaleDependentFormat.isSelected());
+      _lenientChk.setEnabled(_radUseLocaleDependentFormat.isSelected());
 
-      useThreeDigitMillisChk.setEnabled(useJavaDefaultFormatRad.isSelected());
+      _useThreeDigitMillisChk.setEnabled(_radUseJavaDefaultFormat.isSelected());
 
 //      dateFormatTypeDrop.setEnabled(!useJavaDefaultFormatRad.isSelected());
 //      lenientChk.setEnabled(!useJavaDefaultFormatRad.isSelected());
@@ -134,14 +134,24 @@ class TimestampOkPanel extends OkJPanel
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      add(createUseDefaultPanel(), gbc);
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,1,0,1), 0,0);
+      final JPanel useDefaultPanel = createUseDefaultPanel();
+      add(useDefaultPanel, gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0);
-      add(createLocaleDependentPanel(), gbc);
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,1,0,1), 0,0);
+      final JPanel localeDependentPanel = createLocaleDependentPanel();
+      add(localeDependentPanel, gbc);
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0);
-      add(createWhereClausePanel(), gbc);
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,1,1,1), 0,0);
+      final JPanel whereClausePanel = createWhereClausePanel();
+      add(whereClausePanel, gbc);
+
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,1,1,1), 0,0);
+      final JPanel scriptGenerationPanel = _temporalScriptGenerationCtrl.getPanel();;
+      add(scriptGenerationPanel, gbc);
+
+
+      GUIUtils.alignPreferredWidths(useDefaultPanel, localeDependentPanel, whereClausePanel, scriptGenerationPanel);
    }
 
    private JPanel createWhereClausePanel()
@@ -153,15 +163,16 @@ class TimestampOkPanel extends OkJPanel
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       ret.add(new JLabel(s_stringMgr.getString("dateTypeTimestamp.generateWhereClause")), gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
-      ret.add(doNotUseButton, gbc);
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,0), 0,0);
+      ret.add(_radInternalWhereDoNotUse, gbc);
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
-      ret.add(useTimestampFormatButton, gbc);
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,0), 0,0);
+      ret.add(_radInternalWhereUseTimestampFormat, gbc);
 
-      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
-      ret.add(useStringFormatButton, gbc);
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,0), 0,0);
+      ret.add(_radInternalWhereUseStringFormat, gbc);
 
+      ret.setBorder(BorderFactory.createEtchedBorder());
       return ret;
    }
 
@@ -172,13 +183,14 @@ class TimestampOkPanel extends OkJPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
-      ret.add(useLocaleDependentFormatRad, gbc);
+      ret.add(_radUseLocaleDependentFormat, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,3), 0,0);
-      ret.add(dateFormatTypeCbo, gbc);
+      GUIUtils.setPreferredWidth(_dateFormatTypeCbo, 250);
+      ret.add(_dateFormatTypeCbo, gbc);
 
       gbc = new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
-      ret.add(lenientChk, gbc);
+      ret.add(_lenientChk, gbc);
 
       ret.setBorder(BorderFactory.createEtchedBorder());
       return ret;
@@ -191,10 +203,10 @@ class TimestampOkPanel extends OkJPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      ret.add(useJavaDefaultFormatRad, gbc);
+      ret.add(_radUseJavaDefaultFormat, gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
-      ret.add(useThreeDigitMillisChk, gbc);
+      ret.add(_useThreeDigitMillisChk, gbc);
 
       ret.setBorder(BorderFactory.createEtchedBorder());
       return ret;
@@ -213,39 +225,40 @@ class TimestampOkPanel extends OkJPanel
    public void ok()
    {
       // get the values from the controls and set them in the static properties
-      _dataTypeTimestampStatics.setUseJavaDefaultFormat(useJavaDefaultFormatRad.isSelected());
+      _dataTypeTimestampStatics.setUseJavaDefaultFormat(_radUseJavaDefaultFormat.isSelected());
       DTProperties.put(DataTypeTimestamp.class.getName(), "useJavaDefaultFormat", Boolean.valueOf(_dataTypeTimestampStatics.isUseJavaDefaultFormat()).toString());
 
-      _dataTypeTimestampStatics.setUseThreeDigitMillis(useThreeDigitMillisChk.isSelected());
+      _dataTypeTimestampStatics.setUseThreeDigitMillis(_useThreeDigitMillisChk.isSelected());
       DTProperties.put(DataTypeTimestamp.class.getName(), "useThreeDigitMillis", Boolean.valueOf(_dataTypeTimestampStatics.isUseThreeDigitMillis()).toString());
 
 
-      _dataTypeTimestampStatics.setLocaleFormat(dateFormatTypeCbo.getValue());
+      _dataTypeTimestampStatics.setLocaleFormat(_dateFormatTypeCbo.getValue());
       DTProperties.put(DataTypeTimestamp.class.getName(), "localeFormat", Integer.toString(_dataTypeTimestampStatics.getLocaleFormat()));
 
-      _dataTypeTimestampStatics.setLenient(lenientChk.isSelected());
+      _dataTypeTimestampStatics.setLenient(_lenientChk.isSelected());
       DTProperties.put(DataTypeTimestamp.class.getName(), "lenient", Boolean.valueOf(_dataTypeTimestampStatics.isLenient()).toString());
 
       //WARNING: this depends on entries in ButtonGroup being in the same order
       // as the values for whereClauseUsage
       int buttonIndex;
-      for (buttonIndex = 0; buttonIndex < radioButtonModels.length; buttonIndex++)
+      for (buttonIndex = 0; buttonIndex < _radioButtonModels.length; buttonIndex++)
       {
-         if (whereClauseUsageGroup.isSelected(radioButtonModels[buttonIndex]))
+         if (_btnGroupInternalWhereClauseUsage.isSelected(_radioButtonModels[buttonIndex]))
          {
             break;
          }
       }
-      if (buttonIndex > radioButtonModels.length)
+      if (buttonIndex > _radioButtonModels.length)
       {
          buttonIndex = DataTypeTimestampStatics.USE_JDBC_ESCAPE_FORMAT;
       }
-      _dataTypeTimestampStatics.setWhereClauseUsage(buttonIndex);
-      DTProperties.put(DataTypeTimestamp.class.getName(), "whereClauseUsage", Integer.toString(_dataTypeTimestampStatics.getWhereClauseUsage()));
+      _dataTypeTimestampStatics.setInternalWhereClauseUsage(buttonIndex);
+      DTProperties.put(DataTypeTimestamp.class.getName(), "whereClauseUsage", Integer.toString(_dataTypeTimestampStatics.getInternalWhereClauseUsage()));
 
+      _dataTypeTimestampStatics.setTimestampScriptFormat(_temporalScriptGenerationCtrl.getFormat());
+      DTProperties.put(DataTypeTimestamp.class.getName(), "timestampScriptFormat", _dataTypeTimestampStatics.getTimestampScriptFormat().name());
 
       _dataTypeTimestampStatics.initDateFormat();
-
    }
 
    // Class that displays the various formats available for dates
@@ -307,7 +320,7 @@ class TimestampOkPanel extends OkJPanel
 
    private String createThreeDigitMillisExample()
    {
-      return new SimpleDateFormat(ThreadSafeDateFormat.DEFAULT_WITH_THREE_MILLI_DIGITS).format(millisTo0(currentTimeStamp));
+      return new SimpleDateFormat(ThreadSafeDateFormat.DEFAULT_WITH_THREE_MILLI_DIGITS).format(millisTo0(_currentTimeStamp));
    }
 
 }

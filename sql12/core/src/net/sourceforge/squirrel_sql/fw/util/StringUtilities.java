@@ -17,10 +17,11 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 /**
  * String handling utilities.
  * 
@@ -420,5 +421,17 @@ public class StringUtilities
       }
 
       return text.replaceAll("\r","");
+   }
+
+   public static String prefixNulls(int toPrefix, int digitCount)
+   {
+      String ret = "" + toPrefix;
+
+      while (ret.length() < digitCount)
+      {
+         ret = 0 + ret;
+      }
+
+      return ret;
    }
 }

@@ -406,7 +406,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			new TableCopyInStatementCommand(_dataSetViewerTablePanel.getTable()).execute();
+			new TableCopyInStatementCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
 		}
 	}
 
@@ -419,7 +419,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			new TableCopyWhereStatementCommand(_dataSetViewerTablePanel.getTable()).execute();
+			new TableCopyWhereStatementCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
 		}
 	}
 

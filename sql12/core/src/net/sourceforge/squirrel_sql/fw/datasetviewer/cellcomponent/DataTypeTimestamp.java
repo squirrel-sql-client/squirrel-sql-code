@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -49,6 +50,7 @@ import java.io.OutputStreamWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.text.DateFormat;
 
 /**
@@ -173,15 +175,30 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
       }
 
       // how to use Timestamp in WHERE clauses
-      _dataTypeTimestampStatics.setWhereClauseUsage(DataTypeTimestampStatics.USE_JDBC_ESCAPE_FORMAT);   // default to SQL standard
+      _dataTypeTimestampStatics.setInternalWhereClauseUsage(DataTypeTimestampStatics.USE_JDBC_ESCAPE_FORMAT);   // default to SQL standard
       String whereClauseUsageString = DTProperties.get(DataTypeTimestamp.class.getName(), "whereClauseUsage");
       if (whereClauseUsageString != null)
       {
-         _dataTypeTimestampStatics.setWhereClauseUsage(Integer.parseInt(whereClauseUsageString));
+         _dataTypeTimestampStatics.setInternalWhereClauseUsage(Integer.parseInt(whereClauseUsageString));
       }
+
+      _dataTypeTimestampStatics.setTimestampScriptFormat(getTimeStampScriptFormat());
 
       _dataTypeTimestampStatics.initDateFormat();
 
+   }
+
+   public static TemporalScriptGenerationFormat getTimeStampScriptFormat()
+   {
+      TemporalScriptGenerationFormat ret = TemporalScriptGenerationFormat.STD_JDBC_FORMAT;
+      final String formatName = DTProperties.get(DataTypeTimestamp.class.getName(), "timestampScriptFormat");
+      if(false == StringUtilities.isEmpty(formatName, true))
+      {
+         final TemporalScriptGenerationFormat timestampScriptFormat = TemporalScriptGenerationFormat.valueOf(formatName);
+         ret = timestampScriptFormat;
+      }
+
+      return ret;
    }
 
    /**
@@ -505,17 +522,19 @@ public class DataTypeTimestamp extends BaseDataTypeComponent implements IDataTyp
     */
    public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
    {
-      if (_dataTypeTimestampStatics.getWhereClauseUsage() == DataTypeTimestampStatics.DO_NOT_USE)
+      if (_dataTypeTimestampStatics.getInternalWhereClauseUsage() == DataTypeTimestampStatics.DO_NOT_USE)
       {
          return new EmptyWhereClausePart();
       }
+
       if (value == null || value.toString() == null || value.toString().length() == 0)
       {
          return new IsNullWhereClausePart(_colDef);
       }
-      else if (_dataTypeTimestampStatics.getWhereClauseUsage() == DataTypeTimestampStatics.USE_JDBC_ESCAPE_FORMAT)
+      else if (_dataTypeTimestampStatics.getInternalWhereClauseUsage() == DataTypeTimestampStatics.USE_JDBC_ESCAPE_FORMAT)
       {
-         return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={ts '" + value.toString() + "'}");
+         //return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={ts '" + value.toString() + "'}");
+         return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + " = " + TemporalUtils.getStdJDBCFormat((java.util.Date) value, Types.TIMESTAMP));
       }
       else
       {

@@ -31,8 +31,10 @@ public class DataTypeTimestampStatics
 
    // Define whether or not to use Timestamp in internally generated WHERE
    // clauses, and if so what format to use.
-   private int whereClauseUsage = USE_JDBC_ESCAPE_FORMAT;
+   private int internalWhereClauseUsage = USE_JDBC_ESCAPE_FORMAT;
    private boolean _useThreeDigitMillis;
+
+   private TemporalScriptGenerationFormat _timestampScriptFormat;
 
 
    public boolean isUseJavaDefaultFormat()
@@ -91,14 +93,14 @@ public class DataTypeTimestampStatics
    }
 
 
-   public int getWhereClauseUsage()
+   public int getInternalWhereClauseUsage()
    {
-      return whereClauseUsage;
+      return internalWhereClauseUsage;
    }
 
-   public void setWhereClauseUsage(int whereClauseUsage)
+   public void setInternalWhereClauseUsage(int internalWhereClauseUsage)
    {
-      this.whereClauseUsage = whereClauseUsage;
+      this.internalWhereClauseUsage = internalWhereClauseUsage;
    }
 
    public boolean isUseThreeDigitMillis()
@@ -109,5 +111,15 @@ public class DataTypeTimestampStatics
    public void setUseThreeDigitMillis(boolean useThreeDigitMillis)
    {
       _useThreeDigitMillis = useThreeDigitMillis;
+   }
+
+   public TemporalScriptGenerationFormat getTimestampScriptFormat()
+   {
+      return _timestampScriptFormat;
+   }
+
+   public void setTimestampScriptFormat(TemporalScriptGenerationFormat timestampScriptFormat)
+   {
+      _timestampScriptFormat = timestampScriptFormat;
    }
 }

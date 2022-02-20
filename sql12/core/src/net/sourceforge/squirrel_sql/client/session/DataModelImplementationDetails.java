@@ -80,4 +80,9 @@ public class DataModelImplementationDetails
    {
       return _exInfo;
    }
+
+   public ISession getSession()
+   {
+      return _session;
+   }
 }
