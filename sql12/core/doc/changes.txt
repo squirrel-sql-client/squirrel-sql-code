@@ -129,6 +129,9 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Logs viewer raised StringIndexOutOfBoundsException if not all log levels where checked.
+  See menu Windows --> View SQuirreL logs or button in status bar.
+
 Logging (after dropping dependency on log4j): Sometimes exceptions weren't logged with stacktrace.
 
 #1497 When table-editing columns of type NUMERIC OR DECIMAL SQuirreL tried to validate if the edited number's
