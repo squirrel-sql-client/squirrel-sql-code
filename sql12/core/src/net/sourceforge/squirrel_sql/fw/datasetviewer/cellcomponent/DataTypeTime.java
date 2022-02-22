@@ -18,32 +18,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
-import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.JTextComponent;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -61,6 +35,34 @@ import java.sql.Time;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.util.Date;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
+import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * @author gwg
@@ -795,10 +797,10 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
              new JCheckBox(s_stringMgr.getString("dataTypeTime.useDefaultFormat", new Time(new java.util.Date().getTime()).toString()));
 
        // label for the date format combo, used to enable/disable text
-       private RightLabel dateFormatTypeDropLabel = new RightLabel(s_stringMgr.getString("dataTypeTime.useDefaultFormat2"));
+       private RightLabel timeFormatTypeDropLabel = new RightLabel(s_stringMgr.getString("dataTypeTime.useDefaultFormat2"));
 
        // Combo box for read-all/read-part of blob
-       private DateFormatTypeCombo dateFormatTypeDrop = new DateFormatTypeCombo();
+       private DateFormatTypeCombo timeFormatTypeDrop = new DateFormatTypeCombo();
 
        // checkbox for whether to interpret input leniently or not
        private JCheckBox lenientChk = new JCheckBox(s_stringMgr.getString("dataTypeTime.inexact"));
@@ -815,22 +817,22 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
           {
              public void stateChanged(ChangeEvent e)
              {
-                dateFormatTypeDrop.setEnabled(! useJavaDefaultFormatChk.isSelected());
-                dateFormatTypeDropLabel.setEnabled(! useJavaDefaultFormatChk.isSelected());
+                timeFormatTypeDrop.setEnabled(! useJavaDefaultFormatChk.isSelected());
+                timeFormatTypeDropLabel.setEnabled(! useJavaDefaultFormatChk.isSelected());
                 lenientChk.setEnabled(! useJavaDefaultFormatChk.isSelected());
              }
           });
 
           // Combo box for read-all/read-part of blob
-          dateFormatTypeDrop = new DateFormatTypeCombo();
-          dateFormatTypeDrop.setSelectedIndex(localeFormat);
+          timeFormatTypeDrop = new DateFormatTypeCombo();
+          timeFormatTypeDrop.setSelectedIndex(localeFormat);
 
           // lenient checkbox
           lenientChk.setSelected(lenient);
 
           // handle cross-connection between fields
-          dateFormatTypeDrop.setEnabled(! useJavaDefaultFormatChk.isSelected());
-          dateFormatTypeDropLabel.setEnabled(! useJavaDefaultFormatChk.isSelected());
+          timeFormatTypeDrop.setEnabled(! useJavaDefaultFormatChk.isSelected());
+          timeFormatTypeDropLabel.setEnabled(! useJavaDefaultFormatChk.isSelected());
           lenientChk.setEnabled(! useJavaDefaultFormatChk.isSelected());
 
           final java.sql.Time currentSqlTime = new java.sql.Time(new java.util.Date().getTime());
@@ -847,33 +849,43 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
        {
           setLayout(new GridBagLayout());
 
+          GridBagConstraints gbc;
+
+          gbc = new GridBagConstraints(0,0,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
+          JPanel formatPanel = createFormatPanel();
+          add(formatPanel, gbc);
+
+          gbc = new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,5,0), 0,0);
+          TemporalScriptGenerationPanel scriptPanel = _temporalScriptGenerationCtrl.getPanel();
+          add(scriptPanel, gbc);
+
+          GUIUtils.alignPreferredWidths(formatPanel, scriptPanel);
+
           setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dataTypeTime.typeTime")));
-          final GridBagConstraints gbc = new GridBagConstraints();
-          gbc.fill = GridBagConstraints.HORIZONTAL;
-          gbc.insets = new Insets(4, 4, 4, 4);
-          gbc.anchor = GridBagConstraints.WEST;
 
-          gbc.gridx = 0;
-          gbc.gridy = 0;
+       }
 
-          gbc.gridwidth = GridBagConstraints.REMAINDER;
-          add(useJavaDefaultFormatChk, gbc);
+       private JPanel createFormatPanel()
+       {
+          JPanel ret = new JPanel(new GridBagLayout());
 
-          gbc.gridwidth = 1;
-          gbc.gridx = 0;
-          ++gbc.gridy;
-          add(dateFormatTypeDropLabel, gbc);
+          GridBagConstraints gbc;
 
-          ++gbc.gridx;
-          add(dateFormatTypeDrop, gbc);
+          gbc = new GridBagConstraints(0,0,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0);
+          ret.add(useJavaDefaultFormatChk, gbc);
 
-          gbc.gridx = 0;
-          ++gbc.gridy;
-          add(lenientChk, gbc);
+          gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,20,0,0), 0,0);
+          ret.add(timeFormatTypeDropLabel, gbc);
 
-          gbc.gridx = 0;
-          ++gbc.gridy;
-          add(_temporalScriptGenerationCtrl.getPanel(), gbc);
+          gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0);
+          ret.add(timeFormatTypeDrop, gbc);
+
+          gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0);
+          ret.add(lenientChk, gbc);
+
+          ret.setBorder(BorderFactory.createEtchedBorder());
+
+          return ret;
        }
 
 
@@ -888,7 +900,7 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
           DTProperties.put(thisClassName, PROP_USE_JAVA_DEFAULT_FORMAT, Boolean.valueOf(useJavaDefaultFormat).toString());
 
 
-          localeFormat = dateFormatTypeDrop.getValue();
+          localeFormat = timeFormatTypeDrop.getValue();
           dateFormat = new ThreadSafeDateFormat(localeFormat, true);   // lenient is set next
           DTProperties.put(thisClassName, PROP_LOCALE_FORMAT, Integer.toString(localeFormat));
 

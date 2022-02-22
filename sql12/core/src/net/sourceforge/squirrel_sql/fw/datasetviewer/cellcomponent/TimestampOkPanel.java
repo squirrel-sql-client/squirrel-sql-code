@@ -1,12 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
-import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
-
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
@@ -15,12 +14,13 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
+import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
 
 /**
  * Inner class that extends OkJPanel so that we can call the ok()
@@ -127,7 +127,6 @@ class TimestampOkPanel extends OkJPanel
 
    private void layoutPanel()
    {
-      // i18n[dateTypeTimestamp.typeTimestamp=Timestamp   (SQL type 93)]
       setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dateTypeTimestamp.typeTimestamp")));
 
       setLayout(new GridBagLayout());
@@ -135,78 +134,69 @@ class TimestampOkPanel extends OkJPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,1,0,1), 0,0);
-      final JPanel useDefaultPanel = createUseDefaultPanel();
+      final JPanel useDefaultPanel = createFormatPanel();
       add(useDefaultPanel, gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,1,0,1), 0,0);
-      final JPanel localeDependentPanel = createLocaleDependentPanel();
-      add(localeDependentPanel, gbc);
-
-      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,1,1,1), 0,0);
-      final JPanel whereClausePanel = createWhereClausePanel();
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,1,1,1), 0,0);
+      final JPanel whereClausePanel = createInternalWhereClausePanel();
       add(whereClausePanel, gbc);
 
-      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,1,1,1), 0,0);
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,1,1,1), 0,0);
       final JPanel scriptGenerationPanel = _temporalScriptGenerationCtrl.getPanel();;
       add(scriptGenerationPanel, gbc);
 
-
-      GUIUtils.alignPreferredWidths(useDefaultPanel, localeDependentPanel, whereClausePanel, scriptGenerationPanel);
+      GUIUtils.alignPreferredWidths(useDefaultPanel, whereClausePanel, scriptGenerationPanel);
    }
 
-   private JPanel createWhereClausePanel()
+   private JPanel createInternalWhereClausePanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,0), 0,0);
       ret.add(new JLabel(s_stringMgr.getString("dateTypeTimestamp.generateWhereClause")), gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,0), 0,0);
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,8,0,0), 0,0);
       ret.add(_radInternalWhereDoNotUse, gbc);
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,0), 0,0);
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,8,0,0), 0,0);
       ret.add(_radInternalWhereUseTimestampFormat, gbc);
 
-      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,0), 0,0);
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,8,0,0), 0,0);
       ret.add(_radInternalWhereUseStringFormat, gbc);
+
+
+      // dist
+      gbc = new GridBagConstraints(1,4,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(new JPanel(), gbc);
 
       ret.setBorder(BorderFactory.createEtchedBorder());
       return ret;
    }
 
-   private JPanel createLocaleDependentPanel()
+   private JPanel createFormatPanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
+      gbc = new GridBagConstraints(0,0,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(_radUseJavaDefaultFormat, gbc);
+
+      gbc = new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,20,0,0), 0,0);
+      ret.add(_useThreeDigitMillisChk, gbc);
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15,0,0,0), 0,0);
       ret.add(_radUseLocaleDependentFormat, gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,3), 0,0);
+      gbc = new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15,5,0,3), 0,0);
       GUIUtils.setPreferredWidth(_dateFormatTypeCbo, 250);
       ret.add(_dateFormatTypeCbo, gbc);
 
-      gbc = new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
+      gbc = new GridBagConstraints(0,3,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,20,0,0), 0,0);
       ret.add(_lenientChk, gbc);
 
-      ret.setBorder(BorderFactory.createEtchedBorder());
-      return ret;
-   }
-
-   private JPanel createUseDefaultPanel()
-   {
-      JPanel ret = new JPanel(new GridBagLayout());
-
-      GridBagConstraints gbc;
-
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      ret.add(_radUseJavaDefaultFormat, gbc);
-
-      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,0,0,0), 0,0);
-      ret.add(_useThreeDigitMillisChk, gbc);
 
       ret.setBorder(BorderFactory.createEtchedBorder());
       return ret;

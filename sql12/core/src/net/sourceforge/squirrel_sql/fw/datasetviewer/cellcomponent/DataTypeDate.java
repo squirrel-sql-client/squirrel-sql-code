@@ -18,33 +18,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
-import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.JTextComponent;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -61,6 +34,35 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.text.DateFormat;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.TemporalUtils;
+import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * @author gwg
@@ -905,43 +907,45 @@ public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComp
 
 		 private void layoutPanel()
 		 {
-			 /*
-			  * Create the panel and add the GUI items to it
-			  */
 			 setLayout(new GridBagLayout());
+			 GridBagConstraints gbc;
 
-			 // i18n[dataTypeDate.typeDate=Date   (SQL type 91)]
+			 gbc = new GridBagConstraints(0,0,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
+			 JPanel formatPanel = createFormatPanel();
+			 add(formatPanel, gbc);
+
+			 gbc = new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,5,0), 0,0);
+			 TemporalScriptGenerationPanel scriptGenerationCtrlPanel = _temporalScriptGenerationCtrl.getPanel();
+			 add(scriptGenerationCtrlPanel, gbc);
+
+			 GUIUtils.alignPreferredWidths(formatPanel, scriptGenerationCtrlPanel);
+
 			 setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dataTypeDate.typeDate")));
-			 final GridBagConstraints gbc = new GridBagConstraints();
-			 gbc.fill = GridBagConstraints.HORIZONTAL;
-			 gbc.insets = new Insets(4, 4, 4, 4);
-			 gbc.anchor = GridBagConstraints.WEST;
+		 }
 
-			 gbc.gridx = 0;
-			 gbc.gridy = 0;
+		 private JPanel createFormatPanel()
+		 {
+			 JPanel ret = new JPanel(new GridBagLayout());
+			 GridBagConstraints gbc;
 
-			 gbc.gridwidth = GridBagConstraints.REMAINDER;
-			 add(useJavaDefaultFormatChk, gbc);
+			 gbc = new GridBagConstraints(0,0,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0);
+			 ret.add(useJavaDefaultFormatChk, gbc);
 
-			 gbc.gridwidth = 1;
-			 gbc.gridx = 0;
-			 ++gbc.gridy;
-			 add(dateFormatTypeDropLabel, gbc);
+			 gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,20,0,0), 0,0);
+			 ret.add(dateFormatTypeDropLabel, gbc);
 
-			 ++gbc.gridx;
-			 add(dateFormatTypeDrop, gbc);
+			 gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0);
+			 ret.add(dateFormatTypeDrop, gbc);
 
-			 gbc.gridx = 0;
-			 ++gbc.gridy;
-			 add(lenientChk, gbc);
+			 gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0);
+			 ret.add(lenientChk, gbc);
 
-			 gbc.gridx = 0;
-			 ++gbc.gridy;
-			 add(readdDateAsTimestampChk, gbc);
+			 gbc = new GridBagConstraints(0,3,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,3,0,3), 0,0);
+			 ret.add(readdDateAsTimestampChk, gbc);
 
-			 gbc.gridx = 0;
-			 ++gbc.gridy;
-			 add(_temporalScriptGenerationCtrl.getPanel(), gbc);
+			 ret.setBorder(BorderFactory.createEtchedBorder());
+
+			 return ret;
 		 }
 
 
