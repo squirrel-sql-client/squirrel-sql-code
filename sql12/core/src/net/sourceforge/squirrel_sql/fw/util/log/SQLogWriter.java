@@ -1,9 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.util.log;
 
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,6 +10,10 @@ import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 public class SQLogWriter
 {
    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
@@ -21,7 +21,7 @@ public class SQLogWriter
    private File _executionLogFile;
    private ExecutorService _executorService;
 
-   private long logCount;
+   private long _lastSizeCheckMillis = 0;
 
    public SQLogWriter()
    {
@@ -53,13 +53,14 @@ public class SQLogWriter
 
    private void writeLogEntry(Class clazz, SQLogLevel level, Object message, Throwable th)
    {
+      Date now = new Date();
       String logEntry = String.format("%s [%s] %s  %s  - %s\n%s",
-                                            SIMPLE_DATE_FORMAT.format(new Date()),
-                                            Thread.currentThread().getName(),
-                                            level.name(),
-                                            getClassName(clazz),
-                                            getMessage(message),
-                                            Utilities.getStackTrace(th));
+                                      SIMPLE_DATE_FORMAT.format(now),
+                                      Thread.currentThread().getName(),
+                                      level.name(),
+                                      getClassName(clazz),
+                                      getMessage(message),
+                                      Utilities.getStackTrace(th));
 
       // Just to see all logs are written by the same thread.
       // logEntry = Thread.currentThread().getId() + "  " + Thread.currentThread().getName() + " #### " + logEntry;
@@ -67,10 +68,17 @@ public class SQLogWriter
 
       try
       {
-         ++logCount;
-         if(0 == logCount % 100 && 1048576L <= _executionLogFile.length())
+         if( 0 == _lastSizeCheckMillis )
          {
-            Files.move(_executionLogFile.toPath(), Paths.get(_executionLogFile.getAbsolutePath() + "_old"), StandardCopyOption.REPLACE_EXISTING);
+            _lastSizeCheckMillis = now.getTime();
+         }
+         else if( now.getTime() - _lastSizeCheckMillis > 10000)
+         {
+            _lastSizeCheckMillis = now.getTime();
+            if( 1048576L <= _executionLogFile.length() )
+            {
+               Files.move(_executionLogFile.toPath(), Paths.get(_executionLogFile.getAbsolutePath() + "_old"), StandardCopyOption.REPLACE_EXISTING);
+            }
          }
 
          Files.write(
