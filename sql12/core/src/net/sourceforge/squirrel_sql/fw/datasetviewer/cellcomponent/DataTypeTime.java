@@ -880,7 +880,7 @@ public class DataTypeTime extends BaseDataTypeComponent implements IDataTypeComp
           gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0);
           ret.add(timeFormatTypeDrop, gbc);
 
-          gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0);
+          gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,20,0,3), 0,0);
           ret.add(lenientChk, gbc);
 
           ret.setBorder(BorderFactory.createEtchedBorder());

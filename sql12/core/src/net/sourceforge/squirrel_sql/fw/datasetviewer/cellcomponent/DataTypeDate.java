@@ -937,10 +937,10 @@ public class DataTypeDate extends BaseDataTypeComponent implements IDataTypeComp
 			 gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0);
 			 ret.add(dateFormatTypeDrop, gbc);
 
-			 gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,3,0,3), 0,0);
+			 gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,20,0,3), 0,0);
 			 ret.add(lenientChk, gbc);
 
-			 gbc = new GridBagConstraints(0,3,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,3,0,3), 0,0);
+			 gbc = new GridBagConstraints(0,3,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,3,0,3), 0,0);
 			 ret.add(readdDateAsTimestampChk, gbc);
 
 			 ret.setBorder(BorderFactory.createEtchedBorder());
