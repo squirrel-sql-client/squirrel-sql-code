@@ -129,6 +129,9 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+SQL editor: Function "Go to last edit location" (ctrl+shift+backspace) didn't work
+  when the last edit was a paste action.
+
 Corrected layout for temporal data types (TIMESTAMP, DATE, TIME) configuration UIs.
   See menu File --> Global Preferences --> tab Data Type Controls --> sections Timestamp, Date, Time
 
