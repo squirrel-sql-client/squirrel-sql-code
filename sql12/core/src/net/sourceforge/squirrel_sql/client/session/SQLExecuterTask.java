@@ -181,7 +181,7 @@ public class SQLExecuterTask implements Runnable
             ++processedStatementCount;
             if (_handler != null)
             {
-               _handler.sqlToBeExecuted(querySql.getQuery());
+               _handler.sqlToBeExecuted(querySql);
             }
 
             _currentStatementWrapper = new StatementWrapper(conn.createStatement(), _session);

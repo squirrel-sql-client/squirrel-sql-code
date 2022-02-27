@@ -12,7 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import java.awt.Frame;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class CreateTableOfCurrentSQLDialog extends JDialog
 {
@@ -27,47 +29,50 @@ public class CreateTableOfCurrentSQLDialog extends JDialog
 
 	public CreateTableOfCurrentSQLDialog(Frame parentFrame)
 	{
-		// i18n[sqlscript.dlgCreatTableOfSql=Create table of SQL]
 		super(parentFrame, s_stringMgr.getString("sqlscript.dlgCreatTableOfSql"), true);
 
-		getContentPane().setLayout(new GridLayout(5,1,5,0));
+		getContentPane().setLayout(new GridBagLayout());
 
-		// i18n[sqlscript.enterNameOfTable=Enter name of table:]
-		getContentPane().add(new JLabel(s_stringMgr.getString("sqlscript.enterNameOfTable")));
+		GridBagConstraints gbc;
 
+		gbc =  new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0);
+		getContentPane().add(new JLabel(s_stringMgr.getString("sqlscript.enterNameOfTable")), gbc);
+
+		gbc =  new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0);
 		txtTableName = new JTextField();
-		getContentPane().add(txtTableName);
+		getContentPane().add(txtTableName, gbc);
 
-		// i18n[sqlscript.dropIfExists=Drop table if exists]
+		gbc =  new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0);
 		chkDropTable = new JCheckBox(s_stringMgr.getString("sqlscript.dropIfExists"));
-		getContentPane().add(chkDropTable);
+		getContentPane().add(chkDropTable, gbc);
 
-		// i18n[sqlscript.scriptOnly=Generate script only]
+		gbc =  new GridBagConstraints(0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0);
 		chkScriptOnly = new JCheckBox(s_stringMgr.getString("sqlscript.scriptOnly"));
-		getContentPane().add(chkScriptOnly);
+		getContentPane().add(chkScriptOnly, gbc);
 
-		JPanel pnlButtons = new JPanel();
-		pnlButtons.setLayout(new GridLayout(1,2,0,5));
-
-		// i18n[sqlscript.tableScriptOk=OK]
-		btnOK = new JButton(s_stringMgr.getString("sqlscript.tableScriptOk"));
-		pnlButtons.add(btnOK);
-		// i18n[sqlscript.tableScriptCancel=Cancel]
-		btnCancel = new JButton(s_stringMgr.getString("sqlscript.tableScriptCancel"));
-		pnlButtons.add(btnCancel);
-
-		getContentPane().add(pnlButtons);
+		gbc =  new GridBagConstraints(0, 4, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0);
+		getContentPane().add(createButtonsPanel(), gbc);
 		
 		getRootPane().setDefaultButton(btnOK);
 
       GUIUtils.enableCloseByEscape(this);
 
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            txtTableName.requestFocus();
-         }
-      });
+      SwingUtilities.invokeLater(() -> txtTableName.requestFocus());
    }
+
+	private JPanel createButtonsPanel()
+	{
+		GridBagConstraints gbc;
+		JPanel pnlButtons = new JPanel();
+		pnlButtons.setLayout(new GridBagLayout());
+
+		gbc =  new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+		btnOK = new JButton(s_stringMgr.getString("sqlscript.tableScriptOk"));
+		pnlButtons.add(btnOK, gbc);
+
+		gbc =  new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0);
+		btnCancel = new JButton(s_stringMgr.getString("sqlscript.tableScriptCancel"));
+		pnlButtons.add(btnCancel, gbc);
+		return pnlButtons;
+	}
 }

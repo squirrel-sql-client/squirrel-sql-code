@@ -1,13 +1,22 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class CancelPanel extends JPanel
 {
@@ -21,6 +30,8 @@ public class CancelPanel extends JPanel
    JTextField txtNumberOfRowsRead;
    JCheckBox chkPlaySoundWhenFinished;
    JButton btnConfigureFinishedSound;
+   JButton btnCopySqlToClip;
+   JButton btnShowExecutingSql;
 
 
    public CancelPanel(ISession session)
@@ -51,54 +62,65 @@ public class CancelPanel extends JPanel
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
-      // i18n[SQLResultExecuterPanel.cancelButtonLabel=Cancel]
-      String label = s_stringMgr.getString("SQLResultExecuterPanel.cancelButtonLabel");
-      cancelBtn = new JButton(label);
+      cancelBtn = new JButton(s_stringMgr.getString("SQLResultExecuterPanel.cancelButtonLabel"));
 
-      GridBagConstraints gbc = new GridBagConstraints();
+      GridBagConstraints gbc;
 
-      gbc.anchor = GridBagConstraints.WEST;
-      gbc.insets = new Insets(5, 10, 5, 10);
+      gbc =  new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15, 10, 5, 10),0,0);
+      ret.add(createSQLLabelWithButtons(), gbc);
 
-      gbc.gridx = 0;
-      gbc.gridy = 0;
-
-      // i18n[SQLResultExecuterPanel.sqlLabel=SQL:]
-      label = s_stringMgr.getString("SQLResultExecuterPanel.sqlLabel");
-      ret.add(new JLabel(label), gbc);
-
-      gbc.weightx = 1;
-      ++gbc.gridx;
+      gbc =  new GridBagConstraints(1,0,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 10, 0, 10),0,0);
       ret.add(sqlLbl, gbc);
 
-      gbc.weightx = 0;
-      gbc.gridx = 0;
-      ++gbc.gridy;
-      // i18n[SQLResultExecuterPanel.statusLabel=Status:]
-      label = s_stringMgr.getString("SQLResultExecuterPanel.statusLabel");
-      ret.add(new JLabel(label), gbc);
 
-      ++gbc.gridx;
+      gbc =  new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 10, 0, 10),0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SQLResultExecuterPanel.statusLabel")), gbc);
+
+      gbc =  new GridBagConstraints(1,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 10, 0, 10),0,0);
       ret.add(currentStatusLbl, gbc);
 
-      gbc.gridx = 0;
-      ++gbc.gridy;
-      gbc.fill = GridBagConstraints.NONE;
+
+
+      gbc =  new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 10, 0, 10),0,0);
       ret.add(cancelBtn, gbc);
 
-      gbc.gridx = 0;
-      ++gbc.gridy;
-      gbc.fill = GridBagConstraints.NONE;
-      gbc.insets = new Insets(30, gbc.insets.left, gbc.insets.bottom, gbc.insets.right);
-      gbc.gridwidth = 2;
+
+      gbc =  new GridBagConstraints(0,3,2,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(30, 10, 0, 10),0,0);
       ret.add(createExecutionTimePanel(), gbc);
 
-      gbc.gridx = 0;
-      ++gbc.gridy;
-      gbc.fill = GridBagConstraints.NONE;
-      gbc.insets = new Insets(30, gbc.insets.left, gbc.insets.bottom, gbc.insets.right);
-      gbc.gridwidth = 2;
+
+      gbc =  new GridBagConstraints(0,4,2,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(30, 10, 0, 10),0,0);
       ret.add(createNotificationPanel(), gbc);
+
+      // dist
+      gbc =  new GridBagConstraints(0,5,2,1,0,1, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0),0,0);
+      ret.add(new JPanel(), gbc);
+
+      return ret;
+   }
+
+   private JPanel createSQLLabelWithButtons()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,2,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 1, 0),0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SQLResultExecuterPanel.sqlLabel")), gbc);
+
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0),0,0);
+      btnCopySqlToClip = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.COPY_SQL));
+      btnCopySqlToClip.setToolTipText(s_stringMgr.getString("SQLResultExecuterPanel.copy.executing.sql.to.clipboard"));
+
+      ret.add(GUIUtils.styleAsToolbarButton(btnCopySqlToClip), gbc);
+
+      gbc = new GridBagConstraints(1,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 1, 0, 0),0,0);
+      btnShowExecutingSql = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SQL));
+      btnShowExecutingSql.setToolTipText(s_stringMgr.getString("SQLResultExecuterPanel.show.executing.sql"));
+      ret.add(GUIUtils.styleAsToolbarButton(btnShowExecutingSql), gbc);
+
+
       return ret;
    }
 

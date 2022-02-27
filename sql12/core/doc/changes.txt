@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+SQL execution progress panel now offers to view the SQL being executed and to copy it to clipboard.
+
 Scripting of the data types TIMESTAMP, DATE, TIME can now be chosen to use the standard JDBC format,
   e.g. {ts '2022-02-20 22:41:47'}, or a string version, e.g. '2022-02-20 22:41:47'.
   The format can be chosen at menu File --> Global Preferences --> tab Data Type Controls

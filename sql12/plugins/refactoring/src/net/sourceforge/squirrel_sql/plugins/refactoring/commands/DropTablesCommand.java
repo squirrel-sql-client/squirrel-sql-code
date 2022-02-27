@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
+import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
@@ -35,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -389,21 +391,22 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 		}
 
 		/**
-		 * @see net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler#sqlToBeExecuted(java.lang.String)
+		 * @see ISQLExecuterHandler#sqlToBeExecuted(QueryHolder)
+		 * @param queryHolder
 		 */
 		@Override
-		public void sqlToBeExecuted(final String sql)
+		public void sqlToBeExecuted(final QueryHolder queryHolder)
 		{
 			if (s_log.isDebugEnabled())
 			{
-				s_log.debug("Statement to be executed: " + sql);
+				s_log.debug("Statement to be executed: " + queryHolder);
 			}
 
-			if (sql.startsWith("ALTER"))
+			if (queryHolder.getQuery().startsWith("ALTER"))
 			{
 				cb.setLoadingPrefix(i18n.DROPPING_CONSTRAINT_PREFIX);
 				// Hack!!! hopefully the FK name will always be the last token!
-				final String[] parts = StringUtilities.split(sql, ' ');
+				final String[] parts = StringUtilities.split(queryHolder.getQuery(), ' ');
 				cb.currentlyLoading(parts[parts.length - 1]);
 			}
 			else

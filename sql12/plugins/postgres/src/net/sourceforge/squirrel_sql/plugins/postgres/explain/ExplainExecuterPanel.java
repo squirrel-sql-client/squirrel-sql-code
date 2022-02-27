@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -288,7 +289,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		}
 
 		@Override
-		public void sqlToBeExecuted(final String sql)
+		public void sqlToBeExecuted(final QueryHolder queryHolder)
 		{
 		}
 

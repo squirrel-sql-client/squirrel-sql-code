@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.textdataset.ResultAsText;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import java.io.BufferedWriter;
@@ -101,7 +102,7 @@ public class CliSQLExecuterHandler extends CliSQLExecuterHandlerAdapter
    }
 
    @Override
-   public void sqlToBeExecuted(String sql)
+   public void sqlToBeExecuted(QueryHolder queryHolder)
    {
       //System.out.println("sql = " + sql);
    }

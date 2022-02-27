@@ -19,9 +19,10 @@ package net.sourceforge.squirrel_sql.plugins.postgres.commands.handler;
  */
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.postgres.gui.MessageDialog;
@@ -29,87 +30,100 @@ import net.sourceforge.squirrel_sql.plugins.postgres.gui.MessageDialog;
 import java.sql.SQLWarning;
 import java.util.ArrayList;
 
-public abstract class MessageSQLExecuterHandler extends ProgressSQLExecuterHandler {
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MessageSQLExecuterHandler.class);
+public abstract class MessageSQLExecuterHandler extends ProgressSQLExecuterHandler
+{
+   /**
+    * Internationalized strings for this class.
+    */
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MessageSQLExecuterHandler.class);
 
-    protected MessageDialog _mdialog;
-    protected long _startTime;
+   protected MessageDialog _mdialog;
+   protected long _startTime;
 
-    protected boolean _exceptionOccured = false;
-
-
-    public MessageSQLExecuterHandler(ISession session, MessageDialog mdialog, String progressDialogTitle, String commandPrefix) {
-        super(session, mdialog, progressDialogTitle, commandPrefix);
-        _mdialog = mdialog;
-    }
+   protected boolean _exceptionOccured = false;
 
 
-    @Override
-    public void sqlToBeExecuted(String sql) {
-        super.sqlToBeExecuted(sql);
-        _mdialog.writeLine("========= " + _commandPrefix + " " + getSuffix(sql) + " =========");
-    }
+   public MessageSQLExecuterHandler(ISession session, MessageDialog mdialog, String progressDialogTitle, String commandPrefix)
+   {
+      super(session, mdialog, progressDialogTitle, commandPrefix);
+      _mdialog = mdialog;
+   }
 
 
-    protected abstract String getSuffix(String sql);
+   @Override
+   public void sqlToBeExecuted(QueryHolder queryHolder)
+   {
+      super.sqlToBeExecuted(queryHolder);
+      _mdialog.writeLine("========= " + _commandPrefix + " " + getSuffix(queryHolder.getQuery()) + " =========");
+   }
 
 
-    @Override
-    public void sqlExecutionComplete(SQLExecutionInfo info, int processedStatementCount, int statementCount) {
-        super.sqlExecutionComplete(info, processedStatementCount, statementCount);
-        _mdialog.writeEmptyLine();
-    }
+   protected abstract String getSuffix(String sql);
 
 
-    @Override
-    public void sqlExecutionWarning(SQLWarning warn) {
-        //super.sqlExecutionWarning(warn);
-        _mdialog.writeLine(warn.toString());
-    }
+   @Override
+   public void sqlExecutionComplete(SQLExecutionInfo info, int processedStatementCount, int statementCount)
+   {
+      super.sqlExecutionComplete(info, processedStatementCount, statementCount);
+      _mdialog.writeEmptyLine();
+   }
 
 
-    @Override
-    public void sqlStatementCount(int statementCount) {
-        super.sqlStatementCount(statementCount);
-        _startTime = System.currentTimeMillis();
-    }
+   @Override
+   public void sqlExecutionWarning(SQLWarning warn)
+   {
+      //super.sqlExecutionWarning(warn);
+      _mdialog.writeLine(warn.toString());
+   }
 
 
-    @Override
-    public void sqlCloseExecutionHandler(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement) {
-        super.sqlCloseExecutionHandler(sqlExecErrorMsgs, lastExecutedStatement);
-        if (!_exceptionOccured) {
-            float executionTime = (float) (System.currentTimeMillis() - _startTime) / 1000;
-            _mdialog.writeEmptyLine();
-            _mdialog.writeLine(s_stringMgr.getString("MessageSQLExecuterHandler.done", _commandPrefix, executionTime));
-        }
-        _mdialog.enableCloseButton();
-    }
+   @Override
+   public void sqlStatementCount(int statementCount)
+   {
+      super.sqlStatementCount(statementCount);
+      _startTime = System.currentTimeMillis();
+   }
 
 
-    public void sqlExecutionCancelled() {
-        super.sqlExecutionCancelled();
-        //TODO: ? Dialog Handling on Cancelled ?
-    }
+   @Override
+   public void sqlCloseExecutionHandler(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
+   {
+      super.sqlCloseExecutionHandler(sqlExecErrorMsgs, lastExecutedStatement);
+      if(!_exceptionOccured)
+      {
+         float executionTime = (float) (System.currentTimeMillis() - _startTime) / 1000;
+         _mdialog.writeEmptyLine();
+         _mdialog.writeLine(s_stringMgr.getString("MessageSQLExecuterHandler.done", _commandPrefix, executionTime));
+      }
+      _mdialog.enableCloseButton();
+   }
 
 
-    public void sqlDataUpdated(int updateCount) {
-        super.sqlDataUpdated(updateCount);
-    }
+   public void sqlExecutionCancelled()
+   {
+      super.sqlExecutionCancelled();
+   }
 
 
-    public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model) {
-        super.sqlResultSetAvailable(rst, info, model);
-    }
+   public void sqlDataUpdated(int updateCount)
+   {
+      super.sqlDataUpdated(updateCount);
+   }
 
 
-    public String sqlExecutionException(Throwable th, String postErrorString) {
-       String ret = super.sqlExecutionException(th, postErrorString);
-       _mdialog.writeEmptyLine();
-       _mdialog.writeLine(s_stringMgr.getString("MessageSQLExecuterHandler.aborted", _commandPrefix));
-       _exceptionOccured = true;
+   public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
+   {
+      super.sqlResultSetAvailable(rst, info, model);
+   }
 
-       return ret;
-    }
+
+   public String sqlExecutionException(Throwable th, String postErrorString)
+   {
+      String ret = super.sqlExecutionException(th, postErrorString);
+      _mdialog.writeEmptyLine();
+      _mdialog.writeLine(s_stringMgr.getString("MessageSQLExecuterHandler.aborted", _commandPrefix));
+      _exceptionOccured = true;
+
+      return ret;
+   }
 }

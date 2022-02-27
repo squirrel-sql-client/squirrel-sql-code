@@ -1,17 +1,24 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.FinishedNotificationSoundHandler;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -48,7 +55,6 @@ class SQLExecutionHandler implements ISQLExecuterHandler
     */
    private ResultSetDataSet _rsds = null;
 
-   private String sqlToBeExecuted = null;
    private SQLType sqlType = null;
    private IResultTab _resultTabToReplace;
    private boolean _largeScript = false;
@@ -167,7 +173,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
       return result;
    }
 
-   public void sqlToBeExecuted(final String sql)
+   public void sqlToBeExecuted(final QueryHolder queryHolder)
    {
       _cancelPanelCtrl.incCurrentQueryIndex();
       int currentStmtCount = _cancelPanelCtrl.getCurrentQueryIndex();
@@ -175,13 +181,10 @@ class SQLExecutionHandler implements ISQLExecuterHandler
       {
          return;
       }
-      final String cleanSQL = StringUtilities.cleanString(sql);
-      sqlToBeExecuted = cleanSQL;
-      sqlType = getSQLType(cleanSQL);
+      sqlType = getSQLType(queryHolder.getCleanQuery());
 
-      _cancelPanelCtrl.setSQL(sqlToBeExecuted);
+      _cancelPanelCtrl.setSQL(queryHolder);
 
-      // i18n[SQLResultExecuterPanel.execStatus=Executing SQL...]
       String status = s_stringMgr.getString("SQLResultExecuterPanel.execStatus");
       _cancelPanelCtrl.setStatusLabel(status);
    }

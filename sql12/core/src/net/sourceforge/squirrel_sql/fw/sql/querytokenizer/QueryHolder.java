@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.sql.querytokenizer;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 public class QueryHolder
 {
    private final String _query;
@@ -24,5 +26,10 @@ public class QueryHolder
    public String getOriginalQuery()
    {
       return _originalQuery;
+   }
+
+   public String getCleanQuery()
+   {
+      return StringUtilities.cleanString(_query);
    }
 }

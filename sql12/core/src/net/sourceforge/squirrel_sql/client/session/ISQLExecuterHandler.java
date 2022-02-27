@@ -17,12 +17,14 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLWarning;
-import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
+
+import java.sql.SQLWarning;
+import java.util.ArrayList;
 
 /**
  * This interface is the call back interface used during execution
@@ -38,48 +40,56 @@ public interface ISQLExecuterHandler
 	 * It signals the start of a new sql execution.
 	 * <p/>This callback is called from the thread that the SQLExecuter is running on.
 	 * It may or may not be the Swing thread so card should be taken with any gui actions
+	 * @param queryHolder
 	 */
-	public void sqlToBeExecuted(String sql);
+	void sqlToBeExecuted(QueryHolder queryHolder);
 
-	/** Called if another thread cancels the sql execution
+	/**
+	 * Called if another thread cancels the sql execution
 	 * <p/>This callback is called from the thread that the SQLExecuter is running on.
 	 * It may or may not be the Swing thread so card should be taken with any gui actions
 	 * It is called AFTER the SQLExecutor has cancelled out its execution.
 	 */
-	public void sqlExecutionCancelled();
+	void sqlExecutionCancelled();
 
-	/** Called if the execution of the sql caused data to be updated.
+	/**
+	 * Called if the execution of the sql caused data to be updated.
 	 * <p/>The updateCount can be 0 especially when the database structure changed
 	 * or the update count is not supported by the database.
 	 * <p/>This callback is called from the thread that the SQLExecuter is running on.
 	 * It may or may not be the Swing thread so card should be taken with any gui actions
 	 */
-	public void sqlDataUpdated(int updateCount);
+	void sqlDataUpdated(int updateCount);
 
-	/** Called when the execution of the sql caused data to be returned.
+	/**
+	 * Called when the execution of the sql caused data to be returned.
 	 * <p/>This can fire multiple times if there are multiple result sets.
 	 * <p/>This callback is called from the thread that the SQLExecuter is running on.
 	 * It may or may not be the Swing thread so card should be taken with any gui actions 
 	 */
-	public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info,
-			IDataSetUpdateableTableModel model) throws DataSetException;
+	void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
+			throws DataSetException;
 
-	/** Called when the SQLExecutor succesfully completes execution of a sql
+	/**
+	 * Called when the SQLExecutor succesfully completes execution of a sql
 	 *  statement.
 	 */
-	public void sqlExecutionComplete(SQLExecutionInfo info, int processedStatementCount, int statementCount);
+	void sqlExecutionComplete(SQLExecutionInfo info, int processedStatementCount, int statementCount);
 
-	/** Called when the SQLExecutor terminates due to an exception
+	/**
+	 * Called when the SQLExecutor terminates due to an exception
 	 */
-	public String sqlExecutionException(Throwable th, String postErrorString);
+	String sqlExecutionException(Throwable th, String postErrorString);
 
-	/** Called when a SQLWarning is received during execuion of the sql*/
-	public void sqlExecutionWarning(SQLWarning warn);
+	/**
+	 * Called when a SQLWarning is received during execuion of the sql
+	 */
+	void sqlExecutionWarning(SQLWarning warn);
 
    /**
     * To set the number of statements that will be executed
     */
-   public void sqlStatementCount(int statementCount);
+	void sqlStatementCount(int statementCount);
 
    /**
     * Tell the execution handler that we don't need it anymore
@@ -88,5 +98,5 @@ public interface ISQLExecuterHandler
     * @param sqlExecErrorMsgs null if no error occurred
     * @param lastExecutedStatement
     */
-   public void sqlCloseExecutionHandler(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement);
+	void sqlCloseExecutionHandler(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement);
 }

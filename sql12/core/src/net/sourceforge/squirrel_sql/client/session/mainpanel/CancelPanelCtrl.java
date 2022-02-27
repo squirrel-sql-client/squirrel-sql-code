@@ -3,9 +3,17 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.notificationsound.FinishedNotificationSoundHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import java.awt.Dimension;
 
 class CancelPanelCtrl
 {
@@ -26,6 +34,7 @@ class CancelPanelCtrl
    private int _currentQueryIndex = 0;
    private CancelPanelListener _listener;
    private final TimerHolder _timer;
+   private QueryHolder _currentSql;
 
    CancelPanelCtrl(CancelPanelListener listener, ISession session, FinishedNotificationSoundHandler finishedNotificationSoundHandler)
    {
@@ -35,6 +44,10 @@ class CancelPanelCtrl
 
       _panel.cancelBtn.addActionListener(e -> onCancel());
 
+      _panel.btnCopySqlToClip.addActionListener(e -> onCopyCurrentSqlToClip());
+
+      _panel.btnShowExecutingSql.addActionListener(e -> onShowCurrentSql());
+
       _panel.closeBtn.addActionListener(e -> onClose());
 
       _panel.chkPlaySoundWhenFinished.addActionListener(e -> _finishedNotificationSoundHandler.onPlayFinishedSoundChecked(_panel.chkPlaySoundWhenFinished.isSelected()));
@@ -43,23 +56,54 @@ class CancelPanelCtrl
 
       _timer = new TimerHolder(_panel.txtExecTimeCounter, _panel.txtNumberOfRowsRead, _panel.chkPlaySoundWhenFinished, _finishedNotificationSoundHandler);
    }
+
    void incCurrentQueryIndex()
    {
       ++_currentQueryIndex;
    }
 
-   void setSQL(final String sql)
+   void setSQL(final QueryHolder queryHolder)
    {
-      GUIUtils.processOnSwingEventThread(() -> onSetSql(sql));
+      GUIUtils.processOnSwingEventThread(() -> onSetSql(queryHolder));
    }
 
-   private void onSetSql(String sql)
+   private void onSetSql(QueryHolder sql)
    {
-      // i18n[SQLResultExecuterPanel.currentSQLLabel={0} of {1} - {2}]
-      String label = s_stringMgr.getString("SQLResultExecuterPanel.currentSQLLabel", String.valueOf(_currentQueryIndex),String.valueOf(_queryCount),sql);
-
+      _currentSql = sql;
+      String label = s_stringMgr.getString("SQLResultExecuterPanel.currentSQLLabel", String.valueOf(_currentQueryIndex), String.valueOf(_queryCount), sql.getCleanQuery());
       _panel.sqlLbl.setText(label);
    }
+
+   private void onCopyCurrentSqlToClip()
+   {
+      if(null == _currentSql || StringUtilities.isEmpty(_currentSql.getOriginalQuery(), true))
+      {
+         return;
+      }
+      ClipboardUtil.copyToClip(_currentSql.getOriginalQuery());
+   }
+
+   private void onShowCurrentSql()
+   {
+      if(null == _currentSql || StringUtilities.isEmpty(_currentSql.getOriginalQuery(), true))
+      {
+         return;
+      }
+      JPopupMenu popupMenu = new JPopupMenu();
+
+      JTextPane textPane = new JTextPane();
+      textPane.setText(_currentSql.getOriginalQuery());
+
+      textPane.setPreferredSize(new Dimension(_panel.getSize().width * 2 / 3, _panel.getSize().height * 2 / 3));
+
+      final JScrollPane scrollPane = new JScrollPane(textPane);
+      popupMenu.add(scrollPane);
+
+      popupMenu.show(_panel.btnShowExecutingSql, 0, _panel.btnShowExecutingSql.getHeight());
+
+      GUIUtils.forceScrollToBegin(scrollPane);
+   }
+
 
    void setStatusLabel(final String text)
    {

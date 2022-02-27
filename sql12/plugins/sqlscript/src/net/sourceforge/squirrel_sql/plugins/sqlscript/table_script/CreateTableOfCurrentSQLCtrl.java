@@ -1,11 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.fw.props.Props;
+
+import java.awt.Frame;
 
 
 public class CreateTableOfCurrentSQLCtrl
@@ -21,21 +19,9 @@ public class CreateTableOfCurrentSQLCtrl
    {
       _dlg = new CreateTableOfCurrentSQLDialog(parent);
 
-      _dlg.btnOK.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onOK();
-         }
-      });
+      _dlg.btnOK.addActionListener(e -> onOK());
 
-      _dlg.btnCancel.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onCancel();
-         }
-      });
+      _dlg.btnCancel.addActionListener(e -> onCancel());
 
 
       String tempSqlResultTable = Props.getString(PREFS_KEY_LAST_TABLE_NAME, "tempSqlResultTable");
@@ -47,8 +33,7 @@ public class CreateTableOfCurrentSQLCtrl
       _dlg.chkDropTable.setSelected(dropTable);
       _dlg.chkScriptOnly.setSelected(scriptOnly);
 
-
-      _dlg.setSize(360,160);
+      GUIUtils.initLocation(_dlg, 360, 180);
       GUIUtils.centerWithinParent(_dlg);
 
       _dlg.setVisible(true);

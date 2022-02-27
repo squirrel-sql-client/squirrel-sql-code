@@ -18,20 +18,22 @@ package net.sourceforge.squirrel_sql.plugins.postgres.commands.handler;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.sql.SQLWarning;
-import java.util.ArrayList;
-
-import javax.swing.JDialog;
-
 import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
-import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
 import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JDialog;
+import java.sql.SQLWarning;
+import java.util.ArrayList;
 
 public abstract class ProgressSQLExecuterHandler implements ISQLExecuterHandler
 {
@@ -61,7 +63,7 @@ public abstract class ProgressSQLExecuterHandler implements ISQLExecuterHandler
 		this.progressCallBackFactory = progressCallBackFactory;
 	}
 
-	public void sqlToBeExecuted(String sql)
+	public void sqlToBeExecuted(QueryHolder queryHolder)
 	{
 		if (s_log.isDebugEnabled())
 		{
@@ -78,7 +80,7 @@ public abstract class ProgressSQLExecuterHandler implements ISQLExecuterHandler
 		}
 
 		_pdialog.setLoadingPrefix(_commandPrefix);
-		_pdialog.currentlyLoading(getSuffix(sql));
+		_pdialog.currentlyLoading(getSuffix(queryHolder.getQuery()));
 	}
 
 	protected abstract String getSuffix(String sql);

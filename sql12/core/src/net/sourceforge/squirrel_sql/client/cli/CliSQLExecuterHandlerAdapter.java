@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 
 import java.sql.SQLWarning;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 public class CliSQLExecuterHandlerAdapter implements ISQLExecuterHandler
 {
    @Override
-   public void sqlToBeExecuted(String sql)
+   public void sqlToBeExecuted(QueryHolder queryHolder)
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
    }

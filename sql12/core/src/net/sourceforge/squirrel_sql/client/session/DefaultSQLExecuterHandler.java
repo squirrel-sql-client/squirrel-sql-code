@@ -16,13 +16,15 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.util.ArrayList;
 
 /**
  * This default implementation of the sql executer handler simply notifies the
@@ -39,7 +41,7 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
 		_session = session;
 	}
 
-	public void sqlToBeExecuted(String sql)
+	public void sqlToBeExecuted(QueryHolder queryHolder)
 	{
 	}
 

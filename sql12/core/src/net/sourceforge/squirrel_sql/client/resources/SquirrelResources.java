@@ -167,6 +167,9 @@ public class SquirrelResources extends Resources
 
 		String PERCENT = "percent";
 		String PERCENT_NEGATED = "percent_negated";
+
+		String COPY_SQL = "copySQL";
+		String SQL = "sql";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)
