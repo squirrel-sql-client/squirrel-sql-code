@@ -1,14 +1,19 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.text.NumberFormat;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.*;
-import java.awt.*;
-import java.text.NumberFormat;
 
 public class QueryInfoPanel extends JPanel
 {
@@ -27,18 +32,14 @@ public class QueryInfoPanel extends JPanel
 
    void load(int rowCount, SQLExecutionInfo exInfo)
    {
-      //_queryTxt.setText(StringUtilities.cleanString(exInfo.getSQL()));
-
-      _queryTxt.setRows(6);
       _queryTxt.setEditable(false);
       _queryTxt.setText(exInfo.getQueryHolder().getOriginalQuery());
-
-
-      _queryScrollPane.scrollRectToVisible(new Rectangle(0,0,1,1));
 
       displayRowCount(rowCount);
       _executedLbl.setText(exInfo.getSQLExecutionStartTime().toString());
       _elapsedLbl.setText(formatElapsedTime(exInfo));
+
+      GUIUtils.forceScrollToBegin(_queryScrollPane);
    }
 
    public void displayRowCount(int rowCount)
@@ -68,52 +69,42 @@ public class QueryInfoPanel extends JPanel
    private void createGUI()
    {
       setLayout(new GridBagLayout());
-      GridBagConstraints gbc = new GridBagConstraints();
+      GridBagConstraints gbc;
 
-      gbc.anchor = GridBagConstraints.NORTHWEST;
-      gbc.gridwidth = 1;
-      gbc.weightx = 0;
-
-      gbc.gridx = 0;
-      gbc.gridy = 0;
-      gbc.insets = new Insets(5, 10, 5, 10);
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-         // i18n[ResultTab.executedLabel=Executed:]
-         String label = s_stringMgr.getString("ResultTab.executedLabel");
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(15, 10, 0, 10), 0,0);
+      String label = s_stringMgr.getString("ResultTab.executedLabel");
       add(new JLabel(label, SwingConstants.RIGHT), gbc);
 
-      ++gbc.gridy;
-         // i18n[ResultTab.rowCountLabel=Row Count:]
-         label = s_stringMgr.getString("ResultTab.rowCountLabel");
-      add(new JLabel(label, SwingConstants.RIGHT), gbc);
-
-      ++gbc.gridy;
-         // i18n[ResultTab.statementLabel=SQL:]
-         label = s_stringMgr.getString("ResultTab.statementLabel");
-      add(new JLabel(label, SwingConstants.RIGHT), gbc);
-
-      ++gbc.gridy;
-         // i18n[ResultTab.elapsedTimeLabel=Elapsed Time (seconds):]
-         label = s_stringMgr.getString("ResultTab.elapsedTimeLabel");
-         add(new JLabel(label, SwingConstants.RIGHT), gbc);
-
-      gbc.gridwidth = GridBagConstraints.REMAINDER;
-      gbc.weightx = 1;
-
-      gbc.gridx = 1;
-      gbc.gridy = 0;
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15, 0, 0, 10), 0,0);
       add(_executedLbl, gbc);
 
-      ++gbc.gridy;
+
+      //++gbc.gridy;
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 0, 10), 0,0);
+      label = s_stringMgr.getString("ResultTab.rowCountLabel");
+      add(new JLabel(label, SwingConstants.RIGHT), gbc);
+
+      gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 10), 0,0);
       add(_rowCountLbl, gbc);
 
-      ++gbc.gridy;
-      gbc.weightx=1 ;
+
+
+      //++gbc.gridy;
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 0, 10), 0,0);
+      label = s_stringMgr.getString("ResultTab.statementLabel");
+      add(new JLabel(label, SwingConstants.RIGHT), gbc);
+
+      gbc = new GridBagConstraints(1,2,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10, 0, 0, 10), 0,0);
       _queryScrollPane = new JScrollPane(_queryTxt);
       add(_queryScrollPane, gbc);
 
-      ++gbc.gridy;
-      gbc.weightx=0 ;
+
+
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 30, 10), 0,0);
+      label = s_stringMgr.getString("ResultTab.elapsedTimeLabel");
+      add(new JLabel(label, SwingConstants.RIGHT), gbc);
+
+      gbc = new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 0, 30, 10), 0,0);
       add(_elapsedLbl, gbc);
    }
 }
