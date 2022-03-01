@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Hibernate Plugin: Updated help file.
+
 SQL execution progress panel now offers to view the SQL being executed and to copy it to clipboard.
 
 Scripting of the data types TIMESTAMP, DATE, TIME can now be chosen to use the standard JDBC format,
