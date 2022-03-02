@@ -170,6 +170,10 @@ public class SquirrelResources extends Resources
 
 		String COPY_SQL = "copySQL";
 		String SQL = "sql";
+
+		String SESSION_SAVE = "session_save";
+		String SESSION_OPEN = "session_open";
+		String SESSION_MANAGE = "session_manage";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

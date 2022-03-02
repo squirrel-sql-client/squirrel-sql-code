@@ -44,22 +44,17 @@ import java.util.regex.Pattern;
  */
 public class Utilities
 {
-   /** Logger for this class. */
    private static ILogger s_log = LoggerController.createLogger(Utilities.class);
 
-    private static Pattern spanStartPattern = Pattern.compile(".*\\<span\\>.*");
-    private static Pattern spanStartSplitPattern = Pattern.compile("\\<span\\>");
-    private static Pattern spanEndPattern = Pattern.compile(".*<\\/span\\>.*");
-    private static Pattern spanEndSplitPattern = Pattern.compile("<\\/span\\>");
+   private static Pattern spanStartPattern = Pattern.compile(".*\\<span\\>.*");
+   private static Pattern spanStartSplitPattern = Pattern.compile("\\<span\\>");
+   private static Pattern spanEndPattern = Pattern.compile(".*<\\/span\\>.*");
+   private static Pattern spanEndSplitPattern = Pattern.compile("<\\/span\\>");
 	
    
    
-   /**
-    * Ctor. <TT>private</TT> as all methods are static.
-    */
    private Utilities()
    {
-      super();
    }
 
    /**

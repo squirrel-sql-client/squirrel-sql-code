@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import java.util.List;
+
 /**
  * Handler, that tries to free some memory. Mostly, if a
  * {@link OutOfMemoryError} occurs,the user not be able to save his work,
@@ -108,9 +110,9 @@ public class OutOfMemoryErrorHandler implements IOutOfMemoryErrorHandler
       SessionManager sessionManager = application.getSessionManager();
 
       // All sessions, the user has opened
-      ISession[] sessions = sessionManager.getConnectedSessions();
+      List<ISession> sessions = sessionManager.getOpenSessions();
 
-      if (sessions.length != 0)
+      if (sessions.size() > 0)
       {
          for (ISession session : sessions)
          {

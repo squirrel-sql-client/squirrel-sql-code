@@ -6,6 +6,10 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteAllSqlsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
+import net.sourceforge.squirrel_sql.client.session.action.NextSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.PreviousSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleObjectTreeBesidesEditorAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
@@ -17,10 +21,9 @@ import net.sourceforge.squirrel_sql.client.session.action.file.FilePrintAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileReloadAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
-import net.sourceforge.squirrel_sql.client.session.action.GoToLastEditLocationAction;
-import net.sourceforge.squirrel_sql.client.session.action.NextSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.PreviousSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeChooser;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -56,8 +59,13 @@ class SQLInternalFrameToolBar extends ToolBar
       add(actions.get(FileReloadAction.class));
 
       add(new ChangeTrackTypeChooser((ChangeTrackAction) actions.get(ChangeTrackAction.class), session).getComponent());
-
       addSeparator();
+
+      add(actions.get(SessionSaveAction.class));
+      add(actions.get(SessionOpenAction.class));
+      add(actions.get(SessionManageAction.class));
+      addSeparator();
+
       add(actions.get(PreviousSqlAction.class));
       add(actions.get(NextSqlAction.class));
       add(actions.get(SelectSqlAction.class));

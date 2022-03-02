@@ -20,15 +20,6 @@ package net.sourceforge.squirrel_sql.client.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Window;
-import java.beans.PropertyVetoException;
-import javax.swing.Action;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-import javax.swing.event.EventListenerList;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -103,6 +94,15 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.Action;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+import javax.swing.event.EventListenerList;
+import java.awt.Window;
+import java.beans.PropertyVetoException;
 /**
  * This class manages the windows for the application.
  *
@@ -379,7 +379,7 @@ public class WindowManager
 	 * @throws	IllegalArgumentException
 	 *			Thrown if ISession is passed as null.
 	 */
-	public synchronized SQLInternalFrame createSQLInternalFrame(ISession session)
+	public SQLInternalFrame createSQLInternalFrame(ISession session)
 	{
 		if (session == null)
 		{

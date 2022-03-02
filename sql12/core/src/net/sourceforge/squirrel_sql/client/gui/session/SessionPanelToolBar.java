@@ -25,6 +25,9 @@ import net.sourceforge.squirrel_sql.client.session.action.file.FilePrintAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileReloadAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeChooser;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
@@ -86,8 +89,13 @@ class SessionPanelToolBar extends ToolBar
       add(actions.get(FileReloadAction.class));
 
       add(new ChangeTrackTypeChooser((ChangeTrackAction) actions.get(ChangeTrackAction.class), session).getComponent());
-
       addSeparator();
+
+      add(actions.get(SessionSaveAction.class));
+      add(actions.get(SessionOpenAction.class));
+      add(actions.get(SessionManageAction.class));
+      addSeparator();
+
       add(actions.get(PreviousSqlAction.class));
       add(actions.get(NextSqlAction.class));
       add(actions.get(SelectSqlAction.class));

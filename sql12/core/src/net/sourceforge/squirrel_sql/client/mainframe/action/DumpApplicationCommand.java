@@ -17,17 +17,15 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.DumpSessionCommand;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextFileDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.HashtableDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
@@ -42,14 +40,16 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Version;
-import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.DumpSessionCommand;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * This <CODE>ICommand</CODE> will dump the status of the application.
@@ -193,26 +193,25 @@ public class DumpApplicationCommand implements ICommand
 			}
 
 			// Dump sessions.
-			final ISession[] sessions = _app.getSessionManager().getConnectedSessions();
+			final List<ISession> sessions = _app.getSessionManager().getOpenSessions();
 			final DumpSessionCommand sessionCmd = new DumpSessionCommand();
-			for (int i = 0; i < sessions.length; ++i)
+
+			for (ISession session : sessions)
 			{
 				try
 				{
 					File tempFile = File.createTempFile(PREFIX, SUFFIX);
-					sessionCmd.setSession(sessions[i]);
+					sessionCmd.setSession(session);
 					sessionCmd.setDumpFile(tempFile);
 					sessionCmd.execute();
 					files.add(tempFile);
-                    //i18n[DumpApplicationCommand.title.sessiondump=Session Dump: {0}]
-                    String title = 
-                        s_stringMgr.getString("DumpApplicationCommand.title.sessiondump",
-                                              sessions[i].getIdentifier());
+					//i18n[DumpApplicationCommand.title.sessiondump=Session Dump: {0}]
+					String title = s_stringMgr.getString("DumpApplicationCommand.title.sessiondump", session.getIdentifier());
 					titles.add(title);
 				}
 				catch (Throwable th)
 				{
-                    //i18n[DumpApplicationCommand.error.sessiondump=Error dumping sessions]
+					//i18n[DumpApplicationCommand.error.sessiondump=Error dumping sessions]
 					final String msg = s_stringMgr.getString("DumpApplicationCommand.error.sessiondump");
 					_msgHandler.showMessage(msg);
 					_msgHandler.showMessage(th, null);

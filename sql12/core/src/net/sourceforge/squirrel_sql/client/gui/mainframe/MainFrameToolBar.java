@@ -390,13 +390,9 @@ public class MainFrameToolBar extends ToolBar
 		 */
 		private void load()
 		{
-			final ISession[] s = _sessionManager.getConnectedSessions();
-			if (s != null)
+			for (ISession session : _sessionManager.getOpenSessions())
 			{
-				for (int i = 0; i < s.length; i++)
-				{
-					addSession(s[i]);
-				}
+				addSession(session);
 			}
 		}
 

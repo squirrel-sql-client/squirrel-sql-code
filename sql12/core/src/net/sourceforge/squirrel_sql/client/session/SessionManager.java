@@ -46,7 +46,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,11 +63,10 @@ public class SessionManager
 
    private ISession _activeSession;
 
-   /** Linked list of sessions. */
-   private final LinkedList<ISession> _sessionsList = new LinkedList<ISession>();
+   private final ArrayList<ISession> _sessionsList = new ArrayList<>();
 
    /** Map of sessions keyed by session ID. */
-   private final Map<IIdentifier, ISession> _sessionsById = new HashMap<IIdentifier, ISession>();
+   private final Map<IIdentifier, ISession> _sessionsById = new HashMap<>();
 
    private EventListenerList listenerList = new EventListenerList();
 
@@ -108,7 +107,7 @@ public class SessionManager
          _inCreateSession.add(sessionId);
 
          final Session sess = new Session(app, driver, alias, conn, user, password, sessionId);
-         _sessionsList.addLast(sess);
+         _sessionsList.add(sess);
          _sessionsById.put(sess.getIdentifier(), sess);
 
          fireSessionAdded(sess);
@@ -143,9 +142,9 @@ public class SessionManager
     *
     * @return array of all connected sessions.
     */
-   public ISession[] getConnectedSessions()
+   public List<ISession> getOpenSessions()
    {
-      return _sessionsList.toArray(new ISession[_sessionsList.size()]);
+      return new ArrayList<>(_sessionsList);
    }
 
    /**
@@ -246,7 +245,7 @@ public class SessionManager
             {
                if (!_sessionsList.isEmpty())
                {
-                  setActiveSession(_sessionsList.getLast(), false);
+                  setActiveSession(_sessionsList.get(_sessionsList.size() - 1), false);
                }
                else
                {
@@ -296,10 +295,11 @@ public class SessionManager
    {
       // Get an array since we dont want trouble with the sessionsList when
       // we remove the sessions from it.
-      final ISession[] sessions = getConnectedSessions();
-      for (int i = sessions.length - 1; i >= 0; i--)
+      List<ISession> sessions = getOpenSessions();
+
+      for (ISession session : sessions)
       {
-         if (!closeSession(sessions[i]))
+         if (!closeSession(session))
          {
             return false;
          }
@@ -313,15 +313,16 @@ public class SessionManager
 
       // Get an array since we dont want trouble with the sessionsList when
       // we remove the sessions from it.
-      final ISession[] sessions = getConnectedSessions();
-      for (int i = sessions.length - 1; i >= 0; i--)
+      List<ISession> sessions = getOpenSessions();
+
+      for (int i = sessions.size() - 1; i >= 0; i--)
       {
-         if(sessions[i] == activeSession)
+         if(sessions.get(i) == activeSession)
          {
             continue; 
          }
 
-         if (!closeSession(sessions[i]))
+         if (!closeSession(sessions.get(i)))
          {
             return false;
          }

@@ -23,7 +23,7 @@ public class FileSaveAllAction extends SquirrelAction  implements ISessionAction
 
    public void actionPerformed(ActionEvent evt)
    {
-      for (ISession session : Main.getApplication().getSessionManager().getConnectedSessions())
+      for (ISession session : Main.getApplication().getSessionManager().getOpenSessions())
       {
          for (SQLPanel sqlPanel : session.getSessionPanel().getAllSQLPanels())
          {

@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.SquirrelDesktopManager;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 
 public interface IDesktopContainer
 {

@@ -28,8 +28,8 @@ import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JInternalFrame;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 /**
@@ -84,24 +84,21 @@ public class CascadeInternalFramesAction
 		if (_desktop != null && _app.getDesktopStyle().isInternalFrameStyle())
 		{
 			Dimension cs = null; // Size to set child windows to.
-			CascadeInternalFramePositioner pos =
-				new CascadeInternalFramePositioner();
-			IWidget[] widgets =
-				WidgetUtils.getOpenNonToolWindows(_desktop.getAllWidgets());
+			CascadeInternalFramePositioner pos = new CascadeInternalFramePositioner();
+			IWidget[] widgets =  WidgetUtils.getOpenNonToolWindows(_desktop.getAllWidgets());
 			for (int i = widgets.length - 1; i >= 0; --i)
 			{
 				JInternalFrame child = widgets[i].getInternalFrame();
 
-				if (cs == null && child.getParent() != null)
+				if(cs == null && child.getParent() != null)
 				{
 					cs = child.getParent().getSize();
 					// Cast to int required as Dimension::setSize(double,double)
 					// doesn't appear to do anything in JDK1.2.2.
-					cs.setSize(
-						(int) (cs.width * 0.8d),
-						(int) (cs.height * 0.8d));
+					cs.setSize( (int) (cs.width * 0.8d), (int) (cs.height * 0.8d));
 				}
-				if (cs != null)
+
+				if(cs != null)
 				{
 					child.setSize(cs);
 					pos.positionInternalFrame(child);
