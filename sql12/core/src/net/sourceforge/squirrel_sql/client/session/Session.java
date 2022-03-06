@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.mainframe.action.openconnection.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
 import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -179,6 +180,8 @@ class Session implements ISession
 
 
    private HashMap<Object, Object> _sessionLocales = new HashMap<>();
+
+   private SavedSessionJsonBean _savedSession;
 
    /**
     * Create a new session.
@@ -1288,5 +1291,17 @@ class Session implements ISession
       {
          throw new IllegalStateException("No ConnectionPool instance. This may happen when reconnect (Ctrl+T) failed.");
       }
+   }
+
+   @Override
+   public SavedSessionJsonBean getSavedSession()
+   {
+      return _savedSession;
+   }
+
+   @Override
+   public void setSavedSession(SavedSessionJsonBean savedSession)
+   {
+      _savedSession = savedSession;
    }
 }

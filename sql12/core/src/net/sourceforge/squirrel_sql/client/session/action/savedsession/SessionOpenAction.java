@@ -2,15 +2,15 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 
 import java.awt.event.ActionEvent;
 
 
-public class SessionOpenAction extends SquirrelAction implements ISQLPanelAction
+public class SessionOpenAction extends SquirrelAction implements ISessionAction
 {
-	private ISQLPanelAPI _panel;
+	private ISession _session;
 
 	public SessionOpenAction(IApplication app)
 	{
@@ -19,13 +19,16 @@ public class SessionOpenAction extends SquirrelAction implements ISQLPanelAction
 
 	public void actionPerformed(ActionEvent e)
 	{
-		System.out.println("SessionOpenAction.actionPerformed");
+		SavedSessionOpenCtrl savedSessionOpenCtrl = new SavedSessionOpenCtrl(_session);
+
+		SavedSessionJsonBean savedSessionJsonBean = savedSessionOpenCtrl.getSelectedSavedSession();
 	}
 
-	public void setSQLPanel(ISQLPanelAPI panel)
+	@Override
+	public void setSession(ISession session)
 	{
-		_panel = panel;
-		setEnabled(null != _panel);
-	}
+		_session = session;
 
+		setEnabled(null != _session);
+	}
 }

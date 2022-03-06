@@ -1,22 +1,48 @@
 package net.sourceforge.squirrel_sql.fw.props;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.Set;
+import java.util.TreeSet;
 
+/**
+ * See answer 13 at
+ * https://stackoverflow.com/questions/10275862/how-to-sort-properties-in-java
+ */
 class SortedProperties extends Properties
 {
-   public Enumeration keys()
+   @Override
+   public Set<Object> keySet()
    {
-      Enumeration keysEnum = super.keys();
-      Vector<String> keyList = new Vector<>();
-      while (keysEnum.hasMoreElements())
+      return Collections.unmodifiableSet(new TreeSet<>(super.keySet()));
+   }
+
+
+   @Override
+   public Set<Map.Entry<Object, Object>> entrySet()
+   {
+      Set<Map.Entry<Object, Object>> set1 = super.entrySet();
+      Set<Map.Entry<Object, Object>> set2 = new LinkedHashSet<>(set1.size());
+
+      Iterator<Map.Entry<Object, Object>> iterator = set1.stream().sorted(Comparator.comparing(o -> o.getKey().toString())).iterator();
+
+      while (iterator.hasNext())
       {
-         keyList.add((String) keysEnum.nextElement());
+         set2.add(iterator.next());
       }
-      Collections.sort(keyList);
-      return keyList.elements();
+
+      return set2;
+   }
+
+   @Override
+   public synchronized Enumeration<Object> keys()
+   {
+      return Collections.enumeration(new TreeSet<>(super.keySet()));
    }
 
 }

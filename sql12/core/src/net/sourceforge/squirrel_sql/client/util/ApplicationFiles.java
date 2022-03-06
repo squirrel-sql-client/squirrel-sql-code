@@ -109,9 +109,8 @@ public class ApplicationFiles
       }
       catch (Exception ex)
       {
-         System.out.println(
-               "Error creating user settings directory: " + _userSettingsDir);
-         System.out.println(ex.toString());
+         System.out.println("Error creating user settings directory: " + _userSettingsDir);
+         ex.printStackTrace();
       }
       try
       {
@@ -120,8 +119,18 @@ public class ApplicationFiles
       }
       catch (Exception ex)
       {
-         System.out.println("Error creating logs directory");
-         System.out.println(ex.toString());
+         System.out.println("Error creating logs directory: " + getExecutionLogFile().getParentFile());
+         ex.printStackTrace();
+      }
+      try
+      {
+         final File savedSessionsDir = getSavedSessionsDir();
+         savedSessionsDir.mkdirs();
+      }
+      catch (Exception ex)
+      {
+         System.out.println("Error creating saved sessions directory: " + getSavedSessionsDir());
+         ex.printStackTrace();
       }
    }
 
@@ -458,5 +467,15 @@ public class ApplicationFiles
    public File getRecentAliasesJsonBeanFile()
    {
       return new File(_userSettingsDir + File.separator + "recentAliasesJsonBean.json");
+   }
+
+   public File getSavedSessionsJsonFile()
+   {
+      return new File(getSavedSessionsDir(), "savedSessions.json");
+   }
+
+   public File getSavedSessionsDir()
+   {
+      return new File(_userSettingsDir + File.separator + "savedSessions");
    }
 }

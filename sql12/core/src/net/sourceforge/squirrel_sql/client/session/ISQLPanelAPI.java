@@ -283,5 +283,7 @@ public interface ISQLPanelAPI extends IFileEditorAPI
 	SQLPanelSplitter getSQLPanelSplitter();
 
 	ChangeTracker getChangeTracker();
+
+   byte[] getBytesForSave();
 }
 

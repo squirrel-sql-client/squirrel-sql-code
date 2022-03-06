@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
 import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -402,10 +403,15 @@ public interface ISession extends IHasIdentifier
    void removeSimpleSessionListener(SimpleSessionListener simpleSessionListener);
 
 
-
    Object getSessionLocal(Object key);
 
    void putSessionLocal(Object key, Object value);
 
+
    SessionConnectionPool getConnectionPool();
+
+
+   SavedSessionJsonBean getSavedSession();
+
+   void setSavedSession(SavedSessionJsonBean savedSession);
 }

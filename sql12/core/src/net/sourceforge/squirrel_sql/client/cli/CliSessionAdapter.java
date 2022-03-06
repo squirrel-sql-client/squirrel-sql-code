@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectInfo;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionJsonBean;
 import net.sourceforge.squirrel_sql.client.session.connectionpool.SessionConnectionPool;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -371,6 +372,17 @@ public class CliSessionAdapter implements ISession
    public SessionConnectionPool getConnectionPool()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
+   public SavedSessionJsonBean getSavedSession()
+   {
+      return null;
+   }
+
+   @Override
+   public void setSavedSession(SavedSessionJsonBean savedSession)
+   {
    }
 
 }

@@ -391,6 +391,10 @@ public class StringUtilities
 
    public static boolean equalsRespectNullModuloEmptyAndWhiteSpace(String s1, String s2)
    {
+      return equalsRespectNullModuloEmptyAndWhiteSpace(s1, s2, false);
+   }
+   public static boolean equalsRespectNullModuloEmptyAndWhiteSpace(String s1, String s2, boolean ignoreCase)
+   {
       if(isEmpty(s1, true) && isEmpty(s2, true))
       {
          return true;
@@ -401,7 +405,14 @@ public class StringUtilities
       }
       else
       {
-         return s1.trim().equals(s2.trim());
+         if(ignoreCase)
+         {
+            return s1.trim().equalsIgnoreCase(s2.trim());
+         }
+         else
+         {
+            return s1.trim().equals(s2.trim());
+         }
       }
 
    }

@@ -670,7 +670,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		return _panel.getChangeTracker();
 	}
 
-	@Override
+   @Override
 	public void selectWidgetOrTab()
 	{
 		SQLPanelSelectionHandler.selectSqlPanel(this);
@@ -705,4 +705,11 @@ public class SQLPanelAPI implements ISQLPanelAPI
    {
       return _fileHandler;
    }
+
+	@Override
+	public byte[] getBytesForSave()
+	{
+		return _fileHandler.getBytesForSave();
+   }
+
 }

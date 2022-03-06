@@ -406,4 +406,9 @@ public class FileHandler
    {
       return _fileManagementCore.getFile();
    }
+
+   public byte[] getBytesForSave()
+   {
+      return _fileManagementCore.getBytesForSave();
+   }
 }
