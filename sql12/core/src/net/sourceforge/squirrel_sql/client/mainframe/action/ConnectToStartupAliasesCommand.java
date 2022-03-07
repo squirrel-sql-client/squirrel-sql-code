@@ -69,7 +69,7 @@ public class ConnectToStartupAliasesCommand implements ICommand
 
          s_log.info("Connecting during Application start to Alias: \"" + alias.getName() + "\" (JDBC-URL: " +  alias.getUrl() + ")");
 
-         new ConnectToAliasCommand(_app, alias).execute();
+         new ConnectToAliasCommand(alias).execute();
       }
    }
 }

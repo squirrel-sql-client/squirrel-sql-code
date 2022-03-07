@@ -141,7 +141,7 @@ final class AliasUserInterfaceFactory implements IUserInterfaceFactory
       SQLAlias alias = _aliasesList.getSelectedAlias(evt);
       if (alias != null)
       {
-         cmd = new ConnectToAliasCommand(_app, alias);
+         cmd = new ConnectToAliasCommand(alias);
       }
       return cmd;
    }

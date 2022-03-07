@@ -4,7 +4,6 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AliasFileOpenAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -102,7 +101,7 @@ public class SessionStartupMainSQLTabContentLoader
          }
       };
 
-      new ConnectToAliasCommand(Main.getApplication(), selectedAlias, true, callback).execute();
+      new ConnectToAliasCommand(selectedAlias, true, callback).execute();
 
    }
 

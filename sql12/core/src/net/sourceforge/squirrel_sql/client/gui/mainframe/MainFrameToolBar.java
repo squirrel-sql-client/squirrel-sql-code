@@ -40,6 +40,8 @@ import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleAutoCommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAllAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.SQLWorksheetTypeChooser;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
@@ -123,7 +125,11 @@ public class MainFrameToolBar extends ToolBar
 		add(actions.get(NewObjectTreeAction.class));
       add(actions.get(NewAliasConnectionAction.class));
       add(actions.get(FileSaveAllAction.class));
-   }
+
+		addSeparator();
+		add(actions.get(SessionSaveAction.class));
+		add(actions.get(SessionOpenAction.class));
+	}
 
 
 	/**
@@ -176,7 +182,7 @@ public class MainFrameToolBar extends ToolBar
 				Object obj = getSelectedItem();
 				if (obj instanceof SQLAlias && this.isEnabled())
 				{
-					new ConnectToAliasCommand(_myApp, (SQLAlias)obj).execute();
+					new ConnectToAliasCommand((SQLAlias)obj).execute();
 				}
 			}
 			finally

@@ -133,7 +133,6 @@ import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAllAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
-import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
@@ -402,9 +401,7 @@ final class MainFrameMenuBar extends JMenuBar
       menu.add(createSessionWindowFileMenu(rsrc));
 		addToMenu(rsrc, ChangeTrackAction.class, menu);
       menu.addSeparator();
-		addToMenu(rsrc, SessionSaveAction.class, menu);
-		addToMenu(rsrc, SessionOpenAction.class, menu);
-		addToMenu(rsrc, SessionManageAction.class, menu);
+		menu.add(createSavedSessionMenu(rsrc));
       menu.addSeparator();
 		addToMenu(rsrc, ShowNativeSQLAction.class, menu);
 		menu.addSeparator();
@@ -456,7 +453,7 @@ final class MainFrameMenuBar extends JMenuBar
 	}
 
 
-   private JMenu createPluginsMenu(Resources rsrc)
+	private JMenu createPluginsMenu(Resources rsrc)
    {
       JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.PLUGINS);
       addToMenu(rsrc, DisplayPluginSummaryAction.class, menu);
@@ -579,7 +576,7 @@ final class MainFrameMenuBar extends JMenuBar
 		return menu;
 	}
 
-   private Component createSessionWindowFileMenu(Resources rsrc)
+   private JMenu createSessionWindowFileMenu(Resources rsrc)
    {
       JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.FILE);
       addToMenu(rsrc, FileNewAction.class, menu);
@@ -596,7 +593,16 @@ final class MainFrameMenuBar extends JMenuBar
       return menu;
    }
 
-   private Component createTransactionMenu(Resources rsrc)
+	private JMenu createSavedSessionMenu(Resources rsrc)
+	{
+		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.SAVED_SESSION);
+		addToMenu(rsrc, SessionSaveAction.class, menu);
+		addToMenu(rsrc, SessionOpenAction.class, menu);
+		return menu;
+	}
+
+
+	private Component createTransactionMenu(Resources rsrc)
    {
       JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.TRANSACTION);
       addToMenuAsCheckBoxMenuItem(rsrc, ToggleAutoCommitAction.class, menu);

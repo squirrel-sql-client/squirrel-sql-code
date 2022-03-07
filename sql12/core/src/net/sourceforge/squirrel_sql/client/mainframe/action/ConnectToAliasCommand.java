@@ -67,22 +67,20 @@ public class ConnectToAliasCommand implements ICommand
 	/**
 	 * Ctor. This ctor will create a new session as well as opening a connection.
 	 *
-	 * @param	app		The <TT>IApplication</TT> that defines app API.
 	 * @param	alias	The <TT>ISQLAlias</TT> to connect to.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or
 	 *			<TT>ISQLAlias</TT> passed.
 	 */
-	public ConnectToAliasCommand(IApplication app, SQLAlias sqlAlias)
+	public ConnectToAliasCommand(SQLAlias sqlAlias)
 	{
-		this(app, sqlAlias, true, null);
+		this(sqlAlias, true, null);
 	}
 
 	/**
 	 * Ctor.
 	 *
-	 * @param	app				The <TT>IApplication</TT> that defines app API.
 	 * @param	alias			The <TT>ISQLAlias</TT> to connect to.
 	 * @param	createSession	If <TT>true</TT> then create a session as well
 	 *							as connecting to the database.
@@ -92,12 +90,8 @@ public class ConnectToAliasCommand implements ICommand
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or
 	 *			<TT>ISQLAlias</TT> passed.
 	 */
-	public ConnectToAliasCommand(IApplication app, SQLAlias sqlAlias, boolean createSession, ICompletionCallback callback)
+	public ConnectToAliasCommand(SQLAlias sqlAlias, boolean createSession, ICompletionCallback callback)
 	{
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
 		if (sqlAlias == null)
 		{
 			throw new IllegalArgumentException("Null ISQLAlias passed");

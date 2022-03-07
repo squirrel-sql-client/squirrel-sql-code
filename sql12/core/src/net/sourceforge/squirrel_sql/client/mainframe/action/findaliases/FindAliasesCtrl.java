@@ -221,7 +221,7 @@ public class FindAliasesCtrl
          }
 
 
-         new ConnectToAliasCommand(Main.getApplication(), (SQLAlias) selectedWrapperAlias.getAlias(), true, completionCallback).execute();
+         new ConnectToAliasCommand((SQLAlias) selectedWrapperAlias.getAlias(), true, completionCallback).execute();
 
          if(false == _dlg.chkLeaveOpen.isSelected())
          {

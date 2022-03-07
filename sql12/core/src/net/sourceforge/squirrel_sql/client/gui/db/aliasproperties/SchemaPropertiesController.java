@@ -1,23 +1,25 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
+import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
-import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 
-import javax.swing.*;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.DefaultTableColumnModel;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
 import java.io.File;
 
 public class SchemaPropertiesController implements IAliasPropertiesPanelController
@@ -161,7 +163,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
          }
       };
 
-      ConnectToAliasCommand cmd = new ConnectToAliasCommand(_app, _alias, false, cb);
+      ConnectToAliasCommand cmd = new ConnectToAliasCommand(_alias, false, cb);
       cmd.execute();
    }
 

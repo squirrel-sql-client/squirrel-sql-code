@@ -96,7 +96,6 @@ import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAllAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
-import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
@@ -232,7 +231,6 @@ public class ActionRegistry
 
       actionCollection.add(new SessionSaveAction(app));
       actionCollection.add(new SessionOpenAction(app));
-      actionCollection.add(new SessionManageAction(app));
 
       actionCollection.add(new GlobalPreferencesAction(app));
       actionCollection.add(new GotoNextResultsTabAction(app));

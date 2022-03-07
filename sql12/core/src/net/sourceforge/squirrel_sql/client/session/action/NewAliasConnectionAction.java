@@ -62,7 +62,7 @@ public class NewAliasConnectionAction extends SquirrelAction implements ISession
    @Override
    public void actionPerformed(ActionEvent evt)
    {
-      new CloneAliasCommand(getApplication(), (SQLAlias) _session.getAlias()).execute();
+      new CloneAliasCommand((SQLAlias) _session.getAlias()).execute();
    }
 
    @Override

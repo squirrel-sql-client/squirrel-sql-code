@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
@@ -32,12 +31,14 @@ public class CloneAliasCommand implements ICommand
 {
 	private final ConnectToAliasCommand connectToAliasCommand;
 
-	public CloneAliasCommand(IApplication app, SQLAlias sqlAlias) {
-		connectToAliasCommand = new ConnectToAliasCommand(app, sqlAlias, true, null);
+	public CloneAliasCommand(SQLAlias sqlAlias)
+	{
+		connectToAliasCommand = new ConnectToAliasCommand(sqlAlias, true, null);
 	}
 
 	@Override
-	public void execute() {
+	public void execute()
+	{
 		connectToAliasCommand.execute();
 	}
 

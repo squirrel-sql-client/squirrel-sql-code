@@ -26,6 +26,7 @@ public class SessionSaveAction extends SquirrelAction implements ISessionAction
 	public SessionSaveAction(IApplication app)
 	{
 		super(app);
+		setEnabled(false);
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -48,9 +49,9 @@ public class SessionSaveAction extends SquirrelAction implements ISessionAction
 
 			savedSessionJsonBean = new SavedSessionJsonBean();
 			savedSessionJsonBean.setName(sessionSaveDlg.getSavedSessionName());
-			savedSessionJsonBean.setDefaultAliasId(alias.getIdentifier());
+			savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
 		}
-		else if(false == alias.getIdentifier().equals(savedSessionJsonBean.getDefaultAliasId()) && savedSessionsManager.isShowAliasChangeMsg())
+		else if(false == alias.getIdentifier().equals(savedSessionJsonBean.getDefaultAliasIdString()) && savedSessionsManager.isShowAliasChangeMsg())
 		{
 			final DontShowAgainDialog dlgMsg = new DontShowAgainDialog(GUIUtils.getOwningFrame(_session.getSessionPanel()),
 																						  s_stringMgr.getString("SessionSaveAction.change.default.alias.to"),
@@ -61,7 +62,7 @@ public class SessionSaveAction extends SquirrelAction implements ISessionAction
 			savedSessionsManager.setShowAliasChangeMsg(res.isDontShowAgain());
 			if(res.isYes())
 			{
-				savedSessionJsonBean.setDefaultAliasId(alias.getIdentifier());
+				savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
 			}
 		}
 

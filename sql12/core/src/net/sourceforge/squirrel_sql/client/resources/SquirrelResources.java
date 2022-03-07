@@ -45,6 +45,7 @@ public class SquirrelResources extends Resources
 		String SESSION = "session";
 		String WINDOWS = "windows";
       String FILE = "file";
+      String SAVED_SESSION = "savedSession";
       String TRANSACTION = "transaction";
    }
 

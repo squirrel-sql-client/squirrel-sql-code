@@ -1,24 +1,22 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class SavedSessionJsonBean
 {
-   private IIdentifier _defaultAliasId;
+   private String _defaultAliasIdString;
    private String _name;
    private List<SessionSqlJsonBean> _sessionSQLs = new ArrayList<>();
 
-   public void setDefaultAliasId(IIdentifier defaultAliasId)
+   public void setDefaultAliasIdString(String defaultAliasIdString)
    {
-      _defaultAliasId = defaultAliasId;
+      _defaultAliasIdString = defaultAliasIdString;
    }
 
-   public IIdentifier getDefaultAliasId()
+   public String getDefaultAliasIdString()
    {
-      return _defaultAliasId;
+      return _defaultAliasIdString;
    }
 
    public void setName(String name)

@@ -155,7 +155,7 @@ public class RecentAliasesListCtrl
          return;
       }
 
-      new ConnectToAliasCommand(Main.getApplication(), selectedAlias).execute();
+      new ConnectToAliasCommand(selectedAlias).execute();
    }
 
    private SQLAlias getSelectedAliasChecked()

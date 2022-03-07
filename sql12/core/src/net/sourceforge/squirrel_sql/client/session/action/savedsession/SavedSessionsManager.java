@@ -10,15 +10,18 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class SavedSessionsManager
 {
    private final static ILogger s_log = LoggerController.createLogger(SavedSessionsManager.class);
 
-   private SavedSessionsJsonBean _savedSessionsJsonBean = new SavedSessionsJsonBean();
+   private SavedSessionsJsonBean _savedSessionsJsonBean = null;
 
    public boolean doesNameExist(String newSessionName)
    {
+      initSavedSessions();
+
       for (SavedSessionJsonBean savedSessionJsonBean : _savedSessionsJsonBean.getSavedSessionJsonBeans())
       {
          if( StringUtilities.equalsRespectNullModuloEmptyAndWhiteSpace(savedSessionJsonBean.getName(), newSessionName, true) )
@@ -31,16 +34,19 @@ public class SavedSessionsManager
 
    public boolean isShowAliasChangeMsg()
    {
+      initSavedSessions();
       return _savedSessionsJsonBean.isShowAliasChangeMsg();
    }
 
    public void setShowAliasChangeMsg(boolean b)
    {
+      initSavedSessions();
       _savedSessionsJsonBean.setShowAliasChangeMsg(b);
    }
 
    public void beginStore(SavedSessionJsonBean savedSessionJsonBean)
    {
+      initSavedSessions();
       for (SessionSqlJsonBean sessionSQL : savedSessionJsonBean.getSessionSQLs())
       {
          if(false == StringUtilities.isEmpty(sessionSQL.getInternalFileName()))
@@ -106,5 +112,27 @@ public class SavedSessionsManager
       _savedSessionsJsonBean.getSavedSessionJsonBeans().remove(savedSessionJsonBean);
       _savedSessionsJsonBean.getSavedSessionJsonBeans().add(0, savedSessionJsonBean);
       JsonMarshalUtil.writeObjectToFile(new ApplicationFiles().getSavedSessionsJsonFile(), _savedSessionsJsonBean);
+   }
+
+   public List<SavedSessionJsonBean> getSavedSessions()
+   {
+      initSavedSessions();
+      return _savedSessionsJsonBean.getSavedSessionJsonBeans();
+   }
+
+   private void initSavedSessions()
+   {
+      if(null == _savedSessionsJsonBean)
+      {
+         final File jsonFile = new ApplicationFiles().getSavedSessionsJsonFile();
+         if(jsonFile.exists())
+         {
+            _savedSessionsJsonBean = JsonMarshalUtil.readObjectFromFile(jsonFile, SavedSessionsJsonBean.class);
+         }
+         else
+         {
+            _savedSessionsJsonBean = new SavedSessionsJsonBean();
+         }
+      }
    }
 }

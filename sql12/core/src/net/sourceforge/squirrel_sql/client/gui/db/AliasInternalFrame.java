@@ -18,34 +18,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
@@ -71,6 +43,34 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.ALIAS_DEFINITIONS;
 /**
@@ -551,7 +551,7 @@ public class AliasInternalFrame extends DialogWidget
 				}
 			};
 
-			new ConnectToAliasCommand(Main.getApplication(), (SQLAlias) _sqlAlias, true, connectToAliasCallBack).execute();
+			new ConnectToAliasCommand((SQLAlias) _sqlAlias, true, connectToAliasCallBack).execute();
 		}
 		else
 		{
@@ -582,7 +582,7 @@ public class AliasInternalFrame extends DialogWidget
 				return;
 			}
 
-			new ConnectToAliasCommand(Main.getApplication(), alias, false, new ConnectionTestCallBack(Main.getApplication(), alias)).execute();
+			new ConnectToAliasCommand(alias, false, new ConnectionTestCallBack(Main.getApplication(), alias)).execute();
 		}
 	}
 

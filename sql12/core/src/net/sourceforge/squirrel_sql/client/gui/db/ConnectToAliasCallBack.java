@@ -1,19 +1,18 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 import java.sql.SQLException;
 
 public class ConnectToAliasCallBack implements ICompletionCallback
@@ -27,7 +26,6 @@ public class ConnectToAliasCallBack implements ICompletionCallback
 
    public ConnectToAliasCallBack(SQLAlias alias)
    {
-      super();
       if (alias == null)
       {
          throw new IllegalArgumentException("ISQLAlias == null");
