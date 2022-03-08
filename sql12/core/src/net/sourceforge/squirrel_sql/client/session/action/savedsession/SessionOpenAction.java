@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -72,7 +73,23 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction
 
    private void onOpenSavedSession(SavedSessionJsonBean savedSessionJsonBean)
    {
-      if(null == _session)
+      final MainFrame mainFrame = Main.getApplication().getMainFrame();
+      if(null != _session)
+      {
+         if( false == SavedSessionUtil.isSQLVirgin(_session))
+         {
+            final String msg = s_stringMgr.getString("SessionOpenAction.discard.open.session", _session.getTitle());
+            if(JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(mainFrame, msg))
+            {
+               return;
+            }
+
+            SavedSessionUtil.makeSessionSQLVirgin(_session);
+         }
+
+         loadSavedSession(_session.getSessionInternalFrame(), savedSessionJsonBean);
+      }
+      else
       {
          final UidIdentifier aliasId = new UidIdentifier(savedSessionJsonBean.getDefaultAliasIdString());
 
@@ -80,7 +97,7 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction
 
          if(null == alias)
          {
-            JOptionPane.showMessageDialog(Main.getApplication().getMainFrame(), s_stringMgr.getString("SessionOpenAction.missing.alias"));
+            JOptionPane.showMessageDialog(mainFrame, s_stringMgr.getString("SessionOpenAction.missing.alias"));
             return;
          }
 
@@ -89,16 +106,16 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction
             @Override
             public void sessionInternalFrameCreated(SessionInternalFrame sessionInternalFrame)
             {
-               onSessionInternalFrameCreated(sessionInternalFrame, savedSessionJsonBean);
+               loadSavedSession(sessionInternalFrame, savedSessionJsonBean);
             }
          };
 
          new ConnectToAliasCommand((SQLAlias) alias, true, callback).execute();
-      }
 
+      }
    }
 
-   private void onSessionInternalFrameCreated(SessionInternalFrame sessionInternalFrame, SavedSessionJsonBean savedSessionJsonBean)
+   private void loadSavedSession(SessionInternalFrame sessionInternalFrame, SavedSessionJsonBean savedSessionJsonBean)
    {
       SavedSessionLoader.load(sessionInternalFrame, savedSessionJsonBean);
    }

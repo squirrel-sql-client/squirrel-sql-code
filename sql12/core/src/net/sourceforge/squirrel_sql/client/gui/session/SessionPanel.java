@@ -52,6 +52,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SessionPanel extends JPanel
 {
@@ -321,6 +322,12 @@ public class SessionPanel extends JPanel
    {
       return _mainPanel.getAllSQLPanels();
    }
+
+   public List<AdditionalSQLTab> getAdditionalSQLTabs()
+   {
+      return _mainPanel.getAdditionalSQLTabs();
+   }
+
 
    public SQLPanel getSelectedSQLPanel()
    {

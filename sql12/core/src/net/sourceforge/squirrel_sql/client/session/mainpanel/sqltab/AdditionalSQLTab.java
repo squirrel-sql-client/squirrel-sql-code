@@ -1,8 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab;
 
-import java.awt.Component;
-import javax.swing.ImageIcon;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandlerUtil;
@@ -13,6 +10,9 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.ImageIcon;
+import java.awt.Component;
 
 public class AdditionalSQLTab extends BaseSQLTab
 {
@@ -80,6 +80,11 @@ public class AdditionalSQLTab extends BaseSQLTab
    }
 
    private void onClose(boolean callConfirmClose)
+   {
+      close(callConfirmClose);
+   }
+
+   public void close(boolean callConfirmClose)
    {
       if(callConfirmClose && getSQLPanel().getSQLPanelAPI().confirmClose())
       {
