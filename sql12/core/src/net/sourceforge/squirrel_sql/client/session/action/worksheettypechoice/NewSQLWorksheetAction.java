@@ -18,18 +18,17 @@ package net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.event.ActionEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.action.SquirrelActionChannel;
 import net.sourceforge.squirrel_sql.client.action.ChanneledAction;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.action.SquirrelActionChannel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.toolbarbuttonchooser.EnabledListener;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
+import net.sourceforge.squirrel_sql.client.session.action.toolbarbuttonchooser.EnabledListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+
+import java.awt.event.ActionEvent;
 
 /**
  * According to the selection in the main tool bar a new main  window tab
@@ -61,11 +60,7 @@ public class NewSQLWorksheetAction extends SquirrelAction implements ISessionAct
             getApplication().getWindowManager().createSQLInternalFrame(_session);
             break;
          case SQL_TAB:
-            AdditionalSQLTab additionalSQLTab = new AdditionalSQLTab(_session);
-            int tabIndex = _session.getSessionPanel().addMainTab(additionalSQLTab);
-            _session.getSessionPanel().selectMainTab(tabIndex);
-            Main.getApplication().getPluginManager().additionalSQLTabOpened(additionalSQLTab);
-            _session.getSessionInternalFrame().moveToFront();
+            SessionUtils.createSQLTab(_session);
             break;
          default:
             throw new IllegalStateException("Unknown selected SQLWorksheetTypeEnum " + SQLWorksheetTypeEnum.getSelectedType());

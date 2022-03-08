@@ -9,12 +9,11 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.BaseSQLTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import java.awt.*;
+import java.awt.Frame;
 
 public class SessionUtils
 {
@@ -134,5 +133,15 @@ public class SessionUtils
       }
 
       return null;
+   }
+
+   public static AdditionalSQLTab createSQLTab(ISession session)
+   {
+      AdditionalSQLTab additionalSQLTab = new AdditionalSQLTab(session);
+      int tabIndex = session.getSessionPanel().addMainTab(additionalSQLTab);
+      session.getSessionPanel().selectMainTab(tabIndex);
+      Main.getApplication().getPluginManager().additionalSQLTabOpened(additionalSQLTab);
+      session.getSessionInternalFrame().moveToFront();
+      return additionalSQLTab;
    }
 }
