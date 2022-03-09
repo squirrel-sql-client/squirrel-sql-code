@@ -1,21 +1,13 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import java.awt.event.ActionEvent;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainDialog;
-import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainResult;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.awt.event.ActionEvent;
 
 
 public class SessionSaveAction extends SquirrelAction implements ISessionAction
@@ -32,51 +24,7 @@ public class SessionSaveAction extends SquirrelAction implements ISessionAction
 
 	public void actionPerformed(ActionEvent e)
 	{
-		SavedSessionJsonBean savedSessionJsonBean = _session.getSavedSession();
-
-		final ISQLAliasExt alias = _session.getAlias();
-		final SavedSessionsManager savedSessionsManager = getApplication().getSavedSessionsManager();
-		if(null == savedSessionJsonBean)
-		{
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String savedSessionNameTemplate = alias.getName() + " | " + df.format(new Date());
-
-			final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(GUIUtils.getOwningFrame(_session.getSessionPanel()), savedSessionNameTemplate);
-
-			if(false == sessionSaveDlg.isOk())
-			{
-				return;
-			}
-
-			savedSessionJsonBean = new SavedSessionJsonBean();
-			savedSessionJsonBean.setName(sessionSaveDlg.getSavedSessionName());
-			savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
-		}
-		else if(false == alias.getIdentifier().equals(savedSessionJsonBean.getDefaultAliasIdString()) && savedSessionsManager.isShowAliasChangeMsg())
-		{
-			final DontShowAgainDialog dlgMsg = new DontShowAgainDialog(GUIUtils.getOwningFrame(_session.getSessionPanel()),
-																						  s_stringMgr.getString("SessionSaveAction.change.default.alias.to"),
-																						  s_stringMgr.getString("SessionSaveAction.change.default.alias.how.to"));
-
-
-			final DontShowAgainResult res = dlgMsg.showAndGetResult("SessionSaveAction.change.alias", 470, 200);
-			savedSessionsManager.setShowAliasChangeMsg(res.isDontShowAgain());
-			if(res.isYes())
-			{
-				savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
-			}
-		}
-
-		List<SQLPanelTyped> sqlPanelTypedList =  SavedSessionUtil.getAllSQLPanelsOrderedAndTyped(_session);
-
-		SavedSessionJsonBean finalSavedSessionJsonBean = savedSessionJsonBean;
-		savedSessionsManager.beginStore(savedSessionJsonBean);
-		sqlPanelTypedList.forEach(p -> savedSessionsManager.storeFile(finalSavedSessionJsonBean, p.getSqlPanel(), p.getSqlPanelType()));
-		savedSessionsManager.endStore(savedSessionJsonBean);
-
-		Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SessionSaveAction.saved.session.msg", savedSessionJsonBean.getName()));
-
-		SavedSessionUtil.initSessionWithSavedSession(savedSessionJsonBean, _session);
+		SessionPersister.saveSession(_session);
 	}
 
 	@Override

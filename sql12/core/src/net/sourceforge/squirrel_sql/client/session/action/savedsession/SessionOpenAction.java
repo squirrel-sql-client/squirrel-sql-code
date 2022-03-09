@@ -10,7 +10,6 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -91,9 +90,7 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction
       }
       else
       {
-         final UidIdentifier aliasId = new UidIdentifier(savedSessionJsonBean.getDefaultAliasIdString());
-
-         final ISQLAlias alias = Main.getApplication().getAliasesAndDriversManager().getAlias(aliasId);
+         final ISQLAlias alias = SavedSessionUtil.getAliasForIdString(savedSessionJsonBean.getDefaultAliasIdString());
 
          if(null == alias)
          {

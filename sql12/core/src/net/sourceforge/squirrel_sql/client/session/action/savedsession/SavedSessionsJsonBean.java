@@ -6,7 +6,7 @@ import java.util.List;
 public class SavedSessionsJsonBean
 {
    List<SavedSessionJsonBean> _savedSessionJsonBeans = new ArrayList<>();
-   private boolean _showAliasChangeMsg;
+   private boolean _showAliasChangeMsg = true;
 
    public List<SavedSessionJsonBean> getSavedSessionJsonBeans()
    {

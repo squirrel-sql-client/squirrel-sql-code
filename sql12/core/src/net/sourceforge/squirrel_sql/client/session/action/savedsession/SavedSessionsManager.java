@@ -1,10 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
@@ -12,11 +7,19 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class SavedSessionsManager
 {
    private final static ILogger s_log = LoggerController.createLogger(SavedSessionsManager.class);
 
    private SavedSessionsJsonBean _savedSessionsJsonBean = null;
+   private ExecutorService _singleThreadJsonWriteExecutorService;
 
    public boolean doesNameExist(String newSessionName)
    {
@@ -111,7 +114,13 @@ public class SavedSessionsManager
    {
       _savedSessionsJsonBean.getSavedSessionJsonBeans().remove(savedSessionJsonBean);
       _savedSessionsJsonBean.getSavedSessionJsonBeans().add(0, savedSessionJsonBean);
-      JsonMarshalUtil.writeObjectToFile(new ApplicationFiles().getSavedSessionsJsonFile(), _savedSessionsJsonBean);
+
+      saveJsonBean();
+   }
+
+   private void saveJsonBean()
+   {
+      _singleThreadJsonWriteExecutorService.submit(() -> JsonMarshalUtil.writeObjectToFile(new ApplicationFiles().getSavedSessionsJsonFile(), _savedSessionsJsonBean));
    }
 
    public List<SavedSessionJsonBean> getSavedSessions()
@@ -133,12 +142,19 @@ public class SavedSessionsManager
          {
             _savedSessionsJsonBean = new SavedSessionsJsonBean();
          }
+
+         _singleThreadJsonWriteExecutorService = Executors.newSingleThreadExecutor();
+
       }
    }
 
    public void moveToTop(SavedSessionJsonBean savedSession)
    {
+      initSavedSessions();
+
       _savedSessionsJsonBean.getSavedSessionJsonBeans().remove(savedSession);
       _savedSessionsJsonBean.getSavedSessionJsonBeans().add(0, savedSession);
+
+      saveJsonBean();
    }
 }
