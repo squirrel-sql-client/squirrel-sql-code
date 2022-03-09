@@ -20,6 +20,13 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -40,6 +47,7 @@ import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleAutoCommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAllAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.worksheettypechoice.NewSQLWorksheetAction;
@@ -55,13 +63,6 @@ import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Iterator;
 /**
  * Toolbar for <CODE>MainFrame</CODE>.
  *
@@ -129,6 +130,7 @@ public class MainFrameToolBar extends ToolBar
 		addSeparator();
 		add(actions.get(SessionSaveAction.class));
 		add(actions.get(SessionOpenAction.class));
+		add(actions.get(SessionManageAction.class));
 	}
 
 

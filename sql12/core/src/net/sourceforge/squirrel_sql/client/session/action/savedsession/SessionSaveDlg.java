@@ -1,20 +1,21 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 public class SessionSaveDlg extends JDialog
 {
@@ -27,13 +28,14 @@ public class SessionSaveDlg extends JDialog
    private boolean _ok;
 
 
-   public SessionSaveDlg(Frame parentFrame, String savedSessionNameTemplate, SavedSessionsManager savedSessionsManager)
+   public SessionSaveDlg(Frame parentFrame, String savedSessionNameTemplate)
    {
       super(parentFrame, s_stringMgr.getString("SessionSaveDlg.title"), true);
 
+
       layoutUI(savedSessionNameTemplate);
 
-      _btnOk.addActionListener(e -> onOk(savedSessionsManager));
+      _btnOk.addActionListener(e -> onOk());
       _btnCancel.addActionListener(e -> close());
 
       getRootPane().setDefaultButton(_btnOk);
@@ -44,15 +46,16 @@ public class SessionSaveDlg extends JDialog
       setVisible(true);
    }
 
-   private void onOk(SavedSessionsManager savedSessionsManager)
+   private void onOk()
    {
+
       if(StringUtilities.isEmpty(_txtSavedSessionName.getText(), true))
       {
          JOptionPane.showConfirmDialog(this, s_stringMgr.getString("SessionSaveDlg.empty.name"));
          return;
       }
 
-      if(savedSessionsManager.doesNameExist(_txtSavedSessionName.getText().trim()))
+      if( Main.getApplication().getSavedSessionsManager().doesNameExist(_txtSavedSessionName.getText().trim()))
       {
          JOptionPane.showConfirmDialog(this, s_stringMgr.getString("SessionSaveDlg.nonunique.name"));
          return;
@@ -120,10 +123,5 @@ public class SessionSaveDlg extends JDialog
       ret.add(_btnCancel, gbc);
 
       return ret;
-   }
-
-   public String getName()
-   {
-      return null;
    }
 }

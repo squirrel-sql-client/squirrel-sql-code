@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -8,9 +11,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SavedSessionUtil
 {
@@ -83,5 +83,11 @@ public class SavedSessionUtil
             }
          }
       }
+   }
+
+   public static void setSavedSession(SavedSessionJsonBean savedSessionJsonBean, ISession session)
+   {
+      session.setSavedSession(savedSessionJsonBean);
+      ((SessionManageAction)Main.getApplication().getActionCollection().get(SessionManageAction.class)).updateUI();
    }
 }

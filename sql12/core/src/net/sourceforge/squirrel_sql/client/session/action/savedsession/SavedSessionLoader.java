@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
@@ -12,11 +17,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class SavedSessionLoader
 {
@@ -46,7 +46,7 @@ public class SavedSessionLoader
          }
       }
 
-      sessionInternalFrame.getSession().setSavedSession(savedSessionJsonBean);
+      SavedSessionUtil.setSavedSession(savedSessionJsonBean, sessionInternalFrame.getSession());
    }
 
    private static void loadSessionSql(SessionSqlJsonBean sessionSQL, ISQLPanelAPI mainSQLPanelAPI)

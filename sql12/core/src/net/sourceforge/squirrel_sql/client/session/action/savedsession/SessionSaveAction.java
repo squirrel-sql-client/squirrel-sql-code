@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import java.awt.event.ActionEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
@@ -10,11 +15,6 @@ import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainResult;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.awt.event.ActionEvent;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 
 public class SessionSaveAction extends SquirrelAction implements ISessionAction
@@ -40,7 +40,7 @@ public class SessionSaveAction extends SquirrelAction implements ISessionAction
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String savedSessionNameTemplate = alias.getName() + " | " + df.format(new Date());
 
-			final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(GUIUtils.getOwningFrame(_session.getSessionPanel()), savedSessionNameTemplate, savedSessionsManager);
+			final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(GUIUtils.getOwningFrame(_session.getSessionPanel()), savedSessionNameTemplate);
 
 			if(false == sessionSaveDlg.isOk())
 			{
@@ -73,7 +73,7 @@ public class SessionSaveAction extends SquirrelAction implements ISessionAction
 		sqlPanelTypedList.forEach(p -> savedSessionsManager.storeFile(finalSavedSessionJsonBean, p.getSqlPanel(), p.getSqlPanelType()));
 		savedSessionsManager.endStore(savedSessionJsonBean);
 
-		_session.setSavedSession(savedSessionJsonBean);
+		SavedSessionUtil.setSavedSession(savedSessionJsonBean, _session);
 	}
 
 	@Override
