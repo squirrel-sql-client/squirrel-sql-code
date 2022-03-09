@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -73,7 +74,9 @@ public class SessionSaveAction extends SquirrelAction implements ISessionAction
 		sqlPanelTypedList.forEach(p -> savedSessionsManager.storeFile(finalSavedSessionJsonBean, p.getSqlPanel(), p.getSqlPanelType()));
 		savedSessionsManager.endStore(savedSessionJsonBean);
 
-		SavedSessionUtil.setSavedSession(savedSessionJsonBean, _session);
+		Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SessionSaveAction.saved.session.msg", savedSessionJsonBean.getName()));
+
+		SavedSessionUtil.initSessionWithSavedSession(savedSessionJsonBean, _session);
 	}
 
 	@Override

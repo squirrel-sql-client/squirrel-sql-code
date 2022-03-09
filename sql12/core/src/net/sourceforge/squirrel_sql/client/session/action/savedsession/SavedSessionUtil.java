@@ -85,7 +85,7 @@ public class SavedSessionUtil
       }
    }
 
-   public static void setSavedSession(SavedSessionJsonBean savedSessionJsonBean, ISession session)
+   public static void initSessionWithSavedSession(SavedSessionJsonBean savedSessionJsonBean, ISession session)
    {
       session.setSavedSession(savedSessionJsonBean);
       ((SessionManageAction)Main.getApplication().getActionCollection().get(SessionManageAction.class)).updateUI();

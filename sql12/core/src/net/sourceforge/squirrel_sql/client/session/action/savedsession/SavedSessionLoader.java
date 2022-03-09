@@ -46,7 +46,7 @@ public class SavedSessionLoader
          }
       }
 
-      SavedSessionUtil.setSavedSession(savedSessionJsonBean, sessionInternalFrame.getSession());
+      SavedSessionUtil.initSessionWithSavedSession(savedSessionJsonBean, sessionInternalFrame.getSession());
    }
 
    private static void loadSessionSql(SessionSqlJsonBean sessionSQL, ISQLPanelAPI mainSQLPanelAPI)

@@ -1,16 +1,16 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
 
 public class SavedSessionsManager
 {
@@ -134,5 +134,11 @@ public class SavedSessionsManager
             _savedSessionsJsonBean = new SavedSessionsJsonBean();
          }
       }
+   }
+
+   public void moveToTop(SavedSessionJsonBean savedSession)
+   {
+      _savedSessionsJsonBean.getSavedSessionJsonBeans().remove(savedSession);
+      _savedSessionsJsonBean.getSavedSessionJsonBeans().add(0, savedSession);
    }
 }

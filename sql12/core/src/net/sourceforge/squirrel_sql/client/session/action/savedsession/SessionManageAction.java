@@ -23,6 +23,7 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
    public SessionManageAction(IApplication app)
    {
       super(app);
+      updateUI();
    }
 
    public void actionPerformed(ActionEvent ae)
@@ -63,7 +64,10 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
 
       _session.getSavedSession().setName(sessionSaveDlg.getSavedSessionName());
 
-      System.out.println("SessionManageAction.onRenameSavedSession");
+      Main.getApplication().getSavedSessionsManager().moveToTop(_session.getSavedSession());
+
+      Main.getApplication().getActionCollection().get(SessionSaveAction.class).actionPerformed(new ActionEvent(this, 1, "Rename"));
+
    }
 
    @Override
