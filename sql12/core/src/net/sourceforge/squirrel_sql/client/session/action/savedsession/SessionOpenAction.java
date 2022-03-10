@@ -1,5 +1,12 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import java.awt.event.ActionEvent;
+import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -13,13 +20,6 @@ import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import java.awt.event.ActionEvent;
-import java.util.List;
 
 
 public class SessionOpenAction extends SquirrelAction implements ISessionAction
@@ -45,7 +45,7 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction
          {
             SavedSessionJsonBean savedSessionJsonBean =  savedSessions.get(i);
             final JMenuItem item = new JMenuItem(savedSessionJsonBean.getName());
-            item.addActionListener(e -> onOpenSavedSession(savedSessionJsonBean));
+            item.addActionListener(e -> onOpenSavedSession(savedSessionJsonBean, _session));
             popupMenu.add(item);
          }
 
@@ -65,28 +65,37 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction
 
    private void onOpenSavedSessionsDialog()
    {
-      System.out.println("SessionOpenAction.onOpenSavedSessionsDialog");
-//		SavedSessionOpenCtrl savedSessionOpenCtrl = new SavedSessionOpenCtrl(_session);
-//		SavedSessionJsonBean savedSessionJsonBean = savedSessionOpenCtrl.getSelectedSavedSession();
+      SavedSessionMoreCtrl savedSessionOpenCtrl = new SavedSessionMoreCtrl(_session);
+		SavedSessionJsonBean savedSessionJsonBean = savedSessionOpenCtrl.getSelectedSavedSession();
+
+      if(null != savedSessionJsonBean)
+      {
+         onOpenSavedSession(savedSessionJsonBean, _session);
+      }
    }
 
-   private void onOpenSavedSession(SavedSessionJsonBean savedSessionJsonBean)
+   private void onOpenSavedSession(SavedSessionJsonBean savedSessionJsonBean, ISession session)
    {
       final MainFrame mainFrame = Main.getApplication().getMainFrame();
-      if(null != _session)
+      if( null != session )
       {
-         if( false == SavedSessionUtil.isSQLVirgin(_session))
+         OpenInSessionDlg openInSessionDlg = new OpenInSessionDlg(mainFrame,
+                                                                  savedSessionJsonBean.getName(),
+                                                                  SavedSessionUtil.isSQLVirgin(session));
+         if(false == openInSessionDlg.isOk())
          {
-            final String msg = s_stringMgr.getString("SessionOpenAction.discard.open.session", _session.getTitle());
-            if(JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(mainFrame, msg))
-            {
-               return;
-            }
-
-            SavedSessionUtil.makeSessionSQLVirgin(_session);
+            return;
          }
 
-         loadSavedSession(_session.getSessionInternalFrame(), savedSessionJsonBean);
+         if(openInSessionDlg.isOpenInNewSession())
+         {
+            onOpenSavedSession(savedSessionJsonBean, null);
+            return;
+         }
+
+         SavedSessionUtil.makeSessionSQLVirgin(session);
+
+         loadSavedSession(session.getSessionInternalFrame(), savedSessionJsonBean);
       }
       else
       {

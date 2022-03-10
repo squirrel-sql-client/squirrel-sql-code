@@ -1,18 +1,17 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import java.awt.Frame;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
-import java.awt.Frame;
-
-public class SavedSessionOpenCtrl
+public class SavedSessionMoreCtrl
 {
-   private final SavedSessionOpenDlg _dlg;
+   private final SavedSessionMoreDlg _dlg;
    private ISession _session;
 
-
-   public SavedSessionOpenCtrl(ISession session)
+   public SavedSessionMoreCtrl(ISession session)
    {
       _session = session;
 
@@ -29,8 +28,13 @@ public class SavedSessionOpenCtrl
          showWillDiscardExistingSqlPanelsWarning = false;
       }
 
-      _dlg = new SavedSessionOpenDlg(owningFrame, showWillDiscardExistingSqlPanelsWarning);
+      _dlg = new SavedSessionMoreDlg(owningFrame);
 
+      GUIUtils.enableCloseByEscape(_dlg);
+
+      GUIUtils.initLocation(_dlg, 400, 600);
+
+      _dlg.setVisible(true);
    }
 
    public SavedSessionJsonBean getSelectedSavedSession()
