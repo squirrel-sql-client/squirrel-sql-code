@@ -11,6 +11,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -36,15 +37,15 @@ public class SavedSessionMoreDlg extends JDialog
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
-      getContentPane().add(createTopPanel(state), gbc);
+      getContentPane().add(createTopPanel(), gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(3,5,0,5), 0,0);
       lstSavedSessions = new JList<>();
       lstSavedSessions.setCellRenderer(new SavedSessionListCellRenderer());
-      getContentPane().add(lstSavedSessions, gbc);
+      getContentPane().add(new JScrollPane(lstSavedSessions), gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,0), 0,0);
-      getContentPane().add(createButtonPanel(), gbc);
+      getContentPane().add(createButtonPanel(state), gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,0,0), 0,0);
       getContentPane().add(createConfigPanel(), gbc);
@@ -56,7 +57,7 @@ public class SavedSessionMoreDlg extends JDialog
       getRootPane().setDefaultButton(btnOpenSelected);
    }
 
-   private JPanel createTopPanel(SavedSessionMoreDlgState state)
+   private JPanel createTopPanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
@@ -66,16 +67,7 @@ public class SavedSessionMoreDlg extends JDialog
       ret.add(new JLabel(s_stringMgr.getString("SavedSessionMoreDlg.available.saved.sessions")), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("SavedSessionMoreDlg.saved.session.info"), 10000).getButton(), gbc);
-
-      if(state == SavedSessionMoreDlgState.CURRENT_SESSION || state == SavedSessionMoreDlgState.CURRENT_SESSION_WARN_DISCARD_SQL_EDITORS)
-      {
-         gbc = new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,0), 0,0);
-         openInSessionPanel = new OpenInSessionPanel(null, state == SavedSessionMoreDlgState.CURRENT_SESSION_WARN_DISCARD_SQL_EDITORS);
-         ret.add(openInSessionPanel, gbc);
-
-         openInSessionPanel.setBorder(BorderFactory.createEtchedBorder());
-      }
+      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("saved.sessions.info.html"), 10000).getButton(), gbc);
 
       return ret;
    }
@@ -102,19 +94,32 @@ public class SavedSessionMoreDlg extends JDialog
       return ret;
    }
 
-   private JPanel createButtonPanel()
+   private JPanel createButtonPanel(SavedSessionMoreDlgState state)
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      int gridX = 0;
+
+      gbc = new GridBagConstraints(gridX,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       btnOpenSelected = new JButton(s_stringMgr.getString("SavedSessionMoreDlg.open.selected"));
       ret.add(btnOpenSelected, gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
+      if(state == SavedSessionMoreDlgState.CURRENT_SESSION || state == SavedSessionMoreDlgState.CURRENT_SESSION_WARN_DISCARD_SQL_EDITORS)
+      {
+         ++gridX;
+         gbc = new GridBagConstraints(gridX,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,2,0,0), 0,0);
+         openInSessionPanel = new OpenInSessionPanel(null, state == SavedSessionMoreDlgState.CURRENT_SESSION_WARN_DISCARD_SQL_EDITORS);
+         ret.add(openInSessionPanel, gbc);
+         openInSessionPanel.setBorder(BorderFactory.createEtchedBorder());
+      }
+
+      ++ gridX;
+      gbc = new GridBagConstraints(gridX,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,10,0,0), 0,0);
       btnDeleteSelected = new JButton(s_stringMgr.getString("SavedSessionMoreDlg.delete.selected"));
       ret.add(btnDeleteSelected, gbc);
+
 
       return ret;
    }

@@ -38,7 +38,7 @@ public class SavedSessionMoreCtrl
 
       GUIUtils.enableCloseByEscape(_dlg);
 
-      GUIUtils.initLocation(_dlg, 400, 600);
+      GUIUtils.initLocation(_dlg, 650, 580);
 
       _dlg.setVisible(true);
    }
