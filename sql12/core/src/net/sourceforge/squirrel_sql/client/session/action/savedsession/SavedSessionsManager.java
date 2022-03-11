@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
@@ -50,6 +52,13 @@ public class SavedSessionsManager
    public void beginStore(SavedSessionJsonBean savedSessionJsonBean)
    {
       initSavedSessions();
+      deleteInternallyStoredFiles(savedSessionJsonBean);
+
+      savedSessionJsonBean.getSessionSQLs().clear();
+   }
+
+   private void deleteInternallyStoredFiles(SavedSessionJsonBean savedSessionJsonBean)
+   {
       for (SessionSqlJsonBean sessionSQL : savedSessionJsonBean.getSessionSQLs())
       {
          if(false == StringUtilities.isEmpty(sessionSQL.getInternalFileName()))
@@ -65,8 +74,6 @@ public class SavedSessionsManager
             }
          }
       }
-
-      savedSessionJsonBean.getSessionSQLs().clear();
    }
 
    public void storeFile(SavedSessionJsonBean savedSessionJsonBean, SQLPanel sqlPanel, SqlPanelType sqlPanelType)
@@ -154,6 +161,35 @@ public class SavedSessionsManager
 
       _savedSessionsJsonBean.getSavedSessionJsonBeans().remove(savedSession);
       _savedSessionsJsonBean.getSavedSessionJsonBeans().add(0, savedSession);
+
+      saveJsonBean();
+   }
+
+   public boolean areUsedInOpenSessions(List<SavedSessionJsonBean> savedSessions)
+   {
+      initSavedSessions();
+
+      return Main.getApplication().getSessionManager().getOpenSessions().stream().anyMatch(s -> savedSessions.contains(s.getSavedSession()));
+   }
+
+   public void delete(List<SavedSessionJsonBean> toDel)
+   {
+      initSavedSessions();
+
+      for (ISession session : Main.getApplication().getSessionManager().getOpenSessions())
+      {
+         if(toDel.contains(session.getSavedSession()))
+         {
+            session.setSavedSession(null);
+            ((SessionManageAction)Main.getApplication().getActionCollection().get(SessionManageAction.class)).updateUI();
+         }
+      }
+
+      for (SavedSessionJsonBean savedSessionJsonBean : toDel)
+      {
+         deleteInternallyStoredFiles(savedSessionJsonBean);
+      }
+      _savedSessionsJsonBean.getSavedSessionJsonBeans().removeAll(toDel);
 
       saveJsonBean();
    }

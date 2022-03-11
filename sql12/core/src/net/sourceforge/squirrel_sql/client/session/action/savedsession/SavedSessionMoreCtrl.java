@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 public class SavedSessionMoreCtrl
 {
@@ -64,6 +65,8 @@ public class SavedSessionMoreCtrl
       _dlg.btnOpenSelected.addActionListener(e -> onOpenSelected());
       _dlg.btnClose.addActionListener(e -> close());
 
+      _dlg.btnDeleteSelected.addActionListener(e -> onDeleteSelected());
+
       GUIUtils.enableCloseByEscape(_dlg);
 
       GUIUtils.initLocation(_dlg, 650, 580);
@@ -71,6 +74,41 @@ public class SavedSessionMoreCtrl
       GUIUtils.forceFocus(_dlg.lstSavedSessions);
 
       _dlg.setVisible(true);
+   }
+
+   private void onDeleteSelected()
+   {
+      final List<SavedSessionJsonBean> selectedValuesList = _dlg.lstSavedSessions.getSelectedValuesList();
+
+      if(0 == selectedValuesList.size())
+      {
+         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("SavedSessionMoreCtrl.no.session.selected.to.delete"));
+         return;
+      }
+
+      if(Main.getApplication().getSavedSessionsManager().areUsedInOpenSessions(selectedValuesList))
+      {
+         if(JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(_dlg, s_stringMgr.getString("SavedSessionMoreCtrl.confirm.delete.including.used.in.open")))
+         {
+            return;
+         }
+      }
+      else
+      {
+         if(JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(_dlg, s_stringMgr.getString("SavedSessionMoreCtrl.confirm.delete")))
+         {
+            return;
+         }
+      }
+
+      Main.getApplication().getSavedSessionsManager().delete(selectedValuesList);
+
+      _dlg.lstSavedSessions.setListData(Main.getApplication().getSavedSessionsManager().getSavedSessions().toArray(new SavedSessionJsonBean[0]));
+
+      if(0 < _dlg.lstSavedSessions.getModel().getSize())
+      {
+         _dlg.lstSavedSessions.setSelectedIndex(1);
+      }
    }
 
    private void onListClicked(MouseEvent e)
