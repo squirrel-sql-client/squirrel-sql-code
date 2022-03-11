@@ -1,12 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import java.awt.event.ActionEvent;
-import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -20,6 +13,13 @@ import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import java.awt.event.ActionEvent;
+import java.util.List;
 
 
 public class SessionOpenAction extends SquirrelAction implements ISessionAction
@@ -81,7 +81,7 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction
       {
          OpenInSessionDlg openInSessionDlg = new OpenInSessionDlg(mainFrame,
                                                                   savedSessionJsonBean.getName(),
-                                                                  SavedSessionUtil.isSQLVirgin(session));
+                                                                  false == SavedSessionUtil.isSQLVirgin(session));
          if(false == openInSessionDlg.isOk())
          {
             return;

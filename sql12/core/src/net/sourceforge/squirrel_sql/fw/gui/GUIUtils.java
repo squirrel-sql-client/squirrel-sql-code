@@ -288,13 +288,8 @@ public class GUIUtils
 	 *
 	 * @throws IllegalArgumentException	 If <TT>btns</TT> is <TT>null</TT>.
 	 */
-	public static void setJButtonSizesTheSame(JButton[] btns)
+	public static void setJButtonSizesTheSame(JButton... btns)
 	{
-		if (btns == null)
-		{
-			throw new IllegalArgumentException("null JButton[] passed");
-		}
-
 		// Get the largest width and height
 		final Dimension maxSize = new Dimension(0, 0);
 		for (int i = 0; i < btns.length; ++i)
