@@ -47,10 +47,19 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
          item.addActionListener(e -> onPrintDetailsToMessagePanel());
          popupMenu.add(item);
 
+         item = new JMenuItem(s_stringMgr.getString("SessionManageAction.more"));
+         item.addActionListener(e -> onOpenManageSavedSessionDialog());
+         popupMenu.add(item);
+
          JButton toolBarButton = (JButton) ae.getSource();
 
          popupMenu.show(toolBarButton, 0, toolBarButton.getHeight());
       }
+   }
+
+   private void onOpenManageSavedSessionDialog()
+   {
+      ((SessionOpenAction)Main.getApplication().getActionCollection().get(SessionOpenAction.class)).onOpenSavedSessionsDialog();
    }
 
    private void onPrintDetailsToMessagePanel()

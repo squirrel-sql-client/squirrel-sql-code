@@ -45,7 +45,7 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction
          {
             SavedSessionJsonBean savedSessionJsonBean =  savedSessions.get(i);
             final JMenuItem item = new JMenuItem(savedSessionJsonBean.getName());
-            item.addActionListener(e -> onOpenSavedSession(savedSessionJsonBean, _session));
+            item.addActionListener(e -> onOpenSavedSession(savedSessionJsonBean, _session, false));
             popupMenu.add(item);
          }
 
@@ -63,34 +63,44 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction
       }
    }
 
-   private void onOpenSavedSessionsDialog()
+   public void onOpenSavedSessionsDialog()
    {
       SavedSessionMoreCtrl savedSessionOpenCtrl = new SavedSessionMoreCtrl(_session);
 		SavedSessionJsonBean savedSessionJsonBean = savedSessionOpenCtrl.getSelectedSavedSession();
 
       if(null != savedSessionJsonBean)
       {
-         onOpenSavedSession(savedSessionJsonBean, _session);
+         if(savedSessionOpenCtrl.isOpenInNewSession())
+         {
+            onOpenSavedSession(savedSessionJsonBean, null, true);
+         }
+         else
+         {
+            onOpenSavedSession(savedSessionJsonBean, _session, true);
+         }
       }
    }
 
-   private void onOpenSavedSession(SavedSessionJsonBean savedSessionJsonBean, ISession session)
+   private void onOpenSavedSession(SavedSessionJsonBean savedSessionJsonBean, ISession session, boolean silent)
    {
       final MainFrame mainFrame = Main.getApplication().getMainFrame();
       if( null != session )
       {
-         OpenInSessionDlg openInSessionDlg = new OpenInSessionDlg(mainFrame,
-                                                                  savedSessionJsonBean.getName(),
-                                                                  false == SavedSessionUtil.isSQLVirgin(session));
-         if(false == openInSessionDlg.isOk())
+         if(false == silent)
          {
-            return;
-         }
+            OpenInSessionDlg openInSessionDlg =
+                  new OpenInSessionDlg(mainFrame, savedSessionJsonBean.getName(),false == SavedSessionUtil.isSQLVirgin(session));
 
-         if(openInSessionDlg.isOpenInNewSession())
-         {
-            onOpenSavedSession(savedSessionJsonBean, null);
-            return;
+            if(false == openInSessionDlg.isOk())
+            {
+               return;
+            }
+
+            if(openInSessionDlg.isOpenInNewSession())
+            {
+               onOpenSavedSession(savedSessionJsonBean, null, silent);
+               return;
+            }
          }
 
          SavedSessionUtil.makeSessionSQLVirgin(session);

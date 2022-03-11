@@ -81,6 +81,8 @@ public class OpenInSessionDlg extends JDialog
 
       GUIUtils.setJButtonSizesTheSame(_btnOk, _btnCancel);
 
+      getRootPane().setDefaultButton(_btnOk);
+
       return ret;
    }
 

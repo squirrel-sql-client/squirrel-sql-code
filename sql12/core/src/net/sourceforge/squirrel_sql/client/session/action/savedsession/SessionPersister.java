@@ -47,16 +47,24 @@ public class SessionPersister
          savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
       }
       else if(allowAliasChangeMsg
-              && false == alias.getIdentifier().equals(savedSessionJsonBean.getDefaultAliasIdString())
+              && false == alias.getIdentifier().toString().equals(savedSessionJsonBean.getDefaultAliasIdString())
               && savedSessionsManager.isShowAliasChangeMsg())
       {
          final DontShowAgainDialog dlgMsg = new DontShowAgainDialog(GUIUtils.getOwningFrame(session.getSessionPanel()),
                                                                     s_stringMgr.getString("SessionPersister.change.default.alias.to", savedSessionJsonBean.getName(), alias.getName(), alias.getUrl()),
                                                                     s_stringMgr.getString("SessionPersister.change.default.alias.how.to"));
 
+         dlgMsg.setTitle(s_stringMgr.getString("SessionPersister.change.default.alias.title"));
+
 
          final DontShowAgainResult res = dlgMsg.showAndGetResult("SessionPersister.change.alias", 600, 250);
          savedSessionsManager.setShowAliasChangeMsg(false == res.isDontShowAgain());
+
+         if(res.isCancel())
+         {
+            return false;
+         }
+
          if(res.isYes())
          {
             savedSessionJsonBean.setDefaultAliasIdString(alias.getIdentifier().toString());
