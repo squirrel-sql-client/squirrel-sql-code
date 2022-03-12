@@ -165,6 +165,12 @@ public class CliSessionAdapter implements ISession
    }
 
    @Override
+   public int getMainPanelTabIndex(IMainPanelTab mainPanelTab)
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
+
+   @Override
    public int getSelectedMainTabIndex()
    {
       throw new UnsupportedOperationException("Must be implemented in derived class");
@@ -385,4 +391,9 @@ public class CliSessionAdapter implements ISession
    {
    }
 
+   @Override
+   public ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow(boolean allowReturnNull)
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
+   }
 }

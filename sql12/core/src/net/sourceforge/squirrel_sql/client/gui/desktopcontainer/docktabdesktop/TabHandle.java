@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import javax.swing.Icon;
-
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.TabWidget;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
+
+import javax.swing.Icon;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 public class TabHandle
 {
@@ -108,10 +108,10 @@ public class TabHandle
 
    public void setSelected(boolean b)
    {
-      _setSelected(b, false);
+      setSelected(b, false);
    }
 
-   public void _setSelected(boolean b, boolean force)
+   public void setSelected(boolean b, boolean force)
    {
       if(_isSelected == b && false == force)
       {
@@ -184,5 +184,10 @@ public class TabHandle
    public TabHandle getNextTabHandle()
    {
       return _dockTabDesktopPane.getNextTabHandle(this);
+   }
+
+   public void selectTab()
+   {
+      _dockTabDesktopPane.selectTab(this);
    }
 }

@@ -2,7 +2,6 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -76,15 +75,17 @@ public class SavedSessionsManager
       }
    }
 
-   public void storeFile(SavedSessionJsonBean savedSessionJsonBean, SQLPanel sqlPanel, SqlPanelType sqlPanelType)
+   public void storeFile(SavedSessionJsonBean savedSessionJsonBean, SQLPanelSaveInfo sqlPanelSaveInfo)
    {
       final SessionSqlJsonBean sqlJsonBean = new SessionSqlJsonBean();
-      sqlJsonBean.setPanelType(sqlPanelType);
+      sqlJsonBean.setPanelType(sqlPanelSaveInfo.getSqlPanelType());
+      sqlJsonBean.setActiveSqlPanel(sqlPanelSaveInfo.isActiveSqlPanel());
+      sqlJsonBean.setCaretPosition(sqlPanelSaveInfo.getCaretPosition());
 
-      if(null != sqlPanel.getSQLPanelAPI().getFileHandler().getFile())
+      if(null != sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().getFile())
       {
-         sqlPanel.getSQLPanelAPI().getFileHandler().fileSave();
-         sqlJsonBean.setExternalFilePath(sqlPanel.getSQLPanelAPI().getFileHandler().getFile().getAbsolutePath());
+         sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().fileSave();
+         sqlJsonBean.setExternalFilePath(sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().getFile().getAbsolutePath());
       }
       else
       {
@@ -105,7 +106,7 @@ public class SavedSessionsManager
          final Path path = Path.of(new ApplicationFiles().getSavedSessionsDir().getAbsolutePath(), internalFileName);
          try
          {
-            Files.write(path, sqlPanel.getSQLPanelAPI().getBytesForSave());
+            Files.write(path, sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getBytesForSave());
          }
          catch (Exception e)
          {
@@ -180,8 +181,7 @@ public class SavedSessionsManager
       {
          if(toDel.contains(session.getSavedSession()))
          {
-            session.setSavedSession(null);
-            ((SessionManageAction)Main.getApplication().getActionCollection().get(SessionManageAction.class)).updateUI();
+            SavedSessionUtil.initSessionWithSavedSession(null, session);
          }
       }
 

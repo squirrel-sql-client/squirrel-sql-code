@@ -328,7 +328,9 @@ public class SessionPanel extends JPanel
       return _mainPanel.getAdditionalSQLTabs();
    }
 
-
+   /**
+    * @return null if the selected panel is not an SQL panel.
+    */
    public SQLPanel getSelectedSQLPanel()
    {
       return _mainPanel.getSelectedSQLPanel();

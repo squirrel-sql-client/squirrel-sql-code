@@ -168,7 +168,11 @@ public interface ISession extends IHasIdentifier
     */
    void selectMainTab(int tabIndex) throws IllegalArgumentException;
 
-   public int getSelectedMainTabIndex();
+   int getMainPanelTabIndex(IMainPanelTab mainPanelTab);
+
+   int getSelectedMainTabIndex();
+
+
 
 
    /**
@@ -259,6 +263,8 @@ public interface ISession extends IHasIdentifier
     * for example if it is an ObjectTreeInternalFrame
     */
    ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow();
+
+   ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow(boolean allowReturnNull);
 
    /**
     *

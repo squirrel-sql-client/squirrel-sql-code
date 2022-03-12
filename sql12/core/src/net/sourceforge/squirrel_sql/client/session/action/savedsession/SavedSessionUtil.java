@@ -17,15 +17,27 @@ import java.util.List;
 public class SavedSessionUtil
 {
    // The first SQL Panel is the main SQL Panel
-   public static List<SQLPanelTyped> getAllSQLPanelsOrderedAndTyped(ISession session)
+   public static List<SQLPanelSaveInfo> getAllSQLPanelsOrderedAndTyped(ISession session)
    {
-      List<SQLPanelTyped> ret = new ArrayList<>();
+      List<SQLPanelSaveInfo> ret = new ArrayList<>();
 
-      ret.add(new SQLPanelTyped(session.getSessionPanel().getMainSQLPanel() , SqlPanelType.MAIN_SQL_TAB));
+      final SQLPanelSaveInfo mainSqlPanelSaveInfo = new SQLPanelSaveInfo(session.getSessionPanel().getMainSQLPanel(), SqlPanelType.MAIN_SQL_TAB);
+      ret.add(mainSqlPanelSaveInfo);
+      if(session.getSessionPanel().getMainSQLPanel().getSQLPanelAPI() == session.getSQLPanelAPIOfActiveSessionWindow())
+      {
+         mainSqlPanelSaveInfo.setActiveSqlPanel(session.getSessionPanel().getMainSQLPanel().getSQLPanelAPI().getCaretPosition());
+      }
 
       for (AdditionalSQLTab additionalSQLTab : session.getSessionPanel().getAdditionalSQLTabs())
       {
-         ret.add(new SQLPanelTyped(additionalSQLTab.getSQLPanel(), SqlPanelType.SQL_TAB));
+         final SQLPanelSaveInfo sqlPanelSaveInfo = new SQLPanelSaveInfo(additionalSQLTab.getSQLPanel(), SqlPanelType.SQL_TAB);
+
+         if(additionalSQLTab.getSQLPanel().getSQLPanelAPI() == session.getSQLPanelAPIOfActiveSessionWindow())
+         {
+            sqlPanelSaveInfo.setActiveSqlPanel(additionalSQLTab.getSQLPanel().getSQLPanelAPI().getCaretPosition());
+         }
+
+         ret.add(sqlPanelSaveInfo);
       }
 
       final IWidget[] allWidgets = Main.getApplication().getMainFrame().getDesktopContainer().getAllWidgets();
@@ -33,10 +45,19 @@ public class SavedSessionUtil
       {
          if(widget instanceof SQLInternalFrame)
          {
-            final ISession sessionOfSqlInternaFrame = ((SQLInternalFrame) widget).getSQLPanel().getSession();
+            final SQLPanel sqlWorksheetPanel = ((SQLInternalFrame) widget).getSQLPanel();
+
+            final ISession sessionOfSqlInternaFrame = sqlWorksheetPanel.getSession();
             if(session.getIdentifier().equals(sessionOfSqlInternaFrame.getIdentifier()))
             {
-               ret.add(new SQLPanelTyped(((SQLInternalFrame)widget).getSQLPanel(), SqlPanelType.SQL_INTERNAL_FRAME));
+               final SQLPanelSaveInfo sqlPanelSaveInfo = new SQLPanelSaveInfo(sqlWorksheetPanel, SqlPanelType.SQL_INTERNAL_FRAME);
+
+               if(Main.getApplication().getMainFrame().getDesktopContainer().getSelectedWidget() == widget)
+               {
+                  sqlPanelSaveInfo.setActiveSqlPanel(sqlWorksheetPanel.getSQLPanelAPI().getCaretPosition());
+               }
+
+               ret.add(sqlPanelSaveInfo);
             }
          }
       }
@@ -46,14 +67,14 @@ public class SavedSessionUtil
 
    public static boolean isSQLVirgin(ISession session)
    {
-      List<SQLPanelTyped> sqlPanelTypedList =  getAllSQLPanelsOrderedAndTyped(session);
+      List<SQLPanelSaveInfo> sqlPanelSaveInfoList =  getAllSQLPanelsOrderedAndTyped(session);
 
-      if(1 < sqlPanelTypedList.size())
+      if(1 < sqlPanelSaveInfoList.size())
       {
          return false;
       }
 
-      final ISQLPanelAPI sqlPanelAPI = sqlPanelTypedList.get(0).getSqlPanel().getSQLPanelAPI();
+      final ISQLPanelAPI sqlPanelAPI = sqlPanelSaveInfoList.get(0).getSqlPanel().getSQLPanelAPI();
       return null == sqlPanelAPI.getFileHandler().getFile() && StringUtilities.isEmpty(sqlPanelAPI.getEntireSQLScript(), true);
    }
 

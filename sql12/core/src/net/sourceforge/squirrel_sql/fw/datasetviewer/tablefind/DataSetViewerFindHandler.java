@@ -4,10 +4,13 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
@@ -87,7 +90,7 @@ public class DataSetViewerFindHandler
          _split.setDividerLocation(0);
          _dataSetFindPanelController.wasHidden();
 
-         ISQLPanelAPI sqlPanelAPI = _session.getSQLPanelAPIOfActiveSessionWindow();
+         ISQLPanelAPI sqlPanelAPI = _session.getSQLPanelAPIOfActiveSessionWindow(true);
 
          if(null != sqlPanelAPI)
          {

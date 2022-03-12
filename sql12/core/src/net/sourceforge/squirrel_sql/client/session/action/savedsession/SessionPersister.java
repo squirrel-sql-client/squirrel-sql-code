@@ -71,11 +71,17 @@ public class SessionPersister
          }
       }
 
-      List<SQLPanelTyped> sqlPanelTypedList = SavedSessionUtil.getAllSQLPanelsOrderedAndTyped(session);
+      List<SQLPanelSaveInfo> sqlPanelSaveInfoList = SavedSessionUtil.getAllSQLPanelsOrderedAndTyped(session);
 
       SavedSessionJsonBean finalSavedSessionJsonBean = savedSessionJsonBean;
       savedSessionsManager.beginStore(savedSessionJsonBean);
-      sqlPanelTypedList.forEach(p -> savedSessionsManager.storeFile(finalSavedSessionJsonBean, p.getSqlPanel(), p.getSqlPanelType()));
+
+      for (SQLPanelSaveInfo panel : sqlPanelSaveInfoList)
+      {
+         savedSessionsManager.storeFile(finalSavedSessionJsonBean, panel);
+
+      }
+
       savedSessionsManager.endStore(savedSessionJsonBean);
 
       Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SessionPersister.saved.session.msg", savedSessionJsonBean.getName()));

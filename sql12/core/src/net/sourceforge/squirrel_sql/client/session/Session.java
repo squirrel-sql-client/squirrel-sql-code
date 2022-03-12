@@ -734,6 +734,12 @@ class Session implements ISession
       _sessionSheet.selectMainTab(tabIndex);
    }
 
+   @Override
+   public int getMainPanelTabIndex(IMainPanelTab mainPanelTab)
+   {
+      return _sessionSheet.getMainPanelTabIndex(mainPanelTab);
+   }
+
    public int getSelectedMainTabIndex()
    {
       return _sessionSheet.getSelectedMainTabIndex();
@@ -872,7 +878,12 @@ class Session implements ISession
     */
    public ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow()
    {
-      ISQLPanelAPI sqlPanelAPI;
+      return getSQLPanelAPIOfActiveSessionWindow(false);
+   }
+
+   public ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow(boolean allowReturnNull)
+   {
+      ISQLPanelAPI sqlPanelAPI = null;
       if (isSessionWidgetActive())
       {
          sqlPanelAPI = ((SessionInternalFrame) _activeActiveSessionWindow).getSelectedOrMainSQLPanelAPI();
@@ -881,7 +892,7 @@ class Session implements ISession
       {
          sqlPanelAPI = ((SQLInternalFrame) _activeActiveSessionWindow).getMainSQLPanelAPI();
       }
-      else
+      else if(false == allowReturnNull)
       {
          throw new IllegalStateException("SQLPanelApi can only be provided for SessionInternalFrame or SQLInternalFrame");
       }

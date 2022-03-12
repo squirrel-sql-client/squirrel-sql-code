@@ -1,5 +1,16 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandleEvent;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandleListener;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
+
+import javax.swing.Icon;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
+import javax.swing.border.Border;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -7,17 +18,6 @@ import java.awt.event.FocusListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.util.HashMap;
-import javax.swing.Icon;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
-import javax.swing.border.Border;
-
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandleEvent;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandleListener;
-import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
 
 public class TabDelegate implements ITabDelegate
 {
@@ -279,7 +279,7 @@ public class TabDelegate implements ITabDelegate
 
    public void setSelected(boolean b) throws PropertyVetoException
    {
-      //To change body of implemented methods use File | Settings | File Templates.
+      _tabHandle.selectTab();
    }
 
    public void setLayer(Integer layer)
