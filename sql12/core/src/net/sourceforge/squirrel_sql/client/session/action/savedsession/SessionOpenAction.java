@@ -71,7 +71,7 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
    public void onOpenSavedSessionsDialog()
    {
       SavedSessionMoreCtrl savedSessionOpenCtrl = new SavedSessionMoreCtrl(_session);
-		SavedSessionJsonBean savedSessionJsonBean = savedSessionOpenCtrl.getSelectedSavedSession();
+		SavedSessionJsonBean savedSessionJsonBean = savedSessionOpenCtrl.getSavedSessionToOpen();
 
       if(null != savedSessionJsonBean)
       {

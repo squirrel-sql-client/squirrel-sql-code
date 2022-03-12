@@ -106,10 +106,8 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
       }
 
       _session.getSavedSession().setName(sessionSaveDlg.getSavedSessionName());
-
       Main.getApplication().getSavedSessionsManager().moveToTop(_session.getSavedSession());
-
-      SessionPersister.saveSession(_session, false);
+      // SessionPersister.saveSession(session, false);
    }
 
    @Override

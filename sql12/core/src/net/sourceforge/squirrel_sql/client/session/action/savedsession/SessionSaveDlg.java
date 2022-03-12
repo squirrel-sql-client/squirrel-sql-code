@@ -12,10 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 
 public class SessionSaveDlg extends JDialog
 {
@@ -28,10 +28,9 @@ public class SessionSaveDlg extends JDialog
    private boolean _ok;
 
 
-   public SessionSaveDlg(Frame parentFrame, String savedSessionNameTemplate)
+   public SessionSaveDlg(Window parentFrame, String savedSessionNameTemplate)
    {
-      super(parentFrame, s_stringMgr.getString("SessionSaveDlg.title"), true);
-
+      super(parentFrame, s_stringMgr.getString("SessionSaveDlg.title"), ModalityType.APPLICATION_MODAL);
 
       layoutUI(savedSessionNameTemplate);
 

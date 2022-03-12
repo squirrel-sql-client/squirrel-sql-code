@@ -6,7 +6,9 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -18,7 +20,7 @@ public class SavedSessionMoreCtrl
 
    private final SavedSessionMoreDlg _dlg;
    private ISession _session;
-   private SavedSessionJsonBean _selectedSavedSession;
+   private SavedSessionJsonBean _savedSessionToOpen;
 
    public SavedSessionMoreCtrl(ISession session)
    {
@@ -51,13 +53,26 @@ public class SavedSessionMoreCtrl
          _dlg.lstSavedSessions.setSelectedIndex(0);
       }
 
-      _dlg.lstSavedSessions.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e)
+      _dlg.lstSavedSessions.addMouseListener(new MouseAdapter()
       {
-         onListClicked(e);
-      }
-   });
+         @Override
+         public void mouseClicked(MouseEvent e)
+         {
+            onListClicked(e);
+         }
+
+         @Override
+         public void mousePressed(MouseEvent e)
+         {
+            maybeTriggerPopup(e);
+         }
+
+         @Override
+         public void mouseReleased(MouseEvent e)
+         {
+            maybeTriggerPopup(e);
+         }
+      });
 
       _dlg.chkShowDefaultAliasMsg.setSelected(savedSessionsManager.isShowAliasChangeMsg());
       _dlg.chkShowDefaultAliasMsg.addActionListener(e -> savedSessionsManager.setShowAliasChangeMsg(_dlg.chkShowDefaultAliasMsg.isSelected()));
@@ -74,6 +89,41 @@ public class SavedSessionMoreCtrl
       GUIUtils.forceFocus(_dlg.lstSavedSessions);
 
       _dlg.setVisible(true);
+   }
+
+   private void maybeTriggerPopup(MouseEvent me)
+   {
+      if(false == me.isPopupTrigger())
+      {
+         return;
+      }
+
+      JPopupMenu popupMenu = new JPopupMenu();
+      JMenuItem menuItem;
+
+      menuItem = new JMenuItem(s_stringMgr.getString("SavedSessionMoreCtrl.rename"));
+      menuItem.addActionListener(e -> onRename());
+      popupMenu.add(menuItem);
+      popupMenu.show(_dlg.lstSavedSessions, me.getX(), me.getY());
+   }
+
+   private void onRename()
+   {
+      final SavedSessionJsonBean selectedSavedSession = _dlg.lstSavedSessions.getSelectedValue();
+      if(null == selectedSavedSession)
+      {
+         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("SavedSessionMoreCtrl.no.section.to.rename"));
+      }
+
+      final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(_dlg, selectedSavedSession.getName());
+
+      if(false == sessionSaveDlg.isOk())
+      {
+         return;
+      }
+
+      selectedSavedSession.setName(sessionSaveDlg.getSavedSessionName());
+      Main.getApplication().getSavedSessionsManager().moveToTop(selectedSavedSession);
    }
 
    private void onDeleteSelected()
@@ -121,9 +171,9 @@ public class SavedSessionMoreCtrl
 
    private void onOpenSelected()
    {
-      _selectedSavedSession = _dlg.lstSavedSessions.getSelectedValue();
+      _savedSessionToOpen = _dlg.lstSavedSessions.getSelectedValue();
 
-      if(null == _selectedSavedSession)
+      if(null == _savedSessionToOpen)
       {
          JOptionPane.showConfirmDialog(_dlg, s_stringMgr.getString("SavedSessionMoreCtrl.no.saved.session.selected.to.open"));
          return;
@@ -137,9 +187,9 @@ public class SavedSessionMoreCtrl
       _dlg.dispose();
    }
 
-   public SavedSessionJsonBean getSelectedSavedSession()
+   public SavedSessionJsonBean getSavedSessionToOpen()
    {
-      return _selectedSavedSession;
+      return _savedSessionToOpen;
    }
 
    public boolean isOpenInNewSession()
