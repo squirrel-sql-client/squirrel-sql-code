@@ -181,6 +181,11 @@ public class ActionRegistry
       toolsPopupController.addAction("pastehist", ac.get(PasteFromHistoryAction.class));
 
       toolsPopupController.addAction("objbesidessql", ac.get(ToggleObjectTreeBesidesEditorAction.class));
+
+      toolsPopupController.addAction("changetrack", ac.get(ChangeTrackAction.class));
+
+      toolsPopupController.addAction("savedsessionopen", ac.get(SessionOpenAction.class));
+      toolsPopupController.addAction("savedsessionsave", ac.get(SessionSaveAction.class));
    }
 
    public void preloadActions(ActionCollection actionCollection)

@@ -6,9 +6,11 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.IToolsPopupDescription;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ActionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -22,7 +24,7 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 
-public class SessionOpenAction extends SquirrelAction implements ISessionAction
+public class SessionOpenAction extends SquirrelAction implements ISessionAction, IToolsPopupDescription
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionOpenAction.class);
 
@@ -49,7 +51,10 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction
             popupMenu.add(item);
          }
 
-         final JMenuItem item = new JMenuItem(s_stringMgr.getString("SessionOpenAction.popup.more"));
+         final String sessionOpenAccel = ActionUtil.getAcceleratorString(Main.getApplication().getResources(),
+                                                                         Main.getApplication().getActionCollection().get(SessionOpenAction.class));
+
+         final JMenuItem item = new JMenuItem(s_stringMgr.getString("SessionOpenAction.popup.more", sessionOpenAccel));
          item.addActionListener(e -> onOpenSavedSessionsDialog());
          popupMenu.add(item);
 
@@ -141,5 +146,11 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction
    public void setSession(ISession session)
    {
       _session = session;
+   }
+
+   @Override
+   public String getToolsPopupDescription()
+   {
+      return s_stringMgr.getString("SessionOpenAction.tools.popup.description");
    }
 }

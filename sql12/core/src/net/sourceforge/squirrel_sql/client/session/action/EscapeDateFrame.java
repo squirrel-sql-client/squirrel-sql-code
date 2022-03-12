@@ -4,15 +4,23 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 
 public class EscapeDateFrame extends JDialog
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(EscapeDateFrame.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(EscapeDateFrame.class);
 
 
 	JTextField txtYear = createTextField();

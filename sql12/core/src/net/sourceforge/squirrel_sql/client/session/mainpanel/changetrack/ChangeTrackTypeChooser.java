@@ -4,8 +4,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ActionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
-import net.sourceforge.squirrel_sql.client.session.action.toolbarbuttonchooser.ToolbarButtonChooserUtil;
 import net.sourceforge.squirrel_sql.fw.gui.buttonchooser.ButtonChooser;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -89,13 +89,13 @@ public class ChangeTrackTypeChooser
       ImageIcon iconTrackFile = rsrc.getIcon(SquirrelResources.IImageNames.CHANGE_TRACK_FILE);
       ImageIcon iconTrackGit = rsrc.getIcon(SquirrelResources.IImageNames.CHANGE_TRACK_GIT);
 
-      String textTrackManual = s_stringMgr.getString("ChangeTrackTypeChooser.manual") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
-      String textTrackFile = s_stringMgr.getString("ChangeTrackTypeChooser.file") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
-      String textTrackGit = s_stringMgr.getString("ChangeTrackTypeChooser.git") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
+      String textTrackManual = s_stringMgr.getString("ChangeTrackTypeChooser.manual") + ActionUtil.getAcceleratorString(rsrc, _action);
+      String textTrackFile = s_stringMgr.getString("ChangeTrackTypeChooser.file") + ActionUtil.getAcceleratorString(rsrc, _action);
+      String textTrackGit = s_stringMgr.getString("ChangeTrackTypeChooser.git") + ActionUtil.getAcceleratorString(rsrc, _action);
 
-      String toolTipTrackManual = s_stringMgr.getString("ChangeTrackTypeChooser.manual.tooltip") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
-      String toolTipTrackFile = s_stringMgr.getString("ChangeTrackTypeChooser.file.tooltip") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
-      String toolTipTrackGit = s_stringMgr.getString("ChangeTrackTypeChooser.git.tooltip") + ToolbarButtonChooserUtil.getAcceleratorString(rsrc, _action);
+      String toolTipTrackManual = s_stringMgr.getString("ChangeTrackTypeChooser.manual.tooltip") + ActionUtil.getAcceleratorString(rsrc, _action);
+      String toolTipTrackFile = s_stringMgr.getString("ChangeTrackTypeChooser.file.tooltip") + ActionUtil.getAcceleratorString(rsrc, _action);
+      String toolTipTrackGit = s_stringMgr.getString("ChangeTrackTypeChooser.git.tooltip") + ActionUtil.getAcceleratorString(rsrc, _action);
 
 
       _btnTrackManual = new JButton(textTrackManual, iconTrackManual);

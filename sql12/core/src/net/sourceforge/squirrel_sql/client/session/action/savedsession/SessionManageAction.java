@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ActionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -47,7 +48,10 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
          item.addActionListener(e -> onPrintDetailsToMessagePanel());
          popupMenu.add(item);
 
-         item = new JMenuItem(s_stringMgr.getString("SessionManageAction.more"));
+         final String sessionOpenAccel = ActionUtil.getAcceleratorString(Main.getApplication().getResources(),
+                                                                         Main.getApplication().getActionCollection().get(SessionOpenAction.class));
+
+         item = new JMenuItem(s_stringMgr.getString("SessionManageAction.more", sessionOpenAccel));
          item.addActionListener(e -> onOpenManageSavedSessionDialog());
          popupMenu.add(item);
 

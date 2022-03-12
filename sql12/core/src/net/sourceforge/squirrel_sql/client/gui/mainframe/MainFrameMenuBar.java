@@ -520,6 +520,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, FindAliasAction.class, menu);
 		addToMenu(rsrc, FindAliasAltAcceleratorAction.class, menu);
 		menu.addSeparator();
+		addToMenu(rsrc, SessionOpenAction.class, menu);
 		addToMenu(rsrc, ViewDriversAction.class, menu);
 		addToMenu(rsrc, ViewLogsAction.class, menu);
       if (_app.getDesktopStyle().isInternalFrameStyle())

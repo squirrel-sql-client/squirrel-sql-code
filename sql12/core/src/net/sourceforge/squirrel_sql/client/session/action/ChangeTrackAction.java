@@ -2,15 +2,20 @@ package net.sourceforge.squirrel_sql.client.session.action;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.gui.session.IToolsPopupDescription;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeEnum;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.SQLPanelApiChangedListener;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
-public class ChangeTrackAction extends SquirrelAction  implements ISQLPanelAction
+public class ChangeTrackAction extends SquirrelAction  implements ISQLPanelAction, IToolsPopupDescription
 {
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChangeTrackAction.class);
+
 	private ISQLPanelAPI _panel;
 	private ArrayList<SQLPanelApiChangedListener> _sqlPanelApiChangedListeners = new ArrayList<>();
 
@@ -68,5 +73,11 @@ public class ChangeTrackAction extends SquirrelAction  implements ISQLPanelActio
 	public void removeSQLPanelApiChangedListener(SQLPanelApiChangedListener sqlPanelApiChangedListener)
 	{
 		_sqlPanelApiChangedListeners.remove(sqlPanelApiChangedListener);
+	}
+
+	@Override
+	public String getToolsPopupDescription()
+	{
+		return s_stringMgr.getString("ChangeTrackAction.tools.popup.description");
 	}
 }

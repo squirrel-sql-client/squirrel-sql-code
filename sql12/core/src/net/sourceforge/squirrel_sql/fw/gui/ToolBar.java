@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.fw.gui;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -117,31 +119,55 @@ public class ToolBar extends JToolBar
 
    protected void initialiseButton(Action action, AbstractButton btn)
    {
-      if (btn != null)
+      if (btn == null)
       {
-         btn.setRequestFocusEnabled(false);
-         btn.setText("");
-         String tt = null;
-         if (action != null)
+         return;
+      }
+
+      btn.setRequestFocusEnabled(false);
+      btn.setText("");
+      if (action != null)
+      {
+         String toolTip = (String) action.getValue(Action.SHORT_DESCRIPTION);
+
+         if(StringUtilities.isEmpty(toolTip, true))
          {
-            tt = (String) action.getValue(Action.SHORT_DESCRIPTION);
+            toolTip = "";
          }
-         btn.setToolTipText(tt != null ? tt : "");
-         if (action != null)
+         else
          {
-            Icon icon = getIconFromAction(action, BaseAction.IBaseActionPropertyNames.ROLLOVER_ICON);
-            if (icon != null)
-            {
-               btn.setRolloverIcon(icon);
-               btn.setRolloverSelectedIcon(icon);
-            }
-            icon = getIconFromAction(action, BaseAction.IBaseActionPropertyNames.DISABLED_ICON);
-            if (icon != null)
-            {
-               btn.setDisabledIcon(icon);
-            }
-            mapInputAction(action, btn);
+            toolTip = toolTip.trim();
          }
+
+         // See also ToolsPopupCompletionInfo.getDescription()
+         if(null != action.getValue(Resources.ACCELERATOR_STRING)
+            && 0 != action.getValue(Resources.ACCELERATOR_STRING).toString().trim().length())
+         {
+            final String accelleratorString = "(" + action.getValue(Resources.ACCELERATOR_STRING) + ")";
+            if(false == toolTip.trim().toLowerCase().endsWith(accelleratorString.toLowerCase()))
+            {
+               toolTip += (" " + accelleratorString);
+            }
+         }
+
+         btn.setToolTipText(toolTip);
+      }
+
+
+      if (action != null)
+      {
+         Icon icon = getIconFromAction(action, BaseAction.IBaseActionPropertyNames.ROLLOVER_ICON);
+         if (icon != null)
+         {
+            btn.setRolloverIcon(icon);
+            btn.setRolloverSelectedIcon(icon);
+         }
+         icon = getIconFromAction(action, BaseAction.IBaseActionPropertyNames.DISABLED_ICON);
+         if (icon != null)
+         {
+            btn.setDisabledIcon(icon);
+         }
+         mapInputAction(action, btn);
       }
    }
 

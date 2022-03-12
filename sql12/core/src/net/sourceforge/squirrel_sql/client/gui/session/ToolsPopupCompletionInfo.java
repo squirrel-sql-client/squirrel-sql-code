@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
+import net.sourceforge.squirrel_sql.client.session.action.ActionUtil;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class ToolsPopupCompletionInfo extends CompletionInfo
 {
@@ -43,7 +43,11 @@ public class ToolsPopupCompletionInfo extends CompletionInfo
    {
       if(null == _description)
       {
-         if(null != _action.getValue(Action.SHORT_DESCRIPTION))
+         if(_action instanceof IToolsPopupDescription)
+         {
+            _description = ((IToolsPopupDescription)_action).getToolsPopupDescription();
+         }
+         else if(null != _action.getValue(Action.SHORT_DESCRIPTION))
          {
             _description = _action.getValue(Action.SHORT_DESCRIPTION).toString();
          }
@@ -52,9 +56,10 @@ public class ToolsPopupCompletionInfo extends CompletionInfo
             _description = "";
          }
 
-         if(    false == _action instanceof SquirrelAction  // SquirrelAction descriptions already contain the accelerator 
-             && null != _action.getValue(Resources.ACCELERATOR_STRING)
-             && 0 != _action.getValue(Resources.ACCELERATOR_STRING).toString().trim().length())
+         // See also ToolBar.initialiseButton(...)
+         if(false == ActionUtil.actionDescriptionContainsAccelerator(_action)
+            && null != _action.getValue(Resources.ACCELERATOR_STRING)
+            && 0 != _action.getValue(Resources.ACCELERATOR_STRING).toString().trim().length())
          {
             _description += " (" + _action.getValue(Resources.ACCELERATOR_STRING) + ")";
          }
