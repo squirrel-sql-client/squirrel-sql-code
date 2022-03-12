@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Saved Sessions, three new buttons at the right of application (topmost) toolbar:
+  The Saved Session feature allows to save and restore all SQL editors of a Session at once.
+  Saved Session are especially useful when working with additional SQL Tabs or SQL Worksheets.
+  SQL editors with open files are saved by saving the files and referencing them from the Saved Session.
+  SQL editors without open files are saved internally.
+  Saved Sessions contain a reference to a default Alias which allows to open a Saved Session without an exiting Session.
+
 Hibernate Plugin: Updated help file.
 
 SQL execution progress panel now offers to view the SQL being executed and to copy it to clipboard.
