@@ -4,6 +4,8 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -17,6 +19,8 @@ import java.util.concurrent.Executors;
 
 public class SavedSessionsManager
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SavedSessionsManager.class);
+
    private final static ILogger s_log = LoggerController.createLogger(SavedSessionsManager.class);
 
    private SavedSessionsJsonBean _savedSessionsJsonBean = null;
@@ -153,7 +157,27 @@ public class SavedSessionsManager
 
          _singleThreadJsonWriteExecutorService = Executors.newSingleThreadExecutor();
 
+         checkMaxSavedSessionLimit();
+
       }
+   }
+
+   private void checkMaxSavedSessionLimit()
+   {
+      if(   0 == _savedSessionsJsonBean.getMaxNumberSavedSessions()
+         || _savedSessionsJsonBean.getSavedSessionJsonBeans().size() <= _savedSessionsJsonBean.getMaxNumberSavedSessions())
+      {
+         return;
+      }
+
+      final List<SavedSessionJsonBean> toDel =
+            _savedSessionsJsonBean.getSavedSessionJsonBeans().subList(_savedSessionsJsonBean.getMaxNumberSavedSessions(), _savedSessionsJsonBean.getSavedSessionJsonBeans().size());
+
+      final String msg = s_stringMgr.getString("SavedSessionsManager.maximum.number.saved.sessions.exceeded", _savedSessionsJsonBean.getMaxNumberSavedSessions(), toDel.size());
+      Main.getApplication().getMessageHandler().showMessage(msg);
+      s_log.info(msg);
+
+      delete(toDel);
    }
 
    public void moveToTop(SavedSessionJsonBean savedSession)
@@ -191,6 +215,17 @@ public class SavedSessionsManager
       }
       _savedSessionsJsonBean.getSavedSessionJsonBeans().removeAll(toDel);
 
+      saveJsonBean();
+   }
+
+   public int getMaxNumberSavedSessions()
+   {
+      return _savedSessionsJsonBean.getMaxNumberSavedSessions();
+   }
+
+   public void setMaxNumberSavedSessions(int maxNumberSavedSessions)
+   {
+      _savedSessionsJsonBean.setMaxNumberSavedSessions(maxNumberSavedSessions);
       saveJsonBean();
    }
 }

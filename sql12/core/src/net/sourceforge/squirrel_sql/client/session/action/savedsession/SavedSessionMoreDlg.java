@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -27,6 +28,7 @@ public class SavedSessionMoreDlg extends JDialog
    JButton btnOpenSelected;
    JButton btnDeleteSelected;
    JCheckBox chkShowDefaultAliasMsg;
+   IntegerField txtMaxNumberSavedSessions;
 
    public SavedSessionMoreDlg(Frame parentFrame, SavedSessionMoreDlgState state)
    {
@@ -47,7 +49,7 @@ public class SavedSessionMoreDlg extends JDialog
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,0), 0,0);
       getContentPane().add(createButtonPanel(state), gbc);
 
-      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,0,0), 0,0);
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,0,5), 0,0);
       getContentPane().add(createConfigPanel(), gbc);
 
       gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,10,0), 0,0);
@@ -78,14 +80,20 @@ public class SavedSessionMoreDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0);
+      gbc = new GridBagConstraints(0,0,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0), 0,0);
       chkShowDefaultAliasMsg = new JCheckBox(s_stringMgr.getString("SavedSessionMoreDlg.show.change.default.alias.offer"));
       chkShowDefaultAliasMsg.setToolTipText(s_stringMgr.getString("SavedSessionMoreDlg.show.change.default.alias.offer.tooltip"));
       ret.add(chkShowDefaultAliasMsg, gbc);
 
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,3,0,0), 0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SavedSessionMoreDlg.max.savedSession")), gbc);
+
+      gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      txtMaxNumberSavedSessions = new IntegerField(5, 0);
+      ret.add(txtMaxNumberSavedSessions, gbc);
 
       // dist
-      gbc = new GridBagConstraints(1,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      gbc = new GridBagConstraints(2,2,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       ret.add(new JPanel(), gbc);
 
 

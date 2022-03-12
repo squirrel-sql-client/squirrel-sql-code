@@ -77,12 +77,15 @@ public class SavedSessionMoreCtrl
       _dlg.chkShowDefaultAliasMsg.setSelected(savedSessionsManager.isShowAliasChangeMsg());
       _dlg.chkShowDefaultAliasMsg.addActionListener(e -> savedSessionsManager.setShowAliasChangeMsg(_dlg.chkShowDefaultAliasMsg.isSelected()));
 
+      _dlg.txtMaxNumberSavedSessions.setInt(savedSessionsManager.getMaxNumberSavedSessions());
+
+
       _dlg.btnOpenSelected.addActionListener(e -> onOpenSelected());
       _dlg.btnClose.addActionListener(e -> close());
 
       _dlg.btnDeleteSelected.addActionListener(e -> onDeleteSelected());
 
-      GUIUtils.enableCloseByEscape(_dlg);
+      GUIUtils.enableCloseByEscape(_dlg, dialog -> savedSessionsManager.setMaxNumberSavedSessions(_dlg.txtMaxNumberSavedSessions.getInt()));
 
       GUIUtils.initLocation(_dlg, 650, 580);
 
@@ -183,6 +186,7 @@ public class SavedSessionMoreCtrl
 
    private void close()
    {
+      Main.getApplication().getSavedSessionsManager().setMaxNumberSavedSessions(_dlg.txtMaxNumberSavedSessions.getInt());
       _dlg.setVisible(false);
       _dlg.dispose();
    }

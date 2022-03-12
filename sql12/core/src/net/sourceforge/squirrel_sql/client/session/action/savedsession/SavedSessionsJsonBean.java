@@ -7,6 +7,7 @@ public class SavedSessionsJsonBean
 {
    List<SavedSessionJsonBean> _savedSessionJsonBeans = new ArrayList<>();
    private boolean _showAliasChangeMsg = true;
+   private int _maxNumberSavedSessions = 20;
 
    public List<SavedSessionJsonBean> getSavedSessionJsonBeans()
    {
@@ -26,5 +27,15 @@ public class SavedSessionsJsonBean
    public void setShowAliasChangeMsg(boolean showAliasChangeMsg)
    {
       _showAliasChangeMsg = showAliasChangeMsg;
+   }
+
+   public int getMaxNumberSavedSessions()
+   {
+      return _maxNumberSavedSessions;
+   }
+
+   public void setMaxNumberSavedSessions(int maxNumberSavedSessions)
+   {
+      _maxNumberSavedSessions = maxNumberSavedSessions;
    }
 }
