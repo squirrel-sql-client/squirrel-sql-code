@@ -178,7 +178,7 @@ public class SavedSessionMoreCtrl
 
       if(null == _savedSessionToOpen)
       {
-         JOptionPane.showConfirmDialog(_dlg, s_stringMgr.getString("SavedSessionMoreCtrl.no.saved.session.selected.to.open"));
+         JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("SavedSessionMoreCtrl.no.saved.session.selected.to.open"));
          return;
       }
       close();
