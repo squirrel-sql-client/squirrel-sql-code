@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -8,10 +12,6 @@ import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainResult;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 public class SessionPersister
 {
@@ -76,10 +76,14 @@ public class SessionPersister
       SavedSessionJsonBean finalSavedSessionJsonBean = savedSessionJsonBean;
       savedSessionsManager.beginStore(savedSessionJsonBean);
 
+      SQLEditorActivator sqlEditorActivator = new SQLEditorActivator();
       for (SQLPanelSaveInfo panel : sqlPanelSaveInfoList)
       {
-         savedSessionsManager.storeFile(finalSavedSessionJsonBean, panel);
+         SessionSqlJsonBean sessionSqlJsonBean = savedSessionsManager.storeFile(finalSavedSessionJsonBean, panel);
 
+         // The SQLEditorActivator is needed because externally saving a file selects the according SQL Tab.
+         // But we want the active SQL-Editor to remain the same after saving teh Session.
+         sqlEditorActivator.prepareToActivateSQLPanelSaveInfo(panel, sessionSqlJsonBean);
       }
 
       savedSessionsManager.endStore(savedSessionJsonBean);
@@ -87,6 +91,8 @@ public class SessionPersister
       Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SessionPersister.saved.session.msg", savedSessionJsonBean.getName()));
 
       SavedSessionUtil.initSessionWithSavedSession(savedSessionJsonBean, session);
+
+      sqlEditorActivator.activate();
 
       return true;
    }

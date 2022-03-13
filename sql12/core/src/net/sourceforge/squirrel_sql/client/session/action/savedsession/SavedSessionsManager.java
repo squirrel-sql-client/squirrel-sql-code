@@ -79,7 +79,7 @@ public class SavedSessionsManager
       }
    }
 
-   public void storeFile(SavedSessionJsonBean savedSessionJsonBean, SQLPanelSaveInfo sqlPanelSaveInfo)
+   public SessionSqlJsonBean storeFile(SavedSessionJsonBean savedSessionJsonBean, SQLPanelSaveInfo sqlPanelSaveInfo)
    {
       final SessionSqlJsonBean sqlJsonBean = new SessionSqlJsonBean();
       sqlJsonBean.setPanelType(sqlPanelSaveInfo.getSqlPanelType());
@@ -121,6 +121,7 @@ public class SavedSessionsManager
       }
 
       savedSessionJsonBean.getSessionSQLs().add(sqlJsonBean);
+      return sqlJsonBean;
    }
 
    public void endStore(SavedSessionJsonBean savedSessionJsonBean)

@@ -1,11 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import java.beans.PropertyVetoException;
 import java.io.File;
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -27,7 +24,7 @@ public class SavedSessionLoader
 
    public static void load(final SessionInternalFrame sessionInternalFrame, SavedSessionJsonBean savedSessionJsonBean)
    {
-      Runnable selectSqlEditorRunnable = null;
+      SQLEditorActivator sqlEditorActivator = new SQLEditorActivator();
 
       for (final SessionSqlJsonBean sessionSQL : savedSessionJsonBean.getSessionSQLs())
       {
@@ -38,21 +35,7 @@ public class SavedSessionLoader
 
             if(sessionSQL.isActiveSqlPanel())
             {
-               selectSqlEditorRunnable = () -> {
-                  try
-                  {
-                     sessionInternalFrame.setSelected(true);
-                     sessionInternalFrame.getSession().selectMainTab(MainPanel.ITabIndexes.SQL_TAB);
-                     if(0 <= sessionSQL.getCaretPosition() &&  sessionSQL.getCaretPosition() < mainSQLPanelAPI.getEntireSQLScript().length())
-                     {
-                        mainSQLPanelAPI.setCaretPosition(sessionSQL.getCaretPosition());
-                     }
-                  }
-                  catch (PropertyVetoException e)
-                  {
-                     s_log.error("Failed to select Mains Session SQL Tab", e);
-                  }
-               };
+               sqlEditorActivator.prepareToActivateMainSqlTab(sessionInternalFrame, sessionSQL);
             }
          }
          else if(sessionSQL.getPanelType() == SqlPanelType.SQL_TAB)
@@ -62,22 +45,7 @@ public class SavedSessionLoader
 
             if(sessionSQL.isActiveSqlPanel())
             {
-               selectSqlEditorRunnable = () -> {
-                  try
-                  {
-                     sessionInternalFrame.setSelected(true);
-                     final int mainPanelTabIndex = sessionInternalFrame.getSession().getMainPanelTabIndex(sqlTab);
-                     sessionInternalFrame.getSession().selectMainTab(mainPanelTabIndex);
-                     if(0 <= sessionSQL.getCaretPosition() &&  sessionSQL.getCaretPosition() < sqlTab.getSQLPanelAPI().getEntireSQLScript().length())
-                     {
-                        sqlTab.getSQLPanelAPI().setCaretPosition(sessionSQL.getCaretPosition());
-                     }
-                  }
-                  catch (PropertyVetoException e)
-                  {
-                     s_log.error("Failed to select SQL Tab", e);
-                  }
-               };
+               sqlEditorActivator.prepareToActivateAdditionalSqlTab(sessionInternalFrame, sqlTab, sessionSQL);
             }
 
          }
@@ -88,27 +56,16 @@ public class SavedSessionLoader
 
             if(sessionSQL.isActiveSqlPanel())
             {
-               selectSqlEditorRunnable = () -> {
-                  try
-                  {
-                     sqlInternalFrame.setSelected(true);
-                     sqlInternalFrame.getMainSQLPanelAPI().setCaretPosition(sessionSQL.getCaretPosition());
-                  }
-                  catch (PropertyVetoException e)
-                  {
-                     s_log.error("Failed to select SQL Worksheet", e);
-                  }
-               };
+               sqlEditorActivator.prepareToActivateSqlInternalFrame(sqlInternalFrame, sessionSQL);
             }
          }
       }
 
       SavedSessionUtil.initSessionWithSavedSession(savedSessionJsonBean, sessionInternalFrame.getSession());
 
-      if(null != selectSqlEditorRunnable)
-      {
-         SwingUtilities.invokeLater(selectSqlEditorRunnable);
-      }
+      Main.getApplication().getSavedSessionsManager().moveToTop(savedSessionJsonBean);
+
+      sqlEditorActivator.activate();
    }
 
    private static void loadSessionSql(SessionSqlJsonBean sessionSQL, ISQLPanelAPI mainSQLPanelAPI)

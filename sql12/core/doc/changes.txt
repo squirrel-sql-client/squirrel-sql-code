@@ -140,7 +140,10 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
-Saved Sessions: Loading internally saved file failed on MS Windows.
+Saved Sessions:
+  - Opening a Saved Session didn't move it to the top of the last used Sessions list.
+  - Active SQL editor sometimes changed when saving a Session.
+  - Loading internally saved file failed on MS Windows.
 
 SQL editor: Function "Go to last edit location" (ctrl+shift+backspace) didn't work
   when the last edit was a paste action.
