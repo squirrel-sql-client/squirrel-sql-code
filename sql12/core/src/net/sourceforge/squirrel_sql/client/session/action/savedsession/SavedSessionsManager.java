@@ -1,5 +1,12 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -9,13 +16,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class SavedSessionsManager
 {
@@ -110,6 +110,7 @@ public class SavedSessionsManager
          final Path path = Path.of(new ApplicationFiles().getSavedSessionsDir().getAbsolutePath(), internalFileName);
          try
          {
+            // See also FileManagementCore.saveScript()
             Files.write(path, sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getBytesForSave());
          }
          catch (Exception e)

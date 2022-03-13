@@ -1,11 +1,16 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
+import java.beans.PropertyVetoException;
+import java.io.File;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -13,13 +18,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.SwingUtilities;
-import java.beans.PropertyVetoException;
-import java.io.File;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class SavedSessionLoader
 {
@@ -149,8 +147,7 @@ public class SavedSessionLoader
       final File internalScriptFile = new File(new ApplicationFiles().getSavedSessionsDir(), sessionSQL.getInternalFileName());
       try
       {
-         final List<String> lines = Files.readAllLines(internalScriptFile.toPath());
-         return lines.stream().collect(Collectors.joining("\n"));
+         return FileManagementUtil.readFile(internalScriptFile).toString();
       }
       catch (Exception e)
       {
