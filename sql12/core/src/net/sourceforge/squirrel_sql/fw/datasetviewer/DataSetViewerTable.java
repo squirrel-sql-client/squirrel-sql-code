@@ -245,9 +245,9 @@ public final class DataSetViewerTable extends JTable
    /**
     * Display the popup menu for this component.
     */
-   private void displayPopupMenu(MouseEvent evt)
+   private void displayPopupMenu(MouseEvent evt, TableClickPosition tableClickPosition)
    {
-      _tablePopupMenuHandler.displayPopupMenu(evt);
+      _tablePopupMenuHandler.displayPopupMenu(evt, tableClickPosition);
    }
 
 
@@ -350,12 +350,12 @@ public final class DataSetViewerTable extends JTable
       {
          public void mousePressed(MouseEvent evt)
          {
-            onMousePressed(evt, false);
+            onMousePressed(evt, new TableClickPosition(false, evt));
          }
 
          public void mouseReleased(MouseEvent evt)
          {
-            onMouseReleased(evt);
+            onMouseReleased(evt, new TableClickPosition(false, evt));
          }
       });
 
@@ -363,35 +363,35 @@ public final class DataSetViewerTable extends JTable
       {
          public void mousePressed(MouseEvent evt)
          {
-            onMousePressed(evt, true);
+            onMousePressed(evt, new TableClickPosition(true, evt));
          }
 
          public void mouseReleased(MouseEvent evt)
          {
-            onMouseReleased(evt);
+            onMouseReleased(evt, new TableClickPosition(true, evt));
          }
       });
 
    }
 
-   private void onMouseReleased(MouseEvent evt)
+   private void onMouseReleased(MouseEvent evt, TableClickPosition tableClickPosition)
    {
       if (evt.isPopupTrigger())
       {
-         this.displayPopupMenu(evt);
+         this.displayPopupMenu(evt, tableClickPosition);
       }
    }
 
-   private void onMousePressed(MouseEvent evt, boolean clickedOnTableHeader)
+   private void onMousePressed(MouseEvent evt, TableClickPosition tableClickPosition)
    {
       if (evt.isPopupTrigger())
       {
-         this.displayPopupMenu(evt);
+         this.displayPopupMenu(evt, tableClickPosition);
       }
-      else if (evt.getClickCount() == 2 && false == clickedOnTableHeader)
+      else if (evt.getClickCount() == 2 && false == tableClickPosition.isClickedOnTableHeader())
       {
          // If this was done when the header was clicked
-         // it prevents MS Excel like adopition of column
+         // it prevents MS Excel like adjustment of column
          // sizes by double click. See class ButtonTableHeader.
 
          // figure out which column the user clicked on
@@ -407,7 +407,6 @@ public final class DataSetViewerTable extends JTable
          {
             ColumnDisplayDefinition colDefs[] = _dataSetViewerTablePanel.getColumnDefinitions();
             CellDataPopup.showDialog(this, colDefs[modelIndex], evt, _dataSetViewerTablePanel.isTableEditable());
-
          }
       }
    }

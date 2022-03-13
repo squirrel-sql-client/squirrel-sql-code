@@ -140,6 +140,8 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Table right mouse menu: "Copy column names" didn't work when table header was right mouse clicked.
+
 Saved Sessions:
   - Opening a Saved Session didn't move it to the top of the last used Sessions list.
   - Active SQL editor sometimes changed when saving a Session.

@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.TableClickPosition;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.ShowReferencesCommand;
@@ -304,9 +305,11 @@ public class TablePopupMenu extends BasePopupMenu
 	/**
 	 * Show the menu.
 	 */
-	public void show(Component invoker, int x, int y)
+	public void showPopupMenu(Component invoker, int x, int y, TableClickPosition tableClickPosition)
 	{
 		_gotoColorMenuController.createSubMenus(_dataSetViewerTablePanel.getTable());
+		_copyColumnHeader.setCurrentTableClickPosition(tableClickPosition);
+
 		super.show(invoker, x, y);
 	}
 
@@ -452,17 +455,23 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class CopyColumnHeaderAction extends BaseAction
 	{
-      CopyColumnHeaderAction()
+		private TableClickPosition _currentTableClickPosition;
+
+		CopyColumnHeaderAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.copycolumnheader"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			new TableCopyColumnHeaderCommand(_dataSetViewerTablePanel.getTable()).execute();
+			new TableCopyColumnHeaderCommand(_dataSetViewerTablePanel, _currentTableClickPosition).execute();
 		}
 
-   }
+		public void setCurrentTableClickPosition(TableClickPosition tableClickPosition)
+		{
+			_currentTableClickPosition = tableClickPosition;
+		}
+	}
 
    private class ExportAction extends BaseAction
    {

@@ -59,10 +59,10 @@ public class TablePopupMenuHandler
       _currentRowNumberMenuItemState = false;
    }
 
-   public void displayPopupMenu(MouseEvent evt)
+   public void displayPopupMenu(MouseEvent evt, TableClickPosition tableClickPosition)
    {
       _tablePopupMenu.ensureRowNumbersMenuItemIsUpToDate(_currentRowNumberMenuItemState);
-      _tablePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+      _tablePopupMenu.showPopupMenu(evt.getComponent(), evt.getX(), evt.getY(), tableClickPosition);
    }
 
    public void ensureRowNumersMenuItemIsUpToDate(boolean currentRowNumberMenutItemState)
