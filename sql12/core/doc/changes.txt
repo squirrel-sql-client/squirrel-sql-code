@@ -140,6 +140,8 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Alias Color Chooser dialog was wrongly positioned.
+
 Table right mouse menu: "Copy column names" didn't work when table header was right mouse clicked.
 
 Saved Sessions:

@@ -1,5 +1,16 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliascolor;
 
+import java.awt.Color;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import javax.swing.JColorChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasTreeUtil;
@@ -8,17 +19,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.ColorPropertie
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JColorChooser;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTree;
-import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-import java.awt.Color;
-import java.awt.MouseInfo;
-import java.awt.Point;
 
 public class TreeAliasColorSelectionHandler
 {
@@ -63,7 +63,7 @@ public class TreeAliasColorSelectionHandler
 
       if (false == remove)
       {
-         newColor = JColorChooser.showDialog(aliasTree, ColorPropertiesPanel.i18n.ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+         newColor = JColorChooser.showDialog(Main.getApplication().getMainFrame(), ColorPropertiesPanel.i18n.ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
 
          if(null == newColor)
          {

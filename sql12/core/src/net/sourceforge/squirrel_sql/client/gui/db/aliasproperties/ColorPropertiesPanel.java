@@ -27,7 +27,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -38,6 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -52,13 +52,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
  */
 public class ColorPropertiesPanel extends JPanel
 {
-	private static final long serialVersionUID = 1L;
-
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ColorPropertiesPanel.class);
-
-	// Toolbar
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ColorPropertiesPanel.class);
 
 	private JCheckBox toolbarBackgroundColorChk = new JCheckBox("");
 
@@ -369,7 +363,7 @@ public class ColorPropertiesPanel extends JPanel
 			{
 				Color startColor = statusBarBackgroundColor == null ? Color.WHITE : statusBarBackgroundColor;
 				Color newColor =
-						JColorChooser.showDialog(null, i18n.STATUS_BAR_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+						JColorChooser.showDialog(GUIUtils.getOwningFrame(ColorPropertiesPanel.this), i18n.STATUS_BAR_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
 
 				if (newColor != null)
 				{
@@ -441,7 +435,7 @@ public class ColorPropertiesPanel extends JPanel
 			{
 				Color startColor = aliasBackgroundColor == null ? Color.WHITE : aliasBackgroundColor;
 				Color newColor =
-						JColorChooser.showDialog(null, i18n.ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+						JColorChooser.showDialog(GUIUtils.getOwningFrame(ColorPropertiesPanel.this), i18n.ALIAS_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
 
 				if (newColor != null)
 				{
@@ -520,7 +514,7 @@ public class ColorPropertiesPanel extends JPanel
 			{
 				Color startColor = objectTreeBackgroundColor == null ? Color.WHITE : objectTreeBackgroundColor;
 				Color newColor =
-					JColorChooser.showDialog(null, i18n.OBJECT_TREE_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE,
+					JColorChooser.showDialog(GUIUtils.getOwningFrame(ColorPropertiesPanel.this), i18n.OBJECT_TREE_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE,
 						startColor);
 				if (newColor != null)
 				{
@@ -590,7 +584,7 @@ public class ColorPropertiesPanel extends JPanel
 			{
 				Color startColor = toolbarBackgroundColor == null ? Color.WHITE : toolbarBackgroundColor;
 				Color newColor =
-					JColorChooser.showDialog(null, i18n.TOOLBAR_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
+					JColorChooser.showDialog(GUIUtils.getOwningFrame(ColorPropertiesPanel.this), i18n.TOOLBAR_BACKGROUND_COLOR_CHOOSER_DIALOG_TITLE, startColor);
 				if (newColor != null)
 				{
 					toolbarBackgroundColor = newColor;
