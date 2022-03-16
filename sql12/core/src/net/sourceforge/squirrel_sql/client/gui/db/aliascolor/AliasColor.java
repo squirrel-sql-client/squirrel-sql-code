@@ -10,6 +10,8 @@ public class AliasColor
 {
    public static final double FACTOR = 0.7;
 
+   public static final String PREF_KEY_LAST_ALIAS_COLOR = "AliasColor.last.alias.color";
+
    public static Color colorOf(int argb)
    {
       // Could cache values, also.

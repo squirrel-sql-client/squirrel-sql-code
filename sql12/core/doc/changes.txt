@@ -140,6 +140,9 @@ New SQL editor function to delete the current SQL statement.
 
 Bug fixes:
 
+Fixed several bugs of SQL result table functions
+  "Mark duplicate cells in row" and "Mark duplicate consecutive cells in row".
+
 Alias Color Chooser dialog was wrongly positioned.
 
 Table right mouse menu: "Copy column names" didn't work when table header was right mouse clicked.

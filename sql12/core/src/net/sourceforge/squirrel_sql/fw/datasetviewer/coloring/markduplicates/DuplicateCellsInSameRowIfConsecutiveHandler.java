@@ -1,9 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
@@ -24,7 +24,17 @@ public class DuplicateCellsInSameRowIfConsecutiveHandler implements DuplicateHan
    public DuplicateCellsInSameRowIfConsecutiveHandler(DataSetViewerTable dataSetViewerTable)
    {
       _dataSetViewerTable = dataSetViewerTable;
+      _dataSetViewerTable.getSortableTableModel().addSortingListener((modelColumnIx, columnOrder) -> onSorted());
    }
+
+   private void onSorted()
+   {
+      if(null != _colorByCell)
+      {
+         markDuplicates(true);
+      }
+   }
+
 
    @Override
    public void markDuplicates(boolean selected)
@@ -34,11 +44,12 @@ public class DuplicateCellsInSameRowIfConsecutiveHandler implements DuplicateHan
          if (false == selected)
          {
             _colorByCell = null;
+            return;
          }
 
          _colorByCell = new HashMap<>();
 
-         DataSetViewerTableModel dataSetViewerTableModel = _dataSetViewerTable.getDataSetViewerTableModel();
+         SortableTableModel dataSetViewerTableModel = _dataSetViewerTable.getSortableTableModel();
 
          for (int j = 0; j < dataSetViewerTableModel.getRowCount(); ++j)
          {

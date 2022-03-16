@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
+import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -22,6 +22,15 @@ public class DuplicateCellsInSameRowHandler implements DuplicateHandler
    public DuplicateCellsInSameRowHandler(DataSetViewerTable dataSetViewerTable)
    {
       _dataSetViewerTable = dataSetViewerTable;
+      _dataSetViewerTable.getSortableTableModel().addSortingListener((modelColumnIx, columnOrder) -> onSorted());
+   }
+
+   private void onSorted()
+   {
+      if(null != _duplicateValuesByRowIndex)
+      {
+         markDuplicates(true);
+      }
    }
 
    @Override
@@ -30,11 +39,12 @@ public class DuplicateCellsInSameRowHandler implements DuplicateHandler
       if (false == selected)
       {
          _duplicateValuesByRowIndex = null;
+         return;
       }
 
       _duplicateValuesByRowIndex = new HashMap<>();
 
-      DataSetViewerTableModel dataSetViewerTableModel = _dataSetViewerTable.getDataSetViewerTableModel();
+      SortableTableModel dataSetViewerTableModel = _dataSetViewerTable.getSortableTableModel();
 
       for (int j = 0; j < dataSetViewerTableModel.getRowCount(); ++j)
       {
