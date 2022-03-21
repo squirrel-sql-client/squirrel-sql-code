@@ -1,9 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.configuration;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
-
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -15,9 +14,10 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 
 public class HibernateConfigPanel extends JPanel
 {
@@ -30,8 +30,10 @@ public class HibernateConfigPanel extends JPanel
    JButton btnCopyConfig;
 
    JList lstClassPath;
+
    JButton btnClassPathAdd;
    JButton btnClassPathDirAdd;
+   JButton btnClassPathAddFormClip;
    JButton btnClassPathRemove;
    JButton btnClassPathMoveUp;
    JButton btnClassPathMoveDown;
@@ -209,7 +211,6 @@ public class HibernateConfigPanel extends JPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      // i18n[HibernateConfigPanel.classPathAdd=Add classpath entry]
       btnClassPathAdd = new JButton(s_stringMgr.getString("HibernatePanel.classPathAdd"));
       btnClassPathAdd.setIcon(resources.getIcon(HibernatePluginResources.IKeys.JAR_IMAGE));
       ret.add(btnClassPathAdd, gbc);
@@ -220,22 +221,27 @@ public class HibernateConfigPanel extends JPanel
       ret.add(btnClassPathDirAdd, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      // i18n[HibernateConfigPanel.classPathRemove=Remove selected entries]
+      btnClassPathAddFormClip = new JButton(s_stringMgr.getString("HibernatePanel.classPathAddFromClip"));
+      btnClassPathAddFormClip.setToolTipText(s_stringMgr.getString("HibernatePanel.classPathAddFromClip.tooltip"));
+      btnClassPathAddFormClip.setIcon(resources.getIcon(HibernatePluginResources.IKeys.JAR_FROM_CLIP_IMAGE));
+      ret.add(btnClassPathAddFormClip, gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnClassPathRemove = new JButton(resources.getIcon(HibernatePluginResources.IKeys.DELETE_IMAGE));
       btnClassPathRemove.setToolTipText(s_stringMgr.getString("HibernatePanel.classPathRemove.tooltip"));
       ret.add(btnClassPathRemove, gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnClassPathReplace = new JButton(resources.getIcon(HibernatePluginResources.IKeys.REPLACE_IMAGE));
       btnClassPathReplace.setToolTipText(s_stringMgr.getString("HibernatePanel.classpath.replace.tooltip"));
       ret.add(btnClassPathReplace, gbc);
 
-      gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(5,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnClassPathMoveUp = new JButton(resources.getIcon(HibernatePluginResources.IKeys.PREV_NAV_IMAGE));
       btnClassPathMoveUp.setToolTipText(s_stringMgr.getString("HibernatePanel.moveUp.tooltip"));
       ret.add(btnClassPathMoveUp, gbc);
 
-      gbc = new GridBagConstraints(5,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(6,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnClassPathMoveDown = new JButton(resources.getIcon(HibernatePluginResources.IKeys.NEXT_NAV_IMAGE));
       btnClassPathMoveDown.setToolTipText(s_stringMgr.getString("HibernatePanel.moveDown.tooltip"));
       ret.add(btnClassPathMoveDown, gbc);

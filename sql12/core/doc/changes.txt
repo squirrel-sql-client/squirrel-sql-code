@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Hibernate Plugin:
+  New button in Hibernate configuration "Add classpath from clipboard"
+  which reads classpath entries from clipboard. The entries may be
+  separated by OS dependent classpath separators and/or newlines.
+  File --> Global Preferences --> Tab Hibernate --> See below classpath entry list.
+
 Saved Sessions, three new buttons at the right of application (topmost) toolbar:
   The Saved Session feature allows to save and restore all SQL editors of a Session at once.
   Saved Session are especially useful when working with additional SQL Tabs or SQL Worksheets.

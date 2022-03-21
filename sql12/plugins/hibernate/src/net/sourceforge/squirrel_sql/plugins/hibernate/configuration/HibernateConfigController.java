@@ -4,17 +4,17 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.props.Props;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
@@ -75,6 +75,7 @@ public class HibernateConfigController
 		_panel.btnClassPathAdd.addActionListener(e -> onAddClasspathEntry());
 
 		_panel.btnClassPathDirAdd.addActionListener(e -> onAddClassPathDir());
+		_panel.btnClassPathAddFormClip.addActionListener(e -> onAddClassPathFromClip());
 
 		_panel.btnClassPathReplace.addActionListener(e -> onReplaceClasspathEntry());
 
@@ -96,6 +97,24 @@ public class HibernateConfigController
 		_panel.radInVM.addItemListener(radProcessListener);
 
 		_panel.btnProcessDetails.addActionListener(e -> onProcessDetails());
+	}
+
+	private void onAddClassPathFromClip()
+	{
+		ArrayList<String> cpEntries = new ArrayList<>();
+
+		String clipboardAsString = ClipboardUtil.getClipboardAsString();
+		String[] splits = clipboardAsString.split("\n");
+
+		for( String split : splits )
+		{
+			cpEntries.addAll(Arrays.asList(split.trim().split(System.getProperties().getProperty("path.separator"))));
+		}
+
+		for( String cpEntry : cpEntries )
+		{
+			getClassPathListModel().addJar(cpEntry);
+		}
 	}
 
 	private void onProcessDetails()
