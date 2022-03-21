@@ -1,17 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.configuration;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
-
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -29,6 +17,18 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePrefsListener;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathItem;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class HibernateConfigController
 {
@@ -113,7 +113,10 @@ public class HibernateConfigController
 
 		for( String cpEntry : cpEntries )
 		{
-			getClassPathListModel().addJar(cpEntry);
+			if(false == StringUtilities.isEmpty(cpEntry, true))
+			{
+				getClassPathListModel().addJar(cpEntry.trim());
+			}
 		}
 	}
 
