@@ -1,12 +1,16 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
-import java.security.Permission;
-import java.util.concurrent.Callable;
-
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import java.security.Permission;
+import java.util.concurrent.Callable;
+
+/**
+ * Since Java 18 {@link System#getSecurityManager()} and {@link System#setSecurityManager(SecurityManager)}
+ * throw UnsupportedOperationExceptions. This class handels accessing these methods adequately.
+ */
 public class RMISecurityManagerWrappedCall
 {
    private static ILogger s_log = LoggerController.createLogger(RMISecurityManagerWrappedCall.class);

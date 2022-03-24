@@ -1,9 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -12,6 +8,11 @@ import net.sourceforge.squirrel_sql.fw.gui.DontShowAgainResult;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class SessionPersister
 {
@@ -92,7 +93,12 @@ public class SessionPersister
 
       SavedSessionUtil.initSessionWithSavedSession(savedSessionJsonBean, session);
 
-      sqlEditorActivator.activate();
+      if( savedSessionJsonBean.getSessionSQLs().stream().anyMatch(s -> StringUtilities.isEmpty(s.getExternalFilePath(), true)) )
+      {
+         // Activate needs to be called only when an external file was saved, see comment above.
+         // On Windows this call results in a short flicker that's why call it when it's necessary only.
+         sqlEditorActivator.activate();
+      }
 
       return true;
    }
