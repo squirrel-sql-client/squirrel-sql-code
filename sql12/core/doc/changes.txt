@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Introduced Java 18 compatibility.
+
 Hibernate Plugin:
   New button in Hibernate configuration "Add classpath from clipboard"
   which reads classpath entries from clipboard. The entries may be

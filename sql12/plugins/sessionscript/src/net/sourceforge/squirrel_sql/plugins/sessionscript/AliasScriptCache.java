@@ -18,16 +18,16 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 /**
  * XML cache of SQL scripts.
  *
@@ -35,9 +35,7 @@ import java.io.IOException;
  */
 public class AliasScriptCache
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(AliasScriptCache.class);
+	private static ILogger s_log = LoggerController.createLogger(AliasScriptCache.class);
 
 	/** Current plugin. */
 	private SessionScriptPlugin _plugin;

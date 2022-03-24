@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import java.rmi.RemoteException;
-import java.security.Permission;
 import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
@@ -26,13 +25,7 @@ public class HibernateConnection
    private final boolean _endProcessOnDisconnect;
    private ArrayList<MappedClassInfo> _mappedClassInfos;
 
-   private final SecurityManager _rmiSecurityManager = new SecurityManager()
-   {
-      @Override
-      public void checkPermission(Permission perm)
-      {
-      }
-   };
+   private RMISecurityManagerWrappedCall _rmiSecurityManagerWrappedCall = new RMISecurityManagerWrappedCall();
 
    public HibernateConnection(HibernateServerConnection hibernateServerConnection, boolean process, ServerMain serverMain, boolean endProcessOnDisconnect)
    {
@@ -48,17 +41,7 @@ public class HibernateConnection
       {
          if (_process)
          {
-            SecurityManager old = System.getSecurityManager();
-
-            try
-            {
-               System.setSecurityManager(_rmiSecurityManager);
-               return _hibernateServerConnection.generateSQL(hqlQuery);
-            }
-            finally
-            {
-               System.setSecurityManager(old);
-            }
+            return _rmiSecurityManagerWrappedCall.call(() -> _hibernateServerConnection.generateSQL(hqlQuery));
          }
          else
          {
@@ -115,23 +98,12 @@ public class HibernateConnection
       {
          if (null == _mappedClassInfos)
          {
-            _mappedClassInfos = new ArrayList<MappedClassInfo>();
+            _mappedClassInfos = new ArrayList<>();
 
             ArrayList<MappedClassInfoData> mappedClassInfoData;
             if (_process)
             {
-               SecurityManager old = System.getSecurityManager();
-
-               try
-               {
-                  System.setSecurityManager(_rmiSecurityManager);
-                  mappedClassInfoData = _hibernateServerConnection.getMappedClassInfoData();
-               }
-               finally
-               {
-                  System.setSecurityManager(old);
-               }
-
+               mappedClassInfoData = _rmiSecurityManagerWrappedCall.call(() ->_hibernateServerConnection.getMappedClassInfoData());
             }
             else
             {
@@ -169,17 +141,7 @@ public class HibernateConnection
    {
       if (_process)
       {
-         SecurityManager old = System.getSecurityManager();
-
-         try
-         {
-            System.setSecurityManager(_rmiSecurityManager);
-            return callCreateQueryList(hqlQuery, sqlNbrRowsToShow, jdbcData);
-         }
-         finally
-         {
-            System.setSecurityManager(old);
-         }
+         return _rmiSecurityManagerWrappedCall.call(() -> callCreateQueryList(hqlQuery, sqlNbrRowsToShow, jdbcData));
       }
       else
       {
