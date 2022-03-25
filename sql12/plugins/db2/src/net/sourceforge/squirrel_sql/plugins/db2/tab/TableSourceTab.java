@@ -19,6 +19,10 @@ package net.sourceforge.squirrel_sql.plugins.db2.tab;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
@@ -32,10 +36,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
-
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 
@@ -83,16 +83,17 @@ public class TableSourceTab extends FormattedSourceTab
 		String sql = db2Sql.getTableSourceSql();
 
 		boolean isMQT = isMQT();
-		if (!isMQT)
+		if( !isMQT )
 		{
 			sql = getTableSelectSql((ITableInfo) doi);
 
 			// we may have more than one statement in sql at this point
-			super.appendSeparator = false;
-		} else
+			super.setAppendSeparator(false);
+		}
+		else
 		{
 			// MQTs only ever have one sql statement
-			super.appendSeparator = true;
+			super.setAppendSeparator(true);
 		}
 		if (s_log.isDebugEnabled())
 		{
@@ -172,7 +173,7 @@ public class TableSourceTab extends FormattedSourceTab
 				 * If the generated statement contains a ', then escape it.
 				 */
 				tmp.append(sql.replace("'", "''"));
-				tmp.append(statementSeparator);
+				tmp.append(super.getStatementSeparator());
 				tmp.append("\n");
 				tmp.append("\n");
 			}

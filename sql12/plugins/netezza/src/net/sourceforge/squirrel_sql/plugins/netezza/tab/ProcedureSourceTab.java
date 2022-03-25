@@ -53,7 +53,7 @@ public class ProcedureSourceTab extends FormattedSourceTab
 		super.setupFormatter(formator, stmtSep, null);
 		super.setCompressWhitespace(true);
 		// Netezza procedure definitions include the statement separator.
-		super.appendSeparator = false;
+		super.setAppendSeparator(false);
 	}
 
 	/**

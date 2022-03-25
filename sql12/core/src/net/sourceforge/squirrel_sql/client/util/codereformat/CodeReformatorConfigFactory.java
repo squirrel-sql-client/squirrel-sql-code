@@ -1,17 +1,15 @@
 package net.sourceforge.squirrel_sql.client.util.codereformat;
 
+import java.util.ArrayList;
+
 import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlPanel;
 import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlPref;
 import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlPrefReader;
 import net.sourceforge.squirrel_sql.client.preferences.codereformat.KeywordBehaviourPref;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-import java.util.ArrayList;
-
 public class CodeReformatorConfigFactory
 {
-
-
    public static final CommentSpec[] DEFAULT_COMMENT_SPECS = new CommentSpec[]
          {
                new CommentSpec("/*", "*/"),

@@ -24,18 +24,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
-import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.client.util.codereformat.ICodeReformator;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.text.JTextComponent;
 
 /**
  * This will provide source code formatting for object source to subclasses. The subclass only needs to call
@@ -49,37 +43,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 {
    private final static ILogger s_log = LoggerController.createLogger(FormattedSourceTab.class);
 
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(FormattedSourceTab.class);
-
-   /**
-    * does the work of formatting
-    */
-   private ICodeReformator formatter = null;
-
-   /**
-    * whether or not to compress whitespace
-    */
-   private boolean compressWhitespace = true;
-
-   private CommentSpec[] commentSpecs =
-         new CommentSpec[]{new CommentSpec("/*", "*/"), new CommentSpec("--", "\n")};
-
-   /**
-    * The String to use to separate statements
-    */
-   protected String statementSeparator = null;
-
-   /**
-    * Whether or not to appendSeparator before reformatting
-    */
-   protected boolean appendSeparator = true;
-
-   static interface i18n
-   {
-      // i18n[FormatterSourceTab.noSourceAvailable=No object source code is
-      // available]
-      String NO_SOURCE_AVAILABLE = s_stringMgr.getString("FormatterSourceTab.noSourceAvailable");
-   }
+   private FormattedSourceTabCore _core = new FormattedSourceTabCore();
 
    public FormattedSourceTab(String hint)
    {
@@ -96,12 +60,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
     */
    protected void setupFormatter(String stmtSep, CommentSpec[] commentSpecs)
    {
-      if (commentSpecs != null)
-      {
-         this.commentSpecs = commentSpecs;
-      }
-      statementSeparator = stmtSep;
-      formatter = new CodeReformator(CodeReformatorConfigFactory.createConfig(stmtSep, this.commentSpecs));
+      _core.setupFormatter(stmtSep, commentSpecs);
    }
 
    /**
@@ -116,12 +75,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
     */
    protected void setupFormatter(ICodeReformator codeReformator, String stmtSep, CommentSpec[] commentSpecs)
    {
-      if (commentSpecs != null)
-      {
-         this.commentSpecs = commentSpecs;
-      }
-      statementSeparator = stmtSep;
-      formatter = codeReformator;
+      _core.setupFormatter(codeReformator, stmtSep, commentSpecs);
    }
 
 
@@ -132,28 +86,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
     */
    protected void setCompressWhitespace(boolean compressWhitespace)
    {
-      this.compressWhitespace = compressWhitespace;
-   }
-
-   /**
-    * We trap any IllegalStateException from the formatter here. If the SQL source code fails to format, log
-    * it and show the original unformatted version.
-    *
-    * @param toFormat the SQL to format.
-    * @return either formatted or original version of the specified SQL.
-    */
-   private String format(String toFormat)
-   {
-      String result = toFormat;
-      try
-      {
-         result = formatter.reformat(toFormat);
-      }
-      catch (IllegalStateException e)
-      {
-         s_log.error("format: Formatting SQL failed: " + e.getMessage(), e);
-      }
-      return result;
+      _core.setCompressWhitespace(compressWhitespace);
    }
 
    /**
@@ -216,35 +149,9 @@ public abstract class FormattedSourceTab extends BaseSourceTab
          @Override
          public void load(ISession session, PreparedStatement stmt)
          {
-            onLoad(getTextArea(), getSourceCode(session, stmt));
+            _core.loadTextArea(getTextArea(), getSourceCode(session, stmt));
          }
       };
-   }
-
-   private void onLoad(JTextComponent textArea, String sourceCode)
-   {
-      textArea.setText("");
-
-      if (appendSeparator && (statementSeparator != null))
-      {
-         sourceCode += "\n";
-         sourceCode += statementSeparator;
-      }
-      String processedResult = sourceCode;
-      if (formatter != null && sourceCode.length() != 0)
-      {
-         textArea.setText(format(processedResult));
-      }
-      else
-      {
-         if (sourceCode.length() == 0)
-         {
-            sourceCode += i18n.NO_SOURCE_AVAILABLE;
-         }
-         textArea.setText(sourceCode);
-      }
-      textArea.setCaretPosition(0);
-
    }
 
    protected String getSourceCode(ISession session, PreparedStatement stmt)
@@ -259,7 +166,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
             {
                continue;
             }
-            if (compressWhitespace)
+            if (_core.isCompressWhitespace())
             {
                buf.append(line.trim() + " ");
             }
@@ -278,4 +185,13 @@ public abstract class FormattedSourceTab extends BaseSourceTab
       return buf.toString();
    }
 
+   protected void setAppendSeparator(boolean b)
+   {
+      _core.setAppendSeparator(b);
+   }
+
+   protected String getStatementSeparator()
+   {
+      return _core.getStatementSeparator();
+   }
 }

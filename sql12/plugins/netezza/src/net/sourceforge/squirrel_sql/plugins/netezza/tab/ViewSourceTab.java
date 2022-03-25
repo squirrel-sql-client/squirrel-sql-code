@@ -49,7 +49,7 @@ public class ViewSourceTab extends FormattedSourceTab
 		super.setupFormatter(stmtSep, null);
 		super.setCompressWhitespace(true);
 		// Netezza view definitions include the statement separator.
-		super.appendSeparator = false;
+		super.setAppendSeparator(false);
 	}
 
 	/**

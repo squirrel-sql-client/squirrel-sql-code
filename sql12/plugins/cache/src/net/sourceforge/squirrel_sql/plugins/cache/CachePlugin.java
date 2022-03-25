@@ -12,10 +12,14 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.plugins.cache.tap.CacheViewSourceTab;
 
 /**
  * Plugin to show query statistics and plan for the Intersystems Cache database.
@@ -143,7 +147,14 @@ public class CachePlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(ISession session)
 	{
+		if( false == DialectFactory.isIntersystemsCache(session.getMetaData()) )
+		{
+			return null;
+		}
+
 		addStatisticsAndQueryPlanSessionMenuAction(session);
+
+		GUIUtils.processOnSwingEventThread(() -> updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI()));
 
 		return new PluginSessionCallback()
 		{
@@ -162,7 +173,7 @@ public class CachePlugin extends DefaultSessionPlugin
 			@Override
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
 			{
-
+				updateTreeApi(objectTreeInternalFrame.getObjectTreeAPI());
 			}
 
 			@Override
@@ -173,9 +184,17 @@ public class CachePlugin extends DefaultSessionPlugin
 		};
 	}
 
+	private void updateTreeApi(IObjectTreeAPI objectTreeAPI)
+	{
+		CacheViewSourceTab viewSourceTab = new CacheViewSourceTab(objectTreeAPI.getSession());
+		objectTreeAPI.addDetailTab(DatabaseObjectType.VIEW, viewSourceTab);
+		objectTreeAPI.refreshTree();
+	}
+
+
 	private void initSqlInternalFrame(SQLInternalFrame sqlInternalFrame, ISession session)
 	{
-		if ( false == DialectFactory.isIntersystemsCache(session.getMetaData()))
+		if( false == DialectFactory.isIntersystemsCache(session.getMetaData()) )
 		{
 			return;
 		}
@@ -200,10 +219,6 @@ public class CachePlugin extends DefaultSessionPlugin
 
 	private void addStatisticsAndQueryPlanSessionMenuAction(ISession session)
 	{
-		if( false == DialectFactory.isIntersystemsCache(session.getMetaData()) )
-		{
-			return;
-		}
 
 		ActionCollection coll = Main.getApplication().getActionCollection();
 
