@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Intersystems Cache Plugin: View source are displayed in Object tree details.
+
 Introduced Java 18 compatibility.
 
 Hibernate Plugin:
@@ -137,7 +139,7 @@ Query connection pool.
   Note: To keep a Session from blocking itself the pool is switched off when autocommit is switched off.
   This change was inspired by the discussion in bug #1488.
 
-New Plugin for the Intersystem Cache database. The Plugin adds a new toolbar button to
+New Plugin for the Intersystems Cache database. The Plugin adds a new toolbar button to
   show statistics and query plan for an SQL query.
   Thanks to Martin Weissenborn for the Cache specific requirements
 
@@ -147,6 +149,8 @@ New SQL editor function to delete the current SQL statement.
 
 
 Bug fixes:
+
+Postgres Plugin: Removed duplicate statement separator from View source display in Object tree details.
 
 Fixed several bugs of SQL result table functions
   "Mark duplicate cells in row" and "Mark duplicate consecutive cells in row".

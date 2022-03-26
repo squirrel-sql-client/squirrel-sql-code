@@ -41,6 +41,7 @@ public class ViewSourceTab extends FormattedSourceTab
 		super(hint);
 		super.setCompressWhitespace(true);
 		super.setupFormatter(stmtSep, null);
+		super.setAppendSeparator(false);
 	}
 
 	/**
