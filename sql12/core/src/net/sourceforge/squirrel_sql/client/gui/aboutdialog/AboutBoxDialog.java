@@ -85,6 +85,8 @@ public class AboutBoxDialog extends JDialog
 
       tabPnl.add(s_stringMgr.getString("AboutBoxDialog.command.line"), new CommandlinePanel());
 
+      tabPnl.add(s_stringMgr.getString("AboutBoxDialog.more"), new MorePanel());
+
       tabPnl.addChangeListener(new ChangeListener()
       {
          public void stateChanged(ChangeEvent evt)

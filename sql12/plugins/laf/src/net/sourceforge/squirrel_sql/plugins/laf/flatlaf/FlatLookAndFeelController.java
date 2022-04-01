@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.laf.flatlaf;
 
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
@@ -27,6 +28,8 @@ import java.util.TreeMap;
 
 public class FlatLookAndFeelController extends DefaultLookAndFeelController
 {
+   private final static ILogger s_log = LoggerController.createLogger(FlatLookAndFeelController.class);
+
    public static final String FLAT_LAF_PLACEHOLDER_CLASS_NAME = new FlatLafPlaceholder().getClass().getName();
 
    private static ILogger log = LoggerController.createLogger(FlatLookAndFeelController.class);
@@ -135,8 +138,15 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
    private void _hasBeenInstalled()
    {
       Object theme = getAvailableThemes().get(selectedTheme.getName());
+
       try
       {
+         if(null == theme && 0 < getAvailableThemes().size())
+         {
+            s_log.error("Flat-Laf theme \"" + selectedTheme.getName() +"\" is not in available themes." );
+            theme = getAvailableThemes().values().iterator().next();
+         }
+
          LookAndFeel lnf;
          if(theme instanceof Class)
          {
@@ -229,7 +239,11 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
       @Override
       public boolean applyChanges()
       {
-         ctrl.selectedTheme.setName(themeList.getSelectedItem().toString());
+         if(   null != themeList.getSelectedItem()
+            && false == StringUtilities.isEmpty(themeList.getSelectedItem().toString(), true))
+         {
+            ctrl.selectedTheme.setName(themeList.getSelectedItem().toString());
+         }
          return true;
       }
    }

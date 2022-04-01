@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Look and Feel plugin:
+  - Upgrade FlatLaF to 2.1
+  - Increased stability installing FlatLaF
+  - About dialog shows the currently installed Look and Feel
+
 Intersystems Cache Plugin: View source are displayed in Object tree details.
 
 Introduced Java 18 compatibility.
