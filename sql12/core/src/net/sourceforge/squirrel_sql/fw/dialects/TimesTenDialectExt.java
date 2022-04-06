@@ -24,12 +24,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
-import org.hibernate.HibernateException;
 
 /**
  * A dialect delegate for the TimesTen database.
@@ -39,7 +38,7 @@ import org.hibernate.HibernateException;
 public class TimesTenDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	private class TimesTenDialectHelper extends org.hibernate.dialect.TimesTenDialect
+	private class TimesTenDialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.TimesTenDialect
 	{
 		public TimesTenDialectHelper()
 		{

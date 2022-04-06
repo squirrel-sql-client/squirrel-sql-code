@@ -18,6 +18,15 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -26,15 +35,6 @@ import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.HibernateException;
-
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 
 import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.CYCLE_CLAUSE;
 import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.NO_CYCLE_CLAUSE;
@@ -45,7 +45,7 @@ import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.NO_CYCLE_CLA
 public class DB2DialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	private class DB2DialectHelper extends org.hibernate.dialect.DB2Dialect
+	private class DB2DialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.DB2Dialect
 	{
 		public DB2DialectHelper()
 		{

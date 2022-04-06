@@ -22,12 +22,11 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
-import org.hibernate.HibernateException;
 
 /**
  * An interface for methods implemented by database dialects for the purpose of

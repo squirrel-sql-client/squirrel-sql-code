@@ -25,12 +25,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
 import org.antlr.stringtemplate.StringTemplate;
-import org.hibernate.HibernateException;
 
 /**
  * A dialect delegate for the Firebird database.
@@ -38,7 +37,7 @@ import org.hibernate.HibernateException;
 public class FirebirdDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	private class FirebirdDialectHelper extends org.hibernate.dialect.FirebirdDialect
+	private class FirebirdDialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.FirebirdDialect
 	{
 		public FirebirdDialectHelper()
 		{

@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import org.hibernate.dialect.Dialect;
-
 import java.sql.Types;
+
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.Dialect;
 
 public class GenericDialectHelper extends Dialect
 {

@@ -25,14 +25,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
 import org.antlr.stringtemplate.StringTemplate;
-import org.hibernate.HibernateException;
 
 /**
  * A dialect delegate for the HSQL database.
@@ -40,7 +39,7 @@ import org.hibernate.HibernateException;
 public class HSQLDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	private class HSQLDialectHelper extends org.hibernate.dialect.HSQLDialect
+	private class HSQLDialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.HSQLDialect
 	{
 		public HSQLDialectHelper()
 		{

@@ -18,12 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import static java.sql.DatabaseMetaData.importedKeyNoAction;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.CYCLE_CLAUSE;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.NOCYCLE_CLAUSE;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.RENAME_CLAUSE;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.TO_CLAUSE;
-
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -31,15 +25,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
 import org.antlr.stringtemplate.StringTemplate;
-import org.hibernate.HibernateException;
+
+import static java.sql.DatabaseMetaData.importedKeyNoAction;
+import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.*;
 
 
 /**
@@ -48,7 +44,7 @@ import org.hibernate.HibernateException;
 public class OracleDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	private class OracleDialectHelper extends org.hibernate.dialect.Oracle9Dialect {
+	private class OracleDialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.Oracle9Dialect {
 		public OracleDialectHelper()
 		{
 			super();

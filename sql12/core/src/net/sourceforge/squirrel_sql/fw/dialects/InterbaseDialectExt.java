@@ -23,12 +23,11 @@ import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
-import org.hibernate.HibernateException;
 
 /**
  * A dialect delegate for the Interbase database. This dialect's support and get..SQL methods have not been
@@ -37,7 +36,7 @@ import org.hibernate.HibernateException;
 public class InterbaseDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	private class InterbaseDialectHelper extends org.hibernate.dialect.InterbaseDialect
+	private class InterbaseDialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.InterbaseDialect
 	{
 		public InterbaseDialectHelper()
 		{

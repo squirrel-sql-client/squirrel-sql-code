@@ -18,9 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import org.hibernate.HibernateException;
 
 /**
  * Do not remove final to inherit from this class. Look at {@link SQLiteDialectExt} for an example

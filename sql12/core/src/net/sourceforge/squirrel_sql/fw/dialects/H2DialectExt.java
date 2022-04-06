@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -25,14 +26,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
 import org.antlr.stringtemplate.StringTemplate;
-import org.hibernate.HibernateException;
 
 /**
  * A dialect delegate for the H2 database.
@@ -45,7 +45,7 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	 * 
 	 * @author manningr
 	 */
-	private class H2DialectHelper extends org.hibernate.dialect.Dialect
+	private class H2DialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.Dialect
 	{
 
 		public H2DialectHelper()

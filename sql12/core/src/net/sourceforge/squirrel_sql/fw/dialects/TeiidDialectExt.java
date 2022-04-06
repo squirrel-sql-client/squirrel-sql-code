@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
 
-import org.hibernate.HibernateException;
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 
 /**
  * An extension to the standard Hibernate TeiidDialect dialect

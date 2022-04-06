@@ -18,15 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.CYCLE_CLAUSE;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.NO_CYCLE_CLAUSE;
-
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -34,7 +32,8 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
-import org.hibernate.HibernateException;
+import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.CYCLE_CLAUSE;
+import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.NO_CYCLE_CLAUSE;
 
 /**
  * An extension to the standard Hibernate PostgreSQL dialect
@@ -44,7 +43,7 @@ import org.hibernate.HibernateException;
 public class PostgreSQLDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	private class PostgreSQLDialectHelper extends org.hibernate.dialect.PostgreSQLDialect {
+	private class PostgreSQLDialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.PostgreSQLDialect {
 		public PostgreSQLDialectHelper() {
 			super();
 			registerColumnType(Types.BIGINT, "bigint");

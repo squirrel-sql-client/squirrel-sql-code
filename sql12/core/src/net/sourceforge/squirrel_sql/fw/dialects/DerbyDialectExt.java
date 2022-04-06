@@ -18,16 +18,16 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import org.hibernate.HibernateException;
-
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An extension to the DB2DialectExt. Much of the behavior of DB2 is happily found in Derby.
@@ -53,7 +53,7 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 		String COLUMN_LENGTH_MESSAGE = s_stringMgr.getString("DerbyDialect.columnLengthMessage");
 	}
 
-	private class DerbyDialectHelper extends org.hibernate.dialect.DB2Dialect {
+	private class DerbyDialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.DB2Dialect {
 		public DerbyDialectHelper() {
 			super();
 			registerColumnType(Types.BIGINT, "bigint");

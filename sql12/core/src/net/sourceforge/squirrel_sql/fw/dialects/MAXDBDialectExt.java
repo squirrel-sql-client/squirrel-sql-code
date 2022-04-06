@@ -25,15 +25,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.SAPDBDialect;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
 import org.antlr.stringtemplate.StringTemplate;
-import org.hibernate.HibernateException;
-import org.hibernate.dialect.SAPDBDialect;
 
 public class MAXDBDialectExt extends CommonHibernateDialect implements HibernateDialect
 {

@@ -18,21 +18,20 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import org.hibernate.HibernateException;
-
-import java.sql.Types;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 /**
  * Dummy Extension for the Intersystems Cache DB
  */
 public class IntersystemsCacheDialectExt extends CommonHibernateDialect
 {
-   private class CacheHelper extends org.hibernate.dialect.Cache71Dialect {
+   private class CacheHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.Cache71Dialect {
       public CacheHelper() {
          super();
          registerColumnType(Types.BIT, "BIT");

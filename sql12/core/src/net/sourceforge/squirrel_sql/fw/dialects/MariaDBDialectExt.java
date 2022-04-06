@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import org.hibernate.HibernateException;
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 
 public class MariaDBDialectExt extends CommonHibernateDialect // Could make sense to derive this from MySQLDialectEx
 {

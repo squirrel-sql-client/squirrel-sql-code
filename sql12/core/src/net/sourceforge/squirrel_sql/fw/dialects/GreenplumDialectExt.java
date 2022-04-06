@@ -19,24 +19,17 @@
 
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.ADD_COLUMN_TYPE;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.COLUMN_DROP_TYPE;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.COLUMN_NULL_ALTER_TYPE;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.COLUMN_TYPE_ALTER_TYPE;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.CREATE_INDEX_TYPE;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.DROP_INDEX_TYPE;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.getUnsupportedMessage;
-
 import java.sql.Types;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
 import org.antlr.stringtemplate.StringTemplate;
-import org.hibernate.HibernateException;
+
+import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.*;
 
 /**
  * Dialect for the Greenplum NPS database server.
@@ -46,7 +39,7 @@ public class GreenplumDialectExt extends CommonHibernateDialect
 
 	// Note that Greenplum 4.6 doesn't have support for LOB data types. Under the hood, it appears to use
 	// PostgreSQL, but with some limitations.
-	private class GreenplumDialectHelper extends org.hibernate.dialect.PostgreSQLDialect
+	private class GreenplumDialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.PostgreSQLDialect
 	{
 		public GreenplumDialectHelper()
 		{

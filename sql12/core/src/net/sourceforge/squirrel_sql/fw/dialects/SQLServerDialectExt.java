@@ -23,21 +23,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-
 import org.antlr.stringtemplate.StringTemplate;
-import org.hibernate.HibernateException;
 
 /**
  * A dialect delegate for the MS SQLServer database.
  */
 public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDialect
 {
-	private class SQLServerDialectHelper extends org.hibernate.dialect.SybaseDialect
+	private class SQLServerDialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.SybaseDialect
 	{
 		public SQLServerDialectHelper()
 		{
