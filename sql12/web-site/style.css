@@ -10,20 +10,13 @@ h1							 	{ text-align: Left;
 										font-size: 12pt; 
 										font-family: Arial; 
 										font-weight: Normal; }
-p							 		{ text-align: Left;
+p						 		{ text-align: Left;
 										font-family: Arial;
 										font-weight: Normal;
 										font-size: 12pt;
 										margin-left: 5; 
-               			margin-top: 0; 
+               			                margin-top: 0;
 										margin-bottom: 8 }
-hr								{ color: #ADB0C4;
-										margin-top: 0;
-										margin-bottom: 0;
-										padding-top: 0;
-										padding-bottom: 0;
-										border-top: 0;
-										border-bottom: 0 }
 
 /* navigation menu styles */
 h1.menu					 	{ text-align: Center;
