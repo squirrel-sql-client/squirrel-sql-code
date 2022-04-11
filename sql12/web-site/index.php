@@ -15,6 +15,10 @@
 			<td width="20">&nbsp;&nbsp;</td>
 			<td width="100%" valign="top">
 <?php
+
+    // Switch off warnings inside web page.
+    error_reporting(0);
+
 	$pageKey = $_GET['page'];
 	$pageFileName = '';
 	if (is_null($pageKey))
@@ -59,12 +63,12 @@
 			break;
 	}
 	
-	if (ereg('.txt$', $pageFileName))
+	if (preg_match('.txt$', $pageFileName))
 	{
 		echo("<PRE>");
 	}
 	include $pageFileName;
-	if (ereg('.txt$', $pageFileName))
+	if (preg_match('.txt$', $pageFileName))
 	{
 		echo("</PRE>");
 	}
