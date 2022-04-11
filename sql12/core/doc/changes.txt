@@ -1,6 +1,21 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in our GIT repository and in snapshots and future releases.
+===============================================================================================
+
+Enhancements:
+
+Removed dependencies on outdated Hibernate libraries (3.2.4.sp1)
+
+
+Bug fixes:
+
+Command line mode: Java process didn't properly end when SQL was executed on command line.
+  Example on Windows: <squirrel-home>\squirrelcli\squirrelcli.bat -alias "yourAlias" -sql "SELECT * FROM <yourTable>"
+
+
+
 4.4.0 (04/06/2021)
 ==================
 

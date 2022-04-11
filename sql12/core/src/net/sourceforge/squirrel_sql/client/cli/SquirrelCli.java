@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Iterator;
+import java.util.regex.Pattern;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
@@ -18,11 +23,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Iterator;
-import java.util.regex.Pattern;
 
 
 public class SquirrelCli
@@ -205,8 +205,6 @@ public class SquirrelCli
    {
       try
       {
-
-
          if (_cliConnectionData.closeCliSession() && CliInitializer.getShellMode() == ShellMode.CLI)
          {
             System.err.println("Database connection closed. Alias is still valid. Next exec() call will reconnect.");
