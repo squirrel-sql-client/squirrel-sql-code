@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findaliases;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
 
@@ -11,9 +11,9 @@ public class FindAliasAction extends SquirrelAction
 {
 	private IAliasesList _al;
 
-	public FindAliasAction(IApplication app, IAliasesList al)
+	public FindAliasAction(IAliasesList al)
 	{
-		super(app);
+		super(Main.getApplication());
 		_al = al;
 	}
 

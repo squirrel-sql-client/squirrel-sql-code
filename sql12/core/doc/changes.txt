@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Main application toolbar: Replaced the former Aliases and Session combo boxes by toolbar buttons
+  which display popup menus to select Aliases and Session respectively.
+
 Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 

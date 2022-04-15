@@ -1,5 +1,22 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.JScrollPopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.JScrollPopupMenuPosition;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,22 +28,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.JScrollPopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SchemaPanel extends JPanel
 {
@@ -133,10 +134,10 @@ public class SchemaPanel extends JPanel
       try
       {
          JScrollPopupMenu popupSchemas = new JScrollPopupMenu();
-         popupSchemas.setMaximumVisibleRows(20);
 
          int menuCount = 0;
-         int menuHeight = new JMenuItem("Test").getPreferredSize().height;
+         popupSchemas.setMaximumVisibleRows(20); // Call before adding items
+
          for (String schema : Main.getApplication().getSessionManager().getAllSchemas(_session))
          {
             if(StringUtilities.isEmpty(schema, true))
@@ -151,18 +152,7 @@ public class SchemaPanel extends JPanel
             ++menuCount;
          }
 
-         int visibleItemCount = Math.min(menuCount, popupSchemas.getMaximumVisibleRows());
-
-         int scrollbarSizeIfVisible = 0;
-
-         if(menuCount > popupSchemas.getMaximumVisibleRows())
-         {
-            scrollbarSizeIfVisible = popupSchemas.getScrollBar().getPreferredSize().width;
-         }
-
-         popupSchemas.show(_btnChooseSchema,
-               -popupSchemas.getPreferredSize().width - scrollbarSizeIfVisible +_btnChooseSchema.getWidth(),
-               -visibleItemCount*menuHeight + _btnChooseSchema.getHeight());
+         popupSchemas.positionPopRelativeTo(_btnChooseSchema, menuCount, JScrollPopupMenuPosition.NORTH_WEST);
 
       }
       catch (SQLException e)

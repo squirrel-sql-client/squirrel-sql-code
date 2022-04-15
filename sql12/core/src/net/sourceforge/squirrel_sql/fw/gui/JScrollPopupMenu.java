@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -10,8 +14,6 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
 
 public class JScrollPopupMenu extends JPopupMenu
 {
@@ -258,4 +260,37 @@ public class JScrollPopupMenu extends JPopupMenu
          }
       }
    }
+
+   public void positionPopRelativeTo(JComponent relativeToComp, int totalItemCount, JScrollPopupMenuPosition popupMenuPosition)
+   {
+      int scrollbarSizeIfVisible = 0;
+
+      if(totalItemCount > maximumVisibleRows)
+      {
+         scrollbarSizeIfVisible = getScrollBar().getPreferredSize().width;
+      }
+
+      int visibleItemCount = Math.min(totalItemCount, getMaximumVisibleRows());
+
+      int menuHeight = new JMenuItem("Test").getPreferredSize().height;
+
+      if(popupMenuPosition == JScrollPopupMenuPosition.NORTH_WEST)
+      {
+         show(relativeToComp,
+              -getPreferredSize().width - scrollbarSizeIfVisible + relativeToComp.getWidth(),
+              //-visibleItemCount * menuHeight + relativeToComp.getHeight());
+              -visibleItemCount * menuHeight - 3 );
+      }
+      else if(popupMenuPosition == JScrollPopupMenuPosition.SOUTH_EAST)
+      {
+         show(relativeToComp,
+              0,
+              relativeToComp.getHeight());
+      }
+      else
+      {
+         throw new UnsupportedOperationException("NYI");
+      }
+   }
+
 }

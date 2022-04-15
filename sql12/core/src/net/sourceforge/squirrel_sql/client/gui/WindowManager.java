@@ -866,8 +866,8 @@ public class WindowManager
 		actions.add(new CopyAliasAction(_app, al));
 		actions.add(new ConnectToAliasAction(_app, al));
 		actions.add(new CreateAliasAction(_app));
-		actions.add(new FindAliasAction(_app, al));
-		actions.add(new FindAliasAltAcceleratorAction(_app, al));
+		actions.add(new FindAliasAction(al));
+		actions.add(new FindAliasAltAcceleratorAction(al));
 		actions.add(new SortAliasesAction(_app, al));
 		actions.add(new ColorAliasAction(_app, al));
 		actions.add(new AliasPropertiesAction(_app, al));

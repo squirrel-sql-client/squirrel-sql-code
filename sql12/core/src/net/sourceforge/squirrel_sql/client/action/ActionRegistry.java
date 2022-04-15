@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPopUpMenuAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllButCurrentSessionsAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
@@ -16,6 +17,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriver
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.SavePreferencesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.SessionPopUpMenuAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
@@ -239,6 +241,7 @@ public class ActionRegistry
       actionCollection.add(new SessionOpenAction(app));
       actionCollection.add(new SessionManageAction(app));
 
+      actionCollection.add(new AliasPopUpMenuAction());
       actionCollection.add(new GlobalPreferencesAction(app));
       actionCollection.add(new GotoNextResultsTabAction(app));
       actionCollection.add(new GotoPreviousResultsTabAction(app));
@@ -248,6 +251,7 @@ public class ActionRegistry
       actionCollection.add(new NewSQLWorksheetAction(app));
       actionCollection.add(new NewAliasConnectionAction(app));
       actionCollection.add(new NewSessionPropertiesAction(app));
+      actionCollection.add(new SessionPopUpMenuAction());
       actionCollection.add(new NextSessionAction(app));
       actionCollection.add(new PreviousSessionAction(app));
       actionCollection.add(new ReconnectAction(app));
