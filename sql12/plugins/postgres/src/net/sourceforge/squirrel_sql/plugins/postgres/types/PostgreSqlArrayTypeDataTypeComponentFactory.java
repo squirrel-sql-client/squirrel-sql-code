@@ -9,14 +9,13 @@
  */
 package net.sourceforge.squirrel_sql.plugins.postgres.types;
 
-import java.sql.Types;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
+import java.sql.Types;
 
 /**
  * A factory that creates PostgreSqlGeometryTypeDataTypeComponents for rendering "geometry" columns.

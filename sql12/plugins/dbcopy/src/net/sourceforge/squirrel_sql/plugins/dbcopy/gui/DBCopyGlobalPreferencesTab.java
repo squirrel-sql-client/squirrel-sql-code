@@ -18,15 +18,14 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy.gui;
 
-import java.awt.Component;
-
-import javax.swing.JScrollPane;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
+
+import javax.swing.JScrollPane;
+import java.awt.Component;
 
 public class DBCopyGlobalPreferencesTab implements IGlobalPreferencesPanel {
 

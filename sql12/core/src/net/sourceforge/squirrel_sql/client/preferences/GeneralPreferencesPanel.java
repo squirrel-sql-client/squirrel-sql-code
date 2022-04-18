@@ -18,48 +18,35 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Component;
-
-import javax.swing.*;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.util.LocaleUtils;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.JScrollPane;
+import java.awt.Component;
+
 class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(GeneralPreferencesPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GeneralPreferencesPanel.class);
 
 	/** Panel to be displayed in preferences dialog. */
 	private GeneralPreferencesGUI _myPanel;
 	private JScrollPane _myScrollPane;
 
-	/** Application API. */
-	private IApplication _app;
 
 	/**
 	 * Default ctor.
 	 */
 	public GeneralPreferencesPanel()
 	{
-		super();
 	}
 
 	@Override
 	public void initialize(IApplication app)
 	{
-		if (app == null)
-		{
-			throw new IllegalArgumentException("IApplication == null");
-		}
-
-		_app = app;
-
 		getPanelComponent();
-      _myPanel.loadData(_app.getSquirrelPreferences());
+      _myPanel.loadData(app.getSquirrelPreferences());
 
    }
 
@@ -69,7 +56,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
    }
 
    @Override
-   public synchronized Component getPanelComponent()
+   public Component getPanelComponent()
 	{
 		if (_myPanel == null)
 		{
@@ -82,7 +69,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 	@Override
 	public void applyChanges()
 	{
-		_myPanel.applyChanges(_app.getSquirrelPreferences());
+		_myPanel.applyChanges(Main.getApplication().getSquirrelPreferences());
 	}
 
 	@Override

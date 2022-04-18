@@ -18,12 +18,11 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
 
-import java.io.Serializable;
-
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import org.apache.commons.lang3.StringUtils;
 
-import org.apache.commons.lang.StringUtils;
+import java.io.Serializable;
 
 /**
  * A generic implementation for {@link IWikiTableConfiguration}

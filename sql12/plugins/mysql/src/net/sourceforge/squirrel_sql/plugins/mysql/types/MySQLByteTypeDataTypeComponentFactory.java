@@ -5,8 +5,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeShort
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 /**
  * A factory that creates DataTypeShort for rendering columns of MySQL TINYINT UNSIGNED.

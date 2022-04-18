@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import java.awt.*;
+import java.awt.Component;
 
 public class FormatSqlConfigPrefsTab implements IGlobalPreferencesPanel
 {

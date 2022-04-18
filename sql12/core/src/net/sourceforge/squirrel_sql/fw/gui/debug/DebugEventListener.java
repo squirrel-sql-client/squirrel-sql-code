@@ -19,18 +19,17 @@
 
 package net.sourceforge.squirrel_sql.fw.gui.debug;
 
-import java.awt.AWTEvent;
-import java.awt.Container;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
-import java.awt.event.MouseEvent;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.ToolTipManager;
 import javax.swing.border.Border;
-
-import org.apache.commons.lang.StringUtils;
+import java.awt.AWTEvent;
+import java.awt.Container;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+import java.awt.event.MouseEvent;
 
 
 /**

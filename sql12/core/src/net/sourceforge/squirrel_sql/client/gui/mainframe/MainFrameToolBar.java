@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.SessionPopUpMenuActi
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.FindInPreferencesAction;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.NewAliasConnectionAction;
 import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
@@ -66,6 +67,7 @@ public class MainFrameToolBar extends ToolBar
       addSeparator();
       add(actions.get(GlobalPreferencesAction.class));
       add(actions.get(NewSessionPropertiesAction.class));
+      add(actions.get(FindInPreferencesAction.class));
       if (Main.getApplication().getDesktopStyle().isInternalFrameStyle())
       {
          addSeparator();

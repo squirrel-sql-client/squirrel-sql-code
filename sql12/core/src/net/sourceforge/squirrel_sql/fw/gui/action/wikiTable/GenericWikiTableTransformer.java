@@ -18,12 +18,11 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * A generic implementation for {@link IWikiTableTransformer}.

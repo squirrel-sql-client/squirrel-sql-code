@@ -11,6 +11,8 @@ Main application toolbar: Replaced the former Aliases and Session combo boxes by
 
 Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
+Update Commons Lang library to version 3.12.0,
+  see https://commons.apache.org/proper/commons-lang/
 
 Bug fixes:
 

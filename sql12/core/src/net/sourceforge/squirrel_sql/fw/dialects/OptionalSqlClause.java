@@ -19,7 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import org.antlr.stringtemplate.StringTemplate;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * There are a number of dialects which produce DDL statements which have "optional" clauses such

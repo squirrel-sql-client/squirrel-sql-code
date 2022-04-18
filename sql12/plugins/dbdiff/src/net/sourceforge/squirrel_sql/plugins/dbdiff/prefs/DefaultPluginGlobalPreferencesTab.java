@@ -19,13 +19,12 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.prefs;
 
-import java.awt.Component;
-
-import javax.swing.JScrollPane;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.util.IOptionPanel;
+
+import javax.swing.JScrollPane;
+import java.awt.Component;
 
 /**
  * 

@@ -17,13 +17,12 @@
  */
 package net.sourceforge.squirrel_sql.plugins.db2.types;
 
-import java.sql.Types;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+import java.sql.Types;
 
 /**
  * A factory that creates DB2XmlTypeDataTypeComponents for rendering columns of

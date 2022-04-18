@@ -188,8 +188,6 @@ public class FindAliasesCtrl
             _dlg.lstResult.ensureIndexIsVisible(selIx + 1);
          }
       }
-
-
    }
 
    private void onConnect()

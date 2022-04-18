@@ -19,22 +19,25 @@
 
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.sqlbookmark.exportimport.BookmarkExportImport;
+import org.apache.commons.lang3.ArrayUtils;
+
+import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.Component;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
-
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.tree.*;
-
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.plugins.sqlbookmark.exportimport.BookmarkExportImport;
-import org.apache.commons.lang.ArrayUtils;
 
 /**
  * Manage the bookmarks.

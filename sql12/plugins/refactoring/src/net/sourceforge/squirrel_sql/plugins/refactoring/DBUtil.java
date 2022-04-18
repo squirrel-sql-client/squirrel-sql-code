@@ -19,16 +19,15 @@ package net.sourceforge.squirrel_sql.plugins.refactoring;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import org.apache.commons.lang3.StringUtils;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class DBUtil
 {

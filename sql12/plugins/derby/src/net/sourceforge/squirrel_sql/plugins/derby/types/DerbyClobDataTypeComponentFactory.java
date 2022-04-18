@@ -18,13 +18,12 @@
  */
 package net.sourceforge.squirrel_sql.plugins.derby.types;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 public class DerbyClobDataTypeComponentFactory implements
         IDataTypeComponentFactory {

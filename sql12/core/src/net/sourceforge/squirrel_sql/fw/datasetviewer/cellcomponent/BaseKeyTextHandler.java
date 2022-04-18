@@ -18,15 +18,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.text.JTextComponent;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import org.apache.commons.lang.StringUtils;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class BaseKeyTextHandler extends KeyAdapter {
     

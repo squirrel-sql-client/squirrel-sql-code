@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.showreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
 import net.sourceforge.squirrel_sql.fw.gui.action.InStatColumnInfo;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.sql.DatabaseMetaData;

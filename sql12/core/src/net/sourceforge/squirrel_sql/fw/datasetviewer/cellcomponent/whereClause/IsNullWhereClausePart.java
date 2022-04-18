@@ -1,12 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause;
 
-import java.sql.PreparedStatement;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import org.apache.commons.lang.StringUtils;
+
+import java.sql.PreparedStatement;
 
 /**
  * The part of an where-clause, which presents an <code>column is null</code>

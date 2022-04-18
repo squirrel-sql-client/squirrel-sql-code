@@ -18,15 +18,14 @@
  */
 package net.sourceforge.squirrel_sql.plugins.refactoring.prefs;
 
-import java.awt.Component;
-
-import javax.swing.JScrollPane;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JScrollPane;
+import java.awt.Component;
 
 public class RefactoringPreferencesTab implements IGlobalPreferencesPanel {
 

@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.GlobalPreferencesDialogFindInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlConfigPrefsTab;
 import net.sourceforge.squirrel_sql.client.preferences.shortcut.ShortcutPrefsTab;
@@ -57,7 +58,6 @@ import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DAT
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-@SuppressWarnings("serial")
 public class GlobalPreferencesSheet extends DialogWidget
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GlobalPreferencesSheet.class);
@@ -73,7 +73,7 @@ public class GlobalPreferencesSheet extends DialogWidget
     * List of all the panels (instances of
     * <TT>IGlobalPreferencesPanel</TT> objects in sheet.
     */
-   private List<IGlobalPreferencesPanel> _panels = new ArrayList<>();
+   private List<IGlobalPreferencesPanel> _globalPreferencesPanels = new ArrayList<>();
 
    private JTabbedPane _tabPane;
 
@@ -87,15 +87,17 @@ public class GlobalPreferencesSheet extends DialogWidget
    public static final String PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT = "Squirrel.globalPrefsSheetHeight";
 
 
-   private static ArrayList<GlobalPreferencesActionListener> _listeners = new ArrayList<>();
-
    private GlobalPreferencesSheet()
+   {
+      this(false);
+   }
+   private GlobalPreferencesSheet(boolean toUseByPreferencesFinderOnly)
    {
       super(s_stringMgr.getString("GlobalPreferencesSheet.title"), true, Main.getApplication());
 
       createGUI();
 
-      for (Iterator<IGlobalPreferencesPanel> it = _panels.iterator(); it.hasNext(); )
+      for (Iterator<IGlobalPreferencesPanel> it = _globalPreferencesPanels.iterator(); it.hasNext(); )
       {
          IGlobalPreferencesPanel pnl = it.next();
          try
@@ -111,10 +113,12 @@ public class GlobalPreferencesSheet extends DialogWidget
       }
       setSize(getDimension());
 
-      Main.getApplication().getMainFrame().addWidget(this);
-      DialogWidget.centerWithinDesktop(this);
-      setVisible(true);
-
+      if(false == toUseByPreferencesFinderOnly)
+      {
+         Main.getApplication().getMainFrame().addWidget(this);
+         DialogWidget.centerWithinDesktop(this);
+         setVisible(true);
+      }
    }
 
    private Dimension getDimension()
@@ -127,35 +131,10 @@ public class GlobalPreferencesSheet extends DialogWidget
 
 
    /**
-    * Registers a GlobalPreferencesActionListener to receive callbacks when
-    * certain actions take place.
-    *
-    * @param listener the GlobalPreferencesActionListener to register.
-    */
-   public static void addGlobalPreferencesActionListener(GlobalPreferencesActionListener listener)
-   {
-      _listeners.add(listener);
-   }
-
-
-   /**
-    * Unregisters a GlobalPreferencesActionListener to receive callbacks when
-    * certain actions take place.
-    *
-    * @param listener the GlobalPreferencesActionListener to unregister.
-    */
-   public static void removeGlobalPreferencesActionListener(GlobalPreferencesActionListener listener)
-   {
-      _listeners.remove(listener);
-   }
-
-
-   /**
     * Show the Preferences dialog
     *
     * @throws IllegalArgumentException Thrown if a <TT>null</TT> <TT>IApplication</TT> object passed.
     */
-   @SuppressWarnings("unchecked")
    public static void showSheet(Class componentClassOfTabToSelect)
    {
       if (s_instance == null)
@@ -171,28 +150,43 @@ public class GlobalPreferencesSheet extends DialogWidget
       {
          s_instance.selectTab(componentClassOfTabToSelect);
       }
-      for (GlobalPreferencesActionListener listener : _listeners)
-      {
-         listener.onDisplayGlobalPreferences();
-      }
    }
+
+   public static GlobalPreferencesDialogFindInfo createPreferencesFinderInfo()
+   {
+      final GlobalPreferencesSheet prefsFinderInstance = new GlobalPreferencesSheet(true);
+      return new GlobalPreferencesDialogFindInfo(prefsFinderInstance._tabPane);
+   }
+
 
    private void selectTab(Class componentClassOfTabToSelect)
    {
+      GlobalPrefTabInfo info = findTabInfoByComponentClass(componentClassOfTabToSelect);
+
+      if(null != info)
+      {
+         _tabPane.setSelectedIndex(info.getTabIndex());
+      }
+   }
+   private GlobalPrefTabInfo findTabInfoByComponentClass(Class componentClass)
+   {
       for (int i = 0; i < _tabPane.getTabCount(); i++)
       {
+         JScrollPane wrappingScrollPane = null;
          Component comp = _tabPane.getComponentAt(i);
          if (JScrollPane.class.equals(comp.getClass()))
          {
+            wrappingScrollPane = (JScrollPane) comp;
             comp = ((JScrollPane) comp).getViewport().getView();
          }
 
-         if (componentClassOfTabToSelect.equals(comp.getClass()))
+         if (componentClass.equals(comp.getClass()))
          {
-            _tabPane.setSelectedIndex(i);
-            return;
+            return new GlobalPrefTabInfo(i, componentClass, comp, wrappingScrollPane);
          }
       }
+
+      return null;
    }
 
    public void dispose()
@@ -201,7 +195,7 @@ public class GlobalPreferencesSheet extends DialogWidget
       Props.putInt(PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH, size.width);
       Props.putInt(PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT, size.height);
 
-      for (Iterator<IGlobalPreferencesPanel> it = _panels.iterator(); it.hasNext(); )
+      for (Iterator<IGlobalPreferencesPanel> it = _globalPreferencesPanels.iterator(); it.hasNext(); )
       {
          IGlobalPreferencesPanel pnl = it.next();
          pnl.uninitialize(Main.getApplication());
@@ -229,16 +223,7 @@ public class GlobalPreferencesSheet extends DialogWidget
     */
    private void performClose()
    {
-      fireClose();
       dispose();
-   }
-
-   private void fireClose()
-   {
-      for (GlobalPreferencesActionListener listener : _listeners.toArray(new GlobalPreferencesActionListener[0]))
-      {
-         listener.onPerformClose();
-      }
    }
 
    /**
@@ -250,7 +235,7 @@ public class GlobalPreferencesSheet extends DialogWidget
       cursorChg.show();
       try
       {
-         for (Iterator<IGlobalPreferencesPanel> it = _panels.iterator(); it.hasNext(); )
+         for (Iterator<IGlobalPreferencesPanel> it = _globalPreferencesPanels.iterator(); it.hasNext(); )
          {
             IGlobalPreferencesPanel pnl = it.next();
             try
@@ -272,10 +257,6 @@ public class GlobalPreferencesSheet extends DialogWidget
       }
 
       dispose();
-      for (GlobalPreferencesActionListener listener : _listeners)
-      {
-         listener.onPerformOk();
-      }
    }
 
    /**
@@ -299,13 +280,13 @@ public class GlobalPreferencesSheet extends DialogWidget
 
 
       // Add panels for core Squirrel functionality.
-      _panels.add(new GeneralPreferencesPanel());
-      _panels.add(new SQLPreferencesController());
-      _panels.add(new ProxyPreferencesPanel());
-      _panels.add(new DataTypePreferencesPanel());
-      _panels.add(new WikiTablePreferencesTab());
-      _panels.add(new FormatSqlConfigPrefsTab(Main.getApplication()));
-      _panels.add(new ShortcutPrefsTab());
+      _globalPreferencesPanels.add(new GeneralPreferencesPanel());
+      _globalPreferencesPanels.add(new SQLPreferencesController());
+      _globalPreferencesPanels.add(new ProxyPreferencesPanel());
+      _globalPreferencesPanels.add(new DataTypePreferencesPanel());
+      _globalPreferencesPanels.add(new WikiTablePreferencesTab());
+      _globalPreferencesPanels.add(new FormatSqlConfigPrefsTab(Main.getApplication()));
+      _globalPreferencesPanels.add(new ShortcutPrefsTab());
 
       // Go thru all loaded plugins asking for panels.
       PluginInfo[] plugins = Main.getApplication().getPluginManager().getPluginInformation();
@@ -319,7 +300,7 @@ public class GlobalPreferencesSheet extends DialogWidget
             {
                for (int pnlIdx = 0; pnlIdx < pnls.length; ++pnlIdx)
                {
-                  _panels.add(pnls[pnlIdx]);
+                  _globalPreferencesPanels.add(pnls[pnlIdx]);
                }
             }
          }
@@ -327,7 +308,7 @@ public class GlobalPreferencesSheet extends DialogWidget
 
       // Add all panels to the tabbed pane.
       _tabPane = UIFactory.getInstance().createTabbedPane();
-      for (Iterator<IGlobalPreferencesPanel> it = _panels.iterator(); it.hasNext(); )
+      for (Iterator<IGlobalPreferencesPanel> it = _globalPreferencesPanels.iterator(); it.hasNext(); )
       {
          IGlobalPreferencesPanel pnl = it.next();
          String pnlTitle = pnl.getTitle();

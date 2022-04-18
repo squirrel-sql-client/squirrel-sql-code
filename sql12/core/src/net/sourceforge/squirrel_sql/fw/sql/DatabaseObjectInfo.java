@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.SQLException;
 

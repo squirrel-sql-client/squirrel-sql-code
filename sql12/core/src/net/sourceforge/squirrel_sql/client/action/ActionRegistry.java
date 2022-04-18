@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.FindInPreferencesAction;
 import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
@@ -251,6 +252,7 @@ public class ActionRegistry
       actionCollection.add(new NewSQLWorksheetAction(app));
       actionCollection.add(new NewAliasConnectionAction(app));
       actionCollection.add(new NewSessionPropertiesAction(app));
+      actionCollection.add(new FindInPreferencesAction());
       actionCollection.add(new SessionPopUpMenuAction());
       actionCollection.add(new NextSessionAction(app));
       actionCollection.add(new PreviousSessionAction(app));

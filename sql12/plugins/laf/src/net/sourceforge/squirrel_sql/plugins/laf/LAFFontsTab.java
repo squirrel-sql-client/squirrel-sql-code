@@ -122,7 +122,7 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 	 *
 	 * @return  the component to be displayed in the Preferences dialog.
 	 */
-	public synchronized Component getPanelComponent()
+	public Component getPanelComponent()
 	{
 		if (_myPanel == null)
 		{

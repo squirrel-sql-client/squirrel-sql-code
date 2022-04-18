@@ -68,6 +68,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findaliases.FindAliasAltAcceleratorAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.FindInPreferencesAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
@@ -361,6 +362,7 @@ final class MainFrameMenuBar extends JMenuBar
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.APP_FILE_MENU);
 		addToMenu(rsrc, GlobalPreferencesAction.class, menu);
 		addToMenu(rsrc, NewSessionPropertiesAction.class, menu);
+		addToMenu(rsrc, FindInPreferencesAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, DumpApplicationAction.class, menu);
       addToMenu(rsrc, SavePreferencesAction.class, menu);

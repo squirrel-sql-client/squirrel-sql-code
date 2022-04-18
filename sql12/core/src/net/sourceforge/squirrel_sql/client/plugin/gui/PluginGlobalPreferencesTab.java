@@ -18,70 +18,80 @@
  */
 package net.sourceforge.squirrel_sql.client.plugin.gui;
 
-import java.awt.Component;
-
-import javax.swing.JScrollPane;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 
-public class PluginGlobalPreferencesTab implements IGlobalPreferencesPanel {
+import javax.swing.JScrollPane;
+import java.awt.Component;
 
-    protected PluginQueryTokenizerPreferencesPanel _prefs = null;
+public class PluginGlobalPreferencesTab implements IGlobalPreferencesPanel
+{
 
-    private JScrollPane _myscrolledPanel;
+   protected PluginQueryTokenizerPreferencesPanel _prefs = null;
 
-    private String _title = null;
-    
-    private String _hint = null;
-    
-    public PluginGlobalPreferencesTab(PluginQueryTokenizerPreferencesPanel prefsPanel) {
-        _myscrolledPanel = new JScrollPane(prefsPanel);
-        _prefs = prefsPanel;
-    }
+   private JScrollPane _myscrolledPanel;
 
-    public void initialize(IApplication app) {
-        /* Do Nothing */
-    }
+   private String _title = null;
 
-    public void uninitialize(IApplication app) {
-        /* Do Nothing */
-    }
+   private String _hint = null;
 
-    public void applyChanges() {
-        if (_prefs != null) {
-            _prefs.applyChanges();
-        }
-    }
+   public PluginGlobalPreferencesTab(PluginQueryTokenizerPreferencesPanel prefsPanel)
+   {
+      _myscrolledPanel = new JScrollPane(prefsPanel);
+      _prefs = prefsPanel;
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see net.sourceforge.squirrel_sql.client.util.IOptionPanel#getTitle()
-     */
-    public String getTitle() {
-        return _title;
-    }
+   public void initialize(IApplication app)
+   {
+      /* Do Nothing */
+   }
 
-    public void setTitle(String title) {
-        this._title = title;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see net.sourceforge.squirrel_sql.client.util.IOptionPanel#getHint()
-     */
-    public String getHint() {
-        return _hint;
-    }
+   public void uninitialize(IApplication app)
+   {
+      /* Do Nothing */
+   }
 
-    public void setHint(String hint) {
-        this._hint = hint;
-    }
-    
-    public Component getPanelComponent() {
-        return _myscrolledPanel;
-    }
+   public void applyChanges()
+   {
+      if(_prefs != null)
+      {
+         _prefs.applyChanges();
+      }
+   }
+
+   /*
+    * (non-Javadoc)
+    *
+    * @see net.sourceforge.squirrel_sql.client.util.IOptionPanel#getTitle()
+    */
+   public String getTitle()
+   {
+      return _title;
+   }
+
+   public void setTitle(String title)
+   {
+      this._title = title;
+   }
+
+   /*
+    * (non-Javadoc)
+    *
+    * @see net.sourceforge.squirrel_sql.client.util.IOptionPanel#getHint()
+    */
+   public String getHint()
+   {
+      return _hint;
+   }
+
+   public void setHint(String hint)
+   {
+      this._hint = hint;
+   }
+
+   public Component getPanelComponent()
+   {
+      return _myscrolledPanel;
+   }
 
 }

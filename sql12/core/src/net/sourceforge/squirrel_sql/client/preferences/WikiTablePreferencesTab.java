@@ -18,11 +18,11 @@
  */
 package net.sourceforge.squirrel_sql.client.preferences;
 
-import java.awt.Component;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.awt.Component;
 
 /**
  * Preferences for WIKI table configurations.

@@ -1,9 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Basic implementation of an WhereClausePart.

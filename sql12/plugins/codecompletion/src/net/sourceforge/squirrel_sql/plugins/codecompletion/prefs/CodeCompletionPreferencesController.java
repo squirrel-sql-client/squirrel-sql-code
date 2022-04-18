@@ -9,12 +9,14 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CompletionCaseSpelling;
 
-import javax.swing.table.TableColumn;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
+import javax.swing.JScrollPane;
 import javax.swing.table.TableCellEditor;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import javax.swing.table.TableColumn;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class CodeCompletionPreferencesController
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel

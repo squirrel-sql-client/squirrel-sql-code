@@ -21,12 +21,12 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Component;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.awt.Component;
 
 /**
  * This dialog allows the user to review and maintain background color overrides for an alias.

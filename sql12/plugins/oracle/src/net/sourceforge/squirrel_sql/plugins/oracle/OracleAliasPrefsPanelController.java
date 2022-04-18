@@ -4,9 +4,9 @@ import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasProperti
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class OracleAliasPrefsPanelController implements IAliasPropertiesPanelController
 {

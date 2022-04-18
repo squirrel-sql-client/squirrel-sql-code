@@ -17,21 +17,20 @@ package net.sourceforge.squirrel_sql.plugins.sqlval;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 {
@@ -98,7 +97,7 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 	 *
 	 * @return	the component to be displayed in the Preferences dialog.
 	 */
-	public synchronized Component getPanelComponent()
+	public Component getPanelComponent()
 	{
 		if (_myPanel == null)
 		{
