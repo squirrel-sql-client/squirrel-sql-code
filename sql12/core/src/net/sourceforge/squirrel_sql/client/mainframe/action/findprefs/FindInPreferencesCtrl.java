@@ -1,6 +1,9 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
+import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,9 +20,12 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FindInPreferencesCtrl
 {
+   private StringManager s_stringMgr = StringManagerFactory.getStringManager(FindInPreferencesCtrl.class);
 
    private final FindInPreferencesDlg _dlg;
    private TreeMap<List<String>, List<PrefComponentInfo>> _componentInfoByPath;
@@ -61,6 +67,9 @@ public class FindInPreferencesCtrl
          }
       });
 
+      _dlg.btnGoTo.addActionListener(e -> onGoTo());
+
+
       updateTree();
 
       SwingUtilities.invokeLater(() -> _dlg.txtFind.requestFocus());
@@ -69,6 +78,26 @@ public class FindInPreferencesCtrl
       GUIUtils.enableCloseByEscape(_dlg);
 
       _dlg.setVisible(true);
+   }
+
+   private void onGoTo()
+   {
+      if(null == _dlg.tree.getSelectionPath())
+      {
+         s_stringMgr.getString("FindInPreferencesCtrl.no.tree.node.selected");
+         return;
+      }
+
+      final Object[] pathIncludingRoot = ((DefaultMutableTreeNode) _dlg.tree.getSelectionPath().getLastPathComponent()).getUserObjectPath();
+      List<String> path = Stream.of(pathIncludingRoot).map(o -> (String)o).collect(Collectors.toList()).subList(1, pathIncludingRoot.length);
+
+      final GlobalPreferencesDialogFindInfo openDialogsFindInfo = GlobalPreferencesSheet.showSheetAndGetPreferencesFinderInfo();
+
+      final TreeMap<List<String>, List<PrefComponentInfo>> infoForOpenDialog = ComponentInfoByPathCreator.create(openDialogsFindInfo);
+
+      final List<PrefComponentInfo> prefComponentInfoList = infoForOpenDialog.get(path);
+
+      openDialogsFindInfo.selectTabOfPathComponent(prefComponentInfoList.get(0).getComponent());
    }
 
    private void updateTree()

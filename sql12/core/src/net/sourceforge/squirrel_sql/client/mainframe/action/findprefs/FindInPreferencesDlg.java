@@ -22,7 +22,7 @@ import java.awt.Insets;
 
 public class FindInPreferencesDlg extends JDialog
 {
-   StringManager s_stringMgr = StringManagerFactory.getStringManager(FindInPreferencesDlg.class);
+   private StringManager s_stringMgr = StringManagerFactory.getStringManager(FindInPreferencesDlg.class);
 
    JSplitPane splitPane;
    JTree tree;

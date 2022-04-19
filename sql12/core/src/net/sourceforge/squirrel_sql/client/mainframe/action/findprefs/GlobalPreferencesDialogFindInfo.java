@@ -14,15 +14,18 @@ public class GlobalPreferencesDialogFindInfo
 
    private final JTabbedPane _globalPrefsTabPane;
    private final HashMap<Integer, Component> _tabComponentByTabIndex;
+   private final HashMap<Component, Integer> _tabIndexByTabComponent;
 
    public GlobalPreferencesDialogFindInfo(JTabbedPane globalPrefsTabPane)
    {
       _globalPrefsTabPane = globalPrefsTabPane;
       _tabComponentByTabIndex = new HashMap<>();
+      _tabIndexByTabComponent = new HashMap<>();
 
       for (int i = 0; i < _globalPrefsTabPane.getTabCount(); i++)
       {
          _tabComponentByTabIndex.put(i, _globalPrefsTabPane.getComponentAt(i));
+         _tabIndexByTabComponent.put(_globalPrefsTabPane.getComponentAt(i), i);
       }
 
    }
@@ -32,8 +35,18 @@ public class GlobalPreferencesDialogFindInfo
       return _tabComponentByTabIndex;
    }
 
+   public int getTabIndexByTabComponent(Component tabComponent)
+   {
+      return _tabIndexByTabComponent.get(tabComponent);
+   }
+
    public String getTabName(int tabIx)
    {
       return s_stringMgr.getString("GlobalPreferencesDialogFindInfo.tab", _globalPrefsTabPane.getTitleAt(tabIx));
+   }
+
+   public void selectTabOfPathComponent(Component tabComponent)
+   {
+      _globalPrefsTabPane.setSelectedIndex(_tabIndexByTabComponent.get(tabComponent));
    }
 }

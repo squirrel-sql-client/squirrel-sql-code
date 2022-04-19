@@ -28,7 +28,10 @@ public class GlobalPreferencesPanelVisitor
 
    public static void visit(String tabName, Component globalPrefTabComponent, GlobalPreferencesPanelVisitorListener visitListener)
    {
-      _visit(globalPrefTabComponent, visitListener, PrefComponentInfo.createParentForTabComponent(tabName, globalPrefTabComponent));
+      final PrefComponentInfo parentForTabComponent = PrefComponentInfo.createParentForTabComponent(tabName, globalPrefTabComponent);
+      visitListener.visitFindableComponent(parentForTabComponent);
+
+      _visit(globalPrefTabComponent, visitListener, parentForTabComponent);
    }
 
    /**

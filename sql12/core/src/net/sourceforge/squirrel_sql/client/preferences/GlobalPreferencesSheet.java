@@ -158,6 +158,12 @@ public class GlobalPreferencesSheet extends DialogWidget
       return new GlobalPreferencesDialogFindInfo(prefsFinderInstance._tabPane);
    }
 
+   public static GlobalPreferencesDialogFindInfo showSheetAndGetPreferencesFinderInfo()
+   {
+      showSheet(null);
+      return new GlobalPreferencesDialogFindInfo(s_instance._tabPane);
+   }
+
 
    private void selectTab(Class componentClassOfTabToSelect)
    {
