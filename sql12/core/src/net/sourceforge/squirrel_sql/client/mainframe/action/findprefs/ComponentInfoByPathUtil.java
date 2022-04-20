@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class ComponentInfoByPathCreator
+public class ComponentInfoByPathUtil
 {
-   public static TreeMap<List<String>, List<PrefComponentInfo>> create(GlobalPreferencesDialogFindInfo globalPreferencesDialogFindInfo)
+   public static TreeMap<List<String>, List<PrefComponentInfo>> globalPrefsFindInfoToComponentInfoByPath(GlobalPreferencesDialogFindInfo globalPreferencesDialogFindInfo)
    {
       TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath = new TreeMap<>( (p1, p2) -> comparePaths(p1,p2) );
 

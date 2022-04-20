@@ -23,9 +23,9 @@ public class FindInPreferencesAction extends SquirrelAction
 	{
 		final GlobalPreferencesDialogFindInfo globalPreferencesDialogFindInfo = GlobalPreferencesSheet.createPreferencesFinderInfo();
 
-		TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath =
-				ComponentInfoByPathCreator.create(globalPreferencesDialogFindInfo);
+		TreeMap<List<String>, List<PrefComponentInfo>> globalPrefsComponentInfoByPath =
+				ComponentInfoByPathUtil.globalPrefsFindInfoToComponentInfoByPath(globalPreferencesDialogFindInfo);
 
-		new FindInPreferencesCtrl(componentInfoByPath);
+		new FindInPreferencesCtrl(globalPrefsComponentInfoByPath);
 	}
 }

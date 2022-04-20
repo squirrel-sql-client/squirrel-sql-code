@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -18,21 +17,18 @@ import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class FindInPreferencesCtrl
 {
    private StringManager s_stringMgr = StringManagerFactory.getStringManager(FindInPreferencesCtrl.class);
 
    private final FindInPreferencesDlg _dlg;
-   private TreeMap<List<String>, List<PrefComponentInfo>> _componentInfoByPath;
+   private FindInPreferencesModel _model;
 
    public FindInPreferencesCtrl(TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath)
    {
-      _componentInfoByPath = componentInfoByPath;
+      _model = new FindInPreferencesModel(componentInfoByPath);
       _dlg = new FindInPreferencesDlg();
 
       _dlg.tree.addTreeSelectionListener(e -> onTreeSelectionChanged(e));
@@ -88,14 +84,14 @@ public class FindInPreferencesCtrl
          return;
       }
 
-      final Object[] pathIncludingRoot = ((DefaultMutableTreeNode) _dlg.tree.getSelectionPath().getLastPathComponent()).getUserObjectPath();
-      List<String> path = Stream.of(pathIncludingRoot).map(o -> (String)o).collect(Collectors.toList()).subList(1, pathIncludingRoot.length);
+      List<String> path = _model.treeNodeToComponentPath((DefaultMutableTreeNode)_dlg.tree.getSelectionPath().getLastPathComponent());
 
       final GlobalPreferencesDialogFindInfo openDialogsFindInfo = GlobalPreferencesSheet.showSheetAndGetPreferencesFinderInfo();
 
-      final TreeMap<List<String>, List<PrefComponentInfo>> infoForOpenDialog = ComponentInfoByPathCreator.create(openDialogsFindInfo);
+      final TreeMap<List<String>, List<PrefComponentInfo>> globalPrefsComponentInfoByPath =
+            ComponentInfoByPathUtil.globalPrefsFindInfoToComponentInfoByPath(openDialogsFindInfo);
 
-      final List<PrefComponentInfo> prefComponentInfoList = infoForOpenDialog.get(path);
+      final List<PrefComponentInfo> prefComponentInfoList = globalPrefsComponentInfoByPath.get(path);
 
       openDialogsFindInfo.selectTabOfPathComponent(prefComponentInfoList.get(0).getComponent());
    }
@@ -104,37 +100,7 @@ public class FindInPreferencesCtrl
    {
       String filterText = _dlg.txtFind.getText();
 
-      DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
-
-      for (Map.Entry<List<String>, List<PrefComponentInfo>> entry : _componentInfoByPath.entrySet())
-      {
-         if(false == matches(entry.getKey(), filterText))
-         {
-            continue;
-         }
-
-         DefaultMutableTreeNode parent = root;
-         for (String nodeName : entry.getKey())
-         {
-            boolean found = false;
-            for (int i = 0; i < parent.getChildCount(); i++)
-            {
-               DefaultMutableTreeNode child = (DefaultMutableTreeNode) parent.getChildAt(i);
-               if(nodeName.equals(child.getUserObject()))
-               {
-                  parent = child;
-                  found = true;
-                  break;
-               }
-            }
-            if(false == found)
-            {
-               DefaultMutableTreeNode child = new DefaultMutableTreeNode(nodeName);
-               parent.add(child);
-               parent = child;
-            }
-         }
-      }
+      DefaultMutableTreeNode root = _model.createFilteredTreeNodes(filterText);
 
       DefaultTreeModel dtm = new DefaultTreeModel(root);
       _dlg.tree.setModel(dtm);
@@ -152,24 +118,6 @@ public class FindInPreferencesCtrl
 
       _dlg.tree.setSelectionRow(0);
 
-   }
-
-   private boolean matches(List<String> path, String filterText)
-   {
-      if(StringUtilities.isEmpty(filterText, true))
-      {
-         return true;
-      }
-
-      filterText = filterText.trim();
-      for (String pathEntry : path)
-      {
-         if(StringUtils.containsIgnoreCase(pathEntry, filterText))
-         {
-            return true;
-         }
-      }
-      return false;
    }
 
    private void onKeyPressed(KeyEvent e)
@@ -220,9 +168,11 @@ public class FindInPreferencesCtrl
          return;
       }
 
-      DefaultMutableTreeNode lastPathComponent = (DefaultMutableTreeNode) e.getNewLeadSelectionPath().getLastPathComponent();
+      DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) e.getNewLeadSelectionPath().getLastPathComponent();
 
-      _dlg.txtDetails.setText("" + lastPathComponent.getUserObject());
+      PrefComponentInfo prefComponentInfo = _model.treeNodeToComponentInfo(selectedNode);
+
+      _dlg.txtDetails.setText("" + prefComponentInfo.getText());
 
       SwingUtilities.invokeLater(() -> _dlg.txtDetails.scrollRectToVisible(new Rectangle(0,0)));
    }
