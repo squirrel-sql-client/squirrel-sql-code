@@ -24,18 +24,22 @@ public class FindInPreferencesModel
 
       for (Map.Entry<List<String>, List<PrefComponentInfo>> entry : _componentInfoByPath.entrySet())
       {
-         if(false == matches(entry.getKey(), filterText))
-         {
-            continue;
-         }
-
          DefaultMutableTreeNode parent = root;
-         for (String pathEntryString : entry.getKey())
+         final List<String> pathEntryStrings = entry.getKey();
+         for (int i = 0; i < pathEntryStrings.size(); i++)
          {
-            boolean found = false;
-            for (int i = 0; i < parent.getChildCount(); i++)
+            if(false == matches(pathEntryStrings.subList(i, pathEntryStrings.size()), filterText))
             {
-               DefaultMutableTreeNode child = (DefaultMutableTreeNode) parent.getChildAt(i);
+               // Neither pathEntryStrings.get(i) nor its kids match so the path from here is not needed.
+               continue;
+            }
+
+            String pathEntryString = pathEntryStrings.get(i);
+
+            boolean found = false;
+            for (int j = 0; j < parent.getChildCount(); j++)
+            {
+               DefaultMutableTreeNode child = (DefaultMutableTreeNode) parent.getChildAt(j);
                final PathEntry pathEntry = (PathEntry) child.getUserObject();
                if(pathEntry.isSame(pathEntryString))
                {

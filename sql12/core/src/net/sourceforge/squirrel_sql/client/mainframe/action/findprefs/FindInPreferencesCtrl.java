@@ -88,12 +88,7 @@ public class FindInPreferencesCtrl
 
       final GlobalPreferencesDialogFindInfo openDialogsFindInfo = GlobalPreferencesSheet.showSheetAndGetPreferencesFinderInfo();
 
-      final TreeMap<List<String>, List<PrefComponentInfo>> globalPrefsComponentInfoByPath =
-            ComponentInfoByPathUtil.globalPrefsFindInfoToComponentInfoByPath(openDialogsFindInfo);
-
-      final List<PrefComponentInfo> prefComponentInfoList = globalPrefsComponentInfoByPath.get(path);
-
-      openDialogsFindInfo.selectTabOfPathComponent(prefComponentInfoList.get(0).getComponent());
+      new GotoHandler(openDialogsFindInfo).gotoPath(path);
    }
 
    private void updateTree()
