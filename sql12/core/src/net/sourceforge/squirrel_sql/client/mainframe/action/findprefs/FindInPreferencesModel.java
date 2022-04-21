@@ -4,11 +4,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class FindInPreferencesModel
 {
@@ -31,13 +30,14 @@ public class FindInPreferencesModel
          }
 
          DefaultMutableTreeNode parent = root;
-         for (String nodeName : entry.getKey())
+         for (String pathEntryString : entry.getKey())
          {
             boolean found = false;
             for (int i = 0; i < parent.getChildCount(); i++)
             {
                DefaultMutableTreeNode child = (DefaultMutableTreeNode) parent.getChildAt(i);
-               if(nodeName.equals(child.getUserObject()))
+               final PathEntry pathEntry = (PathEntry) child.getUserObject();
+               if(pathEntry.isSame(pathEntryString))
                {
                   parent = child;
                   found = true;
@@ -46,8 +46,11 @@ public class FindInPreferencesModel
             }
             if(false == found)
             {
-               DefaultMutableTreeNode child = new DefaultMutableTreeNode(nodeName);
+               final PathEntry newPathEntry = new PathEntry(pathEntryString);
+               DefaultMutableTreeNode child = new DefaultMutableTreeNode(newPathEntry);
                parent.add(child);
+               newPathEntry.setComponentInfoList(treeNodeToComponentInfoList(child));
+
                parent = child;
             }
          }
@@ -77,13 +80,35 @@ public class FindInPreferencesModel
    public List<String> treeNodeToComponentPath(DefaultMutableTreeNode node)
    {
       final Object[] pathIncludingRoot = node.getUserObjectPath();
-      List<String> path = Stream.of(pathIncludingRoot).map(o -> (String)o).collect(Collectors.toList()).subList(1, pathIncludingRoot.length);
-      return path;
+
+      ArrayList<String> ret = new ArrayList<>();
+
+      for (int i = 1; i < pathIncludingRoot.length; i++)
+      {
+         String pathEntryString = ((PathEntry)pathIncludingRoot[i]).getPathEntryString();
+         ret.add(pathEntryString);
+      }
+      return ret;
    }
 
-   public PrefComponentInfo treeNodeToComponentInfo(DefaultMutableTreeNode node)
+   public PrefComponentInfo treeNodeToFirstComponentInfo(DefaultMutableTreeNode node)
    {
-      final List<String> path = treeNodeToComponentPath(node);
-      return _componentInfoByPath.get(treeNodeToComponentPath(node)).get(0);
+      return treeNodeToComponentInfoList(node).get(0);
+   }
+
+   public List<PrefComponentInfo> treeNodeToComponentInfoList(DefaultMutableTreeNode node)
+   {
+      return _componentInfoByPath.get(treeNodeToComponentPath(node));
+   }
+
+   public String getDetailsText(DefaultMutableTreeNode node)
+   {
+      return ((PathEntry)node.getUserObject()).getPathEntryString();
+   }
+
+   public boolean detailsTextNeedsLineWrap(DefaultMutableTreeNode node)
+   {
+      final PathEntry pathEntry = (PathEntry) node.getUserObject();
+      return pathEntry.detailsTextNeedsLineWrap();
    }
 }

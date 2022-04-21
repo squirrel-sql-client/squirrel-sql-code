@@ -170,9 +170,18 @@ public class FindInPreferencesCtrl
 
       DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) e.getNewLeadSelectionPath().getLastPathComponent();
 
-      PrefComponentInfo prefComponentInfo = _model.treeNodeToComponentInfo(selectedNode);
+      if(_model.detailsTextNeedsLineWrap(selectedNode))
+      {
+         _dlg.txtDetails.setLineWrap(true);
+         _dlg.txtDetails.setWrapStyleWord(true);
+      }
+      else
+      {
+         _dlg.txtDetails.setLineWrap(false);
+         _dlg.txtDetails.setWrapStyleWord(false);
+      }
 
-      _dlg.txtDetails.setText("" + prefComponentInfo.getText());
+      _dlg.txtDetails.setText(_model.getDetailsText(selectedNode));
 
       SwingUtilities.invokeLater(() -> _dlg.txtDetails.scrollRectToVisible(new Rectangle(0,0)));
    }
