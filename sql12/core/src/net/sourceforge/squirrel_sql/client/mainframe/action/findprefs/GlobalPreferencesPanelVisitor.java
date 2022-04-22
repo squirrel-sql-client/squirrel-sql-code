@@ -1,12 +1,8 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
-import com.jidesoft.swing.MultilineLabel;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.steppschuh.markdowngenerator.table.Table;
-import org.apache.commons.lang3.StringUtils;
-
+import java.awt.Component;
+import java.awt.Container;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -19,8 +15,13 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
-import java.awt.Component;
-import java.awt.Container;
+
+import com.jidesoft.swing.MultilineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.steppschuh.markdowngenerator.table.Table;
+import org.apache.commons.lang3.StringUtils;
 
 public class GlobalPreferencesPanelVisitor
 {
@@ -60,6 +61,10 @@ public class GlobalPreferencesPanelVisitor
          info = new PrefComponentInfo(component, extractText(component), parent);
       }
       else if(component instanceof JTextComponent)
+      {
+         info = new PrefComponentInfo(component, extractText(component), parent);
+      }
+      else if(component instanceof JButton)
       {
          info = new PrefComponentInfo(component, extractText(component), parent);
       }
@@ -125,6 +130,10 @@ public class GlobalPreferencesPanelVisitor
       else if(component instanceof JTextComponent)
       {
          return ((JTextComponent)component).getText();
+      }
+      else if(component instanceof JButton )
+      {
+         return ((JButton)component).getText();
       }
       else if(component instanceof JRadioButton)
       {

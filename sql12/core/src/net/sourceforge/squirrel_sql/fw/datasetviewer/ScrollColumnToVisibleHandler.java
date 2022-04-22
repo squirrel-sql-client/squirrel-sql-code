@@ -1,19 +1,17 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
-import javax.swing.JTable;
-import javax.swing.Timer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.JTable;
+import javax.swing.Timer;
 
 public class ScrollColumnToVisibleHandler
 {
-   private int blinkCount = 0;
+   private int _blinkCount = 0;
    private Timer _timer;
 
 
@@ -30,14 +28,7 @@ public class ScrollColumnToVisibleHandler
             Rectangle cellRect = table.getCellRect(0, columnIxToScrollTo, true);
             table.scrollRectToVisible(cellRect);
 
-            _timer = new Timer(500, new ActionListener()
-            {
-               @Override
-               public void actionPerformed(ActionEvent e)
-               {
-                  onBlinkCol(table, columnIxToScrollTo);
-               }
-            });
+            _timer = new Timer(500, e -> onBlinkCol(table, columnIxToScrollTo));
 
             _timer.setRepeats(true);
 
@@ -56,7 +47,7 @@ public class ScrollColumnToVisibleHandler
 
       Graphics graphics = table.getTableHeader().getGraphics();
 
-      if(blinkCount++ % 2 == 0)
+      if( _blinkCount++ % 2 == 0)
       {
          Color formerColor = graphics.getColor();
          graphics.setColor(Color.red);
@@ -84,7 +75,7 @@ public class ScrollColumnToVisibleHandler
       }
 
 
-      if(blinkCount > 10)
+      if( _blinkCount > 10)
       {
          _timer.stop();
 

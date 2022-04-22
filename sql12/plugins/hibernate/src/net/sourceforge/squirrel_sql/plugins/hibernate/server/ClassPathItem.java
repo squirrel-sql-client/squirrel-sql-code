@@ -26,4 +26,10 @@ public class ClassPathItem implements Serializable
    {
       return _path;
    }
+
+   @Override
+   public String toString()
+   {
+      return _path + "(isJarDir = " + _jarDir + ")";
+   }
 }
