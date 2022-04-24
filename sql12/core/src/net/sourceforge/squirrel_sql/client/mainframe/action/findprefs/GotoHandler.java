@@ -1,5 +1,15 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -10,15 +20,11 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.List;
 import java.util.TreeMap;
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 public class GotoHandler
 {
+   public final static ILogger s_log = LoggerController.createLogger(GotoHandler.class);
+
    private GlobalPreferencesDialogFindInfo _openDialogsFindInfo;
    private TreeMap<List<String>, List<PrefComponentInfo>> _globalPrefsComponentInfoByPath;
    private Timer _timer;
@@ -36,6 +42,14 @@ public class GotoHandler
       _openDialogsFindInfo.selectTabOfPathComponent(tabComponent);
 
       Component componentToGoTo = getComponentByPath(path);
+
+      if(null == componentToGoTo)
+      {
+         s_log.warn("Failed to find Component for path:\n" + path);
+         final String pathNoNewLines = StringUtils.replace("" + path, "\n", " ");
+         Main.getApplication().getMessageHandler().showWarningMessage("Failed to find Component for path:\n " + StringUtils.abbreviate(pathNoNewLines, 300));
+         return;
+      }
 
       if(tabComponent instanceof JScrollPane && tabComponent != componentToGoTo)
       {
@@ -112,7 +126,14 @@ public class GotoHandler
 
    private Component getComponentByPath(List<String> path)
    {
-      return _globalPrefsComponentInfoByPath.get(path).get(0).getComponent();
+      final List<PrefComponentInfo> componentInfoList = _globalPrefsComponentInfoByPath.get(path);
+
+      if(null == componentInfoList)
+      {
+         return null;
+      }
+
+      return componentInfoList.get(0).getComponent();
    }
 
    private Component getTabComponent(List<String> path)

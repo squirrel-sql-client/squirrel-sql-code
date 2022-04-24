@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
-import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -30,9 +30,9 @@ public class FindInPreferencesDlg extends JDialog
    JButton btnGoTo;
    JTextArea txtDetails;
 
-   public FindInPreferencesDlg()
+   public FindInPreferencesDlg(MainFrame parent)
    {
-      super(Main.getApplication().getMainFrame());
+      super(parent);
 
       setTitle(s_stringMgr.getString("FindInPreferencesDlg.title"));
 
@@ -44,6 +44,8 @@ public class FindInPreferencesDlg extends JDialog
       splitPane.add(createLeftPanel());
 
       splitPane.add(createRightPanel());
+
+      getRootPane().setDefaultButton(btnGoTo);
    }
 
    private JPanel createRightPanel()
@@ -51,10 +53,10 @@ public class FindInPreferencesDlg extends JDialog
       JPanel ret = new JPanel(new GridBagLayout());
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,3, 0, 3), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5, 0, 5), 0,0);
       ret.add(new JLabel(s_stringMgr.getString("FindInPreferencesDlg.details")), gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1, 1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(3,3, 3, 3), 0,0);
+      gbc = new GridBagConstraints(0,1,1,1, 1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(3,5, 5, 5), 0,0);
       txtDetails = new JTextArea();
       Font font = new Font(Font.MONOSPACED, Font.PLAIN, txtDetails.getFont().getSize());
       txtDetails.setFont(font);
@@ -68,19 +70,20 @@ public class FindInPreferencesDlg extends JDialog
       JPanel ret = new JPanel(new GridBagLayout());
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,3, 0, 3), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5, 0, 5), 0,0);
       ret.add(new JLabel(s_stringMgr.getString("FindInPreferencesDlg.enter.text.to.find")), gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(3,3, 0, 3), 0,0);
+      gbc = new GridBagConstraints(0,1,1,1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(3,5, 0, 5), 0,0);
       txtFind = new JTextField();
       ret.add(txtFind, gbc);
 
-      gbc = new GridBagConstraints(0,2,1,1, 1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(3,3, 3, 3), 0,0);
+      gbc = new GridBagConstraints(0,2,1,1, 1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5, 5, 5), 0,0);
       tree = new JTree();
       ret.add(new JScrollPane(tree), gbc);
 
-      gbc = new GridBagConstraints(0,3,1,1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,3, 3, 3), 0,0);
+      gbc = new GridBagConstraints(0,3,1,1, 0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5, 5, 5), 0,0);
       btnGoTo = new JButton(s_stringMgr.getString("FindInPreferencesDlg.goto"));
+      btnGoTo.setToolTipText(s_stringMgr.getString("FindInPreferencesDlg.goto.toolTip"));
       ret.add(btnGoTo, gbc);
 
       ret.setMinimumSize(new Dimension(20,20));

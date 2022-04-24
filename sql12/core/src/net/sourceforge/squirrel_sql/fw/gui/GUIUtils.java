@@ -95,10 +95,6 @@ public class GUIUtils
     */
    public static void centerWithinParent(Window wind)
    {
-      if (wind == null)
-      {
-         throw new IllegalArgumentException("null Window passed");
-      }
       final Container parent = wind.getParent();
       if (parent != null && parent.isVisible())
       {
@@ -142,10 +138,6 @@ public class GUIUtils
 	 */
 	public static void centerWithinScreen(Window wind)
 	{
-		if (wind == null)
-		{
-			throw new IllegalArgumentException("null Window passed");
-		}
 		final Toolkit toolKit = Toolkit.getDefaultToolkit();
 		final Rectangle rcScreen = new Rectangle(toolKit.getScreenSize());
 		final Dimension windSize = wind.getSize();

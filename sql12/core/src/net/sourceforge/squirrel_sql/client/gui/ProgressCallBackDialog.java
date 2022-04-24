@@ -18,19 +18,6 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
@@ -38,6 +25,19 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 
 /**
  * A simple class that can be used to show the user a dialog to indicate the progress of some task using the
@@ -51,11 +51,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class ProgressCallBackDialog extends JDialog implements ProgressCallBack
 {
-
-	/** Logger for this class. */
 	public final static ILogger s_log = LoggerController.createLogger(ProgressCallBackDialog.class);
 
-	/** Internationalized strings for this class */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ProgressCallBackDialog.class);
 

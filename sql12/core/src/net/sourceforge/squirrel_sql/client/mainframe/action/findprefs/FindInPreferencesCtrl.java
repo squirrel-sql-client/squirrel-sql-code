@@ -1,21 +1,28 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -29,9 +36,23 @@ public class FindInPreferencesCtrl
    public FindInPreferencesCtrl(TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath)
    {
       _model = new FindInPreferencesModel(componentInfoByPath);
-      _dlg = new FindInPreferencesDlg();
+      final MainFrame parent = Main.getApplication().getMainFrame();
+      _dlg = new FindInPreferencesDlg(parent);
 
       _dlg.tree.addTreeSelectionListener(e -> onTreeSelectionChanged(e));
+
+      _dlg.tree.addMouseListener(new MouseAdapter() {
+         @Override
+         public void mousePressed(MouseEvent e)
+         {
+            onTreeClicked(e);
+         }
+         @Override
+         public void mouseReleased(MouseEvent e)
+         {
+            onTreeClicked(e);
+         }
+      });
 
       _dlg.txtFind.getDocument().addDocumentListener(new DocumentListener()
       {
@@ -70,10 +91,31 @@ public class FindInPreferencesCtrl
 
       SwingUtilities.invokeLater(() -> _dlg.txtFind.requestFocus());
 
-      GUIUtils.initLocation(_dlg, 600, 600);
+      GUIUtils.initLocation(_dlg, 750, 600);
+      _dlg.setLocation(parent.getX() + 20, _dlg.getLocation().y);
+
       GUIUtils.enableCloseByEscape(_dlg);
 
       _dlg.setVisible(true);
+   }
+
+   private void onTreeClicked(MouseEvent me)
+   {
+      if(me.isPopupTrigger())
+      {
+         JPopupMenu popup = new JPopupMenu();
+
+         final JMenuItem mnuItem = new JMenuItem(s_stringMgr.getString("FindInPreferencesCtrl.tree.popup.menu"));
+         popup.add(mnuItem);
+         mnuItem.addActionListener(e -> onGoTo());
+
+         final TreePath pathForLocation = _dlg.tree.getPathForLocation(me.getX(), me.getY());
+         if(null != pathForLocation)
+         {
+            _dlg.tree.setSelectionPath(pathForLocation);
+         }
+         popup.show(_dlg.tree, me.getX(), me.getY());
+      }
    }
 
    private void onGoTo()
