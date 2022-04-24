@@ -131,19 +131,35 @@ public class FindInPreferencesCtrl
       final GlobalPreferencesDialogFindInfo openDialogsFindInfo = GlobalPreferencesSheet.showSheetAndGetPreferencesFinderInfo();
 
       final GotoHandler gotoHandler = new GotoHandler(openDialogsFindInfo);
-      gotoHandler.gotoPath(componentPath);
 
-      // E.g the shortcut table changes when the preference window is opened.
-      // That is why we refresh the tree here.
-      _model = new FindInPreferencesModel(gotoHandler.getRefreshedGlobalPrefsComponentInfoByPath());
-      updateTree();
+      if(false == gotoHandler.gotoPath(componentPath))
+      {
+         ///////////////////////////////////////////////////////////////////////
+         // E.g the shortcut table changes when the preference window is opened.
+         // That is why we refresh the tree here.
+         // This block is of minor interest and may be removed if it causes trouble.
+         _model = new FindInPreferencesModel(gotoHandler.getRefreshedGlobalPrefsComponentInfoByPath());
+         updateTree();
+         tryRestorePreviousSelection(componentPath);
+         //
+         ////////////////////////////////////////////////////////////////////////
+      }
+   }
 
+   private void tryRestorePreviousSelection(List<String> componentPath)
+   {
       // Restore previous selection
       final DefaultMutableTreeNode root = (DefaultMutableTreeNode) _dlg.tree.getModel().getRoot();
-      final DefaultMutableTreeNode toSelect = findTreePathByComponentPath(componentPath, root);
-      if(null != toSelect)
+      for (int i = componentPath.size(); i > 0; i--)
       {
-         _dlg.tree.setSelectionPath(new TreePath(toSelect.getPath()));
+         List<String> path = componentPath.subList(0, i);
+
+         final DefaultMutableTreeNode toSelect = findTreePathByComponentPath(path, root);
+         if(null != toSelect)
+         {
+            _dlg.tree.setSelectionPath(new TreePath(toSelect.getPath()));
+            break;
+         }
       }
    }
 

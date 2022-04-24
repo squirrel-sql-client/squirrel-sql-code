@@ -36,7 +36,7 @@ public class GotoHandler
       _globalPrefsComponentInfoByPath = ComponentInfoByPathUtil.globalPrefsFindInfoToComponentInfoByPath(openDialogsFindInfo);
    }
 
-   public void gotoPath(List<String> path)
+   public boolean gotoPath(List<String> path)
    {
       Component tabComponent = getTabComponent(path);
       _openDialogsFindInfo.selectTabOfPathComponent(tabComponent);
@@ -48,7 +48,7 @@ public class GotoHandler
          s_log.warn("Failed to find Component for path:\n" + path);
          final String pathNoNewLines = StringUtils.replace("" + path, "\n", " ");
          Main.getApplication().getMessageHandler().showWarningMessage("Failed to find Component for path:\n " + StringUtils.abbreviate(pathNoNewLines, 300));
-         return;
+         return false;
       }
 
       if(tabComponent instanceof JScrollPane && tabComponent != componentToGoTo)
@@ -82,6 +82,8 @@ public class GotoHandler
       SwingUtilities.invokeLater(() -> onBlinkComponent(componentToGoTo));
 
       _timer.start();
+
+      return true;
    }
 
    public TreeMap<List<String>, List<PrefComponentInfo>> getRefreshedGlobalPrefsComponentInfoByPath()
