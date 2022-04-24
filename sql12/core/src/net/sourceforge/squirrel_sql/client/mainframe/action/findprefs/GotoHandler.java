@@ -84,6 +84,11 @@ public class GotoHandler
       _timer.start();
    }
 
+   public TreeMap<List<String>, List<PrefComponentInfo>> getRefreshedGlobalPrefsComponentInfoByPath()
+   {
+      return _globalPrefsComponentInfoByPath;
+   }
+
    private void onBlinkComponent(Component component)
    {
       Graphics graphics = component.getGraphics();

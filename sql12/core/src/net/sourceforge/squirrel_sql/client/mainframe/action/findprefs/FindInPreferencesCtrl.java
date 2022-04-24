@@ -126,11 +126,46 @@ public class FindInPreferencesCtrl
          return;
       }
 
-      List<String> path = _model.treeNodeToComponentPath((DefaultMutableTreeNode)_dlg.tree.getSelectionPath().getLastPathComponent());
+      List<String> componentPath = _model.treeNodeToComponentPath((DefaultMutableTreeNode)_dlg.tree.getSelectionPath().getLastPathComponent());
 
       final GlobalPreferencesDialogFindInfo openDialogsFindInfo = GlobalPreferencesSheet.showSheetAndGetPreferencesFinderInfo();
 
-      new GotoHandler(openDialogsFindInfo).gotoPath(path);
+      final GotoHandler gotoHandler = new GotoHandler(openDialogsFindInfo);
+      gotoHandler.gotoPath(componentPath);
+
+      // E.g the shortcut table changes when the preference window is opened.
+      // That is why we refresh the tree here.
+      _model = new FindInPreferencesModel(gotoHandler.getRefreshedGlobalPrefsComponentInfoByPath());
+      updateTree();
+
+      // Restore previous selection
+      final DefaultMutableTreeNode root = (DefaultMutableTreeNode) _dlg.tree.getModel().getRoot();
+      final DefaultMutableTreeNode toSelect = findTreePathByComponentPath(componentPath, root);
+      if(null != toSelect)
+      {
+         _dlg.tree.setSelectionPath(new TreePath(toSelect.getPath()));
+      }
+   }
+
+   private DefaultMutableTreeNode findTreePathByComponentPath(List<String> componentPath, DefaultMutableTreeNode node)
+   {
+      for (int i = 0; i < node.getChildCount(); i++)
+      {
+         final DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(i);
+         PathEntry pe = (PathEntry) child.getUserObject();
+         if(pe.getComponentInfoList().get(0).getPath().equals(componentPath))
+         {
+            return child;
+         }
+
+         final DefaultMutableTreeNode ret = findTreePathByComponentPath(componentPath, child);
+         if(null != ret)
+         {
+            return ret;
+         }
+      }
+
+      return null;
    }
 
    private void updateTree()
