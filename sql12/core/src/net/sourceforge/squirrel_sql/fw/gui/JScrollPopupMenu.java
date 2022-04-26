@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
-import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
@@ -15,6 +14,9 @@ import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+/**
+ * https://github.com/PGWelch/com.opendoorlogistics/blob/master/com.opendoorlogistics.codefromweb/src/com/opendoorlogistics/codefromweb/JScrollPopupMenu.java
+ */
 public class JScrollPopupMenu extends JPopupMenu
 {
    protected int maximumVisibleRows = 10;
@@ -261,7 +263,7 @@ public class JScrollPopupMenu extends JPopupMenu
       }
    }
 
-   public void positionPopRelativeTo(JComponent relativeToComp, int totalItemCount, JScrollPopupMenuPosition popupMenuPosition)
+   public void positionPopRelativeTo(Component relativeToComp, int totalItemCount, JScrollPopupMenuPosition popupMenuPosition)
    {
       int scrollbarSizeIfVisible = 0;
 
@@ -287,10 +289,21 @@ public class JScrollPopupMenu extends JPopupMenu
               0,
               relativeToComp.getHeight());
       }
+      else if(popupMenuPosition == JScrollPopupMenuPosition.CENTER)
+      {
+         show(relativeToComp,
+              relativeToComp.getWidth() / 2 - getPreferredSize().width / 2,
+              relativeToComp.getHeight() / 2 - getPopupHeight(totalItemCount) / 2);
+      }
       else
       {
          throw new UnsupportedOperationException("NYI");
       }
+   }
+
+   private int getPopupHeight(int totalItemCount)
+   {
+      return (new JMenuItem("Dummy").getPreferredSize().height) * Math.min(totalItemCount, maximumVisibleRows);
    }
 
 }

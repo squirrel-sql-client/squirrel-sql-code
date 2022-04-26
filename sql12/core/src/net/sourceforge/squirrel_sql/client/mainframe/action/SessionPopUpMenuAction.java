@@ -35,19 +35,27 @@ public class SessionPopUpMenuAction extends SquirrelAction
 		}
 
 
-		JButton toolbarConnectButton = (JButton) evt.getSource();
 
-		JScrollPopupMenu popupSchemas = new JScrollPopupMenu();
-		popupSchemas.setMaximumVisibleRows(20); // Call before adding items
+		JScrollPopupMenu popupSessions = new JScrollPopupMenu();
+		popupSessions.setMaximumVisibleRows(20); // Call before adding items
 
 		for (ISession openSession : openSessions)
 		{
 			JMenuItem menuItem = new JMenuItem(openSession.getTitle());
 			menuItem.addActionListener(e -> onSwitchToSession(openSession));
-			popupSchemas.add(menuItem);
+			popupSessions.add(menuItem);
 		}
 
-		popupSchemas.positionPopRelativeTo(toolbarConnectButton, openSessions.size(), JScrollPopupMenuPosition.SOUTH_EAST);
+		if(evt.getSource() instanceof JButton)
+		{
+			// Toolbar button
+			JButton toolbarConnectButton = (JButton) evt.getSource();
+			popupSessions.positionPopRelativeTo(toolbarConnectButton, openSessions.size(), JScrollPopupMenuPosition.SOUTH_EAST);
+		}
+		else
+		{
+			popupSessions.positionPopRelativeTo(Main.getApplication().getMainFrame(), openSessions.size(), JScrollPopupMenuPosition.CENTER);
+		}
 	}
 
 	private void onSwitchToSession(ISession session)

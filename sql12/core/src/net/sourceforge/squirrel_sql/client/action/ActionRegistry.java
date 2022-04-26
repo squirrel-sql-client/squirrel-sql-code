@@ -189,6 +189,9 @@ public class ActionRegistry
 
       toolsPopupController.addAction("savedsessionopen", ac.get(SessionOpenAction.class));
       toolsPopupController.addAction("savedsessionsave", ac.get(SessionSaveAction.class));
+
+      toolsPopupController.addAction("aliaspopup", ac.get(AliasPopUpMenuAction.class));
+      toolsPopupController.addAction("sessionpopup", ac.get(SessionPopUpMenuAction.class));
    }
 
    public void preloadActions(ActionCollection actionCollection)

@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.action.ChanneledAction;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasFileOpenAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPopUpMenuAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllButCurrentSessionsAction;
@@ -54,6 +55,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.NewAliasFolderAction
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.PasteAliasFolderAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.SavePreferencesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.SessionPopUpMenuAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ShowDriverWebsiteAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.SortAliasesAction;
@@ -364,6 +366,8 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, NewSessionPropertiesAction.class, menu);
 		addToMenu(rsrc, FindInPreferencesAction.class, menu);
 		menu.addSeparator();
+		addToMenu(rsrc, AliasPopUpMenuAction.class, menu);
+		menu.addSeparator();
 		addToMenu(rsrc, DumpApplicationAction.class, menu);
       addToMenu(rsrc, SavePreferencesAction.class, menu);
 		menu.addSeparator();
@@ -416,6 +420,7 @@ final class MainFrameMenuBar extends JMenuBar
 		menu.addSeparator();
 		addToMenu(rsrc, PreviousSessionAction.class, menu);
 		addToMenu(rsrc, NextSessionAction.class, menu);
+		addToMenu(rsrc, SessionPopUpMenuAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, PreviousSqlAction.class, menu);
 		addToMenu(rsrc, NextSqlAction.class, menu);

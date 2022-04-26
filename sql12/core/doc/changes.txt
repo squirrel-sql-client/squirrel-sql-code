@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Made Aliases and Session popup menus accessible through
+  - shortcuts alt shift A and alt shift S respectively
+  - tools popup
+
 Searching in SQuirreL's major configurations namely Global Preferences and New Session Properties
   See menu File --> Find Preference
 

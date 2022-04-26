@@ -38,20 +38,19 @@ public class AliasPopUpMenuAction extends SquirrelAction
 		}
 
 
-		JButton toolbarConnectButton = (JButton) evt.getSource();
 
-		JScrollPopupMenu popupSchemas = new JScrollPopupMenu();
+		JScrollPopupMenu popupAliases = new JScrollPopupMenu();
 
 		final int maximumVisibleRows = 20;
-		popupSchemas.setMaximumVisibleRows(maximumVisibleRows); // Call before adding items
+		popupAliases.setMaximumVisibleRows(maximumVisibleRows); // Call before adding items
 
 		int menuCount = 0;
 		if(aliasList.size() >= maximumVisibleRows)
 		{
 			final Action findAliasAction = Main.getApplication().getActionCollection().get(FindAliasAction.class);
-			final JMenuItem menuItem = popupSchemas.add(findAliasAction);
+			final JMenuItem menuItem = popupAliases.add(findAliasAction);
 			Main.getApplication().getResources().configureMenuItem(findAliasAction, menuItem);
-			popupSchemas.addSeparator();
+			popupAliases.addSeparator();
 			++menuCount;
 		}
 
@@ -59,11 +58,20 @@ public class AliasPopUpMenuAction extends SquirrelAction
 		{
 			JMenuItem menuItem = new JMenuItem(alias.getName());
 			menuItem.addActionListener(e -> onAliasSelected(alias));
-			popupSchemas.add(menuItem);
+			popupAliases.add(menuItem);
 			++menuCount;
 		}
 
-		popupSchemas.positionPopRelativeTo(toolbarConnectButton, menuCount, JScrollPopupMenuPosition.SOUTH_EAST);
+		if(evt.getSource() instanceof JButton)
+		{
+			// Toolbar button
+			JButton toolbarConnectButton = (JButton) evt.getSource();
+			popupAliases.positionPopRelativeTo(toolbarConnectButton, menuCount, JScrollPopupMenuPosition.SOUTH_EAST);
+		}
+		else
+		{
+			popupAliases.positionPopRelativeTo(Main.getApplication().getMainFrame(), menuCount, JScrollPopupMenuPosition.CENTER);
+		}
 	}
 
 	private void onAliasSelected(ISQLAlias alias)
