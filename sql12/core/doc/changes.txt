@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+Searching in SQuirreL's major configurations namely Global Preferences and New Session Properties
+  See menu File --> Find Preference
+
 Main application toolbar: Replaced the former Aliases and Session combo boxes by toolbar buttons
   which display popup menus to select Aliases and Session respectively.
 

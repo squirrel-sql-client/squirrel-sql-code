@@ -9,11 +9,18 @@ import java.util.List;
 public class PathEntry
 {
    private String _pathEntryString;
+   private boolean _thisEntryMatchesFilter;
    private List<PrefComponentInfo> _componentInfoList;
 
-   public PathEntry(String pathEntryString)
+   public PathEntry(String pathEntryString, boolean thisEntryMatchesFilter)
    {
       _pathEntryString = pathEntryString;
+      _thisEntryMatchesFilter = thisEntryMatchesFilter;
+   }
+
+   public boolean isThisEntryMatchesFilter()
+   {
+      return _thisEntryMatchesFilter;
    }
 
    @Override

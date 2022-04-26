@@ -53,6 +53,8 @@ public class FindInPreferencesCtrl
          }
       });
 
+      _dlg.tree.setCellRenderer(new FindPrefsTreeCellRenderer());
+
       _dlg.txtFind.getDocument().addDocumentListener(new DocumentListener()
       {
          @Override

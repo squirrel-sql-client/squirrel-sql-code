@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,8 @@ public class FindInPreferencesModel
             }
             if(false == found)
             {
-               final PathEntry newPathEntry = new PathEntry(pathEntryString);
+               final PathEntry newPathEntry = new PathEntry(pathEntryString, pathEntryMatchesFilter(filterText, pathEntryString));
+
                DefaultMutableTreeNode child = new DefaultMutableTreeNode(newPathEntry);
                parent.add(child);
                newPathEntry.setComponentInfoList(treeNodeToComponentInfoList(child));
@@ -60,6 +62,11 @@ public class FindInPreferencesModel
       }
 
       return root;
+   }
+
+   private boolean pathEntryMatchesFilter(String filterText, String pathEntryString)
+   {
+      return false == StringUtilities.isEmpty(filterText, true) && matches(Collections.singletonList(pathEntryString), filterText);
    }
 
    private boolean matches(List<String> path, String filterText)
