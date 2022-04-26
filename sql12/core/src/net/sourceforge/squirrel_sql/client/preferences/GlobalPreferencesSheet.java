@@ -154,14 +154,12 @@ public class GlobalPreferencesSheet extends DialogWidget
 
    public static GlobalPreferencesDialogFindInfo createPreferencesFinderInfo()
    {
-      final GlobalPreferencesSheet prefsFinderInstance = new GlobalPreferencesSheet(true);
-      return new GlobalPreferencesDialogFindInfo(prefsFinderInstance._tabPane);
-   }
-
-   public static GlobalPreferencesDialogFindInfo showSheetAndGetPreferencesFinderInfo()
-   {
-      showSheet(null);
-      return new GlobalPreferencesDialogFindInfo(s_instance._tabPane);
+      GlobalPreferencesSheet prefsFinderInstance = s_instance;;
+      if(null == prefsFinderInstance)
+      {
+         prefsFinderInstance = new GlobalPreferencesSheet(true);
+      }
+      return new GlobalPreferencesDialogFindInfo(prefsFinderInstance.getTitle(), prefsFinderInstance._tabPane);
    }
 
 

@@ -2,7 +2,6 @@ package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -24,7 +23,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-import java.util.TreeMap;
 
 public class FindInPreferencesCtrl
 {
@@ -33,9 +31,9 @@ public class FindInPreferencesCtrl
    private final FindInPreferencesDlg _dlg;
    private FindInPreferencesModel _model;
 
-   public FindInPreferencesCtrl(TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath)
+   public FindInPreferencesCtrl(PrefsFindInfo prefsFindInfo)
    {
-      _model = new FindInPreferencesModel(componentInfoByPath);
+      _model = new FindInPreferencesModel(prefsFindInfo);
       final MainFrame parent = Main.getApplication().getMainFrame();
       _dlg = new FindInPreferencesDlg(parent);
 
@@ -128,9 +126,7 @@ public class FindInPreferencesCtrl
 
       List<String> componentPath = _model.treeNodeToComponentPath((DefaultMutableTreeNode)_dlg.tree.getSelectionPath().getLastPathComponent());
 
-      final GlobalPreferencesDialogFindInfo openDialogsFindInfo = GlobalPreferencesSheet.showSheetAndGetPreferencesFinderInfo();
-
-      final GotoHandler gotoHandler = new GotoHandler(openDialogsFindInfo);
+      final GotoHandler gotoHandler = new GotoHandler();
 
       if(false == gotoHandler.gotoPath(componentPath))
       {
@@ -138,7 +134,7 @@ public class FindInPreferencesCtrl
          // E.g the shortcut table changes when the preference window is opened.
          // That is why we refresh the tree here.
          // This block is of minor interest and may be removed if it causes trouble.
-         _model = new FindInPreferencesModel(gotoHandler.getRefreshedGlobalPrefsComponentInfoByPath());
+         _model = new FindInPreferencesModel(gotoHandler.getPrefsFindInfoUpdate());
          updateTree();
          tryRestorePreviousSelection(componentPath);
          //

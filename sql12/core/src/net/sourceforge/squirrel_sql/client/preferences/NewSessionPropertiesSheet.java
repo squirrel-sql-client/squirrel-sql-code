@@ -18,10 +18,10 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.SessionPropertiesDialogFindInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionObjectTreePropertiesPanel;
@@ -64,29 +64,45 @@ public class NewSessionPropertiesSheet extends DialogWidget
 	/** Frame title. */
 	private JLabel _titleLbl = new JLabel();
 
-	private IApplication _app;
 	private List<INewSessionPropertiesPanel> _panels = new ArrayList<>();
 
 	private JTabbedPane _tabbedPane;
 
 
-	private NewSessionPropertiesSheet(IApplication app)
+	private NewSessionPropertiesSheet()
 	{
-		super(s_stringMgr.getString("NewSessionPropertiesSheet.title"), true, app);
-		_app = app;
+		this(false);
+	}
+	private NewSessionPropertiesSheet(boolean toUseByPropertiesFinderOnly)
+	{
+		super(s_stringMgr.getString("NewSessionPropertiesSheet.title"), true, Main.getApplication());
 		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
 		createGUI();
 		for (Iterator<INewSessionPropertiesPanel> it = _panels.iterator(); it.hasNext();)
 		{
 			INewSessionPropertiesPanel pnl = it.next();
-			pnl.initialize(_app);
+			pnl.initialize(Main.getApplication());
 		}
 
 		setSize(getDimension());
-		app.getMainFrame().addWidget(this);
-		DialogWidget.centerWithinDesktop(this);
-		setVisible(true);
+
+		if(false == toUseByPropertiesFinderOnly)
+		{
+			Main.getApplication().getMainFrame().addWidget(this);
+			DialogWidget.centerWithinDesktop(this);
+			setVisible(true);
+		}
+	}
+
+	public static SessionPropertiesDialogFindInfo createPropertiesFinderInfo()
+	{
+		NewSessionPropertiesSheet newSessionPropertiesSheet = s_instance;
+		if(null == newSessionPropertiesSheet)
+		{
+			newSessionPropertiesSheet = new NewSessionPropertiesSheet(true);
+		}
+		return new SessionPropertiesDialogFindInfo(newSessionPropertiesSheet.getTitle(), newSessionPropertiesSheet._tabbedPane);
 	}
 
 	private Dimension getDimension()
@@ -101,16 +117,16 @@ public class NewSessionPropertiesSheet extends DialogWidget
 	 * Show the Preferences dialog
 	 *
 	 */
-	public static synchronized void showSheet()
+	public static void showSheet()
 	{
 		showSheet(null);
 	}
 
-	public static synchronized void showSheet(Integer tabIndexToSelect)
+	public static void showSheet(Integer tabIndexToSelect)
 	{
 		if (s_instance == null)
 		{
-			s_instance = new NewSessionPropertiesSheet(Main.getApplication());
+			s_instance = new NewSessionPropertiesSheet();
 		}
 		else
 		{
@@ -140,10 +156,8 @@ public class NewSessionPropertiesSheet extends DialogWidget
 		Props.putInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, size.width);
 		Props.putInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, size.height);
 
-		synchronized (getClass())
-		{
-			s_instance = null;
-		}
+		s_instance = null;
+
 		super.dispose();
 	}
 
@@ -198,11 +212,11 @@ public class NewSessionPropertiesSheet extends DialogWidget
 
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralSessionPropertiesPanel());
-		_panels.add(new SessionObjectTreePropertiesPanel(_app));
-		_panels.add(new SessionSQLPropertiesPanel(_app, null));
+		_panels.add(new SessionObjectTreePropertiesPanel(Main.getApplication()));
+		_panels.add(new SessionSQLPropertiesPanel(Main.getApplication(), null));
 
 		// Go thru all loaded plugins asking for panels.
-		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
+		PluginInfo[] plugins = Main.getApplication().getPluginManager().getPluginInformation();
 		for (int plugIdx = 0; plugIdx < plugins.length; ++plugIdx)
 		{
 			PluginInfo pi = plugins[plugIdx];

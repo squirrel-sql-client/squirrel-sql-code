@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
+import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
+import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
+
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,16 +11,26 @@ import java.util.TreeMap;
 
 public class ComponentInfoByPathUtil
 {
-   public static TreeMap<List<String>, List<PrefComponentInfo>> globalPrefsFindInfoToComponentInfoByPath(GlobalPreferencesDialogFindInfo globalPreferencesDialogFindInfo)
+   public static PrefsFindInfo createPrefsFindInfo()
    {
+
       TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath = new TreeMap<>( (p1, p2) -> comparePaths(p1,p2) );
 
+      GlobalPreferencesDialogFindInfo globalPreferencesDialogFindInfo = GlobalPreferencesSheet.createPreferencesFinderInfo();
       for (Map.Entry<Integer, Component> entry : globalPreferencesDialogFindInfo.getTabComponentByTabIndex().entrySet())
       {
          final String tabName = globalPreferencesDialogFindInfo.getTabName(entry.getKey());
-         GlobalPreferencesPanelVisitor.visit(tabName, entry.getValue(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
+         PrefsPanelVisitor.visit(globalPreferencesDialogFindInfo, tabName, entry.getValue(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
       }
-      return componentInfoByPath;
+
+      SessionPropertiesDialogFindInfo sessionPropertiesDialogFindInfo = NewSessionPropertiesSheet.createPropertiesFinderInfo();
+      for (Map.Entry<Integer, Component> entry : sessionPropertiesDialogFindInfo.getTabComponentByTabIndex().entrySet())
+      {
+         final String tabName = sessionPropertiesDialogFindInfo.getTabName(entry.getKey());
+         PrefsPanelVisitor.visit(sessionPropertiesDialogFindInfo, tabName, entry.getValue(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
+      }
+
+      return new PrefsFindInfo(globalPreferencesDialogFindInfo, sessionPropertiesDialogFindInfo, componentInfoByPath);
    }
 
    private static void onVisitFindableComponent(PrefComponentInfo componentInfo, TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath)

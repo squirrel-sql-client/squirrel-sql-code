@@ -7,22 +7,21 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class FindInPreferencesModel
 {
-   private TreeMap<List<String>, List<PrefComponentInfo>> _componentInfoByPath;
+   private PrefsFindInfo _prefsFindInfo;
 
-   public FindInPreferencesModel(TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath)
+   public FindInPreferencesModel(PrefsFindInfo prefsFindInfo)
    {
-      _componentInfoByPath = componentInfoByPath;
+      _prefsFindInfo = prefsFindInfo;
    }
 
    public DefaultMutableTreeNode createFilteredTreeNodes(String filterText)
    {
       DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
 
-      for (Map.Entry<List<String>, List<PrefComponentInfo>> entry : _componentInfoByPath.entrySet())
+      for (Map.Entry<List<String>, List<PrefComponentInfo>> entry : _prefsFindInfo.getComponentInfoByPath().entrySet())
       {
          DefaultMutableTreeNode parent = root;
          final List<String> pathEntryStrings = entry.getKey();
@@ -95,14 +94,9 @@ public class FindInPreferencesModel
       return ret;
    }
 
-   public PrefComponentInfo treeNodeToFirstComponentInfo(DefaultMutableTreeNode node)
-   {
-      return treeNodeToComponentInfoList(node).get(0);
-   }
-
    public List<PrefComponentInfo> treeNodeToComponentInfoList(DefaultMutableTreeNode node)
    {
-      return _componentInfoByPath.get(treeNodeToComponentPath(node));
+      return _prefsFindInfo.getPrefComponentInfoListByPath(treeNodeToComponentPath(node));
    }
 
    public String getDetailsText(DefaultMutableTreeNode node)

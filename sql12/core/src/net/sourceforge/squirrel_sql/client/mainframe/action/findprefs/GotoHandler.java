@@ -19,31 +19,36 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.List;
-import java.util.TreeMap;
 
 public class GotoHandler
 {
    public final static ILogger s_log = LoggerController.createLogger(GotoHandler.class);
+   private PrefsFindInfo _prefsFindInfo;
 
-   private GlobalPreferencesDialogFindInfo _openDialogsFindInfo;
-   private TreeMap<List<String>, List<PrefComponentInfo>> _globalPrefsComponentInfoByPath;
    private Timer _timer;
    private int _blinkCount;
 
-   public GotoHandler(GlobalPreferencesDialogFindInfo openDialogsFindInfo)
+   public GotoHandler()
    {
-      _openDialogsFindInfo = openDialogsFindInfo;
-      _globalPrefsComponentInfoByPath = ComponentInfoByPathUtil.globalPrefsFindInfoToComponentInfoByPath(openDialogsFindInfo);
    }
 
    public boolean gotoPath(List<String> path)
    {
-      Component tabComponent = getTabComponent(path);
-      _openDialogsFindInfo.selectTabOfPathComponent(tabComponent);
+      _prefsFindInfo = ComponentInfoByPathUtil.createPrefsFindInfo();
 
-      Component componentToGoTo = getComponentByPath(path);
+      PrefComponentInfo tabComponentInfo = _prefsFindInfo.showTabOfPathComponent(path);
 
-      if(null == componentToGoTo)
+      _prefsFindInfo = _prefsFindInfo.getPrefsFindInfoUpdate();
+
+      if(null == tabComponentInfo)
+      {
+         // Happens when the dialog node was gone to.
+         return true;
+      }
+
+      PrefComponentInfo componentInfoToGoTo = _prefsFindInfo.getComponentInfoByPath(path);
+
+      if(null == componentInfoToGoTo)
       {
          s_log.warn("Failed to find Component for path:\n" + path);
          final String pathNoNewLines = StringUtils.replace("" + path, "\n", " ");
@@ -51,14 +56,19 @@ public class GotoHandler
          return false;
       }
 
-      if(tabComponent instanceof JScrollPane && tabComponent != componentToGoTo)
+      return blinkComponent(tabComponentInfo.getComponent(), componentInfoToGoTo.getComponent());
+   }
+
+   private boolean blinkComponent(Component containingTabComponent, Component componentToBlink)
+   {
+      if(containingTabComponent instanceof JScrollPane && containingTabComponent != componentToBlink)
       {
-         JComponent componentInScrollPane = (JComponent) ((JScrollPane)tabComponent).getViewport().getView();
+         JComponent componentInScrollPane = (JComponent) ((JScrollPane) containingTabComponent).getViewport().getView();
 
-         int x = componentToGoTo.getX();
-         int y = componentToGoTo.getY();
+         int x = componentToBlink.getX();
+         int y = componentToBlink.getY();
 
-         Container parent = componentToGoTo.getParent();
+         Container parent = componentToBlink.getParent();
          while (parent != componentInScrollPane)
          {
             x += parent.getX();
@@ -66,29 +76,34 @@ public class GotoHandler
             parent = parent.getParent();
          }
 
-         final Rectangle rect = new Rectangle(x, y, componentToGoTo.getWidth(), componentToGoTo.getHeight());
+         final Rectangle rect = new Rectangle(x, y, componentToBlink.getWidth(), componentToBlink.getHeight());
 
          GUIUtils.forceProperty(() -> {
             componentInScrollPane.scrollRectToVisible(rect);
-            final boolean contains = ((JScrollPane) tabComponent).getVisibleRect().contains(rect);
+            final boolean contains = ((JScrollPane) containingTabComponent).getVisibleRect().contains(rect);
             return contains;
          });
       }
 
-      _timer = new Timer(500, e -> onBlinkComponent(componentToGoTo));
+      _timer = new Timer(500, e -> onBlinkComponent(componentToBlink));
 
       _timer.setRepeats(true);
 
-      SwingUtilities.invokeLater(() -> onBlinkComponent(componentToGoTo));
+      SwingUtilities.invokeLater(() -> onBlinkComponent(componentToBlink));
 
       _timer.start();
 
       return true;
    }
 
-   public TreeMap<List<String>, List<PrefComponentInfo>> getRefreshedGlobalPrefsComponentInfoByPath()
+   public PrefsFindInfo getPrefsFindInfoUpdate()
    {
-      return _globalPrefsComponentInfoByPath;
+      if(null == _prefsFindInfo)
+      {
+         throw new IllegalStateException("Call gotoPath() first");
+      }
+
+      return _prefsFindInfo;
    }
 
    private void onBlinkComponent(Component component)
@@ -129,23 +144,5 @@ public class GotoHandler
 
          component.repaint();
       }
-   }
-
-   private Component getComponentByPath(List<String> path)
-   {
-      final List<PrefComponentInfo> componentInfoList = _globalPrefsComponentInfoByPath.get(path);
-
-      if(null == componentInfoList)
-      {
-         return null;
-      }
-
-      return componentInfoList.get(0).getComponent();
-   }
-
-   private Component getTabComponent(List<String> path)
-   {
-      final List<PrefComponentInfo> prefComponentInfoList = _globalPrefsComponentInfoByPath.get(path.subList(0,1));
-      return prefComponentInfoList.get(0).getComponent();
    }
 }

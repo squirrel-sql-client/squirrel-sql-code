@@ -8,8 +8,20 @@ import java.util.List;
 
 public class PrefComponentInfo
 {
+   /**
+    * Not null when {@link  #_findableComponentInfoType == FindableComponentInfoType.DIALOG}
+    */
+   private DialogFindInfo _dialogFindInfo;
+
+   /**
+    * null when {@link  #_findableComponentInfoType == FindableComponentInfoType.DIALOG}
+    */
    private Component _component;
    private String _text;
+
+   /**
+    * null when {@link  #_findableComponentInfoType == FindableComponentInfoType.DIALOG}
+    */
    private PrefComponentInfo _parent;
    private FindableComponentInfoType _findableComponentInfoType;
 
@@ -26,6 +38,14 @@ public class PrefComponentInfo
       _findableComponentInfoType = findableComponentInfoType;
    }
 
+   public PrefComponentInfo(DialogFindInfo dialogFindInfo)
+   {
+      _dialogFindInfo = dialogFindInfo;
+      _text = dialogFindInfo.getDialogTitle();
+      _parent = null;
+      _findableComponentInfoType = FindableComponentInfoType.DIALOG;
+   }
+
    public String getText()
    {
       return _text;
@@ -36,14 +56,20 @@ public class PrefComponentInfo
       return _component;
    }
 
+   public DialogFindInfo getDialogFindInfo()
+   {
+      return _dialogFindInfo;
+   }
+
    public FindableComponentInfoType getFindableComponentInfoType()
    {
       return _findableComponentInfoType;
    }
 
-   public static PrefComponentInfo createParentForTabComponent(String tabName, Component globalPrefTabComponent)
+   public static PrefComponentInfo createParentForTabComponent(DialogFindInfo dialogFindInfo, String tabName, Component globalPrefTabComponent)
    {
-      return new PrefComponentInfo(globalPrefTabComponent, tabName, null, FindableComponentInfoType.PARENT_TAB_CONTAINER);
+      PrefComponentInfo dialogComponentInfo = new PrefComponentInfo(dialogFindInfo);
+      return new PrefComponentInfo(globalPrefTabComponent, tabName, dialogComponentInfo, FindableComponentInfoType.PARENT_TAB_CONTAINER);
    }
 
    public List<String> getPath()
@@ -55,9 +81,9 @@ public class PrefComponentInfo
       return path;
    }
 
-   public boolean isLeaf()
+   public PrefComponentInfo getParent()
    {
-      return _findableComponentInfoType == FindableComponentInfoType.LEAVE_COMPONENT;
+      return _parent;
    }
 
    private void fillPath(ArrayList<String> path)
@@ -72,6 +98,7 @@ public class PrefComponentInfo
          path.add(_text);
       }
    }
+
 
    public boolean hasEmptyText()
    {

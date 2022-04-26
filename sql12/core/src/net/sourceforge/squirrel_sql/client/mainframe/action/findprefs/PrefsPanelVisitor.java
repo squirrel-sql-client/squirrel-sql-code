@@ -1,7 +1,12 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
-import java.awt.Component;
-import java.awt.Container;
+import com.jidesoft.swing.MultilineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.steppschuh.markdowngenerator.table.Table;
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -15,21 +20,17 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
+import java.awt.Component;
+import java.awt.Container;
 
-import com.jidesoft.swing.MultilineLabel;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.steppschuh.markdowngenerator.table.Table;
-import org.apache.commons.lang3.StringUtils;
-
-public class GlobalPreferencesPanelVisitor
+public class PrefsPanelVisitor
 {
    private static StringManager s_stringMgr = StringManagerFactory.getStringManager(FindInPreferencesAction.class);
 
-   public static void visit(String tabName, Component globalPrefTabComponent, GlobalPreferencesPanelVisitorListener visitListener)
+   public static void visit(DialogFindInfo dialogFindInfo, String tabName, Component globalPrefTabComponent, GlobalPreferencesPanelVisitorListener visitListener)
    {
-      final PrefComponentInfo parentForTabComponent = PrefComponentInfo.createParentForTabComponent(tabName, globalPrefTabComponent);
+      final PrefComponentInfo parentForTabComponent = PrefComponentInfo.createParentForTabComponent(dialogFindInfo, tabName, globalPrefTabComponent);
+      visitListener.visitFindableComponent(parentForTabComponent.getParent());
       visitListener.visitFindableComponent(parentForTabComponent);
 
       _visit(globalPrefTabComponent, visitListener, parentForTabComponent);

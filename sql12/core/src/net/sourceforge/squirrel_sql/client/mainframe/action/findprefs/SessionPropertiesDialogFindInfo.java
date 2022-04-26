@@ -8,26 +8,27 @@ import java.awt.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GlobalPreferencesDialogFindInfo implements DialogFindInfo
+public class SessionPropertiesDialogFindInfo implements DialogFindInfo
 {
-   private static StringManager s_stringMgr = StringManagerFactory.getStringManager(GlobalPreferencesDialogFindInfo.class);
+   private static StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionPropertiesDialogFindInfo.class);
 
    private String _dialogTitle;
-   private final JTabbedPane _globalPrefsTabPane;
    private final HashMap<Integer, Component> _tabComponentByTabIndex;
    private final HashMap<Component, Integer> _tabIndexByTabComponent;
+   private JTabbedPane _newSessionPropertiesTabbedPane;
 
-   public GlobalPreferencesDialogFindInfo(String dialogTitle, JTabbedPane globalPrefsTabPane)
+   public SessionPropertiesDialogFindInfo(String dialogTitle, JTabbedPane newSessionPropertiesTabbedPane)
    {
       _dialogTitle = dialogTitle;
-      _globalPrefsTabPane = globalPrefsTabPane;
+      _newSessionPropertiesTabbedPane = newSessionPropertiesTabbedPane;
+
       _tabComponentByTabIndex = new HashMap<>();
       _tabIndexByTabComponent = new HashMap<>();
 
-      for (int i = 0; i < _globalPrefsTabPane.getTabCount(); i++)
+      for (int i = 0; i < _newSessionPropertiesTabbedPane.getTabCount(); i++)
       {
-         _tabComponentByTabIndex.put(i, _globalPrefsTabPane.getComponentAt(i));
-         _tabIndexByTabComponent.put(_globalPrefsTabPane.getComponentAt(i), i);
+         _tabComponentByTabIndex.put(i, _newSessionPropertiesTabbedPane.getComponentAt(i));
+         _tabIndexByTabComponent.put(_newSessionPropertiesTabbedPane.getComponentAt(i), i);
       }
    }
 
@@ -38,7 +39,7 @@ public class GlobalPreferencesDialogFindInfo implements DialogFindInfo
 
    public String getTabName(int tabIx)
    {
-      return s_stringMgr.getString("GlobalPreferencesDialogFindInfo.tab", _globalPrefsTabPane.getTitleAt(tabIx));
+      return s_stringMgr.getString("SessionPropertiesFinderInfo.tab", _newSessionPropertiesTabbedPane.getTitleAt(tabIx));
    }
 
    @Override
@@ -49,6 +50,6 @@ public class GlobalPreferencesDialogFindInfo implements DialogFindInfo
 
    public void selectTabOfPathComponent(Component tabComponent)
    {
-      _globalPrefsTabPane.setSelectedIndex(_tabIndexByTabComponent.get(tabComponent));
+      _newSessionPropertiesTabbedPane.setSelectedIndex(_tabIndexByTabComponent.get(tabComponent));
    }
 }
