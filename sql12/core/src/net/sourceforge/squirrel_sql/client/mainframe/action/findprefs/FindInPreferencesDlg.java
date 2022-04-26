@@ -10,7 +10,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import java.awt.Dimension;
@@ -28,7 +27,7 @@ public class FindInPreferencesDlg extends JDialog
    JTree tree;
    JTextField txtFind;
    JButton btnGoTo;
-   JTextArea txtDetails;
+   NoWrapJTextPane txtDetails;
 
    public FindInPreferencesDlg(MainFrame parent)
    {
@@ -57,7 +56,7 @@ public class FindInPreferencesDlg extends JDialog
       ret.add(new JLabel(s_stringMgr.getString("FindInPreferencesDlg.details")), gbc);
 
       gbc = new GridBagConstraints(0,1,1,1, 1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(3,5, 5, 5), 0,0);
-      txtDetails = new JTextArea();
+      txtDetails = new NoWrapJTextPane();
       Font font = new Font(Font.MONOSPACED, Font.PLAIN, txtDetails.getFont().getSize());
       txtDetails.setFont(font);
       txtDetails.setEditable(false);

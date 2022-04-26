@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -254,20 +255,53 @@ public class FindInPreferencesCtrl
 
       DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) e.getNewLeadSelectionPath().getLastPathComponent();
 
-      if(_model.detailsTextNeedsLineWrap(selectedNode))
+      _dlg.txtDetails.setLineWrap(_model.detailsTextNeedsLineWrap(selectedNode));
+
+
+      final String detailsText = _model.getDetailsText(selectedNode);
+
+      _dlg.txtDetails.setText("");
+      if(null == getFilterText())
       {
-         _dlg.txtDetails.setLineWrap(true);
-         _dlg.txtDetails.setWrapStyleWord(true);
+         _dlg.txtDetails.setText(detailsText);
       }
       else
       {
-         _dlg.txtDetails.setLineWrap(false);
-         _dlg.txtDetails.setWrapStyleWord(false);
+         final String filterText = getFilterText();
+         int startIx = 0;
+
+         for(;;)
+         {
+            int matchIx = StringUtils.indexOfIgnoreCase(detailsText, filterText, startIx);
+
+            if(-1 == matchIx)
+            {
+               _dlg.txtDetails.appendToPane(detailsText.substring(startIx), false);
+               break;
+            }
+            else
+            {
+               _dlg.txtDetails.appendToPane(detailsText.substring(startIx, matchIx), false);
+               _dlg.txtDetails.appendToPane(detailsText.substring(matchIx,  matchIx + filterText.length() ), true);
+               startIx = matchIx + filterText.length();
+            }
+         }
       }
 
-      _dlg.txtDetails.setText(_model.getDetailsText(selectedNode));
-
       SwingUtilities.invokeLater(() -> _dlg.txtDetails.scrollRectToVisible(new Rectangle(0,0)));
+   }
+
+   private String getFilterText()
+   {
+      final String text = _dlg.txtFind.getText();
+
+      if(StringUtilities.isEmpty(text, true))
+      {
+         return null;
+      }
+
+      return text.trim();
+
    }
 
 }

@@ -82,36 +82,7 @@ public class StringUtilities
 		return buf.toString();
 	}
 
-	/**
-	 * Return the number of occurences of a character in a string.
-	 *
-	 * @param str	The string to check.
-	 * @param ch	The character check for.
-	 *
-	 * @return	The number of times <tt>ch</tt> occurs in <tt>str</tt>.
-	 */
-	public static int countOccurences(String str, int ch)
-	{
-		if (StringUtils.isEmpty(str))
-		{
-			return 0;
-		}
-
-		int count = 0;
-		int idx = -1;
-		do
-		{
-			idx = str.indexOf(ch, ++idx);
-			if (idx != -1)
-			{
-				++count;
-			}
-		}
-		while (idx != -1);
-		return count;
-	}
-
-	/**
+   /**
 	 * Split a string based on the given delimiter, but don't remove
 	 * empty elements.
 	 *

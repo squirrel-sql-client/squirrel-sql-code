@@ -1,8 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -10,10 +7,13 @@ import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class RSyntaxSQLEntryAreaFactory
 {
 	private SyntaxPlugin _plugin;
-   private HashMap<IIdentifier, ArrayList<RSyntaxSQLEntryPanel>> _rSyntaxSQLEntryPanelsBySessionID = new HashMap<IIdentifier, ArrayList<RSyntaxSQLEntryPanel>>();
+   private HashMap<IIdentifier, ArrayList<RSyntaxSQLEntryPanel>> _rSyntaxSQLEntryPanelsBySessionID = new HashMap<>();
 
    public RSyntaxSQLEntryAreaFactory(SyntaxPlugin plugin)
 	{
