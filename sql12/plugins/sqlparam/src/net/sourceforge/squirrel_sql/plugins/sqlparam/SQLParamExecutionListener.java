@@ -123,8 +123,13 @@ public class SQLParamExecutionListener extends SQLExecutionAdapter
                return null;
             }
             value = sanitizeValue(dialog.getValue(), dialog.isQuotingNeeded());
-            cache.put(var, dialog.getValue());
-            currentCache.put(var, value);
+
+            if(false == dialog.isHideText())
+            {
+               cache.put(var, dialog.getValue());
+               currentCache.put(var, value);
+            }
+
          }
          buffer.replace(m.start(), m.end(), value);
          parametersWhereReplaced = true;

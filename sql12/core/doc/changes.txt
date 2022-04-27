@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+#608 SQL Parametrisation Plugin: The parameter value dialog now has a checkbox named "Hide value"
+  which turns the value text field into a password field.
+
 Made Aliases and Session popup menus accessible through
   - shortcuts alt shift A and alt shift S respectively
   - tools popup

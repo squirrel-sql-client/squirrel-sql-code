@@ -29,12 +29,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 
 
@@ -51,9 +53,12 @@ public class AskParamValueDialog extends JDialog
 
 
    private OkClosePanel _btnsPnl = new OkClosePanel();
+   private JPanel _pnlTxtValueContainer;
    private JTextField _txtValue = new JTextField();
+   private JPasswordField _txtHiddenValue = new JPasswordField();
    private JCheckBox _chkQuote = new JCheckBox();
    private JCheckBox _chkQuoteAlways = new JCheckBox();
+   private JCheckBox _chkHideValue = new JCheckBox();
    private String _parameter;
 
    private boolean _done = false;
@@ -95,6 +100,7 @@ public class AskParamValueDialog extends JDialog
       _chkQuoteAlways.setSelected(Props.getBoolean(PREF_KEY_ALWAYS_QUOTE_VALUES, false));
       _chkQuoteAlways.addActionListener(e -> onQuoteAlways());
 
+      _chkHideValue.addActionListener(e -> onHideText());
 
       updateCheckbox();
       _btnsPnl.addListener(new MyOkClosePanelListener());
@@ -107,6 +113,22 @@ public class AskParamValueDialog extends JDialog
 
       GUIUtils.centerWithinParent(this);
       GUIUtils.enableCloseByEscape(this, d -> _cancelled = true);
+   }
+
+   private void onHideText()
+   {
+      _pnlTxtValueContainer.removeAll();
+      if(_chkHideValue.isSelected())
+      {
+         _pnlTxtValueContainer.add(_txtHiddenValue);
+      }
+      else
+      {
+         _pnlTxtValueContainer.add(_txtValue);
+      }
+      _pnlTxtValueContainer.invalidate();
+      _pnlTxtValueContainer.doLayout();
+      _pnlTxtValueContainer.repaint();
    }
 
    private void onQuoteAlways()
@@ -150,7 +172,19 @@ public class AskParamValueDialog extends JDialog
     */
    public String getValue()
    {
-      return _txtValue.getText();
+      if(_chkHideValue.isSelected())
+      {
+         return String.valueOf(_txtHiddenValue.getPassword());
+      }
+      else
+      {
+         return _txtValue.getText();
+      }
+   }
+
+   public boolean isHideText()
+   {
+      return _chkHideValue.isSelected();
    }
 
    /**
@@ -203,7 +237,9 @@ public class AskParamValueDialog extends JDialog
       panel.add(new JLabel(stringMgr.getString("sqlparam.valueFor", _parameter)), gbc);
 
       gbc = new GridBagConstraints(1,1,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-      panel.add(_txtValue, gbc);
+      _pnlTxtValueContainer = new JPanel(new GridLayout(1,1));
+      _pnlTxtValueContainer.add(_txtValue);
+      panel.add(_pnlTxtValueContainer, gbc);
 
 
       gbc = new GridBagConstraints(0,2,2,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
@@ -216,6 +252,10 @@ public class AskParamValueDialog extends JDialog
       panel.add(_chkQuoteAlways, gbc);
 
       gbc = new GridBagConstraints(0,4,2,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      _chkHideValue.setText(stringMgr.getString("sqlparam.hide.value"));
+      panel.add(_chkHideValue, gbc);
+
+      gbc = new GridBagConstraints(0,5,2,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       panel.add(_btnsPnl, gbc);
 
       return panel;
