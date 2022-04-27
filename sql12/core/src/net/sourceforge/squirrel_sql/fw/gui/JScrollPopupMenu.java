@@ -3,14 +3,21 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
+import javax.swing.MenuElement;
+import javax.swing.MenuSelectionManager;
+import javax.swing.SwingUtilities;
+import javax.swing.event.MenuKeyEvent;
+import javax.swing.event.MenuKeyListener;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
@@ -47,6 +54,68 @@ public class JScrollPopupMenu extends JPopupMenu
             event.consume();
          }
       });
+
+      addMenuKeyListener(new MenuKeyListener() {
+         @Override
+         public void menuKeyTyped(MenuKeyEvent e) {}
+
+         @Override
+         public void menuKeyPressed(MenuKeyEvent e)
+         {
+            if(   e.getKeyCode() == KeyEvent.VK_UP
+               || e.getKeyCode() == KeyEvent.VK_DOWN
+               || e.getKeyCode() == KeyEvent.VK_PAGE_UP
+               || e.getKeyCode() == KeyEvent.VK_PAGE_DOWN
+            )
+            {
+               // Wait until the popup responded to the KeyEvent
+               SwingUtilities.invokeLater(() -> onAdjustScrollbar());
+            }
+         }
+
+         @Override
+         public void menuKeyReleased(MenuKeyEvent e)  {}
+      });
+   }
+
+   private void onAdjustScrollbar()
+   {
+      if(false == getScrollBar().isVisible())
+      {
+         return;
+      }
+
+      final MenuElement[] selectedPath = MenuSelectionManager.defaultManager().getSelectedPath();
+
+      if(null == selectedPath || 0 == selectedPath.length)
+      {
+         // Menu closed
+         return;
+      }
+
+      final MenuElement menuElement = selectedPath[selectedPath.length - 1];
+
+      Rectangle miBounds = menuElement.getComponent().getBounds();
+
+//      System.out.println(
+//                           " getVisibleAmount()=" + popupScrollBar.getVisibleAmount()
+//                         + " getMaximum()=" + popupScrollBar.getMaximum()
+//                         + " getScrollBar().getValue()=" + getScrollBar().getValue()
+//                         + " miBounds.y=" + miBounds.y
+//                         + " miBounds.y_=" + (miBounds.y + miBounds.height)
+//                        );
+
+      while(miBounds.y < 0)
+      {
+         getScrollBar().setValue(getScrollBar().getValue() - getScrollBar().getUnitIncrement());
+         miBounds = menuElement.getComponent().getBounds();
+      }
+
+      while(miBounds.y + miBounds.height > getScrollBar().getVisibleAmount())
+      {
+         getScrollBar().setValue(getScrollBar().getValue() + getScrollBar().getUnitIncrement());
+         miBounds = menuElement.getComponent().getBounds();
+      }
    }
 
    private JScrollBar popupScrollBar;
@@ -132,7 +201,7 @@ public class JScrollPopupMenu extends JPopupMenu
                {
                   unit = preferredSize.height;
                }
-               if (false == comp instanceof JPopupMenu.Separator && i++ < maximumVisibleRows)
+               if (false == comp instanceof Separator && i++ < maximumVisibleRows)
                {
                   extent += preferredSize.height;
                }

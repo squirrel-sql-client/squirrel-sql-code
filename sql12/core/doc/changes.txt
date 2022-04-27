@@ -24,6 +24,8 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+Fixed scrolling behaviour of scrollable popup menus when up/down keys were used.
+
 Command line mode: Java process didn't properly end when SQL was executed on command line.
   Example on Windows: <squirrel-home>\squirrelcli\squirrelcli.bat -alias "yourAlias" -sql "SELECT * FROM <yourTable>"
 
