@@ -20,16 +20,22 @@ package net.sourceforge.squirrel_sql.plugins.sqlparam.gui;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 
 /**
@@ -174,12 +180,10 @@ public class AskParamValueDialog extends JDialog
       if (isNumber)
       {
          _chkQuote.setSelected(_chkQuoteAlways.isSelected());
-         _chkQuote.setEnabled(true);
       }
       else
       {
          _chkQuote.setSelected(true);
-         _chkQuote.setEnabled(false);
       }
    }
 
