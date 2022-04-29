@@ -18,6 +18,15 @@
  */
 package net.sourceforge.squirrel_sql.fw.util;
 
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.GetMethod;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -35,22 +44,8 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.CRC32;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class IOUtilitiesImpl implements IOUtilities
 {
@@ -61,18 +56,6 @@ public class IOUtilitiesImpl implements IOUtilities
 	/** Logger for this class. */
 	private final ILogger s_log = LoggerController.createLogger(IOUtilitiesImpl.class);
 
-	/* Spring-Injected */
-	
-	private FileWrapperFactory fileWrapperFactory;
-	/**
-	 * @param fileWrapperFactory the fileWrapperFactory to set
-	 */
-	public void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory)
-	{
-		this.fileWrapperFactory = fileWrapperFactory;
-	}
-	
-	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities#closeInputStream(java.io.InputStream)
 	 */
@@ -423,36 +406,6 @@ public class IOUtilitiesImpl implements IOUtilities
 			out.write(NEW_LINE);
 		}
 		out.close();
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities# copyResourceFromJarFile(java.lang.String,
-	 *      java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void copyResourceFromJarFile(String jarFilename, String resourceName, String destinationFile)
-		throws ZipException, IOException
-	{
-		ZipFile appJar = new ZipFile(new File(jarFilename));
-		Enumeration<? extends ZipEntry> entries = appJar.entries();
-		while (entries.hasMoreElements())
-		{
-			ZipEntry entry = entries.nextElement();
-			String entryName = entry.getName();
-			if (entryName.endsWith(resourceName))
-			{
-				InputStream is = null;
-				try {
-					FileWrapper destinationFileWrapper = fileWrapperFactory.create(destinationFile); 
-					is = appJar.getInputStream(entry);
-					copyBytesToFile(is, destinationFileWrapper);
-				} finally {
-					closeInputStream(is);
-				}
-				break;
-			}
-		}
-
 	}
 
 }

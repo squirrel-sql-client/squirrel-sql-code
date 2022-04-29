@@ -28,7 +28,6 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.zip.ZipException;
 
 public interface IOUtilities
 {
@@ -157,21 +156,5 @@ public interface IOUtilities
 	 */
 	void writeLinesToFile(String filename, List<String> lines) throws FileNotFoundException;
 
-	/**
-	 * Copies the resource specified from the jarfile specified to the specified destination directory.
-	 * 
-	 * @param jarFilename
-	 *           the jarfile to look in.
-	 * @param resourceName
-	 *           the resource to pull out.
-	 * @param destinationDir
-	 *           the directory to write the resource to.
-	 * @throws IOException
-	 * @throws ZipException
-	 */
-	void copyResourceFromJarFile(String jarFilename, String resourceName, String destinationDir)
-		throws ZipException, IOException;
-	
-	
 
 }
