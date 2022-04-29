@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.preferences.shortcut;
 
-import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;

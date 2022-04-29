@@ -1,5 +1,14 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -9,20 +18,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import com.jidesoft.swing.MultilineLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 
 public class WaitPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(WaitPanel.class);
-   private MultilineLabel _label;
+   private MultipleLineLabel _label;
    private boolean _isDisplayingError;
    private JButton _btnClose;
    private WaitPanelListener _waitPanelListener;
@@ -49,7 +49,7 @@ public class WaitPanel extends JPanel
       ret.add(new JLabel(s_stringMgr.getString("WaitPanel.hqlLabel")), gbc);
 
       gbc = new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 5, 10), 0, 0);
-      _label = new MultilineLabel(hqlQuery);
+      _label = new MultipleLineLabel(hqlQuery);
       ret.add(_label, gbc);
 
       return ret;

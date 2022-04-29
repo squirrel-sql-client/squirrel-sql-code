@@ -1,20 +1,30 @@
 package net.sourceforge.squirrel_sql.plugins.graph.link;
 
-import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import net.sourceforge.squirrel_sql.fw.props.Props;
 
 
 public class LinkGraphDialog extends JDialog
@@ -43,14 +53,12 @@ public class LinkGraphDialog extends JDialog
 
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);
       String lblText = s_stringMgr.getString("linkGraph.dialog.displayedFolder", session.getAlias().getUrl());
-      content.add(new MultilineLabel(lblText), gbc);
+      content.add(new MultipleLineLabel(lblText), gbc);
 
       gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0);
       txtDir = new JTextField();
       txtDir.setEditable(false);
       content.add(txtDir, gbc);
-
-      content.add(new MultilineLabel(lblText), gbc);
 
       gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0);
       content.add(createFolderButtonsPanel(), gbc);
@@ -63,7 +71,7 @@ public class LinkGraphDialog extends JDialog
       tblGraphFiles.init(null, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION, new DataModelImplementationDetails(session), session);
       content.add(new JScrollPane(tblGraphFiles.getComponent()), gbc);
 
-      gbc = new GridBagConstraints(0, 5, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 5, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);
       content.add(createButtonPanel(session, content), gbc);
 
       getContentPane().setLayout(new GridLayout(1, 1));

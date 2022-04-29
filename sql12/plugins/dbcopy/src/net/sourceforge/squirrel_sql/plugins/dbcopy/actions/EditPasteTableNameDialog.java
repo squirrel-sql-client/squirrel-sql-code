@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.dbcopy.actions;
 
-import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -51,7 +51,7 @@ public class EditPasteTableNameDialog extends JDialog
       int gridy = 0;
 
       gbc = new GridBagConstraints(0, gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-      getContentPane().add(new MultilineLabel(s_stringMgr.getString("EditPasteTableNameDlg.text")), gbc);
+      getContentPane().add(new MultipleLineLabel(s_stringMgr.getString("EditPasteTableNameDlg.text")), gbc);
 
       gbc = new GridBagConstraints(0,++gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       getContentPane().add(txtTableName, gbc);

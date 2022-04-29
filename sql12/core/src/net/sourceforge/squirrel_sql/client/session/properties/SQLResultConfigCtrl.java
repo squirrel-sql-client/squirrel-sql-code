@@ -1,12 +1,17 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 
-import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -22,7 +27,7 @@ public class SQLResultConfigCtrl
    private JCheckBox _sqlReadOnChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.readOn"));
    private IntegerField _sqlReadOnBlockSize = new IntegerField(10);
 
-   private MultilineLabel _lblReadOnWarning = new MultilineLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.readOnWarning"));
+   private MultipleLineLabel _lblReadOnWarning = new MultipleLineLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.readOnWarning"));
 
 
    private JCheckBox _sqlUseFetchSizeChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.fetchSize"));

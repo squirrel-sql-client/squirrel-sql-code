@@ -1,9 +1,9 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 
-import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackPrefsPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -121,7 +121,7 @@ public final class SQLPreferencesPanel extends JPanel
 
       ++gbc.gridx;
       gbc.fill = GridBagConstraints.HORIZONTAL;
-      pnl.add(new MultilineLabel(s_stringMgr.getString("SQLPreferencesPanel.largeScriptStmtCount.note")), gbc);
+      pnl.add(new MultipleLineLabel(s_stringMgr.getString("SQLPreferencesPanel.largeScriptStmtCount.note")), gbc);
 
 
       gbc.gridx = 0;
@@ -177,7 +177,7 @@ public final class SQLPreferencesPanel extends JPanel
       ret.add(chkReloadSqlContentsSql, gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,3,3,3), 0,0);
-      ret.add(new MultilineLabel(s_stringMgr.getString("SQLPreferencesPanel.reload.changetrack.hint")), gbc);
+      ret.add(new MultipleLineLabel(s_stringMgr.getString("SQLPreferencesPanel.reload.changetrack.hint")), gbc);
 
       ret.setBorder(BorderFactory.createEtchedBorder());
       return ret;

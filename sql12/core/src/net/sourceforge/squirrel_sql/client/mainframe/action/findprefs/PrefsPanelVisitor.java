@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
-import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -54,10 +53,6 @@ public class PrefsPanelVisitor
          info = new PrefComponentInfo(component, extractText(component), parent);
       }
       else if(component instanceof MultipleLineLabel)
-      {
-         info = new PrefComponentInfo(component, extractText(component), parent);
-      }
-      else if(component instanceof MultilineLabel)
       {
          info = new PrefComponentInfo(component, extractText(component), parent);
       }
@@ -123,10 +118,6 @@ public class PrefsPanelVisitor
       else if(component instanceof MultipleLineLabel)
       {
          return ((MultipleLineLabel)component).getText();
-      }
-      else if(component instanceof MultilineLabel)
-      {
-         return ((MultilineLabel)component).getText();
       }
       else if(component instanceof JTextComponent)
       {

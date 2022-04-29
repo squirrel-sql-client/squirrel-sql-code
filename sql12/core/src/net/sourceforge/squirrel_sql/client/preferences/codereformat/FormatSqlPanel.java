@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.preferences.codereformat;
 
-import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.util.codereformat.PieceMarkerSpec;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
@@ -17,11 +16,13 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
@@ -104,11 +105,14 @@ public class FormatSqlPanel extends JPanel
    {
       setLayout(new BorderLayout());
 
-      JScrollPane scr = new JScrollPane(createControlsPanel(keywordBehaviourPrefs));
+      final JPanel controlsPanel = createControlsPanel(keywordBehaviourPrefs);
+      JScrollPane scr = new JScrollPane(controlsPanel);
       scr.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
       add(scr, BorderLayout.WEST);
 
       add(new JScrollPane(txtExampleSqls), BorderLayout.CENTER);
+
+      SwingUtilities.invokeLater(() -> controlsPanel.scrollRectToVisible(new Rectangle(0,0,1,1)));
    }
 
 
@@ -221,7 +225,7 @@ public class FormatSqlPanel extends JPanel
       ++gridy;
       // When AND/OR keywords occur in from clauses you can choose to ignore the start new line setting from above.
       // This may be considered to to lead to more readable JOIN clauses.
-      MultilineLabel lblLineBreakFor_AND_OR_in_FROM_clause = new MultilineLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.explain.lineBreakFor_AND_OR_in_FROM_clause"));
+      MultipleLineLabel lblLineBreakFor_AND_OR_in_FROM_clause = new MultipleLineLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.explain.lineBreakFor_AND_OR_in_FROM_clause"));
       lblLineBreakFor_AND_OR_in_FROM_clause.setText(s_stringMgr.getString("codereformat.FormatSqlPanel.explain.lineBreakFor_AND_OR_in_FROM_clause"));
 
       gbc = new GridBagConstraints(0,gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
