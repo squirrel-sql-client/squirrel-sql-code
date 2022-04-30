@@ -30,7 +30,7 @@ public interface IExportDataRow {
 	 * The cells of the row.
 	 * @return the cells of the row.
 	 */
-	Iterator<IExportDataCell> getCells();
+	Iterator<ExportCellData> getCells();
 	/**
 	 * The number of the row.
 	 * @return number of the row.

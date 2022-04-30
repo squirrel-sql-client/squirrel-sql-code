@@ -63,7 +63,7 @@ public class DataExportJSONWriter extends AbstractDataExportFileWriter
    }
 
    @Override
-   protected void addCell(IExportDataCell cell)
+   protected void addCell(ExportCellData cell)
    {
       ObjectNode objectNode = _mapper.createObjectNode();
 

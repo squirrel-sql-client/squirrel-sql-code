@@ -114,22 +114,22 @@ public class JTableExportData implements IExportData
       List<IExportDataRow> rows = new ArrayList<IExportDataRow>(nbrSelRows);
       for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
       {
-         List<IExportDataCell> cells = new ArrayList<IExportDataCell>(nbrSelCols);
+         List<ExportCellData> cells = new ArrayList<>(nbrSelCols);
 
          for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
          {
-            ExportDataColumn cellObj;
+            ExportCellData cellObj;
 
             final Object obj = table.getValueAt(selRows[rowIdx], selCols[colIdx]);
 
             if (table.getColumnModel().getColumn(colIdx) instanceof ExtTableColumn)
             {
                ExtTableColumn col = (ExtTableColumn) table.getColumnModel().getColumn(selCols[colIdx]);
-               cellObj = new ExportDataColumn(col.getColumnDisplayDefinition(), obj, rowIdx, colIdx);
+               cellObj = new ExportCellData(col.getColumnDisplayDefinition(), obj, rowIdx, colIdx);
             }
             else
             {
-               cellObj = new ExportDataColumn(null, obj, rowIdx, colIdx);
+               cellObj = new ExportCellData(null, obj, rowIdx, colIdx);
             }
             cells.add(cellObj);
          }

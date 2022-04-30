@@ -141,12 +141,12 @@ public class ResultSetExportData implements IExportData
             try
             {
 
-               List<IExportDataCell> cells = new ArrayList<IExportDataCell>();
+               List<ExportCellData> cells = new ArrayList<ExportCellData>();
                for (int i = 1; i <= colDispDef.size(); i++)
                {
                   ColumnDisplayDefinition colDef = colDispDef.get(i - 1);
                   Object object = CellComponentFactory.readResultSet(colDef, resultSet, i, false);
-                  IExportDataCell cell = new ExportDataColumn(colDef, object, rowIndex, i - 1);
+                  ExportCellData cell = new ExportCellData(colDef, object, rowIndex, i - 1);
                   cells.add(cell);
                }
                ExportDataRow data = new ExportDataRow(cells, rowIndex);

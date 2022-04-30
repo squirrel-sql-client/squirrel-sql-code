@@ -217,10 +217,10 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
    /**
     * @see AbstractDataExportFileWriter#addCell(TableExportController,
     * int, int,
-    * IExportDataCell)
+    * ExportCellData)
     */
    @Override
-   protected void addCell(IExportDataCell cell)
+   protected void addCell(ExportCellData cell)
    {
       if (getPrefs().isUseGlobalPrefsFormating())
       {
@@ -236,7 +236,7 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
     * @param cell
     * @return
     */
-   private int calculateRowIdx(IExportDataCell cell)
+   private int calculateRowIdx(ExportCellData cell)
    {
       if (this.withHeader)
       {

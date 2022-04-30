@@ -150,10 +150,10 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
          }
          beforeRow(aRow.getRowIndex());
 
-         Iterator<IExportDataCell> cells = aRow.getCells();
+         Iterator<ExportCellData> cells = aRow.getCells();
          while (cells.hasNext())
          {
-            IExportDataCell cell = cells.next();
+            ExportCellData cell = cells.next();
             addCell(cell);
          }
          afterRow();
@@ -249,7 +249,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
     * @param cell cell to be added
     * @throws Exception
     */
-   protected abstract void addCell(IExportDataCell cell) throws Exception;
+   protected abstract void addCell(ExportCellData cell) throws Exception;
 
    /**
     * Callback, before the processing of the header line will start.

@@ -26,11 +26,11 @@ import java.util.List;
  */
 public class ExportDataRow implements IExportDataRow
 {
-   private List<IExportDataCell> cells;
+   private List<ExportCellData> cells;
 
    private int rowIndex;
 
-   public ExportDataRow(List<IExportDataCell> cells, int rowIndex)
+   public ExportDataRow(List<ExportCellData> cells, int rowIndex)
    {
       setCells(cells);
       setRowIndex(rowIndex);
@@ -40,7 +40,7 @@ public class ExportDataRow implements IExportDataRow
     * @see IExportDataRow#getCells()
     */
    @Override
-   public Iterator<IExportDataCell> getCells()
+   public Iterator<ExportCellData> getCells()
    {
       return cells.iterator();
    }
@@ -48,7 +48,7 @@ public class ExportDataRow implements IExportDataRow
    /**
     * @param cells the cells to set
     */
-   public void setCells(List<IExportDataCell> cells)
+   public void setCells(List<ExportCellData> cells)
    {
       if (cells == null)
       {

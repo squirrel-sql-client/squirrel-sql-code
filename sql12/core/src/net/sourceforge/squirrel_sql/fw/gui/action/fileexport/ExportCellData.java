@@ -23,14 +23,14 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 /**
  * @author Stefan Willinger
  */
-public class ExportDataColumn implements IExportDataCell
+public class ExportCellData
 {
    private ColumnDisplayDefinition columnDisplayDefinition;
    private Object object;
    private int rowIndex;
    private int columnIndex;
 
-   public ExportDataColumn(ColumnDisplayDefinition columnDisplayDefinition, Object object, int rowIndex, int columnIndex)
+   public ExportCellData(ColumnDisplayDefinition columnDisplayDefinition, Object object, int rowIndex, int columnIndex)
    {
       setColumnDisplayDefinition(columnDisplayDefinition);
       setObject(object);
@@ -40,7 +40,7 @@ public class ExportDataColumn implements IExportDataCell
 
    /**
     * @return the columnDisplayDefinition
-    * @see IExportDataCell#getColumnDisplayDefinition()
+    * @see ExportCellData#getColumnDisplayDefinition()
     */
    public ColumnDisplayDefinition getColumnDisplayDefinition()
    {
@@ -57,7 +57,7 @@ public class ExportDataColumn implements IExportDataCell
 
    /**
     * @return the object
-    * @see IExportDataCell#getObject()
+    * @see ExportCellData#getObject()
     */
    public Object getObject()
    {
@@ -74,7 +74,7 @@ public class ExportDataColumn implements IExportDataCell
 
    /**
     * @return the rowIndex
-    * @see IExportDataCell#getRowIndex()
+    * @see ExportCellData#getRowIndex()
     */
    public int getRowIndex()
    {
@@ -91,7 +91,7 @@ public class ExportDataColumn implements IExportDataCell
 
    /**
     * @return the columnIndex
-    * @see IExportDataCell#getColumnIndex()
+    * @see ExportCellData#getColumnIndex()
     */
    public int getColumnIndex()
    {
