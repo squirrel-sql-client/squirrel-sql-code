@@ -17,21 +17,23 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer.excel;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FailedToInterpretHandler;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This implementation of the <code>IFileImporter</code> interface is to
@@ -41,6 +43,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  */
 public class ExcelFileImporter implements IFileImporter
 {
+   public final static ILogger s_log = LoggerController.createLogger(ExcelFileImporter.class);
 
    private File importFile;
    private int pointer = -1;
@@ -68,14 +71,7 @@ public class ExcelFileImporter implements IFileImporter
     */
    public boolean open() throws IOException
    {
-      try
-      {
-         workbook = WorkbookFactory.create(importFile);
-      }
-      catch (InvalidFormatException fe)
-      {
-         throw new IOException(fe.toString());
-      }
+      workbook = WorkbookFactory.create(importFile);
       reset();
       return true;
    }
@@ -86,6 +82,14 @@ public class ExcelFileImporter implements IFileImporter
     */
    public boolean close() throws IOException
    {
+      try
+      {
+         workbook.close();
+      }
+      catch (Exception e)
+      {
+         s_log.info("Failed to close MS-Excel workbook", e);
+      }
       return true;
    }
 
@@ -97,15 +101,8 @@ public class ExcelFileImporter implements IFileImporter
       String[][] data = null;
       Workbook wb = null;
       Sheet sht = null;
-      try
-      {
-         wb = WorkbookFactory.create(importFile);
-         sht = getSheet(wb);
-      }
-      catch (InvalidFormatException fe)
-      {
-         throw new IOException(fe.toString());
-      }
+      wb = WorkbookFactory.create(importFile);
+      sht = getSheet(wb);
 
       if(0 == sht.getPhysicalNumberOfRows())
       {
@@ -227,7 +224,7 @@ public class ExcelFileImporter implements IFileImporter
       }
 
 
-      if (cell.getCellType() == Cell.CELL_TYPE_STRING)
+      if (cell.getCellType() == CellType.STRING)
       {
          String buf = getString(column);
 
@@ -262,7 +259,7 @@ public class ExcelFileImporter implements IFileImporter
          return null;
       }
 
-      if (cell.getCellType() == Cell.CELL_TYPE_STRING)
+      if (cell.getCellType() == CellType.STRING)
       {
 
          String buf = getString(column);

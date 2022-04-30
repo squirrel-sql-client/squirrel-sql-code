@@ -254,7 +254,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
    /**
     * Callback, before the processing of the header line will start.
     */
-   protected void beforeHeader() throws Exception
+   protected void beforeHeader()
    {
       // Can be overridden.
    }

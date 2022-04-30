@@ -27,7 +27,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
  * @author Stefan Willinger
  *
  */
-public interface IExportDataCell {
+public interface IExportDataCell
+{
 	/**
 	 * The value-object of the cell.
 	 */

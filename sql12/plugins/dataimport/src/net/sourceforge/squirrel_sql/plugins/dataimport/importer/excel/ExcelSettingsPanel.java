@@ -17,23 +17,22 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer.excel;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This panel holds the excel specific settings for the importer.
@@ -64,9 +63,9 @@ public class ExcelSettingsPanel extends ConfigurationPanel
       {
          this._workbook = WorkbookFactory.create(f);
       }
-      catch (Exception e)
+      catch (IOException e)
       {
-         this._workbook = null;
+         throw Utilities.wrapRuntime(e);
       }
       init();
       loadSettings();

@@ -215,13 +215,12 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
    }
 
    /**
-    * @throws java.lang.Exception
     * @see AbstractDataExportFileWriter#addCell(TableExportController,
     * int, int,
     * IExportDataCell)
     */
    @Override
-   protected void addCell(IExportDataCell cell) throws Exception
+   protected void addCell(IExportDataCell cell)
    {
       if (getPrefs().isUseGlobalPrefsFormating())
       {
