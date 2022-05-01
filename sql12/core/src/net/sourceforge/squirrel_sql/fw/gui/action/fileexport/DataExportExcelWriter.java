@@ -225,10 +225,8 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
 
    /**
     * @see AbstractDataExportFileWriter#addCell(TableExportController,
-    * int, int,
-    * ExportCellData)
+    * int, int, ExportCellData)
     */
-   @Override
    protected void addCell(ExportCellData cell)
    {
       final Cell excelCell;

@@ -23,6 +23,12 @@ public class TableExportCommand extends AbstractExportCommand
       _table = table;
    }
 
+   @Override
+   protected TableExportPreferences getExportPreferences()
+   {
+      return TableExportPreferencesDAO.loadPreferences();
+   }
+
    /**
     * @see AbstractExportCommand#checkMissingData(java.lang.String)
     */

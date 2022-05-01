@@ -135,6 +135,21 @@ public class ResultSetExportCommand extends AbstractExportCommand
       }
    }
 
+   @Override
+   protected TableExportPreferences getExportPreferences()
+   {
+      final TableExportPreferences prefs = TableExportPreferencesDAO.loadPreferences();
+
+      /////////////////////////////////////////////////////////////////////////////////////////////////
+      // If useColoring was true for a file export a XSSFWorkbook instead of a SXSSFWorkbook was used.
+      // This would result in much higher memory usage and much longer export time.
+      // See DataExportExcelWriter.beforeWorking(...)
+      prefs.setUseColoring(false);
+      //
+      /////////////////////////////////////////////////////////////////////////////////////////////////
+      return prefs;
+   }
+
    /**
     * Create a new {@link ProgressAbortCallback}.
     *

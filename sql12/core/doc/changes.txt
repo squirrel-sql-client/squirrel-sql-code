@@ -6,7 +6,7 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
-The MS-Excel export of UI tables allows to include result coloring.
+MS-Excel export of UI tables allows to include result coloring.
   See right mouse menu of UI tables --> "Export CSV / MS Excel / XML / JSON ..."
   The following colors will be saved:
    - User colored rows or cell, see tables right mouse menu

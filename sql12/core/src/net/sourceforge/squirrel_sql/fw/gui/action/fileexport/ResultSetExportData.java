@@ -142,7 +142,7 @@ public class ResultSetExportData implements IExportData
             try
             {
 
-               List<ExportCellData> cells = new ArrayList<ExportCellData>();
+               List<ExportCellData> cells = new ArrayList<>();
                for (int i = 1; i <= colDispDef.size(); i++)
                {
                   ColumnDisplayDefinition colDef = colDispDef.get(i - 1);
