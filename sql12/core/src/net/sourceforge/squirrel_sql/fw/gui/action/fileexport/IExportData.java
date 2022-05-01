@@ -40,6 +40,6 @@ public interface IExportData {
 	 * Its not sure, how many rows are exists. The underlying system may do a lazy load of the rows.
 	 * @return the rows to export.
 	 */
-	Iterator<IExportDataRow> getRows();
+	Iterator<ExportDataRow> getRows();
 
 }

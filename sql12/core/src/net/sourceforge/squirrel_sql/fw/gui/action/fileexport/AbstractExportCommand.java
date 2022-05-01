@@ -98,8 +98,10 @@ public abstract class AbstractExportCommand
 	 */
    protected long writeFile(final TableExportController ctrl, IExportData data)
    {
-      return ExportFileWriter.writeFile(TableExportPreferencesDAO.loadPreferences(), data, progressController, ctrl.getOwningWindow());
+      return ExportFileWriter.writeFile(getExportPreferences(), data, progressController, ctrl.getOwningWindow());
    }
+
+   protected abstract TableExportPreferences getExportPreferences();
 
 
    private void executeCommand(String command, final Window owner)

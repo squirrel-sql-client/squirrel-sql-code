@@ -54,7 +54,7 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
       super(file, prefs, progressController);
    }
 
-   protected String getDataCSV(String sepChar, IExportDataCell cellObj, boolean useGlobalFormatting)
+   protected String getDataCSV(String sepChar, ExportCellData cellObj, boolean useGlobalFormatting)
    {
       if (cellObj.getObject() == null)
       {
@@ -130,10 +130,10 @@ public class DataExportCSVWriter extends AbstractDataExportFileWriter
 
 
    /**
-    * @see AbstractDataExportFileWriter#addCell(int, int, IExportDataCell)
+    * @see AbstractDataExportFileWriter#addCell(int, int, ExportCellData)
     */
    @Override
-   protected void addCell(IExportDataCell cell)
+   protected void addCell(ExportCellData cell)
    {
       String cellObjData = getDataCSV(getSeperatorCharRespectTab(), cell, getPrefs().isUseGlobalPrefsFormating());
       this.aRow.add(cellObjData);

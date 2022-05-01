@@ -20,17 +20,20 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
+import java.awt.Color;
+
 /**
  * @author Stefan Willinger
  */
-public class ExportDataColumn implements IExportDataCell
+public class ExportCellData
 {
-   private ColumnDisplayDefinition columnDisplayDefinition;
-   private Object object;
-   private int rowIndex;
-   private int columnIndex;
+   private ColumnDisplayDefinition _columnDisplayDefinition;
+   private Object _object;
+   private int _rowIndex;
+   private int _columnIndex;
+   private Color _excelExportColor;
 
-   public ExportDataColumn(ColumnDisplayDefinition columnDisplayDefinition, Object object, int rowIndex, int columnIndex)
+   public ExportCellData(ColumnDisplayDefinition columnDisplayDefinition, Object object, int rowIndex, int columnIndex)
    {
       setColumnDisplayDefinition(columnDisplayDefinition);
       setObject(object);
@@ -40,11 +43,11 @@ public class ExportDataColumn implements IExportDataCell
 
    /**
     * @return the columnDisplayDefinition
-    * @see IExportDataCell#getColumnDisplayDefinition()
+    * @see ExportCellData#getColumnDisplayDefinition()
     */
    public ColumnDisplayDefinition getColumnDisplayDefinition()
    {
-      return columnDisplayDefinition;
+      return _columnDisplayDefinition;
    }
 
    /**
@@ -52,16 +55,16 @@ public class ExportDataColumn implements IExportDataCell
     */
    public void setColumnDisplayDefinition(ColumnDisplayDefinition columnDisplayDefinition)
    {
-      this.columnDisplayDefinition = columnDisplayDefinition;
+      this._columnDisplayDefinition = columnDisplayDefinition;
    }
 
    /**
     * @return the object
-    * @see IExportDataCell#getObject()
+    * @see ExportCellData#getObject()
     */
    public Object getObject()
    {
-      return object;
+      return _object;
    }
 
    /**
@@ -69,16 +72,16 @@ public class ExportDataColumn implements IExportDataCell
     */
    public void setObject(Object object)
    {
-      this.object = object;
+      this._object = object;
    }
 
    /**
     * @return the rowIndex
-    * @see IExportDataCell#getRowIndex()
+    * @see ExportCellData#getRowIndex()
     */
    public int getRowIndex()
    {
-      return rowIndex;
+      return _rowIndex;
    }
 
    /**
@@ -86,16 +89,16 @@ public class ExportDataColumn implements IExportDataCell
     */
    public void setRowIndex(int rowIndex)
    {
-      this.rowIndex = rowIndex;
+      this._rowIndex = rowIndex;
    }
 
    /**
     * @return the columnIndex
-    * @see IExportDataCell#getColumnIndex()
+    * @see ExportCellData#getColumnIndex()
     */
    public int getColumnIndex()
    {
-      return columnIndex;
+      return _columnIndex;
    }
 
    /**
@@ -103,8 +106,17 @@ public class ExportDataColumn implements IExportDataCell
     */
    public void setColumnIndex(int columnIndex)
    {
-      this.columnIndex = columnIndex;
+      this._columnIndex = columnIndex;
    }
 
 
+   public void setExcelExportColor(Color excelExportColor)
+   {
+      _excelExportColor = excelExportColor;
+   }
+
+   public Color getExcelExportColor()
+   {
+      return _excelExportColor;
+   }
 }

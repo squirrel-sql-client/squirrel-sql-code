@@ -6,6 +6,14 @@ Not yet released, available in our GIT repository and in snapshots and future re
 
 Enhancements:
 
+MS-Excel export of UI tables allows to include result coloring.
+  See right mouse menu of UI tables --> "Export CSV / MS Excel / XML / JSON ..."
+  The following colors will be saved:
+   - User colored rows or cell, see tables right mouse menu
+   - Find result coloring
+   - Duplicates coloring
+  Warning: For large tables coloring results in higher memory usage and slower export.
+
 #608 SQL Parametrisation Plugin: The parameter value dialog now has a checkbox named "Hide value"
   which turns the value text field into a password field.
 

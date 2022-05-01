@@ -36,9 +36,9 @@ public class ColoringService
       _nullValueColorHandler = new NullValueColorHandler(_dataSetViewerTable);
    }
 
-   public void colorCell(CellRenderer cellRenderer, IDataTypeComponent dataTypeObject, JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+   public void colorCell(CellRenderer cellRenderer, IDataTypeComponent dataTypeObject, JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIx, int columnIx)
    {
-      if (RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX ==  table.getColumnModel().getColumn(column).getModelIndex())
+      if (RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX ==  table.getColumnModel().getColumn(columnIx).getModelIndex())
       {
          return;
       }
@@ -65,27 +65,31 @@ public class ColoringService
          }
       }
 
-      Color userColor = _userColorHandler.getBackground(column, row, isSelected);
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+      // When adjusting check getExcelExportRelevantColor(), too.
+      Color userColor = _userColorHandler.getBackground(columnIx, rowIx, isSelected);
       if(null != userColor)
       {
          customBackground = userColor;
       }
 
-      Color markDuplicateBackground = _markDuplicatesHandler.getBackgroundForCell(row, column, value);
+      Color markDuplicateBackground = _markDuplicatesHandler.getBackgroundForCell(rowIx, columnIx, value);
       if(null != markDuplicateBackground)
       {
          customBackground = markDuplicateBackground;
       }
 
-      Color findBackground = _findColorHandler.getBackgroundForCell(row, column);
+      Color findBackground = _findColorHandler.getBackgroundForCell(rowIx, columnIx);
       if(null != findBackground)
       {
          customBackground = findBackground;
       }
+      //
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
       if(null != _coloringCallback)
       {
-         Color buf = _coloringCallback.getCellColor(row, column, isSelected);
+         Color buf = _coloringCallback.getCellColor(rowIx, columnIx, isSelected);
 
          if(null != buf)
          {
@@ -108,7 +112,6 @@ public class ColoringService
             cellRenderer.setBackground(_dataSetViewerTable.getBackground());
          }
       }
-
    }
 
    public UserColorHandler getUserColorHandler()
@@ -129,5 +132,29 @@ public class ColoringService
    public void setColoringCallback(ColoringCallback coloringCallback)
    {
       _coloringCallback = coloringCallback;
+   }
+
+   public Color getExcelExportRelevantColor(int rowIx, int columnIx, Object cellValue)
+   {
+      Color customBackground = null;
+
+      Color userColor = _userColorHandler.getBackground(columnIx, rowIx, false);
+      if(null != userColor)
+      {
+         customBackground = userColor;
+      }
+
+      Color markDuplicateBackground = _markDuplicatesHandler.getBackgroundForCell(rowIx, columnIx, cellValue);
+      if(null != markDuplicateBackground)
+      {
+         customBackground = markDuplicateBackground;
+      }
+
+      Color findBackground = _findColorHandler.getBackgroundForCell(rowIx, columnIx);
+      if(null != findBackground)
+      {
+         customBackground = findBackground;
+      }
+      return customBackground;
    }
 }

@@ -101,7 +101,7 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter
     * @see AbstractDataExportFileWriter#addCell(int, int, IExportDataCell)
     */
    @Override
-   protected void addCell(IExportDataCell cell) throws Exception
+   protected void addCell(ExportCellData cell)
    {
       String strCellValue = "";
       if (cell.getObject() != null)

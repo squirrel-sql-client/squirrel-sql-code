@@ -29,6 +29,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -66,7 +67,7 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
       super(file, prefs, progressController);
    }
 
-   private Cell getXlsCell(ColumnDisplayDefinition colDef, int colIdx, int curRow, Object cellObj)
+   private Cell writeXlsCell(ColumnDisplayDefinition colDef, int colIdx, int curRow, Object cellObj)
    {
       Row row = sheet.getRow(curRow);
       if (row == null)
@@ -189,7 +190,15 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
       }
       else
       {
-         this.workbook = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
+         if(getPrefs().isUseColoring())
+         {
+            // See class ExcelCellColorer on how this will take care the Excel gets colored.
+            this.workbook = new XSSFWorkbook();
+         }
+         else
+         {
+            this.workbook = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
+         }
       }
 
       this.file = file;
@@ -217,27 +226,28 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
    /**
     * @throws java.lang.Exception
     * @see AbstractDataExportFileWriter#addCell(TableExportController,
-    * int, int,
-    * IExportDataCell)
+    * int, int, ExportCellData)
     */
-   @Override
-   protected void addCell(IExportDataCell cell) throws Exception
+   protected void addCell(ExportCellData cell) throws Exception
    {
+      final Cell excelCell;
       if (getPrefs().isUseGlobalPrefsFormating())
       {
-         getXlsCell(cell.getColumnDisplayDefinition(), cell.getColumnIndex(), calculateRowIdx(cell), cell.getObject());
+         excelCell = writeXlsCell(cell.getColumnDisplayDefinition(), cell.getColumnIndex(), calculateRowIdx(cell), cell.getObject());
       }
       else
       {
-         getXlsCell(null, cell.getColumnIndex(), calculateRowIdx(cell), cell.getObject());
+         excelCell = writeXlsCell(null, cell.getColumnIndex(), calculateRowIdx(cell), cell.getObject());
       }
+
+      ExcelCellColorer.color(excelCell, cell.getExcelExportColor());
    }
 
    /**
     * @param cell
     * @return
     */
-   private int calculateRowIdx(IExportDataCell cell)
+   private int calculateRowIdx(ExportCellData cell)
    {
       if (this.withHeader)
       {

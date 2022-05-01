@@ -16,6 +16,7 @@ public class TableExportPreferencesDAO
    private static final String PREF_KEY_COMMAND = "SquirrelSQL.csvexport.commandString";
    private static final String PREF_KEY_FORMAT_CSV = "SquirrelSQL.csvexport.formatCSV";
    private static final String PREF_KEY_FORMAT_XLS = "SquirrelSQL.csvexport.formatXLS"; // is xlsx
+   private static final String PREF_KEY_USE_COLORING = "SquirrelSQL.csvexport.useColoring"; // is xlsx
    private static final String PREF_KEY_FORMAT_XLS_OLD = "SquirrelSQL.csvexport.formatXLS_OLD"; // is xls
    private static final String PREF_KEY_FORMAT_XML = "SquirrelSQL.csvexport.formatXML";
    private static final String PREF_KEY_FORMAT_JSON = "SquirrelSQL.csvexport.formatJSON";
@@ -39,6 +40,7 @@ public class TableExportPreferencesDAO
       ret.setCommand(Props.getString(PREF_KEY_COMMAND, ret.getCommand()));
       ret.setFormatCSV(Props.getBoolean(PREF_KEY_FORMAT_CSV, ret.isFormatCSV()));
       ret.setFormatXLS(Props.getBoolean(PREF_KEY_FORMAT_XLS, ret.isFormatXLS()));
+      ret.setUseColoring(Props.getBoolean(PREF_KEY_USE_COLORING, ret.isUseColoring()));
       ret.setFormatXLSOld(Props.getBoolean(PREF_KEY_FORMAT_XLS_OLD, ret.isFormatXLSOld()));
       ret.setFormatXML(Props.getBoolean(PREF_KEY_FORMAT_XML, ret.isFormatXML()));
       ret.setFormatJSON(Props.getBoolean(PREF_KEY_FORMAT_JSON, ret.isFormatJSON()));
@@ -62,6 +64,7 @@ public class TableExportPreferencesDAO
       Props.putString(PREF_KEY_COMMAND, prefs.getCommand());
       Props.putBoolean(PREF_KEY_FORMAT_CSV, prefs.isFormatCSV());
       Props.putBoolean(PREF_KEY_FORMAT_XLS, prefs.isFormatXLS());
+      Props.putBoolean(PREF_KEY_USE_COLORING, prefs.isUseColoring());
       Props.putBoolean(PREF_KEY_FORMAT_XLS_OLD, prefs.isFormatXLSOld());
       Props.putBoolean(PREF_KEY_FORMAT_XML, prefs.isFormatXML());
       Props.putBoolean(PREF_KEY_FORMAT_JSON, prefs.isFormatJSON());
