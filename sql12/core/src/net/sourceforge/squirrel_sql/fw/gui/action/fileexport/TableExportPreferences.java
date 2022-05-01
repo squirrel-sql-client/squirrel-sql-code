@@ -55,10 +55,10 @@ public class TableExportPreferences
 
    // PREF_KEY_LINE_SEPERATOR;
    private String _lineSeperator = LineSeparator.DEFAULT.name();
+   private boolean _useColoring;
 
    public boolean isFormatXLS()
    {
-
       return _formatXLS;
    }
 
@@ -215,5 +215,15 @@ public class TableExportPreferences
    public void setLineSeperator(String lineSeperator)
    {
       _lineSeperator = lineSeperator;
+   }
+
+   public boolean isUseColoring()
+   {
+      return _useColoring;
+   }
+
+   public void setUseColoring(boolean useColoring)
+   {
+      _useColoring = useColoring;
    }
 }

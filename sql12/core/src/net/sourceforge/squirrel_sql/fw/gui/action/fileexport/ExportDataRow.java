@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author Stefan Willinger
  */
-public class ExportDataRow implements IExportDataRow
+public class ExportDataRow
 {
    private List<ExportCellData> cells;
 
@@ -37,9 +37,8 @@ public class ExportDataRow implements IExportDataRow
    }
 
    /**
-    * @see IExportDataRow#getCells()
+    * @see ExportDataRow#getCells()
     */
-   @Override
    public Iterator<ExportCellData> getCells()
    {
       return cells.iterator();
@@ -58,7 +57,7 @@ public class ExportDataRow implements IExportDataRow
    }
 
    /**
-    * @see IExportDataRow#getRowIndex()
+    * @see ExportDataRow#getRowIndex()
     */
    public int getRowIndex()
    {

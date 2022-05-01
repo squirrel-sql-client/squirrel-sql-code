@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent;
 
-import java.awt.Dimension;
-import javax.swing.ImageIcon;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+
+import javax.swing.ImageIcon;
+import java.awt.Dimension;
 
 public class SmallToolTipInfoButton
 {
@@ -47,5 +47,10 @@ public class SmallToolTipInfoButton
    public void setInfoText(String infoText)
    {
       _infoText = infoText;
+   }
+
+   public void setEnabled(boolean b)
+   {
+      _btnShowToolTip.setEnabled(b);
    }
 }

@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -31,6 +32,8 @@ public class TableExportDlg extends JDialog
    JCheckBox chkWithHeaders;
    JRadioButton radFormatCSV;
    JRadioButton radFormatXLSX;
+   JCheckBox chkUseColoring;
+   SmallToolTipInfoButton btnUseColoringInfo;
    JRadioButton radFormatXLS;
    JRadioButton radFormatXML;
    JRadioButton radFormatJSON;
@@ -54,7 +57,6 @@ public class TableExportDlg extends JDialog
 	JComboBox cboLineSeparators;
 
 
-	
    public TableExportDlg(Window owner)
    {
       super(owner);
@@ -120,11 +122,8 @@ public class TableExportDlg extends JDialog
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
       ret.add(radFormatCSV, gbc);
 
-
-
       gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0);
-      radFormatXLSX = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatXLSX"));
-      ret.add(radFormatXLSX, gbc);
+      ret.add(createXLSXPanel(), gbc);
 
       gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0);
       radFormatXLS = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatXLS"));
@@ -156,6 +155,35 @@ public class TableExportDlg extends JDialog
       bg.add(radFormatJSON);
 
       ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("TableExportCsvDlg.export.format.title")));
+
+      return ret;
+   }
+
+   private JPanel createXLSXPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+
+      radFormatXLSX = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatXLSX"));
+      ret.add(radFormatXLSX, gbc);
+
+      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0);
+      chkUseColoring = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.coloring.checkbox"));
+      chkUseColoring.setToolTipText(s_stringMgr.getString("TableExportCsvDlg.coloring.info.button"));
+      if(false == this instanceof ResultSetExportDialog)
+      {
+         ret.add(chkUseColoring, gbc);
+      }
+
+      gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      btnUseColoringInfo = new SmallToolTipInfoButton(s_stringMgr.getString("TableExportCsvDlg.coloring.info.button"));
+      if(false == this instanceof ResultSetExportDialog)
+      {
+         ret.add(btnUseColoringInfo.getButton(), gbc);
+      }
 
       return ret;
    }

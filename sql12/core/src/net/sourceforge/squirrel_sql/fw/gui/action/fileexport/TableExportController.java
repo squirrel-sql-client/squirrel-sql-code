@@ -113,6 +113,10 @@ public class TableExportController
          _dlg.lblLineSeparator.setEnabled(true);
          _dlg.cboLineSeparators.setEnabled(true);
 
+         _dlg.chkUseColoring.setEnabled(false);
+         _dlg.btnUseColoringInfo.setEnabled(false);
+
+
          if(_dlg.chkSeparatorTab.isSelected())
          {
             _dlg.txtSeparatorChar.setText(null);
@@ -139,6 +143,10 @@ public class TableExportController
          _dlg.txtSeparatorChar.setEnabled(false);
          _dlg.lblLineSeparator.setEnabled(false);
          _dlg.cboLineSeparators.setEnabled(false);
+         _dlg.chkUseColoring.setEnabled(_dlg.radFormatXLSX.isSelected());
+         _dlg.btnUseColoringInfo.setEnabled(_dlg.radFormatXLSX.isSelected());
+
+
          if(replaceEnding)
          {
             replaceFileEnding();
@@ -153,6 +161,11 @@ public class TableExportController
          _dlg.txtSeparatorChar.setEnabled(false);
          _dlg.lblLineSeparator.setEnabled(false);
          _dlg.cboLineSeparators.setEnabled(false);
+
+         _dlg.chkUseColoring.setEnabled(false);
+         _dlg.btnUseColoringInfo.setEnabled(false);
+
+
          if(replaceEnding)
          {
             replaceFileEnding();
@@ -398,6 +411,8 @@ public class TableExportController
       //Preferences.putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLSX.isSelected());
       prefs.setFormatXLS(_dlg.radFormatXLSX.isSelected());
 
+      prefs.setUseColoring(_dlg.chkUseColoring.isSelected());
+
       //Preferences.putBoolean(PREF_KEY_FORMAT_XLS_OLD, _dlg.radFormatXLS.isSelected());
       prefs.setFormatXLSOld(_dlg.radFormatXLS.isSelected());
 
@@ -442,6 +457,7 @@ public class TableExportController
       {
          _dlg.txtFile.setText(prefs.getFile());
       }
+      _dlg.chkUseColoring.setSelected(prefs.isUseColoring());
 
       _dlg.cboCharsets.setSelectedItem(prefs.getEncoding());
       _dlg.chkWithHeaders.setSelected(prefs.isWithHeaders());

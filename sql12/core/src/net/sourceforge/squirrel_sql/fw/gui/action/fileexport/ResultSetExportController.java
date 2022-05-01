@@ -37,7 +37,6 @@ import java.awt.Window;
 public class ResultSetExportController extends TableExportController
 {
 
-
    public ResultSetExportController(Window owner)
    {
       super(owner);
@@ -47,7 +46,8 @@ public class ResultSetExportController extends TableExportController
 	 * @see TableExportController#shouldWarnIfExcel()
 	 */
 	@Override
-	protected boolean shouldWarnIfExcel() {
+	protected boolean shouldWarnIfExcel()
+	{
 		return true;
 	}
 

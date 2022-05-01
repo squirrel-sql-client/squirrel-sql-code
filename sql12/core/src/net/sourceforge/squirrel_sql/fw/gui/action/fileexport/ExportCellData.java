@@ -20,15 +20,18 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
+import java.awt.Color;
+
 /**
  * @author Stefan Willinger
  */
 public class ExportCellData
 {
-   private ColumnDisplayDefinition columnDisplayDefinition;
-   private Object object;
-   private int rowIndex;
-   private int columnIndex;
+   private ColumnDisplayDefinition _columnDisplayDefinition;
+   private Object _object;
+   private int _rowIndex;
+   private int _columnIndex;
+   private Color _excelExportColor;
 
    public ExportCellData(ColumnDisplayDefinition columnDisplayDefinition, Object object, int rowIndex, int columnIndex)
    {
@@ -44,7 +47,7 @@ public class ExportCellData
     */
    public ColumnDisplayDefinition getColumnDisplayDefinition()
    {
-      return columnDisplayDefinition;
+      return _columnDisplayDefinition;
    }
 
    /**
@@ -52,7 +55,7 @@ public class ExportCellData
     */
    public void setColumnDisplayDefinition(ColumnDisplayDefinition columnDisplayDefinition)
    {
-      this.columnDisplayDefinition = columnDisplayDefinition;
+      this._columnDisplayDefinition = columnDisplayDefinition;
    }
 
    /**
@@ -61,7 +64,7 @@ public class ExportCellData
     */
    public Object getObject()
    {
-      return object;
+      return _object;
    }
 
    /**
@@ -69,7 +72,7 @@ public class ExportCellData
     */
    public void setObject(Object object)
    {
-      this.object = object;
+      this._object = object;
    }
 
    /**
@@ -78,7 +81,7 @@ public class ExportCellData
     */
    public int getRowIndex()
    {
-      return rowIndex;
+      return _rowIndex;
    }
 
    /**
@@ -86,7 +89,7 @@ public class ExportCellData
     */
    public void setRowIndex(int rowIndex)
    {
-      this.rowIndex = rowIndex;
+      this._rowIndex = rowIndex;
    }
 
    /**
@@ -95,7 +98,7 @@ public class ExportCellData
     */
    public int getColumnIndex()
    {
-      return columnIndex;
+      return _columnIndex;
    }
 
    /**
@@ -103,8 +106,17 @@ public class ExportCellData
     */
    public void setColumnIndex(int columnIndex)
    {
-      this.columnIndex = columnIndex;
+      this._columnIndex = columnIndex;
    }
 
 
+   public void setExcelExportColor(Color excelExportColor)
+   {
+      _excelExportColor = excelExportColor;
+   }
+
+   public Color getExcelExportColor()
+   {
+      return _excelExportColor;
+   }
 }

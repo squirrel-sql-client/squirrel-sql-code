@@ -80,7 +80,7 @@ public class ResultSetExportData implements IExportData
    public ResultSetExportData(ResultSet resultSet, DialectType dialect) throws SQLException
    {
       this.resultSet = resultSet;
-      this.colDispDef = new ArrayList<ColumnDisplayDefinition>();
+      this.colDispDef = new ArrayList<>();
       this.dialect = dialect;
 
       int columnCount = this.resultSet.getMetaData().getColumnCount();
@@ -118,10 +118,10 @@ public class ResultSetExportData implements IExportData
     * @see IExportData#getRows()
     */
    @Override
-   public Iterator<IExportDataRow> getRows()
+   public Iterator<ExportDataRow> getRows()
    {
 
-      return new Iterator<IExportDataRow>()
+      return new Iterator<>()
       {
 
          @Override
@@ -132,11 +132,12 @@ public class ResultSetExportData implements IExportData
 
          /**
           * Reads the next row from the result set.
+          *
           * @return A new IExportDataRow, created from the current row of the result set.
           * @see java.util.Iterator#next()
           */
          @Override
-         public IExportDataRow next()
+         public ExportDataRow next()
          {
             try
             {
@@ -161,8 +162,8 @@ public class ResultSetExportData implements IExportData
          }
 
          /**
-          * @see java.util.Iterator#hasNext()
           * @return true, if the result set has more data.
+          * @see java.util.Iterator#hasNext()
           */
          @Override
          public boolean hasNext()

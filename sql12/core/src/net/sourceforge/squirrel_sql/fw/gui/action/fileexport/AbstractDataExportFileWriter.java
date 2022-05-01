@@ -47,8 +47,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
    /**
     * Internationalized strings for this class
     */
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(AbstractDataExportFileWriter.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AbstractDataExportFileWriter.class);
 
    static interface i18n
    {
@@ -130,7 +129,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
          afterHeader();
       }
 
-      Iterator<IExportDataRow> rows = data.getRows();
+      Iterator<ExportDataRow> rows = data.getRows();
 
       progress(i18n.BEGIN_WRITING);
       beforeRows();
@@ -142,7 +141,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
       while (rows.hasNext() && isStop() == false)
       {
          rowsCount++;
-         IExportDataRow aRow = rows.next();
+         ExportDataRow aRow = rows.next();
          if (isStatusUpdateNecessary())
          {
             long secondsPassed = (System.currentTimeMillis() - begin) / 1000;

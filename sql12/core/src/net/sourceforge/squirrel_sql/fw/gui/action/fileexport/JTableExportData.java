@@ -18,9 +18,11 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 
 import javax.swing.JTable;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,12 +39,12 @@ import java.util.List;
 public class JTableExportData implements IExportData
 {
 
-   private JTable table;
+   private JTable _table;
 
-   int nbrSelRows;
-   int nbrSelCols;
-   int[] selRows;
-   int[] selCols;
+   private int _nbrSelRows;
+   private int _nbrSelCols;
+   private int[] _selRows;
+   private int[] _selcols;
 
    /**
     * Constructor using a JTable.
@@ -52,37 +54,37 @@ public class JTableExportData implements IExportData
     */
    public JTableExportData(JTable table, boolean complete)
    {
-      this.table = table;
+      _table = table;
 
-      nbrSelRows = table.getSelectedRowCount();
-      if (0 == nbrSelRows || complete)
+      _nbrSelRows = table.getSelectedRowCount();
+      if (0 == _nbrSelRows || complete)
       {
-         nbrSelRows = table.getRowCount();
+         _nbrSelRows = table.getRowCount();
       }
 
-      nbrSelCols = table.getSelectedColumnCount();
-      if (0 == nbrSelCols || complete)
+      _nbrSelCols = table.getSelectedColumnCount();
+      if (0 == _nbrSelCols || complete)
       {
-         nbrSelCols = table.getColumnCount();
+         _nbrSelCols = table.getColumnCount();
       }
 
-      selRows = table.getSelectedRows();
-      if (0 == selRows.length || complete)
+      _selRows = table.getSelectedRows();
+      if (0 == _selRows.length || complete)
       {
-         selRows = new int[nbrSelRows];
-         for (int i = 0; i < selRows.length; i++)
+         _selRows = new int[_nbrSelRows];
+         for (int i = 0; i < _selRows.length; i++)
          {
-            selRows[i] = i;
+            _selRows[i] = i;
          }
       }
 
-      selCols = table.getSelectedColumns();
-      if (0 == selCols.length || complete)
+      _selcols = table.getSelectedColumns();
+      if (0 == _selcols.length || complete)
       {
-         selCols = new int[nbrSelCols];
-         for (int i = 0; i < selCols.length; i++)
+         _selcols = new int[_nbrSelCols];
+         for (int i = 0; i < _selcols.length; i++)
          {
-            selCols[i] = i;
+            _selcols[i] = i;
          }
       }
 
@@ -97,9 +99,9 @@ public class JTableExportData implements IExportData
    public Iterator<String> getHeaders()
    {
       List<String> headers = new ArrayList<String>();
-      for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
+      for (int colIdx = 0; colIdx < _nbrSelCols; ++colIdx)
       {
-         String columnName = table.getColumnName(selCols[colIdx]);
+         String columnName = _table.getColumnName(_selcols[colIdx]);
          headers.add(columnName);
       }
       return headers.iterator();
@@ -109,28 +111,35 @@ public class JTableExportData implements IExportData
     * @see IExportData#getRows(boolean)
     */
    @Override
-   public Iterator<IExportDataRow> getRows()
+   public Iterator<ExportDataRow> getRows()
    {
-      List<IExportDataRow> rows = new ArrayList<IExportDataRow>(nbrSelRows);
-      for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
+      List<ExportDataRow> rows = new ArrayList<>(_nbrSelRows);
+      for (int rowIdx = 0; rowIdx < _nbrSelRows; ++rowIdx)
       {
-         List<ExportCellData> cells = new ArrayList<>(nbrSelCols);
+         List<ExportCellData> cells = new ArrayList<>(_nbrSelCols);
 
-         for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
+         for (int colIdx = 0; colIdx < _nbrSelCols; ++colIdx)
          {
             ExportCellData cellObj;
 
-            final Object obj = table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+            final Object obj = _table.getValueAt(_selRows[rowIdx], _selcols[colIdx]);
 
-            if (table.getColumnModel().getColumn(colIdx) instanceof ExtTableColumn)
+            if (_table.getColumnModel().getColumn(colIdx) instanceof ExtTableColumn)
             {
-               ExtTableColumn col = (ExtTableColumn) table.getColumnModel().getColumn(selCols[colIdx]);
+               ExtTableColumn col = (ExtTableColumn) _table.getColumnModel().getColumn(_selcols[colIdx]);
                cellObj = new ExportCellData(col.getColumnDisplayDefinition(), obj, rowIdx, colIdx);
             }
             else
             {
                cellObj = new ExportCellData(null, obj, rowIdx, colIdx);
             }
+
+            if(_table instanceof DataSetViewerTable)
+            {
+               final Color excelExportColor = ((DataSetViewerTable) _table).getColoringService().getExcelExportRelevantColor(rowIdx, colIdx, obj);
+               cellObj.setExcelExportColor(excelExportColor);
+            }
+
             cells.add(cellObj);
          }
          rows.add(new ExportDataRow(cells, rowIdx));
