@@ -1,15 +1,5 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -19,6 +9,16 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.List;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang3.StringUtils;
 
 public class GotoHandler
 {
@@ -59,11 +59,13 @@ public class GotoHandler
       return blinkComponent(tabComponentInfo.getComponent(), componentInfoToGoTo.getComponent());
    }
 
-   private boolean blinkComponent(Component containingTabComponent, Component componentToBlink)
+   private boolean blinkComponent(final Component containingTabComponent, Component componentToBlink)
    {
+      Runnable runnableToScrollAndBlink = null;
+
       if(containingTabComponent instanceof JScrollPane && containingTabComponent != componentToBlink)
       {
-         JComponent componentInScrollPane = (JComponent) ((JScrollPane) containingTabComponent).getViewport().getView();
+         final JComponent componentInScrollPane = (JComponent) ((JScrollPane) containingTabComponent).getViewport().getView();
 
          int x = componentToBlink.getX();
          int y = componentToBlink.getY();
@@ -78,23 +80,38 @@ public class GotoHandler
 
          final Rectangle rect = new Rectangle(x, y, componentToBlink.getWidth(), componentToBlink.getHeight());
 
-         GUIUtils.forceProperty(() -> {
-            componentInScrollPane.scrollRectToVisible(rect);
-            final boolean contains = ((JScrollPane) containingTabComponent).getVisibleRect().contains(rect);
-            return contains;
-         });
+         runnableToScrollAndBlink = new Runnable()
+         {
+            public void run()
+            {
+               GUIUtils.forceProperty(() -> {
+                  componentInScrollPane.scrollRectToVisible(rect);
+                  final boolean contains = ((JScrollPane) containingTabComponent).getVisibleRect().contains(rect);
+                  return contains;
+               },
+               () -> initBlinkComponent(componentToBlink));
+            }
+         };
+      }
+      else
+      {
+         runnableToScrollAndBlink = () -> initBlinkComponent(componentToBlink);
       }
 
-      _timer = new Timer(500, e -> onBlinkComponent(componentToBlink));
-
-      _timer.setRepeats(true);
-
-      SwingUtilities.invokeLater(() -> onBlinkComponent(componentToBlink));
-
-      _timer.start();
+      // Give the UI 300 millis to properly open
+      GUIUtils.executeDelayed(runnableToScrollAndBlink, 400);
 
       return true;
    }
+
+   private void initBlinkComponent(Component componentToBlink)
+   {
+      _timer = new Timer(500, e -> onBlinkComponent(componentToBlink));
+      _timer.setRepeats(true);
+      _timer.start();
+       SwingUtilities.invokeLater(() -> onBlinkComponent(componentToBlink));
+   }
+
 
    public PrefsFindInfo getPrefsFindInfoUpdate()
    {

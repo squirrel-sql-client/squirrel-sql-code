@@ -18,29 +18,6 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.ToolTipManager;
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -73,6 +50,29 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.ToolTipManager;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * Common GUI utilities accessed via static methods.
@@ -587,7 +587,14 @@ public class GUIUtils
 
 	public static void executeDelayed(Runnable runnable)
 	{
-		forceProperty(() -> {runnable.run(); return true;}, null, 100);
+		executeDelayed(runnable, 100);
+	}
+
+	public static void executeDelayed(Runnable runnable, int delayMillis)
+	{
+		Timer timer = new Timer(delayMillis, e -> runnable.run());
+		timer.setRepeats(false);
+		timer.start();
 	}
 
 	public static void forceProperty(PropertyCheck propertyCheck)
@@ -595,12 +602,12 @@ public class GUIUtils
 		forceProperty(propertyCheck, null);
 	}
 
-	public static void forceProperty(PropertyCheck propertyCheck, Runnable callOnSuccess)
+	public static void forceProperty(PropertyCheck propertyCheck, Runnable callOnFinished)
 	{
-		forceProperty(propertyCheck, callOnSuccess, 100);
+		forceProperty(propertyCheck, callOnFinished, 100);
 	}
 
-	public static void forceProperty(PropertyCheck propertyCheck, Runnable callOnSuccess, int delayMillis)
+	public static void forceProperty(PropertyCheck propertyCheck, Runnable callOnFinished, int delayMillis)
 	{
 		final Timer[] timerRef = new Timer[1];
 
@@ -615,15 +622,14 @@ public class GUIUtils
 				{
 					timerRef[0].stop();
 
-					if(null != callOnSuccess)
+					if(null != callOnFinished)
 					{
-						callOnSuccess.run();
+						callOnFinished.run();
 					}
 
 					return;
 				}
 				++maxCount;
-
 			}
 		});
 
@@ -650,6 +656,11 @@ public class GUIUtils
 
 	public static void forceScrollToBegin(JScrollPane scrollPane)
 	{
+		forceScrollToBegin(scrollPane, 15);
+	}
+
+	public static void forceScrollToBegin(JScrollPane scrollPane, int maxTrialsCount)
+	{
 		final Timer[] timerRef = new Timer[1];
 
 		timerRef[0] = new Timer(100, new ActionListener()
@@ -661,7 +672,7 @@ public class GUIUtils
 			{
             int hValue = scrollPane.getHorizontalScrollBar().getValue();
             int vValue = scrollPane.getVerticalScrollBar().getValue();
-            if ( (0 == hValue && 0 == vValue)  || maxCount > 15)
+            if ( (0 == hValue && 0 == vValue)  || maxCount > maxTrialsCount)
 				{
 					timerRef[0].stop();
 					return;

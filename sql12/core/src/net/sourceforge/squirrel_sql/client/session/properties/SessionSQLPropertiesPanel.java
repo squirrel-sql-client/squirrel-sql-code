@@ -18,6 +18,9 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Component;
+import javax.swing.JScrollPane;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
@@ -25,9 +28,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JScrollPane;
-import java.awt.Component;
 
 /**
  * This panel allows the user to tailor SQL settings for a session.
@@ -50,16 +50,14 @@ public class SessionSQLPropertiesPanel
    /**
 	 * ctor specifying the Application API.
 	 *
-	 * @param	app		Application API.
-	 *
 	 * @param session
     * @throws	IllegalArgumentException
 	 * 			Thrown if <tt>null</tt> <tt>IApplication</tt>
 	 * 			passed.
 	 */
-	public SessionSQLPropertiesPanel(IApplication app, ISession session) throws IllegalArgumentException
+	public SessionSQLPropertiesPanel(ISession session) throws IllegalArgumentException
 	{
-		_myPanel = new SQLPropertiesPanel(Main.getApplication(), session);
+		_myPanel = new SQLPropertiesPanel(session);
       _scrolledMyPanel = new JScrollPane(_myPanel);
 
 		GUIUtils.forceScrollToBegin(_scrolledMyPanel);

@@ -18,6 +18,20 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
@@ -33,20 +47,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SessionPropertiesSheet extends SessionDialogWidget
 {
@@ -206,7 +206,7 @@ public class SessionPropertiesSheet extends SessionDialogWidget
 		// Property panels for SQuirreL.
 		_panels.add(new GeneralSessionPropertiesPanel());
 		_panels.add(new SessionObjectTreePropertiesPanel(app));
-		_panels.add(new SessionSQLPropertiesPanel(app, session));
+		_panels.add(new SessionSQLPropertiesPanel(session));
 
 		// Go thru all plugins attached to this session asking for panels.
 		SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(getSession());
