@@ -18,11 +18,11 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
-import org.apache.commons.lang3.StringUtils;
-
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A generic implementation for {@link IWikiTableTransformer}.
@@ -73,7 +73,7 @@ public class GenericWikiTableTransformer implements IWikiTableTransformer {
 			// Create the header
 			appendWithReplacement(buf, configuration.getHeaderStartTag());
 			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
-				appendWithReplacement(buf, configuration.getHeaderCell(), table.getColumnName(selCols[colIdx]));
+				appendWithReplacement(buf, configuration.getHeaderCell(), configuration.escapeCellData(table.getColumnName(selCols[colIdx])));
 			}
 			appendWithReplacement(buf, configuration.getHeaderEndTag());
 			// Now fill all the table rows
@@ -98,7 +98,7 @@ public class GenericWikiTableTransformer implements IWikiTableTransformer {
 							value = tmp;
 						}
 					}
-					appendWithReplacement(buf, configuration.getDataCell(), value);
+					appendWithReplacement(buf, configuration.getDataCell(), configuration.escapeCellData(value));
 				}
 				appendWithReplacement(buf, configuration.getRowEndTag());
 			}

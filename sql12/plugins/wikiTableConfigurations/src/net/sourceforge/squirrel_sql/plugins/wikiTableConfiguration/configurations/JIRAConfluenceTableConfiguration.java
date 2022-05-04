@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.wikiTableConfiguration.configuratio
 
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.GenericWikiTableConfigurationBean;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A build in configuration for a Atlassian JIRA/Confluence table.
@@ -27,10 +28,8 @@ import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurat
  * @author Thomas Hackel
  *
  */
-public class JIRAConfluenceTableConfiguration extends GenericWikiTableConfigurationBean {
-
-	private static final long serialVersionUID = 754221028689690621L;
-
+public class JIRAConfluenceTableConfiguration extends GenericWikiTableConfigurationBean
+{
 	private static final String NAME = "JIRA/Confluence";
 	private static final String TABLE_START = "" ;
 	private static final String HEADER_START = "||";
@@ -65,4 +64,9 @@ public class JIRAConfluenceTableConfiguration extends GenericWikiTableConfigurat
 		return config;
 	}
 
+	@Override
+	public String escapeCellData(String cellData)
+	{
+		return StringUtils.replace(cellData, "|", "\\|");
+	}
 }

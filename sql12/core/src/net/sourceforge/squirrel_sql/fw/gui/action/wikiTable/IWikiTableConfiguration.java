@@ -19,7 +19,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
 
 import java.io.Serializable;
-
 import javax.swing.JTable;
 
 /**
@@ -338,5 +337,7 @@ public interface IWikiTableConfiguration extends Cloneable, Serializable {
 	 * @param enabled true, if this configuration should be enabled.
 	 */
 	void setEnabled(boolean enabled);
+
+	String escapeCellData(String cellData);
 
 }

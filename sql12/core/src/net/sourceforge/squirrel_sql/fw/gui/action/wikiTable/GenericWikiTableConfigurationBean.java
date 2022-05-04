@@ -18,11 +18,11 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
 
+import java.io.Serializable;
+
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
 
 /**
  * A generic implementation for {@link IWikiTableConfiguration}
@@ -34,15 +34,10 @@ import java.io.Serializable;
  * @author Stefan Willinger
  * 
  */
-public class GenericWikiTableConfigurationBean implements IWikiTableConfiguration, Serializable {
-
-	private static final long serialVersionUID = 1L;
-
-
-	private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(GenericWikiTableConfigurationBean.class);
+public class GenericWikiTableConfigurationBean implements IWikiTableConfiguration, Serializable
+{
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GenericWikiTableConfigurationBean.class);
 	
-
 	private String name;
 	private String tableStartTag;
 	private String headerStartTag;
@@ -385,6 +380,12 @@ public class GenericWikiTableConfigurationBean implements IWikiTableConfiguratio
 	@Override
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	@Override
+	public String escapeCellData(String cellData)
+	{
+		return cellData;
 	}
 
 	/**

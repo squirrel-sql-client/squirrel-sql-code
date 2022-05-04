@@ -35,6 +35,8 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+#1501 Copy as WIKI Table - JIRA/Confluence --> Values containing "|" were not correctly escaped.
+
 #1500 SQL Parametrisation Plugin: Quote values check box will always be enabled/active.
 
 Fixed scrolling behaviour of scrollable popup menus when up/down keys were used.
