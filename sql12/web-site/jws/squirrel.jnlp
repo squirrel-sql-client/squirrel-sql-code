@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0+" codebase="http://www.squirrelsql.org/jws" href="squirrel.jnlp">
+<jnlp spec="1.0+" codebase="https://squirrel-sql.sourceforge.io/jws/" href="squirrel.jnlp">
   <information>
     <title>SQuirreL SQL Client</title>
     <vendor>SourceForge.net</vendor>
-    <homepage href="http://www.squirrelsql.org/"/>
+    <homepage href="https://squirrel-sql.sourceforge.io/"/>
     <icon kind="splash" href="logo.jpg"/>
     <offline-allowed/>
   </information>
