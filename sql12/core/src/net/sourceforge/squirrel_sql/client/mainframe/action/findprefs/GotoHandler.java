@@ -16,13 +16,18 @@ import javax.swing.Timer;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
 
 public class GotoHandler
 {
-   public final static ILogger s_log = LoggerController.createLogger(GotoHandler.class);
+   private StringManager s_stringMgr = StringManagerFactory.getStringManager(GotoHandler.class);
+
+   private final static ILogger s_log = LoggerController.createLogger(GotoHandler.class);
+
    private PrefsFindInfo _prefsFindInfo;
 
    private Timer _timer;
@@ -50,9 +55,12 @@ public class GotoHandler
 
       if(null == componentInfoToGoTo)
       {
-         s_log.warn("Failed to find Component for path:\n" + path);
+         s_log.warn("Failed to find Component for path (search dialog was reloaded, try again):\n" + path);
+
          final String pathNoNewLines = StringUtils.replace("" + path, "\n", " ");
-         Main.getApplication().getMessageHandler().showWarningMessage("Failed to find Component for path:\n " + StringUtils.abbreviate(pathNoNewLines, 300));
+         String msg = s_stringMgr.getString("GotoHandler.component.not.found.try.again", pathNoNewLines);
+         Main.getApplication().getMessageHandler().showWarningMessage(msg);
+
          return false;
       }
 
