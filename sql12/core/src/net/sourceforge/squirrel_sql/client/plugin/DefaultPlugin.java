@@ -25,9 +25,8 @@ import java.util.Collections;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.IApplicationArgument;
-import net.sourceforge.squirrel_sql.client.Version;
-import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers;
@@ -103,16 +102,6 @@ public abstract class DefaultPlugin implements IPlugin
 	public String getContributors()
 	{
 		return "";
-	}
-
-	/**
-	 * Returns the home page for this plugin.
-	 *
-	 * @return	the home page for this plugin.
-	 */
-	public String getWebSite()
-	{
-		return Version.getWebSite();
 	}
 
 	/**

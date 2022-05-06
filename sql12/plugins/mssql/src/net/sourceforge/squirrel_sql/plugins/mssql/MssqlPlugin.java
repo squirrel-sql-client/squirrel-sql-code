@@ -18,6 +18,11 @@ package net.sourceforge.squirrel_sql.plugins.mssql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
@@ -72,11 +77,6 @@ import net.sourceforge.squirrel_sql.plugins.mssql.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.mssql.tab.ViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.mssql.tokenizer.MSSQLQueryTokenizer;
 import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
-
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 
 public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin
 {
@@ -213,14 +213,6 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
       net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel[] retValue;
 
       retValue = super.getSessionPropertiesPanels(iSession);
-      return retValue;
-   }
-
-   public String getWebSite()
-   {
-      String retValue;
-
-      retValue = super.getWebSite();
       return retValue;
    }
 

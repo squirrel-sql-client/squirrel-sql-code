@@ -87,13 +87,6 @@ public interface IPlugin
 	String getContributors();
 
 	/**
-	 * Returns the home page for this plugin.
-	 *
-	 * @return	the home page for this plugin.
-	 */
-	String getWebSite();
-
-	/**
 	 * Returns the current version of this plugin.
 	 *
 	 * @return	the current version of this plugin.

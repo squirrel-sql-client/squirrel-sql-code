@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+About dialog: Completed web links.
+
 MS-Excel export of UI tables allows to include result coloring.
   See right mouse menu of UI tables --> "Export CSV / MS Excel / XML / JSON ..."
   The following colors will be saved:

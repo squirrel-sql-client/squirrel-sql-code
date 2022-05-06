@@ -1,15 +1,15 @@
 package net.sourceforge.squirrel_sql.client.gui.aboutdialog;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.VersionPane;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-
+import java.awt.BorderLayout;
+import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.VersionPane;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 
 final class AboutPanel extends JPanel
 {
@@ -22,7 +22,7 @@ final class AboutPanel extends JPanel
       Icon icon = rsrc.getIcon(SquirrelResources.IImageNames.SPLASH_SCREEN);
       add(BorderLayout.CENTER, new JLabel(icon));
 
-      VersionPane versionPane = new VersionPane(true);
+      VersionPane versionPane = new VersionPane();
       versionPane.setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND, true));
       versionPane.setForeground(Color.black);
       versionPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));

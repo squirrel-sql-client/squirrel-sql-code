@@ -127,16 +127,6 @@ public class PluginInfo
 	}
 
 	/**
-	 * Returns the home page for this plugin.
-	 *
-	 * @return	the home page for this plugin.
-	 */
-	public String getWebSite()
-	{
-		return _plugin.getWebSite();
-	}
-
-	/**
 	 * Returns the current version of this plugin.
 	 *
 	 * @return	the current version of this plugin.

@@ -19,19 +19,6 @@ package net.sourceforge.squirrel_sql.client.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.Version;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.JTextPane;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-import javax.swing.text.html.HTML;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Point;
@@ -41,6 +28,20 @@ import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import javax.swing.JTextPane;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.html.HTML;
+
+import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * A class that encapsulates the work of rendering the version and copyright.
@@ -48,8 +49,6 @@ import java.net.URISyntaxException;
  */
 public class VersionPane extends JTextPane implements MouseMotionListener, MouseListener
 {
-   private boolean _showWebsite = false;
-
    /**
     * Logger for this class.
     */
@@ -58,77 +57,73 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
    /**
     * Constructor
     *
-    * @param showWebsite whether or not to display the website.  This is done
-    *                    in the about dialog but not in the splash screen.
     */
-   public VersionPane(boolean showWebsite)
+   public VersionPane()
    {
-      _showWebsite = showWebsite;
-      init();
-   }
-
-   /**
-    * Renders the content.
-    */
-   private void init()
-   {
-      String content = getContent();
-      putClientProperty(HONOR_DISPLAY_PROPERTIES, true);
-      setContentType("text/html");
-      StyledDocument doc = getStyledDocument();
-      SimpleAttributeSet s = new SimpleAttributeSet();
-      StyleConstants.setAlignment(s, StyleConstants.ALIGN_CENTER);
-      StyleConstants.setBold(s, true);
       try
       {
-         doc.setParagraphAttributes(0, content.length(), s, false);
-         doc.insertString(0, content, null);
-         if (_showWebsite)
+         StringBuilder text = new StringBuilder();
+         text.append(Version.getVersion());
+         text.append("\n");
+         text.append(Version.getCopyrightStatement());
+         text.append("\n");
+
+         if( Desktop.isDesktopSupported() )
          {
-            String webContent = Version.getWebSite();
-            SimpleAttributeSet w = new SimpleAttributeSet();
-            StyleConstants.setAlignment(w, StyleConstants.ALIGN_CENTER);
-            StyleConstants.setUnderline(w, true);
-            SimpleAttributeSet hrefAttr = new SimpleAttributeSet();
-            hrefAttr.addAttribute(HTML.Attribute.HREF, Version.getWebSite());
-            w.addAttribute(HTML.Tag.A, hrefAttr);
-            doc.setParagraphAttributes(content.length(), webContent.length(), w, false);
-            doc.insertString(content.length(), webContent, null);
-            if (Desktop.isDesktopSupported())
-            {
-               addMouseListener(this);
-               addMouseMotionListener(this);
-            }
+            String content = text.toString();
+            putClientProperty(HONOR_DISPLAY_PROPERTIES, true);
+            setContentType("text/html");
+            StyledDocument doc = getStyledDocument();
+            SimpleAttributeSet s = new SimpleAttributeSet();
+            StyleConstants.setAlignment(s, StyleConstants.ALIGN_CENTER);
+            StyleConstants.setBold(s, true);
+            doc.setParagraphAttributes(0, content.length(), s, false);
+            doc.insertString(0, content, null);
+
+            appendWebsiteLink(doc, Version.getWebSite());
+            doc.insertString(doc.getLength(), "\n", null);
+            appendWebsiteLink(doc, Version.getWebSite2());
+            doc.insertString(doc.getLength(), "\n", null);
+            appendWebsiteLink(doc, Version.getWebSite3());
+
+            addMouseListener(this);
+            addMouseMotionListener(this);
+         }
+         else
+         {
+            text.append(Version.getWebSite() + "\n");
+            text.append(Version.getWebSite2() + "\n");
+            text.append(Version.getWebSite3());
+
+            String content = text.toString();
+            putClientProperty(HONOR_DISPLAY_PROPERTIES, true);
+            setContentType("text/html");
+            StyledDocument doc = getStyledDocument();
+            SimpleAttributeSet s = new SimpleAttributeSet();
+            StyleConstants.setAlignment(s, StyleConstants.ALIGN_CENTER);
+            StyleConstants.setBold(s, true);
+            doc.setParagraphAttributes(0, content.length(), s, false);
+            doc.insertString(0, content, null);
+
          }
       }
       catch (Exception e)
       {
-         s_log.error("init: Unexpected exception " + e.getMessage());
+         s_log.error(e);
       }
       setOpaque(false);
-
    }
 
-   /**
-    * Constructs the text that gets rendered.
-    *
-    * @return version and copyright info ( and possibly website url )
-    */
-   private String getContent()
+   private void appendWebsiteLink(StyledDocument doc, String webContent) throws BadLocationException
    {
-      StringBuffer text = new StringBuffer();
-      text.append(Version.getVersion());
-      text.append("\n");
-      text.append(Version.getCopyrightStatement());
-      if (_showWebsite)
-      {
-         text.append("\n");
-         if (!Desktop.isDesktopSupported())
-         {
-            text.append(Version.getWebSite());
-         }
-      }
-      return text.toString();
+      SimpleAttributeSet w = new SimpleAttributeSet();
+      StyleConstants.setAlignment(w, StyleConstants.ALIGN_CENTER);
+      StyleConstants.setUnderline(w, true);
+      SimpleAttributeSet hrefAttr = new SimpleAttributeSet();
+      hrefAttr.addAttribute(HTML.Attribute.HREF, webContent);
+      w.addAttribute(HTML.Tag.A, hrefAttr);
+      doc.setParagraphAttributes(doc.getLength(), webContent.length(), w, false);
+      doc.insertString(doc.getLength(), webContent, null);
    }
 
    public void mouseMoved(MouseEvent ev)

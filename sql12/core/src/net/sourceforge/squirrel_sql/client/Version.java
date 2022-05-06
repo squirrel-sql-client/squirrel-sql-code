@@ -18,11 +18,11 @@ package net.sourceforge.squirrel_sql.client;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * Application version information.
  *
@@ -37,7 +37,10 @@ public class Version
 	private static final String APP_NAME = "SQuirreL SQL Client";
 	private static final String COPYRIGHT = "Copyright (c) 2001-2022\nColin Bell, Gerd Wagner, Rob Manning and others";
 	private static final String WEB_SITE = "http://www.squirrelsql.org";
-	
+	private static final String WEB_SITE2 = "https://squirrelsql.org";
+
+	private static final String WEB_SITE3 = "https://squirrel-sql.sourceforge.io";
+
 	private static String shortVersion = null;
 	
 	public static String getApplicationName()
@@ -116,7 +119,17 @@ public class Version
 		return WEB_SITE;
 	}
 
-   public static boolean supportsUsedJDK()
+	public static String getWebSite2()
+	{
+		return WEB_SITE2;
+	}
+	public static String getWebSite3()
+	{
+		return WEB_SITE3;
+	}
+
+
+	public static boolean supportsUsedJDK()
    {
       String vmVer = System.getProperty("java.vm.version");
 
