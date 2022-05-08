@@ -19,15 +19,10 @@ package net.sourceforge.squirrel_sql.client.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.Cursor;
-import java.awt.Desktop;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import javax.swing.JTextPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -38,10 +33,15 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.html.HTML;
-
-import net.sourceforge.squirrel_sql.client.Version;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * A class that encapsulates the work of rendering the version and copyright.
@@ -106,12 +106,16 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
             doc.insertString(0, content, null);
 
          }
+
+         setOpaque(false);
+
+         //setFocusable(false);
+         setFocusCycleRoot(false);
       }
       catch (Exception e)
       {
          s_log.error(e);
       }
-      setOpaque(false);
    }
 
    private void appendWebsiteLink(StyledDocument doc, String webContent) throws BadLocationException
