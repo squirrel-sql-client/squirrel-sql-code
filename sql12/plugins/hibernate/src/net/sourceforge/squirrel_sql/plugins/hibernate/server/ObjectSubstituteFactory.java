@@ -110,7 +110,7 @@ public class ObjectSubstituteFactory
       try
       {
 
-         ArrayList<ObjectSubstitute> ret = new ArrayList<ObjectSubstitute>();
+         ArrayList<ObjectSubstitute> ret = new ArrayList<>();
          if (isInitialized(col))
          {
             for (Object o : col)
@@ -188,7 +188,18 @@ public class ObjectSubstituteFactory
                Collection col = (Collection) accessor.get(o);
                if (isInitialized(col))
                {
-                  objectSubstituteCollection = _prepareObjectSubstitutesForCollection(col, infoDataByClassName, doneObjs);
+                  if(isPersistentBasicTypeCollection(col, infoDataByClassName))
+                  {
+                     objectSubstituteCollection = new ArrayList<>();
+
+                     // new ArrayList<>(col) is needed to to move the entries of col
+                     // from a Hibernate persistent collection into a Java standard ArrayList
+                     objectSubstituteCollection.add(new ObjectSubstitute(new ArrayList<>(col)));
+                  }
+                  else
+                  {
+                     objectSubstituteCollection = _prepareObjectSubstitutesForCollection(col, infoDataByClassName, doneObjs);
+                  }
                }
 
                PropertySubstitute propertySubstitute = new PropertySubstitute(hibernatePropertyInfo, objectSubstituteCollection, isInitialized(col));
@@ -208,6 +219,20 @@ public class ObjectSubstituteFactory
 
       return ret;
    }
+
+   private boolean isPersistentBasicTypeCollection(Collection collectionToCheck, HashMap<String, MappedClassInfoData> infoDataByClassName)
+   {
+      if(null == collectionToCheck || collectionToCheck.isEmpty())
+      {
+         return false;
+      }
+
+      MappedClassInfoData mappedClassInfoData =
+            findMappedClassInfoData(collectionToCheck.stream().findAny().get(), infoDataByClassName, null);
+
+      return null == mappedClassInfoData;
+   }
+
 
    private String _toString(Object o)
    {

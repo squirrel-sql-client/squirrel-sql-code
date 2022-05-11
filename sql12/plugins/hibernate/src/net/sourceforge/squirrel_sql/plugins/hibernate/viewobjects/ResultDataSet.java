@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import java.util.ArrayList;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -10,8 +12,6 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
-
-import java.util.ArrayList;
 
 public class ResultDataSet implements IDataSet
 {
@@ -75,6 +75,11 @@ public class ResultDataSet implements IDataSet
          if (false == hpr.wasInitialized())
          {
             return HibernateUtil.UNITIALIZED_PERSISTENT_COLLECTION;
+         }
+         else if (null == mappedClassInfo)
+         {
+            // Happens when hpr is a mapped basic type (e.g. Integer) collection
+            return "" + hpr.getPersistentCollection();
          }
          else
          {

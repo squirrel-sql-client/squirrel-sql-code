@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class ObjectSubstitute implements Serializable
 {
@@ -13,7 +14,7 @@ public class ObjectSubstitute implements Serializable
 
 
    public static final String PLAIN_VALUES = "<plain values>";
-   private ArrayList<Object> _plainValueArray;
+   private Collection<Object> _plainValueArray;
    private HashMap<String, PlainValue> _plainValueByPropertyName = new HashMap<String, PlainValue>();
 
    /**
@@ -25,31 +26,63 @@ public class ObjectSubstitute implements Serializable
       _toString = toString;
    }
 
-   ObjectSubstitute(ArrayList<Object> plainValueArray)
+   ObjectSubstitute(Collection<Object> plainValueCollection)
    {
-      _plainValueArray = plainValueArray;
-      _toString = PLAIN_VALUES + "[" + plainValueArray.size() + "]";
+      _plainValueArray = plainValueCollection;
+      //_toString = PLAIN_VALUES + "[" + plainValueCollection.size() + "]";
+      _toString = PLAIN_VALUES + " size=" + plainValueCollection.size() + ", values: " + plainValuesAsString(plainValueCollection);
 
 
-      String className = null == plainValueArray.get(0) ? "<unknown>" : plainValueArray.get(0).getClass().getName();
+      Optional<Object> any = plainValueCollection.stream().findAny();
+      String className = any.isEmpty() ? "<unknown>" : any.getClass().getName();
       String propertyName = "value " + (1);
       HibernatePropertyInfo indentifierHibernatePropertyInfo = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
 
-      _plainValueByPropertyName.put(propertyName, new PlainValue(plainValueArray.get(0), indentifierHibernatePropertyInfo));
+      _plainValueByPropertyName.put(propertyName, new PlainValue(any.orElse("<unknown>"), indentifierHibernatePropertyInfo));
 
-      HibernatePropertyInfo[] hibernatePropertyInfos = new HibernatePropertyInfo[plainValueArray.size() - 1];
-      for (int i = 1; i < plainValueArray.size(); i++)
+      HibernatePropertyInfo[] hibernatePropertyInfos = new HibernatePropertyInfo[plainValueCollection.size() - 1];
+
+      ArrayList<Object> plainValueList = new ArrayList<>(plainValueCollection);
+      for ( int i = 1; i < plainValueList.size(); i++)
       {
-         className = null == plainValueArray.get(i) ? "<unknown>" : plainValueArray.get(i).getClass().getName();
+         className = null == plainValueList.get(i) ? "<unknown>" : plainValueList.get(i).getClass().getName();
          propertyName = "value " + (i + 1);
          hibernatePropertyInfos[i-1] = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
 
-         _plainValueByPropertyName.put(propertyName, new PlainValue(plainValueArray.get(i), hibernatePropertyInfos[i-1]));
+         _plainValueByPropertyName.put(propertyName, new PlainValue(plainValueList.get(i), hibernatePropertyInfos[i-1]));
       }
 
 
       _mappedClassInfoData = new MappedClassInfoData(PLAIN_VALUES, "<unknown>", indentifierHibernatePropertyInfo, hibernatePropertyInfos);
       _mappedClassInfoData.setPlainValueArray(true);
+   }
+
+   private String plainValuesAsString(Collection<Object> plainValueCollection)
+   {
+      StringBuilder ret = new StringBuilder();
+
+      int count = 0;
+      for( Object o : plainValueCollection )
+      {
+         if(0 == count)
+         {
+            ret.append(o);
+         }
+         else
+         {
+            ret.append(";").append(o);
+         }
+
+         ++count;
+
+         if(count > 20)
+         {
+            ret.append(" ...");
+            break;
+         }
+      }
+
+      return ret.toString();
    }
 
    void putSubstituteValueByPropertyName(String propertyName, PropertySubstitute propertySubstitute)

@@ -37,6 +37,8 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+Hibernate Plugin: Fixed NullPointer for mapped collections of type javax.persistence.ElementCollection.
+
 #1501 Copy as WIKI Table - JIRA/Confluence --> Values containing "|" were not correctly escaped.
 
 #1500 SQL Parametrisation Plugin: Quote values check box will always be enabled/active.
