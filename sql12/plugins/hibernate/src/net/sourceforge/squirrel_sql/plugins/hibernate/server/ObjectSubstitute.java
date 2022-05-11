@@ -14,8 +14,8 @@ public class ObjectSubstitute implements Serializable
 
 
    public static final String PLAIN_VALUES = "<plain values>";
-   private Collection<Object> _plainValueArray;
-   private HashMap<String, PlainValue> _plainValueByPropertyName = new HashMap<String, PlainValue>();
+   private Collection<Object> _primitiveTypePersistentCollection;
+   private HashMap<String, PlainValue> _plainValueByPropertyName = new HashMap<>();
 
    /**
     * Is seriously meant to be package visible because it must not called nowhere except during initialization in ObjectSubstituteFactory
@@ -26,23 +26,23 @@ public class ObjectSubstitute implements Serializable
       _toString = toString;
    }
 
-   ObjectSubstitute(Collection<Object> plainValueCollection)
+   ObjectSubstitute(Collection<Object> primitiveTypeCollection)
    {
-      _plainValueArray = plainValueCollection;
-      //_toString = PLAIN_VALUES + "[" + plainValueCollection.size() + "]";
-      _toString = PLAIN_VALUES + " size=" + plainValueCollection.size() + ", values: " + plainValuesAsString(plainValueCollection);
+      _primitiveTypePersistentCollection = primitiveTypeCollection;
+      //_toString = PLAIN_VALUES + "[" + primitiveTypeCollection.size() + "]";
+      _toString = PLAIN_VALUES + " size=" + primitiveTypeCollection.size() + ", values: " + primitiveTypePersistentCollectionAsString(primitiveTypeCollection);
 
 
-      Optional<Object> any = plainValueCollection.stream().findAny();
+      Optional<Object> any = primitiveTypeCollection.stream().findAny();
       String className = any.isEmpty() ? "<unknown>" : any.getClass().getName();
       String propertyName = "value " + (1);
       HibernatePropertyInfo indentifierHibernatePropertyInfo = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
 
       _plainValueByPropertyName.put(propertyName, new PlainValue(any.orElse("<unknown>"), indentifierHibernatePropertyInfo));
 
-      HibernatePropertyInfo[] hibernatePropertyInfos = new HibernatePropertyInfo[plainValueCollection.size() - 1];
+      HibernatePropertyInfo[] hibernatePropertyInfos = new HibernatePropertyInfo[primitiveTypeCollection.size() - 1];
 
-      ArrayList<Object> plainValueList = new ArrayList<>(plainValueCollection);
+      ArrayList<Object> plainValueList = new ArrayList<>(primitiveTypeCollection);
       for ( int i = 1; i < plainValueList.size(); i++)
       {
          className = null == plainValueList.get(i) ? "<unknown>" : plainValueList.get(i).getClass().getName();
@@ -57,7 +57,7 @@ public class ObjectSubstitute implements Serializable
       _mappedClassInfoData.setPlainValueArray(true);
    }
 
-   private String plainValuesAsString(Collection<Object> plainValueCollection)
+   private String primitiveTypePersistentCollectionAsString(Collection<Object> plainValueCollection)
    {
       StringBuilder ret = new StringBuilder();
 
@@ -87,7 +87,7 @@ public class ObjectSubstitute implements Serializable
 
    void putSubstituteValueByPropertyName(String propertyName, PropertySubstitute propertySubstitute)
    {
-      if (null == _plainValueArray)
+      if ( null == _primitiveTypePersistentCollection )
       {
          _substituteValueByPropertyName.put(propertyName, propertySubstitute);
       }
@@ -107,7 +107,7 @@ public class ObjectSubstitute implements Serializable
     */
    public Object getValue(String propertyName)
    {
-      if (null == _plainValueArray)
+      if ( null == _primitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).getSingleValue();
       }
@@ -119,7 +119,7 @@ public class ObjectSubstitute implements Serializable
 
    public String getTypeName(String propertyName)
    {
-      if (null == _plainValueArray)
+      if ( null == _primitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).getHibernatePropertyInfo().getClassName();
       }
@@ -131,7 +131,7 @@ public class ObjectSubstitute implements Serializable
 
    public boolean wasInitialized(String propertyName)
    {
-      if (null == _plainValueArray)
+      if ( null == _primitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).isInitialized();
       }
@@ -146,9 +146,9 @@ public class ObjectSubstitute implements Serializable
       return _substituteValueByPropertyName.get(propertyName).getObjectSubstituteCollection();
    }
 
-   public boolean isPersistenCollection(String propertyName)
+   public boolean isPrimitiveTypePersistentCollection(String propertyName)
    {
-      if (null == _plainValueArray)
+      if ( null == _primitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).isPersistenCollection();
       }
@@ -160,7 +160,7 @@ public class ObjectSubstitute implements Serializable
 
    public boolean isNull(String propertyName)
    {
-      if (null == _plainValueArray)
+      if ( null == _primitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).isNull();
       }
@@ -172,7 +172,7 @@ public class ObjectSubstitute implements Serializable
 
    public HibernatePropertyInfo getHibernatePropertyInfo(String propertyName)
    {
-      if (null == _plainValueArray)
+      if ( null == _primitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).getHibernatePropertyInfo();
       }
@@ -188,9 +188,9 @@ public class ObjectSubstitute implements Serializable
       return _toString;
    }
 
-   public MappedClassInfoData getPlainValueArrayMappedClassInfo()
+   public MappedClassInfoData getPrimitiveTypePersistentCollectionClassInfo()
    {
-      if (null == _plainValueArray)
+      if ( null == _primitiveTypePersistentCollection )
       {
          return null;
       }

@@ -1,14 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import java.util.ArrayList;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
-
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class ViewObjectsUtil
 {
@@ -42,7 +41,16 @@ public class ViewObjectsUtil
 
          if (hpr.isPersistenCollection())
          {
-            parent.add(new DefaultMutableTreeNode(new PersistentCollectionResult(hpr, propertyInfo, allMappedClassInfos)));
+            if(null == ViewObjectsUtil.findMappedClassInfo(hpr.getTypeName(), allMappedClassInfos, true))
+            {
+                  // Happens when hpr is a mapped basic type (e.g. Integer) collection
+               parent.add(new DefaultMutableTreeNode(new PrimitiveCollection(hpr)));
+            }
+            else
+            {
+               parent.add(new DefaultMutableTreeNode(new PersistentCollectionResult(hpr, propertyInfo, allMappedClassInfos)));
+
+            }
          }
          else if (isMappedType(allMappedClassInfos, hpr))
          {
@@ -76,5 +84,10 @@ public class ViewObjectsUtil
       {
          kidNode.add(new DefaultMutableTreeNode(singleResult));
       }
+   }
+
+   public static String getPrimitivePersistentCollectionString(HibernatePropertyReader hpr)
+   {
+      return "" + hpr.getPersistentCollection();
    }
 }

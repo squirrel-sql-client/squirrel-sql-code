@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import java.util.Collection;
+
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernatePropertyInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
-
-import java.util.Collection;
 
 public class HibernatePropertyReader
 {
@@ -68,7 +68,7 @@ public class HibernatePropertyReader
       }
       else
       {
-         return _obj.isPersistenCollection(_propertyName);
+         return _obj.isPrimitiveTypePersistentCollection(_propertyName);
       }
    }
 

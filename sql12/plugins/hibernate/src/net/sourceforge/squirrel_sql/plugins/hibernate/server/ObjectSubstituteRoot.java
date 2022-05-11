@@ -62,10 +62,10 @@ public class ObjectSubstituteRoot implements Serializable
       {
          for (ObjectSubstitute objectSubstitute : _objectSubstituteArray)
          {
-            if(null != objectSubstitute.getPlainValueArrayMappedClassInfo())
+            if(null != objectSubstitute.getPrimitiveTypePersistentCollectionClassInfo())
             {
                // There can be just one PlainValueArray in a tuple
-               return objectSubstitute.getPlainValueArrayMappedClassInfo();
+               return objectSubstitute.getPrimitiveTypePersistentCollectionClassInfo();
             }
          }
 
@@ -74,7 +74,7 @@ public class ObjectSubstituteRoot implements Serializable
       }
       else
       {
-         return _objectSubstitute.getPlainValueArrayMappedClassInfo();
+         return _objectSubstitute.getPrimitiveTypePersistentCollectionClassInfo();
       }
    }
 }

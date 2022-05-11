@@ -79,7 +79,7 @@ public class ResultDataSet implements IDataSet
          else if (null == mappedClassInfo)
          {
             // Happens when hpr is a mapped basic type (e.g. Integer) collection
-            return "" + hpr.getPersistentCollection();
+            return ViewObjectsUtil.getPrimitivePersistentCollectionString(hpr);
          }
          else
          {
