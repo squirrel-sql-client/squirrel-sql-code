@@ -17,17 +17,21 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Font;
-import java.awt.event.MouseListener;
 
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
+import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
-
-import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
+import java.awt.Font;
+import java.awt.event.MouseListener;
 
 public interface ISQLEntryPanel extends IHasIdentifier
 {

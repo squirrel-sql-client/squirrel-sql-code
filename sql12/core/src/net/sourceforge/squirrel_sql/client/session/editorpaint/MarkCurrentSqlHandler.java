@@ -1,6 +1,7 @@
-package net.sourceforge.squirrel_sql.client.session;
+package net.sourceforge.squirrel_sql.client.session.editorpaint;
 
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.sqlbounds.BoundsOfSqlHandler;
 
 import javax.swing.SwingUtilities;

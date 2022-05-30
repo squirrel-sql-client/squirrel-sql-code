@@ -17,22 +17,22 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
-import java.awt.dnd.DropTarget;
-import java.awt.event.MouseListener;
 
-import javax.swing.BorderFactory;
+import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.undo.UndoManager;
-
-import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import java.awt.Font;
+import java.awt.dnd.DropTarget;
+import java.awt.event.MouseListener;
 
 public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 {

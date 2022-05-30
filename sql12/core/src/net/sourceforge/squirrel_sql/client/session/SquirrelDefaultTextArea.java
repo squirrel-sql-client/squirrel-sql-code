@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 
@@ -8,9 +10,7 @@ import java.awt.Graphics;
 
 class SquirrelDefaultTextArea extends JTextArea
 {
-
-   private MarkCurrentSqlHandler _markCurrentSqlHandler;
-   private TextAreaPaintListener _textAreaPaintListener;
+   private TextAreaPaintHandler _textAreaPaintHandler;
 
    SquirrelDefaultTextArea(ISession session)
    {
@@ -21,7 +21,7 @@ class SquirrelDefaultTextArea extends JTextArea
          this.setFont(props.getFontInfo().createFont());
       }
 
-      _markCurrentSqlHandler = new MarkCurrentSqlHandler(this, session);
+      _textAreaPaintHandler = new TextAreaPaintHandler(this, session);
 
 
       /////////////////////////////////////////////////////////////////////
@@ -35,22 +35,23 @@ class SquirrelDefaultTextArea extends JTextArea
    public void paint(Graphics g)
    {
       super.paint(g);
-      _markCurrentSqlHandler.paintMark(g);
+      _textAreaPaintHandler.onPaint(g);
+   }
 
-      if(null != _textAreaPaintListener)
-      {
-         _textAreaPaintListener.paint();
-      }
-
+   @Override
+   protected void paintComponent(Graphics g)
+   {
+      super.paintComponent(g);
+      _textAreaPaintHandler.onPaintComponent(g);
    }
 
    public void setMarkCurrentSQLActive(boolean b)
    {
-      _markCurrentSqlHandler.setActive(b);
+      _textAreaPaintHandler.getMarkCurrentSqlHandler().setActive(b);
    }
 
    public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
    {
-      _textAreaPaintListener = textAreaPaintListener;
+      _textAreaPaintHandler.setTextAreaPaintListener(textAreaPaintListener);
    }
 }

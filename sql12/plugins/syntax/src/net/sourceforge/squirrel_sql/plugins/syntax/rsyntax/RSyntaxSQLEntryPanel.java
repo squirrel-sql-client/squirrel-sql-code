@@ -19,10 +19,20 @@ package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.Font;
-import java.awt.dnd.DropTarget;
-import java.awt.event.MouseListener;
-import java.util.HashMap;
+import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
+import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
+import org.fife.ui.rtextarea.RTextScrollPane;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
@@ -32,20 +42,10 @@ import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.PlainDocument;
 import javax.swing.undo.UndoManager;
-
-import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
-import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.client.session.TextAreaPaintListener;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import org.fife.ui.rtextarea.RTextScrollPane;
+import java.awt.Font;
+import java.awt.dnd.DropTarget;
+import java.awt.event.MouseListener;
+import java.util.HashMap;
 
 
 public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel

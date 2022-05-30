@@ -2,9 +2,9 @@ package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.MarkCurrentSqlHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.client.session.TextAreaPaintListener;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
@@ -50,9 +50,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    private ErrorInfo[] _currentErrorInfos = new ErrorInfo[0];
    private boolean _parsingInitialized;
    private SquirrelRSyntaxSearchEngine _squirrelRSyntaxSearchEngine;
-   private MarkCurrentSqlHandler _markCurrentSqlHandler;
-   private TextAreaPaintListener _textAreaPaintListener;
-
+   private TextAreaPaintHandler _textAreaPaintHandler;
 
    public SquirrelRSyntaxTextArea(ISession session, SyntaxPreferences prefs, RSyntaxPropertiesWrapper propertiesWrapper, IIdentifier sqlEntryPanelIdentifier)
    {
@@ -105,7 +103,8 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
             session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("syntax.useNoDDrawOnWIn32"));
          }
       }
-      _markCurrentSqlHandler = new MarkCurrentSqlHandler(this, session);
+
+      _textAreaPaintHandler = new TextAreaPaintHandler(this, session);
    }
 
 
@@ -293,22 +292,23 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    public void paint(Graphics g)
    {
       super.paint(g);
-      _markCurrentSqlHandler.paintMark(g);
 
-      if(null != _textAreaPaintListener)
-      {
-         _textAreaPaintListener.paint();
-      }
+      _textAreaPaintHandler.onPaint(g);
    }
 
+   @Override
+   protected void paintComponent(Graphics g)
+   {
+      super.paintComponent(g);
+   }
 
-//   public void copyAsStyledText()
+   //   public void copyAsStyledText()
 //   {
 //      RtfFix.copyAsStyledText(this);
 //   }
 
    public void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener)
    {
-      _textAreaPaintListener = textAreaPaintListener;
+      _textAreaPaintHandler.setTextAreaPaintListener(textAreaPaintListener);
    }
 }
