@@ -12,6 +12,8 @@ public class HighlightUtil
    {
       try
       {
+         //TODO
+
          if(endPos <= startPos)
          {
             return null;

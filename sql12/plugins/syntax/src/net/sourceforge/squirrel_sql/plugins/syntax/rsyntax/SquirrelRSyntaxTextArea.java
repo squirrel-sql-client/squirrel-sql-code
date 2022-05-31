@@ -300,6 +300,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    protected void paintComponent(Graphics g)
    {
       super.paintComponent(g);
+      _textAreaPaintHandler.onPaintComponent(g);
    }
 
    //   public void copyAsStyledText()
