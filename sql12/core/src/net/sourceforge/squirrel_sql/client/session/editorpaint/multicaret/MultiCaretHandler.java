@@ -169,6 +169,7 @@ public class MultiCaretHandler
       }
 
       SwingUtilities.invokeLater(() -> _multiEdits.scrollToLastCaret());
+      SwingUtilities.invokeLater(() -> _textArea.repaint());
    }
 
    private void deleteLastHighlight()
@@ -190,6 +191,7 @@ public class MultiCaretHandler
       {
          _textArea.scrollRectToVisible(GUIUtils.getRectangleOfPosition(_textArea, _multiEdits.last().getStart()));
       }
+      SwingUtilities.invokeLater(() -> _textArea.repaint());
    }
 
    private void createNextHighlight()

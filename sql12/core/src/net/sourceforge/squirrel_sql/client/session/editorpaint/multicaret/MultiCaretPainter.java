@@ -44,27 +44,7 @@ public class MultiCaretPainter
       final DefaultCaret defaultCaret = (DefaultCaret) _textArea.getCaret();
       final Position.Bias dotBias = defaultCaret.getDotBias();
 
-      Integer caretWidthProperty = (Integer) _textArea.getClientProperty("caretWidth");
-
-      int caretWidth;
-      int caretXDisplacement;
-
-      if(null == caretWidthProperty)
-      {
-         // This is the case when _textArea.getClass() == SquirrelRSyntaxTextArea
-
-         caretWidth = 2;
-         caretXDisplacement = 0;
-      }
-      else
-      {
-         // This is the case when _textArea.getClass() == SquirrelDefaultTextArea
-
-         caretWidth = caretWidthProperty;
-
-         // See {@link DefaultCaret#paint(Graphics)}.
-         caretXDisplacement = caretWidth  >> 1;
-      }
+      EditorSpecificCaretData editorSpecificCaretData = EditorSpecifics.getEditorSpecificCaretData(_textArea);
 
       for (SingleEdit singleEdit : _multiEdits.allButInitial())
       {
@@ -81,8 +61,8 @@ public class MultiCaretPainter
          try
          {
             g.setColor(_textArea.getCaretColor());
-            r.x -= caretXDisplacement;
-            g.fillRect(r.x, r.y, caretWidth, r.height);
+            r.x -= editorSpecificCaretData.getCaretXDisplacement();
+            g.fillRect(r.x, r.y, editorSpecificCaretData.getCaretWidth(), r.height);
 
             //g.fillRect(r.x, r.y, 20, r.height);
             //System.out.println("r = " + r);

@@ -12,12 +12,12 @@ public class HighlightUtil
    {
       try
       {
-         //TODO
-
          if(endPos <= startPos)
          {
             return null;
          }
+
+         endPos = EditorSpecifics.adjustHiglightEndPos(textArea, endPos);
 
          final DefaultHighlighter highlighter = (DefaultHighlighter) textArea.getHighlighter();
          highlighter.setDrawsLayeredHighlights(false);

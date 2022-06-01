@@ -8,7 +8,7 @@ import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import javax.swing.JTextArea;
 import java.awt.Graphics;
 
-class SquirrelDefaultTextArea extends JTextArea
+public class SquirrelDefaultTextArea extends JTextArea
 {
    private TextAreaPaintHandler _textAreaPaintHandler;
 

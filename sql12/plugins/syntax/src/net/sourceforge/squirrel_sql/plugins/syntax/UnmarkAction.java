@@ -2,17 +2,15 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
-import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
-import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.RSyntaxSQLEntryPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.RSyntaxSQLEntryPanel;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class UnmarkAction extends SquirrelAction implements ISQLPanelAction
@@ -56,11 +54,6 @@ public class UnmarkAction extends SquirrelAction implements ISQLPanelAction
       {
          SquirrelRSyntaxTextArea rsep = (SquirrelRSyntaxTextArea) sqlEntryPanel.getTextComponent();
          rsep.unmarkAll();
-      }
-      else
-      {
-         String msg = s_stringMgr.getString("syntax.unmarkOnlyOnRecommendedEditors");
-         JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
       }
 
    }
