@@ -44,4 +44,9 @@ public class TextAreaPaintHandler
    {
       _multiCaretHandler.onPaintComponent(g);
    }
+
+   public MultiCaretHandler getMultiCaretHandler()
+   {
+      return _multiCaretHandler;
+   }
 }

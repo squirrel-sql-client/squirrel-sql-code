@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.client.session.action.file.FilePrintAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileReloadAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
+import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretAddAction;
+import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretRemoveAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeChooser;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
@@ -93,6 +95,11 @@ class SessionPanelToolBar extends ToolBar
       add(actions.get(SelectSqlAction.class));
       add(actions.get(GoToLastEditLocationAction.class));
       addSeparator();
+
+      add(actions.get(CaretAddAction.class));
+      add(actions.get(CaretRemoveAction.class));
+      addSeparator();
+
       addToggleAction((IToggleAction) actions.get(ToggleObjectTreeBesidesEditorAction.class), session);
    }
 

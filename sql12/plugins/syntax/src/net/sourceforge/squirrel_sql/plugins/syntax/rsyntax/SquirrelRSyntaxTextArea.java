@@ -312,4 +312,9 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    {
       _textAreaPaintHandler.setTextAreaPaintListener(textAreaPaintListener);
    }
+
+   public TextAreaPaintHandler getTextAreaPaintHandler()
+   {
+      return _textAreaPaintHandler;
+   }
 }

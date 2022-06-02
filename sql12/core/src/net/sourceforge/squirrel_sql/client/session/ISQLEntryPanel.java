@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
@@ -195,4 +196,6 @@ public interface ISQLEntryPanel extends IHasIdentifier
 	void goToLastEditLocation();
 
 	void setTextAreaPaintListener(TextAreaPaintListener textAreaPaintListener);
+
+	TextAreaPaintHandler getTextAreaPaintHandler();
 }

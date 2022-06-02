@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
@@ -327,7 +328,13 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 		_textArea.setTextAreaPaintListener(textAreaPaintListener);
 	}
 
-	/**
+   @Override
+   public TextAreaPaintHandler getTextAreaPaintHandler()
+   {
+      return _textArea.getTextAreaPaintHandler();
+   }
+
+   /**
 	 * @see ISQLEntryPanel#hasFocus()
 	 */
 	public boolean hasFocus()

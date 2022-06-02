@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 
 import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
+import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintListener;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -90,8 +91,14 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		_defaultTextArea.setTextAreaPaintListener(textAreaPaintListener);
 	}
 
+   @Override
+   public TextAreaPaintHandler getTextAreaPaintHandler()
+   {
+      return _defaultTextArea.getTextAreaPaintHandler();
+   }
 
-	/**
+
+   /**
 	 * If the component returned by <TT>getTextComponent</TT> contains
 	 * its own scroll bars return <TT>true</TT> other wise this component
 	 * will be wrapped in the scroll pane when added to the SQL panel.

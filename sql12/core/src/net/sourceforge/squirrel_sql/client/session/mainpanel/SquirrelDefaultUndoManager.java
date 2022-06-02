@@ -16,10 +16,11 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import javax.swing.event.DocumentEvent;
+import javax.swing.text.AbstractDocument;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
-import javax.swing.text.AbstractDocument;
-import javax.swing.event.DocumentEvent;
 /**
  * The trick of this UndoManager is to jump over UndoableEdits
  * of type DocumentEvent.EventType.CHANGE. These are events like
@@ -27,8 +28,6 @@ import javax.swing.event.DocumentEvent;
  */
 public class SquirrelDefaultUndoManager extends UndoManager
 {
-   private static final long serialVersionUID = 1L;
-
     /**
 	 * Default ctor.
 	 */

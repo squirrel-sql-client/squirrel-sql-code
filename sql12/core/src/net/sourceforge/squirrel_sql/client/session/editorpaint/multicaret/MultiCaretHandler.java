@@ -121,25 +121,27 @@ public class MultiCaretHandler
 
    public void onKeyPressed(KeyEvent e)
    {
-      if(isAddNextTrigger(e))
+//      if(isAddNextTrigger(e))
+//      {
+//         createNextCaret();
+//      }
+//      else if(isRemovePreviousTrigger(e))
+//      {
+//         removeLastCaret();
+//      }
+
+
+      if(_multiEdits.isEmpty())
       {
-         createNextHighlight();
+         return;
       }
-      else if(isRemovePreviousTrigger(e))
-      {
-         deleteLastHighlight();
-      }
-      else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+
+      if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
       {
          clearMultiEdits();
       }
       else
       {
-         if(_multiEdits.isEmpty())
-         {
-            return;
-         }
-
          SwingUtilities.invokeLater(() -> adjustHighlights());
       }
 
@@ -172,7 +174,7 @@ public class MultiCaretHandler
       SwingUtilities.invokeLater(() -> _textArea.repaint());
    }
 
-   private void deleteLastHighlight()
+   public void removeLastCaret()
    {
       if(_multiEdits.isEmpty())
       {
@@ -194,7 +196,7 @@ public class MultiCaretHandler
       SwingUtilities.invokeLater(() -> _textArea.repaint());
    }
 
-   private void createNextHighlight()
+   public void createNextCaret()
    {
       SingleEdit buf = getNextTextToFind();
 
@@ -204,15 +206,15 @@ public class MultiCaretHandler
       }
 
       _multiEdits.add(buf);
-      newHighLight(_multiEdits.last());
+      newCaret(_multiEdits.last());
 
       if(false == _multiEdits.isEmpty() && _multiEdits.last().isFromSelection())
       {
-         createNextHighlight();
+         createNextCaret();
       }
    }
 
-   private void newHighLight(SingleEdit singleEdit)
+   private void newCaret(SingleEdit singleEdit)
    {
       final Object highlightTag = HighlightUtil.highlightRange(_textArea, singleEdit.getStart(), singleEdit.getEnd());
       singleEdit.setHighLightTag(highlightTag);
@@ -222,11 +224,6 @@ public class MultiCaretHandler
 
    private void clearMultiEdits()
    {
-      if(_multiEdits.isEmpty())
-      {
-         return;
-      }
-
       for (SingleEdit singleEdit : _multiEdits.all())
       {
          HighlightUtil.removeHighlight(_textArea, singleEdit.getHighLightTag());

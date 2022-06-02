@@ -98,6 +98,8 @@ import net.sourceforge.squirrel_sql.client.session.action.file.FileReloadAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAllAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
+import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretAddAction;
+import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretRemoveAction;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
@@ -162,6 +164,9 @@ public class ActionRegistry
       toolsPopupController.addAction("sqlnext", ac.get(NextSqlAction.class));
       toolsPopupController.addAction("sqlselect", ac.get(SelectSqlAction.class));
       toolsPopupController.addAction("sqllastedit", ac.get(SelectSqlAction.class));
+
+      toolsPopupController.addAction("caretadd", ac.get(CaretAddAction.class));
+      toolsPopupController.addAction("caretremove", ac.get(CaretRemoveAction.class));
 
       toolsPopupController.addAction("format", ac.get(FormatSQLAction.class));
 
@@ -309,6 +314,9 @@ public class ActionRegistry
 
       actionCollection.add(new ToggleObjectTreeBesidesEditorAction());
       actionCollection.add(new FileSaveAllAction());
+
+      actionCollection.add(new CaretAddAction());
+      actionCollection.add(new CaretRemoveAction());
 
    }
 

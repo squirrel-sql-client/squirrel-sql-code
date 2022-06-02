@@ -135,6 +135,8 @@ import net.sourceforge.squirrel_sql.client.session.action.file.FileReloadAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAllAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
+import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretAddAction;
+import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretRemoveAction;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
@@ -438,6 +440,10 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, DeleteSqlAction.class, menu);
 		addToMenu(rsrc, DeleteCurrentLineAction.class, menu);
 		addToMenu(rsrc, RemoveNewLinesAction.class, menu);
+
+		menu.addSeparator();
+		addToMenu(rsrc, CaretAddAction.class, menu);
+		addToMenu(rsrc, CaretRemoveAction.class, menu);
 
 
 		menu.addSeparator();

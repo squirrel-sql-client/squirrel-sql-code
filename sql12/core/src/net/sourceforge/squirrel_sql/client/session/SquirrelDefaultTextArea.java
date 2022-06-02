@@ -54,4 +54,9 @@ public class SquirrelDefaultTextArea extends JTextArea
    {
       _textAreaPaintHandler.setTextAreaPaintListener(textAreaPaintListener);
    }
+
+   public TextAreaPaintHandler getTextAreaPaintHandler()
+   {
+      return _textAreaPaintHandler;
+   }
 }
