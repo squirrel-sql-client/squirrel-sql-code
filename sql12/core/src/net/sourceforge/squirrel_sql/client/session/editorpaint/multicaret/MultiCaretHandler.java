@@ -1,16 +1,16 @@
 package net.sourceforge.squirrel_sql.client.session.editorpaint.multicaret;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 /**
  * https://stackoverflow.com/questions/40955172/java-how-to-select-multiple-non-consecutive-lines-of-text-in-a-text-area-the-s
@@ -94,7 +94,18 @@ public class MultiCaretHandler
          return;
       }
 
+      if(isUndoRedoDocumentEvent(e))
+      {
+         clearMultiEdits();
+         return;
+      }
+
       _documentMultiEditor.executeRemove(e);
+   }
+
+   private boolean isUndoRedoDocumentEvent(DocumentEvent e)
+   {
+      return "javax.swing.text.AbstractDocument$UndoRedoDocumentEvent".equals(e.getClass().getName());
    }
 
 
@@ -114,6 +125,13 @@ public class MultiCaretHandler
       {
          return;
       }
+
+      if(isUndoRedoDocumentEvent(e))
+      {
+         clearMultiEdits();
+         return;
+      }
+
 
       _documentMultiEditor.executeInsert(e);
    }
