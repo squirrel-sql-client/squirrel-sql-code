@@ -1,15 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.editorpaint.multicaret;
 
+import java.awt.GridLayout;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import java.awt.GridLayout;
 
-/**
- * TODO:
- * - Restart at doc begin
- */
 public class Test_MultiCaretFrame
 {
 
