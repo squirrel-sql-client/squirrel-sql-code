@@ -9,8 +9,10 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * https://stackoverflow.com/questions/40955172/java-how-to-select-multiple-non-consecutive-lines-of-text-in-a-text-area-the-s
@@ -218,7 +220,7 @@ public class MultiCaretHandler
    {
       SingleEdit buf = getNextTextToFind();
 
-      if(buf.isEmpty())
+      if(null == buf)
       {
          return;
       }
@@ -226,7 +228,7 @@ public class MultiCaretHandler
       _multiEdits.add(buf);
       newCaret(_multiEdits.last());
 
-      if(false == _multiEdits.isEmpty() && _multiEdits.last().isFromSelection())
+      if(false == _multiEdits.isEmpty() && _multiEdits.last().isInitialEdit())
       {
          createNextCaret();
       }
@@ -268,22 +270,54 @@ public class MultiCaretHandler
       if(_multiEdits.isEmpty())
       {
          final SingleEdit ret = new SingleEdit(_textArea.getSelectedText(), _textArea.getSelectionStart(), _textArea.getSelectionEnd());
-         ret.setFromSelection(true);
+         ret.setInitialEdit(true);
          return ret;
       }
       else
       {
-         final int nextStart =
-               _textArea.getText().indexOf(_multiEdits.last().getText(), _multiEdits.last().getEnd());
-
-         if(-1 == nextStart)
+         final int nextEditsStart;
+         if( _multiEdits.last().isEmptySelection() )
          {
-            return SingleEdit.EMPTY;
+            nextEditsStart = getNextEditsStartFromPositionInLine();
          }
          else
          {
-            return new SingleEdit(_multiEdits.last().getText(), nextStart, nextStart + _multiEdits.last().getText().length());
+            nextEditsStart = _textArea.getText().indexOf(_multiEdits.last().getText(), _multiEdits.last().getEnd());
          }
+
+         if(-1 == nextEditsStart)
+         {
+            return null;
+         }
+         else
+         {
+            return new SingleEdit(_multiEdits.last().getText(), nextEditsStart, nextEditsStart + _multiEdits.last().getLength());
+         }
+      }
+   }
+
+   private int getNextEditsStartFromPositionInLine()
+   {
+      try
+      {
+         int previousEditsLine = _textArea.getLineOfOffset(_multiEdits.last().getStart());
+
+         int previousEditsPositionInLine = _multiEdits.last().getStart() - _textArea.getLineStartOffset(previousEditsLine);
+
+         int lineCount = _textArea.getLineCount();
+         for( int line = previousEditsLine + 1; line < lineCount; line++ )
+         {
+            if( _textArea.getLineEndOffset(line) - _textArea.getLineStartOffset(line) >= previousEditsPositionInLine )
+            {
+               return _textArea.getLineStartOffset(line) + previousEditsPositionInLine;
+            }
+         }
+
+         return -1;
+      }
+      catch(BadLocationException e)
+      {
+         throw Utilities.wrapRuntime(e);
       }
    }
 

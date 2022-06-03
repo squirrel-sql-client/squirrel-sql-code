@@ -4,13 +4,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 public class SingleEdit
 {
-   public static final SingleEdit EMPTY = new SingleEdit(null, -1, -1);
+   //public static final SingleEdit EMPTY = new SingleEdit(null, -1, -1);
 
    private final String _text;
    private int _start;
    private int _end;
    private Object _highLightTag;
-   private boolean _fromSelection;
+   private boolean _initialEdit;
 
    public SingleEdit(String text, int start, int end)
    {
@@ -35,7 +35,7 @@ public class SingleEdit
    }
 
 
-   public boolean isEmpty()
+   public boolean isEmptySelection()
    {
       return StringUtilities.isEmpty(_text, true);
    }
@@ -50,19 +50,29 @@ public class SingleEdit
       return _highLightTag;
    }
 
-   public boolean isFromSelection()
+   public boolean isInitialEdit()
    {
-      return _fromSelection;
+      return _initialEdit;
    }
 
-   public void setFromSelection(boolean fromSelection)
+   public void setInitialEdit(boolean initialEdit)
    {
-      _fromSelection = fromSelection;
+      _initialEdit = initialEdit;
    }
 
    public void adjustByAnchestorShift(int shiftLen)
    {
       _start += shiftLen;
       _end += shiftLen;
+   }
+
+   public int getLength()
+   {
+      if( null == _text )
+      {
+         return 0;
+      }
+
+      return _text.length();
    }
 }
