@@ -28,7 +28,7 @@ public class MultiCaretPainter
     */
    public void paintAdditionalCarets(Graphics g)
    {
-      if(false == _textArea.getCaret().isVisible() || false == _multiEdits.requiresMultipleCarets())
+      if(false == _multiEdits.requiresMultipleCarets())
       {
          if(false == _emptyRepaintDone)
          {
@@ -39,37 +39,44 @@ public class MultiCaretPainter
       }
       _emptyRepaintDone = false;
 
-      int relativeCaretPosition = _multiEdits.relativeCaretPosition();
 
-      final DefaultCaret defaultCaret = (DefaultCaret) _textArea.getCaret();
-      final Position.Bias dotBias = defaultCaret.getDotBias();
-
-      EditorSpecificCaretData editorSpecificCaretData = EditorSpecifics.getEditorSpecificCaretData(_textArea);
-
-      for (SingleEdit singleEdit : _multiEdits.allButInitial())
+      if(_textArea.getCaret().isVisible())
       {
-         final int additionalCaretsPosition = singleEdit.getStart() + relativeCaretPosition;
+         // For a blinking caret _textArea.getCaret() changes between visible=true and visible=false
+         // When it's not visible we just don't paint it.
 
-         if(additionalCaretsPosition < 0 || additionalCaretsPosition >= _textArea.getText().length())
+         int relativeCaretPosition = _multiEdits.relativeCaretPosition();
+
+         final DefaultCaret defaultCaret = (DefaultCaret) _textArea.getCaret();
+         final Position.Bias dotBias = defaultCaret.getDotBias();
+
+         EditorSpecificCaretData editorSpecificCaretData = EditorSpecifics.getEditorSpecificCaretData(_textArea);
+
+         for (SingleEdit singleEdit : _multiEdits.allButInitial())
          {
-            continue;
-         }
+            final int additionalCaretsPosition = singleEdit.getStart() + relativeCaretPosition;
 
-         Rectangle r = GUIUtils.getRectangleOfPosition(_textArea, additionalCaretsPosition, dotBias);
+            if(additionalCaretsPosition < 0 || additionalCaretsPosition >= _textArea.getText().length())
+            {
+               continue;
+            }
 
-         Color previousColor = g.getColor();
-         try
-         {
-            g.setColor(_textArea.getCaretColor());
-            r.x -= editorSpecificCaretData.getCaretXDisplacement();
-            g.fillRect(r.x, r.y, editorSpecificCaretData.getCaretWidth(), r.height);
+            Rectangle r = GUIUtils.getRectangleOfPosition(_textArea, additionalCaretsPosition, dotBias);
 
-            //g.fillRect(r.x, r.y, 20, r.height);
-            //System.out.println("r = " + r);
-         }
-         finally
-         {
-            g.setColor(previousColor);
+            Color previousColor = g.getColor();
+            try
+            {
+               g.setColor(_textArea.getCaretColor());
+               r.x -= editorSpecificCaretData.getCaretXDisplacement();
+               g.fillRect(r.x, r.y, editorSpecificCaretData.getCaretWidth(), r.height);
+
+               //g.fillRect(r.x, r.y, 20, r.height);
+               //System.out.println("r = " + r);
+            }
+            finally
+            {
+               g.setColor(previousColor);
+            }
          }
       }
 
