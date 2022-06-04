@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.editorpaint.multicaret;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import javax.swing.JTextArea;
+import javax.swing.Timer;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.Position;
 import java.awt.Color;
@@ -15,10 +16,15 @@ public class MultiCaretPainter
    private final MultiEdits _multiEdits;
    private boolean _emptyRepaintDone;
 
+   private Timer _repaintWithDelayBeyondPerceptiblyTimer;
+
    public MultiCaretPainter(JTextArea textArea, MultiEdits multiEdits)
    {
       _textArea = textArea;
       _multiEdits = multiEdits;
+
+      _repaintWithDelayBeyondPerceptiblyTimer = new Timer(100, e -> _textArea.repaint());
+      _repaintWithDelayBeyondPerceptiblyTimer.setRepeats(false);
    }
 
    /**
@@ -32,7 +38,7 @@ public class MultiCaretPainter
       {
          if(false == _emptyRepaintDone)
          {
-            _textArea.repaint();
+            repaintWithDelayBeyondPerceptibly();
             _emptyRepaintDone = true;
          }
          return;
@@ -80,7 +86,24 @@ public class MultiCaretPainter
          }
       }
 
-      _textArea.repaint();
+      repaintWithDelayBeyondPerceptibly();
+   }
+
+   /**
+    * This method is called from within {@link #paintAdditionalCarets(Graphics)} which is
+    * called by {@link #_textArea}'s paintComponent(...) method.
+    * To prevent paintComponent(...) being called quasi always when additional carets exist
+    * we introduced this delayed call.
+    *
+    * Calling this method ensures additional carets blink alright even if the original caret
+    * is scrolled out of sight.
+    */
+   private void repaintWithDelayBeyondPerceptibly()
+   {
+      if(false == _repaintWithDelayBeyondPerceptiblyTimer.isRunning())
+      {
+         _repaintWithDelayBeyondPerceptiblyTimer.start();
+      }
    }
 
 //   private int getCaretWidth()

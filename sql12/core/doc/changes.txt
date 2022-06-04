@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+The SQL editor allows multiple caret/cursor editing.
+  alt+J adds a caret. alt+shift+J removes the last added caret.
+  When some text is selected the next occurrence of the selected text will be added a caret.
+  When no text is selected the next line will be added a caret at the same line position
+  provided the line is long enough.
+  Escape key or mouse click will remove all extra carets.
+
 About dialog: Completed web links.
 
 MS-Excel export of UI tables allows to include result coloring.

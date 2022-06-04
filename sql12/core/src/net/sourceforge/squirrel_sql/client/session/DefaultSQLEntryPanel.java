@@ -384,10 +384,8 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		_defaultTextArea.setMarkCurrentSQLActive(b);
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel#setUndoManager(javax.swing.undo.UndoManager)
-     */
-    public void setUndoManager(UndoManager manager) {
-        // no support for undo
-    }
+	public void setUndoManager(UndoManager manager)
+	{
+		// no support for undo
+	}
 }
