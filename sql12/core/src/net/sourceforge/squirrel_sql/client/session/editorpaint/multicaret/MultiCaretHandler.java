@@ -13,6 +13,7 @@ import javax.swing.text.BadLocationException;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * https://stackoverflow.com/questions/40955172/java-how-to-select-multiple-non-consecutive-lines-of-text-in-a-text-area-the-s
@@ -218,7 +219,7 @@ public class MultiCaretHandler
 
    public void createNextCaret()
    {
-      SingleEdit buf = getNextTextToFind();
+      SingleEdit buf = getNextEdit();
 
       if(null == buf)
       {
@@ -232,6 +233,8 @@ public class MultiCaretHandler
       {
          createNextCaret();
       }
+
+      SwingUtilities.invokeLater(() -> _textArea.repaint());
    }
 
    private void newCaret(SingleEdit singleEdit)
@@ -265,7 +268,7 @@ public class MultiCaretHandler
    }
 
 
-   private SingleEdit getNextTextToFind()
+   private SingleEdit getNextEdit()
    {
       if(_multiEdits.isEmpty())
       {
@@ -282,7 +285,8 @@ public class MultiCaretHandler
          }
          else
          {
-            nextEditsStart = _textArea.getText().indexOf(_multiEdits.last().getText(), _multiEdits.last().getEnd());
+            nextEditsStart = StringUtils.indexOfIgnoreCase(_textArea.getText(), _multiEdits.last().getText(), _multiEdits.last().getEnd());
+            //nextEditsStart = _textArea.getText().indexOf(_multiEdits.last().getText(), _multiEdits.last().getEnd());
          }
 
          if(-1 == nextEditsStart)
@@ -307,7 +311,8 @@ public class MultiCaretHandler
          int lineCount = _textArea.getLineCount();
          for( int line = previousEditsLine + 1; line < lineCount; line++ )
          {
-            if( _textArea.getLineEndOffset(line) - _textArea.getLineStartOffset(line) >= previousEditsPositionInLine )
+            // _textArea.getLineEndOffset(line) returns the position of \n
+            if( _textArea.getLineEndOffset(line) - 1 - _textArea.getLineStartOffset(line) >= previousEditsPositionInLine )
             {
                return _textArea.getLineStartOffset(line) + previousEditsPositionInLine;
             }

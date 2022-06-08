@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+SQL editor: Improvements of multiple caret/cursor editing:
+ - Searching for next occurrence of selected text now works case insensitive.
+ - Improved UI repaint behaviour.
+ - Fixed positioning of new carets when added without selection.
+
 The SQL editor allows multiple caret/cursor editing.
   alt+J adds a caret. alt+shift+J removes the last added caret.
   When some text is selected the next occurrence of the selected text will be added a caret.

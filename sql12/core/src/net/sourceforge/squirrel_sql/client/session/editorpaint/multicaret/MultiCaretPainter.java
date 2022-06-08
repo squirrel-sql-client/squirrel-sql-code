@@ -1,14 +1,14 @@
 package net.sourceforge.squirrel_sql.client.session.editorpaint.multicaret;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.Position;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 public class MultiCaretPainter
 {
@@ -23,7 +23,7 @@ public class MultiCaretPainter
       _textArea = textArea;
       _multiEdits = multiEdits;
 
-      _repaintWithDelayBeyondPerceptiblyTimer = new Timer(100, e -> _textArea.repaint());
+      _repaintWithDelayBeyondPerceptiblyTimer = new Timer(50, e -> _textArea.repaint());
       _repaintWithDelayBeyondPerceptiblyTimer.setRepeats(false);
    }
 
