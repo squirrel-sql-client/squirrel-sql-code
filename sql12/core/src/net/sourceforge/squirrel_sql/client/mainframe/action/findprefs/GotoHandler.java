@@ -135,6 +135,12 @@ public class GotoHandler
    {
       Graphics graphics = component.getGraphics();
 
+      if(null == graphics)
+      {
+         // Happens when prefs sheet is closed while blinking is active.
+         return;
+      }
+
       if(_blinkCount++ % 2 == 0)
       {
          Color formerColor = graphics.getColor();
