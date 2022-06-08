@@ -1,8 +1,18 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
+import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.io.File;
+import java.util.List;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
-import net.sourceforge.squirrel_sql.client.preferences.SQLPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesAddressBook;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionListController;
@@ -10,17 +20,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisio
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import java.awt.Graphics;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.io.File;
-import java.util.List;
 
 public class ChangeTracker
 {
@@ -168,7 +167,8 @@ public class ChangeTracker
 
    private void onOpenChangeTrackPreferences()
    {
-      GlobalPreferencesSheet.showSheet(SQLPreferencesPanel.class);
+      PreferencesAddressBook.CHANGE_TRACKING_PREFS.jumpTo();
+      // GlobalPreferencesSheet.showSheet(SQLPreferencesPanel.class);
    }
 
 

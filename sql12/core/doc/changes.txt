@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Improved jumps to distinguished preferences sections utilizing
+  the new Global Preferences and New Session Properties search.
+  Currently used by:
+  - Jump to query connection pool configuration.
+  - Jump to change tracking preferences by right mouse clicking the SQL editor's left gutter.
+
 SQL editor: Improvements of multiple caret/cursor editing:
  - Searching for next occurrence of selected text now works case insensitive.
  - Improved UI repaint behaviour.

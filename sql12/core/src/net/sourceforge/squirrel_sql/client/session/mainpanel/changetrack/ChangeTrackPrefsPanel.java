@@ -1,12 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -15,13 +13,17 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
-public class ChangeTrackPrefsPanel extends JPanel
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.AddressablePrefComponent;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesAddressBook;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+public class ChangeTrackPrefsPanel extends JPanel implements AddressablePrefComponent
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChangeTrackPrefsPanelController.class);
 
@@ -297,5 +299,11 @@ public class ChangeTrackPrefsPanel extends JPanel
    public int getInsertEndBackground()
    {
       return btnInsertEndBackground.getBackground().getRGB();
+   }
+
+   @Override
+   public PreferencesAddressBook getAddress()
+   {
+      return PreferencesAddressBook.CHANGE_TRACKING_PREFS;
    }
 }

@@ -18,6 +18,8 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.AddressablePrefJPanel;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesAddressBook;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
@@ -389,7 +391,7 @@ class SQLPropertiesPanel extends JPanel
       GridBagConstraints gbc;
 
       // Query connection pool
-      JPanel queryConnectionPool = new JPanel(new GridBagLayout());
+      JPanel queryConnectionPool = new AddressablePrefJPanel(PreferencesAddressBook.QUERY_CONNECTION_POOL_PREFS, new GridBagLayout());
 
       gbc = new GridBagConstraints(0, 0, 2, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0);
       String queryConnectionPoolDescription = s_stringMgr.getString("SessionSQLPropertiesPanel.queryConnectionPoolDescription");

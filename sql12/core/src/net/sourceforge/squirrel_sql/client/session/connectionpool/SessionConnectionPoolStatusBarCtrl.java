@@ -1,7 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.connectionpool;
 
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesAddressBook;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesCommand;
@@ -9,10 +13,6 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 public class SessionConnectionPoolStatusBarCtrl extends JComponent
 {
@@ -39,13 +39,13 @@ public class SessionConnectionPoolStatusBarCtrl extends JComponent
    {
       JPopupMenu popupMenu = new JPopupMenu();
 
-      final JMenuItem mnuCurrentSession = new JMenuItem(s_stringMgr.getString("SessionConnectionPool.pool.size.for.current.session"));
-      mnuCurrentSession.addActionListener( e -> openSessionPropertiesAtSqlTab(true));
-      popupMenu.add(mnuCurrentSession);
-
       final JMenuItem mnuFutureSessions = new JMenuItem(s_stringMgr.getString("SessionConnectionPool.pool.size.for.future.sessions"));
       mnuFutureSessions.addActionListener( e -> openSessionPropertiesAtSqlTab(false));
       popupMenu.add(mnuFutureSessions);
+
+      final JMenuItem mnuCurrentSession = new JMenuItem(s_stringMgr.getString("SessionConnectionPool.pool.size.for.current.session"));
+      mnuCurrentSession.addActionListener( e -> openSessionPropertiesAtSqlTab(true));
+      popupMenu.add(mnuCurrentSession);
 
       popupMenu.show(_statusBarPanel.btnConfigureConnectionPoolSize, _statusBarPanel.btnConfigureConnectionPoolSize.getWidth(), _statusBarPanel.btnConfigureConnectionPoolSize.getHeight());
    }
@@ -58,7 +58,8 @@ public class SessionConnectionPoolStatusBarCtrl extends JComponent
       }
       else
       {
-         NewSessionPropertiesSheet.showSheet(2);
+         PreferencesAddressBook.QUERY_CONNECTION_POOL_PREFS.jumpTo();
+         //NewSessionPropertiesSheet.showSheet(2);
       }
    }
 
