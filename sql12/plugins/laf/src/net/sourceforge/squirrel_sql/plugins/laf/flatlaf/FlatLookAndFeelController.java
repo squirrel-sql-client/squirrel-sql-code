@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.laf.flatlaf;
 
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelLookAndFeelHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -161,7 +162,7 @@ public class FlatLookAndFeelController extends DefaultLookAndFeelController
             lnf = flatProxy.createLaf(theme);
          }
          UIManager.put("ClassLoader", lnf.getClass().getClassLoader());
-         UIManager.setLookAndFeel(lnf);
+         SquirrelLookAndFeelHandler.setLookAndFeel(lnf);
       }
       catch (Exception e)
       {

@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelLookAndFeelHandler;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -250,11 +251,11 @@ public class LAFRegister
 					if (_lafClassLoader != null)
 					{
 						UIManager.put("ClassLoader", _lafClassLoader);
-						UIManager.setLookAndFeel(laf);
+						SquirrelLookAndFeelHandler.setLookAndFeel(laf);
 					}
 					else
 					{
-						UIManager.setLookAndFeel(laf);
+						SquirrelLookAndFeelHandler.setLookAndFeel(laf);
 					}
 				}
 				lafCont.hasBeenInstalled(this, laf);

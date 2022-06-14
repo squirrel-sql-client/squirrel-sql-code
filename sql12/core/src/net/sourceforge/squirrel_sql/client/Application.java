@@ -74,6 +74,7 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelLookAndFeelHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -1341,7 +1342,7 @@ public class Application implements IApplication
 			// This has no effect on Linux/Windows
 			PopupFactory.setSharedInstance(new PopupFactory());
 
-			UIManager.setLookAndFeel(lafClassName);
+			SquirrelLookAndFeelHandler.setLookAndFeel(lafClassName);
 		}
 		catch (Exception ex)
 		{

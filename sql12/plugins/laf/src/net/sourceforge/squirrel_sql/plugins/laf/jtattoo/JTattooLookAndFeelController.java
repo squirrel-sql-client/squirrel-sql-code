@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelLookAndFeelHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -145,8 +146,8 @@ public class JTattooLookAndFeelController extends DefaultLookAndFeelController
             // Set theme
             com.jtattoo.plaf.mcwin.McWinLookAndFeel.setCurrentTheme(props);
 			}
-			
-			UIManager.setLookAndFeel(skinObject);
+
+			SquirrelLookAndFeelHandler.setLookAndFeel(skinObject);
 			UIManager.getLookAndFeelDefaults().put("ClassLoader", _cl);
 		}
 		catch (InstantiationException e)

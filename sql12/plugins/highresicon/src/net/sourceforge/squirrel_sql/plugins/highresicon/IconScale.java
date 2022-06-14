@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.highresicon;
 
+import net.sourceforge.squirrel_sql.fw.util.SystemInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -8,7 +9,6 @@ import javax.swing.UIManager;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Locale;
 
 /**
  * Manages an icon scaling factor to adjust icon sizing for different
@@ -54,7 +54,7 @@ public final class IconScale
       Font font = UIManager.getFont("Label.font");
       double baseFontSize = 12.0;
 
-      if (SystemInfo.isWindows)
+      if (SystemInfo.isWindows())
       {
          // Windows LaF uses Tahoma font rather than the actual Windows system font (Segoe UI),
          // and its size is always ca. 10% smaller than the actual system font size.
@@ -62,15 +62,15 @@ public final class IconScale
          if ("Tahoma".equals(font.getFamily()))
             baseFontSize = 11.0;
       }
-      else if (SystemInfo.isMacOS)
+      else if (SystemInfo.isMacOS())
       {
          // default font size on macOS is 13
          baseFontSize = 13.0;
       }
-      else if (SystemInfo.isLinux)
+      else if (SystemInfo.isLinux())
       {
          // default font size for Unity and Gnome is 15 and for KDE it is 13
-         baseFontSize = SystemInfo.isKDE ? 13.0 : 15.0;
+         baseFontSize = SystemInfo.isIsKDE() ? 13.0 : 15.0;
       }
 
       double scale = font.getSize() / baseFontSize;
@@ -119,29 +119,3 @@ public final class IconScale
 }
 
 
-final class SystemInfo
-{
-   static boolean isWindows;
-   static boolean isMacOS;
-   static boolean isLinux;
-   static boolean isKDE;
-   static int javaVersion;
-
-   static
-   {
-      String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
-      isWindows = osName.startsWith("windows");
-      isMacOS = osName.startsWith("mac");
-      isLinux = osName.startsWith("linux");
-
-      isKDE = (isLinux && System.getenv("KDE_FULL_SESSION") != null);
-
-      javaVersion = Integer.parseInt(System.getProperty("java.specification.version")
-                                           .replaceFirst("^(?:1\\.)?(\\d+)", "$1"));
-   }
-
-   private SystemInfo()
-   {
-      // no instances
-   }
-}

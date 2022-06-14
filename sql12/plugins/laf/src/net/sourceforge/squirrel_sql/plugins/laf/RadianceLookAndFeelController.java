@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelLookAndFeelHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -40,7 +41,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Set;
@@ -78,7 +78,8 @@ public class RadianceLookAndFeelController extends DefaultLookAndFeelController 
 	 * 
 	 * @param plugin The plugin that this controller is a part of.
 	 */
-	RadianceLookAndFeelController(LAFPlugin plugin, LAFRegister register) throws IOException {
+	RadianceLookAndFeelController(LAFPlugin plugin, LAFRegister register)
+	{
 		super();
 
 		_cl = register.getLookAndFeelClassLoader();
@@ -114,7 +115,7 @@ public class RadianceLookAndFeelController extends DefaultLookAndFeelController 
 		LookAndFeel skinObject;
 		try {
 			skinObject = (LookAndFeel) skinClass.getDeclaredConstructor().newInstance();
-			UIManager.setLookAndFeel(skinObject);
+			SquirrelLookAndFeelHandler.setLookAndFeel(skinObject);
 			UIManager.getLookAndFeelDefaults().put("ClassLoader", _cl);
 		} catch (InstantiationException e) {
 			// skinClass.newInstance();
@@ -140,7 +141,6 @@ public class RadianceLookAndFeelController extends DefaultLookAndFeelController 
 	}
 
 	private static final class RadianceSkinPrefsPanel extends BaseLAFPreferencesPanelComponent {
-		private static final long serialVersionUID = 1L;
 
 		interface SkinPrefsPanelI18n {
 			// i18n[RadianceLookAndFeelController.radianceSkinLabel=Radiance Skin:]
