@@ -1,13 +1,12 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
+import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
+import net.sourceforge.squirrel_sql.fw.completion.ICompletorModel;
+
+import javax.swing.Action;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
-
-import javax.swing.Action;
-
-import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
-import net.sourceforge.squirrel_sql.fw.completion.ICompletorModel;
 
 
 public class ToolsPopupCompletorModel implements ICompletorModel
@@ -44,9 +43,9 @@ public class ToolsPopupCompletorModel implements ICompletorModel
 
 
 
-   public void addAction(String selectionString, Action action)
+   public void addAction(String selectionString, Action action, String toolsPopupDescription)
    {
-      _toolsPopupCompletionInfos.add(new ToolsPopupCompletionInfo(selectionString, action));
+      _toolsPopupCompletionInfos.add(new ToolsPopupCompletionInfo(selectionString, action, toolsPopupDescription));
 
       Collections.sort(_toolsPopupCompletionInfos, new ToolsPopupCompletionInfoComparator());
       

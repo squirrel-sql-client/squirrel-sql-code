@@ -165,7 +165,7 @@ public class ActionRegistry
       toolsPopupController.addAction("sqlselect", ac.get(SelectSqlAction.class));
       toolsPopupController.addAction("sqllastedit", ac.get(SelectSqlAction.class));
 
-      toolsPopupController.addAction("caretadd", ac.get(CaretAddAction.class));
+      toolsPopupController.addAction("caretadd", ac.get(CaretAddAction.class), CaretAddAction.getToolsPopupDescription());
       toolsPopupController.addAction("caretremove", ac.get(CaretRemoveAction.class));
 
       toolsPopupController.addAction("format", ac.get(FormatSQLAction.class));

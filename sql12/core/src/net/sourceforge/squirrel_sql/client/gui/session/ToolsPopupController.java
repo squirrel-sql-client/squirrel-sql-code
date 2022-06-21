@@ -1,22 +1,20 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-
-import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
-import net.sourceforge.squirrel_sql.fw.gui.ToggleComponentHolder;
-import net.sourceforge.squirrel_sql.fw.props.Props;
-
-import javax.swing.Action;
-
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
+import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
+import net.sourceforge.squirrel_sql.fw.gui.ToggleComponentHolder;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.Action;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
 
 
 public class ToolsPopupController
@@ -100,6 +98,11 @@ public class ToolsPopupController
 
    public void addAction(String selectionString, Action action)
    {
-      _toolsPopupCompletorModel.addAction(selectionString, action);
+      addAction(selectionString, action, null);
+   }
+
+   public void addAction(String selectionString, Action action, String toolsPopupDescription)
+   {
+      _toolsPopupCompletorModel.addAction(selectionString, action, toolsPopupDescription);
    }
 }

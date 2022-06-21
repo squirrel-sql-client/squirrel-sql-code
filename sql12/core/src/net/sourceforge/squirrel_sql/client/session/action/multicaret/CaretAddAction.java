@@ -6,17 +6,26 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.TextAreaPaintHandler;
 import net.sourceforge.squirrel_sql.client.session.editorpaint.multicaret.MultiCaretHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.awt.event.ActionEvent;
 
 
 public class CaretAddAction extends SquirrelAction implements ISQLPanelAction
 {
+	private static StringManager s_stringMgr = StringManagerFactory.getStringManager(CaretAddAction.class);
+
 	private ISQLPanelAPI _panel;
 
 	public CaretAddAction()
 	{
 		super(Main.getApplication());
+	}
+
+	public static String getToolsPopupDescription()
+	{
+		return s_stringMgr.getString("CaretAddAction.toolsPopupDescription");
 	}
 
 	public void actionPerformed(ActionEvent e)
