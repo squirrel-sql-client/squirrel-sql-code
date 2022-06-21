@@ -55,7 +55,7 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
-Tools popup was far to wide because of too long description text.
+Tools popup (ctrl+T) was far to wide because of too long description text.
 
 #1502 MAC OS with Metal Look and Feel:
   Standard keyboard shortcuts (cut, copy, paste) of simple text fields where changed from ctrl+X/C/V to command+X/C/V.
