@@ -129,7 +129,6 @@ public class SQLPanelAPI implements ISQLPanelAPI
       resources.configureMenuItem(formatSqlAction, item);
 
 
-
 		getSQLEntryPanel().addSeparatorToSQLEntryAreaMenu();
 
 		item = getSQLEntryPanel().addToSQLEntryAreaMenu(ac.get(InQuotesAction.class));

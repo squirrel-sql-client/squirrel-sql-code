@@ -426,7 +426,7 @@ public class SQLPanel extends JPanel
 
 		_splitPane.setDividerLocation(pos);
 
-      _undoHandler = new UndoHandlerImpl(_session.getApplication(), _sqlEntry);
+      _undoHandler = new UndoHandlerImpl(_sqlEntry);
 
       new PasteFromHistoryAttach(_sqlEntry);
 

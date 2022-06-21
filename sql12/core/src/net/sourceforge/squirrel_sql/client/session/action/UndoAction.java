@@ -16,27 +16,25 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-
-import javax.swing.undo.UndoManager;
-import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 
-public class UndoAction extends SquirrelAction
+import javax.swing.Action;
+import javax.swing.undo.UndoManager;
+import java.awt.event.ActionEvent;
+
+public class UndoAction extends SquirrelAction implements ISQLPanelAction
 {
-	private UndoManager _undo;
+	private UndoManager _undoManager;
    private Action _delegate;
+   private ISQLPanelAPI _sqlPanelAPI;
 
-   public UndoAction(IApplication app, UndoManager undo)
+   public UndoAction()
 	{
-		super(app);
-		if (undo == null)
-		{
-			throw new IllegalArgumentException("UndoManager == null");
-		}
-		_undo = undo;
+		super(Main.getApplication());
 	}
 
    public UndoAction(IApplication app, Action delegate)
@@ -45,17 +43,40 @@ public class UndoAction extends SquirrelAction
       _delegate = delegate;
    }
 
+   @Override
+   public void setSQLPanel(ISQLPanelAPI sqlPanelAPI)
+   {
+      _sqlPanelAPI = sqlPanelAPI;
+      setEnabled(null != _sqlPanelAPI);
+   }
+
+   public void setUndoManager(UndoManager undoManager)
+   {
+      _undoManager = undoManager;
+      _delegate = null;
+   }
+
+   public void setDelegate(Action delegate)
+   {
+      _delegate = delegate;
+      _undoManager = null;
+   }
 
    /*
    * @see ActionListener#actionPerformed(ActionEvent)
    */
 	public void actionPerformed(ActionEvent e)
 	{
+      if(null == _sqlPanelAPI)
+      {
+         return;
+      }
+
       if (null == _delegate)
       {
-         if (_undo.canUndo())
+         if (_undoManager.canUndo())
          {
-            _undo.undo();
+            _undoManager.undo();
          }
       }
       else

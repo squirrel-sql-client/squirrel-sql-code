@@ -4,7 +4,9 @@ import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAccessor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.UndoHandlerImpl;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import java.util.HashMap;
 
 public class EntryPanelManager
@@ -44,7 +46,7 @@ public class EntryPanelManager
          _component.setBorder(BorderFactory.createEmptyBorder());
       }
 
-      new UndoHandlerImpl(_session.getApplication(), _entry);
+      new UndoHandlerImpl(_entry);
    }
 
    public JComponent getComponent()

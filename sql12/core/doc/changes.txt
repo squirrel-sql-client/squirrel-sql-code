@@ -55,6 +55,9 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+Made undo (ctrl+Z) and redo (ctrl+R) shortcuts changeable
+  at menu File --> Global Preferences --> tab Keyboard shortcuts.
+
 Tools popup (ctrl+T) was far to wide because of too long description text.
 
 #1502 MAC OS with Metal Look and Feel:

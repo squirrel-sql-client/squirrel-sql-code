@@ -310,6 +310,10 @@ public class ActionRegistry
       actionCollection.add(new PasteFromHistoryAction(app));
       actionCollection.add(new PasteFromHistoryAltAcceleratorAction(app));
 
+      actionCollection.add(new UndoAction());
+      actionCollection.add(new RedoAction());
+
+
       actionCollection.add(new QuitSoundAction());
 
       actionCollection.add(new ToggleObjectTreeBesidesEditorAction());
@@ -334,8 +338,8 @@ public class ActionRegistry
    {
       ShortcutManager shortcutManager = Main.getApplication().getShortcutManager();
 
-      shortcutManager.registerAccelerator(UndoAction.class);
-      shortcutManager.registerAccelerator(RedoAction.class);
+//      shortcutManager.registerAccelerator(UndoAction.class);
+//      shortcutManager.registerAccelerator(RedoAction.class);
 
    }
 

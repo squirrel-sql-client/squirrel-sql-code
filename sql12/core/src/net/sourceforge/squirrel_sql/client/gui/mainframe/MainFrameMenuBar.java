@@ -108,6 +108,7 @@ import net.sourceforge.squirrel_sql.client.session.action.PasteFromHistoryAction
 import net.sourceforge.squirrel_sql.client.session.action.PasteFromHistoryAltAcceleratorAction;
 import net.sourceforge.squirrel_sql.client.session.action.PreviousSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.PreviousSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
 import net.sourceforge.squirrel_sql.client.session.action.RemoveNewLinesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RemoveQuotesAction;
@@ -123,6 +124,7 @@ import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResult
 import net.sourceforge.squirrel_sql.client.session.action.ToggleMinimizeResultsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleObjectTreeBesidesEditorAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
+import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
 import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileAppendAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileCloseAction;
@@ -440,6 +442,10 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, DeleteSqlAction.class, menu);
 		addToMenu(rsrc, DeleteCurrentLineAction.class, menu);
 		addToMenu(rsrc, RemoveNewLinesAction.class, menu);
+
+		menu.addSeparator();
+		addToMenu(rsrc, UndoAction.class, menu);
+		addToMenu(rsrc, RedoAction.class, menu);
 
 		menu.addSeparator();
 		addToMenu(rsrc, CaretAddAction.class, menu);

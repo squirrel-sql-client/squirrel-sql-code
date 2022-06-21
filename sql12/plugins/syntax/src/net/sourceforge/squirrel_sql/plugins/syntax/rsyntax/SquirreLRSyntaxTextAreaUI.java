@@ -115,12 +115,9 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       sharedIM.put(getLineUpKeyStroke(), RTextAreaEditorKit.rtaLineUpAction);
       sharedIM.put(getLineDownKeyStroke(), RTextAreaEditorKit.rtaLineDownAction);
 
-      
-
-      KeyStroke rsyntaxRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
-      KeyStroke squirrelRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK);
-      sharedIM.put(squirrelRedoStroke,sharedIM.get(rsyntaxRedoStroke));
-      // This enables users to redefine to the default ctrl+DELETE for DeleteCurrentLineAction by the popular alternativ ctrl+Y
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
+      // This enables users to redefine to the default ctrl+DELETE for DeleteCurrentLineAction by the popular alternative ctrl+Y
       sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK));
 
 
