@@ -175,7 +175,7 @@ public interface ISQLEntryPanel extends IHasIdentifier
 
 	void removeUndoableEditListener(UndoableEditListener listener);
 
-	void addRedoUndoActionsToSQLEntryAreaMenu(Action undo, Action redo);
+	void addUndoRedoActionsToSQLEntryAreaMenu(Action undo, Action redo);
 
 	void addCaretListener(CaretListener lis);
 	void removeCaretListener(CaretListener lis);

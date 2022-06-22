@@ -130,7 +130,7 @@ public class SQLPanel extends JPanel
 	private ISQLPanelAPI _panelAPI;
 
 
-   private IUndoHandler _undoHandler;
+   private UndoHandlerImpl _undoHandler;
    private ResultLimitAndReadOnPanelSmallPanel _resultLimitAndReadOnPanelSmallPanel = new ResultLimitAndReadOnPanelSmallPanel();
 	private ToggleResultMinimizeHandler _toggleResultMinimizeHandler;
 	private SQLPanelPosition _sqlPanelPosition;
@@ -688,6 +688,11 @@ public class SQLPanel extends JPanel
    {
       return _undoHandler.getRedoAction();
    }
+
+	public UndoHandlerImpl getUndoHandlerImpl()
+	{
+		return _undoHandler;
+	}
 
 	public SQLPanelPosition getSQLPanelPosition()
 	{

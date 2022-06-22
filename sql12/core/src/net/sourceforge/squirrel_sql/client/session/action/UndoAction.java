@@ -48,18 +48,14 @@ public class UndoAction extends SquirrelAction implements ISQLPanelAction
    {
       _sqlPanelAPI = sqlPanelAPI;
       setEnabled(null != _sqlPanelAPI);
-   }
 
-   public void setUndoManager(UndoManager undoManager)
-   {
-      _undoManager = undoManager;
-      _delegate = null;
-   }
+      if(null != _sqlPanelAPI)
+      {
+         UndoRedoActionContext undoRedoContext = _sqlPanelAPI.getUndoRedoActionContext();
 
-   public void setDelegate(Action delegate)
-   {
-      _delegate = delegate;
-      _undoManager = null;
+         _undoManager = undoRedoContext.getUndoManager();
+         _delegate = undoRedoContext.getUndoActionDelegate();
+      }
    }
 
    /*

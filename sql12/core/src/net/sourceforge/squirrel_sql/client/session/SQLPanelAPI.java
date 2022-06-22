@@ -41,6 +41,7 @@ import net.sourceforge.squirrel_sql.client.session.action.RemoveNewLinesAction;
 import net.sourceforge.squirrel_sql.client.session.action.RemoveQuotesAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleMinimizeResultsAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
+import net.sourceforge.squirrel_sql.client.session.action.UndoRedoActionContext;
 import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
@@ -709,6 +710,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	public byte[] getBytesForSave()
 	{
 		return _fileHandler.getBytesForSave();
+   }
+
+   @Override
+   public UndoRedoActionContext getUndoRedoActionContext()
+   {
+      return _panel.getUndoHandlerImpl().getUndoRedoActionContext();
    }
 
 }

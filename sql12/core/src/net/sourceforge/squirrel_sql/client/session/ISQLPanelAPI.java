@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.action.UndoRedoActionContext;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
@@ -285,5 +286,7 @@ public interface ISQLPanelAPI extends IFileEditorAPI
 	ChangeTracker getChangeTracker();
 
    byte[] getBytesForSave();
+
+   UndoRedoActionContext getUndoRedoActionContext();
 }
 

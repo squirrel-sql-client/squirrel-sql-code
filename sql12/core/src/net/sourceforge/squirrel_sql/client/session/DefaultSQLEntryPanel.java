@@ -386,6 +386,6 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 
 	public void setUndoManager(UndoManager manager)
 	{
-		// no support for undo
+		_defaultTextArea.getDocument().addUndoableEditListener(manager);
 	}
 }

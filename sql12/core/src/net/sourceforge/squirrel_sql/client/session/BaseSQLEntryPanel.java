@@ -1,14 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
@@ -17,6 +8,15 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
+
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /*
  * Copyright (C) 2001-2003 Colin Bell
@@ -211,9 +211,9 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
 
 	/**
-	 * @see ISQLEntryPanel#addRedoUndoActionsToSQLEntryAreaMenu(javax.swing.Action, javax.swing.Action)
+	 * @see ISQLEntryPanel#addUndoRedoActionsToSQLEntryAreaMenu(javax.swing.Action, javax.swing.Action)
 	 */
-	public void addRedoUndoActionsToSQLEntryAreaMenu(Action undo, Action redo)
+	public void addUndoRedoActionsToSQLEntryAreaMenu(Action undo, Action redo)
 	{
 		_textPopupMenu.addSeparator();
 

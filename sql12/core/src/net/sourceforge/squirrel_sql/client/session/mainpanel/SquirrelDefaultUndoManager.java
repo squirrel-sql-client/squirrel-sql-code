@@ -33,7 +33,6 @@ public class SquirrelDefaultUndoManager extends UndoManager
 	 */
    public SquirrelDefaultUndoManager()
 	{
-		super();
 		// Prepare to have a lot of DocumentEvent.EventType.CHANGE
 		setLimit(200000);
 	}
