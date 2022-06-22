@@ -151,17 +151,20 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
        result.append(_simpleName);
        return result.toString();
    }
-   
+
    private String getProgressQualifiedName() {
-   	StringBuilder result = new StringBuilder();
-   	if (_schema != null) {
-   		result.append(_schema);
-   		result.append(".");
-   	}
-   	result.append(_simpleName);
-   	return result.toString();
+      StringBuilder result = new StringBuilder();
+      if (_schema != null) {
+         result.append("\"");
+         result.append(_schema);
+         result.append("\"");
+         result.append(".");
+      }
+      result.append("\"");
+      result.append(_simpleName);
+      result.append("\"");
+      return result.toString();
    }
-   
    /**
     * Generates the qualified name (for example, "SCHEMA.SIMPLENAME").  This is highly database specific and
     * should probably be moved into the dialects.

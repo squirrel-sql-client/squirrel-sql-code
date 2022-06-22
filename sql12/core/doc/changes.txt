@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Improved handling of OpenEdge DB specifics.
+  Thanks to Tinco van Engen for the patch.
+
 Improved jumps to distinguished preferences sections utilizing
   the new Global Preferences and New Session Properties search.
   Currently used by:
