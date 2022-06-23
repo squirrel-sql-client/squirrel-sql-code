@@ -18,18 +18,14 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.event.ActionEvent;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 
-import javax.swing.Action;
-import javax.swing.undo.UndoManager;
-import java.awt.event.ActionEvent;
-
 public class RedoAction extends SquirrelAction  implements ISQLPanelAction
 {
-	private UndoManager _undoManager;
-   private Action _delegate;
    private ISQLPanelAPI _sqlPanelAPI;
 
    public RedoAction()
@@ -42,14 +38,6 @@ public class RedoAction extends SquirrelAction  implements ISQLPanelAction
    {
       _sqlPanelAPI = sqlPanelAPI;
       setEnabled(null != _sqlPanelAPI);
-
-      if(null != _sqlPanelAPI)
-      {
-         UndoRedoActionContext undoRedoContext = _sqlPanelAPI.getUndoRedoActionContext();
-
-         _undoManager = undoRedoContext.getUndoManager();
-         _delegate = undoRedoContext.getRedoActionDelegate();
-      }
    }
 
    /*
@@ -62,13 +50,19 @@ public class RedoAction extends SquirrelAction  implements ISQLPanelAction
          return;
       }
 
-      if (null == _delegate)
+
+      UndoRedoActionContext undoRedoContext = _sqlPanelAPI.getUndoRedoActionContext();
+
+      if ( null != undoRedoContext.getUndoManager() )
       {
-         if(_undoManager.canRedo()) _undoManager.redo();
+         if( undoRedoContext.getUndoManager().canRedo())
+         {
+            undoRedoContext.getUndoManager().redo();
+         }
       }
       else
       {
-         _delegate.actionPerformed(e);
+         undoRedoContext.getRedoActionDelegate().actionPerformed(e);
       }
    }
 
