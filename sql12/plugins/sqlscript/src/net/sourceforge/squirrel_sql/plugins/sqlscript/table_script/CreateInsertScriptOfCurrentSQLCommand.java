@@ -19,18 +19,15 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.tablenamefind.TableNameFindService;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.insert.InsertGenerator;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder.ScriptBuilder;
@@ -38,8 +35,6 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.scriptbuilder
 import javax.swing.SwingUtilities;
 import java.awt.Frame;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 public class CreateInsertScriptOfCurrentSQLCommand
@@ -91,17 +86,7 @@ public class CreateInsertScriptOfCurrentSQLCommand
                String sql = qt.nextQuery().getQuery();
 
                ResultSet srcResult = stmt.executeQuery(sql);
-               String tableName = getFirstTableNameFromResultSetMetaData(srcResult);
-
-               if (StringUtilities.isEmpty(tableName, true))
-               {
-                  tableName = new EditableSqlCheck(sql).getTableNameFromSQL();
-               }
-
-               if (StringUtilities.isEmpty(tableName, true))
-               {
-                  tableName = "PressCtrlH";
-               }
+               String tableName = TableNameFindService.findTableName(sql, srcResult, _session);
 
                new InsertGenerator(_session).genInserts(srcResult, tableName, sbRows, false, false, () -> _abortController.isStop());
             }
@@ -134,29 +119,4 @@ public class CreateInsertScriptOfCurrentSQLCommand
    }
 
 
-   private String getFirstTableNameFromResultSetMetaData(ResultSet srcResult) throws SQLException
-   {
-      ResultSetMetaData metaData = srcResult.getMetaData();
-      //String tableName = metaData.getTableName(1);
-
-      for (int i = 1; i <= metaData.getColumnCount(); i++)
-      {
-         ITableInfo tInfo = new TableInfo(
-               metaData.getCatalogName(i),
-               metaData.getSchemaName(i),
-               metaData.getTableName(i),
-               "TABLE", "",
-               _session.getMetaData());
-
-         String tableName = ScriptUtil.getTableName(tInfo);
-
-         if(false == StringUtilities.isEmpty(tableName, true))
-         {
-            return tableName;
-         }
-
-      }
-
-      return null;
-   }
 }
