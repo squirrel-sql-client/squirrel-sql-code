@@ -28,7 +28,7 @@ public class DataModelImplementationDetails
    {
       if (null != _exInfo)
       {
-         String tableNameFromSQL = new EditableSqlCheck(_exInfo).getTableNameFromSQL();
+         String tableNameFromSQL = new EditableSqlCheck(_exInfo, _session).getTableNameFromSQL();
 
          if(false == StringUtilities.isEmpty(tableNameFromSQL, true))
          {

@@ -7,7 +7,7 @@ public class EditableSqlCheck
 {
    private String _tableNameFromSQL = null;
 
-   public EditableSqlCheck(SQLExecutionInfo exInfo)
+   public EditableSqlCheck(SQLExecutionInfo exInfo, ISession session)
    {
       if(null == exInfo || null == exInfo.getSQL())
       {
@@ -18,7 +18,7 @@ public class EditableSqlCheck
 
       if (null == _tableNameFromSQL)
       {
-         _tableNameFromSQL = TableNameFindService.findTableNameInSQL(exInfo.getSQL());
+         _tableNameFromSQL = TableNameFindService.findTableNameInSQL(exInfo.getSQL(), session);
       }
    }
 

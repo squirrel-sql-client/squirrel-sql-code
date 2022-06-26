@@ -30,4 +30,10 @@ public class SQLScriptExternalService
       return ScriptUtil.getTableName(tableInfo);
    }
 
+   public boolean isQualifyTableRequired()
+   {
+      return ScriptUtil.isQualifyTableRequired();
+   }
+
+
 }

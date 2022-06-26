@@ -19,24 +19,30 @@ public class TableNameFindService
 
    public static String findTableNameBySqlOrResultMetaData(String sql, ResultSet srcResult, ISession session) throws SQLException
    {
-      String tableName = getFirstTableNameFromResultSetMetaData(srcResult, session);
+      String tableName = TableQualifyingService.qualifyIfNeeded(getFirstTableNameFromResultSetMetaData(srcResult, session), session);
 
       if (StringUtilities.isEmpty(tableName, true))
       {
-         tableName = findTableNameInSQL(sql);
+         tableName = TableQualifyingService.qualifyIfNeeded(_findTableNameInSQL(sql), session);
       }
 
       if (StringUtilities.isEmpty(tableName, true))
       {
          tableName = "PressCtrlH";
       }
+
+
       return tableName;
    }
 
 
-   public static String findTableNameInSQL(String sql)
+   public static String findTableNameInSQL(String sql, ISession session)
    {
+      return TableQualifyingService.qualifyIfNeeded(_findTableNameInSQL(sql), session);
+   }
 
+   private static String _findTableNameInSQL(String sql)
+   {
       Pattern patternBeforeTable = Pattern.compile("SELECT\\s+[A-Z0-9_\\*\\.',\\s\"]*\\s+FROM\\s+([A-Z0-9_\\.\"]+)");
       sql = sql.toUpperCase().trim();
       // Bug 1371587 - remove useless accent characters if they exist
@@ -98,6 +104,7 @@ public class TableNameFindService
 
    /**
     * This method may never be called?!
+    * In case it is called {@link TableQualifyingService#qualifyIfNeeded(String, ISession)} ma be necessary.
     */
    public static String findTableNameInColumnDisplayDefinition(ColumnDisplayDefinition colDef)
    {

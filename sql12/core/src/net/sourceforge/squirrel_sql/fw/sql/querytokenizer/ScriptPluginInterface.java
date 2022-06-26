@@ -8,4 +8,6 @@ public interface ScriptPluginInterface
    boolean startsWithSqlToFileMarker(String sql);
 
    String formatTableName(ITableInfo tInfo);
+
+   boolean isQualifyTableRequired();
 }

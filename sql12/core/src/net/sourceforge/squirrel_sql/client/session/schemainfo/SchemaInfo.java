@@ -1024,15 +1024,16 @@ public class SchemaInfo
 
       for(ITableInfo iTableInfo : tis)
       {
-         if(null != catalog &&
-            false == catalog.equalsIgnoreCase(iTableInfo.getCatalogName()) &&
-            false == fulfillsPlatformDependendMatches(iTableInfo, catalog)
+         if(   null != catalog
+            && false == catalog.equalsIgnoreCase(iTableInfo.getCatalogName())
+            && false == fulfillsPlatformDependendMatches(iTableInfo, catalog)
             )
          {
             continue;
          }
 
-         if(null != schema && false == schema.equalsIgnoreCase(iTableInfo.getSchemaName()) )
+         if(null != schema
+            && false == schema.equalsIgnoreCase(iTableInfo.getSchemaName()) )
          {
             continue;
          }
