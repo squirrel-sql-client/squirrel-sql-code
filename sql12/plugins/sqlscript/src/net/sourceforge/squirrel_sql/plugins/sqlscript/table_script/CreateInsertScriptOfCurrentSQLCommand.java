@@ -86,7 +86,7 @@ public class CreateInsertScriptOfCurrentSQLCommand
                String sql = qt.nextQuery().getQuery();
 
                ResultSet srcResult = stmt.executeQuery(sql);
-               String tableName = TableNameFindService.findTableName(sql, srcResult, _session);
+               String tableName = TableNameFindService.findTableNameBySqlOrResultMetaData(sql, srcResult, _session);
 
                new InsertGenerator(_session).genInserts(srcResult, tableName, sbRows, false, false, () -> _abortController.isStop());
             }

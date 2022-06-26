@@ -17,7 +17,7 @@ public class TableNameFindService
 {
    private static final Pattern FILL_COLUMN_NAME_PATTERN = Pattern.compile(".+:([^:]+):[^:]+$");
 
-   public static String findTableName(String sql, ResultSet srcResult, ISession session) throws SQLException
+   public static String findTableNameBySqlOrResultMetaData(String sql, ResultSet srcResult, ISession session) throws SQLException
    {
       String tableName = getFirstTableNameFromResultSetMetaData(srcResult, session);
 
