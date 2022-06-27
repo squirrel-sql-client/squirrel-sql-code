@@ -1,5 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.sql.tablenamefind;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -7,38 +13,32 @@ import net.sourceforge.squirrel_sql.fw.sql.SqlScriptPluginAccessor;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class TableNameFindService
 {
    private static final Pattern FILL_COLUMN_NAME_PATTERN = Pattern.compile(".+:([^:]+):[^:]+$");
 
    public static String findTableNameBySqlOrResultMetaData(String sql, ResultSet srcResult, ISession session) throws SQLException
    {
-      String tableName = TableQualifyingService.qualifyIfNeeded(getFirstTableNameFromResultSetMetaData(srcResult, session), session);
+      QualifyResult qualifyResult = TableQualifyingService.qualifyIfNeeded(getFirstTableNameFromResultSetMetaData(srcResult, session), session);
 
-      if (StringUtilities.isEmpty(tableName, true))
+      if (qualifyResult.getState() == QualifyResultState.EMPTY || qualifyResult.getState() == QualifyResultState.HEURISTIC_USED)
       {
-         tableName = TableQualifyingService.qualifyIfNeeded(_findTableNameInSQL(sql), session);
+         qualifyResult = TableQualifyingService.qualifyIfNeeded(_findTableNameInSQL(sql), session);
       }
 
-      if (StringUtilities.isEmpty(tableName, true))
+      if (qualifyResult.getState() == QualifyResultState.EMPTY)
       {
-         tableName = "PressCtrlH";
+         return "PressCtrlH";
       }
 
 
-      return tableName;
+      return qualifyResult.getTableName();
    }
 
 
    public static String findTableNameInSQL(String sql, ISession session)
    {
-      return TableQualifyingService.qualifyIfNeeded(_findTableNameInSQL(sql), session);
+      return TableQualifyingService.qualifyIfNeeded(_findTableNameInSQL(sql), session).getTableName();
    }
 
    private static String _findTableNameInSQL(String sql)
