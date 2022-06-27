@@ -15,14 +15,14 @@
 
 package net.sourceforge.squirrel_sql.fw.completion;
 
+import java.awt.Component;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JRootPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
-import java.awt.Component;
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 
 
 /**
@@ -141,16 +141,16 @@ public class PopupManager
 		Component viewParent = view.getParent();
 		if (viewParent instanceof JViewport)
 		{
-			Rectangle viewBounds = ((JViewport) viewParent).getViewRect();
-			Rectangle translatedCursorBounds = (Rectangle) cursorBounds.clone();
-			translatedCursorBounds.translate(-viewBounds.x, -viewBounds.y);
+			Rectangle2D viewBounds = ((JViewport) viewParent).getViewRect();
+			Rectangle translatedCursorBounds = ((Rectangle2D) cursorBounds.clone()).getBounds();
+			translatedCursorBounds.translate(-viewBounds.getBounds().x, -viewBounds.getBounds().y);
 
-			ret = computeBounds(popup, viewBounds.width, viewBounds.height,
+			ret = computeBounds(popup, viewBounds.getBounds().width, viewBounds.getBounds().height,
 				translatedCursorBounds, placement);
 
 			if (ret != null)
 			{ // valid bounds
-				ret.translate(viewBounds.x, viewBounds.y);
+				ret.translate(viewBounds.getBounds().x, viewBounds.getBounds().y);
 			}
 
 		}
