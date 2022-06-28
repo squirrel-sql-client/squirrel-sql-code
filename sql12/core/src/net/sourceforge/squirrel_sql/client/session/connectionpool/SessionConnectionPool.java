@@ -295,6 +295,11 @@ public class SessionConnectionPool
       setPropertyInAllConnections("catalog", con -> con.setCatalog(selectedCatalog));
    }
 
+   public void setSessionSchema(String selectedSchema)
+   {
+      setPropertyInAllConnections("schema", con -> con.setSchema(selectedSchema));
+   }
+
    public void setSessionCommitOnClose(boolean commitOnClosingConnection)
    {
       setPropertyInAllConnections("commitOnClosingConnection", con -> con.setCommitOnClose(commitOnClosingConnection));

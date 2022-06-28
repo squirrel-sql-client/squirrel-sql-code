@@ -1,22 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -28,6 +11,23 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 
 public class SchemaPanel extends JPanel
 {
@@ -160,23 +160,8 @@ public class SchemaPanel extends JPanel
 
    private void onSchemaSelected(JMenuItem menuItem)
    {
-      try
-      {
-         _session.getSQLConnection().setSchema(menuItem.getText());
-
-         if( menuItem.getText().equalsIgnoreCase(_session.getSQLConnection().getSchema()))
-         {
-            onRefreshSchema(true);
-         }
-         else
-         {
-            s_log.error("Setting schema didn't take effect.");
-         }
-      }
-      catch (Throwable e)
-      {
-         s_log.error("Failed to set schema", e);
-      }
+      _session.getCurrentSchemaModel().setCurrentSchema(menuItem.getText());
+      onRefreshSchema(false);
    }
 
    /**

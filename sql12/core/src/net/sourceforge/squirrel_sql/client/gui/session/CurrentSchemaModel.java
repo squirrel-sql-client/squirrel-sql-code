@@ -20,6 +20,29 @@ public class CurrentSchemaModel
       _session = session;
    }
 
+   public void setCurrentSchema(String schemaName)
+   {
+      try
+      {
+         _session.getSQLConnection().setSchema(schemaName);
+
+         if( schemaName.equalsIgnoreCase(_session.getSQLConnection().getSchema()))
+         {
+            _session.getConnectionPool().setSessionSchema(schemaName);
+            refreshSchema(true);
+         }
+         else
+         {
+            s_log.error("Setting schema didn't take effect.");
+         }
+      }
+      catch (Throwable e)
+      {
+         s_log.error("Failed to set schema", e);
+      }
+   }
+
+
    public String refreshSchema(boolean logException)
    {
       _initialized = true;

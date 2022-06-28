@@ -58,6 +58,9 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+Current schema panel at the right of Session's status bar:
+  Made setting the current schema work when connection pool is used.
+
 Plain SQL editor: Fixed ClassCastException when code completion was used.
   See menu File --> New Session Properties --> top of tab Syntax
 
