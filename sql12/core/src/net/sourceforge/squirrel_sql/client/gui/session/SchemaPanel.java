@@ -99,10 +99,7 @@ public class SchemaPanel extends JPanel
 
       });
 
-
       onRefreshSchema(false);
-
-
    }
 
    private void onTxtSchemaClicked(MouseEvent me)
@@ -183,35 +180,14 @@ public class SchemaPanel extends JPanel
    }
 
    /**
-    * @param logException Currently getSchema() is not well supported by several RDBMSes/Drivers.
-    *                     Using this parameter we prevent logs at start up. But whenever the refresh button is used logging will be done.
     */
    private void onRefreshSchema(boolean logException)
    {
-
-      String noneString = "<None>";
-
-      String schema;
-
-      try
-      {
-         schema = _session.getSQLConnection().getSchema();
-         schema = StringUtilities.isEmpty(schema, true) ? noneString : schema;
-      }
-      catch (Throwable e)
-      {
-         schema = "<Not accessible>";
-         if (logException)
-         {
-            s_log.error("Failed to load current schema name", e);
-         }
-      }
-
+      String schema = _session.getCurrentSchemaModel().refreshSchema(logException);
       _txtSchema.setText(schema);
-
       invalidate();
-
    }
+
 
    @Override
    public void setBackground(Color bg)

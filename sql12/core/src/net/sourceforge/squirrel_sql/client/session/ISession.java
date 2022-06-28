@@ -20,9 +20,13 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.SQLException;
+import javax.swing.Action;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
+import net.sourceforge.squirrel_sql.client.gui.session.CurrentSchemaModel;
 import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
@@ -43,9 +47,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-
-import javax.swing.Action;
-import java.sql.SQLException;
 
 /**
  * The current session.
@@ -420,4 +421,6 @@ public interface ISession extends IHasIdentifier
    SavedSessionJsonBean getSavedSession();
 
    void setSavedSession(SavedSessionJsonBean savedSession);
+
+   CurrentSchemaModel getCurrentSchemaModel();
 }
