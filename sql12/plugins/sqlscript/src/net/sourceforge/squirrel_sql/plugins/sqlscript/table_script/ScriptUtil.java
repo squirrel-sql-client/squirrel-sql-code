@@ -12,7 +12,7 @@ import java.util.Hashtable;
 public class ScriptUtil
 {
 
-   Hashtable<String, String> _uniqueColNames = new Hashtable<>();
+   private Hashtable<String, String> _uniqueColNames = new Hashtable<>();
 
    /**
     * This method provides unique column names.
@@ -92,4 +92,8 @@ public class ScriptUtil
       return DialectUtils.formatQualified(ti.getSimpleName(), ti.getSchemaName(), qualifyTableNames, useDoubleQuotes);
    }
 
+   public static boolean isQualifyTableRequired()
+   {
+      return SQLScriptPreferencesManager.getPreferences().isQualifyTableNames();
+   }
 }

@@ -1,14 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.sql.tablenamefind.TableNameFindService;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DataModelImplementationDetails
 {
-   private static final Pattern FILL_COLUMN_NAME_PATTERN = Pattern.compile(".+:([^:]+):[^:]+$");
    private ISession _session;
    private SQLExecutionInfo _exInfo;
 
@@ -31,7 +28,7 @@ public class DataModelImplementationDetails
    {
       if (null != _exInfo)
       {
-         String tableNameFromSQL = new EditableSqlCheck(_exInfo).getTableNameFromSQL();
+         String tableNameFromSQL = new EditableSqlCheck(_exInfo, _session).getTableNameFromSQL();
 
          if(false == StringUtilities.isEmpty(tableNameFromSQL, true))
          {
@@ -39,28 +36,7 @@ public class DataModelImplementationDetails
          }
       }
 
-      if(false == StringUtilities.isEmpty(colDef.getTableName(), true))
-      {
-         return colDef.getTableName();
-      }
-
-      if (    null != colDef.getResultMetaDataTable()
-           && false == StringUtilities.isEmpty(colDef.getResultMetaDataTable().getTableName(), true))
-      {
-         return colDef.getResultMetaDataTable().getTableName();
-      }
-
-      if (false == StringUtilities.isEmpty(colDef.getFullTableColumnName(), true))
-      {
-         Matcher matcher = FILL_COLUMN_NAME_PATTERN.matcher(colDef.getFullTableColumnName());
-
-         if (matcher.matches())
-         {
-            return matcher.group(1);
-         }
-      }
-
-      return null;
+      return TableNameFindService.findTableNameInColumnDisplayDefinition(colDef);
    }
 
 

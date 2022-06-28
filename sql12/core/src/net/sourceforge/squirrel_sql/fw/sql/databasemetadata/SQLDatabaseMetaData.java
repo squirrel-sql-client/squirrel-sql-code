@@ -334,7 +334,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		{
 			value = Boolean.valueOf(privateGetJDBCMetaData().supportsSchemasInDataManipulation());
 		}
-		catch (SQLException ex)
+		catch (Exception ex)
 		{
 			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
 
@@ -364,7 +364,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		{
 			value = Boolean.valueOf(privateGetJDBCMetaData().supportsSchemasInTableDefinitions());
 		}
-		catch (SQLException ex)
+		catch (Exception ex)
 		{
 			boolean isSQLServer = DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
 			if (isSQLServer)

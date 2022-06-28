@@ -1,8 +1,12 @@
 package net.sourceforge.squirrel_sql.client.cli;
 
+import java.sql.SQLException;
+import javax.swing.Action;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
+import net.sourceforge.squirrel_sql.client.gui.session.CurrentSchemaModel;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
@@ -26,9 +30,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-
-import javax.swing.Action;
-import java.sql.SQLException;
 
 public class CliSessionAdapter implements ISession
 {
@@ -389,6 +390,12 @@ public class CliSessionAdapter implements ISession
    @Override
    public void setSavedSession(SavedSessionJsonBean savedSession)
    {
+   }
+
+   @Override
+   public CurrentSchemaModel getCurrentSchemaModel()
+   {
+      throw new UnsupportedOperationException("Must be implemented in derived class");
    }
 
    @Override

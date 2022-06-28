@@ -11,6 +11,7 @@ public class TableNameProvider
    private boolean _colDefsFinished;
 
    private ArrayList<ColumnDisplayDefinition> _colDefs = new ArrayList<>();
+   private String _tableName;
 
    public TableNameProvider(DataModelImplementationDetails dataModelImplementationDetails)
    {
@@ -34,6 +35,15 @@ public class TableNameProvider
    }
 
    public String getTableName()
+   {
+      if(null == _tableName)
+      {
+         _tableName = _findTableName();
+      }
+      return _tableName;
+   }
+
+   private String _findTableName()
    {
       for (ColumnDisplayDefinition colDef : _colDefs)
       {

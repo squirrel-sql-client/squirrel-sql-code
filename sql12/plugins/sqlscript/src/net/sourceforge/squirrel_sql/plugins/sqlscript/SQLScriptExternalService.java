@@ -1,8 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptCommand;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptCommand;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ScriptUtil;
 
 
 public class SQLScriptExternalService
@@ -23,4 +24,16 @@ public class SQLScriptExternalService
    {
       return SQLToFileHandler.startsWithSqlToFileMarker(sql);
    }
+
+   public String formatTableName(ITableInfo tableInfo)
+   {
+      return ScriptUtil.getTableName(tableInfo);
+   }
+
+   public boolean isQualifyTableRequired()
+   {
+      return ScriptUtil.isQualifyTableRequired();
+   }
+
+
 }

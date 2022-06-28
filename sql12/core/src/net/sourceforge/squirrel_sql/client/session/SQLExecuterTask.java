@@ -480,7 +480,7 @@ public class SQLExecuterTask implements Runnable
          _handler.sqlExecutionComplete(exInfo, processedStatementCount, statementCount);
       }
 
-      EditableSqlCheck edittableCheck = new EditableSqlCheck(exInfo);
+      EditableSqlCheck edittableCheck = new EditableSqlCheck(exInfo, _session);
 
       if (_executeEditableCheck && edittableCheck.allowsEditing())
       {
