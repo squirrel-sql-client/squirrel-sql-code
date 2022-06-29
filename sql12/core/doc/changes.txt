@@ -62,7 +62,7 @@ Bug fixes:
   Note: To configure qualifying see menu File --> Global Preferences --> tab SQL Scripts
 
 Current schema panel at the right of Session's status bar:
-  Made setting the current schema work when connection pool is used.
+  Made setting the current schema work when query connection pool is used.
 
 Plain SQL editor: Fixed ClassCastException when code completion was used.
   See menu File --> New Session Properties --> top of tab Syntax
