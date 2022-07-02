@@ -92,7 +92,7 @@ Command line mode: Java process didn't properly end when SQL was executed on com
 
 
 
-4.4.0 (04/06/2021)
+4.4.0 (04/06/2022)
 ==================
 
 Enhancements:
