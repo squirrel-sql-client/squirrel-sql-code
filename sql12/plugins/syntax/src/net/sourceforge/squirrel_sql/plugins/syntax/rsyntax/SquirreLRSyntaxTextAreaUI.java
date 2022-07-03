@@ -4,8 +4,12 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.SQLEntryPanelUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextActionUtil;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextBeginAction;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextBeginLineAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextCopyAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextCutAction;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextEndAction;
+import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextEndLineAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPasteAction;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextSelectAllAction;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaDefaultInputMap;
@@ -132,6 +136,15 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       sharedIM.put(TextPasteAction.getKeyStroke(), RTextAreaEditorKit.pasteAction);
       sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
       sharedIM.put(TextSelectAllAction.getKeyStroke(), RTextAreaEditorKit.selectAllAction);
+
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0));
+      sharedIM.put(TextBeginLineAction.getKeyStroke(), RTextAreaEditorKit.beginLineAction);
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0));
+      sharedIM.put(TextEndLineAction.getKeyStroke(), RTextAreaEditorKit.endLineAction);
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.put(TextBeginAction.getKeyStroke(), RTextAreaEditorKit.beginAction);
+      sharedIM.remove(KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK));
+      sharedIM.put(TextEndAction.getKeyStroke(), RTextAreaEditorKit.endAction);
    }
 
    public IUndoHandler createUndoHandler()

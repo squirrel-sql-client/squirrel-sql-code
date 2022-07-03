@@ -58,6 +58,10 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+#1502 MAC OS: Made some standard navigation keyboard short cuts available for configuration.
+  See menu File --> Global Preferences --> tab Keyboard shortcuts,
+  entries caret-begin, caret-begin-line, caret-end, caret-end-line
+
 #1505 Improved/fixed schema qualifying for scripting function.
   Note: To configure qualifying see menu File --> Global Preferences --> tab SQL Scripts
 
