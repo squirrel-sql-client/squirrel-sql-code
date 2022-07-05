@@ -85,6 +85,8 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
             appendWebsiteLink(doc, Version.getWebSite2());
             doc.insertString(doc.getLength(), "\n", null);
             appendWebsiteLink(doc, Version.getWebSite3());
+            doc.insertString(doc.getLength(), "\n", null);
+            appendWebsiteLink(doc, Version.getWebSite4());
 
             addMouseListener(this);
             addMouseMotionListener(this);
@@ -93,7 +95,8 @@ public class VersionPane extends JTextPane implements MouseMotionListener, Mouse
          {
             text.append(Version.getWebSite() + "\n");
             text.append(Version.getWebSite2() + "\n");
-            text.append(Version.getWebSite3());
+            text.append(Version.getWebSite3() + "\n");
+            text.append(Version.getWebSite4());
 
             String content = text.toString();
             putClientProperty(HONOR_DISPLAY_PROPERTIES, true);

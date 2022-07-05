@@ -18,11 +18,11 @@ package net.sourceforge.squirrel_sql.client;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * Application version information.
  *
@@ -40,6 +40,8 @@ public class Version
 	private static final String WEB_SITE2 = "https://squirrelsql.org";
 
 	private static final String WEB_SITE3 = "https://squirrel-sql.sourceforge.io";
+
+	private static final String WEB_SITE4 = "https://github.com/squirrel-sql-client";
 
 	private static String shortVersion = null;
 	
@@ -126,6 +128,10 @@ public class Version
 	public static String getWebSite3()
 	{
 		return WEB_SITE3;
+	}
+	public static String getWebSite4()
+	{
+		return WEB_SITE4;
 	}
 
 

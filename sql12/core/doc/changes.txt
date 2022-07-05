@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+The about dialog now contains a link to SQuirreL's new GitHub web page:
+  https://github.com/squirrel-sql-client
+
 Improved handling of OpenEdge DB specifics.
   Thanks to Tinco van Engen for the patch.
 
