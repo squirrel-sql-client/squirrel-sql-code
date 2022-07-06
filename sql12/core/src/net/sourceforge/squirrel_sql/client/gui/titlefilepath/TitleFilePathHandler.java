@@ -1,35 +1,40 @@
 package net.sourceforge.squirrel_sql.client.gui.titlefilepath;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
+import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallTabButton;
-import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class TitleFilePathHandler
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TitleFilePathHandler.class);
 
-   private static final String PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_FILE_NAME = "Squirrel.TitleFilePathHandler.showFileName";
-   private static final String PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_PATH_NAME = "Squirrel.TitleFilePathHandler.showPathName";
-
+   public static final String PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_FILE_NAME = "Squirrel.TitleFilePathHandler.showFileName";
+   public static final String PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_PATH_NAME = "Squirrel.TitleFilePathHandler.showPathName";
+   public static final String PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_INTERNALLY_SAVED_SESSION_FILE_NAME= "Squirrel.TitleFilePathHandler.showInternallySavedSessionFileName";
+   public static final String PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_INTERNALLY_SAVED_SESSION_PATH_NAME= "Squirrel.TitleFilePathHandler.showInternallySavedSessionPathName";
+   
+   
    private File _sqlFile;
    private TitleFilePathHandlerListener _titleFilePathHandlerListener;
    private SmallTabButton _smallTabButton;
-   private JPopupMenu _popUp;
    private JCheckBoxMenuItem _chkMnuShowFileName;
    private JCheckBoxMenuItem _chkMnuShowFilePath;
+
+   private TitleFileCheckBoxesInitializer _titleFileCheckBoxesInitializer = new TitleFileCheckBoxesInitializer();
 
 
    public TitleFilePathHandler(TitleFilePathHandlerListener titleFilePathHandlerListener)
@@ -40,45 +45,95 @@ public class TitleFilePathHandler
       _smallTabButton = new SmallTabButton(msg, resources.getIcon(SquirrelResources.IImageNames.SMALL_FILE));
 
       _smallTabButton.addActionListener(e -> showPopup());
+      _chkMnuShowFileName = new JCheckBoxMenuItem();
+      _chkMnuShowFilePath = new JCheckBoxMenuItem();
+   }
 
-      _popUp = new JPopupMenu();
+   private JPopupMenu createPopupMenu()
+   {
+      JPopupMenu popUp = new JPopupMenu();
 
-      JMenuItem mnuOpenFilePath = new JMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.openFilePath"));
-      _popUp.add(mnuOpenFilePath);
+      JMenuItem mnuOpenFilePath;
+      if(SavedSessionUtil.isInSavedSessionsDir(_sqlFile))
+      {
+         mnuOpenFilePath = new JMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.openInternallySavedSessionFilePath"));
+      }
+      else
+      {
+         mnuOpenFilePath = new JMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.openFilePath"));
+      }
+      popUp.add(mnuOpenFilePath);
       mnuOpenFilePath.addActionListener(e -> onOpenFilePath());
 
-      JMenuItem mnuCopyFilePath = new JMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.copyFilePath"));
-      _popUp.add(mnuCopyFilePath);
+      JMenuItem mnuCopyFilePath;
+      if(SavedSessionUtil.isInSavedSessionsDir(_sqlFile))
+      {
+         mnuCopyFilePath = new JMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.copyInternallySavedSessionFilePath"));
+      }
+      else
+      {
+         mnuCopyFilePath = new JMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.copyFilePath"));
+      }
+      popUp.add(mnuCopyFilePath);
       mnuCopyFilePath.addActionListener(e -> onCopyFilePath());
 
-      JMenuItem mnuCopyFileName = new JMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.copyFileName"));
-      _popUp.add(mnuCopyFileName);
+      JMenuItem mnuCopyFileName;
+      if(SavedSessionUtil.isInSavedSessionsDir(_sqlFile))
+      {
+         mnuCopyFileName = new JMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.copyInternallySavedSessionFileName"));
+      }
+      else
+      {
+         mnuCopyFileName = new JMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.copyFileName"));
+      }
+      popUp.add(mnuCopyFileName);
       mnuCopyFileName.addActionListener(e -> onCopyFileName());
 
 
-      _popUp.addSeparator();
+      popUp.addSeparator();
 
-      _chkMnuShowFileName = new JCheckBoxMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.showFileName"));
-      _popUp.add(_chkMnuShowFileName);
+      if(SavedSessionUtil.isInSavedSessionsDir(_sqlFile))
+      {
+         _chkMnuShowFileName.setText(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.showInternallySavedSessionFileName"));
+      }
+      else
+      {
+         _chkMnuShowFileName.setText(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.showFileName"));
+      }
+      popUp.add(_chkMnuShowFileName);
       _chkMnuShowFileName.addActionListener(e -> onChkMnuShowFileName());
 
-      _chkMnuShowFilePath = new JCheckBoxMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.showFilePath"));
-      _popUp.add(_chkMnuShowFilePath);
+      if(SavedSessionUtil.isInSavedSessionsDir(_sqlFile))
+      {
+         _chkMnuShowFilePath.setText(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.showInternallySavedSessionFilePath"));
+      }
+      else
+      {
+         _chkMnuShowFilePath.setText(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.showFilePath"));
+      }
+      popUp.add(_chkMnuShowFilePath);
       _chkMnuShowFilePath.addActionListener(e -> onChkMnuShowFilePath());
 
 
       JMenuItem mnuRememberCheckboxes = new JMenuItem(s_stringMgr.getString("desktopcontainer.TitleFilePathHandler.rememberCheckBoxes"));
-      _popUp.add(mnuRememberCheckboxes);
+      popUp.add(mnuRememberCheckboxes);
       mnuRememberCheckboxes.addActionListener(e -> onRememberCheckboxes());
 
-      _chkMnuShowFileName.setSelected(Props.getBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_FILE_NAME, false));
-      _chkMnuShowFilePath.setSelected(Props.getBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_PATH_NAME, false));
+      return popUp;
    }
 
    private void onRememberCheckboxes()
    {
-      Props.putBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_FILE_NAME, _chkMnuShowFileName.isSelected());
-      Props.putBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_PATH_NAME, _chkMnuShowFilePath.isSelected());
+      if(SavedSessionUtil.isInSavedSessionsDir(_sqlFile))
+      {
+         Props.putBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_INTERNALLY_SAVED_SESSION_FILE_NAME, _chkMnuShowFileName.isSelected());
+         Props.putBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_INTERNALLY_SAVED_SESSION_PATH_NAME, _chkMnuShowFilePath.isSelected());
+      }
+      else
+      {
+         Props.putBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_FILE_NAME, _chkMnuShowFileName.isSelected());
+         Props.putBoolean(PREF_KEY_TITLE_FILE_PATH_HANDLER_SHOW_PATH_NAME, _chkMnuShowFilePath.isSelected());
+      }
    }
 
    private void onChkMnuShowFilePath()
@@ -141,7 +196,7 @@ public class TitleFilePathHandler
 
    private void showPopup()
    {
-      _popUp.show(_smallTabButton, 0, 0);
+      createPopupMenu().show(_smallTabButton, 0, 0);
    }
 
    public void setSqlFile(File sqlFile)
@@ -149,13 +204,22 @@ public class TitleFilePathHandler
       _sqlFile = sqlFile;
       if(null == _sqlFile)
       {
-         _smallTabButton.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_FILE));
+         _smallTabButton.setIcon(null);
          _smallTabButton.setToolTipText("");
       }
       else
       {
-         _smallTabButton.setToolTipText(_sqlFile.getAbsolutePath());
+         if(SavedSessionUtil.isInSavedSessionsDir(_sqlFile))
+         {
+            _smallTabButton.setToolTipText(s_stringMgr.getString("TitleFilePathHandler.internallySavedFile", _sqlFile.getAbsolutePath()));
+         }
+         else
+         {
+            _smallTabButton.setToolTipText(_sqlFile.getAbsolutePath());
+         }
       }
+
+      _titleFileCheckBoxesInitializer.init(_chkMnuShowFileName, _chkMnuShowFilePath, _sqlFile);
 
       _titleFilePathHandlerListener.refreshFileDisplay();
    }
@@ -191,11 +255,25 @@ public class TitleFilePathHandler
    {
       if (unsavedEdits)
       {
-         _smallTabButton.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_FILE_CHANGED));
+         if(SavedSessionUtil.isInSavedSessionsDir(_sqlFile))
+         {
+            _smallTabButton.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_FILE_INTERNAL_CHANGED));
+         }
+         else
+         {
+            _smallTabButton.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_FILE_CHANGED));
+         }
       }
       else
       {
-         _smallTabButton.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_FILE));
+         if(SavedSessionUtil.isInSavedSessionsDir(_sqlFile))
+         {
+            _smallTabButton.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_FILE_INTERNAL));
+         }
+         else
+         {
+            _smallTabButton.setIcon(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SMALL_FILE));
+         }
       }
    }
 }

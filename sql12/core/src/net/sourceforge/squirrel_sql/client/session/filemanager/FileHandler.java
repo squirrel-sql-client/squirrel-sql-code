@@ -201,13 +201,29 @@ public class FileHandler
    {
       if (_fileManagementCore.saveAs())
       {
-         _fileSaved = true;
-         _unsavedEdits = false;
-         displayUnsavedEditsInTabComponent(false);
-         ActionCollection actions = Main.getApplication().getActionCollection();
-         actions.enableAction(FileSaveAction.class, false);
-         fireFileHandlerListener();
+         onInitiallySaved();
       }
+   }
+
+   /**
+    * The caller is responsible to make sure toFile does not exist and can be created and written to.
+    */
+   public void fileSaveInitiallyTo(File toFile)
+   {
+      if (_fileManagementCore.saveInitiallyTo(toFile))
+      {
+         onInitiallySaved();
+      }
+   }
+
+   private void onInitiallySaved()
+   {
+      _fileSaved = true;
+      _unsavedEdits = false;
+      displayUnsavedEditsInTabComponent(false);
+      ActionCollection actions = Main.getApplication().getActionCollection();
+      actions.enableAction(FileSaveAction.class, false);
+      fireFileHandlerListener();
    }
 
    public boolean showConfirmCloseIfNecessary()

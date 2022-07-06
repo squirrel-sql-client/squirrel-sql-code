@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.filemanager;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.filechooser.PreviewFileChooser;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
@@ -60,6 +61,15 @@ public class FileManagementCore
    {
       return saveIntern(true);
    }
+
+   /**
+    * The caller is responsible to make sure toFile does not exist and can be created and written to.
+    */
+   public boolean saveInitiallyTo(File toFile)
+   {
+      return saveScript(_fileEditorAPI.getOwningFrame(), toFile, false);
+   }
+
 
    public boolean open(File f, boolean appendToExisting)
    {
@@ -172,6 +182,12 @@ public class FileManagementCore
 
    private void memorizeFile(File file, SquirrelPreferences prefs)
    {
+      if(SavedSessionUtil.isInSavedSessionsDir(file))
+      {
+         // We don't memorize internally saved files.
+         return;
+      }
+
       prefs.setFilePreviousDir(file.getAbsolutePath());
       Main.getApplication().getRecentFilesManager().fileTouched(file.getAbsolutePath(), _fileEditorAPI.getSession().getAlias());
    }
@@ -278,6 +294,7 @@ public class FileManagementCore
       {
           // i18n[FileManager.error.cannotwritefile=File {0} \ncannot be written to.]
          String msg = s_stringMgr.getString("FileManager.error.cannotwritefile", file.getAbsolutePath());
+         s_log.warn(msg);
          Dialogs.showOk(frame, msg);
          return false;
       }
@@ -292,6 +309,7 @@ public class FileManagementCore
          s_log.error("Invalid file name: Call to File.toPath() raised error", e);
 
          String msg = s_stringMgr.getString("FileManager.error.invalid.file.name", file.getAbsolutePath(), Utilities.getExceptionStringSave(e));
+         s_log.error(msg, e);
          Dialogs.showError(frame, msg);
          return false;
       }

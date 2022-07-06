@@ -96,6 +96,8 @@ public class SquirrelResources extends Resources
 
       String SMALL_FILE = "smallFile";
       String SMALL_FILE_CHANGED = "smallFileChanged";
+      String SMALL_FILE_INTERNAL = "smallFileInternal";
+      String SMALL_FILE_INTERNAL_CHANGED = "smallFileInternalChanged";
 
 		String SMALL_REFRESH = "smallRefresh";
 

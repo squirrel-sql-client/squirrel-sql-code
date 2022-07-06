@@ -7,10 +7,12 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,5 +120,15 @@ public class SavedSessionUtil
    {
       final UidIdentifier aliasId = new UidIdentifier(defaultAliasIdString);
       return Main.getApplication().getAliasesAndDriversManager().getAlias(aliasId);
+   }
+
+   public static boolean isInSavedSessionsDir(File sqlFile)
+   {
+      if(null == sqlFile)
+      {
+         return false;
+      }
+
+      return new ApplicationFiles().getSavedSessionsDir().equals(sqlFile.getParentFile());
    }
 }
