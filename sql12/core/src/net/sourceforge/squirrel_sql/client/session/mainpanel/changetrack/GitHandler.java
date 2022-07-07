@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisionlist.RevisionWrapper;
@@ -24,6 +25,7 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 
+import javax.swing.JOptionPane;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -169,9 +171,6 @@ public class GitHandler
       }
    }
 
-
-
-
    private static String commit(IFileEditorAPI fileEditorAPI)
    {
       Repository repository = null;
@@ -186,14 +185,30 @@ public class GitHandler
 
          File file = fileEditorAPI.getFileHandler().getFile();
 
-
-
          repository = findRepository(file);
 
          if (null == repository)
          {
+            File gitInitDir;
 
-            File gitInitDir = new SelectGitRepoRootDirController().getDir(file);
+            if(SavedSessionUtil.isInSavedSessionsDir(file))
+            {
+               gitInitDir = null;
+
+               int option = JOptionPane.showConfirmDialog(Main.getApplication().getMainFrame(),
+                                                          s_stringMgr.getString("GitHandler.git.control.internal.saved.session.files.msg"),
+                                                          s_stringMgr.getString("GitHandler.git.control.internal.saved.session.files.title"),
+                                                          JOptionPane.YES_NO_CANCEL_OPTION);
+
+               if(JOptionPane.YES_OPTION == option)
+               {
+                  gitInitDir = SavedSessionUtil.getSavedSessionsDir();
+               }
+            }
+            else
+            {
+               gitInitDir = new SelectGitRepoRootDirController().getDir(file);
+            }
 
             if (null == gitInitDir)
             {
@@ -403,6 +418,30 @@ public class GitHandler
          }
 
          return ret;
+      }
+      catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+
+   /**
+    * Commits the file delete if the file is in a GIT repository
+    */
+   public static void commitDelete(File toDelete)
+   {
+      if(false == isInRepository(toDelete))
+      {
+         return;
+      }
+
+      try(Repository repository = findRepository(toDelete);
+          Git git = Git.open(repository.getDirectory());)
+      {
+         final String pathRelativeToRepo = getPathRelativeToRepo(repository, toDelete);
+
+         git.rm().addFilepattern(pathRelativeToRepo).call();
       }
       catch (Exception e)
       {

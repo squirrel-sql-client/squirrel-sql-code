@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-public class SessionSqlJsonBean
+import java.io.Serializable;
+
+public class SessionSqlJsonBean implements Serializable
 {
    private String _internalFileName;
    private SqlPanelType _panelType;

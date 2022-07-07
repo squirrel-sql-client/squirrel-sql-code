@@ -129,6 +129,11 @@ public class SavedSessionUtil
          return false;
       }
 
-      return new ApplicationFiles().getSavedSessionsDir().equals(sqlFile.getParentFile());
+      return getSavedSessionsDir().equals(sqlFile.getParentFile());
+   }
+
+   public static File getSavedSessionsDir()
+   {
+      return new ApplicationFiles().getSavedSessionsDir();
    }
 }

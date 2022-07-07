@@ -2,6 +2,9 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeEnum;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.GitHandler;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -52,34 +55,43 @@ public class SavedSessionsManager
       _savedSessionsJsonBean.setShowAliasChangeMsg(b);
    }
 
-   public void beginStore(SavedSessionJsonBean savedSessionJsonBean)
+   public SessionSaveProcessHandle beginStore(SavedSessionJsonBean savedSessionJsonBean)
    {
       initSavedSessions();
-      deleteInternallyStoredFiles(savedSessionJsonBean);
+
+      SessionSaveProcessHandle ret = new SessionSaveProcessHandle(savedSessionJsonBean);
 
       savedSessionJsonBean.getSessionSQLs().clear();
+
+      return ret;
    }
 
-   private void deleteInternallyStoredFiles(SavedSessionJsonBean savedSessionJsonBean)
+   private void deleteAllInternallyStoredFiles(SavedSessionJsonBean savedSessionJsonBean)
    {
       for (SessionSqlJsonBean sessionSQL : savedSessionJsonBean.getSessionSQLs())
       {
-         if(false == StringUtilities.isEmpty(sessionSQL.getInternalFileName()))
+         deleteInternallyStoredFile(sessionSQL);
+      }
+   }
+
+   private void deleteInternallyStoredFile(SessionSqlJsonBean sessionSQL)
+   {
+      if(false == StringUtilities.isEmpty(sessionSQL.getInternalFileName()))
+      {
+         final File toDelete = new File(SavedSessionUtil.getSavedSessionsDir(), sessionSQL.getInternalFileName());
+         try
          {
-            final File toDelete = new File(new ApplicationFiles().getSavedSessionsDir(), sessionSQL.getInternalFileName());
-            try
-            {
-               Files.deleteIfExists(Path.of(toDelete.toURI()));
-            }
-            catch (Exception e)
-            {
-               s_log.error("Failed to delete internal saved session file: " + toDelete.getAbsolutePath(), e);
-            }
+            Files.deleteIfExists(Path.of(toDelete.toURI()));
+            GitHandler.commitDelete(toDelete);
+         }
+         catch (Exception e)
+         {
+            s_log.error("Failed to delete internal saved session file: " + toDelete.getAbsolutePath(), e);
          }
       }
    }
 
-   public SessionSqlJsonBean storeFile(SavedSessionJsonBean savedSessionJsonBean, SQLPanelSaveInfo sqlPanelSaveInfo)
+   public SessionSqlJsonBean storeFile(SavedSessionJsonBean savedSessionJsonBean, SQLPanelSaveInfo sqlPanelSaveInfo, boolean gitCommit)
    {
       final SessionSqlJsonBean sqlJsonBean = new SessionSqlJsonBean();
       sqlJsonBean.setPanelType(sqlPanelSaveInfo.getSqlPanelType());
@@ -88,7 +100,14 @@ public class SavedSessionsManager
 
       if(null != sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().getFile())
       {
-         sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().fileSave();
+         if(gitCommit)
+         {
+            gitCommitSqlPanel(sqlPanelSaveInfo);
+         }
+         else
+         {
+            sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().fileSave();
+         }
 
          if(SavedSessionUtil.isInSavedSessionsDir(sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().getFile()))
          {
@@ -109,7 +128,7 @@ public class SavedSessionsManager
 
          int emergencyPosFix = 0;
          String internalFileName = internalFileNameOrig + ".sql";
-         while (Files.exists(Path.of(new File(new ApplicationFiles().getSavedSessionsDir(), internalFileName).toURI())))
+         while (Files.exists(Path.of(new File(SavedSessionUtil.getSavedSessionsDir(), internalFileName).toURI())))
          {
             ++emergencyPosFix;
             internalFileName = internalFileNameOrig + "__" + emergencyPosFix + ".sql";
@@ -117,24 +136,47 @@ public class SavedSessionsManager
 
          sqlJsonBean.setInternalFileName(internalFileName);
 
-         final Path path = Path.of(new ApplicationFiles().getSavedSessionsDir().getAbsolutePath(), internalFileName);
+         final Path path = Path.of(SavedSessionUtil.getSavedSessionsDir().getAbsolutePath(), internalFileName);
          try
          {
             sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().fileSaveInitiallyTo(path.toFile());
+            if(gitCommit)
+            {
+               gitCommitSqlPanel(sqlPanelSaveInfo);
+            }
          }
          catch (Exception e)
          {
             s_log.error("Error while saving Session: Failed to internally save SQL editor contents to internal file : " + path.toFile().getAbsolutePath(), e);
          }
-
       }
 
       savedSessionJsonBean.getSessionSQLs().add(sqlJsonBean);
       return sqlJsonBean;
    }
 
-   public void endStore(SavedSessionJsonBean savedSessionJsonBean)
+   private static void gitCommitSqlPanel(SQLPanelSaveInfo sqlPanelSaveInfo)
    {
+      if(sqlPanelSaveInfo.isActiveSqlPanel())
+      {
+         // Needed to update the toolbar change tracking icon in case it wasn't already set to GIT.
+         final ChangeTrackAction changeTrackAction = (ChangeTrackAction) Main.getApplication().getActionCollection().get(ChangeTrackAction.class);
+         changeTrackAction.setChangeTrackTypeForCurrentSqlPanel(ChangeTrackTypeEnum.GIT);
+      }
+      else
+      {
+         // See ChangeTrackAction.changeTrackTypeChangedForCurrentSqlPanel(ChangeTrackTypeEnum)
+         sqlPanelSaveInfo.getSqlPanel().getChangeTracker().changeTrackTypeChanged(ChangeTrackTypeEnum.GIT);
+      }
+
+      sqlPanelSaveInfo.getSqlPanel().getChangeTracker().rebaseChangeTrackingOnToolbarButtonOrMenuClicked();
+   }
+
+
+   public void endStore(SavedSessionJsonBean savedSessionJsonBean, SessionSaveProcessHandle sessionSaveProcessHandle)
+   {
+      sessionSaveProcessHandle.getToDelete(savedSessionJsonBean).forEach(b -> deleteInternallyStoredFile(b));
+
       _savedSessionsJsonBean.getSavedSessionJsonBeans().remove(savedSessionJsonBean);
       _savedSessionsJsonBean.getSavedSessionJsonBeans().add(0, savedSessionJsonBean);
 
@@ -222,7 +264,7 @@ public class SavedSessionsManager
 
       for (SavedSessionJsonBean savedSessionJsonBean : toDel)
       {
-         deleteInternallyStoredFiles(savedSessionJsonBean);
+         deleteAllInternallyStoredFiles(savedSessionJsonBean);
       }
       _savedSessionsJsonBean.getSavedSessionJsonBeans().removeAll(toDel);
 

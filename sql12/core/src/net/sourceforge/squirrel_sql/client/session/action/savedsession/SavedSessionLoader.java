@@ -6,7 +6,6 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -87,7 +86,7 @@ public class SavedSessionLoader
       }
       else
       {
-         file = new File(new ApplicationFiles().getSavedSessionsDir(), sessionSQL.getInternalFileName());
+         file = new File(SavedSessionUtil.getSavedSessionsDir(), sessionSQL.getInternalFileName());
       }
 
       if(file.exists())

@@ -20,9 +20,6 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.SQLException;
-import javax.swing.Action;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
@@ -47,6 +44,9 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+
+import javax.swing.Action;
+import java.sql.SQLException;
 
 /**
  * The current session.
@@ -249,7 +249,7 @@ public interface ISession extends IHasIdentifier
    /**
     * Hint for plugins:
     * When ISessionPlugin.sessionStarted is called the active session window is
-    * always the SessionInternalFrame which provides an SQLPanelAPI. This might help to simplyfy
+    * always the SessionInternalFrame which provides an SQLPanelAPI. This might help to simplify
     * the code in the sessionStarted() method of a plugin.
     */
    ISessionWidget getActiveSessionWindow();

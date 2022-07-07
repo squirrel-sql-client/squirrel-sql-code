@@ -70,7 +70,7 @@ public class SessionStartupMainSQLTabContentLoader
 
       if (ChangeTrackTypeEnum.getPreference() == ChangeTrackTypeEnum.MANUAL)
       {
-         panelAPI.getChangeTracker().rebaseChangeTrackingOnToolbarButtonOrMenu();
+         panelAPI.getChangeTracker().rebaseChangeTrackingOnToolbarButtonOrMenuClicked();
       }
    }
 

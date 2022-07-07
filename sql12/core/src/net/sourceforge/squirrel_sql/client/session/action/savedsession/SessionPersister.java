@@ -16,7 +16,7 @@ import java.util.List;
 
 public class SessionPersister
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionSaveAction.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SessionPersister.class);
 
 
    public static boolean saveSession(ISession session)
@@ -25,6 +25,11 @@ public class SessionPersister
    }
 
    public static boolean saveSession(ISession session, boolean allowAliasChangeMsg)
+   {
+      return saveSession(session, allowAliasChangeMsg, false);
+   }
+
+   public static boolean saveSession(ISession session, boolean allowAliasChangeMsg, boolean gitCommit)
    {
       SavedSessionJsonBean savedSessionJsonBean = session.getSavedSession();
 
@@ -57,7 +62,6 @@ public class SessionPersister
 
          dlgMsg.setTitle(s_stringMgr.getString("SessionPersister.change.default.alias.title"));
 
-
          final DontShowAgainResult res = dlgMsg.showAndGetResult("SessionPersister.change.alias", 600, 250);
          savedSessionsManager.setShowAliasChangeMsg(false == res.isDontShowAgain());
 
@@ -74,20 +78,17 @@ public class SessionPersister
 
       List<SQLPanelSaveInfo> sqlPanelSaveInfoList = SavedSessionUtil.getAllSQLPanelsOrderedAndTyped(session);
 
-      SavedSessionJsonBean finalSavedSessionJsonBean = savedSessionJsonBean;
-      savedSessionsManager.beginStore(savedSessionJsonBean);
-
+      SessionSaveProcessHandle sessionSaveProcessHandle = savedSessionsManager.beginStore(savedSessionJsonBean);
       SQLEditorActivator sqlEditorActivator = new SQLEditorActivator();
       for (SQLPanelSaveInfo panel : sqlPanelSaveInfoList)
       {
-         SessionSqlJsonBean sessionSqlJsonBean = savedSessionsManager.storeFile(finalSavedSessionJsonBean, panel);
+         SessionSqlJsonBean sessionSqlJsonBean = savedSessionsManager.storeFile(savedSessionJsonBean, panel, gitCommit);
 
          // The SQLEditorActivator is needed because externally saving a file selects the according SQL Tab.
-         // But we want the active SQL-Editor to remain the same after saving teh Session.
+         // But we want the active SQL-Editor to remain the same after saving the Session.
          sqlEditorActivator.prepareToActivateSQLPanelSaveInfo(panel, sessionSqlJsonBean);
       }
-
-      savedSessionsManager.endStore(savedSessionJsonBean);
+      savedSessionsManager.endStore(savedSessionJsonBean, sessionSaveProcessHandle);
 
       Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SessionPersister.saved.session.msg", savedSessionJsonBean.getName()));
 

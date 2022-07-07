@@ -21,7 +21,7 @@ import java.awt.event.MouseEvent;
 public class ChangeTrackTypeChooser
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChangeTrackTypeChooser.class);
-   private final SQLPanelApiChangedListener _sqlPanelApiChangedListener;
+   private final ChangeTrackActionUpdateListener _changeTrackActionUpdateListener;
 
    private ChangeTrackAction _action;
    private final ButtonChooser _buttonChooser = new ButtonChooser(true);
@@ -44,11 +44,24 @@ public class ChangeTrackTypeChooser
 
       _buttonChooser.setChooserEnabled(_action.isEnabled());
 
-      _sqlPanelApiChangedListener = newSqlPanelAPIsChangeTrackType -> onSqlPanelApiChanged(newSqlPanelAPIsChangeTrackType);
+      _changeTrackActionUpdateListener = new ChangeTrackActionUpdateListener() {
+         @Override
+         public void activeSqlPanelApiChanged(ChangeTrackTypeEnum newSqlPanelAPIsChangeTrackType)
+         {
+            onSqlPanelApiChanged(newSqlPanelAPIsChangeTrackType);
+         }
 
-      _action.addSQLPanelApiChangedListener(_sqlPanelApiChangedListener);
+         @Override
+         public void externallySetChangeTrackType(ChangeTrackTypeEnum newSqlPanelAPIsChangeTrackType)
+         {
+            onSqlPanelApiChanged(newSqlPanelAPIsChangeTrackType);
+         }
+      };
 
-      session.addSimpleSessionListener(() -> _action.removeSQLPanelApiChangedListener(_sqlPanelApiChangedListener));
+
+      _action.addChangeTrackActionUpdateListener(_changeTrackActionUpdateListener);
+
+      session.addSimpleSessionListener(() -> _action.removeSQLPanelApiChangedListener(_changeTrackActionUpdateListener));
    }
 
    /**

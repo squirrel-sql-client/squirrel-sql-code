@@ -1,16 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
-import java.awt.Graphics;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.io.File;
-import java.util.List;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesAddressBook;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
@@ -20,6 +9,18 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.revisio
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.io.File;
+import java.util.List;
 
 public class ChangeTracker
 {
@@ -226,7 +227,14 @@ public class ChangeTracker
    }
 
 
-   public void rebaseChangeTrackingOnToolbarButtonOrMenu()
+   /**
+    * The commit button (Ctrl+K) was clicked.
+    * In case of {@link ChangeTrackTypeEnum#GIT} this saves the file and commits it to GIT.
+    * In case of {@link ChangeTrackTypeEnum#FILE} this does nothing, see also {@link net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction#actionPerformed(ActionEvent)}.
+    * In case of {@link ChangeTrackTypeEnum#MANUAL} this makes the current editor contents the new change track base.
+    *
+    */
+   public void rebaseChangeTrackingOnToolbarButtonOrMenuClicked()
    {
       if(false == _enabled)
       {

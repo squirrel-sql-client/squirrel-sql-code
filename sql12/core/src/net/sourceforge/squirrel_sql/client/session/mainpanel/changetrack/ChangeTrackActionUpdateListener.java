@@ -1,7 +1,8 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
-@FunctionalInterface
-public interface SQLPanelApiChangedListener
+public interface ChangeTrackActionUpdateListener
 {
    void activeSqlPanelApiChanged(ChangeTrackTypeEnum newSqlPanelAPIsChangeTrackType);
+
+   void externallySetChangeTrackType(ChangeTrackTypeEnum type);
 }

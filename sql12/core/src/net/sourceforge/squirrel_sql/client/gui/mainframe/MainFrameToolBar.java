@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToggleAutoCommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAllAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.GitCommitSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
@@ -97,6 +98,7 @@ public class MainFrameToolBar extends ToolBar
 
 		addSeparator();
 		add(actions.get(SessionSaveAction.class));
+		add(actions.get(GitCommitSessionAction.class));
 		add(actions.get(SessionOpenAction.class));
 		add(actions.get(SessionManageAction.class));
 	}

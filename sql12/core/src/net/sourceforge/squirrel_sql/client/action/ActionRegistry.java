@@ -101,6 +101,7 @@ import net.sourceforge.squirrel_sql.client.session.action.file.FileSaveAsAction;
 import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretAddAction;
 import net.sourceforge.squirrel_sql.client.session.action.multicaret.CaretRemoveAction;
 import net.sourceforge.squirrel_sql.client.session.action.reconnect.ReconnectAction;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.GitCommitSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionManageAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionSaveAction;
@@ -194,6 +195,7 @@ public class ActionRegistry
 
       toolsPopupController.addAction("savedsessionopen", ac.get(SessionOpenAction.class));
       toolsPopupController.addAction("savedsessionsave", ac.get(SessionSaveAction.class));
+      toolsPopupController.addAction("savedsessioncommit", ac.get(GitCommitSessionAction.class));
 
       toolsPopupController.addAction("aliaspopup", ac.get(AliasPopUpMenuAction.class));
       toolsPopupController.addAction("sessionpopup", ac.get(SessionPopUpMenuAction.class));
@@ -247,6 +249,7 @@ public class ActionRegistry
       actionCollection.add(new ChangeTrackAction(app));
 
       actionCollection.add(new SessionSaveAction(app));
+      actionCollection.add(new GitCommitSessionAction(app));
       actionCollection.add(new SessionOpenAction(app));
       actionCollection.add(new SessionManageAction(app));
 
