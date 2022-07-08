@@ -157,16 +157,14 @@ public class SavedSessionsManager
 
    private static void gitCommitSqlPanel(SQLPanelSaveInfo sqlPanelSaveInfo)
    {
+      //See ChangeTrackAction.changeTrackTypeChangedForCurrentSqlPanel(ChangeTrackTypeEnum)
+      sqlPanelSaveInfo.getSqlPanel().getChangeTracker().changeTrackTypeChanged(ChangeTrackTypeEnum.GIT);
+
       if(sqlPanelSaveInfo.isActiveSqlPanel())
       {
          // Needed to update the toolbar change tracking icon in case it wasn't already set to GIT.
          final ChangeTrackAction changeTrackAction = (ChangeTrackAction) Main.getApplication().getActionCollection().get(ChangeTrackAction.class);
          changeTrackAction.setChangeTrackTypeForCurrentSqlPanel(ChangeTrackTypeEnum.GIT);
-      }
-      else
-      {
-         // See ChangeTrackAction.changeTrackTypeChangedForCurrentSqlPanel(ChangeTrackTypeEnum)
-         sqlPanelSaveInfo.getSqlPanel().getChangeTracker().changeTrackTypeChanged(ChangeTrackTypeEnum.GIT);
       }
 
       sqlPanelSaveInfo.getSqlPanel().getChangeTracker().rebaseChangeTrackingOnToolbarButtonOrMenuClicked();

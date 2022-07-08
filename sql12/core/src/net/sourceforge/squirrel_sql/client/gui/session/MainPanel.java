@@ -114,6 +114,10 @@ public class MainPanel extends JPanel
 		(_tabs.get(tabIndex)).mouseWheelClickedOnTab();
 	}
 
+	/**
+	 * Whenever this may cause trouble try to remove the method
+	 * by moving the initializations done in the method elsewhere.
+	 */
 	public void addNotify()
 	{
 		super.addNotify();
@@ -124,25 +128,10 @@ public class MainPanel extends JPanel
 			_session.getProperties().addPropertyChangeListener(_propsListener);
 		}
 
-		_tabPnlListener = evt -> performStateChanged();
-
-		_tabbedPane.addChangeListener(_tabPnlListener);
-	}
-
-	public void removeNotify()
-	{
-		super.removeNotify();
-
-		if (_propsListener != null)
+		if(null == _tabPnlListener)
 		{
-			_session.getProperties().removePropertyChangeListener(_propsListener);
-			_propsListener = null;
-		}
-
-		if (_tabPnlListener != null)
-		{
-			_tabbedPane.removeChangeListener(_tabPnlListener);
-			_tabPnlListener = null;
+			_tabPnlListener = evt -> performStateChanged();
+			_tabbedPane.addChangeListener(_tabPnlListener);
 		}
 	}
 

@@ -54,7 +54,7 @@ public class ChangeTrackTypeChooser
          @Override
          public void externallySetChangeTrackType(ChangeTrackTypeEnum newSqlPanelAPIsChangeTrackType)
          {
-            onSqlPanelApiChanged(newSqlPanelAPIsChangeTrackType);
+            onExternallySetChangeTrackType(newSqlPanelAPIsChangeTrackType);
          }
       };
 
@@ -62,6 +62,12 @@ public class ChangeTrackTypeChooser
       _action.addChangeTrackActionUpdateListener(_changeTrackActionUpdateListener);
 
       session.addSimpleSessionListener(() -> _action.removeSQLPanelApiChangedListener(_changeTrackActionUpdateListener));
+   }
+
+   private void onExternallySetChangeTrackType(ChangeTrackTypeEnum newSqlPanelAPIsChangeTrackType)
+   {
+      newSqlPanelAPIsChangeTrackType.savePreference();
+      onSqlPanelApiChanged(newSqlPanelAPIsChangeTrackType);
    }
 
    /**
