@@ -12,6 +12,7 @@ import javax.swing.JPopupMenu;
 import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.List;
 
 public class SavedSessionMoreCtrl
@@ -139,12 +140,15 @@ public class SavedSessionMoreCtrl
          return;
       }
 
-      if(Main.getApplication().getSavedSessionsManager().areUsedInOpenSessions(selectedValuesList))
+      final List<ISession> openSessions = Main.getApplication().getSavedSessionsManager().getOpenSessionsOfList(selectedValuesList);
+      if(0 < openSessions.size())
       {
          if(JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(_dlg, s_stringMgr.getString("SavedSessionMoreCtrl.confirm.delete.including.used.in.open")))
          {
             return;
          }
+
+         detachInternalFiles(openSessions);
       }
       else
       {
@@ -161,6 +165,24 @@ public class SavedSessionMoreCtrl
       if(0 < _dlg.lstSavedSessions.getModel().getSize())
       {
          _dlg.lstSavedSessions.setSelectedIndex(1);
+      }
+   }
+
+   private void detachInternalFiles(List<ISession> sessions)
+   {
+      for (ISession session : sessions)
+      {
+         List<SQLPanelSaveInfo> sqlPanelSaveInfos = SavedSessionUtil.getAllSQLPanelsOrderedAndTyped(session);
+
+         for (SQLPanelSaveInfo sqlPanelSaveInfo : sqlPanelSaveInfos)
+         {
+            final File file = sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().getFile();
+
+            if(SavedSessionUtil.isInSavedSessionsDir(file))
+            {
+               sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().fileDetach(true);
+            }
+         }
       }
    }
 

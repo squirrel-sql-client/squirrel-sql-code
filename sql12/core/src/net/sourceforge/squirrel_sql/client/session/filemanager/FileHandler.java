@@ -80,7 +80,7 @@ public class FileHandler
 
    public void fileClose()
    {
-      _closeFile(true);
+      _closeFile(true, false);
    }
 
    public void fileReload(FileReloadInfo info)
@@ -123,7 +123,7 @@ public class FileHandler
 
       int caretPosition = _fileEditorAPI.getCaretPosition();
 
-      if(false == _closeFile(true))
+      if(false == _closeFile(true, false))
       {
          return;
       }
@@ -194,7 +194,12 @@ public class FileHandler
 
    public void fileDetach()
    {
-      _closeFile(false);
+      fileDetach(false);
+   }
+
+   public void fileDetach(boolean silently)
+   {
+      _closeFile(false, silently);
    }
 
    public void fileSaveAs()
@@ -246,11 +251,9 @@ public class FileHandler
       PrintUtilities.printComponent(_fileEditorAPI.getTextComponent());
    }
 
-
-
-   private boolean _closeFile(boolean clearEditor)
+   private boolean _closeFile(boolean clearEditor, boolean silently)
    {
-      if (_unsavedEdits)
+      if (_unsavedEdits && false == silently)
       {
          if(false == showConfirmSaveDialog())
          {

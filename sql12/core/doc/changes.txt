@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Saved Sessions improvements (See the four buttons at the right of SQuirreL's topmost toolbar):
+  Internally saved files are treated as normal files but are recognizable by blue bordered file icons.
+  Internally saved files can be change tracked by GIT (https://git-scm.com).
+  New toolbar to save and commit all files of a Saved Session to GIT.
+
 The about dialog now contains a link to SQuirreL's new GitHub web page:
   https://github.com/squirrel-sql-client
 

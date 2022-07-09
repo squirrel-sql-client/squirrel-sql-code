@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public class SavedSessionsManager
 {
@@ -225,11 +226,11 @@ public class SavedSessionsManager
       saveJsonBean();
    }
 
-   public boolean areUsedInOpenSessions(List<SavedSessionJsonBean> savedSessions)
+   public List<ISession> getOpenSessionsOfList(List<SavedSessionJsonBean> savedSessions)
    {
       initSavedSessions();
 
-      return Main.getApplication().getSessionManager().getOpenSessions().stream().anyMatch(s -> savedSessions.contains(s.getSavedSession()));
+      return Main.getApplication().getSessionManager().getOpenSessions().stream().filter(s -> savedSessions.contains(s.getSavedSession())).collect(Collectors.toList());
    }
 
    public void delete(List<SavedSessionJsonBean> toDel)

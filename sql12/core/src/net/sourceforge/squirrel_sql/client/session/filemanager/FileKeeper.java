@@ -29,7 +29,5 @@ public class FileKeeper
             Main.getApplication().getFileNotifier().watchFile(_file);
          }
       }
-
-
    }
 }
