@@ -66,7 +66,6 @@ public class ChangeTrackTypeChooser
 
    private void onExternallySetChangeTrackType(ChangeTrackTypeEnum newSqlPanelAPIsChangeTrackType)
    {
-      newSqlPanelAPIsChangeTrackType.savePreference();
       onSqlPanelApiChanged(newSqlPanelAPIsChangeTrackType);
    }
 

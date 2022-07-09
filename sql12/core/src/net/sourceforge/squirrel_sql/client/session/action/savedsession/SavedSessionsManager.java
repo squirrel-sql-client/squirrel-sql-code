@@ -2,8 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ChangeTrackAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackTypeEnum;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTrackUtil;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.GitHandler;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.JsonMarshalUtil;
@@ -102,7 +101,7 @@ public class SavedSessionsManager
       {
          if(gitCommit)
          {
-            gitCommitSqlPanel(sqlPanelSaveInfo);
+            ChangeTrackUtil.gitCommitSqlPanel(sqlPanelSaveInfo.getSqlPanel(), sqlPanelSaveInfo.isActiveSqlPanel());
          }
          else
          {
@@ -142,7 +141,7 @@ public class SavedSessionsManager
             sqlPanelSaveInfo.getSqlPanel().getSQLPanelAPI().getFileHandler().fileSaveInitiallyTo(path.toFile());
             if(gitCommit)
             {
-               gitCommitSqlPanel(sqlPanelSaveInfo);
+               ChangeTrackUtil.gitCommitSqlPanel(sqlPanelSaveInfo.getSqlPanel(), sqlPanelSaveInfo.isActiveSqlPanel());
             }
          }
          catch (Exception e)
@@ -153,21 +152,6 @@ public class SavedSessionsManager
 
       savedSessionJsonBean.getSessionSQLs().add(sqlJsonBean);
       return sqlJsonBean;
-   }
-
-   private static void gitCommitSqlPanel(SQLPanelSaveInfo sqlPanelSaveInfo)
-   {
-      //See ChangeTrackAction.changeTrackTypeChangedForCurrentSqlPanel(ChangeTrackTypeEnum)
-      sqlPanelSaveInfo.getSqlPanel().getChangeTracker().changeTrackTypeChanged(ChangeTrackTypeEnum.GIT);
-
-      if(sqlPanelSaveInfo.isActiveSqlPanel())
-      {
-         // Needed to update the toolbar change tracking icon in case it wasn't already set to GIT.
-         final ChangeTrackAction changeTrackAction = (ChangeTrackAction) Main.getApplication().getActionCollection().get(ChangeTrackAction.class);
-         changeTrackAction.setChangeTrackTypeForCurrentSqlPanel(ChangeTrackTypeEnum.GIT);
-      }
-
-      sqlPanelSaveInfo.getSqlPanel().getChangeTracker().rebaseChangeTrackingOnToolbarButtonOrMenuClicked();
    }
 
 
