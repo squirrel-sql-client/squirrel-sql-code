@@ -2,7 +2,13 @@ package net.sourceforge.squirrel_sql.fw.completion.util;
 
 class CompletionUtils
 {
-   private static final char[] SEPARATORS = {' ', '\t', '\n' ,  ',', '(', '\'','"', '=', '>', '<'};
+
+   /**
+    *  Before the change
+    *  'Code completion: Fixed/improved completion for double quoted (") identifiers, e.g. schemas, tables, columns.'
+    *  double quotes (") where included in this list.
+    */
+   private static final char[] SEPARATORS = {' ', '\t', '\n' ,  ',', '(', '\'', '=', '>', '<'};
 
    static String getStringToParse(String textTillCaret)
    {
@@ -38,7 +44,7 @@ class CompletionUtils
       return beginning;
    }
 
-   static int getLastSeparatorIndex(String str)
+    private static int getLastSeparatorIndex(String str)
    {
       int lastSeparatorIndex = -1;
       for (char separator : SEPARATORS)

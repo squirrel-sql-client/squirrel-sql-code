@@ -66,6 +66,8 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+Code completion: Fixed/improved completion for double quoted (") identifiers, e.g. schemas, tables, columns.
+
 Change tracking, left gutter popup to show changes:
   Fixed Nullpointer when popup was too long.
 

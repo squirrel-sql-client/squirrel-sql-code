@@ -1,11 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.completion.util;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class CompletionParser
 {
    private static final String DEREF_CHAR = ".";
+   private static final String DOUBLE_QUOTE_CHAR = "\"";
 
    private ArrayList<String> _tokens;
    private String _stringToParse;
@@ -23,17 +26,18 @@ public class CompletionParser
    public CompletionParser(String textTillCarret, boolean completeQualified)
    {
       _textTillCarret = textTillCarret;
-      _stringToParse = CompletionUtils.getStringToParse(textTillCarret);
+      _stringToParse = StringUtilities.stripDoubleQuotes(CompletionUtils.getStringToParse(textTillCarret));
       _stringToParsePosition = CompletionUtils.getStringToParsePosition ( textTillCarret );
 
       StringTokenizer st = new StringTokenizer(_stringToParse, DEREF_CHAR);
       _tokens = new ArrayList<>();
       while(st.hasMoreTokens())
       {
-         _tokens.add(st.nextToken());
+         _tokens.add(StringUtilities.stripDoubleQuotes(st.nextToken()));
       }
 
-      if(textTillCarret.endsWith(DEREF_CHAR) || 0 == _tokens.size())
+      if(   textTillCarret.endsWith(DEREF_CHAR) || textTillCarret.endsWith(DEREF_CHAR + DOUBLE_QUOTE_CHAR)
+         || 0 == _tokens.size())
       {
          _tokens.add("");
       }

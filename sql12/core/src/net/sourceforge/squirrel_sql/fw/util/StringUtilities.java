@@ -416,4 +416,14 @@ public class StringUtilities
 
       return ret;
    }
+
+   public static String stripDoubleQuotes(String possiblyQuotedString)
+   {
+      if(isEmpty(possiblyQuotedString, true))
+      {
+         return possiblyQuotedString;
+      }
+
+      return StringUtils.strip(possiblyQuotedString, "\"");
+   }
 }
