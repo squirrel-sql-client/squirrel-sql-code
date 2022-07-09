@@ -66,6 +66,9 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+Change tracking, left gutter popup to show changes:
+  Fixed Nullpointer when popup was too long.
+
 #1502 MAC OS: Made some standard navigation keyboard short cuts available for configuration.
   See menu File --> Global Preferences --> tab Keyboard shortcuts,
   entries caret-begin, caret-begin-line, caret-end, caret-end-line
