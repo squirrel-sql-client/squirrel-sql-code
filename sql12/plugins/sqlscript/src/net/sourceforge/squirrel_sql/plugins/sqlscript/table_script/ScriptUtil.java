@@ -4,6 +4,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
 import java.util.Hashtable;
@@ -91,6 +93,36 @@ public class ScriptUtil
    {
       return DialectUtils.formatQualified(ti.getSimpleName(), ti.getSchemaName(), qualifyTableNames, useDoubleQuotes);
    }
+
+   public static String getColumnName(TableColumnInfo info)
+   {
+      return getColumnName(info, SQLScriptPreferencesManager.getPreferences().isUseDoubleQuotes());
+   }
+
+   public static String getColumnName(TableColumnInfo info, boolean useDoubleQuotes)
+   {
+      return getColumnName(info.getColumnName(), useDoubleQuotes);
+   }
+
+   public static String getColumnName(String columnName)
+   {
+      return getColumnName(columnName, SQLScriptPreferencesManager.getPreferences().isUseDoubleQuotes());
+   }
+
+   public static String getColumnName(String columnName, boolean useDoubleQuotes)
+   {
+      final String unquotedColumnName = StringUtilities.stripDoubleQuotes(columnName);
+
+      if(useDoubleQuotes)
+      {
+         return "\"" + unquotedColumnName + "\"";
+      }
+      else
+      {
+         return unquotedColumnName;
+      }
+   }
+
 
    public static boolean isQualifyTableRequired()
    {

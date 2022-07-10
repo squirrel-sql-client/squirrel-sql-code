@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
+import net.sourceforge.squirrel_sql.fw.sql.SqlScriptPluginAccessor;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import javax.swing.JTable;
@@ -118,7 +119,7 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
                }
 
                final Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-               buf.append(colDef.getColumnName()).append(getData(colDef, cellObj, StatType.WHERE));
+               buf.append(SqlScriptPluginAccessor.formatColumnName(colDef.getColumnName())).append(getData(colDef, cellObj, StatType.WHERE));
             }
 
             if(1 < nbrSelCols)

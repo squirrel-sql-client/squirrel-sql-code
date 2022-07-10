@@ -2,8 +2,6 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils2;
@@ -16,6 +14,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
 public class CreateSelectScriptCommand
 {
@@ -96,7 +95,16 @@ public class CreateSelectScriptCommand
 
               DialectType dialectType = DialectFactory.getDialectType(_iObjectTreeAPI.getSession().getMetaData());
 
-              sbScript.append(DialectUtils2.checkColumnDoubleQuotes(dialectType, infos[i].getColumnName()));
+              if(SQLScriptPreferencesManager.getPreferences().isUseDoubleQuotes())
+              {
+                 ScriptUtil.getColumnName(infos[i], SQLScriptPreferencesManager.getPreferences().isUseDoubleQuotes());
+              }
+              else
+              {
+                 // Former version before Preferences.isUseDoubleQuotes() was respected.
+                 // Maybe this whole if-else should simply be replaced by return ScriptUtil.getColumnName(infos[i]);
+                 sbScript.append(DialectUtils2.checkColumnDoubleQuotes(dialectType, infos[i].getColumnName()));
+              }
            }
 
            sbScript.append(" FROM ").append(ScriptUtil.getTableName(ti));

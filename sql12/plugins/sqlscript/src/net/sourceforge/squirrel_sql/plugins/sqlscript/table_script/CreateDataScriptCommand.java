@@ -183,7 +183,7 @@ public class CreateDataScriptCommand
    private String getFirstColumnName(ITableInfo ti) throws SQLException
    {
       TableColumnInfo[] infos = _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
-      return infos[0].getColumnName();
+      return ScriptUtil.getColumnName(infos[0]);
    }
 
    private int getFirstColumnType(ITableInfo ti) throws SQLException

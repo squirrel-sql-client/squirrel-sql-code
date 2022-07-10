@@ -67,7 +67,7 @@ public class InsertGenerator
          for (int i = 0; i < iColumnCount; i++)
          {
             int iIndexPoint = colInfo[i].columnName.lastIndexOf('.');
-            sbColumns.append(su.makeColumnNameUnique(colInfo[i].columnName.substring(iIndexPoint + 1)));
+            sbColumns.append(ScriptUtil.getColumnName(su.makeColumnNameUnique(colInfo[i].columnName.substring(iIndexPoint + 1))));
 
             if (Types.TINYINT == colInfo[i].sqlType
                || Types.BIGINT == colInfo[i].sqlType

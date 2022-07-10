@@ -16,7 +16,7 @@ public class SqlScriptPluginAccessor
 
       if(null == si)
       {
-         writeScriptPLuginMissingMessage();
+         writeScriptPluginMissingMessage();
          return false;
       }
 
@@ -29,14 +29,14 @@ public class SqlScriptPluginAccessor
 
       if (null == si)
       {
-         writeScriptPLuginMissingMessage();
+         writeScriptPluginMissingMessage();
          return tInfo.getSimpleName();
       }
 
       return si.formatTableName(tInfo);
    }
 
-   private static void writeScriptPLuginMissingMessage()
+   private static void writeScriptPluginMissingMessage()
    {
       String msg = s_stringMgr.getString("SqlScriptPluginAccessor.scriptPluginNeeded");
       Main.getApplication().getMessageHandler().showErrorMessage(msg);
@@ -48,9 +48,33 @@ public class SqlScriptPluginAccessor
 
       if (null == si)
       {
-         writeScriptPLuginMissingMessage();
+         writeScriptPluginMissingMessage();
          return false;
       }
       return si.isQualifyTableRequired();
+   }
+
+   public static String formatColumnName(TableColumnInfo tcInfo)
+   {
+      ScriptPluginInterface si = (ScriptPluginInterface) Main.getApplication().getPluginManager().bindExternalPluginService("sqlscript", ScriptPluginInterface.class);
+
+      if (null == si)
+      {
+         writeScriptPluginMissingMessage();
+         return tcInfo.getColumnName();
+      }
+      return si.formatColumnName(tcInfo);
+   }
+
+   public static String formatColumnName(String columnName)
+   {
+      ScriptPluginInterface si = (ScriptPluginInterface) Main.getApplication().getPluginManager().bindExternalPluginService("sqlscript", ScriptPluginInterface.class);
+
+      if (null == si)
+      {
+         writeScriptPluginMissingMessage();
+         return columnName;
+      }
+      return si.formatColumnName(columnName);
    }
 }

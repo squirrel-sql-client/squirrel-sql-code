@@ -70,6 +70,9 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+#1506: Script generation didn't double quote column names when configured.
+  Note: To configure double quoting go to menu File --> Global Preferences --> tab SQL Scripts
+
 Code completion: Fixed/improved completion for double quoted (") identifiers, e.g. schemas, tables, columns.
 
 Change tracking, left gutter popup to show changes:

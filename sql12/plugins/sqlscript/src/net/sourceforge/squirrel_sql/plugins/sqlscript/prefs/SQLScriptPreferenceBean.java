@@ -133,8 +133,9 @@ public class SQLScriptPreferenceBean implements Cloneable,
      * 
      * @return Returns the value of qualifyTableNames.
      */
-    public boolean isQualifyTableNames() {
-        return qualifyTableNames;
+    public boolean isQualifyTableNames()
+    {
+       return qualifyTableNames;
     }
 
     public void setDeleteRefAction(boolean deleteRefAction) {

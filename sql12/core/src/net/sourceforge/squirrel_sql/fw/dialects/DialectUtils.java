@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SqlScriptPluginAccessor;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -1798,8 +1799,8 @@ public class DialectUtils implements StringTemplateConstants
 		HibernateDialect dialect, CreateScriptPreferences prefs, boolean isJdbcOdbc, boolean sortColumns)
 		throws SQLException
 	{
-		final List<String> sqls = new ArrayList<String>();
-		final List<String> allconstraints = new ArrayList<String>();
+		final List<String> sqls = new ArrayList<>();
+		final List<String> allconstraints = new ArrayList<>();
 
 		for (final ITableInfo ti : tables)
 		{
@@ -1817,7 +1818,7 @@ public class DialectUtils implements StringTemplateConstants
 			}
 			for (final TableColumnInfo tcInfo : infos)
 			{
-				final String columnName = tcInfo.getColumnName();
+				final String columnNameFormatted = SqlScriptPluginAccessor.formatColumnName(tcInfo);
 				final String defaultVal = tcInfo.getDefaultValue();
 
 				String columnType = tcInfo.getTypeName();
@@ -1832,11 +1833,11 @@ public class DialectUtils implements StringTemplateConstants
 				}
 
 				result.append("\n   ");
-				result.append(columnName);
+				result.append(columnNameFormatted);
 				result.append(" ");
 				result.append(columnType);
 				final String isNullable = tcInfo.isNullable();
-				if (pks.size() == 1 && pks.get(0).equals(columnName))
+				if (pks.size() == 1 && pks.get(0).equals(tcInfo.getColumnName()))
 				{
 					result.append(" PRIMARY KEY");
 				}
