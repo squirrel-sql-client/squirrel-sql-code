@@ -70,6 +70,9 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+SQL editor: Double quoted (") tables used to be highlighted as error.
+  Note: The default error highlight color is red, see menu File --> New Session Properties --> tab Syntax
+
 #1506: Script generation didn't double quote column names when configured.
   Note: To configure double quoting go to menu File --> Global Preferences --> tab SQL Scripts
 

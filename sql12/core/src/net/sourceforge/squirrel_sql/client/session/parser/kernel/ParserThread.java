@@ -7,9 +7,9 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableQualifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -108,7 +108,9 @@ public class ParserThread
 
             TableQualifier tableQualifier = new TableQualifier(table.getFullyQualifiedName());
 
-            ITableInfo[] tableInfos = _session.getSchemaInfo().getITableInfos(tableQualifier.getCatalog(), tableQualifier.getSchema(), tableQualifier.getTableName());
+            ITableInfo[] tableInfos = _session.getSchemaInfo().getITableInfos(StringUtilities.stripDoubleQuotes(tableQualifier.getCatalog()),
+                                                                              StringUtilities.stripDoubleQuotes(tableQualifier.getSchema()),
+                                                                              StringUtilities.stripDoubleQuotes(tableQualifier.getTableName()));
 
             _parseTerminateRequestCheck.check();
 
