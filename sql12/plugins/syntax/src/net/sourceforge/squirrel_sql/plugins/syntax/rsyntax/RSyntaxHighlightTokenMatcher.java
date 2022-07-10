@@ -1,19 +1,19 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
-import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.CaseInsensitiveString;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
-import java.util.Arrays;
 
 public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatcher
 {
@@ -122,7 +122,7 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
 
    public boolean isTable(char[] buffer, int offset, int len)
    {
-      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len, true);
 
       // No new here, method is called very often
 
@@ -167,7 +167,7 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
 
    public boolean isFunction(char[] buffer, int offset, int len)
    {
-      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len, true);
 
 
       if(_sess.getSchemaInfo().isFunction(_caseInsensitiveStringBuffer))
@@ -221,7 +221,7 @@ public class RSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatche
       // No new here, method is called very often
       //String s = new String(buffer, offset, len);
 
-      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len, true);
 
       if(_sess.getSchemaInfo().isColumn(_caseInsensitiveStringBuffer))
       {

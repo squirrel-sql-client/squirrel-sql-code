@@ -12,35 +12,24 @@ import java.util.HashMap;
  * the usage of this class leads to better performance and
  * memory finger print.
  */
-public class CaseInsensitiveString implements Comparable<CaseInsensitiveString>, 
-                                              Serializable
+public class CaseInsensitiveString implements Comparable<CaseInsensitiveString>, Serializable
 {
-   private static final long serialVersionUID = -4625230597578277614L;
-   private char[] value = new char[0];
-   private int offset = 0;
-   private int count = 0;
-   private int hash = 0;
+   private char[] _value = new char[0];
+   private int _offset = 0;
+   private int _len = 0;
+   private int _hash = 0;
    private boolean _isMutable;
 
-   private static HashMap<Character,Character> upChars;
-   private static HashMap<Character,Character> lcChars;
-   
-   static {
-       if (upChars == null) {
-           upChars = new HashMap<Character,Character>();
-       }
-       if (lcChars == null) {
-           lcChars = new HashMap<Character,Character>();
-       }
-   }
-   
+   private static HashMap<Character,Character> upChars = new HashMap<>();
+   private static HashMap<Character,Character> lcChars = new HashMap<>();
+
    public CaseInsensitiveString(String s)
    {
-      value = new char[s.length()];
-      s.getChars(0, s.length(), value, 0);
-      offset = 0;
-      count = s.length();
-      hash = 0;
+      _value = new char[s.length()];
+      s.getChars(0, s.length(), _value, 0);
+      _offset = 0;
+      _len = s.length();
+      _hash = 0;
       _isMutable = false;
    }
 
@@ -51,52 +40,68 @@ public class CaseInsensitiveString implements Comparable<CaseInsensitiveString>,
 
    public void setCharBuffer(char[] buffer, int beginIndex, int len)
    {
+      setCharBuffer(buffer, beginIndex, len, false);
+   }
+
+   public void setCharBuffer(char[] buffer, int offset, int len, boolean stripDoubleQuotes)
+   {
       if(false == _isMutable)
       {
          throw new UnsupportedOperationException("This CaseInsensitiveString is immutable");
       }
 
-      value = buffer;
-      offset = beginIndex;
-      count = len;
-      hash = 0;
+      _value = buffer;
+      _offset = offset;
+      _len = len;
+      _hash = 0;
+
+      if(   stripDoubleQuotes
+         && 2 < _len
+         && '"' == buffer[_offset] && '"' == buffer[_offset + _len - 1])
+      {
+         ++_offset;
+         _len -=2;
+      }
+
    }
 
    public int hashCode()
    {
-      int h = hash;
+      int h = _hash;
       if (h == 0)
       {
-         int off = offset;
-         char val[] = value;
-         int len = count;
+         int off = _offset;
+         char val[] = _value;
+         int len = _len;
 
          for (int i = 0; i < len; i++)
          {
             h = 31 * h + toUpperCase(val[off++]);
          }
-         hash = h;
+         _hash = h;
       }
       return h;
    }
 
    public boolean equals(Object obj)
    {
-   	if (obj == null) {
-   		return false;
-   	}
+      if(obj == null)
+      {
+         return false;
+      }
+
       if(obj instanceof String)
       {
          String other = (String) obj;
 
-         if(other.length() != count)
+         if(other.length() != _len)
          {
             return false;
          }
 
-         for(int i=0; i < count; ++i)
+         for(int i = 0; i < _len; ++i)
          {
-            char c1 = value[offset + i];
+            char c1 = _value[_offset + i];
             char c2 = other.charAt(i);
 
 
@@ -128,15 +133,15 @@ public class CaseInsensitiveString implements Comparable<CaseInsensitiveString>,
          CaseInsensitiveString other = (CaseInsensitiveString) obj;
 
 
-         if(other.count != count)
+         if(other._len != _len)
          {
             return false;
          }
 
-         for(int i=0; i < count; ++i)
+         for(int i = 0; i < _len; ++i)
          {
-            char c1 = value[offset + i];
-            char c2 = other.value[other.offset + i];
+            char c1 = _value[_offset + i];
+            char c2 = other._value[other._offset + i];
 
 
             // If characters don't match but case may be ignored,
@@ -171,18 +176,18 @@ public class CaseInsensitiveString implements Comparable<CaseInsensitiveString>,
 
    public String toString()
    {
-      return new String(value, offset, count);
+      return new String(_value, _offset, _len);
    }
 
    public int compareTo(CaseInsensitiveString anotherString)
    {
-      int len1 = count;
-      int len2 = anotherString.count;
+      int len1 = _len;
+      int len2 = anotherString._len;
       int n = Math.min(len1, len2);
-      char v1[] = value;
-      char v2[] = anotherString.value;
-      int i = offset;
-      int j = anotherString.offset;
+      char v1[] = _value;
+      char v2[] = anotherString._value;
+      int i = _offset;
+      int j = anotherString._offset;
 
       if (i == j)
       {

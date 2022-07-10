@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
-import org.fife.ui.rsyntaxtextarea.Token;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
+import org.fife.ui.rsyntaxtextarea.Token;
 
 public class SquirrelTokenMarker extends SquirrelTokenMakerBase
 {
@@ -73,6 +73,33 @@ public class SquirrelTokenMarker extends SquirrelTokenMakerBase
          else if(_syntaxHighlightTokenMatcher.isStatementSeparator(array, start, len))
          {
             super.addToken(array, start, end, TOKEN_IDENTIFIER_STATEMENT_SEPARATOR, startOffset, hyperlink);
+         }
+         else
+         {
+            super.addToken(array, start, end, tokenType, startOffset, hyperlink);
+         }
+      }
+      else if(Token.LITERAL_STRING_DOUBLE_QUOTE == tokenType)
+      {
+         // final CaseInsensitiveString buf = new CaseInsensitiveString();
+         // buf.setCharBuffer(array, start, len);
+         // final String toString = buf.toString();
+         // System.out.println(toString);
+
+         // Tables, columns or function may be surrounded by double quotes.
+         // This block is needed for adequate coloring of those.
+         // See CaseInsensitiveString.setCharBuffer(char[], int, int, boolean)
+         if(_syntaxHighlightTokenMatcher.isTable(array, start, len))
+         {
+            super.addToken(array, start, end, TOKEN_IDENTIFIER_TABLE, startOffset, _ctrlDownHyperlinkHandler.isShowTablesAsHyperlink());
+         }
+         else if(_syntaxHighlightTokenMatcher.isColumn(array, start, len))
+         {
+            super.addToken(array, start, end, TOKEN_IDENTIFIER_COLUMN, startOffset, hyperlink);
+         }
+         else if(_syntaxHighlightTokenMatcher.isFunction(array, start, len))
+         {
+            super.addToken(array, start, end, TOKEN_IDENTIFIER_FUNCTION, startOffset, hyperlink);
          }
          else
          {
