@@ -1,17 +1,17 @@
 package net.sourceforge.squirrel_sql.fw.sql.tablenamefind;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SqlScriptPluginAccessor;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TableNameFindService
 {
@@ -44,18 +44,21 @@ public class TableNameFindService
    private static String _findTableNameInSQL(String sql)
    {
       Pattern patternBeforeTable = Pattern.compile("SELECT\\s+[A-Z0-9_\\*\\.',\\s\"]*\\s+FROM\\s+([A-Z0-9_\\.\"]+)");
-      sql = sql.toUpperCase().trim();
+      String ucSql = sql.toUpperCase().trim();
       // Bug 1371587 - remove useless accent characters if they exist
-      sql = sql.replaceAll("\\`", "");
+      ucSql = ucSql.replaceAll("\\`", "");
       Matcher matcher;
 
-      matcher = patternBeforeTable.matcher(sql);
+      matcher = patternBeforeTable.matcher(ucSql);
       if(false == matcher.find())
       {
          return null;
       }
-      String table = matcher.group(1);
-      String behindTable = sql.substring(matcher.end(1)).trim();
+
+      // Get the table name in its original upper-lower case.
+      String table = sql.trim().substring(matcher.start(1), matcher.end(1));
+
+      String behindTable = ucSql.substring(matcher.end(1)).trim();
 
       SingleTableSqlEnum ret = behindTableAllowsEditing(behindTable);
 

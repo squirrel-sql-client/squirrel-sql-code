@@ -70,6 +70,9 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+#1506: Concerning SQL-insert-scripts generated from SQL queries (ctrl+T -> sql2ins) or copied from SQL result tables:
+  Scripted table names used to be all upper case. Now the original spelling is preserved.
+
 SQL editor: Double quoted (") tables used to be highlighted as error.
   Note: The default error highlight color is red, see menu File --> New Session Properties --> tab Syntax
 
