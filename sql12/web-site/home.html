@@ -103,9 +103,10 @@
 			<center>
 				<h3 class="body">
 					New snapshot 20220710_1306 with several SQL editor fixes and improvements<br>
-					concerning code completion and highlighting of double quoted (") identifiers (tables, columns, functions, ...).<br>
+					concerning code completion and highlighting of double quoted (") identifiers (tables, columns, functions, ...)<br>
+					and with extensions of Saved Session feature, e.g. internally saved files can now be change tracked by <a href="https://git-scm.com/">GIT</a>.<br>
 					For details see our change log at <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
-					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/SourceForge/sql12/core/doc/changes.txt">GitHub</a>.<br>
+					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br>
 					The 20220710_1306 snapshot releases on SourceForge are:<br>
 					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220710_1306/squirrel-sql-snapshot-20220710_1306-standard.jar/download">Download installer for Windows/Linux/others</a><br>
 					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220710_1306/squirrel-sql-snapshot-20220710_1306-MACOSX-install.jar/download">Download installer for Mac OS </a><br>
@@ -251,26 +252,7 @@
 		<td class="body_left_border">&nbsp;</td>
 		<td width='100%' bgcolor="white" valign="top">
 			<h1 class="body"><A name="installation">Download and Installation</A></h1>
-			<p>The SQuirreL SQL Client is installed with the IzPack Java
-			installer. Download the file <b>squirrel-sql-&lt;version&gt;-install.jar</b>
-			and execute it using the following command:
-
-         <BR><code>
-			&nbsp;&nbsp;&nbsp;java -jar squirrel-sql-&lt;version&gt;-install.jar
-			</code>
-
-			<br><br>Make sure that you have write privileges to the directory
-			that you want to install into.
-
-			<br>Note that some browsers may attempt to open this
-			file rather than download it. In this case, right-click on
-			the download link and click your browser's equivalent of the
-			&quot;Save as...&quot; menu item.
-
-			<p>On Windows, execute the file <span class="code">squirrel-sql.bat</span> to run the
-			application. On Linux/Unix, the file is <span class="code">squirrel-sql.sh</span>.
-
-			<h2>The most important <U>downloads</U> are:</h2>
+			<h2>Available downloads are:</h2>
 
 			<table border="1">
 				<tr>
@@ -300,9 +282,49 @@
 			</table>
 
 
-			<br>See the <A HREF="index.php?page=plugins">plugins</A> page for instructions on installing plugins.
+			<h2>Installation:</h2>
+			<p>
+			<b>Prerequisite, Java must be available:</b><br>
+			Java is open source and can be downloaded from <a href="https://adoptium.net">https://adoptium.net</a>.
+			<br>SQuirreL will always run with the current LTS (Long Term Support) release of Java.
+			<br>The minimum Java version required usually is the previous LTS release.<br><br>
 
-			<br>To checkout SQuirreL from the Git repository use the command:<br><br>
+			<b>Installation of the SQuirreL SQL Client:</b><br>
+			The SQuirreL SQL Client can be installed by the IzPack installer. Download the file <b>squirrel-sql-&lt;version&gt;-install.jar</b>
+			and execute it using the following command:<br>
+			<code>java -jar squirrel-sql-&lt;version&gt;-install.jar</code> &nbsp;&nbsp; when you properly installed Java.<br>
+			or<br>
+			<code>&lt;path to Java directory&gt;\bin\java -jar squirrel-sql-&lt;version&gt;-install.jar</code> &nbsp;&nbsp; when you just unpacked the zip or tar.gz version of Java.
+			<br>Note: On Linux/Unix or MacOs replace backslashes (\) by slashes (/).
+
+			<br><br>Make sure that you have write privileges to the directory
+			that you want to install into.
+
+			<br>Note that some browsers may attempt to open this
+			file rather than download it. In this case, right-click on
+			the download link and click your browser's equivalent of the
+			&quot;Save as...&quot; menu item.
+
+			<br><br><b>On MacOS:</b>
+			<br>On MacOS the preferable way to install the SQuirrel SQL Client is the MacOS X installer.
+
+				<br><br><b>Starting the SQuirreL SQL Client:</b>
+			<br>On Windows, execute the file <span class="code">squirrel-sql.bat</span> to run the
+			application. On Linux/Unix and MacOS, the file is <span class="code">squirrel-sql.sh</span>.
+
+			<br><br><b>Trouble shooting:</b>
+			<br>When SQuirreL SQL doesn't start<br>
+			on Windows try to add the line
+			<br><code>&nbsp set JAVA_HOME=&lt;path to Java directory&gt;</code><br>
+			to the top of squirrel-sql.bat<br>
+			<br>On Linux/Unix or MacOS try to add the line
+			<br><code>&nbsp export JAVA_HOME=&lt;path to Java directory&gt;</code><br>
+			to the top of squirrel-sql.sh<br>
+
+			</p>
+
+			<h2>Additional information:</h2>
+			To checkout SQuirreL from the Git repository use the command:<br><br>
 			<table border="1">
 				<tr>
 					<th><a href="https://sourceforge.net/projects/squirrel-sql/">On SourceForge</a></th>
@@ -310,28 +332,31 @@
 				</tr>
 				<tr>
 					<td>
-						<code>
-							git clone git://git.code.sf.net/p/squirrel-sql/git squirrel-sql-git
+						<p>
+							<code>
+								git clone git://git.code.sf.net/p/squirrel-sql/git squirrel-sql-git
+							</code>
+							<BR>or
+							<BR><code>
+							git clone http://git.code.sf.net/p/squirrel-sql/git squirrel-sql-git
 						</code>
-						<BR>or
-						<BR><code>
-						git clone http://git.code.sf.net/p/squirrel-sql/git squirrel-sql-git
-					</code>
-						<BR><BR>Registered developers should use:
-						<BR><code>
-						git clone ssh://&lt;SF user name&gt;@git.code.sf.net/p/squirrel-sql/git squirrel-sql-git
-					</code>
+							<BR><BR>Registered developers should use:
+							<BR><code>
+							git clone ssh://&lt;SF user name&gt;@git.code.sf.net/p/squirrel-sql/git squirrel-sql-git
+						</code>
+						</p>
 					</td>
 					<td>
-						<code>git clone https://github.com/squirrel-sql-client/squirrel-sql-code.git squirrel-sql-git</code>
+						<p>
+							<code>git clone https://github.com/squirrel-sql-client/squirrel-sql-code.git squirrel-sql-git</code>
+						</p>
 					</td>
 				</tr>
 			</table>
-			<br>
 			SQuirreL's source code is in the sql12/ subdirectory of the clone.
             <a href="index.php?page=programing">Click here for information on how to build and program SQuirreL.</a>
 
-
+			<br><br>See the <A HREF="index.php?page=plugins">plugins</A> page for instructions on installing plugins.
         </td>
 		<td class="body_right_border">&nbsp;</td>
 	</tr>
