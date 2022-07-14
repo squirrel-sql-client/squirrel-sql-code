@@ -1,8 +1,11 @@
 #! /bin/sh
 
 
-# IZPACK_JAVA_HOME is filtered in by the IzPack installer when this script is installed
-IZPACK_JAVA_HOME=%JAVA_HOME
+# IzPack replaces ($ or %)JAVA_HOME with the JDK/JRE IzPack installer was started with.
+# I.e. is a built in variable of IzPack,
+# see https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491572/Variables
+# Note the shell script untypical %JAVA_HOME which is the one replaced by IzPack here.
+export IZPACK_JAVA_HOME=%JAVA_HOME
 
 # We detect the java executable to use according to the following algorithm:
 #

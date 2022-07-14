@@ -9,7 +9,8 @@
 ABSPATH=$(cd "$(dirname "$0")"; pwd)
 
 
-# IZPACK_JAVA_HOME is filtered in by the IzPack installer when this script is installed
+# Note: Windows and Linux/Unix scripts use the IzPack built in variable ($ or %)JAVA_HOME here.
+# The variable ($ or %)JAVA_HOME contains the JDK/JRE the IzPack installer was started with.
 IZPACK_JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"
 
 # We detect the java executable to use according to the following algorithm:

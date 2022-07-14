@@ -1,8 +1,7 @@
 #! /bin/sh
 
 
-# IZPACK_JAVA_HOME is filtered in by the IzPack installer when this script is installed
-IZPACK_JAVA_HOME=%JAVA_HOME
+export IZPACK_JAVA_HOME=$JAVA_HOME
 
 # We detect the java executable to use according to the following algorithm:
 #

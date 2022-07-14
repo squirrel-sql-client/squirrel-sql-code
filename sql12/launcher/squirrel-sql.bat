@@ -1,15 +1,21 @@
 @echo off
 
-@rem IZPACK_JAVA is filtered in by the IzPack installer when this script is installed
-set "IZPACK_JAVA=%JAVA_HOME%"
+@rem IzPack replaces ($ or %)JAVA_HOME with the JDK/JRE IzPack installer was started with.
+@rem I.e. is a built in variable of IzPack,
+@rem see https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491572/Variables
+@rem Note the batch script untypical $JAVA_HOME which is the one replaced by IzPack here.
+set "IZPACK_JAVA=$JAVA_HOME"
 
 @rem We detect the java executable to use according to the following algorithm:
 @rem
-@rem 1. If the one used by the IzPack installer is available then use that; otherwise
-@rem 2. Use the java that is in the command path.
+@rem 1. If the system variable JAVA_HOME is set then use that; otherwise
+@rem 2. If the one used by the IzPack installer is available then use that; otherwise
+@rem 3. Use the java that is in the command path.
 @rem 
 
-if exist "%IZPACK_JAVA%\bin\javaw.exe" (
+if exist "%JAVA_HOME%\bin\javaw.exe" (
+  set "LOCAL_JAVA=%JAVA_HOME%\bin\javaw.exe"
+) else if exist "%IZPACK_JAVA%\bin\javaw.exe" (
   set "LOCAL_JAVA=%IZPACK_JAVA%\bin\javaw.exe"
 ) else (
   set LOCAL_JAVA=javaw.exe

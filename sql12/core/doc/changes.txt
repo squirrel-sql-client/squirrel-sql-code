@@ -70,6 +70,13 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+Start script fixes:
+  SQuirreL's installer for Windows/Linux/others now reliably transfers
+  the Java runtime used to start the installer to SQuirreL's start scripts. Especially on Windows this didn't work.
+  The scripts proceed as follows:
+  - If the JAVA_HOME variable was set it is used.
+  - If the JAVA_HOME variable is not set the Java runtime the installer was started with is used.
+
 SQL editor: Corrected highlighting of double quoted (") tables, columns, functions.
 
 #1506: Concerning SQL-insert-scripts generated from SQL queries (ctrl+T -> sql2ins) or copied from SQL result tables:

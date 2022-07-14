@@ -5,7 +5,7 @@ set IZPACK_JAVA="%JAVA_HOME%"
 
 @rem We detect the java executable to use according to the following algorithm:
 @rem
-@rem 1. If the one used by the IzPack installer is available then use that; otherwise
+@rem 1. If the system variable JAVA_HOME is set then use that; otherwise
 @rem 2. Use the java that is in the command path.
 @rem
 
