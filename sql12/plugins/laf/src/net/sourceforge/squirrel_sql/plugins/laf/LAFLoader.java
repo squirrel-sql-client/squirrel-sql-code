@@ -62,6 +62,7 @@ public class LAFLoader
                         "For a workaround see bug #1507 at SourceForge: " +
                         "https://sourceforge.net/p/squirrel-sql/bugs/1507\n" +
                         "Note that JGoodies does not offer open source updates for its Look and Feels anymore, see: http://www.jgoodies.com/downloads/libraries/\n" +
+                        "Also note: JGoddies Look and Feels leave tabs empty at several places. If you are using JGoddies please consider switching to a Metal or FlatLaf Look and Feel.\n" +
                         "Detailed error message:";
                   s_log.error(jgoodiesMsg, t);
                }

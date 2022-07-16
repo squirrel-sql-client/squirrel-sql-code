@@ -70,9 +70,11 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
-Look and Feel Plugin: Improved handling JGoodies WindowsLookAndFeel Java 17 error.
+Look and Feel Plugin: Improved handling JGoodies' WindowsLookAndFeel Java 17 error.
   When the error occurs SQuirreL will switch to its standard Metal/Ocean Look and Feel
   and the log (see menu Window --> "View SQuirreL Logs") will contain detailed information.
+  Note: JGoddies Look and Feels leave tabs empty at several places. If you are using
+  JGoddies please consider switching to a Metal or FlatLaf Look and Feel.
 
 Start script fixes:
   SQuirreL's installer for Windows/Linux/others now reliably transfers
