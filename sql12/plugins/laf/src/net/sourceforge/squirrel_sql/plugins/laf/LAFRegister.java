@@ -68,7 +68,6 @@ public class LAFRegister
 
 	private final static int FONT_KEYS_ARRAY_STATIC = 2;
 
-	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(LAFRegister.class);
 
 	// TODO: What about these
@@ -217,23 +216,14 @@ public class LAFRegister
 		try
 		{
 			final LAFPreferences prefs = _plugin.getLAFPreferences();
-			final String lafClassName = prefs.getLookAndFeelClassName();
-			// Get Look and Feel class object.
-			Class<?> lafClass = null;
-			if (_lafClassLoader != null)
-			{
-				lafClass = Class.forName(lafClassName, true, _lafClassLoader);
-			}
-			else
-			{
-				lafClass = Class.forName(lafClassName);
-			}
-			// Get the new Look and Feel object.
-			final LookAndFeel laf = (LookAndFeel) lafClass.getDeclaredConstructor().newInstance();
+			LookAndFeel laf = LAFLoader.getLafOrDefaultMetalOnError(prefs, _lafClassLoader);
+
+			String lafClassName = laf.getClass().getName();
+
+
 			// If a different LAF to the current one has been requested then
 			// change to the requested LAF.
 			LookAndFeel curLaf = UIManager.getLookAndFeel();
-			s_log.debug(curLaf);
 			if (force || curLaf == null || !curLaf.getName().equals(laf.getName()))
 			{
 				ILookAndFeelController lafCont = getLookAndFeelController(lafClassName);
@@ -241,12 +231,10 @@ public class LAFRegister
 
 				// Set Look and Feel. If this is the Substance/JTattoo placeholder, skip it as it is not a real
 				// look and feel. The controller will handle setting the look and feel using the UIManager.
+				s_log.info("Current Look and Feel before L&F Plugin starts installing: " + curLaf.getName() + "(" + curLaf.getClass().getName() + ")");
 				if (!PlaceholderLookAndFeel.isPlaceholder(lafClassName))
 				{
-					if (s_log.isInfoEnabled())
-					{
-						s_log.info("Setting lookandfeel class: " + lafClassName);
-					}
+					s_log.info("L&F Plugin starts installing: " + laf.getName() + "(" + lafClassName + ")");
 
 					if (_lafClassLoader != null)
 					{
@@ -384,20 +372,20 @@ public class LAFRegister
 
 			for (Iterator<String> it = lafs.keySet().iterator(); it.hasNext();)
 			{
-				String className = it.next();
+				String lafClassName = it.next();
 				try
 				{
-					Class<?> lafClass = Class.forName(className, false, _lafClassLoader);
-					LookAndFeel laf = (LookAndFeel) lafClass.getDeclaredConstructor().newInstance();
-					if (laf.isSupportedLookAndFeel())
+					LookAndFeel laf = LAFLoader.getLafOrNullOnError(lafClassName, _lafClassLoader);
+
+					if (null != laf && laf.isSupportedLookAndFeel())
 					{
-						LookAndFeelInfo info = new LookAndFeelInfo(laf.getName(), lafClass.getName());
+						LookAndFeelInfo info = new LookAndFeelInfo(laf.getName(), lafClassName);
 						UIManager.installLookAndFeel(info);
 					}
 				}
 				catch (Throwable th)
 				{
-					s_log.error("Error occurred loading Look and Feel: " + className, th);
+					s_log.error("Error occurred loading Look and Feel: " + lafClassName, th);
 				}
 			}
 		}
