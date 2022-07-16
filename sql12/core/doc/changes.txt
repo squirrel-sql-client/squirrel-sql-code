@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Look and Feel plugin: Upgrade FlatLaF to 2.4
+
 SQL Script Plugin: The Plugin's help now describes how to run query output directly into a file.
   See bottom of the Plugin's help page.
   Example syntax: @file '/tmp/customers.xlsx' SELECT * FROM customers
