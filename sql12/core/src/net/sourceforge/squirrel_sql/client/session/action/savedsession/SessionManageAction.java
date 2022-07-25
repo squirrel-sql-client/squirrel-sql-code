@@ -6,7 +6,6 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ActionUtil;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -68,21 +67,7 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
 
    private void onPrintDetailsToMessagePanel()
    {
-
-      final String savedSessionName = _session.getSavedSession().getName();
-      final ISQLAlias alias = SavedSessionUtil.getAliasForIdString(_session.getSavedSession().getDefaultAliasIdString());
-      String aliasName = "<unknown>";
-      String jdbcUrl = "<unknown>";
-      String jdbcUser = "<unknown>";
-      if(null != alias)
-      {
-         aliasName = alias.getName();
-         jdbcUrl = alias.getUrl();
-         jdbcUser = alias.getUserName();
-      }
-
-      final String msg = s_stringMgr.getString("SessionManageAction.saved.session.details", savedSessionName, aliasName, jdbcUrl, jdbcUser);
-      Main.getApplication().getMessageHandler().showMessage(msg);
+      SavedSessionUtil.printSavedSessionDetails(_session.getSavedSession());
    }
 
    private void onSaveAsNewSavedSession()

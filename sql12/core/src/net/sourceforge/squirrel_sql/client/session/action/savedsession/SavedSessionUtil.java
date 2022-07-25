@@ -10,6 +10,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQ
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import java.io.File;
@@ -18,6 +20,8 @@ import java.util.List;
 
 public class SavedSessionUtil
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SavedSessionUtil.class);
+
    // The first SQL Panel is the main SQL Panel
    public static List<SQLPanelSaveInfo> getAllSQLPanelsOrderedAndTyped(ISession session)
    {
@@ -135,5 +139,48 @@ public class SavedSessionUtil
    public static File getSavedSessionsDir()
    {
       return new ApplicationFiles().getSavedSessionsDir();
+   }
+
+   public static void printSavedSessionDetails(SavedSessionJsonBean savedSession)
+   {
+      String savedSessionName = savedSession.getName();
+
+      final ISQLAlias alias = getAliasForIdString(savedSession.getDefaultAliasIdString());
+      String aliasName = "<unknown>";
+      String jdbcUrl = "<unknown>";
+      String jdbcUser = "<unknown>";
+      if(null != alias)
+      {
+         aliasName = alias.getName();
+         jdbcUrl = alias.getUrl();
+         jdbcUser = alias.getUserName();
+      }
+
+      final String msg = s_stringMgr.getString("SavedSessionUtil.saved.session.details", savedSessionName, aliasName, jdbcUrl, jdbcUser);
+      Main.getApplication().getMessageHandler().showMessage(msg);
+
+      boolean firstInternalFile = true;
+      for (SessionSqlJsonBean sessionSQL : savedSession.getSessionSQLs())
+      {
+         final String fileMsg;
+
+         if(false == StringUtilities.isEmpty(sessionSQL.getExternalFilePath()))
+         {
+            fileMsg = s_stringMgr.getString("SavedSessionUtil.saved.session.external.file", sessionSQL.getExternalFilePath());
+         }
+         else
+         {
+            if(firstInternalFile)
+            {
+               fileMsg = s_stringMgr.getString("SavedSessionUtil.saved.session.internal.file.first", sessionSQL.getInternalFileName(), getSavedSessionsDir());
+               firstInternalFile = false;
+            }
+            else
+            {
+               fileMsg = s_stringMgr.getString("SavedSessionUtil.saved.session.internal.file", sessionSQL.getInternalFileName());
+            }
+         }
+         Main.getApplication().getMessageHandler().showMessage(fileMsg);
+      }
    }
 }

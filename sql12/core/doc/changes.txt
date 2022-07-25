@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Saved Sessions improvement (See the four buttons at the right of SQuirreL's topmost toolbar):
+  Printing Saved Session details now prints contained external and internal files.
+
 Intersystems Cache Plugin: Now works for Intersystems Cache and IRIS.
 
 Look and Feel plugin: Upgrade FlatLaF to 2.4

@@ -108,7 +108,24 @@ public class SavedSessionMoreCtrl
       menuItem = new JMenuItem(s_stringMgr.getString("SavedSessionMoreCtrl.rename"));
       menuItem.addActionListener(e -> onRename());
       popupMenu.add(menuItem);
+
+      menuItem = new JMenuItem(s_stringMgr.getString("SavedSessionMoreCtrl.print.saved.session.details.msg.panel"));
+      menuItem.addActionListener(e -> onPrintDetails());
+      popupMenu.add(menuItem);
+
       popupMenu.show(_dlg.lstSavedSessions, me.getX(), me.getY());
+   }
+
+   private void onPrintDetails()
+   {
+      final SavedSessionJsonBean selectedSavedSession = _dlg.lstSavedSessions.getSelectedValue();
+
+      if(null == selectedSavedSession)
+      {
+         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("SavedSessionMoreCtrl.no.section.to.print.details"));
+      }
+
+      SavedSessionUtil.printSavedSessionDetails(selectedSavedSession);
    }
 
    private void onRename()
