@@ -6,7 +6,7 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
-Intersystems Cache Plugin: Now works for Intersystem Cache and IRIS.
+Intersystems Cache Plugin: Now works for Intersystems Cache and IRIS.
 
 Look and Feel plugin: Upgrade FlatLaF to 2.4
 
