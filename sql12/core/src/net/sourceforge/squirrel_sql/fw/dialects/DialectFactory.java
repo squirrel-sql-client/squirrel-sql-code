@@ -18,6 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.fw.gui.DialogUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IDialogUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -25,13 +32,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Set;
 
 /**
  * This class maps SQLDatabaseMetaData instances to their corresponding Hibernate dialect.
@@ -109,6 +109,7 @@ public class DialectFactory
 	private static final TimesTenDialectExt timestenDialect = new TimesTenDialectExt();
 
 	private static final IntersystemsCacheDialectExt intersystemsCacheDialectExt = new IntersystemsCacheDialectExt();
+	private static final IntersystemsIrisDialectExt intersystemsIrisDialectExt = new IntersystemsIrisDialectExt();
 
 	private static final SQLiteDialectExt sqliteDialectExt = new SQLiteDialectExt();
 
@@ -165,6 +166,7 @@ public class DialectFactory
 		dbNameDialectMap.put(sybaseDialect.getDisplayName(), sybaseDialect);
 		dbNameDialectMap.put(timestenDialect.getDisplayName(), timestenDialect);
 		dbNameDialectMap.put(intersystemsCacheDialectExt.getDisplayName(), intersystemsCacheDialectExt);
+		dbNameDialectMap.put(intersystemsIrisDialectExt.getDisplayName(), intersystemsIrisDialectExt);
 		dbNameDialectMap.put(sqliteDialectExt.getDisplayName(), sqliteDialectExt);
 	}
 
@@ -302,6 +304,10 @@ public class DialectFactory
 	{
 		return dialectSupportsProduct(md, intersystemsCacheDialectExt);
 	}
+	public static boolean isIntersystemsIris(ISQLDatabaseMetaData md)
+	{
+		return dialectSupportsProduct(md, intersystemsIrisDialectExt);
+	}
 
 	public static boolean isSQLite(ISQLDatabaseMetaData md)
 	{
@@ -398,6 +404,7 @@ public class DialectFactory
 		if (isSyBase(md)) { return sybaseDialect; }
 		if (isTimesTen(md)) { return timestenDialect; }
 		if (isIntersystemsCache(md)) { return intersystemsCacheDialectExt; }
+		if (isIntersystemsIris(md)) { return intersystemsIrisDialectExt; }
 		if (isSQLite(md)) { return sqliteDialectExt; }
 		// GenericDialect must be last, since it will claim that it supports any product/version. That is also
 		// why there is no isGenericDialect - it would always return true if there was one, making it useless.

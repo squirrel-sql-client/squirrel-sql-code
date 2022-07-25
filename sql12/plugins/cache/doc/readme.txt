@@ -1,6 +1,6 @@
-Plugin to show query statistics and plan for the Intersystems Cache database.
+Plugin to show query statistics and plan for the Intersystems Cache/IRIS database.
 
-As a prerequisite for this Plugin a class written in COS stated below has to be imported into the Cache server.
+As a prerequisite for this Plugin a class written in COS stated below has to be imported into the Cache/IRIS server.
 
 
 
@@ -12,7 +12,7 @@ Class DBUtilities.ShowPlan Extends %RegisteredObject
 /// --------------------------------
 /// Parameter :
 /// 1 = Namespace
-/// 2 = SQL-Querry
+/// 2 = SQL-Query
 ///
 /// Discription :
 /// Displaying an Execution Plan as  SQL procedure

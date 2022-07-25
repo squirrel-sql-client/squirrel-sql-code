@@ -54,7 +54,7 @@ public class CachePlugin extends DefaultSessionPlugin
 	 */
 	public String getDescriptiveName()
 	{
-		return "Intersystems Cache Plugin";
+		return "Intersystems Cache/IRIS Plugin";
 	}
 
 	/**
@@ -147,7 +147,8 @@ public class CachePlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(ISession session)
 	{
-		if( false == DialectFactory.isIntersystemsCache(session.getMetaData()) )
+		if(    false == DialectFactory.isIntersystemsCache(session.getMetaData())
+			 && false == DialectFactory.isIntersystemsIris(session.getMetaData()))
 		{
 			return null;
 		}

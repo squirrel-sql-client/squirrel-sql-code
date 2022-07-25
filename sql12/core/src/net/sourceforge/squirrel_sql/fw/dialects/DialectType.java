@@ -39,6 +39,7 @@ public enum DialectType
    INFORMIX,
    INGRES,
    INTERBASE,
+   INTERSYSTEMS_IRIS,
    MAXDB,
    MCKOI,
    MSSQL,

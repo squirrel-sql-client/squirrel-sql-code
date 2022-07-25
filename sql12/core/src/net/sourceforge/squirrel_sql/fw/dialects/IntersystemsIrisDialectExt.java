@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 /**
  * Dummy Extension for the Intersystems Cache DB
  */
-public class IntersystemsCacheDialectExt extends IntersystemsDialectExt
+public class IntersystemsIrisDialectExt extends IntersystemsDialectExt
 {
    /**
     * The string which identifies this dialect in the dialect chooser.
@@ -30,7 +30,7 @@ public class IntersystemsCacheDialectExt extends IntersystemsDialectExt
     */
    public String getDisplayName()
    {
-      return "Cache";
+      return "InterSystems IRIS";
    }
 
    /**
@@ -49,7 +49,7 @@ public class IntersystemsCacheDialectExt extends IntersystemsDialectExt
       {
          return false;
       }
-      if (databaseProductName.trim().startsWith("Cache"))
+      if (databaseProductName.trim().startsWith("InterSystems IRIS"))
       {
          // We don't yet have the need to discriminate by version.
          return true;
@@ -60,6 +60,6 @@ public class IntersystemsCacheDialectExt extends IntersystemsDialectExt
    @Override
    public DialectType getDialectType()
    {
-      return DialectType.CACHE;
+      return DialectType.INTERSYSTEMS_IRIS;
    }
 }
