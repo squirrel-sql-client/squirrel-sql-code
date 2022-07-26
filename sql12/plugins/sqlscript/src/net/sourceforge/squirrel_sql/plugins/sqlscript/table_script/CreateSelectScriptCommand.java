@@ -97,7 +97,7 @@ public class CreateSelectScriptCommand
 
               if(SQLScriptPreferencesManager.getPreferences().isUseDoubleQuotes())
               {
-                 ScriptUtil.getColumnName(infos[i], SQLScriptPreferencesManager.getPreferences().isUseDoubleQuotes());
+                 sbScript.append(ScriptUtil.getColumnName(infos[i], SQLScriptPreferencesManager.getPreferences().isUseDoubleQuotes()));
               }
               else
               {
