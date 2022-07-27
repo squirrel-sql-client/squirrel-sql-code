@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Intersystems Cache Plugin: Updated COS class in Plugin readme/help.
+  Thanks to Martin Weissenborn for the update.
+
 Saved Sessions improvement (See the four buttons at the right of SQuirreL's topmost toolbar):
   Printing Saved Session details now prints contained external and internal files.
 
@@ -73,7 +76,6 @@ Main application toolbar: Replaced the former Aliases and Session combo boxes by
   which display popup menus to select Aliases and Session respectively.
 
 Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
-
 
 Bug fixes:
 
