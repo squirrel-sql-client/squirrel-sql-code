@@ -415,7 +415,7 @@ public class DriverInternalFrame extends DialogWidget
 		pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.name"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridy;
-		pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.egurl"), SwingConstants.RIGHT), gbc);
+		pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.example.jdbc.url"), SwingConstants.RIGHT), gbc);
 
 		++gbc.gridy;
 		pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.weburl"), SwingConstants.RIGHT), gbc);
