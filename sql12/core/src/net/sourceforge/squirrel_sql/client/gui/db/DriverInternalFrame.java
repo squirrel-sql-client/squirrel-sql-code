@@ -19,13 +19,45 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.ListModel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DRIVER_DEFINITIONS;
 import net.sourceforge.squirrel_sql.fw.gui.DefaultFileListBoxModel;
 import net.sourceforge.squirrel_sql.fw.gui.FileListBox;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IFileListBoxModel;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -36,17 +68,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DRIVER_DEFINITIONS;
 
 /**
  * This dialog allows maintenance of a JDBC driver definition.
@@ -322,8 +344,8 @@ public class DriverInternalFrame extends DialogWidget
 		contentPane.add(createDriverPanel(), gbc);
 
 		JTabbedPane tabPnl = new JTabbedPane();
-		tabPnl.addTab(s_stringMgr.getString("DriverInternalFrame.javaclasspath"), createJavaClassPathPanel());
-		tabPnl.addTab(s_stringMgr.getString("DriverInternalFrame.extraclasspath"), createExtraClassPathPanel());
+		tabPnl.addTab(s_stringMgr.getString("DriverInternalFrame.jdbc.driver.classpath"), createJDBCDriverClasspathPanel());
+		tabPnl.addTab(s_stringMgr.getString("DriverInternalFrame.squirrel.java.classpath"), createJavaClassPathPanel());
 
 		++gbc.gridy;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -486,7 +508,7 @@ public class DriverInternalFrame extends DialogWidget
 	 * 
 	 * @return Panel that displays the extra class path.
 	 */
-	private JPanel createExtraClassPathPanel()
+	private JPanel createJDBCDriverClasspathPanel()
 	{
 		_extraClasspathListDriversBtn = new ListDriversButton(_extraClassPathList);
 		_extraClassPathList.addListSelectionListener(new ExtraClassPathListBoxListener());
@@ -561,53 +583,56 @@ public class DriverInternalFrame extends DialogWidget
 		});
 
 		JPanel pnl = new JPanel(new GridBagLayout());
-		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.WEST;
-		gbc.weightx = 1.0;
-		gbc.weighty = 1.0;
-		gbc.insets = new Insets(4, 4, 4, 4);
+		//pnl.setBorder(BorderFactory.createLineBorder(Color.RED));
+
+		GridBagConstraints gbc;
+
+		gbc = new GridBagConstraints(0,0,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+		pnl.add(new MultipleLineLabel(s_stringMgr.getString("DriverInternalFrame.jdbc.driver.classpath.description")), gbc);
+
 
 		// Scrollbars are "shown always" to stop sheet resizing when they
 		// are shown/hidden.
-		gbc.gridheight = GridBagConstraints.REMAINDER;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.fill = GridBagConstraints.BOTH;
-		JScrollPane sp =
-			new JScrollPane(_extraClassPathList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		final Dimension dm = sp.getPreferredSize();
-		dm.width = LIST_WIDTH; // Required otherwise it gets too wide.
-		sp.setPreferredSize(dm);
+		gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,0), 0,0);
+		JScrollPane sp = new JScrollPane(_extraClassPathList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		// Required otherwise it gets too wide.
+		GUIUtils.setPreferredWidth(sp, LIST_WIDTH);
 		pnl.add(sp, gbc);
 
-		gbc.gridheight = 1;
-		gbc.weightx = 0.0;
-		gbc.weighty = 0.0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		++gbc.gridx;
-		pnl.add(_extraClasspathListDriversBtn, gbc);
+		gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+		pnl.add(createJDBCDiverClassPathButtonPanel(newBtn), gbc);
 
-		++gbc.gridy;
-		gbc.insets = new Insets(5, 5, 5, 5);
-		pnl.add(new JSeparator(), gbc);
-		gbc.insets = new Insets(4, 4, 4, 4);
+		return pnl;
+	}
 
-		++gbc.gridy;
-		pnl.add(_extraClasspathUpBtn, gbc);
+	private JPanel createJDBCDiverClassPathButtonPanel(JButton newBtn)
+	{
+		JPanel pnl = new JPanel(new GridBagLayout());
 
-		++gbc.gridy;
-		pnl.add(_extraClasspathDownBtn, gbc);
+		GridBagConstraints gbc;
 
-		++gbc.gridy;
-		gbc.insets = new Insets(5, 5, 5, 5);
-		pnl.add(new JSeparator(), gbc);
-		gbc.insets = new Insets(4, 4, 4, 4);
-
-		++gbc.gridy;
+		gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,5,0), 0,0);
 		pnl.add(newBtn, gbc);
 
-		++gbc.gridy;
+		gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,5,0), 0,0);
+		pnl.add(new JSeparator(), gbc);
+
+		gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,5,0), 0,0);
+		pnl.add(_extraClasspathListDriversBtn, gbc);
+
+		gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,5,0), 0,0);
+		pnl.add(new JSeparator(), gbc);
+
+		gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,5,0), 0,0);
+		pnl.add(_extraClasspathUpBtn, gbc);
+
+		gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,5,0), 0,0);
+		pnl.add(_extraClasspathDownBtn, gbc);
+
+		gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,5,0), 0,0);
+		pnl.add(new JSeparator(), gbc);
+
+		gbc = new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,5,0), 0,0);
 		pnl.add(_extraClasspathDeleteBtn, gbc);
 
 		return pnl;

@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+The add/edit Driver dialog was redesigned to make clear that adding JDBC driver JARs is the primary action.
+
 Intersystems Cache Plugin: Updated COS class in Plugin readme/help.
   Thanks to Martin Weissenborn for the update.
 
