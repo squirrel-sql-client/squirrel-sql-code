@@ -19,6 +19,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -272,6 +273,7 @@ public class SchemaInfoCache implements Serializable
     */
    public void writeToTableCache(ITableInfo[] infos)
    {
+      ArrayList<ITableInfo> infosToWriteToCache = new ArrayList<>();
       for (ITableInfo info : infos)
       {
          String tableName = info.getSimpleName();
@@ -281,10 +283,16 @@ public class SchemaInfoCache implements Serializable
          List<ITableInfo> aITabInfos = _tableInfosBySimpleName.get(ciTableName);
          if (null == aITabInfos)
          {
-            aITabInfos = new ArrayList<ITableInfo>();
+            aITabInfos = new ArrayList<>();
             _tableInfosBySimpleName.put(ciTableName, aITabInfos);
+            aITabInfos.add(info);
+            infosToWriteToCache.add(info);
          }
-         aITabInfos.add(info);
+         else if(false == containsTableInfo(aITabInfos, info))
+         {
+            aITabInfos.add(info);
+            infosToWriteToCache.add(info);
+         }
       }
       // CopyOnWriteArrayList is unfortunately not sort-able as a List.  So this
       // will throw an UnsupportedOperationException:
@@ -301,20 +309,36 @@ public class SchemaInfoCache implements Serializable
 
       /* Now, create an array large enough to hold the original and the new */
       int currSize = _iTableInfos.size();
-      ITableInfo[] tableArr =
-            _iTableInfos.toArray(new ITableInfo[currSize + infos.length]);
+      ITableInfo[] tableArr = _iTableInfos.toArray(new ITableInfo[currSize + infosToWriteToCache.size()]);
       /*
        * Append the new tables to the new array, starting at the end of the
        * original
        */
-      for (int i = 0; i < infos.length; i++)
+      for (int i = 0; i < infosToWriteToCache.size(); i++)
       {
-         tableArr[currSize + i] = infos[i];
+         tableArr[currSize + i] = infosToWriteToCache.get(i);
       }
 
       /* Sort it and store in a new CopyOnWriteArrayList */
       Arrays.sort(tableArr, new TableInfoSimpleNameComparator());
-      _iTableInfos = new CopyOnWriteArrayList<ITableInfo>(tableArr);
+      _iTableInfos = new CopyOnWriteArrayList<>(tableArr);
+   }
+
+   /**
+    * Needed to prevent duplicate tables showing up in the Object tree,
+    * when a table is created.
+    */
+   private boolean containsTableInfo(List<ITableInfo> tableInfos, ITableInfo info)
+   {
+      for (ITableInfo buf : tableInfos)
+      {
+         if(StringUtils.equalsIgnoreCase(buf.getQualifiedName(), info.getQualifiedName()))
+         {
+            return true;
+         }
+      }
+
+      return false;
    }
 
 

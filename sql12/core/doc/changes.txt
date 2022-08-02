@@ -81,6 +81,8 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+After executing a CREATE TABLE statement the new table showed up multiple times in the Object tree.
+
 SQL Scripts Plugin: Right mouse click on table in Object tree --> Scripts --> Select Script
   created a SELECT statement with empty column list
   when "Qualify table names ..." and "Use double quotes..." were checked at
