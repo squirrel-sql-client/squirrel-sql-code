@@ -17,7 +17,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
@@ -134,24 +133,7 @@ public class CatalogsPanel extends JPanel
 
 		_parent.validate();
 
-		addActionListener(new CatalogsComboListener(_session, this));
-
-	}
-
-	public void addActionListener(ActionListener catalogsComboListener)
-	{
-		if(null != _catalogsCmb)
-		{
-			_catalogsCmb.addActionListener(catalogsComboListener);
-		}
-	}
-
-	public void removeActionListener(ActionListener catalogsComboListener)
-	{
-		if(null != _catalogsCmb)
-		{
-			_catalogsCmb.addActionListener(catalogsComboListener);
-		}
+		_catalogsCmb.addActionListener(new CatalogsComboListener(_session, this));
 	}
 
 	public void refreshCatalogs()

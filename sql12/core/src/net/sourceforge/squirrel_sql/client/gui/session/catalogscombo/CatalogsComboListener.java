@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefind
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
+import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +33,7 @@ final class CatalogsComboListener implements ActionListener
          {
             //_session.getSQLConnection().setCatalog(selectedCatalog);
             _session.getConnectionPool().setSessionCatalog(selectedCatalog);
-            refreshSchemaInBackground();
+            refreshSchema();
          }
          catch (Exception ex)
          {
@@ -42,16 +43,11 @@ final class CatalogsComboListener implements ActionListener
       }
    }
 
-   private void refreshSchemaInBackground()
+   private void refreshSchema()
    {
-      final ISession session = _session;
-      session.getApplication().getThreadPool().addTask(new Runnable()
-      {
-         public void run()
-         {
-            session.getSchemaInfo().reloadAll();
-            expandTreeInForeground();
-         }
+      SwingUtilities.invokeLater(() -> {
+         _session.getSchemaInfo().reloadAll();
+         expandTreeInForeground();
       });
    }
 
