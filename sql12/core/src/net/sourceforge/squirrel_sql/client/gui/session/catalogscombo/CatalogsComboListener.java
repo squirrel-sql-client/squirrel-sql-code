@@ -8,7 +8,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefind
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
-import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,10 +44,8 @@ final class CatalogsComboListener implements ActionListener
 
    private void refreshSchema()
    {
-      SwingUtilities.invokeLater(() -> {
-         _session.getSchemaInfo().reloadAll();
-         expandTreeInForeground();
-      });
+      _session.getSchemaInfo().reloadAll();
+      expandTreeInForeground();
    }
 
    private void expandTreeInForeground()
