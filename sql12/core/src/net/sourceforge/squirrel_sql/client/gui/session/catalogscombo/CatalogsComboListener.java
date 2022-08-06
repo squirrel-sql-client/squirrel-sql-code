@@ -6,7 +6,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeFinderGoToNextResultHandle;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.treefinder.ObjectTreeSearchResultFuture;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
@@ -32,7 +31,7 @@ final class CatalogsComboListener implements ActionListener
          {
             //_session.getSQLConnection().setCatalog(selectedCatalog);
             _session.getConnectionPool().setSessionCatalog(selectedCatalog);
-            refreshSchema();
+            refreshSchemaAndTree();
          }
          catch (Exception ex)
          {
@@ -42,35 +41,17 @@ final class CatalogsComboListener implements ActionListener
       }
    }
 
-   private void refreshSchema()
+   private void refreshSchemaAndTree()
    {
-      _session.getSchemaInfo().reloadAll();
-      expandTreeInForeground();
-   }
+      // Not needed here. Schema is reloaded in call api.refreshTree(true);
+      //_session.getSchemaInfo().reloadAll();
 
-   private void expandTreeInForeground()
-   {
-
-      final ISession session = _session;
       final String selectedCatalog = _catalogsPanel.getSelectedCatalog();
-
-      GUIUtils.processOnSwingEventThread(() -> expandTablesForCatalog(session, selectedCatalog));
-   }
-
-
-   /**
-    * Since the catalog has changed, it is necessary to reload the schema info and expand the tables node
-    * in the tree. Saves the user a few clicks.
-    *
-    * @param session         the session whose ObjectTreePanel should be updated
-    * @param selectedCatalog the catalog that was selected.
-    */
-   private void expandTablesForCatalog(ISession session, String selectedCatalog)
-   {
-      IObjectTreeAPI api = session.getObjectTreeAPIOfActiveSessionWindow();
+      IObjectTreeAPI api = _session.getObjectTreeAPIOfActiveSessionWindow();
       api.refreshTree(true);
 
-      ObjectTreeSearchResultFuture resultFuture = api.selectInObjectTree(selectedCatalog, null, new FilterMatcher("TABLE", null), ObjectTreeFinderGoToNextResultHandle.DONT_GO_TO_NEXT_RESULT_HANDLE);
+      ObjectTreeSearchResultFuture resultFuture =
+            api.selectInObjectTree(selectedCatalog, null, new FilterMatcher("TABLE", null), ObjectTreeFinderGoToNextResultHandle.DONT_GO_TO_NEXT_RESULT_HANDLE);
 
       resultFuture.addFinishedListenerOrdered(tn -> onFindFinished(tn, api));
    }

@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -231,104 +232,56 @@ public class SchemaInfo
 
    private void privateLoadAll()
    {
-      synchronized (this)
-      {
-         if(_loading)
-         {
-            return;
-         }
-
-         _loading = true;
-
-         _schemasAndCatalogsLoaded = false;
-         _tablesLoaded = false;
-         _storedProceduresLoaded = false;
-         _udtsLoaded = false;
-      }
-
-      breathing();
-
       try
       {
+         synchronized (this)
+         {
+            if(_loading)
+            {
+               return;
+            }
+
+            _loading = true;
+
+            _schemasAndCatalogsLoaded = false;
+            _tablesLoaded = false;
+            _storedProceduresLoaded = false;
+            _udtsLoaded = false;
+         }
+         breathing();
+
+
          ISQLConnection conn = _session.getSQLConnection();
          _dmd = conn.getSQLMetaData();
 
          _dmd.clearCache();
 
 
-         int progress = 0;
+         String catalog = null;
 
-
-         progress = loadCatalogs(progress);
-
-         progress = loadSchemas(progress);
-
-         notifySchemasAndCatalogsLoad();
-
-         try
+         if(DialectFactory.isMSSQLServer(_dmd))
          {
-            int beginProgress = getLoadMethodProgress(progress++);
-            setProgress(i18n.LOADING_KEYWORDS_MSG, beginProgress);
-            loadKeywords(i18n.LOADING_KEYWORDS_MSG, beginProgress);
-         }
-         catch (Exception ex)
-         {
-            s_log.error("Error loading keywords", ex);
-         }
-
-         try
-         {
-            int beginProgress = getLoadMethodProgress(progress++);
-            setProgress(i18n.LOADING_DATATYPES_MSG, beginProgress);
-            loadDataTypes(i18n.LOADING_DATATYPES_MSG, beginProgress);
-         }
-         catch (Exception ex)
-         {
-            s_log.error("Error loading data types", ex);
+            // This code is a workaround for bug #1508 (Sourceforge):
+            // After switching catalogs using the catalogs combobox (see CatalogsComboListener.actionPerformed())
+            // the MSSQL-Server JDBC driver (https://github.com/microsoft/mssql-jdbc)
+            // throws a "SQLServerException: The prepared statement handle 1 is not valid in this context ..."
+            // when SchemaInfo is reloaded.
+            // The problem doesn't occur, when the reloading is done with the current catalog specified.
+            //
+            // Note: Without switching catalog the MSSQL-Server JDBC driver loads SchemaInfo fine with catalog = null, too.
+            // It then loads the current catalog's objects. So setting the current catalog here makes no difference except from
+            // preventing the JDBC driver's bug.
+            try
+            {
+               catalog = _session.getSQLConnection().getCatalog();
+            }
+            catch (Exception e)
+            {
+               s_log.error("Error getting the current catalog from MSSQL-Server to workaround Sourceforge bug #1508.", e);
+            }
          }
 
-         try
-         {
-            int beginProgress = getLoadMethodProgress(progress++);
-            setProgress(i18n.LOADING_FUNCTIONS_MSG, beginProgress);
-            loadGlobalFunctions(i18n.LOADING_FUNCTIONS_MSG, beginProgress);
-         }
-         catch (Exception ex)
-         {
-            s_log.error("Error loading functions", ex);
-         }
-
-         try
-         {
-            progress = loadTables(null, null, null, null, progress);
-            notifyTablesLoaded();
-         }
-         catch(Exception ex)
-         {
-            s_log.error("Error loading tables", ex);
-         }
-
-
-         try
-         {
-            progress = loadStoredProcedures(null, null, null, progress);
-            notifyStoredProceduresLoaded();
-         }
-         catch(Exception ex)
-         {
-            s_log.error("Error loading procedures", ex);
-         }
-
-         try
-         {
-            progress = loadUDTs(null, null, null, progress);
-            notifyUDTsLoaded();
-         }
-         catch(Exception ex)
-         {
-            s_log.error("Error loading UDTS", ex);
-         }
-
+         _loadAllObjects(catalog);
       }
       finally
       {
@@ -339,6 +292,81 @@ public class SchemaInfo
 
          _loading = false;
          _loaded = true;
+      }
+   }
+
+   private void _loadAllObjects(String catalog)
+   {
+      int progress = 0;
+
+      progress = loadCatalogs(progress);
+
+      progress = loadSchemas(progress);
+
+      notifySchemasAndCatalogsLoad();
+
+      try
+      {
+         int beginProgress = getLoadMethodProgress(progress++);
+         setProgress(i18n.LOADING_KEYWORDS_MSG, beginProgress);
+         loadKeywords(i18n.LOADING_KEYWORDS_MSG, beginProgress);
+      }
+      catch (Exception ex)
+      {
+         s_log.error("Error loading keywords", ex);
+      }
+
+      try
+      {
+         int beginProgress = getLoadMethodProgress(progress++);
+         setProgress(i18n.LOADING_DATATYPES_MSG, beginProgress);
+         loadDataTypes(i18n.LOADING_DATATYPES_MSG, beginProgress);
+      }
+      catch (Exception ex)
+      {
+         s_log.error("Error loading data types", ex);
+      }
+
+      try
+      {
+         int beginProgress = getLoadMethodProgress(progress++);
+         setProgress(i18n.LOADING_FUNCTIONS_MSG, beginProgress);
+         loadGlobalFunctions(i18n.LOADING_FUNCTIONS_MSG, beginProgress);
+      }
+      catch (Exception ex)
+      {
+         s_log.error("Error loading functions", ex);
+      }
+
+      try
+      {
+         progress = loadTables(catalog, null, null, null, progress);
+         notifyTablesLoaded();
+      }
+      catch (Exception ex)
+      {
+         s_log.error("Error loading tables", ex);
+      }
+
+
+      try
+      {
+         progress = loadStoredProcedures(catalog, null, null, progress);
+         notifyStoredProceduresLoaded();
+      }
+      catch (Exception ex)
+      {
+         s_log.error("Error loading procedures", ex);
+      }
+
+      try
+      {
+         progress = loadUDTs(catalog, null, null, progress);
+         notifyUDTsLoaded();
+      }
+      catch (Exception ex)
+      {
+         s_log.error("Error loading UDTS", ex);
       }
    }
 
@@ -517,16 +545,13 @@ public class SchemaInfo
          return;
       }
 
-   	synchronized(this)
+      try
       {
-	      try
-	      {
-	         wait(50);
-	      }
-	      catch (InterruptedException e)
-	      {
-	      }
-   	}
+         Thread.sleep(50);
+      }
+      catch (InterruptedException e)
+      {
+      }
    }
 
    private void privateLoadStoredProcedures(String catalog, String schema, String procNamePattern, final String msg, final int beginProgress)

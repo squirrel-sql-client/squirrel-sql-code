@@ -81,6 +81,13 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+#1508 MS SQL Server: When the catalog was switched by SQuirreL's catalogs combobox
+  the subsequent Object tree reload didn't work.
+  The reason is a bug of the MSSQL JDBC driver (https://github.com/microsoft/mssql-jdbc).
+  The logged message of the bug is:
+  "SQLServerException: The prepared statement handle 1 is not valid in this context ..."
+  The fix consists of a workaround for the driver's bug.
+
 After executing a CREATE TABLE statement the new table showed up multiple times in the Object tree.
 
 SQL Scripts Plugin: Right mouse click on table in Object tree --> Scripts --> Select Script
