@@ -18,16 +18,16 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An extension to the DB2DialectExt. Much of the behavior of DB2 is happily found in Derby.
@@ -113,18 +113,18 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 	private DerbyDialectHelper _dialect = new DerbyDialectHelper();
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 * @see HibernateDialect#getTypeName(int, int, int, int, String)
 	 */
 	@Override
-	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	public String getTypeName(int javaSqlTypesConst, int length, int precision, int scale, String typeNameOrNull) throws HibernateException
 	{
-		if(code == Types.BOOLEAN)
+		if(javaSqlTypesConst == Types.BOOLEAN)
 		{
 			// See bug #1452
 			return "boolean";
 		}
 
-		return _dialect.getTypeName(code, length, precision, scale);
+		return _dialect.getTypeName(javaSqlTypesConst, length, precision, scale);
 	}
 
 	/**

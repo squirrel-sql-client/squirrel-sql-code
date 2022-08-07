@@ -18,9 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.Types;
-
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
+
+import java.sql.Types;
 
 /**
  * An extension to the standard Hibernate TeiidDialect dialect
@@ -61,12 +61,12 @@ public class TeiidDialectExt extends CommonHibernateDialect
 	private TeiidDialectHelper _dialect = new TeiidDialectHelper();
 	
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 * @see HibernateDialect#getTypeName(int, int, int, int, String)
 	 */
 	@Override
-	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	public String getTypeName(int javaSqlTypesConst, int length, int precision, int scale, String typeNameOrNull) throws HibernateException
 	{
-		return _dialect.getTypeName(code, length, precision, scale);
+		return _dialect.getTypeName(javaSqlTypesConst, length, precision, scale);
 	}
 
 	/**

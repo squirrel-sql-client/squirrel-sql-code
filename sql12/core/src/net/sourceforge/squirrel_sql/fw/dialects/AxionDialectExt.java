@@ -18,17 +18,17 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Collection;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.Dialect;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A dialect delegate for the Axion database.  
@@ -90,12 +90,12 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	private AxionDialectHelper _dialect = new AxionDialectHelper();
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 * @see HibernateDialect#getTypeName(int, int, int, int, String)
 	 */
 	@Override
-	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	public String getTypeName(int javaSqlTypesConst, int length, int precision, int scale, String typeNameOrNull) throws HibernateException
 	{
-		return _dialect.getTypeName(code, length, precision, scale);
+		return _dialect.getTypeName(javaSqlTypesConst, length, precision, scale);
 	}
 
 	/**

@@ -18,13 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.List;
 
 /**
  * Dummy Extension for the Intersystems Cache DB
@@ -67,11 +67,11 @@ public abstract class IntersystemsDialectExt extends CommonHibernateDialect
 
 
    /**
-    * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getTypeName(int, int, int, int)
+    * @see HibernateDialect#getTypeName(int, int, int, int, String)
     */
-   public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+   public String getTypeName(int javaSqlTypesConst, int length, int precision, int scale, String typeNameOrNull) throws HibernateException
    {
-      return _dialect.getTypeName(code, length, precision, scale);
+      return _dialect.getTypeName(javaSqlTypesConst, length, precision, scale);
    }
 
    /**

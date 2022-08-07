@@ -32,9 +32,9 @@ public final class GenericDialectExt extends CommonHibernateDialect
 	private GenericDialectHelper _dialect = new GenericDialectHelper();
 
 	@Override
-	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	public String getTypeName(int javaSqlTypesConst, int length, int precision, int scale, String typeNameOrNull) throws HibernateException
 	{
-		return _dialect.getTypeName(code, length, precision, scale);
+		return _dialect.getTypeName(javaSqlTypesConst, length, precision, scale);
 	}
 	
 	@Override

@@ -18,11 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -30,6 +25,11 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.antlr.stringtemplate.StringTemplate;
+
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * A dialect delegate for the MS SQLServer database.
@@ -75,12 +75,12 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 	private SQLServerDialectHelper _dialect = new SQLServerDialectHelper();
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 * @see HibernateDialect#getTypeName(int, int, int, int, String)
 	 */
 	@Override
-	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	public String getTypeName(int javaSqlTypesConst, int length, int precision, int scale, String typeNameOrNull) throws HibernateException
 	{
-		return _dialect.getTypeName(code, length, precision, scale);
+		return _dialect.getTypeName(javaSqlTypesConst, length, precision, scale);
 	}
 
 	/**

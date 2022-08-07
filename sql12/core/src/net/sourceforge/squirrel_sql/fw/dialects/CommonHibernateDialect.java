@@ -18,18 +18,18 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.antlr.stringtemplate.StringTemplate;
+
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * A base class for dialects where the most frequently implemented behavior can located, to avoid code
@@ -577,19 +577,19 @@ public abstract class CommonHibernateDialect implements HibernateDialect, String
 			dataType = getJavaTypeForNativeType(tcInfo.getTypeName());
 		}
 
-		return getTypeName(dataType, columnSize, precision, tcInfo.getDecimalDigits());
+		return getTypeName(dataType, columnSize, precision, tcInfo.getDecimalDigits(), tcInfo.getTypeName());
 	}
-	
+
 	/**
 	 * This should be overridden by dialects to provide a mapping between native column name and java.sql.Types
 	 * codes. This is particulary helpful for databases with "other" (1111) types.
-	 * 
+	 *
 	 * @param nativeColumnTypeName the native column type.
-	 * @return the java type code 
+	 * @return the java type code
 	 */
-	public int getJavaTypeForNativeType(String nativeColumnTypeName) {
-		throw new IllegalStateException("Dialect (" + getDisplayName()
-			+ ") doesn't provide a java type for native type = " + nativeColumnTypeName);
+	public int getJavaTypeForNativeType(String nativeColumnTypeName)
+	{
+		throw new IllegalStateException("Dialect (" + getDisplayName() + ") doesn't provide a java type for native type = " + nativeColumnTypeName);
 	}
 	
 	/**
@@ -983,10 +983,16 @@ public abstract class CommonHibernateDialect implements HibernateDialect, String
 	}
 
 	@Override
-	public String getBinaryLiteralString(byte[] binaryData) {
+	public String getBinaryLiteralString(byte[] binaryData)
+	{
 		StringBuilder result = new StringBuilder();
 		result.append("'").append(DialectUtils.toHexString(binaryData)).append("'");
 		return result.toString();
 	}
 
+	@Override
+	public String getTypeName(int javaSqlTypesConst, int length, int precision, int scale) throws HibernateException
+	{
+		return getTypeName(javaSqlTypesConst, length, precision, scale, null);
+	}
 }

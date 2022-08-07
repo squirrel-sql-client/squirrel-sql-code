@@ -117,12 +117,12 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	private final DB2DialectHelper _dialect = new DB2DialectHelper();
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 * @see HibernateDialect#getTypeName(int, int, int, int, String)
 	 */
 	@Override
-	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	public String getTypeName(int javaSqlTypesConst, int length, int precision, int scale, String typeNameOrNull) throws HibernateException
 	{
-		return _dialect.getTypeName(code, length, precision, scale);
+		return _dialect.getTypeName(javaSqlTypesConst, length, precision, scale);
 	}
 
 	/**
@@ -260,8 +260,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		addColumn.append(" ADD ");
 		addColumn.append(shapedColumnName);
 		addColumn.append(" ");
-		addColumn.append(getTypeName(info.getDataType(), info.getColumnSize(), info.getColumnSize(),
-			info.getDecimalDigits()));
+		addColumn.append(getTypeName(info.getDataType(), info.getColumnSize(), info.getColumnSize(), info.getDecimalDigits()));
 		if (info.getDefaultValue() != null)
 		{
 			addColumn.append(" WITH DEFAULT ");

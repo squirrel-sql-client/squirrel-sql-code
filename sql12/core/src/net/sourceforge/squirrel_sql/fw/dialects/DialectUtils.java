@@ -467,7 +467,7 @@ public class DialectUtils implements StringTemplateConstants
 	public static String getTypeName(TableColumnInfo info, HibernateDialect dialect)
 	{
 		return dialect.getTypeName(info.getDataType(), info.getColumnSize(), info.getColumnSize(),
-			info.getDecimalDigits());
+											info.getDecimalDigits(), info.getTypeName());
 	}
 
 	/**
@@ -1747,11 +1747,10 @@ public class DialectUtils implements StringTemplateConstants
 				sql.append(column.getColumnName());
 			}
 			sql.append(" ");
-			sql.append(dialect.getTypeName(column.getDataType(), column.getColumnSize(), column.getColumnSize(),
-				column.getDecimalDigits()));
 
-			if (primaryKeys != null && primaryKeys.size() == 1
-				&& primaryKeys.get(0).getColumnName().equals(column.getColumnName()))
+			sql.append(dialect.getTypeName(column.getDataType(), column.getColumnSize(), column.getColumnSize(),column.getDecimalDigits(), column.getTypeName()));
+
+			if (primaryKeys != null && primaryKeys.size() == 1 && primaryKeys.get(0).getColumnName().equals(column.getColumnName()))
 			{
 				sql.append(" " + DialectUtils.PRIMARY_KEY_CLAUSE);
 			}
@@ -2960,8 +2959,8 @@ public class DialectUtils implements StringTemplateConstants
 			result.append(info.getColumnName());
 		}
 		result.append(" ");
-		result.append(dialect.getTypeName(info.getDataType(), info.getColumnSize(), info.getColumnSize(),
-			info.getDecimalDigits()));
+
+		result.append(dialect.getTypeName(info.getDataType(), info.getColumnSize(), info.getColumnSize(), info.getDecimalDigits(), info.getTypeName()));
 
 		if (addDefaultClause)
 		{

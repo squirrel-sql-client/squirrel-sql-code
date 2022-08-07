@@ -81,6 +81,11 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/1
+  Table scripts for Oracle RDBMS:
+  For Oracle databases right mouse click on table in Object tree --> Scripts --> Create Table Script
+  scripted columns of type number as decimal.
+
 #1508 MS SQL Server: When the catalog was switched by SQuirreL's catalogs combobox
   the subsequent Object tree reload didn't work.
   The reason is a bug of the MSSQL JDBC driver (https://github.com/microsoft/mssql-jdbc).

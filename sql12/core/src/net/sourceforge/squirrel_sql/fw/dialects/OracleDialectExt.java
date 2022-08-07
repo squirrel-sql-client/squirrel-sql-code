@@ -18,13 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.HibernateException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -33,6 +26,14 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.antlr.stringtemplate.StringTemplate;
+import org.apache.commons.lang3.StringUtils;
+
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 import static java.sql.DatabaseMetaData.importedKeyNoAction;
 import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.*;
@@ -43,6 +44,8 @@ import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.*;
  */
 public class OracleDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
+	private static final int ORACLE_NUMBER_TYPE_PRECISION_AND_SCALE = -23030001;
+	private static final int ORACLE_NUMBER_TYPE_PRECISION_ONLY = -23030002;
 
 	private class OracleDialectHelper extends net.sourceforge.squirrel_sql.fw.dialects.fromhibernate3_2_4_sp1.dialect.Oracle9Dialect {
 		public OracleDialectHelper()
@@ -71,6 +74,8 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 			registerColumnType(Types.LONGVARCHAR, "clob");
 			registerColumnType(Types.NCHAR, 2000, "nchar($l)");
 			registerColumnType(Types.NUMERIC, "number($p)");
+			registerColumnType(ORACLE_NUMBER_TYPE_PRECISION_AND_SCALE, "number($p,$s)");
+			registerColumnType(ORACLE_NUMBER_TYPE_PRECISION_ONLY, "number($p)");
 			registerColumnType(Types.NVARCHAR, 2000, "nvarchar2($l)");
 			registerColumnType(Types.NVARCHAR, "nclob");
 			registerColumnType(Types.REAL, "real");
@@ -93,12 +98,36 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	private OracleDialectHelper _dialect = new OracleDialectHelper();
 	
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 * @see HibernateDialect#getTypeName(int, int, int, int, String)
 	 */
 	@Override
-	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	public String getTypeName(int javaSqlTypesConst, int length, int precision, int scale, String typeNameOrNull) throws HibernateException
 	{
-		return _dialect.getTypeName(code, length, precision, scale);
+		// This if arose from bug https://github.com/squirrel-sql-client/squirrel-sql-code/issues/1
+		if(Types.DECIMAL == javaSqlTypesConst && StringUtils.equalsIgnoreCase("NUMBER", typeNameOrNull))
+		{
+			// See https://www.oracletutorial.com/oracle-basics/oracle-number-data-type/
+			if(    (1 <= precision && precision <= 38)
+			    && (-84 <= scale && scale <= 127) )
+			{
+				if(0 != scale)
+				{
+					return _dialect.getTypeName(ORACLE_NUMBER_TYPE_PRECISION_AND_SCALE, length, precision, scale);
+				}
+				else
+				{
+					return _dialect.getTypeName(ORACLE_NUMBER_TYPE_PRECISION_ONLY, length, precision, scale);
+				}
+			}
+			else
+			{
+				return typeNameOrNull.toLowerCase();
+			}
+		}
+		else
+		{
+			return _dialect.getTypeName(javaSqlTypesConst, length, precision, scale);
+		}
 	}
 	
 	/**
@@ -143,10 +172,11 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	@Override
 	public int getMaxPrecision(int dataType)
 	{
-		if (dataType == Types.DOUBLE || dataType == Types.FLOAT)
+		if(dataType == Types.DOUBLE || dataType == Types.FLOAT)
 		{
 			return 53;
-		} else
+		}
+		else
 		{
 			return 38;
 		}
