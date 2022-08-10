@@ -1,12 +1,12 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.rowcolandsum;
 
+import java.sql.Types;
+import java.util.ArrayList;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
-
-import java.sql.Types;
-import java.util.ArrayList;
 
 public class Calculator
 {
@@ -66,10 +66,10 @@ public class Calculator
          long sum = 0;
          for (int selectedRow : selectedRows)
          {
-            Number number = (Number) table.getValueAt(selectedRow, selectedColumn);
-            if (null != number)
+            Object raw = table.getValueAt(selectedRow, selectedColumn);
+            if (raw instanceof Number)
             {
-               sum += number.longValue();
+               sum += ((Number)raw).longValue();
             }
          }
 

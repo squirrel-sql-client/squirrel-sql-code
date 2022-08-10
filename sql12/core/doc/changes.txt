@@ -81,6 +81,10 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+Summing in SQL result tables: When summing of selected cells is activated
+  (see upper right of result table) and numeric cells contain "<Error>"
+  cell selection raised ClassCastExceptions.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/1
   Table scripts for Oracle RDBMS:
   For Oracle databases right mouse click on table in Object tree --> Scripts --> Create Table Script
