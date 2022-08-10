@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
+import net.sourceforge.squirrel_sql.client.gui.db.passwordaccess.PasswordInAliasCtrl;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
@@ -52,15 +53,12 @@ import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.Serializable;
@@ -131,7 +129,7 @@ public class AliasInternalFrame extends DialogWidget
 	private final JTextField _txtUserName = new JTextField();
 
 	/** Password */
-	private final JPasswordField _txtPassword = new JPasswordField();
+	private PasswordInAliasCtrl _passwordInAliasCtrl = new PasswordInAliasCtrl();
 
 	/** Autologon checkbox. */
 	private final JCheckBox _chkAutoLogon = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.autologon"));
@@ -221,7 +219,7 @@ public class AliasInternalFrame extends DialogWidget
 		_txtAliasName.setText(_sqlAlias.getName());
 		_txtUserName.setText(_sqlAlias.getUserName());
 
-		_txtPassword.setText(AliasPasswordHandler.getPassword(_sqlAlias));
+		_passwordInAliasCtrl.setPassword(AliasPasswordHandler.getPassword(_sqlAlias));
 
 		_chkAutoLogon.setSelected(_sqlAlias.isAutoLogon());
 		_chkConnectAtStartup.setSelected(_sqlAlias.isConnectAtStartup());
@@ -284,7 +282,7 @@ public class AliasInternalFrame extends DialogWidget
 		alias.setUserName(_txtUserName.getText().trim());
 
 		StringBuffer buf = new StringBuffer();
-		buf.append(_txtPassword.getPassword());
+		buf.append(_passwordInAliasCtrl.getPassword());
 
 		alias.setEncryptPassword(_chkSavePasswordEncrypted.isSelected());
 
@@ -338,7 +336,7 @@ public class AliasInternalFrame extends DialogWidget
 		_txtAliasName.setColumns(COLUMN_COUNT);
 		_txtUrl.setColumns(COLUMN_COUNT);
 		_txtUserName.setColumns(COLUMN_COUNT);
-		_txtPassword.setColumns(COLUMN_COUNT);
+		_passwordInAliasCtrl.setColumns(COLUMN_COUNT);
 
 		// This seems to be necessary to get background colours
 		// correct. Without it labels added to the content pane
@@ -392,23 +390,7 @@ public class AliasInternalFrame extends DialogWidget
 
 	private JPanel createDataEntryPanel()
 	{
-		_btnAliasProps.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				showDriverPropertiesDialog();
-			}
-
-		});
-
-//		_useDriverPropsChk.addActionListener(new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent evt)
-//			{
-//				_aliasPropsBtn.setEnabled(_useDriverPropsChk.isSelected());
-//			}
-//
-//		});
+		_btnAliasProps.addActionListener(evt -> showDriverPropertiesDialog());
 
 		JPanel pnl = new JPanel(new GridBagLayout());
 
@@ -432,13 +414,7 @@ public class AliasInternalFrame extends DialogWidget
 		driverPnl.add(_drivers);
 		driverPnl.add(Box.createHorizontalStrut(5));
 		JButton newDriverBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.new"));
-		newDriverBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				showNewDriverDialog();
-			}
-		});
+		newDriverBtn.addActionListener(evt -> showNewDriverDialog());
 		driverPnl.add(newDriverBtn);
 
       gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
@@ -460,7 +436,7 @@ public class AliasInternalFrame extends DialogWidget
 		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.password"), SwingConstants.RIGHT), gbc);
 
       gbc = new GridBagConstraints(1,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-		pnl.add(_txtPassword, gbc);
+		pnl.add(_passwordInAliasCtrl.getPanel(), gbc);
 
       gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
 		pnl.add(createAutoLogonPanel(), gbc);
@@ -690,7 +666,7 @@ public class AliasInternalFrame extends DialogWidget
             // of the Alias definiton may have changed.
             // Here we transfere this information back into the controls.
             _txtUserName.setText(getAlias().getUserName());
-            _txtPassword.setText(AliasPasswordHandler.getPassword(getAlias()));
+            _passwordInAliasCtrl.setPassword(AliasPasswordHandler.getPassword(getAlias()));
          }
       }
 

@@ -53,7 +53,7 @@ import java.util.Iterator;
 public class SquirrelPreferences implements Serializable
 {
 
-	public interface IPropertyNames
+   public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
       String CONFIRM_SESSION_CLOSE = "confirmSessionClose";
@@ -138,6 +138,8 @@ public class SquirrelPreferences implements Serializable
 		String MESSAGE_PANEL_WHITE_BACKGROUND_AS_UI_DEFAULT = "messagePanelWhiteBackgroundAsUIDefault";
 		String MESSAGE_PANEL_BLACK_FOREGROUND_AS_UI_DEFAULT = "messagePanelBlackForegroundAsUIDefault";
 
+		String SHOW_ALIAS_PASSWORD_COPY_BUTTON = "showAliasPasswordCopyButton";
+		String SHOW_ALIAS_PASSWORD_SHOW_BUTTON = "showAliasPasswordShowButton";
 
 
 	}
@@ -335,6 +337,10 @@ public class SquirrelPreferences implements Serializable
 	private boolean _messagePanelBlackForegroundAsUIDefault = true;
 	// Message panel properties
 	/////////////////////////////////////////////////////////////////////////
+
+
+	private boolean _showAliasPasswordCopyButton;
+	private boolean _showAliasPasswordShowButton;
 
 
 	public SquirrelPreferences()
@@ -1620,4 +1626,25 @@ public class SquirrelPreferences implements Serializable
 	{
 		_messagePanelBlackForegroundAsUIDefault = messagePanelBlackForegroundAsUIDefault;
 	}
+
+	public boolean getShowAliasPasswordCopyButton()
+	{
+		return _showAliasPasswordCopyButton;
+	}
+
+	public void setShowAliasPasswordCopyButton(boolean aliasPasswordCopyButton)
+	{
+		_showAliasPasswordCopyButton = aliasPasswordCopyButton;
+	}
+
+	public boolean getShowAliasPasswordShowButton()
+	{
+		return _showAliasPasswordShowButton;
+	}
+
+	public void setShowAliasPasswordShowButton(boolean aliasPasswordShowButton)
+	{
+		_showAliasPasswordShowButton = aliasPasswordShowButton;
+	}
+
 }

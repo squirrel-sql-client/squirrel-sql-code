@@ -177,6 +177,9 @@ public class SquirrelResources extends Resources
 		String SESSION_SAVE = "session_save";
 		String SESSION_OPEN = "session_open";
 		String SESSION_MANAGE = "session_manage";
+
+		String SMALL_COPY_PASSWORD = "small_copy_password";
+		String SMALL_SHOW_PASSWORD = "small_show_password";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

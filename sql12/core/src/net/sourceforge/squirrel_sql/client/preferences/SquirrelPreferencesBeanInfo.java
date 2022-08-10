@@ -135,8 +135,11 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
             prop(MESSAGE_PANEL_ERROR_HISTORY_FOREGROUND, SquirrelPreferences.class, "getMessagePanelErrorHistoryForeground", "setMessagePanelErrorHistoryForeground"),
             prop(MESSAGE_PANEL_ERROR_HISTORY_BACKGROUND, SquirrelPreferences.class, "getMessagePanelErrorHistoryBackground", "setMessagePanelErrorHistoryBackground"),
             prop(MESSAGE_PANEL_WHITE_BACKGROUND_AS_UI_DEFAULT, SquirrelPreferences.class, "isMessagePanelWhiteBackgroundAsUIDefault", "setMessagePanelWhiteBackgroundAsUIDefault"),
-            prop(MESSAGE_PANEL_BLACK_FOREGROUND_AS_UI_DEFAULT, SquirrelPreferences.class, "isMessagePanelBlackForegroundAsUIDefault", "setMessagePanelBlackForegroundAsUIDefault")
-         };
+            prop(MESSAGE_PANEL_BLACK_FOREGROUND_AS_UI_DEFAULT, SquirrelPreferences.class, "isMessagePanelBlackForegroundAsUIDefault", "setMessagePanelBlackForegroundAsUIDefault"),
+
+            prop(SHOW_ALIAS_PASSWORD_COPY_BUTTON, SquirrelPreferences.class, "getShowAliasPasswordCopyButton", "setShowAliasPasswordCopyButton"),
+            prop(SHOW_ALIAS_PASSWORD_SHOW_BUTTON, SquirrelPreferences.class, "getShowAliasPasswordShowButton", "setShowAliasPasswordShowButton")
+      };
    }
 
    private PropertyDescriptor prop(String propertyName, Class<?> beanClass, String readMethodName, String writeMethodName)

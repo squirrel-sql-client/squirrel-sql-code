@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.preferences;
 
+import net.sourceforge.squirrel_sql.client.gui.db.passwordaccess.PasswordAccessPrefsCtrl;
 import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesController;
 import net.sourceforge.squirrel_sql.client.session.messagepanel.MessagePrefsCtrl;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -67,6 +68,8 @@ final class GeneralPreferencesGUI extends JPanel
    private MaxColumnAdjustLengthCtrl _maxColumnAdjustLengthCtrl = new MaxColumnAdjustLengthCtrl();
    private MessagePrefsCtrl _messagePrefsCtrl = new MessagePrefsCtrl();
 
+   private PasswordAccessPrefsCtrl _passwordAccessPrefsCtrl = new PasswordAccessPrefsCtrl();
+
    GeneralPreferencesGUI()
    {
       super(new GridBagLayout());
@@ -118,6 +121,9 @@ final class GeneralPreferencesGUI extends JPanel
       _internalFrameStyle.addActionListener(e -> onStyleChanged());
 
       _messagePrefsCtrl.loadData(prefs);
+
+      _passwordAccessPrefsCtrl.loadData(prefs);
+
    }
 
    private void onStyleChanged()
@@ -161,6 +167,8 @@ final class GeneralPreferencesGUI extends JPanel
       prefs.setMaxColumnAdjustLength(_maxColumnAdjustLengthCtrl.getMaxColumnAdjustLength());
 
       _messagePrefsCtrl.applyChanges(prefs);
+
+      _passwordAccessPrefsCtrl.applyChanges(prefs);
    }
 
    private void createUserInterface()
@@ -310,6 +318,10 @@ final class GeneralPreferencesGUI extends JPanel
       gbc.gridx = 0;
       gbc.gridy = 9;
       pnl.add(_maxColumnAdjustLengthCtrl.getPanel(), gbc);
+
+      gbc.gridx = 0;
+      gbc.gridy = 10;
+      pnl.add(_passwordAccessPrefsCtrl.getPanel(), gbc);
 
 
       return pnl;
