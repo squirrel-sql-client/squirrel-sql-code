@@ -6,7 +6,7 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
-Option to view and/or copy passwords of aliases.
+Option to view and/or copy passwords of Aliases.
   This option is switched off by default and can be switched on at menu File --> Global Preferences
   --> tab General on the lower right see box titled "Alias password access"
 
