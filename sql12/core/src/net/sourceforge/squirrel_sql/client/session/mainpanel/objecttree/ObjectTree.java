@@ -32,6 +32,8 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoActio
 import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
 import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
 import net.sourceforge.squirrel_sql.client.session.action.ShowTableReferencesAction;
+import net.sourceforge.squirrel_sql.client.session.menuattic.AtticHandler;
+import net.sourceforge.squirrel_sql.client.session.menuattic.MenuOrigin;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -672,6 +674,9 @@ class ObjectTree extends JTree
 			{
 				pop = _globalPopup;
 			}
+
+			AtticHandler.initAtticForMenu(pop, MenuOrigin.OBJECT_TREE);
+
 			pop.show(this, x, y);
 		}
 	}

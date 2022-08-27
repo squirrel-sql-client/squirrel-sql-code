@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSess
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
+import net.sourceforge.squirrel_sql.client.session.menuattic.PopupMenuAtticModel;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
@@ -281,5 +282,7 @@ public interface IApplication
 	IconHandler getIconHandler();
 
 	void setIconHandler(IconHandler iconHandler);
+
+	PopupMenuAtticModel getPopupMenuAtticModel();
 
 }

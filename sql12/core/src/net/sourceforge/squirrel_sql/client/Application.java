@@ -53,6 +53,7 @@ import net.sourceforge.squirrel_sql.client.session.filemanager.FileNotifier;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.multiclipboard.PasteHistory;
+import net.sourceforge.squirrel_sql.client.session.menuattic.PopupMenuAtticModel;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
@@ -202,6 +203,7 @@ public class Application implements IApplication
 	private GlobalSQLAliasVersioner _globalSQLAliasVersioner = new GlobalSQLAliasVersioner();
 
 	private IconHandler _iconHandler = new DefaultIconHandler();
+	private PopupMenuAtticModel _popupMenuAtticModel = new PopupMenuAtticModel();
 
 	public Application()
 	{
@@ -1488,4 +1490,10 @@ public class Application implements IApplication
 	{
 		_iconHandler = iconHandler;
 	}
+
+   @Override
+   public PopupMenuAtticModel getPopupMenuAtticModel()
+   {
+		return _popupMenuAtticModel;
+   }
 }

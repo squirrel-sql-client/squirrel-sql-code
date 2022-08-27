@@ -478,4 +478,9 @@ public class ApplicationFiles
    {
       return new File(_userSettingsDir + File.separator + "savedSessions");
    }
+
+   public File getPopupMenuAtticFile()
+   {
+      return new File(_userSettingsDir + File.separator + "popupMenuAttic.json");
+   }
 }

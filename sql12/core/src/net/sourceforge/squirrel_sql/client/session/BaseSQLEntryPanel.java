@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.session;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
+import net.sourceforge.squirrel_sql.client.session.menuattic.AtticHandler;
+import net.sourceforge.squirrel_sql.client.session.menuattic.MenuOrigin;
 import net.sourceforge.squirrel_sql.client.session.sqlbounds.BoundsOfSqlHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.stdtextpopup.TextPopupMenu;
@@ -45,7 +47,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
    public static final IntegerIdentifierFactory ENTRY_PANEL_IDENTIFIER_FACTORY = new IntegerIdentifierFactory();
    private IIdentifier _entryPanelIdentifier;
 
-	private TextPopupMenu _textPopupMenu;
+	private TextPopupMenu _textPopupMenu = new TextPopupMenu();
 	private IApplication _app;
 
 	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
@@ -57,7 +59,6 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 	protected BaseSQLEntryPanel(IApplication app)
 	{
 		_entryPanelIdentifier = ENTRY_PANEL_IDENTIFIER_FACTORY.createIdentifier();
-		_textPopupMenu = new TextPopupMenu();
 		_app = app;
 
 		SwingUtilities.invokeLater(() -> initLater());
@@ -243,7 +244,6 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
 	public void dispose()
 	{
-		_textPopupMenu.dispose();
 	}
 
    @Override
@@ -309,6 +309,9 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 		private void displayPopupMenu(MouseEvent evt)
 		{
 			_textPopupMenu.setTextComponent(getTextComponent());
+
+			AtticHandler.initAtticForMenu(_textPopupMenu, MenuOrigin.SQL_EDITOR);
+
 			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
 		}
 	}
