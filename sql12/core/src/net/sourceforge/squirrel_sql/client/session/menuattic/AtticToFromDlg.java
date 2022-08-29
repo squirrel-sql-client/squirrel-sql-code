@@ -13,6 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -36,10 +38,13 @@ public class AtticToFromDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10,5,0,5), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,0,5), 0,0);
+      getContentPane().add(new MultipleLineLabel(s_stringMgr.getString("AtticToFromDlg.allows.to.move.less.used")), gbc);
+
+      gbc = new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10,5,0,5), 0,0);
       getContentPane().add(createListsPanel(), gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
       getContentPane().add(createBottomPanel(menuOrigin), gbc);
 
    }
@@ -57,12 +62,15 @@ public class AtticToFromDlg extends JDialog
       ret.add(btnCancel, gbc);
 
 
-      gbc = new GridBagConstraints(2,0,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0,0);
-      ret.add(new JPanel(), gbc);
+      gbc = new GridBagConstraints(2,0,1,1,1,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,0), 0,0);
+      final MultipleLineLabel lblSessionRestart = new MultipleLineLabel(s_stringMgr.getString("AtticToFromDlg.may.take.effect.on.Session.restart"));
+      lblSessionRestart.setFont(lblSessionRestart.getFont().deriveFont(Font.BOLD));
+      lblSessionRestart.setForeground(Color.red);
+      ret.add(lblSessionRestart, gbc);
 
       if(menuOrigin == MenuOrigin.SQL_EDITOR)
       {
-         gbc = new GridBagConstraints(0,1,3,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,0), 0,0);
+         gbc = new GridBagConstraints(0,1,3,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,0,0,0), 0,0);
          ret.add(new MultipleLineLabel(s_stringMgr.getString("AtticToFromDlg.tools.popup.note")), gbc);
       }
 

@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.menuattic.AtticHandler;
+import net.sourceforge.squirrel_sql.client.session.menuattic.MenuOrigin;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 
 import javax.swing.SwingUtilities;
@@ -62,6 +64,8 @@ public class TablePopupMenuHandler
    public void displayPopupMenu(MouseEvent evt, TableClickPosition tableClickPosition)
    {
       _tablePopupMenu.ensureRowNumbersMenuItemIsUpToDate(_currentRowNumberMenuItemState);
+
+      AtticHandler.initAtticForMenu(_tablePopupMenu, MenuOrigin.SQL_RESULT);
       _tablePopupMenu.showPopupMenu(evt.getComponent(), evt.getX(), evt.getY(), tableClickPosition);
    }
 
