@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Log counter (see right of SQuirreL's status bar) did neglect several logs issued during startup.
+
 Right mouse menus of SQL results, the SQL editor and the Object tree now allow to move less used
   menu items to a submenu called attic, see the bottommost menu item of these menus.
 
@@ -88,6 +90,13 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+#1507 Look and Feel Plugin: Improved handling JGoodies' WindowsLookAndFeel Java 17 error.
+  The Windows start batch squirrel-sql.bat now sets the Java VM Parameter
+  "--add-exports=java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED"
+  to prevent JGoodies' WindowsLookAndFeel "access check failed" error
+  When JGoodies a look and feel is used on Linux an error log is written during start up
+  that tab titles are not displayed by JGoodies on Linux.
+
 Summing in SQL result tables: When summing of selected cells is activated
   (see upper right of result table) and numeric cells contain "<Error>"
   cell selection raised ClassCastExceptions.
@@ -111,10 +120,10 @@ SQL Scripts Plugin: Right mouse click on table in Object tree --> Scripts --> Se
   when "Qualify table names ..." and "Use double quotes..." were checked at
   menu File --> Global Preferences --> tab "SQL Scripts".
 
-Look and Feel Plugin: Improved handling JGoodies' WindowsLookAndFeel Java 17 error.
+#1507 Look and Feel Plugin: Improved handling JGoodies' WindowsLookAndFeel Java 17 error.
   When the error occurs SQuirreL will switch to its standard Metal/Ocean Look and Feel
   and the log (see menu Window --> "View SQuirreL Logs") will contain detailed information.
-  Note: JGoddies Look and Feels leave tabs empty at several places. If you are using
+  Note: JGoddies Look and Feels on Linux leave tab titles empty at several places. If you are using
   JGoddies please consider switching to a Metal or FlatLaf Look and Feel.
 
 Start script fixes:

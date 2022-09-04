@@ -15,20 +15,6 @@ package net.sourceforge.squirrel_sql.client.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Vector;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsCommand;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -38,6 +24,20 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILoggerListener;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Vector;
 
 
 /**
@@ -92,6 +92,10 @@ public class LogPanel extends JPanel
       _displayLastLogTimer = new Timer(displayDelay, e -> updatePanel());
 
       _displayLastLogTimer.setRepeats(false);
+
+      _statistics._errorCount = LoggerController.getLogCounts().getErrorCount();
+      _statistics._warnCount = LoggerController.getLogCounts().getWarningCount();
+      _statistics._infoCount = LoggerController.getLogCounts().getInfoCount();
 
       LoggerController.addLoggerListener(new ILoggerListener()
       {
@@ -188,15 +192,9 @@ public class LogPanel extends JPanel
    {
       if (null != _curlogToDisplay)
       {
-         Object[] params = new Object[]
-               {
-                     _curlogToDisplay.source,
-                     _curlogToDisplay.logTime,
-                     _curlogToDisplay.message
-               };
-
          // i18n[LogPanel.logMsg=Logged by {0} at {1}:\n\n {2}]
-         String extMsg = s_stringMgr.getString("LogPanel.logMsg", params);
+         String extMsg = s_stringMgr.getString("LogPanel.logMsg", _curlogToDisplay.source, _curlogToDisplay.logTime,_curlogToDisplay.message);
+
          ErrorDialog errorDialog = new ErrorDialog(_app.getMainFrame(), extMsg, _curlogToDisplay.throwable);
 
          String title;
@@ -315,9 +313,9 @@ public class LogPanel extends JPanel
 
    private static class LogStatistics
    {
-      private int _errorCount;
-      private int _warnCount;
-      private int _infoCount;
+      private long _errorCount;
+      private long _warnCount;
+      private long _infoCount;
 
       private String _toString = "";
 
@@ -326,40 +324,33 @@ public class LogPanel extends JPanel
          updateToString();
       }
 
-
-      public String toString()
-      {
-         return _toString;
-      }
-
-      void setErrorCount(int errorCount)
+      void setErrorCount(long errorCount)
       {
          this._errorCount = errorCount;
          updateToString();
       }
 
-      private void updateToString()
-      {
-         Object[] params = new Integer[]
-               {
-                     Integer.valueOf(_errorCount),
-                     Integer.valueOf(_warnCount),
-                     Integer.valueOf(_infoCount),
-               };
-         // i18n[LogPanel.logInfoLabel=Logs: Errors {0}, Warnings {1}, Infos {2}]
-         _toString = s_stringMgr.getString("LogPanel.logInfoLabel", params);
-      }
-
-      void setWarnCount(int warnCount)
+      void setWarnCount(long warnCount)
       {
          this._warnCount = warnCount;
          updateToString();
       }
 
-      void setInfoCount(int infoCount)
+      void setInfoCount(long infoCount)
       {
          this._infoCount = infoCount;
          updateToString();
+      }
+
+      private void updateToString()
+      {
+         // i18n[LogPanel.logInfoLabel=Logs: Errors {0}, Warnings {1}, Infos {2}]
+         _toString = s_stringMgr.getString("LogPanel.logInfoLabel", _errorCount, _warnCount, _infoCount);
+      }
+
+      public String toString()
+      {
+         return _toString;
       }
    }
 

@@ -99,8 +99,7 @@ public class LAFRegister
 	/**
 	 * Collection of <TT>ILookAndFeelController</TT> objects keyed by the Look and Feel class name.
 	 */
-	private Map<String, ILookAndFeelController> _lafControllers =
-		new HashMap<String, ILookAndFeelController>();
+	private Map<String, ILookAndFeelController> _lafControllers = new HashMap<String, ILookAndFeelController>();
 
 	/**
 	 * Default LAF controller. Used if a specialised one isn't available for the LAF in _lafControllers.

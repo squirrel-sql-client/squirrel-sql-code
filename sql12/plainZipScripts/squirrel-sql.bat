@@ -36,6 +36,7 @@ SET TMP_PARMS= --squirrel-home "%SQUIRREL_SQL_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 @rem Run with no command window. This may not work with versions of Windows prior to XP.
 @rem Remove 'start "SQuirreL SQL Client" /B' for compatibility only if necessary
-start "SQuirreL SQL Client" /B "%LOCAL_JAVA%" -Dsun.awt.nopixfmt=true -Dsun.java2d.noddraw=true -cp %CP% -splash:"%SQUIRREL_SQL_HOME%/icons/splash.jpg" net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
+@rem VM Parameter --add-exports=java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED was added for JGoodies Windows L&F, see SourceForge bug #1507.
+start "SQuirreL SQL Client" /B "%LOCAL_JAVA%" --add-exports=java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED -Dsun.awt.nopixfmt=true -Dsun.java2d.noddraw=true -cp %CP% -splash:"%SQUIRREL_SQL_HOME%/icons/splash.jpg" net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
 
 :ExitForWrongJavaVersion

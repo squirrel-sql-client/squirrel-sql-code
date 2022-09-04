@@ -64,4 +64,8 @@ public class LoggerController
 
 	}
 
+	public static SQLLogCounts getLogCounts()
+	{
+		return SQLoggerKernel.getLogCounts();
+	}
 }
