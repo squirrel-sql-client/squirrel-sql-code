@@ -90,6 +90,8 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+"Don't show again" option wasn't saved for dialogs that were shown during application shutdown.
+
 #1507 Look and Feel Plugin: Improved handling JGoodies' WindowsLookAndFeel Java 17 error.
   The Windows start batch squirrel-sql.bat now sets the Java VM Parameter
   "--add-exports=java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED"

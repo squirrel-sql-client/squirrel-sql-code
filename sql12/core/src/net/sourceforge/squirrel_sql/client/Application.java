@@ -357,6 +357,9 @@ public class Application implements IApplication
 	{
 		_propsImpl.saveProperties();
 		s_log.info("saveApplicationState: _propsImpl.saveProperties() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+		_globalPreferences.setFirstRun(false);
+		_globalPreferences.save();
 	}
 
 	/**
