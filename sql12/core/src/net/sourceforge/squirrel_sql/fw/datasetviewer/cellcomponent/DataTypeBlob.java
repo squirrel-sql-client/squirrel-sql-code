@@ -55,7 +55,6 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -541,15 +540,21 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 		 // Since the BLOB is just a pointer to the BLOB data rather than the
 		 // data itself, this operation should not take much time (as opposed
 		 // to getting all of the data in the blob).
-		 Blob blob;
+		 BlobResult blobResult;
 		 try
 		 {
-			 blob = rs.getBlob(index);
+			 blobResult = getBlobRespectingUnsupportedFeatureException(rs, index);
 
 			 if (rs.wasNull())
 			 {
 				 return null;
 			 }
+
+			 if(false == blobResult.isBlob())
+			 {
+				 return blobResult.getAsString();
+			 }
+
 		 }
 		 catch (Exception e)
 		 {
@@ -561,14 +566,14 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 		 if (false == _readBlobs)
 		 {
 			 // user said not to read any of the data from the blob
-			 return new BlobDescriptor(blob, null, false, false, 0);
+			 return new BlobDescriptor(blobResult.getBlob(), null, false, false, 0);
 		 }
 
 		 // User said to read at least some of the data from the blob
 		 byte[] blobData = null;
-		 if (blob != null)
+		 if (blobResult != null)
 		 {
-			 int len = (int) blob.length();
+			 int len = (int) blobResult.getBlob().length();
 			 if (len > 0)
 			 {
 				 int charsToRead = len;
@@ -580,7 +585,7 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 				 {
 					 charsToRead = len;
 				 }
-				 blobData = blob.getBytes(1, charsToRead);
+				 blobData = blobResult.getBlob().getBytes(1, charsToRead);
 			 }
 		 }
 
@@ -591,7 +596,31 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 			 wholeBlobRead = true;
 		 }
 
-		 return new BlobDescriptor(blob, blobData, true, wholeBlobRead, _readBlobsSize);
+		 return new BlobDescriptor(blobResult.getBlob(), blobData, true, wholeBlobRead, _readBlobsSize);
+	}
+
+	/**
+	 * Was introduced for SourceForge bug #1464
+	 * and
+	 * https://github.com/xerial/sqlite-jdbc/issues/589
+	 */
+	private static BlobResult getBlobRespectingUnsupportedFeatureException(ResultSet rs, int index) throws SQLException
+	{
+		try
+		{
+			return new BlobResult(rs.getBlob(index));
+		}
+		catch (Throwable eBlob)
+		{
+			try
+			{
+				return new BlobResult(rs.getBytes(index), eBlob);
+			}
+			catch (Throwable eBytes)
+			{
+				return new BlobResult(rs.getString(index), eBytes);
+			}
+		}
 	}
 
 	/**
