@@ -90,6 +90,9 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+Saved Session: Fixed message issued to message panel when the number of Saved Session
+  exceeds the user defined maximum, see bottom of Saved Session management dialog.
+
 #1464 When exception occurs while reading BLOB data SQuirreL now tries to read the data as bytes or string.
 
 "Don't show again" option wasn't saved for dialogs that were shown during application shutdown.
