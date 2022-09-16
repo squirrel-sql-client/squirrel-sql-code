@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Saved Sessions improvement (See the four buttons at the right of SQuirreL's topmost toolbar):
+  The Saved Sessions dialog now allows to search for Saved Sessions.
+  See menu Windows --> Open Saved Session.
+
 Log counter (see right of SQuirreL's status bar) did neglect several logs issued during startup.
 
 Right mouse menus of SQL results, the SQL editor and the Object tree now allow to move less used

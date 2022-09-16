@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,6 +22,9 @@ import java.awt.Insets;
 public class SavedSessionMoreDlg extends JDialog
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SavedSessionMoreDlg.class);
+
+   JTextField txtToSearch = new JTextField();
+   JCheckBox chkRememberLastSearch = new JCheckBox(s_stringMgr.getString("SavedSessionMoreDlg.remember.last.search"));
 
    OpenInSessionPanel openInSessionPanel;
    JList<SavedSessionJsonBean> lstSavedSessions;
@@ -38,15 +42,15 @@ public class SavedSessionMoreDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
       getContentPane().add(createTopPanel(), gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(3,5,0,5), 0,0);
+      gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5), 0,0);
       lstSavedSessions = new JList<>();
       lstSavedSessions.setCellRenderer(new SavedSessionListCellRenderer());
       getContentPane().add(new JScrollPane(lstSavedSessions), gbc);
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(3,5,0,0), 0,0);
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
       getContentPane().add(createButtonPanel(state), gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,0,5), 0,0);
@@ -69,7 +73,20 @@ public class SavedSessionMoreDlg extends JDialog
       ret.add(new JLabel(s_stringMgr.getString("SavedSessionMoreDlg.available.saved.sessions")), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("saved.sessions.info.html"), 10000).getButton(), gbc);
+      ret.add(new SmallToolTipInfoButton(s_stringMgr.getString("SavedSessionMoreDlg.saved.sessions.info.html"), 10000).getButton(), gbc);
+
+
+      gbc = new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,0,0,0), 0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SavedSessionMoreDlg.enter.search.text")), gbc);
+
+
+      gbc = new GridBagConstraints(0,2,2,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,0), 0,0);
+      ret.add(txtToSearch, gbc);
+
+
+      gbc = new GridBagConstraints(0,3,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(chkRememberLastSearch, gbc);
+
 
       return ret;
    }

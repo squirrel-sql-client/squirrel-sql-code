@@ -3,21 +3,38 @@ package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
+import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.Frame;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SavedSessionMoreCtrl
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SavedSessionMoreCtrl.class);
+
+   public static final String PREF_KEY_FIND_REMEMBER_LAST_SEARCH = "SavedSessionMoreCtrl.remember.last.search";
+
+   public static final String PREF_KEY_FIND_LAST_SEARCH_STRING = "SavedSessionMoreCtrl.last.search.string";
+
 
    private final SavedSessionMoreDlg _dlg;
    private ISession _session;
@@ -46,13 +63,42 @@ public class SavedSessionMoreCtrl
 
       _dlg = new SavedSessionMoreDlg(owningFrame, state);
 
-      final SavedSessionsManager savedSessionsManager = Main.getApplication().getSavedSessionsManager();
 
-      _dlg.lstSavedSessions.setListData(savedSessionsManager.getSavedSessions().toArray(new SavedSessionJsonBean[0]));
-      if(0 < _dlg.lstSavedSessions.getModel().getSize())
+      _dlg.txtToSearch.getDocument().addDocumentListener(new DocumentListener()
       {
-         _dlg.lstSavedSessions.setSelectedIndex(0);
+         @Override
+         public void insertUpdate(DocumentEvent e)
+         {
+            updateList();
+         }
+
+         @Override
+         public void removeUpdate(DocumentEvent e)
+         {
+            updateList();
+         }
+
+         @Override
+         public void changedUpdate(DocumentEvent e)
+         {
+            updateList();
+         }
+      });
+
+      _dlg.chkRememberLastSearch.setSelected(Props.getBoolean(PREF_KEY_FIND_REMEMBER_LAST_SEARCH, false));
+
+      if (_dlg.chkRememberLastSearch.isSelected())
+      {
+         String lastSearchString = Props.getString(PREF_KEY_FIND_LAST_SEARCH_STRING, null);
+         _dlg.txtToSearch.setText(lastSearchString);
+
+         if(null != lastSearchString)
+         {
+            _dlg.txtToSearch.selectAll();
+         }
       }
+
+      updateList();
 
       _dlg.lstSavedSessions.addMouseListener(new MouseAdapter()
       {
@@ -75,6 +121,9 @@ public class SavedSessionMoreCtrl
          }
       });
 
+
+      final SavedSessionsManager savedSessionsManager = Main.getApplication().getSavedSessionsManager();
+
       _dlg.chkShowDefaultAliasMsg.setSelected(savedSessionsManager.isShowAliasChangeMsg());
       _dlg.chkShowDefaultAliasMsg.addActionListener(e -> savedSessionsManager.setShowAliasChangeMsg(_dlg.chkShowDefaultAliasMsg.isSelected()));
 
@@ -86,13 +135,124 @@ public class SavedSessionMoreCtrl
 
       _dlg.btnDeleteSelected.addActionListener(e -> onDeleteSelected());
 
-      GUIUtils.enableCloseByEscape(_dlg, dialog -> savedSessionsManager.setMaxNumberSavedSessions(_dlg.txtMaxNumberSavedSessions.getInt()));
 
-      GUIUtils.initLocation(_dlg, 650, 580);
+      _dlg.txtToSearch.addKeyListener(new KeyAdapter()
+      {
+         @Override
+         public void keyPressed(KeyEvent e)
+         {
+            onKeyPressed(e);
+         }
+      });
 
-      GUIUtils.forceFocus(_dlg.lstSavedSessions);
+      _dlg.addWindowListener(new WindowAdapter()
+      {
+         @Override
+         public void windowClosing(WindowEvent e)
+         {
+            onClosing();
+         }
+      });
+
+      GUIUtils.enableCloseByEscape(_dlg, dialog -> onClosing());
+      GUIUtils.initLocation(_dlg, 750, 750);
+
+      GUIUtils.forceFocus(_dlg.txtToSearch);
 
       _dlg.setVisible(true);
+   }
+
+
+   private void onKeyPressed(KeyEvent e)
+   {
+      if(e.getKeyCode() == KeyEvent.VK_UP)
+      {
+         int selIx = _dlg.lstSavedSessions.getSelectedIndex();
+
+         if(0 < selIx)
+         {
+            _dlg.lstSavedSessions.setSelectedIndex(selIx - 1);
+            _dlg.lstSavedSessions.ensureIndexIsVisible(selIx - 1);
+         }
+      }
+      else if(e.getKeyCode() == KeyEvent.VK_DOWN)
+      {
+         int selIx = _dlg.lstSavedSessions.getSelectedIndex();
+
+         if(_dlg.lstSavedSessions.getModel().getSize() - 1 > selIx)
+         {
+            _dlg.lstSavedSessions.setSelectedIndex(selIx + 1);
+            _dlg.lstSavedSessions.ensureIndexIsVisible(selIx + 1);
+         }
+      }
+   }
+
+   private void updateList()
+   {
+      String filterText = _dlg.txtToSearch.getText();
+
+      final List<SavedSessionJsonBean> savedSessions = Main.getApplication().getSavedSessionsManager().getSavedSessions();
+
+      List<SavedSessionJsonBean> matchingSavedSessions = new ArrayList<>();
+      for (SavedSessionJsonBean savedSession : savedSessions)
+      {
+         if(matches(savedSession, filterText))
+         {
+            matchingSavedSessions.add(savedSession);
+         }
+      }
+
+      _dlg.lstSavedSessions.setListData(matchingSavedSessions.toArray(new SavedSessionJsonBean[0]));
+      if(0 < _dlg.lstSavedSessions.getModel().getSize())
+      {
+         _dlg.lstSavedSessions.setSelectedIndex(0);
+      }
+   }
+
+   private boolean matches(SavedSessionJsonBean savedSession, String filterText)
+   {
+      if(StringUtilities.isEmpty(filterText, true))
+      {
+         return true;
+      }
+
+      if(StringUtils.containsIgnoreCase(savedSession.getName(), filterText))
+      {
+         return true;
+      }
+
+      if(false == StringUtilities.isEmpty(savedSession.getDefaultAliasIdString(), true))
+      {
+         final ISQLAlias alias = Main.getApplication().getAliasesAndDriversManager().getAlias(new UidIdentifier(savedSession.getDefaultAliasIdString()));
+
+         if((null != alias.getName() && StringUtils.containsIgnoreCase(alias.getName(), filterText))
+            || (null != alias.getUrl() && StringUtils.containsIgnoreCase(alias.getUrl(), filterText))
+            || (null != alias.getUserName() && StringUtils.containsIgnoreCase(alias.getUserName(), filterText))
+         )
+         {
+            return true;
+         }
+      }
+
+      for (SessionSqlJsonBean sessionSQL : savedSession.getSessionSQLs())
+      {
+         if(false == StringUtilities.isEmpty(sessionSQL.getInternalFileName(), true))
+         {
+            if(StringUtils.containsIgnoreCase(sessionSQL.getInternalFileName(), filterText))
+            {
+               return true;
+            }
+         }
+         else if(false == StringUtilities.isEmpty(sessionSQL.getExternalFilePath(), true))
+         {
+            if(StringUtils.containsIgnoreCase(sessionSQL.getExternalFilePath(), filterText))
+            {
+               return true;
+            }
+         }
+      }
+
+      return false;
    }
 
    private void maybeTriggerPopup(MouseEvent me)
@@ -225,7 +385,7 @@ public class SavedSessionMoreCtrl
 
    private void close()
    {
-      Main.getApplication().getSavedSessionsManager().setMaxNumberSavedSessions(_dlg.txtMaxNumberSavedSessions.getInt());
+      onClosing();
       _dlg.setVisible(false);
       _dlg.dispose();
    }
@@ -244,4 +404,17 @@ public class SavedSessionMoreCtrl
 
       return _dlg.openInSessionPanel.isOpenInNewSession();
    }
+
+   private void onClosing()
+   {
+      Main.getApplication().getSavedSessionsManager().setMaxNumberSavedSessions(_dlg.txtMaxNumberSavedSessions.getInt());
+
+      Props.putBoolean(PREF_KEY_FIND_REMEMBER_LAST_SEARCH, _dlg.chkRememberLastSearch.isSelected());
+
+      if (_dlg.chkRememberLastSearch.isSelected())
+      {
+         Props.putString(PREF_KEY_FIND_LAST_SEARCH_STRING, _dlg.txtToSearch.getText());
+      }
+   }
+
 }
