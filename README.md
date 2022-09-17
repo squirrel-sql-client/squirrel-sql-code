@@ -9,9 +9,9 @@ The build script itself is located at `<squirrel-git-root>/sql12/build.xml` and 
 
 With the restructuring of the build system went a new directory structure:
 
-  * `<squirrel-git-root>/sql12/core/`: contains the former fw and app parts of SQuirreL's base application.
-  * `<squirrel-git-root>/sql12/plugins/`: contains all Plugins.
-  * `<squirrel-git-root>/sql12/launcher/`: contains the basis of SQuirreL's start scripts in a way they are needed for building the installer packages.
+  * `<squirrel-git-root>/sql12/core/`: Contains the code of SQuirreL's base application..
+  * `<squirrel-git-root>/sql12/plugins/`: Contains all Plugins.
+  * `<squirrel-git-root>/sql12/launcher/`: Contains the basis of SQuirreL's start scripts in a way they are needed for building the installer packages.
   *  `<squirrel-git-root>/sql12/plainZipScript/`: Scripts for plain zip distributions. If copied to the launcher directory these scripts are able to start SQuirreL without installation.
 
 ## Hints for developers
