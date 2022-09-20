@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Introduced Java 19 compatibility.
+
 Saved Sessions improvement (See the four buttons at the right of SQuirreL's topmost toolbar):
   The Saved Sessions dialog now allows to search for Saved Sessions.
   See menu Windows --> Open Saved Session.
