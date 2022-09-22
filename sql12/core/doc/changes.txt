@@ -96,6 +96,8 @@ Removed dependencies on outdated Hibernate libraries (3.2.4.sp1).
 
 Bug fixes:
 
+Intersystems Cache Plugin: Opening a new SQL Worksheet duplicated the Plugin's entry in the Session menu.
+
 Saved Session: Fixed message issued to message panel when the number of Saved Session
   exceeds the user defined maximum, see bottom of Saved Session management dialog.
 

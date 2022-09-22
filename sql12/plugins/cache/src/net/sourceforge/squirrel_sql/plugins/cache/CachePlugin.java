@@ -202,18 +202,6 @@ public class CachePlugin extends DefaultSessionPlugin
 
 		ActionCollection coll = Main.getApplication().getActionCollection();
 
-		if( null == _statisticsAndQueryPlanAction )
-		{
-			_statisticsAndQueryPlanAction = new StatisticsAndQueryPlanAction(_resources);
-			coll.add(_statisticsAndQueryPlanAction);
-		}
-
-		JMenu menu = _resources.createMenu(IMenuResourceKeys.MENU);
-		Main.getApplication().addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
-
-
-		_resources.addToMenu(_statisticsAndQueryPlanAction, menu);
-
 		sqlInternalFrame.addSeparatorToToolbar();
 		sqlInternalFrame.addToToolbar(coll.get(StatisticsAndQueryPlanAction.class));
 	}
@@ -236,7 +224,4 @@ public class CachePlugin extends DefaultSessionPlugin
 		session.addSeparatorToToolbar();
 		session.addToToolbar(coll.get(StatisticsAndQueryPlanAction.class));
 	}
-
-
-
 }
