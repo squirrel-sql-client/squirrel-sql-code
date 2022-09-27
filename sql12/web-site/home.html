@@ -102,6 +102,29 @@
 
 			<center>
 				<h3 class="body">
+					Latest snapshot 20220920_2105 offers<br>
+					&rArr; Java 19 compatibility<br>
+					&rArr; Search for Saved Sessions<br>
+					&rArr; Configurable right mouse menus through the option to move less used menu items to an attic submenu.<br>
+					This snapshot is a candidate for the 4.5.0 release. It would be nice if you could give it a try.<br>
+					For details see our change log at <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
+					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br>
+					The snapshot releases on SourceForge are:<br>
+					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220920_2105/squirrel-sql-snapshot-20220920_2105-standard.jar/download">Download installer for Windows/Linux/others</a><br>
+					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220920_2105/squirrel-sql-snapshot-20220920_2105-MACOSX-install.jar/download">Download installer for Mac OS </a><br>
+					The snapshot releases on GitHub are:<br>
+					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20220920_2105/squirrel-sql-snapshot-20220920_2105-standard.jar">Download installer for Windows/Linux/others</a><br>
+					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20220920_2105/squirrel-sql-snapshot-20220920_2105-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
+				</h3>
+				<h3 class="body">
+					Note: We don't anounce every snapshot release here. If you are interested please check<br>
+					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases">https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases</A><br>
+					or<br>
+					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots">https://sourceforge.net/projects/squirrel-sql/files/3-snapshots</A><br>
+					for the latest snapshots regularly.<br>
+				</h3>
+				<div style="border-top: 3px solid grey"></div>
+				<h3 class="body">
 					New snapshot 20220725_2137 which fixes start script problems on Windows<br>
 					that kept SQuirreL from starting when the IzPack installer was used.<br>
 					Also note the <a href="index.php?page=home#installation">updated download and installation section below.</a><br><br>
@@ -113,13 +136,6 @@
 					The snapshot releases on GitHub are:<br>
 					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20220725_2137/squirrel-sql-snapshot-20220725_2137-standard.jar">Download installer for Windows/Linux/others</a><br>
 					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20220725_2137/squirrel-sql-snapshot-20220725_2137-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
-				</h3>
-				<h3 class="body">
-					Note: We don't anounce every snapshot release here. If you are interested please check<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases">https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases</A><br>
-					or<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots">https://sourceforge.net/projects/squirrel-sql/files/3-snapshots</A><br>
-					for the latest snapshots regularly.<br>
 				</h3>
 				<div style="border-top: 3px solid grey"></div>
 				<h3 class="body">
@@ -315,16 +331,22 @@
 			application. On Linux/Unix and MacOS, the file is <span class="code">squirrel-sql.sh</span>.
 
 			<br><br><b>Trouble shooting:</b>
-			<br>When SQuirreL SQL doesn't start<br>
-			on Windows try to add the line
+			<br>When SQuirreL SQL doesn't start:<br>
+			On Windows try to add the line
 			<br><code>&nbsp set JAVA_HOME=&lt;path to Java directory&gt;</code><br>
 			to the top of squirrel-sql.bat<br>
-			<br>On Linux/Unix or MacOS try to add the line
+			On Linux/Unix or MacOS try to add the line
 			<br><code>&nbsp export JAVA_HOME=&lt;path to Java directory&gt;</code><br>
 			after the line
 			<br><code>&nbsp #! /bin/sh</code><br>
 			of squirrel-sql.sh
-
+			<br>
+			<br>Scaling problems on high resolution screens:<br>
+			Set the JVM (Java Virtual Machine) parameter
+			<br><code>-Dsun.java2d.uiScale=&lt;scaleValue&gt;</code><br>
+			Example: <code>-Dsun.java2d.uiScale=2.5</code><br>
+			This can be done by editing squirrel-sql.bat on Windows and squirrel-sql.sh on Linux/Unix or MacOS<br>
+			or by setting the SQUIRREL_SQL_OPTS variable before executing the start script.
 			</p>
 
 			<h2>Additional information:</h2>
