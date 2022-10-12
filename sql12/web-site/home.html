@@ -41,15 +41,16 @@
 	<tr>
       <td class="body_left_border">&nbsp;</td>
       <td width='100%' class="body" bgcolor="white" valign="top">
-         <h3 class="body"><A name="newfeatures">Feature highlights of 4.4.0:</A></h3>
+         <h3 class="body"><A name="newfeatures">Feature highlights of 4.5.0:</A></h3>
 		 <ul>
-			 <li>Saved Sessions: Option to save and restore all SQL editors of a Session</li>
-			 <li>Improved Object Tree search</li>
-			 <li>Optional query connection pool allows parallel SQL execution.</li>
-			 <li>Java 18 compatibility</li>
-			 <li>Dependency on Log4j libraries was removed</li>
+			 <li>Multiple caret/cursor editing</li>
+			 <li>Global Preferences and New Session Properties search</li>
+			 <li>Several improvements of Saved Sessions (feature to save and restore all SQL editors of a Session)</li>
+			 <li>Configurable right mouse menus</li>
+			 <li>Redesigned add/edit JDBC-Driver dialog</li>
+			 <li>Java 19 compatibility</li>
 		 </ul>
-		 All new features and bug fixes of the 4.4.0 release can be found in our change log at
+		 All new features and bug fixes of the 4.5.0 release can be found in our change log at
 			  <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
 			  or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.
 
@@ -102,6 +103,24 @@
 
 			<center>
 				<h3 class="body">
+					<strong>SQuirreL 4.5.0 is released (12/10/2022).</strong> Highlights are:<br>
+					Multiple caret/cursor editing<br>
+					Global Preferences and New Session Properties search<br>
+					Several improvements of Saved Sessions (feature to save and restore all SQL editors of a Session)<br>
+					Configurable right mouse menus<br>
+					Redesigned JDBC-Driver dialog<br>
+					Java 19 compatibility<br>
+					For more details on all new features and bug fixes see our <A href="https://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">change log</A>.<br>
+					<br>
+					4.5.0 releases on SourceForge:<br>
+					<A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/4.5.0/squirrel-sql-4.5.0-standard.jar/download">Download installer for Windows/Linux/others</a><br>
+					<A href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/4.5.0/squirrel-sql-4.5.0-MACOSX-install.jar/download">Download installer for Mac OS </a><br><br>
+					4.5.0 releases on GitHub:<br>
+					<A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.5.0-installer/squirrel-sql-4.5.0-standard.jar">Download installer for Windows/Linux/others</a><br>
+					<A href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.5.0-installer/squirrel-sql-4.5.0-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
+				</h3>
+				<div style="border-top: 3px solid grey"></div>
+				<h3 class="body">
 					Latest snapshot 20220920_2105 offers<br>
 					&rArr; Java 19 compatibility<br>
 					&rArr; Search for Saved Sessions<br>
@@ -136,50 +155,6 @@
 					The snapshot releases on GitHub are:<br>
 					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20220725_2137/squirrel-sql-snapshot-20220725_2137-standard.jar">Download installer for Windows/Linux/others</a><br>
 					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20220725_2137/squirrel-sql-snapshot-20220725_2137-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
-				</h3>
-				<div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-					New snapshot 20220710_1306 with several SQL editor fixes and improvements<br>
-					concerning code completion and highlighting of double quoted (") identifiers (tables, columns, functions, ...)<br>
-					and with extensions of Saved Session feature, e.g. internally saved files can now be change tracked by <a href="https://git-scm.com/">GIT</a>.<br>
-					For details see our change log at <a href="http://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">SourceForge</a>
-					or <a href="https://github.com/squirrel-sql-client/squirrel-sql-code/blob/master/sql12/core/doc/changes.txt">GitHub</a>.<br>
-					The 20220710_1306 snapshot releases on SourceForge are:<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220710_1306/squirrel-sql-snapshot-20220710_1306-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220710_1306/squirrel-sql-snapshot-20220710_1306-MACOSX-install.jar/download">Download installer for Mac OS </a><br>
-					The 20220710_1306 snapshot releases on GitHub are:<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20220710_1306/squirrel-sql-snapshot-20220710_1306-standard.jar">Download installer for Windows/Linux/others</a><br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20220710_1306/squirrel-sql-snapshot-20220710_1306-MACOSX-install.jar">Download installer for Mac OS </a>
-				</h3>
-				<div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-					SQuirreL's source code and binary downloads are now available on <a href="https://github.com">GitHub</a> and <a href="https://sourceforge.net/">SourceForge</a><br>
-					See <a href="https://github.com/squirrel-sql-client">https://github.com/squirrel-sql-client</a> on GitHub<br>
-					and <a href="https://sourceforge.net/projects/squirrel-sql">https://sourceforge.net/projects/squirrel-sql/</a> on SourceForge.<br>
-					For more information check the <b>"On GitHub"</b> and <b>"On SourceForge"</b> sections on the left of this page<br>
-					and the <a href="#installation">Downloads and Installation</a> section below.<br> <br>
-					The latest snapshot releases on GitHub are:<br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20220705_1007/squirrel-sql-snapshot-20220705_1007-standard.jar">Download installer for Windows/Linux/others</a><br>
-					<A href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases/download/snapshot-20220705_1007/squirrel-sql-snapshot-20220705_1007-MACOSX-install.jar">Download installer for Mac OS </a><br><br>
-					The latest snapshot releases on SourceForge are:<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220705_1007/squirrel-sql-snapshot-20220705_1007-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220705_1007/squirrel-sql-snapshot-20220705_1007-MACOSX-install.jar/download">Download installer for Mac OS </a>
-				</h3>
-				<div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-					New snapshot 20220608_2238 which allows multiple caret/cursor editing.<br>
-					For details see our <A href="https://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">change log</A>.<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220608_2238/squirrel-sql-snapshot-20220608_2238-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220608_2238/squirrel-sql-snapshot-20220608_2238-MACOSX-install.jar/download">Download installer for Mac OS </a><br>
-				</h3>
-				<div style="border-top: 3px solid grey"></div>
-				<h3 class="body">
-					New snapshot 20220502_0135. New features are:<br>
-					Searching in Global Preferences and New Session Properties.<br>
-					MS-Excel export supports coloring.<br>
-					For details see our <A href="https://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/doc/changes.txt">change log</A>.<br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220502_0135/squirrel-sql-snapshot-20220502_0135-standard.jar/download">Download installer for Windows/Linux/others</a><br>
-					<A href="https://sourceforge.net/projects/squirrel-sql/files/3-snapshots/snapshot-20220502_0135/squirrel-sql-snapshot-20220502_0135-MACOSX-install.jar/download">Download installer for Mac OS </a><br>
 				</h3>
 			</center>
 		</td>
@@ -280,19 +255,19 @@
 				<tr>
 					<td>
 						<UL>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.4.0/squirrel-sql-4.4.0-standard.jar/download">Install jar of SQuirreL 4.4.0 for Windows/Linux/others</a></B></LI>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.4.0/squirrel-sql-4.4.0-MACOSX-install.jar/download">Install jar of SQuirreL 4.4.0 for MacOS X</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.5.0/squirrel-sql-4.5.0-standard.jar/download">Install jar of SQuirreL 4.5.0 for Windows/Linux/others</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.5.0/squirrel-sql-4.5.0-MACOSX-install.jar/download">Install jar of SQuirreL 4.5.0 for MacOS X</a></B></LI>
 							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/3-snapshots/">Install jars of latest snapshots</a></B></LI>
-							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.4.0-plainzip/">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
+							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/4.5.0-plainzip/">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
 							<LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/">Overview of all available downloads</a></B></LI>
 						</UL>
 					</td>
 					<td>
 						<UL>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.4.0-installer/squirrel-sql-4.4.0-standard.jar">Install jar of SQuirreL 4.4.0 for Windows/Linux/others</a></B></LI>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.4.0-installer/squirrel-sql-4.4.0-MACOSX-install.jar">Install jar of SQuirreL 4.4.0 for MacOS X</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.5.0-installer/squirrel-sql-4.5.0-standard.jar">Install jar of SQuirreL 4.5.0 for Windows/Linux/others</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/download/4.5.0-installer/squirrel-sql-4.5.0-MACOSX-install.jar">Install jar of SQuirreL 4.5.0 for MacOS X</a></B></LI>
 							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-snapshot-releases/releases">Install jars of latest snapshots</a></B></LI>
-							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/tag/4.4.0-a_plainzip">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
+							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases/tag/4.5.0-a_plainzip">Plain zips of the latest release for Windows/Linux/MacOS X/others</a></B></LI>
 							<LI><B><a href="https://github.com/squirrel-sql-client/squirrel-sql-stable-releases/releases">Overview of all stable releases</a></B></LI>
 						</UL>
 					</td>
