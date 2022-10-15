@@ -58,6 +58,7 @@ public class TableExportDlg extends JDialog
    public TableExportDlg(Window owner, JPanel exportSelectionPanel, boolean enableColoring)
    {
       super(owner);
+      setModal(true);
 
       // i18n[TableExportCSVDlg.exportTitleNew=CSV / MS Excel / XML export]
       setTitle(s_stringMgr.getString("TableExportCSVDlg.exportTitleNew"));

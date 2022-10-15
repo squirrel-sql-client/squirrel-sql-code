@@ -46,7 +46,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.CopyColoredRowsToNew
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.GotoColorMenuController;
 import net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby.TableCopySeparatedByCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportDataException;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExport;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues.ShowDistinctValuesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
@@ -485,7 +485,7 @@ public class TablePopupMenu extends BasePopupMenu
       {
 			try
 			{
-				new TableExportCommand(_dataSetViewerTablePanel.getTable()).execute(SwingUtilities.windowForComponent(_dataSetViewerTablePanel.getTable()));
+				new TableExport(_dataSetViewerTablePanel.getTable()).export(SwingUtilities.windowForComponent(_dataSetViewerTablePanel.getTable()));
 			}
 			catch (ExportDataException e)
 			{

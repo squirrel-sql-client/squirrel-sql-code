@@ -17,10 +17,11 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.Clob;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.sql.Clob;
 /**
  * @author gwg
  *
@@ -42,12 +43,12 @@ public class ClobDescriptor {
 	/**
 	 * The java.sql.Clob object that was read.
 	 */
-	Clob _clob;
+	private Clob _clob;
 
 	/**
 	 * The data read from the Clob.
 	 */
-	String _data = null;
+	private String _data = null;
 
 	/**
 	 * If <TT>_clobRead</TT> is <TT>true</TT> then at least some
@@ -69,12 +70,12 @@ public class ClobDescriptor {
 	private int _userSetClobLimit;
 
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ClobDescriptor.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ClobDescriptor.class);
 
-    public static interface i18n {
-        String CLOB_LABEL = s_stringMgr.getString("ClobDescriptor.clob");
-    }
+	public interface i18n
+	{
+		String CLOB_LABEL = s_stringMgr.getString("ClobDescriptor.clob");
+	}
     
 	/**
 	 * Ctor
@@ -120,7 +121,7 @@ public class ClobDescriptor {
 			return false;	// this one does not, so they are not equal
 
 		// both have actual data, so compare the strings
-		// Note that if one has read all of the data and the other has read only part
+		// Note that if one has read all the data and the other has read only part
 		// of the data that we will say that they are NOT equal.
 		return c.getData().equals(_data);
 	}

@@ -2,8 +2,10 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 
 import javax.swing.JTable;
+import java.awt.Window;
 import java.sql.Types;
 
 /**
@@ -14,26 +16,53 @@ import java.sql.Types;
  * @author Stefan Willinger
  * @see net.sourceforge.squirrel_sql.fw.gui.action.export
  */
-public class TableExportCommand extends AbstractExportCommand
+public class TableExport
 {
    private JTable _table;
+   private Exporter _exporter;
 
-   public TableExportCommand(JTable table)
+   public TableExport(JTable table)
    {
       _table = table;
+
+      final ExporterCallback exporterCallback = new ExporterCallback()
+      {
+         @Override
+         public TableExportPreferences getExportPreferences()
+         {
+            return TableExportPreferencesDAO.loadPreferences();
+         }
+
+         @Override
+         public ProgressAbortCallback createProgressController()
+         {
+            return null;
+         }
+
+         @Override
+         public TableExportController createTableExportController(Window owner)
+         {
+            return ExportControllerFactory.createExportControllerForTable(owner);
+         }
+
+         @Override
+         public boolean checkMissingData(String separatorChar)
+         {
+            return onCheckMissingData(separatorChar);
+         }
+
+         @Override
+         public IExportData createExportData(TableExportController ctrl)
+         {
+            return new JTableExportData(_table, ctrl.isExportComplete());
+         }
+      };
+
+      _exporter = new Exporter(exporterCallback);
+
    }
 
-   @Override
-   protected TableExportPreferences getExportPreferences()
-   {
-      return TableExportPreferencesDAO.loadPreferences();
-   }
-
-   /**
-    * @see AbstractExportCommand#checkMissingData(java.lang.String)
-    */
-   @Override
-   protected boolean checkMissingData(String sepChar)
+   private boolean onCheckMissingData(String sepChar)
    {
       // TODO: if the use checks "export entire table" and doesn't select all,
       // then the selected indices are not set, and this check doesn't properly
@@ -70,12 +99,8 @@ public class TableExportCommand extends AbstractExportCommand
    }
 
 
-   /**
-    * @see AbstractExportCommand#createExportData()
-    */
-   @Override
-   protected IExportData createExportData(TableExportController ctrl)
+   public void export(Window owner) throws ExportDataException
    {
-      return new JTableExportData(_table, ctrl.isExportComplete());
+      _exporter.export(owner);
    }
 }

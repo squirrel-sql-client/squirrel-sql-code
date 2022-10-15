@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExportCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExport;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportDlg;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
@@ -48,7 +48,7 @@ import java.text.NumberFormat;
  * The command will run on a separate thread and a separate connection to the database. It is monitored with a {@link ProgressAbortDialog} and can be canceled.
  *
  * @author Stefan Willinger
- * @see ResultSetExportCommand
+ * @see ResultSetExport
  * @see ProgressAbortCallback
  */
 public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
@@ -61,7 +61,7 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
    /**
     * Command for exporting the data.
     */
-   private ResultSetExportCommand resultSetExportCommand;
+   private ResultSetExport _resultSetExport;
 
    private Statement stmt = null;
 
@@ -83,11 +83,8 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
 
    public void execute(final JFrame owner)
    {
-
       this.currentSQL = getSelectedSelectStatement();
-
       getSession().getApplication().getThreadPool().addTask(() -> doCreateFileOfCurrentSQL(owner));
-
    }
 
 
@@ -106,7 +103,6 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
          {
             unmanagedConnection = createUnmanagedConnection();
 
-            // TODO maybe, we should use a SQLExecutorTask for taking advantage of some ExecutionListeners like the parameter replacement. But how to get the right Listeners?
             if (unmanagedConnection != null)
             {
                stmt = createStatementForStreamingResults(unmanagedConnection.getConnection());
@@ -117,15 +113,15 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
             }
 
 
-            _progressAbortCallback = new ProgressAbortFactoryCallbackImpl(getSession(), currentSQL, () -> resultSetExportCommand.getTargetFile(), stmt);
+            _progressAbortCallback = new ProgressAbortFactoryCallbackImpl(getSession(), currentSQL, () -> _resultSetExport.getTargetFile(), stmt);
 
 
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
 
             DialectType dialectType = DialectFactory.getDialectType(getSession().getMetaData());
-            resultSetExportCommand = new ResultSetExportCommand(stmt, currentSQL, dialectType, _progressAbortCallback);
-            resultSetExportCommand.execute(owner);
+            _resultSetExport = new ResultSetExport(stmt, currentSQL, dialectType, _progressAbortCallback);
+            _resultSetExport.export(owner);
 
 
 
@@ -135,12 +131,12 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
             {
                return;
             }
-            else if (resultSetExportCommand.getWrittenRows() >= 0)
+            else if (_resultSetExport.getWrittenRows() >= 0)
             {
                NumberFormat nf = NumberFormat.getIntegerInstance();
 
-               String rows = nf.format(resultSetExportCommand.getWrittenRows());
-               File targetFile = resultSetExportCommand.getTargetFile();
+               String rows = nf.format(_resultSetExport.getWrittenRows());
+               File targetFile = _resultSetExport.getTargetFile();
                String seconds = nf.format(stopWatch.getTime() / 1000);
                String msg = s_stringMgr.getString("CreateFileOfCurrentSQLCommand.progress.sucessMessage",
                      rows,
@@ -217,7 +213,7 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
 
 
    /**
-    * Create a new unmanaged connection, , which is not associated with the current session.
+    * Create a new unmanaged connection, which is not associated with the current session.
     *
     * @return a new unmanaged connection or null, if no connection can be created.
     * @throws SQLException
