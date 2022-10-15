@@ -23,9 +23,9 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.nio.charset.Charset;
 
-public class TableExportDlg extends JDialog
+public class ExportDlg extends JDialog
 {
-	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportDlg.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExportDlg.class);
 
    JTextField txtFile;
    JButton btnFile;
@@ -55,10 +55,9 @@ public class TableExportDlg extends JDialog
 	JComboBox cboLineSeparators;
 
 
-   public TableExportDlg(Window owner, JPanel exportSelectionPanel, boolean enableColoring)
+   public ExportDlg(Window owner, JPanel exportSelectionPanel, boolean enableColoring)
    {
       super(owner);
-      setModal(true);
 
       // i18n[TableExportCSVDlg.exportTitleNew=CSV / MS Excel / XML export]
       setTitle(s_stringMgr.getString("TableExportCSVDlg.exportTitleNew"));

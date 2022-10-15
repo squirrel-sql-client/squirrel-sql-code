@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -36,7 +37,7 @@ import java.text.NumberFormat;
 
 /**
  * Exporting Data.
- * This class exports the specified {@link IExportData}. The main configuration of the export could be managed with the {@link TableExportController}.
+ * This class exports the specified {@link IExportData}. The main configuration of the export could be managed with the {@link ExportController}.
  * A {@link ProgressAbortCallback} can monitor the progress, but there must not be a such monitor.
  * There are several target formats supported:
  * <li>CSV</li>
@@ -56,26 +57,122 @@ import java.text.NumberFormat;
  * @see DataExportExcelWriter
  */
 public class Exporter
-
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(Exporter.class);
    private static ILogger s_log = LoggerController.createLogger(Exporter.class);
+   private final ExportController _exportController;
 
    private ProgressAbortCallback progressController = null;
-   private File targetFile;
-
-   /**
-    * Container to store all files, referenced by a currently running export process.
-    */
-   private ExportFileContainer fileContainer = ExportFileContainer.getInstance();
-
+   private File _targetFile;
 
    private long writtenRows = -1;
    private ExporterCallback _exporterCallback;
 
-   public Exporter(ExporterCallback exporterCallback)
+   public Exporter(ExporterCallback exporterCallback, ExportController exportController)
    {
       _exporterCallback = exporterCallback;
+      _exportController = exportController;
+   }
+
+   public void export()
+   {
+      if(_exportController.isModal())
+      {
+         exportDialogClosed(_exportController);
+      }
+      else
+      {
+         _exportController.setFinishedListener(() -> exportDialogClosed(_exportController));
+      }
+   }
+
+   private void exportDialogClosed(ExportController ctrl)
+   {
+      try
+      {
+         if(false == ctrl.isOK())
+         {
+            return;
+         }
+
+         if(_exporterCallback.checkMissingData(ctrl.getSeparatorChar()))
+         {
+            int choice = JOptionPane.showConfirmDialog(ctrl.getOwningWindow(), s_stringMgr.getString("TableExportCsvCommand.missingClobDataMsg", ClobDescriptor.i18n.CLOB_LABEL));
+            if(choice != JOptionPane.YES_OPTION)
+            {
+               return;
+            }
+         }
+
+         this._targetFile = ctrl.getFile();
+
+
+         exportToTargetFile(ctrl);
+      }
+      catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   private void exportToTargetFile(ExportController ctrl) throws ExportDataException
+   {
+      this.progressController = _exporterCallback.createProgressController();
+
+      try
+      {
+         writtenRows = writeFile(ctrl, _exporterCallback.createExportData(ctrl));
+      }
+      catch (ExportDataException e)
+      {
+         // Show an error and re-throw the exception.
+         s_log.error(s_stringMgr.getString("AbstractExportCommand.failed"));
+
+         Runnable runnable = new Runnable()
+         {
+            public void run()
+            {
+               JOptionPane.showMessageDialog(ctrl.getOwningWindow(), s_stringMgr.getString("AbstractExportCommand.failed"));
+            }
+         };
+
+         GUIUtils.processOnSwingEventThread(runnable);
+
+         throw e;
+      }
+
+      if(writtenRows >= 0)
+      {
+         String command = ctrl.getCommand();
+
+         if(null != command)
+         {
+            executeOpenExportedFileCommand(command, ctrl.getOwningWindow());
+         }
+         else
+         {
+            // i18n[TableExportCsvCommand.writeFileSuccess=Export to file
+            // "{0}" is complete.]
+            ExportController finalCtrl = ctrl;
+            GUIUtils.processOnSwingEventThread(() -> showExportSuccessMessage(ctrl.getOwningWindow(), writtenRows, finalCtrl.getFile()), true);
+
+         }
+      }
+      else
+      {
+         s_log.info(s_stringMgr.getString("AbstractExportCommand.failed"));
+
+         Runnable runnable = new Runnable()
+         {
+            public void run()
+            {
+               JOptionPane.showMessageDialog(ctrl.getOwningWindow(), s_stringMgr.getString("AbstractExportCommand.failed"));
+            }
+         };
+
+         GUIUtils.processOnSwingEventThread(runnable, true);
+
+      }
    }
 
 
@@ -86,7 +183,7 @@ public class Exporter
     * @param data The data to export
     * @return the number of written data rows or a negative value, if not the whole data are exported.
     */
-   private long writeFile(final TableExportController ctrl, IExportData data)
+   private long writeFile(final ExportController ctrl, IExportData data)
    {
       return ExportFileWriter.writeFile(_exporterCallback.getExportPreferences(), data, progressController, ctrl.getOwningWindow());
    }
@@ -113,125 +210,6 @@ public class Exporter
          };
 
          GUIUtils.processOnSwingEventThread(runnable, true);
-      }
-   }
-
-   public void export(final Window owner) throws ExportDataException
-   {
-      try
-      {
-
-         boolean fileIsInUse = false;
-
-         TableExportController ctrl;
-         do
-         {
-            ctrl = _exporterCallback.createTableExportController(owner);
-
-            if(false == ctrl.isOK())
-            {
-               return;
-            }
-
-            if(_exporterCallback.checkMissingData(ctrl.getSeparatorChar()))
-            {
-               int choice = JOptionPane.showConfirmDialog(owner, s_stringMgr.getString("TableExportCsvCommand.missingClobDataMsg", ClobDescriptor.i18n.CLOB_LABEL));
-               if(choice != JOptionPane.YES_OPTION)
-               {
-                  // abort the export
-                  return;
-               }
-            }
-
-            this.targetFile = ctrl.getFile();
-
-            // Allow only one export at a time.
-            if(fileContainer.add(this.targetFile) == false)
-            {
-               fileIsInUse = true;
-               Runnable runnable = new Runnable()
-               {
-                  public void run()
-                  {
-                     JOptionPane.showMessageDialog(owner, s_stringMgr.getString("AbstractExportCommand.anotherExportIsActive"), s_stringMgr.getString("AbstractExportCommand.anotherExportIsActive.title"), JOptionPane.WARNING_MESSAGE);
-                  }
-               };
-
-               GUIUtils.processOnSwingEventThread(runnable, true);
-
-            }
-            else
-            {
-               fileIsInUse = false;
-            }
-
-         } while (fileIsInUse);
-
-
-         this.progressController = _exporterCallback.createProgressController();
-
-
-         try
-         {
-            writtenRows = writeFile(ctrl, _exporterCallback.createExportData(ctrl));
-         }
-         catch (ExportDataException e)
-         {
-            // Show an error and re-throw the exception.
-            s_log.error(s_stringMgr.getString("AbstractExportCommand.failed"));
-
-            Runnable runnable = new Runnable()
-            {
-               public void run()
-               {
-                  JOptionPane.showMessageDialog(owner, s_stringMgr.getString("AbstractExportCommand.failed"));
-               }
-            };
-
-            GUIUtils.processOnSwingEventThread(runnable);
-
-            throw e;
-         }
-
-         if(writtenRows >= 0)
-         {
-            String command = ctrl.getCommand();
-
-            if(null != command)
-            {
-               executeOpenExportedFileCommand(command, owner);
-            }
-            else
-            {
-               // i18n[TableExportCsvCommand.writeFileSuccess=Export to file
-               // "{0}" is complete.]
-               TableExportController finalCtrl = ctrl;
-               GUIUtils.processOnSwingEventThread(() -> showExportSuccessMessage(owner, writtenRows, finalCtrl.getFile()), true);
-
-            }
-         }
-         else
-         {
-            s_log.info(s_stringMgr.getString("AbstractExportCommand.failed"));
-
-            Runnable runnable = new Runnable()
-            {
-               public void run()
-               {
-                  JOptionPane.showMessageDialog(owner, s_stringMgr.getString("AbstractExportCommand.failed"));
-               }
-            };
-
-            GUIUtils.processOnSwingEventThread(runnable, true);
-
-         }
-      }
-      finally
-      {
-         if(this.targetFile != null)
-         {
-            this.fileContainer.remove(this.targetFile);
-         }
       }
    }
 
@@ -285,7 +263,7 @@ public class Exporter
     */
    public File getTargetFile()
    {
-      return targetFile;
+      return _targetFile;
    }
 
    /**

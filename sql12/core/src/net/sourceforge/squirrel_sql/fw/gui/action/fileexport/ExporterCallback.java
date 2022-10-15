@@ -2,8 +2,6 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 
-import java.awt.Window;
-
 public interface ExporterCallback
 {
    TableExportPreferences getExportPreferences();
@@ -14,12 +12,6 @@ public interface ExporterCallback
     * @return returns null.
     */
    ProgressAbortCallback createProgressController();
-
-   /**
-    * @return
-    * @param owner
-    */
-   TableExportController createTableExportController(final Window owner);
 
    /**
     * @param separatorChar
@@ -33,6 +25,6 @@ public interface ExporterCallback
     * @return the data for the export.
     * @throws ExportDataException if any problem occurs while creating the data.
     */
-   IExportData createExportData(TableExportController ctrl) throws ExportDataException;
+   IExportData createExportData(ExportController ctrl) throws ExportDataException;
 
 }

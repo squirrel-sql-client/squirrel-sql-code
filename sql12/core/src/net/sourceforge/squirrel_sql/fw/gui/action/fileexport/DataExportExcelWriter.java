@@ -225,7 +225,7 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
 
    /**
     * @throws java.lang.Exception
-    * @see AbstractDataExportFileWriter#addCell(TableExportController,
+    * @see AbstractDataExportFileWriter#addCell(ExportController,
     * int, int, ExportCellData)
     */
    protected void addCell(ExportCellData cell) throws Exception

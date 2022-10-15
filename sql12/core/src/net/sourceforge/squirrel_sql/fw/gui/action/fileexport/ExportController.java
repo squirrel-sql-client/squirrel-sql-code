@@ -11,26 +11,36 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 
-public class TableExportController
+public class ExportController
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportController.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExportController.class);
 
-   private TableExportDlg _dlg;
+   private ExportDlg _dlg;
    private boolean _ok = false;
 
    private Window _owner;
    private ExportSelectionPanelController _exportSelectionPanelController;
    private boolean _warnIfExcel;
+   private TableExportDlgFinishedListener _tableExportDlgFinishedListener;
+   private boolean _finishFired;
 
 
-   TableExportController(Window owner, ExportSelectionPanelController exportSelectionPanelController, boolean warnIfExcel, boolean enableColoring)
+   /**
+    * @param tableExportDlgFinishedListener when null the dialog is modal.
+    */
+   ExportController(Window owner,
+                    ExportSelectionPanelController exportSelectionPanelController,
+                    boolean warnIfExcel,
+                    boolean enableColoring)
    {
       _owner = owner;
       _exportSelectionPanelController = exportSelectionPanelController;
       _warnIfExcel = warnIfExcel;
-      _dlg = new TableExportDlg(owner, exportSelectionPanelController.getPanel(), enableColoring);
+      _dlg = new ExportDlg(owner, exportSelectionPanelController.getPanel(), enableColoring);
 
       initData();
 
@@ -45,14 +55,33 @@ public class TableExportController
       });
 
       _dlg.getRootPane().setDefaultButton(_dlg.btnOk);
-      GUIUtils.enableCloseByEscape(_dlg);
 
+      GUIUtils.enableCloseByEscape(_dlg, dlg -> fireFinished());
+      _dlg.addWindowListener(new WindowAdapter() {
+         @Override
+         public void windowClosing(WindowEvent e)
+         {
+            fireFinished();
+         }
+      });
+   }
+
+   public void showModal()
+   {
+      _dlg.setModal(true);
+      _show();
+   }
+   public void showNonModal()
+   {
+      _dlg.setModal(false);
+      _show();
+   }
+
+   private void _show()
+   {
       _dlg.pack();
-
       GUIUtils.centerWithinParent(_dlg);
-
       _dlg.setVisible(true);
-
    }
 
 
@@ -302,9 +331,10 @@ public class TableExportController
 
    private void onOK()
    {
-	  if(warnIfExcel() == false){
-		  return;
-	  }
+      if(warnIfExcel() == false)
+      {
+         return;
+      }
 	   
       String csvFileName = _dlg.txtFile.getText();
       if(null == csvFileName || 0 == csvFileName.trim().length())
@@ -529,8 +559,19 @@ public class TableExportController
    private void closeDlg()
    {
       _dlg.setVisible(false);
+      fireFinished();
       _dlg.dispose();
    }
+
+   private void fireFinished()
+   {
+      if(null != _tableExportDlgFinishedListener && false == _finishFired)
+      {
+         _tableExportDlgFinishedListener.finished();
+         _finishFired = true;
+      }
+   }
+
 
    boolean isOK()
    {
@@ -587,5 +628,15 @@ public class TableExportController
    public ExportSelectionPanelController getExportSelectionPanelController()
    {
       return _exportSelectionPanelController;
+   }
+
+   public boolean isModal()
+   {
+      return _dlg.isModal();
+   }
+
+   public void setFinishedListener(TableExportDlgFinishedListener tableExportDlgFinishedListener)
+   {
+      _tableExportDlgFinishedListener = tableExportDlgFinishedListener;
    }
 }

@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescripto
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 
 import javax.swing.JTable;
-import java.awt.Window;
+import javax.swing.SwingUtilities;
 import java.sql.Types;
 
 /**
@@ -40,26 +40,19 @@ public class TableExport
          }
 
          @Override
-         public TableExportController createTableExportController(Window owner)
-         {
-            return ExportControllerFactory.createExportControllerForTable(owner);
-         }
-
-         @Override
          public boolean checkMissingData(String separatorChar)
          {
             return onCheckMissingData(separatorChar);
          }
 
          @Override
-         public IExportData createExportData(TableExportController ctrl)
+         public IExportData createExportData(ExportController ctrl)
          {
             return new JTableExportData(_table, ctrl.isExportComplete());
          }
       };
 
-      _exporter = new Exporter(exporterCallback);
-
+      _exporter = new Exporter(exporterCallback, ExportControllerFactory.createExportControllerForTable(SwingUtilities.windowForComponent(_table)));
    }
 
    private boolean onCheckMissingData(String sepChar)
@@ -99,8 +92,8 @@ public class TableExport
    }
 
 
-   public void export(Window owner) throws ExportDataException
+   public void export()
    {
-      _exporter.export(owner);
+      _exporter.export();
    }
 }

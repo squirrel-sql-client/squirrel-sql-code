@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * Exports a data structure into a file.
  * This abstract implementation does not know the format of the target file, e.g. XML or CSV.
  * It rather knows the structure of {@link IExportData} and provide some callback methods for exporting data.
- * A further scope of this abstract class is the interaction with  {@link TableExportController} and {@link ProgressAbortCallback}.
+ * A further scope of this abstract class is the interaction with  {@link ExportController} and {@link ProgressAbortCallback}.
  * A concrete implementation is responsible for formating and writing the data into the target.
  *
  * @author Stefan Willinger

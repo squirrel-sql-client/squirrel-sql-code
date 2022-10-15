@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.awt.Window;
+import javax.swing.JFrame;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -44,7 +44,7 @@ public class ResultSetExport
    static ILogger log = LoggerController.createLogger(ResultSetExport.class);
    private final Exporter _exporter;
 
-   public ResultSetExport(Statement stmt, String sql, DialectType dialect, ProgressAbortFactoryCallback progressControllerFactory)
+   public ResultSetExport(Statement stmt, String sql, DialectType dialect, ProgressAbortFactoryCallback progressControllerFactory, JFrame owner)
    {
       final ExporterCallback exporterCallback = new ExporterCallback()
       {
@@ -61,35 +61,29 @@ public class ResultSetExport
          }
 
          @Override
-         public TableExportController createTableExportController(Window owner)
-         {
-            return ExportControllerFactory.createExportControllerForResultSet(owner);
-         }
-
-         @Override
          public boolean checkMissingData(String separatorChar)
          {
             return false;
          }
 
          @Override
-         public IExportData createExportData(TableExportController ctrl) throws ExportDataException
+         public IExportData createExportData(ExportController ctrl) throws ExportDataException
          {
             return onCreateExportData(ctrl, sql, stmt, dialect);
          }
       };
 
-      _exporter = new Exporter(exporterCallback);
+      _exporter = new Exporter(exporterCallback, ExportControllerFactory.createExportControllerForResultSet(owner));
 
    }
 
-   public void export(Window owner) throws ExportDataException
+   public void export()
    {
-      _exporter.export(owner);
+      _exporter.export();
    }
 
 
-   private IExportData onCreateExportData(TableExportController ctrl, String sql, Statement stmt, DialectType dialect) throws ExportDataException
+   private IExportData onCreateExportData(ExportController ctrl, String sql, Statement stmt, DialectType dialect) throws ExportDataException
    {
       try
       {

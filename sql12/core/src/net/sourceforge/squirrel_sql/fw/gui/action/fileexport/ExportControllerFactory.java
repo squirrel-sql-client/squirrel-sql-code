@@ -6,19 +6,22 @@ import java.awt.Window;
 
 public class ExportControllerFactory
 {
-   public static TableExportController createExportControllerForTable(Window owner)
+   public static ExportController createExportControllerForTable(Window owner)
    {
-      return new TableExportController(owner, new TableExportSelectionPanelController(), false, true);
+      final ExportController exportController = new ExportController(owner, new TableExportSelectionPanelController(), false, true);
+      exportController.showNonModal();
+      return exportController;
    }
 
    /**
     * Is not expected to be called from EDT.
     * That's why we halt the calling thread to wait for the user to finish the export configuration.
+    * To halt the calling thread the export dialog is modal.
     */
-   public static TableExportController createExportControllerForResultSet(Window owner)
+   public static ExportController createExportControllerForResultSet(Window owner)
    {
-      final TableExportController[] buf = new TableExportController[1];
-      GUIUtils.processOnSwingEventThread(() -> buf[0] = new TableExportController(owner, new ResultSetExportSelectionPanelController(), true, false), true);
-      return buf[0];
+      final ExportController exportController = new ExportController(owner, new ResultSetExportSelectionPanelController(), true, false);
+      GUIUtils.processOnSwingEventThread(() -> exportController.showModal(), true);
+      return exportController;
    }
 }
