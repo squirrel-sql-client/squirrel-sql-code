@@ -76,8 +76,6 @@ public class TableExportCommand extends AbstractExportCommand
    @Override
    protected IExportData createExportData(TableExportController ctrl)
    {
-      return new JTableExportData(_table, ctrl.exportComplete());
+      return new JTableExportData(_table, ctrl.isExportComplete());
    }
-
-
 }

@@ -300,20 +300,12 @@ public abstract class AbstractExportCommand
 	 * @return
     * @param owner
 	 */
-	protected TableExportController createTableExportController(final Window owner) {
-
+	protected TableExportController createTableExportController(final Window owner)
+   {
       try
       {
          final TableExportController[] buf = new TableExportController[1];
-
-         Runnable runnable = new Runnable()
-         {
-            public void run()
-            {
-               buf[0] = new TableExportController(owner);
-            }
-         };
-         GUIUtils.processOnSwingEventThread(runnable, true);
+         GUIUtils.processOnSwingEventThread(() -> buf[0] = new TableExportController(owner, new TableExportSelectionPanelController(), false, true), true);
 
          return buf[0];
       }

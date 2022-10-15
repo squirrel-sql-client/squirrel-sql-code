@@ -91,10 +91,9 @@ public class ResultSetExportCommand extends AbstractExportCommand
       try
       {
          super.progress(i18n.EXECUTING_QUERY);
-         ResultSetExportController controller = (ResultSetExportController) ctrl;
-         if (controller.exportComplete() == false)
+         if (ctrl.isExportComplete() == false)
          {
-            stmt.setMaxRows(controller.getMaxRows());
+            stmt.setMaxRows(((ResultSetExportSelectionPanelController)ctrl.getExportSelectionPanelController()).getMaxRows());
          }
          this.resultSet = stmt.executeQuery(sql);
          return new ResultSetExportData(this.resultSet, dialect);
@@ -115,17 +114,8 @@ public class ResultSetExportCommand extends AbstractExportCommand
    {
       try
       {
-         final ResultSetExportController[] buf = new ResultSetExportController[1];
-
-         Runnable runnable = new Runnable()
-         {
-            public void run()
-            {
-               buf[0] = new ResultSetExportController(owner);
-            }
-         };
-
-         GUIUtils.processOnSwingEventThread(runnable, true);
+         final TableExportController[] buf = new TableExportController[1];
+         GUIUtils.processOnSwingEventThread(() -> buf[0] = new TableExportController(owner, new ResultSetExportSelectionPanelController(), true, false), true);
 
          return buf[0];
       }
