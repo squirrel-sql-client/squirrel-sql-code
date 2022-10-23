@@ -520,11 +520,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       int sqlResultsTabPlacement = _session.getProperties().getSQLResultsTabPlacement();
       _tabResultTabs = UIFactory.getInstance().createTabbedPane(sqlResultsTabPlacement);
 
-		JPanel panel = new JPanel();
-      panel.setLayout(new BorderLayout(15, 0));
-		panel.add(createRightPanel(), BorderLayout.EAST);
-		panel.add(_currentSqlLblCtrl.getLabel(), BorderLayout.CENTER);
-		add(panel, BorderLayout.NORTH);
+      add(createTopPanel(), BorderLayout.NORTH);
 		add(_tabResultTabs, BorderLayout.CENTER);
 
        //  SCROLL _resultSetSp.setBorder(BorderFactory.createEmptyBorder());
@@ -548,21 +544,30 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    }
 
-   private JPanel createRightPanel()
+   private JPanel createTopPanel()
+   {
+      JPanel topPanel = new JPanel();
+      topPanel.setLayout(new BorderLayout(15, 0));
+      topPanel.add(createTopRightPanel(), BorderLayout.EAST);
+      topPanel.add(_currentSqlLblCtrl.getLabel(), BorderLayout.CENTER);
+      return topPanel;
+   }
+
+   private JPanel createTopRightPanel()
    {
       JPanel ret = new JPanel(new BorderLayout());
 
-      ret.add(createButtonsPanel(), BorderLayout.EAST);
+      ret.add(createTopRightButtonsPanel(), BorderLayout.EAST);
 
       ret.add(_rowColAndSumController.getPanel(), BorderLayout.CENTER);
 
       return ret;
    }
 
-   private JPanel createButtonsPanel()
+   private JPanel createTopRightButtonsPanel()
    {
       JPanel ret = new JPanel();
-      ret.setLayout(new GridLayout(1, 3, 0, 0));
+      ret.setLayout(new GridLayout(1, 0, 0, 0)); // 0 columns means any number of columns
 
       ret.add(_readMoreResultsHandler.getLoadingLabel());
       ret.add(new TabButton(getRerunCurrentSQLResultTabAction()));

@@ -7,6 +7,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyAdapter;
@@ -23,8 +25,8 @@ public class ExportController
    private boolean _ok = false;
 
    private Window _owner;
+   private ExportDialogType _exportDialogType;
    private ExportSelectionPanelController _exportSelectionPanelController;
-   private boolean _warnIfExcel;
    private TableExportDlgFinishedListener _tableExportDlgFinishedListener;
    private boolean _finishFired;
 
@@ -32,15 +34,13 @@ public class ExportController
    /**
     * @param tableExportDlgFinishedListener when null the dialog is modal.
     */
-   ExportController(Window owner,
-                    ExportSelectionPanelController exportSelectionPanelController,
-                    boolean warnIfExcel,
-                    boolean enableColoring)
+   ExportController(Window owner, ExportDialogType exportDialogType)
    {
       _owner = owner;
-      _exportSelectionPanelController = exportSelectionPanelController;
-      _warnIfExcel = warnIfExcel;
-      _dlg = new ExportDlg(owner, exportSelectionPanelController.getPanel(), enableColoring);
+      _exportDialogType = exportDialogType;
+      _exportSelectionPanelController = exportDialogType.createExportSelectionPanelController();
+
+      _dlg = new ExportDlg(owner, _exportSelectionPanelController.getPanel(), _exportDialogType);
 
       initData();
 
@@ -54,6 +54,28 @@ public class ExportController
          }
       });
 
+      _dlg.txtFile.getDocument().addDocumentListener(new DocumentListener() {
+         @Override
+         public void insertUpdate(DocumentEvent e)
+         {
+            updateDestinationInfo();
+         }
+
+         @Override
+         public void removeUpdate(DocumentEvent e)
+         {
+            updateDestinationInfo();
+         }
+
+         @Override
+         public void changedUpdate(DocumentEvent e)
+         {
+            updateDestinationInfo();
+         }
+      });
+
+      updateDestinationInfo();
+
       _dlg.getRootPane().setDefaultButton(_dlg.btnOk);
 
       GUIUtils.enableCloseByEscape(_dlg, dlg -> fireFinished());
@@ -64,6 +86,11 @@ public class ExportController
             fireFinished();
          }
       });
+   }
+
+   private void updateDestinationInfo()
+   {
+      _exportSelectionPanelController.updateExportDestinationInfo(_dlg.txtFile.getText(), _dlg.radFormatXLSX.isSelected() || _dlg.radFormatXLS.isSelected());
    }
 
    public void showModal()
@@ -201,6 +228,8 @@ public class ExportController
       {
          throw new IllegalStateException("No valid output format");
       }
+
+      updateDestinationInfo();
    }
 
    private void replaceFileEnding()
@@ -398,7 +427,7 @@ public class ExportController
     */
    private boolean warnIfExcel()
    {
-      if(this._dlg.radFormatXLS.isSelected() && _warnIfExcel)
+      if(this._dlg.radFormatXLS.isSelected() && _exportDialogType.isWarnIfExcel())
       {
          // i18n[TableExportCsvController.warnIfExcel=Exporting a huge data set for MS Excel maybe use huge memory.]
          String msg = s_stringMgr.getString("TableExportCsvController.warnIfExcel");

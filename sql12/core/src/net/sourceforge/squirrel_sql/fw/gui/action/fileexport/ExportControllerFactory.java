@@ -8,7 +8,7 @@ public class ExportControllerFactory
 {
    public static ExportController createExportControllerForTable(Window owner)
    {
-      final ExportController exportController = new ExportController(owner, new TableExportSelectionPanelController(), false, true);
+      final ExportController exportController = new ExportController(owner, ExportDialogType.UI_TABLE_EXPORT);
       exportController.showNonModal();
       return exportController;
    }
@@ -20,7 +20,7 @@ public class ExportControllerFactory
     */
    public static ExportController createExportControllerForResultSet(Window owner)
    {
-      final ExportController exportController = new ExportController(owner, new ResultSetExportSelectionPanelController(), true, false);
+      final ExportController exportController = new ExportController(owner, ExportDialogType.RESULT_SET_EXPORT);
       GUIUtils.processOnSwingEventThread(() -> exportController.showModal(), true);
       return exportController;
    }

@@ -11,4 +11,9 @@ public interface ExportSelectionPanelController
    void initPanel(TableExportPreferences prefs);
 
    boolean isExportComplete();
+
+
+   default void updateExportDestinationInfo(String exportFileNameText, boolean destinationIsExcel)
+   {
+   }
 }

@@ -1,11 +1,18 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -14,10 +21,16 @@ public class TableExportSelectionPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportSelectionPanel.class);
 
-
    JRadioButton radComplete;
    JRadioButton radSelection;
    JRadioButton radMultipleSQLRes;
+
+   JList<SQLResultExport> lstSQLResultsToExport;
+   JButton btnUp;
+   JButton btnDown;
+   JButton btnEdit;
+   JButton btnDelete;
+   JTextField txtExportFileOrDir;
 
    public TableExportSelectionPanel()
    {
@@ -25,26 +38,79 @@ public class TableExportSelectionPanel extends JPanel
 
       GridBagConstraints gbc;
 
-      // i18n[TableExportCsvDlg.exportCompleteTable=Export complete table]
       radComplete = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.exportCompleteTable"));
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
       add(radComplete, gbc);
 
-      // i18n[TableExportCsvDlg.exportSelection=Export selection]
       radSelection = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.exportSelection"));
       gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
       add(radSelection, gbc);
 
       radMultipleSQLRes = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.exportMultipleSQLResults"));
+      radMultipleSQLRes.setToolTipText(s_stringMgr.getString("TableExportCsvDlg.exportMultipleSQLResults.tooltip"));
       gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
       add(radMultipleSQLRes, gbc);
 
-      gbc = new GridBagConstraints(3, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
-      add(new JPanel(), gbc);
+
+      gbc = new GridBagConstraints(0, 1, 3, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0);
+      add(createSQLResultExportListPanel(), gbc);
+
 
       ButtonGroup bg = new ButtonGroup();
       bg.add(radComplete);
       bg.add(radSelection);
       bg.add(radMultipleSQLRes);
+
+      setBorder(BorderFactory.createEtchedBorder());
+   }
+
+   private JPanel createSQLResultExportListPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
+      lstSQLResultsToExport = new JList<>();
+      ret.add(lstSQLResultsToExport, gbc);
+
+      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      ret.add(createRightSideListEditButtons(), gbc);
+
+
+
+      gbc = new GridBagConstraints(0, 1, 2, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 0), 0, 0);
+      txtExportFileOrDir = GUIUtils.styleTextFieldToCopyableLabel(new JTextField());
+      ret.add(txtExportFileOrDir, gbc);
+
+      return GUIUtils.setPreferredHeight(ret, 120);
+   }
+
+   private JPanel createRightSideListEditButtons()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+
+      GridBagConstraints gbc;
+      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      btnUp = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ARROW_UP));
+      btnUp.setToolTipText(s_stringMgr.getString("TableExportSelectionPanel.edit.excel.table_sheet.order.tooltip"));
+      ret.add(GUIUtils.styleAsToolbarButton(btnUp), gbc);
+
+      gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      btnDown = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ARROW_DOWN));
+      btnDown.setToolTipText(s_stringMgr.getString("TableExportSelectionPanel.edit.excel.table_sheet.order.tooltip"));
+      ret.add(GUIUtils.styleAsToolbarButton(btnDown), gbc);
+
+      gbc = new GridBagConstraints(1, 2, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 0, 0), 0, 0);
+      btnEdit = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.EDIT));
+      btnEdit.setToolTipText(s_stringMgr.getString("TableExportSelectionPanel.edit.excel.table_sheet.name.tooltip"));
+      ret.add(GUIUtils.styleAsToolbarButton(btnEdit), gbc);
+
+      gbc = new GridBagConstraints(1, 3, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 0, 0), 0, 0);
+      btnDelete = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DELETE));
+      btnDelete.setToolTipText(s_stringMgr.getString("TableExportSelectionPanel.remove.sql.result.tooltip"));
+      ret.add(GUIUtils.styleAsToolbarButton(btnDelete), gbc);
+
+      return ret;
    }
 }

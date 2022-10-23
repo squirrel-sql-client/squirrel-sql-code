@@ -11,6 +11,7 @@ public class TableExportPreferencesDAO
    private static final String PREF_KEY_SEPERATOR_CHAR = "SquirrelSQL.csvexport.sepearatorChar";
    private static final String PREF_KEY_LINE_SEPERATOR = "SquirrelSQL.csvexport.lineSeparator";
    private static final String PREF_KEY_EXPORT_COMPLETE = "SquirrelSQL.csvexport.exportcomplete";
+   private static final String PREF_KEY_EXPORT_MULTIPLE_SQL_RESULTS = "SquirrelSQL.csvexport.exportMultipleSQLResults";
    private static final String PREF_KEY_USE_GLOBAL_PREFS_FORMATING = "SquirrelSQL.csvexport.useGlobalPrefsFomating";
    private static final String PREF_KEY_EXECUTE_COMMAND = "SquirrelSQL.csvexport.executeCommand";
    private static final String PREF_KEY_COMMAND = "SquirrelSQL.csvexport.commandString";
@@ -35,6 +36,7 @@ public class TableExportPreferencesDAO
       ret.setSeperatorChar(Props.getString(PREF_KEY_SEPERATOR_CHAR, ret.getSeperatorChar()));
       ret.setLineSeperator(Props.getString(PREF_KEY_LINE_SEPERATOR, ret.getLineSeperator()));
       ret.setExportComplete(Props.getBoolean(PREF_KEY_EXPORT_COMPLETE, ret.isExportComplete()));
+      ret.setExportMultipleSQLResults(Props.getBoolean(PREF_KEY_EXPORT_MULTIPLE_SQL_RESULTS, ret.isExportMultipleSQLResults()));
       ret.setUseGlobalPrefsFormating(Props.getBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, ret.isUseGlobalPrefsFormating()));
       ret.setExecuteCommand(Props.getBoolean(PREF_KEY_EXECUTE_COMMAND, ret.isExecuteCommand()));
       ret.setCommand(Props.getString(PREF_KEY_COMMAND, ret.getCommand()));
@@ -59,6 +61,7 @@ public class TableExportPreferencesDAO
       Props.putString(PREF_KEY_SEPERATOR_CHAR, prefs.getSeperatorChar());
       Props.putString(PREF_KEY_LINE_SEPERATOR, prefs.getLineSeperator());
       Props.putBoolean(PREF_KEY_EXPORT_COMPLETE, prefs.isExportComplete());
+      Props.putBoolean(PREF_KEY_EXPORT_MULTIPLE_SQL_RESULTS, prefs.isExportMultipleSQLResults());
       Props.putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, prefs.isUseGlobalPrefsFormating());
       Props.putBoolean(PREF_KEY_EXECUTE_COMMAND, prefs.isExecuteCommand());
       Props.putString(PREF_KEY_COMMAND, prefs.getCommand());

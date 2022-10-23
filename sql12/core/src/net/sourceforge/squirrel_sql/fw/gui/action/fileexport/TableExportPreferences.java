@@ -56,6 +56,7 @@ public class TableExportPreferences
    // PREF_KEY_LINE_SEPERATOR;
    private String _lineSeperator = LineSeparator.DEFAULT.name();
    private boolean _useColoring;
+   private boolean _exportMultipleSQLResults;
 
    public boolean isFormatXLS()
    {
@@ -225,5 +226,15 @@ public class TableExportPreferences
    public void setUseColoring(boolean useColoring)
    {
       _useColoring = useColoring;
+   }
+
+   public boolean isExportMultipleSQLResults()
+   {
+      return _exportMultipleSQLResults;
+   }
+
+   public void setExportMultipleSQLResults(boolean exportMultipleSQLResults)
+   {
+      _exportMultipleSQLResults = exportMultipleSQLResults;
    }
 }
