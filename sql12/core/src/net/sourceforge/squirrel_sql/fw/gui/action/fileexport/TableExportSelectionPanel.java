@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -12,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -25,12 +27,13 @@ public class TableExportSelectionPanel extends JPanel
    JRadioButton radSelection;
    JRadioButton radMultipleSQLRes;
 
-   JList<SQLResultExport> lstSQLResultsToExport;
+   JList<SqlResultListEntry> lstSQLResultsToExport;
    JButton btnUp;
    JButton btnDown;
    JButton btnEdit;
    JButton btnDelete;
    JTextField txtExportFileOrDir;
+   SmallToolTipInfoButton btnInfo;
 
    public TableExportSelectionPanel()
    {
@@ -71,7 +74,7 @@ public class TableExportSelectionPanel extends JPanel
 
       gbc = new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
       lstSQLResultsToExport = new JList<>();
-      ret.add(lstSQLResultsToExport, gbc);
+      ret.add(new JScrollPane(lstSQLResultsToExport), gbc);
 
       gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
       ret.add(createRightSideListEditButtons(), gbc);
@@ -82,7 +85,7 @@ public class TableExportSelectionPanel extends JPanel
       txtExportFileOrDir = GUIUtils.styleTextFieldToCopyableLabel(new JTextField());
       ret.add(txtExportFileOrDir, gbc);
 
-      return GUIUtils.setPreferredHeight(ret, 120);
+      return GUIUtils.setPreferredHeight(ret, 150);
    }
 
    private JPanel createRightSideListEditButtons()
@@ -110,6 +113,10 @@ public class TableExportSelectionPanel extends JPanel
       btnDelete = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.DELETE));
       btnDelete.setToolTipText(s_stringMgr.getString("TableExportSelectionPanel.remove.sql.result.tooltip"));
       ret.add(GUIUtils.styleAsToolbarButton(btnDelete), gbc);
+
+      gbc = new GridBagConstraints(1, 4, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 0, 0), 0, 0);
+      btnInfo = new SmallToolTipInfoButton(s_stringMgr.getString("TableExportSelectionPanel.info.button"));
+      ret.add(btnInfo.getButton(), gbc);
 
       return ret;
    }

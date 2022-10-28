@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
 import net.sourceforge.squirrel_sql.client.session.filemanager.IFileEditorAPI;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecutor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack.ChangeTracker;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.SQLPanelSplitter;
@@ -42,9 +42,9 @@ import java.util.ArrayList;
  */
 public interface ISQLPanelAPI extends IFileEditorAPI
 {
-	void addExecutor(ISQLResultExecuter exec);
+	void addExecutor(ISQLResultExecutor exec);
 
-	void removeExecutor(ISQLResultExecuter exec);
+	void removeExecutor(ISQLResultExecutor exec);
 
 	/**
 	 * Add a listener listening for SQL Execution.
@@ -109,7 +109,7 @@ public interface ISQLPanelAPI extends IFileEditorAPI
      * 
      * @return an implementation of ISQLResultExecuter 
      */
-    ISQLResultExecuter getSQLResultExecuter();
+    ISQLResultExecutor getSQLResultExecuter();
     
 
 	/**

@@ -257,7 +257,7 @@ public interface ISession extends IHasIdentifier
    /**
     * Hint for plugins:
     * When ISessionPlugin.sessionStarted is called the active session window is
-    * always the SessionInternalFrame which provides an SQLPanelAPI. This might help to simplyfy
+    * always the SessionInternalFrame which provides an SQLPanelAPI. This might help to simplify
     * the code in the sessionStarted() method of a plugin.
     *
     * @throws IllegalStateException if ActiveSessionWindow doesn't provide an SQLPanelAPI

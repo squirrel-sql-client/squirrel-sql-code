@@ -1,20 +1,21 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.List;
+
 public class ResultTabClosing
 {
-
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultTabClosing.class);
 
    private final TabIconManager _tabIconManager;
@@ -139,7 +140,19 @@ public class ResultTabClosing
 
    public boolean isAnchoredAt(int indexOfTab)
    {
-      return _tabIconManager.getAnchorIcon() == _tabbedExecutionsPanel.getIconAt(indexOfTab);
+      return _tabIconManager.getAnchorIcon() == getIconAt(indexOfTab);
+   }
+
+   private Icon getIconAt(int indexOfTab)
+   {
+      if(null == _tabbedExecutionsPanel.getTabComponentAt(indexOfTab))
+      {
+         return _tabbedExecutionsPanel.getIconAt(indexOfTab);
+      }
+      else
+      {
+         return ((JLabel)_tabbedExecutionsPanel.getTabComponentAt(indexOfTab)).getIcon();
+      }
    }
 
    private void _closeTab(Component tab)

@@ -47,7 +47,7 @@ import net.sourceforge.squirrel_sql.plugins.postgres.actions.VacuumTableAction;
 import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresSequenceInodeExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresTableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresTableTriggerExtractorImpl;
-import net.sourceforge.squirrel_sql.plugins.postgres.explain.ExplainExecuterPanel;
+import net.sourceforge.squirrel_sql.plugins.postgres.explain.ExplainExecutorPanel;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.ActiveConnections;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexSourceTab;
@@ -239,7 +239,7 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
 
         GUIUtils.processOnSwingEventThread(() -> updateTreeApi(session.getSessionInternalFrame().getObjectTreeAPI()));
 
-        SwingUtilities.invokeLater(() -> session.getSQLPanelAPIOfActiveSessionWindow().addExecutor(new ExplainExecuterPanel(session)));
+        SwingUtilities.invokeLater(() -> session.getSQLPanelAPIOfActiveSessionWindow().addExecutor(new ExplainExecutorPanel(session)));
 
         return new PluginSessionCallback()
         {
@@ -247,7 +247,7 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
             @Override
             public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, final ISession sess)
             {
-                SwingUtilities.invokeLater(() -> sqlInternalFrame.getMainSQLPanelAPI().addExecutor(new ExplainExecuterPanel(sess)));
+                SwingUtilities.invokeLater(() -> sqlInternalFrame.getMainSQLPanelAPI().addExecutor(new ExplainExecutorPanel(sess)));
             }
 
             @Override
@@ -265,7 +265,7 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
             @Override
             public void additionalSQLTabOpened(AdditionalSQLTab additionalSQLTab)
             {
-                SwingUtilities.invokeLater(() -> additionalSQLTab.getSQLPanelAPI().addExecutor(new ExplainExecuterPanel(additionalSQLTab.getSession())));
+                SwingUtilities.invokeLater(() -> additionalSQLTab.getSQLPanelAPI().addExecutor(new ExplainExecutorPanel(additionalSQLTab.getSession())));
             }
         };
     }

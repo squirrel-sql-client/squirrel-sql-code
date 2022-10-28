@@ -61,6 +61,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportChannel;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationFactory;
@@ -204,6 +205,7 @@ public class Application implements IApplication
 
 	private IconHandler _iconHandler = new DefaultIconHandler();
 	private PopupMenuAtticModel _popupMenuAtticModel = new PopupMenuAtticModel();
+	private MultipleSqlResultExportChannel _multipleSqlResultExportChannel = new MultipleSqlResultExportChannel();
 
 	public Application()
 	{
@@ -1498,5 +1500,11 @@ public class Application implements IApplication
    public PopupMenuAtticModel getPopupMenuAtticModel()
    {
 		return _popupMenuAtticModel;
+   }
+
+   @Override
+   public MultipleSqlResultExportChannel getMultipleSqlResultExportChannel()
+   {
+      return _multipleSqlResultExportChannel;
    }
 }

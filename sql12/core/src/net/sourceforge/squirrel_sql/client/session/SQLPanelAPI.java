@@ -48,7 +48,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
 import net.sourceforge.squirrel_sql.client.session.filemanager.SQLPanelSelectionHandler;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecutor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanelPosition;
@@ -183,12 +183,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
    }
 
 
-   public void addExecutor(ISQLResultExecuter exec)
+   public void addExecutor(ISQLResultExecutor exec)
 	{
 		_panel.addExecutor(exec);
 	}
 
-	public void removeExecutor(ISQLResultExecuter exec)
+	public void removeExecutor(ISQLResultExecutor exec)
 	{
 		_panel.removeExecutor(exec);
 	}
@@ -305,7 +305,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
      * 
      * @return an implementation of ISQLResultExecuter 
      */
-	 public ISQLResultExecuter getSQLResultExecuter()
+	 public ISQLResultExecutor getSQLResultExecuter()
 	 {
 		 return _panel.getSQLExecPanel();
 	 }

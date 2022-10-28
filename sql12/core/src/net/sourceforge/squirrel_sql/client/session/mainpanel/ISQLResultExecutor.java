@@ -17,17 +17,19 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.Icon;
-import javax.swing.JComponent;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.util.List;
 
 /**
  * This is the interface that can store executors for SQL.
  *
  */
-public interface ISQLResultExecuter
+public interface ISQLResultExecutor
 {
 
    enum ExecutionScope
@@ -54,4 +56,6 @@ public interface ISQLResultExecuter
     * @param icon may be null
     */
    void addCustomResult(CustomResultPanel panel, String title, Icon icon);
+
+   List<IResultTab> getAllSqlResultTabs();
 }

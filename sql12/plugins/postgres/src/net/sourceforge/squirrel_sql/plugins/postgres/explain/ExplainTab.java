@@ -62,7 +62,7 @@ public class ExplainTab extends JPanel
 	private final ISession _session;
 
 	/** Parent Explain Executer Panel */
-	private final ExplainExecuterPanel _parent;
+	private final ExplainExecutorPanel _parent;
 
 	private SQLExecutionInfo _info;
 
@@ -78,8 +78,8 @@ public class ExplainTab extends JPanel
 
 	private boolean _allowsEditing;
 
-	public ExplainTab(ISession session, ExplainExecuterPanel parent, ResultSetDataSet rsds,
-		SQLExecutionInfo info, IDataSetUpdateableTableModel model)
+	public ExplainTab(ISession session, ExplainExecutorPanel parent, ResultSetDataSet rsds,
+                     SQLExecutionInfo info, IDataSetUpdateableTableModel model)
 	{
 		_session = session;
 		_parent = parent;
@@ -93,7 +93,7 @@ public class ExplainTab extends JPanel
 
 	private void init()
 	{
-		_query = _info.getSQL().substring(ExplainExecuterPanel.EXPLAIN_PREFIX.length());
+		_query = _info.getSQL().substring(ExplainExecutorPanel.EXPLAIN_PREFIX.length());
 
 		_model.addListener(new DataSetUpdateableTableModelListener()
 		{

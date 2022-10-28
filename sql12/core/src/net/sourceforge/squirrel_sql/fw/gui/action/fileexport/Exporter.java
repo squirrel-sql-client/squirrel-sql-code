@@ -225,7 +225,7 @@ public class Exporter
 
          String formattedWrittenRows = NumberFormat.getIntegerInstance().format(writtenRows);
 
-         String fileName = StringUtilities.shorten(exportFile.getAbsolutePath(), 300, "...");
+         String fileName = StringUtilities.shortenBegin(exportFile.getAbsolutePath(), 300, "...");
 
          int selectIndex = JOptionPane.showOptionDialog(
                owner,

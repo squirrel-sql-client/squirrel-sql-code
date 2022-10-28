@@ -1,26 +1,20 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Stroke;
-import java.util.List;
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.ComponentIndicator;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Rectangle;
+import java.util.List;
 
 public class GotoHandler
 {
@@ -30,8 +24,8 @@ public class GotoHandler
 
    private PrefsFindInfo _prefsFindInfo;
 
-   private Timer _timer;
-   private int _blinkCount;
+
+   private ComponentIndicator _componentIndicator = new ComponentIndicator();
 
    public GotoHandler()
    {
@@ -112,12 +106,9 @@ public class GotoHandler
       return true;
    }
 
-   private void initBlinkComponent(Component componentToBlink)
+   private void initBlinkComponent(Component componentToIndicate)
    {
-      _timer = new Timer(500, e -> onBlinkComponent(componentToBlink));
-      _timer.setRepeats(true);
-      _timer.start();
-       SwingUtilities.invokeLater(() -> onBlinkComponent(componentToBlink));
+      _componentIndicator.init(componentToIndicate);
    }
 
 
@@ -129,51 +120,5 @@ public class GotoHandler
       }
 
       return _prefsFindInfo;
-   }
-
-   private void onBlinkComponent(Component component)
-   {
-      Graphics graphics = component.getGraphics();
-
-      if(null == graphics)
-      {
-         // Happens when prefs sheet is closed while blinking is active.
-         return;
-      }
-
-      if(_blinkCount++ % 2 == 0)
-      {
-         Color formerColor = graphics.getColor();
-         graphics.setColor(Color.red);
-
-         Stroke formerStroke = null;
-         int strokeWidth = 4;
-         if (graphics instanceof Graphics2D )
-         {
-            formerStroke = ((Graphics2D)graphics).getStroke();
-            ((Graphics2D)graphics).setStroke(new BasicStroke(strokeWidth));
-         }
-
-         graphics.drawRect(strokeWidth, strokeWidth, component.getBounds().width - 2 * strokeWidth, component.getBounds().height - 2 * strokeWidth);
-
-         graphics.setColor(formerColor);
-
-         if (graphics instanceof Graphics2D)
-         {
-            ((Graphics2D)graphics).setStroke(formerStroke);
-         }
-      }
-      else
-      {
-         component.repaint();
-      }
-
-
-      if(_blinkCount > 10)
-      {
-         _timer.stop();
-
-         component.repaint();
-      }
    }
 }

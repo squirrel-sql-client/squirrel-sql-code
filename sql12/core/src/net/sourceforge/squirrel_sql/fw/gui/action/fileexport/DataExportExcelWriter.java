@@ -48,7 +48,7 @@ import java.util.HashMap;
  */
 public class DataExportExcelWriter extends AbstractDataExportFileWriter
 {
-
+   public static final String EXCEL_EXPORT_SHEET_NAME = "Squirrel SQL Export";
    private Workbook workbook; // The streaming api export for (very) large xlsx files
    private Sheet sheet; // We write the data to this sheet
    private File file; // File where the export is written to
@@ -202,7 +202,7 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
       }
 
       this.file = file;
-      this.sheet = workbook.createSheet("Squirrel SQL Export");
+      this.sheet = workbook.createSheet(EXCEL_EXPORT_SHEET_NAME);
    }
 
    /**

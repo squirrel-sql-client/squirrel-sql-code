@@ -63,7 +63,7 @@ public class SQLPanelListenerManager
       }
    }
 
-   public void fireExecuterTabAdded(ISQLResultExecuter exec)
+   public void fireExecuterTabAdded(ISQLResultExecutor exec)
    {
       SQLResultExecuterTabEvent evt = new SQLResultExecuterTabEvent(exec);
       for (ISQLResultExecuterTabListener isqlResultExecuterTabListener : _sqlResultExecuterTabListener.toArray(new ISQLResultExecuterTabListener[0]))
@@ -72,7 +72,7 @@ public class SQLPanelListenerManager
       }
    }
 
-   public void fireExecuterTabActivated(ISQLResultExecuter exec)
+   public void fireExecuterTabActivated(ISQLResultExecutor exec)
    {
       SQLResultExecuterTabEvent evt = new SQLResultExecuterTabEvent(exec);
       for (ISQLResultExecuterTabListener isqlResultExecuterTabListener : _sqlResultExecuterTabListener.toArray(new ISQLResultExecuterTabListener[0]))

@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecutor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -63,14 +63,15 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 
-public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
+public class ExplainExecutorPanel extends JPanel implements ISQLResultExecutor
 {
 	static final String EXPLAIN_PREFIX = "EXPLAIN ANALYZE ";
 
-	private static final ILogger s_log = LoggerController.createLogger(ExplainExecuterPanel.class);
+	private static final ILogger s_log = LoggerController.createLogger(ExplainExecutorPanel.class);
 
-	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExplainExecuterPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExplainExecutorPanel.class);
 
 	static interface i18n
 	{
@@ -92,7 +93,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 	/** Each tab is an <TT>ExplainTab</TT> showing the explain result of a query. */
 	private JTabbedPane _tabbedExecutionsPanel;
 
-	public ExplainExecuterPanel(ISession session)
+	public ExplainExecutorPanel(ISession session)
 	{
 		_session = session;
 		_dialectType = DialectFactory.getDialectType(_session.getMetaData());
@@ -409,5 +410,11 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
    public void addCustomResult(CustomResultPanel resultPanelm, String title, Icon icon)
    {
 
+   }
+
+   @Override
+   public List<IResultTab> getAllSqlResultTabs()
+   {
+      throw new UnsupportedOperationException("Not implemented, should not be called");
    }
 }

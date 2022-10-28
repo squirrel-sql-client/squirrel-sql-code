@@ -343,7 +343,7 @@ public class StringUtilities
       return s;
    }
 
-   public static String shorten(String in, int maxLen, String incompleteIndikator)
+   public static String shortenBegin(String in, int maxLen, String incompleteIndikator)
    {
       if(in.length() <= maxLen)
       {
@@ -357,6 +357,23 @@ public class StringUtilities
       else
       {
          return incompleteIndikator +  in.substring(in.length() - maxLen);
+      }
+   }
+
+   public static String shortenEnd(String in, int maxLen, String incompleteIndikator)
+   {
+      if(in.length() <= maxLen)
+      {
+         return in;
+      }
+
+      if (null == incompleteIndikator)
+      {
+         return in.substring(0, maxLen);
+      }
+      else
+      {
+         return in.substring(0, maxLen) + incompleteIndikator;
       }
    }
 

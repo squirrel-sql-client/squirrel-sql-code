@@ -18,17 +18,26 @@ package net.sourceforge.squirrel_sql.plugins.oracle.explainplan;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
+import com.sun.treetable.AbstractTreeTableModel;
+import com.sun.treetable.JTreeTable;
+import com.sun.treetable.TreeTableModel;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
+import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecutor;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
+import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -40,39 +49,31 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-
-import com.sun.treetable.AbstractTreeTableModel;
-import com.sun.treetable.JTreeTable;
-import com.sun.treetable.TreeTableModel;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
-import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
-import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 
 
 /**
  * This is the panel where Oracle Explain Plans are executed and results presented.
  *
  */
-public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
+public class ExplainPlanExecutor extends JPanel implements ISQLResultExecutor
+{
 
 
-	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExplainPlanExecuter.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExplainPlanExecutor.class);
 
 
-	private static final ILogger s_log = LoggerController.createLogger(ExplainPlanExecuter.class);
+	private static final ILogger s_log = LoggerController.createLogger(ExplainPlanExecutor.class);
 
 	private ISession _session;
 	private boolean checkedPlanTable = false;
@@ -97,7 +98,7 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
 	* @throws	IllegalArgumentException
 	*			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	*/
-  public ExplainPlanExecuter(ISession session, ISQLPanelAPI sqlpanel) {
+  public ExplainPlanExecutor(ISession session, ISQLPanelAPI sqlpanel) {
 	 super();
 	 setSession(session);
 	 createGUI();
@@ -576,7 +577,7 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
 	 public void executerTabRemoved(SQLResultExecuterTabEvent evt) {}
 
 	 public void executerTabActivated(SQLResultExecuterTabEvent evt) {
-		if (evt.getExecuter() == ExplainPlanExecuter.this) {
+		if (evt.getExecuter() == ExplainPlanExecutor.this) {
 		  createPlanTable();
 		}
 	 }
@@ -871,7 +872,7 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
   }
 
   /**
-   * @see net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter#getSelectedResultTab()
+   * @see ISQLResultExecutor#getSelectedResultTab()
    */
   public IResultTab getSelectedResultTab() {
       throw new UnsupportedOperationException("ExplainPlanExecuter has no ResultTabs");
@@ -882,4 +883,10 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
    {
 
    }
+
+   @Override
+   public List<IResultTab> getAllSqlResultTabs()
+   {
+		throw new UnsupportedOperationException("Not implemented, should not be called");
+	}
 }
