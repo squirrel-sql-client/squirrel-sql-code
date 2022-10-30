@@ -37,8 +37,10 @@ public class StringUtilities
 
    public static final String NULL_AS_STRING = "<null>";
 
+   public static final char[] ILLEGAL_FILE_NAME_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
 
-	/**
+
+   /**
 	 * Clean the passed string. Replace whitespace characters with a single
 	 * space. If a <TT>null</TT> string passed return an empty string. E.G.
 	 * replace
@@ -268,7 +270,7 @@ public class StringUtilities
 
    public static String javaNormalize(String text, boolean ensureJavaStart)
    {
-      StringBuffer buf = new StringBuffer(text.length());
+      StringBuilder buf = new StringBuilder(text.length());
 
       if(ensureJavaStart && Character.isJavaIdentifierStart(text.charAt(0)) )
       {
@@ -299,6 +301,36 @@ public class StringUtilities
       String ret = buf.toString();
 
       return ret;
+   }
+
+   public static String fileNameNormalize(String text)
+   {
+      StringBuilder buf = new StringBuilder(text.length());
+
+      for(int i=0; i < text.length(); ++i)
+      {
+
+         boolean illegal = false;
+         for (char illegalFileNameChar : ILLEGAL_FILE_NAME_CHARACTERS)
+         {
+            if(text.charAt(i) == illegalFileNameChar)
+            {
+               illegal = true;
+               break;
+            }
+         }
+
+         if ( illegal )
+         {
+            buf.append('_');
+         }
+         else
+         {
+            buf.append(text.charAt(i));
+         }
+      }
+
+      return buf.toString().trim();
    }
 
 

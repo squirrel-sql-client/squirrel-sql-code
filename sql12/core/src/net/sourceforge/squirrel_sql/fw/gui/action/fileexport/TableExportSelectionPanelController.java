@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -28,6 +29,8 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
       _exportSelectionPanel.radSelection.addActionListener(e -> updateUI());
       _exportSelectionPanel.radMultipleSQLRes.addActionListener(e -> updateUI());
 
+      _exportSelectionPanel.btnEdit.addActionListener(e -> onEdit());
+
       _exportSelectionPanel.lstSQLResultsToExport.addMouseListener(new MouseAdapter() {
          @Override
          public void mouseClicked(MouseEvent e)
@@ -35,6 +38,30 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
             onListClicked(e);
          }
       });
+   }
+
+   private void onEdit()
+   {
+      final SqlResultListEntry selectedValue = _exportSelectionPanel.lstSQLResultsToExport.getSelectedValue();
+
+      if(null == selectedValue)
+      {
+         final String msg = s_stringMgr.getString("TableExportSelectionPanelController.no.sql.result.selected");
+         Main.getApplication().getMessageHandler().showWarningMessage(msg);
+         return;
+      }
+
+      GUIUtils.getOwningWindow(_exportSelectionPanel);
+
+      final EditExcelTabOrFileNameCtrl ctrl =
+            new EditExcelTabOrFileNameCtrl(GUIUtils.getOwningWindow(_exportSelectionPanel), selectedValue.toString());
+
+      if(ctrl.isOk())
+      {
+         selectedValue.setUserEnteredSqlResultName(ctrl.getNewSqlResultName());
+      }
+
+      //((DefaultListModel)_exportSelectionPanel.lstSQLResultsToExport.getModel()).elem
    }
 
    private void onListClicked(MouseEvent e)
@@ -52,7 +79,7 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
          {
             return;
          }
-         selEntry.getHandle().redIndicateTabComponent();
+         selEntry.getHandle().indicateTabComponent();
       }
       else if(2 == e.getClickCount())
       {
@@ -63,7 +90,7 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
             return;
          }
          selEntry.getHandle().selectResultTab();
-         selEntry.getHandle().redIndicateTabComponent();
+         selEntry.getHandle().indicateTabComponent();
 
       }
    }
@@ -71,7 +98,8 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
    @Override
    public void writeControlsToPrefs(TableExportPreferences prefs)
    {
-      _exportSelectionPanel.radComplete.isSelected();
+      prefs.setExportMultipleSQLResults(_exportSelectionPanel.radMultipleSQLRes.isSelected());
+      prefs.setExportComplete(prefs.isExportComplete());
    }
 
    @Override
@@ -123,6 +151,11 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
                _exportSelectionPanel.lstSQLResultsToExport.setSelectedValue(selEntry, true);
             }
          }
+         else if(false == listEntries.isEmpty())
+         {
+            _exportSelectionPanel.lstSQLResultsToExport.setSelectedIndex(0);
+         }
+
       }
       else
       {

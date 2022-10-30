@@ -47,8 +47,10 @@ public class ResultSetExportSelectionPanelController implements ExportSelectionP
 
 	public void initPanel(TableExportPreferences prefs)
 	{
-		_exportSelectionPanel.radComplete.setSelected(prefs.isExportComplete());
-		_exportSelectionPanel.radLimited.setSelected(false == prefs.isExportComplete());
+		final boolean exportComplete = prefs.isExportComplete() || prefs.isExportMultipleSQLResults();
+
+		_exportSelectionPanel.radComplete.setSelected(exportComplete);
+		_exportSelectionPanel.radLimited.setSelected(false == exportComplete);
 
 		_exportSelectionPanel.txtLimitRows.setText(prefs.getLimitRows());
 

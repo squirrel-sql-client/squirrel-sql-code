@@ -15,7 +15,7 @@ public class SqlResultTabHandle
       _sqlResultExecutor = sqlResultExecutor;
    }
 
-   public void redIndicateTabComponent()
+   public void indicateTabComponent()
    {
       for (int i = 0; i < _sqlResultExecutor.getTabbedPane().getTabCount(); i++)
       {
