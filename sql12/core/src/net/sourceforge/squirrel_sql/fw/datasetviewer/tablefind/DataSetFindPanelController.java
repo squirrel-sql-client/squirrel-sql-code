@@ -7,9 +7,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
+import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionCommand;
-import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -31,7 +30,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DataSetFindPanelController
@@ -39,11 +37,12 @@ public class DataSetFindPanelController
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataSetFindPanelController.class);
 
-   private static final String PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF = "SquirrelSQL.DataSetFind.tableSearch.StrPref_";
+   private static final String PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF_PREFIX = "SquirrelSQL.DataSetFind.tableSearch.StrPref_";
 
    private static final int MAX_HIST_LENGTH = 10;
 
    private DataSetFindPanel _dataSetFindPanel;
+   private EditableComboBoxHandler _editableComboBoxHandler;
 
    private TableTraverser _tableTraverser = new TableTraverser();
    private DataSetViewerTablePanel _dataSetViewerTablePanel;
@@ -81,15 +80,9 @@ public class DataSetFindPanelController
 
       _dataSetFindPanel.cboMatchType.addItemListener(e -> clearFind());
 
-      for (int i = 0; i <  MAX_HIST_LENGTH; i++)
-      {
-         String item = Props.getString(PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF + i, null);
-         if (null != item)
-         {
-            _dataSetFindPanel.cboString.addItem(item);
-         }
-      }
-      _dataSetFindPanel.cboString.getEditor().setItem(null);
+      _editableComboBoxHandler = new EditableComboBoxHandler(_dataSetFindPanel.cboString, PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF_PREFIX, MAX_HIST_LENGTH);
+
+      _editableComboBoxHandler.fillComboBox();
 
       initKeyStrokes();
    }
@@ -245,7 +238,7 @@ public class DataSetFindPanelController
       ensureFindService();
 
 
-      String searchString = "" + _dataSetFindPanel.cboString.getEditor().getItem();
+      String searchString = _editableComboBoxHandler.getItem();
 
 
       if(false == StringUtils.equals(searchString, _currentSearchString))
@@ -262,9 +255,7 @@ public class DataSetFindPanelController
          return;
       }
 
-      addToComboList(_currentSearchString);
-
-
+      _editableComboBoxHandler.addToComboList(_currentSearchString);
 
       boolean matchFound = false;
       for(int i=0; i < _tableTraverser.getCellCount(); ++i)
@@ -396,7 +387,7 @@ public class DataSetFindPanelController
 
    private Color onGetBackgroundColor(int viewRow, int viewColumn)
    {
-      String searchString = "" + _dataSetFindPanel.cboString.getEditor().getItem();
+      String searchString = _editableComboBoxHandler.getItem();
       if(null == searchString)
       {
          return null;
@@ -420,46 +411,9 @@ public class DataSetFindPanelController
 
    }
 
-   private void addToComboList(String searchString)
-   {
-      for (int i = 0; i < _dataSetFindPanel.cboString.getItemCount(); i++)
-      {
-          if(searchString.equals(_dataSetFindPanel.cboString.getItemAt(i)))
-          {
-             _dataSetFindPanel.cboString.removeItemAt(i);
-          }
-      }
-      ((DefaultComboBoxModel)_dataSetFindPanel.cboString.getModel()).insertElementAt(searchString, 0);
-
-
-      ArrayList itemsToRemove = new ArrayList();
-      for (int i = 0; i <  _dataSetFindPanel.cboString.getItemCount(); i++)
-      {
-         if (MAX_HIST_LENGTH > i)
-         {
-            Props.putString(PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF + i, "" + _dataSetFindPanel.cboString.getItemAt(i));
-         }
-         else
-         {
-            itemsToRemove.add(_dataSetFindPanel.cboString.getItemAt(i));
-         }
-      }
-
-      for (Object item : itemsToRemove)
-      {
-         _dataSetFindPanel.cboString.removeItem(item);
-      }
-
-      _dataSetFindPanel.cboString.setSelectedIndex(0);
-
-   }
 
    public void focusTextField()
    {
-      _dataSetFindPanel.cboString.getEditor().getEditorComponent().requestFocus();
-
+      _editableComboBoxHandler.focus();
    }
-
-
-
 }

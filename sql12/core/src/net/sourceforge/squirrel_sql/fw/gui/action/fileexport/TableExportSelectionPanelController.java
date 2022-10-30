@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -29,7 +30,11 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
       _exportSelectionPanel.radSelection.addActionListener(e -> updateUI());
       _exportSelectionPanel.radMultipleSQLRes.addActionListener(e -> updateUI());
 
+      _exportSelectionPanel.btnUp.addActionListener(e -> onUp());
+      _exportSelectionPanel.btnDown.addActionListener(e -> onDown());
+
       _exportSelectionPanel.btnEdit.addActionListener(e -> onEdit());
+      _exportSelectionPanel.btnDelete.addActionListener(e -> onDelete());
 
       _exportSelectionPanel.lstSQLResultsToExport.addMouseListener(new MouseAdapter() {
          @Override
@@ -39,6 +44,41 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
          }
       });
    }
+
+   private void onUp()
+   {
+      final int selectedIndex = _exportSelectionPanel.lstSQLResultsToExport.getSelectedIndex();
+
+      if(selectedIndex <= 0)
+      {
+         return;
+      }
+
+      final DefaultListModel<SqlResultListEntry> model = (DefaultListModel<SqlResultListEntry>) _exportSelectionPanel.lstSQLResultsToExport.getModel();
+
+      final SqlResultListEntry entry = model.remove(selectedIndex);
+      final int newIndex = selectedIndex - 1;
+      model.add(newIndex, entry);
+      _exportSelectionPanel.lstSQLResultsToExport.setSelectedIndex(newIndex);
+   }
+
+   private void onDown()
+   {
+      final int selectedIndex = _exportSelectionPanel.lstSQLResultsToExport.getSelectedIndex();
+
+      final DefaultListModel<SqlResultListEntry> model = (DefaultListModel<SqlResultListEntry>) _exportSelectionPanel.lstSQLResultsToExport.getModel();
+
+      if(selectedIndex < 0 || selectedIndex == model.size() - 1)
+      {
+         return;
+      }
+
+      final SqlResultListEntry entry = model.remove(selectedIndex);
+      final int newIndex = selectedIndex + 1;
+      model.add(newIndex, entry);
+      _exportSelectionPanel.lstSQLResultsToExport.setSelectedIndex(newIndex);
+   }
+
 
    private void onEdit()
    {
@@ -61,8 +101,38 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
          selectedValue.setUserEnteredSqlResultName(ctrl.getNewSqlResultName());
       }
 
-      //((DefaultListModel)_exportSelectionPanel.lstSQLResultsToExport.getModel()).elem
+      _exportSelectionPanel.lstSQLResultsToExport.repaint();
    }
+
+   private void onDelete()
+   {
+      final int selectedIndex = _exportSelectionPanel.lstSQLResultsToExport.getSelectedIndex();
+
+      if(-1 == selectedIndex)
+      {
+         final String msg = s_stringMgr.getString("TableExportSelectionPanelController.no.sql.result.selected");
+         Main.getApplication().getMessageHandler().showWarningMessage(msg);
+         return;
+      }
+      ((DefaultListModel)_exportSelectionPanel.lstSQLResultsToExport.getModel()).remove(selectedIndex);
+
+      if(0 == _exportSelectionPanel.lstSQLResultsToExport.getModel().getSize())
+      {
+         return;
+      }
+
+
+      if(selectedIndex < _exportSelectionPanel.lstSQLResultsToExport.getModel().getSize())
+      {
+         _exportSelectionPanel.lstSQLResultsToExport.setSelectedIndex(selectedIndex);
+      }
+      else
+      {
+         _exportSelectionPanel.lstSQLResultsToExport.setSelectedIndex(_exportSelectionPanel.lstSQLResultsToExport.getModel().getSize() - 1);
+      }
+
+   }
+
 
    private void onListClicked(MouseEvent e)
    {
@@ -140,7 +210,9 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
 
          final SqlResultListEntry selEntry = _exportSelectionPanel.lstSQLResultsToExport.getSelectedValue();
 
-         _exportSelectionPanel.lstSQLResultsToExport.setListData(listEntries.toArray(new SqlResultListEntry[0]));
+         DefaultListModel<SqlResultListEntry> defaultListModel = new DefaultListModel<>();
+         defaultListModel.addAll(listEntries);
+         _exportSelectionPanel.lstSQLResultsToExport.setModel(defaultListModel);
 
          if(null != selEntry)
          {

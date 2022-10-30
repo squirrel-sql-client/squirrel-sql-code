@@ -1,13 +1,16 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
+import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Window;
 
 public class EditExcelTabOrFileNameCtrl
 {
    private final EditExcelTabOrFileNameDlg _dlg;
+   private final EditableComboBoxHandler _editableComboBoxHandler;
    private String _previousSqlResultName;
    private boolean _ok;
 
@@ -15,7 +18,9 @@ public class EditExcelTabOrFileNameCtrl
    {
       _dlg = new EditExcelTabOrFileNameDlg(owningWindow);
       _previousSqlResultName = sqlResultName;
-      _dlg.txtSqlResultName.setText(sqlResultName);
+
+      _editableComboBoxHandler = new EditableComboBoxHandler(_dlg.cboSqlResultName, "fileExport.EditExcelTabOrFileNameCtrl_", 10, _previousSqlResultName);
+      _editableComboBoxHandler.fillComboBox();
 
       _dlg.btnOk.addActionListener(e -> onOk());
       _dlg.btnCancel.addActionListener(e -> close());
@@ -23,10 +28,7 @@ public class EditExcelTabOrFileNameCtrl
       GUIUtils.enableCloseByEscape(_dlg);
       GUIUtils.initLocation(_dlg, 200, 100);
 
-      _dlg.txtSqlResultName.setSelectionStart(0);
-      _dlg.txtSqlResultName.setSelectionEnd(_dlg.txtSqlResultName.getText().length());
-
-      GUIUtils.forceFocus(_dlg.txtSqlResultName);
+      _editableComboBoxHandler.focus();
 
       _dlg.setVisible(true);
    }
@@ -50,12 +52,19 @@ public class EditExcelTabOrFileNameCtrl
 
    public String getNewSqlResultName()
    {
-      if(StringUtilities.isEmpty(_dlg.txtSqlResultName.getText(), true))
+      if(StringUtilities.isEmpty(_editableComboBoxHandler.getItem(), true))
       {
          return _previousSqlResultName;
       }
 
-      return  StringUtilities.fileNameNormalize(_dlg.txtSqlResultName.getText());
+      final String ret = StringUtilities.fileNameNormalize(_editableComboBoxHandler.getItem());
+
+      if(false == StringUtils.equals(ret, _previousSqlResultName))
+      {
+         _editableComboBoxHandler.addToComboList(ret);
+      }
+
+      return ret;
 
    }
 }

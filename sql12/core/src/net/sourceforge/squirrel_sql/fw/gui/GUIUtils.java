@@ -547,12 +547,12 @@ public class GUIUtils
       return newFolder;
    }
 
-	public static void forceFocus(final JComponent comp)
+	public static void forceFocus(final Component comp)
 	{
 		forceFocus(comp, null);
 	}
 
-	public static void forceFocus(final JComponent comp, Runnable callWhenFocused)
+	public static void forceFocus(final Component comp, Runnable callWhenFocused)
 	{
 		final Timer[] timerRef = new Timer[1];
 

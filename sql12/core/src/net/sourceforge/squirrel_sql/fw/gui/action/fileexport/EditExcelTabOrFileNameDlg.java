@@ -4,10 +4,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -17,7 +17,7 @@ import java.awt.Window;
 public class EditExcelTabOrFileNameDlg extends JDialog
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(EditExcelTabOrFileNameDlg.class);
-   final JTextField txtSqlResultName = new JTextField();
+   final JComboBox cboSqlResultName = new JComboBox();
    JButton btnOk = new JButton(s_stringMgr.getString("EditExcelTabOrFileNameDlg.ok"));
    JButton btnCancel = new JButton(s_stringMgr.getString("EditExcelTabOrFileNameDlg.cancel"));
 
@@ -32,7 +32,8 @@ public class EditExcelTabOrFileNameDlg extends JDialog
       getContentPane().add(new JLabel(s_stringMgr.getString("EditExcelTabOrFileNameDlg.enter.new.name")), gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
-      getContentPane().add(txtSqlResultName, gbc);
+      cboSqlResultName.setEditable(true);
+      getContentPane().add(cboSqlResultName, gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
       getContentPane().add(createButtonsPanel(), gbc);

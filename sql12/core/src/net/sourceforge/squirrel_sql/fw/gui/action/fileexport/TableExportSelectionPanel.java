@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -74,6 +75,7 @@ public class TableExportSelectionPanel extends JPanel
 
       gbc = new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
       lstSQLResultsToExport = new JList<>();
+      lstSQLResultsToExport.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       ret.add(new JScrollPane(lstSQLResultsToExport), gbc);
 
       gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
