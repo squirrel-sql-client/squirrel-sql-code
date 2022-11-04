@@ -1,41 +1,22 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import java.beans.PropertyVetoException;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
-import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQLTab;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SQLEditorActivator
 {
-   private final static ILogger s_log = LoggerController.createLogger(SQLEditorActivator.class);
-
    private Runnable _selectSqlEditorRunnable;
 
    public void prepareToActivateMainSqlTab(SessionInternalFrame sessionInternalFrame, SessionSqlJsonBean sessionSQL)
    {
       _selectSqlEditorRunnable = () -> {
-         try
-         {
-            final ISQLPanelAPI mainSQLPanelAPI = sessionInternalFrame.getMainSQLPanelAPI();
-            sessionInternalFrame.setSelected(true);
-            sessionInternalFrame.getSession().selectMainTab(MainPanel.ITabIndexes.SQL_TAB);
-            if(0 <= sessionSQL.getCaretPosition() &&  sessionSQL.getCaretPosition() < mainSQLPanelAPI.getEntireSQLScript().length())
-            {
-               mainSQLPanelAPI.setCaretPosition(sessionSQL.getCaretPosition());
-            }
-         }
-         catch (PropertyVetoException e)
-         {
-            s_log.error("Failed to select Mains Session SQL Tab", e);
-         }
+         SessionUtils.activateMainSqlTab(sessionInternalFrame, sessionSQL.getCaretPosition());
       };
    }
 
@@ -43,20 +24,7 @@ public class SQLEditorActivator
    public void prepareToActivateAdditionalSqlTab(SessionInternalFrame sessionInternalFrame, AdditionalSQLTab sqlTab, SessionSqlJsonBean sessionSQL)
    {
       _selectSqlEditorRunnable = () -> {
-         try
-         {
-            sessionInternalFrame.setSelected(true);
-            final int mainPanelTabIndex = sessionInternalFrame.getSession().getMainPanelTabIndex(sqlTab);
-            sessionInternalFrame.getSession().selectMainTab(mainPanelTabIndex);
-            if(0 <= sessionSQL.getCaretPosition() &&  sessionSQL.getCaretPosition() < sqlTab.getSQLPanelAPI().getEntireSQLScript().length())
-            {
-               sqlTab.getSQLPanelAPI().setCaretPosition(sessionSQL.getCaretPosition());
-            }
-         }
-         catch (PropertyVetoException e)
-         {
-            s_log.error("Failed to select SQL Tab", e);
-         }
+         SessionUtils.activateAdditionalSqlTab(sessionInternalFrame, sqlTab, sessionSQL.getCaretPosition());
       };
 
    }
@@ -64,15 +32,7 @@ public class SQLEditorActivator
    public void prepareToActivateSqlInternalFrame(SQLInternalFrame sqlInternalFrame, SessionSqlJsonBean sessionSQL)
    {
       _selectSqlEditorRunnable = () -> {
-         try
-         {
-            sqlInternalFrame.setSelected(true);
-            sqlInternalFrame.getMainSQLPanelAPI().setCaretPosition(sessionSQL.getCaretPosition());
-         }
-         catch (PropertyVetoException e)
-         {
-            s_log.error("Failed to select SQL Worksheet", e);
-         }
+         SessionUtils.activateSqlInternalFrame(sqlInternalFrame, sessionSQL.getCaretPosition());
       };
 
    }
