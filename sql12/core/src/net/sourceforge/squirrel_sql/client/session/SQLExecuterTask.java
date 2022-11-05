@@ -27,14 +27,6 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.DatabaseUpdateInfosListener;
@@ -50,6 +42,14 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.SwingUtilities;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class can be used to execute SQL.
@@ -480,12 +480,23 @@ public class SQLExecuterTask implements Runnable
          _handler.sqlExecutionComplete(exInfo, processedStatementCount, statementCount);
       }
 
-      EditableSqlCheck edittableCheck = new EditableSqlCheck(exInfo, _session);
 
-      if (_executeEditableCheck && edittableCheck.allowsEditing())
+
+
+      if (_executeEditableCheck)
       {
-         TableInfo ti = getTableName(edittableCheck.getTableNameFromSQL());
-         dataSetUpdateableTableModel.setTableInfo(ti);
+         // Do not create this object when _executeEditableCheck is false, i.e. in CLI mode.
+         EditableSqlCheck edittableCheck = new EditableSqlCheck(exInfo, _session);
+
+         if(edittableCheck.allowsEditing())
+         {
+            TableInfo ti = getTableName(edittableCheck.getTableNameFromSQL());
+            dataSetUpdateableTableModel.setTableInfo(ti);
+         }
+         else
+         {
+            dataSetUpdateableTableModel.setTableInfo(null);
+         }
       }
       else
       {

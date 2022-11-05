@@ -9,10 +9,12 @@ export IZPACK_JAVA_HOME=$JAVA_HOME
 # 2. If the one used by the IzPack installer is available then use that, otherwise
 # 3. Use the java that is in the command path.
 #
-
-
-if [ -d "$IZPACK_JAVA_HOME" -a -x "$IZPACK_JAVA_HOME/bin/java" ]; then
-	JAVA_HOME="$IZPACK_JAVA_HOME"
+if [ -d "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
+	JAVACMD="$JAVA_HOME/bin/java"
+elif [ -d "$IZPACK_JAVA_HOME" -a -x "$IZPACK_JAVA_HOME/bin/java" ]; then
+	JAVACMD="$IZPACK_JAVA_HOME/bin/java"
+else
+	JAVACMD=java
 fi
 
 # Are we running within Cygwin on some version of Windows or on Mac OS X?
