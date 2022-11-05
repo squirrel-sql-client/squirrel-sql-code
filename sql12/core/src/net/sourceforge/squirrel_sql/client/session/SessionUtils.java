@@ -1,7 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import java.awt.Frame;
+import java.beans.PropertyVetoException;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
+import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
@@ -12,11 +16,13 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.sqltab.AdditionalSQ
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import java.awt.Frame;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SessionUtils
 {
+   private final static ILogger s_log = LoggerController.createLogger(SessionUtils.class);
+
    public static Frame getOwningFrame(ISession destSession)
    {
       Frame owningFrame;
@@ -143,5 +149,54 @@ public class SessionUtils
       Main.getApplication().getPluginManager().additionalSQLTabOpened(additionalSQLTab);
       session.getSessionInternalFrame().moveToFront();
       return additionalSQLTab;
+   }
+
+   public static void activateMainSqlTab(SessionInternalFrame sessionInternalFrame, int caretPosition)
+   {
+      try
+      {
+         final ISQLPanelAPI mainSQLPanelAPI = sessionInternalFrame.getMainSQLPanelAPI();
+         sessionInternalFrame.setSelected(true);
+         sessionInternalFrame.getSession().selectMainTab(MainPanel.ITabIndexes.SQL_TAB);
+         if( 0 <= caretPosition && caretPosition < mainSQLPanelAPI.getEntireSQLScript().length())
+         {
+            mainSQLPanelAPI.setCaretPosition(caretPosition);
+         }
+      }
+      catch (PropertyVetoException e)
+      {
+         s_log.error("Failed to select Mains Session SQL Tab", e);
+      }
+   }
+
+   public static void activateAdditionalSqlTab(SessionInternalFrame sessionInternalFrame, AdditionalSQLTab sqlTab, int caretPosition)
+   {
+      try
+      {
+         sessionInternalFrame.setSelected(true);
+         final int mainPanelTabIndex = sessionInternalFrame.getSession().getMainPanelTabIndex(sqlTab);
+         sessionInternalFrame.getSession().selectMainTab(mainPanelTabIndex);
+         if( 0 <= caretPosition && caretPosition < sqlTab.getSQLPanelAPI().getEntireSQLScript().length())
+         {
+            sqlTab.getSQLPanelAPI().setCaretPosition(caretPosition);
+         }
+      }
+      catch (PropertyVetoException e)
+      {
+         s_log.error("Failed to select SQL Tab", e);
+      }
+   }
+
+   public static void activateSqlInternalFrame(SQLInternalFrame sqlInternalFrame, int caretPosition)
+   {
+      try
+      {
+         sqlInternalFrame.setSelected(true);
+         sqlInternalFrame.getMainSQLPanelAPI().setCaretPosition(caretPosition);
+      }
+      catch (PropertyVetoException e)
+      {
+         s_log.error("Failed to select SQL Worksheet", e);
+      }
    }
 }

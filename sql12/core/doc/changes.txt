@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Bug fixes:
 
+Saving all open files switched the active SQL editor.
+
 Editing SQL result tables didn't work.
   The following message box was displayed when the problem occured:
   "Cannot edit table because table cannot be found or table name is not unique in DB."
