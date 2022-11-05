@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Bug fixes:
 
+Command line mode:
+ 1. Exception occurred at the end of SQL output.
+ 2. Improved detection of Java-VM in Linux script squirrelcli.sh
+ Example for command line mode on Linux:
+ <squirrel-home>/squirrelcli/squirrelcli.sh -alias "yourAlias" -sql "SELECT * FROM <yourTable>"
+
 Saving all open files switched the active SQL editor.
 
 Editing SQL result tables didn't work.
