@@ -38,7 +38,14 @@ public class ExportFileWriter
       {
          if (prefs.isFormatXLS() || prefs.isFormatXLSOld())
          {
-            file = exportDataInfoList.getMultipleSqlResultExportDestinationInfo().getExcelExportFile();
+            if(null == exportDataInfoList.getMultipleSqlResultExportDestinationInfo())
+            {
+               file = exportDataInfoList.getSingleExportFile(prefs);
+            }
+            else
+            {
+               file = exportDataInfoList.getMultipleSqlResultExportDestinationInfo().getExcelExportFile();
+            }
 
             file = checkAndPrepareExportFile(file);
 

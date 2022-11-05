@@ -118,7 +118,7 @@ public class ResultSetExport
 
    public File getTargetFile()
    {
-      return _exporter.getTargetFile();
+      return _exporter.getSingleExportTargetFile();
    }
 
    public long getWrittenRows()

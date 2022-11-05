@@ -63,7 +63,7 @@ public class Exporter
    private final ExportController _exportController;
 
    private ProgressAbortCallback progressController = null;
-   private File _targetFile;
+   private File _singleExportTargetFile;
 
    private long writtenRows = -1;
    private ExporterCallback _exporterCallback;
@@ -76,14 +76,7 @@ public class Exporter
 
    public void export()
    {
-      if(_exportController.isModal())
-      {
-         exportDialogClosed(_exportController);
-      }
-      else
-      {
-         _exportController.setFinishedListener(() -> exportDialogClosed(_exportController));
-      }
+      exportDialogClosed(_exportController);
    }
 
    private void exportDialogClosed(ExportController ctrl)
@@ -104,10 +97,9 @@ public class Exporter
             }
          }
 
-         this._targetFile = ctrl.getFile();
+         this._singleExportTargetFile = ctrl.getSingleExportTargetFile();
 
-
-         exportToTargetFile(ctrl);
+         export(ctrl);
       }
       catch (Exception e)
       {
@@ -115,7 +107,7 @@ public class Exporter
       }
    }
 
-   private void exportToTargetFile(ExportController ctrl) throws ExportDataException
+   private void export(ExportController ctrl) throws ExportDataException
    {
       this.progressController = _exporterCallback.createProgressController();
 
@@ -141,7 +133,7 @@ public class Exporter
 
          writtenRows = writeExport(ctrl, exportDataInfoList);
 
-         firstExportedFile = exportDataInfoList.getFirstExportedFile(TableExportPreferencesDAO.loadPreferences());
+         firstExportedFile = exportDataInfoList.getFirstExportFile(TableExportPreferencesDAO.loadPreferences());
       }
       catch (ExportDataException e)
       {
@@ -167,8 +159,7 @@ public class Exporter
             // i18n[TableExportCsvCommand.writeFileSuccess=Export to file
             // "{0}" is complete.]
             ExportController finalCtrl = ctrl;
-            GUIUtils.processOnSwingEventThread(() -> showExportSuccessMessage(ctrl.getOwningWindow(), writtenRows, finalCtrl.getFile()), true);
-
+            GUIUtils.processOnSwingEventThread(() -> showExportSuccessMessage(ctrl.getOwningWindow(), writtenRows, firstExportedFile), true);
          }
       }
       else
@@ -274,9 +265,9 @@ public class Exporter
    /**
     * @return the targetFile
     */
-   public File getTargetFile()
+   public File getSingleExportTargetFile()
    {
-      return _targetFile;
+      return _singleExportTargetFile;
    }
 
    /**

@@ -31,11 +31,11 @@ public class MultipleSqlResultExportChannel
 
       List<IResultTab> tabs = sqlPanelApi.getSQLResultExecuter().getAllSqlResultTabs();
 
-      return tabs.stream().map(t -> createSqlResultTabHandle(sqlPanelApi, (ResultTab) t, activeSession)).collect(Collectors.toList());
+      return tabs.stream().map(t -> createSqlResultTabHandle(sqlPanelApi, (ResultTab) t)).collect(Collectors.toList());
    }
 
-   private static SqlResultTabHandle createSqlResultTabHandle(ISQLPanelAPI sqlPanelApi, ResultTab t, ISession session)
+   private static SqlResultTabHandle createSqlResultTabHandle(ISQLPanelAPI sqlPanelApi, ResultTab t)
    {
-      return new SqlResultTabHandle(t, (SQLResultExecutorPanel) sqlPanelApi.getSQLResultExecuter(), session);
+      return new SqlResultTabHandle(t, (SQLResultExecutorPanel) sqlPanelApi.getSQLResultExecuter());
    }
 }

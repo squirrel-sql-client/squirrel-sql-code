@@ -13,8 +13,6 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 
 public class ExportController
@@ -27,8 +25,6 @@ public class ExportController
    private Window _owner;
    private ExportDialogType _exportDialogType;
    private ExportSelectionPanelController _exportSelectionPanelController;
-   private TableExportDlgFinishedListener _tableExportDlgFinishedListener;
-   private boolean _finishFired;
 
 
    /**
@@ -77,15 +73,7 @@ public class ExportController
       updateDestinationInfo();
 
       _dlg.getRootPane().setDefaultButton(_dlg.btnOk);
-
-      GUIUtils.enableCloseByEscape(_dlg, dlg -> fireFinished());
-      _dlg.addWindowListener(new WindowAdapter() {
-         @Override
-         public void windowClosing(WindowEvent e)
-         {
-            fireFinished();
-         }
-      });
+      GUIUtils.enableCloseByEscape(_dlg);
    }
 
    private void updateDestinationInfo()
@@ -93,18 +81,7 @@ public class ExportController
       _exportSelectionPanelController.updateExportDestinationInfo(_dlg.txtFile.getText(), _dlg.radFormatXLSX.isSelected() || _dlg.radFormatXLS.isSelected());
    }
 
-   public void showModal()
-   {
-      _dlg.setModal(true);
-      _show();
-   }
-   public void showNonModal()
-   {
-      _dlg.setModal(false);
-      _show();
-   }
-
-   private void _show()
+   public void showDialog()
    {
       _dlg.pack();
       GUIUtils.centerWithinParent(_dlg);
@@ -588,26 +565,15 @@ public class ExportController
    private void closeDlg()
    {
       _dlg.setVisible(false);
-      fireFinished();
       _dlg.dispose();
    }
-
-   private void fireFinished()
-   {
-      if(null != _tableExportDlgFinishedListener && false == _finishFired)
-      {
-         _tableExportDlgFinishedListener.finished();
-         _finishFired = true;
-      }
-   }
-
 
    boolean isOK()
    {
       return _ok;
    }
 
-   File getFile()
+   File getSingleExportTargetFile()
    {
       return new File(_dlg.txtFile.getText());
    }
@@ -649,16 +615,6 @@ public class ExportController
    public ExportSelectionPanelController getExportSelectionPanelController()
    {
       return _exportSelectionPanelController;
-   }
-
-   public boolean isModal()
-   {
-      return _dlg.isModal();
-   }
-
-   public void setFinishedListener(TableExportDlgFinishedListener tableExportDlgFinishedListener)
-   {
-      _tableExportDlgFinishedListener = tableExportDlgFinishedListener;
    }
 
    public ExportDataInfoList getMultipleSqlResults()

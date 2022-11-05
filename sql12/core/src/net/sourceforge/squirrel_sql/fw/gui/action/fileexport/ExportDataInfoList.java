@@ -47,7 +47,7 @@ public class ExportDataInfoList
       return _exportDataInfos.isEmpty();
    }
 
-   public File getFirstExportedFile(TableExportPreferences prefs)
+   public File getFirstExportFile(TableExportPreferences prefs)
    {
       if(isEmpty())
       {
@@ -55,5 +55,10 @@ public class ExportDataInfoList
       }
 
       return _exportDataInfos.get(0).getFile(prefs);
+   }
+
+   public File getSingleExportFile(TableExportPreferences prefs)
+   {
+      return getFirstExportFile(prefs);
    }
 }

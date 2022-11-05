@@ -10,7 +10,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -149,13 +148,8 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
 
       final SqlResultListEntry selEntry = _exportSelectionPanel.lstSQLResultsToExport.getSelectedValue();
 
-      if(false == selEntry.getHandle().isAlive())
+      if(null == selEntry)
       {
-         JOptionPane.showMessageDialog(GUIUtils.getOwningWindow(_exportSelectionPanel),
-                                       s_stringMgr.getString("TableExportSelectionPanelController.sql.result.does.not.exist"),
-                                       s_stringMgr.getString("TableExportSelectionPanelController.sql.result.does.not.exist.title"),
-                                       JOptionPane.WARNING_MESSAGE);
-         ((DefaultListModel<SqlResultListEntry>)_exportSelectionPanel.lstSQLResultsToExport.getModel()).remove(_exportSelectionPanel.lstSQLResultsToExport.getSelectedIndex());
          return;
       }
 
