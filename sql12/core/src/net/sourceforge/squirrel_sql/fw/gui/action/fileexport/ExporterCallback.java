@@ -25,6 +25,6 @@ public interface ExporterCallback
     * @return the data for the export.
     * @throws ExportDataException if any problem occurs while creating the data.
     */
-   IExportData createExportData(ExportController ctrl) throws ExportDataException;
+   ExportDataInfoList createExportData(ExportController ctrl) throws ExportDataException;
 
 }

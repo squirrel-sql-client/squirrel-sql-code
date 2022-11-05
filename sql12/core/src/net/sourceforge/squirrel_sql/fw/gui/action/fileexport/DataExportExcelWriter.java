@@ -21,6 +21,8 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -33,11 +35,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Types;
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Exports {@link IExportData} to a Excel file.
@@ -46,33 +49,105 @@ import java.util.HashMap;
  *
  * @author Stefan Willinger
  */
-public class DataExportExcelWriter extends AbstractDataExportFileWriter
+public class DataExportExcelWriter
 {
-   public static final String EXCEL_EXPORT_SHEET_NAME = "Squirrel SQL Export";
-   private Workbook workbook; // The streaming api export for (very) large xlsx files
-   private Sheet sheet; // We write the data to this sheet
-   private File file; // File where the export is written to
+   public static final String DEFAULT_EXCEL_EXPORT_SHEET_NAME = "Squirrel SQL Export";
+
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataExportExcelWriter.class);
+
+   private final FileExportService _fileExportService;
+   private Workbook _workbook; // The streaming api export for (very) large xlsx files
+   private Sheet _sheet; // We write the data to this sheet
    private boolean withHeader = false;
    private HashMap<String, CellStyle> formatCache = null;
 
-   /**
-    * @param file
-    * @param prefs
-    * @param includeHeaders
-    * @param exportFormat
-    * @param progressController
-    */
    public DataExportExcelWriter(File file, TableExportPreferences prefs, ProgressAbortCallback progressController)
    {
-      super(file, prefs, progressController);
+      _fileExportService = new FileExportService(file, prefs, progressController);
+   }
+
+   public long write(ExportDataInfoList exportDataInfoList) throws Exception
+   {
+      long rowsCount = 0;
+
+      _fileExportService.progress(s_stringMgr.getString("DataExportExcelWriter.beginWriting.file", _fileExportService.getFile()));
+
+      beforeWorking();
+
+      for (ExportDataInfo exportDataInfo : exportDataInfoList.getExportDataInfos())
+      {
+         this._sheet = _workbook.createSheet(exportDataInfo.getExcelSheetTabName());
+
+         rowsCount += _writeExcelTab(exportDataInfo.getExportData());
+      }
+      _fileExportService.progress(s_stringMgr.getString("DataExportExcelWriter.finishedLoading", NumberFormat.getInstance().format(rowsCount)));
+
+      _fileExportService.progress(s_stringMgr.getString("DataExportExcelWriter.closingTheFile"));
+      // All sheets and cells added. Now write out the workbook
+      afterWorking();
+
+      _fileExportService.progress(s_stringMgr.getString("DataExportExcelWriter.done"));
+
+      _fileExportService.setProgressFinished();
+
+      if (_fileExportService.isStop())
+      {
+         return -1;
+      }
+      else
+      {
+         return rowsCount;
+      }
+
+   }
+
+   private long _writeExcelTab(IExportData data)
+   {
+      if (_fileExportService.getPrefs().isWithHeaders())
+      {
+         Iterator<String> headers = data.getHeaders();
+
+         int colIdx = 0;
+         while (headers.hasNext())
+         {
+            String columnName = headers.next();
+            addHeaderCell(colIdx, columnName);
+            colIdx++;
+         }
+      }
+
+      Iterator<ExportDataRow> rows = data.getRows();
+
+      long rowsCount = 0;
+
+      long begin = System.currentTimeMillis();
+      while (rows.hasNext() && _fileExportService.isStop() == false)
+      {
+         rowsCount++;
+         ExportDataRow aRow = rows.next();
+         if (_fileExportService.isStatusUpdateNecessary())
+         {
+            long secondsPassed = (System.currentTimeMillis() - begin) / 1000;
+            _fileExportService.taskStatus(s_stringMgr.getString("DataExportExcelWriter.numberOfRowsCompletedInSeconds", NumberFormat.getInstance().format(rowsCount), secondsPassed));
+         }
+
+         Iterator<ExportCellData> cells = aRow.getCells();
+         while (cells.hasNext())
+         {
+            ExportCellData cell = cells.next();
+            addCell(cell);
+         }
+      }
+
+      return rowsCount;
    }
 
    private Cell writeXlsCell(ColumnDisplayDefinition colDef, int colIdx, int curRow, Object cellObj)
    {
-      Row row = sheet.getRow(curRow);
+      Row row = _sheet.getRow(curRow);
       if (row == null)
       {
-         row = sheet.createRow(curRow);
+         row = _sheet.createRow(curRow);
       }
       Cell retVal = row.createCell(colIdx);
 
@@ -137,11 +212,11 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
     */
    private void makeTemporalCell(Cell retVal, Date cellObj, String format)
    {
-      CreationHelper creationHelper = workbook.getCreationHelper();
+      CreationHelper creationHelper = _workbook.getCreationHelper();
       CellStyle cellStyle;
       if (formatCache == null)
       {
-         cellStyle = workbook.createCellStyle();
+         cellStyle = _workbook.createCellStyle();
          cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat(format));
          formatCache = new HashMap<String, CellStyle>();
          formatCache.put(format, cellStyle);
@@ -151,7 +226,7 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
          cellStyle = formatCache.get(format);
          if (cellStyle == null)
          {
-            cellStyle = workbook.createCellStyle();
+            cellStyle = _workbook.createCellStyle();
             cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat(format));
             formatCache.put(format, cellStyle);
          }
@@ -177,61 +252,42 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
       }
    }
 
-   /**
-    * @throws java.io.IOException
-    * @see AbstractDataExportFileWriter#beforeWorking()
-    */
-   @Override
-   protected void beforeWorking(File file) throws IOException
+   private void beforeWorking()
    {
-      if (getPrefs().isFormatXLSOld())
+      if (_fileExportService.getPrefs().isFormatXLSOld())
       {
-         this.workbook = new HSSFWorkbook(); // See https://gist.github.com/madan712/3912272
+         this._workbook = new HSSFWorkbook(); // See https://gist.github.com/madan712/3912272
       }
       else
       {
-         if(getPrefs().isUseColoring())
+         if(_fileExportService.getPrefs().isUseColoring())
          {
             // See class ExcelCellColorer on how this will take care the Excel gets colored.
-            this.workbook = new XSSFWorkbook();
+            this._workbook = new XSSFWorkbook();
          }
          else
          {
-            this.workbook = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
+            this._workbook = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
          }
       }
-
-      this.file = file;
-      this.sheet = workbook.createSheet(EXCEL_EXPORT_SHEET_NAME);
    }
 
-   /**
-    * @throws java.lang.Exception
-    * @see AbstractDataExportFileWriter#addHeaderCell(int,
-    * java.lang.String)
-    */
-   @Override
-   protected void addHeaderCell(int colIdx, String columnName) throws Exception
+   private void addHeaderCell(int colIdx, String columnName)
    {
       this.withHeader = true;
-      Row headerRow = sheet.getRow(0);
+      Row headerRow = _sheet.getRow(0);
       if (headerRow == null)
       {
-         headerRow = sheet.createRow(0);
+         headerRow = _sheet.createRow(0);
       }
       Cell cell = headerRow.createCell(colIdx);
       cell.setCellValue(columnName);
    }
 
-   /**
-    * @throws java.lang.Exception
-    * @see AbstractDataExportFileWriter#addCell(ExportController,
-    * int, int, ExportCellData)
-    */
-   protected void addCell(ExportCellData cell) throws Exception
+   private void addCell(ExportCellData cell)
    {
       final Cell excelCell;
-      if (getPrefs().isUseGlobalPrefsFormating())
+      if (_fileExportService.getPrefs().isUseGlobalPrefsFormating())
       {
          excelCell = writeXlsCell(cell.getColumnDisplayDefinition(), cell.getColumnIndex(), calculateRowIdx(cell), cell.getObject());
       }
@@ -243,10 +299,6 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
       ExcelCellColorer.color(excelCell, cell.getExcelExportColor());
    }
 
-   /**
-    * @param cell
-    * @return
-    */
    private int calculateRowIdx(ExportCellData cell)
    {
       if (this.withHeader)
@@ -259,21 +311,16 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter
       }
    }
 
-   /**
-    * @throws java.lang.Exception
-    * @see AbstractDataExportFileWriter#afterWorking()
-    */
-   @Override
-   protected void afterWorking() throws Exception
+   private void afterWorking() throws Exception
    {
-      FileOutputStream out = new FileOutputStream(this.file);
-      this.workbook.write(out);
+      FileOutputStream out = new FileOutputStream(_fileExportService.getFile());
+      this._workbook.write(out);
       out.close();
 
       // dispose of temporary files backing this workbook on disk
-      if (workbook instanceof SXSSFWorkbook)
+      if (_workbook instanceof SXSSFWorkbook)
       {
-         ((SXSSFWorkbook) workbook).dispose();
+         ((SXSSFWorkbook) _workbook).dispose();
       }
    }
 

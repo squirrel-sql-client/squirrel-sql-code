@@ -7,7 +7,7 @@ public class SqlResultListEntry
    private final SqlResultTabHandle _handle;
    private final int _index;
 
-   private String _userEnteredName;
+   private String _userEnteredSqlResultNameFileNormalized;
 
    public SqlResultListEntry(SqlResultTabHandle handle, int index)
    {
@@ -18,14 +18,7 @@ public class SqlResultListEntry
    @Override
    public String toString()
    {
-      if(StringUtilities.isEmpty(_userEnteredName, true))
-      {
-         return DataExportExcelWriter.EXCEL_EXPORT_SHEET_NAME + " " + _index;
-      }
-      else
-      {
-         return _userEnteredName;
-      }
+      return getExportNameFileNormalized();
    }
 
    public SqlResultTabHandle getHandle()
@@ -33,8 +26,20 @@ public class SqlResultListEntry
       return _handle;
    }
 
-   public void setUserEnteredSqlResultName(String userEnteredName)
+   public void setUserEnteredSqlResultNameFileNormalized(String userEnteredSqlResultNameFileNormalized)
    {
-      this._userEnteredName = userEnteredName;
+      this._userEnteredSqlResultNameFileNormalized = userEnteredSqlResultNameFileNormalized;
+   }
+
+   public String getExportNameFileNormalized()
+   {
+      if(StringUtilities.isEmpty(_userEnteredSqlResultNameFileNormalized, true))
+      {
+         return DataExportExcelWriter.DEFAULT_EXCEL_EXPORT_SHEET_NAME + " " + _index;
+      }
+      else
+      {
+         return _userEnteredSqlResultNameFileNormalized;
+      }
    }
 }

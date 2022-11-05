@@ -24,10 +24,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
 import java.text.NumberFormat;
 import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Exports a data structure into a file.
@@ -43,51 +41,10 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AbstractDataExportFileWriter implements IDataExportWriter
 {
-
-   /**
-    * Internationalized strings for this class
-    */
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AbstractDataExportFileWriter.class);
 
-   static interface i18n
-   {
-      // i18n[AbstractDataExportFileWriter.beginWriting=Begin writing]
-      String BEGIN_WRITING = s_stringMgr.getString("AbstractDataExportFileWriter.beginWriting");
+   private final FileExportService _fileExportService;
 
-      String KEY_NUMBER_OF_ROWS_COMPLETED_IN_SECONDS = "AbstractDataExportFileWriter.numberOfRowsCompletedInSeconds";
-
-
-      // i18n[AbstractDataExportFileWriter.NUMBER_OF_ROWS_COMPLETED=Finished with 100 rows]
-      String KEY_FINISHED_LOADING = "AbstractDataExportFileWriter.finishedLoading";
-
-      // i18n[AbstractDataExportFileWriter.NUMBER_OF_ROWS_COMPLETED=Closing the file]
-      String CLOSING_THE_FILE = s_stringMgr.getString("AbstractDataExportFileWriter.closingTheFile");
-
-      // i18n[AbstractDataExportFileWriter.DONE=Done]
-      String DONE = s_stringMgr.getString("AbstractDataExportFileWriter.done");
-   }
-
-
-   /**
-    * Constant, for updating the progress bar each x seconds.
-    */
-   private static final int FEEDBACK_EVRY_N_SECONDS = 2;
-   /**
-    * The target file.
-    */
-   private File file;
-
-   private TableExportPreferences _prefs;
-
-   /**
-    * Progress controller with the opportunity to abort the operation.
-    */
-   private ProgressAbortCallback progressController;
-
-   /**
-    * Timestamp of the last update of the progress status.
-    */
-   private long timeOfLastStatusUpdate = 0;
 
    /**
     * "Begin writing");
@@ -101,9 +58,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
     */
    public AbstractDataExportFileWriter(File file, TableExportPreferences prefs, ProgressAbortCallback progressController)
    {
-      this.file = file;
-      this._prefs = prefs;
-      this.progressController = progressController;
+      _fileExportService = new FileExportService(file, prefs, progressController);
    }
 
    /**
@@ -112,9 +67,9 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
    public long write(IExportData data) throws Exception
    {
 
-      beforeWorking(file);
+      beforeWorking(_fileExportService.getFile());
 
-      if (_prefs.isWithHeaders())
+      if (_fileExportService.getPrefs().isWithHeaders())
       {
          Iterator<String> headers = data.getHeaders();
 
@@ -122,7 +77,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
          beforeHeader();
          while (headers.hasNext())
          {
-            String columnName = (String) headers.next();
+            String columnName = headers.next();
             addHeaderCell(colIdx, columnName);
             colIdx++;
          }
@@ -131,7 +86,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
 
       Iterator<ExportDataRow> rows = data.getRows();
 
-      progress(i18n.BEGIN_WRITING);
+      progress(s_stringMgr.getString("AbstractDataExportFileWriter.beginWriting.file", _fileExportService.getFile()));
       beforeRows();
       long rowsCount = 0;
       NumberFormat nfRowCount = NumberFormat.getInstance();
@@ -142,10 +97,10 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
       {
          rowsCount++;
          ExportDataRow aRow = rows.next();
-         if (isStatusUpdateNecessary())
+         if (_fileExportService.isStatusUpdateNecessary())
          {
             long secondsPassed = (System.currentTimeMillis() - begin) / 1000;
-            taskStatus(s_stringMgr.getString(i18n.KEY_NUMBER_OF_ROWS_COMPLETED_IN_SECONDS, nfRowCount.format(rowsCount), secondsPassed));
+            taskStatus(s_stringMgr.getString("AbstractDataExportFileWriter.numberOfRowsCompletedInSeconds", nfRowCount.format(rowsCount), secondsPassed));
          }
          beforeRow(aRow.getRowIndex());
 
@@ -157,18 +112,12 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
          }
          afterRow();
       }
-      progress(s_stringMgr.getString(i18n.KEY_FINISHED_LOADING, nfRowCount.format(rowsCount)));
+      progress(s_stringMgr.getString("AbstractDataExportFileWriter.finishedLoading", nfRowCount.format(rowsCount)));
       afterRows();
-      progress(i18n.CLOSING_THE_FILE);
-      // All sheets and cells added. Now write out the workbook
+      progress(s_stringMgr.getString("AbstractDataExportFileWriter.closingTheFile"));
       afterWorking();
 
-      progress(i18n.DONE);
-
-      if (progressController != null)
-      {
-         progressController.setFinished();
-      }
+      progress(s_stringMgr.getString("AbstractDataExportFileWriter.done"));
 
       if (isStop())
       {
@@ -178,26 +127,8 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
       {
          return rowsCount;
       }
-
    }
 
-   /**
-    * @return
-    */
-   private boolean isStatusUpdateNecessary()
-   {
-      long time = System.currentTimeMillis();
-
-      if ((timeOfLastStatusUpdate + TimeUnit.SECONDS.toMillis(FEEDBACK_EVRY_N_SECONDS)) < time)
-      {
-         timeOfLastStatusUpdate = time;
-         return true;
-      }
-      else
-      {
-         return false;
-      }
-   }
 
    /**
     * Callback before processing the first row.
@@ -290,7 +221,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
     */
    public File getFile()
    {
-      return file;
+      return _fileExportService.getFile();
    }
 
    /**
@@ -298,7 +229,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
     */
    public void setFile(File file)
    {
-      this.file = file;
+      _fileExportService.setFile(file);
    }
 
    /**
@@ -306,7 +237,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
     */
    public TableExportPreferences getPrefs()
    {
-      return _prefs;
+      return _fileExportService.getPrefs();
    }
 
    /**
@@ -314,7 +245,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
     */
    public void setPrefs(TableExportPreferences prefs)
    {
-      this._prefs = prefs;
+      _fileExportService.setPrefs(prefs);
    }
 
    /**
@@ -324,10 +255,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
     */
    protected void progress(String task)
    {
-      if (progressController != null)
-      {
-         progressController.currentlyLoading(task);
-      }
+      _fileExportService.progress(task);
    }
 
    /**
@@ -337,10 +265,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
     */
    protected void taskStatus(String status)
    {
-      if (progressController != null)
-      {
-         progressController.setTaskStatus(status);
-      }
+      _fileExportService.taskStatus(status);
    }
 
 
@@ -351,26 +276,12 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
     */
    protected boolean isStop()
    {
-      if (progressController == null)
-      {
-         return false;
-      }
-      else
-      {
-         return progressController.isStop();
-      }
+      return _fileExportService.isStop();
    }
 
    public Charset getCharset()
    {
-      try
-      {
-         return Charset.forName(getPrefs().getEncoding());
-      }
-      catch (IllegalCharsetNameException icne)
-      {
-         return Charset.defaultCharset();
-      }
+      return _fileExportService.getCharset();
    }
 
 }

@@ -35,6 +35,34 @@ public enum FileEndings
       return false;
    }
 
+   public static String getByTableExportPreferences(TableExportPreferences prefs)
+   {
+      if(prefs.isFormatCSV())
+      {
+         return CSV.get();
+      }
+      else if(prefs.isFormatJSON())
+      {
+         return JSON.get();
+      }
+      else if(prefs.isFormatXML())
+      {
+         return XML.get();
+      }
+      else if(prefs.isFormatXLS())
+      {
+         return XLSX.get();
+      }
+      else if(prefs.isFormatXLSOld())
+      {
+         return XLS.get();
+      }
+      else
+      {
+         throw new IllegalStateException("Could not find file ending by TableExportPreferences");
+      }
+   }
+
    public String get()
    {
       return _ending;

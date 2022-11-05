@@ -12,8 +12,17 @@ public interface ExportSelectionPanelController
 
    boolean isExportComplete();
 
-
    default void updateExportDestinationInfo(String exportFileNameText, boolean destinationIsExcel)
    {
+   }
+
+   default boolean isExportMultipleSqlResults()
+   {
+      return false;
+   }
+
+   default ExportDataInfoList getMultipleSqlResults()
+   {
+      return ExportDataInfoList.EMPTY;
    }
 }

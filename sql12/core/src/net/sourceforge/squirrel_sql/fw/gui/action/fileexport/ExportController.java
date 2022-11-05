@@ -537,9 +537,9 @@ public class ExportController
          _dlg.radFormatCSV.setSelected(true);
       }
 
-      onFormat(false);
-
       _exportSelectionPanelController.initPanel(prefs);
+
+      onFormat(false);
 
       if(prefs.isUseGlobalPrefsFormating())
       {
@@ -629,19 +629,11 @@ public class ExportController
       return _exportSelectionPanelController.isExportComplete();
    }
 
-   String getCommand()
+   String getCommand(File firstExportedFile)
    {
       if(_dlg.chkExecCommand.isSelected())
       {
-         // Copied from Java Doc Matcher.replaceAll:
-         //
-         // Note that backslashes (\) and dollar signs ($) in the replacement string
-         // may cause the results to be different than if it
-         // were being treated as a literal replacement string.
-         // Dollar signs may be treated as references to
-         // captured subsequences as described above, and
-         // backslashes are used to escape literal characters in the replacement string.
-         return _dlg.txtCommand.getText().replaceAll("%file", _dlg.txtFile.getText().replaceAll("\\\\","\\\\\\\\"));
+         return _dlg.txtCommand.getText().replaceAll("%file", firstExportedFile.getAbsolutePath());
       }
       else
       {
@@ -667,5 +659,15 @@ public class ExportController
    public void setFinishedListener(TableExportDlgFinishedListener tableExportDlgFinishedListener)
    {
       _tableExportDlgFinishedListener = tableExportDlgFinishedListener;
+   }
+
+   public ExportDataInfoList getMultipleSqlResults()
+   {
+      return _exportSelectionPanelController.getMultipleSqlResults();
+   }
+
+   public boolean isExportMultipleSqlResults()
+   {
+      return _exportSelectionPanelController.isExportMultipleSqlResults();
    }
 }

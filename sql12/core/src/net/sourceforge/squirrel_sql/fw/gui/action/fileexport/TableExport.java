@@ -46,13 +46,36 @@ public class TableExport
          }
 
          @Override
-         public IExportData createExportData(ExportController ctrl)
+         public ExportDataInfoList createExportData(ExportController ctrl)
          {
-            return new JTableExportData(_table, ctrl.isExportComplete());
+            return createExportDataInfoList(ctrl);
          }
       };
 
       _exporter = new Exporter(exporterCallback, ExportControllerFactory.createExportControllerForTable(SwingUtilities.windowForComponent(_table)));
+   }
+
+   private ExportDataInfoList createExportDataInfoList(ExportController ctrl)
+   {
+      ExportDataInfoList exportDataInfoList = _exporter.getMultipleSqlResults();
+
+      if(exportDataInfoList.isEmpty())
+      {
+         if(ctrl.isExportMultipleSqlResults())
+         {
+            // Happens when multiple SQL result export was chosen with empty export list.
+            return ExportDataInfoList.EMPTY;
+         }
+         else
+         {
+            // This is the default behavior, i.e. export of single table.
+            return ExportDataInfoList.single(new JTableExportData(_table, ctrl.isExportComplete()));
+         }
+      }
+      else
+      {
+         return exportDataInfoList;
+      }
    }
 
    private boolean onCheckMissingData(String sepChar)

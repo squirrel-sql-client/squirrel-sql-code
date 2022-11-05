@@ -119,23 +119,36 @@ public class Exporter
    {
       this.progressController = _exporterCallback.createProgressController();
 
+      File firstExportedFile;
       try
       {
-         writtenRows = writeFile(ctrl, _exporterCallback.createExportData(ctrl));
+         final ExportDataInfoList exportDataInfoList = _exporterCallback.createExportData(ctrl);
+
+         if(exportDataInfoList.isEmpty())
+         {
+            // Happens when multiple SQL result export was chosen with empty export list.
+            if(null != progressController)
+            {
+               progressController.setFinished();
+            }
+            Runnable runnable = () -> JOptionPane.showMessageDialog(ctrl.getOwningWindow(),
+                                                                    s_stringMgr.getString("Exporter.no.files.to.export"),
+                                                                    s_stringMgr.getString("Exporter.no.files.to.export.title"),
+                                                                    JOptionPane.WARNING_MESSAGE);
+            GUIUtils.processOnSwingEventThread(runnable);
+            return;
+         }
+
+         writtenRows = writeExport(ctrl, exportDataInfoList);
+
+         firstExportedFile = exportDataInfoList.getFirstExportedFile(TableExportPreferencesDAO.loadPreferences());
       }
       catch (ExportDataException e)
       {
          // Show an error and re-throw the exception.
          s_log.error(s_stringMgr.getString("AbstractExportCommand.failed"));
 
-         Runnable runnable = new Runnable()
-         {
-            public void run()
-            {
-               JOptionPane.showMessageDialog(ctrl.getOwningWindow(), s_stringMgr.getString("AbstractExportCommand.failed"));
-            }
-         };
-
+         Runnable runnable = () -> JOptionPane.showMessageDialog(ctrl.getOwningWindow(), s_stringMgr.getString("AbstractExportCommand.failed"));
          GUIUtils.processOnSwingEventThread(runnable);
 
          throw e;
@@ -143,7 +156,7 @@ public class Exporter
 
       if(writtenRows >= 0)
       {
-         String command = ctrl.getCommand();
+         String command = ctrl.getCommand(firstExportedFile);
 
          if(null != command)
          {
@@ -180,12 +193,12 @@ public class Exporter
     * Exports the data structure.
     *
     * @param ctrl the controller to use
-    * @param data The data to export
+    * @param exportDataInfoList The data to export
     * @return the number of written data rows or a negative value, if not the whole data are exported.
     */
-   private long writeFile(final ExportController ctrl, IExportData data)
+   private long writeExport(final ExportController ctrl, ExportDataInfoList exportDataInfoList)
    {
-      return ExportFileWriter.writeFile(_exporterCallback.getExportPreferences(), data, progressController, ctrl.getOwningWindow());
+      return ExportFileWriter.export(exportDataInfoList, _exporterCallback.getExportPreferences(), progressController, ctrl.getOwningWindow());
    }
 
 
@@ -272,5 +285,10 @@ public class Exporter
    public long getWrittenRows()
    {
       return writtenRows;
+   }
+
+   public ExportDataInfoList getMultipleSqlResults()
+   {
+      return _exportController.getMultipleSqlResults();
    }
 }

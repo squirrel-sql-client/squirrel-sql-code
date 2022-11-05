@@ -67,9 +67,9 @@ public class ResultSetExport
          }
 
          @Override
-         public IExportData createExportData(ExportController ctrl) throws ExportDataException
+         public ExportDataInfoList createExportData(ExportController ctrl) throws ExportDataException
          {
-            return onCreateExportData(ctrl, sql, stmt, dialect);
+            return ExportDataInfoList.single(onCreateExportData(ctrl, sql, stmt, dialect));
          }
       };
 

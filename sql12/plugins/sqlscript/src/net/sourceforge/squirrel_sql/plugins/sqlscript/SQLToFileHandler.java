@@ -180,7 +180,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
    {
       try
       {
-         ExportFileWriter.writeFile(prefs, new ResultSetExportData(stat.executeQuery(sqlToWriteToFile), dialectType), progressControllerFactory.getOrCreate());
+         ExportFileWriter.writeFile(new ResultSetExportData(stat.executeQuery(sqlToWriteToFile), dialectType), prefs, progressControllerFactory.getOrCreate());
          Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLToFileHandler.wrote.file", file.getPath()));
       }
       catch (Throwable e)
