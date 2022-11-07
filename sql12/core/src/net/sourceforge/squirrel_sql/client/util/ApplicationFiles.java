@@ -483,4 +483,9 @@ public class ApplicationFiles
    {
       return new File(_userSettingsDir + File.separator + "popupMenuAttic.json");
    }
+
+   public File getExcelTabOrFileNamesJsonBeanFile()
+   {
+      return new File(_userSettingsDir + File.separator + "excelTabOrFileNames.json");
+   }
 }

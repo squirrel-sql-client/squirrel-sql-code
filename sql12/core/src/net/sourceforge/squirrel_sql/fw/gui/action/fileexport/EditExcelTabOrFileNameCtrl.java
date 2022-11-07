@@ -31,7 +31,7 @@ public class EditExcelTabOrFileNameCtrl
       _dlg.btnCancel.addActionListener(e -> close());
 
       GUIUtils.enableCloseByEscape(_dlg);
-      GUIUtils.initLocation(_dlg, 200, 100);
+      GUIUtils.initLocation(_dlg, 500, 130);
 
       _editableComboBoxHandler.focus();
 

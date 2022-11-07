@@ -10,7 +10,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -24,24 +27,27 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportSelectionPanelController.class);
 
 
-   private TableExportSelectionPanel _exportSelectionPanel;
+   private TableExportSelectionPanel _pnl;
    private MultipleSqlResultExportDestinationInfo _currentExportDestinationInfo;
 
    public TableExportSelectionPanelController()
    {
-      _exportSelectionPanel = new TableExportSelectionPanel();
+      _pnl = new TableExportSelectionPanel();
 
-      _exportSelectionPanel.radComplete.addActionListener(e -> updateUI());
-      _exportSelectionPanel.radSelection.addActionListener(e -> updateUI());
-      _exportSelectionPanel.radMultipleSQLRes.addActionListener(e -> updateUI());
+      _pnl.radComplete.addActionListener(e -> updateUI());
+      _pnl.radSelection.addActionListener(e -> updateUI());
+      _pnl.radMultipleSQLRes.addActionListener(e -> updateUI());
 
-      _exportSelectionPanel.btnUp.addActionListener(e -> onUp());
-      _exportSelectionPanel.btnDown.addActionListener(e -> onDown());
+      _pnl.btnUp.addActionListener(e -> onUp());
+      _pnl.btnDown.addActionListener(e -> onDown());
 
-      _exportSelectionPanel.btnEdit.addActionListener(e -> onEdit());
-      _exportSelectionPanel.btnDelete.addActionListener(e -> onDelete());
+      _pnl.btnEdit.addActionListener(e -> onEdit());
+      _pnl.btnDelete.addActionListener(e -> onDelete());
 
-      _exportSelectionPanel.lstSQLResultsToExport.addMouseListener(new MouseAdapter() {
+      _pnl.btnSaveNames.addActionListener(e -> onSaveNames());
+      _pnl.btnApplySavedNames.addActionListener(e -> onApplySavedNames());
+
+      _pnl.lstSQLResultsToExport.addMouseListener(new MouseAdapter() {
          @Override
          public void mouseClicked(MouseEvent e)
          {
@@ -50,28 +56,79 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
       });
    }
 
+   private void onApplySavedNames()
+   {
+      final List<String> savedNames = ExcelTabOrFileNamesDao.getSavedNames();
+
+      if(savedNames.isEmpty())
+      {
+         JOptionPane.showConfirmDialog(GUIUtils.getOwningWindow(_pnl), s_stringMgr.getString("TableExportSelectionPanelController.no.names.saved"));
+         return;
+      }
+
+      JPopupMenu menu = new JPopupMenu();
+
+      for (String savedName : savedNames)
+      {
+         final JMenuItem menuItem = new JMenuItem(savedName);
+         menu.add(menuItem);
+         menuItem.addActionListener(e -> onNamesSelected(savedName));
+      }
+
+      menu.show(_pnl.btnApplySavedNames, 0,_pnl.btnApplySavedNames.getHeight());
+   }
+
+   private void onNamesSelected(String savedName)
+   {
+      List<String> excelTabOrFileNames = ExcelTabOrFileNamesDao.getExcelTabOrFileNames(savedName);
+
+      for (int i = 0; i < Math.min(excelTabOrFileNames.size(), getListModel().size() ) ; i++)
+      {
+         getListModel().getElementAt(i).setUserEnteredSqlResultNameFileNormalized(excelTabOrFileNames.get(i));
+      }
+
+      _pnl.lstSQLResultsToExport.repaint();
+   }
+
+   private void onSaveNames()
+   {
+      if(getListModel().isEmpty())
+      {
+         return;
+      }
+
+      List<String> excelTabOrFileNames =
+            GUIUtils.getListItems(getListModel()).stream().map(i -> i.getExportNameFileNormalized()).collect(Collectors.toList());
+
+      ExcelTabOrFileNamesDao.addOrReplaceSavedName(String.join("/", excelTabOrFileNames), excelTabOrFileNames);
+
+   }
+
+   private DefaultListModel<SqlResultListEntry> getListModel()
+   {
+      return (DefaultListModel<SqlResultListEntry>) _pnl.lstSQLResultsToExport.getModel();
+   }
+
    private void onUp()
    {
-      final int selectedIndex = _exportSelectionPanel.lstSQLResultsToExport.getSelectedIndex();
+      final int selectedIndex = _pnl.lstSQLResultsToExport.getSelectedIndex();
 
       if(selectedIndex <= 0)
       {
          return;
       }
 
-      final DefaultListModel<SqlResultListEntry> model = (DefaultListModel<SqlResultListEntry>) _exportSelectionPanel.lstSQLResultsToExport.getModel();
-
-      final SqlResultListEntry entry = model.remove(selectedIndex);
+      final SqlResultListEntry entry = getListModel().remove(selectedIndex);
       final int newIndex = selectedIndex - 1;
-      model.add(newIndex, entry);
-      _exportSelectionPanel.lstSQLResultsToExport.setSelectedIndex(newIndex);
+      getListModel().add(newIndex, entry);
+      _pnl.lstSQLResultsToExport.setSelectedIndex(newIndex);
    }
 
    private void onDown()
    {
-      final int selectedIndex = _exportSelectionPanel.lstSQLResultsToExport.getSelectedIndex();
+      final int selectedIndex = _pnl.lstSQLResultsToExport.getSelectedIndex();
 
-      final DefaultListModel<SqlResultListEntry> model = (DefaultListModel<SqlResultListEntry>) _exportSelectionPanel.lstSQLResultsToExport.getModel();
+      final DefaultListModel<SqlResultListEntry> model = getListModel();
 
       if(selectedIndex < 0 || selectedIndex == model.size() - 1)
       {
@@ -81,13 +138,13 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
       final SqlResultListEntry entry = model.remove(selectedIndex);
       final int newIndex = selectedIndex + 1;
       model.add(newIndex, entry);
-      _exportSelectionPanel.lstSQLResultsToExport.setSelectedIndex(newIndex);
+      _pnl.lstSQLResultsToExport.setSelectedIndex(newIndex);
    }
 
 
    private void onEdit()
    {
-      final SqlResultListEntry selectedValue = _exportSelectionPanel.lstSQLResultsToExport.getSelectedValue();
+      final SqlResultListEntry selectedValue = _pnl.lstSQLResultsToExport.getSelectedValue();
 
       if(null == selectedValue)
       {
@@ -96,22 +153,22 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
          return;
       }
 
-      GUIUtils.getOwningWindow(_exportSelectionPanel);
+      GUIUtils.getOwningWindow(_pnl);
 
       final EditExcelTabOrFileNameCtrl ctrl =
-            new EditExcelTabOrFileNameCtrl(GUIUtils.getOwningWindow(_exportSelectionPanel), selectedValue.toString());
+            new EditExcelTabOrFileNameCtrl(GUIUtils.getOwningWindow(_pnl), selectedValue.toString());
 
       if(ctrl.isOk())
       {
          selectedValue.setUserEnteredSqlResultNameFileNormalized(ctrl.getNewSqlResultNameFileNormalized());
       }
 
-      _exportSelectionPanel.lstSQLResultsToExport.repaint();
+      _pnl.lstSQLResultsToExport.repaint();
    }
 
    private void onDelete()
    {
-      final int selectedIndex = _exportSelectionPanel.lstSQLResultsToExport.getSelectedIndex();
+      final int selectedIndex = _pnl.lstSQLResultsToExport.getSelectedIndex();
 
       if(-1 == selectedIndex)
       {
@@ -119,21 +176,21 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
          Main.getApplication().getMessageHandler().showWarningMessage(msg);
          return;
       }
-      ((DefaultListModel)_exportSelectionPanel.lstSQLResultsToExport.getModel()).remove(selectedIndex);
+      ((DefaultListModel) _pnl.lstSQLResultsToExport.getModel()).remove(selectedIndex);
 
-      if(0 == _exportSelectionPanel.lstSQLResultsToExport.getModel().getSize())
+      if(0 == _pnl.lstSQLResultsToExport.getModel().getSize())
       {
          return;
       }
 
 
-      if(selectedIndex < _exportSelectionPanel.lstSQLResultsToExport.getModel().getSize())
+      if(selectedIndex < _pnl.lstSQLResultsToExport.getModel().getSize())
       {
-         _exportSelectionPanel.lstSQLResultsToExport.setSelectedIndex(selectedIndex);
+         _pnl.lstSQLResultsToExport.setSelectedIndex(selectedIndex);
       }
       else
       {
-         _exportSelectionPanel.lstSQLResultsToExport.setSelectedIndex(_exportSelectionPanel.lstSQLResultsToExport.getModel().getSize() - 1);
+         _pnl.lstSQLResultsToExport.setSelectedIndex(_pnl.lstSQLResultsToExport.getModel().getSize() - 1);
       }
 
    }
@@ -146,7 +203,7 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
          return;
       }
 
-      final SqlResultListEntry selEntry = _exportSelectionPanel.lstSQLResultsToExport.getSelectedValue();
+      final SqlResultListEntry selEntry = _pnl.lstSQLResultsToExport.getSelectedValue();
 
       if(null == selEntry)
       {
@@ -185,7 +242,7 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
    @Override
    public void writeControlsToPrefs(TableExportPreferences prefs)
    {
-      prefs.setExportMultipleSQLResults(_exportSelectionPanel.radMultipleSQLRes.isSelected());
+      prefs.setExportMultipleSQLResults(_pnl.radMultipleSQLRes.isSelected());
       prefs.setExportComplete(prefs.isExportComplete());
    }
 
@@ -194,16 +251,16 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
    {
       if(prefs.isExportComplete())
       {
-         _exportSelectionPanel.radComplete.setSelected(true);
+         _pnl.radComplete.setSelected(true);
       }
       else
       {
-         _exportSelectionPanel.radSelection.setSelected(true);
+         _pnl.radSelection.setSelected(true);
       }
 
       if(prefs.isExportMultipleSQLResults())
       {
-         _exportSelectionPanel.radMultipleSQLRes.setSelected(true);
+         _pnl.radMultipleSQLRes.setSelected(true);
       }
 
       updateUI();
@@ -211,28 +268,30 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
 
    private void updateUI()
    {
-      _exportSelectionPanel.lstSQLResultsToExport.setEnabled(_exportSelectionPanel.radMultipleSQLRes.isSelected());
-      _exportSelectionPanel.btnUp.setEnabled(_exportSelectionPanel.radMultipleSQLRes.isSelected());
-      _exportSelectionPanel.btnDown.setEnabled(_exportSelectionPanel.radMultipleSQLRes.isSelected());
-      _exportSelectionPanel.btnEdit.setEnabled(_exportSelectionPanel.radMultipleSQLRes.isSelected());
-      _exportSelectionPanel.btnDelete.setEnabled(_exportSelectionPanel.radMultipleSQLRes.isSelected());
-      _exportSelectionPanel.btnInfo.setEnabled(_exportSelectionPanel.radMultipleSQLRes.isSelected());
+      _pnl.lstSQLResultsToExport.setEnabled(_pnl.radMultipleSQLRes.isSelected());
+      _pnl.btnUp.setEnabled(_pnl.radMultipleSQLRes.isSelected());
+      _pnl.btnDown.setEnabled(_pnl.radMultipleSQLRes.isSelected());
+      _pnl.btnEdit.setEnabled(_pnl.radMultipleSQLRes.isSelected());
+      _pnl.btnDelete.setEnabled(_pnl.radMultipleSQLRes.isSelected());
+      _pnl.btnSaveNames.setEnabled(_pnl.radMultipleSQLRes.isSelected());
+      _pnl.btnApplySavedNames.setEnabled(_pnl.radMultipleSQLRes.isSelected());
+      _pnl.btnInfo.setEnabled(_pnl.radMultipleSQLRes.isSelected());
 
-      _exportSelectionPanel.txtExportFileOrDir.setEnabled(_exportSelectionPanel.radMultipleSQLRes.isSelected());
+      _pnl.txtExportFileOrDir.setEnabled(_pnl.radMultipleSQLRes.isSelected());
 
 
-      if(_exportSelectionPanel.radMultipleSQLRes.isSelected())
+      if(_pnl.radMultipleSQLRes.isSelected())
       {
          List<SqlResultTabHandle> sqlResultTabHandel = Main.getApplication().getMultipleSqlResultExportChannel().getSqlResultTabHandles();
 
          int[] indexCounter = new int[1];
          final List<SqlResultListEntry> listEntries = sqlResultTabHandel.stream().map(h -> new SqlResultListEntry(h, ++indexCounter[0])).collect(Collectors.toList());
 
-         final SqlResultListEntry selEntry = _exportSelectionPanel.lstSQLResultsToExport.getSelectedValue();
+         final SqlResultListEntry selEntry = _pnl.lstSQLResultsToExport.getSelectedValue();
 
          DefaultListModel<SqlResultListEntry> defaultListModel = new DefaultListModel<>();
          defaultListModel.addAll(listEntries);
-         _exportSelectionPanel.lstSQLResultsToExport.setModel(defaultListModel);
+         _pnl.lstSQLResultsToExport.setModel(defaultListModel);
 
          if(null != selEntry)
          {
@@ -240,31 +299,31 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
 
             if(match.isPresent())
             {
-               _exportSelectionPanel.lstSQLResultsToExport.setSelectedValue(selEntry, true);
+               _pnl.lstSQLResultsToExport.setSelectedValue(selEntry, true);
             }
          }
          else if(false == listEntries.isEmpty())
          {
-            _exportSelectionPanel.lstSQLResultsToExport.setSelectedIndex(0);
+            _pnl.lstSQLResultsToExport.setSelectedIndex(0);
          }
 
       }
       else
       {
-         _exportSelectionPanel.lstSQLResultsToExport.setListData(new SqlResultListEntry[0]);
+         _pnl.lstSQLResultsToExport.setListData(new SqlResultListEntry[0]);
       }
    }
 
    @Override
    public boolean isExportComplete()
    {
-      return _exportSelectionPanel.radComplete.isSelected();
+      return _pnl.radComplete.isSelected();
    }
 
    @Override
    public void updateExportDestinationInfo(String exportFileNameText, boolean destinationIsExcel)
    {
-      _exportSelectionPanel.txtExportFileOrDir.setText(s_stringMgr.getString("TableExportSelectionPanelController.export.location.unspecified"));
+      _pnl.txtExportFileOrDir.setText(s_stringMgr.getString("TableExportSelectionPanelController.export.location.unspecified"));
       _currentExportDestinationInfo = null;
 
       if(StringUtilities.isEmpty(exportFileNameText, true))
@@ -278,7 +337,7 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
       {
          if(false == destinationIsExcel)
          {
-            _exportSelectionPanel.txtExportFileOrDir.setText(s_stringMgr.getString("TableExportSelectionPanelController.export.dir", file.getAbsolutePath()));
+            _pnl.txtExportFileOrDir.setText(s_stringMgr.getString("TableExportSelectionPanelController.export.dir", file.getAbsolutePath()));
             _currentExportDestinationInfo = MultipleSqlResultExportDestinationInfo.createExportDir(file);
          }
       }
@@ -288,13 +347,13 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
          {
             if(null != file.getParentFile())
             {
-               _exportSelectionPanel.txtExportFileOrDir.setText(s_stringMgr.getString("TableExportSelectionPanelController.export.dir", file.getParentFile().getAbsolutePath()));
+               _pnl.txtExportFileOrDir.setText(s_stringMgr.getString("TableExportSelectionPanelController.export.dir", file.getParentFile().getAbsolutePath()));
                _currentExportDestinationInfo = MultipleSqlResultExportDestinationInfo.createExportDir(file.getParentFile());
             }
          }
          else
          {
-            _exportSelectionPanel.txtExportFileOrDir.setText(s_stringMgr.getString("TableExportSelectionPanelController.export.file", file.getAbsolutePath()));
+            _pnl.txtExportFileOrDir.setText(s_stringMgr.getString("TableExportSelectionPanelController.export.file", file.getAbsolutePath()));
             _currentExportDestinationInfo = MultipleSqlResultExportDestinationInfo.createExcelExportFile(file);
          }
       }
@@ -303,30 +362,28 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
    @Override
    public JPanel getPanel()
    {
-      return _exportSelectionPanel;
+      return _pnl;
    }
 
    @Override
    public boolean isExportMultipleSqlResults()
    {
-      return _exportSelectionPanel.radMultipleSQLRes.isSelected();
+      return _pnl.radMultipleSQLRes.isSelected();
    }
 
    @Override
    public ExportDataInfoList getMultipleSqlResults()
    {
-      if(false == _exportSelectionPanel.radMultipleSQLRes.isSelected())
+      if(false == _pnl.radMultipleSQLRes.isSelected())
       {
          return ExportDataInfoList.EMPTY;
       }
 
-      final DefaultListModel<SqlResultListEntry> model = (DefaultListModel<SqlResultListEntry>) _exportSelectionPanel.lstSQLResultsToExport.getModel();
-
       ArrayList<ExportDataInfo> ret = new ArrayList<>();
 
-      for (int i = 0; i < model.getSize(); i++)
+      for (int i = 0; i < getListModel().getSize(); i++)
       {
-         final SqlResultListEntry listEntry = model.getElementAt(i);
+         final SqlResultListEntry listEntry = getListModel().getElementAt(i);
          final SqlResultTabHandle handle = listEntry.getHandle();
          final IDataSetViewer sqlResultDataSetViewer = handle.getSQLResultDataSetViewer();
 

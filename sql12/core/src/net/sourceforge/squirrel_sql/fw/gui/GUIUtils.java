@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -75,6 +76,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -1124,4 +1126,16 @@ public class GUIUtils
 		}
 	}
 
+	public static <T> List<T> getListItems(DefaultListModel<T> listModel)
+	{
+		ArrayList<T> ret = new ArrayList<>();
+
+		final Enumeration<T> e = listModel.elements();
+		while (e.hasMoreElements())
+		{
+			ret.add(e.nextElement());
+		}
+
+		return ret;
+	}
 }

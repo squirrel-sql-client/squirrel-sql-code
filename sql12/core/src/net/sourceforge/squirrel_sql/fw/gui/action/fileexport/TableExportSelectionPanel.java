@@ -33,6 +33,8 @@ public class TableExportSelectionPanel extends JPanel
    JButton btnDown;
    JButton btnEdit;
    JButton btnDelete;
+   JButton btnSaveNames;
+   JButton btnApplySavedNames;
    JTextField txtExportFileOrDir;
    SmallToolTipInfoButton btnInfo;
 
@@ -87,7 +89,7 @@ public class TableExportSelectionPanel extends JPanel
       txtExportFileOrDir = GUIUtils.styleTextFieldToCopyableLabel(new JTextField());
       ret.add(txtExportFileOrDir, gbc);
 
-      return GUIUtils.setPreferredHeight(ret, 150);
+      return GUIUtils.setPreferredHeight(ret, 200);
    }
 
    private JPanel createRightSideListEditButtons()
@@ -117,6 +119,16 @@ public class TableExportSelectionPanel extends JPanel
       ret.add(GUIUtils.styleAsToolbarButton(btnDelete), gbc);
 
       gbc = new GridBagConstraints(1, 4, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 0, 0), 0, 0);
+      btnSaveNames = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.SAVE));
+      btnSaveNames.setToolTipText(s_stringMgr.getString("TableExportSelectionPanel.save.names.tooltip"));
+      ret.add(GUIUtils.styleAsToolbarButton(btnSaveNames), gbc);
+
+      gbc = new GridBagConstraints(1, 5, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 0, 0), 0, 0);
+      btnApplySavedNames = new JButton(Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.OPEN));
+      btnApplySavedNames.setToolTipText(s_stringMgr.getString("TableExportSelectionPanel.apply.saved.names.tooltip"));
+      ret.add(GUIUtils.styleAsToolbarButton(btnApplySavedNames), gbc);
+
+      gbc = new GridBagConstraints(1, 6, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 0, 0, 0), 0, 0);
       btnInfo = new SmallToolTipInfoButton(s_stringMgr.getString("TableExportSelectionPanel.info.button"));
       ret.add(btnInfo.getButton(), gbc);
 
