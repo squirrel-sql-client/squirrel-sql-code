@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
@@ -26,10 +27,12 @@ import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExport;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -51,11 +54,13 @@ import java.text.NumberFormat;
  * @see ResultSetExport
  * @see ProgressAbortCallback
  */
-public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
+public class CreateFileOfCurrentSQLCommand
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateFileOfCurrentSQLCommand.class);
 
    private static ILogger s_log = LoggerController.createLogger(CreateFileOfCurrentSQLCommand.class);
+   private final ISession session;
+   private final SQLScriptPlugin plugin;
 
 
    /**
@@ -77,7 +82,8 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
     */
    public CreateFileOfCurrentSQLCommand(ISession session, SQLScriptPlugin plugin)
    {
-      super(session, plugin);
+      this.session = session;
+      this.plugin = plugin;
    }
 
 
@@ -165,14 +171,10 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
       }
       finally
       {
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
+         SwingUtilities.invokeLater(() -> {
+            if (null != _progressAbortCallback)
             {
-               if (null != _progressAbortCallback)
-               {
-                  _progressAbortCallback.hideProgressMonitor();
-               }
+               _progressAbortCallback.hideProgressMonitor();
             }
          });
       }
@@ -236,5 +238,55 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
          unmanagedConnection.setAutoCommit(false);
       }
       return unmanagedConnection;
+   }
+
+   /**
+    * @return the _session
+    */
+   public ISession getSession()
+   {
+      return session;
+   }
+
+   /**
+    * @return the _plugin
+    */
+   public SQLScriptPlugin getPlugin()
+   {
+      return plugin;
+   }
+
+   /**
+    * Looks for the current selected SQL statement in the editor pane.
+    * These errors can occurs,
+    * <li>no query selected</li>
+    * <li>more than one query selected</li>
+    * In all these cases, the user will get a message and <code>null</code> will be returned.
+    *
+    * @return the selected SELECT statement or null, if not exactly one SELECT statement is selected.
+    */
+   protected String getSelectedSelectStatement()
+   {
+      ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(getSession());
+
+      String script = api.getSQLScriptToBeExecuted();
+
+      IQueryTokenizer qt = getSession().getQueryTokenizer();
+      qt.setScriptToTokenize(script);
+
+      if (false == qt.hasQuery())
+      {
+         getSession().showErrorMessage(s_stringMgr.getString("AbstractDataScriptCommand.noQuery"));
+         return null;
+      }
+
+      if (qt.getQueryCount() > 1)
+      {
+         getSession().showWarningMessage(s_stringMgr.getString("AbstractDataScriptCommand.moreThanOnQuery"));
+      }
+
+      String currentSQL = qt.nextQuery().getQuery();
+
+      return currentSQL;
    }
 }
