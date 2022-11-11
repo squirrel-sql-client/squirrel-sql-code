@@ -19,17 +19,11 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.JFrame;
 import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -39,81 +33,20 @@ import java.sql.Statement;
  */
 public class ResultSetExport
 {
-   static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultSetExport.class);
-
-   static ILogger log = LoggerController.createLogger(ResultSetExport.class);
    private final Exporter _exporter;
 
    public ResultSetExport(Statement stmt, String sql, DialectType dialect, ProgressAbortFactoryCallback progressControllerFactory, JFrame owner)
    {
-      final ExporterCallback exporterCallback = new ExporterCallback()
-      {
-         @Override
-         public TableExportPreferences getExportPreferences()
-         {
-            return onGetExportPreferences();
-         }
+      final ExporterCallback exporterCallback = () -> progressControllerFactory.getOrCreate();
 
-         @Override
-         public ProgressAbortCallback createProgressController()
-         {
-            return progressControllerFactory.getOrCreate();
-         }
-
-         @Override
-         public boolean checkMissingData(String separatorChar)
-         {
-            return false;
-         }
-
-         @Override
-         public ExportDataInfoList createExportData(ExportController ctrl) throws ExportDataException
-         {
-            return ExportDataInfoList.single(onCreateExportData(ctrl, sql, stmt, dialect));
-         }
-      };
-
-      _exporter = new Exporter(exporterCallback, ExportControllerFactory.createExportControllerForResultSet(owner));
-
+      final ExportController exportController = new ExportController(new ExportSourceAccess(sql, stmt, dialect), owner, ExportDialogType.RESULT_SET_EXPORT);
+      GUIUtils.processOnSwingEventThread(() -> exportController.showDialog(), true);
+      _exporter = new Exporter(exporterCallback, exportController);
    }
 
    public void export()
    {
       _exporter.export();
-   }
-
-
-   private IExportData onCreateExportData(ExportController ctrl, String sql, Statement stmt, DialectType dialect) throws ExportDataException
-   {
-      try
-      {
-         _exporter.progress(s_stringMgr.getString("ResultSetExportCommand.executingQuery"));
-         if (ctrl.isExportComplete() == false)
-         {
-            stmt.setMaxRows(((ResultSetExportSelectionPanelController)ctrl.getExportSelectionPanelController()).getMaxRows());
-         }
-         ResultSet resultSet = stmt.executeQuery(sql);
-         return new ResultSetExportData(resultSet, dialect);
-      }
-      catch (SQLException e)
-      {
-         log.error(s_stringMgr.getString("ResultSetExportCommand.errorExecuteStatement"), e);
-         throw new ExportDataException(s_stringMgr.getString("ResultSetExportCommand.errorExecuteStatement"), e);
-      }
-   }
-
-   private TableExportPreferences onGetExportPreferences()
-   {
-      final TableExportPreferences prefs = TableExportPreferencesDAO.loadPreferences();
-
-      /////////////////////////////////////////////////////////////////////////////////////////////////
-      // If useColoring was true for a file export a XSSFWorkbook instead of a SXSSFWorkbook was used.
-      // This would result in much higher memory usage and much longer export time.
-      // See DataExportExcelWriter.beforeWorking(...)
-      prefs.setUseColoring(false);
-      //
-      /////////////////////////////////////////////////////////////////////////////////////////////////
-      return prefs;
    }
 
    public File getTargetFile()

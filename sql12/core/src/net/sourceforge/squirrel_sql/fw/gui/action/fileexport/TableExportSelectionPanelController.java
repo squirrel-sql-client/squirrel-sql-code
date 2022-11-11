@@ -18,24 +18,29 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class TableExportSelectionPanelController implements ExportSelectionPanelController
+public class TableExportSelectionPanelController
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportSelectionPanelController.class);
+   private final ExportSourceAccess _exportSourceAccess;
+   private final ExportDialogType _exportDialogType;
 
 
    private TableExportSelectionPanel _pnl;
    private MultipleSqlResultExportDestinationInfo _currentExportDestinationInfo;
 
-   public TableExportSelectionPanelController()
+   public TableExportSelectionPanelController(ExportSourceAccess exportSourceAccess, ExportDialogType exportDialogType)
    {
-      _pnl = new TableExportSelectionPanel();
+      _exportSourceAccess = exportSourceAccess;
+      _exportDialogType = exportDialogType;
+      _pnl = new TableExportSelectionPanel(exportDialogType);
 
       _pnl.radComplete.addActionListener(e -> updateUI());
-      _pnl.radSelection.addActionListener(e -> updateUI());
+      _pnl.radSelectionOrLimitRows.addActionListener(e -> updateUI());
       _pnl.radMultipleSQLRes.addActionListener(e -> updateUI());
 
       _pnl.btnUp.addActionListener(e -> onUp());
@@ -239,31 +244,51 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
       }
    }
 
-   @Override
-   public void writeControlsToPrefs(TableExportPreferences prefs)
-   {
-      prefs.setExportMultipleSQLResults(_pnl.radMultipleSQLRes.isSelected());
-      prefs.setExportComplete(prefs.isExportComplete());
-   }
-
-   @Override
    public void initPanel(TableExportPreferences prefs)
    {
-      if(prefs.isExportComplete())
+      if(prefs.isExportMultipleSQLResults())
+      {
+         _pnl.radMultipleSQLRes.setSelected(true);
+      }
+      else if(prefs.isExportComplete())
       {
          _pnl.radComplete.setSelected(true);
       }
       else
       {
-         _pnl.radSelection.setSelected(true);
+         _pnl.radSelectionOrLimitRows.setSelected(true);
       }
 
-      if(prefs.isExportMultipleSQLResults())
+      if(_exportDialogType == ExportDialogType.RESULT_SET_EXPORT)
       {
-         _pnl.radMultipleSQLRes.setSelected(true);
+         _pnl.txtLimitRows.setText(prefs.getLimitRows());
       }
 
       updateUI();
+   }
+
+   public void writeControlsToPrefs(TableExportPreferences prefs)
+   {
+      if(_pnl.radMultipleSQLRes.isSelected())
+      {
+         prefs.setExportMultipleSQLResults(true);
+         prefs.setExportComplete(false);
+      }
+      else if(_pnl.radComplete.isSelected())
+      {
+         prefs.setExportMultipleSQLResults(false);
+         prefs.setExportComplete(true);
+      }
+      else
+      {
+         prefs.setExportMultipleSQLResults(false);
+         prefs.setExportComplete(false);
+      }
+
+      if(_exportDialogType == ExportDialogType.RESULT_SET_EXPORT)
+      {
+         prefs.setLimitRows(_pnl.txtLimitRows.getText());
+      }
    }
 
    private void updateUI()
@@ -279,6 +304,10 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
 
       _pnl.txtExportFileOrDir.setEnabled(_pnl.radMultipleSQLRes.isSelected());
 
+      if(_exportDialogType == ExportDialogType.RESULT_SET_EXPORT)
+      {
+         _pnl.txtLimitRows.setEnabled(_pnl.radSelectionOrLimitRows.isSelected());
+      }
 
       if(_pnl.radMultipleSQLRes.isSelected())
       {
@@ -314,13 +343,11 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
       }
    }
 
-   @Override
    public boolean isExportComplete()
    {
       return _pnl.radComplete.isSelected();
    }
 
-   @Override
    public void updateExportDestinationInfo(String exportFileNameText, boolean destinationIsExcel)
    {
       _pnl.txtExportFileOrDir.setText(s_stringMgr.getString("TableExportSelectionPanelController.export.location.unspecified"));
@@ -359,24 +386,16 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
       }
    }
 
-   @Override
    public JPanel getPanel()
    {
       return _pnl;
    }
 
-   @Override
-   public boolean isExportMultipleSqlResults()
-   {
-      return _pnl.radMultipleSQLRes.isSelected();
-   }
-
-   @Override
-   public ExportDataInfoList getMultipleSqlResults()
+   public List<ExportDataInfo> getSqlResultDataSetViewersExportData()
    {
       if(false == _pnl.radMultipleSQLRes.isSelected())
       {
-         return ExportDataInfoList.EMPTY;
+         return Collections.emptyList();
       }
 
       ArrayList<ExportDataInfo> ret = new ArrayList<>();
@@ -394,6 +413,22 @@ public class TableExportSelectionPanelController implements ExportSelectionPanel
          }
       }
 
-      return new ExportDataInfoList(ret, _currentExportDestinationInfo);
+      return ret;
    }
+
+   public ExportSourceAccess getExportSourceAccess()
+   {
+      switch (_exportDialogType)
+      {
+         case UI_TABLE_EXPORT:
+            _exportSourceAccess.prepareSqlResultDataSetViewersExport(getSqlResultDataSetViewersExportData(), _pnl.radSelectionOrLimitRows.isSelected(), _currentExportDestinationInfo, _pnl.radMultipleSQLRes.isSelected());
+            return _exportSourceAccess;
+         case RESULT_SET_EXPORT:
+            _exportSourceAccess.prepareResultSetExport(isExportComplete(), _pnl.txtLimitRows.getInt(), _currentExportDestinationInfo, _pnl.radMultipleSQLRes.isSelected());
+            return _exportSourceAccess;
+         default:
+            throw new IllegalStateException("Unknown ExportDialogType: " + _exportDialogType);
+      }
+   }
+
 }

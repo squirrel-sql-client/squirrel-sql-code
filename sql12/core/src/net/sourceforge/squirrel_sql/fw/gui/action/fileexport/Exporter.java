@@ -62,7 +62,7 @@ public class Exporter
    private static ILogger s_log = LoggerController.createLogger(Exporter.class);
    private final ExportController _exportController;
 
-   private ProgressAbortCallback progressController = null;
+   private ProgressAbortCallback _progressController = null;
    private File _singleExportTargetFile;
 
    private long writtenRows = -1;
@@ -88,7 +88,7 @@ public class Exporter
             return;
          }
 
-         if(_exporterCallback.checkMissingData(ctrl.getSeparatorChar()))
+         if(ctrl.isUITableMissingBlobData())
          {
             int choice = JOptionPane.showConfirmDialog(ctrl.getOwningWindow(), s_stringMgr.getString("TableExportCsvCommand.missingClobDataMsg", ClobDescriptor.i18n.CLOB_LABEL));
             if(choice != JOptionPane.YES_OPTION)
@@ -109,19 +109,20 @@ public class Exporter
 
    private void export(ExportController ctrl) throws ExportDataException
    {
-      this.progressController = _exporterCallback.createProgressController();
+      this._progressController = _exporterCallback.createProgressController();
 
       File firstExportedFile;
       try
       {
-         final ExportDataInfoList exportDataInfoList = _exporterCallback.createExportData(ctrl);
+         //final ExportDataInfoList exportDataInfoList = _exporterCallback.createExportData(ctrl);
+         final ExportDataInfoList exportDataInfoList = ctrl.getExportSourceAccess().createExportData(_progressController);
 
          if(exportDataInfoList.isEmpty())
          {
             // Happens when multiple SQL result export was chosen with empty export list.
-            if(null != progressController)
+            if(null != _progressController)
             {
-               progressController.setFinished();
+               _progressController.setFinished();
             }
             Runnable runnable = () -> JOptionPane.showMessageDialog(ctrl.getOwningWindow(),
                                                                     s_stringMgr.getString("Exporter.no.files.to.export"),
@@ -135,7 +136,7 @@ public class Exporter
 
          firstExportedFile = exportDataInfoList.getFirstExportFile(TableExportPreferencesDAO.loadPreferences());
       }
-      catch (ExportDataException e)
+      catch (Exception e)
       {
          // Show an error and re-throw the exception.
          s_log.error(s_stringMgr.getString("AbstractExportCommand.failed"));
@@ -189,7 +190,7 @@ public class Exporter
     */
    private long writeExport(final ExportController ctrl, ExportDataInfoList exportDataInfoList)
    {
-      return ExportFileWriter.export(exportDataInfoList, _exporterCallback.getExportPreferences(), progressController, ctrl.getOwningWindow());
+      return ExportFileWriter.export(exportDataInfoList, ctrl.getExportSourceAccess().getPreferences(), _progressController, ctrl.getOwningWindow());
    }
 
 
@@ -256,9 +257,9 @@ public class Exporter
 
    public void progress(String task)
    {
-      if(progressController != null)
+      if(_progressController != null)
       {
-         progressController.currentlyLoading(task);
+         _progressController.currentlyLoading(task);
       }
    }
 
@@ -278,8 +279,4 @@ public class Exporter
       return writtenRows;
    }
 
-   public ExportDataInfoList getMultipleSqlResults()
-   {
-      return _exportController.getMultipleSqlResults();
-   }
 }

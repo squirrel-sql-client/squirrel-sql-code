@@ -23,17 +23,4 @@ public enum ExportDialogType
    {
       return _enableColoring;
    }
-
-   public ExportSelectionPanelController createExportSelectionPanelController()
-   {
-      switch (this)
-      {
-         case UI_TABLE_EXPORT:
-            return new TableExportSelectionPanelController();
-         case RESULT_SET_EXPORT:
-            return new ResultSetExportSelectionPanelController();
-         default:
-            throw new IllegalStateException("Unknown ExportDialogType: " + name());
-      }
-   }
 }

@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -25,7 +26,9 @@ public class TableExportSelectionPanel extends JPanel
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportSelectionPanel.class);
 
    JRadioButton radComplete;
-   JRadioButton radSelection;
+   JRadioButton radSelectionOrLimitRows;
+   IntegerField txtLimitRows;
+
    JRadioButton radMultipleSQLRes;
 
    JList<SqlResultListEntry> lstSQLResultsToExport;
@@ -38,7 +41,7 @@ public class TableExportSelectionPanel extends JPanel
    JTextField txtExportFileOrDir;
    SmallToolTipInfoButton btnInfo;
 
-   public TableExportSelectionPanel()
+   public TableExportSelectionPanel(ExportDialogType exportDialogType)
    {
       super(new GridBagLayout());
 
@@ -48,23 +51,40 @@ public class TableExportSelectionPanel extends JPanel
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
       add(radComplete, gbc);
 
-      radSelection = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.exportSelection"));
-      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
-      add(radSelection, gbc);
+      if(exportDialogType == ExportDialogType.UI_TABLE_EXPORT)
+      {
+         radSelectionOrLimitRows = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.exportSelection"));
+         gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+         add(radSelectionOrLimitRows, gbc);
+      }
+      else if(exportDialogType == ExportDialogType.RESULT_SET_EXPORT)
+      {
+         radSelectionOrLimitRows = new JRadioButton(s_stringMgr.getString("ResultSetExportDialog.limitRows"));
+         gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+         add(radSelectionOrLimitRows, gbc);
+
+         gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+         txtLimitRows = new IntegerField(5);
+         add(txtLimitRows, gbc);
+      }
+      else
+      {
+         throw new IllegalArgumentException("Unknown exportDialogType: " + exportDialogType);
+      }
 
       radMultipleSQLRes = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.exportMultipleSQLResults"));
       radMultipleSQLRes.setToolTipText(s_stringMgr.getString("TableExportCsvDlg.exportMultipleSQLResults.tooltip"));
-      gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      gbc = new GridBagConstraints(0, 1, 3, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0);
       add(radMultipleSQLRes, gbc);
 
 
-      gbc = new GridBagConstraints(0, 1, 3, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 3, 3, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0);
       add(createSQLResultExportListPanel(), gbc);
 
 
       ButtonGroup bg = new ButtonGroup();
       bg.add(radComplete);
-      bg.add(radSelection);
+      bg.add(radSelectionOrLimitRows);
       bg.add(radMultipleSQLRes);
 
       setBorder(BorderFactory.createEtchedBorder());

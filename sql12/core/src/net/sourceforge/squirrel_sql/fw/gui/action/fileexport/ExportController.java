@@ -24,17 +24,18 @@ public class ExportController
 
    private Window _owner;
    private ExportDialogType _exportDialogType;
-   private ExportSelectionPanelController _exportSelectionPanelController;
+   private TableExportSelectionPanelController _exportSelectionPanelController;
 
 
    /**
     * @param tableExportDlgFinishedListener when null the dialog is modal.
+    * @param exportSourceAccess
     */
-   ExportController(Window owner, ExportDialogType exportDialogType)
+   ExportController(ExportSourceAccess exportSourceAccess, Window owner, ExportDialogType exportDialogType)
    {
       _owner = owner;
       _exportDialogType = exportDialogType;
-      _exportSelectionPanelController = exportDialogType.createExportSelectionPanelController();
+      _exportSelectionPanelController = new TableExportSelectionPanelController(exportSourceAccess, exportDialogType);
 
       _dlg = new ExportDlg(owner, _exportSelectionPanelController.getPanel(), _exportDialogType);
 
@@ -612,18 +613,13 @@ public class ExportController
       return _owner;
    }
 
-   public ExportSelectionPanelController getExportSelectionPanelController()
+   public boolean isUITableMissingBlobData()
    {
-      return _exportSelectionPanelController;
+      return _exportSelectionPanelController.getExportSourceAccess().isUITableMissingBlobData(getSeparatorChar());
    }
 
-   public ExportDataInfoList getMultipleSqlResults()
+   public ExportSourceAccess getExportSourceAccess()
    {
-      return _exportSelectionPanelController.getMultipleSqlResults();
-   }
-
-   public boolean isExportMultipleSqlResults()
-   {
-      return _exportSelectionPanelController.isExportMultipleSqlResults();
+      return _exportSelectionPanelController.getExportSourceAccess();
    }
 }
