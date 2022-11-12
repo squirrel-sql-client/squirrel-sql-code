@@ -23,6 +23,7 @@ public class TableExportPreferencesDAO
    private static final String PREF_KEY_FORMAT_JSON = "SquirrelSQL.csvexport.formatJSON";
 
    private static final String PREF_KEY_LIMIT_ROWS = "SquirrelSQL.sqlexport.limitRows";
+   private static final String PREF_KEY_LIMIT_ROWS_CHECKED = "SquirrelSQL.sqlexport.limitRowsChecked";
 
 
    public static TableExportPreferences loadPreferences()
@@ -35,7 +36,7 @@ public class TableExportPreferencesDAO
       ret.setSeperatorTab(Props.getBoolean(PREF_KEY_SEPERATOR_TAB, ret.isSeperatorTab()));
       ret.setSeperatorChar(Props.getString(PREF_KEY_SEPERATOR_CHAR, ret.getSeperatorChar()));
       ret.setLineSeperator(Props.getString(PREF_KEY_LINE_SEPERATOR, ret.getLineSeperator()));
-      ret.setExportComplete(Props.getBoolean(PREF_KEY_EXPORT_COMPLETE, ret.isExportComplete()));
+      ret.setExportComplete(Props.getBoolean(PREF_KEY_EXPORT_COMPLETE, ret.isExportCompleteTableOrSingleFile()));
       ret.setExportMultipleSQLResults(Props.getBoolean(PREF_KEY_EXPORT_MULTIPLE_SQL_RESULTS, ret.isExportMultipleSQLResults()));
       ret.setUseGlobalPrefsFormating(Props.getBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, ret.isUseGlobalPrefsFormating()));
       ret.setExecuteCommand(Props.getBoolean(PREF_KEY_EXECUTE_COMMAND, ret.isExecuteCommand()));
@@ -47,7 +48,8 @@ public class TableExportPreferencesDAO
       ret.setFormatXML(Props.getBoolean(PREF_KEY_FORMAT_XML, ret.isFormatXML()));
       ret.setFormatJSON(Props.getBoolean(PREF_KEY_FORMAT_JSON, ret.isFormatJSON()));
 
-      ret.setLimitRows(Props.getString(PREF_KEY_LIMIT_ROWS, ret.getLimitRows()));
+      ret.setRowsLimit(Props.getString(PREF_KEY_LIMIT_ROWS, ret.getRowsLimit()));
+      ret.setLimitRowsChecked(Props.getBoolean(PREF_KEY_LIMIT_ROWS_CHECKED, ret.isLimitRowsChecked()));
 
       return ret;
    }
@@ -60,7 +62,7 @@ public class TableExportPreferencesDAO
       Props.putBoolean(PREF_KEY_SEPERATOR_TAB, prefs.isSeperatorTab());
       Props.putString(PREF_KEY_SEPERATOR_CHAR, prefs.getSeperatorChar());
       Props.putString(PREF_KEY_LINE_SEPERATOR, prefs.getLineSeperator());
-      Props.putBoolean(PREF_KEY_EXPORT_COMPLETE, prefs.isExportComplete());
+      Props.putBoolean(PREF_KEY_EXPORT_COMPLETE, prefs.isExportCompleteTableOrSingleFile());
       Props.putBoolean(PREF_KEY_EXPORT_MULTIPLE_SQL_RESULTS, prefs.isExportMultipleSQLResults());
       Props.putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, prefs.isUseGlobalPrefsFormating());
       Props.putBoolean(PREF_KEY_EXECUTE_COMMAND, prefs.isExecuteCommand());
@@ -72,7 +74,8 @@ public class TableExportPreferencesDAO
       Props.putBoolean(PREF_KEY_FORMAT_XML, prefs.isFormatXML());
       Props.putBoolean(PREF_KEY_FORMAT_JSON, prefs.isFormatJSON());
 
-      Props.putString(PREF_KEY_LIMIT_ROWS, prefs.getLimitRows());
+      Props.putString(PREF_KEY_LIMIT_ROWS, prefs.getRowsLimit());
+      Props.putBoolean(PREF_KEY_LIMIT_ROWS_CHECKED   , prefs.isLimitRowsChecked());
    }
 
    public static TableExportPreferences createExportPreferencesForFile(String fileName)

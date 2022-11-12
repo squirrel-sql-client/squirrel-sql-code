@@ -18,11 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.fw.sql;
 
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -472,7 +474,40 @@ public class SQLUtilities
 		}
 	}
 
-   /**
+	/**
+	 * Create a {@link Statement} that will stream the result instead of loading into the memory.
+	 *
+	 * @param connection the connection to use
+	 * @param dialectType
+	 * @return A Statement, that will stream the result.
+	 * @throws SQLException
+	 * @see http://javaquirks.blogspot.com/2007/12/mysql-streaming-result-set.html
+	 * @see http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-implementation-notes.html
+	 */
+	public static Statement createStatementForStreamingResults(Connection connection, DialectType dialectType) throws SQLException
+	{
+		Statement stmt;
+
+		if (DialectType.MYSQL5 == dialectType)
+		{
+			/*
+			 * MYSQL will load the whole result into memory. To avoid this, we must use the streaming mode.
+			 *
+			 * http://javaquirks.blogspot.com/2007/12/mysql-streaming-result-set.html
+			 * http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-implementation-notes.html
+			 */
+			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			stmt.setFetchSize(Integer.MIN_VALUE);
+		}
+		else
+		{
+			stmt = connection.createStatement();
+		}
+		return stmt;
+
+	}
+
+	/**
 	 * @author manningr
 	 */
 	private static class TableComparator implements Comparator<ITableInfo>, Serializable

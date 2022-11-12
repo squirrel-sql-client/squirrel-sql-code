@@ -39,8 +39,22 @@ public class TableExportSelectionPanelController
       _exportDialogType = exportDialogType;
       _pnl = new TableExportSelectionPanel(exportDialogType);
 
-      _pnl.radComplete.addActionListener(e -> updateUI());
-      _pnl.radSelectionOrLimitRows.addActionListener(e -> updateUI());
+      _pnl.radCompleteTableOrSingleFile.addActionListener(e -> updateUI());
+
+      if(_exportDialogType == ExportDialogType.RESULT_SET_EXPORT)
+      {
+         _pnl.chkLimitRows.addActionListener(e -> updateUI());
+      }
+      else if(_exportDialogType == ExportDialogType.UI_TABLE_EXPORT)
+      {
+         _pnl.radSelectionInUiTable.addActionListener(e -> updateUI());
+      }
+      else
+      {
+         throw new IllegalStateException("Unknown ExportDialogType: " + _exportDialogType);
+      }
+
+
       _pnl.radMultipleSQLRes.addActionListener(e -> updateUI());
 
       _pnl.btnUp.addActionListener(e -> onUp());
@@ -246,14 +260,34 @@ public class TableExportSelectionPanelController
 
    public void initPanel(TableExportPreferences prefs)
    {
-      final boolean exportMultipleSQLResults;
-      if(_exportDialogType == ExportDialogType.RESULT_SET_EXPORT && 1 < _exportSourceAccess.getOriginalSqlsToExport().size())
+      boolean exportCompleteTableOrSingleFile = prefs.isExportCompleteTableOrSingleFile();
+      boolean exportMultipleSQLResults = prefs.isExportMultipleSQLResults();
+
+      if(_exportDialogType == ExportDialogType.RESULT_SET_EXPORT)
       {
-         exportMultipleSQLResults = true;
+         if(1 < _exportSourceAccess.getOriginalSqlsToExport().size())
+         {
+            exportMultipleSQLResults = true;
+            exportCompleteTableOrSingleFile = false;
+         }
+         else if( false == (prefs.isFormatXLS() || prefs.isFormatXLSOld()) )
+         {
+            exportMultipleSQLResults = false;
+            exportCompleteTableOrSingleFile = true;
+         }
+      }
+      else if(_exportDialogType == ExportDialogType.UI_TABLE_EXPORT)
+      {
+         if(   exportMultipleSQLResults
+            && Main.getApplication().getMultipleSqlResultExportChannel().getSqlResultTabHandles().isEmpty())
+         {
+            exportMultipleSQLResults = false;
+            exportCompleteTableOrSingleFile = true;
+         }
       }
       else
       {
-         exportMultipleSQLResults = prefs.isExportMultipleSQLResults();
+         throw new IllegalStateException("Unknown ExportDialogType: " + _exportDialogType);
       }
 
 
@@ -261,18 +295,22 @@ public class TableExportSelectionPanelController
       {
          _pnl.radMultipleSQLRes.setSelected(true);
       }
-      else if(prefs.isExportComplete())
+      else if(exportCompleteTableOrSingleFile)
       {
-         _pnl.radComplete.setSelected(true);
+         _pnl.radCompleteTableOrSingleFile.setSelected(true);
       }
       else
       {
-         _pnl.radSelectionOrLimitRows.setSelected(true);
+         if(_exportDialogType == ExportDialogType.UI_TABLE_EXPORT)
+         {
+            _pnl.radSelectionInUiTable.setSelected(true);
+         }
       }
 
       if(_exportDialogType == ExportDialogType.RESULT_SET_EXPORT)
       {
-         _pnl.txtLimitRows.setText(prefs.getLimitRows());
+         _pnl.chkLimitRows.setSelected(prefs.isLimitRowsChecked());
+         _pnl.txtLimitRows.setText(prefs.getRowsLimit());
       }
 
       updateUI();
@@ -285,7 +323,7 @@ public class TableExportSelectionPanelController
          prefs.setExportMultipleSQLResults(true);
          prefs.setExportComplete(false);
       }
-      else if(_pnl.radComplete.isSelected())
+      else if(_pnl.radCompleteTableOrSingleFile.isSelected())
       {
          prefs.setExportMultipleSQLResults(false);
          prefs.setExportComplete(true);
@@ -298,7 +336,8 @@ public class TableExportSelectionPanelController
 
       if(_exportDialogType == ExportDialogType.RESULT_SET_EXPORT)
       {
-         prefs.setLimitRows(_pnl.txtLimitRows.getText());
+         prefs.setLimitRowsChecked(_pnl.chkLimitRows.isSelected());
+         prefs.setRowsLimit(_pnl.txtLimitRows.getText());
       }
    }
 
@@ -317,7 +356,7 @@ public class TableExportSelectionPanelController
 
       if(_exportDialogType == ExportDialogType.RESULT_SET_EXPORT)
       {
-         _pnl.txtLimitRows.setEnabled(_pnl.radSelectionOrLimitRows.isSelected());
+         _pnl.txtLimitRows.setEnabled(_pnl.chkLimitRows.isSelected());
       }
 
       if(_pnl.radMultipleSQLRes.isSelected())
@@ -410,10 +449,18 @@ public class TableExportSelectionPanelController
       switch (_exportDialogType)
       {
          case UI_TABLE_EXPORT:
-            _exportSourceAccess.prepareSqlResultDataSetViewersExport(getSqlResultDataSetViewersExportData(), _pnl.radSelectionOrLimitRows.isSelected(), _currentExportDestinationInfo, _pnl.radMultipleSQLRes.isSelected());
+            _exportSourceAccess.prepareSqlResultDataSetViewersExport(getSqlResultDataSetViewersExportData(),
+                                                                     _pnl.radSelectionInUiTable.isSelected(),
+                                                                     _currentExportDestinationInfo,
+                                                                     _pnl.radMultipleSQLRes.isSelected());
             return _exportSourceAccess;
          case RESULT_SET_EXPORT:
-            _exportSourceAccess.prepareResultSetExport(getExportSqlsNamed(), _pnl.radComplete.isSelected(), _pnl.txtLimitRows.getInt(), _currentExportDestinationInfo, _pnl.radMultipleSQLRes.isSelected());
+            _exportSourceAccess.prepareResultSetExport(getExportSqlsNamed(),
+                                                       _pnl.radCompleteTableOrSingleFile.isSelected(),
+                                                       _pnl.chkLimitRows.isSelected(),
+                                                       _pnl.txtLimitRows.getInt(),
+                                                       _currentExportDestinationInfo,
+                                                       _pnl.radMultipleSQLRes.isSelected());
             return _exportSourceAccess;
          default:
             throw new IllegalStateException("Unknown ExportDialogType: " + _exportDialogType);

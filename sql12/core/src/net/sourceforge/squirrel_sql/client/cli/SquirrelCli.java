@@ -16,6 +16,7 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
@@ -176,8 +177,8 @@ public class SquirrelCli
          _cliConnectionData.ensureCliSessionCreated();
 
          final ISQLConnection sqlConnection = _cliConnectionData.getCliSession().getSQLConnection();
-         final Statement stat = sqlConnection.getConnection().createStatement();
          final DialectType dialectType = DialectFactory.getDialectType(sqlConnection.getSQLMetaData());
+         final Statement stat = SQLUtilities.createStatementForStreamingResults(sqlConnection.getConnection(), dialectType);
 
          TableExportPreferences exportPrefs = TableExportPreferencesDAO.createExportPreferencesForFile(outputFile);
 

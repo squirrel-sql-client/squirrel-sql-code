@@ -42,7 +42,7 @@ public class TableExportPreferences
    private boolean _exportComplete = true;
 
 	// PREF_KEY_LIMIT_ROWS
-   private String _limitRows = "100";
+   private String _rowsLimit = "100";
 
    // PREF_KEY_USE_GLOBAL_PREFS_FORMATING
    private boolean _useGlobalPrefsFormating = true;
@@ -57,6 +57,7 @@ public class TableExportPreferences
    private String _lineSeperator = LineSeparator.DEFAULT.name();
    private boolean _useColoring;
    private boolean _exportMultipleSQLResults;
+   private boolean _limitRowsChecked;
 
    public boolean isFormatXLS()
    {
@@ -158,7 +159,7 @@ public class TableExportPreferences
       _formatJSON = formatJSON;
    }
 
-   public boolean isExportComplete()
+   public boolean isExportCompleteTableOrSingleFile()
    {
       return _exportComplete;
    }
@@ -168,14 +169,14 @@ public class TableExportPreferences
       _exportComplete = exportComplete;
    }
 
-   public String getLimitRows()
+   public String getRowsLimit()
    {
-      return _limitRows;
+      return _rowsLimit;
    }
 
-   public void setLimitRows(String limitRows)
+   public void setRowsLimit(String rowsLimit)
    {
-      _limitRows = limitRows;
+      _rowsLimit = rowsLimit;
    }
 
    public boolean isUseGlobalPrefsFormating()
@@ -236,5 +237,15 @@ public class TableExportPreferences
    public void setExportMultipleSQLResults(boolean exportMultipleSQLResults)
    {
       _exportMultipleSQLResults = exportMultipleSQLResults;
+   }
+
+   public boolean isLimitRowsChecked()
+   {
+      return _limitRowsChecked;
+   }
+
+   public void setLimitRowsChecked(boolean limitRowsChecked)
+   {
+      _limitRowsChecked = limitRowsChecked;
    }
 }

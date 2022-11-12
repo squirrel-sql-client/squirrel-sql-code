@@ -11,8 +11,9 @@ public class JDBCResultSetExportData
 
    public Connection _con;
    public DialectType _dialect;
+   public boolean _limitRows;
 
    List<ExportSqlNamed> _exportSqlsNamed;
-   public boolean _exportComplete;
+   public boolean _exportSingleFile;
    public int _maxRows;
 }

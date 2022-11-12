@@ -10,6 +10,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportFileWriter;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExportData;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferencesDAO;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
@@ -18,7 +19,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ProgressAbortFactoryCallbackImpl;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ScriptUtil;
 
 import java.io.File;
 import java.sql.Connection;
@@ -182,7 +182,7 @@ public class SQLToFileHandler implements ISQLExecutionListener
    {
       try
       {
-         final Statement stat = ScriptUtil.createStatementForStreamingResults(con, dialectType);
+         final Statement stat = SQLUtilities.createStatementForStreamingResults(con, dialectType);
          ExportFileWriter.writeFile(new ResultSetExportData(stat, sqlToWriteToFile ,dialectType), prefs, progressControllerFactory.getOrCreate());
          Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLToFileHandler.wrote.file", file.getPath()));
       }

@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -107,9 +108,9 @@ public class ExportSourceAccess
    {
       try
       {
-         Statement stat = _jdbcResultSetExportData._con.createStatement();
+         Statement stat = SQLUtilities.createStatementForStreamingResults(_jdbcResultSetExportData._con, _jdbcResultSetExportData._dialect);
 
-         if (_jdbcResultSetExportData._exportComplete == false)
+         if (_jdbcResultSetExportData._limitRows)
          {
             stat.setMaxRows(_jdbcResultSetExportData._maxRows);
          }
@@ -171,9 +172,10 @@ public class ExportSourceAccess
       return prefs;
    }
 
-   public void prepareResultSetExport(List<ExportSqlNamed> exportSqlsNamed,  boolean exportComplete, int maxRows, MultipleSqlResultExportDestinationInfo currentExportDestinationInfo, boolean exportMultipleResults)
+   public void prepareResultSetExport(List<ExportSqlNamed> exportSqlsNamed, boolean exportSingleFile, boolean limitRows, int maxRows, MultipleSqlResultExportDestinationInfo currentExportDestinationInfo, boolean exportMultipleResults)
    {
-      _jdbcResultSetExportData._exportComplete = exportComplete;
+      _jdbcResultSetExportData._exportSingleFile = exportSingleFile;
+      _jdbcResultSetExportData._limitRows = limitRows;
       _jdbcResultSetExportData._maxRows = maxRows;
       _jdbcResultSetExportData._exportSqlsNamed = exportSqlsNamed;
 
