@@ -509,4 +509,8 @@ public class TableExportSelectionPanelController
       return ret;
    }
 
+   public boolean isExportMultipleSQLResults()
+   {
+      return _pnl.radMultipleSQLRes.isSelected();
+   }
 }

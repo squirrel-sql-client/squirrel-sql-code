@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -343,10 +344,9 @@ public class ExportController
          return;
       }
 	   
-      String csvFileName = _dlg.txtFile.getText();
-      if(null == csvFileName || 0 == csvFileName.trim().length())
+      String singleExportFileName = _dlg.txtFile.getText();
+      if(StringUtilities.isEmpty(singleExportFileName, true))
       {
-         // i18n[TableExportCsvController.noFile=You must provide a export file name.]
          String msg = s_stringMgr.getString("TableExportCsvController.noFile");
          JOptionPane.showMessageDialog(_dlg, msg);
          return;
@@ -377,7 +377,9 @@ public class ExportController
          }
       }
 
-      if(new File(csvFileName).exists())
+      if(    new File(singleExportFileName).exists()
+          && false == isExportingMultipleFiles() // For now in case of multiple export files these files will be replaced silently.
+        )
       {
          // i18n[TableExportCsvController.replaceFile=The export file already exisits. Would you like to replace it?]
          String msg = s_stringMgr.getString("TableExportCsvController.replaceFile");
@@ -395,7 +397,11 @@ public class ExportController
       closeDlg();
    }
 
-
+   private boolean isExportingMultipleFiles()
+   {
+      return _exportSelectionPanelController.isExportMultipleSQLResults()
+             && false == (_dlg.radFormatXLS.isSelected() || _dlg.radFormatXLSX.isSelected()); // Multiple exports to MS Excel means one Excel file with multiple tabs.
+   }
 
 
    /**
