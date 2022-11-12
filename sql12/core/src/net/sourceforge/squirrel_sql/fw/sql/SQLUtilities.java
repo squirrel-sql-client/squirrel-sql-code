@@ -383,7 +383,8 @@ public class SQLUtilities
 		try
 		{
 			stmt.close();
-		} catch (SQLException e)
+		}
+		catch (SQLException e)
 		{
 			if (s_log.isDebugEnabled())
 			{
@@ -462,6 +463,14 @@ public class SQLUtilities
 
       return sbColDef.toString();
    }
+
+	public static void closeConnection(ISQLConnection sqlCon)
+	{
+		if (sqlCon != null)
+		{
+			sqlCon.close();
+		}
+	}
 
    /**
 	 * @author manningr

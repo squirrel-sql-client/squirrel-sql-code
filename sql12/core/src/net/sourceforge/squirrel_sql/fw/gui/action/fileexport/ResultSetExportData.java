@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -28,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -46,24 +48,19 @@ public class ResultSetExportData implements IExportData
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultSetExportData.class);
 
-   static interface i18n
-   {
-      // i18n[ResultSetExportData.defaultLoadingPrefix="Error while reading the result set."]
-      String ERROR_READING_RESULTSET = s_stringMgr.getString("ResultSetExportData.errorReadingResultSet");
-   }
-
-
    /**
-    * The result set to work on.
+    * ResultSet to export and its Statement.
+    * The ResultSet has an associated Statement because mostly Statements allow only a single ResultSet at a time.
     */
-   private ResultSet resultSet;
+   private Statement _stat;
+   private ResultSet _resultSet;
 
    /**
     * The {@link ColumnDisplayDefinition} for each column.
     */
-   private List<ColumnDisplayDefinition> colDispDef;
+   private List<ColumnDisplayDefinition> _colDispDef;
 
-   private DialectType dialect;
+   private DialectType _dialect;
 
    /**
     * The current row index
@@ -77,18 +74,18 @@ public class ResultSetExportData implements IExportData
     * @param dialect   The dialect to use.
     * @throws SQLException if the meta data of the result set could not be read.
     */
-   public ResultSetExportData(ResultSet resultSet, DialectType dialect) throws SQLException
+   public ResultSetExportData(Statement stat, String sqlToWriteToFile, DialectType dialect) throws SQLException
    {
-      this.resultSet = resultSet;
-      this.colDispDef = new ArrayList<>();
-      this.dialect = dialect;
+      _stat = stat;
+      _resultSet = stat.executeQuery(sqlToWriteToFile);
+      _colDispDef = new ArrayList<>();
+      _dialect = dialect;
 
-      int columnCount = this.resultSet.getMetaData().getColumnCount();
+      int columnCount = this._resultSet.getMetaData().getColumnCount();
       for (int i = 1; i <= columnCount; i++)
       {
-         colDispDef.add(new ColumnDisplayDefinition(resultSet, i, this.dialect, true));
+         _colDispDef.add(new ColumnDisplayDefinition(_resultSet, i, this._dialect, true));
       }
-
    }
 
    /**
@@ -100,8 +97,8 @@ public class ResultSetExportData implements IExportData
    @Override
    public Iterator<String> getHeaders()
    {
-      List<String> headers = new ArrayList<String>();
-      for (ColumnDisplayDefinition col : this.colDispDef)
+      List<String> headers = new ArrayList<>();
+      for (ColumnDisplayDefinition col : this._colDispDef)
       {
          String headerValue = col.getColumnHeading();
          headers.add(headerValue);
@@ -112,7 +109,7 @@ public class ResultSetExportData implements IExportData
 
    /**
     * Iterates over the result set.
-    * The result set will not be read into the memory. It creates a iterator, which reads one row at a time.
+    * The result set will not be read into the memory. It creates an iterator, which reads one row at a time.
     * The amount of the used heap depends on the number of rows, that the JDBC-driver reads at once.
     *
     * @see IExportData#getRows()
@@ -139,26 +136,7 @@ public class ResultSetExportData implements IExportData
          @Override
          public ExportDataRow next()
          {
-            try
-            {
-
-               List<ExportCellData> cells = new ArrayList<>();
-               for (int i = 1; i <= colDispDef.size(); i++)
-               {
-                  ColumnDisplayDefinition colDef = colDispDef.get(i - 1);
-                  Object object = CellComponentFactory.readResultSet(colDef, resultSet, i, false);
-                  ExportCellData cell = new ExportCellData(colDef, object, rowIndex, i - 1);
-                  cells.add(cell);
-               }
-               ExportDataRow data = new ExportDataRow(cells, rowIndex);
-               rowIndex++;
-               return data;
-            }
-            catch (SQLException e)
-            {
-               log.error(i18n.ERROR_READING_RESULTSET, e);
-               throw new RuntimeException(i18n.ERROR_READING_RESULTSET, e);
-            }
+            return createRow();
          }
 
          /**
@@ -168,19 +146,53 @@ public class ResultSetExportData implements IExportData
          @Override
          public boolean hasNext()
          {
-            try
-            {
-               boolean next = resultSet.next();
-               return next;
-            }
-            catch (SQLException e)
-            {
-               log.error(i18n.ERROR_READING_RESULTSET, e);
-               throw new RuntimeException(i18n.ERROR_READING_RESULTSET, e);
-            }
+            return hasNextRow();
          }
       };
 
+   }
+
+   @Override
+   public void close()
+   {
+      SQLUtilities.closeResultSet(_resultSet);
+      SQLUtilities.closeStatement(_stat);
+   }
+
+   private boolean hasNextRow()
+   {
+      try
+      {
+         return _resultSet.next();
+      }
+      catch (SQLException e)
+      {
+         log.error(s_stringMgr.getString("ResultSetExportData.errorReadingResultSet"), e);
+         throw new RuntimeException(s_stringMgr.getString("ResultSetExportData.errorReadingResultSet"), e);
+      }
+   }
+
+   private ExportDataRow createRow()
+   {
+      try
+      {
+         List<ExportCellData> cells = new ArrayList<>();
+         for (int i = 1; i <= _colDispDef.size(); i++)
+         {
+            ColumnDisplayDefinition colDef = _colDispDef.get(i - 1);
+            Object object = CellComponentFactory.readResultSet(colDef, _resultSet, i, false);
+            ExportCellData cell = new ExportCellData(colDef, object, rowIndex, i - 1);
+            cells.add(cell);
+         }
+         ExportDataRow data = new ExportDataRow(cells, rowIndex);
+         rowIndex++;
+         return data;
+      }
+      catch (SQLException e)
+      {
+         log.error(s_stringMgr.getString("ResultSetExportData.errorReadingResultSet"), e);
+         throw new RuntimeException(s_stringMgr.getString("ResultSetExportData.errorReadingResultSet"), e);
+      }
    }
 
 }

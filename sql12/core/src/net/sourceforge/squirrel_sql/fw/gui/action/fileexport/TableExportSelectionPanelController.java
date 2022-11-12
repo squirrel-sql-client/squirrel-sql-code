@@ -246,7 +246,18 @@ public class TableExportSelectionPanelController
 
    public void initPanel(TableExportPreferences prefs)
    {
-      if(prefs.isExportMultipleSQLResults())
+      final boolean exportMultipleSQLResults;
+      if(_exportDialogType == ExportDialogType.RESULT_SET_EXPORT && 1 < _exportSourceAccess.getOriginalSqlsToExport().size())
+      {
+         exportMultipleSQLResults = true;
+      }
+      else
+      {
+         exportMultipleSQLResults = prefs.isExportMultipleSQLResults();
+      }
+
+
+      if(exportMultipleSQLResults)
       {
          _pnl.radMultipleSQLRes.setSelected(true);
       }
@@ -311,10 +322,18 @@ public class TableExportSelectionPanelController
 
       if(_pnl.radMultipleSQLRes.isSelected())
       {
-         List<SqlResultTabHandle> sqlResultTabHandel = Main.getApplication().getMultipleSqlResultExportChannel().getSqlResultTabHandles();
+         final List<SqlResultListEntry> listEntries;
 
          int[] indexCounter = new int[1];
-         final List<SqlResultListEntry> listEntries = sqlResultTabHandel.stream().map(h -> new SqlResultListEntry(h, ++indexCounter[0])).collect(Collectors.toList());
+         if(_exportDialogType == ExportDialogType.UI_TABLE_EXPORT)
+         {
+            List<SqlResultTabHandle> sqlResultTabHandel = Main.getApplication().getMultipleSqlResultExportChannel().getSqlResultTabHandles();
+            listEntries = sqlResultTabHandel.stream().map(h -> new SqlResultListEntry(h, ++indexCounter[0])).collect(Collectors.toList());
+         }
+         else
+         {
+            listEntries = _exportSourceAccess.getOriginalSqlsToExport().stream().map(sql -> new SqlResultListEntry(sql, ++indexCounter[0])).collect(Collectors.toList());
+         }
 
          final SqlResultListEntry selEntry = _pnl.lstSQLResultsToExport.getSelectedValue();
 
@@ -339,13 +358,8 @@ public class TableExportSelectionPanelController
       }
       else
       {
-         _pnl.lstSQLResultsToExport.setListData(new SqlResultListEntry[0]);
+         _pnl.lstSQLResultsToExport.setModel(new DefaultListModel<>());
       }
-   }
-
-   public boolean isExportComplete()
-   {
-      return _pnl.radComplete.isSelected();
    }
 
    public void updateExportDestinationInfo(String exportFileNameText, boolean destinationIsExcel)
@@ -391,7 +405,39 @@ public class TableExportSelectionPanelController
       return _pnl;
    }
 
-   public List<ExportDataInfo> getSqlResultDataSetViewersExportData()
+   public ExportSourceAccess getExportSourceAccess()
+   {
+      switch (_exportDialogType)
+      {
+         case UI_TABLE_EXPORT:
+            _exportSourceAccess.prepareSqlResultDataSetViewersExport(getSqlResultDataSetViewersExportData(), _pnl.radSelectionOrLimitRows.isSelected(), _currentExportDestinationInfo, _pnl.radMultipleSQLRes.isSelected());
+            return _exportSourceAccess;
+         case RESULT_SET_EXPORT:
+            _exportSourceAccess.prepareResultSetExport(getExportSqlsNamed(), _pnl.radComplete.isSelected(), _pnl.txtLimitRows.getInt(), _currentExportDestinationInfo, _pnl.radMultipleSQLRes.isSelected());
+            return _exportSourceAccess;
+         default:
+            throw new IllegalStateException("Unknown ExportDialogType: " + _exportDialogType);
+      }
+   }
+
+   private List<ExportSqlNamed> getExportSqlsNamed()
+   {
+      if(false == _pnl.radMultipleSQLRes.isSelected())
+      {
+         return Collections.emptyList();
+      }
+
+      ArrayList<ExportSqlNamed> ret = new ArrayList<>();
+
+      for (int i = 0; i < getListModel().getSize(); i++)
+      {
+         final SqlResultListEntry listEntry = getListModel().getElementAt(i);
+         ret.add(new ExportSqlNamed(listEntry.getSql(), listEntry.getExportNameFileNormalized()));
+      }
+      return ret;
+   }
+
+   private List<ExportDataInfo> getSqlResultDataSetViewersExportData()
    {
       if(false == _pnl.radMultipleSQLRes.isSelected())
       {
@@ -414,21 +460,6 @@ public class TableExportSelectionPanelController
       }
 
       return ret;
-   }
-
-   public ExportSourceAccess getExportSourceAccess()
-   {
-      switch (_exportDialogType)
-      {
-         case UI_TABLE_EXPORT:
-            _exportSourceAccess.prepareSqlResultDataSetViewersExport(getSqlResultDataSetViewersExportData(), _pnl.radSelectionOrLimitRows.isSelected(), _currentExportDestinationInfo, _pnl.radMultipleSQLRes.isSelected());
-            return _exportSourceAccess;
-         case RESULT_SET_EXPORT:
-            _exportSourceAccess.prepareResultSetExport(isExportComplete(), _pnl.txtLimitRows.getInt(), _currentExportDestinationInfo, _pnl.radMultipleSQLRes.isSelected());
-            return _exportSourceAccess;
-         default:
-            throw new IllegalStateException("Unknown ExportDialogType: " + _exportDialogType);
-      }
    }
 
 }

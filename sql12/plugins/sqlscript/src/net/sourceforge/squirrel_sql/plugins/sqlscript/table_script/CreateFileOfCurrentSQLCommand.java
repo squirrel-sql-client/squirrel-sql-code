@@ -42,8 +42,9 @@ import javax.swing.SwingUtilities;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Command to export the result of the current SQL into a File.
@@ -68,14 +69,9 @@ public class CreateFileOfCurrentSQLCommand
     */
    private ResultSetExport _resultSetExport;
 
-   private Statement stmt = null;
 
    private ProgressAbortFactoryCallbackImpl _progressAbortCallback;
 
-   /**
-    * The current SQL in the SQL editor pane.
-    */
-   private String currentSQL = null;
 
    /**
     * Ctor specifying the current session.
@@ -89,47 +85,58 @@ public class CreateFileOfCurrentSQLCommand
 
    public void execute(final JFrame owner)
    {
-      this.currentSQL = getSelectedSelectStatement();
-      getSession().getApplication().getThreadPool().addTask(() -> doCreateFileOfCurrentSQL(owner));
+      final List<String> sqls = getSelectedSelectStatements();
+      getSession().getApplication().getThreadPool().addTask(() -> doCreateFileOfCurrentSQL(sqls, owner));
    }
 
 
    /**
     * Do the work.
     *
+    * @param sqls
     * @param owner
     */
-   private void doCreateFileOfCurrentSQL(JFrame owner)
+   private void doCreateFileOfCurrentSQL(List<String> sqls, JFrame owner)
    {
       try
       {
-
-         ISQLConnection unmanagedConnection = null;
+         ISQLConnection unmangedConnection = null;
          try
          {
-            unmanagedConnection = createUnmanagedConnection();
+            unmangedConnection = createUnmanagedConnection();
 
-            if (unmanagedConnection != null)
+            Connection con;
+            if (unmangedConnection != null)
             {
-               stmt = createStatementForStreamingResults(unmanagedConnection.getConnection());
+               con = unmangedConnection.getConnection();
             }
             else
             {
-               stmt = createStatementForStreamingResults(getSession().getSQLConnection().getConnection());
+               con = getSession().getSQLConnection().getConnection();
             }
 
-
-            _progressAbortCallback = new ProgressAbortFactoryCallbackImpl(getSession(), currentSQL, () -> _resultSetExport.getTargetFile(), stmt);
+            final String sqlsJoined;
+            if(1 == session.getProperties().getSQLStatementSeparator().length())
+            {
+               sqlsJoined = String.join(session.getProperties().getSQLStatementSeparator() + "\n", sqls);
+            }
+            else
+            {
+               sqlsJoined = String.join(" " + session.getProperties().getSQLStatementSeparator() + "\n", sqls);
+            }
+            _progressAbortCallback = new ProgressAbortFactoryCallbackImpl(getSession(), sqlsJoined, () -> _resultSetExport.getTargetFile());
 
 
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
 
             DialectType dialectType = DialectFactory.getDialectType(getSession().getMetaData());
-            _resultSetExport = new ResultSetExport(stmt, currentSQL, dialectType, _progressAbortCallback, owner);
+
+            // Opens the modal export dialog ...
+            _resultSetExport = new ResultSetExport(con, sqls, dialectType, _progressAbortCallback, owner);
+
+            // ... called after the  modal export dialog was closed.
             _resultSetExport.export();
-
-
 
             stopWatch.stop();
 
@@ -153,11 +160,7 @@ public class CreateFileOfCurrentSQLCommand
          }
          finally
          {
-            SQLUtilities.closeStatement(stmt);
-            if (unmanagedConnection != null)
-            {
-               unmanagedConnection.close();
-            }
+            SQLUtilities.closeConnection(unmangedConnection);
          }
       }
       catch (Exception e)
@@ -178,39 +181,6 @@ public class CreateFileOfCurrentSQLCommand
             }
          });
       }
-   }
-
-   /**
-    * Create a {@link Statement} that will stream the result instead of loading into the memory.
-    *
-    * @param connection the connection to use
-    * @return A Statement, that will stream the result.
-    * @throws SQLException
-    * @see http://javaquirks.blogspot.com/2007/12/mysql-streaming-result-set.html
-    * @see http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-implementation-notes.html
-    */
-   private Statement createStatementForStreamingResults(Connection connection) throws SQLException
-   {
-      Statement stmt;
-      DialectType dialectType = DialectFactory.getDialectType(getSession().getMetaData());
-
-      if (DialectType.MYSQL5 == dialectType)
-      {
-         /*
-          * MYSQL will load the whole result into memory. To avoid this, we must use the streaming mode.
-          *
-          * http://javaquirks.blogspot.com/2007/12/mysql-streaming-result-set.html
-          * http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-implementation-notes.html
-          */
-         stmt = connection.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
-         stmt.setFetchSize(Integer.MIN_VALUE);
-      }
-      else
-      {
-         stmt = connection.createStatement();
-      }
-      return stmt;
-
    }
 
 
@@ -258,14 +228,12 @@ public class CreateFileOfCurrentSQLCommand
 
    /**
     * Looks for the current selected SQL statement in the editor pane.
-    * These errors can occurs,
-    * <li>no query selected</li>
-    * <li>more than one query selected</li>
-    * In all these cases, the user will get a message and <code>null</code> will be returned.
+    * An error occurs when no query is selected.
+    * In this case, the user will get a message and <code>null</code> will be returned.
     *
     * @return the selected SELECT statement or null, if not exactly one SELECT statement is selected.
     */
-   protected String getSelectedSelectStatement()
+   private List<String> getSelectedSelectStatements()
    {
       ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(getSession());
 
@@ -280,13 +248,13 @@ public class CreateFileOfCurrentSQLCommand
          return null;
       }
 
-      if (qt.getQueryCount() > 1)
+
+      List<String> ret = new ArrayList<>();
+      while(qt.hasQuery())
       {
-         getSession().showWarningMessage(s_stringMgr.getString("AbstractDataScriptCommand.moreThanOnQuery"));
+         ret.add(qt.nextQuery().getQuery());
       }
 
-      String currentSQL = qt.nextQuery().getQuery();
-
-      return currentSQL;
+      return ret;
    }
 }

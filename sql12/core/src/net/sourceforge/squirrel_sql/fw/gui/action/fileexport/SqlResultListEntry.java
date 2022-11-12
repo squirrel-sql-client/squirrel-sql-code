@@ -4,14 +4,21 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 public class SqlResultListEntry
 {
-   private final SqlResultTabHandle _handle;
-   private final int _index;
+   private SqlResultTabHandle _handle;
+   private String _sql;
+   private int _index;
 
    private String _userEnteredSqlResultNameFileNormalized;
 
    public SqlResultListEntry(SqlResultTabHandle handle, int index)
    {
       _handle = handle;
+      _index = index;
+   }
+
+   public SqlResultListEntry(String sql, int index)
+   {
+      _sql = sql;
       _index = index;
    }
 
@@ -26,6 +33,11 @@ public class SqlResultListEntry
       return _handle;
    }
 
+   public String getSql()
+   {
+      return _sql;
+   }
+
    public void setUserEnteredSqlResultNameFileNormalized(String userEnteredSqlResultNameFileNormalized)
    {
       this._userEnteredSqlResultNameFileNormalized = userEnteredSqlResultNameFileNormalized;
@@ -35,11 +47,12 @@ public class SqlResultListEntry
    {
       if(StringUtilities.isEmpty(_userEnteredSqlResultNameFileNormalized, true))
       {
-         return DataExportExcelWriter.DEFAULT_EXCEL_EXPORT_SHEET_NAME + " " + _index;
+         return ExportUtil.createDefaultExportName(_index);
       }
       else
       {
          return _userEnteredSqlResultNameFileNormalized;
       }
    }
+
 }

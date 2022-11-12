@@ -43,4 +43,9 @@ public class ExportUtil
       }
       return false;
    }
+
+   public static String createDefaultExportName(int index)
+   {
+      return DataExportExcelWriter.DEFAULT_EXCEL_EXPORT_SHEET_NAME + " " + index;
+   }
 }

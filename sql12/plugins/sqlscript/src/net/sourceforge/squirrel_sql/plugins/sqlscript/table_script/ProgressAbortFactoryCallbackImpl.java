@@ -10,26 +10,21 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-
 public class ProgressAbortFactoryCallbackImpl implements ProgressAbortFactoryCallback
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ProgressAbortFactoryCallbackImpl.class);
 
 
    private final ISession _session;
-   private final String _sql;
+   private final String _sqlsJoined;
    private final ExportFileProvider _exportFileProvider;
-   private final Statement _stmt;
    private ProgressAbortCallback progressDialog;
 
-   public ProgressAbortFactoryCallbackImpl(ISession session, String sql, ExportFileProvider exportFileProvider, Statement stmt)
+   public ProgressAbortFactoryCallbackImpl(ISession session, String sqlsJoined, ExportFileProvider exportFileProvider)
    {
       _session = session;
-      _sql = sql;
+      _sqlsJoined = sqlsJoined;
       _exportFileProvider = exportFileProvider;
-      _stmt = stmt;
    }
 
    public ProgressAbortCallback getOrCreate()
@@ -56,18 +51,12 @@ public class ProgressAbortFactoryCallbackImpl implements ProgressAbortFactoryCal
 
    private void showProgressDialog(DisplayReachedCallBack displayReachedCallBack)
    {
-      /*
-       *  Copied from FormatSQLCommand.
-       *  Is there a better way to get the CommentSpec[] ?
-       */
-
       CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(_session));
 
-      String reformatedSQL = cr.reformat(_sql);
+      String reformatedSQL = cr.reformat(_sqlsJoined);
 
       String targetFile = _exportFileProvider.getExportFile().getAbsolutePath();
 
-      // i18n[CreateFileOfCurrentSQLCommand.progress.title=Exporting to a file.]
       String title = s_stringMgr.getString("CreateFileOfCurrentSQLCommand.progress.title", targetFile);
       progressDialog = new ProgressAbortDialog(Main.getApplication().getMainFrame(), title, targetFile, reformatedSQL, 0, () -> onCancel(), displayReachedCallBack);
 
@@ -76,20 +65,20 @@ public class ProgressAbortFactoryCallbackImpl implements ProgressAbortFactoryCal
 
    private void onCancel()
    {
-      /*
-       * We need to cancel the statement at this point for the case, that we are waiting for the first rows.
-       */
-      if (_stmt != null)
-      {
-         try
-         {
-            _stmt.cancel();
-         }
-         catch (SQLException e1)
-         {
-            // nothing todo
-         }
-      }
+      // /*
+      //  * We need to cancel the statement at this point for the case, that we are waiting for the first rows.
+      //  */
+      // if (_stmt != null)
+      // {
+      //    try
+      //    {
+      //       _stmt.cancel();
+      //    }
+      //    catch (SQLException e1)
+      //    {
+      //       // nothing todo
+      //    }
+      // }
    }
 
    /**

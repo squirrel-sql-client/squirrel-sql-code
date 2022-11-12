@@ -24,7 +24,8 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
 
 import javax.swing.JFrame;
 import java.io.File;
-import java.sql.Statement;
+import java.sql.Connection;
+import java.util.List;
 
 /**
  * Command for exporting a result set to a file.
@@ -35,12 +36,12 @@ public class ResultSetExport
 {
    private final Exporter _exporter;
 
-   public ResultSetExport(Statement stmt, String sql, DialectType dialect, ProgressAbortFactoryCallback progressControllerFactory, JFrame owner)
+   public ResultSetExport(Connection con, List<String> sqls, DialectType dialect, ProgressAbortFactoryCallback progressControllerFactory, JFrame owner)
    {
       final ExporterCallback exporterCallback = () -> progressControllerFactory.getOrCreate();
-
-      final ExportController exportController = new ExportController(new ExportSourceAccess(sql, stmt, dialect), owner, ExportDialogType.RESULT_SET_EXPORT);
+      final ExportController exportController = new ExportController(new ExportSourceAccess(sqls, con, dialect), owner, ExportDialogType.RESULT_SET_EXPORT);
       GUIUtils.processOnSwingEventThread(() -> exportController.showDialog(), true);
+
       _exporter = new Exporter(exporterCallback, exportController);
    }
 

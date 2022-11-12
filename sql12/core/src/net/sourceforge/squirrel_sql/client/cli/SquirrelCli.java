@@ -181,7 +181,7 @@ public class SquirrelCli
 
          TableExportPreferences exportPrefs = TableExportPreferencesDAO.createExportPreferencesForFile(outputFile);
 
-         ExportFileWriter.writeFile(new ResultSetExportData(stat.executeQuery(sql), dialectType), exportPrefs, new CliProgressAbortCallback());
+         ExportFileWriter.writeFile(new ResultSetExportData(stat, sql, dialectType), exportPrefs, new CliProgressAbortCallback());
       }
       catch (SQLException e)
       {

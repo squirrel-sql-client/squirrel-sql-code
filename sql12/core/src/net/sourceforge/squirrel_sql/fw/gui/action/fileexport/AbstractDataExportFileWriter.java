@@ -64,68 +64,74 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter
    /**
     * @see IDataExportWriter#write(IExportData)
     */
-   public long write(IExportData data) throws Exception
+   public long write(IExportData exportData) throws Exception
    {
-
-      beforeWorking(_fileExportService.getFile());
-
-      if (_fileExportService.getPrefs().isWithHeaders())
+      try
       {
-         Iterator<String> headers = data.getHeaders();
+         beforeWorking(_fileExportService.getFile());
 
-         int colIdx = 0;
-         beforeHeader();
-         while (headers.hasNext())
+         if (_fileExportService.getPrefs().isWithHeaders())
          {
-            String columnName = headers.next();
-            addHeaderCell(colIdx, columnName);
-            colIdx++;
+            Iterator<String> headers = exportData.getHeaders();
+
+            int colIdx = 0;
+            beforeHeader();
+            while (headers.hasNext())
+            {
+               String columnName = headers.next();
+               addHeaderCell(colIdx, columnName);
+               colIdx++;
+            }
+            afterHeader();
          }
-         afterHeader();
-      }
 
-      Iterator<ExportDataRow> rows = data.getRows();
+         Iterator<ExportDataRow> rows = exportData.getRows();
 
-      progress(s_stringMgr.getString("AbstractDataExportFileWriter.beginWriting.file", _fileExportService.getFile()));
-      beforeRows();
-      long rowsCount = 0;
-      NumberFormat nfRowCount = NumberFormat.getInstance();
+         progress(s_stringMgr.getString("AbstractDataExportFileWriter.beginWriting.file", _fileExportService.getFile()));
+         beforeRows();
+         long rowsCount = 0;
+         NumberFormat nfRowCount = NumberFormat.getInstance();
 
 
-      long begin = System.currentTimeMillis();
-      while (rows.hasNext() && isStop() == false)
-      {
-         rowsCount++;
-         ExportDataRow aRow = rows.next();
-         if (_fileExportService.isStatusUpdateNecessary())
+         long begin = System.currentTimeMillis();
+         while (rows.hasNext() && isStop() == false)
          {
-            long secondsPassed = (System.currentTimeMillis() - begin) / 1000;
-            taskStatus(s_stringMgr.getString("AbstractDataExportFileWriter.numberOfRowsCompletedInSeconds", nfRowCount.format(rowsCount), secondsPassed));
-         }
-         beforeRow(aRow.getRowIndex());
+            rowsCount++;
+            ExportDataRow aRow = rows.next();
+            if (_fileExportService.isStatusUpdateNecessary())
+            {
+               long secondsPassed = (System.currentTimeMillis() - begin) / 1000;
+               taskStatus(s_stringMgr.getString("AbstractDataExportFileWriter.numberOfRowsCompletedInSeconds", nfRowCount.format(rowsCount), secondsPassed));
+            }
+            beforeRow(aRow.getRowIndex());
 
-         Iterator<ExportCellData> cells = aRow.getCells();
-         while (cells.hasNext())
+            Iterator<ExportCellData> cells = aRow.getCells();
+            while (cells.hasNext())
+            {
+               ExportCellData cell = cells.next();
+               addCell(cell);
+            }
+            afterRow();
+         }
+         progress(s_stringMgr.getString("AbstractDataExportFileWriter.finishedLoading", nfRowCount.format(rowsCount)));
+         afterRows();
+         progress(s_stringMgr.getString("AbstractDataExportFileWriter.closingTheFile"));
+         afterWorking();
+
+         progress(s_stringMgr.getString("AbstractDataExportFileWriter.done"));
+
+         if (isStop())
          {
-            ExportCellData cell = cells.next();
-            addCell(cell);
+            return -1;
          }
-         afterRow();
+         else
+         {
+            return rowsCount;
+         }
       }
-      progress(s_stringMgr.getString("AbstractDataExportFileWriter.finishedLoading", nfRowCount.format(rowsCount)));
-      afterRows();
-      progress(s_stringMgr.getString("AbstractDataExportFileWriter.closingTheFile"));
-      afterWorking();
-
-      progress(s_stringMgr.getString("AbstractDataExportFileWriter.done"));
-
-      if (isStop())
+      finally
       {
-         return -1;
-      }
-      else
-      {
-         return rowsCount;
+         exportData.close();
       }
    }
 

@@ -591,11 +591,6 @@ public class ExportController
       }
    }
 
-   boolean isExportComplete()
-   {
-      return _exportSelectionPanelController.isExportComplete();
-   }
-
    String getCommand(File firstExportedFile)
    {
       if(_dlg.chkExecCommand.isSelected())

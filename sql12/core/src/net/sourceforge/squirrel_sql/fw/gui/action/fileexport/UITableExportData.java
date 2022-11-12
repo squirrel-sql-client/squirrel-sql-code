@@ -5,7 +5,7 @@ import java.util.List;
 
 public class UITableExportData
 {
-   public JTable _table;
+   public JTable _tableExportDialogWasOpenedFor;
    public List<ExportDataInfo> _sqlResultDataSetViewersExportDataList;
    public boolean _exportUITableSelection;
 }

@@ -8,9 +8,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.JTable;
-import java.sql.ResultSet;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExportSourceAccess
@@ -28,14 +29,14 @@ public class ExportSourceAccess
    public ExportSourceAccess(JTable table)
    {
       _uiTableExportData = new UITableExportData();
-      _uiTableExportData._table = table;
+      _uiTableExportData._tableExportDialogWasOpenedFor = table;
    }
 
-   public ExportSourceAccess(String sql, Statement stmt, DialectType dialect)
+   public ExportSourceAccess(List<String> sqls, Connection con, DialectType dialect)
    {
       _jdbcResultSetExportData = new JDBCResultSetExportData();
-      _jdbcResultSetExportData._sql = sql;
-      _jdbcResultSetExportData._stmt = stmt;
+      _jdbcResultSetExportData._originalSqlsToExport = sqls;
+      _jdbcResultSetExportData._con = con;
       _jdbcResultSetExportData._dialect = dialect;
    }
 
@@ -47,7 +48,7 @@ public class ExportSourceAccess
       }
       else
       {
-         return ExportUtil.isUITableMissingBlobData(_uiTableExportData._table, separatorChar);
+         return ExportUtil.isUITableMissingBlobData(_uiTableExportData._tableExportDialogWasOpenedFor, separatorChar);
       }
    }
 
@@ -55,11 +56,11 @@ public class ExportSourceAccess
    {
       if(isResultSetExport())
       {
-         return createResultSetExportData(progressController);
+         return createResultSetExportDataInfoList(progressController);
       }
       else
       {
-         return createTableExportDataInfoList();
+         return createUiTableExportDataInfoList();
       }
    }
 
@@ -68,17 +69,51 @@ public class ExportSourceAccess
       return null != _jdbcResultSetExportData;
    }
 
-   private ExportDataInfoList createResultSetExportData(ProgressAbortCallback progressController) throws ExportDataException
+   private ExportDataInfoList createResultSetExportDataInfoList(ProgressAbortCallback progressController) throws ExportDataException
+   {
+      if(_jdbcResultSetExportData._exportSqlsNamed.isEmpty())
+      {
+         if(_exportMultipleResults)
+         {
+            // Happens when multiple SQL result export was chosen with empty export list.
+            return ExportDataInfoList.EMPTY;
+         }
+         else
+         {
+            progress(progressController, s_stringMgr.getString("ResultSetExportCommand.executingQuery.n.of.m", 1, 1));
+            // This is the default behavior, i.e. export of single table.
+            return ExportDataInfoList.single(createResultSetExportData(_jdbcResultSetExportData._originalSqlsToExport.get(0)));
+         }
+      }
+      else
+      {
+         List<ExportDataInfo> buf = new ArrayList<>();
+
+         final List<ExportSqlNamed> exportSqlsNamed = _jdbcResultSetExportData._exportSqlsNamed;
+         for (int i = 0; i < exportSqlsNamed.size(); i++)
+         {
+            progress(progressController, s_stringMgr.getString("ResultSetExportCommand.executingQuery.n.of.m", i + 1, exportSqlsNamed.size()));
+
+            ExportSqlNamed exportSqlNamed = exportSqlsNamed.get(i);
+            final ResultSetExportData resultSetExportData = createResultSetExportData(exportSqlNamed.getSql());
+            buf.add(new ExportDataInfo(resultSetExportData, exportSqlNamed.getExportNameFileNormalized()));
+         }
+
+         return new ExportDataInfoList(buf, _currentExportDestinationInfo);
+      }
+   }
+
+   private ResultSetExportData createResultSetExportData(String sql) throws ExportDataException
    {
       try
       {
-         progress(progressController, s_stringMgr.getString("ResultSetExportCommand.executingQuery"));
+         Statement stat = _jdbcResultSetExportData._con.createStatement();
+
          if (_jdbcResultSetExportData._exportComplete == false)
          {
-            _jdbcResultSetExportData._stmt.setMaxRows(_jdbcResultSetExportData._maxRows);
+            stat.setMaxRows(_jdbcResultSetExportData._maxRows);
          }
-         ResultSet resultSet = _jdbcResultSetExportData._stmt.executeQuery(_jdbcResultSetExportData._sql);
-         return ExportDataInfoList.single(new ResultSetExportData(resultSet, _jdbcResultSetExportData._dialect));
+         return new ResultSetExportData(stat, sql, _jdbcResultSetExportData._dialect);
       }
       catch (SQLException e)
       {
@@ -87,7 +122,7 @@ public class ExportSourceAccess
       }
    }
 
-   private ExportDataInfoList createTableExportDataInfoList()
+   private ExportDataInfoList createUiTableExportDataInfoList()
    {
       if(_uiTableExportData._sqlResultDataSetViewersExportDataList.isEmpty())
       {
@@ -99,7 +134,7 @@ public class ExportSourceAccess
          else
          {
             // This is the default behavior, i.e. export of single table.
-            return ExportDataInfoList.single(new JTableExportData(_uiTableExportData._table, false == _uiTableExportData._exportUITableSelection));
+            return ExportDataInfoList.single(new JTableExportData(_uiTableExportData._tableExportDialogWasOpenedFor, false == _uiTableExportData._exportUITableSelection));
          }
       }
       else
@@ -136,10 +171,11 @@ public class ExportSourceAccess
       return prefs;
    }
 
-   public void prepareResultSetExport(boolean exportComplete, int maxRows, MultipleSqlResultExportDestinationInfo currentExportDestinationInfo, boolean exportMultipleResults)
+   public void prepareResultSetExport(List<ExportSqlNamed> exportSqlsNamed,  boolean exportComplete, int maxRows, MultipleSqlResultExportDestinationInfo currentExportDestinationInfo, boolean exportMultipleResults)
    {
       _jdbcResultSetExportData._exportComplete = exportComplete;
       _jdbcResultSetExportData._maxRows = maxRows;
+      _jdbcResultSetExportData._exportSqlsNamed = exportSqlsNamed;
 
       _currentExportDestinationInfo = currentExportDestinationInfo;
       _exportMultipleResults = exportMultipleResults;
@@ -147,14 +183,20 @@ public class ExportSourceAccess
 
    public void prepareSqlResultDataSetViewersExport(List<ExportDataInfo> sqlResultDataSetViewersExportDataList, boolean exportUITableSelection, MultipleSqlResultExportDestinationInfo currentExportDestinationInfo, boolean exportMultipleResults)
    {
-      // if _exportMultipleResults then export _uiTableExportData.sqlResultDataSetViewersExportDataList
-      // else export _uiTableExportData._table only
-
       _uiTableExportData._sqlResultDataSetViewersExportDataList = sqlResultDataSetViewersExportDataList;
       _uiTableExportData._exportUITableSelection = exportUITableSelection;
 
-
       _currentExportDestinationInfo = currentExportDestinationInfo;
       _exportMultipleResults = exportMultipleResults;
+   }
+
+   public List<String> getOriginalSqlsToExport()
+   {
+      if(false == isResultSetExport())
+      {
+         throw new IllegalStateException("Not exporting SQL statement!!!");
+      }
+
+      return _jdbcResultSetExportData._originalSqlsToExport;
    }
 }
