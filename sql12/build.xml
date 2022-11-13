@@ -8,8 +8,8 @@
         <tstamp/> <!-- Needed to initialize DSTAMP and TSTAMP variables-->
 
         <!-- DEFINE VERSION HERE ONLY-->
-        <property name="squirrelsql.version" value="4.5.1"/>
-        <!--<property name="squirrelsql.version" value="snapshot-${DSTAMP}_${TSTAMP}"/>-->
+        <!--<property name="squirrelsql.version" value="4.5.1"/>-->
+        <property name="squirrelsql.version" value="snapshot-${DSTAMP}_${TSTAMP}"/>
 
         <delete dir="output"/>
         <mkdir dir="output/work/bin"/>

@@ -1,6 +1,22 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in our GIT repository, snapshots and future releases.
+===============================================================================================
+
+Enhancements:
+
+Export of multiple SQL results.
+  When exporting to MS Excel, multiple data sheets/tabs in the same file are created.
+  When exporting to other formats, multiple files are created.
+  The export dialog allows to name sheets/tabs or files respectively.
+  Howto:
+  To export multiple SQL results right click or open tools popup (ctl+t)
+  on multiple SQL queries (separated by statement separators) to open the file export dialog.
+  To export multiple SQL result UI tables execute multiple SQLs (ctrl+enter).
+  Then right click one of the UI result tables to open the file export dialog.
+
+
 4.5.1 (11/13/2022)
 ==================
 
