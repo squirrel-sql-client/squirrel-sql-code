@@ -37,9 +37,10 @@ public interface IExportData {
 
 	/**
 	 * The rows of data.
-	 * Its not sure, how many rows are exists. The underlying system may do a lazy load of the rows.
+	 * It's not sure, how many rows are exists. The underlying system may do a lazy load of the rows.
 	 * @return the rows to export.
 	 */
 	Iterator<ExportDataRow> getRows();
 
+	void close();
 }

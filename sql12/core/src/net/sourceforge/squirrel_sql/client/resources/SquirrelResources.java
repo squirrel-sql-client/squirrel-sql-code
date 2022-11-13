@@ -180,6 +180,10 @@ public class SquirrelResources extends Resources
 
 		String SMALL_COPY_PASSWORD = "small_copy_password";
 		String SMALL_SHOW_PASSWORD = "small_show_password";
+
+		String EDIT = "edit";
+
+		String DELETE = "delete";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

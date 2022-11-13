@@ -2,8 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecutor;
 
 public class ResultTabProvider
 {
@@ -30,7 +29,7 @@ public class ResultTabProvider
 
       if (_panel != null)
       {
-         ISQLResultExecuter sqlResultExecuter = _panel.getSQLResultExecuter();
+         ISQLResultExecutor sqlResultExecuter = _panel.getSQLResultExecuter();
          if (sqlResultExecuter != null)
          {
             IResultTab selectedResultTab = sqlResultExecuter.getSelectedResultTab();

@@ -3,32 +3,44 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
-public class TableExportController
+public class ExportController
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableExportController.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExportController.class);
 
-   private TableExportDlg _dlg;
+   private ExportDlg _dlg;
    private boolean _ok = false;
 
    private Window _owner;
+   private ExportDialogType _exportDialogType;
+   private TableExportSelectionPanelController _exportSelectionPanelController;
 
 
-   TableExportController(Window owner)
+   /**
+    * @param tableExportDlgFinishedListener when null the dialog is modal.
+    * @param exportSourceAccess
+    */
+   ExportController(ExportSourceAccess exportSourceAccess, Window owner, ExportDialogType exportDialogType)
    {
       _owner = owner;
-      _dlg = createDialog(owner);
+      _exportDialogType = exportDialogType;
+      _exportSelectionPanelController = new TableExportSelectionPanelController(exportSourceAccess, exportDialogType);
 
-      initDlg();
+      _dlg = new ExportDlg(owner, _exportSelectionPanelController.getPanel(), _exportDialogType);
+
+      initData();
 
       initListeners();
 
@@ -40,34 +52,54 @@ public class TableExportController
          }
       });
 
+      _dlg.txtFile.getDocument().addDocumentListener(new DocumentListener() {
+         @Override
+         public void insertUpdate(DocumentEvent e)
+         {
+            updateDestinationInfo();
+         }
+
+         @Override
+         public void removeUpdate(DocumentEvent e)
+         {
+            updateDestinationInfo();
+         }
+
+         @Override
+         public void changedUpdate(DocumentEvent e)
+         {
+            updateDestinationInfo();
+         }
+      });
+
+      updateDestinationInfo();
+
       _dlg.getRootPane().setDefaultButton(_dlg.btnOk);
       GUIUtils.enableCloseByEscape(_dlg);
-
-      _dlg.pack();
-
-      GUIUtils.centerWithinParent(_dlg);
-
-      _dlg.setVisible(true);
-
    }
 
-   protected TableExportDlg createDialog(Window owner)
+   private void updateDestinationInfo()
    {
-      return new TableExportDlg(owner);
+      _exportSelectionPanelController.updateExportDestinationInfo(_dlg.txtFile.getText(), _dlg.radFormatXLSX.isSelected() || _dlg.radFormatXLS.isSelected());
    }
+
+   public void showDialog()
+   {
+      _dlg.pack();
+      GUIUtils.centerWithinParent(_dlg);
+      _dlg.setVisible(true);
+   }
+
 
    private void onSeparatorCharChanged(KeyEvent e)
    {
-      SwingUtilities.invokeLater(new Runnable()
+      SwingUtilities.invokeLater(() ->
       {
-         public void run()
+         String text = _dlg.txtSeparatorChar.getText();
+         if(null != text && 1 < text.length())
          {
-            String text = _dlg.txtSeparatorChar.getText();
-            if(null != text && 1 < text.length())
-            {
-               _dlg.txtSeparatorChar.setText(text.substring(0,1));
-               Toolkit.getDefaultToolkit().beep();
-            }
+            _dlg.txtSeparatorChar.setText(text.substring(0,1));
+            Toolkit.getDefaultToolkit().beep();
          }
       });
 
@@ -175,6 +207,8 @@ public class TableExportController
       {
          throw new IllegalStateException("No valid output format");
       }
+
+      updateDestinationInfo();
    }
 
    private void replaceFileEnding()
@@ -305,14 +339,14 @@ public class TableExportController
 
    private void onOK()
    {
-	  if(warnIfExcel() == false){
-		  return;
-	  }
-	   
-      String csvFileName = _dlg.txtFile.getText();
-      if(null == csvFileName || 0 == csvFileName.trim().length())
+      if(warnIfExcel() == false)
       {
-         // i18n[TableExportCsvController.noFile=You must provide a export file name.]
+         return;
+      }
+	   
+      String singleExportFileName = _dlg.txtFile.getText();
+      if(StringUtilities.isEmpty(singleExportFileName, true))
+      {
          String msg = s_stringMgr.getString("TableExportCsvController.noFile");
          JOptionPane.showMessageDialog(_dlg, msg);
          return;
@@ -343,7 +377,9 @@ public class TableExportController
          }
       }
 
-      if(new File(csvFileName).exists())
+      if(    new File(singleExportFileName).exists()
+          && false == isExportingMultipleFiles() // For now in case of multiple export files these files will be replaced silently.
+        )
       {
          // i18n[TableExportCsvController.replaceFile=The export file already exisits. Would you like to replace it?]
          String msg = s_stringMgr.getString("TableExportCsvController.replaceFile");
@@ -353,12 +389,19 @@ public class TableExportController
          }
       }
 
-      writePrefs();
+      TableExportPreferences tableExportPreferences = new TableExportPreferences();
+      writeControlsToPrefs(tableExportPreferences);
+      TableExportPreferencesDAO.savePreferences(tableExportPreferences);
+
       _ok = true;
       closeDlg();
    }
 
-
+   private boolean isExportingMultipleFiles()
+   {
+      return _exportSelectionPanelController.isExportMultipleSQLResults()
+             && false == (_dlg.radFormatXLS.isSelected() || _dlg.radFormatXLSX.isSelected()); // Multiple exports to MS Excel means one Excel file with multiple tabs.
+   }
 
 
    /**
@@ -366,36 +409,23 @@ public class TableExportController
     * Exporting a excel file may use a huge amount of memory and can cause some problems within MS Excel.
     * @return true, if the user wishes to continue.
     */
-   private boolean warnIfExcel() {
-	   if(this._dlg.radFormatXLS.isSelected() && shouldWarnIfExcel()){
-		   // i18n[TableExportCsvController.warnIfExcel=Exporting a huge data set for MS Excel maybe use huge memory.]
-		   String msg = s_stringMgr.getString("TableExportCsvController.warnIfExcel");
-		   int option = JOptionPane.showConfirmDialog(_dlg, msg, null, JOptionPane.OK_CANCEL_OPTION);
-		   if(option != JOptionPane.OK_OPTION){
-			   return false;
-		   }		
-	   }
-	   return true;
-   }
-   /**
-    * Decide, if we want warn the user, if the choose the Excel export.
-    * This default implementation returns always false.
-    * @return true, if we should warn.
-    */
-   protected boolean shouldWarnIfExcel(){
-	   return false;
-   }
-
-   protected void writePrefs()
+   private boolean warnIfExcel()
    {
-      TableExportPreferences tableExportPreferences = new TableExportPreferences();
-      writeControlsToPrefs(tableExportPreferences);
-
-      TableExportPreferencesDAO.savePreferences(tableExportPreferences);
+      if(this._dlg.radFormatXLS.isSelected() && _exportDialogType.isWarnIfExcel())
+      {
+         // i18n[TableExportCsvController.warnIfExcel=Exporting a huge data set for MS Excel maybe use huge memory.]
+         String msg = s_stringMgr.getString("TableExportCsvController.warnIfExcel");
+         int option = JOptionPane.showConfirmDialog(_dlg, msg, null, JOptionPane.OK_CANCEL_OPTION);
+         if(option != JOptionPane.OK_OPTION)
+         {
+            return false;
+         }
+      }
+      return true;
    }
-   protected void writeControlsToPrefs(TableExportPreferences prefs)
-   {
 
+   private void writeControlsToPrefs(TableExportPreferences prefs)
+   {
       // Preferences.put(PREF_KEY_CSV_FILE, );
       prefs.setFile(_dlg.txtFile.getText());
 
@@ -431,21 +461,17 @@ public class TableExportController
       //Preferences.put(PREF_KEY_LINE_SEPERATOR, ((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
       prefs.setLineSeperator(((LineSeparator)_dlg.cboLineSeparators.getSelectedItem()).name());
 
-      //Preferences.putBoolean(PREF_KEY_EXPORT_COMPLETE, _dlg.radComplete.isSelected());
-      prefs.setExportComplete(_dlg.radComplete.isSelected());
+      _exportSelectionPanelController.writeControlsToPrefs(prefs);
 
-      //Preferences.putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, _dlg.radUseGlobalPrefsFormating.isSelected());
       prefs.setUseGlobalPrefsFormating(_dlg.radUseGlobalPrefsFormating.isSelected());
 
-      //Preferences.putBoolean(PREF_KEY_EXECUTE_COMMAND, _dlg.chkExecCommand.isSelected());
       prefs.setExecuteCommand(_dlg.chkExecCommand.isSelected());
 
-      // Preferences.put(PREF_KEY_COMMAND, _dlg.txtCommand.getText());
       prefs.setCommand(_dlg.txtCommand.getText());
    }
 
 	
-   private void initDlg()
+   private void initData()
    {
       TableExportPreferences prefs = TableExportPreferencesDAO.loadPreferences();
 
@@ -495,9 +521,9 @@ public class TableExportController
          _dlg.radFormatCSV.setSelected(true);
       }
 
-      onFormat(false);
+      _exportSelectionPanelController.initPanel(prefs);
 
-      initSelectionPanel(prefs);
+      onFormat(false);
 
       if(prefs.isUseGlobalPrefsFormating())
       {
@@ -536,23 +562,6 @@ public class TableExportController
       return fileName;
    }
 
-   /**
-    * Initialize the values for the selection panel from the saved properties.
-    * @param userRoot the saved properties.
-    */
-   protected void initSelectionPanel(TableExportPreferences userRoot)
-   {
-
-	   if(userRoot.isExportComplete())
-	   {
-		   _dlg.radComplete.setSelected(true);
-	   }
-	   else
-	   {
-		   _dlg.radSelection.setSelected(true);
-	   }
-   }
-
    private void onChkExecCommand()
    {
       _dlg.txtCommand.setEnabled(_dlg.chkExecCommand.isSelected());
@@ -571,7 +580,7 @@ public class TableExportController
       return _ok;
    }
 
-   File getFile()
+   File getSingleExportTargetFile()
    {
       return new File(_dlg.txtFile.getText());
    }
@@ -588,24 +597,11 @@ public class TableExportController
       }
    }
 
-   boolean exportComplete()
-   {
-      return _dlg.radComplete.isSelected();
-   }
-
-   String getCommand()
+   String getCommand(File firstExportedFile)
    {
       if(_dlg.chkExecCommand.isSelected())
       {
-         // Copied from Java Doc Matcher.replaceAll:
-         //
-         // Note that backslashes (\) and dollar signs ($) in the replacement string
-         // may cause the results to be different than if it
-         // were being treated as a literal replacement string.
-         // Dollar signs may be treated as references to
-         // captured subsequences as described above, and
-         // backslashes are used to escape literal characters in the replacement string.
-         return _dlg.txtCommand.getText().replaceAll("%file", _dlg.txtFile.getText().replaceAll("\\\\","\\\\\\\\"));
+         return _dlg.txtCommand.getText().replaceAll("%file", firstExportedFile.getAbsolutePath());
       }
       else
       {
@@ -613,12 +609,18 @@ public class TableExportController
       }
    }
 
-   protected TableExportDlg getDialog() {
-	   return this._dlg;
-   }
-
    public Window getOwningWindow()
    {
       return _owner;
+   }
+
+   public boolean isUITableMissingBlobData()
+   {
+      return _exportSelectionPanelController.getExportSourceAccess().isUITableMissingBlobData(getSeparatorChar());
+   }
+
+   public ExportSourceAccess getExportSourceAccess()
+   {
+      return _exportSelectionPanelController.getExportSourceAccess();
    }
 }

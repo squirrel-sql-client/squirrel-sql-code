@@ -78,7 +78,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.expander.SessionParentExpande
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.TableExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.TriggerParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.UserParentExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecuter;
+import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecutor;
 import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePluginPreferencesPanel;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
@@ -623,7 +623,7 @@ public class OraclePlugin extends DefaultSessionPlugin implements ISQLDatabaseMe
 
 	private void initSQLPanel(ISession session, ISQLPanelAPI sqlPanelAPI)
 	{
-		sqlPanelAPI.addExecutor(new ExplainPlanExecuter(session, sqlPanelAPI));
+		sqlPanelAPI.addExecutor(new ExplainPlanExecutor(session, sqlPanelAPI));
 	}
 
 

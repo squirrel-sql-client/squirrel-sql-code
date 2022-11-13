@@ -11,10 +11,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.prefs.Preferences;
 
 public class PropsImpl
 {
+   /**
+    * Legacy from support of "old Preferences" (java.util.prefs.Preferences).
+    * Do not remove because there may be property files that still have such NULL entries.
+    */
    private static final String NULL_PROP = "__" + StringUtilities.NULL_AS_STRING + "__";
 
    private Timer _propsWriteTimer;
@@ -109,7 +112,7 @@ public class PropsImpl
 
    private String getProperty(String propKey)
    {
-      String ret;
+      String ret = null;
 
       String newProp = _properties.getProperty(propKey);
 
@@ -117,20 +120,22 @@ public class PropsImpl
       {
          ret = newProp;
       }
-      else
-      {
-         //System.out.println("Reading old Preferences");
 
-         String oldPref = Preferences.userRoot().get(propKey, NULL_PROP);
-         putProperty(propKey, oldPref);
-
-         if(false == NULL_PROP.equals(oldPref))
-         {
-            Preferences.userRoot().remove(propKey);
-         }
-
-         ret = oldPref;
-      }
+      // Removed reading from "old Preferences" on 30.10.2022, almost four years after the new properties were introduced.
+      // else
+      // {
+      //    //System.out.println("Reading old Preferences");
+      //
+      //    String oldPref = Preferences.userRoot().get(propKey, NULL_PROP);
+      //    putProperty(propKey, oldPref);
+      //
+      //    if(false == NULL_PROP.equals(oldPref))
+      //    {
+      //       Preferences.userRoot().remove(propKey);
+      //    }
+      //
+      //    ret = oldPref;
+      // }
 
       if(NULL_PROP.equals(ret))
       {

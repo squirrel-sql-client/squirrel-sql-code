@@ -1,19 +1,24 @@
 package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecuterPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecutorPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.HideDockButtonHandler;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class GraphQueryResultPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GraphQueryResultPanel.class);
 
-   SQLResultExecuterPanel resultExecuterPanel;
+   SQLResultExecutorPanel resultExecuterPanel;
    JCheckBox chkAutoSyncSQL;
    JButton btnSyncSQLResultNow;
 
@@ -22,7 +27,7 @@ public class GraphQueryResultPanel extends JPanel
    {
       setLayout(new BorderLayout());
 
-      resultExecuterPanel = new SQLResultExecuterPanel(session);
+      resultExecuterPanel = new SQLResultExecutorPanel(session);
       add(createButtonPanel(hideDockButtonHandler), BorderLayout.NORTH);
       add(resultExecuterPanel, BorderLayout.CENTER);
    }

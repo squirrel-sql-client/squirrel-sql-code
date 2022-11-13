@@ -10,6 +10,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportFileWriter;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExportData;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportPreferencesDAO;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryHolder;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.QueryTokenizer;
@@ -20,6 +21,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.ProgressAbortFactoryCallbackImpl;
 
 import java.io.File;
+import java.sql.Connection;
 import java.sql.Statement;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -156,12 +158,12 @@ public class SQLToFileHandler implements ISQLExecutionListener
       {
 
          Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLToFileHandler.writing.file", file.getPath()));
-         Statement stat = _session.getSQLConnection().createStatement();
          DialectType dialectType = DialectFactory.getDialectType(_session.getMetaData());
-         ProgressAbortFactoryCallbackImpl progressControllerFactory = new ProgressAbortFactoryCallbackImpl(_session, sqlToWriteToFile, () -> file, stat);
+         final Connection con = _session.getSQLConnection().getConnection();
+         ProgressAbortFactoryCallbackImpl progressControllerFactory = new ProgressAbortFactoryCallbackImpl(_session, sqlToWriteToFile, () -> file);
 
          // Execution will stop at this point displaying a modal progress frame.
-         progressControllerFactory.getOrCreate(() -> onModalProgressDialogIsDisplaying(prefs, file, sqlToWriteToFile, stat, dialectType, progressControllerFactory));
+         progressControllerFactory.getOrCreate(() -> onModalProgressDialogIsDisplaying(prefs, file, sqlToWriteToFile, con, dialectType, progressControllerFactory));
 
       }
       catch (Exception e)
@@ -170,17 +172,18 @@ public class SQLToFileHandler implements ISQLExecutionListener
       }
    }
 
-   private void onModalProgressDialogIsDisplaying(TableExportPreferences prefs, File file, String sqlToWriteToFile, Statement stat, DialectType dialectType, ProgressAbortFactoryCallbackImpl progressControllerFactory)
+   private void onModalProgressDialogIsDisplaying(TableExportPreferences prefs, File file, String sqlToWriteToFile, Connection con, DialectType dialectType, ProgressAbortFactoryCallbackImpl progressControllerFactory)
    {
       ExecutorService executorService = Executors.newSingleThreadExecutor();
-      executorService.submit(() -> doWriteFile(prefs, file, sqlToWriteToFile, stat, dialectType, progressControllerFactory));
+      executorService.submit(() -> doWriteFile(prefs, file, sqlToWriteToFile, con, dialectType, progressControllerFactory));
    }
 
-   private void doWriteFile(TableExportPreferences prefs, File file, String sqlToWriteToFile, Statement stat, DialectType dialectType, ProgressAbortFactoryCallbackImpl progressControllerFactory)
+   private void doWriteFile(TableExportPreferences prefs, File file, String sqlToWriteToFile, Connection con, DialectType dialectType, ProgressAbortFactoryCallbackImpl progressControllerFactory)
    {
       try
       {
-         ExportFileWriter.writeFile(prefs, new ResultSetExportData(stat.executeQuery(sqlToWriteToFile), dialectType), progressControllerFactory.getOrCreate());
+         final Statement stat = SQLUtilities.createStatementForStreamingResults(con, dialectType);
+         ExportFileWriter.writeFile(new ResultSetExportData(stat, sqlToWriteToFile ,dialectType), prefs, progressControllerFactory.getOrCreate());
          Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLToFileHandler.wrote.file", file.getPath()));
       }
       catch (Throwable e)

@@ -45,15 +45,13 @@ import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionType;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.CopyColoredRowsToNewWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.GotoColorMenuController;
 import net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby.TableCopySeparatedByCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportDataException;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExport;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues.ShowDistinctValuesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -62,7 +60,6 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -483,15 +480,8 @@ public class TablePopupMenu extends BasePopupMenu
 
       public void actionPerformed(ActionEvent evt)
       {
-			try
-			{
-				new TableExportCommand(_dataSetViewerTablePanel.getTable()).execute(SwingUtilities.windowForComponent(_dataSetViewerTablePanel.getTable()));
-			}
-			catch (ExportDataException e)
-			{
-				throw Utilities.wrapRuntime(e);
-			}
-      }
+			new TableExport(_dataSetViewerTablePanel.getTable()).export();
+		}
    }
 
    private class ShowReferencesAction extends BaseAction

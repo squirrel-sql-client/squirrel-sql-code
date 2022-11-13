@@ -123,9 +123,9 @@ public class SQLPanel extends JPanel
 
 
 
-	private final List<ISQLResultExecuter> _executors = new ArrayList<>();
+	private final List<ISQLResultExecutor> _executors = new ArrayList<>();
 
-	private SQLResultExecuterPanel _sqlExecPanel;
+	private SQLResultExecutorPanel _sqlExecPanel;
 
 	private ISQLPanelAPI _panelAPI;
 
@@ -143,7 +143,7 @@ public class SQLPanel extends JPanel
 		setSession(session);
 		createGUI();
 		propertiesHaveChanged(null);
-		_sqlExecPanel = new SQLResultExecuterPanel(session, true);
+		_sqlExecPanel = new SQLResultExecutorPanel(session, true);
 
 		_sqlExecutorHistoryAdapter = new SQLExecutionAdapter()
 		{
@@ -226,7 +226,7 @@ public class SQLPanel extends JPanel
 		return _session;
 	}
 
-	public void addExecutor(ISQLResultExecuter exec)
+	public void addExecutor(ISQLResultExecutor exec)
 	{
 		_executors.add(exec);
 
@@ -240,7 +240,7 @@ public class SQLPanel extends JPanel
          _executerPanleHolder.remove(_simpleExecuterPanel);
          _executerPanleHolder.add(_tabbedExecuterPanel);
          _executors.get(0);
-         ISQLResultExecuter buf = _executors.get(0);
+         ISQLResultExecutor buf = _executors.get(0);
          _tabbedExecuterPanel.addTab(buf.getTitle(), null, buf.getComponent(), buf.getTitle());
       }
 
@@ -257,12 +257,12 @@ public class SQLPanel extends JPanel
 		_sqlPanelListenerManager.fireExecuterTabAdded(exec);
 	}
 
-	public void removeExecutor(ISQLResultExecuter exec)
+	public void removeExecutor(ISQLResultExecutor exec)
 	{
 		_executors.remove(exec);
 	}
 
-	public SQLResultExecuterPanel getSQLExecPanel()
+	public SQLResultExecutorPanel getSQLExecPanel()
 	{
 		return _sqlExecPanel;
 	}
@@ -322,26 +322,26 @@ public class SQLPanel extends JPanel
 
 	public void runCurrentExecuter()
 	{
-      _runExecuter(ISQLResultExecuter.ExecutionScope.EXEC_CURRENT_SQL);
+      _runExecuter(ISQLResultExecutor.ExecutionScope.EXEC_CURRENT_SQL);
    }
 
    public void runAllSqlsExecuter()
 	{
-      _runExecuter(ISQLResultExecuter.ExecutionScope.EXEC_ALL_SQLS);
+      _runExecuter(ISQLResultExecutor.ExecutionScope.EXEC_ALL_SQLS);
 	}
 
 
-   private void _runExecuter(ISQLResultExecuter.ExecutionScope executionScope)
+   private void _runExecuter(ISQLResultExecutor.ExecutionScope executionScope)
    {
       if(1 == _executors.size())
       {
-         ISQLResultExecuter exec = _executors.get(0);
+         ISQLResultExecutor exec = _executors.get(0);
          exec.execute(_sqlEntry, executionScope);
       }
       else
       {
          int selectedIndex = _tabbedExecuterPanel.getSelectedIndex();
-         ISQLResultExecuter exec = _executors.get(selectedIndex);
+         ISQLResultExecutor exec = _executors.get(selectedIndex);
          exec.execute(_sqlEntry, executionScope);
       }
    }

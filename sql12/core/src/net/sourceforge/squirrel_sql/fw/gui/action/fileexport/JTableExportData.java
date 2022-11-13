@@ -147,4 +147,10 @@ public class JTableExportData implements IExportData
       return rows.iterator();
    }
 
+   @Override
+   public void close()
+   {
+
+   }
+
 }

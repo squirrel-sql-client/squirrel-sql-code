@@ -20,53 +20,68 @@ public class ExportFileWriter
 
    /**
     * Exports the data structure.
-    * @param ctrl the controller to use
-    * @param data The data to export
-    * @param progressController
+    *
+    * @param ctrl               the controller to use
+    * @param data               The data to export
     */
-   public static long writeFile(TableExportPreferences prefs, IExportData data, ProgressAbortCallback progressController)
+   public static long writeFile(IExportData data, TableExportPreferences prefs, ProgressAbortCallback progressController)
    {
-      return writeFile(prefs, data, progressController, null);
+      return export(ExportDataInfoList.single(data), prefs, progressController, null);
    }
 
-   public static long writeFile(TableExportPreferences prefs, IExportData data, ProgressAbortCallback progressController, Window ownerFrame)
+   public static long export(ExportDataInfoList exportDataInfoList, TableExportPreferences prefs, ProgressAbortCallback progressController, Window ownerFrame)
    {
 
+      long ret = 0;
       File file = null;
       try
       {
-         file = new File(prefs.getFile());
+         if (prefs.isFormatXLS() || prefs.isFormatXLSOld())
+         {
+            if(null == exportDataInfoList.getMultipleSqlResultExportDestinationInfo())
+            {
+               file = exportDataInfoList.getSingleExportFile(prefs);
+            }
+            else
+            {
+               file = exportDataInfoList.getMultipleSqlResultExportDestinationInfo().getExcelExportFile();
+            }
 
-         // Checks if file name is valid.
-         // Raises an InvalidPathException if not.
-         file.toPath();
+            file = checkAndPrepareExportFile(file);
 
-         if (null != file.getParentFile())
-         {
-            file.getParentFile().mkdirs();
-         }
-
-         if (prefs.isFormatCSV())
-         {
-            return new DataExportCSVWriter(file, prefs, progressController).write(data);
-         }
-         else if (prefs.isFormatXLS() || prefs.isFormatXLSOld())
-         {
-            return new DataExportExcelWriter(file, prefs, progressController).write(data);
-         }
-         else if (prefs.isFormatXML())
-         {
-            return new DataExportXMLWriter(file, prefs, progressController).write(data);
-         }
-         else if (prefs.isFormatJSON())
-         {
-            return new DataExportJSONWriter(file, prefs, progressController).write(data);
+            ret += new DataExportExcelWriter(file, prefs, progressController).write(exportDataInfoList);
          }
          else
          {
-            throw new IllegalStateException("None of the format flags is true");
+            for (ExportDataInfo exportDataInfo : exportDataInfoList.getExportDataInfos())
+            {
+               file = checkAndPrepareExportFile(exportDataInfo.getFile(prefs));
+
+               if (prefs.isFormatCSV())
+               {
+                  ret += new DataExportCSVWriter(file, prefs, progressController).write(exportDataInfo.getExportData());
+               }
+               else if (prefs.isFormatXML())
+               {
+                  ret += new DataExportXMLWriter(file, prefs, progressController).write(exportDataInfo.getExportData());
+               }
+               else if (prefs.isFormatJSON())
+               {
+                  ret += new DataExportJSONWriter(file, prefs, progressController).write(exportDataInfo.getExportData());
+               }
+               else
+               {
+                  throw new IllegalStateException("None of the format flags is true");
+               }
+            }
+
+            if(null != progressController)
+            {
+               progressController.setFinished();
+            }
          }
 
+         return ret;
       }
       catch (Exception e)
       {
@@ -88,5 +103,19 @@ public class ExportFileWriter
 
          throw new RuntimeException(e);
       }
+   }
+
+   private static File checkAndPrepareExportFile(File file)
+   {
+      // Checks if file name is valid.
+      // Raises an InvalidPathException if not.
+      file.toPath();
+
+      if (null != file.getParentFile())
+      {
+         file.getParentFile().mkdirs();
+      }
+
+      return file;
    }
 }

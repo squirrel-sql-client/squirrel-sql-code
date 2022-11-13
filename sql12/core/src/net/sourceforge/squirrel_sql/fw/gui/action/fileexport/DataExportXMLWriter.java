@@ -169,7 +169,7 @@ public class DataExportXMLWriter extends AbstractDataExportFileWriter
    {
       super.beforeRow(rowIdx);
       row = document.createElement("row");
-      row.setAttribute("rowNumber", String.valueOf(rowIdx));
+      row.setAttribute("rowNumber", String.valueOf(rowIdx + 1));
       rows.appendChild(row);
    }
 

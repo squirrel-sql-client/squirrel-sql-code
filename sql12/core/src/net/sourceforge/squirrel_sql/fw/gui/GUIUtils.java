@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -75,6 +76,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -547,12 +549,12 @@ public class GUIUtils
       return newFolder;
    }
 
-	public static void forceFocus(final JComponent comp)
+	public static void forceFocus(final Component comp)
 	{
 		forceFocus(comp, null);
 	}
 
-	public static void forceFocus(final JComponent comp, Runnable callWhenFocused)
+	public static void forceFocus(final Component comp, Runnable callWhenFocused)
 	{
 		final Timer[] timerRef = new Timer[1];
 
@@ -950,37 +952,37 @@ public class GUIUtils
       return textField;
    }
 
-	public static Component setPreferredWidth(Component comp, int width)
+	public static <T extends Component> T setPreferredWidth(T comp, int width)
 	{
 		comp.setPreferredSize(new Dimension(width, comp.getPreferredSize().height));
 		return comp;
 	}
 
-	public static Component setPreferredHeight(Component comp, int height)
+	public static <T extends Component> T setPreferredHeight(T comp, int height)
 	{
 		comp.setPreferredSize(new Dimension(comp.getPreferredSize().width, height));
 		return comp;
 	}
 
-	public static Component setMaximumWidth(Component comp, int width)
+	public static <T extends Component> T setMaximumWidth(T comp, int width)
 	{
 		comp.setMaximumSize(new Dimension(width, comp.getMaximumSize().height));
 		return comp;
 	}
 
-	public static Component setMaximumHeight(Component comp, int height)
+	public static <T extends Component> T setMaximumHeight(T comp, int height)
 	{
 		comp.setMaximumSize(new Dimension(comp.getMaximumSize().width, height));
 		return comp;
 	}
 
-	public static Component setMinimumWidth(Component comp, int width)
+	public static <T extends Component> T setMinimumWidth(T comp, int width)
 	{
 		comp.setMinimumSize(new Dimension(width, comp.getMinimumSize().height));
 		return comp;
 	}
 
-	public static Component setMinimumHeight(Component comp, int height)
+	public static <T extends Component> T setMinimumHeight(T comp, int height)
 	{
 		comp.setMinimumSize(new Dimension(comp.getMinimumSize().width, height));
 		return comp;
@@ -1124,4 +1126,16 @@ public class GUIUtils
 		}
 	}
 
+	public static <T> List<T> getListItems(DefaultListModel<T> listModel)
+	{
+		ArrayList<T> ret = new ArrayList<>();
+
+		final Enumeration<T> e = listModel.elements();
+		while (e.hasMoreElements())
+		{
+			ret.add(e.nextElement());
+		}
+
+		return ret;
+	}
 }

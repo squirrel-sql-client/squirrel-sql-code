@@ -16,19 +16,18 @@ package net.sourceforge.squirrel_sql.client.session.event;
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecutor;
 
 public class SQLResultExecuterTabEvent
 {
-	private ISQLResultExecuter _tab;
+	private ISQLResultExecutor _tab;
 
-	public SQLResultExecuterTabEvent(ISQLResultExecuter tab)
+	public SQLResultExecuterTabEvent(ISQLResultExecutor tab)
 	{
 		_tab = tab;
 	}
 
-	public ISQLResultExecuter getExecuter()
+	public ISQLResultExecutor getExecuter()
 	{
 		return _tab;
 	}

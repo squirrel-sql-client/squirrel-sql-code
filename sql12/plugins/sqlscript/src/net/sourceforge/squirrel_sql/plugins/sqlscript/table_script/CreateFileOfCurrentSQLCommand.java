@@ -18,18 +18,21 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExportCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExportDlg;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ExportDlg;
+import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.ResultSetExport;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -39,95 +42,101 @@ import javax.swing.SwingUtilities;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Command to export the result of the current SQL into a File.
- * With this command is the user able to export the result of the current SQL into a file using the {@link TableExportDlg}.
+ * With this command is the user able to export the result of the current SQL into a file using the {@link ExportDlg}.
  * The command will run on a separate thread and a separate connection to the database. It is monitored with a {@link ProgressAbortDialog} and can be canceled.
  *
  * @author Stefan Willinger
- * @see ResultSetExportCommand
+ * @see ResultSetExport
  * @see ProgressAbortCallback
  */
-public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
+public class CreateFileOfCurrentSQLCommand
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CreateFileOfCurrentSQLCommand.class);
 
    private static ILogger s_log = LoggerController.createLogger(CreateFileOfCurrentSQLCommand.class);
+   private final ISession session;
+   private final SQLScriptPlugin plugin;
 
 
    /**
     * Command for exporting the data.
     */
-   private ResultSetExportCommand resultSetExportCommand;
+   private ResultSetExport _resultSetExport;
 
-   private Statement stmt = null;
 
    private ProgressAbortFactoryCallbackImpl _progressAbortCallback;
 
-   /**
-    * The current SQL in the SQL editor pane.
-    */
-   private String currentSQL = null;
 
    /**
     * Ctor specifying the current session.
     */
    public CreateFileOfCurrentSQLCommand(ISession session, SQLScriptPlugin plugin)
    {
-      super(session, plugin);
+      this.session = session;
+      this.plugin = plugin;
    }
 
 
    public void execute(final JFrame owner)
    {
-
-      this.currentSQL = getSelectedSelectStatement();
-
-      getSession().getApplication().getThreadPool().addTask(() -> doCreateFileOfCurrentSQL(owner));
-
+      final List<String> sqls = getSelectedSelectStatements();
+      getSession().getApplication().getThreadPool().addTask(() -> doCreateFileOfCurrentSQL(sqls, owner));
    }
 
 
    /**
     * Do the work.
     *
+    * @param sqls
     * @param owner
     */
-   private void doCreateFileOfCurrentSQL(JFrame owner)
+   private void doCreateFileOfCurrentSQL(List<String> sqls, JFrame owner)
    {
       try
       {
-
-         ISQLConnection unmanagedConnection = null;
+         ISQLConnection unmangedConnection = null;
          try
          {
-            unmanagedConnection = createUnmanagedConnection();
+            unmangedConnection = createUnmanagedConnection();
 
-            // TODO maybe, we should use a SQLExecutorTask for taking advantage of some ExecutionListeners like the parameter replacement. But how to get the right Listeners?
-            if (unmanagedConnection != null)
+            Connection con;
+            if (unmangedConnection != null)
             {
-               stmt = createStatementForStreamingResults(unmanagedConnection.getConnection());
+               con = unmangedConnection.getConnection();
             }
             else
             {
-               stmt = createStatementForStreamingResults(getSession().getSQLConnection().getConnection());
+               con = getSession().getSQLConnection().getConnection();
             }
 
-
-            _progressAbortCallback = new ProgressAbortFactoryCallbackImpl(getSession(), currentSQL, () -> resultSetExportCommand.getTargetFile(), stmt);
+            final String sqlsJoined;
+            if(1 == session.getProperties().getSQLStatementSeparator().length())
+            {
+               sqlsJoined = String.join(session.getProperties().getSQLStatementSeparator() + "\n", sqls);
+            }
+            else
+            {
+               sqlsJoined = String.join(" " + session.getProperties().getSQLStatementSeparator() + "\n", sqls);
+            }
+            _progressAbortCallback = new ProgressAbortFactoryCallbackImpl(getSession(), sqlsJoined, () -> _resultSetExport.getTargetFile());
 
 
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
 
             DialectType dialectType = DialectFactory.getDialectType(getSession().getMetaData());
-            resultSetExportCommand = new ResultSetExportCommand(stmt, currentSQL, dialectType, _progressAbortCallback);
-            resultSetExportCommand.execute(owner);
 
+            // Opens the modal export dialog ...
+            _resultSetExport = new ResultSetExport(con, sqls, dialectType, _progressAbortCallback, owner);
 
+            // ... called after the  modal export dialog was closed.
+            _resultSetExport.export();
 
             stopWatch.stop();
 
@@ -135,12 +144,12 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
             {
                return;
             }
-            else if (resultSetExportCommand.getWrittenRows() >= 0)
+            else if (_resultSetExport.getWrittenRows() >= 0)
             {
                NumberFormat nf = NumberFormat.getIntegerInstance();
 
-               String rows = nf.format(resultSetExportCommand.getWrittenRows());
-               File targetFile = resultSetExportCommand.getTargetFile();
+               String rows = nf.format(_resultSetExport.getWrittenRows());
+               File targetFile = _resultSetExport.getTargetFile();
                String seconds = nf.format(stopWatch.getTime() / 1000);
                String msg = s_stringMgr.getString("CreateFileOfCurrentSQLCommand.progress.sucessMessage",
                      rows,
@@ -151,11 +160,7 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
          }
          finally
          {
-            SQLUtilities.closeStatement(stmt);
-            if (unmanagedConnection != null)
-            {
-               unmanagedConnection.close();
-            }
+            SQLUtilities.closeConnection(unmangedConnection);
          }
       }
       catch (Exception e)
@@ -169,55 +174,18 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
       }
       finally
       {
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
+         SwingUtilities.invokeLater(() -> {
+            if (null != _progressAbortCallback)
             {
-               if (null != _progressAbortCallback)
-               {
-                  _progressAbortCallback.hideProgressMonitor();
-               }
+               _progressAbortCallback.hideProgressMonitor();
             }
          });
       }
    }
 
-   /**
-    * Create a {@link Statement} that will stream the result instead of loading into the memory.
-    *
-    * @param connection the connection to use
-    * @return A Statement, that will stream the result.
-    * @throws SQLException
-    * @see http://javaquirks.blogspot.com/2007/12/mysql-streaming-result-set.html
-    * @see http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-implementation-notes.html
-    */
-   private Statement createStatementForStreamingResults(Connection connection) throws SQLException
-   {
-      Statement stmt;
-      DialectType dialectType = DialectFactory.getDialectType(getSession().getMetaData());
-
-      if (DialectType.MYSQL5 == dialectType)
-      {
-         /*
-          * MYSQL will load the whole result into memory. To avoid this, we must use the streaming mode.
-          *
-          * http://javaquirks.blogspot.com/2007/12/mysql-streaming-result-set.html
-          * http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-implementation-notes.html
-          */
-         stmt = connection.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
-         stmt.setFetchSize(Integer.MIN_VALUE);
-      }
-      else
-      {
-         stmt = connection.createStatement();
-      }
-      return stmt;
-
-   }
-
 
    /**
-    * Create a new unmanaged connection, , which is not associated with the current session.
+    * Create a new unmanaged connection, which is not associated with the current session.
     *
     * @return a new unmanaged connection or null, if no connection can be created.
     * @throws SQLException
@@ -240,5 +208,53 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand
          unmanagedConnection.setAutoCommit(false);
       }
       return unmanagedConnection;
+   }
+
+   /**
+    * @return the _session
+    */
+   public ISession getSession()
+   {
+      return session;
+   }
+
+   /**
+    * @return the _plugin
+    */
+   public SQLScriptPlugin getPlugin()
+   {
+      return plugin;
+   }
+
+   /**
+    * Looks for the current selected SQL statement in the editor pane.
+    * An error occurs when no query is selected.
+    * In this case, the user will get a message and <code>null</code> will be returned.
+    *
+    * @return the selected SELECT statement or null, if not exactly one SELECT statement is selected.
+    */
+   private List<String> getSelectedSelectStatements()
+   {
+      ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(getSession());
+
+      String script = api.getSQLScriptToBeExecuted();
+
+      IQueryTokenizer qt = getSession().getQueryTokenizer();
+      qt.setScriptToTokenize(script);
+
+      if (false == qt.hasQuery())
+      {
+         getSession().showErrorMessage(s_stringMgr.getString("AbstractDataScriptCommand.noQuery"));
+         return null;
+      }
+
+
+      List<String> ret = new ArrayList<>();
+      while(qt.hasQuery())
+      {
+         ret.add(qt.nextQuery().getQuery());
+      }
+
+      return ret;
    }
 }
