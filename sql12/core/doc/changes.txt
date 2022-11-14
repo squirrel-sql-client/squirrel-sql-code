@@ -4,6 +4,13 @@ SQuirreL SQL Client Change Log
 Not yet released, available in our GIT repository, snapshots and future releases.
 ===============================================================================================
 
+Bug fixes:
+
+File export:
+  Executing command on exported file didn't on MS Windows work because of erroneous file name format.
+  Exporting SQL queries directly from the SQL editor (not UI-Tables)
+  caused Even Dispatch Thread (EDT) violations.
+
 Enhancements:
 
 Export of multiple SQL results.

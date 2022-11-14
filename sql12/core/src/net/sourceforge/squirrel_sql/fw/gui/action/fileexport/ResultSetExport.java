@@ -18,14 +18,14 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
-import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
-
-import javax.swing.JFrame;
 import java.io.File;
 import java.sql.Connection;
 import java.util.List;
+import javax.swing.JFrame;
+
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
 
 /**
  * Command for exporting a result set to a file.
@@ -39,10 +39,17 @@ public class ResultSetExport
    public ResultSetExport(Connection con, List<String> sqls, DialectType dialect, ProgressAbortFactoryCallback progressControllerFactory, JFrame owner)
    {
       final ExporterCallback exporterCallback = () -> progressControllerFactory.getOrCreate();
-      final ExportController exportController = new ExportController(new ExportSourceAccess(sqls, con, dialect), owner, ExportDialogType.RESULT_SET_EXPORT);
-      GUIUtils.processOnSwingEventThread(() -> exportController.showDialog(), true);
 
-      _exporter = new Exporter(exporterCallback, exportController);
+      ExportController exportControllerRef[] = new ExportController[1];
+
+      GUIUtils.processOnSwingEventThread(() ->
+                                         {
+                                            exportControllerRef[0] =
+                                                  new ExportController(new ExportSourceAccess(sqls, con, dialect), owner, ExportDialogType.RESULT_SET_EXPORT);
+                                            exportControllerRef[0].showDialog();
+                                         }, true);
+
+      _exporter = new Exporter(exporterCallback, exportControllerRef[0]);
    }
 
    public void export()
