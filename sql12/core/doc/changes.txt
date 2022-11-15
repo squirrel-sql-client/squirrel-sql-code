@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Bug fixes:
 
+Hibernate Plugin:
+  Right mouse HQL editor function: "View in mapped objects" (Ctrl+B) matched Entity name not exactly enough.
+
 File export:
   Executing command on exported file didn't on MS Windows work because of erroneous file name format.
   Exporting SQL queries directly from the SQL editor (not UI-Tables)
@@ -1267,7 +1270,7 @@ If name and label of a SQL result column differed by leading or trailing white s
   Now this happens only when there's a "real" difference.
   For example on MSSQL: For unaliased aggregate functions the column name is an empty string while the column label is one blank character.
 
-Hibernate Plugin: New right HQL editor function: "View in mapped objects" (Ctrl+B) shows Entity at cursor in mapped objects tree.
+Hibernate Plugin: New right mouse HQL editor function: "View in mapped objects" (Ctrl+B) shows Entity at cursor in mapped objects tree.
 
 
 Added Actian/Ingres default driver definitions.

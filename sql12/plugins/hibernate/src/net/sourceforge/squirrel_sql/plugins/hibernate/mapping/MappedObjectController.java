@@ -1,5 +1,18 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import javax.swing.JComponent;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.props.Props;
@@ -11,19 +24,7 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateChannel;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
-
-import javax.swing.*;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Collections;
+import org.apache.commons.lang3.StringUtils;
 
 public class MappedObjectController
 {
@@ -261,7 +262,7 @@ public class MappedObjectController
 
          MappedClassInfoTreeWrapper mappedClassInfoTreeWrapper = (MappedClassInfoTreeWrapper) childNode.getUserObject();
 
-         if(mappedClassInfoTreeWrapper.getMappedClassInfo().getClassName().endsWith(wordAtCursor))
+         if( matchesEntityClassName(wordAtCursor, mappedClassInfoTreeWrapper.getMappedClassInfo().getClassName()) )
          {
             TreePath selectionPath = new TreePath(childNode.getPath());
             _panel.treMappedObjects.setSelectionPath(selectionPath);
@@ -277,5 +278,15 @@ public class MappedObjectController
       }
 
       return false;
+   }
+
+   private static boolean matchesEntityClassName(String wordAtCursor, String className)
+   {
+      if( StringUtils.contains(wordAtCursor, ".") )
+      {
+         return StringUtils.equals(className, wordAtCursor);
+      }
+
+      return StringUtils.endsWith(className,"." + wordAtCursor);
    }
 }
