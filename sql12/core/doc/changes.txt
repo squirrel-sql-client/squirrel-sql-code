@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Bug fixes:
 
+Fixed class cast exception that sometimes occurred when SQL result tabs were closed.
+
 Hibernate Plugin:
   Right mouse HQL editor function: "View in mapped objects" (Ctrl+B) matched Entity name not exactly enough.
 

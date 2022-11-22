@@ -1,18 +1,18 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.List;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.custompanel.CustomResultPanel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class ResultTabClosing
 {
@@ -149,9 +149,22 @@ public class ResultTabClosing
       {
          return _tabbedExecutionsPanel.getIconAt(indexOfTab);
       }
-      else
+      else if(_tabbedExecutionsPanel.getTabComponentAt(indexOfTab) instanceof JLabel)
       {
          return ((JLabel)_tabbedExecutionsPanel.getTabComponentAt(indexOfTab)).getIcon();
+      }
+      else
+      {
+         // Introduced for
+         // java.lang.ClassCastException:
+         // class net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.ButtonTabComponent cannot be cast to class javax.swing.JLabel
+         //  at net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTabClosing.getIconAt(ResultTabClosing.java:154)
+         //  at net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTabClosing.isAnchoredAt(ResultTabClosing.java:143)
+         //  at net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecutorPanel.checkResultTabLimit(SQLResultExecutorPanel.java:817)
+         //  at net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecutorPanel.addResultsTab(SQLResultExecutorPanel.java:748)
+         //  at net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecutorPanel.onAddResultsTab(SQLResultExecutorPanel.java:690)
+         //  at net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecutorPanel$2.lambda$addResultsTab$0(SQLResultExecutorPanel.java:310)
+         return null;
       }
    }
 
