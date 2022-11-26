@@ -293,7 +293,7 @@ public class SavedSessionMoreCtrl
       final SavedSessionJsonBean selectedSavedSession = _dlg.lstSavedSessions.getSelectedValue();
       if(null == selectedSavedSession)
       {
-         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("SavedSessionMoreCtrl.no.section.to.rename"));
+         Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("SavedSessionMoreCtrl.no.session.to.rename"));
       }
 
       final SessionSaveDlg sessionSaveDlg = new SessionSaveDlg(_dlg, selectedSavedSession.getName());
@@ -305,6 +305,8 @@ public class SavedSessionMoreCtrl
 
       selectedSavedSession.setName(sessionSaveDlg.getSavedSessionName());
       Main.getApplication().getSavedSessionsManager().moveToTop(selectedSavedSession);
+
+      Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();
    }
 
    private void onDeleteSelected()

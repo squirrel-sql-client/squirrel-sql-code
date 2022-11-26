@@ -101,6 +101,8 @@ public class SessionPersister
          sqlEditorActivator.activate();
       }
 
+      Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();
+
       return true;
    }
 }

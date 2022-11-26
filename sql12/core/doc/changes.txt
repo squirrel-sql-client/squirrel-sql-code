@@ -24,6 +24,8 @@ File export:
 
 Enhancements:
 
+Saved Sessions: Name of current Saved Session is displayed in SQuirreL's main window title.
+
 Export of multiple SQL results.
   When exporting to MS Excel, multiple data sheets/tabs in the same file are created.
   When exporting to other formats, multiple files are created.

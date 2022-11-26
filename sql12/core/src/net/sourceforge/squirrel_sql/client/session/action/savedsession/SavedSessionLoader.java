@@ -64,6 +64,8 @@ public class SavedSessionLoader
       Main.getApplication().getSavedSessionsManager().moveToTop(savedSessionJsonBean);
 
       sqlEditorActivator.activate();
+
+      Main.getApplication().getMainFrame().getMainFrameTitleHandler().updateMainFrameTitle();
    }
 
    private static void loadSessionSql(SessionSqlJsonBean sessionSQL, ISQLPanelAPI mainSQLPanelAPI)

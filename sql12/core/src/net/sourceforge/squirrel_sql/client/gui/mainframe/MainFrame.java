@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopContainerFactory;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;
@@ -32,7 +31,6 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.D
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.messagepanel.MessagePanel;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.statusbar.MainFrameStatusBar;
@@ -68,35 +66,36 @@ public class MainFrame extends JFrame
 		// Empty body.
 	}
 
-	/** Logger for this class. */
 	private final ILogger s_log = LoggerController.createLogger(MainFrame.class);
-
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MainFrame.class);
-    
-	/** Application API. */
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MainFrame.class);
 	private final IApplication _app;
-
-	/** Toolbar at top of window. */
 	private MainFrameToolBar _toolBar;
 
-
-	/** Status bar at bottom of window. */
+	/**
+	 * Status bar at bottom of window.
+	 */
 	private MainFrameStatusBar _statusBar;
 
-	/** Message panel at bottom of window. */
+	/**
+	 * Message panel at bottom of window.
+	 */
 	private MessagePanel _messagePanel;
 
-	/** If <TT>true</TT> then status bar is visible. */
+	/**
+	 * If <TT>true</TT> then status bar is visible.
+	 */
 	private boolean _statusBarVisible = false;
 
 	private IDesktopContainer _desktop;
 
-   private JSplitPane _splitPn;
+	private JSplitPane _splitPn;
 
-   private SplitPnResizeHandler _splitPnResizeHandler;
+	private SplitPnResizeHandler _splitPnResizeHandler;
 
-   /**
+	private final MainFrameTitleHandler _mainFrameTitleHandler;
+
+
+	/**
 	 * Ctor.
 	 *
 	 * @param	app	 Application API.
@@ -108,11 +107,6 @@ public class MainFrame extends JFrame
 	public MainFrame(IApplication app)
 	{
 		//super(Version.getVersion() + " User dir:" + new ApplicationFiles().getUserSettingsDirectory());
-		super(s_stringMgr.getString("MainFrame.title.version.userdir", Version.getVersion(), new ApplicationFiles().getUserSettingsDirectory()));
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
 		_app = app;
 		_desktop = DesktopContainerFactory.createDesktopContainer(_app);
 		createUserInterface();
@@ -127,6 +121,8 @@ public class MainFrame extends JFrame
 				}
 			}
 		});
+
+		_mainFrameTitleHandler = new MainFrameTitleHandler(this);
 
 		DesktopSupport.handleDesktop();
 		SwingUtilities.invokeLater(() -> initializeDesktop());
@@ -457,5 +453,10 @@ public class MainFrame extends JFrame
 	public void setStatusText(String text)
 	{
 		_statusBar.setText(text);
+	}
+
+	public MainFrameTitleHandler getMainFrameTitleHandler()
+	{
+		return _mainFrameTitleHandler;
 	}
 }
