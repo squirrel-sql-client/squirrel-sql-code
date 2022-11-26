@@ -23,7 +23,6 @@ import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.dnd.DropTarget;
@@ -116,7 +115,7 @@ public class GraphDesktopController
          }
       });
 
-      _desktopPane.setBackground(Color.white);
+      GraphColoring.setDesktopBackground(_desktopPane);
 
       _modeManager = modeManager;
 

@@ -3,8 +3,12 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -72,7 +76,7 @@ public class QueryTextArea extends JPanel implements IColumnTextArea
 
       GridBagConstraints gbc;
 
-      setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      GraphColoring.setTableFrameBackground(this);
 
       for (int i = 0; i < _columnInfoModel.getColCount(); i++)
       {
@@ -86,7 +90,7 @@ public class QueryTextArea extends JPanel implements IColumnTextArea
 
 
       JPanel dist = new JPanel();
-      dist.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      GraphColoring.setTableFrameBackground(dist);
       add(dist, gbc);
 
       setVisible(true);

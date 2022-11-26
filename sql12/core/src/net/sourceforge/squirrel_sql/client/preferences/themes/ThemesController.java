@@ -3,7 +3,6 @@ package net.sourceforge.squirrel_sql.client.preferences.themes;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.messagepanel.MessagePrefsCtrl;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -14,7 +13,6 @@ public class ThemesController
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ThemesController.class);
 
-   public static final String PREF_KEY_THEMESCONTROLLER_LAST_APPLIED_THEMS = "GlobalPreferences.ThemesController.last.applied.theme";
 
    private final ThemesPanel _themesPanel;
 
@@ -23,7 +21,6 @@ public class ThemesController
     * LAF-Preferences and New Session Properties. Hence the applied theme is saved immediately, too.
     *
     */
-   private ThemesEnum _lastAppliedTheme;
    private MessagePrefsCtrl _messagePrefsCtrl;
 
    public ThemesController(MessagePrefsCtrl messagePrefsCtrl)
@@ -31,19 +28,17 @@ public class ThemesController
       _messagePrefsCtrl = messagePrefsCtrl;
       _themesPanel = new ThemesPanel();
 
-      _lastAppliedTheme = ThemesEnum.valueOf(Props.getString(PREF_KEY_THEMESCONTROLLER_LAST_APPLIED_THEMS, ThemesEnum.LIGH.name()));
-
-      _themesPanel.cboThemes.setSelectedItem(_lastAppliedTheme);
+      _themesPanel.cboThemes.setSelectedItem(ThemesEnum.getCurrentTheme());
 
       _themesPanel.btnApply.addActionListener(e -> onApply());
    }
 
    private void onApply()
    {
-      _lastAppliedTheme = (ThemesEnum) _themesPanel.cboThemes.getSelectedItem();
+      ThemesEnum.saveCurrentTheme((ThemesEnum) _themesPanel.cboThemes.getSelectedItem());
 
 
-      switch (_lastAppliedTheme)
+      switch (ThemesEnum.getCurrentTheme())
       {
          case LIGH:
             if (JOptionPane.YES_OPTION != JOptionPane.showConfirmDialog(_themesPanel, s_stringMgr.getString("ThemesController.apply.light.theme")))
@@ -70,9 +65,6 @@ public class ThemesController
             _messagePrefsCtrl.switchToDark();
             break;
       }
-
-      Props.putString(PREF_KEY_THEMESCONTROLLER_LAST_APPLIED_THEMS, _lastAppliedTheme.name());
-
    }
 
    public ThemesPanel getPanel()

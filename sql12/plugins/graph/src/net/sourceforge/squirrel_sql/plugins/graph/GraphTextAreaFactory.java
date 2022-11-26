@@ -3,14 +3,11 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
 import java.awt.event.MouseListener;
 
 public class GraphTextAreaFactory
 {
-   public static final Color TEXTAREA_BG = new Color(255,255,204);
-
    private ColumnTextArea _txtColumns;
    private ZoomableColumnTextArea _txtZoomColumns;
    private QueryTextArea _txtQueryTextArea;
@@ -19,10 +16,10 @@ public class GraphTextAreaFactory
    {
       _txtColumns = new ColumnTextArea(toolTipProvider, dndCallback, session);
       _txtColumns.setEditable(false);
-      _txtColumns.setBackground(TEXTAREA_BG);
+      GraphColoring.setTableFrameBackground(_txtColumns);
 
       _txtZoomColumns = new ZoomableColumnTextArea(toolTipProvider, modeManager.getZoomer(), dndCallback, session);
-      _txtZoomColumns.setBackground(TEXTAREA_BG);
+      GraphColoring.setTableFrameBackground(_txtZoomColumns);
 
       _txtQueryTextArea = new QueryTextArea(tableName, plugin, dndCallback, session);
    }

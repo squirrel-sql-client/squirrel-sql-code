@@ -1,5 +1,17 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameXmlBean;
+
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JScrollPane;
+import javax.swing.border.LineBorder;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -13,15 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameXmlBean;
 
 
 public class TableFrame extends JInternalFrame
@@ -51,7 +54,7 @@ public class TableFrame extends JInternalFrame
       setTitleBarIconsVisible(true);
 
       setTitle(tableName);
-      setBackground(new Color(255,255,204));
+      GraphColoring.setTableFrameBackground(this);
 
       setResizable(true);
 
@@ -242,11 +245,13 @@ public class TableFrame extends JInternalFrame
          // Iconify is abused for sort
          iconIcon = rsc.getIcon(GraphPluginResources.IKeys.SORT_NONE);
 
-         groupTitleColor = new Color(200,200,240);
-         selectedTitleColor = new Color(255,255,220);
-         notSelectedTitleColor = new Color(255,255,220);
-         selectedTextColor = Color.black;
-         notSelectedTextColor = Color.black;
+         groupTitleColor = GraphColoring.getGroupTitleColor();
+         selectedTitleColor = GraphColoring.getInternalFrameTitleSelectedColor(selectedTitleColor);
+         notSelectedTitleColor = GraphColoring.getInternalFrameTitleNotSelectedTitleColor(notSelectedTitleColor);
+
+         selectedTextColor = GraphColoring.getInternalFrameTitleSelectedTextColor(selectedTextColor);
+         notSelectedTextColor = GraphColoring.getInternalFrameTitleNotSelectedTextColor(notSelectedTextColor);
+
          setFont(new Font(getFont().getFontName(), Font.BOLD, getFont().getSize()));
       }
 

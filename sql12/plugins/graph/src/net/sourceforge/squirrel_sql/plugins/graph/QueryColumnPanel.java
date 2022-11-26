@@ -7,8 +7,19 @@ import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryFilterController;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryFilterListener;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.FontMetrics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
@@ -45,7 +56,7 @@ class QueryColumnPanel extends JPanel
 
       _pnlButtons = new JPanel(new GridBagLayout());
 
-      _pnlButtons.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      GraphColoring.setTableFrameBackground(_pnlButtons);
 
       GridBagConstraints gbc;
 
@@ -53,7 +64,7 @@ class QueryColumnPanel extends JPanel
 
       chkSelect = new JCheckBox();
       chkSelect.setToolTipText(s_stringMgr.getString("QueryColumn.select"));
-      chkSelect.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      GraphColoring.setTableFrameBackground(chkSelect);
       chkSelect.setSelected(_columnInfo.getQueryData().isInSelectClause());
       chkSelect.addActionListener(new ActionListener()
       {
@@ -79,7 +90,7 @@ class QueryColumnPanel extends JPanel
 
       txtColumn = new QueryColumnTextField(_columnInfo.toString(), dndCallback, _session);
       txtColumn.setEditable(false);
-      txtColumn.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      GraphColoring.setTableFrameBackground(txtColumn);
       txtColumn.setBorder(BorderFactory.createEmptyBorder());
 
       add(txtColumn, BorderLayout.CENTER);
@@ -93,7 +104,7 @@ class QueryColumnPanel extends JPanel
       btnFilter.setToolTipText(s_stringMgr.getString("QueryColumn.filterButton"));
 
 
-      btnFilter.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      GraphColoring.setTableFrameBackground(btnFilter);
       btnFilter.setBorder(BorderFactory.createEmptyBorder());
       btnFilter.setFocusable(false);
       btnFilter.addActionListener(new ActionListener()
@@ -113,7 +124,7 @@ class QueryColumnPanel extends JPanel
    {
       GridBagConstraints gbc;
       btnAggFct = new JButton();
-      btnAggFct.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      GraphColoring.setTableFrameBackground(btnAggFct);
       btnAggFct.setBorder(BorderFactory.createEmptyBorder());
       //btnAggFct.setEnabled(false);
       gbc = new GridBagConstraints(xPos,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
@@ -153,7 +164,7 @@ class QueryColumnPanel extends JPanel
    {
       GridBagConstraints gbc;
       btnSorting = new JButton();
-      btnSorting.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      GraphColoring.setTableFrameBackground(btnSorting);
       btnSorting.setBorder(BorderFactory.createEmptyBorder());
       gbc = new GridBagConstraints(xPos,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,3), 0,0);
       pnlButtons.add(btnSorting, gbc);

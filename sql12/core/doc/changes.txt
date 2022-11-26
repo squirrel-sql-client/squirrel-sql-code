@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Bug fixes:
 
+#481 (in feature requests) Dark theme now applies to Graphs (Entity Relationship diagrams), too.
+
 Fixed class cast exception that sometimes occurred when SQL result tabs were closed.
 
 Hibernate Plugin:
