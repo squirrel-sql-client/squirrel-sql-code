@@ -18,13 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Set;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import net.sourceforge.squirrel_sql.fw.gui.DialogUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IDialogUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -32,6 +25,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * This class maps SQLDatabaseMetaData instances to their corresponding Hibernate dialect.
@@ -113,6 +113,8 @@ public class DialectFactory
 
 	private static final SQLiteDialectExt sqliteDialectExt = new SQLiteDialectExt();
 
+	private static final UnityJdbcDialectExt unityJdbcDialectExt = new UnityJdbcDialectExt();
+
 	/**
 	 * TODO: Remove and put static dialects in DialectType enum.
 	 */
@@ -168,6 +170,7 @@ public class DialectFactory
 		dbNameDialectMap.put(intersystemsCacheDialectExt.getDisplayName(), intersystemsCacheDialectExt);
 		dbNameDialectMap.put(intersystemsIrisDialectExt.getDisplayName(), intersystemsIrisDialectExt);
 		dbNameDialectMap.put(sqliteDialectExt.getDisplayName(), sqliteDialectExt);
+		dbNameDialectMap.put(unityJdbcDialectExt.getDisplayName(), unityJdbcDialectExt);
 	}
 
 	public static boolean isAxion(ISQLDatabaseMetaData md)
@@ -313,6 +316,12 @@ public class DialectFactory
 	{
 		return dialectSupportsProduct(md, sqliteDialectExt);
 	}
+
+	public static boolean isUnityJDBC(ISQLDatabaseMetaData md)
+	{
+		return dialectSupportsProduct(md, unityJdbcDialectExt);
+	}
+
 
 	/**
 	 * Returns a DialectType for the specified ISQLDatabaseMetaData

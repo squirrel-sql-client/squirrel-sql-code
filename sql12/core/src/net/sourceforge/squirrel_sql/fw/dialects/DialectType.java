@@ -55,6 +55,6 @@ public enum DialectType
    SYBASEASE, // Sybase Adaptive Server Enterprise
    TEIID,
    TIMESTEN,
-
+   UNITY_JDBC,
    GENERIC
 }

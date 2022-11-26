@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/6
+  Exporting SQLs to file (open tools popup (ctl+t) and choose "sql2file") did not work
+  for the multi source UnityJDBC driver (https://unityjdbc.com) / MultisSource Plugin.
+
 #481 (in feature requests) Dark theme now applies to Graphs (Entity Relationship diagrams), too.
 
 Fixed class cast exception that sometimes occurred when SQL result tabs were closed.
@@ -25,7 +29,7 @@ Export of multiple SQL results.
   When exporting to other formats, multiple files are created.
   The export dialog allows to name sheets/tabs or files respectively.
   Howto:
-  To export multiple SQL results right click or open tools popup (ctl+t)
+  To export multiple SQL results right click or open tools popup (ctl+t) and choose "sql2file"
   on multiple SQL queries (separated by statement separators) to open the file export dialog.
   To export multiple SQL result UI tables execute multiple SQLs (ctrl+enter).
   Then right click one of the UI result tables to open the file export dialog.
@@ -45,7 +49,7 @@ Command line mode:
 Saving all open files switched the active SQL editor.
 
 Editing SQL result tables didn't work.
-  The following message box was displayed when the problem occured:
+  The following message box was displayed when the problem occurred:
   "Cannot edit table because table cannot be found or table name is not unique in DB."
   Possible workaround:
   Go to menu File --> Global Preferences --> tab Scripts --> Check "Qualify table names ...".

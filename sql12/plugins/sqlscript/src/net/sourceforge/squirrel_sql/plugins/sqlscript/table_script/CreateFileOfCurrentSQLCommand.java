@@ -192,6 +192,14 @@ public class CreateFileOfCurrentSQLCommand
     */
    private ISQLConnection createUnmanagedConnection() throws SQLException
    {
+      if(DialectFactory.isUnityJDBC(getSession().getMetaData()))
+      {
+         // See bug https://github.com/squirrel-sql-client/squirrel-sql-code/issues/6
+         // Creating an unmanaged connection does not work for UnityJDBC.
+         // See https://unityjdbc.com and the Multisource-Plugin.
+         return null;
+      }
+
       ISQLConnection unmanagedConnection = getSession().createUnmanagedConnection();
 
       if (unmanagedConnection == null)
@@ -204,7 +212,7 @@ public class CreateFileOfCurrentSQLCommand
       }
       else
       {
-         // we didn't want a autocommit
+         // we didn't want autocommit
          unmanagedConnection.setAutoCommit(false);
       }
       return unmanagedConnection;

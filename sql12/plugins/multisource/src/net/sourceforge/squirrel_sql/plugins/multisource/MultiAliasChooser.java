@@ -25,6 +25,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
@@ -249,12 +250,10 @@ public class MultiAliasChooser extends JDialog
 		gridBagConstraints21.ipady = 0;
 		gridBagConstraints21.gridwidth = 1;
 		gridBagConstraints21.anchor = GridBagConstraints.NORTH;
-		FlowLayout flowLayout = new FlowLayout();
-		flowLayout.setAlignment(java.awt.FlowLayout.LEFT);
-		
+
 		// Source file panel
 		JPanel sourcePanel = new JPanel();
-		sourcePanel.setLayout(flowLayout);
+		sourcePanel.setLayout(new BorderLayout(3,3));
 		sourcePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
 		
       	_aliasCbx = new JComboBox(_aliasList.toArray());
@@ -269,9 +268,11 @@ public class MultiAliasChooser extends JDialog
 		_sourceName = StringUtilities.javaNormalize(((ISQLAlias) _aliasCbx.getSelectedItem()).getName());
 		_nameTxt.setText(_sourceName);
 
-		sourcePanel.add(new JLabel(s_stringMgr.getString("MultiAliasChooser.prompt")), null);		 //$NON-NLS-1$
-		
-		sourcePanel.add(_aliasCbx);
+		final JPanel sourcePanelLower = new JPanel(new BorderLayout(5,5));
+		sourcePanel.add(sourcePanelLower);
+
+		sourcePanel.add(new JLabel(s_stringMgr.getString("MultiAliasChooser.prompt")), BorderLayout.NORTH);		 //$NON-NLS-1$
+		sourcePanelLower.add(_aliasCbx, BorderLayout.CENTER);
 		this.btnExit = new JButton(s_stringMgr.getString("MultiAliasChooser.cancel"));
 		this.btnExit.addActionListener(new java.awt.event.ActionListener() {
 			@Override
@@ -279,7 +280,7 @@ public class MultiAliasChooser extends JDialog
 				dispose();
 			}
 		});
-		sourcePanel.add(this.btnExit);		
+		sourcePanelLower.add(this.btnExit, BorderLayout.EAST);
 		mainPanel.add(sourcePanel, gridBagConstraints21);
 		mainPanel.add(addPanel, gridBagConstraints1);
 		
