@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.fw.gui;
 
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -88,6 +90,8 @@ import java.util.List;
 public class GUIUtils
 {
 	private static final ILogger s_log = LoggerController.createLogger(GUIUtils.class);
+
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(GUIUtils.class);
 
    /**
     * Centers <CODE>wind</CODE> within its parent. If it has no parent then

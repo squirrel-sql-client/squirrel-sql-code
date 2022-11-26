@@ -24,6 +24,8 @@ File export:
 
 Enhancements:
 
+SQL result: Made several labels on Info tab copyable.
+
 Saved Sessions: Name of current Saved Session is displayed in SQuirreL's main window title.
 
 Export of multiple SQL results.
