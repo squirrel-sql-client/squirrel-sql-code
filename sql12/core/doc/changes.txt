@@ -24,6 +24,8 @@ File export:
 
 Enhancements:
 
+File export: Export file and command text fields were changed into drop downs with history.
+
 SQL result: Made several labels on Info tab copyable.
 
 Saved Sessions: Name of current Saved Session is displayed in SQuirreL's main window title.

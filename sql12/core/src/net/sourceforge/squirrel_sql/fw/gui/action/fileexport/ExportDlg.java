@@ -27,7 +27,7 @@ public class ExportDlg extends JDialog
 {
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExportDlg.class);
 
-   JTextField txtFile;
+   JComboBox cboFile;
    JButton btnFile;
    JCheckBox chkWithHeaders;
    JRadioButton radFormatCSV;
@@ -47,7 +47,7 @@ public class ExportDlg extends JDialog
    JRadioButton radUseGlobalPrefsFormating;
    JRadioButton radUseDefaultFormating;
    JCheckBox chkExecCommand;
-   JTextField txtCommand;
+   JComboBox cboCommand;
    JButton btnCommandFile;
    JButton btnOk;
    JButton btnCancel;
@@ -259,9 +259,9 @@ public class ExportDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      txtCommand = new JTextField();
+      cboCommand = new JComboBox();
       gbc = new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 5), 0, 0);
-      ret.add(txtCommand, gbc);
+      ret.add(cboCommand, gbc);
 
       LibraryResources rsrc = new LibraryResources();
       btnCommandFile = new JButton(rsrc.getIcon(LibraryResources.IImageNames.OPEN));
@@ -341,9 +341,9 @@ public class ExportDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      txtFile = new JTextField();
+      cboFile = new JComboBox();
       gbc = new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 5), 0, 0);
-      ret.add(txtFile, gbc);
+      ret.add(cboFile, gbc);
 
       LibraryResources rsrc = new LibraryResources();
 

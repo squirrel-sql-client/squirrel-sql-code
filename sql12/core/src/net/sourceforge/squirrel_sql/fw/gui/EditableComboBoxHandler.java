@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 import java.util.ArrayList;
 
 public class EditableComboBoxHandler
@@ -14,6 +16,10 @@ public class EditableComboBoxHandler
    private final int _maxItemCount;
    private String _defaultString;
 
+   public EditableComboBoxHandler(JComboBox cbo, String prefKeyPrefix)
+   {
+      this(cbo, prefKeyPrefix, 10, null);
+   }
    public EditableComboBoxHandler(JComboBox cbo, String prefKeyPrefix, int maxItemCount)
    {
       this(cbo, prefKeyPrefix, maxItemCount, null);
@@ -21,12 +27,16 @@ public class EditableComboBoxHandler
    public EditableComboBoxHandler(JComboBox cbo, String prefKeyPrefix, int maxItemCount, String defaultString)
    {
       _cbo = cbo;
+      _cbo.setEditable(true);
+
       _prefKeyPrefix = prefKeyPrefix;
       _maxItemCount = maxItemCount;
       _defaultString = defaultString;
+
+      loadComboBox();
    }
 
-   public void fillComboBox()
+   private void loadComboBox()
    {
       for (int i = 0; ; i++)
       {
@@ -49,7 +59,7 @@ public class EditableComboBoxHandler
       }
    }
 
-   public void addToComboList(String newItem)
+   public void addOrReplaceCurrentItem(String newItem)
    {
       for (int i = 0; i < _cbo.getItemCount(); i++)
       {
@@ -92,5 +102,22 @@ public class EditableComboBoxHandler
    public String getItem()
    {
       return "" + _cbo.getEditor().getItem();
+   }
+
+   public void addDocumentListener(DocumentListener documentListener)
+   {
+      if(_cbo.getEditor().getEditorComponent() instanceof JTextComponent)
+      {
+         ((JTextComponent)_cbo.getEditor().getEditorComponent()).getDocument().addDocumentListener(documentListener);
+      }
+      else
+      {
+         throw new UnsupportedOperationException("Failed to add DocumentListener to editable Combobox as the ComboBoxes editor isn't an instance of JTextComponent");
+      }
+   }
+
+   public void saveCurrentItem()
+   {
+      addOrReplaceCurrentItem(getItem());
    }
 }

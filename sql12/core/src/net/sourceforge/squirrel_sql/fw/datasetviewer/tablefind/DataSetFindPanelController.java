@@ -39,8 +39,6 @@ public class DataSetFindPanelController
 
    private static final String PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF_PREFIX = "SquirrelSQL.DataSetFind.tableSearch.StrPref_";
 
-   private static final int MAX_HIST_LENGTH = 10;
-
    private DataSetFindPanel _dataSetFindPanel;
    private EditableComboBoxHandler _editableComboBoxHandler;
 
@@ -80,9 +78,7 @@ public class DataSetFindPanelController
 
       _dataSetFindPanel.cboMatchType.addItemListener(e -> clearFind());
 
-      _editableComboBoxHandler = new EditableComboBoxHandler(_dataSetFindPanel.cboString, PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF_PREFIX, MAX_HIST_LENGTH);
-
-      _editableComboBoxHandler.fillComboBox();
+      _editableComboBoxHandler = new EditableComboBoxHandler(_dataSetFindPanel.cboString, PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF_PREFIX);
 
       initKeyStrokes();
    }
@@ -255,7 +251,7 @@ public class DataSetFindPanelController
          return;
       }
 
-      _editableComboBoxHandler.addToComboList(_currentSearchString);
+      _editableComboBoxHandler.addOrReplaceCurrentItem(_currentSearchString);
 
       boolean matchFound = false;
       for(int i=0; i < _tableTraverser.getCellCount(); ++i)

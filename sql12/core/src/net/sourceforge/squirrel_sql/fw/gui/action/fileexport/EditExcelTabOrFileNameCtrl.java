@@ -25,7 +25,6 @@ public class EditExcelTabOrFileNameCtrl
       _previousSqlResultName = sqlResultName;
 
       _editableComboBoxHandler = new EditableComboBoxHandler(_dlg.cboSqlResultName, "fileExport.EditExcelTabOrFileNameCtrl_", 10, _previousSqlResultName);
-      _editableComboBoxHandler.fillComboBox();
 
       _dlg.btnOk.addActionListener(e -> onOk());
       _dlg.btnCancel.addActionListener(e -> close());
@@ -72,7 +71,7 @@ public class EditExcelTabOrFileNameCtrl
 
       if(false == StringUtils.equals(ret, _previousSqlResultName))
       {
-         _editableComboBoxHandler.addToComboList(ret);
+         _editableComboBoxHandler.addOrReplaceCurrentItem(ret);
       }
 
       return ret;

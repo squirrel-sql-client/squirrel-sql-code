@@ -32,7 +32,6 @@ public class EditExcelTabOrFileNameDlg extends JDialog
       getContentPane().add(new JLabel(s_stringMgr.getString("EditExcelTabOrFileNameDlg.enter.new.name")), gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
-      cboSqlResultName.setEditable(true);
       getContentPane().add(cboSqlResultName, gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);

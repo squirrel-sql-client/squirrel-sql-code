@@ -1,27 +1,31 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
 
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
+import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
+
 public class ExportController
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExportController.class);
 
    private ExportDlg _dlg;
+   private final EditableComboBoxHandler _cboFileHandler;
+   private final EditableComboBoxHandler _cboCommandHandler;
+
    private boolean _ok = false;
 
    private Window _owner;
@@ -41,6 +45,11 @@ public class ExportController
 
       _dlg = new ExportDlg(owner, _exportSelectionPanelController.getPanel(), _exportDialogType);
 
+      _cboFileHandler = new EditableComboBoxHandler(_dlg.cboFile, "fileexport.ExportDlg.cboFile");
+
+      _cboCommandHandler = new EditableComboBoxHandler(_dlg.cboCommand, "fileexport.ExportDlg.cboCommand");
+
+
       initData();
 
       initListeners();
@@ -53,7 +62,7 @@ public class ExportController
          }
       });
 
-      _dlg.txtFile.getDocument().addDocumentListener(new DocumentListener() {
+      _cboFileHandler.addDocumentListener(new DocumentListener() {
          @Override
          public void insertUpdate(DocumentEvent e)
          {
@@ -81,7 +90,7 @@ public class ExportController
 
    private void updateDestinationInfo()
    {
-      _exportSelectionPanelController.updateExportDestinationInfo(_dlg.txtFile.getText(), _dlg.radFormatXLSX.isSelected() || _dlg.radFormatXLS.isSelected());
+      _exportSelectionPanelController.updateExportDestinationInfo(_cboFileHandler.getItem(), _dlg.radFormatXLSX.isSelected() || _dlg.radFormatXLS.isSelected());
    }
 
    public void showDialog()
@@ -241,7 +250,7 @@ public class ExportController
          throw new IllegalStateException("No valid output format");
       }
 
-      String file = _dlg.txtFile.getText();
+      String file = _cboFileHandler.getItem();
       if(null == file || 0 == file.trim().length() || file.toUpperCase().endsWith("." + newEnding.toUpperCase()))
       {
          return;
@@ -272,7 +281,7 @@ public class ExportController
          newFile = file;
       }
       
-      _dlg.txtFile.setText(newFile);
+      _cboFileHandler.addOrReplaceCurrentItem(newFile);
    }
 
    private void onCommandFile()
@@ -291,7 +300,7 @@ public class ExportController
 
       if(null != chooser.getSelectedFile())
       {
-         _dlg.txtCommand.setText(chooser.getSelectedFile().getPath() + " %file");
+         _cboCommandHandler.addOrReplaceCurrentItem(chooser.getSelectedFile().getPath() + " %file");
       }
    }
 
@@ -300,7 +309,7 @@ public class ExportController
    {
       JFileChooser chooser = null;
 
-      String csvFileName = _dlg.txtFile.getText();
+      String csvFileName = _cboFileHandler.getItem();
       if(null != csvFileName && 0 < csvFileName.trim().length())
       {
          File csvFile = new File(csvFileName);
@@ -332,7 +341,7 @@ public class ExportController
 
       if(null != chooser.getSelectedFile())
       {
-         _dlg.txtFile.setText(chooser.getSelectedFile().getPath());
+         _cboFileHandler.addOrReplaceCurrentItem(chooser.getSelectedFile().getPath());
       }
 
    }
@@ -345,7 +354,7 @@ public class ExportController
          return;
       }
 	   
-      String singleExportFileName = _dlg.txtFile.getText();
+      String singleExportFileName = _cboFileHandler.getItem();
       if(StringUtilities.isEmpty(singleExportFileName, true))
       {
          String msg = s_stringMgr.getString("TableExportCsvController.noFile");
@@ -368,7 +377,7 @@ public class ExportController
 
       if(_dlg.chkExecCommand.isSelected())
       {
-         String command = _dlg.txtCommand.getText();
+         String command = _cboCommandHandler.getItem();
          if(null == command || 0 == command.trim().length())
          {
             // i18n[TableExportCsvController.noCommand=You must provide a command string or uncheck "Execute command".]
@@ -428,7 +437,8 @@ public class ExportController
    private void writeControlsToPrefs(TableExportPreferences prefs)
    {
       // Preferences.put(PREF_KEY_CSV_FILE, );
-      prefs.setFile(_dlg.txtFile.getText());
+      prefs.setFile(_cboFileHandler.getItem());
+      _cboFileHandler.saveCurrentItem();
 
       //Preferences.put(PREF_KEY_CSV_ENCODING, _dlg.charsets.getSelectedItem().toString());
       prefs.setEncoding(_dlg.cboCharsets.getSelectedItem().toString());
@@ -468,7 +478,8 @@ public class ExportController
 
       prefs.setExecuteCommand(_dlg.chkExecCommand.isSelected());
 
-      prefs.setCommand(_dlg.txtCommand.getText());
+      prefs.setCommand(_cboCommandHandler.getItem());
+      _cboCommandHandler.saveCurrentItem();
    }
 
 	
@@ -478,11 +489,11 @@ public class ExportController
 
       if (formatIsNewXlsx(prefs))
       {
-         _dlg.txtFile.setText(replaceXlsByXlsx(prefs.getFile()));
+         _cboFileHandler.addOrReplaceCurrentItem(replaceXlsByXlsx(prefs.getFile()));
       }
       else
       {
-         _dlg.txtFile.setText(prefs.getFile());
+         _cboFileHandler.addOrReplaceCurrentItem(prefs.getFile());
       }
       _dlg.chkUseColoring.setSelected(prefs.isUseColoring());
 
@@ -539,7 +550,7 @@ public class ExportController
       _dlg.chkExecCommand.setSelected(prefs.isExecuteCommand());
       onChkExecCommand();
 
-      _dlg.txtCommand.setText(prefs.getCommand());
+      _cboCommandHandler.addOrReplaceCurrentItem(prefs.getCommand());
 
 
       LineSeparator preferredLineSeparator = LineSeparator.valueOf(prefs.getLineSeperator());
@@ -565,7 +576,7 @@ public class ExportController
 
    private void onChkExecCommand()
    {
-      _dlg.txtCommand.setEnabled(_dlg.chkExecCommand.isSelected());
+      _dlg.cboCommand.setEnabled(_dlg.chkExecCommand.isSelected());
       _dlg.btnCommandFile.setEnabled(_dlg.chkExecCommand.isSelected());
    }
 
@@ -583,7 +594,7 @@ public class ExportController
 
    File getSingleExportTargetFile()
    {
-      return new File(_dlg.txtFile.getText());
+      return new File(_cboFileHandler.getItem());
    }
 
    public String getSeparatorChar()
@@ -602,7 +613,7 @@ public class ExportController
    {
       if(_dlg.chkExecCommand.isSelected())
       {
-         return StringUtils.replace(_dlg.txtCommand.getText(), "%file", firstExportedFile.getAbsolutePath());
+         return StringUtils.replace(_cboCommandHandler.getItem(), "%file", firstExportedFile.getAbsolutePath());
       }
       else
       {
