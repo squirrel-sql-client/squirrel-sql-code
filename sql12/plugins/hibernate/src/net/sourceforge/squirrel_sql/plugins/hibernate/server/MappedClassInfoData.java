@@ -16,20 +16,14 @@ public class MappedClassInfoData  implements Serializable
       _indentifierHibernatePropertyInfo = indentifierHibernatePropertyInfo;
       _hibernatePropertyInfos = hibernatePropertyInfos;
 
-      setMappedClassName(mappedClassName);
-      setTableName(tableName);
-      setSimpleMappedClassName(extracteSimpleClassName(mappedClassName));
+      _mappedClassName = mappedClassName;
+      _tableName = tableName;
+      _simpleMappedClassName = extracteSimpleClassName(mappedClassName);
    }
-
 
    public String getMappedClassName()
    {
       return _mappedClassName;
-   }
-
-   public void setMappedClassName(String mappedClassName)
-   {
-      _mappedClassName = mappedClassName;
    }
 
 
@@ -38,16 +32,6 @@ public class MappedClassInfoData  implements Serializable
       return _simpleMappedClassName;
    }
 
-   public void setSimpleMappedClassName(String simpleMappedClassName)
-   {
-      _simpleMappedClassName = simpleMappedClassName;
-   }
-
-
-   public void setTableName(String tableName)
-   {
-      _tableName = tableName;
-   }
 
    public String getTableName()
    {

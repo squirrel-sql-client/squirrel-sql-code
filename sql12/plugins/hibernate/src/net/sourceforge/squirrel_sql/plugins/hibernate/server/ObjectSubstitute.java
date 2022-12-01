@@ -27,33 +27,32 @@ public class ObjectSubstitute implements Serializable
       _toString = toString;
    }
 
-   ObjectSubstitute(ClassLoader cl, Collection<Object> primitiveTypeCollection)
+   ObjectSubstitute(ClassLoader cl, Collection<Object> primitiveOrUnknownObjectCollection)
    {
       _isPrimitiveTypePersistentCollection = true;
 
-      //_toString = PLAIN_VALUES + "[" + primitiveTypeCollection.size() + "]";
       _toString = PLAIN_VALUES + " size="
-                  + primitiveTypeCollection.size()
-                  + ", values: " + primitiveTypePersistentCollectionAsString(primitiveTypeCollection, cl);
+                  + primitiveOrUnknownObjectCollection.size()
+                  + ", values: " + primitiveOrUnknownObjectCollectionAsString(primitiveOrUnknownObjectCollection, cl);
 
 
-      Optional<Object> any = primitiveTypeCollection.stream().findAny();
+      Optional<Object> any = primitiveOrUnknownObjectCollection.stream().findAny();
       String className = any.isEmpty() ? "<unknown>" : any.get().getClass().getName();
       String propertyName = "value " + (1);
       HibernatePropertyInfo indentifierHibernatePropertyInfo = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
 
       _plainValueByPropertyName.put(propertyName, new PlainValue(toPrimitiveType(any.orElse("<unknown>"), cl), indentifierHibernatePropertyInfo));
 
-      HibernatePropertyInfo[] hibernatePropertyInfos = new HibernatePropertyInfo[primitiveTypeCollection.size() - 1];
+      HibernatePropertyInfo[] hibernatePropertyInfos = new HibernatePropertyInfo[primitiveOrUnknownObjectCollection.size() - 1];
 
-      ArrayList<Object> plainValueList = new ArrayList<>(primitiveTypeCollection);
-      for ( int i = 1; i < plainValueList.size(); i++)
+      ArrayList<Object> primitiveOrUnknownObjectList = new ArrayList<>(primitiveOrUnknownObjectCollection);
+      for ( int i = 1; i < primitiveOrUnknownObjectList.size(); i++)
       {
-         className = null == plainValueList.get(i) ? "<unknown>" : plainValueList.get(i).getClass().getName();
+         className = null == primitiveOrUnknownObjectList.get(i) ? "<unknown>" : primitiveOrUnknownObjectList.get(i).getClass().getName();
          propertyName = "value " + (i + 1);
          hibernatePropertyInfos[i-1] = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
 
-         _plainValueByPropertyName.put(propertyName, new PlainValue(toPrimitiveType(plainValueList.get(i), cl), hibernatePropertyInfos[i-1]));
+         _plainValueByPropertyName.put(propertyName, new PlainValue(toPrimitiveType(primitiveOrUnknownObjectList.get(i), cl), hibernatePropertyInfos[i-1]));
       }
 
 
@@ -61,7 +60,7 @@ public class ObjectSubstitute implements Serializable
       _mappedClassInfoData.setPlainValueArray(true);
    }
 
-   private String primitiveTypePersistentCollectionAsString(Collection<Object> plainValueCollection, ClassLoader cl)
+   private String primitiveOrUnknownObjectCollectionAsString(Collection<Object> plainValueCollection, ClassLoader cl)
    {
       StringBuilder ret = new StringBuilder();
 
