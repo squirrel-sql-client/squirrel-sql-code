@@ -6,6 +6,9 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Bug fixes:
 
+Hibernate Plugin: Unknown object or mapping types used to cause ClassNotFoundExceptions
+  when transported from the Hibernate process to SQuirreL's process.
+
 https://github.com/squirrel-sql-client/squirrel-sql-code/issues/6
   Exporting SQLs to file (open tools popup (ctl+t) and choose "sql2file") did not work
   for the multi source UnityJDBC driver (https://unityjdbc.com) / MultisSource Plugin.

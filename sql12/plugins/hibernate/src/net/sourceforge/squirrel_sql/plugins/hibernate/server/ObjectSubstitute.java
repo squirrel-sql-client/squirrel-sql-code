@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,13 +9,13 @@ import java.util.Optional;
 
 public class ObjectSubstitute implements Serializable
 {
-   private HashMap<String, PropertySubstitute> _substituteValueByPropertyName = new HashMap<String, PropertySubstitute>();
+   private HashMap<String, PropertySubstitute> _substituteValueByPropertyName = new HashMap<>();
    private MappedClassInfoData _mappedClassInfoData;
    private String _toString;
 
 
    public static final String PLAIN_VALUES = "<plain values>";
-   private Collection<Object> _primitiveTypePersistentCollection;
+   private boolean _isPrimitiveTypePersistentCollection = false;
    private HashMap<String, PlainValue> _plainValueByPropertyName = new HashMap<>();
 
    /**
@@ -26,19 +27,22 @@ public class ObjectSubstitute implements Serializable
       _toString = toString;
    }
 
-   ObjectSubstitute(Collection<Object> primitiveTypeCollection)
+   ObjectSubstitute(ClassLoader cl, Collection<Object> primitiveTypeCollection)
    {
-      _primitiveTypePersistentCollection = primitiveTypeCollection;
+      _isPrimitiveTypePersistentCollection = true;
+
       //_toString = PLAIN_VALUES + "[" + primitiveTypeCollection.size() + "]";
-      _toString = PLAIN_VALUES + " size=" + primitiveTypeCollection.size() + ", values: " + primitiveTypePersistentCollectionAsString(primitiveTypeCollection);
+      _toString = PLAIN_VALUES + " size="
+                  + primitiveTypeCollection.size()
+                  + ", values: " + primitiveTypePersistentCollectionAsString(primitiveTypeCollection, cl);
 
 
       Optional<Object> any = primitiveTypeCollection.stream().findAny();
-      String className = any.isEmpty() ? "<unknown>" : any.getClass().getName();
+      String className = any.isEmpty() ? "<unknown>" : any.get().getClass().getName();
       String propertyName = "value " + (1);
       HibernatePropertyInfo indentifierHibernatePropertyInfo = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
 
-      _plainValueByPropertyName.put(propertyName, new PlainValue(any.orElse("<unknown>"), indentifierHibernatePropertyInfo));
+      _plainValueByPropertyName.put(propertyName, new PlainValue(toPrimitiveType(any.orElse("<unknown>"), cl), indentifierHibernatePropertyInfo));
 
       HibernatePropertyInfo[] hibernatePropertyInfos = new HibernatePropertyInfo[primitiveTypeCollection.size() - 1];
 
@@ -49,7 +53,7 @@ public class ObjectSubstitute implements Serializable
          propertyName = "value " + (i + 1);
          hibernatePropertyInfos[i-1] = new HibernatePropertyInfo(propertyName, className, "<unknown>", new String[]{"<unknown>"});
 
-         _plainValueByPropertyName.put(propertyName, new PlainValue(plainValueList.get(i), hibernatePropertyInfos[i-1]));
+         _plainValueByPropertyName.put(propertyName, new PlainValue(toPrimitiveType(plainValueList.get(i), cl), hibernatePropertyInfos[i-1]));
       }
 
 
@@ -57,7 +61,7 @@ public class ObjectSubstitute implements Serializable
       _mappedClassInfoData.setPlainValueArray(true);
    }
 
-   private String primitiveTypePersistentCollectionAsString(Collection<Object> plainValueCollection)
+   private String primitiveTypePersistentCollectionAsString(Collection<Object> plainValueCollection, ClassLoader cl)
    {
       StringBuilder ret = new StringBuilder();
 
@@ -66,11 +70,11 @@ public class ObjectSubstitute implements Serializable
       {
          if(0 == count)
          {
-            ret.append(o);
+            ret.append(toPrimitiveType(o, cl));
          }
          else
          {
-            ret.append(";").append(o);
+            ret.append(";").append(toPrimitiveType(o, cl));
          }
 
          ++count;
@@ -85,9 +89,67 @@ public class ObjectSubstitute implements Serializable
       return ret.toString();
    }
 
+   private Object toPrimitiveType(Object o, ClassLoader cl)
+   {
+      if(null == o || o.getClass().getName().startsWith("java."))
+      {
+         return o;
+      }
+      else
+      {
+         return transformToString(o, cl);
+      }
+   }
+
+   private String transformToString(Object o, ClassLoader cl)
+   {
+
+      StringBuilder sb = new StringBuilder();
+      try
+      {
+         Field[] declaredFields = o.getClass().getDeclaredFields();
+
+         boolean valueAppended = false;
+         for( Field f : declaredFields )
+         {
+            if( valueAppended )
+            {
+               sb.append("|");
+               valueAppended = false;
+            }
+
+            try
+            {
+               f.setAccessible(true);
+               Object fieldVal = f.get(o);
+               String fieldName = f.getName();
+               if(HibernateServerUtil.isInitialized(cl, fieldVal))
+               {
+                  sb.append(fieldName + "=" + fieldVal);
+                  valueAppended = true;
+               }
+               else
+               {
+                  sb.append(fieldName + "=<uninitialized>");
+                  valueAppended = true;
+               }
+            }
+            catch(Throwable e)
+            {
+            }
+         }
+      }
+      catch(Throwable e)
+      {
+         sb.append("" + o);
+      }
+
+      return sb.toString();
+   }
+
    void putSubstituteValueByPropertyName(String propertyName, PropertySubstitute propertySubstitute)
    {
-      if ( null == _primitiveTypePersistentCollection )
+      if ( false == _isPrimitiveTypePersistentCollection )
       {
          _substituteValueByPropertyName.put(propertyName, propertySubstitute);
       }
@@ -107,7 +169,7 @@ public class ObjectSubstitute implements Serializable
     */
    public Object getValue(String propertyName)
    {
-      if ( null == _primitiveTypePersistentCollection )
+      if ( false == _isPrimitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).getSingleValue();
       }
@@ -119,7 +181,7 @@ public class ObjectSubstitute implements Serializable
 
    public String getTypeName(String propertyName)
    {
-      if ( null == _primitiveTypePersistentCollection )
+      if ( false == _isPrimitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).getHibernatePropertyInfo().getClassName();
       }
@@ -131,7 +193,7 @@ public class ObjectSubstitute implements Serializable
 
    public boolean wasInitialized(String propertyName)
    {
-      if ( null == _primitiveTypePersistentCollection )
+      if ( false == _isPrimitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).isInitialized();
       }
@@ -148,7 +210,7 @@ public class ObjectSubstitute implements Serializable
 
    public boolean isPrimitiveTypePersistentCollection(String propertyName)
    {
-      if ( null == _primitiveTypePersistentCollection )
+      if ( false == _isPrimitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).isPersistenCollection();
       }
@@ -160,7 +222,7 @@ public class ObjectSubstitute implements Serializable
 
    public boolean isNull(String propertyName)
    {
-      if ( null == _primitiveTypePersistentCollection )
+      if ( false == _isPrimitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).isNull();
       }
@@ -172,7 +234,7 @@ public class ObjectSubstitute implements Serializable
 
    public HibernatePropertyInfo getHibernatePropertyInfo(String propertyName)
    {
-      if ( null == _primitiveTypePersistentCollection )
+      if ( false == _isPrimitiveTypePersistentCollection )
       {
          return _substituteValueByPropertyName.get(propertyName).getHibernatePropertyInfo();
       }
@@ -190,7 +252,7 @@ public class ObjectSubstitute implements Serializable
 
    public MappedClassInfoData getPrimitiveTypePersistentCollectionClassInfo()
    {
-      if ( null == _primitiveTypePersistentCollection )
+      if ( false == _isPrimitiveTypePersistentCollection )
       {
          return null;
       }

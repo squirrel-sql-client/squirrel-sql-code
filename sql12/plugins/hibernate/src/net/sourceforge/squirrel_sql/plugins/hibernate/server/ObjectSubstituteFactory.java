@@ -60,13 +60,13 @@ public class ObjectSubstituteFactory
                   if (0 < arrBuf.size())
                   {
                      // result row is a mixture of plain values and mapped objects
-                     arrBuf.add(new ObjectSubstitute(plainValueArrBuf));
+                     arrBuf.add(new ObjectSubstitute(_cl, plainValueArrBuf));
                      buf = new ObjectSubstituteRoot(arrBuf);
                   }
                   else
                   {
                      // result row consists only of  plain values
-                     buf = new ObjectSubstituteRoot(new ObjectSubstitute(plainValueArrBuf));
+                     buf = new ObjectSubstituteRoot(new ObjectSubstitute(_cl, plainValueArrBuf));
                   }
                }
                else
@@ -85,7 +85,7 @@ public class ObjectSubstituteFactory
                {
                   ArrayList<Object> plainValueArrBuf = new ArrayList<Object>();
                   plainValueArrBuf.add(o);
-                  buf = new ObjectSubstituteRoot(new ObjectSubstitute(plainValueArrBuf));
+                  buf = new ObjectSubstituteRoot(new ObjectSubstitute(_cl, plainValueArrBuf));
                }
             }
 
@@ -192,9 +192,9 @@ public class ObjectSubstituteFactory
                   {
                      objectSubstituteCollection = new ArrayList<>();
 
-                     // new ArrayList<>(col) is needed to to move the entries of col
+                     // new ArrayList<>(col) is needed to move the entries of col
                      // from a Hibernate persistent collection into a Java standard ArrayList
-                     objectSubstituteCollection.add(new ObjectSubstitute(new ArrayList<>(col)));
+                     objectSubstituteCollection.add(new ObjectSubstitute(_cl, new ArrayList<>(col)));
                   }
                   else
                   {
@@ -290,7 +290,6 @@ public class ObjectSubstituteFactory
 
    private Boolean isInitialized(Object obj)
    {
-      return (Boolean) _rc.callStaticMethod(_cl, "org.hibernate.Hibernate", "isInitialized", new Class[]{Object.class}, new Object[]{obj}).getCallee();
+      return HibernateServerUtil.isInitialized(_cl, _rc, obj);
    }
-
 }
