@@ -70,7 +70,7 @@ public class QueryInfoPanel extends JPanel
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(15, 10, 0, 10), 0, 0);
       add(new JLabel(s_stringMgr.getString("ResultTab.executedLabel"), SwingConstants.RIGHT), gbc);
 
-      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15, 0, 0, 10), 0, 0);
+      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 0, 0, 10), 0, 0);
       add(_executedLbl, gbc);
 
 
@@ -78,7 +78,7 @@ public class QueryInfoPanel extends JPanel
       gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 0, 10), 0, 0);
       add(new JLabel(s_stringMgr.getString("ResultTab.rowCountLabel"), SwingConstants.RIGHT), gbc);
 
-      gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 10), 0, 0);
+      gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 10), 0, 0);
       add(_rowCountLbl, gbc);
 
 
@@ -94,7 +94,7 @@ public class QueryInfoPanel extends JPanel
       gbc = new GridBagConstraints(0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 30, 10), 0, 0);
       add(new JLabel(s_stringMgr.getString("ResultTab.elapsedTimeLabel"), SwingConstants.RIGHT), gbc);
 
-      gbc = new GridBagConstraints(1, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 0, 30, 10), 0, 0);
+      gbc = new GridBagConstraints(1, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 30, 10), 0, 0);
       add(_elapsedLbl, gbc);
    }
 }

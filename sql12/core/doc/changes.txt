@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Bug fixes:
 
+SQL result --> tab Info: Execution time and row count weren't displayed for long SQL strings.
+
 Hibernate Plugin: Unknown object or mapping types used to cause ClassNotFoundExceptions
   when transported from the Hibernate process to SQuirreL's process.
 
