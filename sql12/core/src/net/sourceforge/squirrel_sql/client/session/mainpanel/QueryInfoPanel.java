@@ -70,6 +70,7 @@ public class QueryInfoPanel extends JPanel
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(15, 10, 0, 10), 0, 0);
       add(new JLabel(s_stringMgr.getString("ResultTab.executedLabel"), SwingConstants.RIGHT), gbc);
 
+      // If GridBagConstraints.HORIZONTAL is changes to GridBagConstraints.NONE the controls won't be displayed when SQL are long.
       gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 0, 0, 10), 0, 0);
       add(_executedLbl, gbc);
 
