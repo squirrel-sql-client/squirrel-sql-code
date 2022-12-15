@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 public class PluginStatus implements Serializable
 {
-	private static final long serialVersionUID = -2149837347357638120L;
-
 	/** Identifies the plugin that this object refers to. */
 	private String _internalName;
 

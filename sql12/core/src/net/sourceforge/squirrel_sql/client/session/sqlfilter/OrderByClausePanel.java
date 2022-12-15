@@ -132,8 +132,6 @@ public class OrderByClausePanel implements ISQLFilterPanel
 	/** A private class that makes up the bulk of the GUI for the panel. */
 	private static final class OrderByClauseSubPanel extends JPanel
 	{
-        private static final long serialVersionUID = 1L;
-
         /**
 		 * This interface defines locale specific strings. This should be replaced with a property file.
 		 */
@@ -295,9 +293,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 
 	private static final class OrderCombo extends JComboBox
 	{
-        private static final long serialVersionUID = 1L;
-
-        OrderCombo()
+		OrderCombo()
 		{
 			super();
 			addItem(OrderByClauseSubPanel.OrderByClausePanelI18n.ASC);

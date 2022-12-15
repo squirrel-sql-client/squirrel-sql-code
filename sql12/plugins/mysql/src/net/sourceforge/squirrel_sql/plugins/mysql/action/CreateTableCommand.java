@@ -17,10 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -31,6 +27,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 import net.sourceforge.squirrel_sql.plugins.mysql.util.FieldDetails;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 /**
  * CreateTableCommand.java Created on June 15, 2003, 2:44 PM
  * 
@@ -38,7 +41,6 @@ import net.sourceforge.squirrel_sql.plugins.mysql.util.FieldDetails;
  */
 public class CreateTableCommand extends JDialog implements ICommand
 {
-	private static final long serialVersionUID = 1L;
 
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(CreateTableCommand.class);

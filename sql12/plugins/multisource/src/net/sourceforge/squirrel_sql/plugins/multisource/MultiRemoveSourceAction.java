@@ -1,24 +1,23 @@
 package net.sourceforge.squirrel_sql.plugins.multisource;
 
-import java.awt.event.ActionEvent;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.Connection;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.resources.Resources;
+
+import java.awt.event.ActionEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.Connection;
 
 /**
  * Menu item that allows user to remove a source from the virtual view. 
  */
 public class MultiRemoveSourceAction extends SquirrelAction {
-	private static final long serialVersionUID = 1L;
 
 	private ISession _session;
 

@@ -17,15 +17,18 @@ package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.SquirrelDesktopManager;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.SquirrelDesktopManager;
+import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IInternalFramePositioner;
-import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import javax.swing.JComponent;
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -33,17 +36,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.beans.PropertyVetoException;
 
-import javax.swing.*;
-
 //
 public class ScrollableDesktopPane extends JDesktopPane implements IDesktopContainer
 {
-
-	private static final long serialVersionUID = 1L;
-
-	/** Logger for this class. */
    private transient final ILogger s_log = LoggerController.createLogger(ScrollableDesktopPane.class);
-
 
 	private transient MyComponentListener _listener = new MyComponentListener();
 

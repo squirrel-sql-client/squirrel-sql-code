@@ -27,8 +27,6 @@ import java.util.HashMap;
  */
 public class SQLFilterClauses implements Serializable
 {
-    private static final long serialVersionUID = 1L;
-
     /** The container for the SQL filter information */
 	HashMap<String, HashMap<String, String>> _sqlClauseInformation;
 

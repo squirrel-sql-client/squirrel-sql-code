@@ -18,6 +18,29 @@
  */
 package net.sourceforge.squirrel_sql.plugins.smarttools.gui;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
+import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -30,34 +53,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+public class SmarttoolCreateIndexD extends JDialog implements ActionListener
+{
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
-import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-public class SmarttoolCreateIndexD extends JDialog implements ActionListener {
-	private static final long serialVersionUID = 3733610935239923743L;
-	
 	// variables
 	// ========================================================================
 	// non visible

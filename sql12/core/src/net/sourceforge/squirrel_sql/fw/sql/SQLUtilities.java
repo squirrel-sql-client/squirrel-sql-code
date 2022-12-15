@@ -513,8 +513,6 @@ public class SQLUtilities
 	private static class TableComparator implements Comparator<ITableInfo>, Serializable
 	{
 
-		private static final long serialVersionUID = 1L;
-
 		public int compare(ITableInfo t1, ITableInfo t2)
 		{
 			ForeignKeyInfo[] t1ImportedKeys = t1.getImportedKeys();

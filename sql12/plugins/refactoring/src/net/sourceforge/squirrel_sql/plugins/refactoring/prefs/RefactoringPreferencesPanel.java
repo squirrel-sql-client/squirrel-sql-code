@@ -18,9 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.plugins.refactoring.prefs;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -28,17 +29,13 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+public class RefactoringPreferencesPanel extends JPanel  {
 
-public class RefactoringPreferencesPanel extends JPanel  {                              
-
-	private static final long serialVersionUID = -4293776729533111287L;
-
-	private static final StringManager s_stringMgr =
+   private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(RefactoringPreferencesPanel.class);    
 	
     /** Logger for this class. */

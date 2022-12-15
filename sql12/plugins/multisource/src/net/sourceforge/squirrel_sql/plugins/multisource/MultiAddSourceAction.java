@@ -1,20 +1,19 @@
 package net.sourceforge.squirrel_sql.plugins.multisource;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Menu item that allows the user to add a source to the integrated, global view.
  */
 public class MultiAddSourceAction extends SquirrelAction {
-	private static final long serialVersionUID = 1L;
 
 	private ISession _session;
 

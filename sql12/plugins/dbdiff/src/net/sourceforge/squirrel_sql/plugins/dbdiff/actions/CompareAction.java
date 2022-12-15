@@ -19,14 +19,12 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.actions;
 
-import java.awt.event.ActionEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider;
@@ -34,9 +32,10 @@ import net.sourceforge.squirrel_sql.plugins.dbdiff.commands.CompareCommand;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.gui.DiffPresentationFactoryImpl;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.gui.IDiffPresentationFactory;
 
+import java.awt.event.ActionEvent;
+
 public class CompareAction extends AbstractDiffAction implements ISessionAction
 {
-	private static final long serialVersionUID = 1L;
 
 	/** Current plugin. */
 	private final SessionInfoProvider sessionInfoProv;

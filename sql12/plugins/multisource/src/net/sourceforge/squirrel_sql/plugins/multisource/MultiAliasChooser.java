@@ -46,8 +46,7 @@ import java.util.ArrayList;
  * A dialog that allows a user to select an existing alias to add to the virtualization.
  */
 public class MultiAliasChooser extends JDialog 
-{	
-	private static final long serialVersionUID = 1L;
+{
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MultiAliasChooser.class);

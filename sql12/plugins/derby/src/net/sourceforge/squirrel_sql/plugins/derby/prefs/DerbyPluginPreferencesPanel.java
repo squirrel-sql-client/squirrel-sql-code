@@ -18,17 +18,16 @@
  */
 package net.sourceforge.squirrel_sql.plugins.derby.prefs;
 
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 
 /**
@@ -40,8 +39,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 public class DerbyPluginPreferencesPanel extends
         PluginQueryTokenizerPreferencesPanel {
 
- 
-    private static final long serialVersionUID = 1L;
 
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =

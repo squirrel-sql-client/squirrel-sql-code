@@ -25,8 +25,7 @@ import javax.swing.table.AbstractTableModel;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.MergeTableDialog.i18n;
 
 class MergeTableColumnTableModel extends AbstractTableModel {
-	  private static final long serialVersionUID = -1078295535237858500L;
-	  private final Vector<String> rowData = new Vector<String>();
+   private final Vector<String> rowData = new Vector<String>();
      private final String[] columnNames = new String[]{i18n.COLUMNS_REFERENCED_HEADER};
 
 

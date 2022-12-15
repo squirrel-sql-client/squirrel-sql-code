@@ -27,10 +27,6 @@ import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.IPluginPreferencesManag
 
 public abstract class AbstractDiffAction extends SquirrelAction
 {
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
 
 	protected IPluginPreferencesManager pluginPreferencesManager;
 

@@ -18,16 +18,14 @@
  */
 package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
 
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddUniqueConstraintDialog.i18n;
+
+import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.table.AbstractTableModel;
-
-import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddUniqueConstraintDialog.i18n;
-
 class AddUniqueConstraintColumnTableModel extends AbstractTableModel
 {
-	private static final long serialVersionUID = 3668028756342251497L;
 
 	private final ArrayList<String> rowData = new ArrayList<String>();
 

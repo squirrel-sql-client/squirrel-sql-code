@@ -18,16 +18,15 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlreplace;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 /**
  * @author Dieter
@@ -35,11 +34,7 @@ import javax.swing.JTextArea;
  */
 public class SQLReplacementPreferencesPanel extends JPanel {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	// Flag indicates changing in textarea
+   // Flag indicates changing in textarea
 	private boolean hasChanged = false;
 	
     String BM_SAVE = "button.save.title";

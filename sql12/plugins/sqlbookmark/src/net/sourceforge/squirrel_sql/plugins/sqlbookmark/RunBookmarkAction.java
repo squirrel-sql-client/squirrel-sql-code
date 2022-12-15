@@ -19,10 +19,6 @@
 
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.JMenuItem;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -33,6 +29,9 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 
+import javax.swing.JMenuItem;
+import java.awt.event.ActionEvent;
+
 /**
  * Initiates execution of a bookmark when user clicks on a bookmark
  * menu item.
@@ -42,9 +41,8 @@ import net.sourceforge.squirrel_sql.fw.resources.IResources;
 public class RunBookmarkAction extends SquirrelAction
    implements ISQLPanelAction
 {
-    private static final long serialVersionUID = 1L;
 
-    /**
+   /**
 	 * Current session to load the bookmark into
 	 */
 	transient private ISession session;

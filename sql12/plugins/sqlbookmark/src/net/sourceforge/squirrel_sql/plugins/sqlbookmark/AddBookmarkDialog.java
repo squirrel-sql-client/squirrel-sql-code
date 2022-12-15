@@ -2,6 +2,13 @@ package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -9,23 +16,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 public class AddBookmarkDialog extends JDialog
 {
-   private static final long serialVersionUID = 1L;
-	private static final String BM_TITLE = "dialog.add.title";
+   private static final String BM_TITLE = "dialog.add.title";
    private static final String BM_NAME = "dialog.add.name";
    private static final String BM_DESCRIPTION = "dialog.add.description";
    private static final String BM_ENTER_NAME = "dialog.add.entername";

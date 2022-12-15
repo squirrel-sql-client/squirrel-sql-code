@@ -17,16 +17,16 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Font;
-import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
+import java.awt.Font;
+import java.io.Serializable;
+
 public class FontInfo implements Cloneable, Serializable
 {
-    private static final long serialVersionUID = 1L;
 
-    public interface IPropertyNames
+	public interface IPropertyNames
 	{
 		String FAMILY = "family";
 		String IS_BOLD = "isBold";

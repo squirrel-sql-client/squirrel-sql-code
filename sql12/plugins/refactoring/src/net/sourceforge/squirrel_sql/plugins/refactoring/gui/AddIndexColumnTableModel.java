@@ -18,15 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
 
-import java.util.Vector;
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddIndexDialog.i18n;
 
 import javax.swing.table.AbstractTableModel;
-
-import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddIndexDialog.i18n;
+import java.util.Vector;
 
 class AddIndexColumnTableModel extends AbstractTableModel
 {
-	private static final long serialVersionUID = -3437369044423909295L;
 
 	private final Vector<String> rowData = new Vector<String>();
 

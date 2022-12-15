@@ -17,11 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.favs;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.beans.PropertyChangeSupport;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
@@ -31,15 +26,19 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * This class represents a folder within which queries that can be stored.
  */
 public final class Folder implements Cloneable, Serializable, IHasIdentifier,
 										IValidatable /*, IHasName*/ {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final StringManager s_stringMgr =
+	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(Folder.class);
 
 	private static final String EMPTY_STRING = "";

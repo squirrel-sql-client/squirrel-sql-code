@@ -22,9 +22,8 @@ import java.io.Serializable;
 */
 public class ForeignKeyColumnInfo implements Serializable
 {
-	static final long serialVersionUID = -2645123423172494012L;
-    
-    private final String _fkColumnName;
+
+	private final String _fkColumnName;
 	private final String _pkColumnName;
 	private final int _keySeq;
 

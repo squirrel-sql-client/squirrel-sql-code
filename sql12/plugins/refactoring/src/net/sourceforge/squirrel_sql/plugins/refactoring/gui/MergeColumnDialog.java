@@ -32,8 +32,6 @@ import java.awt.event.KeyEvent;
 public class MergeColumnDialog extends AbstractRefactoringTabbedDialog
 {
 
-	private static final long serialVersionUID = 3883169067774317873L;
-
 	/**
 	 * Internationalized strings for this class.
 	 */
@@ -145,7 +143,6 @@ public class MergeColumnDialog extends AbstractRefactoringTabbedDialog
 
 	class PropertiesTab extends JPanel
 	{
-		private static final long serialVersionUID = -2466076386547185573L;
 
 		private JComboBox _columnFirstBox;
 

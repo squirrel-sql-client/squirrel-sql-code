@@ -17,29 +17,25 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.ListSelectionModel;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 import net.sourceforge.squirrel_sql.fw.gui.SortableTable;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.ListSelectionModel;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class PluginSummaryTable extends SortableTable
 {
-    private static final long serialVersionUID = 1L;
-
-    /** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(PluginSummaryTable.class); 
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PluginSummaryTable.class);
     
 	private final static String[] s_hdgs = new String[]
 	{
@@ -98,7 +94,6 @@ public class PluginSummaryTable extends SortableTable
 
 	private static class MyTableModel extends AbstractTableModel
 	{
-        private static final long serialVersionUID = 1L;
         private ArrayList<PluginData> _pluginData = new ArrayList<PluginData>();
 
 		MyTableModel(PluginInfo[] pluginInfo, PluginStatus[] pluginStatus)

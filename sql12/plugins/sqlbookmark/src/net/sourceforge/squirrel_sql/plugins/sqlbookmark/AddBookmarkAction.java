@@ -19,14 +19,14 @@
 
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
-import java.awt.event.ActionEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Prompt for name and add a new bookmark into the system.
@@ -36,8 +36,7 @@ import net.sourceforge.squirrel_sql.fw.resources.IResources;
 public class AddBookmarkAction extends SquirrelAction
    implements ISQLPanelAction
 {
-    private static final long serialVersionUID = 1L;
-    transient private ISession session;
+   transient private ISession session;
     transient private SQLBookmarkPlugin plugin;
 
    public AddBookmarkAction(IApplication app, IResources resources,

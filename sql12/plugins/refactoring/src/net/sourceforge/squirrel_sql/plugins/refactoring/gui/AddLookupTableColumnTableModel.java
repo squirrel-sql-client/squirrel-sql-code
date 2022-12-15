@@ -18,15 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
 
-import java.util.ArrayList;
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddLookupTableDialog.i18n;
 
 import javax.swing.table.AbstractTableModel;
-
-import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddLookupTableDialog.i18n;
+import java.util.ArrayList;
 
 class AddLookupTableColumnTableModel extends AbstractTableModel
 {
-	private static final long serialVersionUID = 2291876910684420431L;
 
 	private final ArrayList<String[]> _rowData = new ArrayList<String[]>();
 

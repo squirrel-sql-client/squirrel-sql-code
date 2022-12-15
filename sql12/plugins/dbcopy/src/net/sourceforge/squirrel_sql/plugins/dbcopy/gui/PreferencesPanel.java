@@ -18,12 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy.gui;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -33,17 +31,16 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
+public class PreferencesPanel extends JPanel  {
 
-public class PreferencesPanel extends JPanel  {                              
-
-	private static final long serialVersionUID = 1L;
-
-	DBCopyPreferenceBean _prefs = null;
+    DBCopyPreferenceBean _prefs = null;
     
     JCheckBox truncateCheckBox = null;
     

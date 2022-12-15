@@ -16,13 +16,13 @@
  */
 package net.sourceforge.squirrel_sql.plugins.oracle.sqlloader.control;
 
-import java.awt.event.ActionEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.plugins.oracle.sqlloader.ui.ControlFileGenerationFrame;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Action to generate a SQL*Loader control file for the tables selected in the
@@ -32,8 +32,6 @@ import net.sourceforge.squirrel_sql.plugins.oracle.sqlloader.ui.ControlFileGener
  * 
  */
 public class GenerateControlFileAction extends SquirrelAction {
-
-	private static final long serialVersionUID = 1L;
 
 	private ISession session;
 

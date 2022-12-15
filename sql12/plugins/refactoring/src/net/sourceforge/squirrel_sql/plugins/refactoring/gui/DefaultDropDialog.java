@@ -22,8 +22,13 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
 
 /**
  * Defines a drop View dialog for many Drop Operations.
@@ -31,7 +36,6 @@ import java.awt.*;
 public class DefaultDropDialog extends AbstractRefactoringDialog {
 
 
-    private static final long serialVersionUID = 1L;
     private JCheckBox _cascadeCB;
     private JLabel _cascadeConstraintsLabel;
 

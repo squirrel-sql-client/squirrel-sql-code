@@ -17,23 +17,6 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -41,6 +24,19 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 /**
  * This dialog displays a summary of all plugins.
  *
@@ -48,11 +44,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class PluginSummaryDialog extends JDialog
 {
-    private static final long serialVersionUID = 1L;
-
-    /** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(PluginSummaryDialog.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PluginSummaryDialog.class);
 
 	transient private final IApplication _app;
 

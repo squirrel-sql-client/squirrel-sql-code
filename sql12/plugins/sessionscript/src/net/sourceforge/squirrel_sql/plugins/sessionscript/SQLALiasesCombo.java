@@ -17,13 +17,12 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.Iterator;
-
-import javax.swing.JComboBox;
-
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+
+import javax.swing.JComboBox;
+import java.util.Iterator;
 /**
  * This <TT>JComboBox</TT> will display all aliases.
  *
@@ -31,9 +30,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  */
 public class SQLALiasesCombo extends JComboBox
 {
-    private static final long serialVersionUID = 1L;
 
-    /**
+	/**
 	 * Default ctor. Builds an empty combo box.
 	 */
 	public SQLALiasesCombo()

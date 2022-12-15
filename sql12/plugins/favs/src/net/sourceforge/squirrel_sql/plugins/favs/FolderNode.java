@@ -21,8 +21,7 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 
 final class FolderNode extends BaseNode {
 
-    private static final long serialVersionUID = 1L;
-    private Folder _folder;
+	private Folder _folder;
 	private String _identifier;
 	private String _name;
 
@@ -37,7 +36,8 @@ final class FolderNode extends BaseNode {
 	public boolean isLeaf() {
 		return false;
 	}
-	Folder getFolder() {
+
+	Folder getFolder() {
 		return _folder;
 	}
 

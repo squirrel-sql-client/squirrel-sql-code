@@ -21,6 +21,19 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -30,30 +43,13 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.SpinnerNumberModel;
-
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
 /**
  * This panel allows the user to configure Session connection keep-alive properties
  */
 public class ConnectionPropertiesPanel extends JPanel
 {
-	private static final long serialVersionUID = 1L;
-
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ConnectionPropertiesPanel.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ConnectionPropertiesPanel.class);
 
 	private JCheckBox enableConnectionKeepAliveChk = null;
 

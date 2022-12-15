@@ -1,26 +1,25 @@
 package net.sourceforge.squirrel_sql.plugins.SybaseASE;
 
-import java.awt.event.ActionEvent;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.awt.event.ActionEvent;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 
 
 public class ScriptSybaseASEViewAction extends SquirrelAction
 {
-    private static final long serialVersionUID = 1L;
 
-    transient private ISession _session;
+   transient private ISession _session;
    
     /** Logger for this class. */
     transient private final ILogger s_log =

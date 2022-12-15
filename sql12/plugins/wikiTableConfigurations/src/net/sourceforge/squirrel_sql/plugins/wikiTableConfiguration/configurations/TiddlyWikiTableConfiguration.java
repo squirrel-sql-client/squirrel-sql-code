@@ -28,8 +28,6 @@ import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurat
  */
 public class TiddlyWikiTableConfiguration extends GenericWikiTableConfigurationBean {
 
-	private static final long serialVersionUID = 754221028689690621L;
-
 	private static final String NAME = "Tiddly Wiki";
 	private static final String TABLE_START = "" ;
 	private static final String HEADER_START = "";

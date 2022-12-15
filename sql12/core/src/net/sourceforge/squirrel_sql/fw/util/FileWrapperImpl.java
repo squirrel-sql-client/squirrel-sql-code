@@ -656,9 +656,6 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 
 	}
 
-	/** use serialVersionUID from JDK 1.0.2 for interoperability */
-	private static final long serialVersionUID = 301077366599181567L;
-
 	private static FileWrapper[] wrapFiles(File[] resultFiles)
 	{
 		if (resultFiles == null) {

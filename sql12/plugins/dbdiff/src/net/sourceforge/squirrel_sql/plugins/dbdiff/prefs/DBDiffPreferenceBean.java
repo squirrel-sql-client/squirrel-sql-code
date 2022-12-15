@@ -19,19 +19,15 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.prefs;
 
-import java.io.Serializable;
-
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
+import java.io.Serializable;
 
 /**
  * A bean class to store preferences for the DB Diff plugin.
  */
 public class DBDiffPreferenceBean implements Cloneable, Serializable, IPluginPreferenceBean
 {
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
 
 	static final String UNSUPPORTED = "Unsupported";
 

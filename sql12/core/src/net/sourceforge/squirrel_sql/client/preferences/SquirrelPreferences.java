@@ -230,9 +230,6 @@ public class SquirrelPreferences implements Serializable
 	/** Proxy settings. */
 	private ProxySettings _proxySettings = new ProxySettings();
 
-	/** Software update settings */
-	private IUpdateSettings _updateSettings = new UpdateSettings();
-	
 	/** Show loaded drivers only in the Drivers window. */
 	private boolean _showLoadedDriversOnly;
 
@@ -724,23 +721,7 @@ public class SquirrelPreferences implements Serializable
 		return (ProxySettings)_proxySettings.clone();
 	}
 
-	public IUpdateSettings getUpdateSettings() {
-	   return new UpdateSettings(_updateSettings); 
-	}
 
-   public synchronized void setUpdateSettings(IUpdateSettings data)
-   {
-      if (data == null)
-      {
-         data = new UpdateSettings();
-      }
-      final IUpdateSettings oldValue = _updateSettings;
-      _updateSettings= data;
-      getPropertyChangeReporter().firePropertyChange(IPropertyNames.UPDATE,
-                                 oldValue, _updateSettings);
-   }
-	
-	
 	public synchronized void setProxySettings(ProxySettings data)
 	{
 		if (data == null)

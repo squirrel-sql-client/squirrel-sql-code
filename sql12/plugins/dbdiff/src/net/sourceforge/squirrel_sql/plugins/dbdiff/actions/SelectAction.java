@@ -19,8 +19,6 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.actions;
 
-import java.awt.event.ActionEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
@@ -30,13 +28,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.DBDiffPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.commands.SelectCommand;
 
+import java.awt.event.ActionEvent;
+
 public class SelectAction extends AbstractDiffAction implements ISessionAction
 {
-
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
 
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(SelectAction.class);

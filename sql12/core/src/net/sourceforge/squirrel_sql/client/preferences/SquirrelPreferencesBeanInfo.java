@@ -72,7 +72,6 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
             prop(SCROLLABLE_TABBED_PANES, SquirrelPreferences.class, "getUseScrollableTabbedPanes", "setUseScrollableTabbedPanes"),
             ixProp(ACTION_KEYS, SquirrelPreferences.class, "getActionKeys", "setActionKeys", "getActionKeys", "setActionKeys"),
             prop(PROXY, SquirrelPreferences.class, "getProxySettings", "setProxySettings"),
-            prop(UPDATE, SquirrelPreferences.class, "getUpdateSettings", "setUpdateSettings"),
             prop(SHOW_LOADED_DRIVERS_ONLY, SquirrelPreferences.class, "getShowLoadedDriversOnly", "setShowLoadedDriversOnly"),
             prop(MAXIMIMIZE_SESSION_SHEET_ON_OPEN, SquirrelPreferences.class, "getMaximizeSessionSheetOnOpen", "setMaximizeSessionSheetOnOpen"),
             prop(SHOW_COLOR_ICONS_IN_TOOLBAR, SquirrelPreferences.class, "getShowColoriconsInToolbar", "setShowColoriconsInToolbar"),

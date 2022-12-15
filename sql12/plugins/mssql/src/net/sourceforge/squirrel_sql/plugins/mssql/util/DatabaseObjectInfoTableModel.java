@@ -18,13 +18,12 @@ package net.sourceforge.squirrel_sql.plugins.mssql.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.util.ArrayList;
-import javax.swing.table.AbstractTableModel;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
+import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
+
 public class DatabaseObjectInfoTableModel extends AbstractTableModel {
-    
-    private static final long serialVersionUID = -1879428906496726350L;
 
     private ArrayList<IDatabaseObjectInfo> _objectInfo;
     

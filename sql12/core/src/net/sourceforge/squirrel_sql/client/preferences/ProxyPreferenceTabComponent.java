@@ -7,8 +7,15 @@ import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -21,14 +28,11 @@ import java.awt.event.ActionListener;
 */
 final class ProxyPreferenceTabComponent extends JPanel
 {
-   private static final StringManager s_stringMgr =
-         StringManagerFactory.getStringManager(ProxyPreferenceTabComponent.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ProxyPreferenceTabComponent.class);
 
 
-   private static final long serialVersionUID = 1L;
    private JCheckBox _httpUseProxyChk = new JCheckBox(s_stringMgr.getString("ProxyPreferencesPanel.useproxy"));
-   private JLabel _httpProxyServerLabel =
-      new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.server"), JLabel.RIGHT);
+   private JLabel _httpProxyServerLabel = new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.server"), JLabel.RIGHT);
    private JTextField _httpProxyServer = new JTextField();
    private JLabel _httpProxyPortLabel =
       new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.port"), JLabel.RIGHT);

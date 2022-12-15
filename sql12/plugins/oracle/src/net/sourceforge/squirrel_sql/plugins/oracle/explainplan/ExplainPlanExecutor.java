@@ -826,9 +826,7 @@ public class ExplainPlanExecutor extends JPanel implements ISQLResultExecutor
 
   private class PlanTreeCellRenderer extends DefaultTreeCellRenderer {
 
-      private static final long serialVersionUID = 6829431667964347305L;
-
-      public Component getTreeCellRendererComponent(JTree tree,
+	  public Component getTreeCellRendererComponent(JTree tree,
                                                     Object value,
                                                     boolean selected,
                                                     boolean expanded,

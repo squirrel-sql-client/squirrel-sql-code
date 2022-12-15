@@ -22,14 +22,13 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
-import java.awt.*;
+import java.awt.Toolkit;
 
 /**
  * A document that only holds numeric values.
  */
 public class NumberDocument extends PlainDocument implements Document {
 
-    private static final long serialVersionUID = 8245201344439966381L;
     private int maxLength = -1;
     private String valid = "-0123456789";
     private boolean fractional = false;

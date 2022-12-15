@@ -18,21 +18,20 @@
  */
 package net.sourceforge.squirrel_sql.plugins.oracle.prefs;
 
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.TimeZone;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.TimeZone;
 
 /**
  * Adds the preference widget for allowing the user to specify whether or not Oracle 10g recycle bin tables
@@ -42,8 +41,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class OraclePluginPreferencesPanel extends PluginQueryTokenizerPreferencesPanel
 {
-
-	private static final long serialVersionUID = 1L;
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =

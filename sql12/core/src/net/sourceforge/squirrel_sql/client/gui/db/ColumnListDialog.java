@@ -58,9 +58,6 @@ import java.util.List;
  */
 public class ColumnListDialog extends JDialog implements IDisposableDialog
 {
-
-   private static final long serialVersionUID = 1L;
-
    private JLabel tableNameLabel = null;
    private JLabel primaryKeyNameLabel = null;
    private JTextField tableNameTextField = null;

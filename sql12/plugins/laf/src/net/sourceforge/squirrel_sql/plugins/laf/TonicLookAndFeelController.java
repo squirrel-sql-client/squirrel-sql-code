@@ -17,15 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.io.IOException;
-import java.util.Iterator;
-
-import javax.swing.JCheckBox;
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -36,6 +27,15 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
+
+import javax.swing.JCheckBox;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.io.IOException;
+import java.util.Iterator;
 /**
  * Behaviour for the Tonic Look and Feel.
  *
@@ -114,9 +114,8 @@ public class TonicLookAndFeelController extends DefaultLookAndFeelController
 
 	private static final class TonicPrefsPanel extends BaseLAFPreferencesPanelComponent
 	{
-        private static final long serialVersionUID = 1L;
 
-        /**
+		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */

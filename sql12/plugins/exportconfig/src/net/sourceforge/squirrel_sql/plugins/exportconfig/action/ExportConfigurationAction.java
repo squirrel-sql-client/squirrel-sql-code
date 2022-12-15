@@ -17,12 +17,13 @@ package net.sourceforge.squirrel_sql.plugins.exportconfig.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
+
+import java.awt.event.ActionEvent;
 /**
  * This <TT>Action</TT> will allow the user to export configuration information
  * to the file system.
@@ -31,7 +32,6 @@ import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
  */
 public class ExportConfigurationAction extends SquirrelAction 
 {
-	private static final long serialVersionUID = 1L;
 
 	/** Application API. */
 	@SuppressWarnings("unused")

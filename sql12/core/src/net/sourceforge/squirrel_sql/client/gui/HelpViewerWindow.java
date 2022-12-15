@@ -487,8 +487,6 @@ public class HelpViewerWindow extends JFrame
 
 	private class DocumentNode extends DefaultMutableTreeNode
 	{
-		private static final long serialVersionUID = 1L;
-
 		private URL _url;
 
 		DocumentNode(String title, FileWrapper file) throws MalformedURLException
@@ -515,8 +513,6 @@ public class HelpViewerWindow extends JFrame
 
 	private class FolderNode extends DocumentNode
 	{
-		private static final long serialVersionUID = 1L;
-
 		private final List<String> _docTitles = new ArrayList<String>();
 
 		private final List<URL> _docURLs = new ArrayList<URL>();

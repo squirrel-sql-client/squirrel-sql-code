@@ -17,21 +17,20 @@ package net.sourceforge.squirrel_sql.plugins.favs;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
 
+import java.io.Serializable;
+
 /**
  * This class represents a query that can be saved and restored.
  */
 final class Query implements Cloneable, Serializable, IHasIdentifier, IValidatable {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = "";
 
 
 	public interface IPropertyNames {
@@ -40,7 +39,8 @@ final class Query implements Cloneable, Serializable, IHasIdentifier, IValidatab
 		String NAME = "Name";
 		String SQL = "Sql";
 	}
-	/** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
+
+	/** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
 	private IIdentifier _id;
 
 	/** Name. */

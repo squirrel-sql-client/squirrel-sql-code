@@ -426,9 +426,8 @@ public class Completor
 			{
 			    Action doNothingAction = new AbstractAction("doNothingAction")
 			    {
-			        private static final long serialVersionUID = 1L;
 
-			        public void actionPerformed(ActionEvent e)
+                public void actionPerformed(ActionEvent e)
 			        {
 			        }
 			    };

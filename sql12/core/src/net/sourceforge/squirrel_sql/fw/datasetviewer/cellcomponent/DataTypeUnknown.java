@@ -521,8 +521,7 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 	  * method to save the data when the user is happy with it.
 	  */
 	 private static class UnknownOkJPanel extends OkJPanel {
-        private static final long serialVersionUID = 1L;
-        /*
+		 /*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */

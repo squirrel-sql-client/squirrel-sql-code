@@ -68,7 +68,6 @@ import java.util.Vector;
  */
 public class SmarttoolChangeValuesFrame extends DialogWidget implements ISmarttoolFrame, ActionListener
 {
-	private static final long serialVersionUID = 3680564541641320485L;
 
 	private final String WILDCARD = "%";
 
@@ -1184,7 +1183,6 @@ public class SmarttoolChangeValuesFrame extends DialogWidget implements ISmartto
 	// ------------------------------------------------------------------------
 	class SmarttoolChangeValuesTableCellRenderer extends JLabel implements TableCellRenderer
 	{
-		private static final long serialVersionUID = -7923233754901241279L;
 
 		private ImageIcon iconMarkedSelected = SmarttoolsHelper.loadIcon("gridMarkedSelected16x16.png");
 
@@ -1269,7 +1267,6 @@ public class SmarttoolChangeValuesFrame extends DialogWidget implements ISmartto
 
 	class SmarttoolChangeValuesTableModel extends DefaultTableModel
 	{
-		private static final long serialVersionUID = 1355771906563987627L;
 
 		@Override
 		public boolean isCellEditable(int row, int column)

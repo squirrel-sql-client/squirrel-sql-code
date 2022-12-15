@@ -17,10 +17,11 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
+
+import java.awt.event.ActionEvent;
 
 /**
  * This <CODE>Action</CODE> allows the user to delete an <TT>ISQLAlias</TT>.
@@ -29,8 +30,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
  */
 public class DeleteAliasAction extends AliasAction
 {
-   private static final long serialVersionUID = 1L;
-
    private IToogleableAliasesList _aliasesList;
 
    public DeleteAliasAction(IApplication app, IToogleableAliasesList al)

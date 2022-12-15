@@ -39,11 +39,7 @@ import java.awt.event.ActionListener;
  */
 public class AddDriverPropertyDialog extends JDialog
 {
-	private static final long serialVersionUID = 4889632277323001185L;
-
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AddDriverPropertyDialog.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AddDriverPropertyDialog.class);
 
 	private static interface i18n
 	{

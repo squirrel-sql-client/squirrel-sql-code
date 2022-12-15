@@ -18,15 +18,14 @@ package net.sourceforge.squirrel_sql.plugins.sqlval;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.io.Serializable;
-
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
+import java.io.Serializable;
+
 public class WebServiceSessionProperties implements Cloneable, Serializable
 {
-	private static final long serialVersionUID = -2947538669142176792L;
 
 	private static final String UNSUPPORTED = "Unsupported";
 

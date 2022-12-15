@@ -185,7 +185,6 @@ public class JTattooLookAndFeelController extends DefaultLookAndFeelController
 
 	private static final class JTattooSkinPrefsPanel extends BaseLAFPreferencesPanelComponent
 	{
-		private static final long serialVersionUID = 1L;
 
 		interface SkinPrefsPanelI18n
 		{

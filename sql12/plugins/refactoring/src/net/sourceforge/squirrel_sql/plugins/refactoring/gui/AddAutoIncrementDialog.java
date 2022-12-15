@@ -23,8 +23,9 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import java.awt.Frame;
 import java.sql.Types;
 
 /**
@@ -32,8 +33,6 @@ import java.sql.Types;
  */
 public class AddAutoIncrementDialog extends AbstractRefactoringDialog {
 
-
-    private static final long serialVersionUID = 1L;
 
     /**
      * Internationalized strings for this class

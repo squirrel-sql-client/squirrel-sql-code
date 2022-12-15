@@ -100,11 +100,6 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 	{
 
 		/**
-		 * serialVersionUID
-		 */
-		private static final long serialVersionUID = 1L;
-
-		/**
 		 * @see org.jmeld.ui.JMeldPanel#getWindowListener()
 		 */
 		@Override

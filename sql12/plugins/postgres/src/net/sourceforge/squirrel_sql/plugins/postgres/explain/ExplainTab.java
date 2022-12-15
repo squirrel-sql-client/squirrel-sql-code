@@ -207,8 +207,7 @@ public class ExplainTab extends JPanel
 
 	private final class TabButton extends JButton
 	{
-		private static final long serialVersionUID = 1L;
-		
+
 		public TabButton(Action action)
 		{
 			super(action);
@@ -220,7 +219,6 @@ public class ExplainTab extends JPanel
 
 	private class CloseAction extends SquirrelAction
 	{
-		private static final long serialVersionUID = 1L;
 
 		CloseAction()
 		{
@@ -237,7 +235,6 @@ public class ExplainTab extends JPanel
 
 	private class RerunAction extends SquirrelAction
 	{
-		private static final long serialVersionUID = 1L;
 
 		RerunAction()
 		{

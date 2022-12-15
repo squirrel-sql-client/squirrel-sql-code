@@ -19,29 +19,6 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.util.List;
-
-import javax.swing.GroupLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -50,13 +27,33 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.ColumnDifference;
 
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.util.List;
+
 /**
  * A dialog that displays column differences between two tables.
  */
 public class ColumnDiffDialog extends javax.swing.JDialog
 {
-
-	private static final long serialVersionUID = 1856729976997357397L;
 
 	private static StringManager s_stringMgr = StringManagerFactory.getStringManager(ColumnDiffDialog.class);
 
@@ -232,7 +229,6 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 				i18n.SESSION_LABEL_PREFIX + "1 Null", i18n.SESSION_LABEL_PREFIX + "2 Null",
 				i18n.SESSION_LABEL_PREFIX + "1 Remarks", i18n.SESSION_LABEL_PREFIX + "2 Remarks", })
 		{
-			private static final long serialVersionUID = -8971846055387133384L;
 
 			boolean[] canEdit = new boolean[] { false, false, false, false, false, false, false, false };
 
@@ -333,18 +329,6 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 
 	private JTable getRowHeader()
 	{
-		// result.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-		/*
-		TableModel tm = 
-		    new DefaultTableModel(new String [] { "Table", "Column" }, 4) {
-
-		        private static final long serialVersionUID = -8826914717673025881L;
-		
-		        public boolean isCellEditable(int rowIndex, int columnIndex) {
-		            return false;
-		        }
-		};
-		*/
 		final TableModel tm = new RowHeaderTableModel();
 		final TableColumnModel tcm = getTableColumnModel(rowHeaderColumnMinimumWidth);
 		final JTable result = new JTable(tm, tcm);
@@ -356,7 +340,6 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 	{
 		final TableColumnModel result = new DefaultTableColumnModel()
 		{
-			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void addColumn(TableColumn tc)
@@ -371,8 +354,6 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 
 	private static class DiffTableModel extends DefaultTableModel
 	{
-
-		private static final long serialVersionUID = 6563983121243062913L;
 
 		private final List<ColumnDifference> _diffs;
 
@@ -486,8 +467,6 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 	private static class CornerTableModel extends DefaultTableModel
 	{
 
-		private static final long serialVersionUID = 1L;
-
 		/**
 		 * @see javax.swing.table.DefaultTableModel#getColumnCount()
 		 */
@@ -549,8 +528,6 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 	 */
 	private static class RowHeaderTableModel extends DefaultTableModel
 	{
-
-		private static final long serialVersionUID = 9015962292222867195L;
 
 		private List<ColumnDifference> _diffs;
 

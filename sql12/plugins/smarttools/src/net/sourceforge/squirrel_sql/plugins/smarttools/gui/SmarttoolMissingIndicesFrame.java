@@ -67,7 +67,6 @@ import java.util.Vector;
 
 public class SmarttoolMissingIndicesFrame extends DialogWidget implements ISmarttoolFrame, ActionListener
 {
-	private static final long serialVersionUID = 3680564513241320485L;
 
 	private final int START_WORKING = 1;
 

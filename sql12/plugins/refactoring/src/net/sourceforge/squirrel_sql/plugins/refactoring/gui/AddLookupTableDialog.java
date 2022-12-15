@@ -24,17 +24,31 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 public class AddLookupTableDialog extends AbstractRefactoringTabbedDialog
 {
-	private static final long serialVersionUID = -4903417767342627807L;
 
 	/** Logger for this class. */
 	@SuppressWarnings("unused")
@@ -169,7 +183,6 @@ public class AddLookupTableDialog extends AbstractRefactoringTabbedDialog
 
 	private class SourceTab extends JPanel
 	{
-		private static final long serialVersionUID = -1731428049078527137L;
 
 		private JList _columnList;
 
@@ -308,7 +321,6 @@ public class AddLookupTableDialog extends AbstractRefactoringTabbedDialog
 
 	private class LookupTab extends JPanel
 	{
-		private static final long serialVersionUID = 6999302068227311098L;
 
 		private JTextField _tableTextField;
 
@@ -406,7 +418,6 @@ public class AddLookupTableDialog extends AbstractRefactoringTabbedDialog
 
 	private class BehaviourTab extends JPanel
 	{
-		private static final long serialVersionUID = -1528361503293831825L;
 
 		private JCheckBox _dropCascade;
 

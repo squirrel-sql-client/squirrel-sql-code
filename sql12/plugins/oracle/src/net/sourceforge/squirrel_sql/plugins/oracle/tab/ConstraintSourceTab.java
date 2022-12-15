@@ -17,10 +17,6 @@
  */
 package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourcePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
@@ -33,6 +29,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.oracle.constraint.ConstraintInfo;
 import net.sourceforge.squirrel_sql.plugins.oracle.constraint.ConstraintSourceBuilder;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * This tab displays the source for the constraint
@@ -81,7 +81,6 @@ public class ConstraintSourceTab extends BaseSourceTab {
 	 * The panel that displays the source code for the constraint
 	 */
 	private final class ConstraintSourcePanel extends BaseSourcePanel {
-		private static final long serialVersionUID = 1L;
 
 
 		ConstraintSourcePanel(ISession session) {

@@ -44,11 +44,6 @@ import java.awt.event.ActionListener;
 public class DBDiffPreferencesPanel extends JPanel implements IOptionPanel
 {
 
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
-
 	DBDiffPreferenceBean _prefs = null;
 
 	IPluginPreferencesManager pluginPreferencesManager = null;

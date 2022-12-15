@@ -17,6 +17,12 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.table.DefaultTableModel;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -26,19 +32,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 
-import javax.swing.table.DefaultTableModel;
-
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 public class BeanPropertyTableModel extends DefaultTableModel
 {
-    private static final long serialVersionUID = 1L;
 
-    /** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(BeanPropertyTableModel.class);
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(BeanPropertyTableModel.class);
 
 	private Object _bean;
 

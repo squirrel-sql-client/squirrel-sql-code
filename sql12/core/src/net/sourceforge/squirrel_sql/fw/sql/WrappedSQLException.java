@@ -17,9 +17,10 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
+
+import java.sql.SQLException;
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
  * an <TT>ISQLAlias</TT>.
@@ -28,9 +29,8 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
  */
 public class WrappedSQLException extends BaseException
 {
-	static final long serialVersionUID = 8923509127367847605L;
 
-    /**
+	/**
 	 * Ctor specifying the <TT>SQLException</TT> that this exception
 	 * is wrapped around.
 	 * 

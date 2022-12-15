@@ -17,29 +17,24 @@ package net.sourceforge.squirrel_sql.plugins.mysql.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Frame;
-import java.sql.SQLException;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.sql.SQLException;
 /**
  * Dialog that allows user to alter the dtructure of a table
  *
@@ -47,13 +42,8 @@ import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
  */
 public class AlterTableDialog extends JDialog
 {
-	/** Logger for this class. */
-//	private final static ILogger s_log =
-//		LoggerController.createLogger(AlterTableDialog.class);
 
-    private static final long serialVersionUID = 1L;
-
-    /** Internationalized strings for this class. */
+	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(AlterTableDialog.class);
 

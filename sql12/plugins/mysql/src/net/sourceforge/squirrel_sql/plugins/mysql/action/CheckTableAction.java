@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -25,6 +24,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
+
+import java.awt.event.ActionEvent;
 /**
  * This <TT>Action</TT> will run a &quot;CHECK TABLE&quot; over the
  * currently selected tables.
@@ -33,7 +34,6 @@ import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
  */
 public class CheckTableAction extends SquirrelAction implements ISessionAction
 {
-    private static final long serialVersionUID = 1L;
 	/** Different check types that can be run. */
 	interface ICheckTypes
 	{
@@ -121,7 +121,6 @@ public class CheckTableAction extends SquirrelAction implements ISessionAction
 
 	public static final class ChangedCheckTableAction extends CheckTableAction
 	{
-        private static final long serialVersionUID = 1L;	    
 		public ChangedCheckTableAction(IApplication app, IResources resources,
 										MysqlPlugin plugin)
 		{
@@ -131,7 +130,6 @@ public class CheckTableAction extends SquirrelAction implements ISessionAction
 
 	public static final class ExtendedCheckTableAction extends CheckTableAction
 	{
-        private static final long serialVersionUID = 1L;	    
 		public ExtendedCheckTableAction(IApplication app, IResources resources,
 										MysqlPlugin plugin)
 		{
@@ -141,9 +139,8 @@ public class CheckTableAction extends SquirrelAction implements ISessionAction
 
 	public static final class FastCheckTableAction extends CheckTableAction
 	{
-        private static final long serialVersionUID = 1L;
 
-        public FastCheckTableAction(IApplication app, IResources resources,
+		public FastCheckTableAction(IApplication app, IResources resources,
 										MysqlPlugin plugin)
 		{
 			super(app, resources, plugin, ICheckTypes.FAST);
@@ -152,7 +149,6 @@ public class CheckTableAction extends SquirrelAction implements ISessionAction
 
 	public static final class MediumCheckTableAction extends CheckTableAction
 	{
-        private static final long serialVersionUID = 1L;	    
 		public MediumCheckTableAction(IApplication app, IResources resources,
 										MysqlPlugin plugin)
 		{
@@ -162,7 +158,6 @@ public class CheckTableAction extends SquirrelAction implements ISessionAction
 
 	public static final class QuickCheckTableAction extends CheckTableAction
 	{
-        private static final long serialVersionUID = 1L;	    
 		public QuickCheckTableAction(IApplication app, IResources resources,
 										MysqlPlugin plugin)
 		{

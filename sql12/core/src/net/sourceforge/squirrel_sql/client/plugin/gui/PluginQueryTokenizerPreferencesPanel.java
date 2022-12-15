@@ -48,10 +48,7 @@ import java.awt.event.ActionListener;
  */
 public class PluginQueryTokenizerPreferencesPanel extends JPanel
 {
-
 	protected static final int LEFT_INDENT_INSET_SIZE = 35;
-
-	private static final long serialVersionUID = 1L;
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =

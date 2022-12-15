@@ -31,10 +31,18 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
 import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -45,7 +53,6 @@ import java.util.Vector;
 
 public class SmarttoolFindBadNullValuesFrame extends DialogWidget
 		implements ISmarttoolFrame, ActionListener {
-	private static final long serialVersionUID = -1504852937961154906L;
 
 	private final String INDENT = "   ";
 	private final int START_WORKING = 1;

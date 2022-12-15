@@ -19,17 +19,15 @@ package net.sourceforge.squirrel_sql.plugins.postgres.gui;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 public class VacuumDatabaseDialog extends AbstractPostgresDialog
 {
-
-	private static final long serialVersionUID = 1L;
 
 	/** Name of the database/catalog. */
 	protected String _catalogName;

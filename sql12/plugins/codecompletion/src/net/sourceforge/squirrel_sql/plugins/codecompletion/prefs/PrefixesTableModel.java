@@ -1,14 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.prefs;
 
 import javax.swing.table.DefaultTableModel;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PrefixesTableModel extends DefaultTableModel
 {
-    private static final long serialVersionUID = 1L;
 
-    private ArrayList<PrefixedConfig> _data = new ArrayList<PrefixedConfig>();
+	private ArrayList<PrefixedConfig> _data = new ArrayList<PrefixedConfig>();
 
 	public PrefixesTableModel(PrefixedConfig[] prefixedConfigs)
 	{

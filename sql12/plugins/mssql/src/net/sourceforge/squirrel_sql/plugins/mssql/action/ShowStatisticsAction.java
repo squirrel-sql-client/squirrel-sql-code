@@ -18,20 +18,19 @@ package net.sourceforge.squirrel_sql.plugins.mssql.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.event.ActionEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
+
+import java.awt.event.ActionEvent;
 
 public class ShowStatisticsAction extends SquirrelAction implements ISessionAction {
 
-    private static final long serialVersionUID = 1L;
-    transient private ISession _session;
+	transient private ISession _session;
 	transient private final MssqlPlugin _plugin;
     
     private final ITableInfo _tableInfo;

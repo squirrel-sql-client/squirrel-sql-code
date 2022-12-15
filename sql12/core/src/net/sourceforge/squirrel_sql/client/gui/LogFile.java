@@ -31,8 +31,6 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
  */
 public class LogFile extends File
 {
-	private static final long serialVersionUID = 1L;
-
 	private final String _stringRep;
 
 	LogFile(File dir, String name)

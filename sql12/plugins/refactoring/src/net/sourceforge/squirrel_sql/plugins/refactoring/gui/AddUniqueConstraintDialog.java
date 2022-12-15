@@ -19,16 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.List;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -40,13 +32,19 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.List;
 
 public class AddUniqueConstraintDialog extends AbstractRefactoringTabbedDialog
 {
-	private static final long serialVersionUID = -8499959410488757334L;
 
 	/**
 	 * Internationalized strings for this class.
@@ -127,7 +125,6 @@ public class AddUniqueConstraintDialog extends AbstractRefactoringTabbedDialog
 
 	class PropertiesTab extends JPanel
 	{
-		private static final long serialVersionUID = 1949077865903781457L;
 
 		private JTextField _nameField;
 
@@ -194,7 +191,6 @@ public class AddUniqueConstraintDialog extends AbstractRefactoringTabbedDialog
 
 	class ColumnsTab extends JPanel
 	{
-		private static final long serialVersionUID = 3381783567015647873L;
 
 		private JTable _columTable;
 

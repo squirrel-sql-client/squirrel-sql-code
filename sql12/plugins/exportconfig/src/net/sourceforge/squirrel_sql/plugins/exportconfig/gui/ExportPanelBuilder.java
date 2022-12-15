@@ -18,18 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.exportconfig.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -43,6 +31,18 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPreferences;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 /**
  * This builder creates the component that allows the user to select what they
  * want to export and where it should be exported to.
@@ -434,6 +434,5 @@ public class ExportPanelBuilder
      * Exception to indicate user wanted to break out of the export early.
      */
     private class CancelledException extends Exception {
-		private static final long serialVersionUID = 1L;
-    }
+	 }
 }

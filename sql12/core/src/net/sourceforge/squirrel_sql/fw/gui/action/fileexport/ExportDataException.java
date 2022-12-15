@@ -26,8 +26,6 @@ package net.sourceforge.squirrel_sql.fw.gui.action.fileexport;
  */
 public class ExportDataException extends Exception {
 
-	private static final long serialVersionUID = 1L;
-
 	/**
 	 * Constructor, if the error depends on a other Exception (e.g. a SQLException)
 	 * @param message The message

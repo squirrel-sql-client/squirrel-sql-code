@@ -19,6 +19,29 @@
 
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -36,41 +59,13 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.DatabaseMetaData;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 /**
  * A dialog that can be used to get column info from the user for adding new 
  * columns or modifying existing ones.
  */
 public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
 
-    private static final long serialVersionUID = 1L;
-
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ColumnDetailDialog.class);
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ColumnDetailDialog.class);
     
     private JLabel tableNameLabel = null;
     private JTextField tableNameTextField = null;

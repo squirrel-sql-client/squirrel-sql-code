@@ -28,8 +28,6 @@ import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurat
  */
 public class MediaWikiTableConfiguration extends GenericWikiTableConfigurationBean {
 
-	private static final long serialVersionUID = -6873210947889098473L;
-	
 	private static final String NAME = "Media Wiki";
 	private static final String TABLE_START = "{| border=\"1\"" + NEW_LINE_PLACEHOLDER ;
 	private static final String HEADER_START = "";

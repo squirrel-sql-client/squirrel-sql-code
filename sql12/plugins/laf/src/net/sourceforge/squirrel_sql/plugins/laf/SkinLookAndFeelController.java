@@ -18,17 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-
-import javax.swing.JLabel;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.DirectoryListComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
@@ -46,6 +35,17 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
+
+import javax.swing.JLabel;
+import javax.swing.LookAndFeel;
+import javax.swing.SwingConstants;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
 
 /**
  * Behaviour for the Skin Look and Feel.
@@ -172,7 +172,6 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 
 	private static final class SkinPrefsPanel extends BaseLAFPreferencesPanelComponent
 	{
-		private static final long serialVersionUID = 1L;
 
 		/**
 		 * This interface defines locale specific strings. This should be replaced with a property file.

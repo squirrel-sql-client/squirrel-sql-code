@@ -9,8 +9,6 @@ import java.util.Arrays;
 
 public class SchemaTableModel extends DefaultTableModel
 {
-   private static final long serialVersionUID = 1L;
-    
    static final int IX_SCHEMA_NAME = 0;
    static final int IX_TABLE = 1;
 	static final int IX_VIEW = 2;

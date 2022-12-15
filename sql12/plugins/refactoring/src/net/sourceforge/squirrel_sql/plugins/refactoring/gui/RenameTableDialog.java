@@ -22,16 +22,15 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import java.awt.Frame;
 
 /**
  * Defines a rename Table/View dialog.
  */
 public class RenameTableDialog extends AbstractRefactoringDialog {
 
-
-    private static final long serialVersionUID = 1L;
 
     /**
      * Type for changing a View.

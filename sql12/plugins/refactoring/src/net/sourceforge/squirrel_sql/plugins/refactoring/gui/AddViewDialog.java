@@ -24,8 +24,20 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -33,8 +45,6 @@ import java.awt.event.KeyListener;
 
 public class AddViewDialog extends AbstractRefactoringTabbedDialog
 {
-
-	private static final long serialVersionUID = -4707883598801686297L;
 
 	/**
 	 * Internationalized strings for this class.
@@ -121,7 +131,6 @@ public class AddViewDialog extends AbstractRefactoringTabbedDialog
 
 	private class PropertiesTab extends JPanel
 	{
-		private static final long serialVersionUID = 6552656160947599842L;
 
 		private JTextField _viewNameField;
 
@@ -285,7 +294,6 @@ public class AddViewDialog extends AbstractRefactoringTabbedDialog
 
 	class DefinitionTab extends JPanel
 	{
-		private static final long serialVersionUID = 6541977721917288953L;
 
 		JTextArea _definitionArea;
 

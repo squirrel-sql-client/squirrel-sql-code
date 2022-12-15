@@ -1,20 +1,18 @@
 package net.sourceforge.squirrel_sql.plugins.multisource;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.event.ActionEvent;
+
 /**
  * Menu item that allows user to export the source information into XML files.
  */
 public class MultiExportAction extends SquirrelAction {
-	private static final long serialVersionUID = 1L;
 
 	private ISession _session;
 

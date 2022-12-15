@@ -22,9 +22,8 @@ import javax.swing.TransferHandler;
 public class ImageSelection extends TransferHandler
    implements Transferable
 {
-   private static final long serialVersionUID = 1L;
 
-	private static final DataFlavor flavors[] =
+   private static final DataFlavor flavors[] =
       {
          DataFlavor.imageFlavor,
          new DataFlavor("image/jpeg","JPEG image"),

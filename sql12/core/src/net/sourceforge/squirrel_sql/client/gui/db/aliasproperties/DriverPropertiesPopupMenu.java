@@ -18,16 +18,15 @@
  */
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Popup menu which is displayed when the user right-clicks on the driver properties table, giving the choice
@@ -35,11 +34,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class DriverPropertiesPopupMenu extends JPopupMenu
 {
-	private static final long serialVersionUID = -8109748449852223185L;
-
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DriverPropertiesPopupMenu.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DriverPropertiesPopupMenu.class);
 
 	private static interface i18n
 	{

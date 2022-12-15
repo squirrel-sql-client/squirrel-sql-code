@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.client.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.PropertyChangeListener;
-import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
@@ -27,6 +25,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
+import java.beans.PropertyChangeListener;
+import java.io.Serializable;
+
 /**
  * Objects of this class hold a collection of <TT>ISQLAlias</TT> objects.
  *
@@ -34,11 +35,8 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
  */
 public class AliasGroup implements Cloneable, Serializable, Comparable<AliasGroup>
 {
-    private static final long serialVersionUID = 1L;
-
-    /** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AliasGroup.class);
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasGroup.class);
 
 	/**
 	 * JavaBean property names for this class.

@@ -18,16 +18,11 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Vector;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -43,19 +38,21 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Vector;
 
 
 public class AddForeignKeyDialog extends AbstractRefactoringTabbedDialog {
 
-    private static final long serialVersionUID = -1468861452449568878L;
-    
-	 /**
+    /**
      * Internationalized strings for this class.
      */
     private static final StringManager s_stringMgr =
@@ -226,7 +223,6 @@ public class AddForeignKeyDialog extends AbstractRefactoringTabbedDialog {
 
 
     class PropertiesTab extends JPanel {
-        private static final long serialVersionUID = -8311422583709806081L;
         private JComboBox _referencesField;
         private JTextField _nameField;
 
@@ -376,7 +372,6 @@ public class AddForeignKeyDialog extends AbstractRefactoringTabbedDialog {
     }
 
     class ColumnsTab extends JPanel {
-        private static final long serialVersionUID = 932908227634023574L;
 
         private JTable _columTable;
 
@@ -517,7 +512,6 @@ public class AddForeignKeyDialog extends AbstractRefactoringTabbedDialog {
     }
 
     class ActionTab extends JPanel {
-        private static final long serialVersionUID = -6693305068890653755L;
         private static final String NO_ACTION_COMMAND = "NO ACTION";
         private static final String RESTRICT_COMMAND = "RESTRICT";
         private static final String CASCADE_COMMAND = "CASCADE";

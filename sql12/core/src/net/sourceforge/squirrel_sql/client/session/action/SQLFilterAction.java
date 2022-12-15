@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * @author Maury Hammel
  *
  */
-import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -32,6 +31,8 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.awt.event.ActionEvent;
 /**
  * SQLFilterAction.java
  *
@@ -43,13 +44,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class SQLFilterAction extends SquirrelAction implements IObjectTreeAction
 {
-    private static final long serialVersionUID = 1L;
-
-    transient private IObjectTreeAPI _tree;
+    private IObjectTreeAPI _tree;
 
     /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(SQLFilterAction.class);
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLFilterAction.class);
     
 	/** Creates a new instance of SQLFilterAction
 	* @param app A reference to the SQuirreL application instance

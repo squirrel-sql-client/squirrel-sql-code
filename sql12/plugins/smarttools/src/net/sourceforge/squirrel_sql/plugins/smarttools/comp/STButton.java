@@ -18,20 +18,18 @@
  */
 package net.sourceforge.squirrel_sql.plugins.smarttools.comp;
 
-import java.awt.Cursor;
-
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.border.Border;
+import java.awt.Cursor;
 
 /**
  * Component class with global configured JButton for squirrel frames  
  * @author Michael Romankiewicz
  */
 public class STButton extends JButton {
-	private static final long serialVersionUID = -1504866017961154906L;
 
 	public STButton() {
 		super();

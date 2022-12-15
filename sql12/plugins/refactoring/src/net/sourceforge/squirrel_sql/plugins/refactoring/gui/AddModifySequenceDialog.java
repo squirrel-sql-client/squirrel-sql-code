@@ -23,8 +23,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.util.NumberDocument;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import java.awt.Frame;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -33,8 +35,6 @@ import java.awt.event.KeyEvent;
  */
 public class AddModifySequenceDialog extends AbstractRefactoringDialog
 {
-
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Internationalized strings for this class

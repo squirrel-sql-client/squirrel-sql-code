@@ -148,9 +148,7 @@ public class WhereClausePanel implements ISQLFilterPanel
 	 */
 	private static final class WhereClauseSubPanel extends JPanel
 	{
-        private static final long serialVersionUID = 1L;
-
-        /**
+		/**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
@@ -355,7 +353,6 @@ public class WhereClausePanel implements ISQLFilterPanel
       }
 
 		private static final class OperatorTypeCombo extends JComboBox {
-			private static final long serialVersionUID = 1L;
 
 			public void setItems(String[] supportedOperators) {
 				removeAllItems();
@@ -368,9 +365,8 @@ public class WhereClausePanel implements ISQLFilterPanel
 
 		private static final class AndOrCombo extends JComboBox
 		{
-            private static final long serialVersionUID = 1L;
 
-            AndOrCombo()
+			AndOrCombo()
 			{
 				addItem(WhereClauseSubPanelI18n.AND);
 				addItem(WhereClauseSubPanelI18n.OR);

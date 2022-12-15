@@ -67,7 +67,6 @@ public abstract class InformixSourceTab extends BaseSourceTab
 
 	private final class InformixSourcePanel extends BaseSourcePanel
 	{
-		private static final long serialVersionUID = 1L;
 
 		InformixSourcePanel(ISession session) {
 			super(session);

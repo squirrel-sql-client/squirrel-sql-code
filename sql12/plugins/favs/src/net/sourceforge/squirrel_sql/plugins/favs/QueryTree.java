@@ -17,6 +17,16 @@ package net.sourceforge.squirrel_sql.plugins.favs;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
+
+import javax.swing.Action;
+import javax.swing.JMenuItem;
+import javax.swing.JTree;
+import javax.swing.ToolTipManager;
+import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -24,20 +34,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.Action;
-import javax.swing.JMenuItem;
-import javax.swing.JTree;
-import javax.swing.ToolTipManager;
-import javax.swing.tree.TreePath;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
-
 final class QueryTree extends JTree {
-    private static final long serialVersionUID = 1L;
 
-    private IApplication _app;
+	private IApplication _app;
     
     @SuppressWarnings("unused")
 	private QueryTreeModel _model;
@@ -108,7 +107,8 @@ final class QueryTree extends JTree {
 		}
 		return tip;
 	}
-	QueryTreeModel getTypedModel() {
+
+	QueryTreeModel getTypedModel() {
 		return (QueryTreeModel)getModel();
 	}
 
@@ -121,13 +121,13 @@ final class QueryTree extends JTree {
 		TreePath path = getPathForLocation(x, y);
 		_popupMenu.show(evt, path);
 	}
-	/**
+
+	/**
 	 * Popup menu for this tree.
 	 */
 	private class MyPopupMenu extends BasePopupMenu {
-        private static final long serialVersionUID = 1L;
 
-        /** Set to <CODE>true</CODE> once list is built. */
+		/** Set to <CODE>true</CODE> once list is built. */
 		private boolean _built = false;
 
 		/**
@@ -148,7 +148,8 @@ final class QueryTree extends JTree {
 			}
 			super.show(evt);
 		}
-		public JMenuItem add(Action action) {
+
+		public JMenuItem add(Action action) {
 			if (action instanceof BaseFavouriteAction) {
 				((BaseFavouriteAction)action).setQueryTree(QueryTree.this);
 				_actions.add((BaseFavouriteAction)action);

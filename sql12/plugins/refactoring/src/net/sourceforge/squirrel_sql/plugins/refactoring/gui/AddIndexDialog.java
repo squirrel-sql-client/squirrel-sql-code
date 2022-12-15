@@ -24,17 +24,30 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class AddIndexDialog extends AbstractRefactoringTabbedDialog
 {
-
-	private static final long serialVersionUID = -3938627506591289398L;
 
 	/**
 	 * Internationalized strings for this class.
@@ -158,8 +171,6 @@ public class AddIndexDialog extends AbstractRefactoringTabbedDialog
 
 	class PropertiesTab extends JPanel
 	{
-
-		private static final long serialVersionUID = -6278926941374497863L;
 
 		private JTextField _indexNameField;
 
@@ -389,8 +400,6 @@ public class AddIndexDialog extends AbstractRefactoringTabbedDialog
 
 	class ColumnsTab extends JPanel
 	{
-
-		private static final long serialVersionUID = 8534250606004015711L;
 
 		private JTable _columnTable;
 

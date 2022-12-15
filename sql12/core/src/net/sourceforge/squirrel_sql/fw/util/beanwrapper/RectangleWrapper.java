@@ -22,7 +22,6 @@ import java.io.Serializable;
 
 public class RectangleWrapper implements Serializable
 {
-	private static final long serialVersionUID = -188201653324691558L;
 
 	public interface IPropertyNames
 	{

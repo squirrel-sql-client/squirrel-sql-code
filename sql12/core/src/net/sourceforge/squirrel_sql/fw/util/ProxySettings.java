@@ -27,7 +27,6 @@ import java.io.Serializable;
  */
 public class ProxySettings implements Cloneable, Serializable, IProxySettings
 {
-	private static final long serialVersionUID = 6435632924688921646L;
 
 	/** If <TT>true</TT> use a HTTP proxy server. */
 	private boolean _httpUseProxy;

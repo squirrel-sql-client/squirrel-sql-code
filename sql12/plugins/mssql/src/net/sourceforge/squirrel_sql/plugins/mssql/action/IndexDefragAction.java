@@ -29,8 +29,7 @@ import net.sourceforge.squirrel_sql.fw.resources.IResources;
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 
 public class IndexDefragAction extends SquirrelAction implements ISessionAction {
-   private static final long serialVersionUID = 1L;
-   
+
 	private ISession _session;
 	private final MssqlPlugin _plugin;
     

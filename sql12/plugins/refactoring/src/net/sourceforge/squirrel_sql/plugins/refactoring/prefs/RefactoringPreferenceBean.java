@@ -25,7 +25,6 @@ import java.io.Serializable;
  */
 public class RefactoringPreferenceBean implements Cloneable, Serializable
 {
-	private static final long serialVersionUID = 6377157814922907413L;
 
 	static final String UNSUPPORTED = "Unsupported";
 

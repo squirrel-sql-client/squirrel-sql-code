@@ -32,9 +32,8 @@ import java.util.TreeMap;
  */
 public class SQLCatalogsComboBox extends JComboBox
 {
-    private static final long serialVersionUID = 1L;
 
- 	/** Internationalized strings for this class. */
+	/** Internationalized strings for this class. */
  	private static final StringManager s_stringMgr =
  		StringManagerFactory.getStringManager(SQLCatalogsComboBox.class);
  	

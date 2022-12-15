@@ -17,12 +17,11 @@ package net.sourceforge.squirrel_sql.plugins.sqlval;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -31,15 +30,15 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 class AppPreferencesPanel extends JPanel
 {
-   private static final long serialVersionUID = 1L;
 
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(AppPreferencesPanel.class);
