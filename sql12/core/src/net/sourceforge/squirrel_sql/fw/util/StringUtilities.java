@@ -367,13 +367,24 @@ public class StringUtilities
 
    public static String emptyToNull(String s)
    {
-      if(isEmpty(s))
+      if(isEmpty(s, true))
       {
          return null;
       }
 
       return s;
    }
+
+   public static String nullToEmpty(String str)
+   {
+      if(null == str)
+      {
+         return "";
+      }
+
+      return str;
+   }
+
 
    public static String shortenBegin(String in, int maxLen, String incompleteIndikator)
    {

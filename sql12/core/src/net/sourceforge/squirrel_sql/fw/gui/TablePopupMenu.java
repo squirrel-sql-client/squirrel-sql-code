@@ -44,6 +44,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionComman
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionType;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.CopyColoredRowsToNewWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.GotoColorMenuController;
+import net.sourceforge.squirrel_sql.fw.gui.action.columndetails.ColumnDetailsController;
 import net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby.TableCopySeparatedByCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExport;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
@@ -88,10 +89,12 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyUpdateStatementAction _copyUpdateStatement = new CopyUpdateStatementAction();
 	private CopyInsertStatementAction _copyInsertStatement = new CopyInsertStatementAction();
 	private CopyColumnHeaderAction _copyColumnHeader = new CopyColumnHeaderAction();
+	private CopySelectedRowsToOwnWindowAction _copySelectedRowsToOwnWindow = new CopySelectedRowsToOwnWindowAction();
+
 	private ShowReferencesAction _showReferences = new ShowReferencesAction();
+	private ShowColumnDetailsAction _showColumnDetails = new ShowColumnDetailsAction();
 	private ShowDistinctValuesAction _showDistinctValues = new ShowDistinctValuesAction();
 
-	private CopySelectedRowsToOwnWindowAction _copySelectedRowsToOwnWindow = new CopySelectedRowsToOwnWindowAction();
 	private ColorSelectedRowsAction _colorSelectedRows = new ColorSelectedRowsAction();
 	private ColorSelectedCellsAction _colorSelectedCells = new ColorSelectedCellsAction();
 	private GotoColorMenuController _gotoColorMenuController = new GotoColorMenuController();
@@ -161,19 +164,16 @@ public class TablePopupMenu extends BasePopupMenu
 		addAction(_copyUpdateStatement);
       addAction(_copyInsertStatement);
       addAction(_copyColumnHeader);
+		addAction(_copySelectedRowsToOwnWindow);
 
 		if (null != _session)
 		{
 			addSeparator();
 			addAction(_showReferences);
-
+			addAction(_showColumnDetails);
 		}
 
-		addSeparator();
 		addAction(_showDistinctValues);
-
-		addSeparator();
-		addAction(_copySelectedRowsToOwnWindow);
 
 		addSeparator();
 		addAction(_colorSelectedRows);
@@ -470,7 +470,21 @@ public class TablePopupMenu extends BasePopupMenu
 		}
 	}
 
-   private class ExportAction extends BaseAction
+	private class CopySelectedRowsToOwnWindowAction extends BaseAction
+	{
+		CopySelectedRowsToOwnWindowAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.CopySelectedRowsToOwnWindow"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			new CopySelectedRowsToOwnWindowCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
+		}
+	}
+
+
+	private class ExportAction extends BaseAction
    {
 		ExportAction()
       {
@@ -497,6 +511,19 @@ public class TablePopupMenu extends BasePopupMenu
       }
    }
 
+   private class ShowColumnDetailsAction extends BaseAction
+   {
+		ShowColumnDetailsAction()
+      {
+         super(s_stringMgr.getString("TablePopupMenu.showColumnDetails"));
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+			new ColumnDetailsController(_dataSetViewerTablePanel.getTable(), _session);
+      }
+   }
+
    private class ShowDistinctValuesAction extends BaseAction
    {
 		ShowDistinctValuesAction()
@@ -510,18 +537,6 @@ public class TablePopupMenu extends BasePopupMenu
       }
    }
 
-   private class CopySelectedRowsToOwnWindowAction extends BaseAction
-   {
-		CopySelectedRowsToOwnWindowAction()
-      {
-         super(s_stringMgr.getString("TablePopupMenu.CopySelectedRowsToOwnWindow"));
-      }
-
-      public void actionPerformed(ActionEvent evt)
-      {
-         new CopySelectedRowsToOwnWindowCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
-      }
-   }
 
    private class ColorSelectedRowsAction extends BaseAction
    {

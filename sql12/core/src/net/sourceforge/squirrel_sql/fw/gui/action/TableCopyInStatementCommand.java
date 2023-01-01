@@ -84,7 +84,7 @@ public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase imp
 
    public ArrayList<InStatColumnInfo> getInStatColumnInfos()
    {
-      ArrayList<InStatColumnInfo> ret = new ArrayList<InStatColumnInfo>();
+      ArrayList<InStatColumnInfo> ret = new ArrayList<>();
 
       int nbrSelRows = _table.getSelectedRowCount();
       int nbrSelCols = _table.getSelectedColumnCount();

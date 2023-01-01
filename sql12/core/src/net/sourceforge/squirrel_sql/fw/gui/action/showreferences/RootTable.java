@@ -38,7 +38,7 @@ public class RootTable
 
       for (InStatColumnInfo inStatColumnInfo : _inStatColumnInfos)
       {
-         ret += " [" + inStatColumnInfo.getDescription() + "]";
+         ret += " [" + inStatColumnInfo.getInStatement() + "]";
       }
 
 

@@ -4,6 +4,26 @@ SQuirreL SQL Client Change Log
 Not yet released, available in our GIT repository, snapshots and future releases.
 ===============================================================================================
 
+Enhancements:
+
+SQL result: New right right mouse menu "Show column details ..."
+
+File export: Export file and command text fields were changed into drop downs with history.
+
+SQL result: Made several labels on Info tab copyable.
+
+Saved Sessions: Name of current Saved Session is displayed in SQuirreL's main window title.
+
+Export of multiple SQL results.
+  When exporting to MS Excel, multiple data sheets/tabs in the same file are created.
+  When exporting to other formats, multiple files are created.
+  The export dialog allows to name sheets/tabs or files respectively.
+  Howto:
+  To export multiple SQL results right click or open tools popup (ctl+t) and choose "sql2file"
+  on multiple SQL queries (separated by statement separators) to open the file export dialog.
+  To export multiple SQL result UI tables execute multiple SQLs (ctrl+enter).
+  Then right click one of the UI result tables to open the file export dialog.
+
 Bug fixes:
 
 SQL result --> tab Info: Execution time and row count weren't displayed for long SQL strings.
@@ -26,24 +46,6 @@ File export:
   Executing command on exported file didn't on MS Windows work because of erroneous file name format.
   Exporting SQL queries directly from the SQL editor (not UI-Tables)
   caused Even Dispatch Thread (EDT) violations.
-
-Enhancements:
-
-File export: Export file and command text fields were changed into drop downs with history.
-
-SQL result: Made several labels on Info tab copyable.
-
-Saved Sessions: Name of current Saved Session is displayed in SQuirreL's main window title.
-
-Export of multiple SQL results.
-  When exporting to MS Excel, multiple data sheets/tabs in the same file are created.
-  When exporting to other formats, multiple files are created.
-  The export dialog allows to name sheets/tabs or files respectively.
-  Howto:
-  To export multiple SQL results right click or open tools popup (ctl+t) and choose "sql2file"
-  on multiple SQL queries (separated by statement separators) to open the file export dialog.
-  To export multiple SQL result UI tables execute multiple SQLs (ctrl+enter).
-  Then right click one of the UI result tables to open the file export dialog.
 
 
 4.5.1 (11/13/2022)
