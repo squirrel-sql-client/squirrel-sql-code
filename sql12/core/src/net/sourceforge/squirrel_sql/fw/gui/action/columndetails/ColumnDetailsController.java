@@ -5,7 +5,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.TableClickPosition;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.InStatColumnInfo;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyInStatementCommand;
@@ -16,9 +18,11 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
+import javax.swing.table.TableColumnModel;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ColumnDetailsController
 {
@@ -26,11 +30,11 @@ public class ColumnDetailsController
    private ColumnDetailsDialog _dlg;
    private DataSetViewerTablePanel _columnsDetailsPanel;
 
-   public ColumnDetailsController(DataSetViewerTable table, ISession session)
+   public ColumnDetailsController(DataSetViewerTable table, ISession session, TableClickPosition tableClickPosition)
    {
       try
       {
-         SimpleDataSet columnDetailsDataSet = createColumnDetailsDataSet(table, session);
+         SimpleDataSet columnDetailsDataSet = createColumnDetailsDataSet(table, session, tableClickPosition);
 
          if(null == columnDetailsDataSet)
          {
@@ -62,17 +66,20 @@ public class ColumnDetailsController
       }
    }
 
-   private SimpleDataSet createColumnDetailsDataSet(DataSetViewerTable table, ISession session)
+   private SimpleDataSet createColumnDetailsDataSet(DataSetViewerTable table, ISession session, TableClickPosition tableClickPosition)
    {
-      ArrayList<InStatColumnInfo> inStatColumnInfos = new TableCopyInStatementCommand(table, session).getInStatColumnInfos();
+      List<ColumnDisplayDefinition> selectedColDefs = getSelectedColDefs(table, session, tableClickPosition);
 
-      if(inStatColumnInfos.isEmpty())
+      if(selectedColDefs.isEmpty())
       {
          return null;
       }
 
 
-      boolean hasTableNames = hasTableNames(inStatColumnInfos);
+      List<ColumnDisplayDefinition> columnDisplayDefinitions = new ArrayList<>();
+      columnDisplayDefinitions.add(new ColumnDisplayDefinition(30, s_stringMgr.getString("ColumnDetailsController.colName")));
+
+      boolean hasTableNames = hasTableNames(selectedColDefs);
 
       List<String> tableNameRow = new ArrayList<>();
       List<String> sqlTypeNameRow = new ArrayList<>();
@@ -81,40 +88,35 @@ public class ColumnDetailsController
       List<String> scaleRow = new ArrayList<>();
       List<String> precisionRow = new ArrayList<>();
 
-
-      List<ColumnDisplayDefinition> columnDisplayDefinitions = new ArrayList<>();
-
-      columnDisplayDefinitions.add(new ColumnDisplayDefinition(30, s_stringMgr.getString("ColumnDetailsController.colName")));
-
-      for (InStatColumnInfo inStatColumnInfo : inStatColumnInfos)
+      for (ColumnDisplayDefinition selColDef : selectedColDefs)
       {
-         columnDisplayDefinitions.add(new ColumnDisplayDefinition(30, inStatColumnInfo.getColDef().getColumnHeading()));
+         columnDisplayDefinitions.add(new ColumnDisplayDefinition(30, selColDef.getColumnHeading()));
 
          if(hasTableNames)
          {
             addIfEmpty(tableNameRow, s_stringMgr.getString("ColumnDetailsController.tableName"));
             String tableName = "";
-            if(null != inStatColumnInfo.getColDef().getResultMetaDataTable())
+            if(null != selColDef.getResultMetaDataTable())
             {
-               tableName = inStatColumnInfo.getColDef().getResultMetaDataTable().getTableName();
+               tableName = selColDef.getResultMetaDataTable().getTableName();
             }
             tableNameRow.add(StringUtilities.nullToEmpty(tableName));
          }
 
          addIfEmpty(sqlTypeNameRow, s_stringMgr.getString("ColumnDetailsController.sqlTypeName"));
-         sqlTypeNameRow.add(inStatColumnInfo.getColDef().getSqlTypeName());
+         sqlTypeNameRow.add(selColDef.getSqlTypeName());
 
          addIfEmpty(nullableRow, s_stringMgr.getString("ColumnDetailsController.nullable"));
-         nullableRow.add("" + inStatColumnInfo.getColDef().isNullable());
+         nullableRow.add("" + selColDef.isNullable());
 
          addIfEmpty(columnSizeRow, s_stringMgr.getString("ColumnDetailsController.size"));
-         columnSizeRow.add("" + inStatColumnInfo.getColDef().getColumnSize());
+         columnSizeRow.add("" + selColDef.getColumnSize());
 
          addIfEmpty(scaleRow, s_stringMgr.getString("ColumnDetailsController.scale"));
-         scaleRow.add("" + inStatColumnInfo.getColDef().getScale());
+         scaleRow.add("" + selColDef.getScale());
 
          addIfEmpty(precisionRow, s_stringMgr.getString("ColumnDetailsController.precision"));
-         precisionRow.add("" + inStatColumnInfo.getColDef().getPrecision());
+         precisionRow.add("" + selColDef.getPrecision());
       }
 
 
@@ -136,6 +138,27 @@ public class ColumnDetailsController
       return colsDataSet;
    }
 
+   private List<ColumnDisplayDefinition> getSelectedColDefs(DataSetViewerTable table, ISession session, TableClickPosition tableClickPosition)
+   {
+      ArrayList<InStatColumnInfo> inStatColumnInfos = new TableCopyInStatementCommand(table, session).getInStatColumnInfos();
+
+      List<ColumnDisplayDefinition> colDefs = new ArrayList<>();
+      if(false == inStatColumnInfos.isEmpty())
+      {
+         colDefs = inStatColumnInfos.stream().map(ici -> ici.getColDef()).collect(Collectors.toList());
+      }
+      else if(null != tableClickPosition && tableClickPosition.isClickedOnTableHeader())
+      {
+         TableColumnModel cm = table.getColumnModel();
+         int columnIndexAtX = cm.getColumnIndexAtX(tableClickPosition.getX());
+         if(cm.getColumn(columnIndexAtX) instanceof ExtTableColumn)
+         {
+            colDefs.add(((ExtTableColumn)cm.getColumn(columnIndexAtX)).getColumnDisplayDefinition());
+         }
+      }
+      return colDefs;
+   }
+
    private static void addIfEmpty(List<String> row, String rowName)
    {
       if(row.isEmpty())
@@ -144,13 +167,13 @@ public class ColumnDetailsController
       }
    }
 
-   private static boolean hasTableNames(ArrayList<InStatColumnInfo> inStatColumnInfos)
+   private static boolean hasTableNames(List<ColumnDisplayDefinition> colDefs)
    {
-      for (InStatColumnInfo inStatColumnInfo : inStatColumnInfos)
+      for (ColumnDisplayDefinition colDef : colDefs)
       {
-         if(null != inStatColumnInfo.getColDef().getResultMetaDataTable() )
+         if(null != colDef.getResultMetaDataTable() )
          {
-            String tableName = inStatColumnInfo.getColDef().getResultMetaDataTable().getTableName();
+            String tableName = colDef.getResultMetaDataTable().getTableName();
             if(false == StringUtilities.isEmpty(tableName, true))
             {
                return true;

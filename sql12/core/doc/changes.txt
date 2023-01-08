@@ -26,6 +26,8 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+SQL result: Right right mouse menu "Show column details ..." now works for empty SQL result tables, too.
+
 SQL result --> tab Info: Execution time and row count weren't displayed for long SQL strings.
 
 Hibernate Plugin: Unknown object or mapping types used to cause ClassNotFoundExceptions

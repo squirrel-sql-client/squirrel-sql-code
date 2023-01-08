@@ -306,6 +306,7 @@ public class TablePopupMenu extends BasePopupMenu
 	{
 		_gotoColorMenuController.createSubMenus(_dataSetViewerTablePanel.getTable());
 		_copyColumnHeader.setCurrentTableClickPosition(tableClickPosition);
+		_showColumnDetails.setCurrentTableClickPosition(tableClickPosition);
 
 		super.show(invoker, x, y);
 	}
@@ -513,6 +514,8 @@ public class TablePopupMenu extends BasePopupMenu
 
    private class ShowColumnDetailsAction extends BaseAction
    {
+		private TableClickPosition _tableClickPosition;
+
 		ShowColumnDetailsAction()
       {
          super(s_stringMgr.getString("TablePopupMenu.showColumnDetails"));
@@ -520,9 +523,14 @@ public class TablePopupMenu extends BasePopupMenu
 
       public void actionPerformed(ActionEvent evt)
       {
-			new ColumnDetailsController(_dataSetViewerTablePanel.getTable(), _session);
+			new ColumnDetailsController(_dataSetViewerTablePanel.getTable(), _session, _tableClickPosition);
       }
-   }
+
+		public void setCurrentTableClickPosition(TableClickPosition tableClickPosition)
+		{
+			_tableClickPosition = tableClickPosition;
+		}
+	}
 
    private class ShowDistinctValuesAction extends BaseAction
    {
