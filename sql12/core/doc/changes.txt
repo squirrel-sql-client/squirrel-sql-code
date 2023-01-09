@@ -26,6 +26,9 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+SQL result table function "Mark consecutive duplicate values in columns"
+  was erroneous when columns where moved.
+
 SQL result: Right right mouse menu "Show column details ..." now works for empty SQL result tables, too.
 
 SQL result --> tab Info: Execution time and row count weren't displayed for long SQL strings.

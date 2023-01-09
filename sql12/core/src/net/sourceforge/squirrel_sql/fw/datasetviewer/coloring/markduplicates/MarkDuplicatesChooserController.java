@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates;
 
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractButton;
+import javax.swing.JComponent;
+import javax.swing.JToggleButton;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
@@ -10,11 +15,6 @@ import net.sourceforge.squirrel_sql.fw.gui.buttonchooser.ButtonChooser;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.AbstractButton;
-import javax.swing.JComponent;
-import javax.swing.JToggleButton;
-import java.awt.event.ActionEvent;
 
 public class MarkDuplicatesChooserController
 {
@@ -73,7 +73,8 @@ public class MarkDuplicatesChooserController
       }
 
       MarkDuplicatesMode selectedMode = MarkDuplicatesMode.getModeByButton(selButton);
-      if( selectedMode == MarkDuplicatesMode.DUPLICATE_CONSECUTIVE_CELLS_IN_ROW)
+      if(   selectedMode == MarkDuplicatesMode.DUPLICATE_CONSECUTIVE_CELLS_IN_ROW
+         || selectedMode == MarkDuplicatesMode.DUPLICATE_CONSECUTIVE_VALUES_IN_COLUMNS)
       {
          try
          {

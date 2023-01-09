@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates;
 
+import java.awt.Color;
+import java.awt.Point;
+import java.util.HashMap;
+import java.util.TreeMap;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
@@ -8,11 +13,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import java.awt.Color;
-import java.awt.Point;
-import java.util.HashMap;
-import java.util.TreeMap;
 
 public class DuplicateConsecutiveValuesInColumnsHandler implements DuplicateHandler
 {
@@ -49,9 +49,10 @@ public class DuplicateConsecutiveValuesInColumnsHandler implements DuplicateHand
 
          TreeMap<Integer, Integer> modelIndexByViewIndex = createModelIndexByViewIndexTreeMap(dataSetViewerTableModel);
 
-
-         for (ExtTableColumn tableColumn : DataSetViewerTablePanelUtil.getTableColumns(_dataSetViewerTable))
+         for( int i = 0; i < DataSetViewerTablePanelUtil.getTableColumns(_dataSetViewerTable).size(); i++ )
          {
+            ExtTableColumn tableColumn = DataSetViewerTablePanelUtil.getTableColumns(_dataSetViewerTable).get(i);
+
             int columnModelIndex = tableColumn.getModelIndex();
 
             Color curColor = SquirrelConstants.DUPLICATE_COLOR;
@@ -67,8 +68,8 @@ public class DuplicateConsecutiveValuesInColumnsHandler implements DuplicateHand
 //                  _colorByCell.put(new Point(tableColumn.getModelIndex(), modelIndexByViewIndex.get(viewIx - 1)), curColor);
 //                  _colorByCell.put(new Point(tableColumn.getModelIndex(), modelIndexByViewIndex.get(viewIx)), curColor);
 
-                  _colorByCell.put(new Point(tableColumn.getModelIndex(), viewIx - 1), curColor);
-                  _colorByCell.put(new Point(tableColumn.getModelIndex(), viewIx), curColor);
+                  _colorByCell.put(new Point(i, viewIx - 1), curColor);
+                  _colorByCell.put(new Point(i, viewIx), curColor);
                   lastColoredViewRow = viewIx;
                }
                else if(lastColoredViewRow == viewIx-1)
