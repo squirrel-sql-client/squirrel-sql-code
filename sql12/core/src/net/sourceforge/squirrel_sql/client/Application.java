@@ -35,8 +35,8 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToStartupAliasesCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpCommand;
+import net.sourceforge.squirrel_sql.client.mainframe.action.startupconnect.AppStartupSessionStarter;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginLoadInfo;
@@ -941,8 +941,6 @@ public class Application implements IApplication
 		_threadPool.setParentForMessages(_windowManager.getMainFrame());
 
 
-		new ConnectToStartupAliasesCommand(this).execute();
-
 		if (_globalPreferences.isFirstRun())
 		{
 			try
@@ -964,6 +962,8 @@ public class Application implements IApplication
 			_shutdownTimer.setApplication(this);
 			_shutdownTimer.start();
 		}
+
+		AppStartupSessionStarter.openStartupSessions(args);
 	}
 
 	public void initDriverManager()

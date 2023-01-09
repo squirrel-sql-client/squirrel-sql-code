@@ -88,8 +88,6 @@ public class Main
       System.setOut(new PrintStream(new SystemOutToLog(System.out)));
 
 
-
-
       EventQueue systemEventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
 
       systemEventQueue.push(new EventQueue()

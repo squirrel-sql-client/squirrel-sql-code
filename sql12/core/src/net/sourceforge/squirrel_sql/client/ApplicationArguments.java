@@ -73,6 +73,8 @@ public class ApplicationArguments implements IApplicationArguments
 		String[] PLUGIN_LIST = { "pluginlist", "plugin-classpath-list", "Specify a comma-delimited list of plugins to load from the CLASSPATH" };
 		String[] SHUTDOWN_TIMEOUT_SECONDS = { "s", "shutdown-timeout-seconds","Specify the number of seconds to allow the application to run before exiting the VM" };
 		String[] DETECT_LONG_RUNNING_SWING_EDT_EVENTS = { "detectEDT", "detect-long-running-swing-edt-events","Detect long running Swing Event Dispatch Thread events" };
+		String[] CONNECT_JDBC_URL = { "cu", "connect-url", "Connect to JDBC-URL (requires exiting Alias for JDBC-URL)"};
+		String[] CONNECT_ALIAS = { "ca", "connect-alias", "Connect to Alias (Alias name)"};
 
 
 		String[][] ALL_OPTIONS =
@@ -88,7 +90,9 @@ public class ApplicationArguments implements IApplicationArguments
 				UI_DEBUG,
 				PLUGIN_LIST,
 				SHUTDOWN_TIMEOUT_SECONDS,
-				DETECT_LONG_RUNNING_SWING_EDT_EVENTS
+				DETECT_LONG_RUNNING_SWING_EDT_EVENTS,
+				CONNECT_JDBC_URL,
+				CONNECT_ALIAS
 		};
 	}
 
@@ -125,6 +129,9 @@ public class ApplicationArguments implements IApplicationArguments
 	/** Time in seconds to allow the application to run prior to exiting the VM */
 	private Integer _shutdownTimerSeconds = null;
 
+	private String _startupJdbcUrl;
+	private String _startupAliasName;
+
    private boolean _detectLongRunningSwingEDTEvents;
 
    /**
@@ -135,7 +142,6 @@ public class ApplicationArguments implements IApplicationArguments
 	 */
 	private ApplicationArguments(String[] args)
 	{
-		super();
 		createOptions();
 
       // set up array to return for public access to cmd line args
@@ -254,7 +260,14 @@ public class ApplicationArguments implements IApplicationArguments
             {
                s_instance._shutdownTimerSeconds = Integer.parseInt(s_instance._cmdLine.getOptionValue(IOptions.SHUTDOWN_TIMEOUT_SECONDS[0]));
             }
-
+            if (s_instance._cmdLine.hasOption(IOptions.CONNECT_JDBC_URL[0]))
+            {
+					s_instance._startupJdbcUrl = s_instance._cmdLine.getOptionValue(IOptions.CONNECT_JDBC_URL[0]);
+            }
+            if (s_instance._cmdLine.hasOption(IOptions.CONNECT_ALIAS[0]))
+            {
+               s_instance._startupAliasName = s_instance._cmdLine.getOptionValue(IOptions.CONNECT_ALIAS[0]);
+            }
          }
          catch (IllegalArgumentException ex)
          {
@@ -296,6 +309,16 @@ public class ApplicationArguments implements IApplicationArguments
 	public String getUserSettingsDirectoryOverride()
 	{
 		return _userSettingsDir;
+	}
+
+	public String getStartupJdbcUrl()
+	{
+		return _startupJdbcUrl;
+	}
+
+	public String getStartupAliasName()
+	{
+		return _startupAliasName;
 	}
 
 	/**
@@ -435,6 +458,12 @@ public class ApplicationArguments implements IApplicationArguments
 
 		opt = createAnOption(IOptions.DETECT_LONG_RUNNING_SWING_EDT_EVENTS);
 		_options.addOption(opt);
+
+		opt = createAnOptionWithArgument(IOptions.CONNECT_JDBC_URL);
+		_options.addOption(opt);
+
+		opt = createAnOptionWithArgument(IOptions.CONNECT_ALIAS);
+		_options.addOption(opt);
 	}
 
 	private Option createAnOption(String[] argInfo)
@@ -465,13 +494,4 @@ public class ApplicationArguments implements IApplicationArguments
 	{
 		return str == null || str.length() == 0;
 	}
-    
-    /**
-     * Resets the internally stored instance so that the next call to initialize
-     * will function as the first call.  Useful for unit tests, so it uses package
-     * level access.
-     */
-    static final void reset() {
-        s_instance = null;
-    }
 }

@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+New command line options to connect to an Alias on application start up:
+  | Short option | Long option   | Description                                               |
+  | ------------ | ------------- | --------------------------------------------------------- |
+  | cu           | connect-url   | Connect to JDBC-URL (requires exiting Alias for JDBC-URL) |
+  | ca           | connect-alias | Connect to Alias (Alias name)                             |
+
 SQL result: New right right mouse menu "Show column details ..."
 
 File export: Export file and command text fields were changed into drop downs with history.
