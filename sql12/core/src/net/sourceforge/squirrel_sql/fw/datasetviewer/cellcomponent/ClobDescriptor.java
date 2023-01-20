@@ -160,7 +160,7 @@ public class ClobDescriptor {
 	public boolean getClobRead(){return _clobRead;}
 	public void setClobRead(boolean clobRead){_clobRead = clobRead;}
 
-	public boolean getWholeClobRead(){return _wholeClobRead;}
+	public boolean wasWholeClobRead(){return _wholeClobRead;}
 	public void setWholeClobRead(boolean wholeClobRead){_wholeClobRead = wholeClobRead;}
 
 	public int getUserSetClobLimit(){return _userSetClobLimit;}

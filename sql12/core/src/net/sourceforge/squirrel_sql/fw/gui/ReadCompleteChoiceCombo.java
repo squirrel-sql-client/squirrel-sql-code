@@ -17,21 +17,20 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- import javax.swing.JComboBox;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JComboBox;
  
-public class ReadTypeCombo extends JComboBox
+public class ReadCompleteChoiceCombo extends JComboBox
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ReadTypeCombo.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ReadCompleteChoiceCombo.class);
 
-	static final int READ_ALL_IDX = 1;
-	static final int READ_PARTIAL_IDX = 0;
+	public static final int READ_PARTIAL_IDX = 0;
+	public static final int READ_ALL_IDX = 1;
 
-	public ReadTypeCombo()
+	public ReadCompleteChoiceCombo()
 	{
 		addItem(s_stringMgr.getString("ReadTypeCombo.onlyFirst"));
 		addItem(s_stringMgr.getString("ReadTypeCombo.all"));

@@ -23,29 +23,17 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
-import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.text.JTextComponent;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -85,11 +73,9 @@ import java.sql.ResultSet;
  * contain values of this data type. It provides the special behavior for null
  * handling and resetting the cell to the original value.
  */
-public class DataTypeClob extends BaseDataTypeComponent
-	implements IDataTypeComponent
+public class DataTypeClob extends BaseDataTypeComponent implements IDataTypeComponent
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DataTypeClob.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataTypeClob.class);
 
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;
@@ -107,57 +93,27 @@ public class DataTypeClob extends BaseDataTypeComponent
 	//?? for this data type.
 	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
-	/**
-	 * Name of this class, which is needed because the class name is needed
-	 * by the static method getControlPanel, so we cannot use something
-	 * like getClass() to find this name.
-	 */
-	private static final String thisClassName =
-		"net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob";
 
-
-	/** Default length of CLOB to read */
-	private static int LARGE_COLUMN_DEFAULT_READ_LENGTH = 255;
-
-	/*
-	 * Properties settable by the user
-	 */
-	// flag for whether we have already loaded the properties or not
-	private static boolean propertiesAlreadyLoaded = false;
-
-	/** Read the contents of Clobs from Result sets when first loading the tables. */
-	private static boolean _readClobs = false;
-
-	/**
-	 * If <TT>_readClobs</TT> is <TT>true</TT> this specifies if the complete
-	 * CLOB should be read in.
-	 */
-	private static boolean _readCompleteClobs = false;
-
-	/**
-	 * If <TT>_readClobs</TT> is <TT>true</TT> and <TT>_readCompleteClobs</TT>
-	 * is <tt>false</TT> then this specifies the number of characters to read.
-	 */
-	private static int _readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
-
-	/**
-	 * If <tt>true</tt> then show newlines as "\n" for the in-cell display,
-	 * otherwise do not display newlines in the in-cell display
-	 * (i.e. they are thrown out by JTextField when it loads the text document behind the cell).
-	 */
-	private static boolean _makeNewlinesVisibleInCell = true;
+	private static DataTypeClobProperties s_properties = new DataTypeClobProperties();
 
     
 	/**
 	 * Constructor - save the data needed by this data type.
 	 */
-	public DataTypeClob(JTable table, ColumnDisplayDefinition colDef) {
+	public DataTypeClob(JTable table, ColumnDisplayDefinition colDef)
+	{
 		_table = table;
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
 
-		loadProperties();
+		s_properties.loadProperties();
 	}
+
+	public DataTypeClobProperties getProperties()
+	{
+		return s_properties;
+	}
+
 
 
 	/** Internal function to get the user-settable properties from the DTProperties,
@@ -169,43 +125,6 @@ public class DataTypeClob extends BaseDataTypeComponent
 	 * Properties window. In either case, the data is static and is set only
 	 * the first time we are called.
 	 */
-	private static void loadProperties()
-	{
-
-		if (propertiesAlreadyLoaded == false)
-		{
-			// get parameters previously set by user, or set default values
-			_readClobs = false;   // set to the default
-			String readClobsString = DTProperties.get(thisClassName, "readClobs");
-			if (readClobsString != null && readClobsString.equals("true"))
-			{
-				_readClobs = true;
-			}
-
-			_readCompleteClobs = false;   // set to the default
-			String readCompleteClobsString = DTProperties.get(thisClassName, "readCompleteClobs");
-			if (readCompleteClobsString != null && readCompleteClobsString.equals("true"))
-			{
-				_readCompleteClobs = true;
-			}
-
-			_readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;   // set to default
-			String readClobsSizeString = DTProperties.get(thisClassName, "readClobsSize");
-			if (readClobsSizeString != null)
-			{
-				_readClobsSize = Integer.parseInt(readClobsSizeString);
-			}
-
-			_makeNewlinesVisibleInCell = true;   // set to the default
-			String makeNewlinesVisibleString = DTProperties.get(thisClassName, "makeNewlinesVisibleInCell");
-			if (makeNewlinesVisibleString != null && makeNewlinesVisibleString.equals("false"))
-			{
-				_makeNewlinesVisibleInCell = false;
-			}
-
-			propertiesAlreadyLoaded = true;
-		}
-	}
 
 	/**
 	 * Return the name of the java class used to hold this data type.
@@ -214,22 +133,6 @@ public class DataTypeClob extends BaseDataTypeComponent
 		return "net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor";
 	}
 
-    /**
-     * Used to provide manual override in cases where we are exporting data.
-     * @return the current value of _readCompleteClob
-     */
-    public static boolean getReadCompleteClob() {
-        return _readCompleteClobs;
-    }    
-
-    /**
-     * Used to provide manual override in cases where we are exporting data.
-     * @param val the new value of _readCompleteClob
-     */
-    public static void setReadCompleteClob(boolean val) {
-        _readCompleteClobs = val;
-    }
-    
 	/*
 	 * First we have the methods for in-cell and Text-table operations
 	 */
@@ -237,10 +140,12 @@ public class DataTypeClob extends BaseDataTypeComponent
 	/**
 	 * Render a value into text for this DataType.
 	 */
-	public String renderObject(Object value) {
-		String text = (String)_renderer.renderObject(value);
-		if (_makeNewlinesVisibleInCell){
-		    text = text.replaceAll("\n", "\\\\n");
+	public String renderObject(Object value)
+	{
+		String text = (String) _renderer.renderObject(value);
+		if(s_properties.isMakeNewlinesVisibleInCell())
+		{
+			text = text.replaceAll("\n", "\\\\n");
 		}
 		return text;
 	}
@@ -267,32 +172,37 @@ public class DataTypeClob extends BaseDataTypeComponent
 	 */
 	public boolean isEditableInCell(Object originalValue)
 	{
-		if(false == _readClobs || false ==_readCompleteClobs)
+		if(wasWholeClobRead(originalValue))
 		{
-			return false;
-		}
+			ClobDescriptor cdesc = (ClobDescriptor) originalValue;
 
-
-		// for convenience, cast the value object to its type
-		ClobDescriptor cdesc = (ClobDescriptor) originalValue;
-
-		if (wholeClobRead(cdesc))
-		{
-			// all the data from the clob has been read.
-			// make sure there are no newlines in it
-			if (cdesc != null && cdesc.getData() != null && cdesc.getData().indexOf('\n') > -1)
+			if(cdesc.wasWholeClobRead())
 			{
-				return false;
-			}
-			else
-			{
-				return true;
+				// Editing in cell is possible without new lines only.
+				if (cdesc != null && cdesc.getData() != null && cdesc.getData().indexOf('\n') > -1)
+				{
+					return false;
+				}
+				else
+				{
+					return true;
+				}
 			}
 		}
 
-		// since we do not have all of the data from the clob, we cannot allow editing
 		return false;
 	}
+
+	public boolean wasWholeClobRead(Object value)
+	{
+		if(value instanceof ClobDescriptor)
+		{
+			return ((ClobDescriptor) value).wasWholeClobRead();
+		}
+
+		return false;
+	}
+
 
 	/**
 	 * See if a value in a column has been limited in some way and
@@ -396,7 +306,7 @@ public class DataTypeClob extends BaseDataTypeComponent
 	 * convert the internal data into a text string that
 	 * can be displayed (and edited, if allowed) in a TextField
 	 * or TextArea, and must handle all
-	 * user key strokes related to editing of that data.
+	 * user keystrokes related to editing of that data.
 	 */
 	public boolean useBinaryEditingPanel() {
 		return false;
@@ -413,15 +323,19 @@ public class DataTypeClob extends BaseDataTypeComponent
 	 */
 	public boolean isEditableInPopup(Object originalValue)
 	{
-		if(false == _readClobs || false ==_readCompleteClobs)
+		return wasWholeClobRead(originalValue);
+	}
+
+	public boolean tryReadWholeClob(Object value)
+	{
+		if (false == value instanceof ClobDescriptor )
 		{
 			return false;
 		}
 
-		// If all of the data has been read, then the clob can be edited in the Popup,
-		// otherwise it cannot
-		return wholeClobRead((ClobDescriptor) originalValue);
+		return _wholeClobRead((ClobDescriptor) value);
 	}
+
 
 	/*
 	 * Return a JTextArea usable in the CellPopupDialog
@@ -511,16 +425,22 @@ public class DataTypeClob extends BaseDataTypeComponent
 	 * Make sure the entire CLOB data is read in.
 	 * Return true if it has been read successfully, and false if not.
 	 */
-	private boolean wholeClobRead(ClobDescriptor cdesc) {
-		if (cdesc == null)
-			return true;	// can use an empty clob for editing
+	private boolean _wholeClobRead(ClobDescriptor cdesc)
+	{
+		if(cdesc == null)
+		{
+			return true;   // can use an empty clob for editing
+		}
 
-		if (cdesc.getWholeClobRead())
-			return true;	// the whole clob has been previously read in
+		if(cdesc.wasWholeClobRead())
+		{
+			return true;   // the whole clob has been previously read in
+		}
 
 		// data was not fully read in before, so try to do that now
-		try {
-			String data = cdesc.getClob().getSubString(1, (int)cdesc.getClob().length());
+		try
+		{
+			String data = cdesc.getClob().getSubString(1, (int) cdesc.getClob().length());
 
 			// read succeeded, so reset the ClobDescriptor to match
 			cdesc.setClobRead(true);
@@ -529,9 +449,10 @@ public class DataTypeClob extends BaseDataTypeComponent
 			cdesc.setUserSetClobLimit(0);
 
 			// we successfully read the whole thing
-			 return true;
+			return true;
 		}
-		catch (Exception ex) {
+		catch (Exception ex)
+		{
 			cdesc.setClobRead(false);
 			cdesc.setWholeClobRead(false);
 			cdesc.setData(null);
@@ -559,7 +480,7 @@ public class DataTypeClob extends BaseDataTypeComponent
 	public static Object staticReadResultSet(ResultSet rs, int index)
 		throws java.sql.SQLException
 	{
-		loadProperties();
+		s_properties.loadProperties();
 
 
 		// We always get the CLOB, even when we are not reading the contents.
@@ -575,7 +496,7 @@ public class DataTypeClob extends BaseDataTypeComponent
 
 		// CLOB exists, so try to read the data from it
 		// based on the user's directions
-		if (_readClobs)
+		if (s_properties.isReadClobsOnTableLoading())
 		{
 			// User said to read at least some of the data from the clob
 			String clobData = null;
@@ -585,9 +506,9 @@ public class DataTypeClob extends BaseDataTypeComponent
 				if (len > 0)
 				{
 					int charsToRead = len;
-					if ( ! _readCompleteClobs)
+					if ( !s_properties.isReadCompleteClobs())
 					{
-						charsToRead = _readClobsSize;
+						charsToRead = s_properties.getReadClobsSize();
 					}
 					if (charsToRead > len)
 					{
@@ -599,14 +520,12 @@ public class DataTypeClob extends BaseDataTypeComponent
 
 			// determine whether we read all there was in the clob or not
 			boolean wholeClobRead = false;
-			if (_readCompleteClobs || clobData == null ||
-				clobData.length() < _readClobsSize)
+			if (s_properties.isReadCompleteClobs() || clobData == null || clobData.length() < s_properties.getReadClobsSize())
 			{
 				wholeClobRead = true;
 			}
 
-			return new ClobDescriptor(clob, clobData, true, wholeClobRead,
-				_readClobsSize);
+			return new ClobDescriptor(clob, clobData, true, wholeClobRead, s_properties.getReadClobsSize());
 		}
 		else
 		{
@@ -834,9 +753,9 @@ public class DataTypeClob extends BaseDataTypeComponent
 
 		 // if this panel is called before any instances of the class have been
 		 // created, we need to load the properties from the DTProperties.
-		 loadProperties();
+		 s_properties.loadProperties();
 
-		return new ClobOkJPanel();
+		return new DataTypeClobOkJPanel(s_properties);
 	 }
 
 	 @Override
@@ -844,139 +763,4 @@ public class DataTypeClob extends BaseDataTypeComponent
 		 return StringUtilities.singleQuote(value);
 	}
 
-	/**
-	  * Inner class that extends OkJPanel so that we can call the ok()
-	  * method to save the data when the user is happy with it.
-	  */
-	 private static class ClobOkJPanel extends OkJPanel
-	 {
-        /*
-		 * GUI components - need to be here because they need to be
-		 * accessible from the event handlers to alter each other's state.
-		 */
-		 // check box for whether to read contents during table load or not
-		 // i18n[dataTypeBigDecimal.readContentsOnFirstLoad=Read contents when table is first loaded;]
-		 private JCheckBox _showClobChk = new JCheckBox(s_stringMgr.getString("dataTypeBigDecimal.readContentsOnFirstLoad"));
-
-		 // label for type combo - used to enable/disable text associated with the combo
-		 // i18n[dataTypeBigDecimal.read2=Read]
-		 private RightLabel _typeDropLabel = new RightLabel(s_stringMgr.getString("dataTypeBigDecimal.read2"));
-
-		 // Combo box for read-all/read-part of blob
-		 private ReadTypeCombo _clobTypeDrop = new ReadTypeCombo();
-
-		 // text field for how many bytes of Blob to read
-		 private IntegerField _showClobSizeField = new IntegerField(5);
-
-		 // check box for whether to show newlines as "\n" for in-cell display
-		 private JCheckBox _makeNewlinesVisibleInCellChk =
-			 // i18n[dataTypeBigDecimal.newlinesAsbackslashN=Show newlines as \\n within cells]
-			 new JCheckBox(s_stringMgr.getString("dataTypeBigDecimal.newlinesAsbackslashN"));
-
-
-		 public ClobOkJPanel()
-		 {
-
-			 /* set up the controls */
-			 // checkbox for read/not-read on table load
-			 _showClobChk.setSelected(_readClobs);
-			 _showClobChk.addChangeListener(new ChangeListener()
-			 {
-				 public void stateChanged(ChangeEvent e)
-				 {
-					 _clobTypeDrop.setEnabled(_showClobChk.isSelected());
-					 _typeDropLabel.setEnabled(_showClobChk.isSelected());
-					 _showClobSizeField.setEnabled(_showClobChk.isSelected() &&
-						 (_clobTypeDrop.getSelectedIndex() == 0));
-				 }
-			 });
-
-			 // Combo box for read-all/read-part of blob
-			 _clobTypeDrop = new ReadTypeCombo();
-			 _clobTypeDrop.setSelectedIndex((_readCompleteClobs) ? 1 : 0);
-			 _clobTypeDrop.addActionListener(new ActionListener()
-			 {
-				 public void actionPerformed(ActionEvent e)
-				 {
-					 _showClobSizeField.setEnabled(_clobTypeDrop.getSelectedIndex() == 0);
-				 }
-			 });
-
-			 // field for size of text to read
-			 _showClobSizeField = new IntegerField(5);
-			 _showClobSizeField.setInt(_readClobsSize);
-
-			 // checkbox for displaying newlines as \n in-cell
-			 _makeNewlinesVisibleInCellChk.setSelected(_makeNewlinesVisibleInCell);
-
-			 // handle cross-connection between fields
-			 _clobTypeDrop.setEnabled(_readClobs);
-			 _typeDropLabel.setEnabled(_readClobs);
-			 _showClobSizeField.setEnabled(_readClobs && ! _readCompleteClobs);
-
-			 /*
-						  * Create the panel and add the GUI items to it
-							*/
-
-			 setLayout(new GridBagLayout());
-
-			 // i18n[dataTypeClob.typeClob=CLOB   (SQL type 2005)]
-			 setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dataTypeClob.typeClob_NClob")));
-			 final GridBagConstraints gbc = new GridBagConstraints();
-			 gbc.fill = GridBagConstraints.HORIZONTAL;
-			 gbc.insets = new Insets(4, 4, 4, 4);
-			 gbc.anchor = GridBagConstraints.WEST;
-
-			 gbc.gridx = 0;
-			 gbc.gridy = 0;
-
-			 gbc.gridwidth = 1;
-			 add(_showClobChk, gbc);
-
-			 ++gbc.gridx;
-			 add(_typeDropLabel, gbc);
-
-			 ++gbc.gridx;
-			 add(_clobTypeDrop, gbc);
-
-			 ++gbc.gridx;
-			 add(_showClobSizeField, gbc);
-
-			 ++gbc.gridy;
-			 gbc.gridx = 0;
-			 gbc.gridwidth = GridBagConstraints.REMAINDER;
-			 add(_makeNewlinesVisibleInCellChk, gbc);
-
-		 } // end of constructor for inner class
-
-
-		 /**
-		  * User has clicked OK in the surrounding JPanel,
-		  * so save the current state of all variables
-		  */
-		 public void ok()
-		 {
-			 // get the values from the controls and set them in the static properties
-			 _readClobs = _showClobChk.isSelected();
-			 DTProperties.put(
-				 thisClassName,
-				 "readClobs", Boolean.valueOf(_readClobs).toString());
-
-			 _readCompleteClobs = (_clobTypeDrop.getSelectedIndex() == 0) ? false : true;
-			 DTProperties.put(
-				 thisClassName,
-				 "readCompleteClobs", Boolean.valueOf(_readCompleteClobs).toString());
-
-			 _readClobsSize = _showClobSizeField.getInt();
-			 DTProperties.put(
-				 thisClassName,
-				 "readClobsSize", Integer.toString(_readClobsSize));
-
-			 _makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
-			 DTProperties.put(
-				 thisClassName,
-				 "makeNewlinesVisibleInCell", Boolean.valueOf(_makeNewlinesVisibleInCell).toString());
-		 }
-
-	 } // end of inner class
 }

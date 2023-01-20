@@ -23,10 +23,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
-import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -34,20 +31,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.text.JTextComponent;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -88,7 +76,6 @@ import java.sql.SQLException;
 
 public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComponent
 {
-
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataTypeBlob.class);
 
 	private static ILogger s_log = LoggerController.createLogger(DataTypeBlob.class);
@@ -110,91 +97,25 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 	//?? for this data type.
 	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
-	/**
-	 * Name of this class, which is needed because the class name is needed
-	 * by the static method getControlPanel, so we cannot use something
-	 * like getClass() to find this name.
-	 */
-	private static final String thisClassName = DataTypeBlob.class.getName();
-
-
-	/** Default length of BLOB to read */
-	private static int LARGE_COLUMN_DEFAULT_READ_LENGTH = 255;
-
-	/*
-	 * Properties settable by the user
-	 */
-	 // flag for whether we have already loaded the properties or not
-	 private static boolean propertiesAlreadyLoaded = false;
-
-
-	/** Read the contents of Blobs from Result sets when first loading the tables. */
-	private static boolean _readBlobs = false;
-
-	/**
-	 * If <TT>_readBlobs</TT> is <TT>true</TT> this specifies if the complete
-	 * BLOB should be read in.
-	 */
-	private static boolean _readCompleteBlobs = false;
-
-	/**
-	 * If <TT>_readBlobs</TT> is <TT>true</TT> and <TT>_readCompleteBlobs</TT>
-	 * is <tt>false</TT> then this specifies the number of characters to read.
-	 */
-	private static int _readBlobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
-
-
-
-
+	private static DataTypeBlobProperties s_properties = new DataTypeBlobProperties();
 
 	/**
 	 * Constructor - save the data needed by this data type.
 	 */
-	public DataTypeBlob(JTable table, ColumnDisplayDefinition colDef) {
+	public DataTypeBlob(JTable table, ColumnDisplayDefinition colDef)
+	{
 		_table = table;
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
 
-		loadProperties();
+		s_properties.loadProperties();
 	}
 
-	/** Internal function to get the user-settable properties from the DTProperties,
-	 * if they exist, and to ensure that defaults are set if the properties have
-	 * not yet been created.
-	 * <P>
-	 * This method may be called from different places depending on whether
-	 * an instance of this class is created before the user brings up the Session
-	 * Properties window.  In either case, the data is static and is set only
-	 * the first time we are called.
-	 */
-	private static void loadProperties() {
-
-		//set the property values
-		// Note: this may have already been done by another instance of
-		// this DataType created to handle a different column.
-		if (propertiesAlreadyLoaded == false) {
-			// get parameters previously set by user, or set default values
-			_readBlobs = false;	// set to the default
-			String readBlobsString = DTProperties.get(
-				thisClassName, "readBlobs");
-			if (readBlobsString != null && readBlobsString.equals("true"))
-				_readBlobs = true;
-
-			_readCompleteBlobs = false;	// set to the default
-			String readCompleteBlobsString = DTProperties.get(
-				thisClassName, "readCompleteBlobs");
-			if (readCompleteBlobsString != null && readCompleteBlobsString.equals("true"))
-				_readCompleteBlobs = true;
-
-			_readBlobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;	// set to default
-			String readBlobsSizeString = DTProperties.get(
-				thisClassName, "readBlobsSize");
-			if (readBlobsSizeString != null)
-				_readBlobsSize = Integer.parseInt(readBlobsSizeString);
-
-			propertiesAlreadyLoaded = true;
-		}
+	public DataTypeBlobProperties getProperties()
+	{
+		return s_properties;
 	}
+
 
 	/**
 	 * Return the name of the java class used to hold this data type.
@@ -229,14 +150,14 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 	 */
 	public boolean isEditableInCell(Object originalValue)
 	{
-		if(false == _readBlobs || false ==_readCompleteBlobs)
-		{
-			return false;
-		}
+		return wasWholeBlobRead(originalValue);
+	}
 
+	public boolean wasWholeBlobRead(Object originalValue)
+	{
 		if (originalValue instanceof BlobDescriptor)
 		{
-			return wholeBlobRead((BlobDescriptor) originalValue);
+			return ((BlobDescriptor) originalValue).wasWholeBlobRead();
 		}
 		else
 		{
@@ -379,21 +300,7 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 	 */
 	public boolean isEditableInPopup(Object originalValue)
 	{
-		if(false == _readBlobs || false ==_readCompleteBlobs)
-		{
-			return false;
-		}
-
-		// If all of the data has been read, then the blob can be edited in the Popup,
-		// otherwise it cannot
-		if (originalValue instanceof BlobDescriptor)
-		{
-			return wholeBlobRead((BlobDescriptor) originalValue);
-		}
-		else
-		{
-			return false;
-		}
+		return wasWholeBlobRead(originalValue);
 	}
 
 	/*
@@ -478,18 +385,32 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 			}
 		}
 
+
+	public boolean tryReadWholeBlob(Object value)
+	{
+		if (value instanceof BlobDescriptor)
+		{
+			return _wholeBlobRead((BlobDescriptor) value);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+
 	/*
 	 * Make sure the entire BLOB data is read in.
 	 * Return true if it has been read successfully, and false if not.
 	 */
-	private boolean wholeBlobRead(BlobDescriptor bdesc)
+	private boolean _wholeBlobRead(BlobDescriptor bdesc)
 	{
 		if (bdesc == null)
 		{
 			return true;   // can use an empty blob for editing
 		}
 
-		if (bdesc.getWholeBlobRead())
+		if (bdesc.wasWholeBlobRead())
 		{
 			return true;   // the whole blob has been previously read in
 		}
@@ -534,7 +455,7 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 	  */
 	public static Object staticReadResultSet(ResultSet rs, int index) throws java.sql.SQLException
 	{
-		loadProperties();
+		s_properties.loadProperties();
 
 		 // We always get the BLOB, even when we are not reading the contents.
 		 // Since the BLOB is just a pointer to the BLOB data rather than the
@@ -563,7 +484,7 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 
 		 // BLOB exists, so try to read the data from it
 		 // based on the user's directions
-		 if (false == _readBlobs)
+		 if (false == s_properties.isReadBlobsOnTableLoading())
 		 {
 			 // user said not to read any of the data from the blob
 			 return new BlobDescriptor(blobResult.getBlob(), null, false, false, 0);
@@ -577,9 +498,9 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 			 if (len > 0)
 			 {
 				 int charsToRead = len;
-				 if (!_readCompleteBlobs)
+				 if (!s_properties.isReadCompleteBlobs())
 				 {
-					 charsToRead = _readBlobsSize;
+					 charsToRead = s_properties.getReadBlobsSize();;
 				 }
 				 if (charsToRead > len)
 				 {
@@ -591,12 +512,12 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 
 		 // determine whether we read all there was in the blob or not
 		 boolean wholeBlobRead = false;
-		 if (_readCompleteBlobs || blobData.length < _readBlobsSize)
+		 if (s_properties.isReadCompleteBlobs() || blobData.length < s_properties.getReadBlobsSize())
 		 {
 			 wholeBlobRead = true;
 		 }
 
-		 return new BlobDescriptor(blobResult.getBlob(), blobData, true, wholeBlobRead, _readBlobsSize);
+		 return new BlobDescriptor(blobResult.getBlob(), blobData, true, wholeBlobRead, s_properties.getReadBlobsSize());
 	}
 
 	/**
@@ -637,7 +558,7 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 						+ "See menu File --> \"Global Preferences\" --> tab \"Data type controls\" --> section Blob.\n"
 						+ "Hint: Check out the settings of section Unknown as well.";
 
-		if (false == _readBlobs || false == _readCompleteBlobs)
+		if (false == s_properties.isReadBlobsOnTableLoading() || false == s_properties.isReadCompleteBlobs())
 		{
 			throw new RuntimeException(msg, exceptionToHandle);
 		}
@@ -858,125 +779,10 @@ public class DataTypeBlob extends BaseDataTypeComponent implements IDataTypeComp
 
 		 // if this panel is called before any instances of the class have been
 		 // created, we need to load the properties from the DTProperties.
-		 loadProperties();
+		 s_properties.loadProperties();
 
-		return new BlobOkJPanel();
+		return new DataTypeBlobOkPanel(s_properties);
 	 }
 
 
-
-	 /**
-	  * Inner class that extends OkJPanel so that we can call the ok()
-	  * method to save the data when the user is happy with it.
-	  */
-	 private static class BlobOkJPanel extends OkJPanel {
-
-		 /*
-		 * GUI components - need to be here because they need to be
-		 * accessible from the event handlers to alter each other's state.
-		 */
-		// check box for whether to read contents during table load or not
-	    private JCheckBox _showBlobChk = new JCheckBox(
-		// i18n[dataTypeBlob.readOnFirstLoad=Read contents when table is first loaded:]
-		s_stringMgr.getString("dataTypeBlob.readOnFirstLoad"));
-
-		// label for type combo - used to enable/disable text associated with the combo
-		// i18n[dataTypeBlob.read=Read]
-		private RightLabel _typeDropLabel = new RightLabel(s_stringMgr.getString("dataTypeBlob.read"));
-
-		// Combo box for read-all/read-part of blob
-		private ReadTypeCombo _blobTypeDrop = new ReadTypeCombo();
-
-		// text field for how many bytes of Blob to read
-		private IntegerField _showBlobSizeField = new IntegerField(5);
-
-
-		public BlobOkJPanel() {
-
-			/* set up the controls */
-			// checkbox for read/not-read on table load
-			_showBlobChk.setSelected(_readBlobs);
-			_showBlobChk.addChangeListener(new ChangeListener(){
-				public void stateChanged(ChangeEvent e) {
-				_blobTypeDrop.setEnabled(_showBlobChk.isSelected());
-				_typeDropLabel.setEnabled(_showBlobChk.isSelected());
-				_showBlobSizeField.setEnabled(_showBlobChk.isSelected() &&
-					(_blobTypeDrop.getSelectedIndex()== 0));
-				}
-			});
-
-			// Combo box for read-all/read-part of blob
-			_blobTypeDrop = new ReadTypeCombo();
-			_blobTypeDrop.setSelectedIndex( (_readCompleteBlobs) ? 1 : 0 );
-			_blobTypeDrop.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent e) {
-					_showBlobSizeField.setEnabled(_blobTypeDrop.getSelectedIndex()== 0);
-				}
-			});
-
-			_showBlobSizeField = new IntegerField(5);
-			_showBlobSizeField.setInt(_readBlobsSize);
-
-
-			// handle cross-connection between fields
-			_blobTypeDrop.setEnabled(_readBlobs);
-			_typeDropLabel.setEnabled(_readBlobs);
-			_showBlobSizeField.setEnabled(_readBlobs &&  ! _readCompleteBlobs);
-
-			/*
-			  * Create the panel and add the GUI items to it
-			 */
-
-			setLayout(new GridBagLayout());
-
-
-			// i18n[dataTypeBlob.blobType=BLOB   (SQL type 2004)]
-			setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dataTypeBlob.blobType")));
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
-			gbc.anchor = GridBagConstraints.WEST;
-
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-
-			gbc.gridwidth = 1;
-			add(_showBlobChk, gbc);
-
-			++gbc.gridx;
-			add(_typeDropLabel, gbc);
-
-			++gbc.gridx;
-			add(_blobTypeDrop, gbc);
-
-			++gbc.gridx;
-			add(_showBlobSizeField, gbc);
-
-		} // end of constructor for inner class
-
-
-		/**
-		  * User has clicked OK in the surrounding JPanel,
-		  * so save the current state of all variables
-		  */
-		public void ok() {
-			// get the values from the controls and set them in the static properties
-			_readBlobs = _showBlobChk.isSelected();
-			DTProperties.put(
-				thisClassName,
-				"readBlobs", Boolean.valueOf(_readBlobs).toString());
-
-
-			_readCompleteBlobs = (_blobTypeDrop.getSelectedIndex() == 0) ? false : true;
-			DTProperties.put(
-				thisClassName,
-				"readCompleteBlobs", Boolean.valueOf(_readCompleteBlobs).toString());
-
-			_readBlobsSize = _showBlobSizeField.getInt();
-			DTProperties.put(
-				thisClassName,
-				"readBlobsSize", Integer.toString(_readBlobsSize));
-		}
-
-	 } // end of inner class
 }

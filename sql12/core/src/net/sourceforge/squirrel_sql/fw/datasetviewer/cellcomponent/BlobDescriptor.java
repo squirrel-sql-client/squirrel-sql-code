@@ -17,12 +17,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
-import java.sql.Blob;
-import java.util.Arrays;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.sql.Blob;
+import java.util.Arrays;
 
 /**
  * @author gwg
@@ -165,7 +165,7 @@ public class BlobDescriptor {
 	public boolean getBlobRead(){return _blobRead;}
 	public void setBlobRead(boolean blobRead){_blobRead = blobRead;}
 	 
-	public boolean getWholeBlobRead(){return _wholeBlobRead;}
+	public boolean wasWholeBlobRead(){return _wholeBlobRead;}
 	public void setWholeBlobRead(boolean wholeBlobRead){_wholeBlobRead = wholeBlobRead;}
 
 	public int getUserSetBlobLimit(){return _userSetBlobLimit;}

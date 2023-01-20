@@ -6,6 +6,15 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Data types BLOB and CLOB loading configuration was restructured and fixed.
+  Both data types now offer the following loading options:
+   - Read contents when table is first loaded (offers to limit the amount of data to read)
+   - Read contents when table cell becomes visible
+   - Read contents when table cell is focused
+   - Do not read contents
+  See menu File --> Global Preferences --> tab "Data Type Controls" --> sections BLOB and CLOB
+
+
 New command line options to connect to an Alias on application start up:
   | Short option | Long option   | Description                                               |
   | ------------ | ------------- | --------------------------------------------------------- |

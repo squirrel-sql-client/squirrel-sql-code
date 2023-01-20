@@ -2,9 +2,10 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.ColoringService;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
+import java.awt.Component;
 
 /**
  * The base component of a DefaultTableCellRenderer is a JLabel.
@@ -43,6 +44,8 @@ public final class CellRenderer extends DefaultTableCellRenderer implements Squi
          _coloringService.colorCell(this, _dataTypeObject, table, value, isSelected, hasFocus, row, column);
       }
 
+      BlobClobLoadCheck.check(_dataTypeObject, table, value, isSelected, hasFocus, row, column);
+
       return label;
    }
 
@@ -51,9 +54,14 @@ public final class CellRenderer extends DefaultTableCellRenderer implements Squi
    {
       // default behavior if no DataType object is to use the
       // DefaultColumnRenderer with no modification.
-      if (_dataTypeObject != null)
+      if(_dataTypeObject != null)
+      {
          super.setValue(_dataTypeObject.renderObject(value));
-      else super.setValue(DefaultColumnRenderer.getInstance().renderObject(value));
+      }
+      else
+      {
+         super.setValue(DefaultColumnRenderer.getInstance().renderObject(value));
+      }
    }
 
    public Object renderValue(Object value)
