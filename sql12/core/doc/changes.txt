@@ -41,6 +41,8 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+Searching Saved Sessions: NullPointer occurred when the default Alias of a saved Session was deleted.
+
 SQL result table function "Mark consecutive duplicate values in columns"
   was erroneous when columns where moved.
 

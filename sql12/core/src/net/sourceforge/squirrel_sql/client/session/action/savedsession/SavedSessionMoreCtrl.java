@@ -1,21 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
-import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.Frame;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -26,6 +10,22 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
+import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 public class SavedSessionMoreCtrl
 {
@@ -225,12 +225,15 @@ public class SavedSessionMoreCtrl
       {
          final ISQLAlias alias = Main.getApplication().getAliasesAndDriversManager().getAlias(new UidIdentifier(savedSession.getDefaultAliasIdString()));
 
-         if((null != alias.getName() && StringUtils.containsIgnoreCase(alias.getName(), filterText))
-            || (null != alias.getUrl() && StringUtils.containsIgnoreCase(alias.getUrl(), filterText))
-            || (null != alias.getUserName() && StringUtils.containsIgnoreCase(alias.getUserName(), filterText))
-         )
+         if(null != alias )
          {
-            return true;
+            if((null != alias.getName() && StringUtils.containsIgnoreCase(alias.getName(), filterText))
+               || (null != alias.getUrl() && StringUtils.containsIgnoreCase(alias.getUrl(), filterText))
+               || (null != alias.getUserName() && StringUtils.containsIgnoreCase(alias.getUserName(), filterText))
+            )
+            {
+               return true;
+            }
          }
       }
 
