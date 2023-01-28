@@ -14,23 +14,32 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.FollowFilter;
+import org.eclipse.jgit.revwalk.RenameCallback;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.OrTreeFilter;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 import javax.swing.JOptionPane;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -76,6 +85,10 @@ public class GitHandler
     */
    public static String getVersionOfFile(File file, ObjectId revCommitId)
    {
+      return getVersionOfFile(file, revCommitId, Set.of());
+   }
+   public static String getVersionOfFile(File file, ObjectId revCommitId, Set<String> previousNamesOfFileRelativeToRepositoryRoot)
+   {
       if (null == file)
       {
          return null;
@@ -116,7 +129,19 @@ public class GitHandler
             {
                treeWalk.addTree(tree);
                treeWalk.setRecursive(true);
-               treeWalk.setFilter(PathFilter.create(filePathRelativeToRepoRoot));
+
+               if(previousNamesOfFileRelativeToRepositoryRoot.isEmpty())
+               {
+                  treeWalk.setFilter(PathFilter.create(filePathRelativeToRepoRoot));
+               }
+               else
+               {
+                  ArrayList<PathFilter> pathFilters = new ArrayList<>();
+                  pathFilters.add(PathFilter.create(filePathRelativeToRepoRoot));
+                  previousNamesOfFileRelativeToRepositoryRoot.forEach(f -> pathFilters.add((PathFilter.create(f))));
+                  treeWalk.setFilter(OrTreeFilter.create(pathFilters.toArray(new PathFilter[0])));
+               }
+
                if (!treeWalk.next())
                {
                   // We get here when the file was saved but not yet added.
@@ -325,7 +350,6 @@ public class GitHandler
          );
 
          s_log.info(log);
-
       }
       catch (IOException e)
       {
@@ -397,15 +421,38 @@ public class GitHandler
           Git git = Git.open(repository.getDirectory());)
       {
 
-         String filePathRelativeToRepoRoot = getPathRelativeToRepo(repository, file);
+         Config config = repository.getConfig();
+         config.setBoolean("diff", null, "renames", true);
+
+         RevWalk rw = new RevWalk(repository);
+
+
+         org.eclipse.jgit.diff.DiffConfig dc = config.get(org.eclipse.jgit.diff.DiffConfig.KEY);
+         FollowFilter followFilter = FollowFilter.create(getPathRelativeToRepo(repository, file), dc);
+
+         HashSet<String> previousNamesOfFileRelativeToRepositoryRoot = new HashSet<>();
+         followFilter.setRenameCallback(new RenameCallback() {
+            @Override
+            public void renamed(DiffEntry entry)
+            {
+               previousNamesOfFileRelativeToRepositoryRoot.add(entry.getOldPath());
+            }
+         });
+
+         rw.setTreeFilter(followFilter);
+         rw.markStart(rw.parseCommit(repository.resolve(Constants.HEAD)));
 
          ObjectId headCommitId = repository.resolve(Constants.HEAD);
 
-         Iterable<RevCommit> revCommits = git.log().addPath(filePathRelativeToRepoRoot).call();
+//         String filePathRelativeToRepoRoot = getPathRelativeToRepo(repository, file);
+//
+//         ObjectId headCommitId = repository.resolve(Constants.HEAD);
+//
+//         Iterable<RevCommit> revCommits = git.log().addPath(filePathRelativeToRepoRoot).call();
 
-         for (RevCommit revCommit : revCommits)
+         for (RevCommit revCommit : rw)
          {
-            ret.add(new RevisionWrapper(revCommit, git, headCommitId));
+            ret.add(new RevisionWrapper(revCommit, git, headCommitId, previousNamesOfFileRelativeToRepositoryRoot));
 
 //         String buf =
 //         "GitHandler.getRevisions " + revCommit.getAuthorIdent().getWhen() + "  "
@@ -437,7 +484,7 @@ public class GitHandler
       }
 
       try(Repository repository = findRepository(toDelete);
-          Git git = Git.open(repository.getDirectory());)
+          Git git = Git.open(repository.getDirectory()))
       {
          final String pathRelativeToRepo = getPathRelativeToRepo(repository, toDelete);
 
@@ -448,4 +495,84 @@ public class GitHandler
          throw Utilities.wrapRuntime(e);
       }
    }
+
+   public static boolean moveAndDeleteOld(File newFile, File previousFile)
+   {
+      try(Repository newRepo = findRepository(newFile);
+          Repository oldRepo = findRepository(previousFile))
+      {
+         if(   null != newRepo && null != oldRepo
+               && getRepositoryWorkTreePath(newRepo).equals(getRepositoryWorkTreePath(oldRepo))
+         )
+         {
+            try(Git git = Git.open(newRepo.getDirectory()))
+            {
+               String newFileRelativeToRepo = getPathRelativeToRepo(newRepo, newFile);
+               String previousFileRelativeToRepo = getPathRelativeToRepo(newRepo, previousFile);
+
+               git.add().addFilepattern(newFileRelativeToRepo).call();
+               //deleteFilePhysically(previousFile);
+               git.rm().addFilepattern(previousFileRelativeToRepo).call();
+
+               // detect move
+               git.status().addPath(newFileRelativeToRepo).addPath(previousFileRelativeToRepo).call();
+
+               RevCommit revCommit = git.commit()
+                                        .setOnly(newFileRelativeToRepo)
+                                        .setOnly(previousFileRelativeToRepo)
+                                        .setMessage(s_stringMgr.getString("GitHandler.move.committed", previousFile.getAbsolutePath(), newFile.getAbsolutePath()))
+                                        .call();
+
+               logMove(newRepo, previousFileRelativeToRepo, newFileRelativeToRepo, revCommit);
+            }
+            return true;
+         }
+         else
+         {
+            deleteFilePhysically(previousFile);
+            return false;
+         }
+      }
+      catch (Exception e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
+   private static void deleteFilePhysically(File previousFile) throws IOException
+   {
+      Files.deleteIfExists(Path.of(previousFile.toURI()));
+   }
+
+   private static void logMove(Repository repository, String previousFileRelativeToRepo, String newFileRelativeToRepo, RevCommit revCommit)
+   {
+      try
+      {
+         String msg = s_stringMgr.getString("GitHandler.move.commitMsg",
+                                            previousFileRelativeToRepo,
+                                            newFileRelativeToRepo,
+                                            repository.getBranch(),
+                                            getRepositoryWorkTreePath(repository),
+                                            revCommit.getCommitterIdent().getName()
+                                           );
+
+         Main.getApplication().getMessageHandler().showMessage(msg);
+
+         String log = s_stringMgr.getString("GitHandler.move.commitLog",
+                                            previousFileRelativeToRepo,
+                                            newFileRelativeToRepo,
+                                            repository.getBranch(),
+                                            getRepositoryWorkTreePath(repository),
+                                            revCommit.getCommitterIdent().getName(),
+                                            revCommit.getId()
+                                           );
+
+         s_log.info(log);
+      }
+      catch (IOException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
+   }
+
 }

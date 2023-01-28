@@ -1,5 +1,34 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.gui.dnd.DropedFileExtractor;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
+import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
+import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
+import net.sourceforge.squirrel_sql.fw.gui.filechooser.PreviewFileChooser;
+import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import java.awt.Desktop;
 import java.awt.Frame;
 import java.awt.Rectangle;
@@ -17,35 +46,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTree;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.gui.dnd.DropedFileExtractor;
-import net.sourceforge.squirrel_sql.client.session.filemanager.FileHandler;
-import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
-import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
-import net.sourceforge.squirrel_sql.fw.gui.filechooser.PreviewFileChooser;
-import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class RecentFilesController
 {
@@ -651,6 +651,10 @@ public class RecentFilesController
       JMenuItem mnuCopyPath = new JMenuItem(s_stringMgr.getString("RecentFilesController.copy.path"));
       mnuCopyPath.addActionListener(e -> onCopyPath(fileWrapper));
       popUp.add(mnuCopyPath);
+
+      JMenuItem mnuRemove = new JMenuItem(s_stringMgr.getString("RecentFilesController.remove.from.recent"));
+      mnuRemove.addActionListener(e -> onRemoveSelected());
+      popUp.add(mnuRemove);
 
 
       DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();

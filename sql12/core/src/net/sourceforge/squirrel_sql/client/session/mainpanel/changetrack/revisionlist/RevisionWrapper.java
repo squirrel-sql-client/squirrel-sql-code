@@ -6,6 +6,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 public class RevisionWrapper
@@ -18,8 +19,9 @@ public class RevisionWrapper
    private ObjectId _revCommitId;
 
    private boolean _headRevision;
+   private HashSet<String> _previousNamesOfFileRelativeToRepositoryRoot;
 
-   public RevisionWrapper(RevCommit revCommit, Git git, ObjectId headCommitId)
+   public RevisionWrapper(RevCommit revCommit, Git git, ObjectId headCommitId, HashSet<String> previousNamesOfFileRelativeToRepositoryRoot)
    {
       try
       {
@@ -30,6 +32,7 @@ public class RevisionWrapper
          _commitMsg = revCommit.getFullMessage();
          _revCommitId = revCommit.toObjectId();
          _headRevision = headCommitId.equals(_revCommitId);
+         _previousNamesOfFileRelativeToRepositoryRoot = previousNamesOfFileRelativeToRepositoryRoot;
       }
       catch (Exception e)
       {
@@ -75,6 +78,11 @@ public class RevisionWrapper
    public ObjectId getRevCommitId()
    {
       return _revCommitId;
+   }
+
+   public HashSet<String> getPreviousNamesOfFileRelativeToRepositoryRoot()
+   {
+      return _previousNamesOfFileRelativeToRepositoryRoot;
    }
 
    private String firstTwoLines(String fullMessage)

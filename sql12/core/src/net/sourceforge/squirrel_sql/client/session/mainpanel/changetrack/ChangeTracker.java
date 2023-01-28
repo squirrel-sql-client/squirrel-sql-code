@@ -105,6 +105,12 @@ public class ChangeTracker
       _sqlEntry.setTextAreaPaintListener(() -> _changeTrackPanel.requestGutterRepaint());
    }
 
+   public void reInitChangeTrackingOnFileMoved()
+   {
+      initChangeTracking(_fileEditorAPI);
+   }
+
+
    private void onLeftGutterMouseMoved(MouseEvent e)
    {
       _gutterItemsManager.leftGutterMouseMoved(e, _changeTrackPanel.trackingGutterLeft);

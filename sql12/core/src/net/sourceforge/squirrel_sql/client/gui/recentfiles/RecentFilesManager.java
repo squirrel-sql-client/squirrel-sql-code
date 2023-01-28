@@ -72,7 +72,6 @@ public class RecentFilesManager
 
    public void saveJsonBean(File recentFilesBeanFile)
    {
-
       JsonMarshalUtil.writeObjectToFile(recentFilesBeanFile, _recentFilesJsonBean);
    }
 
@@ -193,5 +192,11 @@ public class RecentFilesManager
       }
 
       return aliasFile.getOpenAtStartupFile();
+   }
+
+   public void removeFromRecentFiles(File toRemove)
+   {
+      _recentFilesJsonBean.getRecentFiles().removeIf(f -> f.equals(toRemove.getAbsolutePath()));
+      _recentFilesJsonBean.getAliasFileXmlBeans().forEach(af -> af.getRecentFiles().removeIf(f -> f.equals(toRemove.getAbsolutePath())) );
    }
 }

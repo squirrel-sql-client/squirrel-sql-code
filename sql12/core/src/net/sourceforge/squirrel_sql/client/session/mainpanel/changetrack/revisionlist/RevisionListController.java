@@ -167,7 +167,7 @@ public class RevisionListController
          return;
       }
 
-      String fileContent = GitHandler.getVersionOfFile(_file, selectedWrapper.getRevCommitId());
+      String fileContent = GitHandler.getVersionOfFile(_file, selectedWrapper.getRevCommitId(), selectedWrapper.getPreviousNamesOfFileRelativeToRepositoryRoot());
 
       _dlg.txtPreview.setText(fileContent);
 

@@ -58,4 +58,6 @@ public interface IFileEditorAPI
    JTextArea getTextComponent();
 
    FileHandler getFileHandler();
+
+   ISQLPanelAPI getSQLPanelAPIOrNull();
 }

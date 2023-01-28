@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+The "Save file as" dialog now offers a check box to move the file instead of copying it.
+  If the file is under GIT control and is moved inside its GIT repository
+  it will be committed after being moved to keep its GIT history intact.
+
 Data types BLOB and CLOB loading configuration was restructured and fixed.
   Both data types now offer the following loading options:
    - Read contents when table is first loaded (offers to limit the amount of data to read)

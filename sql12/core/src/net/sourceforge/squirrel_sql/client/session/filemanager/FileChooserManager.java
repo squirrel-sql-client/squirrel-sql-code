@@ -59,11 +59,6 @@ public class FileChooserManager
       return _currentFileChooser;
    }
 
-   public JFileChooser initNewFileChooserWithPreviewer()
-   {
-      return initNewFileChooser();
-   }
-
 
    public void saveWasApproved()
    {

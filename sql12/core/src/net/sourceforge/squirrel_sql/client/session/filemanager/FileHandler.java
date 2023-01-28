@@ -202,12 +202,15 @@ public class FileHandler
       _closeFile(false, silently);
    }
 
-   public void fileSaveAs()
+   public FileSaveResult fileSaveAs()
    {
-      if (_fileManagementCore.saveAs())
+      FileSaveResult fileSaveResult = _fileManagementCore.saveAs();
+      if (fileSaveResult.isSuccess())
       {
          onInitiallySaved();
       }
+
+      return fileSaveResult;
    }
 
    /**

@@ -54,10 +54,10 @@ public class FileManagementCore
 
    public boolean save()
    {
-      return saveIntern(false);
+      return saveIntern(false).isSuccess();
    }
 
-   public boolean saveAs()
+   public FileSaveResult saveAs()
    {
       return saveIntern(true);
    }
@@ -83,7 +83,7 @@ public class FileManagementCore
    {
        boolean result = false;
 
-      JFileChooser chooser = _fileChooserManager.initNewFileChooserWithPreviewer();
+      JFileChooser chooser = _fileChooserManager.initNewFileChooser();
 
       SquirrelPreferences prefs = Main.getApplication().getSquirrelPreferences();
 
@@ -192,23 +192,24 @@ public class FileManagementCore
       Main.getApplication().getRecentFilesManager().fileTouched(file.getAbsolutePath(), _fileEditorAPI.getSession().getAlias());
    }
 
-   private boolean saveIntern(boolean toNewFile)
+   private FileSaveResult saveIntern(boolean toNewFile)
    {
-      boolean result = false;
+      FileSaveResult result = new FileSaveResult(false);
 
       File toSaveToBuf = null;
       boolean wasSavedToNewFile = false;
+
+      Frame frame = _fileEditorAPI.getOwningFrame();
+      FileChooserWithMoveOptionDialog chooser = new FileChooserWithMoveOptionDialog(_fileChooserManager.initNewFileChooser(), frame);
 
       if (toNewFile)
       {
          toSaveToBuf = _toSaveTo.get();
          _toSaveTo.set(null);
+         chooser.setSelectedFile(toSaveToBuf);
       }
 
-      JFileChooser chooser = _fileChooserManager.initNewFileChooser();
-
       SquirrelPreferences prefs = _fileEditorAPI.getSession().getApplication().getSquirrelPreferences();
-      Frame frame = _fileEditorAPI.getOwningFrame();
 
       for (; ;)
       {
@@ -238,12 +239,12 @@ public class FileManagementCore
          {
             if (saveScript(frame, _toSaveTo.get(), false))
             {
-               result = true;
+               result.setSuccess(true);
             }
             break;
          }
 
-         if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
+         if (chooser.showSaveDialog() == JFileChooser.APPROVE_OPTION)
          {
             _fileChooserManager.saveWasApproved();
             _toSaveTo.set(chooser.getSelectedFile());
@@ -258,14 +259,15 @@ public class FileManagementCore
 
             if (saveScript(frame, _toSaveTo.get(), true))
             {
-               result = true;
+               result.setSuccess(true);
                wasSavedToNewFile = true;
+               result.setSavedToNewFile(toSaveToBuf, _toSaveTo.get(), chooser.isMoveFile());
                break;
             }
             else
             {
                _toSaveTo.set(null);
-               result = false;
+               result.setSuccess(false);
                break;
             }
          }

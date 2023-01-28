@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.gui.titlefilepath.TitleFilePathHandler;
 import net.sourceforge.squirrel_sql.client.session.EntryPanelManager;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
@@ -291,5 +292,11 @@ public class HQLEntryPanelManager extends EntryPanelManager implements IFileEdit
    public FileHandler getFileHandler()
    {
       return _fileHandler;
+   }
+
+   @Override
+   public ISQLPanelAPI getSQLPanelAPIOrNull()
+   {
+      return null;
    }
 }

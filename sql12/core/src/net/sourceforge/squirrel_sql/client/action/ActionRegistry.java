@@ -242,7 +242,7 @@ public class ActionRegistry
       actionCollection.add(new FileOpenRecentAction(app));
       actionCollection.add(new FileAppendAction(app));
       actionCollection.add(new FileSaveAction(app));
-      actionCollection.add(new FileSaveAsAction(app));
+      actionCollection.add(new FileSaveAsAction());
       actionCollection.add(new FileCloseAction(app));
       actionCollection.add(new FilePrintAction(app));
       actionCollection.add(new FileReloadAction(app));
