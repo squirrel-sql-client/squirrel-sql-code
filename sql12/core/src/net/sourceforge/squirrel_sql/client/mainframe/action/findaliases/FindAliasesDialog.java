@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findaliases;
 
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -29,7 +31,8 @@ public class FindAliasesDialog extends JDialog
    JCheckBox chkLeaveOpen = new JCheckBox(s_stringMgr.getString("FindAliasesCtrl.leave.open"));
 
 
-   JButton btnConnect = new JButton(s_stringMgr.getString("FindAliasesCtrl.connect"));
+   JButton btnConnect = new JButton(s_stringMgr.getString("FindAliasesCtrl.connect"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ALIAS_CONNECT));
+   JButton btnModify = new JButton(s_stringMgr.getString("FindAliasesCtrl.modify"), Main.getApplication().getResources().getIcon(SquirrelResources.IImageNames.ALIAS_MODIFY));
    JButton btnGoto = new JButton(s_stringMgr.getString("FindAliasesCtrl.goto"));
    JButton btnClose = new JButton(s_stringMgr.getString("FindAliasesCtrl.close"));
 
@@ -88,13 +91,16 @@ public class FindAliasesDialog extends JDialog
       ret.add(btnConnect, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
-      ret.add(btnGoto, gbc);
+      ret.add(btnModify, gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,5), 0,0);
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
+      ret.add(GUIUtils.setPreferredHeight(btnGoto, btnModify.getPreferredSize().height), gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,1,0,GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,5), 0,0);
       ret.add(new JPanel(), gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      ret.add(btnClose, gbc);
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(GUIUtils.setPreferredHeight(btnClose, btnModify.getPreferredSize().height), gbc);
 
       return ret;
    }

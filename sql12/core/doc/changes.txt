@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+The "Find Alias" dialog (Ctrl+Alt+Shift+G or Ctrl+Alt+Shift+F) now offers to modify Aliases.
+
 The "Save file as" dialog now offers a check box to move the file instead of copying it.
   If the file is under GIT control and is moved inside its GIT repository
   it will be committed after being moved to keep its GIT history intact.

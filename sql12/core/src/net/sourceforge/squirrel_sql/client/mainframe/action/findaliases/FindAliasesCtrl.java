@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action.findaliases;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasFolder;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
 import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
@@ -90,6 +91,8 @@ public class FindAliasesCtrl
 
 
       _dlg.btnConnect.addActionListener(e -> onConnect());
+
+      _dlg.btnModify.addActionListener(e -> onModify());
 
       _dlg.btnGoto.addActionListener(e -> onGoto());
 
@@ -233,6 +236,26 @@ public class FindAliasesCtrl
          onGoto();
       }
    }
+
+   private void onModify()
+   {
+      AliasSearchWrapper selectedWrapperAlias = _dlg.lstResult.getSelectedValue();
+
+      if(null ==  selectedWrapperAlias)
+      {
+         return;
+      }
+
+      AliasWindowManager.showModifyAliasInternalFrame(selectedWrapperAlias.getAlias());
+
+      if(false == _dlg.chkLeaveOpen.isSelected())
+      {
+         onClosing();
+         _dlg.setVisible(false);
+         _dlg.dispose();
+      }
+   }
+
 
    private void onGoto()
    {

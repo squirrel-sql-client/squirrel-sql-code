@@ -184,6 +184,9 @@ public class SquirrelResources extends Resources
 		String EDIT = "edit";
 
 		String DELETE = "delete";
+
+		String ALIAS_CONNECT = "aliasConnect";
+		String ALIAS_MODIFY = "aliasModify";
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)
