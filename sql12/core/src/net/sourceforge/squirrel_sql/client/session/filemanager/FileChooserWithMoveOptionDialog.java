@@ -1,18 +1,18 @@
 package net.sourceforge.squirrel_sql.client.session.filemanager;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 
 public class FileChooserWithMoveOptionDialog extends JDialog
@@ -27,6 +27,8 @@ public class FileChooserWithMoveOptionDialog extends JDialog
    public FileChooserWithMoveOptionDialog(JFileChooser fileChooser, Frame parent)
    {
       super(parent,true);
+
+      setTitle(s_stringMgr.getString("FileChooserWithMoveOptionDialog.title"));
 
       _fileChooser = fileChooser;
 
