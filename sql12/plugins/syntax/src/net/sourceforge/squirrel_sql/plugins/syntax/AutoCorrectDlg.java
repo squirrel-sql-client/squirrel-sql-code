@@ -1,15 +1,26 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 
 
 public class AutoCorrectDlg extends JDialog
@@ -57,14 +68,11 @@ public class AutoCorrectDlg extends JDialog
       gbc = new GridBagConstraints(0,3,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10,5,5,5),0,0);
       getContentPane().add(new JScrollPane(tblAutoCorrects), gbc);
 
-      //i8n[syntax.abrevNewLineNote=Use \n in corrections for line break. Note: Bookmarks are more powerful than abreviations.]
       lblNewLineNote = new MultipleLineLabel(s_stringMgr.getString("syntax.abrevNote"));
-      lblNewLineNote.setForeground(Color.red);
+      lblNewLineNote.setForeground(Color.blue);
       gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
       getContentPane().add(lblNewLineNote, gbc);
 
-
-      // i18n[syntax.abrevclose=Close]
       btnClose = new JButton(s_stringMgr.getString("syntax.abrevclose"));
       gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       getContentPane().add(btnClose, gbc);

@@ -1,14 +1,14 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
+
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.text.JTextComponent;
-import javax.swing.text.BadLocationException;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.*;
-import net.sourceforge.squirrel_sql.fw.props.Props;
 
 public class AutoCorrector
 {
@@ -65,24 +65,17 @@ public class AutoCorrector
             final String corr = _plugin.getAutoCorrectProviderImpl().getAutoCorrects().get(autoCorrCandidate);
             if(null != corr)
             {
-               _txtComp.setSelectionStart(e.getOffset() - autoCorrCandidate.length());
-               _txtComp.setSelectionEnd(e.getOffset());
 
                if(10 > _autocorrectionsCount)
                {
 						String[] params = new String[]{autoCorrCandidate, corr};
-						// i18n[syntax.hasBeenAutocorr={0} has been auto corrected / extended to {1}. To configure auto correct / abreviations see Menu Session --> Syntax --> Configure auto correct / abreviation]
                   _plugin.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("syntax.hasBeenAutocorr", params));
                   Props.putInt(PREFS_KEY_AUTO_COORECTIONS_COUNT, ++_autocorrectionsCount);
                }
 
-               SwingUtilities.invokeLater(new Runnable()
-               {
-                  public void run()
-                  {
-                     _txtComp.replaceSelection(corr + insertChar);
-                  }
-               });
+               _txtComp.setSelectionStart(e.getOffset() - autoCorrCandidate.length());
+               _txtComp.setSelectionEnd(e.getOffset());
+               SwingUtilities.invokeLater(() -> _txtComp.replaceSelection(corr + insertChar));
             }
          }
       }
