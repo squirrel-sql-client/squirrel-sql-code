@@ -47,6 +47,9 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+#943 Database table compare function (right mouse click on table in Object tree) raised NoClassDefFoundError.
+  The fix includes some minor UI improvements.
+
 Searching Saved Sessions: NullPointer occurred when the default Alias of a saved Session was deleted.
 
 SQL result table function "Mark consecutive duplicate values in columns"

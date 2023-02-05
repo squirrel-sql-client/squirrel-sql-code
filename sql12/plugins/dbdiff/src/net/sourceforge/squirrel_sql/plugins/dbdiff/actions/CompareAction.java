@@ -20,11 +20,14 @@
 package net.sourceforge.squirrel_sql.plugins.dbdiff.actions;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.resources.Resources;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider;
@@ -37,11 +40,11 @@ import java.awt.event.ActionEvent;
 public class CompareAction extends AbstractDiffAction implements ISessionAction
 {
 
-	/** Current plugin. */
-	private final SessionInfoProvider sessionInfoProv;
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CompareAction.class);
 
-	/** Logger for this class. */
 	private final static ILogger log = LoggerController.createLogger(CompareAction.class);
+
+	private final SessionInfoProvider sessionInfoProv;
 
 	/**
 	 * Creates a new SQuirreL action that gets fired whenever the user chooses the compare operation.
@@ -75,7 +78,7 @@ public class CompareAction extends AbstractDiffAction implements ISessionAction
 
 		// sourceSession can be null in the case where two tables are selected in the same schema for direct
 		// compare.
-		if (  sourceExists() )
+		if ( sourceExists() )
 		{
 			sessionInfoProv.setDestSelectedDatabaseObjects(dbObjs);
          clearSource = true;
@@ -87,16 +90,15 @@ public class CompareAction extends AbstractDiffAction implements ISessionAction
 			// how object selection in the diff plugin works.
 			if (dbObjs.length == 2)
 			{
-				sessionInfoProv.setSourceSession(destSession);
+				sessionInfoProv.setSourceSession(sessionInfoProv.getDestSession());
 				sessionInfoProv.setSourceSelectedDatabaseObjects(new IDatabaseObjectInfo[] { dbObjs[0] });
-				sessionInfoProv.setDestSession(destSession);
+				sessionInfoProv.setDestSession(sessionInfoProv.getDestSession());
 				sessionInfoProv.setDestSelectedDatabaseObjects(new IDatabaseObjectInfo[] { dbObjs[1] });
             clearSource = true;
 			}
 			else
 			{
-				destSession.showErrorMessage("To compare, you must have exactly two tables selected in the "
-					+ "object tree");
+				Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("CompareAction.exactly.two.tables.when.no.source"));
 			}
 		}
 

@@ -19,18 +19,15 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-
-import javax.swing.JFrame;
-
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.jmeld.settings.EditorSettings;
 import org.jmeld.settings.JMeldSettings;
 import org.jmeld.ui.JMeldPanel;
-import org.jmeld.util.prefs.WindowPreference;
+
+import javax.swing.JDialog;
 
 /**
  * A DiffPresentation that uses components from the JMeld project to render a comparison of the content of two
@@ -38,8 +35,7 @@ import org.jmeld.util.prefs.WindowPreference;
  */
 public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 {
-	/** The frame to place the JMeldPanel in */
-	private JFrame frame;
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(JMeldDiffPresentation.class);
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.gui.AbstractSideBySideDiffPresentation#
@@ -52,63 +48,24 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 		editorSettings.setRightsideReadonly(true);
 		editorSettings.setLeftsideReadonly(true);
 
-		frame = new JFrame();
+		JDialog diffDialog = new JDialog(Main.getApplication().getMainFrame(), s_stringMgr.getString("JMeldDiffPresentation.table.diff") );
 
 		final JMeldPanel panel = new NonExitingJMeldPanel();
 		panel.SHOW_TABBEDPANE_OPTION.disable();
 		panel.SHOW_TOOLBAR_OPTION.disable();
 
-		frame.add(panel);
-		frame.addWindowListener(new WindowCloseListener());
+		diffDialog.add(panel);
 
-		new WindowPreference(frame.getTitle(), frame);
-		frame.addWindowListener(panel.getWindowListener());
-		frame.setVisible(true);
-		frame.toFront();
+		GUIUtils.enableCloseByEscape(diffDialog);
+		GUIUtils.initLocation(diffDialog, 500, 400, JMeldDiffPresentation.class.getName());
 
-		GUIUtils.centerWithinParent(frame);
+		//new WindowPreference(diffDialog.getTitle(), diffDialog);
+		//diffDialog.addWindowListener(panel.getWindowListener());
+
+		diffDialog.setVisible(true);
+		//diffDialog.toFront();
+
 		panel.openComparison(script1Filename, script2Filename);
 	}
 
-	/**
-	 * A WindowListener that responds to windowClosed events by hiding the JMeld frame and setting it to null
-	 * so it can be garbage-collected.
-	 */
-	private class WindowCloseListener extends WindowAdapter
-	{
-
-		/**
-		 * @see java.awt.event.WindowAdapter#windowClosed(java.awt.event.WindowEvent)
-		 */
-		@Override
-		public void windowClosed(WindowEvent e)
-		{
-			if (frame != null)
-			{
-				frame.setVisible(false);
-				frame = null;
-			}
-		}
-
-	}
-
-	/**
-	 * The JMeldPanel registers a window listener that exits the JVM when it detects that the frame it resides
-	 * in was closed. This subclass overrides this behavior with a no-op window listener.
-	 */
-	private class NonExitingJMeldPanel extends JMeldPanel
-	{
-
-		/**
-		 * @see org.jmeld.ui.JMeldPanel#getWindowListener()
-		 */
-		@Override
-		public WindowListener getWindowListener()
-		{
-			return new WindowAdapter()
-			{
-			};
-		}
-
-	}
 }
