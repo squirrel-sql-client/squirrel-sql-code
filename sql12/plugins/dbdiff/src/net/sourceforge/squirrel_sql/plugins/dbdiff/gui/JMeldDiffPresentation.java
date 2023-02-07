@@ -19,6 +19,8 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
+import javax.swing.JDialog;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -26,8 +28,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.jmeld.settings.EditorSettings;
 import org.jmeld.settings.JMeldSettings;
 import org.jmeld.ui.JMeldPanel;
-
-import javax.swing.JDialog;
 
 /**
  * A DiffPresentation that uses components from the JMeld project to render a comparison of the content of two
@@ -50,22 +50,24 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 
 		JDialog diffDialog = new JDialog(Main.getApplication().getMainFrame(), s_stringMgr.getString("JMeldDiffPresentation.table.diff") );
 
-		final JMeldPanel panel = new NonExitingJMeldPanel();
-		panel.SHOW_TABBEDPANE_OPTION.disable();
-		panel.SHOW_TOOLBAR_OPTION.disable();
+		final JMeldPanel meldPanel = new NonExitingJMeldPanel(() -> close(diffDialog));
+		meldPanel.SHOW_TABBEDPANE_OPTION.disable();
+		meldPanel.SHOW_TOOLBAR_OPTION.disable();
 
-		diffDialog.add(panel);
+		diffDialog.add(meldPanel);
 
 		GUIUtils.enableCloseByEscape(diffDialog);
 		GUIUtils.initLocation(diffDialog, 500, 400, JMeldDiffPresentation.class.getName());
 
-		//new WindowPreference(diffDialog.getTitle(), diffDialog);
-		//diffDialog.addWindowListener(panel.getWindowListener());
-
 		diffDialog.setVisible(true);
-		//diffDialog.toFront();
 
-		panel.openComparison(script1Filename, script2Filename);
+		meldPanel.openComparison(script1Filename, script2Filename);
+	}
+
+	private void close(JDialog diffDialog)
+	{
+		diffDialog.setVisible(false);
+		diffDialog.dispose();
 	}
 
 }

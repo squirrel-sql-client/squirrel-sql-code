@@ -1,9 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
-import org.jmeld.ui.JMeldPanel;
-
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowListener;
+
+import org.jmeld.ui.JMeldPanel;
 
 /**
  * The JMeldPanel registers a window listener that exits the JVM when it detects that the frame it resides
@@ -11,6 +12,13 @@ import java.awt.event.WindowListener;
  */
 class NonExitingJMeldPanel extends JMeldPanel
 {
+
+   private MeldExitListener _meldExitListener;
+
+   public NonExitingJMeldPanel(MeldExitListener meldExitListener)
+   {
+      _meldExitListener = meldExitListener;
+   }
 
    /**
     * @see JMeldPanel#getWindowListener()
@@ -23,4 +31,10 @@ class NonExitingJMeldPanel extends JMeldPanel
       };
    }
 
+   @Override
+   public void doExit(ActionEvent ae)
+   {
+      super.doExit(ae);
+      _meldExitListener.meldPanelExits();
+   }
 }

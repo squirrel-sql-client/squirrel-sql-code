@@ -47,6 +47,9 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+Database table compare dialog (right mouse click on table in Object tree) didn't close on escape key
+   when the compare panel had received focus.
+
 #943 Database table compare function (right mouse click on table in Object tree) raised NoClassDefFoundError.
   The fix includes some minor UI improvements.
 
