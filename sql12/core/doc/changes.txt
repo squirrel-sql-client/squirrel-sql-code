@@ -6,6 +6,8 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Upgraded to latest RSyntax version 6.0.1.
+
 The "Find Alias" dialog (Ctrl+Alt+Shift+G or Ctrl+Alt+Shift+F) now offers to modify Aliases.
 
 The "Save file as" dialog now offers a check box to move the file instead of copying it.
