@@ -18,6 +18,8 @@
 package net.sourceforge.squirrel_sql.fw.completion;
 
 
+import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesEnum;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
@@ -48,7 +50,8 @@ import java.awt.geom.Rectangle2D;
 
 public class Completor
 {
-   public static final Color DEFAULT_POP_UP_BACK_GROUND = new Color(255,255,204);
+   public static final Color DEFAULT_LIGH_POP_UP_LIGH_GROUND = new Color(255, 255, 204);
+   public static final Color DEFAULT_LIGH_POP_UP_DARK_GROUND = new Color(51, 51, 0);
 
 
    private CompletorListener _completorListener;
@@ -87,7 +90,7 @@ public class Completor
 
    public Completor(JTextComponent txtComp, ICompletorModel model, CompletorListener completorListener)
 	{
-		this(txtComp, model, completorListener, DEFAULT_POP_UP_BACK_GROUND, false, txtComp); // light yellow
+		this(txtComp, model, completorListener, getDefaultCompletionPopUpBackGround(), false, txtComp); // light yellow
 	}
 
    public Completor(JTextComponent txtComp, ICompletorModel model, CompletorListener completorListener, Color popUpBackGround, boolean useOwnFilterTextField)
@@ -152,6 +155,19 @@ public class Completor
 		_completionPanel.setVisible(false);
 
       _popupMan = new PopupManager(popupParent);
+   }
+
+   public static Color getDefaultCompletionPopUpBackGround()
+   {
+      switch (ThemesEnum.getCurrentTheme())
+      {
+         case LIGH:
+            return DEFAULT_LIGH_POP_UP_LIGH_GROUND;
+         case DARK:
+            return DEFAULT_LIGH_POP_UP_DARK_GROUND;
+         default:
+            throw new IllegalStateException("Unknown theme; " + ThemesEnum.getCurrentTheme());
+      }
    }
 
    private void onKeyPressedOnList(KeyEvent e)

@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
+import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesEnum;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
@@ -48,7 +49,7 @@ public class ToolsPopupController
       };
 
 
-      _toolsCompletor = new Completor(_sqlEntryPanel.getTextComponent(), _toolsPopupCompletorModel, completorListener, new Color(255,204,204), true);
+      _toolsCompletor = new Completor(_sqlEntryPanel.getTextComponent(), _toolsPopupCompletorModel, completorListener, getToosPopUpBackGround(), true);
 
       sqlEntryPanel.getSession().addSimpleSessionListener(new SimpleSessionListener()
       {
@@ -66,6 +67,21 @@ public class ToolsPopupController
           // i18n[ToolsPopupController.toolspopupmsg=Please try out the Tools popup by hitting ctrl+t in the SQL Editor. Do it three times to stop this message.]
          _session.showMessage(s_stringMgr.getString("ToolsPopupController.toolspopupmsg"));
       }
+   }
+
+   private static Color getToosPopUpBackGround()
+   {
+      switch (ThemesEnum.getCurrentTheme())
+      {
+         case LIGH:
+            return new Color(255, 204, 204);
+         case DARK:
+            return new Color(70, 30, 0);
+         default:
+            throw new IllegalStateException("Unknown theme; " + ThemesEnum.getCurrentTheme());
+      }
+
+
    }
 
    private void onToolsPopupActionSelected(CompletionInfo completion)

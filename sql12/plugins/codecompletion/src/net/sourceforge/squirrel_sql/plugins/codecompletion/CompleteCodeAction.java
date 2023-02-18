@@ -63,11 +63,11 @@ public class CompleteCodeAction extends SquirrelAction
 
       if(null != popupParent)
       {
-         _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model, completorListener, Completor.DEFAULT_POP_UP_BACK_GROUND, false, popupParent);
+         _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model, completorListener, Completor.getDefaultCompletionPopUpBackGround(), false, popupParent);
       }
       else
       {
-         _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model, completorListener, Completor.DEFAULT_POP_UP_BACK_GROUND, false);
+         _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model, completorListener, Completor.getDefaultCompletionPopUpBackGround(), false);
       }
 
       session.addSimpleSessionListener(new SimpleSessionListener()
@@ -84,7 +84,7 @@ public class CompleteCodeAction extends SquirrelAction
 	}
 
 
-	public void actionPerformed(ActionEvent evt)
+   public void actionPerformed(ActionEvent evt)
 	{
 		_cc.show();
 	}

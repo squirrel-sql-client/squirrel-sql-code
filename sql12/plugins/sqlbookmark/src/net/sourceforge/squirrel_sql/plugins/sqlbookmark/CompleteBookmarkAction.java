@@ -17,17 +17,18 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.preferences.themes.ThemesEnum;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
 import net.sourceforge.squirrel_sql.fw.resources.IResources;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
 
 public class CompleteBookmarkAction extends SquirrelAction
 {
@@ -50,7 +51,7 @@ public class CompleteBookmarkAction extends SquirrelAction
          }
       };
 
-      _cc = new Completor(_sqlEntryPanel.getTextComponent(), plugin.getBookmarkManager(), completorListener, new Color(204,255,255), true);
+      _cc = new Completor(_sqlEntryPanel.getTextComponent(), plugin.getBookmarkManager(), completorListener, getBookmarksPopUpBackGround(), true);
 
       sqlEntryPanel.getSession().addSimpleSessionListener(new SimpleSessionListener()
       {
@@ -59,6 +60,21 @@ public class CompleteBookmarkAction extends SquirrelAction
             _cc.disposePopup();
          }
       });
+   }
+
+   private static Color getBookmarksPopUpBackGround()
+   {
+
+      switch (ThemesEnum.getCurrentTheme())
+      {
+         case LIGH:
+            return new Color(204, 255, 255);
+         case DARK:
+            return new Color(0, 10, 50);
+         default:
+            throw new IllegalStateException("Unknown theme; " + ThemesEnum.getCurrentTheme());
+      }
+
    }
 
 

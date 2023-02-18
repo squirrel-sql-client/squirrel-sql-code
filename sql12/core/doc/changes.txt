@@ -6,6 +6,12 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Dark theme: Background colors of popups for
+  code completion (ctrl+space), tools (ctrl+t) and bookmarks (ctrl+j) are now adjusted
+  when the dark theme ist used.
+
+Look and Feel plugin: Upgrade FlatLaF to version 3.0
+
 Upgraded to latest RSyntax version 6.0.1.
 
 The "Find Alias" dialog (Ctrl+Alt+Shift+G or Ctrl+Alt+Shift+F) now offers to modify Aliases.
