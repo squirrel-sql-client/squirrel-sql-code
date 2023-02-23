@@ -261,9 +261,9 @@ public class ExportPanelBuilder
 	{
 		ButtonBarBuilder builder = new ButtonBarBuilder();
 		builder.addGlue();
-		builder.addGridded(_exportBtn);                      
-		builder.addRelatedGap();                   
-		builder.addGridded(_cancelBtn);
+		builder.addButton(_exportBtn);
+		builder.addUnrelatedGap();
+		builder.addButton(_cancelBtn);
 
 		return builder.getPanel();  
 	}

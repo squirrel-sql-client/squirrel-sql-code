@@ -27,16 +27,18 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */package net.sourceforge.squirrel_sql.client.gui.builders;
-import java.awt.Component;
-import java.util.ResourceBundle;
+
+import com.jgoodies.forms.layout.ConstantSize;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ConstantSize;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import java.awt.Component;
+import java.util.ResourceBundle;
+
 /** * Provides a means to build consistent form-oriented panels quickly
  * using the {@link FormLayout}. This builder combines frequently used
  * panel building steps: add a new row, add a label, proceed to the next 
@@ -112,12 +114,12 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
      * Holds the row specification that is reused to describe
      * the constant gaps between component lines.
      */
-    private RowSpec lineGapSpec = FormFactory.LINE_GAP_ROWSPEC;
+    private RowSpec lineGapSpec = FormSpecs.LINE_GAP_ROWSPEC;
     /**
      * Holds the row specification that describes the constant gaps 
      * between paragraphs.
      */
-    private RowSpec paragraphGapSpec = FormFactory.PARAGRAPH_GAP_ROWSPEC;
+    private RowSpec paragraphGapSpec = FormSpecs.PARAGRAPH_GAP_ROWSPEC;
     /**
      * Holds the offset of the leading column - often 0 or 1.
      */
@@ -177,7 +179,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
      *     the size of the gaps between component lines
      */
     public void setLineGapSize(ConstantSize lineGapSize) {
-        RowSpec rowSpec = FormFactory.createGapRowSpec(lineGapSize);
+        RowSpec rowSpec = RowSpec.createGap(lineGapSize);
         // No longer supported in version 1.0.4/1.0.5 which are the oldest available versions in maven 
         // central repo
         //
@@ -200,7 +202,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
      *     the size of the gaps between paragraphs
      */
     public void setParagraphGapSize(ConstantSize paragraphGapSize) {
-        RowSpec rowSpec = FormFactory.createGapRowSpec(paragraphGapSize);
+        RowSpec rowSpec = RowSpec.createGap(paragraphGapSize);
         // No longer supported in version 1.0.4/1.0.5 which are the oldest available versions in maven 
         // central repo
         //        
@@ -415,17 +417,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c, columnSpan);
         return label;
     }
-    /**
-     * Adds an internationalized (i15d) text label and component to the panel. 
-     * Then proceeds to the next data column.
-     * 
-     * @param resourceKey  the resource key for the text to add
-     * @param component  the component to add
-     * @return the added label
-     */    
-    public JLabel appendI15d(String resourceKey, Component component) {
-        return appendI15d(resourceKey, component, 1);
-    }
+
     /**
      * Adds an internationalized (i15d) text label and component to the panel. 
      * Then proceeds to the next data column.
@@ -443,66 +435,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         }
         return label;
     }
-    /**
-     * Adds an internationalized (i15d) text label and two components to the panel; each component
-     * will span a single column. Proceeds to the next data column.
-     * 
-     * @param resourceKey  the resource key for the text to add
-     * @param c1    the first component to add
-     * @param c2    the second component to add
-     * @return the added label
-     */    
-    public JLabel appendI15d(String resourceKey, Component c1, Component c2) {
-        JLabel label = appendI15d(resourceKey, c1);
-        append(c2);
-        return label;
-    }
-    /**
-     * Adds an internationalized (i15d) text label and two components to the panel; each component
-     * will span a single column. Proceeds to the next data column.
-     * 
-     * @param resourceKey  the resource key for the text to add
-     * @param c1      the first component to add
-     * @param c2      the second component to add
-     * @param colSpan the column span for the second component
-     * @return the added label
-     */    
-    public JLabel appendI15d(String resourceKey, Component c1, Component c2, int colSpan) {
-        JLabel label = appendI15d(resourceKey, c1);
-        append(c2, colSpan);
-        return label;
-    }
-    /**
-     * Adds an internationalized (i15d) text label and three components to the panel; each component
-     * will span a single column. Proceeds to the next data column.
-     * 
-     * @param resourceKey  the resource key for the text to add
-     * @param c1    the first component to add
-     * @param c2    the second component to add
-     * @param c3    the third component to add
-     * @return the added label
-     */    
-    public JLabel appendI15d(String resourceKey, Component c1, Component c2, Component c3) {
-        JLabel label = appendI15d(resourceKey, c1, c2);
-        append(c3);
-        return label;
-    }
-    /**
-     * Adds an internationalized (i15d) text label and four components to the panel; 
-     * each component will span a single column. Proceeds to the next data column.
-     * 
-     * @param resourceKey  the resource key for the text to add
-     * @param c1    the first component to add
-     * @param c2    the second component to add
-     * @param c3    the third component to add
-     * @param c4    the third component to add
-     * @return the added label
-     */    
-    public JLabel appendI15d(String resourceKey, Component c1, Component c2, Component c3, Component c4) {
-        JLabel label = appendI15d(resourceKey, c1, c2, c3);
-        append(c4);
-        return label;
-    }
+
     // Adding Titles ----------------------------------------------------------
     /**
      * Adds a title label to the panel and proceeds to the next column.
@@ -607,7 +540,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
      */
     private void ensureHasComponentLine() {
         if (getRow() <= getRowCount()) return;
-        appendRow(FormFactory.PREF_ROWSPEC);  
+        appendRow(FormSpecs.PREF_ROWSPEC);
         if (isRowGroupingEnabled()) {
             getLayout().addGroupedRow(getRow());
         }      

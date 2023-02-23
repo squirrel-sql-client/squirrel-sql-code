@@ -117,7 +117,7 @@ public class GenerateSqlDialog extends JDialog {
 		final JPanel pnl = new JPanel(new BorderLayout());
 		pnl.add(buildMainPanel(), BorderLayout.CENTER);
 		pnl.add(buildToolBar(), BorderLayout.SOUTH);
-		pnl.setBorder(Borders.TABBED_DIALOG_BORDER);
+		pnl.setBorder(Borders.TABBED_DIALOG);
 
 		return pnl;
     }
@@ -715,7 +715,7 @@ public class GenerateSqlDialog extends JDialog {
                dlg.setVisible(false);
             }
         });
-		builder.addGridded(okButton);
+		builder.addButton(okButton);
         
 		builder.addRelatedGap();
 
@@ -727,7 +727,7 @@ public class GenerateSqlDialog extends JDialog {
                 dlg.setVisible(false);
             }
         });
-        builder.addGridded(cancelButton);
+        builder.addButton(cancelButton);
 
 		return builder.getPanel();
 	}

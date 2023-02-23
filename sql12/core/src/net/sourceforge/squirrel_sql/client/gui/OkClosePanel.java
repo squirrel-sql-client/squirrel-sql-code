@@ -17,18 +17,17 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.event.EventListenerList;
-
-import com.jgoodies.forms.factories.ButtonBarFactory;
-
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class OkClosePanel extends JPanel
 {
@@ -46,13 +45,11 @@ public class OkClosePanel extends JPanel
 
 	public OkClosePanel()
 	{
-		super();
 		createGUI(s_stringMgr.getString("OkClosePanel.ok"));
 	}
 
 	public OkClosePanel(String okButtonText)
 	{
-		super();
 		createGUI(okButtonText != null ? okButtonText : s_stringMgr.getString("OkClosePanel.ok"));
 	}
 
@@ -163,7 +160,7 @@ public class OkClosePanel extends JPanel
 	{
 		_okBtn = new JButton(okButtonText);
 
-		JPanel pnl = ButtonBarFactory.buildOKCancelBar(_okBtn, _closeBtn);
+		JPanel pnl = ButtonBarBuilder.create().addButton(_okBtn).addUnrelatedGap().addButton(_closeBtn).build();
 		add(pnl);
 //		add(_okBtn);
 //		add(_closeBtn);

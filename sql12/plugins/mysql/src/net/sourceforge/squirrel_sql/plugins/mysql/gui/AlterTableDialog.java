@@ -84,7 +84,7 @@ public class AlterTableDialog extends JDialog
 		final JPanel pnl = new JPanel(new BorderLayout());
 		pnl.add(buildMainPanel(session, ti), BorderLayout.CENTER);
 		pnl.add(buildToolBar(), BorderLayout.SOUTH);
-		pnl.setBorder(Borders.TABBED_DIALOG_BORDER);
+		pnl.setBorder(Borders.TABBED_DIALOG);
 
 		return pnl;
 
@@ -119,10 +119,10 @@ public class AlterTableDialog extends JDialog
 		final ButtonBarBuilder builder = new ButtonBarBuilder();
 		builder.addGlue();
 		// i18n[mysql.alterDlgAlter=Alter]
-		builder.addGridded(new JButton(s_stringMgr.getString("mysql.alterDlgAlter")));
+		builder.addButton(new JButton(s_stringMgr.getString("mysql.alterDlgAlter")));
 		builder.addRelatedGap();
 		// i18n[mysql.alterDlgClose=Close]
-		builder.addGridded(new JButton(s_stringMgr.getString("mysql.alterDlgClose")));
+		builder.addButton(new JButton(s_stringMgr.getString("mysql.alterDlgClose")));
 
 		return builder.getPanel();
 	}

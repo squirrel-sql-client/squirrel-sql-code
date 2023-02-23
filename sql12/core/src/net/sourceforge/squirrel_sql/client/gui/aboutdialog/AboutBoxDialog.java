@@ -141,9 +141,9 @@ public class AboutBoxDialog extends JDialog
 
       final ButtonBarBuilder builder = new ButtonBarBuilder();
       builder.addGlue();
-      builder.addGridded(_closeBtn);
+      builder.addButton(_closeBtn);
 
-      return builder.getPanel();
+      return builder.build();
    }
 
 
