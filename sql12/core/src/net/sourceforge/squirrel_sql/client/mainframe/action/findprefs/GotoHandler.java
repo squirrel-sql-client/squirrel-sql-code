@@ -31,19 +31,9 @@ public class GotoHandler
    {
    }
 
-   public boolean gotoPath(List<String> path)
+   public GotoPathResult gotoPath(List<String> path, boolean gotoLeafOnly)
    {
       _prefsFindInfo = ComponentInfoByPathUtil.createPrefsFindInfo();
-
-      PrefComponentInfo tabComponentInfo = _prefsFindInfo.showTabOfPathComponent(path);
-
-      _prefsFindInfo = _prefsFindInfo.getPrefsFindInfoUpdate();
-
-      if(null == tabComponentInfo)
-      {
-         // Happens when the dialog node was gone to.
-         return true;
-      }
 
       PrefComponentInfo componentInfoToGoTo = _prefsFindInfo.getComponentInfoByPath(path);
 
@@ -55,13 +45,31 @@ public class GotoHandler
          String msg = s_stringMgr.getString("GotoHandler.component.not.found.try.again", pathNoNewLines);
          Main.getApplication().getMessageHandler().showWarningMessage(msg);
 
-         return false;
+         return GotoPathResult.NO_ACTION_BECAUSE_COMPONENT_NOT_FOUND;
+
+      }
+      else
+      {
+         if(gotoLeafOnly && FindableComponentInfoType.LEAVE_COMPONENT != componentInfoToGoTo.getFindableComponentInfoType())
+         {
+            return GotoPathResult.NO_ACTION_BECAUSE_NO_LEAF;
+         }
+      }
+
+      PrefComponentInfo tabComponentInfo = _prefsFindInfo.showTabOfPathComponent(path);
+
+      _prefsFindInfo = _prefsFindInfo.getPrefsFindInfoUpdate();
+
+      if(null == tabComponentInfo)
+      {
+         // Happens when the dialog node was gone to.
+         return GotoPathResult.NO_ACTION_BECAUSE_DIALOG_NODE_SELECTED_TO_GO_TO;
       }
 
       return blinkComponent(tabComponentInfo.getComponent(), componentInfoToGoTo.getComponent());
    }
 
-   private boolean blinkComponent(final Component containingTabComponent, Component componentToBlink)
+   private GotoPathResult blinkComponent(final Component containingTabComponent, Component componentToBlink)
    {
       Runnable runnableToScrollAndBlink = null;
 
@@ -82,18 +90,12 @@ public class GotoHandler
 
          final Rectangle rect = new Rectangle(x, y, componentToBlink.getWidth(), componentToBlink.getHeight());
 
-         runnableToScrollAndBlink = new Runnable()
-         {
-            public void run()
-            {
-               GUIUtils.forceProperty(() -> {
-                  componentInScrollPane.scrollRectToVisible(rect);
-                  final boolean contains = ((JScrollPane) containingTabComponent).getVisibleRect().contains(rect);
-                  return contains;
-               },
-               () -> initBlinkComponent(componentToBlink));
-            }
-         };
+         runnableToScrollAndBlink = () -> GUIUtils.forceProperty(() -> {
+            componentInScrollPane.scrollRectToVisible(rect);
+            final boolean contains = ((JScrollPane) containingTabComponent).getVisibleRect().contains(rect);
+            return contains;
+         },
+                                                           () -> initBlinkComponent(componentToBlink));
       }
       else
       {
@@ -103,7 +105,7 @@ public class GotoHandler
       // Give the UI 300 millis to properly open
       GUIUtils.executeDelayed(runnableToScrollAndBlink, 400);
 
-      return true;
+      return GotoPathResult.WENT_TO_COMPONENT_AND_BLINKED;
    }
 
    private void initBlinkComponent(Component componentToIndicate)

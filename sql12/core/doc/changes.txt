@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Find in Global Preferences and New Session Properties (menu File --> Find in preferences):
+  Leaf nodes of the search dialog tree can now be double clicked to jump to their result in the UI.
+  Note: Non leaf nodes can be right clicked to jump to their result in the UI.
+
 Dark theme: Background colors of popups for
   code completion (ctrl+space), tools (ctrl+t) and bookmarks (ctrl+j) are now adjusted
   when the dark theme ist used.

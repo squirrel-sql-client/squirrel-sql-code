@@ -117,6 +117,20 @@ public class FindInPreferencesCtrl
          }
          popup.show(_dlg.tree, me.getX(), me.getY());
       }
+      else if (2 == me.getClickCount())
+      {
+         if(null == _dlg.tree.getSelectionPath())
+         {
+            return;
+         }
+
+         List<String> componentPath = _model.treeNodeToComponentPath((DefaultMutableTreeNode)_dlg.tree.getSelectionPath().getLastPathComponent());
+
+         final GotoHandler gotoHandler = new GotoHandler();
+
+         gotoHandler.gotoPath(componentPath, true);
+
+      }
    }
 
    private void onGoTo()
@@ -131,7 +145,7 @@ public class FindInPreferencesCtrl
 
       final GotoHandler gotoHandler = new GotoHandler();
 
-      if(false == gotoHandler.gotoPath(componentPath))
+      if(GotoPathResult.NO_ACTION_BECAUSE_COMPONENT_NOT_FOUND == gotoHandler.gotoPath(componentPath, false))
       {
          ///////////////////////////////////////////////////////////////////////
          // E.g the shortcut table changes when the preference window is opened.

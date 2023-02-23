@@ -20,7 +20,7 @@ public enum PreferencesAddressBook
             {
                if( ((AddressablePrefComponent)prefComponentInfo.getComponent()).getAddress() == this)
                {
-                  new GotoHandler().gotoPath(entry.getKey());
+                  new GotoHandler().gotoPath(entry.getKey(), false);
                   return;
                }
             }
