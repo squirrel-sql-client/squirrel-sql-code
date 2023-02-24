@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -24,7 +23,7 @@ public class SavedSessionListCellRenderer implements ListCellRenderer<SavedSessi
          return null;
       }
 
-      JTextArea comp = new JTextArea(getDisplayString(value));
+      JTextArea comp = new JTextArea(SavedSessionUtil.getDisplayString(value));
       comp.setEditable(false);
 
       if(isSelected)
@@ -41,20 +40,4 @@ public class SavedSessionListCellRenderer implements ListCellRenderer<SavedSessi
 
    }
 
-   private String getDisplayString(SavedSessionJsonBean value)
-   {
-      String aliasName = "<unknown>";
-      String aliasUrl = "<unknown>";
-      String aliasUserName = "<unknown>";
-
-      final ISQLAlias alias = SavedSessionUtil.getAliasForIdString(value.getDefaultAliasIdString());
-      if(null != alias)
-      {
-         aliasName = alias.getName();
-         aliasUrl = alias.getUrl();
-         aliasUserName = alias.getUserName();
-      }
-
-      return s_stringMgr.getString("SavedSessionListCellRenderer.saved.session.display.name", value.getName(), aliasName, aliasUrl, aliasUserName);
-   }
 }

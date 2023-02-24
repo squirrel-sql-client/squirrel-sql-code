@@ -183,4 +183,21 @@ public class SavedSessionUtil
          Main.getApplication().getMessageHandler().showMessage(fileMsg);
       }
    }
+
+   public static String getDisplayString(SavedSessionJsonBean value)
+   {
+      String aliasName = "<unknown>";
+      String aliasUrl = "<unknown>";
+      String aliasUserName = "<unknown>";
+
+      final ISQLAlias alias = getAliasForIdString(value.getDefaultAliasIdString());
+      if(null != alias)
+      {
+         aliasName = alias.getName();
+         aliasUrl = alias.getUrl();
+         aliasUserName = alias.getUserName();
+      }
+
+      return s_stringMgr.getString("SavedSessionUtil.saved.session.display.name", value.getName(), aliasName, aliasUrl, aliasUserName);
+   }
 }

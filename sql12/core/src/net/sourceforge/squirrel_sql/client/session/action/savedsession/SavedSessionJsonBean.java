@@ -38,4 +38,10 @@ public class SavedSessionJsonBean
    {
       _sessionSQLs = sessionSQLs;
    }
+
+   @Override
+   public String toString()
+   {
+      return SavedSessionUtil.getDisplayString(this);
+   }
 }
