@@ -33,11 +33,24 @@ public class GotoHandler
 
    public GotoPathResult gotoPath(List<String> path, boolean gotoLeafOnly)
    {
-      _prefsFindInfo = ComponentInfoByPathUtil.createPrefsFindInfo();
+      if(gotoLeafOnly)
+      {
+         if(false == isLeaf(path))
+         {
+            return GotoPathResult.NO_ACTION_BECAUSE_NO_LEAF;
+         }
+      }
 
-      PrefComponentInfo componentInfoToGoTo = _prefsFindInfo.getComponentInfoByPath(path);
 
-      if(null == componentInfoToGoTo)
+      PrefsFindInfo prefsFindInfoPreview = ComponentInfoByPathUtil.createPrefsFindInfo();
+
+      // This call creates a PrefsFindInfo-update that definitely has the real showing components in it.
+      // This crucial fpt the blinking to work.
+      PrefComponentInfo showingComponentInfo = prefsFindInfoPreview.openDialogAndShowComponentAtPath(path);
+      _prefsFindInfo = prefsFindInfoPreview.getPrefsFindInfoUpdate();
+      PrefComponentInfo showingComponentInfoToGoTo = _prefsFindInfo.getComponentInfoByPath(path);
+
+      if(null == showingComponentInfoToGoTo)
       {
          s_log.warn("Failed to find Component for path (search dialog was reloaded, try again):\n" + path);
 
@@ -48,25 +61,23 @@ public class GotoHandler
          return GotoPathResult.NO_ACTION_BECAUSE_COMPONENT_NOT_FOUND;
 
       }
-      else
-      {
-         if(gotoLeafOnly && FindableComponentInfoType.LEAVE_COMPONENT != componentInfoToGoTo.getFindableComponentInfoType())
-         {
-            return GotoPathResult.NO_ACTION_BECAUSE_NO_LEAF;
-         }
-      }
 
-      PrefComponentInfo tabComponentInfo = _prefsFindInfo.showTabOfPathComponent(path);
-
-      _prefsFindInfo = _prefsFindInfo.getPrefsFindInfoUpdate();
-
-      if(null == tabComponentInfo)
+      if(null == showingComponentInfo)
       {
          // Happens when the dialog node was gone to.
          return GotoPathResult.NO_ACTION_BECAUSE_DIALOG_NODE_SELECTED_TO_GO_TO;
       }
 
-      return blinkComponent(tabComponentInfo.getComponent(), componentInfoToGoTo.getComponent());
+      return blinkComponent(showingComponentInfo.getComponent(), showingComponentInfoToGoTo.getComponent());
+   }
+
+   private static boolean isLeaf(List<String> path)
+   {
+      PrefsFindInfo prefsFindInfoPreview = ComponentInfoByPathUtil.createPrefsFindInfo();
+      PrefComponentInfo componentInfoToGoTo = prefsFindInfoPreview.getComponentInfoByPath(path);
+
+      return null != componentInfoToGoTo &&
+         FindableComponentInfoType.LEAVE_COMPONENT == componentInfoToGoTo.getFindableComponentInfoType();
    }
 
    private GotoPathResult blinkComponent(final Component containingTabComponent, Component componentToBlink)
@@ -103,7 +114,7 @@ public class GotoHandler
       }
 
       // Give the UI 300 millis to properly open
-      GUIUtils.executeDelayed(runnableToScrollAndBlink, 400);
+      GUIUtils.executeDelayed(runnableToScrollAndBlink, 200);
 
       return GotoPathResult.WENT_TO_COMPONENT_AND_BLINKED;
    }

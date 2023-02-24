@@ -44,10 +44,16 @@ public class FindInPreferencesCtrl
          @Override
          public void mousePressed(MouseEvent e)
          {
-            onTreeClicked(e);
+            onMaybeTriggerTreePopup(e);
          }
          @Override
          public void mouseReleased(MouseEvent e)
+         {
+            onMaybeTriggerTreePopup(e);
+         }
+
+         @Override
+         public void mouseClicked(MouseEvent e)
          {
             onTreeClicked(e);
          }
@@ -102,6 +108,23 @@ public class FindInPreferencesCtrl
 
    private void onTreeClicked(MouseEvent me)
    {
+      if(2 == me.getClickCount())
+      {
+         if(null == _dlg.tree.getSelectionPath())
+         {
+            return;
+         }
+
+         List<String> componentPath = _model.treeNodeToComponentPath((DefaultMutableTreeNode) _dlg.tree.getSelectionPath().getLastPathComponent());
+
+         final GotoHandler gotoHandler = new GotoHandler();
+
+         gotoHandler.gotoPath(componentPath, true);
+      }
+   }
+
+   private void onMaybeTriggerTreePopup(MouseEvent me)
+   {
       if(me.isPopupTrigger())
       {
          JPopupMenu popup = new JPopupMenu();
@@ -116,20 +139,6 @@ public class FindInPreferencesCtrl
             _dlg.tree.setSelectionPath(pathForLocation);
          }
          popup.show(_dlg.tree, me.getX(), me.getY());
-      }
-      else if (2 == me.getClickCount())
-      {
-         if(null == _dlg.tree.getSelectionPath())
-         {
-            return;
-         }
-
-         List<String> componentPath = _model.treeNodeToComponentPath((DefaultMutableTreeNode)_dlg.tree.getSelectionPath().getLastPathComponent());
-
-         final GotoHandler gotoHandler = new GotoHandler();
-
-         gotoHandler.gotoPath(componentPath, true);
-
       }
    }
 

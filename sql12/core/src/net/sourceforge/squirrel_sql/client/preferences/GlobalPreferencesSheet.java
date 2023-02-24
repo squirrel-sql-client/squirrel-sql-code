@@ -152,6 +152,9 @@ public class GlobalPreferencesSheet extends DialogWidget
       }
    }
 
+   /**
+    * The dialog is open, the returned GlobalPreferencesDialogFindInfo must contain the open dialog's components.
+    */
    public static GlobalPreferencesDialogFindInfo createPreferencesFinderInfo()
    {
       GlobalPreferencesSheet prefsFinderInstance = s_instance;;

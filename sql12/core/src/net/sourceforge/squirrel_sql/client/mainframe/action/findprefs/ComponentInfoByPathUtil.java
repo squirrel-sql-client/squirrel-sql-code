@@ -11,6 +11,10 @@ import java.util.TreeMap;
 
 public class ComponentInfoByPathUtil
 {
+   /**
+    * The calls to {@link GlobalPreferencesSheet#createPreferencesFinderInfo()} and {@link NewSessionPropertiesSheet#createPropertiesFinderInfo()}
+    * must return PrefsFindInfo which contain the real showing components.
+    */
    public static PrefsFindInfo createPrefsFindInfo()
    {
 

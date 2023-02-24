@@ -14,7 +14,7 @@ public class PrefsFindInfo
 
    /**
     * E.g the shortcut table changes when the preference window is opened.
-    * That is why we refresh the FindInfo when {@link #showTabOfPathComponent(List)} is called.
+    * That is why we refresh the FindInfo when {@link #openDialogAndShowComponentAtPath(List)} is called.
     */
    private PrefsFindInfo _prefsFindInfoUpdate;
 
@@ -37,11 +37,11 @@ public class PrefsFindInfo
     * @param The first path entry (path.subList(0,1)) is the dialog. The second if present is the tab components path.
     * @return The tab component If the path contained a tab component else null.
     */
-   public PrefComponentInfo showTabOfPathComponent(List<String> path)
+   public PrefComponentInfo openDialogAndShowComponentAtPath(List<String> path)
    {
       final DialogFindInfo dialogFindInfo = getPrefComponentInfoByPath(path.subList(0,1)).getDialogFindInfo();
 
-      PrefComponentInfo tabComponentInfo = null;
+      PrefComponentInfo showingPrarentsComponentInfo = null;
 
       if(dialogFindInfo instanceof GlobalPreferencesDialogFindInfo )
       {
@@ -52,9 +52,9 @@ public class PrefsFindInfo
 
          if(1 < path.size())
          {
-            tabComponentInfo = getPrefComponentInfoByPath(path.subList(0, 2));
-            tabComponentInfo = _prefsFindInfoUpdate.getPrefComponentInfoByPath(tabComponentInfo.getPath());
-            _prefsFindInfoUpdate._globalPreferencesDialogFindInfo.selectTabOfPathComponent(tabComponentInfo.getComponent());
+            showingPrarentsComponentInfo = getPrefComponentInfoByPath(path.subList(0, 2));
+            showingPrarentsComponentInfo = _prefsFindInfoUpdate.getPrefComponentInfoByPath(showingPrarentsComponentInfo.getPath());
+            _prefsFindInfoUpdate._globalPreferencesDialogFindInfo.selectTabOfPathComponent(showingPrarentsComponentInfo.getComponent());
          }
       }
       else if(dialogFindInfo instanceof SessionPropertiesDialogFindInfo)
@@ -64,9 +64,9 @@ public class PrefsFindInfo
 
          if(1 < path.size())
          {
-            tabComponentInfo = getPrefComponentInfoByPath(path.subList(0,2));
-            tabComponentInfo = _prefsFindInfoUpdate.getPrefComponentInfoByPath(tabComponentInfo.getPath());
-            _prefsFindInfoUpdate._sessionPropertiesDialogFindInfo.selectTabOfPathComponent(tabComponentInfo.getComponent());
+            showingPrarentsComponentInfo = getPrefComponentInfoByPath(path.subList(0,2));
+            showingPrarentsComponentInfo = _prefsFindInfoUpdate.getPrefComponentInfoByPath(showingPrarentsComponentInfo.getPath());
+            _prefsFindInfoUpdate._sessionPropertiesDialogFindInfo.selectTabOfPathComponent(showingPrarentsComponentInfo.getComponent());
          }
       }
       else
@@ -74,7 +74,7 @@ public class PrefsFindInfo
          throw new IllegalStateException("Unknown DialogFindInfo class: " + dialogFindInfo.getClass().getName());
       }
 
-      return tabComponentInfo;
+      return showingPrarentsComponentInfo;
    }
 
    public PrefsFindInfo getPrefsFindInfoUpdate()
