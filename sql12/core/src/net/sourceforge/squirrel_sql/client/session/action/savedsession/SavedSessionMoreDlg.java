@@ -36,7 +36,7 @@ public class SavedSessionMoreDlg extends JDialog
 
    public SavedSessionMoreDlg(Frame parentFrame, SavedSessionMoreDlgState state)
    {
-      super(parentFrame, s_stringMgr.getString("SavedSessionMoreDlg.open.or.manage.saved-sessions"), true);
+      super(parentFrame, s_stringMgr.getString("SavedSessionMoreDlg.open.or.manage.saved-sessions"), false);
 
       getContentPane().setLayout(new GridBagLayout());
 

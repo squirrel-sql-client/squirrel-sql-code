@@ -1,7 +1,9 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
 
 import java.util.List;
 import java.util.TreeMap;
@@ -10,6 +12,7 @@ public class PrefsFindInfo
 {
    private SessionPropertiesDialogFindInfo _sessionPropertiesDialogFindInfo;
    private GlobalPreferencesDialogFindInfo _globalPreferencesDialogFindInfo;
+   private SavedSessionMoreDialogFindInfo _savedSessionFindInfo;
    private TreeMap<List<String>, List<PrefComponentInfo>> _componentInfoByPath;
 
    /**
@@ -20,10 +23,12 @@ public class PrefsFindInfo
 
    public PrefsFindInfo(GlobalPreferencesDialogFindInfo globalPreferencesDialogFindInfo,
                         SessionPropertiesDialogFindInfo sessionPropertiesDialogFindInfo,
+                        SavedSessionMoreDialogFindInfo savedSessionFindInfo,
                         TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath)
    {
       _globalPreferencesDialogFindInfo = globalPreferencesDialogFindInfo;
       _sessionPropertiesDialogFindInfo = sessionPropertiesDialogFindInfo;
+      _savedSessionFindInfo = savedSessionFindInfo;
       _componentInfoByPath = componentInfoByPath;
    }
 
@@ -67,6 +72,20 @@ public class PrefsFindInfo
             showingPrarentsComponentInfo = getPrefComponentInfoByPath(path.subList(0,2));
             showingPrarentsComponentInfo = _prefsFindInfoUpdate.getPrefComponentInfoByPath(showingPrarentsComponentInfo.getPath());
             _prefsFindInfoUpdate._sessionPropertiesDialogFindInfo.selectTabOfPathComponent(showingPrarentsComponentInfo.getComponent());
+         }
+      }
+      else if(dialogFindInfo instanceof SavedSessionMoreDialogFindInfo)
+      {
+         ((SessionOpenAction)Main.getApplication().getActionCollection().get(SessionOpenAction.class)).onOpenSavedSessionsMoreDialog();
+         _prefsFindInfoUpdate = ComponentInfoByPathUtil.createPrefsFindInfo();
+
+         if(0 < path.size())
+         {
+            showingPrarentsComponentInfo = getPrefComponentInfoByPath(path.subList(0,1));
+            showingPrarentsComponentInfo = _prefsFindInfoUpdate.getPrefComponentInfoByPath(showingPrarentsComponentInfo.getPath());
+
+            // SavedSessionMoreDialog has no tabs
+            //_prefsFindInfoUpdate._savedSessionFindInfo.selectTabOfPathComponent(tabComponentInfo.getComponent());
          }
       }
       else

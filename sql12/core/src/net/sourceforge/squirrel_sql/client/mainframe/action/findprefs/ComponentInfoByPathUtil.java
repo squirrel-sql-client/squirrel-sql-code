@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
+import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionMoreCtrlSingleton;
 
 import java.awt.Component;
 import java.util.ArrayList;
@@ -34,7 +35,13 @@ public class ComponentInfoByPathUtil
          PrefsPanelVisitor.visit(sessionPropertiesDialogFindInfo, tabName, entry.getValue(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
       }
 
-      return new PrefsFindInfo(globalPreferencesDialogFindInfo, sessionPropertiesDialogFindInfo, componentInfoByPath);
+      SavedSessionMoreDialogFindInfo savedSessionFindInfo = SavedSessionMoreCtrlSingleton.createPropertiesFinderInfo();
+      PrefsPanelVisitor.visit(savedSessionFindInfo, null, savedSessionFindInfo.getContentPane(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
+
+      return new PrefsFindInfo(globalPreferencesDialogFindInfo,
+                               sessionPropertiesDialogFindInfo,
+                               savedSessionFindInfo,
+                               componentInfoByPath);
    }
 
    private static void onVisitFindableComponent(PrefComponentInfo componentInfo, TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath)

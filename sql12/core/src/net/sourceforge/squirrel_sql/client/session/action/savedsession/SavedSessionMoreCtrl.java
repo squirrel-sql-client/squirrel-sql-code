@@ -1,21 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.action.savedsession;
 
-import java.awt.Frame;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -26,6 +10,23 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.Container;
+import java.awt.Frame;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SavedSessionMoreCtrl
 {
@@ -38,11 +39,15 @@ public class SavedSessionMoreCtrl
 
    private final SavedSessionMoreDlg _dlg;
    private ISession _session;
+   private SavedSessionMoreCtrlClosingListener _closingListener;
    private SavedSessionJsonBean _savedSessionToOpen;
 
-   public SavedSessionMoreCtrl(ISession session)
+   public SavedSessionMoreCtrl(ISession session,
+                               SavedSessionMoreCtrlClosingListener closingListener,
+                               boolean toUseByPreferencesFinderOnly)
    {
       _session = session;
+      _closingListener = closingListener;
 
       Frame owningFrame;
       SavedSessionMoreDlgState state;
@@ -62,7 +67,6 @@ public class SavedSessionMoreCtrl
       }
 
       _dlg = new SavedSessionMoreDlg(owningFrame, state);
-
 
       _dlg.txtToSearch.getDocument().addDocumentListener(new DocumentListener()
       {
@@ -154,12 +158,15 @@ public class SavedSessionMoreCtrl
          }
       });
 
-      GUIUtils.enableCloseByEscape(_dlg, dialog -> onClosing());
-      GUIUtils.initLocation(_dlg, 750, 750);
+      if(false == toUseByPreferencesFinderOnly)
+      {
+         GUIUtils.enableCloseByEscape(_dlg, dialog -> onClosing());
+         GUIUtils.initLocation(_dlg, 750, 750);
 
-      GUIUtils.forceFocus(_dlg.txtToSearch);
+         GUIUtils.forceFocus(_dlg.txtToSearch);
 
-      _dlg.setVisible(true);
+         _dlg.setVisible(true);
+      }
    }
 
 
@@ -395,12 +402,7 @@ public class SavedSessionMoreCtrl
       _dlg.dispose();
    }
 
-   public SavedSessionJsonBean getSavedSessionToOpen()
-   {
-      return _savedSessionToOpen;
-   }
-
-   public boolean isOpenInNewSession()
+   private boolean isOpenInNewSession()
    {
       if(null == _dlg.openInSessionPanel)
       {
@@ -420,6 +422,25 @@ public class SavedSessionMoreCtrl
       {
          Props.putString(PREF_KEY_FIND_LAST_SEARCH_STRING, _dlg.txtToSearch.getText());
       }
+
+      if(null != _closingListener)
+      {
+         _closingListener.closed(_savedSessionToOpen, isOpenInNewSession());
+      }
    }
 
+   public String getTitle()
+   {
+      return _dlg.getTitle();
+   }
+
+   public Container getContentPane()
+   {
+      return _dlg.getContentPane();
+   }
+
+   public void toFront()
+   {
+      _dlg.toFront();
+   }
 }

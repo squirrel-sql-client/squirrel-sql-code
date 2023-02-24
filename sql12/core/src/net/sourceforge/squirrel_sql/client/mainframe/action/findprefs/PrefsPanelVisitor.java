@@ -28,11 +28,20 @@ public class PrefsPanelVisitor
 
    public static void visit(DialogFindInfo dialogFindInfo, String tabName, Component globalPrefTabComponent, GlobalPreferencesPanelVisitorListener visitListener)
    {
-      final PrefComponentInfo parentForTabComponent = PrefComponentInfo.createParentForTabComponent(dialogFindInfo, tabName, globalPrefTabComponent);
-      visitListener.visitFindableComponent(parentForTabComponent.getParent());
-      visitListener.visitFindableComponent(parentForTabComponent);
+      final PrefComponentInfo parent;
+      if(null != tabName)
+      {
+         parent = PrefComponentInfo.createParentForTabComponent(dialogFindInfo, tabName, globalPrefTabComponent);
+         visitListener.visitFindableComponent(parent.getParent());
+         visitListener.visitFindableComponent(parent);
+      }
+      else
+      {
+         parent = PrefComponentInfo.createParentForDialog(dialogFindInfo, globalPrefTabComponent);
+         visitListener.visitFindableComponent(parent);
+      }
 
-      _visit(globalPrefTabComponent, visitListener, parentForTabComponent);
+      _visit(globalPrefTabComponent, visitListener, parent);
    }
 
    /**

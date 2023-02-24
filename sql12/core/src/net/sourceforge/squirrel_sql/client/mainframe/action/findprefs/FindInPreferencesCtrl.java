@@ -110,12 +110,21 @@ public class FindInPreferencesCtrl
    {
       if(2 == me.getClickCount())
       {
-         if(null == _dlg.tree.getSelectionPath())
+         TreePath selectionPath = _dlg.tree.getSelectionPath();
+         if(null == selectionPath)
          {
             return;
          }
 
-         List<String> componentPath = _model.treeNodeToComponentPath((DefaultMutableTreeNode) _dlg.tree.getSelectionPath().getLastPathComponent());
+         final TreePath pathForLocation = _dlg.tree.getPathForLocation(me.getX(), me.getY());
+
+         if(pathForLocation.getLastPathComponent() != selectionPath.getLastPathComponent())
+         {
+            // Only continue if the selected node was double-clicked.
+            return;
+         }
+
+         List<String> componentPath = _model.treeNodeToComponentPath((DefaultMutableTreeNode) selectionPath.getLastPathComponent());
 
          final GotoHandler gotoHandler = new GotoHandler();
 

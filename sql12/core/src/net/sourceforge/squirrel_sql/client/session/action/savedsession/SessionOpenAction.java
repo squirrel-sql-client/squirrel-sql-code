@@ -55,7 +55,7 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
                                                                          Main.getApplication().getActionCollection().get(SessionOpenAction.class));
 
          final JMenuItem item = new JMenuItem(s_stringMgr.getString("SessionOpenAction.popup.more", sessionOpenAccel));
-         item.addActionListener(e -> onOpenSavedSessionsDialog());
+         item.addActionListener(e -> onOpenSavedSessionsMoreDialog());
          popupMenu.add(item);
 
          JButton toolBarButton = (JButton) ae.getSource();
@@ -64,18 +64,20 @@ public class SessionOpenAction extends SquirrelAction implements ISessionAction,
       }
       else
       {
-         onOpenSavedSessionsDialog();
+         onOpenSavedSessionsMoreDialog();
       }
    }
 
-   public void onOpenSavedSessionsDialog()
+   public void onOpenSavedSessionsMoreDialog()
    {
-      SavedSessionMoreCtrl savedSessionOpenCtrl = new SavedSessionMoreCtrl(_session);
-		SavedSessionJsonBean savedSessionJsonBean = savedSessionOpenCtrl.getSavedSessionToOpen();
+      SavedSessionMoreCtrlSingleton.openDialog(_session, (ssjb, newSess) -> onSavedSessionMoreResultReceived(ssjb, newSess));
+   }
 
+   private void onSavedSessionMoreResultReceived(SavedSessionJsonBean savedSessionJsonBean, boolean openInNewSession)
+   {
       if(null != savedSessionJsonBean)
       {
-         if(savedSessionOpenCtrl.isOpenInNewSession())
+         if(openInNewSession)
          {
             onOpenSavedSession(savedSessionJsonBean, null, true);
          }

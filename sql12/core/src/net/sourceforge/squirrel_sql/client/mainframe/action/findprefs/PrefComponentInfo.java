@@ -40,6 +40,12 @@ public class PrefComponentInfo
 
    public PrefComponentInfo(DialogFindInfo dialogFindInfo)
    {
+      this(null, dialogFindInfo);
+   }
+
+   public PrefComponentInfo(Component component, DialogFindInfo dialogFindInfo)
+   {
+      _component = component;
       _dialogFindInfo = dialogFindInfo;
       _text = dialogFindInfo.getDialogTitle();
       _parent = null;
@@ -71,6 +77,12 @@ public class PrefComponentInfo
       PrefComponentInfo dialogComponentInfo = new PrefComponentInfo(dialogFindInfo);
       return new PrefComponentInfo(globalPrefTabComponent, tabName, dialogComponentInfo, FindableComponentInfoType.PARENT_TAB_CONTAINER);
    }
+
+   public static PrefComponentInfo createParentForDialog(DialogFindInfo dialogFindInfo, Component dialogContentComponent)
+   {
+      return new PrefComponentInfo(dialogContentComponent, dialogFindInfo);
+   }
+
 
    public List<String> getPath()
    {

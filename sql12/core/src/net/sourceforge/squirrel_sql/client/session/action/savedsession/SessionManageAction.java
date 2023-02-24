@@ -62,7 +62,7 @@ public class SessionManageAction extends SquirrelAction implements ISessionActio
 
    private void onOpenManageSavedSessionDialog()
    {
-      ((SessionOpenAction)Main.getApplication().getActionCollection().get(SessionOpenAction.class)).onOpenSavedSessionsDialog();
+      ((SessionOpenAction)Main.getApplication().getActionCollection().get(SessionOpenAction.class)).onOpenSavedSessionsMoreDialog();
    }
 
    private void onPrintDetailsToMessagePanel()
