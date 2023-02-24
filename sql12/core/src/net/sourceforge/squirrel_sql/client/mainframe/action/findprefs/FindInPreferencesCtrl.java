@@ -111,14 +111,11 @@ public class FindInPreferencesCtrl
       if(2 == me.getClickCount())
       {
          TreePath selectionPath = _dlg.tree.getSelectionPath();
-         if(null == selectionPath)
-         {
-            return;
-         }
-
          final TreePath pathForLocation = _dlg.tree.getPathForLocation(me.getX(), me.getY());
 
-         if(pathForLocation.getLastPathComponent() != selectionPath.getLastPathComponent())
+         if(   null == selectionPath
+            || null == pathForLocation
+            || pathForLocation.getLastPathComponent() != selectionPath.getLastPathComponent())
          {
             // Only continue if the selected node was double-clicked.
             return;
