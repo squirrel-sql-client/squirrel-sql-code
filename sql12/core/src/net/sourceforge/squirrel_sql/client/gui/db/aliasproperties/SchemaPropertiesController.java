@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
@@ -39,14 +39,12 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    private JComboBox _cboUDT = new JComboBox();
    private Color _origTblColor;
    private SQLAlias _alias;
-   private IApplication _app;
    private SchemaTableModel _schemaTableModel;
 
 
-   public SchemaPropertiesController(SQLAlias alias, IApplication app)
+   public SchemaPropertiesController(SQLAlias alias)
    {
       _alias = alias;
-      _app = app;
       _pnl = new SchemaPropertiesPanel();
 
       _schemaTableModel = new SchemaTableModel(alias.getSchemaProperties().getSchemaDetails());
@@ -97,7 +95,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
       _pnl.chkCacheSchemaIndepndentMetaData.setSelected(alias.getSchemaProperties().isCacheSchemaIndependentMetaData());
 
-      _pnl.txtSchemaFilter.setText(_app.getPropsImpl().getString(PREF_KEY_LAST_SCHEMA_FILTER, null));
+      _pnl.txtSchemaFilter.setText(Main.getApplication().getPropsImpl().getString(PREF_KEY_LAST_SCHEMA_FILTER, null));
 
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.ALL);
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.TABLES);
@@ -131,7 +129,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
    private void onDeleteCache()
    {
-      SchemaInfoCacheSerializer.deleteCacheFile(_app, _alias, true);
+      SchemaInfoCacheSerializer.deleteCacheFile(Main.getApplication(), _alias, true);
    }
 
    private void onPrintCacheFileLocation()
@@ -144,12 +142,12 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       if(schemaCacheFile.exists())
       {
          // i18n[SchemaPropertiesController.cacheFilePath=Cache file path for Alias "{0}": {1}]
-         _app.getMessageHandler().showMessage(s_stringMgr.getString("SchemaPropertiesController.cacheFilePath", params));
+         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SchemaPropertiesController.cacheFilePath", params));
       }
       else
       {
          // i18n[SchemaPropertiesController.cacheFilePathNotExists=Cache file for Alias "{0}" does not exist. If it existed the path would be: {1}]
-         _app.getMessageHandler().showMessage(s_stringMgr.getString("SchemaPropertiesController.cacheFilePathNotExists", params));
+         Main.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SchemaPropertiesController.cacheFilePathNotExists", params));
       }
    }
 
@@ -215,7 +213,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    {
       try
       {
-         String[] schemas = _app.getSessionManager().getAllowedSchemas(conn, _alias, null);
+         String[] schemas = Main.getApplication().getSessionManager().getAllowedSchemas(conn, _alias, null);
 
          _schemaTableModel.updateSchemas(schemas);
 
@@ -313,7 +311,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
       _alias.getSchemaProperties().setCacheSchemaIndependentMetaData(_pnl.chkCacheSchemaIndepndentMetaData.isSelected());
 
-      _app.getPropsImpl().put(PREF_KEY_LAST_SCHEMA_FILTER, _pnl.txtSchemaFilter.getText());
+      Main.getApplication().getPropsImpl().put(PREF_KEY_LAST_SCHEMA_FILTER, _pnl.txtSchemaFilter.getText());
    }
 
    public String getTitle()

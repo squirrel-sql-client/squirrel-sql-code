@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -30,14 +30,12 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
    private DriverPropertiesPanel _propsPnl;
 
    private ISQLAlias _alias;
-   private IApplication _app;
    String _errMsg;
    private Color _origTblColor;
 
-   public DriverPropertiesController(SQLAlias alias, IApplication app)
+   public DriverPropertiesController(SQLAlias alias)
    {
       _alias = alias;
-      _app = app;
       String aliasUrl = alias.getUrl();
 
       IIdentifier driverIdentifier = alias.getDriverIdentifier();
@@ -45,15 +43,15 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
       {
          // I18n[DriverPropertiesController.noDriverSelected=No driver available in this Alias.\nCan not load driver properties tab.]
          _errMsg = s_stringMgr.getString("DriverPropertiesController.noDriverSelected");
-         _app.getMessageHandler().showErrorMessage(_errMsg);
+         Main.getApplication().getMessageHandler().showErrorMessage(_errMsg);
          return;
       }
-      final Driver jdbcDriver = app.getSQLDriverManager().getJDBCDriver(driverIdentifier);
+      final Driver jdbcDriver = Main.getApplication().getSQLDriverManager().getJDBCDriver(driverIdentifier);
       if (jdbcDriver == null)
       {
          // I18n[DriverPropertiesController.loadingDriverFailed=Loading JDBC driver "{0}" failed.\nCan not load driver properties tab.]
-         _errMsg = s_stringMgr.getString("DriverPropertiesController.loadingDriverFailed", app.getAliasesAndDriversManager().getDriver(driverIdentifier).getName());
-         _app.getMessageHandler().showErrorMessage(_errMsg);
+         _errMsg = s_stringMgr.getString("DriverPropertiesController.loadingDriverFailed", Main.getApplication().getAliasesAndDriversManager().getDriver(driverIdentifier).getName());
+         Main.getApplication().getMessageHandler().showErrorMessage(_errMsg);
          return;
       }
       else
@@ -62,19 +60,19 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
          {
             if (!jdbcDriver.acceptsURL(aliasUrl))
             {
-               String driverName = app.getAliasesAndDriversManager().getDriver(driverIdentifier).getName();
+               String driverName = Main.getApplication().getAliasesAndDriversManager().getDriver(driverIdentifier).getName();
                //I18n[DriverPropertiesController.invalidUrl=According to
                //the driver "{0}", the url "{1}" is invalid.]
                _errMsg = s_stringMgr.getString("DriverPropertiesController.invalidUrl",new String[]{driverName, aliasUrl});
-               _app.getMessageHandler().showErrorMessage(_errMsg);
+               Main.getApplication().getMessageHandler().showErrorMessage(_errMsg);
                return;
             }
          }
          catch (Exception e)
          {
             // I18n[DriverPropertiesController.loadingDriverFailed=Loading JDBC driver "{0}" failed.\nCan not load driver properties tab.]
-            _errMsg = s_stringMgr.getString("DriverPropertiesController.loadingDriverFailed", app.getAliasesAndDriversManager().getDriver(driverIdentifier).getName());
-            _app.getMessageHandler().showErrorMessage(_errMsg);
+            _errMsg = s_stringMgr.getString("DriverPropertiesController.loadingDriverFailed", Main.getApplication().getAliasesAndDriversManager().getDriver(driverIdentifier).getName());
+            Main.getApplication().getMessageHandler().showErrorMessage(_errMsg);
             return;
          }
       }
@@ -88,7 +86,7 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
       {
          // I18n[DriverPropertiesController.gettingDriverPropetiesFailed=Loading the properties from the JDBC driver failed.\nCan not load driver properties tab.]
          _errMsg = s_stringMgr.getString("DriverPropertiesController.gettingDriverPropetiesFailed");
-         _app.getMessageHandler().showErrorMessage(_errMsg);
+         Main.getApplication().getMessageHandler().showErrorMessage(_errMsg);
          //return;
       }
 

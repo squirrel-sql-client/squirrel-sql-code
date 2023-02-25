@@ -1,30 +1,36 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class AliasPropertiesInternalFrame extends DialogWidget
 {
    private static final String PREF_KEY_ALIAS_PROPS_SHEET_WIDTH = "Squirrel.aliasPropsSheetWidth";
    private static final String PREF_KEY_ALIAS_PROPS_SHEET_HEIGHT = "Squirrel.aliasPropsSheetHeight";
 
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(AliasPropertiesInternalFrame.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasPropertiesInternalFrame.class);
 
 
    JTabbedPane tabPane;
    JButton btnOk;
    JButton btnClose;
 
-   AliasPropertiesInternalFrame(String title, IApplication app)
+   AliasPropertiesInternalFrame(String title)
    {
-      super(s_stringMgr.getString("AliasPropertiesInternalFrame.title", title), true, app);
+      super(s_stringMgr.getString("AliasPropertiesInternalFrame.title", title), true, Main.getApplication());
 
       setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
       makeToolWindow(true);

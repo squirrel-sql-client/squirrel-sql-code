@@ -14,15 +14,13 @@ public class GlobalPreferencesDialogFindInfo implements DialogFindInfo
 
    private String _dialogTitle;
    private final JTabbedPane _globalPrefsTabPane;
-   private final HashMap<Integer, Component> _tabComponentByTabIndex;
-   private final HashMap<Component, Integer> _tabIndexByTabComponent;
+   private final HashMap<Integer, Component> _tabComponentByTabIndex = new HashMap<>();
+   private final HashMap<Component, Integer> _tabIndexByTabComponent = new HashMap<>();
 
    public GlobalPreferencesDialogFindInfo(String dialogTitle, JTabbedPane globalPrefsTabPane)
    {
       _dialogTitle = dialogTitle;
       _globalPrefsTabPane = globalPrefsTabPane;
-      _tabComponentByTabIndex = new HashMap<>();
-      _tabIndexByTabComponent = new HashMap<>();
 
       for (int i = 0; i < _globalPrefsTabPane.getTabCount(); i++)
       {

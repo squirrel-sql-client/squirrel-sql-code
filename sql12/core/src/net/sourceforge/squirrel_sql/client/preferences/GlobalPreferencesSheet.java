@@ -124,13 +124,7 @@ public class GlobalPreferencesSheet extends DialogWidget
 
    public static PreferencesFindSupport<GlobalPreferencesDialogFindInfo> getPreferencesFindSupport()
    {
-      return new PreferencesFindSupport<GlobalPreferencesDialogFindInfo>() {
-         @Override
-         public GlobalPreferencesDialogFindInfo createFindInfo(boolean ofOpenDialog)
-         {
-            return onCreateFindInfo(ofOpenDialog);
-         }
-      };
+      return ofOpenDialog -> onCreateFindInfo(ofOpenDialog);
    }
 
    private static GlobalPreferencesDialogFindInfo onCreateFindInfo(boolean ofOpenDialog)

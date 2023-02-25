@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -51,7 +50,7 @@ public class ConnectionPropertiesController implements IAliasPropertiesPanelCont
 		String HINT = s_stringMgr.getString("ConnectionPropertiesController.hint");
 	}
 	
-	public ConnectionPropertiesController(ISQLAliasExt alias, IApplication app)
+	public ConnectionPropertiesController(ISQLAliasExt alias)
 	{
 		_alias = alias;
 		_propsPnl = new ConnectionPropertiesPanel(alias.getConnectionProperties());

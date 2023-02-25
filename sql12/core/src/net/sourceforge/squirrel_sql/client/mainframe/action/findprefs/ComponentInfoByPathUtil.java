@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.AliasPropertiesController;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionMoreCtrlSingleton;
@@ -22,6 +23,7 @@ public class ComponentInfoByPathUtil
 
       TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath = new TreeMap<>( (p1, p2) -> comparePaths(p1,p2) );
 
+      // Global Preferences
       GlobalPreferencesDialogFindInfo globalPreferencesDialogFindInfo =
             GlobalPreferencesSheet.getPreferencesFindSupport().createFindInfo(dialogToOpen == DialogToOpen.GLOBAL_PREFERENCES);
       for (Map.Entry<Integer, Component> entry : globalPreferencesDialogFindInfo.getTabComponentByTabIndex().entrySet())
@@ -30,6 +32,7 @@ public class ComponentInfoByPathUtil
          PrefsPanelVisitor.visit(globalPreferencesDialogFindInfo, tabName, entry.getValue(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
       }
 
+      // New Session Properties
       SessionPropertiesDialogFindInfo sessionPropertiesDialogFindInfo =
             NewSessionPropertiesSheet.getPreferencesFindSupport().createFindInfo(dialogToOpen == DialogToOpen.SESSION_PROPERTIES);
       for (Map.Entry<Integer, Component> entry : sessionPropertiesDialogFindInfo.getTabComponentByTabIndex().entrySet())
@@ -38,14 +41,32 @@ public class ComponentInfoByPathUtil
          PrefsPanelVisitor.visit(sessionPropertiesDialogFindInfo, tabName, entry.getValue(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
       }
 
+      // Alias Properties
+      AliasPropertiesDialogFindInfo aliasPropertiesDialogFindInfo =
+            AliasPropertiesController.getPreferencesFindSupport().createFindInfo(dialogToOpen == DialogToOpen.ALIAS_PROPERTIES);
+
+      if(null != aliasPropertiesDialogFindInfo) // Happens when no Alias was defined yet.
+      {
+         for (Map.Entry<Integer, Component> entry : aliasPropertiesDialogFindInfo.getTabComponentByTabIndex().entrySet())
+         {
+            final String tabName = aliasPropertiesDialogFindInfo.getTabName(entry.getKey());
+            PrefsPanelVisitor.visit(aliasPropertiesDialogFindInfo, tabName, entry.getValue(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
+         }
+      }
+
+      // Saved Sessions
       SavedSessionMoreDialogFindInfo savedSessionFindInfo =
             SavedSessionMoreCtrlSingleton.getPreferencesFindSupport().createFindInfo(dialogToOpen == DialogToOpen.SAVED_SESSION);
       PrefsPanelVisitor.visit(savedSessionFindInfo, null, savedSessionFindInfo.getContentPane(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
 
+
+
       return new PrefsFindInfo(globalPreferencesDialogFindInfo,
                                sessionPropertiesDialogFindInfo,
+                               aliasPropertiesDialogFindInfo,
                                savedSessionFindInfo,
-                               componentInfoByPath);
+                               componentInfoByPath
+      );
    }
 
    private static void onVisitFindableComponent(PrefComponentInfo componentInfo, TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath)

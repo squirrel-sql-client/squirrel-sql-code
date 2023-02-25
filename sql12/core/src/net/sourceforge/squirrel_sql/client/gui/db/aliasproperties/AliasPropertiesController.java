@@ -1,10 +1,12 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.AliasPropertiesDialogFindInfo;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesFindSupport;
 import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -15,38 +17,68 @@ import java.util.HashMap;
 
 public class AliasPropertiesController
 {
-   private static HashMap<IIdentifier, AliasPropertiesController> _currentlyOpenInstancesByAliasID = new HashMap<>();
+   private static HashMap<IIdentifier, AliasPropertiesController> s_currentlyOpenInstancesByAliasID = new HashMap<>();
 
    private AliasPropertiesInternalFrame _frame;
    private ArrayList<IAliasPropertiesPanelController> _iAliasPropertiesPanelControllers = new ArrayList<>();
-   private IApplication _app;
    private SQLAlias _alias;
 
-   public static void showAliasProperties(IApplication app, SQLAlias selectedAlias)
+   public static void showAliasProperties(SQLAlias selectedAlias)
    {
-      AliasPropertiesController openProps = _currentlyOpenInstancesByAliasID.get(selectedAlias.getIdentifier());
+      AliasPropertiesController openProps = s_currentlyOpenInstancesByAliasID.get(selectedAlias.getIdentifier());
       if(null == openProps)
       {
-         _currentlyOpenInstancesByAliasID.put(selectedAlias.getIdentifier(), new AliasPropertiesController(app, selectedAlias));
+         s_currentlyOpenInstancesByAliasID.put(selectedAlias.getIdentifier(), new AliasPropertiesController(selectedAlias));
       }
       else
       {
          openProps._frame.moveToFront();
       }
-
    }
 
-   private AliasPropertiesController(IApplication app, SQLAlias selectedAlias)
+   public static PreferencesFindSupport<AliasPropertiesDialogFindInfo> getPreferencesFindSupport()
    {
-      _app = app;
-      _alias = selectedAlias;
-      _frame = new AliasPropertiesInternalFrame(_alias.getName(), app);
+      return ofOpenDialog -> onCreateFindInfo(ofOpenDialog);
+   }
 
-      _app.getMainFrame().addWidget(_frame);
+   private static AliasPropertiesDialogFindInfo onCreateFindInfo(boolean ofOpenDialog)
+   {
+      if(Main.getApplication().getAliasesAndDriversManager().getAliasList().isEmpty())
+      {
+         return null;
+      }
+
+      SQLAlias firstAlias = (SQLAlias) Main.getApplication().getAliasesAndDriversManager().getAliasList().get(0);
+
+      if(ofOpenDialog)
+      {
+         showAliasProperties(firstAlias);
+      }
+
+      AliasPropertiesController aliasPropertiesController = s_currentlyOpenInstancesByAliasID.get(firstAlias.getIdentifier());
+      if(null == aliasPropertiesController)
+      {
+         aliasPropertiesController = new AliasPropertiesController(firstAlias, true);
+      }
+
+      return new AliasPropertiesDialogFindInfo(aliasPropertiesController._frame.getTitle(), aliasPropertiesController._frame.tabPane);
+   }
+
+
+   private AliasPropertiesController(SQLAlias alias)
+   {
+      this(alias, false);
+   }
+
+   private AliasPropertiesController(SQLAlias selectedAlias, boolean toUseByPreferencesFinderOnly)
+   {
+      _alias = selectedAlias;
+      _frame = new AliasPropertiesInternalFrame(_alias.getName());
+
+      Main.getApplication().getMainFrame().addWidget(_frame);
 
       DialogWidget.centerWithinDesktop(_frame);
 
-      _frame.setVisible(true);
 
 
       _frame.btnOk.addActionListener(e -> onOK());
@@ -61,19 +93,26 @@ public class AliasPropertiesController
          }
       });
 
-      GUIUtils.enableCloseByEscape(_frame, dw -> _currentlyOpenInstancesByAliasID.remove(_alias.getIdentifier()));
       loadTabs();
+
+
+      if(false == toUseByPreferencesFinderOnly)
+      {
+         GUIUtils.enableCloseByEscape(_frame, dw -> s_currentlyOpenInstancesByAliasID.remove(_alias.getIdentifier()));
+         _frame.setVisible(true);
+      }
    }
+
 
    private void loadTabs()
    {
-      _iAliasPropertiesPanelControllers.add(new SchemaPropertiesController(_alias, _app));
-      _iAliasPropertiesPanelControllers.add(new DriverPropertiesController(_alias, _app));
-      _iAliasPropertiesPanelControllers.add(new ColorPropertiesController(_alias, _app));
-      _iAliasPropertiesPanelControllers.add(new ConnectionPropertiesController(_alias, _app));
+      _iAliasPropertiesPanelControllers.add(new SchemaPropertiesController(_alias));
+      _iAliasPropertiesPanelControllers.add(new DriverPropertiesController(_alias));
+      _iAliasPropertiesPanelControllers.add(new ColorPropertiesController(_alias));
+      _iAliasPropertiesPanelControllers.add(new ConnectionPropertiesController(_alias));
       
       IAliasPropertiesPanelController[] pluginAliasPropertiesPanelControllers =
-         _app.getPluginManager().getAliasPropertiesPanelControllers(_alias);
+            Main.getApplication().getPluginManager().getAliasPropertiesPanelControllers(_alias);
 
       _iAliasPropertiesPanelControllers.addAll(Arrays.asList(pluginAliasPropertiesPanelControllers));
 
@@ -91,7 +130,7 @@ public class AliasPropertiesController
 
    private void performClose()
    {
-      _currentlyOpenInstancesByAliasID.remove(_alias.getIdentifier());
+      s_currentlyOpenInstancesByAliasID.remove(_alias.getIdentifier());
       _frame.setVisible(false);
       _frame.dispose();
    }
@@ -104,7 +143,7 @@ public class AliasPropertiesController
          aliasPropertiesController.applyChanges();
       }
 
-      _app.savePreferences(PreferenceType.ALIAS_DEFINITIONS);
+      Main.getApplication().savePreferences(PreferenceType.ALIAS_DEFINITIONS);
       performClose();
    }
 
