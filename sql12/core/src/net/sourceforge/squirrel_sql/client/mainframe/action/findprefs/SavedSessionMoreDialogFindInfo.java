@@ -19,6 +19,12 @@ public class SavedSessionMoreDialogFindInfo implements DialogFindInfo
       return s_stringMgr.getString("GlobalPreferencesDialogFindInfo.dialog.title", _title);
    }
 
+   @Override
+   public DialogToOpen getDialogToOpenConstant()
+   {
+      return DialogToOpen.SAVED_SESSION;
+   }
+
    public Container getContentPane()
    {
       return _contentPane;

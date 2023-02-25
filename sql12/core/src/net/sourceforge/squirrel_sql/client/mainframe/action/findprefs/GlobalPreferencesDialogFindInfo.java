@@ -47,6 +47,12 @@ public class GlobalPreferencesDialogFindInfo implements DialogFindInfo
       return s_stringMgr.getString("GlobalPreferencesDialogFindInfo.dialog.title", _dialogTitle);
    }
 
+   @Override
+   public DialogToOpen getDialogToOpenConstant()
+   {
+      return DialogToOpen.GLOBAL_PREFERENCES;
+   }
+
    public void selectTabOfPathComponent(Component tabComponent)
    {
       _globalPrefsTabPane.setSelectedIndex(_tabIndexByTabComponent.get(tabComponent));

@@ -48,6 +48,12 @@ public class SessionPropertiesDialogFindInfo implements DialogFindInfo
       return s_stringMgr.getString("GlobalPreferencesDialogFindInfo.dialog.title", _dialogTitle);
    }
 
+   @Override
+   public DialogToOpen getDialogToOpenConstant()
+   {
+      return DialogToOpen.SESSION_PROPERTIES;
+   }
+
    public void selectTabOfPathComponent(Component tabComponent)
    {
       _newSessionPropertiesTabbedPane.setSelectedIndex(_tabIndexByTabComponent.get(tabComponent));

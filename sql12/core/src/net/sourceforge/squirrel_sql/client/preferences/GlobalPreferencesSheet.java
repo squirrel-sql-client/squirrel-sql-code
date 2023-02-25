@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.GlobalPreferencesDialogFindInfo;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesFindSupport;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlConfigPrefsTab;
 import net.sourceforge.squirrel_sql.client.preferences.shortcut.ShortcutPrefsTab;
@@ -121,6 +122,33 @@ public class GlobalPreferencesSheet extends DialogWidget
       }
    }
 
+   public static PreferencesFindSupport<GlobalPreferencesDialogFindInfo> getPreferencesFindSupport()
+   {
+      return new PreferencesFindSupport<GlobalPreferencesDialogFindInfo>() {
+         @Override
+         public GlobalPreferencesDialogFindInfo createFindInfo(boolean ofOpenDialog)
+         {
+            return onCreateFindInfo(ofOpenDialog);
+         }
+      };
+   }
+
+   private static GlobalPreferencesDialogFindInfo onCreateFindInfo(boolean ofOpenDialog)
+   {
+      if(ofOpenDialog)
+      {
+         // Ensures s_instance is initialized.
+         GlobalPreferencesSheet.showSheet(null);
+      }
+
+      GlobalPreferencesSheet prefsFinderInstance = s_instance;;
+      if(null == prefsFinderInstance)
+      {
+         prefsFinderInstance = new GlobalPreferencesSheet(true);
+      }
+      return new GlobalPreferencesDialogFindInfo(prefsFinderInstance.getTitle(), prefsFinderInstance._tabPane);
+   }
+
    private Dimension getDimension()
    {
       return new Dimension(
@@ -155,7 +183,7 @@ public class GlobalPreferencesSheet extends DialogWidget
    /**
     * The dialog is open, the returned GlobalPreferencesDialogFindInfo must contain the open dialog's components.
     */
-   public static GlobalPreferencesDialogFindInfo createPreferencesFinderInfo()
+   private static GlobalPreferencesDialogFindInfo createPreferencesFinderInfo()
    {
       GlobalPreferencesSheet prefsFinderInstance = s_instance;;
       if(null == prefsFinderInstance)

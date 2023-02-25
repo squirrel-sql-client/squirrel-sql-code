@@ -1,10 +1,5 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action.findprefs;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
-import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
-import net.sourceforge.squirrel_sql.client.session.action.savedsession.SessionOpenAction;
-
 import java.util.List;
 import java.util.TreeMap;
 
@@ -50,10 +45,7 @@ public class PrefsFindInfo
 
       if(dialogFindInfo instanceof GlobalPreferencesDialogFindInfo )
       {
-         GlobalPreferencesSheet.showSheet(null);
-
-         // After the GlobalPreferencesSheet we create an FindInfo-update
-         _prefsFindInfoUpdate = ComponentInfoByPathUtil.createPrefsFindInfo();
+         _prefsFindInfoUpdate = ComponentInfoByPathUtil.createPrefsFindInfo(dialogFindInfo.getDialogToOpenConstant());
 
          if(1 < path.size())
          {
@@ -64,8 +56,7 @@ public class PrefsFindInfo
       }
       else if(dialogFindInfo instanceof SessionPropertiesDialogFindInfo)
       {
-         NewSessionPropertiesSheet.showSheet();
-         _prefsFindInfoUpdate = ComponentInfoByPathUtil.createPrefsFindInfo();
+         _prefsFindInfoUpdate = ComponentInfoByPathUtil.createPrefsFindInfo(dialogFindInfo.getDialogToOpenConstant());
 
          if(1 < path.size())
          {
@@ -76,8 +67,7 @@ public class PrefsFindInfo
       }
       else if(dialogFindInfo instanceof SavedSessionMoreDialogFindInfo)
       {
-         ((SessionOpenAction)Main.getApplication().getActionCollection().get(SessionOpenAction.class)).onOpenSavedSessionsMoreDialog();
-         _prefsFindInfoUpdate = ComponentInfoByPathUtil.createPrefsFindInfo();
+         _prefsFindInfoUpdate = ComponentInfoByPathUtil.createPrefsFindInfo(dialogFindInfo.getDialogToOpenConstant());
 
          if(0 < path.size())
          {

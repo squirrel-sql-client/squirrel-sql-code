@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesFindSupport;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.SessionPropertiesDialogFindInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionPropertiesPanel;
@@ -100,6 +101,33 @@ public class NewSessionPropertiesSheet extends DialogWidget
 	 */
 	public static SessionPropertiesDialogFindInfo createPropertiesFinderInfo()
 	{
+		NewSessionPropertiesSheet newSessionPropertiesSheet = s_instance;
+		if(null == newSessionPropertiesSheet)
+		{
+			newSessionPropertiesSheet = new NewSessionPropertiesSheet(true);
+		}
+		return new SessionPropertiesDialogFindInfo(newSessionPropertiesSheet.getTitle(), newSessionPropertiesSheet._tabbedPane);
+	}
+
+	public static PreferencesFindSupport<SessionPropertiesDialogFindInfo> getPreferencesFindSupport()
+	{
+		return new PreferencesFindSupport<SessionPropertiesDialogFindInfo>() {
+			@Override
+			public SessionPropertiesDialogFindInfo createFindInfo(boolean ofOpenDialog)
+			{
+				return onCreateFindInfo(ofOpenDialog);
+			}
+		};
+	}
+
+	private static SessionPropertiesDialogFindInfo onCreateFindInfo(boolean ofOpenDialog)
+	{
+		if(ofOpenDialog)
+		{
+			// Ensures s_instance is initialized
+			NewSessionPropertiesSheet.showSheet();
+		}
+
 		NewSessionPropertiesSheet newSessionPropertiesSheet = s_instance;
 		if(null == newSessionPropertiesSheet)
 		{

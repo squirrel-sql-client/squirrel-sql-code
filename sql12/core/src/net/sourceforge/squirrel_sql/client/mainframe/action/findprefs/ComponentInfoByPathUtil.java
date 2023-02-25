@@ -12,30 +12,34 @@ import java.util.TreeMap;
 
 public class ComponentInfoByPathUtil
 {
-   /**
-    * The calls to {@link GlobalPreferencesSheet#createPreferencesFinderInfo()} and {@link NewSessionPropertiesSheet#createPropertiesFinderInfo()}
-    * must return PrefsFindInfo which contain the real showing components.
-    */
    public static PrefsFindInfo createPrefsFindInfo()
+   {
+      return createPrefsFindInfo(DialogToOpen.NONE);
+   }
+
+   public static PrefsFindInfo createPrefsFindInfo(DialogToOpen dialogToOpen)
    {
 
       TreeMap<List<String>, List<PrefComponentInfo>> componentInfoByPath = new TreeMap<>( (p1, p2) -> comparePaths(p1,p2) );
 
-      GlobalPreferencesDialogFindInfo globalPreferencesDialogFindInfo = GlobalPreferencesSheet.createPreferencesFinderInfo();
+      GlobalPreferencesDialogFindInfo globalPreferencesDialogFindInfo =
+            GlobalPreferencesSheet.getPreferencesFindSupport().createFindInfo(dialogToOpen == DialogToOpen.GLOBAL_PREFERENCES);
       for (Map.Entry<Integer, Component> entry : globalPreferencesDialogFindInfo.getTabComponentByTabIndex().entrySet())
       {
          final String tabName = globalPreferencesDialogFindInfo.getTabName(entry.getKey());
          PrefsPanelVisitor.visit(globalPreferencesDialogFindInfo, tabName, entry.getValue(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
       }
 
-      SessionPropertiesDialogFindInfo sessionPropertiesDialogFindInfo = NewSessionPropertiesSheet.createPropertiesFinderInfo();
+      SessionPropertiesDialogFindInfo sessionPropertiesDialogFindInfo =
+            NewSessionPropertiesSheet.getPreferencesFindSupport().createFindInfo(dialogToOpen == DialogToOpen.SESSION_PROPERTIES);
       for (Map.Entry<Integer, Component> entry : sessionPropertiesDialogFindInfo.getTabComponentByTabIndex().entrySet())
       {
          final String tabName = sessionPropertiesDialogFindInfo.getTabName(entry.getKey());
          PrefsPanelVisitor.visit(sessionPropertiesDialogFindInfo, tabName, entry.getValue(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
       }
 
-      SavedSessionMoreDialogFindInfo savedSessionFindInfo = SavedSessionMoreCtrlSingleton.createPropertiesFinderInfo();
+      SavedSessionMoreDialogFindInfo savedSessionFindInfo =
+            SavedSessionMoreCtrlSingleton.getPreferencesFindSupport().createFindInfo(dialogToOpen == DialogToOpen.SAVED_SESSION);
       PrefsPanelVisitor.visit(savedSessionFindInfo, null, savedSessionFindInfo.getContentPane(), vi -> onVisitFindableComponent(vi, componentInfoByPath));
 
       return new PrefsFindInfo(globalPreferencesDialogFindInfo,
