@@ -6,6 +6,10 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Find in preferences/configurations:
+  Former "Find in Global Preferences and New Session" now allows to search in
+  the Alias properties and Saved Sessions dialogs, too.
+
 Find in Global Preferences and New Session Properties (menu File --> Find in preferences):
   Leaf nodes of the search dialog tree can now be double clicked to jump to their result in the UI.
   Note: Non leaf nodes can be right clicked to jump to their result in the UI.

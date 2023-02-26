@@ -70,7 +70,7 @@ public class PrefsFindInfo
       {
          _prefsFindInfoUpdate = ComponentInfoByPathUtil.createPrefsFindInfo(dialogFindInfo.getDialogToOpenConstant());
 
-         if(0 < path.size())
+         if(1 < path.size())
          {
             showingPrarentsComponentInfo = getPrefComponentInfoByPath(path.subList(0,2));
             showingPrarentsComponentInfo = _prefsFindInfoUpdate.getPrefComponentInfoByPath(showingPrarentsComponentInfo.getPath());
