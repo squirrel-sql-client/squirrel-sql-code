@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.gui.aboutdialog;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -139,11 +138,11 @@ public class AboutBoxDialog extends JDialog
    {
       _closeBtn.addActionListener(evt -> dispose());
 
-      final ButtonBarBuilder builder = new ButtonBarBuilder();
-      builder.addGlue();
-      builder.addButton(_closeBtn);
-
-      return builder.build();
+      //final ButtonBarBuilder builder = new ButtonBarBuilder();
+      //builder.addGlue();
+      //builder.addButton(_closeBtn);
+      //return builder.build();
+      return GUIUtils.createButtonBar(_closeBtn);
    }
 
 

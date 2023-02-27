@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -34,6 +35,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -58,6 +60,9 @@ import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -1050,11 +1055,41 @@ public class GUIUtils
 
    public static JPanel createHorizontalSeparatorPanel()
    {
-      JPanel separator = new JPanel();
-      separator.setPreferredSize(new Dimension(separator.getPreferredSize().width, 4));
-      separator.setBorder(BorderFactory.createEtchedBorder());
-      return separator;
-   }
+		return createHorizontalSeparatorPanel(null);
+	}
+
+	public static JPanel createHorizontalSeparatorPanel(String title)
+   {
+		if( StringUtils.isBlank(title) )
+		{
+			JPanel separator = new JPanel();
+			separator.setPreferredSize(new Dimension(separator.getPreferredSize().width, 4));
+			separator.setBorder(BorderFactory.createEtchedBorder());
+			return separator;
+		}
+		else
+		{
+			//JPanel separator = new JPanel();
+			//separator.setPreferredSize(new Dimension(separator.getPreferredSize().width, 4));
+			//separator.setBorder(BorderFactory.createTitledBorder(title));
+			//return separator;
+
+			JPanel ret = new JPanel(new GridBagLayout());
+
+			GridBagConstraints gbc;
+
+			gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+			ret.add(new JLabel(title), gbc);
+
+			gbc = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,0), 0,0);
+			JPanel separator = new JPanel();
+			separator.setPreferredSize(new Dimension(separator.getPreferredSize().width, 4));
+			separator.setBorder(BorderFactory.createEtchedBorder());
+			ret.add(separator, gbc);
+
+			return ret;
+		}
+	}
 
 	public static Rectangle toRectangle(Rectangle2D in)
 	{
@@ -1138,6 +1173,17 @@ public class GUIUtils
 		while (e.hasMoreElements())
 		{
 			ret.add(e.nextElement());
+		}
+
+		return ret;
+	}
+
+	public static JPanel createButtonBar(JButton ... buttons)
+	{
+		JPanel ret = new JPanel(new GridLayout(1, buttons.length, 5,0));
+		for( JButton button : buttons )
+		{
+			ret.add(button);
 		}
 
 		return ret;

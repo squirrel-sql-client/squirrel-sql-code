@@ -22,6 +22,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
@@ -567,7 +568,7 @@ public class SmarttoolMissingIndicesFrame extends DialogWidget implements ISmart
 		{
 			if (tblResult.getSelectedRow() > -1)
 			{
-				new SmarttoolCreateIndexD(null, session, (String) tblResult.getValueAt(
+				new SmarttoolCreateIndexD(GUIUtils.getOwningFrame(tblResult), session, (String) tblResult.getValueAt(
 				   tblResult.getSelectedRow(), COL_TABLENAME));
 			} else
 			{

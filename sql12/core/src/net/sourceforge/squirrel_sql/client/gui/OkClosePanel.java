@@ -18,7 +18,7 @@ package net.sourceforge.squirrel_sql.client.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -26,8 +26,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.event.EventListenerList;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class OkClosePanel extends JPanel
 {
@@ -160,25 +158,10 @@ public class OkClosePanel extends JPanel
 	{
 		_okBtn = new JButton(okButtonText);
 
-		JPanel pnl = ButtonBarBuilder.create().addButton(_okBtn).addUnrelatedGap().addButton(_closeBtn).build();
+		//JPanel pnl = ButtonBarBuilder.create().addButton(_okBtn).addUnrelatedGap().addButton(_closeBtn).build();
+		JPanel pnl = GUIUtils.createButtonBar(_okBtn, _closeBtn);
 		add(pnl);
-//		add(_okBtn);
-//		add(_closeBtn);
-		_okBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				fireButtonPressed(_okBtn);
-			}
-		});
-		_closeBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				fireButtonPressed(_closeBtn);
-			}
-		});
-//
-//		GUIUtils.setJButtonSizesTheSame(new JButton[] {_okBtn, _closeBtn, new JButton(i18n.CANCEL)});
+		_okBtn.addActionListener(evt -> fireButtonPressed(_okBtn));
+		_closeBtn.addActionListener(evt -> fireButtonPressed(_closeBtn));
 	}
 }

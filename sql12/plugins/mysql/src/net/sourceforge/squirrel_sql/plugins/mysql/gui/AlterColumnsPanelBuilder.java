@@ -19,33 +19,31 @@ package net.sourceforge.squirrel_sql.plugins.mysql.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.client.gui.controls.ColumnsComboBox;
+import net.sourceforge.squirrel_sql.client.gui.controls.DataTypesComboBox;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import com.jgoodies.forms.layout.FormLayout;
-
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.gui.builders.DefaultFormBuilder;
-import net.sourceforge.squirrel_sql.client.gui.controls.ColumnsComboBox;
-import net.sourceforge.squirrel_sql.client.gui.controls.DataTypesComboBox;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This builder creates the component that allows the user to alter the
  * structure of a column, add and remove columns.
@@ -112,44 +110,97 @@ class AlterColumnsPanelBuilder
 	{
 		initComponents(session, ti);
 
-		final FormLayout layout = new FormLayout(
-				"12dlu, left:max(40dlu;pref), 3dlu, 75dlu:grow(0.50), 7dlu, 75dlu:grow(0.50), 3dlu",
-				"");
-		final DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-		builder.setDefaultDialogBorder();
-		builder.setLeadingColumnOffset(1);
+		JPanel ret = new JPanel(new GridBagLayout());
 
-		builder.appendSeparator(getString("AlterColumnsPanelBuilder.selectcolumn"));
-		builder.append(getString("AlterColumnsPanelBuilder.columnname"), _columnsCmb, 3);
+		GridBagConstraints gbc;
 
-		builder.appendSeparator(getString("AlterColumnsPanelBuilder.attributes"));
-		builder.append(getString("AlterColumnsPanelBuilder.datatype"), _dataTypesCmb, 3);
+		gbc = new GridBagConstraints(0,0,3,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(GUIUtils.createHorizontalSeparatorPanel(s_stringMgr.getString("AlterColumnsPanelBuilder.selectcolumn")), gbc);
 
-		builder.nextLine();
-		builder.append(getString("AlterColumnsPanelBuilder.length"), _columnLengthField, 3);
+		gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+		ret.add(new JLabel(s_stringMgr.getString("AlterColumnsPanelBuilder.columnname")), gbc);
 
-		builder.nextLine();
-		builder.append(getString("AlterColumnsPanelBuilder.default"), _defaultvalue, 3);
+		gbc = new GridBagConstraints(1,1,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_columnsCmb, gbc);
 
-		builder.nextLine();
-		builder.setLeadingColumnOffset(3);
-		builder.append(_unsignedChk);
-		builder.append(_autoIncChk);
 
-		builder.nextLine();
-		builder.append(_binaryChk);
-		builder.append(_zeroFillChk);
+		gbc = new GridBagConstraints(0,2,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(GUIUtils.createHorizontalSeparatorPanel(s_stringMgr.getString("AlterColumnsPanelBuilder.attributes")), gbc);
 
-		builder.nextLine();
-		builder.append(_allowNullChk);
-		builder.setLeadingColumnOffset(1);
+		gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+		ret.add(new JLabel(s_stringMgr.getString("AlterColumnsPanelBuilder.datatype")), gbc);
 
-		return builder.getPanel();
-	}
+		gbc = new GridBagConstraints(1,3,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_dataTypesCmb, gbc);
 
-	private static String getString(String stringMgrKey)
-	{
-		return s_stringMgr.getString(stringMgrKey);
+
+		gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+		ret.add(new JLabel(s_stringMgr.getString("AlterColumnsPanelBuilder.length")), gbc);
+
+		gbc = new GridBagConstraints(1,4,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_columnLengthField, gbc);
+
+
+		gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,0), 0,0);
+		ret.add(new JLabel(s_stringMgr.getString("AlterColumnsPanelBuilder.default")), gbc);
+
+		gbc = new GridBagConstraints(1,5,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_defaultvalue, gbc);
+
+
+		gbc = new GridBagConstraints(1,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_unsignedChk, gbc);
+
+		gbc = new GridBagConstraints(2,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_autoIncChk, gbc);
+
+
+		gbc = new GridBagConstraints(1,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_binaryChk, gbc);
+
+		gbc = new GridBagConstraints(2,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_zeroFillChk, gbc);
+
+
+		gbc = new GridBagConstraints(1,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_allowNullChk, gbc);
+
+		GUIUtils.setPreferredWidth(ret, 450);
+		return ret;
+
+//		final FormLayout layout = new FormLayout(
+//				"12dlu, left:max(40dlu;pref), 3dlu, 75dlu:grow(0.50), 7dlu, 75dlu:grow(0.50), 3dlu",
+//				"");
+//		final DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+//		builder.setDefaultDialogBorder();
+//		builder.setLeadingColumnOffset(1);
+//
+//		builder.appendSeparator(s_stringMgr.getString("AlterColumnsPanelBuilder.selectcolumn"));
+//		builder.append(s_stringMgr.getString("AlterColumnsPanelBuilder.columnname"), _columnsCmb, 3);
+//
+//		builder.appendSeparator(s_stringMgr.getString("AlterColumnsPanelBuilder.attributes"));
+//		builder.append(s_stringMgr.getString("AlterColumnsPanelBuilder.datatype"), _dataTypesCmb, 3);
+//
+//		builder.nextLine();
+//		builder.append(s_stringMgr.getString("AlterColumnsPanelBuilder.length"), _columnLengthField, 3);
+//
+//		builder.nextLine();
+//		builder.append(s_stringMgr.getString("AlterColumnsPanelBuilder.default"), _defaultvalue, 3);
+//
+//		builder.nextLine();
+//		builder.setLeadingColumnOffset(3);
+//		builder.append(_unsignedChk);
+//		builder.append(_autoIncChk);
+//
+//		builder.nextLine();
+//		builder.append(_binaryChk);
+//		builder.append(_zeroFillChk);
+//
+//		builder.nextLine();
+//		builder.append(_allowNullChk);
+//		builder.setLeadingColumnOffset(1);
+//
+//		return builder.getPanel();
 	}
 
 	private void updateControlStatus()
@@ -213,11 +264,11 @@ class AlterColumnsPanelBuilder
 
 		_columnLengthField = new IntegerField();
 		_defaultvalue = new JTextField();
-		_allowNullChk = new JCheckBox(getString("AlterColumnsPanelBuilder.allownull"));
-		_unsignedChk = new JCheckBox(getString("AlterColumnsPanelBuilder.unsigned"));
-		_autoIncChk = new JCheckBox(getString("AlterColumnsPanelBuilder.autoinc"));
-		_binaryChk = new JCheckBox(getString("AlterColumnsPanelBuilder.binary"));
-		_zeroFillChk = new JCheckBox(getString("AlterColumnsPanelBuilder.zerofill"));
+		_allowNullChk = new JCheckBox(s_stringMgr.getString("AlterColumnsPanelBuilder.allownull"));
+		_unsignedChk = new JCheckBox(s_stringMgr.getString("AlterColumnsPanelBuilder.unsigned"));
+		_autoIncChk = new JCheckBox(s_stringMgr.getString("AlterColumnsPanelBuilder.autoinc"));
+		_binaryChk = new JCheckBox(s_stringMgr.getString("AlterColumnsPanelBuilder.binary"));
+		_zeroFillChk = new JCheckBox(s_stringMgr.getString("AlterColumnsPanelBuilder.zerofill"));
 
 //		final File here = new File(".");
 //

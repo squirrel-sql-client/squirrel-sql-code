@@ -18,11 +18,10 @@ package net.sourceforge.squirrel_sql.plugins.mssql.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -117,7 +116,7 @@ public class GenerateSqlDialog extends JDialog {
 		final JPanel pnl = new JPanel(new BorderLayout());
 		pnl.add(buildMainPanel(), BorderLayout.CENTER);
 		pnl.add(buildToolBar(), BorderLayout.SOUTH);
-		pnl.setBorder(Borders.TABBED_DIALOG);
+		pnl.setBorder(BorderFactory.createEtchedBorder());
 
 		return pnl;
     }
@@ -703,8 +702,8 @@ public class GenerateSqlDialog extends JDialog {
     }
 
 	private JPanel buildToolBar() {
-		final ButtonBarBuilder builder = new ButtonBarBuilder();
-		builder.addGlue();
+//		final ButtonBarBuilder builder = new ButtonBarBuilder();
+//		builder.addGlue();
         final GenerateSqlDialog dlg = this;
 
 		  // i18n[mssql.ok=OK]
@@ -715,9 +714,9 @@ public class GenerateSqlDialog extends JDialog {
                dlg.setVisible(false);
             }
         });
-		builder.addButton(okButton);
-        
-		builder.addRelatedGap();
+//		builder.addButton(okButton);
+//
+//		builder.addRelatedGap();
 
 		 // i18n[mssql.cancel=Cancel]
 		  JButton cancelButton = new JButton(s_stringMgr.getString("mssql.cancel"));
@@ -727,10 +726,12 @@ public class GenerateSqlDialog extends JDialog {
                 dlg.setVisible(false);
             }
         });
-        builder.addButton(cancelButton);
+//        builder.addButton(cancelButton);
+//
+//		return builder.getPanel();
+       return GUIUtils.createButtonBar(okButton, cancelButton);
 
-		return builder.getPanel();
-	}
+   }
 
 	private static Frame ctorHelper(ISession session, MssqlPlugin plugin, IDatabaseObjectInfo[] dbObjs)	{
 		if (session == null)

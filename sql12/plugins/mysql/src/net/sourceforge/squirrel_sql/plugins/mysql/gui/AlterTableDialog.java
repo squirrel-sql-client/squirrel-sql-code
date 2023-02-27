@@ -18,15 +18,15 @@ package net.sourceforge.squirrel_sql.plugins.mysql.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -81,10 +81,10 @@ public class AlterTableDialog extends JDialog
 											ITableInfo ti)
 		throws SQLException
 	{
-		final JPanel pnl = new JPanel(new BorderLayout());
+		final JPanel pnl = new JPanel(new BorderLayout(5,5));
 		pnl.add(buildMainPanel(session, ti), BorderLayout.CENTER);
 		pnl.add(buildToolBar(), BorderLayout.SOUTH);
-		pnl.setBorder(Borders.TABBED_DIALOG);
+		pnl.setBorder(BorderFactory.createEtchedBorder());
 
 		return pnl;
 
@@ -116,15 +116,19 @@ public class AlterTableDialog extends JDialog
 
 	private JPanel buildToolBar()
 	{
-		final ButtonBarBuilder builder = new ButtonBarBuilder();
-		builder.addGlue();
-		// i18n[mysql.alterDlgAlter=Alter]
-		builder.addButton(new JButton(s_stringMgr.getString("mysql.alterDlgAlter")));
-		builder.addRelatedGap();
-		// i18n[mysql.alterDlgClose=Close]
-		builder.addButton(new JButton(s_stringMgr.getString("mysql.alterDlgClose")));
+		// Hm, "Alter" and "Close" buttons never had listeners and thus never were functional?!
+		return GUIUtils.createButtonBar(new JButton(s_stringMgr.getString("mysql.alterDlgAlter")),
+												  new JButton(s_stringMgr.getString("mysql.alterDlgClose")));
 
-		return builder.getPanel();
+//		final ButtonBarBuilder builder = new ButtonBarBuilder();
+//		builder.addGlue();
+//		// i18n[mysql.alterDlgAlter=Alter]
+//		builder.addButton(new JButton(s_stringMgr.getString("mysql.alterDlgAlter")));
+//		builder.addRelatedGap();
+//		// i18n[mysql.alterDlgClose=Close]
+//		builder.addButton(new JButton(s_stringMgr.getString("mysql.alterDlgClose")));
+//
+//		return builder.getPanel();
 	}
 
 	private static String getString(String stringMgrKey)

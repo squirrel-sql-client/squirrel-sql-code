@@ -17,23 +17,19 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.importer.excel;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.ConfigurationPanel;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.io.File;
 
 /**
  * This panel holds the excel specific settings for the importer.
@@ -74,13 +70,6 @@ public class ExcelSettingsPanel extends ConfigurationPanel
 
    private void init()
    {
-      ActionListener stateChangedListener = new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            ExcelSettingsPanel.this.stateChanged();
-         }
-      };
       _sheetName = new JComboBox();
       if (_workbook != null)
       {
@@ -90,29 +79,43 @@ public class ExcelSettingsPanel extends ConfigurationPanel
             _sheetName.addItem(_workbook.getSheetAt(i).getSheetName());
          }
       }
-      _sheetName.addActionListener(stateChangedListener);
+      _sheetName.addActionListener(e -> this.stateChanged());
+
+      setLayout(new GridBagLayout());
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0);
+      add(GUIUtils.createHorizontalSeparatorPanel(stringMgr.getString("ExcelSettingsPanel.xlsSettings")), gbc);
+
+      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 5, 30, 5), 0, 0);
+      add(new JLabel(stringMgr.getString("ExcelSettingsPanel.sheetName")), gbc);
+
+      gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 30, 10), 0, 0);
+      add(_sheetName, gbc);
+
+      //add(pnl);
 
 
-      final FormLayout layout = new FormLayout(
-            // Columns
-            "pref, 6dlu, pref:grow",
-            // Rows
-            "pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu");
-
-      PanelBuilder builder = new PanelBuilder(layout);
-      CellConstraints cc = new CellConstraints();
-      builder.setDefaultDialogBorder();
-
-      int y = 1;
-      //i18n[ExcelSettingsPanel.xlsSettings=Excel import settings]
-      builder.addSeparator(stringMgr.getString("ExcelSettingsPanel.xlsSettings"), cc.xywh(1, y, 3, 1));
-
-      y += 2;
-      //i18n[ExcelSettingsPanel.sheetName=Sheet name]
-      builder.add(new JLabel(stringMgr.getString("ExcelSettingsPanel.sheetName")), cc.xy(1, y));
-      builder.add(_sheetName, cc.xy(3, y));
-
-      add(builder.getPanel());
+//      final FormLayout layout = new FormLayout(
+//            // Columns
+//            "pref, 6dlu, pref:grow",
+//            // Rows
+//            "pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu");
+//
+//      PanelBuilder builder = new PanelBuilder(layout);
+//      CellConstraints cc = new CellConstraints();
+//      builder.setDefaultDialogBorder();
+//
+//      int y = 1;
+//      //i18n[ExcelSettingsPanel.xlsSettings=Excel import settings]
+//      builder.addSeparator(stringMgr.getString("ExcelSettingsPanel.xlsSettings"), cc.xywh(1, y, 3, 1));
+//
+//      y += 2;
+//      //i18n[ExcelSettingsPanel.sheetName=Sheet name]
+//      builder.add(new JLabel(stringMgr.getString("ExcelSettingsPanel.sheetName")), cc.xy(1, y));
+//      builder.add(_sheetName, cc.xy(3, y));
+//
+//      add(builder.getPanel());
    }
 
 

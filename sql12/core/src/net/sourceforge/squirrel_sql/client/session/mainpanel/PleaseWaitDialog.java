@@ -17,9 +17,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.CancelStatementThread;
@@ -28,8 +25,15 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Statement;
@@ -72,34 +76,51 @@ public class PleaseWaitDialog extends DialogWidget implements ActionListener {
 	private Component createMainPanel()
 	{
 
-		final FormLayout layout = new FormLayout(
-			// Columns
-			"center:pref",
-			// Rows
-			"pref, 6dlu, pref, 6dlu, pref, 6dlu, pref");
+		JPanel ret = new JPanel(new GridBagLayout());
 
-		PanelBuilder builder = new PanelBuilder(layout);
-		CellConstraints cc = new CellConstraints();
-		builder.setDefaultDialogBorder();
+		GridBagConstraints gbc;
+		gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(new JLabel(getTitle()), gbc);
 
-		int y = 1;
-		builder.addSeparator(getTitle(), cc.xywh(1, y, 1, 1));
+		gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(new JLabel(stringMgr.getString("PleaseWaitDialog.pleaseWait")), gbc);
 
-		y += 2;
-		//i18n[PleaseWaitDialog.pleaseWait=Please wait while the query is executed]
-		builder.addLabel(stringMgr.getString("PleaseWaitDialog.pleaseWait"), cc.xy(1, y));
-
-		y += 2;
-		builder.addSeparator("", cc.xywh(1, y, 1, 1));
-
-		//i18n[PleaseWaitDialog.cancel=Cancel]
+		gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 10, 5), 0, 0);
 		cancelButton = new JButton(stringMgr.getString("PleaseWaitDialog.cancel"));
 		cancelButton.addActionListener(this);
-		
-		y += 2;
-		builder.add(cancelButton, cc.xywh(1, y, 1, 1));
+		ret.add(cancelButton, gbc);
 
-		return builder.getPanel();
+		return ret;
+
+
+//		final FormLayout layout = new FormLayout(
+//			// Columns
+//			"center:pref",
+//			// Rows
+//			"pref, 6dlu, pref, 6dlu, pref, 6dlu, pref");
+//
+//		PanelBuilder builder = new PanelBuilder(layout);
+//		CellConstraints cc = new CellConstraints();
+//		builder.setDefaultDialogBorder();
+//
+//		int y = 1;
+//		builder.addSeparator(getTitle(), cc.xywh(1, y, 1, 1));
+//
+//		y += 2;
+//		//i18n[PleaseWaitDialog.pleaseWait=Please wait while the query is executed]
+//		builder.addLabel(stringMgr.getString("PleaseWaitDialog.pleaseWait"), cc.xy(1, y));
+//
+//		y += 2;
+//		builder.addSeparator("", cc.xywh(1, y, 1, 1));
+//
+//		//i18n[PleaseWaitDialog.cancel=Cancel]
+//		cancelButton = new JButton(stringMgr.getString("PleaseWaitDialog.cancel"));
+//		cancelButton.addActionListener(this);
+//
+//		y += 2;
+//		builder.add(cancelButton, cc.xywh(1, y, 1, 1));
+//
+//		return builder.getPanel();
 	}
 	
 	public void actionPerformed(ActionEvent e) {

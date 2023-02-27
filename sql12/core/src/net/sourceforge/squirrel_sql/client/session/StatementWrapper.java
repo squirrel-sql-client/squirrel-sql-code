@@ -182,6 +182,11 @@ public class StatementWrapper implements StatementCallback
    @Override
    public boolean isContinueReadActive()
    {
+      if(null == _session)
+      {
+         return false;
+      }
+
       return _session.getProperties().getSQLReadOn();
    }
 

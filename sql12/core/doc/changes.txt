@@ -63,7 +63,11 @@ Export of multiple SQL results.
 
 Bug fixes:
 
-Database table compare dialog (right mouse click on table in Object tree) didn't close on escape key
+DB Diff Plugin: Database table compare dialog (right mouse click on table in Object tree) didn't work
+  because of a version conflict concerning the JGoodies Forms library.
+  To solve the problem the library was removed from SQuirreL's core libs.
+
+DB Diff Plugin: Database table compare dialog (right mouse click on table in Object tree) didn't close on escape key
    when the compare panel had received focus.
 
 #943 Database table compare function (right mouse click on table in Object tree) raised NoClassDefFoundError.

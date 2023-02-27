@@ -19,9 +19,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
@@ -53,6 +50,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -131,7 +131,7 @@ public class ConnectionInternalFrame extends DialogWidget
 //	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("ConnectionInternalFrame.userdriverprops"));
 
 	/** Button that brings up the driver properties dialog. */
-	private final JButton _driverPropsBtn = new JButton(s_stringMgr.getString("ConnectionInternalFrame.props"));
+	private final JButton _aliasPropsBtn = new JButton(s_stringMgr.getString("ConnectionInternalFrame.props"));
 
 	private JTextField _statusBar = new JTextField();
 
@@ -358,7 +358,7 @@ public class ConnectionInternalFrame extends DialogWidget
 		_user.setColumns(20);
 		_password.setColumns(20);
 
-		_driverPropsBtn.addActionListener(new ActionListener()
+		_aliasPropsBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
 			{
@@ -368,53 +368,106 @@ public class ConnectionInternalFrame extends DialogWidget
 
 		_btnsPnl.addListener(new MyOkClosePanelListener());
 
-		final FormLayout layout = new FormLayout(
-			// Columns
-			"right:pref, 8dlu, left:min(100dlu;pref):grow",
-			// Rows
-			"pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, "
-		+	"pref, 6dlu, pref, 6dlu, pref, 3dlu, pref, 3dlu, pref");
+		JPanel ret = new JPanel(new GridBagLayout());
 
-		PanelBuilder builder = new PanelBuilder(layout);
-		CellConstraints cc = new CellConstraints();
-		builder.setDefaultDialogBorder();
+		GridBagConstraints gbc;
 
-		int y = 1;
-		builder.addSeparator(getTitle(), cc.xywh(1, y, 3, 1));
+		gbc = new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(GUIUtils.createHorizontalSeparatorPanel(getTitle()), gbc);
 
-		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.alias"), cc.xy(1, y));
-		builder.add(_aliasName, cc.xywh(3, y, 1, 1));
 
-		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.driver"), cc.xy(1, y));
-		builder.add(_driverName, cc.xywh(3, y, 1, 1));
+		gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(new JLabel(s_stringMgr.getString("ConnectionInternalFrame.alias")), gbc);
 
-		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.url"), cc.xy(1, y));
-		builder.add(_url, cc.xywh(3, y, 1, 1));
+		gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(_aliasName, gbc);
 
-		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.user"), cc.xy(1, y));
-		builder.add(_user, cc.xywh(3, y, 1, 1));
 
-		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.password"), cc.xy(1, y));
-		builder.add(_password, cc.xywh(3, y, 1, 1));
+		gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(new JLabel(s_stringMgr.getString("ConnectionInternalFrame.driver")), gbc);
 
-		y += 2;
-      _driverPropsBtn.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
-      builder.add(_driverPropsBtn, cc.xywh(3, y, 1, 1));
+		gbc = new GridBagConstraints(1, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(_driverName, gbc);
 
-		y += 2;
-		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.warningcapslock"),
-							cc.xywh(1, y, 3, 1));
 
-		y += 2;
-		builder.addSeparator("", cc.xywh(1, y, 3, 1));
+		gbc = new GridBagConstraints(0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(new JLabel(s_stringMgr.getString("ConnectionInternalFrame.url")), gbc);
 
-		y += 2;
-		builder.add(_btnsPnl, cc.xywh(1, y, 3, 1));
+		gbc = new GridBagConstraints(1, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(_url, gbc);
+
+
+		gbc = new GridBagConstraints(0, 4, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(new JLabel(s_stringMgr.getString("ConnectionInternalFrame.password")), gbc);
+
+		gbc = new GridBagConstraints(1, 4, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(_password, gbc);
+
+
+		gbc = new GridBagConstraints(1, 5, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		_aliasPropsBtn.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
+		ret.add(_aliasPropsBtn, gbc);
+
+
+		gbc = new GridBagConstraints(0, 6, 2, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(new JLabel(s_stringMgr.getString("ConnectionInternalFrame.warningcapslock")), gbc);
+
+
+		gbc = new GridBagConstraints(0, 7, 2, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(GUIUtils.createHorizontalSeparatorPanel(), gbc);
+
+
+		gbc = new GridBagConstraints(0, 8, 2, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 5), 0, 0);
+		ret.add(_btnsPnl, gbc);
+
+
+//		final FormLayout layout = new FormLayout(
+//			// Columns
+//			"right:pref, 8dlu, left:min(100dlu;pref):grow",
+//			// Rows
+//			"pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, "
+//		+	"pref, 6dlu, pref, 6dlu, pref, 3dlu, pref, 3dlu, pref");
+//
+//		PanelBuilder builder = new PanelBuilder(layout);
+//		CellConstraints cc = new CellConstraints();
+//		builder.setDefaultDialogBorder();
+//
+//		int y = 1;
+//		builder.addSeparator(getTitle(), cc.xywh(1, y, 3, 1));
+//
+//		y += 2;
+//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.alias"), cc.xy(1, y));
+//		builder.add(_aliasName, cc.xywh(3, y, 1, 1));
+//
+//		y += 2;
+//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.driver"), cc.xy(1, y));
+//		builder.add(_driverName, cc.xywh(3, y, 1, 1));
+//
+//		y += 2;
+//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.url"), cc.xy(1, y));
+//		builder.add(_url, cc.xywh(3, y, 1, 1));
+//
+//		y += 2;
+//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.user"), cc.xy(1, y));
+//		builder.add(_user, cc.xywh(3, y, 1, 1));
+//
+//		y += 2;
+//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.password"), cc.xy(1, y));
+//		builder.add(_password, cc.xywh(3, y, 1, 1));
+//
+//		y += 2;
+//      _aliasPropsBtn.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
+//      builder.add(_aliasPropsBtn, cc.xywh(3, y, 1, 1));
+//
+//		y += 2;
+//		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.warningcapslock"),
+//							cc.xywh(1, y, 3, 1));
+//
+//		y += 2;
+//		builder.addSeparator("", cc.xywh(1, y, 3, 1));
+//
+//		y += 2;
+//		builder.add(_btnsPnl, cc.xywh(1, y, 3, 1));
 
 
 		// Set focus to password control if default user name has been setup.
@@ -447,7 +500,8 @@ public class ConnectionInternalFrame extends DialogWidget
 			}
 		});
 
-		return builder.getPanel();
+		//return builder.getPanel();
+		return ret;
 	}
 
 	private void showDriverPropertiesDialog()

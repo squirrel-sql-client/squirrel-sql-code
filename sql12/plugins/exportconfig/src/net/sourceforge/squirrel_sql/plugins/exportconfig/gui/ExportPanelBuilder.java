@@ -18,11 +18,9 @@ package net.sourceforge.squirrel_sql.plugins.exportconfig.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.builders.DefaultFormBuilder;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -39,6 +37,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -52,12 +53,10 @@ import java.io.IOException;
 public class ExportPanelBuilder
 {
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ExportPanelBuilder.class);
+	private final static ILogger s_log = LoggerController.createLogger(ExportPanelBuilder.class);
 
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ExportPanelBuilder.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ExportPanelBuilder.class);
 
 	/**
 	 * Update the status of the GUI controls as the user makes changes.
@@ -119,45 +118,105 @@ public class ExportPanelBuilder
 	{
 		initComponents(prefs);
 
-		final FormLayout layout = new FormLayout(
-				"12dlu, left:max(40dlu;pref), 3dlu, 150dlu:grow(1.0), 3dlu, "
-			  + "right:max(40dlu;pref), 3dlu",
-				"");
-		final DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-		builder.setDefaultDialogBorder();
-		builder.setLeadingColumnOffset(1);
+		JPanel ret = new JPanel(new GridBagLayout());
 
-		builder.appendSeparator(s_stringMgr.getString("ExportPanel.prefs"));
-		builder.append(_exportPrefsChk);
-		builder.append(_exportPrefsText);
-		builder.append(_exportPrefsBtn);
+		GridBagConstraints gbc;
 
-		builder.nextLine();
-		builder.appendSeparator(s_stringMgr.getString("ExportPanel.drivers"));
-		builder.append(_exportDriversChk);
-		builder.append(_exportDriversText);
-		builder.append(_exportDriversBtn);
+		gbc = new GridBagConstraints(0,0,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(GUIUtils.createHorizontalSeparatorPanel(s_stringMgr.getString("ExportPanel.prefs")), gbc);
 
-		builder.nextLine();
-		builder.appendSeparator(s_stringMgr.getString("ExportPanel.aliases"));
-		builder.append(_exportAliasesChk);
-		builder.append(_exportAliasesText);
-		builder.append(_exportAliasesBtn);
+		gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+		ret.add(_exportPrefsChk, gbc);
 
-		builder.setLeadingColumnOffset(3);
-		builder.nextLine();
-		builder.append(_includeUserNamesChk);
+		gbc = new GridBagConstraints(1,1,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_exportPrefsText, gbc);
 
-		builder.nextLine();
-		builder.append(_includePasswordsChk);
-		builder.setLeadingColumnOffset(1);
+		gbc = new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+		ret.add(_exportPrefsBtn, gbc);
 
-		builder.nextLine();
-		builder.appendSeparator();
-		builder.append(createButtonBar(), 5);
 
-		_panel = builder.getPanel();
-        return _panel;
+		gbc = new GridBagConstraints(0,2,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,0,5), 0,0);
+		ret.add(GUIUtils.createHorizontalSeparatorPanel(s_stringMgr.getString("ExportPanel.drivers")), gbc);
+
+		gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+		ret.add(_exportDriversChk, gbc);
+
+		gbc = new GridBagConstraints(1,3,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_exportDriversText, gbc);
+
+		gbc = new GridBagConstraints(2,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+		ret.add(_exportDriversBtn, gbc);
+
+
+		gbc = new GridBagConstraints(0,4,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10,5,0,5), 0,0);
+		ret.add(GUIUtils.createHorizontalSeparatorPanel(s_stringMgr.getString("ExportPanel.aliases")), gbc);
+
+		gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+		ret.add(_exportAliasesChk, gbc);
+
+		gbc = new GridBagConstraints(1,5,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(_exportAliasesText, gbc);
+
+		gbc = new GridBagConstraints(2,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+		ret.add(_exportAliasesBtn, gbc);
+
+
+		gbc = new GridBagConstraints(1,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,0,5), 0,0);
+		ret.add(_includeUserNamesChk, gbc);
+
+		gbc = new GridBagConstraints(1,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,0,5), 0,0);
+		ret.add(_includePasswordsChk, gbc);
+
+
+		gbc = new GridBagConstraints(0,8,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,0,5), 0,0);
+		ret.add(GUIUtils.createHorizontalSeparatorPanel(), gbc);
+
+		gbc = new GridBagConstraints(0,9,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+		ret.add(createButtonBar(), gbc);
+
+		return ret;
+
+
+
+		//final FormLayout layout = new FormLayout(
+		//		"12dlu, left:max(40dlu;pref), 3dlu, 150dlu:grow(1.0), 3dlu, "
+		//	  + "right:max(40dlu;pref), 3dlu",
+		//		"");
+		//final DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+		//builder.setDefaultDialogBorder();
+		//builder.setLeadingColumnOffset(1);
+		//
+		//builder.appendSeparator(s_stringMgr.getString("ExportPanel.prefs"));
+		//builder.append(_exportPrefsChk);
+		//builder.append(_exportPrefsText);
+		//builder.append(_exportPrefsBtn);
+		//
+		//builder.nextLine();
+		//builder.appendSeparator(s_stringMgr.getString("ExportPanel.drivers"));
+		//builder.append(_exportDriversChk);
+		//builder.append(_exportDriversText);
+		//builder.append(_exportDriversBtn);
+		//
+		//builder.nextLine();
+		//builder.appendSeparator(s_stringMgr.getString("ExportPanel.aliases"));
+		//builder.append(_exportAliasesChk);
+		//builder.append(_exportAliasesText);
+		//builder.append(_exportAliasesBtn);
+		//
+		//builder.setLeadingColumnOffset(3);
+		//builder.nextLine();
+		//builder.append(_includeUserNamesChk);
+		//
+		//builder.nextLine();
+		//builder.append(_includePasswordsChk);
+		//builder.setLeadingColumnOffset(1);
+		//
+		//builder.nextLine();
+		//builder.appendSeparator();
+		//builder.append(createButtonBar(), 5);
+		//
+		//_panel = builder.getPanel();
+      //  return _panel;
 	}
 
 	/**
@@ -259,13 +318,15 @@ public class ExportPanelBuilder
 
 	private JPanel createButtonBar()
 	{
-		ButtonBarBuilder builder = new ButtonBarBuilder();
-		builder.addGlue();
-		builder.addButton(_exportBtn);
-		builder.addUnrelatedGap();
-		builder.addButton(_cancelBtn);
 
-		return builder.getPanel();  
+		return GUIUtils.createButtonBar(_exportBtn, _cancelBtn);
+		//ButtonBarBuilder builder = new ButtonBarBuilder();
+		//builder.addGlue();
+		//builder.addButton(_exportBtn);
+		//builder.addUnrelatedGap();
+		//builder.addButton(_cancelBtn);
+		//
+		//return builder.getPanel();
 	}
 
 //	private String getFileName(File dir, String name)
