@@ -18,38 +18,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.ToolTipManager;
-import javax.swing.plaf.TextUI;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Position;
-import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -86,6 +55,39 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.ToolTipManager;
+import javax.swing.plaf.TextUI;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Position;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.fw.props.Props;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Common GUI utilities accessed via static methods.
@@ -1062,9 +1064,8 @@ public class GUIUtils
    {
 		if( StringUtils.isBlank(title) )
 		{
-			JPanel separator = new JPanel();
-			separator.setPreferredSize(new Dimension(separator.getPreferredSize().width, 4));
-			separator.setBorder(BorderFactory.createEtchedBorder());
+			JPanel separator = new JPanel(new GridLayout(1,1));
+			separator.add(new JSeparator());
 			return separator;
 		}
 		else
@@ -1082,10 +1083,10 @@ public class GUIUtils
 			ret.add(new JLabel(title), gbc);
 
 			gbc = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,0), 0,0);
-			JPanel separator = new JPanel();
-			separator.setPreferredSize(new Dimension(separator.getPreferredSize().width, 4));
-			separator.setBorder(BorderFactory.createEtchedBorder());
-			ret.add(separator, gbc);
+			//JPanel separator = new JPanel();
+			//separator.setPreferredSize(new Dimension(separator.getPreferredSize().width, 4));
+			//separator.setBorder(BorderFactory.createEtchedBorder());
+			ret.add(new JSeparator(), gbc);
 
 			return ret;
 		}
@@ -1180,11 +1181,16 @@ public class GUIUtils
 
 	public static JPanel createButtonBar(JButton ... buttons)
 	{
-		JPanel ret = new JPanel(new GridLayout(1, buttons.length, 5,0));
+		JPanel ret = new JPanel(new BorderLayout());
+		ret.add(new JPanel(), BorderLayout.CENTER);
+
+		JPanel buttonPanel = new JPanel(new GridLayout(1, buttons.length, 5,0));
 		for( JButton button : buttons )
 		{
-			ret.add(button);
+			buttonPanel.add(button);
 		}
+
+		ret.add(buttonPanel, BorderLayout.EAST);
 
 		return ret;
 	}
