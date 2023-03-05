@@ -1,15 +1,13 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
 import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.session.DataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
 import net.sourceforge.squirrel_sql.fw.gui.EditableComboBoxHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionCommand;
+import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrame;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -20,13 +18,10 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -174,42 +169,13 @@ public class DataSetFindPanelController
 
    private void onShowRowsFoundInTable(ISession session)
    {
-      Window parent = SwingUtilities.windowForComponent(_dataSetFindPanel);
+      List<Object[]> allRows = _findService.getRowsForIndexes(_trace.getRowsFound());
+      ColumnDisplayDefinition[] columnDisplayDefinitions = _findService.getColumnDisplayDefinitions();
 
-      JDialog dlg = new JDialog(parent, s_stringMgr.getString("DataSetFindPanel.searchResult"));
-      dlg.getContentPane().add(new JScrollPane(createSimpleTable(session).getComponent()));
+      RowsWindowFrame rowsWindowFrame =
+            new RowsWindowFrame(SwingUtilities.windowForComponent(_dataSetFindPanel), allRows, List.of(columnDisplayDefinitions), session);
 
-      dlg.setLocation(_dataSetViewerTablePanel.getComponent().getLocationOnScreen());
-      dlg.setSize(_findService.getVisibleSize());
-      dlg.setVisible(true);
-
-      GUIUtils.centerWithinParent(dlg);
-   }
-
-
-   private DataSetViewerTablePanel createSimpleTable(ISession session)
-   {
-      try
-      {
-         ensureFindService();
-
-         List<Object[]> allRows = _findService.getRowsForIndexes(_trace.getRowsFound());
-         ColumnDisplayDefinition[] columnDisplayDefinitions = _findService.getColumnDisplayDefinitions();
-
-         SimpleDataSet ods = new SimpleDataSet(allRows, columnDisplayDefinitions);
-
-         DataSetViewerTablePanel dsv = new DataSetViewerTablePanel();
-
-         DataModelImplementationDetails dataModelImplementationDetails = new DataModelImplementationDetails();
-
-         dsv.init(null, dataModelImplementationDetails, session);
-         dsv.show(ods);
-         return dsv;
-      }
-      catch (DataSetException e)
-      {
-         throw new RuntimeException(e);
-      }
+      Main.getApplication().getRowsWindowFrameRegistry().add(rowsWindowFrame);
    }
 
 

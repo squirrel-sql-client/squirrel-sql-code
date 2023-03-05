@@ -6,6 +6,13 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Handling of copying SQL result rows to extra windows was unified and now offers
+  the "mark duplicate rows" function.
+  Ways to copy result rows to extra windows are:
+  - SQL result search
+  - right mouse menu "Copy selected rows to new window"
+  - right mouse menu "Copy colored rows to new window"
+
 Find in preferences/configurations:
   Former "Find in Global Preferences and New Session" now allows to search in
   the Alias properties and Saved Sessions dialogs, too.

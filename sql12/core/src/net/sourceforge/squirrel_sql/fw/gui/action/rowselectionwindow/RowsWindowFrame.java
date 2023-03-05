@@ -7,6 +7,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanelUtil;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates.MarkDuplicatesChooserController;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -21,7 +23,10 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
@@ -39,14 +44,12 @@ public class RowsWindowFrame extends JDialog
    private static final String PREF_KEY_ROWS_WINDOW_FRAME_HIGHT = "Squirrel.rowselectionwindow.FrameHight";
 
    private final JPanel _contentPanel;
-   private ArrayList<ColumnDisplayDefinition> _columnDisplayDefinitions;
+   private List<ColumnDisplayDefinition> _columnDisplayDefinitions;
    private ISession _session;
    private int _myCounterId;
    private DataSetViewerTablePanel _dataSetViewerTablePanel;
 
-   private RowColAndSumController _rowColAndSumController = new RowColAndSumController();
-
-   public RowsWindowFrame(List<Object[]> rows, Window parent, ArrayList<ColumnDisplayDefinition> columnDisplayDefinitions, ISession session)
+   public RowsWindowFrame(Window parent, List<Object[]> rows, List<ColumnDisplayDefinition> columnDisplayDefinitions, ISession session)
    {
       super(parent);
       _columnDisplayDefinitions = columnDisplayDefinitions;
@@ -57,8 +60,8 @@ public class RowsWindowFrame extends JDialog
       getContentPane().setLayout(new GridLayout(1,1));
       getContentPane().add(_contentPanel);
 
-      int width = Props.getInt(PREF_KEY_ROWS_WINDOW_FRAME_WIDTH, 300);
-      int height = Props.getInt(PREF_KEY_ROWS_WINDOW_FRAME_HIGHT, 300);
+      GUIUtils.initLocation(this, 500, 300);
+      //GUIUtils.enableCloseByEscape(this, dlg -> onWindowClosing());
 
       addWindowListener(new WindowAdapter()
       {
@@ -68,9 +71,6 @@ public class RowsWindowFrame extends JDialog
             onWindowClosing();
          }
       });
-
-
-      setSize(new Dimension(width, height));
 
       setVisible(true);
    }
@@ -83,17 +83,33 @@ public class RowsWindowFrame extends JDialog
       _dataSetViewerTablePanel = DataSetViewerTablePanelUtil.createDataSetViewerTablePanel(rows, _columnDisplayDefinitions, _session);
       ret.add(new JScrollPane(_dataSetViewerTablePanel.getComponent()), BorderLayout.CENTER);
 
-
-      _rowColAndSumController.setDataSetViewer(_dataSetViewerTablePanel);
-      JPanel pnlNorth = new JPanel(new BorderLayout());
-
-      _rowColAndSumController.getPanel().setBorder(BorderFactory.createEmptyBorder(2,0,2,5));
-      pnlNorth.add(_rowColAndSumController.getPanel(), BorderLayout.EAST);
-      pnlNorth.add(new JPanel(), BorderLayout.CENTER);
-
-      _rowColAndSumController.setRowColSumLayoutListener(() -> onRowColSumLayoutDone(pnlNorth));
+      JPanel pnlNorth = createNorthPanel();
 
       ret.add(pnlNorth, BorderLayout.NORTH);
+      return ret;
+   }
+
+   private JPanel createNorthPanel()
+   {
+      JPanel ret = new JPanel(new BorderLayout());
+      ret.add(new JPanel(), BorderLayout.CENTER);
+
+      JPanel pnlEast = new JPanel(new GridBagLayout());
+      ret.add(pnlEast, BorderLayout.EAST);
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0,0,0,0), 0,0);
+      RowColAndSumController rowColAndSumController = new RowColAndSumController();
+      rowColAndSumController.setDataSetViewer(_dataSetViewerTablePanel);
+      rowColAndSumController.setRowColSumLayoutListener(() -> onRowColSumLayoutDone(ret));
+      pnlEast.add(rowColAndSumController.getPanel(), gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0,5,0,3), 0,0);
+      MarkDuplicatesChooserController markDuplicatesChooserController = new MarkDuplicatesChooserController(_dataSetViewerTablePanel);
+      pnlEast.add(GUIUtils.setPreferredWidth(markDuplicatesChooserController.getComponent(),45), gbc);
+
+
       return ret;
    }
 

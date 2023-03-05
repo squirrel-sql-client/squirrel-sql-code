@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -164,10 +163,7 @@ public class CopyRowsToNewWindowService
    private RowsWindowFrame openWindowForTable(List<Object[]> rows, ArrayList<ColumnDisplayDefinition> columnDisplayDefinitions)
    {
       Window parent = SwingUtilities.windowForComponent(_table);
-
-      RowsWindowFrame rowsWindowFrame = new RowsWindowFrame(rows, parent, columnDisplayDefinitions, _session);
-      GUIUtils.centerWithinParent(rowsWindowFrame);
-
+      RowsWindowFrame rowsWindowFrame = new RowsWindowFrame(parent, rows, columnDisplayDefinitions, _session);
       return rowsWindowFrame;
    }
 }

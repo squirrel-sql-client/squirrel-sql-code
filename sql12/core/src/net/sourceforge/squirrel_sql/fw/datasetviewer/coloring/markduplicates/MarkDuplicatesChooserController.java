@@ -1,10 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.markduplicates;
 
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractButton;
-import javax.swing.JComponent;
-import javax.swing.JToggleButton;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.resulttabactions.MarkDuplicatesToggleAction;
@@ -16,28 +11,51 @@ import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.AbstractButton;
+import javax.swing.JComponent;
+import javax.swing.JToggleButton;
+import java.awt.event.ActionEvent;
+
 public class MarkDuplicatesChooserController
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MarkDuplicatesChooserController.class);
-
+   private final IDataSetViewer _sqlResultDataSetViewer;
 
    private ButtonChooser _toggleBtnChooser;
-   private IResultTab _resultTab;
 
    private static final String PREF_MARK_DUPLICATES_MODE_LAST_MODE = "MarkDuplicatesMode.last.mode";
 
    private boolean _dontReactToEvents = false;
 
 
+   public MarkDuplicatesChooserController(IDataSetViewer dataSetViewer)
+   {
+      this(dataSetViewer, null);
+   }
+
    public MarkDuplicatesChooserController(IResultTab resultTab)
    {
-      _resultTab = resultTab;
+      this(resultTab.getSQLResultDataSetViewer(), resultTab);
+   }
+
+   private MarkDuplicatesChooserController(IDataSetViewer dataSetViewer, IResultTab resultTab)
+   {
+      _sqlResultDataSetViewer = dataSetViewer;
       _toggleBtnChooser = new ButtonChooser();
 
       for (MarkDuplicatesMode mode : MarkDuplicatesMode.values())
       {
-         // MarkDuplicatesToggleAction results in call of actionWasFired(...)
-         JToggleButton btn = new JToggleButton(new MarkDuplicatesToggleAction(resultTab));
+         JToggleButton btn;
+         if(null != resultTab)
+         {
+            // MarkDuplicatesToggleAction results in call of actionWasFired(...)
+            btn = new JToggleButton(new MarkDuplicatesToggleAction(resultTab));
+         }
+         else
+         {
+            btn = new JToggleButton();
+            btn.addActionListener(e -> actionWasFired(e));
+         }
 
          btn.setIcon(mode.getIcon());
          btn.setText(mode.getText());
@@ -50,17 +68,15 @@ public class MarkDuplicatesChooserController
 
       _toggleBtnChooser.setButtonSelectedListener((newSelectedButton, formerSelectedButton) -> onButtonSelected((JToggleButton)newSelectedButton, (JToggleButton)formerSelectedButton));
 
-      IDataSetViewer dataSetViewer = _resultTab.getSQLResultDataSetViewer();
-
-      if(dataSetViewer instanceof DataSetViewerTablePanel)
+      if(_sqlResultDataSetViewer instanceof DataSetViewerTablePanel)
       {
-         SortableTableModel sortableTableModel = ((DataSetViewerTablePanel) dataSetViewer).getTable().getSortableTableModel();
+         SortableTableModel sortableTableModel = ((DataSetViewerTablePanel) _sqlResultDataSetViewer).getTable().getSortableTableModel();
          sortableTableModel.addSortingListener((modelColumnIx, columnOrder) -> onTableSorted());
       }
 
-      if(dataSetViewer instanceof DataSetViewerTablePanel)
+      if(_sqlResultDataSetViewer instanceof DataSetViewerTablePanel)
       {
-         ((DataSetViewerTablePanel) dataSetViewer).getTable().getButtonTableHeader().setDraggedColumnListener(() -> onColumnMoved());
+         ((DataSetViewerTablePanel) _sqlResultDataSetViewer).getTable().getButtonTableHeader().setDraggedColumnListener(() -> onColumnMoved());
       }
    }
 
@@ -173,9 +189,8 @@ public class MarkDuplicatesChooserController
 
    private void doMarkDuplicates()
    {
-      IDataSetViewer dataSetViewer = _resultTab.getSQLResultDataSetViewer();
 
-      if(false == dataSetViewer instanceof DataSetViewerTablePanel)
+      if(false == _sqlResultDataSetViewer instanceof DataSetViewerTablePanel)
       {
          Main.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("MarkDuplicatesChooserController.mark.duplicates.for.table.output.only"));
          return;
@@ -190,7 +205,7 @@ public class MarkDuplicatesChooserController
          mode = MarkDuplicatesMode.getModeByButton(_toggleBtnChooser.getSelectedButton());
       }
 
-      ((DataSetViewerTablePanel)dataSetViewer).getTable().getColoringService().getMarkDuplicatesHandler().markDuplicates(mode);
+      ((DataSetViewerTablePanel) _sqlResultDataSetViewer).getTable().getColoringService().getMarkDuplicatesHandler().markDuplicates(mode);
    }
 
    public void copyStateFrom(MarkDuplicatesChooserController controllerToCopyFrom)
