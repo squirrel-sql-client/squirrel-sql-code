@@ -4,12 +4,14 @@ import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,6 +36,8 @@ public class ReconnectDialog extends JDialog
    JTextField txtUser = new JTextField();
    JPasswordField txtPassword = new JPasswordField();
 
+   JCheckBox chkSkipReconnect = new JCheckBox(s_stringMgr.getString("ReconnectAction.skip.opening.new.connection"));
+
    private JPanel _pnlCollapseableHolder = new JPanel(new GridLayout(1,1));
 
    private JPanel _collapsedPanel;
@@ -56,11 +60,29 @@ public class ReconnectDialog extends JDialog
       gbc = new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0);
       getContentPane().add(createCollapsablePanel(), gbc);
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      getContentPane().add(createDoNotReconnectPanel(), gbc);
+
+      gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       getContentPane().add(createButtonPanel(), gbc);
 
 
       getRootPane().setDefaultButton(btnYes);
+   }
+
+   private JPanel createDoNotReconnectPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(chkSkipReconnect, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      String infoMsg = s_stringMgr.getString("ReconnectAction.skip.opening.new.connection.info");
+      ret.add(new SmallToolTipInfoButton(infoMsg).getButton(), gbc);
+      return ret;
    }
 
    private JPanel createButtonPanel()
@@ -161,7 +183,7 @@ public class ReconnectDialog extends JDialog
    {
       _pnlCollapseableHolder.removeAll();
       _pnlCollapseableHolder.add(_uncollapsedPanel);
-      setSize(new Dimension(500, 300));
+      setSize(new Dimension(500, 330));
 
       btnToggleCollapsed.setIcon(_iconMinus);
    }
@@ -171,7 +193,7 @@ public class ReconnectDialog extends JDialog
       _pnlCollapseableHolder.removeAll();
       _pnlCollapseableHolder.add(_collapsedPanel);
       _pnlCollapseableHolder.invalidate();
-      setSize(new Dimension(500, 150));
+      setSize(new Dimension(500, 180));
 
       btnToggleCollapsed.setIcon(_iconPlus);
 

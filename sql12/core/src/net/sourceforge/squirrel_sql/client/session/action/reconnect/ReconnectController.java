@@ -3,11 +3,11 @@ package net.sourceforge.squirrel_sql.client.session.action.reconnect;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 import javax.swing.SwingUtilities;
-import net.sourceforge.squirrel_sql.fw.props.Props;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class ReconnectController
 {
@@ -53,6 +53,8 @@ public class ReconnectController
    private void doReconnect(JdbcConnectionData jdbcData)
    {
       _reconnectInfo.setReconnectRequested(true);
+
+      _reconnectInfo.setSkipOpeningNewConnection(_reconnectDialog.chkSkipReconnect.isSelected());
 
       if(false == Utilities.equalsRespectNull(_reconnectDialog.txtUrl.getText(), jdbcData.getUrl()))
       {

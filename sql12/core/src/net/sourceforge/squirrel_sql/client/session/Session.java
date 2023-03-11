@@ -668,6 +668,11 @@ class Session implements ISession
             AliasPasswordHandler.setPassword(_alias, _password);
          }
 
+         if(reconnectInfo.isSkipOpeningNewConnection())
+         {
+            String usrRequestedNoRecoonectMsg = s_stringMgr.getString("Session.reconn.skiped.on.user.request");
+            throw new RuntimeException(usrRequestedNoRecoonectMsg);
+         }
 
          final SQLConnection conn = cmd.getSQLConnection();
          try
@@ -1303,7 +1308,14 @@ class Session implements ISession
    {
       if(null == _sessionConnectionPool)
       {
-         throw new IllegalStateException("No ConnectionPool instance. This may happen when reconnect (Ctrl+T) failed.");
+         if(0 == _props.getQueryConnectionPoolSize())
+         {
+            throw new IllegalStateException("No Connection instance. This may happen when reconnect (Ctrl+T) failed.");
+         }
+         else
+         {
+            throw new IllegalStateException("No ConnectionPool instance. This may happen when reconnect (Ctrl+T) failed.");
+         }
       }
    }
 

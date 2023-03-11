@@ -1,23 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.properties;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.AddressablePrefJPanel;
 import net.sourceforge.squirrel_sql.client.mainframe.action.findprefs.PreferencesAddressBook;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -30,6 +12,24 @@ import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.querytokenizer.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 class SQLPropertiesPanel extends JPanel
 {
@@ -95,7 +95,7 @@ class SQLPropertiesPanel extends JPanel
       _writeSQLErrorsToLogChk.setSelected(props.getWriteSQLErrorsToLog());
       _loadColumsInBackgroundChk.setSelected(props.getLoadColumnsInBackground());
       _metaDataLoadingTimeOutTxt.setInt((int)props.getMetaDataLoadingTimeOut());
-      _queryConnectionPoolSizeTxt.setInt((int)props.getQueryConnectionPoolSize());
+      _queryConnectionPoolSizeTxt.setInt(props.getQueryConnectionPoolSize());
 
       _autoCommitChk.setSelected(props.getAutoCommit());
       _commitOnClose.setSelected(props.getCommitOnClosingConnection());

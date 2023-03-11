@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+#611 Reconnect dialog (ctrl+T) allows to skip opening a new connection.
+  To open a connection again reopen the reconnect dialog.
+  This option may be useful for example when your connection
+  disturbs external activities on the database.
+
 Handling of copying SQL result rows to extra windows was unified and now offers
   the "mark duplicate rows" function.
   Ways to copy result rows to extra windows are:

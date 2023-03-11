@@ -10,6 +10,7 @@ public class ReconnectInfo
    private String _user;
    private String _password;
    private String _url;
+   private boolean _skipOpeningNewConnection = true;
    //
    ////////////////////////////////////////////////////////////////////
 
@@ -51,5 +52,15 @@ public class ReconnectInfo
    public void setUrl(String url)
    {
       _url = url;
+   }
+
+   public boolean isSkipOpeningNewConnection()
+   {
+      return _skipOpeningNewConnection;
+   }
+
+   public void setSkipOpeningNewConnection(boolean skipOpeningNewConnection)
+   {
+      _skipOpeningNewConnection = skipOpeningNewConnection;
    }
 }
