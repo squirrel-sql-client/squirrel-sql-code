@@ -1,13 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.action.reconnect;
 
-import net.sourceforge.squirrel_sql.client.Main;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,12 +15,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+
+import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.gui.buttontabcomponent.SmallToolTipInfoButton;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class ReconnectDialog extends JDialog
 {
@@ -76,11 +76,13 @@ public class ReconnectDialog extends JDialog
 
       GridBagConstraints gbc;
 
+      String infoMsg = s_stringMgr.getString("ReconnectAction.skip.opening.new.connection.info");
+
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      chkSkipReconnect.setToolTipText(infoMsg);
       ret.add(chkSkipReconnect, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      String infoMsg = s_stringMgr.getString("ReconnectAction.skip.opening.new.connection.info");
       ret.add(new SmallToolTipInfoButton(infoMsg).getButton(), gbc);
       return ret;
    }
