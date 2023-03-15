@@ -75,6 +75,10 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+Moving files raised "JGitInternalException: Entry not found by path: ..." error,
+  when un-added files where moved inside a Git repository.
+  Info: To move a file open the "Save as" dialog and check the check box on the lower left.
+
 DB Diff Plugin: Database table compare dialog (right mouse click on table in Object tree) didn't work
   because of a version conflict concerning the JGoodies Forms library.
   To solve the problem the library was removed from SQuirreL's core libs.

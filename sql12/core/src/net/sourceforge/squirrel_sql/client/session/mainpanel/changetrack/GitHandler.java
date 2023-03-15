@@ -1,5 +1,16 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.changetrack;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.session.action.savedsession.SavedSessionUtil;
 import net.sourceforge.squirrel_sql.client.session.filemanager.FileManagementUtil;
@@ -29,17 +40,6 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.OrTreeFilter;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
-
-import javax.swing.JOptionPane;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -498,6 +498,12 @@ public class GitHandler
 
    public static boolean moveAndDeleteOld(File newFile, File previousFile)
    {
+      if( false == GitHandler.isInRepository(previousFile) )
+      {
+         deleteFilePhysically(previousFile);
+         return false;
+      }
+
       try(Repository newRepo = findRepository(newFile);
           Repository oldRepo = findRepository(previousFile))
       {
@@ -539,9 +545,16 @@ public class GitHandler
       }
    }
 
-   private static void deleteFilePhysically(File previousFile) throws IOException
+   private static void deleteFilePhysically(File previousFile)
    {
-      Files.deleteIfExists(Path.of(previousFile.toURI()));
+      try
+      {
+         Files.deleteIfExists(Path.of(previousFile.toURI()));
+      }
+      catch(IOException e)
+      {
+         throw Utilities.wrapRuntime(e);
+      }
    }
 
    private static void logMove(Repository repository, String previousFileRelativeToRepo, String newFileRelativeToRepo, RevCommit revCommit)
