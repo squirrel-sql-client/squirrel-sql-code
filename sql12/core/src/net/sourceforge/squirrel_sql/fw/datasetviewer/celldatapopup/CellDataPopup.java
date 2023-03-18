@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.datasetviewer;
+package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 /*
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
@@ -18,18 +18,23 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.*;
-import java.awt.event.*;
-
-import net.sourceforge.squirrel_sql.fw.props.Props;
-
-import javax.swing.*;
-
-//import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
 import net.sourceforge.squirrel_sql.client.Main;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.props.Props;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.CellEditor;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Generate a popup window to display and manipulate the

@@ -6,6 +6,11 @@ Not yet released, available in our GIT repository, snapshots and future releases
 
 Enhancements:
 
+Table cell data popup improvements:
+  Now offers a list of previous files to choose from.
+  The file chooser opened by the "Browse" button was changed from an open to a save dialog.
+  Info: Double click a table cell to open its cell data popup
+
 #611 Reconnect dialog (ctrl+T) allows to skip opening a new connection.
   To open a connection again reopen the reconnect dialog.
   This option may be useful for example when your connection

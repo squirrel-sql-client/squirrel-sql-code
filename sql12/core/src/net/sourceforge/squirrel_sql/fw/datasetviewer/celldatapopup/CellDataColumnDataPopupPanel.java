@@ -1,5 +1,6 @@
-package net.sourceforge.squirrel_sql.fw.datasetviewer;
+package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;

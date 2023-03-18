@@ -59,6 +59,14 @@ public class EditableComboBoxHandler
       }
    }
 
+   public void selectFirstItemIfExists()
+   {
+      if(0 < _cbo.getItemCount())
+      {
+         addOrReplaceCurrentItem((String) _cbo.getItemAt(0));
+      }
+   }
+
    public void addOrReplaceCurrentItem(String newItem)
    {
       for (int i = 0; i < _cbo.getItemCount(); i++)

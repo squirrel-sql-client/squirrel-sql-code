@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.datasetviewer;
+package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 /*
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net

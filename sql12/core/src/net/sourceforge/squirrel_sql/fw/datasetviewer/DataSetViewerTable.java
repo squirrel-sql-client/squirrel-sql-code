@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.coloring.ColoringService;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;

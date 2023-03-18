@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.datasetviewer;
+package net.sourceforge.squirrel_sql.fw.datasetviewer.celldatapopup;
 /*
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,12 +17,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
-import java.util.HashMap;
+
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Collections;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 //import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 
 /**
