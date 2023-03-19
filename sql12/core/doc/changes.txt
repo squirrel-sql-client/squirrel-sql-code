@@ -80,6 +80,10 @@ Export of multiple SQL results.
 
 Bug fixes:
 
+https://github.com/squirrel-sql-client/squirrel-sql-code/issues/11
+  H2 DB versions greater than 2.* didn't show indexes in the Object tree's index details tab.
+  The reason was that H2 changed the table type of ordinary tables from "TABLE" from to "BASE TABLE".
+
 Moving files raised "JGitInternalException: Entry not found by path: ..." error,
   when un-added files where moved inside a Git repository.
   Info: To move a file open the "Save as" dialog and check the check box on the lower left.

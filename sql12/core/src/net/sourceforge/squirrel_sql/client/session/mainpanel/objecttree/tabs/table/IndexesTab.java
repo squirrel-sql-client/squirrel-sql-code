@@ -74,8 +74,16 @@ public class IndexesTab extends BaseTableTab
 				&& false == "LOCAL TEMPORARY".equalsIgnoreCase(ti.getType())
 		)
 		{
-			// Frontbase describes it's tables as "BASE TABLE".
-			if (!DialectFactory.isFrontBase(dmd))
+			// Except from the exceptions below we quit here on account of the following issues:
+			// Bug fixes:
+			// - #1460 Scripts Plugin: Create table scripts contained redundant index for primary key.
+			// - Object tree: NullPointerException occurred when a table's index tab was selected and the table's type other than "TABLE".
+			//
+			// - Frontbase
+			// - H2 version >= 2
+			// describe their tables as "BASE TABLE" so we don't quit for these
+			if (   !DialectFactory.isFrontBase(dmd)
+				 && !DialectFactory.isH2(dmd))
 			{
 				return null;
 			}
