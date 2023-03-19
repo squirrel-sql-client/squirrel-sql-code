@@ -1,10 +1,9 @@
-package net.sourceforge.squirrel_sql.fw.gui.action;
+package net.sourceforge.squirrel_sql.fw.gui.action.copyasmarkdown;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
-import net.sourceforge.squirrel_sql.fw.gui.ClipboardUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.steppschuh.markdowngenerator.table.Table;
@@ -13,30 +12,21 @@ import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 import java.util.ArrayList;
 
-public class TableCopyAsMarkdownCommand
+public class CopyAsMarkDown
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(TableCopyAsMarkdownCommand.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(CopyAsMarkDown.class);
 
-   private final ISession _session;
-   private final JTable _table;
-
-   public TableCopyAsMarkdownCommand(JTable table, ISession session)
+   public static String createMarkdownForSelectedCells(JTable table)
    {
-      _session = session;
-      _table = table;
-   }
-
-   public void execute()
-   {
-      int nbrSelRows = _table.getSelectedRowCount();
-      int nbrSelCols = _table.getSelectedColumnCount();
-      int[] selRows = _table.getSelectedRows();
-      int[] selCols = _table.getSelectedColumns();
+      int nbrSelRows = table.getSelectedRowCount();
+      int nbrSelCols = table.getSelectedColumnCount();
+      int[] selRows = table.getSelectedRows();
+      int[] selCols = table.getSelectedColumns();
 
       ArrayList<ColumnDisplayDefinition> columnDisplayDefinitions = new ArrayList<>();
       for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
       {
-         TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);
+         TableColumn col = table.getColumnModel().getColumn(selCols[colIdx]);
 
          if (col instanceof ExtTableColumn)
          {
@@ -44,8 +34,8 @@ public class TableCopyAsMarkdownCommand
          }
          else
          {
-            _session.showErrorMessage(s_stringMgr.getString("TableCopyAsMarkdownCommand.failed.to.copy"));
-            return;
+            Main.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("TableCopyAsMarkdownCommand.failed.to.copy"));
+            return null;
          }
       }
 
@@ -71,7 +61,7 @@ public class TableCopyAsMarkdownCommand
          int curIx = 0;
          for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
          {
-            Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+            Object cellObj = table.getValueAt(selRows[rowIdx], selCols[colIdx]);
 
             if(cellObj instanceof String && -1 < ((String)cellObj).indexOf('\n'))
             {
@@ -98,7 +88,6 @@ public class TableCopyAsMarkdownCommand
 
       String line = new String(new char[width]).replace('\0', '-') + "\n";
 
-      ClipboardUtil.copyToClip(line + markdownTable + "\n" + line);
-
+      return line + markdownTable + "\n" + line;
    }
 }

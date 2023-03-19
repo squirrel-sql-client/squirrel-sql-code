@@ -19,11 +19,6 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactoryImpl;
@@ -41,6 +36,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.IScriptFileManager;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Base class for all DiffPresentation implementations that display a comparison of the contents of two files
  * side-by-side in some internal or external window.
@@ -49,8 +49,7 @@ public abstract class AbstractSideBySideDiffPresentation extends AbstractDiffPre
 {
 
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(AbstractSideBySideDiffPresentation.class);
+	private final static ILogger s_log = LoggerController.createLogger(AbstractSideBySideDiffPresentation.class);
 
 	/** fileWrapperFactory that allows this class to avoid constructing File objects directly */
 	protected FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
@@ -70,7 +69,7 @@ public abstract class AbstractSideBySideDiffPresentation extends AbstractDiffPre
 	 *           filename of the second script to compare.
 	 * @throws Exception
 	 */
-	protected abstract void executeDiff(String script1Filename, String script2Filename) throws Exception;
+	public abstract void executeDiff(String script1Filename, String script2Filename) throws Exception;
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.gui.IDiffPresentation#execute()

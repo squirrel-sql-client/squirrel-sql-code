@@ -33,8 +33,7 @@ public class DiffPresentationFactoryImpl implements IDiffPresentationFactory
 	 *      DBDiffPreferenceBean)
 	 */
 	@Override
-	public IDiffPresentation createDiffPresentation(SessionInfoProvider sessionInfoProvider,
-		DBDiffPreferenceBean preferenceBean)
+	public IDiffPresentation createDiffPresentation(SessionInfoProvider sessionInfoProvider, DBDiffPreferenceBean preferenceBean)
 	{
 		IDiffPresentation result = null;
 

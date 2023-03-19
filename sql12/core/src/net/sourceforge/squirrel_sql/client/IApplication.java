@@ -44,6 +44,7 @@ import net.sourceforge.squirrel_sql.client.shortcut.ShortcutManager;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.MultipleSqlResultExportChannel;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowFrameRegistry;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
+import net.sourceforge.squirrel_sql.fw.gui.tableselectiondiff.TableSelectionDiffStore;
 import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
 import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
@@ -58,7 +59,7 @@ import javax.swing.JMenu;
  */
 public interface IApplication
 {
-	interface IMenuIDs extends MainFrame.IMenuIDs
+   interface IMenuIDs extends MainFrame.IMenuIDs
 	{
 		// Empty body.
 	}
@@ -287,4 +288,6 @@ public interface IApplication
 	PopupMenuAtticModel getPopupMenuAtticModel();
 
 	MultipleSqlResultExportChannel getMultipleSqlResultExportChannel();
+
+	TableSelectionDiffStore getTableSelectionDiffStore();
 }

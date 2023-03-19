@@ -29,7 +29,6 @@ import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.ShowReferencesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.ShowRowNumbersCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyAlignedCommand;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyAsMarkdownCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyColumnHeaderCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableCopyHtmlCommand;
@@ -45,12 +44,14 @@ import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.ColorSelectionType;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.CopyColoredRowsToNewWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.colorrows.GotoColorMenuController;
 import net.sourceforge.squirrel_sql.fw.gui.action.columndetails.ColumnDetailsController;
+import net.sourceforge.squirrel_sql.fw.gui.action.copyasmarkdown.TableCopyAsMarkdownCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.copyseparatedby.TableCopySeparatedByCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.fileexport.TableExport;
 import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.CopySelectedRowsToOwnWindowCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.showdistinctvalues.ShowDistinctValuesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableActionFactory;
+import net.sourceforge.squirrel_sql.fw.gui.tableselectiondiff.TableSelectionDiff;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -187,7 +188,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 		addAction(_export);
       addSeparator();
-      addAction(_adjustAllColWidthsAction);
+
+		add(TableSelectionDiff.createMenu(() -> _dataSetViewerTablePanel.getTable()));
+      addSeparator();
+
+		addAction(_adjustAllColWidthsAction);
 
       _alwaysAdjustAllColWidtshActionItem = new JCheckBoxMenuItem();
 		_alwaysAdjustAllColWidtshActionItem.setSelected(ButtonTableHeader.isAlwaysAdjustAllColWidths());
@@ -379,7 +384,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			new TableCopyAsMarkdownCommand(_dataSetViewerTablePanel.getTable(), _session).execute();
+			new TableCopyAsMarkdownCommand(_dataSetViewerTablePanel.getTable()).execute();
 		}
 	}
 

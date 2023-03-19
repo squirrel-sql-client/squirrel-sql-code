@@ -19,10 +19,6 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -44,6 +40,10 @@ import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DBDiffPreferencesPanel;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DefaultPluginGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DefaultPluginPreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.IPluginPreferencesManager;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 
 /**
  * The class that sets up the various resources required by SQuirreL to implement a plugin. This plugin
@@ -382,4 +382,9 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 		return scriptFileManager;
 	}
 
+	@Override
+	public DBDIffExternalService getExternalService()
+	{
+		return new DBDIffExternalService((DBDiffPreferenceBean) pluginPreferencesManager.getPreferences());
+	}
 }

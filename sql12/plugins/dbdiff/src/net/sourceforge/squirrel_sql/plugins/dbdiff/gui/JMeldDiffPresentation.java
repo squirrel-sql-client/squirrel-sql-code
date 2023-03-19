@@ -19,8 +19,6 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
-import javax.swing.JDialog;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -28,6 +26,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.jmeld.settings.EditorSettings;
 import org.jmeld.settings.JMeldSettings;
 import org.jmeld.ui.JMeldPanel;
+
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import java.awt.Font;
 
 /**
  * A DiffPresentation that uses components from the JMeld project to render a comparison of the content of two
@@ -42,7 +44,7 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 	 *      executeDiff(java.lang.String, java.lang.String)
 	 */
 	@Override
-	protected void executeDiff(String script1Filename, String script2Filename) throws Exception
+	public void executeDiff(String script1Filename, String script2Filename)
 	{
 		final EditorSettings editorSettings = JMeldSettings.getInstance().getEditor();
 		editorSettings.setRightsideReadonly(true);
@@ -61,6 +63,8 @@ public class JMeldDiffPresentation extends AbstractSideBySideDiffPresentation
 
 		diffDialog.setVisible(true);
 
+		JMeldSettings.getInstance().getEditor().enableCustomFont(true);
+		JMeldSettings.getInstance().getEditor().setFont(new Font(Font.MONOSPACED, Font.PLAIN, new JLabel().getFont().getSize()));
 		meldPanel.openComparison(script1Filename, script2Filename);
 	}
 

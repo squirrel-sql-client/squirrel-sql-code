@@ -43,7 +43,6 @@ public class CompareCommand extends AbstractDiffCommand implements ICommand
 	 */
 	public CompareCommand(SessionInfoProvider provider)
 	{
-		super();
 		this.sessionInfoProvider = provider;
 	}
 
@@ -53,12 +52,8 @@ public class CompareCommand extends AbstractDiffCommand implements ICommand
     */
 	public void execute()
 	{
-		final DBDiffPreferenceBean preferenceBean =
-			(DBDiffPreferenceBean) pluginPreferencesManager.getPreferences();
-
-		final IDiffPresentation diffPresentation =
-			diffPresentationFactory.createDiffPresentation(sessionInfoProvider, preferenceBean);
-
+		final DBDiffPreferenceBean preferenceBean = (DBDiffPreferenceBean) pluginPreferencesManager.getPreferences();
+		final IDiffPresentation diffPresentation = diffPresentationFactory.createDiffPresentation(sessionInfoProvider, preferenceBean);
 		diffPresentation.execute();
 	}
 

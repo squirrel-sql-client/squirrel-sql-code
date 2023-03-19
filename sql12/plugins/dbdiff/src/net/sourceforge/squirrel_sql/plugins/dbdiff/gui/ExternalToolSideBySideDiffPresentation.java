@@ -19,10 +19,10 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
-import java.io.IOException;
-
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.io.IOException;
 
 /**
  * A DiffPresentation implementation that creates a script from both schemas to be compared, then launches a
@@ -32,15 +32,14 @@ public class ExternalToolSideBySideDiffPresentation extends AbstractSideBySideDi
 {
 
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ExternalToolSideBySideDiffPresentation.class);
+	private final static ILogger s_log = LoggerController.createLogger(ExternalToolSideBySideDiffPresentation.class);
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.gui.AbstractSideBySideDiffPresentation#
 	 *      executeDiff(java.lang.String, java.lang.String)
 	 */
 	@Override
-	protected void executeDiff(String script1Filename, String script2Filename) throws IOException
+	public void executeDiff(String script1Filename, String script2Filename) throws IOException
 	{
 		final String toolCommand =
 			preferenceBean.getGraphicalToolCommand() + " " + script1Filename + " " + script2Filename;

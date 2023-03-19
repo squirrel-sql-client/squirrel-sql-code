@@ -66,6 +66,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.rowselectionwindow.RowsWindowF
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationStorage;
+import net.sourceforge.squirrel_sql.fw.gui.tableselectiondiff.TableSelectionDiffStore;
 import net.sourceforge.squirrel_sql.fw.props.PropsImpl;
 import net.sourceforge.squirrel_sql.fw.resources.DefaultIconHandler;
 import net.sourceforge.squirrel_sql.fw.resources.IconHandler;
@@ -206,6 +207,8 @@ public class Application implements IApplication
 	private IconHandler _iconHandler = new DefaultIconHandler();
 	private PopupMenuAtticModel _popupMenuAtticModel = new PopupMenuAtticModel();
 	private MultipleSqlResultExportChannel _multipleSqlResultExportChannel = new MultipleSqlResultExportChannel();
+
+	private TableSelectionDiffStore _tableSelectionDiffStore = new TableSelectionDiffStore();
 
 	public Application()
 	{
@@ -1507,4 +1510,10 @@ public class Application implements IApplication
    {
       return _multipleSqlResultExportChannel;
    }
+
+	@Override
+	public TableSelectionDiffStore getTableSelectionDiffStore()
+	{
+		return _tableSelectionDiffStore;
+	}
 }
