@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.SchemaTableTypeCombination;
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.basetabletype.BaseTableTypeHandler;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.synonym.SynonymHandler;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -187,6 +188,12 @@ public class SchemaInfoCache implements Serializable
       ArrayList<String> tableTypeCandidates = new ArrayList<>();
       tableTypeCandidates.add("TABLE");
       tableTypeCandidates.add("SYSTEM TABLE");
+
+      if(BaseTableTypeHandler.isDatabaseUsingTypeBaseTableInsteadOpTable(_session.getMetaData()))
+      {
+         tableTypeCandidates.add(BaseTableTypeHandler.TABLE_TYPE_BASE_TABLE);
+      }
+
       new SynonymHandler(_session.getSQLConnection().getSQLMetaData()).appendSynonymTableTypesForSchemaInfoCache(tableTypeCandidates);
 
       ArrayList<String> viewTypeCandidates = new ArrayList<>();

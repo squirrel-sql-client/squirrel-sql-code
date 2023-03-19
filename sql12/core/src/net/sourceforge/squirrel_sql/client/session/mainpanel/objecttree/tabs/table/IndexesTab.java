@@ -17,10 +17,11 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.client.session.schemainfo.basetabletype.BaseTableTypeHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.databasemetadata.SQLDatabaseMetaData;
@@ -78,13 +79,9 @@ public class IndexesTab extends BaseTableTab
 			// Bug fixes:
 			// - #1460 Scripts Plugin: Create table scripts contained redundant index for primary key.
 			// - Object tree: NullPointerException occurred when a table's index tab was selected and the table's type other than "TABLE".
-			//
-			// - Frontbase
-			// - H2 version >= 2
-			// describe their tables as "BASE TABLE" so we don't quit for these
-			if (   !DialectFactory.isFrontBase(dmd)
-				 && !DialectFactory.isH2(dmd))
+			if (BaseTableTypeHandler.isDatabaseUsingTypeBaseTableInsteadOpTable(dmd))
 			{
+				// See also SchemaInfoCache.initTypes(...)
 				return null;
 			}
 		}
